@@ -589,6 +589,7 @@ apply_substitutions() {
   project_name=$(get_manifest_value '.variables.PROJECT_NAME')
   languages=$(get_manifest_value '.variables.LANGUAGES')
   cc_model=$(get_manifest_value '.variables.CC_MODEL')
+  cc_statusline=$(get_manifest_value '.variables.CC_STATUSLINE // "enhanced"')
   serena_prompt=$(get_manifest_value '.variables.SERENA_INITIAL_PROMPT')
   tm_custom=$(get_manifest_value '.variables.TM_CUSTOM_SYSTEM_PROMPT')
   tm_append=$(get_manifest_value '.variables.TM_APPEND_SYSTEM_PROMPT')
@@ -605,6 +606,11 @@ apply_substitutions() {
       escaped_model=$(escape_sed_replacement "$cc_model")
       sed -i "s/\"model\": \".*\"/\"model\": \"$escaped_model\"/g" "$cc_settings_file"
     fi
+    # Statusline - template defaults to enhanced (statusline2.sh); switch to basic if requested
+    if [[ "$cc_statusline" == "basic" ]]; then
+      sed -i "s/statusline_enhanced\.sh/statusline.sh/g" "$cc_settings_file"
+    fi
+
     log_info "Applied Claude Code settings"
   fi
 

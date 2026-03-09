@@ -56,8 +56,8 @@ assert_equals "my-project" "$PROJECT_NAME" "PROJECT_NAME = $PROJECT_NAME"
 
 log_test "Extract all variable keys"
 VAR_KEYS=$(jq -r '.variables | keys[]' "$EXAMPLE_MANIFEST" | sort | tr '\n' ',')
-EXPECTED_KEYS="CC_MODEL,LANGUAGES,PROJECT_NAME,SERENA_INITIAL_PROMPT,TM_APPEND_SYSTEM_PROMPT,TM_CUSTOM_SYSTEM_PROMPT,TM_PERMISSION_MODE,"
-assert_equals "$EXPECTED_KEYS" "$VAR_KEYS" "All 7 variable keys present"
+EXPECTED_KEYS="CC_MODEL,CC_STATUSLINE,LANGUAGES,PROJECT_NAME,SERENA_INITIAL_PROMPT,TM_APPEND_SYSTEM_PROMPT,TM_CUSTOM_SYSTEM_PROMPT,TM_PERMISSION_MODE,"
+assert_equals "$EXPECTED_KEYS" "$VAR_KEYS" "All 8 variable keys present"
 
 # =============================================================================
 # Section 3: jq Patterns for Manifest Generation (for cleanup script)
@@ -74,6 +74,7 @@ GENERATED=$(jq -n \
   --arg project "my-project" \
   --arg language "typescript" \
   --arg cc_model "sonnet" \
+  --arg cc_statusline "enhanced" \
   --arg serena_prompt "" \
   --arg tm_custom "" \
   --arg tm_append "" \
@@ -87,6 +88,7 @@ GENERATED=$(jq -n \
       PROJECT_NAME: $project,
       LANGUAGES: $language,
       CC_MODEL: $cc_model,
+      CC_STATUSLINE: $cc_statusline,
       SERENA_INITIAL_PROMPT: $serena_prompt,
       TM_CUSTOM_SYSTEM_PROMPT: $tm_custom,
       TM_APPEND_SYSTEM_PROMPT: $tm_append,
