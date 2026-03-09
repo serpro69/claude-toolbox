@@ -16,6 +16,7 @@
 #   --tm-system-prompt <p>    Custom system prompt for Task Master
 #   --tm-append-prompt <p>    Additional content to append to Task Master prompt
 #   --tm-permission <mode>    Task Master permission mode (default: default)
+#   --statusline <style>      Statusline style: enhanced (default) or basic
 #   --no-commit               Skip git commit and push
 #   --ci                      CI mode: read from env vars, skip interactive prompts
 #   -y, --yes                 Skip confirmation prompt (for scripted use)
@@ -31,6 +32,7 @@ SERENA_INITIAL_PROMPT=""
 TM_CUSTOM_SYSTEM_PROMPT=""
 TM_APPEND_SYSTEM_PROMPT=""
 TM_PERMISSION_MODE="default"
+CC_STATUSLINE="enhanced"
 NO_COMMIT=false
 SKIP_CONFIRM=false
 INTERACTIVE_MODE=false
@@ -41,6 +43,7 @@ CI_MODE=false
 # Called before CLI parsing so CLI args can override
 load_env_vars() {
   CC_MODEL="${CC_MODEL:-default}"
+  CC_STATUSLINE="${CC_STATUSLINE:-enhanced}"
   LANGUAGES="${LANGUAGES:-}"
   SERENA_INITIAL_PROMPT="${SERENA_INITIAL_PROMPT:-}"
   TM_CUSTOM_SYSTEM_PROMPT="${TM_CUSTOM_SYSTEM_PROMPT:-}"
@@ -119,6 +122,9 @@ Options:
   --tm-append-prompt <p>    Additional content to append to Claude Code system prompt
   --tm-permission <mode>    Task Master permission mode (default: default)
                             Options: default, acceptEdits, plan, bypassPermissions
+  --statusline <style>      Statusline style (default: enhanced)
+                            Options: enhanced (rich multi-line with rate limits, git, session timer)
+                                     basic (simple one-line: model + context %)
   --no-commit               Skip git commit and push
   --ci                      CI mode: read config from environment variables,
                             skip interactive prompts and repo name check
@@ -225,6 +231,16 @@ run_interactive() {
 
   echo ""
 
+  # Statusline selection
+  echo -e "${YELLOW}Statusline Options:${NC}"
+  echo -e "  basic:    Simple one-line display (model + context %)"
+  echo -e "  enhanced: Rich multi-line display with rate limits, git, session timer"
+  echo ""
+  prompt_select "Select statusline style" "enhanced" CC_STATUSLINE \
+    "enhanced" "basic"
+
+  echo ""
+
   # Language selection
   # Sources:
   #   https://oraios.github.io/serena/01-about/020_programming-languages.html
@@ -294,6 +310,7 @@ show_config_summary() {
   echo ""
   echo -e "${CYAN}Configuration:${NC}"
   echo "  Claude Model:       $CC_MODEL"
+  echo "  Statusline:         $CC_STATUSLINE"
   echo "  Languages:          $LANGUAGES"
   echo "  TM Permission Mode: $TM_PERMISSION_MODE"
   if [[ -n "$SERENA_INITIAL_PROMPT" ]]; then
@@ -362,6 +379,7 @@ generate_manifest() {
     --arg PROJECT_NAME "$project_name" \
     --arg LANGUAGES "$LANGUAGES" \
     --arg CC_MODEL "$CC_MODEL" \
+    --arg CC_STATUSLINE "$CC_STATUSLINE" \
     --arg SERENA_INITIAL_PROMPT "$SERENA_INITIAL_PROMPT" \
     --arg TM_CUSTOM_SYSTEM_PROMPT "$TM_CUSTOM_SYSTEM_PROMPT" \
     --arg TM_APPEND_SYSTEM_PROMPT "$TM_APPEND_SYSTEM_PROMPT" \
@@ -375,6 +393,7 @@ generate_manifest() {
         PROJECT_NAME: $PROJECT_NAME,
         LANGUAGES: $LANGUAGES,
         CC_MODEL: $CC_MODEL,
+        CC_STATUSLINE: $CC_STATUSLINE,
         SERENA_INITIAL_PROMPT: $SERENA_INITIAL_PROMPT,
         TM_CUSTOM_SYSTEM_PROMPT: $TM_CUSTOM_SYSTEM_PROMPT,
         TM_APPEND_SYSTEM_PROMPT: $TM_APPEND_SYSTEM_PROMPT,
@@ -400,6 +419,11 @@ execute_cleanup() {
     sed -i '/"model":/d' "$cc_settings_file"
   else
     sed -i "s/\"model\": \".*\"/\"model\": \"$CC_MODEL\"/g" "$cc_settings_file"
+  fi
+
+  # Claude Code Statusline
+  if [[ "$CC_STATUSLINE" == "basic" ]]; then
+    sed -i "s/statusline_enhanced\.sh/statusline.sh/g" "$cc_settings_file"
   fi
 
   # Serena MCP Settings
@@ -520,6 +544,10 @@ while [[ $# -gt 0 ]]; do
     ;;
   --tm-permission)
     TM_PERMISSION_MODE="$2"
+    shift 2
+    ;;
+  --statusline)
+    CC_STATUSLINE="$2"
     shift 2
     ;;
   --no-commit)
