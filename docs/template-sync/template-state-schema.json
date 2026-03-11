@@ -39,7 +39,7 @@
       "properties": {
         "PROJECT_NAME": {
           "type": "string",
-          "description": "Repository name, derived from $(basename \"$REPO_ROOT\") during cleanup. Substituted into .serena/project.yml (project_name) and .taskmaster/config.json (projectName).",
+          "description": "Repository name, derived from $(basename \"$REPO_ROOT\") during cleanup. Substituted into .serena/project.yml (project_name).",
           "minLength": 1,
           "examples": ["my-project", "claude-starter-kit"]
         },
@@ -68,25 +68,6 @@
           "default": "",
           "examples": ["", "You are working on a TypeScript project"]
         },
-        "TM_CUSTOM_SYSTEM_PROMPT": {
-          "type": "string",
-          "description": "Task Master custom system prompt. Substituted into .taskmaster/config.json (customSystemPrompt field). Only applied if non-empty.",
-          "default": "",
-          "examples": ["", "Follow test-driven development practices"]
-        },
-        "TM_APPEND_SYSTEM_PROMPT": {
-          "type": "string",
-          "description": "Task Master append system prompt. Substituted into .taskmaster/config.json (appendSystemPrompt field). Only applied if non-empty.",
-          "default": "",
-          "examples": ["", "Always write tests before implementation"]
-        },
-        "TM_PERMISSION_MODE": {
-          "type": "string",
-          "description": "Task Master permission mode. Substituted into .taskmaster/config.json (permissionMode field). Unlike CC_MODEL, 'default' is a literal value (not special-cased).",
-          "default": "default",
-          "enum": ["default", "full", "minimal"],
-          "examples": ["default", "full", "minimal"]
-        }
       }
     },
     "sync_exclusions": {
@@ -100,7 +81,7 @@
       "examples": [
         [],
         [".claude/commands/cove/*"],
-        [".claude/commands/cove/*", ".claude/skills/cove/*", ".taskmaster/templates/example_prd.txt"]
+        [".claude/commands/cove/*", ".claude/skills/cove/*"]
       ]
     }
   }

@@ -323,7 +323,7 @@ validate_manifest() {
   fi
 
   # Verify all required variables exist (can be empty but must be present)
-  local required_vars=("PROJECT_NAME" "LANGUAGES" "CC_MODEL" "SERENA_INITIAL_PROMPT" "TM_CUSTOM_SYSTEM_PROMPT" "TM_APPEND_SYSTEM_PROMPT" "TM_PERMISSION_MODE")
+  local required_vars=("PROJECT_NAME" "LANGUAGES" "CC_MODEL" "SERENA_INITIAL_PROMPT")
   for var in "${required_vars[@]}"; do
     if [[ "$(get_manifest_value ".variables.$var // \"__MISSING__\"")" == "__MISSING__" ]]; then
       log_error "Missing required variable in manifest: $var"
@@ -566,8 +566,6 @@ escape_sed_replacement() {
 # Substitutions applied:
 #   - Claude Code settings: CC_MODEL
 #   - Serena settings: PROJECT_NAME, LANGUAGES, SERENA_INITIAL_PROMPT
-#   - TaskMaster settings: PROJECT_NAME, TM_CUSTOM_SYSTEM_PROMPT,
-#                          TM_APPEND_SYSTEM_PROMPT, TM_PERMISSION_MODE
 #
 # Side effects:
 #   Creates output directory and copies/modifies template files
@@ -583,17 +581,13 @@ apply_substitutions() {
   cp -rp "$template_dir"/* "$output_dir/"
 
   # Read all variables from manifest
-  local project_name languages cc_model
-  local serena_prompt tm_custom tm_append tm_permission
+  local project_name languages cc_model cc_statusline serena_prompt
 
   project_name=$(get_manifest_value '.variables.PROJECT_NAME')
   languages=$(get_manifest_value '.variables.LANGUAGES')
   cc_model=$(get_manifest_value '.variables.CC_MODEL')
   cc_statusline=$(get_manifest_value '.variables.CC_STATUSLINE // "enhanced"')
   serena_prompt=$(get_manifest_value '.variables.SERENA_INITIAL_PROMPT')
-  tm_custom=$(get_manifest_value '.variables.TM_CUSTOM_SYSTEM_PROMPT')
-  tm_append=$(get_manifest_value '.variables.TM_APPEND_SYSTEM_PROMPT')
-  tm_permission=$(get_manifest_value '.variables.TM_PERMISSION_MODE')
 
   # --- Claude Code Settings (claude/settings.json) ---
   local cc_settings_file="$output_dir/claude/settings.json"
@@ -639,37 +633,6 @@ apply_substitutions() {
       sed -i "s/initial_prompt: \"\"/initial_prompt: \"$escaped_serena_prompt\"/g" "$serena_settings_file"
     fi
     log_info "Applied Serena settings"
-  fi
-
-  # --- TaskMaster Settings (taskmaster/config.json) ---
-  local tm_settings_file="$output_dir/taskmaster/config.json"
-  if [[ -f "$tm_settings_file" ]]; then
-    # Project name - always substitute
-    local escaped_project_name_tm
-    escaped_project_name_tm=$(escape_sed_replacement "$project_name")
-    sed -i "s/\"projectName\": \".*\"/\"projectName\": \"$escaped_project_name_tm\"/g" "$tm_settings_file"
-
-    # Custom system prompt - only substitute if provided
-    if [[ -n "$tm_custom" ]]; then
-      local escaped_tm_custom
-      escaped_tm_custom=$(escape_sed_replacement "$tm_custom")
-      sed -i "s/\"customSystemPrompt\": \"\"/\"customSystemPrompt\": \"$escaped_tm_custom\"/g" "$tm_settings_file"
-    fi
-
-    # Append system prompt - only substitute if provided
-    if [[ -n "$tm_append" ]]; then
-      local escaped_tm_append
-      escaped_tm_append=$(escape_sed_replacement "$tm_append")
-      sed -i "s/\"appendSystemPrompt\": \"\"/\"appendSystemPrompt\": \"$escaped_tm_append\"/g" "$tm_settings_file"
-    fi
-
-    # Permission mode - only substitute if provided
-    if [[ -n "$tm_permission" ]]; then
-      local escaped_tm_permission
-      escaped_tm_permission=$(escape_sed_replacement "$tm_permission")
-      sed -i "s/\"permissionMode\": \"\"/\"permissionMode\": \"$escaped_tm_permission\"/g" "$tm_settings_file"
-    fi
-    log_info "Applied TaskMaster settings"
   fi
 
   log_success "Substitutions applied to $output_dir"
@@ -742,7 +705,6 @@ copy_sync_files() {
 # Directories compared:
 #   staging/claude    -> .claude/
 #   staging/serena    -> .serena/
-#   staging/taskmaster -> .taskmaster/
 compare_files() {
   local staging_dir="$1"
 
@@ -759,7 +721,6 @@ compare_files() {
   local -A dir_map=(
     ["claude"]=".claude"
     ["serena"]=".serena"
-    ["taskmaster"]=".taskmaster"
     ["workflows"]=".github/workflows"
     ["scripts"]=".github/scripts"
   )
@@ -771,14 +732,7 @@ compare_files() {
     # Skip if staging subdir doesn't exist
     [[ ! -d "$staging_path" ]] && continue
 
-    # Build find command with exclusions for user-scoped directories in .taskmaster/
-    local staging_find_args=("$staging_path" -type f)
-    if [[ "$staging_subdir" == "taskmaster" ]]; then
-      staging_find_args+=(-not -path "$staging_path/tasks/*")
-      staging_find_args+=(-not -path "$staging_path/docs/*")
-      staging_find_args+=(-not -path "$staging_path/reports/*")
-    fi
-    staging_find_args+=(-print0)
+    local staging_find_args=("$staging_path" -type f -print0)
 
     # Find all files in staging (excluding user-scoped directories)
     while IFS= read -r -d '' staging_file; do
@@ -808,17 +762,7 @@ compare_files() {
     # Skip for sync infrastructure directories - we only sync specific files, not entire dirs
     # (scripts/ only syncs template-sync.sh, workflows/ only syncs template-sync.yml)
     if [[ -d "$project_dir" && "$staging_subdir" != "scripts" && "$staging_subdir" != "workflows" ]]; then
-      # Build find command with exclusions for user-scoped directories
-      local find_args=("$project_dir" -type f)
-
-      # Exclude user-scoped directories in .taskmaster/ (tasks, docs, reports)
-      if [[ "$staging_subdir" == "taskmaster" ]]; then
-        find_args+=(-not -path "$project_dir/tasks/*")
-        find_args+=(-not -path "$project_dir/docs/*")
-        find_args+=(-not -path "$project_dir/reports/*")
-      fi
-
-      find_args+=(-print0)
+      local find_args=("$project_dir" -type f -print0)
 
       while IFS= read -r -d '' project_file; do
         local relative_path="${project_file#$project_dir/}"
@@ -951,8 +895,6 @@ generate_diff_report() {
           staging_file="$staging_dir/claude/${file#.claude/}"
         elif [[ "$file" == ".serena/"* ]]; then
           staging_file="$staging_dir/serena/${file#.serena/}"
-        elif [[ "$file" == ".taskmaster/"* ]]; then
-          staging_file="$staging_dir/taskmaster/${file#.taskmaster/}"
         else
           staging_file="$staging_dir/$file"
         fi
