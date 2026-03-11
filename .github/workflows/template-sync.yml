@@ -154,14 +154,6 @@ jobs:
             echo "Applied changes to .serena/"
           fi
 
-          # Copy taskmaster config files (excluding user-scoped directories)
-          if [[ -d "$STAGING_DIR/taskmaster" ]]; then
-            # Use rsync to exclude user-scoped directories: tasks/, docs/, reports/
-            rsync -a --exclude='tasks/' --exclude='docs/' --exclude='reports/' \
-              "$STAGING_DIR/taskmaster/" .taskmaster/ 2>/dev/null || true
-            echo "Applied changes to .taskmaster/ (excluding user-scoped dirs)"
-          fi
-
           # Copy workflow files (sync infrastructure)
           if [[ -d "$STAGING_DIR/workflows" ]]; then
             cp -r "$STAGING_DIR/workflows/"* .github/workflows/ 2>/dev/null || true
@@ -227,7 +219,6 @@ jobs:
             - [ ] Review changed files for any customizations that should be preserved
             - [ ] Test that Claude Code still works correctly
             - [ ] Verify MCP server configurations are intact
-            - [ ] Confirm Task Master commands work as expected
 
             ### How to Handle Conflicts
 

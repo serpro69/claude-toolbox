@@ -56,8 +56,8 @@ assert_equals "my-project" "$PROJECT_NAME" "PROJECT_NAME = $PROJECT_NAME"
 
 log_test "Extract all variable keys"
 VAR_KEYS=$(jq -r '.variables | keys[]' "$EXAMPLE_MANIFEST" | sort | tr '\n' ',')
-EXPECTED_KEYS="CC_MODEL,CC_STATUSLINE,LANGUAGES,PROJECT_NAME,SERENA_INITIAL_PROMPT,TM_APPEND_SYSTEM_PROMPT,TM_CUSTOM_SYSTEM_PROMPT,TM_PERMISSION_MODE,"
-assert_equals "$EXPECTED_KEYS" "$VAR_KEYS" "All 8 variable keys present"
+EXPECTED_KEYS="CC_MODEL,CC_STATUSLINE,LANGUAGES,PROJECT_NAME,SERENA_INITIAL_PROMPT,"
+assert_equals "$EXPECTED_KEYS" "$VAR_KEYS" "All 5 variable keys present"
 
 # =============================================================================
 # Section 3: jq Patterns for Manifest Generation (for cleanup script)
@@ -76,9 +76,6 @@ GENERATED=$(jq -n \
   --arg cc_model "sonnet" \
   --arg cc_statusline "enhanced" \
   --arg serena_prompt "" \
-  --arg tm_custom "" \
-  --arg tm_append "" \
-  --arg tm_permission "default" \
   '{
     schema_version: $schema,
     upstream_repo: $upstream,
@@ -89,10 +86,7 @@ GENERATED=$(jq -n \
       LANGUAGES: $language,
       CC_MODEL: $cc_model,
       CC_STATUSLINE: $cc_statusline,
-      SERENA_INITIAL_PROMPT: $serena_prompt,
-      TM_CUSTOM_SYSTEM_PROMPT: $tm_custom,
-      TM_APPEND_SYSTEM_PROMPT: $tm_append,
-      TM_PERMISSION_MODE: $tm_permission
+      SERENA_INITIAL_PROMPT: $serena_prompt
     }
   }')
 
@@ -168,9 +162,6 @@ ROUND_TRIP_MANIFEST=$(jq -n \
   --arg language "python" \
   --arg cc_model "opus" \
   --arg serena_prompt "Test prompt with \"quotes\"" \
-  --arg tm_custom "Custom system prompt" \
-  --arg tm_append "Append prompt" \
-  --arg tm_permission "full" \
   '{
     schema_version: $schema,
     upstream_repo: $upstream,
@@ -180,27 +171,21 @@ ROUND_TRIP_MANIFEST=$(jq -n \
       PROJECT_NAME: $project,
       LANGUAGES: $language,
       CC_MODEL: $cc_model,
-      SERENA_INITIAL_PROMPT: $serena_prompt,
-      TM_CUSTOM_SYSTEM_PROMPT: $tm_custom,
-      TM_APPEND_SYSTEM_PROMPT: $tm_append,
-      TM_PERMISSION_MODE: $tm_permission
+      SERENA_INITIAL_PROMPT: $serena_prompt
     }
   }')
 
 # Parse it back and verify
 RT_PROJECT=$(echo "$ROUND_TRIP_MANIFEST" | jq -r '.variables.PROJECT_NAME')
 RT_SERENA=$(echo "$ROUND_TRIP_MANIFEST" | jq -r '.variables.SERENA_INITIAL_PROMPT')
-RT_PERMISSION=$(echo "$ROUND_TRIP_MANIFEST" | jq -r '.variables.TM_PERMISSION_MODE')
 
 if [[ "$RT_PROJECT" == "test-project" ]] &&
-  [[ "$RT_SERENA" == 'Test prompt with "quotes"' ]] &&
-  [[ "$RT_PERMISSION" == "full" ]]; then
+  [[ "$RT_SERENA" == 'Test prompt with "quotes"' ]]; then
   log_pass "Round-trip preserves all values including special characters"
 else
   log_fail "Round-trip failed"
   echo "PROJECT_NAME: $RT_PROJECT"
   echo "SERENA_INITIAL_PROMPT: $RT_SERENA"
-  echo "TM_PERMISSION_MODE: $RT_PERMISSION"
 fi
 
 # =============================================================================

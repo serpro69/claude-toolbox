@@ -34,26 +34,6 @@ on:
         required: false
         default: ""
         type: string
-      TM_CUSTOM_SYSTEM_PROMPT:
-        description: Custom system prompt to override Claude Code default behavior in Task Master.
-        required: false
-        default: ""
-        type: string
-      TM_APPEND_SYSTEM_PROMPT:
-        description: Additional content to append to Claude Code system prompt in Task Master.
-        required: false
-        default: ""
-        type: string
-      TM_PERMISSION_MODE:
-        description: Task Master permission mode for file system operations.
-        required: false
-        default: default
-        type: choice
-        options:
-          - default
-          - acceptEdits
-          - plan
-          - bypassPermissions
 
 jobs:
   # Run cleaning process only if workflow is triggered by the non-"claude-starter-kit" repository.
@@ -74,9 +54,6 @@ jobs:
           CC_MODEL: ${{ github.event.inputs.CC_MODEL }}
           LANGUAGES: ${{ github.event.inputs.LANGUAGES }}
           SERENA_INITIAL_PROMPT: ${{ github.event.inputs.SERENA_INITIAL_PROMPT }}
-          TM_CUSTOM_SYSTEM_PROMPT: ${{ github.event.inputs.TM_CUSTOM_SYSTEM_PROMPT }}
-          TM_APPEND_SYSTEM_PROMPT: ${{ github.event.inputs.TM_APPEND_SYSTEM_PROMPT }}
-          TM_PERMISSION_MODE: ${{ github.event.inputs.TM_PERMISSION_MODE }}
         run: |
           chmod +x .github/scripts/template-cleanup.sh
           ./.github/scripts/template-cleanup.sh --ci --no-commit
