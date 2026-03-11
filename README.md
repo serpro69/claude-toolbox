@@ -41,6 +41,7 @@ Skills are specialized workflows Claude invokes during different development pha
 
 - **CoVe** (`/project:cove/`) — 2 commands for Chain-of-Verification prompting (standard and isolated modes)
 - **Migrate from Task Master** (`/project:migrate-from-taskmaster`) — one-time migration from Task Master MCP to native markdown task tracking
+- **Sync Workflow** (`/project:sync-workflow [version]`) — update the template-sync workflow and script from upstream (`latest`, `master`, or a specific tag like `v0.3.0`)
 
 ### Hooks (`.claude/hooks/`)
 
@@ -298,11 +299,15 @@ If you prefer to migrate manually, follow these steps after syncing:
 
 5. **Remove TM references from `CLAUDE.md`:** delete the "Task Master Integration" and "Task Master AI Instructions" sections (including the `@./.taskmaster/CLAUDE.md` import).
 
-6. **Update the template-sync workflow** ([why?](https://github.com/serpro69/claude-starter-kit/issues/17)): the old workflow contains taskmaster-specific sync logic that will break future syncs. Replace it:
+6. **Update the template-sync workflow** ([why?](https://github.com/serpro69/claude-starter-kit/issues/17)): the old workflow contains taskmaster-specific sync logic that will break future syncs. Run `/project:sync-workflow latest` or manually replace both files:
 
    ```bash
-   curl -fsSL "https://raw.githubusercontent.com/serpro69/claude-starter-kit/v0.3.0/.github/workflows/template-sync.yml" \
+   VERSION="v0.3.0"  # or use latest tag
+   curl -fsSL "https://raw.githubusercontent.com/serpro69/claude-starter-kit/${VERSION}/.github/workflows/template-sync.yml" \
      -o .github/workflows/template-sync.yml
+   curl -fsSL "https://raw.githubusercontent.com/serpro69/claude-starter-kit/${VERSION}/.github/scripts/template-sync.sh" \
+     -o .github/scripts/template-sync.sh
+   chmod +x .github/scripts/template-sync.sh
    ```
 
 Task tracking now lives in simple markdown files (`/docs/wip/[feature]/tasks.md`) created by the `analysis-process` skill and consumed by `implementation-process`. No external MCP server required.

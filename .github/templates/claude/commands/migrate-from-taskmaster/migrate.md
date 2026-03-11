@@ -65,16 +65,13 @@ If `.github/template-state.json` exists, remove these variables from the `variab
 
 ## Step 6: Update template-sync workflow
 
-The old `.github/workflows/template-sync.yml` contains taskmaster-specific sync logic that will cause issues on future syncs (see https://github.com/serpro69/claude-starter-kit/issues/17).
+The old template-sync workflow and script contain taskmaster-specific sync logic that will cause issues on future syncs (see https://github.com/serpro69/claude-starter-kit/issues/17).
 
-Fetch the updated workflow from the upstream template and replace the local copy:
+Run the sync script to update them:
 
 ```bash
-curl -fsSL "https://raw.githubusercontent.com/serpro69/claude-starter-kit/v0.3.0/.github/workflows/template-sync.yml" \
-  -o .github/workflows/template-sync.yml
+bash .claude/scripts/sync-workflow.sh latest
 ```
-
-If the curl fails (e.g. network issues), inform the user they need to manually replace `.github/workflows/template-sync.yml` with the version from https://github.com/serpro69/claude-starter-kit/blob/v0.3.0/.github/workflows/template-sync.yml
 
 ## Step 7: Update MCP config
 
