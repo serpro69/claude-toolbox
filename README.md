@@ -298,6 +298,13 @@ If you prefer to migrate manually, follow these steps after syncing:
 
 5. **Remove TM references from `CLAUDE.md`:** delete the "Task Master Integration" and "Task Master AI Instructions" sections (including the `@./.taskmaster/CLAUDE.md` import).
 
+6. **Update the template-sync workflow** ([why?](https://github.com/serpro69/claude-starter-kit/issues/17)): the old workflow contains taskmaster-specific sync logic that will break future syncs. Replace it:
+
+   ```bash
+   curl -fsSL "https://raw.githubusercontent.com/serpro69/claude-starter-kit/v0.3.0/.github/workflows/template-sync.yml" \
+     -o .github/workflows/template-sync.yml
+   ```
+
 Task tracking now lives in simple markdown files (`/docs/wip/[feature]/tasks.md`) created by the `analysis-process` skill and consumed by `implementation-process`. No external MCP server required.
 
 </details>
