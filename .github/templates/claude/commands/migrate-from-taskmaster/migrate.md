@@ -63,11 +63,24 @@ If `.github/template-state.json` exists, remove these variables from the `variab
 - `TM_APPEND_SYSTEM_PROMPT`
 - `TM_PERMISSION_MODE`
 
-## Step 6: Update MCP config
+## Step 6: Update template-sync workflow
+
+The old `.github/workflows/template-sync.yml` contains taskmaster-specific sync logic that will cause issues on future syncs (see https://github.com/serpro69/claude-starter-kit/issues/17).
+
+Fetch the updated workflow from the upstream template and replace the local copy:
+
+```bash
+curl -fsSL "https://raw.githubusercontent.com/serpro69/claude-starter-kit/v0.3.0/.github/workflows/template-sync.yml" \
+  -o .github/workflows/template-sync.yml
+```
+
+If the curl fails (e.g. network issues), inform the user they need to manually replace `.github/workflows/template-sync.yml` with the version from https://github.com/serpro69/claude-starter-kit/blob/v0.3.0/.github/workflows/template-sync.yml
+
+## Step 7: Update MCP config
 
 Remind the user to manually remove the `task-master-ai` entry from their `~/.claude.json` `mcpServers` config (we cannot modify user-level config).
 
-## Step 7: Summary
+## Step 8: Summary
 
 Show a summary of what was done:
 
