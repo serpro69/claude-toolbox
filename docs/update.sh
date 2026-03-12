@@ -21,6 +21,13 @@ Example:
 EOF
 }
 
+SED="sed"
+XARGS="xargs"
+if [ "$(uname)" = "Darwin" ]; then
+  command -v gsed &>/dev/null && SED="gsed"
+  command -v gxargs &>/dev/null && XARGS="gxargs"
+fi
+
 # Show help
 if [[ "${1:-}" == "-h" || "${1:-}" == "--help" ]]; then
   usage
@@ -47,7 +54,7 @@ if [[ ! -d "${PROJECT_ROOT}/docs/wip/${DIRNAME}" ]]; then
   exit 1
 fi
 
-find "$PROJECT_ROOT" -type f -not -path "*/.git/*" -print0 | xargs -I{} -0 sed -i "s/docs\/wip\/${DIRNAME}/docs\/${DIRNAME}/g" {}
+find "$PROJECT_ROOT" -type f -not -path "*/.git/*" -print0 | $XARGS -I{} -0 $SED -i "s/docs\/wip\/${DIRNAME}/docs\/${DIRNAME}/g" {}
 
 git -C "$PROJECT_ROOT" mv "docs/wip/${DIRNAME}" "docs/${DIRNAME}"
 
