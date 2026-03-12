@@ -521,7 +521,7 @@ fetch_upstream_templates() {
   if ! git sparse-checkout init --cone --quiet 2>/dev/null; then
     log_warn "Sparse-checkout init failed, continuing with full checkout"
   fi
-  if ! git sparse-checkout set .github/templates .github/workflows/template-sync.yml .github/scripts/template-sync.sh --quiet 2>/dev/null; then
+  if ! git sparse-checkout set .github/templates .github/workflows/template-sync.yml .github/scripts/template-sync.sh docs/update.sh --quiet 2>/dev/null; then
     log_warn "Sparse-checkout set failed, templates may not exist at this version"
   fi
 
@@ -677,6 +677,14 @@ copy_sync_files() {
     copied=$((copied + 1))
   fi
 
+  # Copy docs/update.sh if it exists
+  if [[ -f "$upstream_dir/docs/update.sh" ]]; then
+    mkdir -p "$output_dir/docs"
+    cp "$upstream_dir/docs/update.sh" "$output_dir/docs/"
+    log_info "Copied docs/update.sh"
+    copied=$((copied + 1))
+  fi
+
   if ((copied > 0)); then
     log_success "Copied $copied sync infrastructure file(s)"
   else
@@ -723,6 +731,7 @@ compare_files() {
     ["serena"]=".serena"
     ["workflows"]=".github/workflows"
     ["scripts"]=".github/scripts"
+    ["docs"]="docs"
   )
 
   for staging_subdir in "${!dir_map[@]}"; do
@@ -761,7 +770,7 @@ compare_files() {
     # Find deleted files (exist in project but not in staging)
     # Skip for sync infrastructure directories - we only sync specific files, not entire dirs
     # (scripts/ only syncs template-sync.sh, workflows/ only syncs template-sync.yml)
-    if [[ -d "$project_dir" && "$staging_subdir" != "scripts" && "$staging_subdir" != "workflows" ]]; then
+    if [[ -d "$project_dir" && "$staging_subdir" != "scripts" && "$staging_subdir" != "workflows" && "$staging_subdir" != "docs" ]]; then
       local find_args=("$project_dir" -type f -print0)
 
       while IFS= read -r -d '' project_file; do
