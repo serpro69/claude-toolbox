@@ -120,7 +120,7 @@ Skills are specialized workflows Claude invokes during different development pha
       "DEFAULT_THINKING_MODE_THINKDEEP": "high",
       "GEMINI_API_KEY": "YOUR_GEMINI_API_KEY",
       # see https://github.com/BeehiveInnovations/pal-mcp-server/blob/main/docs/configuration.md#model-usage-restrictions
-      "GOOGLE_ALLOWED_MODELS": "gemini-3-pro-preview,gemini-2.5-pro,gemini-2.5-flash"
+      "GOOGLE_ALLOWED_MODELS": "gemini-3.1-pro-preview,gemini-3-flash-preview"
     }
   }
 }
