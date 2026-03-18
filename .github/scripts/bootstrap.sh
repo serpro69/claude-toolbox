@@ -13,9 +13,10 @@ trap cleanup EXIT
 
 claude -p --permission-mode "acceptEdits" /init
 
-# Append @import for kit extra instructions (synced from upstream template)
+# Append @import for extra instructions (synced from upstream template)
 if ! grep -q '@import .claude/CLAUDE.extra.md' CLAUDE.md 2>/dev/null; then
-  printf '\n@import .claude/CLAUDE.extra.md\n' >>CLAUDE.md
+  printf '\n# Extra Instructions\n' >>CLAUDE.md
+  printf '@import .claude/CLAUDE.extra.md\n' >>CLAUDE.md
 fi
 
 printf "\n"
