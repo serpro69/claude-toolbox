@@ -167,6 +167,15 @@ jobs:
             echo "Applied changes to .github/scripts/"
           fi
 
+          # Auto-append @import for CLAUDE.extra.md on first sync
+          # If the file was just added and CLAUDE.md exists but doesn't reference it, add the import
+          if [[ -f "$STAGING_DIR/claude/CLAUDE.extra.md" && -f "CLAUDE.md" ]]; then
+            if ! grep -q '@import .claude/CLAUDE.extra.md' CLAUDE.md; then
+              printf '\n@import .claude/CLAUDE.extra.md\n' >> CLAUDE.md
+              echo "Added @import for .claude/CLAUDE.extra.md to CLAUDE.md"
+            fi
+          fi
+
       - name: Cleanup Staging Artifacts
         run: |
           # Remove staging artifacts to prevent them from being included in the PR

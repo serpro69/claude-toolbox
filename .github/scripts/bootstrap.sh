@@ -13,21 +13,10 @@ trap cleanup EXIT
 
 claude -p --permission-mode "acceptEdits" /init
 
-cat <<EOF >>CLAUDE.md
-
-## Claude-Code Behavioral Instructions
-
-Always follow these guidelines for the given phase.
-
-### Exploration Phase
-
-When you run Explore:
-
-- DO NOT spawn exploration agents unless explicitly asked to do so by the user. **Always explore everything on your own** to gain a complete and thorough understanding.
-  <!-- Why: Claude tends to first spawn exploration agents,
-       and then re-reads all the files on it's own...
-       resulting in double token consumption -->
-EOF
+# Append @import for kit extra instructions (synced from upstream template)
+if ! grep -q '@import .claude/CLAUDE.extra.md' CLAUDE.md 2>/dev/null; then
+  printf '\n@import .claude/CLAUDE.extra.md\n' >>CLAUDE.md
+fi
 
 printf "\n"
 printf "🤖 Done initializing claude-code; committing CLAUDE.md file to git and cleaning up bootstrap script...\n"
