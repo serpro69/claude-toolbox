@@ -422,6 +422,7 @@ execute_cleanup() {
   cp -r .github/templates/serena ./.serena
   if [[ -f .github/scripts/bootstrap.sh ]]; then
     cp .github/scripts/bootstrap.sh .
+    rm -f .github/scripts/bootstrap.sh
   fi
 
   log_step "Cleaning up .github/ (preserving sync infrastructure)..."
