@@ -69,16 +69,16 @@ else
 fi
 
 # =============================================================================
-# Section 2: CLAUDE.md @import Reference
+# Section 2: CLAUDE.md @import reference
 # =============================================================================
 
-log_section "Section 2: CLAUDE.md @import Reference"
+log_section "Section 2: CLAUDE.md @import reference"
 
-log_test "CLAUDE.md contains @import for CLAUDE.extra.md"
-if grep -q '@import .claude/CLAUDE.extra.md' "$REPO_ROOT/CLAUDE.md"; then
-  log_pass "CLAUDE.md contains @import line"
+log_test "CLAUDE.md contains @import reference for CLAUDE.extra.md"
+if grep -q '@.claude/CLAUDE.extra.md' "$REPO_ROOT/CLAUDE.md"; then
+  log_pass "CLAUDE.md contains @import reference"
 else
-  log_fail "CLAUDE.md should contain '@import .claude/CLAUDE.extra.md'"
+  log_fail "CLAUDE.md should contain '@.claude/CLAUDE.extra.md'"
 fi
 
 log_test "CLAUDE.md does not contain migrated behavioral instructions"
@@ -260,12 +260,12 @@ echo "# My Project" > "$test_dir/CLAUDE.md"
 
 # Simulate the workflow logic
 if [[ -f "$test_dir/staging/claude/CLAUDE.extra.md" && -f "$test_dir/CLAUDE.md" ]]; then
-  if ! grep -q '@import .claude/CLAUDE.extra.md' "$test_dir/CLAUDE.md"; then
-    printf '\n@import .claude/CLAUDE.extra.md\n' >> "$test_dir/CLAUDE.md"
+  if ! grep -q '@.claude/CLAUDE.extra.md' "$test_dir/CLAUDE.md"; then
+    printf '\n@.claude/CLAUDE.extra.md\n' >> "$test_dir/CLAUDE.md"
   fi
 fi
 
-if grep -q '@import .claude/CLAUDE.extra.md' "$test_dir/CLAUDE.md"; then
+if grep -q '@.claude/CLAUDE.extra.md' "$test_dir/CLAUDE.md"; then
   log_pass "Import line appended to CLAUDE.md"
 else
   log_fail "Import line should be appended to CLAUDE.md"
@@ -282,18 +282,18 @@ echo "## Instructions" > "$test_dir/staging/claude/CLAUDE.extra.md"
 cat > "$test_dir/CLAUDE.md" << 'EOF'
 # My Project
 
-@import .claude/CLAUDE.extra.md
+@.claude/CLAUDE.extra.md
 EOF
 
 # Simulate the workflow logic
 if [[ -f "$test_dir/staging/claude/CLAUDE.extra.md" && -f "$test_dir/CLAUDE.md" ]]; then
-  if ! grep -q '@import .claude/CLAUDE.extra.md' "$test_dir/CLAUDE.md"; then
-    printf '\n@import .claude/CLAUDE.extra.md\n' >> "$test_dir/CLAUDE.md"
+  if ! grep -q '@.claude/CLAUDE.extra.md' "$test_dir/CLAUDE.md"; then
+    printf '\n@.claude/CLAUDE.extra.md\n' >> "$test_dir/CLAUDE.md"
   fi
 fi
 
 # Count occurrences
-count=$(grep -c '@import .claude/CLAUDE.extra.md' "$test_dir/CLAUDE.md")
+count=$(grep -c '@.claude/CLAUDE.extra.md' "$test_dir/CLAUDE.md")
 if [[ "$count" -eq 1 ]]; then
   log_pass "Import line not duplicated when already present"
 else
@@ -346,10 +346,10 @@ fi
 log_section "Section 5: Bootstrap Script"
 
 log_test "bootstrap.sh contains import append logic"
-if grep -q '@import .claude/CLAUDE.extra.md' "$REPO_ROOT/.github/scripts/bootstrap.sh"; then
+if grep -q '@.claude/CLAUDE.extra.md' "$REPO_ROOT/.github/scripts/bootstrap.sh"; then
   log_pass "bootstrap.sh references CLAUDE.extra.md import"
 else
-  log_fail "bootstrap.sh should contain '@import .claude/CLAUDE.extra.md'"
+  log_fail "bootstrap.sh should contain '@.claude/CLAUDE.extra.md'"
 fi
 
 log_test "bootstrap.sh does not contain old behavioral instructions append"
@@ -360,7 +360,7 @@ else
 fi
 
 log_test "bootstrap.sh has idempotent import (grep guard)"
-if grep -q "grep -q '@import .claude/CLAUDE.extra.md'" "$REPO_ROOT/.github/scripts/bootstrap.sh"; then
+if grep -q "grep -q '@.claude/CLAUDE.extra.md'" "$REPO_ROOT/.github/scripts/bootstrap.sh"; then
   log_pass "bootstrap.sh checks for existing import before appending"
 else
   log_fail "bootstrap.sh should check for existing import to be idempotent"
@@ -374,14 +374,14 @@ log_section "Section 6: Workflow Auto-Import"
 
 log_test "template-sync.yml contains auto-import logic"
 workflow_file="$REPO_ROOT/.github/workflows/template-sync.yml"
-if grep -q '@import .claude/CLAUDE.extra.md' "$workflow_file"; then
+if grep -q '@.claude/CLAUDE.extra.md' "$workflow_file"; then
   log_pass "Workflow contains CLAUDE.extra.md auto-import logic"
 else
   log_fail "Workflow should contain auto-import logic for CLAUDE.extra.md"
 fi
 
 log_test "template-sync.yml has idempotent import check"
-if grep -q "grep -q '@import .claude/CLAUDE.extra.md'" "$workflow_file"; then
+if grep -q "grep -q '@.claude/CLAUDE.extra.md'" "$workflow_file"; then
   log_pass "Workflow checks for existing import before appending"
 else
   log_fail "Workflow should check for existing import to prevent duplication"

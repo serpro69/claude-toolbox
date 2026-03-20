@@ -35,4 +35,4 @@ See `README.md` for detailed troubleshooting of MCP connection issues, Serena la
 
 # Extra Instructions
 
-@import .claude/CLAUDE.extra.md
+@.claude/CLAUDE.extra.md

@@ -167,13 +167,13 @@ jobs:
             echo "Applied changes to .github/scripts/"
           fi
 
-          # Auto-append @import for CLAUDE.extra.md on first sync
+          # Auto-append @import reference for CLAUDE.extra.md on first sync
           # If the file was just added and CLAUDE.md exists but doesn't reference it, add the import
           if [[ -f "$STAGING_DIR/claude/CLAUDE.extra.md" && -f "CLAUDE.md" ]]; then
-            if ! grep -q '@import .claude/CLAUDE.extra.md' CLAUDE.md; then
+            if ! grep -q '@.claude/CLAUDE.extra.md' CLAUDE.md; then
               printf '\n# Extra Instructions\n' >> CLAUDE.md
-              printf '@import .claude/CLAUDE.extra.md\n' >> CLAUDE.md
-              echo "Added @import for .claude/CLAUDE.extra.md to CLAUDE.md"
+              printf '@.claude/CLAUDE.extra.md\n' >> CLAUDE.md
+              echo "Added @import reference for .claude/CLAUDE.extra.md to CLAUDE.md"
             fi
           fi
 
