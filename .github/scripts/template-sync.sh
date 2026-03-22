@@ -1382,7 +1382,16 @@ main() {
   fi
 
   # Compare files and generate report
+  # Save migration deletions before compare_files resets arrays
+  local migration_deletions=()
+  if $PLUGIN_MIGRATED; then
+    migration_deletions=("${DELETED_FILES[@]}")
+  fi
   compare_files "$SUBSTITUTED_TEMPLATES_PATH"
+  # Merge migration deletions back
+  if [[ ${#migration_deletions[@]} -gt 0 ]]; then
+    DELETED_FILES+=("${migration_deletions[@]}")
+  fi
   generate_diff_report "$SUBSTITUTED_TEMPLATES_PATH"
 
   # Summary
