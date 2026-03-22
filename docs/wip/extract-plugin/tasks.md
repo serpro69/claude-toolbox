@@ -6,18 +6,18 @@
 > Created: 2026-03-20
 
 ## Task 1: Create plugin structure and move files
-- **Status:** pending
+- **Status:** done
 - **Depends on:** —
 - **Docs:** [implementation.md#phase-1-create-the-plugin](./implementation.md#phase-1-create-the-plugin)
 
 ### Subtasks
-- [ ] 1.1 Create `klaude-plugin/.claude-plugin/plugin.json` with name `kk`, version `0.4.0`, metadata fields (author, homepage, repository, license, keywords)
-- [ ] 1.2 Move all 9 skill directories from `.github/templates/claude/skills/` to `klaude-plugin/skills/` (analysis-process, cove, development-guidelines, documentation-process, implementation-process, implementation-review, merge-docs, solid-code-review, testing-process)
-- [ ] 1.3 Move all 4 command directories from `.github/templates/claude/commands/` to `klaude-plugin/commands/` (cove, implementation-review, migrate-from-taskmaster, sync-workflow)
-- [ ] 1.4 Move `.github/templates/claude/scripts/validate-bash.sh` to `klaude-plugin/scripts/validate-bash.sh`
-- [ ] 1.5 Create `klaude-plugin/hooks/hooks.json` — extract the `hooks` object from `settings.json`, update script path to `${CLAUDE_PLUGIN_ROOT}/scripts/validate-bash.sh`
-- [ ] 1.6 Create `.claude-plugin/marketplace.json` at repo root with name `claude-toolbox`, owner `serpro69`, single plugin entry pointing to `./klaude-plugin`
-- [ ] 1.7 Scan all moved skill/command files for `$CLAUDE_PROJECT_DIR/.claude/` path references and cross-skill references — update any that now need `${CLAUDE_PLUGIN_ROOT}` or `/kk:` prefix. Leave references to template files (e.g., `sync-workflow.sh`) pointing at `$CLAUDE_PROJECT_DIR`
+- [x] 1.1 Create `klaude-plugin/.claude-plugin/plugin.json` with name `kk`, version `0.5.0`, metadata fields (author, homepage, repository, license, keywords)
+- [x] 1.2 Move all 9 skill directories from `.github/templates/claude/skills/` to `klaude-plugin/skills/` (analysis-process, cove, development-guidelines, documentation-process, implementation-process, implementation-review, merge-docs, solid-code-review, testing-process)
+- [x] 1.3 Move all 4 command directories from `.github/templates/claude/commands/` to `klaude-plugin/commands/` (cove, implementation-review, migrate-from-taskmaster, sync-workflow)
+- [x] 1.4 Move `.github/templates/claude/scripts/validate-bash.sh` to `klaude-plugin/scripts/validate-bash.sh`
+- [x] 1.5 Create `klaude-plugin/hooks/hooks.json` — extract the `hooks` object from `settings.json`, update script path to `${CLAUDE_PLUGIN_ROOT}/scripts/validate-bash.sh`
+- [x] 1.6 Create `.claude-plugin/marketplace.json` at repo root with name `claude-toolbox`, owner `serpro69`, single plugin entry pointing to `./klaude-plugin`
+- [x] 1.7 Scan all moved skill/command files for `$CLAUDE_PROJECT_DIR/.claude/` path references and cross-skill references — update any that now need `${CLAUDE_PLUGIN_ROOT}` or `/kk:` prefix. Leave references to template files (e.g., `sync-workflow.sh`) pointing at `$CLAUDE_PROJECT_DIR`
 
 ## Task 2: Update template configuration
 - **Status:** pending
