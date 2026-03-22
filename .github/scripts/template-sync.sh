@@ -483,13 +483,13 @@ run_plugin_migration() {
   if [[ -f "$settings_file" ]]; then
     local tmp
     tmp=$(mktemp "/tmp/settings-migrate.XXXXXX")
-    if jq --arg url "https://github.com/$upstream_repo.git" \
+    if jq --arg repo "$upstream_repo" \
       'del(.hooks) |
        .extraKnownMarketplaces = {
          "claude-toolbox": {
            "source": {
-             "source": "git",
-             "url": $url
+             "source": "github",
+             "repo": $repo
            }
          }
        } |
@@ -767,15 +767,15 @@ apply_substitutions() {
       sed -i "s/statusline_enhanced\.sh/statusline.sh/g" "$cc_settings_file"
     fi
 
-    # Plugin marketplace — replace local-path source with GitHub git source
-    # (upstream template uses directory source; downstream repos use git)
+    # Plugin marketplace — replace directory source with GitHub source
+    # (upstream template uses directory source; downstream repos use github)
     local upstream_repo
     upstream_repo=$(get_manifest_value '.upstream_repo')
     if jq -e '.extraKnownMarketplaces' "$cc_settings_file" &>/dev/null; then
-      jq --arg url "https://github.com/$upstream_repo.git" \
+      jq --arg repo "$upstream_repo" \
         '.extraKnownMarketplaces."claude-toolbox".source = {
-          "source": "git",
-          "url": $url
+          "source": "github",
+          "repo": $repo
         }' "$cc_settings_file" > "${cc_settings_file}.tmp" && mv "${cc_settings_file}.tmp" "$cc_settings_file"
     fi
 
