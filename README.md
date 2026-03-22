@@ -6,7 +6,11 @@ claude-toolbox is a collection of "tools" for all your Claude Code workflows —
 
 ## About
 
-This is a template repository and claude-plugin system that gives you a ready-to-use Claude Code development environment. It ships with mcp servers, development-related skills, hooks, slash commands — all configured and wired together.
+This is a template repository and plugin system that gives you a ready-to-use Claude Code development environment. It ships with MCP servers, a **kk** plugin (skills, commands, hooks), themed statuslines — all configured and wired together.
+
+The repo serves dual purposes:
+1. **Template repository** — create new repos from this template to get project-specific configuration (settings, instructions, Serena config, statusline, sync infrastructure)
+2. **Plugin marketplace** — install the `kk` plugin via the Claude Code plugin system to get skills, commands, and hooks
 
 > [!NOTE]
 > We focus on collaborative development. Most claude- and mcp-related settings are project-scoped (`.claude/settings.json`) so they can be shared across your team via git, rather than living in user-scoped `~/.claude.local.json`.
@@ -23,9 +27,11 @@ Three servers, configured at user-level (`~/.claude.json`) to keep API keys out 
 | **[Serena](https://github.com/oraios/serena)**                  | Semantic code analysis via LSP — symbol navigation, reference tracking, targeted reads |
 | **[Pal](https://github.com/BeehiveInnovations/pal-mcp-server)** | Multi-model AI integration — chat, debugging, code review, planning, security audit    |
 
-### Skills (`.claude/skills/`)
+### kk Plugin (`klaude-plugin/`)
 
-Skills are specialized workflows Claude invokes during different development phases:
+The **kk** plugin contains all development workflow functionality, distributed via the Claude Code plugin system. Skills are invoked as `/kk:skill-name`.
+
+#### Skills
 
 | Skill                      | When to use                                                                                                                                                              |
 | -------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
@@ -35,15 +41,18 @@ Skills are specialized workflows Claude invokes during different development pha
 | **documentation-process**  | Post-implementation. Updates ARCHITECTURE.md, TESTING.md, and records ADRs.                                                                                              |
 | **development-guidelines** | During implementation. Enforces best practices like using latest deps and context7 for docs.                                                                             |
 | **solid-code-review**      | Code review with a senior-engineer lens. Checks SOLID principles, security, code quality. Includes language-specific checklists for Go, Java, JS/TS, Kotlin, and Python. |
+| **implementation-review**  | Verify implemented code matches design/implementation docs. Detects spec deviations, missing implementations, and outdated docs.                                         |
+| **merge-docs**             | Semantically compare and merge two competing design docs for the same feature into one unified document.                                                                 |
 | **cove**                   | Chain-of-Verification prompting. Two modes: standard (prompt-based) and isolated (sub-agent). For high-stakes accuracy and fact-checking.                                |
 
-### Commands (`.claude/commands/`)
+#### Commands
 
-- **CoVe** (`/project:cove/`) — 2 commands for Chain-of-Verification prompting (standard and isolated modes)
-- **Migrate from Task Master** (`/project:migrate-from-taskmaster`) — one-time migration from Task Master MCP to native markdown task tracking
-- **Sync Workflow** (`/project:sync-workflow [version]`) — update the template-sync workflow and script from upstream (`latest`, `master`, or a specific tag like `v0.3.0`)
+- **CoVe** (`/kk:cove:cove`, `/kk:cove:cove-isolated`) — Chain-of-Verification prompting (standard and isolated modes)
+- **Implementation Review** (`/kk:implementation-review`) — verify implementation against design docs
+- **Migrate from Task Master** (`/kk:migrate-from-taskmaster:migrate`) — one-time migration from Task Master MCP to native markdown task tracking
+- **Sync Workflow** (`/kk:sync-workflow:sync-workflow [version]`) — update the template-sync workflow and script from upstream
 
-### Hooks (`.claude/hooks/`)
+#### Hooks
 
 - **Bash validation** (`PreToolUse`) — blocks bash commands that touch `.env`, `.git/`, `node_modules`, `build/`, `dist/`, `venv/`, and other sensitive paths
 
@@ -58,7 +67,7 @@ Skills are specialized workflows Claude invokes during different development pha
 - **template-cleanup** workflow — one-click GitHub Action to initialize a new repo from this template
 - **template-sync** workflow — pull upstream configuration updates into your project via PR
 - **Sync exclusions** — prevent specific files from being re-added during sync
-- **Test suite** — 72 tests across 3 suites covering the sync/cleanup infrastructure
+- **Test suite** — 157 tests across 5 suites covering the plugin structure, sync/cleanup infrastructure
 
 ## Requirements
 
@@ -188,21 +197,9 @@ See [Pal configuration docs](https://github.com/BeehiveInnovations/pal-mcp-serve
    ╰────────────────────────────────────────────────────────────────────╯
    ```
 
-   Run `claude "list your skills"`, you should see the skills from this repo present:
+   The kk plugin (skills, commands, hooks) is available via the claude-toolbox marketplace configured in `.claude/settings.json`.
 
-   ```
-   > list your skills
-
-   ● I have access to the following skills:
-
-     Available Skills
-     ...
-
-     ---
-     These skills provide specialized workflows for different stages of development. You can invoke any of them by asking me to use a specific skill (e.g., "use the analysis-process skill" or "help me document this feature").
-   ```
-
-5. Update the `README.md` with your project description, then run `chmod +x bootstrap.sh && ./bootstrap.sh` to finalize initialization.
+5. Update the `README.md` with your project description, then run `chmod +x bootstrap.sh && ./bootstrap.sh` to finalize initialization (installs the kk plugin).
 
 6. Profit
 
@@ -226,7 +223,7 @@ Repos created from this template can pull configuration updates via the **Templa
 
 ### What Gets Synced
 
-**Updated:** `.claude/` (commands, skills, agents, scripts, settings), `.serena/`, and the sync infrastructure itself
+**Updated:** `.claude/` (settings, CLAUDE.extra.md, statusline scripts), `.serena/`, and the sync infrastructure itself. Skills, commands, and hooks are managed by the plugin system — not template sync.
 
 **Preserved:** Project-specific values (name, language, prompts), user-scoped files (local settings), gitignored files
 
@@ -243,8 +240,8 @@ Edit `.github/template-state.json` and add a `sync_exclusions` array:
   "template_version": "v0.2.0",
   "synced_at": "2025-01-27T10:00:00Z",
 + "sync_exclusions": [
-+   ".claude/commands/cove/*",
-+   ".claude/skills/cove/*"
++   ".claude/CLAUDE.extra.md",
++   ".claude/settings.json"
 + ],
   "variables": { "..." : "..." }
 }
@@ -270,7 +267,7 @@ Task Master MCP was removed in favor of native markdown-based task tracking inte
 The easiest way to migrate is to run the migration command in Claude Code:
 
 ```
-/project:migrate-from-taskmaster
+/kk:migrate-from-taskmaster:migrate
 ```
 
 It will port pending tasks, clean up TM files, update configs, and walk you through each step with confirmation prompts.
@@ -280,7 +277,7 @@ It will port pending tasks, clean up TM files, update configs, and walk you thro
 
 If you prefer to migrate manually, follow these steps after syncing:
 
-1. **Port any pending tasks** to the new format: create `/docs/wip/[feature]/tasks.md` files following the [example task file](./.github/templates/claude/skills/analysis-process/example-tasks.md). Completed tasks don't need porting.
+1. **Port any pending tasks** to the new format: create `/docs/wip/[feature]/tasks.md` files following the [example task file](./klaude-plugin/skills/analysis-process/example-tasks.md). Completed tasks don't need porting.
 
 1. **Remove Task Master files and config:**
 
@@ -299,7 +296,7 @@ If you prefer to migrate manually, follow these steps after syncing:
 
 5. **Remove TM references from `CLAUDE.md`:** delete the "Task Master Integration" and "Task Master AI Instructions" sections (including the `@./.taskmaster/CLAUDE.md` import).
 
-6. **Update the template-sync workflow** ([why?](https://github.com/serpro69/claude-toolbox/issues/17)): the old workflow contains taskmaster-specific sync logic that will break future syncs. Run `/project:sync-workflow latest` or manually replace both files:
+6. **Update the template-sync workflow** ([why?](https://github.com/serpro69/claude-toolbox/issues/17)): the old workflow contains taskmaster-specific sync logic that will break future syncs. Run `/kk:sync-workflow:sync-workflow latest` or manually replace both files:
 
    ```bash
    VERSION="v0.3.0"  # or use latest tag
@@ -310,9 +307,17 @@ If you prefer to migrate manually, follow these steps after syncing:
    chmod +x .github/scripts/template-sync.sh
    ```
 
-Task tracking now lives in simple markdown files (`/docs/wip/[feature]/tasks.md`) created by the `analysis-process` skill and consumed by `implementation-process`. No external MCP server required.
+Task tracking now lives in simple markdown files (`/docs/wip/[feature]/tasks.md`) created by the `kk:analysis-process` skill and consumed by `kk:implementation-process`. No external MCP server required.
 
 </details>
+
+### Upgrading to the Plugin System (v0.5.0+)
+
+If you're upgrading from a version before the plugin system, skills and commands have moved from the template to the **kk** plugin:
+
+- Skills are now namespaced: `/analysis-process` → `/kk:analysis-process`
+- Commands are now namespaced: `/project:cove` → `/kk:cove:cove`
+- The template-sync workflow will handle the migration automatically on next sync
 
 ### Migration for Existing Repositories
 
@@ -386,47 +391,57 @@ This is my current config, you may want to tweak it to your needs. **I can't rec
 
 ### Running Tests
 
-Tests across 3 suites covere the template sync/cleanup infrastructure:
+Tests across 5 suites cover the plugin structure, template sync/cleanup infrastructure:
 
 ```bash
 # Run all test suites
 for test in test/test-*.sh; do $test; done
 
 # Run individual suites
-./test/test-manifest-jq.sh       # jq JSON pattern tests
-./test/test-template-sync.sh     # template-sync.sh function tests
+./test/test-plugin-structure.sh  # Plugin manifest, skills, commands, hooks validation
+./test/test-template-sync.sh     # template-sync.sh function tests + plugin migration
 ./test/test-template-cleanup.sh  # generate_manifest() tests
+./test/test-claude-extra.sh      # CLAUDE.extra.md detection and auto-import
+./test/test-manifest-jq.sh       # jq JSON pattern tests
 ```
 
-| Test Suite               | Coverage                                                           |
-| ------------------------ | ------------------------------------------------------------------ |
-| test-manifest-jq.sh      | JSON generation, special character handling, round-trip validation |
-| test-template-sync.sh    | CLI parsing, manifest validation, substitutions, file comparison   |
-| test-template-cleanup.sh | Manifest generation, variable capture, git tag/SHA detection       |
+| Test Suite                | Coverage                                                            |
+| ------------------------- | ------------------------------------------------------------------- |
+| test-plugin-structure.sh  | Plugin/marketplace manifests, skills, commands, hooks, cross-refs   |
+| test-template-sync.sh     | CLI parsing, manifest validation, substitutions, plugin migration   |
+| test-template-cleanup.sh  | Manifest generation, variable capture, git tag/SHA detection        |
+| test-claude-extra.sh      | CLAUDE.extra.md existence, compare_files detection, auto-import     |
+| test-manifest-jq.sh       | JSON generation, special character handling, round-trip validation  |
 
 ## Repository Structure
 
 ```
-.claude/
-├── commands/
-│   └── cove/              # 2 CoVe verification commands
-├── hooks/                 # Bash validation hook config
-├── scripts/               # statusline.sh, validate-bash.sh
-├── skills/                # 7 development workflow skills
-└── settings.json          # Shared permission config
+klaude-plugin/                   # kk plugin (distributed via plugin system)
+├── .claude-plugin/plugin.json   # Plugin manifest
+├── skills/                      # 9 development workflow skills
+├── commands/                    # 4 slash commands
+├── hooks/hooks.json             # Bash validation hook config
+└── scripts/validate-bash.sh     # Hook script
+
+.claude-plugin/marketplace.json  # Marketplace catalog
+
+.claude/                         # → symlink to .github/templates/claude/
+├── CLAUDE.extra.md              # Always-loaded instructions
+├── settings.json                # Permissions, env vars, marketplace/plugin config
+└── scripts/                     # statusline.sh, statusline_enhanced.sh, sync-workflow.sh
 
 .serena/
-└── project.yml            # Serena LSP configuration
+└── project.yml                  # Serena LSP configuration
 
 .github/
-├── scripts/               # template-cleanup.sh, template-sync.sh, bootstrap.sh
-├── workflows/             # template-cleanup, template-sync
-└── template-state.json    # Sync manifest and variables
+├── scripts/                     # template-cleanup.sh, template-sync.sh, bootstrap.sh
+├── workflows/                   # template-cleanup, template-sync
+└── template-state.json          # Sync manifest and variables
 
 test/
-├── helpers.sh             # Shared test utilities and assertions
-├── test-*.sh              # 3 test suites
-└── fixtures/              # Test manifests and templates
+├── helpers.sh                   # Shared test utilities and assertions
+├── test-*.sh                    # 5 test suites
+└── fixtures/                    # Test manifests and templates
 ```
 
 ## Examples

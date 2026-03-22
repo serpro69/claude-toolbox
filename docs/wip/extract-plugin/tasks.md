@@ -76,13 +76,13 @@
 - [x] 5.5 Run the full test suite and fix any failures — all 157 tests pass, 224 assertions, 0 failures: `for test in test/test-*.sh; do $test; done`
 
 ## Task 6: Update documentation
-- **Status:** pending
+- **Status:** done
 - **Depends on:** Task 1, Task 2, Task 3, Task 4, Task 5
 - **Docs:** [implementation.md#phase-6-update-documentation](./implementation.md#phase-6-update-documentation)
 
 ### Subtasks
-- [ ] 6.1 Update `README.md` — add plugin system section, update architecture description, update "Getting Started" with plugin installation, update troubleshooting
-- [ ] 6.2 Document the skill namespace change for upgrading users (`/skill-name` → `/kk:skill-name`)
+- [x] 6.1 Update `README.md` — add plugin system section, update architecture description, update "Getting Started" with plugin installation, update troubleshooting
+- [x] 6.2 Document the skill namespace change for upgrading users (`/skill-name` → `/kk:skill-name`)
 
 ## Task 7: Final verification
 - **Status:** pending
