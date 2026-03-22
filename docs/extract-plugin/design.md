@@ -78,8 +78,8 @@ The repo root contains `.claude-plugin/marketplace.json` — the marketplace cat
   "extraKnownMarketplaces": {
     "claude-toolbox": {
       "source": {
-        "source": "git",
-        "url": "https://github.com/serpro69/claude-toolbox.git"
+        "source": "github",
+        "repo": "serpro69/claude-toolbox"
       }
     }
   },
