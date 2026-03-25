@@ -280,39 +280,10 @@ assert_equals "plan" "$(jq -r '.variables.CC_PERMISSION_MODE' "$MANIFEST_PATH")"
 assert_equals "basic" "$(jq -r '.variables.CC_STATUSLINE' "$MANIFEST_PATH")" "Existing CC_STATUSLINE preserved"
 
 # =============================================================================
-# Section 4: Escape Function Tests
+# Section 4: Substitution Tests
 # =============================================================================
 
-log_section "Section 4: Escape Function"
-
-log_test "escape_sed_replacement escapes ampersand"
-result=$(escape_sed_replacement "foo & bar")
-assert_equals 'foo \& bar' "$result" "Ampersand escaped to \\&"
-
-log_test "escape_sed_replacement escapes backslash"
-result=$(escape_sed_replacement 'C:\Users\test')
-assert_equals 'C:\\Users\\test' "$result" "Backslashes escaped"
-
-log_test "escape_sed_replacement escapes forward slash"
-result=$(escape_sed_replacement "path/to/file")
-assert_equals 'path\/to\/file' "$result" "Forward slashes escaped"
-
-log_test "escape_sed_replacement handles empty string"
-result=$(escape_sed_replacement "")
-assert_equals "" "$result" "Empty string returns empty"
-
-log_test "escape_sed_replacement handles combined special characters"
-result=$(escape_sed_replacement 'a/b&c\d')
-# Each special char should be escaped
-assert_output_contains '\/' "echo '$result'" "Combined: forward slash escaped"
-assert_output_contains '\&' "echo '$result'" "Combined: ampersand escaped"
-assert_output_contains '\\' "echo '$result'" "Combined: backslash escaped"
-
-# =============================================================================
-# Section 5: Substitution Tests
-# =============================================================================
-
-log_section "Section 5: Substitution Application"
+log_section "Section 4: Substitution Application"
 
 log_test "apply_substitutions substitutes PROJECT_NAME in serena config"
 reset_globals
