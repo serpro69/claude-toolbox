@@ -813,42 +813,34 @@ apply_substitutions() {
   # --- Claude Code Settings (claude/settings.json) ---
   local cc_settings_file="$output_dir/claude/settings.json"
   if [[ -f "$cc_settings_file" ]]; then
-    if [[ "$cc_model" == "default" ]]; then
-      # Remove the model line entirely so Claude Code uses its built-in default
-      $SED -i '/"model":/d' "$cc_settings_file"
-    else
-      local escaped_model
-      escaped_model=$(escape_sed_replacement "$cc_model")
-      $SED -i "s/\"model\": \".*\"/\"model\": \"$escaped_model\"/g" "$cc_settings_file"
-    fi
-    # Effort level - remove line for "default", otherwise substitute
-    if [[ "$cc_effort_level" == "default" ]]; then
-      $SED -i '/"effortLevel":/d' "$cc_settings_file"
-    else
-      local escaped_effort_level
-      escaped_effort_level=$(escape_sed_replacement "$cc_effort_level")
-      $SED -i "s/\"effortLevel\": \".*\"/\"effortLevel\": \"$escaped_effort_level\"/g" "$cc_settings_file"
-    fi
-    # Permission mode - substitute value
-    local escaped_permission_mode
-    escaped_permission_mode=$(escape_sed_replacement "$cc_permission_mode")
-    $SED -i "s/\"defaultMode\": \".*\"/\"defaultMode\": \"$escaped_permission_mode\"/g" "$cc_settings_file"
-    # Statusline - template defaults to enhanced (statusline2.sh); switch to basic if requested
+    local statusline_script="statusline_enhanced.sh"
     if [[ "$cc_statusline" == "basic" ]]; then
-      $SED -i "s/statusline_enhanced\.sh/statusline.sh/g" "$cc_settings_file"
+      statusline_script="statusline.sh"
     fi
-
-    # Plugin marketplace — replace directory source with GitHub source
-    # (upstream template uses directory source; downstream repos use github)
     local upstream_repo
     upstream_repo=$(get_manifest_value '.upstream_repo')
-    if jq -e '.extraKnownMarketplaces' "$cc_settings_file" &>/dev/null; then
-      jq --arg repo "$upstream_repo" \
-        '.extraKnownMarketplaces."claude-toolbox".source = {
-          "source": "github",
-          "repo": $repo
-        } | del(.enabledPlugins."kk@claude-toolbox") | if .enabledPlugins == {} then del(.enabledPlugins) else . end' "$cc_settings_file" > "${cc_settings_file}.tmp" && mv "${cc_settings_file}.tmp" "$cc_settings_file"
-    fi
+    jq \
+      --arg cc_model "$cc_model" \
+      --arg cc_effort_level "$cc_effort_level" \
+      --arg cc_permission_mode "$cc_permission_mode" \
+      --arg statusline_script "$statusline_script" \
+      --arg repo "$upstream_repo" \
+      '
+      # Model: "default" removes the key, otherwise set it
+      if $cc_model == "default" then del(.model) else .model = $cc_model end |
+      # Effort level: "default" removes the key, otherwise set it
+      if $cc_effort_level == "default" then del(.effortLevel) else .effortLevel = $cc_effort_level end |
+      # Permission mode
+      .permissions.defaultMode = $cc_permission_mode |
+      # Statusline script
+      .statusLine.command = (.statusLine.command | gsub("statusline_enhanced\\.sh"; $statusline_script)) |
+      # Plugin marketplace: directory -> github source for downstream
+      (if .extraKnownMarketplaces then
+        .extraKnownMarketplaces."claude-toolbox".source = { "source": "github", "repo": $repo }
+      else . end) |
+      del(.enabledPlugins."kk@claude-toolbox") |
+      if .enabledPlugins == {} then del(.enabledPlugins) else . end
+      ' "$cc_settings_file" > "${cc_settings_file}.tmp" && mv "${cc_settings_file}.tmp" "$cc_settings_file"
 
     log_info "Applied Claude Code settings"
   fi

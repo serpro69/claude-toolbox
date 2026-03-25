@@ -375,19 +375,21 @@ EOF
 mkdir -p "$test_dir/templates/claude"
 cat >"$test_dir/templates/claude/settings.json" <<'EOF'
 {
+  "effortLevel": "high",
+  "permissions": { "defaultMode": "default" },
   "model": "sonnet",
-  "permissions": {}
+  "statusLine": { "command": "bash statusline_enhanced.sh" }
 }
 EOF
 
 output_dir="$test_dir/output"
 apply_substitutions "$test_dir/templates" "$output_dir" 2>/dev/null
 
-# The model line should be removed
-if grep -q '"model"' "$output_dir/claude/settings.json"; then
-  log_fail "CC_MODEL=default should remove model line"
+# The model key should be removed
+if jq -e '.model' "$output_dir/claude/settings.json" &>/dev/null; then
+  log_fail "CC_MODEL=default should remove model key"
 else
-  log_pass "CC_MODEL=default removes model line from settings"
+  log_pass "CC_MODEL=default removes model key from settings"
 fi
 
 log_test "apply_substitutions substitutes non-default CC_MODEL"
@@ -413,16 +415,18 @@ EOF
 mkdir -p "$test_dir/templates/claude"
 cat >"$test_dir/templates/claude/settings.json" <<'EOF'
 {
+  "effortLevel": "high",
+  "permissions": { "defaultMode": "default" },
   "model": "placeholder",
-  "permissions": {}
+  "statusLine": { "command": "bash statusline_enhanced.sh" }
 }
 EOF
 
 output_dir="$test_dir/output"
 apply_substitutions "$test_dir/templates" "$output_dir" 2>/dev/null
 
-result=$(grep 'model' "$output_dir/claude/settings.json")
-assert_output_contains "claude-opus" "echo '$result'" "CC_MODEL value substituted"
+result=$(jq -r '.model' "$output_dir/claude/settings.json")
+assert_equals "claude-opus" "$result" "CC_MODEL value substituted"
 
 log_test "apply_substitutions substitutes CC_EFFORT_LEVEL"
 reset_globals
@@ -449,18 +453,19 @@ mkdir -p "$test_dir/templates/claude"
 cat >"$test_dir/templates/claude/settings.json" <<'EOF'
 {
   "effortLevel": "high",
+  "permissions": { "defaultMode": "default" },
   "model": "sonnet",
-  "permissions": {}
+  "statusLine": { "command": "bash statusline_enhanced.sh" }
 }
 EOF
 
 output_dir="$test_dir/output"
 apply_substitutions "$test_dir/templates" "$output_dir" 2>/dev/null
 
-result=$(grep 'effortLevel' "$output_dir/claude/settings.json")
-assert_output_contains "medium" "echo '$result'" "CC_EFFORT_LEVEL value substituted"
+result=$(jq -r '.effortLevel' "$output_dir/claude/settings.json")
+assert_equals "medium" "$result" "CC_EFFORT_LEVEL value substituted"
 
-log_test "apply_substitutions removes effortLevel line when CC_EFFORT_LEVEL=default"
+log_test "apply_substitutions removes effortLevel key when CC_EFFORT_LEVEL=default"
 reset_globals
 test_dir=$(create_temp_dir "subst-effort-level-default-test")
 
@@ -485,18 +490,19 @@ mkdir -p "$test_dir/templates/claude"
 cat >"$test_dir/templates/claude/settings.json" <<'EOF'
 {
   "effortLevel": "high",
+  "permissions": { "defaultMode": "default" },
   "model": "sonnet",
-  "permissions": {}
+  "statusLine": { "command": "bash statusline_enhanced.sh" }
 }
 EOF
 
 output_dir="$test_dir/output"
 apply_substitutions "$test_dir/templates" "$output_dir" 2>/dev/null
 
-if grep -q '"effortLevel"' "$output_dir/claude/settings.json"; then
-  log_fail "CC_EFFORT_LEVEL=default should remove effortLevel line"
+if jq -e '.effortLevel' "$output_dir/claude/settings.json" &>/dev/null; then
+  log_fail "CC_EFFORT_LEVEL=default should remove effortLevel key"
 else
-  log_pass "CC_EFFORT_LEVEL=default removes effortLevel line from settings"
+  log_pass "CC_EFFORT_LEVEL=default removes effortLevel key from settings"
 fi
 
 log_test "apply_substitutions defaults CC_EFFORT_LEVEL to high when missing from manifest"
@@ -523,16 +529,17 @@ mkdir -p "$test_dir/templates/claude"
 cat >"$test_dir/templates/claude/settings.json" <<'EOF'
 {
   "effortLevel": "placeholder",
+  "permissions": { "defaultMode": "default" },
   "model": "sonnet",
-  "permissions": {}
+  "statusLine": { "command": "bash statusline_enhanced.sh" }
 }
 EOF
 
 output_dir="$test_dir/output"
 apply_substitutions "$test_dir/templates" "$output_dir" 2>/dev/null
 
-result=$(grep 'effortLevel' "$output_dir/claude/settings.json")
-assert_output_contains "high" "echo '$result'" "CC_EFFORT_LEVEL defaults to high when missing"
+result=$(jq -r '.effortLevel' "$output_dir/claude/settings.json")
+assert_equals "high" "$result" "CC_EFFORT_LEVEL defaults to high when missing"
 
 log_test "apply_substitutions substitutes CC_PERMISSION_MODE"
 reset_globals
@@ -558,18 +565,18 @@ EOF
 mkdir -p "$test_dir/templates/claude"
 cat >"$test_dir/templates/claude/settings.json" <<'EOF'
 {
-  "permissions": {
-    "defaultMode": "default"
-  },
-  "model": "sonnet"
+  "effortLevel": "high",
+  "permissions": { "defaultMode": "default" },
+  "model": "sonnet",
+  "statusLine": { "command": "bash statusline_enhanced.sh" }
 }
 EOF
 
 output_dir="$test_dir/output"
 apply_substitutions "$test_dir/templates" "$output_dir" 2>/dev/null
 
-result=$(grep 'defaultMode' "$output_dir/claude/settings.json")
-assert_output_contains "plan" "echo '$result'" "CC_PERMISSION_MODE value substituted"
+result=$(jq -r '.permissions.defaultMode' "$output_dir/claude/settings.json")
+assert_equals "plan" "$result" "CC_PERMISSION_MODE value substituted"
 
 log_test "apply_substitutions defaults CC_PERMISSION_MODE to default when missing from manifest"
 reset_globals
@@ -594,18 +601,18 @@ EOF
 mkdir -p "$test_dir/templates/claude"
 cat >"$test_dir/templates/claude/settings.json" <<'EOF'
 {
-  "permissions": {
-    "defaultMode": "placeholder"
-  },
-  "model": "sonnet"
+  "effortLevel": "high",
+  "permissions": { "defaultMode": "placeholder" },
+  "model": "sonnet",
+  "statusLine": { "command": "bash statusline_enhanced.sh" }
 }
 EOF
 
 output_dir="$test_dir/output"
 apply_substitutions "$test_dir/templates" "$output_dir" 2>/dev/null
 
-result=$(grep 'defaultMode' "$output_dir/claude/settings.json")
-assert_output_contains "default" "echo '$result'" "CC_PERMISSION_MODE defaults to default when missing"
+result=$(jq -r '.permissions.defaultMode' "$output_dir/claude/settings.json")
+assert_equals "default" "$result" "CC_PERMISSION_MODE defaults to default when missing"
 
 # =============================================================================
 # Section 6: File Comparison Tests
