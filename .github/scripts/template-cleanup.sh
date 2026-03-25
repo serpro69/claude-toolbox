@@ -430,38 +430,32 @@ execute_cleanup() {
   log_step "Substituting template values..."
   # Note: Templates now use actual working values instead of placeholders
 
-  # Claude Code Settings
+  # Claude Code Settings — all JSON modifications in a single jq call
   local cc_settings_file=".github/templates/claude/settings.json"
-  # Claude Code model - remove line for "default" (uses Claude Code's default), otherwise substitute
-  if [[ "$CC_MODEL" == "default" ]]; then
-    # Remove the model line entirely so Claude Code uses its built-in default
-    $SED -i '/"model":/d' "$cc_settings_file"
-  else
-    $SED -i "s/\"model\": \".*\"/\"model\": \"$CC_MODEL\"/g" "$cc_settings_file"
-  fi
-
-  # Claude Code effort level - remove line for "default", otherwise substitute
-  if [[ "$CC_EFFORT_LEVEL" == "default" ]]; then
-    $SED -i '/"effortLevel":/d' "$cc_settings_file"
-  else
-    $SED -i "s/\"effortLevel\": \".*\"/\"effortLevel\": \"$CC_EFFORT_LEVEL\"/g" "$cc_settings_file"
-  fi
-
-  # Claude Code permission mode - substitute value
-  $SED -i "s/\"defaultMode\": \".*\"/\"defaultMode\": \"$CC_PERMISSION_MODE\"/g" "$cc_settings_file"
-
-  # Claude Code Statusline
-  if [[ "$CC_STATUSLINE" == "basic" ]]; then
-    $SED -i "s/statusline_enhanced\.sh/statusline.sh/g" "$cc_settings_file"
-  fi
-
-  # Plugin marketplace — replace directory source with GitHub source for downstream
   local upstream_repo="${UPSTREAM_REPO:-serpro69/claude-toolbox}"
-  jq --arg repo "$upstream_repo" \
-    '.extraKnownMarketplaces."claude-toolbox".source = {
-      "source": "github",
-      "repo": $repo
-    } | del(.enabledPlugins)' "$cc_settings_file" > "${cc_settings_file}.tmp" && mv "${cc_settings_file}.tmp" "$cc_settings_file"
+  local statusline_script="statusline_enhanced.sh"
+  if [[ "$CC_STATUSLINE" == "basic" ]]; then
+    statusline_script="statusline.sh"
+  fi
+  jq \
+    --arg cc_model "$CC_MODEL" \
+    --arg cc_effort_level "$CC_EFFORT_LEVEL" \
+    --arg cc_permission_mode "$CC_PERMISSION_MODE" \
+    --arg statusline_script "$statusline_script" \
+    --arg repo "$upstream_repo" \
+    '
+    # Model: "default" removes the key, otherwise set it
+    if $cc_model == "default" then del(.model) else .model = $cc_model end |
+    # Effort level: "default" removes the key, otherwise set it
+    if $cc_effort_level == "default" then del(.effortLevel) else .effortLevel = $cc_effort_level end |
+    # Permission mode
+    .permissions.defaultMode = $cc_permission_mode |
+    # Statusline script
+    .statusLine.command = (.statusLine.command | gsub("statusline_enhanced\\.sh"; $statusline_script)) |
+    # Plugin marketplace: directory -> github source for downstream
+    .extraKnownMarketplaces."claude-toolbox".source = { "source": "github", "repo": $repo } |
+    del(.enabledPlugins)
+    ' "$cc_settings_file" > "${cc_settings_file}.tmp" && mv "${cc_settings_file}.tmp" "$cc_settings_file"
 
   # Serena MCP Settings
   local serena_settings_file=".github/templates/serena/project.yml"
