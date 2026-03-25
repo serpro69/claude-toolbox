@@ -436,8 +436,7 @@ execute_cleanup() {
     # Statusline script
     .statusLine.command = (.statusLine.command | gsub("statusline_enhanced\\.sh"; $statusline_script)) |
     # Plugin marketplace: directory -> github source for downstream
-    .extraKnownMarketplaces."claude-toolbox".source = { "source": "github", "repo": $repo } |
-    del(.enabledPlugins)
+    .extraKnownMarketplaces."claude-toolbox".source = { "source": "github", "repo": $repo }
     ' "$cc_settings_file" > "${cc_settings_file}.tmp" && mv "${cc_settings_file}.tmp" "$cc_settings_file"
 
   # Serena MCP Settings

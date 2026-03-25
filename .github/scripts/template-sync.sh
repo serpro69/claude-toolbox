@@ -814,9 +814,7 @@ apply_substitutions() {
       # Plugin marketplace: directory -> github source for downstream
       (if .extraKnownMarketplaces then
         .extraKnownMarketplaces."claude-toolbox".source = { "source": "github", "repo": $repo }
-      else . end) |
-      del(.enabledPlugins."kk@claude-toolbox") |
-      if .enabledPlugins == {} then del(.enabledPlugins) else . end
+      else . end)
       ' "$cc_settings_file" > "${cc_settings_file}.tmp" && mv "${cc_settings_file}.tmp" "$cc_settings_file"
 
     log_info "Applied Claude Code settings"
