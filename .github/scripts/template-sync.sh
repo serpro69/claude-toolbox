@@ -142,18 +142,6 @@ cleanup_on_exit() {
 # Helper Functions
 # =============================================================================
 
-# Convert comma-separated languages to YAML array format
-format_languages_yaml() {
-  local input="$1"
-  local indent="${2:-  }"  # default 2-space indent
-  echo "languages:"
-  IFS=',' read -ra langs <<< "$input"
-  for lang in "${langs[@]}"; do
-    lang=$(echo "$lang" | xargs)  # trim whitespace
-    echo "${indent}- $lang"
-  done
-}
-
 # is_excluded()
 # Checks if a file path matches any exclusion pattern.
 #
@@ -186,13 +174,6 @@ is_excluded() {
   return 1  # Not excluded
 }
 
-# Use GNU sed (gsed on macOS, sed on Linux)
-if command -v gsed &>/dev/null; then
-  SED="gsed"
-else
-  SED="sed"
-fi
-
 # =============================================================================
 # Dependency Check
 # =============================================================================
@@ -210,6 +191,10 @@ check_dependencies() {
 
   if ! command -v curl &>/dev/null; then
     missing+=("curl")
+  fi
+
+  if ! command -v yq &>/dev/null; then
+    missing+=("yq")
   fi
 
   if [[ ${#missing[@]} -gt 0 ]]; then
@@ -763,14 +748,6 @@ fetch_upstream_templates() {
 # Substitution Functions
 # =============================================================================
 
-# Escape special characters for sed replacement
-# Usage: escaped=$(escape_sed_replacement "string with /special/ chars")
-escape_sed_replacement() {
-  local str="$1"
-  # Escape: & \ / and newlines for sed replacement string
-  printf '%s' "$str" | $SED -e 's/[&\\/]/\\&/g' -e ':a' -e 'N' -e '$!ba' -e 's/\n/\\n/g'
-}
-
 # apply_substitutions()
 # Applies project-specific variable substitutions to fetched template files.
 # Mirrors the substitution logic from template-cleanup.sh for consistency.
@@ -849,25 +826,16 @@ apply_substitutions() {
   local serena_settings_file="$output_dir/serena/project.yml"
   if [[ -f "$serena_settings_file" ]]; then
     # Project name - always substitute
-    local escaped_project_name
-    escaped_project_name=$(escape_sed_replacement "$project_name")
-    $SED -i "s/project_name: \".*\"/project_name: \"$escaped_project_name\"/g" "$serena_settings_file"
+    yq -i ".project_name = \"$project_name\"" "$serena_settings_file"
 
-    # Languages - use awk to replace the entire languages block (multi-line YAML array)
-    local languages_yaml
-    languages_yaml=$(format_languages_yaml "$languages")
-    awk -v new="$languages_yaml" '
-      /^languages:/ { print new; skip=1; next }
-      skip && /^[[:space:]]*-/ { next }
-      skip && /^[^[:space:]]/ { skip=0 }
-      !skip { print }
-    ' "$serena_settings_file" > "$serena_settings_file.tmp" && mv "$serena_settings_file.tmp" "$serena_settings_file"
+    # Languages - convert comma-separated string to YAML array via jq
+    local lang_json
+    lang_json=$(echo "$languages" | jq -R 'split(",") | map(gsub("^\\s+|\\s+$"; ""))')
+    yq -i ".languages = $lang_json" "$serena_settings_file"
 
     # Initial prompt - only substitute if provided
     if [[ -n "$serena_prompt" ]]; then
-      local escaped_serena_prompt
-      escaped_serena_prompt=$(escape_sed_replacement "$serena_prompt")
-      $SED -i "s/initial_prompt: \"\"/initial_prompt: \"$escaped_serena_prompt\"/g" "$serena_settings_file"
+      yq -i ".initial_prompt = \"$serena_prompt\"" "$serena_settings_file"
     fi
     log_info "Applied Serena settings"
   fi

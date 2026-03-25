@@ -73,33 +73,16 @@ log_step() {
   echo -e "${CYAN}>>>${NC} $1"
 }
 
-# Convert comma-separated languages to YAML array format
-format_languages_yaml() {
-  local input="$1"
-  local indent="${2:-  }" # default 2-space indent
-  echo "languages:"
-  IFS=',' read -ra langs <<<"$input"
-  for lang in "${langs[@]}"; do
-    lang=$(echo "$lang" | xargs) # trim whitespace
-    echo "${indent}- $lang"
-  done
-}
-
-# Use GNU sed (gsed on macOS, sed on Linux)
-if command -v gsed &>/dev/null; then
-  SED="gsed"
-else
-  SED="sed"
-fi
-
 # Check for required dependencies
-if ! command -v jq &>/dev/null; then
-  log_error "jq is required but not installed."
-  echo "Please install jq:"
-  echo "  macOS:  brew install jq"
-  echo "  Linux:  apt-get install jq"
-  exit 1
-fi
+for dep in jq yq; do
+  if ! command -v "$dep" &>/dev/null; then
+    log_error "$dep is required but not installed."
+    echo "Please install $dep:"
+    echo "  macOS:  brew install $dep"
+    echo "  Linux:  See https://github.com/mikefarah/yq#install (for yq)"
+    exit 1
+  fi
+done
 
 show_help() {
   cat <<'EOF'
@@ -460,19 +443,14 @@ execute_cleanup() {
   # Serena MCP Settings
   local serena_settings_file=".github/templates/serena/project.yml"
   # Project name - always substitute with repo name
-  $SED -i "s/project_name: \".*\"/project_name: \"$name\"/g" "$serena_settings_file"
-  # Languages - use awk to replace the entire languages block (multi-line YAML array)
-  local languages_yaml
-  languages_yaml=$(format_languages_yaml "$LANGUAGES")
-  awk -v new="$languages_yaml" '
-    /^languages:/ { print new; skip=1; next }
-    skip && /^[[:space:]]*-/ { next }
-    skip && /^[^[:space:]]/ { skip=0 }
-    !skip { print }
-  ' "$serena_settings_file" >"$serena_settings_file.tmp" && mv "$serena_settings_file.tmp" "$serena_settings_file"
+  yq -i ".project_name = \"$name\"" "$serena_settings_file"
+  # Languages - convert comma-separated string to YAML array via jq
+  local lang_json
+  lang_json=$(echo "$LANGUAGES" | jq -R 'split(",") | map(gsub("^\\s+|\\s+$"; ""))')
+  yq -i ".languages = $lang_json" "$serena_settings_file"
   # Serena initial prompt - only substitute if provided
   if [ -n "$SERENA_INITIAL_PROMPT" ]; then
-    $SED -i "s/initial_prompt: \"\"/initial_prompt: \"$SERENA_INITIAL_PROMPT\"/g" "$serena_settings_file"
+    yq -i ".initial_prompt = \"$SERENA_INITIAL_PROMPT\"" "$serena_settings_file"
   fi
 
   log_step "Removing existing configuration directories..."
