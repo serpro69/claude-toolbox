@@ -4,6 +4,8 @@
 
 claude-toolbox is a collection of "tools" for all your Claude Code workflows — pre-configured MCP servers, skills, sub-agents, commands, hooks, statuslines with themes, and more - everything you need for AI-powered development workflows, used and battle-tested daily on many of my own projects.
 
+<img width="3440" height="521" alt="image" src="https://github.com/user-attachments/assets/27ef7269-0153-47c0-b07d-ed6a9504a176" />
+
 ## About
 
 This is a template repository and plugin system that gives you a ready-to-use Claude Code development environment. It ships with MCP servers, a **kk** plugin (skills, commands, hooks), themed statuslines — all configured and wired together.
