@@ -21,8 +21,8 @@ Load plan, review critically, execute tasks in batches, report for review betwee
 
 1. Read the feature's `tasks.md` file to get the task list and current progress
 2. Read the linked `design.md` and `implementation.md` for full context
-3. **Capy search:** Search `kk:arch-decisions`, `kk:project-conventions`, `kk:lang-idioms`, and `kk:review-findings` for context relevant to the next task
-4. Identify the next pending task (one whose dependencies are all done)
+3. Identify the next pending task (one whose dependencies are all done)
+4. **Capy search:** Search `kk:arch-decisions`, `kk:project-conventions`, `kk:lang-idioms`, and `kk:review-findings` for context relevant to the identified task
 5. Review critically — identify any questions or concerns about the plan
 6. If concerns: Raise them with your human partner before starting
 

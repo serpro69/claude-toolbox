@@ -57,12 +57,14 @@ See [review-process.md](./review-process.md) for the detailed step-by-step proce
 
 **Phases:**
 
-1. Load feature documents. **Capy search:** Search `kk:arch-decisions` for design rationale that may explain intentional spec deviations. Search `kk:review-findings` for known patterns from prior reviews.
-2. Determine review scope (mid-implementation vs post-implementation)
-3. Per-task verification against spec
-4. Cross-cutting concern check
-5. Self-check and confidence assessment
-6. Present findings. **Capy index:** Index any `SPEC_DEV` or `EXTRA_IMPL` findings confirmed by the user as intentional as `kk:arch-decisions` — prevents the same deviation from being flagged again.
+1. Load feature documents
+2. **Capy search:** Search `kk:arch-decisions` for design rationale that may explain intentional spec deviations. Search `kk:review-findings` for known patterns from prior reviews.
+3. Determine review scope (mid-implementation vs post-implementation)
+4. Per-task verification against spec
+5. Cross-cutting concern check
+6. Self-check and confidence assessment
+7. Present findings
+8. **Capy index:** Index any `SPEC_DEV` or `EXTRA_IMPL` findings confirmed by the user as intentional as `kk:arch-decisions` — prevents the same deviation from being flagged again.
 
 ## Invocation
 
