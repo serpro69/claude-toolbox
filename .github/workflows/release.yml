@@ -1,0 +1,169 @@
+---
+# GitHub Actions Workflow for automated releases of the kk plugin.
+# Validates version, updates plugin.json, commits, tags, and creates a GitHub release.
+
+name: Release
+on:
+  workflow_dispatch:
+    inputs:
+      version:
+        description: |
+          Release version (e.g., 'v1.2.3').
+          Must be valid semver with 'v' prefix.
+        required: true
+        type: string
+      dry_run:
+        description: |
+          Preview the release without making changes.
+          Validates version and shows what would happen.
+        required: false
+        default: false
+        type: boolean
+
+jobs:
+  release:
+    name: Release
+    runs-on: ubuntu-latest
+    if: github.ref == 'refs/heads/master'
+    permissions:
+      contents: write
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v6
+        with:
+          fetch-depth: 0
+
+      - name: Validate Version Format
+        id: validate
+        run: |
+          VERSION="${{ inputs.version }}"
+
+          # Must start with 'v'
+          if [[ ! "$VERSION" =~ ^v ]]; then
+            echo "::error::Version must start with 'v' prefix (e.g., v1.2.3)"
+            exit 1
+          fi
+
+          # Strip v prefix for semver validation
+          SEMVER="${VERSION#v}"
+
+          # Validate semver format: MAJOR.MINOR.PATCH with optional pre-release/build metadata
+          if [[ ! "$SEMVER" =~ ^(0|[1-9][0-9]*)\.(0|[1-9][0-9]*)\.(0|[1-9][0-9]*)(-((0|[1-9][0-9]*|[0-9]*[a-zA-Z-][0-9a-zA-Z-]*)(\.(0|[1-9][0-9]*|[0-9]*[a-zA-Z-][0-9a-zA-Z-]*))*))?(\+([0-9a-zA-Z-]+(\.[0-9a-zA-Z-]+)*))?$ ]]; then
+            echo "::error::Invalid semver format: $SEMVER. Expected format: MAJOR.MINOR.PATCH (e.g., v1.2.3)"
+            exit 1
+          fi
+
+          echo "version=$VERSION" >> "$GITHUB_OUTPUT"
+          echo "semver=$SEMVER" >> "$GITHUB_OUTPUT"
+          echo "Validated version: $VERSION (semver: $SEMVER)"
+
+      - name: Check Tag Does Not Exist
+        run: |
+          VERSION="${{ steps.validate.outputs.version }}"
+          if git rev-parse "$VERSION" >/dev/null 2>&1; then
+            echo "::error::Tag $VERSION already exists. To re-release, delete the existing tag and release first."
+            exit 1
+          fi
+          echo "Tag $VERSION does not exist yet. Proceeding."
+
+      - name: Validate Version is Newer
+        run: |
+          NEW_SEMVER="${{ steps.validate.outputs.semver }}"
+          CURRENT_VERSION=$(jq -r '.version' klaude-plugin/.claude-plugin/plugin.json)
+
+          echo "Current version: $CURRENT_VERSION"
+          echo "New version: $NEW_SEMVER"
+
+          if [[ "$NEW_SEMVER" == "$CURRENT_VERSION" ]]; then
+            echo "::error::New version $NEW_SEMVER is the same as the current version."
+            exit 1
+          fi
+
+          # Use sort -V for version comparison
+          HIGHER=$(printf '%s\n%s' "$CURRENT_VERSION" "$NEW_SEMVER" | sort -V | tail -1)
+          if [[ "$HIGHER" != "$NEW_SEMVER" ]]; then
+            echo "::error::New version $NEW_SEMVER is not newer than current version $CURRENT_VERSION."
+            exit 1
+          fi
+
+          echo "Version bump: $CURRENT_VERSION -> $NEW_SEMVER"
+
+      - name: Dry Run Summary
+        if: inputs.dry_run == true
+        run: |
+          VERSION="${{ steps.validate.outputs.version }}"
+          SEMVER="${{ steps.validate.outputs.semver }}"
+          CURRENT_VERSION=$(jq -r '.version' klaude-plugin/.claude-plugin/plugin.json)
+
+          echo "### Dry Run — Release Preview" >> "$GITHUB_STEP_SUMMARY"
+          echo "" >> "$GITHUB_STEP_SUMMARY"
+          echo "**Version:** $VERSION" >> "$GITHUB_STEP_SUMMARY"
+          echo "**Plugin version:** $CURRENT_VERSION → $SEMVER" >> "$GITHUB_STEP_SUMMARY"
+          echo "" >> "$GITHUB_STEP_SUMMARY"
+          echo "**Actions that would be performed:**" >> "$GITHUB_STEP_SUMMARY"
+          echo "1. Update \`klaude-plugin/.claude-plugin/plugin.json\` version to \`$SEMVER\`" >> "$GITHUB_STEP_SUMMARY"
+          echo "2. Commit: \`chore: release $VERSION\`" >> "$GITHUB_STEP_SUMMARY"
+          echo "3. Tag: \`$VERSION\`" >> "$GITHUB_STEP_SUMMARY"
+          echo "4. Push commit and tag" >> "$GITHUB_STEP_SUMMARY"
+          echo "5. Create GitHub release with auto-generated notes" >> "$GITHUB_STEP_SUMMARY"
+          echo "" >> "$GITHUB_STEP_SUMMARY"
+          echo "**Commits since last tag:**" >> "$GITHUB_STEP_SUMMARY"
+          echo '```' >> "$GITHUB_STEP_SUMMARY"
+          LAST_TAG=$(git describe --tags --abbrev=0 2>/dev/null || echo "")
+          if [[ -n "$LAST_TAG" ]]; then
+            git log --oneline "$LAST_TAG"..HEAD >> "$GITHUB_STEP_SUMMARY"
+          else
+            git log --oneline >> "$GITHUB_STEP_SUMMARY"
+          fi
+          echo '```' >> "$GITHUB_STEP_SUMMARY"
+          echo "" >> "$GITHUB_STEP_SUMMARY"
+          echo "Dry run complete. No changes were made."
+
+      - name: Update Plugin Version
+        if: inputs.dry_run != true
+        run: |
+          SEMVER="${{ steps.validate.outputs.semver }}"
+          jq --arg v "$SEMVER" '.version = $v' klaude-plugin/.claude-plugin/plugin.json > klaude-plugin/.claude-plugin/plugin.json.tmp
+          mv klaude-plugin/.claude-plugin/plugin.json.tmp klaude-plugin/.claude-plugin/plugin.json
+          echo "Updated plugin.json version to $SEMVER"
+
+      - name: Commit and Tag
+        if: inputs.dry_run != true
+        run: |
+          VERSION="${{ steps.validate.outputs.version }}"
+          git config --local user.email "action@github.com"
+          git config --local user.name "GitHub Action"
+          git add klaude-plugin/.claude-plugin/plugin.json
+          git commit -m "chore: release $VERSION"
+          git tag "$VERSION"
+          echo "Created commit and tag $VERSION"
+
+      - name: Push
+        if: inputs.dry_run != true
+        run: |
+          VERSION="${{ steps.validate.outputs.version }}"
+          git push origin master
+          git push origin "$VERSION"
+          echo "Pushed commit and tag $VERSION"
+
+      - name: Create GitHub Release
+        if: inputs.dry_run != true
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          VERSION="${{ steps.validate.outputs.version }}"
+          gh release create "$VERSION" \
+            --title "$VERSION" \
+            --generate-notes \
+            --verify-tag
+          echo "Created GitHub release $VERSION"
+
+      - name: Release Summary
+        if: inputs.dry_run != true
+        run: |
+          VERSION="${{ steps.validate.outputs.version }}"
+          echo "### Release $VERSION" >> "$GITHUB_STEP_SUMMARY"
+          echo "" >> "$GITHUB_STEP_SUMMARY"
+          echo "Successfully released version **$VERSION**." >> "$GITHUB_STEP_SUMMARY"
+          echo "" >> "$GITHUB_STEP_SUMMARY"
+          echo "**Release URL:** ${{ github.server_url }}/${{ github.repository }}/releases/tag/$VERSION" >> "$GITHUB_STEP_SUMMARY"
