@@ -460,6 +460,7 @@ execute_cleanup() {
   log_step "Cleaning up .github/ (preserving sync infrastructure)..."
   rm -f .github/scripts/template-cleanup.sh
   rm -f .github/workflows/template-cleanup.yml
+  rm -f .github/workflows/release.yml
 
   log_step "Preserving docs/update.sh..."
   local tmpfile=""
