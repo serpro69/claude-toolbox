@@ -32,7 +32,10 @@ Load plan, review critically, execute tasks in batches, report for review betwee
 
 - Show what was implemented
 - Show verification output
-- Prompt user for code-review; if user responds 'yes' - run `zen` mcp code-review with gemini-3-pro
+- Prompt user for code-review; if user responds 'yes':
+  - Use `kk:solid-code-review` skill for the given programming language
+  - Run `pal` mcp code-review with gemini-3-pro
+  - Consolidate the findings, present them back to the user
 - Based on user and code-review feedback: apply changes if needed and finalize the sub-task
 - When completed, update `tasks.md`: set the task's status to `done`
 
