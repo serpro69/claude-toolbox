@@ -101,9 +101,9 @@ Every skill gets a **search phase** (at workflow start) and an **index phase** (
 
 ## Bootstrapping
 
-### bootstrap.sh Integration
+### Bootstrap Integration
 
-The template's `bootstrap.sh` gains a capy setup step:
+The template's `.github/scripts/bootstrap.sh` gains a capy setup step:
 
 1. Check if `capy` binary is on PATH
 2. If found: run `capy setup` to configure MCP server, hooks, and guidance files

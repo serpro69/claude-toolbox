@@ -30,13 +30,13 @@ This plan adds capy knowledge base integration to the kk plugin. The work breaks
 | `klaude-plugin/skills/documentation-process/SKILL.md` | Add search before writing docs |
 | `klaude-plugin/skills/merge-docs/SKILL.md` | Add search before merging, index for conflict resolutions |
 | `klaude-plugin/skills/cove/cove-process.md` | Add search during verification step |
-| `klaude-plugin/skills/cove/cove-isolated.md` | Add search during verification step |
+| `klaude-plugin/skills/cove/cove-isolated.md` | Add isolation guidance, reconciliation search, read-only restriction |
 
 ### Modified Files — Infrastructure
 
 | File | Change |
 |---|---|
-| `bootstrap.sh` | Add capy setup step with opt-out and warning |
+| `.github/scripts/bootstrap.sh` | Add capy setup step with opt-out and warning |
 | `README.md` | Add capy to MCP servers table, add knowledge base section |
 
 ## Implementation Details

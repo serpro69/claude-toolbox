@@ -2,7 +2,7 @@
 
 > Design: [./design.md](./design.md)
 > Implementation: [./implementation.md](./implementation.md)
-> Status: pending
+> Status: done
 > Created: 2026-04-01
 
 ## Task 1: Create the shared protocol file
@@ -127,11 +127,11 @@
 - [x] 12.2 Add "Knowledge Base" section explaining what capy provides, how skills use it, and installation instructions
 
 ## Task 13: Final verification
-- **Status:** pending
+- **Status:** done
 - **Depends on:** Task 1, Task 2, Task 3, Task 4, Task 5, Task 6, Task 7, Task 8, Task 9, Task 10, Task 11, Task 12
 
 ### Subtasks
-- [ ] 13.1 Run `testing-process` skill — verify all existing tests still pass, check relative paths in skill files
-- [ ] 13.2 Run `documentation-process` skill — update any relevant docs
-- [ ] 13.3 Run `solid-code-review` skill to review all changes
-- [ ] 13.4 Run `implementation-review` skill to verify implementation matches design and implementation docs
+- [x] 13.1 Run `testing-process` skill — verify all existing tests still pass, check relative paths in skill files
+- [x] 13.2 Run `documentation-process` skill — update any relevant docs
+- [x] 13.3 Run `solid-code-review` skill to review all changes
+- [x] 13.4 Run `implementation-review` skill to verify implementation matches design and implementation docs
