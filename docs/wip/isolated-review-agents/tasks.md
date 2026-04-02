@@ -54,16 +54,16 @@
 - [x] 4.5 Write Step 4 (Report): consolidated report using shared template, next-steps prompt to user
 
 ## Task 5: Isolated spec conformance workflow
-- **Status:** pending
+- **Status:** done
 - **Depends on:** Task 1, Task 3
 - **Docs:** [implementation.md#task-5-isolated-spec-conformance-workflow](./implementation.md#task-5-isolated-spec-conformance-workflow)
 
 ### Subtasks
-- [ ] 5.1 Create `klaude-plugin/skills/implementation-review/review-isolated.md` with checklist structure
-- [ ] 5.2 Write Step 1 (Prepare artifacts): locate feature directory, verify docs exist, determine review scope
-- [ ] 5.3 Write Step 2 (Spawn spec reviewer): single `spec-reviewer` agent with feature directory path and review scope
-- [ ] 5.4 Write Step 3 (Reconcile): apply type-specific trust levels, handle disputed SPEC_DEV/EXTRA_IMPL with spec update suggestions
-- [ ] 5.5 Write Step 4 (Report): consolidated report, feed back into task workflow if within implementation-process
+- [x] 5.1 Create `klaude-plugin/skills/implementation-review/review-isolated.md` with checklist structure
+- [x] 5.2 Write Step 1 (Prepare artifacts): locate feature directory, verify docs exist, determine review scope
+- [x] 5.3 Write Step 2 (Spawn spec reviewer): single `spec-reviewer` agent with feature directory path and review scope
+- [x] 5.4 Write Step 3 (Reconcile): apply type-specific trust levels, handle disputed SPEC_DEV/EXTRA_IMPL with spec update suggestions
+- [x] 5.5 Write Step 4 (Report): consolidated report, feed back into task workflow if within implementation-process
 
 ## Task 6: Update SKILL.md routing
 - **Status:** pending
