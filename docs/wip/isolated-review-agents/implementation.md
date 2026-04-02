@@ -139,6 +139,7 @@ Gather the artifacts that will be passed to the sub-agent:
 - Run `git diff --stat` and `git diff` to capture the diff
 - Identify the spec context: if this review is happening within `implementation-process`, locate the relevant design.md section and task description from tasks.md. If standalone, check if the user provided context or if design docs exist in `/docs/wip/`.
 - Detect the primary language from file extensions in the diff (same logic as existing skill's step 2)
+- Call `pal` `listmodels` to get available models, select the highest-scoring model for the `pal` codereview call in Step 2
 
 #### Step 2: Spawn reviewers (parallel)
 
@@ -152,7 +153,7 @@ Two reviewers run in parallel, launched in a single message:
 **Main agent** — `pal` codereview:
 
 - The main agent calls the `pal` codereview MCP tool directly with the git diff
-- Uses the top configured `pal` model (auto-selected)
+- Uses the highest-scoring model from `listmodels` (resolved in Step 1)
 - `pal` is an external model with no conversation context — naturally isolated
 
 Both execute in parallel (sub-agent spawn + `pal` MCP call in the same message).
