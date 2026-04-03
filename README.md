@@ -446,6 +446,6 @@ Feel free to open new PRs/issues. Any contributions you make are greatly appreci
 
 Copyright &copy; 2025 - present, [serpro69](https://github.com/serpro69)
 
-Distributed under the MIT License.
+Distributed under the ELv2 License.
 
 See [`LICENSE.md`](https://github.com/serpro69/claude-toolbox/blob/master/LICENSE.md) file for more information.

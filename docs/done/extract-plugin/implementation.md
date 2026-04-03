@@ -19,7 +19,7 @@ Create `klaude-plugin/.claude-plugin/plugin.json`:
   },
   "homepage": "https://github.com/serpro69/claude-toolbox",
   "repository": "https://github.com/serpro69/claude-toolbox",
-  "license": "MIT",
+  "license": "ELv2",
   "keywords": ["development", "workflow", "code-review", "testing", "documentation"]
 }
 ```
