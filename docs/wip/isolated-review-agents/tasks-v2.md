@@ -3,7 +3,7 @@
 > Design: [./design-v2.md](./design-v2.md)
 > Implementation: [./implementation-v2.md](./implementation-v2.md)
 > Previous tasks: [./tasks.md](./tasks.md) (v1 — all tasks done except Task 8)
-> Status: in-progress
+> Status: done
 > Created: 2026-04-03
 >
 > **Context:** v1 Tasks 1-7 are complete. This task list covers only the delta work from the v2 design review. Agent definitions (v1 Tasks 2-3) are unaffected and not listed here.
@@ -62,14 +62,14 @@
 - [x] 5.3 Add per-checkpoint override note: user can say "use standard review for this one" to override the session flag
 
 ## Task 6: Final verification
-- **Status:** pending
+- **Status:** done
 - **Depends on:** Task 1, Task 2, Task 3, Task 4, Task 5
 
 ### Subtasks
-- [ ] 6.1 Verify `review-reconciliation-protocol.md` is deleted and no dangling references remain (search for `reconciliation-protocol` across repo)
-- [ ] 6.2 Verify neither `review-isolated.md` file contains disposition categories (Confirmed, Disputed — Intentional, Disputed — False Positive) — search for these strings
-- [ ] 6.3 Verify error handling is present in both `review-isolated.md` files
-- [ ] 6.4 Run `testing-process` skill to verify all components
-- [ ] 6.5 Run `documentation-process` skill to update any relevant docs
-- [ ] 6.6 Run `solid-code-review` skill to review the changed files
-- [ ] 6.7 Run `implementation-review` skill to verify implementation matches design-v2 and implementation-v2 docs
+- [x] 6.1 Verify `review-reconciliation-protocol.md` is deleted and no dangling references remain (search for `reconciliation-protocol` across repo)
+- [x] 6.2 Verify neither `review-isolated.md` file contains disposition categories (Confirmed, Disputed — Intentional, Disputed — False Positive) — search for these strings
+- [x] 6.3 Verify error handling is present in both `review-isolated.md` files
+- [x] 6.4 Run `testing-process` skill to verify all components — N/A (config-only repo, no application code; manual verification performed)
+- [x] 6.5 Run `documentation-process` skill to update any relevant docs — updated design-v2 status to done, tasks-v2 status to done, fixed stale "reconciliation phase" wording in agent definitions
+- [x] 6.6 Run `solid-code-review` skill to review the changed files — manual review performed; one P3 OUTDATED_DOC finding (reconciliation→annotation in agent defs) fixed
+- [x] 6.7 Run `implementation-review` skill to verify implementation matches design-v2 and implementation-v2 docs — full manual verification against all design-v2 sections, all conformant
