@@ -102,7 +102,7 @@ jobs:
           echo "" >> "$GITHUB_STEP_SUMMARY"
           echo "**Actions that would be performed:**" >> "$GITHUB_STEP_SUMMARY"
           echo "1. Update \`klaude-plugin/.claude-plugin/plugin.json\` version to \`$SEMVER\`" >> "$GITHUB_STEP_SUMMARY"
-          echo "2. Commit: \`chore: release $VERSION\`" >> "$GITHUB_STEP_SUMMARY"
+          echo "2. Commit: \`Release $VERSION\`" >> "$GITHUB_STEP_SUMMARY"
           echo "3. Tag: \`$VERSION\`" >> "$GITHUB_STEP_SUMMARY"
           echo "4. Push commit and tag" >> "$GITHUB_STEP_SUMMARY"
           echo "5. Create GitHub release with auto-generated notes" >> "$GITHUB_STEP_SUMMARY"
@@ -134,7 +134,7 @@ jobs:
           git config --local user.email "action@github.com"
           git config --local user.name "GitHub Action"
           git add klaude-plugin/.claude-plugin/plugin.json
-          git commit -m "chore: release $VERSION"
+          git commit -m "Release $VERSION"
           git tag "$VERSION"
           echo "Created commit and tag $VERSION"
 
