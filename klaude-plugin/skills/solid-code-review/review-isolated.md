@@ -1,7 +1,6 @@
 ### Workflow
 
 For capy knowledge base conventions, see [capy-knowledge-protocol.md](../_shared/capy-knowledge-protocol.md).
-For reconciliation rules, see [review-reconciliation-protocol.md](../_shared/review-reconciliation-protocol.md).
 
 Copy this checklist and check off items as you complete them:
 
@@ -9,15 +8,15 @@ Copy this checklist and check off items as you complete them:
 Isolated Code Review Progress:
 - [ ] Step 1: Prepare artifacts
 - [ ] Step 2: Spawn reviewers (parallel)
-- [ ] Step 3: Reconcile findings
-- [ ] Step 4: Present consolidated report
+- [ ] Step 3: Annotate findings
+- [ ] Step 4: Present report
 ```
 
 ---
 
 ## Step 1: Prepare Artifacts
 
-Gather the artifacts that will be passed to the sub-agent.
+Gather the artifacts that will be passed to the sub-agents.
 
 ### 1a) Capture the diff
 
@@ -25,7 +24,7 @@ Run `git diff --stat` and `git diff` to capture the changes under review. If the
 
 **Edge cases:**
 - **No changes**: Inform the user and stop.
-- **Large diff (>500 lines)**: Proceed — the sub-agent handles batching internally.
+- **Large diff (>500 lines)**: Proceed — the sub-agent handles batching internally. If the diff exceeds the sub-agent's context window, note the limitation and suggest the user scope the review to specific files or tasks.
 
 ### 1b) Locate spec context
 
@@ -52,6 +51,10 @@ From the `git diff --stat` output, identify the primary language by file extensi
 ### 1d) Resolve pal model
 
 Call `pal` `listmodels` to get available models. Select the most capable model (prefer latest generation with thinking/reasoning support) for the `pal` codereview call in Step 2.
+
+### 1e) Curate rejected approaches
+
+Before spawning sub-agents, prepare a brief summary of approaches that were tried and failed during implementation. Keep it to concrete facts ("approach X caused regression Y"), not the full debugging narrative. If no approaches were rejected, skip this.
 
 ---
 
@@ -87,6 +90,10 @@ klaude-plugin/skills/solid-code-review/reference/{language_key}/
 
 {spec excerpt from Step 1b, or "No spec context available — review based on code quality alone."}
 
+## Rejected Approaches
+
+{curated rejected approaches from Step 1e, or "No rejected approaches to note."}
+
 Produce your findings in the output format specified in your agent definition.
 ```
 
@@ -96,64 +103,100 @@ Call the `pal` `codereview` MCP tool directly with:
 - The git diff as input
 - The most capable model resolved in Step 1d
 
-`pal` is an external model with no conversation context — naturally isolated without needing a sub-agent wrapper.
+`pal` is an external model with no conversation context — naturally isolated without needing a sub-agent wrapper. Its output stays in **native format** — do NOT map it to P0-P3 severity levels.
 
 ### Parallel execution
 
 Both the Agent tool call (Reviewer A) and the `pal` `codereview` MCP call (Reviewer B) MUST appear in the same message to execute in parallel. Do NOT wait for one to finish before starting the other.
 
----
+### Error handling
 
-## Step 3: Reconcile Findings
+Handle reviewer failures inline as they occur:
 
-Follow the [review-reconciliation-protocol.md](../_shared/review-reconciliation-protocol.md) strictly.
-
-### 3a) Collect findings
-
-- Parse the `code-reviewer` sub-agent's structured output (P0-P3 format with file:line, confidence, description)
-- Parse the `pal` codereview output and map its findings to P0-P3 severity levels
-
-### 3b) Cross-reference
-
-Compare findings from both reviewers:
-- **Same logical issue** (same file region, same class of problem): Mark as **Duplicate**, merge into the higher-quality description, apply severity escalation (one level up)
-- **Unique to one reviewer**: Evaluate independently
-
-### 3c) Assign dispositions
-
-For every finding from both reviewers, assign exactly one disposition:
-
-| Disposition | When to use |
-|---|---|
-| **Confirmed** | Finding is valid regardless of your session context |
-| **Disputed — Intentional** | You made a deliberate decision during implementation that explains this. State the specific reason |
-| **Disputed — False Positive** | Finding is incorrect. Cite specific evidence (code path, test, spec section, constraint) |
-| **Duplicate** | Same issue from both reviewers. Merge and escalate severity |
-
-**Invariants** — these are non-negotiable:
-- Every finding MUST appear in the report with a disposition
-- You MUST NOT add new findings (you already had your chance during implementation)
-- Disputed findings still appear — the user decides
-- Agreement escalates severity by one level
+- **`pal` failure** (listmodels returns no models, or codereview fails): Note the failure, proceed to Step 3 with code-reviewer findings only.
+- **`code-reviewer` sub-agent failure** (timeout or error): Note the failure, proceed to Step 3 with pal findings only. Suggest `/kk:solid-code-review` (standard mode) as supplement.
+- **Both reviewers fail**: Abort isolated mode. Display message suggesting fallback to `/kk:solid-code-review` (standard mode). Do not proceed to Step 3.
+- **Malformed output**: Attempt best-effort parsing. If completely unparseable, treat as a failure and apply the rules above.
 
 ---
 
-## Step 4: Present Consolidated Report
+## Step 3: Annotate Findings
 
-Use the consolidated report template from [review-reconciliation-protocol.md](../_shared/review-reconciliation-protocol.md).
+The main agent performs annotation — providing context, not judgment. Do NOT assign dispositions (Confirmed, Disputed, etc.). The user is the final arbiter.
 
-### Report content
+### 3a) Duplicate merging
 
-- **Reviewers**: `code-reviewer (sub-agent), pal codereview (external model — {model name})`
-- **Files reviewed**: from `git diff --stat`
-- **Findings**: grouped by effective severity (P0-P3), each with:
-  - `file:line` location
-  - Which reviewer(s) flagged it
-  - Disposition and reasoning (if Disputed)
-  - Confidence percentage with reasoning
-  - Description and suggested fix
-- **Reconciliation summary table**: all findings with original severity, disposition, effective severity, and action
-- **Reviewer disagreements**: if reviewers contradicted each other on the same code
+Compare findings from both reviewers by file location and issue description:
+
+- When both flag the same logical issue: merge into one entry, tag as **"corroborated"** — independent confirmation from different models is high signal.
+- Severity stays as each reviewer assessed it. If they disagree on severity, show both assessments side by side.
+- If only one reviewer flagged an issue, keep it as-is with reviewer attribution.
+
+### 3b) Author context annotations
+
+For each finding, consider whether the implementation session context adds relevant information:
+
+- If yes: add a clearly-labeled **"Author context"** annotation explaining the decision (e.g., "I chose bcrypt cost 10 because benchmarks showed cost 12 added 400ms").
+- If no: leave the finding as-is — not every finding needs an annotation.
+- Annotations are context, not judgments. "I chose X because Y" is correct. "This finding is invalid" is **not**.
+
+### 3c) Author-sourced findings
+
+If the close re-reading during annotation triggers new observations, add them:
+
+- Tag as **"author-sourced"** — clearly distinct from sub-agent findings.
+- The user knows these come from the author and can weight accordingly.
+
+### 3d) pal follow-up (optional)
+
+If a pal finding is ambiguous or unclear, the main agent MAY use pal's follow-up interaction capability to clarify before presenting to the user.
+
+---
+
+## Step 4: Present Report
+
+Use this report template, organized by agreement level:
+
+```markdown
+## Review Summary (Isolated Mode)
+
+**Reviewers**: code-reviewer (Claude sub-agent), pal codereview ([model name])
+**Files reviewed**: X files, Y lines changed
+
+---
+
+### Corroborated Findings
+(Both reviewers flagged — highest signal)
+
+- **[file:line]** Brief title ⟨corroborated⟩
+  - code-reviewer: [severity] — [description]
+  - pal: [description in native format]
+  - Author context: [optional annotation]
+
+### Code Reviewer Findings
+(code-reviewer sub-agent only — P0-P3 format)
+
+- **[file:line]** Brief title
+  - Severity: P[0-3] | Confidence: [X]%
+  - [description and suggested fix]
+  - Author context: [optional annotation]
+
+### External Review Findings
+(pal codereview — native format)
+
+- [pal output presented in its native format]
+  - Author context: [optional annotation]
+
+### Author-Sourced Findings
+(Main agent observations during annotation — weight accordingly)
+
+- **[file:line]** Brief title ⟨author-sourced⟩
+  - [description]
+```
+
+**Section rules:**
+- Omit any section that has no findings (e.g., if no corroborated findings, skip that section).
+- If a reviewer failed and only one reviewer's findings are present, note the failure at the top and present the available findings under the appropriate section.
 
 ### Next steps
 
@@ -164,12 +207,12 @@ After presenting the report, ask the user how to proceed:
 
 ## Next Steps
 
-I found X issues (P0: ..., P1: ..., P2: ..., P3: ...).
+I found X issues (corroborated: ..., code-reviewer: ..., pal: ..., author-sourced: ...).
 
 **How would you like to proceed?**
 
 1. **Fix all** — I'll implement all suggested fixes
-2. **Fix P0/P1 only** — Address critical and high priority issues
+2. **Fix corroborated + high severity** — Address corroborated findings and P0/P1 issues
 3. **Fix specific items** — Tell me which issues to fix
 4. **No changes** — Review complete, no implementation needed
 
