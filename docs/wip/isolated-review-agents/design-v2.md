@@ -1,6 +1,6 @@
 # Design v2: Isolated Review Agents
 
-> Status: draft
+> Status: done
 > Created: 2026-04-02
 > Updated: 2026-04-03 (v2 — incorporates review feedback from design-review-v1 and design-review-v2)
 > Previous version: [design.md](./design.md)

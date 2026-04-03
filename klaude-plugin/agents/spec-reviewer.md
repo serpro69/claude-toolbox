@@ -126,7 +126,7 @@ Drop any finding you cannot substantiate on re-review.
 
 ## Output Format
 
-Structure your output exactly as follows. This is the contract the reconciliation phase depends on.
+Structure your output exactly as follows. This is the contract the annotation phase depends on.
 
 ```markdown
 ## Spec Conformance Findings
