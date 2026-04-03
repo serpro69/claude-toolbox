@@ -801,12 +801,26 @@ apply_substitutions() {
   # --- Claude Code Settings (claude/settings.json) ---
   local cc_settings_file="$output_dir/claude/settings.json"
   if [[ -f "$cc_settings_file" ]]; then
-    # Use downstream's settings.json as the base if it exists, so we only
-    # modify managed keys and avoid key-reordering noise in diffs.
+    # Smart-merge upstream template into downstream's settings.json.
+    # Downstream is "master": existing values are never overwritten.
+    # Upstream fills gaps: new keys/array entries are added.
     # Falls back to the upstream template copy for first-time sync.
     local downstream_settings=".claude/settings.json"
     if [[ -f "$downstream_settings" ]]; then
-      cp "$downstream_settings" "$cc_settings_file"
+      # $cc_settings_file contains the upstream template copy at this point.
+      # Read downstream as jq input, upstream via --slurpfile.
+      jq --slurpfile upstream "$cc_settings_file" '
+        def smart_merge($u):
+          if (type == "object") and ($u | type == "object") then
+            reduce ($u | keys[]) as $k (.;
+              if has($k) then .[$k] = (.[$k] | smart_merge($u[$k]))
+              else .[$k] = $u[$k] end)
+          elif (type == "array") and ($u | type == "array") then
+            . as $d | . + [$u[] | select(. as $i | $d | index($i) | not)]
+          else . end;
+        smart_merge($upstream[0])
+      ' "$downstream_settings" > "${cc_settings_file}.tmp" \
+        && mv "${cc_settings_file}.tmp" "$cc_settings_file"
     fi
 
     local statusline_script="statusline_enhanced.sh"
