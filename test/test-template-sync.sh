@@ -642,10 +642,10 @@ output_dir="$test_dir/output"
 apply_substitutions "$test_dir/templates" "$output_dir" 2>/dev/null
 popd >/dev/null
 
-# effortLevel: downstream had "medium", manifest doesn't set it (no CC_EFFORT_LEVEL),
-# so backfill defaults to "high". The merge keeps downstream's "medium", then
-# manifest substitution sets "high" (the default).
-# What matters here: the smart merge doesn't override, the manifest does.
+# This tests the full pipeline: merge keeps downstream's "medium", then manifest
+# substitution overrides to "high" (CC_EFFORT_LEVEL defaults to "high").
+# Scalar merge preservation is validated by the "nested object merge" test below
+# where env.B stays as the downstream value with no manifest override.
 result=$(jq -r '.effortLevel' "$output_dir/claude/settings.json")
 assert_equals "high" "$result" "effortLevel set by manifest default after merge"
 
@@ -894,6 +894,40 @@ popd >/dev/null
 result=$(jq -r '.enabledMcpjsonServers | length' "$output_dir/claude/settings.json")
 assert_equals "1" "$result" "Empty upstream array does not add entries"
 assert_equals "capy" "$(jq -r '.enabledMcpjsonServers[0]' "$output_dir/claude/settings.json")" "Downstream entry preserved"
+
+log_test "smart merge: type mismatch preserves downstream value"
+reset_globals
+test_dir=$(create_temp_dir "merge-type-mismatch")
+create_merge_test_manifest "$test_dir/manifest.json"
+MANIFEST_PATH="$test_dir/manifest.json"
+
+mkdir -p "$test_dir/templates/claude"
+cat >"$test_dir/templates/claude/settings.json" <<'EOF'
+{
+  "customSetting": { "nested": "object" },
+  "anotherSetting": ["an", "array"],
+  "permissions": { "defaultMode": "default" },
+  "statusLine": { "command": "bash statusline_enhanced.sh" }
+}
+EOF
+
+mkdir -p "$test_dir/project/.claude"
+cat >"$test_dir/project/.claude/settings.json" <<'EOF'
+{
+  "customSetting": "a-string-not-object",
+  "anotherSetting": "a-string-not-array",
+  "permissions": { "defaultMode": "default" },
+  "statusLine": { "command": "bash statusline_enhanced.sh" }
+}
+EOF
+
+pushd "$test_dir/project" >/dev/null
+output_dir="$test_dir/output"
+apply_substitutions "$test_dir/templates" "$output_dir" 2>/dev/null
+popd >/dev/null
+
+assert_equals "a-string-not-object" "$(jq -r '.customSetting' "$output_dir/claude/settings.json")" "Downstream string preserved when upstream has object"
+assert_equals "a-string-not-array" "$(jq -r '.anotherSetting' "$output_dir/claude/settings.json")" "Downstream string preserved when upstream has array"
 
 # =============================================================================
 # Section 6: File Comparison Tests
