@@ -18,17 +18,17 @@
 - [x] 1.2 Delete `klaude-plugin/skills/_shared/review-reconciliation-protocol.md`
 
 ## Task 2: Rework isolated code review workflow
-- **Status:** pending
+- **Status:** done
 - **Depends on:** Task 1
 - **Docs:** [implementation-v2.md#task-2-rework-isolated-code-review-workflow](./implementation-v2.md#task-2-rework-isolated-code-review-workflow)
 
 ### Subtasks
-- [ ] 2.1 Update Step 1 in `klaude-plugin/skills/solid-code-review/review-isolated.md` to add curated rejected approaches preparation
-- [ ] 2.2 Update Step 2 to add error handling: pal failure (proceed with code-reviewer only), code-reviewer failure (proceed with pal only), both fail (abort with fallback suggestion), malformed output (best-effort parse then failure)
-- [ ] 2.3 Replace Step 3 ("Reconcile") with "Annotate" — remove all disposition logic (Confirmed, Disputed, etc.), replace with: duplicate merging with "corroborated" tag, author context annotations, author-sourced findings, optional pal follow-up
-- [ ] 2.4 Replace Step 4 ("Report") with simplified presentation organized by agreement level: corroborated → single-reviewer → author-sourced. Remove reconciliation summary table. Use report template from design-v2.md
-- [ ] 2.5 Remove all references to the shared reconciliation protocol — annotation logic is now inline
-- [ ] 2.6 Remove pal-to-P0-P3 format mapping — pal output stays in native format
+- [x] 2.1 Update Step 1 in `klaude-plugin/skills/solid-code-review/review-isolated.md` to add curated rejected approaches preparation
+- [x] 2.2 Update Step 2 to add error handling: pal failure (proceed with code-reviewer only), code-reviewer failure (proceed with pal only), both fail (abort with fallback suggestion), malformed output (best-effort parse then failure)
+- [x] 2.3 Replace Step 3 ("Reconcile") with "Annotate" — remove all disposition logic (Confirmed, Disputed, etc.), replace with: duplicate merging with "corroborated" tag, author context annotations, author-sourced findings, optional pal follow-up
+- [x] 2.4 Replace Step 4 ("Report") with simplified presentation organized by agreement level: corroborated → single-reviewer → author-sourced. Remove reconciliation summary table. Use report template from design-v2.md
+- [x] 2.5 Remove all references to the shared reconciliation protocol — annotation logic is now inline
+- [x] 2.6 Remove pal-to-P0-P3 format mapping — pal output stays in native format
 
 ## Task 3: Rework isolated spec conformance workflow
 - **Status:** pending
