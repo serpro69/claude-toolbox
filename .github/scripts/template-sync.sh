@@ -809,7 +809,7 @@ apply_substitutions() {
     if [[ -f "$downstream_settings" ]]; then
       # $cc_settings_file contains the upstream template copy at this point.
       # Read downstream as jq input, upstream via --slurpfile.
-      jq --slurpfile upstream "$cc_settings_file" '
+      if jq --slurpfile upstream "$cc_settings_file" '
         def smart_merge($u):
           if (type == "object") and ($u | type == "object") then
             reduce ($u | keys[]) as $k (.;
@@ -819,8 +819,13 @@ apply_substitutions() {
             . as $d | . + [$u[] | select(. as $i | $d | index($i) | not)]
           else . end;
         smart_merge($upstream[0])
-      ' "$downstream_settings" > "${cc_settings_file}.tmp" \
-        && mv "${cc_settings_file}.tmp" "$cc_settings_file"
+      ' "$downstream_settings" > "${cc_settings_file}.tmp"; then
+        mv "${cc_settings_file}.tmp" "$cc_settings_file"
+      else
+        log_warn "Smart merge failed — downstream .claude/settings.json may contain invalid JSON"
+        log_warn "Falling back to upstream template for settings.json"
+        rm -f "${cc_settings_file}.tmp"
+      fi
     fi
 
     local statusline_script="statusline_enhanced.sh"
@@ -842,8 +847,10 @@ apply_substitutions() {
       if $cc_effort_level == "default" then del(.effortLevel) else .effortLevel = $cc_effort_level end |
       # Permission mode
       .permissions.defaultMode = $cc_permission_mode |
-      # Statusline script
-      .statusLine.command = (.statusLine.command | gsub("statusline_enhanced\\.sh"; $statusline_script)) |
+      # Statusline script (guard against null/missing statusLine)
+      (if (.statusLine.command | type) == "string" then
+        .statusLine.command |= gsub("statusline_enhanced\\.sh"; $statusline_script)
+      else . end) |
       # Plugin marketplace: directory -> github source for downstream
       .extraKnownMarketplaces."claude-toolbox".source = { "source": "github", "repo": $repo }
       ' "$cc_settings_file" > "${cc_settings_file}.tmp" && mv "${cc_settings_file}.tmp" "$cc_settings_file"
