@@ -15,7 +15,11 @@ The repo serves dual purposes:
 2. **Plugin marketplace** — install the `kk` plugin via the Claude Code plugin system to get skills, commands, and hooks
 
 > [!NOTE]
-> We focus on collaborative development. Most claude- and mcp-related settings are project-scoped (`.claude/settings.json`) so they can be shared across your team via git, rather than living in user-scoped `~/.claude.local.json`.
+> We focus on collaborative development. Claude Code settings are split between two project-scoped files:
+> - **`.claude/settings.json`** — upstream-managed defaults, synced to all downstream repos (permissions baseline, env vars, model, plugins, statusline)
+> - **`.claude/settings.local.json`** — per-repo overrides, never synced (hooks, MCP server enables, additional permissions, personal preferences)
+>
+> "Don't ask again" permission grants land in `settings.local.json` automatically.
 
 ## What's Included
 
@@ -47,7 +51,7 @@ Includes: **analysis-process**, **implementation-process**, **testing-process**,
 
 ### Other Configuration
 
-- **Permission allowlist/denylist** (`.claude/settings.json`) — auto-approves safe tools (context7, serena, pal code review) while blocking dangerous ones
+- **Permission allowlist/denylist** (`.claude/settings.json`) — baseline permissions: auto-approves safe bash commands and WebSearch while blocking dangerous patterns. Per-repo MCP tool permissions go in `settings.local.json`.
 - **Status line** (`.claude/scripts/statusline_enhanced.sh`) — rich statusline with model, context %, git branch, session duration, thinking mode, and rate limits. Themes: set `CLAUDE_STATUSLINE_THEME` to `darcula`, `nord`, or `catppuccin`, and `CLAUDE_STATUSLINE_MODE` to `dark` (default) or `light` to match your terminal background
 - **Serena config** (`.serena/project.yml`) — language detection, gitignore integration, encoding settings
 
@@ -214,7 +218,13 @@ Repos created from this template can pull configuration updates via the **Templa
 
 **Updated:** `.claude/` (settings, CLAUDE.extra.md, statusline scripts), `.serena/`, and the sync infrastructure itself. Skills, commands, and hooks are managed by the plugin system — not template sync.
 
-**Preserved:** Project-specific values (name, language, prompts), user-scoped files (local settings), gitignored files
+**Preserved:** Project-specific values (name, language, prompts), `settings.local.json`, gitignored files
+
+**settings.json merge behavior:** The sync uses smart-merge semantics — your downstream `settings.json` is "master" and upstream fills gaps:
+- **New keys** from upstream are added (e.g., new deny patterns, new env vars)
+- **Existing values** are never overwritten (your customizations are preserved)
+- **Arrays** are concatenated with deduplication (e.g., new upstream deny rules are appended)
+- **Manifest variables** (`CC_MODEL`, `CC_EFFORT_LEVEL`, etc.) still override after the merge — these are your explicit choices
 
 ### Sync Exclusions
 
@@ -417,7 +427,8 @@ klaude-plugin/                   # kk plugin (distributed via plugin system)
 
 .claude/
 ├── CLAUDE.extra.md              # Always-loaded instructions
-├── settings.json                # Permissions, env vars, marketplace/plugin config
+├── settings.json                # Upstream-managed: permissions baseline, env, model, plugins
+├── settings.local.json          # Per-repo: hooks, MCP enables, additional permissions
 └── scripts/                     # statusline.sh, statusline_enhanced.sh, sync-workflow.sh
 
 .serena/

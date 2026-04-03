@@ -586,6 +586,316 @@ result=$(jq -r '.permissions.defaultMode' "$output_dir/claude/settings.json")
 assert_equals "default" "$result" "CC_PERMISSION_MODE defaults to default when missing"
 
 # =============================================================================
+# Section 5: Smart Merge Tests
+# =============================================================================
+
+log_section "Section 5: Smart Merge (settings.json)"
+
+# Helper: create a standard manifest for smart merge tests
+create_merge_test_manifest() {
+  local manifest_path="$1"
+  local cc_model="${2:-sonnet}"
+  cat >"$manifest_path" <<EOF
+{
+  "schema_version": "1",
+  "upstream_repo": "test/repo",
+  "template_version": "v1.0.0",
+  "synced_at": "2025-01-27T10:00:00Z",
+  "variables": {
+    "PROJECT_NAME": "test-proj",
+    "LANGUAGES": "bash",
+    "CC_MODEL": "$cc_model",
+    "SERENA_INITIAL_PROMPT": ""
+  }
+}
+EOF
+}
+
+log_test "smart merge: downstream scalar wins over upstream"
+reset_globals
+test_dir=$(create_temp_dir "merge-scalar-wins")
+create_merge_test_manifest "$test_dir/manifest.json" "medium-model"
+MANIFEST_PATH="$test_dir/manifest.json"
+
+# Upstream template
+mkdir -p "$test_dir/templates/claude"
+cat >"$test_dir/templates/claude/settings.json" <<'EOF'
+{
+  "effortLevel": "high",
+  "permissions": { "defaultMode": "default" },
+  "statusLine": { "command": "bash statusline_enhanced.sh" }
+}
+EOF
+
+# Downstream project
+mkdir -p "$test_dir/project/.claude"
+cat >"$test_dir/project/.claude/settings.json" <<'EOF'
+{
+  "effortLevel": "medium",
+  "permissions": { "defaultMode": "plan" },
+  "statusLine": { "command": "bash statusline_enhanced.sh" }
+}
+EOF
+
+pushd "$test_dir/project" >/dev/null
+output_dir="$test_dir/output"
+apply_substitutions "$test_dir/templates" "$output_dir" 2>/dev/null
+popd >/dev/null
+
+# effortLevel: downstream had "medium", manifest doesn't set it (no CC_EFFORT_LEVEL),
+# so backfill defaults to "high". The merge keeps downstream's "medium", then
+# manifest substitution sets "high" (the default).
+# What matters here: the smart merge doesn't override, the manifest does.
+result=$(jq -r '.effortLevel' "$output_dir/claude/settings.json")
+assert_equals "high" "$result" "effortLevel set by manifest default after merge"
+
+log_test "smart merge: new key from upstream added to downstream"
+reset_globals
+test_dir=$(create_temp_dir "merge-new-key")
+create_merge_test_manifest "$test_dir/manifest.json"
+MANIFEST_PATH="$test_dir/manifest.json"
+
+mkdir -p "$test_dir/templates/claude"
+cat >"$test_dir/templates/claude/settings.json" <<'EOF'
+{
+  "effortLevel": "high",
+  "enabledPlugins": { "kk@claude-toolbox": true },
+  "permissions": { "defaultMode": "default" },
+  "statusLine": { "command": "bash statusline_enhanced.sh" }
+}
+EOF
+
+mkdir -p "$test_dir/project/.claude"
+cat >"$test_dir/project/.claude/settings.json" <<'EOF'
+{
+  "effortLevel": "high",
+  "permissions": { "defaultMode": "default" },
+  "statusLine": { "command": "bash statusline_enhanced.sh" }
+}
+EOF
+
+pushd "$test_dir/project" >/dev/null
+output_dir="$test_dir/output"
+apply_substitutions "$test_dir/templates" "$output_dir" 2>/dev/null
+popd >/dev/null
+
+if jq -e '.enabledPlugins["kk@claude-toolbox"]' "$output_dir/claude/settings.json" &>/dev/null; then
+  log_pass "enabledPlugins added from upstream"
+else
+  log_fail "enabledPlugins should be added from upstream when missing in downstream"
+fi
+
+log_test "smart merge: arrays concat and deduplicate"
+reset_globals
+test_dir=$(create_temp_dir "merge-array-concat")
+create_merge_test_manifest "$test_dir/manifest.json"
+MANIFEST_PATH="$test_dir/manifest.json"
+
+mkdir -p "$test_dir/templates/claude"
+cat >"$test_dir/templates/claude/settings.json" <<'EOF'
+{
+  "permissions": {
+    "allow": ["Bash(cat:*)", "WebSearch"],
+    "defaultMode": "default"
+  },
+  "statusLine": { "command": "bash statusline_enhanced.sh" }
+}
+EOF
+
+mkdir -p "$test_dir/project/.claude"
+cat >"$test_dir/project/.claude/settings.json" <<'EOF'
+{
+  "permissions": {
+    "allow": ["Bash(cat:*)", "Bash(ls:*)"],
+    "defaultMode": "default"
+  },
+  "statusLine": { "command": "bash statusline_enhanced.sh" }
+}
+EOF
+
+pushd "$test_dir/project" >/dev/null
+output_dir="$test_dir/output"
+apply_substitutions "$test_dir/templates" "$output_dir" 2>/dev/null
+popd >/dev/null
+
+result=$(jq -r '.permissions.allow | length' "$output_dir/claude/settings.json")
+assert_equals "3" "$result" "Allow list has 3 entries (deduped concat)"
+
+# Verify specific entries
+assert_equals "Bash(cat:*)" "$(jq -r '.permissions.allow[0]' "$output_dir/claude/settings.json")" "First entry from downstream preserved"
+assert_equals "Bash(ls:*)" "$(jq -r '.permissions.allow[1]' "$output_dir/claude/settings.json")" "Second entry from downstream preserved"
+assert_equals "WebSearch" "$(jq -r '.permissions.allow[2]' "$output_dir/claude/settings.json")" "Upstream-only entry appended"
+
+log_test "smart merge: deny list propagation from upstream"
+reset_globals
+test_dir=$(create_temp_dir "merge-deny-propagation")
+create_merge_test_manifest "$test_dir/manifest.json"
+MANIFEST_PATH="$test_dir/manifest.json"
+
+mkdir -p "$test_dir/templates/claude"
+cat >"$test_dir/templates/claude/settings.json" <<'EOF'
+{
+  "permissions": {
+    "deny": ["Bash(rm:*)", "Read(*.log)", "Read(*.pyc)"],
+    "defaultMode": "default"
+  },
+  "statusLine": { "command": "bash statusline_enhanced.sh" }
+}
+EOF
+
+mkdir -p "$test_dir/project/.claude"
+cat >"$test_dir/project/.claude/settings.json" <<'EOF'
+{
+  "permissions": {
+    "deny": ["Bash(rm:*)", "Read(*.csv)"],
+    "defaultMode": "default"
+  },
+  "statusLine": { "command": "bash statusline_enhanced.sh" }
+}
+EOF
+
+pushd "$test_dir/project" >/dev/null
+output_dir="$test_dir/output"
+apply_substitutions "$test_dir/templates" "$output_dir" 2>/dev/null
+popd >/dev/null
+
+result=$(jq -r '.permissions.deny | length' "$output_dir/claude/settings.json")
+assert_equals "4" "$result" "Deny list has 4 entries (downstream 2 + upstream 2 new)"
+# Downstream entries first, then upstream additions
+assert_equals "Read(*.csv)" "$(jq -r '.permissions.deny[1]' "$output_dir/claude/settings.json")" "Downstream deny entry preserved"
+assert_equals "Read(*.log)" "$(jq -r '.permissions.deny[2]' "$output_dir/claude/settings.json")" "Upstream deny entry added"
+
+log_test "smart merge: nested object merge (env)"
+reset_globals
+test_dir=$(create_temp_dir "merge-nested-object")
+create_merge_test_manifest "$test_dir/manifest.json"
+MANIFEST_PATH="$test_dir/manifest.json"
+
+mkdir -p "$test_dir/templates/claude"
+cat >"$test_dir/templates/claude/settings.json" <<'EOF'
+{
+  "env": { "A": "1", "B": "upstream-val" },
+  "permissions": { "defaultMode": "default" },
+  "statusLine": { "command": "bash statusline_enhanced.sh" }
+}
+EOF
+
+mkdir -p "$test_dir/project/.claude"
+cat >"$test_dir/project/.claude/settings.json" <<'EOF'
+{
+  "env": { "B": "downstream-val", "C": "3" },
+  "permissions": { "defaultMode": "default" },
+  "statusLine": { "command": "bash statusline_enhanced.sh" }
+}
+EOF
+
+pushd "$test_dir/project" >/dev/null
+output_dir="$test_dir/output"
+apply_substitutions "$test_dir/templates" "$output_dir" 2>/dev/null
+popd >/dev/null
+
+assert_equals "downstream-val" "$(jq -r '.env.B' "$output_dir/claude/settings.json")" "Downstream env.B preserved"
+assert_equals "3" "$(jq -r '.env.C' "$output_dir/claude/settings.json")" "Downstream env.C preserved"
+assert_equals "1" "$(jq -r '.env.A' "$output_dir/claude/settings.json")" "Upstream env.A added"
+
+log_test "smart merge: manifest substitution overrides merge result"
+reset_globals
+test_dir=$(create_temp_dir "merge-manifest-override")
+create_merge_test_manifest "$test_dir/manifest.json" "haiku"
+MANIFEST_PATH="$test_dir/manifest.json"
+
+mkdir -p "$test_dir/templates/claude"
+cat >"$test_dir/templates/claude/settings.json" <<'EOF'
+{
+  "model": "opus",
+  "permissions": { "defaultMode": "default" },
+  "statusLine": { "command": "bash statusline_enhanced.sh" }
+}
+EOF
+
+mkdir -p "$test_dir/project/.claude"
+cat >"$test_dir/project/.claude/settings.json" <<'EOF'
+{
+  "model": "sonnet",
+  "permissions": { "defaultMode": "default" },
+  "statusLine": { "command": "bash statusline_enhanced.sh" }
+}
+EOF
+
+pushd "$test_dir/project" >/dev/null
+output_dir="$test_dir/output"
+apply_substitutions "$test_dir/templates" "$output_dir" 2>/dev/null
+popd >/dev/null
+
+result=$(jq -r '.model' "$output_dir/claude/settings.json")
+assert_equals "haiku" "$result" "Manifest CC_MODEL overrides merge result (downstream had sonnet)"
+
+log_test "smart merge: first-time sync uses upstream as-is"
+reset_globals
+test_dir=$(create_temp_dir "merge-first-time")
+create_merge_test_manifest "$test_dir/manifest.json" "opus"
+MANIFEST_PATH="$test_dir/manifest.json"
+
+mkdir -p "$test_dir/templates/claude"
+cat >"$test_dir/templates/claude/settings.json" <<'EOF'
+{
+  "effortLevel": "high",
+  "enabledPlugins": { "kk@claude-toolbox": true },
+  "permissions": { "defaultMode": "default" },
+  "model": "placeholder",
+  "statusLine": { "command": "bash statusline_enhanced.sh" }
+}
+EOF
+
+# No downstream .claude/settings.json — first-time sync
+mkdir -p "$test_dir/project"
+pushd "$test_dir/project" >/dev/null
+output_dir="$test_dir/output"
+apply_substitutions "$test_dir/templates" "$output_dir" 2>/dev/null
+popd >/dev/null
+
+result=$(jq -r '.model' "$output_dir/claude/settings.json")
+assert_equals "opus" "$result" "Model set from manifest on first-time sync"
+if jq -e '.enabledPlugins' "$output_dir/claude/settings.json" &>/dev/null; then
+  log_pass "enabledPlugins present from upstream template"
+else
+  log_fail "enabledPlugins should be present from upstream on first-time sync"
+fi
+
+log_test "smart merge: empty upstream array does not duplicate downstream entries"
+reset_globals
+test_dir=$(create_temp_dir "merge-empty-array")
+create_merge_test_manifest "$test_dir/manifest.json"
+MANIFEST_PATH="$test_dir/manifest.json"
+
+mkdir -p "$test_dir/templates/claude"
+cat >"$test_dir/templates/claude/settings.json" <<'EOF'
+{
+  "enabledMcpjsonServers": [],
+  "permissions": { "defaultMode": "default" },
+  "statusLine": { "command": "bash statusline_enhanced.sh" }
+}
+EOF
+
+mkdir -p "$test_dir/project/.claude"
+cat >"$test_dir/project/.claude/settings.json" <<'EOF'
+{
+  "enabledMcpjsonServers": ["capy"],
+  "permissions": { "defaultMode": "default" },
+  "statusLine": { "command": "bash statusline_enhanced.sh" }
+}
+EOF
+
+pushd "$test_dir/project" >/dev/null
+output_dir="$test_dir/output"
+apply_substitutions "$test_dir/templates" "$output_dir" 2>/dev/null
+popd >/dev/null
+
+result=$(jq -r '.enabledMcpjsonServers | length' "$output_dir/claude/settings.json")
+assert_equals "1" "$result" "Empty upstream array does not add entries"
+assert_equals "capy" "$(jq -r '.enabledMcpjsonServers[0]' "$output_dir/claude/settings.json")" "Downstream entry preserved"
+
+# =============================================================================
 # Section 6: File Comparison Tests
 # =============================================================================
 
