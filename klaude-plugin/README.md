@@ -45,9 +45,11 @@ Use **solid-code-review** and **implementation-review** at any point for quality
 
 | Command | Invocation | Description |
 |---------|-----------|-------------|
+| Code Review (isolated) | `/kk:solid-code-review:isolated` | SOLID code review with independent sub-agents |
 | CoVe (standard) | `/kk:cove:cove [question]` | Chain-of-Verification with prompt-based isolation |
 | CoVe (isolated) | `/kk:cove:cove-isolated [--explore] [--haiku] [question]` | CoVe with true sub-agent isolation |
 | Implementation Review | `/kk:implementation-review:implementation-review [feature]` | Verify code matches design/implementation docs |
+| Implementation Review (isolated) | `/kk:implementation-review:isolated [feature]` | Spec conformance review with independent sub-agent |
 | Migrate from Task Master | `/kk:migrate-from-taskmaster:migrate` | One-time migration from Task Master MCP |
 | Sync Workflow | `/kk:sync-workflow:sync-workflow [version]` | Update template-sync from upstream |
 
