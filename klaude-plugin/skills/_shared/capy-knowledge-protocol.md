@@ -1,19 +1,19 @@
 # Capy Knowledge Base Protocol
 
-If capy MCP tools are not available in this session, skip all search and index steps below and proceed normally.
+If `capy` MCP tools are not available in this session, skip all search and index steps below and proceed normally.
 
 ## Source Label Taxonomy
 
 All plugin-managed labels use the `kk:` namespace prefix.
 
-| Label | Contents |
-|---|---|
-| `kk:arch-decisions` | Architecture decisions, design rationale, trade-offs |
-| `kk:review-findings` | Code review patterns, recurring issues, anti-patterns |
-| `kk:lang-idioms` | Language best practices, idiomatic patterns from external sources |
+| Label                    | Contents                                                              |
+| ------------------------ | --------------------------------------------------------------------- |
+| `kk:arch-decisions`      | Architecture decisions, design rationale, trade-offs                  |
+| `kk:review-findings`     | Code review patterns, recurring issues, anti-patterns                 |
+| `kk:lang-idioms`         | Language best practices, idiomatic patterns from external sources     |
 | `kk:project-conventions` | Discovered project patterns, naming conventions, structural decisions |
-| `kk:test-patterns` | Testing approaches, edge cases, test infrastructure decisions |
-| `kk:debug-context` | Root causes, tricky bugs and their fixes, environment gotchas |
+| `kk:test-patterns`       | Testing approaches, edge cases, test infrastructure decisions         |
+| `kk:debug-context`       | Root causes, tricky bugs and their fixes, environment gotchas         |
 
 ## Search Conventions
 

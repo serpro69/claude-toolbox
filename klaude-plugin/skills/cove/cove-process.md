@@ -1,9 +1,5 @@
 ### Workflow
 
-For capy knowledge base conventions, see [capy-knowledge-protocol.md](../_shared/capy-knowledge-protocol.md).
-
-**Capy restriction:** CoVe is a read-only verification tool. Do NOT call `capy_index` or `capy_fetch_and_index` during this workflow. Use `capy_search` only. If corrections reveal knowledge worth persisting, the calling agent handles indexing after CoVe completes.
-
 Copy this checklist and check off items as you complete them:
 
 ```
@@ -21,6 +17,7 @@ CoVe Progress:
 Generate the initial answer to the user's question. This establishes a baseline that will be verified.
 
 **Requirements:**
+
 - Mark the response clearly as "Initial Answer"
 - Provide a complete response (not abbreviated)
 - Note any areas of uncertainty
@@ -33,13 +30,13 @@ Create 3-5 targeted questions designed to expose potential errors in the initial
 
 ### Question Categories
 
-| Category | Purpose | Example |
-|----------|---------|---------|
-| Factual | Verify specific claims | "What is the exact release date of X?" |
-| Logical | Check reasoning consistency | "Does conclusion Y follow from premise X?" |
-| Edge cases | Find exceptions | "What happens when input is empty/null?" |
-| Assumptions | Challenge implicit beliefs | "Is it true that all X have property Y?" |
-| Technical | Verify specifications | "What does the official documentation say about X?" |
+| Category    | Purpose                     | Example                                             |
+| ----------- | --------------------------- | --------------------------------------------------- |
+| Factual     | Verify specific claims      | "What is the exact release date of X?"              |
+| Logical     | Check reasoning consistency | "Does conclusion Y follow from premise X?"          |
+| Edge cases  | Find exceptions             | "What happens when input is empty/null?"            |
+| Assumptions | Challenge implicit beliefs  | "Is it true that all X have property Y?"            |
+| Technical   | Verify specifications       | "What does the official documentation say about X?" |
 
 ### Guidelines for Effective Verification Questions
 
@@ -78,18 +75,19 @@ For EACH verification question:
 ### Why Factored Verification Works
 
 Research shows that when the model can see its draft while answering verification questions, it copies the same hallucination. The factored approach eliminates this by:
+
 - Treating each question as a completely independent query
 - Prioritizing external tools over self-reference
 - Preventing cross-contamination between verification answers
 
 ### Tool Usage Priority
 
-| Priority | Tool | Use Case |
-|----------|------|----------|
-| 1st | WebSearch | Current facts, dates, statistics, recent changes |
-| 2nd | context7 | Library docs, API references, technical specs |
-| 3rd | Read/Grep | Code verification, codebase patterns |
-| Last | Internal knowledge | Only when tools unavailable or not applicable |
+| Priority | Tool               | Use Case                                         |
+| -------- | ------------------ | ------------------------------------------------ |
+| 1st      | WebSearch          | Current facts, dates, statistics, recent changes |
+| 2nd      | context7           | Library docs, API references, technical specs    |
+| 3rd      | Read/Grep          | Code verification, codebase patterns             |
+| Last     | Internal knowledge | Only when tools unavailable or not applicable    |
 
 ---
 
@@ -131,33 +129,39 @@ Use this format for CoVe responses:
 
 ```markdown
 ## Initial Answer
+
 [Complete initial response to the question]
 
 ## Verification
 
 ### Q1: [First verification question]
+
 **A1:** [Independent answer - cite source: WebSearch/context7/docs/internal]
 
 ### Q2: [Second verification question]
+
 **A2:** [Independent answer - cite source]
 
 ### Q3: [Third verification question]
+
 **A3:** [Independent answer - cite source]
 
 [Additional questions as needed...]
 
 ## Reconciliation
 
-| Claim | Verification | Status | Action |
-|-------|--------------|--------|--------|
-| [Claim from initial answer] | Q1 | ✓ Confirmed | Keep |
-| [Another claim] | Q2 | ✗ Contradicted | Correct to: [new value] |
-| [Third claim] | Q3 | ? Inconclusive | Mark uncertain |
+| Claim                       | Verification | Status         | Action                  |
+| --------------------------- | ------------ | -------------- | ----------------------- |
+| [Claim from initial answer] | Q1           | ✓ Confirmed    | Keep                    |
+| [Another claim]             | Q2           | ✗ Contradicted | Correct to: [new value] |
+| [Third claim]               | Q3           | ? Inconclusive | Mark uncertain          |
 
 ## Final Verified Answer
+
 [Revised response incorporating all corrections from reconciliation]
 
 **Verification notes:**
+
 - [List corrections: "Changed X to Y based on Q2 verification"]
 - [List confirmations: "Verified X is correct via WebSearch"]
 - [List uncertainties: "Could not verify Y - marked as uncertain"]

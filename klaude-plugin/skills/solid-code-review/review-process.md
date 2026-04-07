@@ -1,7 +1,5 @@
 ### Workflow
 
-For capy knowledge base conventions, see [capy-knowledge-protocol.md](../_shared/capy-knowledge-protocol.md).
-
 Copy this checklist and check off items as you complete them:
 
 ```
@@ -36,12 +34,12 @@ Code Review Progress:
 
 From the `git diff --stat` output in step 1, identify the primary language of changed files by extension:
 
-| Extensions                                   | Reference set      |
-| -------------------------------------------- | ------------------ |
-| `.go`                                        | `reference/go/`    |
-| `.js`, `.ts`, `.jsx`, `.tsx`, `.mjs`, `.cjs` | `reference/js_ts/` |
+| Extensions                                   | Reference set       |
+| -------------------------------------------- | ------------------- |
+| `.go`                                        | `reference/go/`     |
+| `.js`, `.ts`, `.jsx`, `.tsx`, `.mjs`, `.cjs` | `reference/js_ts/`  |
 | `.py`, `.pyw`                                | `reference/python/` |
-| `.java`                                      | `reference/java/`  |
+| `.java`                                      | `reference/java/`   |
 | `.kt`, `.kts`                                | `reference/kotlin/` |
 
 - **Single language**: Use that language's reference directory for all subsequent steps.

@@ -7,7 +7,9 @@ description: |
 
 # Executing Plans
 
-For capy knowledge base conventions, see [capy-knowledge-protocol.md](../_shared/capy-knowledge-protocol.md).
+## Conventions
+
+Read capy knowledge base conventions at [capy-knowledge-protocol.md](../_shared/capy-knowledge-protocol.md).
 
 ## Overview
 
@@ -18,6 +20,7 @@ Load plan, review critically, execute tasks in batches, report for review betwee
 ### Review Mode
 
 By default, review checkpoints use standard mode. The user can request **isolated review mode** for the entire session:
+
 - When invoking the skill: "use isolated review" or "isolated mode"
 - In `tasks.md` metadata: a `review-mode: isolated` field in the header
 

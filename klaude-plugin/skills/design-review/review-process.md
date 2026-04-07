@@ -1,7 +1,5 @@
 ### Workflow
 
-For capy knowledge base conventions, see [capy-knowledge-protocol.md](../_shared/capy-knowledge-protocol.md).
-
 Copy this checklist and check off items as you complete them:
 
 ```
@@ -24,13 +22,13 @@ Design Review Progress:
 - If feature name is not provided or ambiguous, list `/docs/wip/` contents and ask the user
 - Scope resolution:
 
-| Scope arg | Documents to load |
-|-----------|-------------------|
-| _(none)_ | `design.md` + `implementation.md` |
-| `design` | `design.md` only |
-| `implementation` | `implementation.md` only |
-| `tasks` | `tasks.md` only |
-| `all` | `design.md` + `implementation.md` + `tasks.md` |
+| Scope arg        | Documents to load                              |
+| ---------------- | ---------------------------------------------- |
+| _(none)_         | `design.md` + `implementation.md`              |
+| `design`         | `design.md` only                               |
+| `implementation` | `implementation.md` only                       |
+| `tasks`          | `tasks.md` only                                |
+| `all`            | `design.md` + `implementation.md` + `tasks.md` |
 
 - If a requested document is missing, inform the user and proceed with available docs (do NOT stop — reviewing a single doc is a valid use case)
 - Read all in-scope documents
@@ -83,6 +81,7 @@ For each finding:
 **Scope:** [docs reviewed]
 **Overall assessment:** [SOUND / CONCERNS_FOUND / MAJOR_GAPS]
 **Documents:**
+
 - Design: [path] (if in scope)
 - Implementation: [path] (if in scope)
 - Tasks: [path] (if in scope)

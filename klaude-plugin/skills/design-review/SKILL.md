@@ -7,7 +7,9 @@ description: |
 
 # Design Review
 
-For capy knowledge base conventions, see [capy-knowledge-protocol.md](../_shared/capy-knowledge-protocol.md).
+## Conventions
+
+Read capy knowledge base conventions at [capy-knowledge-protocol.md](../_shared/capy-knowledge-protocol.md).
 
 ## Overview
 

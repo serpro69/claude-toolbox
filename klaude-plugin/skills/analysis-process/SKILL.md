@@ -9,6 +9,10 @@ description: |
 
 **Goal: Before writing any code, make sure you understand the requirements and have an implementation plan ready.**
 
+## Conventions
+
+Read capy knowledge base conventions at [capy-knowledge-protocol.md](../_shared/capy-knowledge-protocol.md).
+
 ## Ideas and Prototypes
 
 _Use this for ideas that are not fully thought out and do not have a fully-formed design/specification and/or implementation-plan._

@@ -1,7 +1,5 @@
 ### Workflow: Continue WIP Feature
 
-For capy knowledge base conventions, see [capy-knowledge-protocol.md](../_shared/capy-knowledge-protocol.md).
-
 1. **Find the feature** — Locate the feature directory in `/docs/wip/`. If multiple WIP features exist, ask the user which one to work on.
 
 2. **Review progress** — Read `tasks.md` to understand:

@@ -1,7 +1,5 @@
 ### Workflow
 
-For capy knowledge base conventions, see [capy-knowledge-protocol.md](../_shared/capy-knowledge-protocol.md).
-
 Copy this checklist and check off items as you complete them:
 
 ```

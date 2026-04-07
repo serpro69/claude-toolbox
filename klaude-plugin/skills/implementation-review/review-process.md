@@ -78,6 +78,7 @@ Structure the output as follows:
 
 **Scope:** [X of Y tasks reviewed] | Mode: [mid-implementation / post-implementation]
 **Documents reviewed:**
+
 - Design: [path]
 - Implementation: [path]
 - Tasks: [path]

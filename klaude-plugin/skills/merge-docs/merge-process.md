@@ -34,12 +34,12 @@ You cannot make good merge decisions without this grounding. Don't skip it. Make
 
 Read both design docs and categorize every section/decision into one of four buckets:
 
-| Category | What it means | Action |
-|---|---|---|
-| **Agreement** | Both docs say the same thing | Keep as-is — use whichever framing is clearer |
-| **Gap** | One doc covers something the other doesn't | Verify against codebase reality (re-read the codebase if needed). If correct, merge in. If wrong, drop with explanation |
-| **Contradiction** | Both docs cover the same topic but disagree | Surface to user for resolution — one question at a time |
-| **Error** | A doc claims something that conflicts with codebase reality | Verify against codebase reality (re-read the codebase if needed). Assign confidence percentage. Flag to user, recommend keeping/dropping, explain why |
+| Category          | What it means                                               | Action                                                                                                                                                |
+| ----------------- | ----------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------- |
+| **Agreement**     | Both docs say the same thing                                | Keep as-is — use whichever framing is clearer                                                                                                         |
+| **Gap**           | One doc covers something the other doesn't                  | Verify against codebase reality (re-read the codebase if needed). If correct, merge in. If wrong, drop with explanation                               |
+| **Contradiction** | Both docs cover the same topic but disagree                 | Surface to user for resolution — one question at a time                                                                                               |
+| **Error**         | A doc claims something that conflicts with codebase reality | Verify against codebase reality (re-read the codebase if needed). Assign confidence percentage. Flag to user, recommend keeping/dropping, explain why |
 
 **How to surface decisions to the user:**
 
@@ -56,6 +56,7 @@ After all decisions are made, write the merged `design.md` to `/docs/wip/[featur
 **Step 3: Merge implementation docs**
 
 This step is informed by two things:
+
 1. Your understanding of the codebase (from Step 1)
 2. The decisions already made in the merged design (from Step 2)
 
