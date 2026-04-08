@@ -11,6 +11,18 @@ description: |
 
 Read capy knowledge base conventions at [capy-knowledge-protocol.md](../_shared/capy-knowledge-protocol.md).
 
+## Required Outputs
+
+Per sub-task cycle (Steps 2–3), verify all outputs are delivered:
+
+- [ ] Implementation matches plan
+- [ ] Verification/tests pass
+- [ ] Code review completed (via `solid-code-review` — which owns indexing its own `kk:review-findings`)
+- [ ] New project conventions indexed as `kk:project-conventions` (skip if none established)
+- [ ] `tasks.md` updated to `done`
+
+**Indexing ownership:** Review skills (`solid-code-review`, `implementation-review`) index their own findings. This skill only indexes `kk:project-conventions` for non-obvious patterns discovered during implementation. Do NOT duplicate review indexing here.
+
 ## Overview
 
 Load plan, review critically, execute tasks in batches, report for review between batches.
@@ -53,8 +65,11 @@ When set, all review checkpoints automatically use isolated variants (`kk:solid-
   - **Standard review** (default): Use `kk:solid-code-review` skill, then run `pal` mcp code-review, consolidate findings
   - **Isolated review** (if user requests): Use `kk:solid-code-review:isolated` — same as above
 - Based on user and code-review feedback: apply changes if needed and finalize the sub-task
-- **Capy index:** If a non-obvious pattern or convention was established during implementation, index it as `kk:project-conventions`
 - When completed, update `tasks.md`: set the task's status to `done`
+
+**After finalizing the sub-task**, check the Required Outputs checklist above. In particular:
+- If a non-obvious pattern or convention was established during implementation, index it as `kk:project-conventions`. If none, note "No new conventions to index" and move on.
+- Review indexing (`kk:review-findings`) is handled by `solid-code-review` — do NOT duplicate it here.
 
 ### Step 4: Continue
 
