@@ -54,7 +54,7 @@ You don't need all servers to get started. Add them incrementally:
 1. **Serena** (no API key needed) — semantic code analysis via LSP. Works immediately after setup.
 2. **Context7** (needs API key) — up-to-date library documentation and code examples.
 3. **Pal** (needs API key) — multi-model AI integration for code review, debugging, planning, and security audit.
-4. **Capy** (optional, auto-configured by bootstrap) — persistent knowledge base across sessions. Install with `brew install serpro69/tap/capy`.
+4. [**Capy**](https://github.com/serpro69/capy) (optional, auto-configured by bootstrap) — persistent knowledge base across sessions. Install with `brew install serpro69/tap/capy`.
 
 <details>
 <summary>Example <code>mcpServers</code> configuration</summary>
