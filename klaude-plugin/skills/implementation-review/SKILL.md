@@ -17,6 +17,16 @@ Systematically compare implemented code against a feature's `design.md`, `implem
 
 Findings go in **both directions** — code that deviates from spec AND spec that is wrong or outdated given the code.
 
+## Required Outputs
+
+Before declaring the review complete, verify all outputs are delivered:
+
+- [ ] Review report presented to user
+- [ ] User-confirmed intentional `SPEC_DEV`/`EXTRA_IMPL` findings indexed as `kk:arch-decisions` (skip if none confirmed)
+- [ ] Next steps confirmation from user
+
+Indexing is owned by this skill — callers (e.g., `implementation-process`) do NOT duplicate it.
+
 ## Review Modes
 
 ### Standard Mode (`/kk:implementation-review`)
@@ -83,7 +93,7 @@ See [review-process.md](./review-process.md) for the detailed step-by-step proce
 5. Cross-cutting concern check
 6. Self-check and confidence assessment
 7. Present findings
-8. **Capy index:** Index any `SPEC_DEV` or `EXTRA_IMPL` findings confirmed by the user as intentional as `kk:arch-decisions` — prevents the same deviation from being flagged again.
+8. Index confirmed deviations — index user-confirmed intentional `SPEC_DEV`/`EXTRA_IMPL` as `kk:arch-decisions`
 
 ## Invocation
 

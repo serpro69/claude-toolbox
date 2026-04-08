@@ -10,6 +10,7 @@ Implementation Review Progress:
 - [ ] Step 4: Cross-cutting concerns
 - [ ] Step 5: Self-check and confidence assessment
 - [ ] Step 6: Present findings
+- [ ] Step 7: Index confirmed deviations
 ```
 
 **Step 1: Load feature documents**
@@ -156,3 +157,11 @@ Please choose an option or provide specific instructions.
 ```
 
 **Important:** Do NOT implement any changes until the user explicitly confirms.
+
+**Step 7: Index confirmed deviations**
+
+After the user responds to the next steps prompt, index any `SPEC_DEV` or `EXTRA_IMPL` findings that the user confirms as intentional as `kk:arch-decisions`. This prevents the same deviation from being flagged in future reviews.
+
+- For each confirmed intentional deviation: call `capy_index` with source `kk:arch-decisions` and a concise summary of the decision and rationale.
+- If the user confirms no deviations as intentional, or there are no `SPEC_DEV`/`EXTRA_IMPL` findings, explicitly note "No deviations to index" and move on.
+- This step is mandatory — do not skip it even if all findings are rejected.

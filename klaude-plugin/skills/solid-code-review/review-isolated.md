@@ -7,7 +7,8 @@ Isolated Code Review Progress:
 - [ ] Step 1: Prepare artifacts
 - [ ] Step 2: Spawn reviewers (parallel)
 - [ ] Step 3: Annotate findings
-- [ ] Step 4: Present report
+- [ ] Step 4: Index findings
+- [ ] Step 5: Present report
 ```
 
 ---
@@ -147,13 +148,18 @@ If the close re-reading during annotation triggers new observations, add them:
 
 If a pal finding is ambiguous or unclear, the main agent MAY use pal's follow-up interaction capability to clarify before presenting to the user.
 
-### 3e) Capy index
+---
 
-**Capy index:** Index any P0/P1 findings that suggest a systemic or structural pattern (not isolated typos or one-off mistakes) as `kk:review-findings`. Index on first encounter — recurrence detection happens on the search side in future reviews. This applies to findings from any source — corroborated, single-reviewer, or author-sourced.
+## Step 4: Index Findings
+
+Index any P0/P1 findings that suggest a systemic or structural pattern (not isolated typos or one-off mistakes) as `kk:review-findings`. Index on first encounter — recurrence detection happens on the search side in future reviews. This applies to findings from any source — corroborated, single-reviewer, or author-sourced.
+
+- If no P0/P1 systemic findings exist, explicitly note "No findings to index" and move on.
+- This step is mandatory — do not skip it even if the review found no issues.
 
 ---
 
-## Step 4: Present Report
+## Step 5: Present Report
 
 Use this report template, organized by agreement level:
 

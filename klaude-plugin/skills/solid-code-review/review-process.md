@@ -11,7 +11,8 @@ Code Review Progress:
 - [ ] Step 5: Security and reliability scan
 - [ ] Step 6: Code quality scan
 - [ ] Step 7: Self-check and confidence assessment
-- [ ] Step 8: Present results
+- [ ] Step 8: Index findings
+- [ ] Step 9: Present results
 ```
 
 ---
@@ -93,9 +94,14 @@ Use `{lang}` below to refer to the detected reference directory.
 - For each finding, re-review to ensure it's valid
 - Assign confidence value
 
-**Capy index:** Index any P0/P1 findings that suggest a systemic or structural pattern (not isolated typos or one-off mistakes) as `kk:review-findings`. Index on first encounter — recurrence detection happens on the search side in future reviews.
+### 8) Index findings
 
-### 8) Present results
+Index any P0/P1 findings that suggest a systemic or structural pattern (not isolated typos or one-off mistakes) as `kk:review-findings`. Index on first encounter — recurrence detection happens on the search side in future reviews.
+
+- If no P0/P1 systemic findings exist, explicitly note "No findings to index" and move on.
+- This step is mandatory — do not skip it even if the review found no issues.
+
+### 9) Present results
 
 #### Output format
 
@@ -160,7 +166,7 @@ Description of the issue and suggested fix.
 - Any areas not covered (e.g., "Did not verify database migrations")
 - Residual risks or recommended follow-up tests
 
-### 9) Next steps confirmation
+### 10) Next steps confirmation
 
 After presenting findings, ask user how to proceed:
 
