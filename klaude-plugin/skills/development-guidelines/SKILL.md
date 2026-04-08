@@ -8,7 +8,7 @@ description: |
 
 ## Conventions
 
-Read capy knowledge base conventions at [capy-knowledge-protocol.md](../_shared/capy-knowledge-protocol.md).
+Read capy knowledge base conventions at [shared-capy-knowledge-protocol.md](shared-capy-knowledge-protocol.md).
 
 ## Working with Dependencies
 

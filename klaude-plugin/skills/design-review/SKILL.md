@@ -9,7 +9,7 @@ description: |
 
 ## Conventions
 
-Read capy knowledge base conventions at [capy-knowledge-protocol.md](../_shared/capy-knowledge-protocol.md).
+Read capy knowledge base conventions at [shared-capy-knowledge-protocol.md](shared-capy-knowledge-protocol.md).
 
 ## Overview
 
@@ -34,23 +34,23 @@ See [review-isolated.md](./review-isolated.md) for the isolated workflow.
 
 ## Finding Types
 
-| Type | Code | Description |
-|------|------|-------------|
-| Incomplete Spec | `INCOMPLETE` | Section lacks sufficient detail for implementation |
-| Internal Inconsistency | `INCONSISTENT` | Two parts of the docs contradict each other |
-| Technical Risk | `TECH_RISK` | Architecture choice has unaddressed failure modes, scalability concerns, or edge cases |
-| Missing Concern | `MISSING` | Cross-cutting concern is absent (error handling, migration, backwards compatibility) |
-| Ambiguity | `AMBIGUOUS` | Requirements can be interpreted multiple ways, likely to cause implementation divergence |
-| Structure Issue | `STRUCTURE` | Document doesn't follow project conventions — missing sections, vague subtasks |
+| Type                   | Code           | Description                                                                              |
+| ---------------------- | -------------- | ---------------------------------------------------------------------------------------- |
+| Incomplete Spec        | `INCOMPLETE`   | Section lacks sufficient detail for implementation                                       |
+| Internal Inconsistency | `INCONSISTENT` | Two parts of the docs contradict each other                                              |
+| Technical Risk         | `TECH_RISK`    | Architecture choice has unaddressed failure modes, scalability concerns, or edge cases   |
+| Missing Concern        | `MISSING`      | Cross-cutting concern is absent (error handling, migration, backwards compatibility)     |
+| Ambiguity              | `AMBIGUOUS`    | Requirements can be interpreted multiple ways, likely to cause implementation divergence |
+| Structure Issue        | `STRUCTURE`    | Document doesn't follow project conventions — missing sections, vague subtasks           |
 
 ## Severity Levels
 
-| Level | Name | Description | Action |
-|-------|------|-------------|--------|
-| **P0** | Critical | Fundamental flaw — design will not work as described, or critical requirement is missing | Must fix before implementation |
-| **P1** | High | Significant gap — likely to cause rework or wrong implementation | Should fix before implementation |
-| **P2** | Medium | Moderate concern — ambiguity or missing detail that could cause confusion | Fix or create follow-up |
-| **P3** | Low | Minor — style, structure, or nitpick | Optional |
+| Level  | Name     | Description                                                                              | Action                           |
+| ------ | -------- | ---------------------------------------------------------------------------------------- | -------------------------------- |
+| **P0** | Critical | Fundamental flaw — design will not work as described, or critical requirement is missing | Must fix before implementation   |
+| **P1** | High     | Significant gap — likely to cause rework or wrong implementation                         | Should fix before implementation |
+| **P2** | Medium   | Moderate concern — ambiguity or missing detail that could cause confusion                | Fix or create follow-up          |
+| **P3** | Low      | Minor — style, structure, or nitpick                                                     | Optional                         |
 
 ## Workflow
 
@@ -82,13 +82,13 @@ Standard mode with scope — review specific documents:
 /kk:design-review [feature-name] all
 ```
 
-| Scope | Documents reviewed |
-|-------|-------------------|
-| _(none)_ | `design.md` + `implementation.md` (default) |
-| `design` | `design.md` only |
-| `implementation` | `implementation.md` only |
-| `tasks` | `tasks.md` only |
-| `all` | `design.md` + `implementation.md` + `tasks.md` |
+| Scope            | Documents reviewed                             |
+| ---------------- | ---------------------------------------------- |
+| _(none)_         | `design.md` + `implementation.md` (default)    |
+| `design`         | `design.md` only                               |
+| `implementation` | `implementation.md` only                       |
+| `tasks`          | `tasks.md` only                                |
+| `all`            | `design.md` + `implementation.md` + `tasks.md` |
 
 Isolated mode with independent sub-agents:
 

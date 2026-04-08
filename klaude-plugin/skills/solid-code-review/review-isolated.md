@@ -108,7 +108,7 @@ Produce your findings in the output format specified in your agent definition.
 
 ### Reviewer B — `pal` codereview
 
-Follow the invocation protocol in [pal-codereview-invocation.md](../_shared/pal-codereview-invocation.md).
+Follow the invocation protocol in [shared-pal-codereview-invocation.md](shared-pal-codereview-invocation.md).
 
 For the `step` parameter in step 1, use the git diff prepared in Step 1c. For the `model` parameter, use the model resolved in Step 1d.
 
