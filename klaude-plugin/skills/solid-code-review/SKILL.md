@@ -15,6 +15,16 @@ Perform a structured review of the current git changes with focus on SOLID, arch
 
 Read capy knowledge base conventions at [capy-knowledge-protocol.md](../_shared/capy-knowledge-protocol.md).
 
+## Required Outputs
+
+Before declaring the review complete, verify all outputs are delivered:
+
+- [ ] Review report presented to user
+- [ ] P0/P1 systemic findings indexed as `kk:review-findings` (skip if no qualifying findings)
+- [ ] Next steps confirmation from user
+
+Indexing is owned by this skill — callers (e.g., `implementation-process`) do NOT duplicate it.
+
 ## Review Modes
 
 ### Standard Mode (`/kk:solid-code-review`)
@@ -52,7 +62,8 @@ See [review-isolated.md](./review-isolated.md) for the isolated workflow.
 5. Security and reliability scan
 6. Code quality scan
 7. Self-check and confidence assessment
-8. Present results with next steps
+8. Index findings — capy index systemic P0/P1 patterns as `kk:review-findings`
+9. Present results with next steps
 
 See [review-process.md](./review-process.md) for the detailed step-by-step process.
 
