@@ -8,7 +8,11 @@ claude-toolbox is a collection of "tools" for all your Claude Code workflows —
 
 ## Why claude-toolbox?
 
-Claude Code is powerful on its own, but it doesn't know your development workflow. claude-toolbox gives it a structured pipeline — from idea through design, implementation, code review, testing, to documentation — with persistent knowledge that carries across sessions.
+Claude Code is powerful on its own, but it doesn't know your development workflow. claude-toolbox gives it two things:
+
+**A minimal, opinionated Claude Code configuration** — sensible permission baselines, a rich statusline, Serena LSP integration, MCP server wiring, and sync infrastructure to keep it all up to date across your projects. Think of it as a dotfiles repo for Claude Code.
+
+**A structured development pipeline** — 10 workflow skills that take you from idea through design, implementation, code review, testing, to documentation, with persistent knowledge that carries across sessions.
 
 ```
 /analysis-process → /design-review → /implementation-process → /solid-code-review → /testing-process → /documentation-process
@@ -25,10 +29,13 @@ Out of the box you get:
 
 ## Choose Your Path
 
-**Starting a new project?** Use the template — you get everything pre-configured: MCP servers, plugin, Serena, statusline, sync infrastructure.
+**Starting a new project?** Use the template — you get the full configuration and plugin pre-wired, plus sync infrastructure to pull future updates.
 → [Template Setup](#template-setup)
 
-**Adding to an existing project?** Install just the kk plugin — all 10 skills, commands, and hooks in one command.
+**Existing project, want the full setup?** Adopt the configuration, plugin, and sync infrastructure without creating from the template.
+→ [Adopting into Existing Repositories](#adopting-into-existing-repositories)
+
+**Just want the skills?** Install the kk plugin — all 10 skills, commands, and hooks in one command. No template needed.
 → [Plugin-Only Setup](#plugin-only-setup)
 
 ## Requirements
@@ -200,7 +207,8 @@ Already have a project? Install just the kk plugin to get all skills, commands, 
 That's it. All 10 skills are now available as `/skill-name` (annotated with `(kk)` in the slash command menu). See the [kk plugin documentation](./klaude-plugin/README.md) for details.
 
 > [!TIP]
-> For the full experience (MCP servers, statusline, Serena config), see [MCP Server Configuration](#mcp-server-configuration) above and add the configs you want to `~/.claude.json`.
+> Want the full configuration too (settings, statusline, Serena, sync infrastructure)? See [Adopting into Existing Repositories](#adopting-into-existing-repositories).
+> For MCP servers, see [MCP Server Configuration](#mcp-server-configuration) and add the configs you want to `~/.claude.json`.
 
 ## Try It
 
@@ -429,26 +437,39 @@ Skills and commands have moved from the template to the **kk** plugin:
 - The template-sync workflow handles migration automatically on next sync
 - After merging the sync PR, run `/plugin install kk@claude-toolbox`
 
-### Migration for Existing Repositories
+### Adopting into Existing Repositories
 
-If your repo was created before the sync feature (or even if your repo wasn't created from this template at all), create `.github/template-state.json`:
+You don't need to create a repo from this template to use the full configuration and sync infrastructure. Any existing repo can adopt it:
 
-```json
-{
-  "schema_version": "1",
-  "upstream_repo": "serpro69/claude-toolbox",
-  "template_version": "v1.0.0",
-  "synced_at": "1970-01-01T00:00:00Z",
-  "variables": {
-    "PROJECT_NAME": "my-cool-project",
-    "LANGUAGES": "go",
-    "CC_MODEL": "default",
-    "SERENA_INITIAL_PROMPT": ""
-  }
-}
-```
+1. **Install the kk plugin** to get all skills, commands, and hooks:
 
-Then copy `.github/workflows/template-sync.yml` and `.github/scripts/template-sync.sh` from the [template repository](https://github.com/serpro69/claude-toolbox).
+   ```
+   /plugin install kk@claude-toolbox
+   ```
+
+2. **Set up sync infrastructure.** Create `.github/template-state.json`:
+
+   ```json
+   {
+     "schema_version": "1",
+     "upstream_repo": "serpro69/claude-toolbox",
+     "template_version": "v1.0.0",
+     "synced_at": "1970-01-01T00:00:00Z",
+     "variables": {
+       "PROJECT_NAME": "my-cool-project",
+       "LANGUAGES": "go",
+       "CC_MODEL": "default",
+       "SERENA_INITIAL_PROMPT": ""
+     }
+   }
+   ```
+
+   Copy `.github/workflows/template-sync.yml` and `.github/scripts/template-sync.sh` from the [template repository](https://github.com/serpro69/claude-toolbox).
+
+3. **Run Template Sync** from your repo's Actions tab to pull in the configuration (settings, Serena config, statusline, permissions). Review and merge the PR.
+
+> [!TIP]
+> Step 1 works standalone if you only want the skills. Steps 2-3 add the opinionated configuration and keep it in sync with upstream improvements.
 
 ## Development
 
