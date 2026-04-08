@@ -11,7 +11,7 @@ CoVe is a verification technique that improves response accuracy by making the m
 
 ## Conventions
 
-Read capy knowledge base conventions at [capy-knowledge-protocol.md](../_shared/capy-knowledge-protocol.md).
+Read capy knowledge base conventions at [shared-capy-knowledge-protocol.md](shared-capy-knowledge-protocol.md).
 
 **Capy restriction:** CoVe is a read-only verification tool. Do NOT call `capy_index` or `capy_fetch_and_index` during this workflow. Use `capy_search` only. If corrections reveal knowledge worth persisting, the calling agent handles indexing after CoVe completes.
 
@@ -81,12 +81,12 @@ See [cove-isolated.md](./cove-isolated.md) for the isolated workflow.
 
 ### Mode Selection Guide
 
-| Use Case                    | Recommended Mode                          |
-| --------------------------- | ----------------------------------------- |
-| Quick fact-checking         | `/cove`                                        |
-| High-stakes accuracy        | `/kk:cove:cove-isolated`                       |
-| Codebase verification       | `/kk:cove:cove-isolated --explore`             |
-| Cost-sensitive verification | `/cove` or `/kk:cove:cove-isolated --haiku`    |
+| Use Case                    | Recommended Mode                            |
+| --------------------------- | ------------------------------------------- |
+| Quick fact-checking         | `/cove`                                     |
+| High-stakes accuracy        | `/kk:cove:cove-isolated`                    |
+| Codebase verification       | `/kk:cove:cove-isolated --explore`          |
+| Cost-sensitive verification | `/cove` or `/kk:cove:cove-isolated --haiku` |
 
 ## Process Overview
 
