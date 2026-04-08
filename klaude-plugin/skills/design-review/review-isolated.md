@@ -17,6 +17,7 @@ Isolated Design Review Progress:
 ### 1a) Read documents
 
 Parse the invocation arguments using the same logic as standard mode Step 1:
+
 - Extract feature name and optional scope argument
 - **Argument disambiguation:** if the first argument matches a directory in `/docs/wip/`, treat it as the feature name. If it matches a scope keyword (`design`, `implementation`, `tasks`, `all`) and no such feature directory exists, treat it as the scope and prompt the user for the feature name.
 - Locate `/docs/wip/[feature-name]/` directory
@@ -24,13 +25,13 @@ Parse the invocation arguments using the same logic as standard mode Step 1:
 
 Scope resolution:
 
-| Scope arg | Documents to load |
-|-----------|-------------------|
-| _(none)_ | `design.md` + `implementation.md` |
-| `design` | `design.md` only |
-| `implementation` | `implementation.md` only |
-| `tasks` | `tasks.md` only |
-| `all` | `design.md` + `implementation.md` + `tasks.md` |
+| Scope arg        | Documents to load                              |
+| ---------------- | ---------------------------------------------- |
+| _(none)_         | `design.md` + `implementation.md`              |
+| `design`         | `design.md` only                               |
+| `implementation` | `implementation.md` only                       |
+| `tasks`          | `tasks.md` only                                |
+| `all`            | `design.md` + `implementation.md` + `tasks.md` |
 
 If a requested document is missing, inform the user and proceed with available docs.
 
@@ -60,11 +61,11 @@ Launch both reviewers in a **single message** so they execute in parallel.
 
 Spawn using the Agent tool:
 
-| Parameter | Value |
-|---|---|
-| `subagent_type` | `kk:design-reviewer` |
-| `description` | `Isolated design review` |
-| `prompt` | See prompt template below |
+| Parameter       | Value                     |
+| --------------- | ------------------------- |
+| `subagent_type` | `kk:design-reviewer`      |
+| `description`   | `Isolated design review`  |
+| `prompt`        | See prompt template below |
 
 **Sub-agent prompt template:**
 
@@ -86,7 +87,7 @@ Read the documents yourself using the Read tool. Produce your findings in the ou
 
 ### Reviewer B — `pal codereview`
 
-Follow the invocation protocol in [pal-codereview-invocation.md](../_shared/pal-codereview-invocation.md).
+Follow the invocation protocol in [shared-pal-codereview-invocation.md](shared-pal-codereview-invocation.md).
 
 For the `step` parameter in step 1, use the document contents prepared in Step 1c. For the `model` parameter, use the model resolved in Step 1b. Set `focus_on` to `"technical soundness, completeness, internal consistency, edge cases, failure modes"`.
 
@@ -155,6 +156,7 @@ Use this report template, organized by agreement level:
 ---
 
 ### Corroborated Findings
+
 (Both reviewers flagged — highest signal)
 
 - **[doc:section]** Brief title ⟨corroborated⟩
@@ -167,6 +169,7 @@ Use this report template, organized by agreement level:
   - Author context: [optional annotation]
 
 ### Design Reviewer Findings
+
 (design-reviewer sub-agent only — P0-P3 format)
 
 - **[doc:section]** Brief title
@@ -177,12 +180,14 @@ Use this report template, organized by agreement level:
   - Author context: [optional annotation]
 
 ### External Review Findings
+
 (pal codereview — native format)
 
 - [pal output in native format]
   - Author context: [optional annotation]
 
 ### Author-Sourced Findings
+
 (Main agent observations during annotation — weight accordingly)
 
 - **[doc:section]** Brief title ⟨author-sourced⟩
@@ -190,6 +195,7 @@ Use this report template, organized by agreement level:
 ```
 
 **Section rules:**
+
 - Omit any section that has no findings (e.g., if no corroborated findings, skip that section).
 - If a reviewer failed and only one reviewer's findings are present, note the failure at the top and present the available findings under the appropriate section.
 
