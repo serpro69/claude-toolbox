@@ -28,9 +28,21 @@ For everything else, use:
 - `capy_batch_execute(commands, queries)` — run multiple commands + search in ONE call
 - `capy_execute(language: "shell", code: "...")` — run in sandbox, only stdout enters context
 
-### Read (for analysis)
-If you are reading a file to **Edit** it → Read is correct (Edit needs content in context).
-If you are reading to **analyze, explore, or summarize** → use `capy_execute_file(path, language, code)` instead. Only your printed summary enters context. The raw file content stays in the sandbox.
+### Read vs capy_execute_file
+
+**Default to `Read`.** It's cheap for normal-sized files, shows you actual content (not just patterns you knew to grep for), and is required if an Edit follows. Use `offset`/`limit` to scope large files.
+
+**Reach for `capy_execute_file` only when ALL of these hold:**
+1. The file is genuinely large (10k+ lines, or measured >100 KB), AND
+2. You want a *derived answer* (count, stats, extracted pattern, structural summary) — not the content itself, AND
+3. You can write the exact grep/awk/script upfront. If you'd struggle to, you don't know enough yet — just `Read`.
+
+**Anti-patterns — do NOT do this:**
+- `capy_execute_file` to grep section headings, then `Read` the file anyway to Edit it. The Read makes the capy call pure overhead.
+- `capy_execute_file` on a code file to "explore structure." Use Serena's `get_symbols_overview` / `find_symbol` — purpose-built and cheaper.
+- `capy_execute_file` on a small/medium file (<2k lines) "to save context." The savings don't exist; you're adding latency.
+
+**Rule of thumb:** capy saves context only when content would otherwise enter context. If you're going to `Read` it anyway (for Edit, for line citations, for follow-ups), capy adds nothing.
 
 ### Grep (large results)
 Grep results can flood context. Use `capy_execute(language: "shell", code: "grep ...")` to run searches in sandbox. Only your printed summary enters context.
