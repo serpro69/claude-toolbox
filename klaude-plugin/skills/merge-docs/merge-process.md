@@ -76,13 +76,13 @@ Write the merged `implementation.md` to `/docs/wip/[feature-title]-merged/`.
 
 The task list is a **derived artifact** — generate it from the merged implementation plan, don't merge the two original task lists directly.
 
-1. Read the merged `implementation.md` and break it into tasks following the same structure and conventions as the [analysis-process example tasks](../analysis-process/example-tasks.md)
+1. Read the merged `implementation.md` and break it into tasks following the same structure and conventions as the [plan example tasks](../plan/example-tasks.md)
 2. For each new task, check if a corresponding task exists in either original `tasks.md`:
    - If a matching task exists and is `done` or `in-progress`, carry forward its status and subtask completion — but update the subtask descriptions if the merged implementation changed the details
    - If a matching task exists but the implementation changed significantly, reset to `pending` with updated subtasks
    - If no matching task exists (new section from the merge), create a fresh `pending` task
 3. Preserve dependency ordering based on the merged implementation plan
-4. Include a final verification task (same pattern as analysis-process)
+4. Include a final verification task (same pattern as plan)
 
 Write `tasks.md` to `/docs/wip/[feature-title]-merged/`.
 

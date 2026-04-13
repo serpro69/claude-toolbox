@@ -1,7 +1,7 @@
 ---
 name: code-reviewer
 description: |
-  Independent code reviewer with no authorship attachment. Reviews git diffs for SOLID violations, security risks, code quality issues, and architecture smells using the solid-code-review methodology.
+  Independent code reviewer with no authorship attachment. Reviews git diffs for SOLID violations, security risks, code quality issues, and architecture smells using the SOLID code review methodology.
 tools:
   - Read
   - Grep
@@ -41,7 +41,7 @@ Use Read/Grep/Glob to inspect the broader codebase when the diff alone is insuff
 
 ## Review Workflow
 
-Follow these steps in order. Each step references the `solid-code-review` methodology.
+Follow these steps in order. Each step references the `review-code` methodology.
 
 ### 1) Preflight Context
 
@@ -56,7 +56,7 @@ Follow these steps in order. Each step references the `solid-code-review` method
 
 ### 2) Detect Primary Language
 
-Use the language provided by the spawning workflow. Load the corresponding reference checklists from `klaude-plugin/skills/solid-code-review/reference/{lang}/`:
+Use the language provided by the spawning workflow. Load the corresponding reference checklists from `klaude-plugin/skills/review-code/reference/{lang}/`:
 
 | Extensions | Reference set |
 |---|---|

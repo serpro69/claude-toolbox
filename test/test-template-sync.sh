@@ -1282,25 +1282,25 @@ assert_equals "1" "$exit_code" "No exclusions means not excluded"
 
 log_test "is_excluded returns 0 for exact path match"
 reset_globals
-SYNC_EXCLUSIONS=(".claude/commands/cove/cove.md")
+SYNC_EXCLUSIONS=(".claude/commands/chain-of-verification/default.md")
 set +e
-is_excluded ".claude/commands/cove/cove.md"
+is_excluded ".claude/commands/chain-of-verification/default.md"
 exit_code=$?
 set -e
 assert_equals "0" "$exit_code" "Exact path match is excluded"
 
 log_test "is_excluded returns 0 for glob pattern with trailing wildcard"
 reset_globals
-SYNC_EXCLUSIONS=(".claude/commands/cove/*")
+SYNC_EXCLUSIONS=(".claude/commands/chain-of-verification/*")
 set +e
-is_excluded ".claude/commands/cove/cove.md"
+is_excluded ".claude/commands/chain-of-verification/default.md"
 exit_code=$?
 set -e
 assert_equals "0" "$exit_code" "Glob wildcard matches file in directory"
 
 log_test "is_excluded returns 1 for non-matching path"
 reset_globals
-SYNC_EXCLUSIONS=(".claude/commands/cove/*")
+SYNC_EXCLUSIONS=(".claude/commands/chain-of-verification/*")
 set +e
 is_excluded ".claude/commands/tm/list.md"
 exit_code=$?
@@ -1309,18 +1309,18 @@ assert_equals "1" "$exit_code" "Non-matching path is not excluded"
 
 log_test "is_excluded matches across directory separators (bash case * crosses /)"
 reset_globals
-SYNC_EXCLUSIONS=(".claude/commands/cove/*")
+SYNC_EXCLUSIONS=(".claude/commands/chain-of-verification/*")
 set +e
-is_excluded ".claude/commands/cove/subdir/file.md"
+is_excluded ".claude/commands/chain-of-verification/subdir/file.md"
 exit_code=$?
 set -e
 assert_equals "0" "$exit_code" "Glob * matches across directory separators"
 
 log_test "is_excluded handles multiple patterns (second pattern matches)"
 reset_globals
-SYNC_EXCLUSIONS=(".serena/project.yml" ".claude/commands/cove/*")
+SYNC_EXCLUSIONS=(".serena/project.yml" ".claude/commands/chain-of-verification/*")
 set +e
-is_excluded ".claude/commands/cove/cove.md"
+is_excluded ".claude/commands/chain-of-verification/default.md"
 exit_code=$?
 set -e
 assert_equals "0" "$exit_code" "Second pattern in list matches"
@@ -1336,8 +1336,8 @@ reset_globals
 MANIFEST_PATH="$FIXTURES_DIR/manifests/valid-manifest-with-exclusions.json"
 read_manifest 2>/dev/null
 assert_equals "2" "${#SYNC_EXCLUSIONS[@]}" "SYNC_EXCLUSIONS has 2 patterns"
-assert_equals ".claude/commands/cove/*" "${SYNC_EXCLUSIONS[0]}" "First exclusion pattern correct"
-assert_equals ".claude/skills/cove/*" "${SYNC_EXCLUSIONS[1]}" "Second exclusion pattern correct"
+assert_equals ".claude/commands/chain-of-verification/*" "${SYNC_EXCLUSIONS[0]}" "First exclusion pattern correct"
+assert_equals ".claude/skills/chain-of-verification/*" "${SYNC_EXCLUSIONS[1]}" "Second exclusion pattern correct"
 
 log_test "read_manifest handles missing sync_exclusions (optional field)"
 reset_globals
@@ -1396,14 +1396,14 @@ reset_globals
 test_dir=$(create_temp_dir "compare-excl-added")
 
 # Create staging with a file that matches exclusion pattern
-mkdir -p "$test_dir/staging/claude/commands/cove"
-echo "excluded content" >"$test_dir/staging/claude/commands/cove/cove.md"
+mkdir -p "$test_dir/staging/claude/commands/chain-of-verification"
+echo "excluded content" >"$test_dir/staging/claude/commands/chain-of-verification/default.md"
 
 # Create empty project directory
-mkdir -p "$test_dir/project/.claude/commands/cove"
+mkdir -p "$test_dir/project/.claude/commands/chain-of-verification"
 
 # Set exclusion pattern
-SYNC_EXCLUSIONS=(".claude/commands/cove/*")
+SYNC_EXCLUSIONS=(".claude/commands/chain-of-verification/*")
 
 pushd "$test_dir/project" >/dev/null || {
   log_fail "Failed to cd to test directory"
@@ -1421,12 +1421,12 @@ reset_globals
 test_dir=$(create_temp_dir "compare-excl-modified")
 
 # Create staging and project with same file (different content) matching exclusion
-mkdir -p "$test_dir/staging/claude/commands/cove"
-mkdir -p "$test_dir/project/.claude/commands/cove"
-echo "new content" >"$test_dir/staging/claude/commands/cove/cove.md"
-echo "old content" >"$test_dir/project/.claude/commands/cove/cove.md"
+mkdir -p "$test_dir/staging/claude/commands/chain-of-verification"
+mkdir -p "$test_dir/project/.claude/commands/chain-of-verification"
+echo "new content" >"$test_dir/staging/claude/commands/chain-of-verification/default.md"
+echo "old content" >"$test_dir/project/.claude/commands/chain-of-verification/default.md"
 
-SYNC_EXCLUSIONS=(".claude/commands/cove/*")
+SYNC_EXCLUSIONS=(".claude/commands/chain-of-verification/*")
 
 pushd "$test_dir/project" >/dev/null || {
   log_fail "Failed to cd to test directory"
@@ -1445,10 +1445,10 @@ test_dir=$(create_temp_dir "compare-excl-deleted")
 
 # Create project with file matching exclusion (not in staging)
 mkdir -p "$test_dir/staging/claude"
-mkdir -p "$test_dir/project/.claude/commands/cove"
-echo "local only" >"$test_dir/project/.claude/commands/cove/cove.md"
+mkdir -p "$test_dir/project/.claude/commands/chain-of-verification"
+echo "local only" >"$test_dir/project/.claude/commands/chain-of-verification/default.md"
 
-SYNC_EXCLUSIONS=(".claude/commands/cove/*")
+SYNC_EXCLUSIONS=(".claude/commands/chain-of-verification/*")
 
 pushd "$test_dir/project" >/dev/null || {
   log_fail "Failed to cd to test directory"
@@ -1465,16 +1465,16 @@ reset_globals
 test_dir=$(create_temp_dir "compare-excl-mixed")
 
 # Create staging with excluded and non-excluded files
-mkdir -p "$test_dir/staging/claude/commands/cove"
+mkdir -p "$test_dir/staging/claude/commands/chain-of-verification"
 mkdir -p "$test_dir/staging/claude/commands/tm"
-echo "excluded" >"$test_dir/staging/claude/commands/cove/cove.md"
+echo "excluded" >"$test_dir/staging/claude/commands/chain-of-verification/default.md"
 echo "included" >"$test_dir/staging/claude/commands/tm/list.md"
 
 # Create empty project dirs
-mkdir -p "$test_dir/project/.claude/commands/cove"
+mkdir -p "$test_dir/project/.claude/commands/chain-of-verification"
 mkdir -p "$test_dir/project/.claude/commands/tm"
 
-SYNC_EXCLUSIONS=(".claude/commands/cove/*")
+SYNC_EXCLUSIONS=(".claude/commands/chain-of-verification/*")
 
 pushd "$test_dir/project" >/dev/null || {
   log_fail "Failed to cd to test directory"
@@ -1493,19 +1493,19 @@ reset_globals
 test_dir=$(create_temp_dir "compare-excl-multi")
 
 # Create staging with files matching different exclusion patterns
-mkdir -p "$test_dir/staging/claude/commands/cove"
-mkdir -p "$test_dir/staging/claude/skills/cove"
+mkdir -p "$test_dir/staging/claude/commands/chain-of-verification"
+mkdir -p "$test_dir/staging/claude/skills/chain-of-verification"
 mkdir -p "$test_dir/staging/claude/commands/tm"
-echo "excluded1" >"$test_dir/staging/claude/commands/cove/cove.md"
-echo "excluded2" >"$test_dir/staging/claude/skills/cove/skill.md"
+echo "excluded1" >"$test_dir/staging/claude/commands/chain-of-verification/default.md"
+echo "excluded2" >"$test_dir/staging/claude/skills/chain-of-verification/skill.md"
 echo "included" >"$test_dir/staging/claude/commands/tm/list.md"
 
 # Create empty project dirs
-mkdir -p "$test_dir/project/.claude/commands/cove"
-mkdir -p "$test_dir/project/.claude/skills/cove"
+mkdir -p "$test_dir/project/.claude/commands/chain-of-verification"
+mkdir -p "$test_dir/project/.claude/skills/chain-of-verification"
 mkdir -p "$test_dir/project/.claude/commands/tm"
 
-SYNC_EXCLUSIONS=(".claude/commands/cove/*" ".claude/skills/cove/*")
+SYNC_EXCLUSIONS=(".claude/commands/chain-of-verification/*" ".claude/skills/chain-of-verification/*")
 
 pushd "$test_dir/project" >/dev/null || {
   log_fail "Failed to cd to test directory"
@@ -1523,12 +1523,12 @@ reset_globals
 test_dir=$(create_temp_dir "compare-excl-nodup")
 
 # Create file in both staging and project matching exclusion
-mkdir -p "$test_dir/staging/claude/commands/cove"
-mkdir -p "$test_dir/project/.claude/commands/cove"
-echo "same content" >"$test_dir/staging/claude/commands/cove/cove.md"
-echo "same content" >"$test_dir/project/.claude/commands/cove/cove.md"
+mkdir -p "$test_dir/staging/claude/commands/chain-of-verification"
+mkdir -p "$test_dir/project/.claude/commands/chain-of-verification"
+echo "same content" >"$test_dir/staging/claude/commands/chain-of-verification/default.md"
+echo "same content" >"$test_dir/project/.claude/commands/chain-of-verification/default.md"
 
-SYNC_EXCLUSIONS=(".claude/commands/cove/*")
+SYNC_EXCLUSIONS=(".claude/commands/chain-of-verification/*")
 
 pushd "$test_dir/project" >/dev/null || {
   log_fail "Failed to cd to test directory"
@@ -1558,7 +1558,7 @@ ADDED_FILES=("file1.txt")
 MODIFIED_FILES=()
 DELETED_FILES=()
 UNCHANGED_FILES=()
-EXCLUDED_FILES=(".claude/commands/cove/cove.md" ".claude/skills/cove/SKILL.md")
+EXCLUDED_FILES=(".claude/commands/chain-of-verification/default.md" ".claude/skills/chain-of-verification/SKILL.md")
 
 output=$(generate_diff_report "$test_dir/staging" 2>&1)
 assert_output_contains "Excluded:" "echo '$output'" "Report shows 'Excluded:' line in summary"
@@ -1574,12 +1574,12 @@ ADDED_FILES=("file1.txt")
 MODIFIED_FILES=()
 DELETED_FILES=()
 UNCHANGED_FILES=()
-EXCLUDED_FILES=(".claude/commands/cove/cove.md" ".claude/skills/cove/SKILL.md")
+EXCLUDED_FILES=(".claude/commands/chain-of-verification/default.md" ".claude/skills/chain-of-verification/SKILL.md")
 
 output=$(generate_diff_report "$test_dir/staging" 2>&1)
 assert_output_contains "Excluded files (via sync_exclusions):" "echo '$output'" "Report shows excluded files header"
-assert_output_contains ".claude/commands/cove/cove.md" "echo '$output'" "Report lists first excluded file"
-assert_output_contains ".claude/skills/cove/SKILL.md" "echo '$output'" "Report lists second excluded file"
+assert_output_contains ".claude/commands/chain-of-verification/default.md" "echo '$output'" "Report lists first excluded file"
+assert_output_contains ".claude/skills/chain-of-verification/SKILL.md" "echo '$output'" "Report lists second excluded file"
 
 log_test "generate_diff_report CI mode includes excluded_count"
 reset_globals
@@ -1593,7 +1593,7 @@ ADDED_FILES=()
 MODIFIED_FILES=()
 DELETED_FILES=()
 UNCHANGED_FILES=()
-EXCLUDED_FILES=(".claude/commands/cove/cove.md" ".claude/skills/cove/SKILL.md")
+EXCLUDED_FILES=(".claude/commands/chain-of-verification/default.md" ".claude/skills/chain-of-verification/SKILL.md")
 
 output=$(generate_diff_report "$test_dir/staging" 2>&1)
 assert_output_contains "excluded_count=2" "echo '$output'" "CI mode outputs excluded_count=2"
@@ -1610,7 +1610,7 @@ ADDED_FILES=()
 MODIFIED_FILES=()
 DELETED_FILES=()
 UNCHANGED_FILES=()
-EXCLUDED_FILES=(".claude/commands/cove/cove.md")
+EXCLUDED_FILES=(".claude/commands/chain-of-verification/default.md")
 
 output=$(generate_diff_report "$test_dir/staging" 2>&1)
 assert_output_contains "has_changes=false" "echo '$output'" "has_changes is false when only excluded files present"
@@ -1626,14 +1626,14 @@ RESOLVED_VERSION="v2.0.0"
 ADDED_FILES=()
 MODIFIED_FILES=()
 DELETED_FILES=()
-EXCLUDED_FILES=(".claude/commands/cove/cove.md" ".claude/skills/cove/SKILL.md")
+EXCLUDED_FILES=(".claude/commands/chain-of-verification/default.md" ".claude/skills/chain-of-verification/SKILL.md")
 
 output=$(generate_markdown_summary "$test_dir/staging" 2>&1)
 assert_output_contains "| Excluded | 2 |" "echo '$output'" "Markdown table contains Excluded row"
 assert_output_contains "### Excluded Files" "echo '$output'" "Markdown contains Excluded Files heading"
 assert_output_contains "sync_exclusions" "echo '$output'" "Markdown contains explanatory text about sync_exclusions"
-assert_output_contains ".claude/commands/cove/cove.md" "echo '$output'" "Markdown lists first excluded file"
-assert_output_contains ".claude/skills/cove/SKILL.md" "echo '$output'" "Markdown lists second excluded file"
+assert_output_contains ".claude/commands/chain-of-verification/default.md" "echo '$output'" "Markdown lists first excluded file"
+assert_output_contains ".claude/skills/chain-of-verification/SKILL.md" "echo '$output'" "Markdown lists second excluded file"
 
 log_test "generate_diff_report does not show excluded section when no exclusions"
 reset_globals

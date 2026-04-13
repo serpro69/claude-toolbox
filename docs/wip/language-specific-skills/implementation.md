@@ -6,7 +6,7 @@ Before starting implementation, ensure you understand:
 - The claude-toolbox repository structure (especially `.claude/skills/` and `.github/workflows/`)
 - How Claude Code skills work (YAML frontmatter, markdown content, skill invocation)
 - GitHub Actions workflow syntax for template-cleanup automation
-- The existing skill patterns in `analysis-process/`, `testing-process/`, etc.
+- The existing skill patterns in `plan/`, `test/`, etc.
 
 ## Implementation Phases
 
@@ -420,10 +420,10 @@ Add a new step that removes unused language skills based on the `LANGUAGE` input
 Add logic to inject language skill references into process skills.
 
 **Files to modify:**
-- `.claude/skills/testing-process/SKILL.md`
-- `.claude/skills/development-process/SKILL.md`
+- `.claude/skills/test/SKILL.md`
+- `.claude/skills/dependency-handling/SKILL.md`
 
-**Replacement logic for testing-process/SKILL.md:**
+**Replacement logic for test/SKILL.md:**
 
 Find pattern:
 ```
@@ -438,7 +438,7 @@ For comprehensive <Language> testing guidance including [language-specific topic
 see the `lang-<language>` skill at [skills/lang-<language>/testing.md](./../lang-<language>/testing.md).
 ```
 
-**Replacement logic for development-process/SKILL.md:**
+**Replacement logic for dependency-handling/SKILL.md:**
 
 Add after dependency documentation section:
 ```
@@ -460,16 +460,16 @@ see the `lang-<language>` skill at [skills/lang-<language>/tooling.md](./../lang
     LANG_LOWER=$(echo "$LANGUAGE" | tr '[:upper:]' '[:lower:]')
     LANG_UPPER=$(echo "$LANGUAGE" | sed 's/.*/\u&/')
 
-    # Update testing-process
-    sed -i "s/%LANGUAGE%/$LANG_UPPER/g" .claude/skills/testing-process/SKILL.md
+    # Update test
+    sed -i "s/%LANGUAGE%/$LANG_UPPER/g" .claude/skills/test/SKILL.md
 
-    # Add language skill reference to testing-process
+    # Add language skill reference to test
     # [Implementation depends on file structure]
 
-    # Update development-process
-    sed -i "s/%LANGUAGE%/$LANG_UPPER/g" .claude/skills/development-process/SKILL.md
+    # Update dependency-handling
+    sed -i "s/%LANGUAGE%/$LANG_UPPER/g" .claude/skills/dependency-handling/SKILL.md
 
-    # Add language skill reference to development-process
+    # Add language skill reference to dependency-handling
     # [Implementation depends on file structure]
 ```
 
@@ -530,9 +530,9 @@ Add input validation for the LANGUAGE parameter.
 
 ## Phase 4: Update Process Skills and Documentation
 
-### Task 4.1: Review and Update testing-process/SKILL.md
+### Task 4.1: Review and Update test/SKILL.md
 
-**Location:** `.claude/skills/testing-process/SKILL.md`
+**Location:** `.claude/skills/test/SKILL.md`
 
 **Actions:**
 - Review current content with `%LANGUAGE%` placeholders
@@ -559,9 +559,9 @@ test coverage, and benchmark testing, see the `lang-go` skill at
 
 ---
 
-### Task 4.2: Review and Update development-process/SKILL.md
+### Task 4.2: Review and Update dependency-handling/SKILL.md
 
-**Location:** `.claude/skills/development-process/SKILL.md`
+**Location:** `.claude/skills/dependency-handling/SKILL.md`
 
 **Actions:**
 - Add `%LANGUAGE%` placeholder if not already present
@@ -620,7 +620,7 @@ Each language skill includes:
 ### Using Language Skills
 
 **Automatic reference from process skills:**
-When you invoke process skills like `testing-process`, they automatically reference the appropriate language skill sections.
+When you invoke process skills like `test`, they automatically reference the appropriate language skill sections.
 
 **Direct invocation:**
 You can directly invoke the language skill for comprehensive guidance:
@@ -698,8 +698,8 @@ If your project was created before language-specific skills were added:
 
 3. **Update process skills**
    Add language skill references to:
-   - `.claude/skills/testing-process/SKILL.md`
-   - `.claude/skills/development-process/SKILL.md`
+   - `.claude/skills/test/SKILL.md`
+   - `.claude/skills/dependency-handling/SKILL.md`
 
 4. **Replace placeholders**
    Find and replace `%LANGUAGE%` with your language name.
@@ -736,8 +736,8 @@ If your project was created before language-specific skills were added:
 [ ] template-cleanup workflow succeeds
 [ ] Correct lang-<language> directory present
 [ ] Other lang-* directories removed
-[ ] testing-process/SKILL.md updated correctly
-[ ] development-process/SKILL.md updated correctly
+[ ] test/SKILL.md updated correctly
+[ ] dependency-handling/SKILL.md updated correctly
 [ ] All markdown links resolve
 [ ] SKILL.md loads properly in Claude Code
 [ ] Topic files are accessible via navigation links

@@ -66,18 +66,19 @@ assert_equals "kk" "$mp_plugin_name" "Marketplace plugin name matches plugin nam
 log_section "Section 3: Skills"
 
 EXPECTED_SKILLS=(
-  analysis-process
-  cove
-  development-guidelines
-  documentation-process
-  implementation-process
-  implementation-review
+  plan
+  chain-of-verification
+  dependency-handling
+  document
+  implement
+  review-design
+  review-spec
   merge-docs
-  solid-code-review
-  testing-process
+  review-code
+  test
 )
 
-log_test "All 9 skill directories exist"
+log_test "All 10 skill directories exist"
 for skill in "${EXPECTED_SKILLS[@]}"; do
   if [[ -d "$REPO_ROOT/klaude-plugin/skills/$skill" ]]; then
     log_pass "Skill exists: $skill"
@@ -97,7 +98,7 @@ done
 
 log_section "Section 4: Commands"
 
-EXPECTED_COMMANDS=(cove implementation-review migrate-from-taskmaster sync-workflow)
+EXPECTED_COMMANDS=(chain-of-verification review-spec migrate-from-taskmaster sync-workflow)
 
 log_test "All 4 command directories exist"
 for cmd in "${EXPECTED_COMMANDS[@]}"; do
@@ -191,7 +192,7 @@ log_section "Section 7: Cross-references"
 
 log_test "Skill references do NOT have kk: prefix (skills are unprefixed)"
 # Skills should be referenced without kk: prefix in skill files
-wrongly_prefixed=$(grep -rE '`kk:(analysis-process|implementation-process|testing-process|documentation-process|solid-code-review|implementation-review|merge-docs)`' \
+wrongly_prefixed=$(grep -rE '`kk:(plan|implement|test|document|review-code|review-spec|merge-docs)`' \
   "$REPO_ROOT/klaude-plugin/skills/" 2>/dev/null || true)
 if [[ -z "$wrongly_prefixed" ]]; then
   log_pass "Skill references correctly unprefixed"
@@ -201,7 +202,7 @@ fi
 
 log_test "Command references use /kk: prefix"
 # Commands in command files should use /kk: prefix in examples
-has_kk_commands=$(grep -rE '/kk:(cove|implementation-review|migrate-from-taskmaster|sync-workflow):' \
+has_kk_commands=$(grep -rE '/kk:(chain-of-verification|review-spec|migrate-from-taskmaster|sync-workflow):' \
   "$REPO_ROOT/klaude-plugin/commands/" 2>/dev/null || true)
 if [[ -n "$has_kk_commands" ]]; then
   log_pass "Command references use /kk: prefix"

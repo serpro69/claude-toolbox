@@ -2,7 +2,7 @@
 name: merge-docs
 description: |
   Compare and merge two design docs for the same feature into a single source of truth.
-  Use when you have competing or complementary design/implementation docs (e.g. from separate analysis-process runs) that need reconciling into one unified document.
+  Use when you have competing or complementary design/implementation docs (e.g. from separate plan runs) that need reconciling into one unified document.
 ---
 
 # Merge Design Documents

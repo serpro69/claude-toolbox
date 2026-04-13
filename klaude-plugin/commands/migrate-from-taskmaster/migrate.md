@@ -18,7 +18,7 @@ Also check for tasks in other non-terminal statuses (`in-progress`, `blocked`, `
 
 For each feature/group with pending tasks:
 
-1. Create `/docs/wip/[feature]/tasks.md` following the format in `../../skills/analysis-process/example-tasks.md`
+1. Create `/docs/wip/[feature]/tasks.md` following the format in `../../skills/plan/example-tasks.md`
 2. Map Task Master statuses: `pending` → `pending`, `in-progress` → `in-progress`, `blocked` → `blocked`, `deferred` → `blocked` (note the reason), `review` → `in-progress`
 3. Preserve task descriptions, subtasks, dependencies, and any implementation notes
 4. Skip tasks with status `done` or `cancelled`
