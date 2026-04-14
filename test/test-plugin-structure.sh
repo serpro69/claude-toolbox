@@ -66,7 +66,7 @@ assert_equals "kk" "$mp_plugin_name" "Marketplace plugin name matches plugin nam
 log_section "Section 3: Skills"
 
 EXPECTED_SKILLS=(
-  plan
+  design
   chain-of-verification
   dependency-handling
   document

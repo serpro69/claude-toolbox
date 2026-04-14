@@ -36,7 +36,7 @@ Applies when creating or renaming kk-plugin skills and commands.
 
 ### Skills
 
-- **Imperative verbs over noun phrases.** `plan` not `analysis-process`, `implement` not `implementation-process`. Drop filler suffixes like `-process`. Skills are invoked as `/skill-name` — shorter names are faster to type.
+- **Imperative verbs over noun phrases.** `design` not `analysis-process`, `implement` not `implementation-process`. Drop filler suffixes like `-process`. Skills are invoked as `/skill-name` — shorter names are faster to type.
 - **Self-documenting over acronyms.** `chain-of-verification` beats `cove`. If the name requires expansion to understand it, it's the wrong name.
 - **Family prefixes for grouped skills.** When multiple skills do the same action on different targets, share a prefix: `review-design`, `review-spec`, `review-code`. Tab-completion, discoverability, and mental grouping all benefit.
 - **Reference bare in prose.** Inside skill/command files, reference other skills without the `kk:` prefix (e.g., `` `review-code` `` not `` `kk:review-code` ``). The `kk:` prefix is for command invocations, not prose references.
