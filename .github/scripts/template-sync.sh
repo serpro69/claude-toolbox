@@ -165,13 +165,13 @@ is_excluded() {
   for pattern in "${SYNC_EXCLUSIONS[@]}"; do
     # IMPORTANT: pattern must be unquoted for glob expansion in case
     case "$path" in
-      $pattern)
-        return 0  # Excluded
-        ;;
+    $pattern)
+      return 0 # Excluded
+      ;;
     esac
   done
 
-  return 1  # Not excluded
+  return 1 # Not excluded
 }
 
 # =============================================================================
@@ -372,7 +372,7 @@ migrate_manifest() {
     log_info "Migrating upstream_repo from serpro69/claude-starter-kit to serpro69/claude-toolbox"
     local tmp
     tmp=$(mktemp "/tmp/manifest-migrate.XXXXXX")
-    if ! jq '.upstream_repo = "serpro69/claude-toolbox"' "$MANIFEST_PATH" > "$tmp"; then
+    if ! jq '.upstream_repo = "serpro69/claude-toolbox"' "$MANIFEST_PATH" >"$tmp"; then
       rm -f "$tmp"
       log_error "Failed to migrate manifest"
       exit 1
@@ -424,7 +424,7 @@ backfill_manifest_variables() {
         jq_expr="$jq_expr | .variables.$var = \"$default_val\""
       fi
     done
-    if ! jq "$jq_expr" "$MANIFEST_PATH" > "$tmp"; then
+    if ! jq "$jq_expr" "$MANIFEST_PATH" >"$tmp"; then
       rm -f "$tmp"
       log_warn "Failed to backfill manifest variables"
       return 0
@@ -541,7 +541,7 @@ run_plugin_migration() {
              "repo": $repo
            }
          }
-       }' "$settings_file" > "$tmp"; then
+       }' "$settings_file" >"$tmp"; then
       mv "$tmp" "$settings_file"
       log_info "Updated $settings_file for plugin system"
     else
@@ -553,7 +553,7 @@ run_plugin_migration() {
   # Set plugin_migrated flag in manifest
   local tmp
   tmp=$(mktemp "/tmp/manifest-plugin.XXXXXX")
-  if jq '.plugin_migrated = true' "$MANIFEST_PATH" > "$tmp"; then
+  if jq '.plugin_migrated = true' "$MANIFEST_PATH" >"$tmp"; then
     mv "$tmp" "$MANIFEST_PATH"
     log_info "Set plugin_migrated flag in manifest"
   else
@@ -590,44 +590,44 @@ resolve_version() {
   local repo_url="https://github.com/$upstream.git"
 
   case "$target" in
-    latest)
-      # Get the most recent tag sorted by version
-      # Note: Use 'grep ... || true' to handle case when no tags exist (grep returns 1 for no matches)
-      resolved=$(git ls-remote --tags --sort=-v:refname "$repo_url" 2>/dev/null \
-        | { grep -v '\^{}' || true; } \
-        | head -1 \
-        | sed 's/.*refs\/tags\///')
+  latest)
+    # Get the most recent tag sorted by version
+    # Note: Use 'grep ... || true' to handle case when no tags exist (grep returns 1 for no matches)
+    resolved=$(git ls-remote --tags --sort=-v:refname "$repo_url" 2>/dev/null |
+      { grep -v '\^{}' || true; } |
+      head -1 |
+      sed 's/.*refs\/tags\///')
 
-      # If no tags exist, resolve default branch to SHA
-      if [[ -z "$resolved" ]]; then
-        log_warn "No tags found in upstream repository, using default branch" >&2
-        resolved=$(git ls-remote "$repo_url" HEAD 2>/dev/null | cut -f1)
-        if [[ -z "$resolved" ]]; then
-          log_error "Failed to resolve default branch SHA for upstream" >&2
-          exit 1
-        fi
-      fi
-      ;;
-    main|master)
-      # Resolve branch name to actual commit SHA
-      resolved=$(git ls-remote "$repo_url" "refs/heads/$target" 2>/dev/null | cut -f1)
-      if [[ -z "$resolved" ]]; then
-        log_error "Branch '$target' not found in upstream repository" >&2
-        exit 1
-      fi
-      ;;
-    HEAD)
-      # Resolve HEAD (default branch) to actual commit SHA
+    # If no tags exist, resolve default branch to SHA
+    if [[ -z "$resolved" ]]; then
+      log_warn "No tags found in upstream repository, using default branch" >&2
       resolved=$(git ls-remote "$repo_url" HEAD 2>/dev/null | cut -f1)
       if [[ -z "$resolved" ]]; then
-        log_error "Failed to resolve HEAD for upstream repository" >&2
+        log_error "Failed to resolve default branch SHA for upstream" >&2
         exit 1
       fi
-      ;;
-    *)
-      # Assume specific tag or SHA - return as-is
-      resolved="$target"
-      ;;
+    fi
+    ;;
+  main | master)
+    # Resolve branch name to actual commit SHA
+    resolved=$(git ls-remote "$repo_url" "refs/heads/$target" 2>/dev/null | cut -f1)
+    if [[ -z "$resolved" ]]; then
+      log_error "Branch '$target' not found in upstream repository" >&2
+      exit 1
+    fi
+    ;;
+  HEAD)
+    # Resolve HEAD (default branch) to actual commit SHA
+    resolved=$(git ls-remote "$repo_url" HEAD 2>/dev/null | cut -f1)
+    if [[ -z "$resolved" ]]; then
+      log_error "Failed to resolve HEAD for upstream repository" >&2
+      exit 1
+    fi
+    ;;
+  *)
+    # Assume specific tag or SHA - return as-is
+    resolved="$target"
+    ;;
   esac
 
   # Validate we got something
@@ -673,7 +673,7 @@ fetch_upstream_templates() {
   mkdir -p "$work_dir"
 
   # Clone with blob filter for efficiency (with retry logic)
-  for ((attempt=1; attempt<=max_retries; attempt++)); do
+  for ((attempt = 1; attempt <= max_retries; attempt++)); do
     if git clone --depth 1 --filter=blob:none \
       "$repo_url" "$work_dir/upstream" --quiet 2>/dev/null; then
       break
@@ -745,7 +745,8 @@ fetch_upstream_templates() {
     cp -rp "$upstream_root/.claude" "$FETCHED_TEMPLATES_PATH/claude"
     # settings.local.json is per-repo and must never be synced downstream
     rm -f "$FETCHED_TEMPLATES_PATH/claude/settings.local.json"
-    # capy.sh is generated by capy tooling per-repo and must never be synced downstream
+    # capy-related configs and files are generated by capy tooling per-repo and must never be synced downstream
+    rm -rf "$FETCHED_TEMPLATES_PATH/claude/capy"
     rm -f "$FETCHED_TEMPLATES_PATH/claude/scripts/capy.sh"
   fi
   if [[ -d "$upstream_root/.serena" ]]; then
@@ -827,7 +828,7 @@ apply_substitutions() {
             . as $d | . + [$u[] | select(. as $i | $d | index($i) | not)]
           else . end;
         smart_merge($upstream[0])
-      ' "$downstream_settings" > "${cc_settings_file}.tmp"; then
+      ' "$downstream_settings" >"${cc_settings_file}.tmp"; then
         mv "${cc_settings_file}.tmp" "$cc_settings_file"
       else
         log_warn "Smart merge failed — downstream .claude/settings.json may contain invalid JSON"
@@ -861,7 +862,7 @@ apply_substitutions() {
       else . end) |
       # Plugin marketplace: directory -> github source for downstream
       .extraKnownMarketplaces."claude-toolbox".source = { "source": "github", "repo": $repo }
-      ' "$cc_settings_file" > "${cc_settings_file}.tmp" && mv "${cc_settings_file}.tmp" "$cc_settings_file"
+      ' "$cc_settings_file" >"${cc_settings_file}.tmp" && mv "${cc_settings_file}.tmp" "$cc_settings_file"
 
     log_info "Applied Claude Code settings"
   fi
@@ -1084,7 +1085,7 @@ generate_diff_report() {
         echo "diff_summary<<EOF"
         generate_markdown_summary "$staging_dir"
         echo "EOF"
-      } >> "$GITHUB_OUTPUT"
+      } >>"$GITHUB_OUTPUT"
     else
       # Output to stdout for local testing
       echo "::group::GitHub Actions Outputs"
