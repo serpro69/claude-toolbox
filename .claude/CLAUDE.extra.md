@@ -61,8 +61,8 @@ Symbols are identified by `name_path` and `relative_path`:
 Task tracking uses simple markdown files co-located with feature design docs:
 
 - **Location:** `/docs/wip/[feature]/tasks.md` alongside `design.md` and `implementation.md`
-- **Created by:** `plan` skill (Step 6 of the idea workflow)
+- **Created by:** `design` skill (Step 6 of the idea workflow)
 - **Consumed by:** `implement` skill (reads tasks, updates status/checkboxes during execution)
 - **Format:** H2 headings per task, checkbox subtasks, bold key-value status/dependencies
 
-The full workflow: `plan` (design + create tasks) → `review-design` → `implement` (execute tasks + `review-code`/`test`/`document` at the end of each task) → `test` (verify) → `document` (document)
+The full workflow: `design` (design + create tasks) → `review-design` → `implement` (execute tasks + `review-code`/`test`/`document` at the end of each task) → `test` (verify) → `document` (document)

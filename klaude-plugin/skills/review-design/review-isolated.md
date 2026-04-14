@@ -120,7 +120,7 @@ Compare findings from both reviewers by document section and issue description:
 
 ### 3b) Author context annotations
 
-For each finding, consider whether the planning session context adds relevant information:
+For each finding, consider whether the design session context adds relevant information:
 
 - If yes: add a clearly-labeled **"Author context"** annotation (e.g., "We discussed this trade-off in Step 3 and chose X because Y").
 - If no: leave the finding as-is — not every finding needs an annotation.

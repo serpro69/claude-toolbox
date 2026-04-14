@@ -18,7 +18,7 @@ All skills appear as `/skill-name` in the slash command menu (annotated with `(k
 
 | Skill                      | What it does                                                                                                                                                                    |
 | -------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| **plan**       | Turns an idea into design docs, an implementation plan, and a task list in `docs/wip/`. Asks refinement questions, then documents everything a developer needs to start coding. |
+| **design**       | Turns an idea into design docs, an implementation plan, and a task list in `docs/wip/`. Asks refinement questions, then documents everything a developer needs to start coding. |
 | **implement** | Executes a task list from `docs/wip/` with batched steps and code review checkpoints between batches. Updates task status as it goes.                                           |
 | **test**        | Generates tests following project conventions: table-driven, integration, mocking, property-based. Runs the full suite and reports coverage.                                    |
 | **document**  | Updates ARCHITECTURE.md, TESTING.md, and records ADRs for non-obvious decisions made during implementation.                                                                     |
@@ -34,10 +34,10 @@ All skills appear as `/skill-name` in the slash command menu (annotated with `(k
 The skills are designed to work together in a pipeline:
 
 ```
-plan → review-design → implement → review-code → test → document
+design → review-design → implement → review-code → test → document
 ```
 
-1. **plan** — design docs + implementation plan + task list
+1. **design** — design docs + implementation plan + task list
 2. **review-design** — evaluate design docs for completeness and technical soundness before writing code
 3. **implement** — execute tasks with review checkpoints
 4. **review-code** — review code for SOLID violations, security risks, and quality issues
@@ -72,7 +72,7 @@ plan → review-design → implement → review-code → test → document
 
 If you're upgrading from a version before the plugin system (< v0.5.0):
 
-- Skills remain unprefixed: `/plan` (annotated with `(kk)` in the menu)
+- Skills remain unprefixed: `/design` (annotated with `(kk)` in the menu)
 - Commands are now namespaced: `/project:chain-of-verification` → `/kk:chain-of-verification:default`
 - The template-sync workflow handles migration automatically on next sync
 - After merging the sync PR, run `/plugin install kk@claude-toolbox`
