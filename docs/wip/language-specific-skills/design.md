@@ -9,7 +9,7 @@ This feature extends the claude-toolbox template with language-specific developm
 The current template includes process-based skills (analysis, testing, documentation, development) that are intentionally language-agnostic. While this maintains flexibility, it means:
 
 1. Users must repeatedly look up language-specific conventions, testing frameworks, and tooling
-2. The `%LANGUAGE%` placeholder in `testing-process/SKILL.md` provides minimal guidance
+2. The `%LANGUAGE%` placeholder in `test/SKILL.md` provides minimal guidance
 3. There's no centralized reference for language-specific best practices within the Claude Code workflow
 4. New contributors to a codebase lack quick access to project language idioms and patterns
 
@@ -41,11 +41,9 @@ The current template includes process-based skills (analysis, testing, documenta
 
 ```
 .claude/skills/
-├── analysis-process/
-├── development-process/
-├── documentation-process/
-├── testing-process/
-├── task-master-process/
+├── plan/
+├── document/
+├── test/
 ├── lang-go/
 │   ├── SKILL.md              # Entry point with overview + quick reference
 │   ├── style.md              # Code style & conventions
@@ -100,8 +98,8 @@ test coverage, and benchmark testing, see the `lang-go` skill at
 ```
 
 **Integration Points:**
-1. `testing-process/SKILL.md` → Links to `lang-<language>/testing.md`
-2. `development-process/SKILL.md` → Links to `lang-<language>/tooling.md` for dependency management
+1. `test/SKILL.md` → Links to `lang-<language>/testing.md`
+2. `dependency-handling/SKILL.md` → Links to `lang-<language>/tooling.md` for dependency management
 3. Users can invoke `lang-<language>` skill directly for standalone language guidance
 
 ### Template Cleanup Workflow
@@ -120,10 +118,10 @@ Input: LANGUAGE=go
 Actions:
 1. Keep: .claude/skills/lang-go/
 2. Delete: .claude/skills/lang-{python,java,kotlin,typescript}/
-3. Replace in testing-process/SKILL.md:
+3. Replace in test/SKILL.md:
    "%LANGUAGE%" → "Go"
    Add link to lang-go/testing.md
-4. Replace in development-process/SKILL.md:
+4. Replace in dependency-handling/SKILL.md:
    "%LANGUAGE%" → "Go"
    Add link to lang-go/tooling.md
 ```
@@ -185,7 +183,7 @@ Each language skill includes an empty `frameworks/` directory:
    - Process skills automatically reference language skill
 
 2. **During development:**
-   - Invoke process skills normally (testing-process, development-process)
+   - Invoke process skills normally (test, dependency-handling)
    - Follow inline brief guidance
    - Navigate to language skill for deep dives when needed
    - Invoke language skill directly: "Use the lang-go skill to help with..."

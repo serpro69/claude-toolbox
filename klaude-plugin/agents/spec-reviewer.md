@@ -76,7 +76,7 @@ Each finding gets a confidence score (1-10) with **mandatory reasoning** explain
 
 ## Review Workflow
 
-Follow these steps in order. Each step references the `implementation-review` methodology.
+Follow these steps in order. Each step references the `review-spec` methodology.
 
 ### 1) Load Feature Documents
 

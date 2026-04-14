@@ -9,7 +9,7 @@ Below are some examples of the actual claude-code workflows that were executed u
 > [!TIP]
 > After completing the design, I usually ask claude to run a code-review with pal to use gemini-2.5-pro model to proof-read the created documents before proceeding with implementation itself.
 
-See full chat transcription in [analysis-process-example.md](./analysis-process-example.md).
+See full chat transcription in [plan-example.md](./plan-example.md).
 
 ### Benchmarks
 
@@ -19,7 +19,7 @@ TODO
 
 ### Benchmarks
 
-Skill benchmarks are available in [benchmarks/design-review-benchmark.md](./benchmarks/design-review-benchmark.md)
+Skill benchmarks are available in [benchmarks/review-design-benchmark.md](./benchmarks/review-design-benchmark.md)
 
 ## Code Review
 
@@ -27,7 +27,7 @@ Skill benchmarks are available in [benchmarks/design-review-benchmark.md](./benc
 
 ### Isolated Mode
 
-See full chat transcription in [./isolated-solid-code-review-example.md](./isolated-solid-code-review-example.md)
+See full chat transcription in [./isolated-review-code-example.md](./isolated-review-code-example.md)
 
 ### Benchmarks
 

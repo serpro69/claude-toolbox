@@ -17,7 +17,7 @@ Arguments:
   dirname    Name of the directory in docs/wip/ to promote
 
 Example:
-  $(basename "$0") cove
+  $(basename "$0") chain-of-verification
 EOF
 }
 

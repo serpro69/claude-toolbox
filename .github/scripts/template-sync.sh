@@ -146,7 +146,7 @@ cleanup_on_exit() {
 # Checks if a file path matches any exclusion pattern.
 #
 # Args:
-#   $1 - Project-relative file path (e.g., ".claude/commands/cove/cove.md")
+#   $1 - Project-relative file path (e.g., ".claude/commands/chain-of-verification/default.md")
 #
 # Returns:
 #   0 if path matches an exclusion pattern (excluded)
@@ -481,7 +481,11 @@ run_plugin_migration() {
   local upstream_repo
   upstream_repo=$(get_manifest_value '.upstream_repo')
 
-  # Static list of known template-managed files to remove
+  # Static list of known template-managed files to remove.
+  # These are the pre-plugin skill/command names that were installed by
+  # template-sync before v0.5.0. Downstream projects upgrading from pre-plugin
+  # versions need these paths cleaned up so the plugin can take over.
+  # Do NOT rename these to post-plugin skill names — historical names only.
   local dirs_to_remove=(
     ".claude/skills/analysis-process"
     ".claude/skills/cove"
