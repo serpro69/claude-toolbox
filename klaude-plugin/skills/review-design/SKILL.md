@@ -1,8 +1,8 @@
 ---
 name: review-design
 description: |
-  Review design and implementation docs produced by plan. Evaluates document quality, internal consistency, and technical soundness.
-  Use after plan completes and before starting implement.
+  Review design and implementation docs produced by design. Evaluates document quality, internal consistency, and technical soundness.
+  Use after design completes and before starting implement.
 ---
 
 # Design Review
@@ -13,7 +13,7 @@ Read capy knowledge base conventions at [shared-capy-knowledge-protocol.md](shar
 
 ## Overview
 
-Pre-implementation review gate that evaluates design documents produced by `plan` before code is written. Sits between `plan` (creates docs) and `implement` (executes them). Reviews two dimensions: document quality/structure (completeness, internal consistency, clarity, convention adherence) and technical soundness (architectural viability, edge cases, failure modes, trade-off analysis).
+Pre-implementation review gate that evaluates design documents produced by `design` before code is written. Sits between `design` (creates docs) and `implement` (executes them). Reviews two dimensions: document quality/structure (completeness, internal consistency, clarity, convention adherence) and technical soundness (architectural viability, edge cases, failure modes, trade-off analysis).
 
 ## Review Modes
 
@@ -23,7 +23,7 @@ Reviews design documents in the main conversation context. Fast, single-pass rev
 
 ### Isolated Mode (`/kk:review-design:isolated`)
 
-Delegates detection to independent reviewers that did not participate in the plan, then annotates their findings with author context. Two parallel reviewers: a `design-reviewer` sub-agent and `pal codereview` (external model in native format). Produces a report organized by agreement level with corroborated findings highlighted.
+Delegates detection to independent reviewers that did not participate in the design, then annotates their findings with author context. Two parallel reviewers: a `design-reviewer` sub-agent and `pal codereview` (external model in native format). Produces a report organized by agreement level with corroborated findings highlighted.
 
 - **Cost**: Higher (sub-agent + external model + annotation)
 - **Isolation**: True — reviewers have zero authorship bias or session context

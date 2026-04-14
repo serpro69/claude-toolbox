@@ -15,7 +15,7 @@ Claude Code is powerful on its own, but it doesn't know your development workflo
 **A structured development pipeline** — 10 workflow skills that take you from idea through design, implementation, code review, testing, to documentation, with persistent knowledge that carries across sessions.
 
 ```
-/plan → /review-design → /implement → /review-code → /test → /document
+/design → /review-design → /implement → /review-code → /test → /document
 ```
 
 Out of the box you get:
@@ -214,7 +214,7 @@ That's it. All 10 skills are now available as `/skill-name` (annotated with `(kk
 
 After setup, try the core workflow:
 
-1. **Start with an idea.** Type `/plan` and describe a feature you want to build. Claude will ask you refinement questions one at a time, then produce design docs and a task list in `docs/wip/`.
+1. **Start with an idea.** Type `/design` and describe a feature you want to build. Claude will ask you refinement questions one at a time, then produce design docs and a task list in `docs/wip/`.
 
 2. **Review the design.** Run `/review-design your-feature` to catch gaps before writing code.
 
@@ -249,7 +249,7 @@ Without Capy, each session starts fresh — all skills still work, they just don
 
 The **kk** plugin contains all development workflow functionality — 10 skills, 4 commands, and hooks — distributed via the Claude Code plugin system. Skills are invoked as `/skill-name`, commands as `/kk:dir:command`.
 
-Includes: **plan**, **implement**, **test**, **document**, **development-guidelines**, **review-code**, **review-spec**, **review-design**, **merge-docs**, **chain-of-verification**. Plus commands for CoVe, implementation review, design review, Task Master migration, and sync workflow updates. See the [plugin README](./klaude-plugin/README.md) for full details.
+Includes: **design**, **implement**, **test**, **document**, **development-guidelines**, **review-code**, **review-spec**, **review-design**, **merge-docs**, **chain-of-verification**. Plus commands for CoVe, implementation review, design review, Task Master migration, and sync workflow updates. See the [plugin README](./klaude-plugin/README.md) for full details.
 
 ### Configuration
 
@@ -379,7 +379,7 @@ Edit `.github/template-state.json` and add a `sync_exclusions` array:
 
 ### Migrating from Task Master
 
-Task Master MCP was removed in favor of native markdown-based task tracking integrated into the `plan` and `implement` skills.
+Task Master MCP was removed in favor of native markdown-based task tracking integrated into the `design` and `implement` skills.
 
 The easiest way to migrate is to run the migration command in Claude Code:
 
@@ -394,7 +394,7 @@ It will port pending tasks, clean up TM files, update configs, and walk you thro
 
 If you prefer to migrate manually, follow these steps after syncing:
 
-1. **Port any pending tasks** to the new format: create `/docs/wip/[feature]/tasks.md` files following the [example task file](./klaude-plugin/skills/plan/example-tasks.md). Completed tasks don't need porting.
+1. **Port any pending tasks** to the new format: create `/docs/wip/[feature]/tasks.md` files following the [example task file](./klaude-plugin/skills/design/example-tasks.md). Completed tasks don't need porting.
 
 1. **Remove Task Master files and config:**
 
@@ -424,7 +424,7 @@ If you prefer to migrate manually, follow these steps after syncing:
    chmod +x .github/scripts/template-sync.sh
    ```
 
-Task tracking now lives in simple markdown files (`/docs/wip/[feature]/tasks.md`) created by the `plan` skill and consumed by `implement`. No external MCP server required.
+Task tracking now lives in simple markdown files (`/docs/wip/[feature]/tasks.md`) created by the `design` skill and consumed by `implement`. No external MCP server required.
 
 </details>
 
@@ -432,7 +432,7 @@ Task tracking now lives in simple markdown files (`/docs/wip/[feature]/tasks.md`
 
 Skills and commands have moved from the template to the **kk** plugin:
 
-- Skills remain unprefixed: `/plan` (annotated with `(kk)` in the menu)
+- Skills remain unprefixed: `/design` (annotated with `(kk)` in the menu)
 - Commands are now namespaced: `/project:chain-of-verification` → `/kk:chain-of-verification:default`
 - The template-sync workflow handles migration automatically on next sync
 - After merging the sync PR, run `/plugin install kk@claude-toolbox`

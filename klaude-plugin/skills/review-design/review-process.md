@@ -40,13 +40,13 @@ Design Review Progress:
 
 ### 3) Document Quality Review
 
-Evaluate each in-scope document against plan expectations:
+Evaluate each in-scope document against design expectations:
 
 - **Completeness** — Is the design detailed enough for an experienced developer with zero codebase context? Are file paths, function names, and components explicitly named where appropriate?
 - **Clarity** — Are requirements unambiguous? Could a developer follow the plan without needing to ask clarifying questions?
 - **Internal consistency** — Does each document agree with itself? (e.g., a design.md that says "3 endpoints" then only describes 2)
 - **Cross-document consistency** — Do design.md and implementation.md agree? (only when both are in scope)
-- **Convention adherence** — Does the document structure follow the plan output conventions? Are sections well-organized with appropriate headings?
+- **Convention adherence** — Does the document structure follow the design output conventions? Are sections well-organized with appropriate headings?
 - **Subtask quality** (only when tasks.md is in scope) — Are subtasks specific enough? Do they name the file/function/component being touched? Are dependencies between tasks correct?
 
 ### 4) Technical Soundness Review

@@ -41,7 +41,7 @@ The current template includes process-based skills (analysis, testing, documenta
 
 ```
 .claude/skills/
-├── plan/
+├── design/
 ├── document/
 ├── test/
 ├── lang-go/
