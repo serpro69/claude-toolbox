@@ -1488,6 +1488,34 @@ assert_equals "1" "${#ADDED_FILES[@]}" "Non-excluded file still categorized as a
 assert_equals "1" "${#EXCLUDED_FILES[@]}" "Excluded file tracked"
 assert_equals "0" "${#MODIFIED_FILES[@]}" "No modified files"
 
+log_test "compare_files does NOT flag per-repo built-in excluded files as deleted"
+# Regression: fetch_upstream_templates strips .claude/settings.local.json,
+# .claude/capy/, and .claude/scripts/capy.sh from staging because they are
+# per-repo files. compare_files must also skip them during deletion detection
+# or they will be incorrectly reported as deleted on every sync.
+reset_globals
+test_dir=$(create_temp_dir "compare-builtin-excl")
+
+# Empty staging (simulates fetch_upstream_templates after stripping)
+mkdir -p "$test_dir/staging/claude"
+
+# Project has the per-repo files that should never be flagged as deleted
+mkdir -p "$test_dir/project/.claude/capy"
+mkdir -p "$test_dir/project/.claude/scripts"
+echo "{}" >"$test_dir/project/.claude/settings.local.json"
+echo "capy config" >"$test_dir/project/.claude/capy/CLAUDE.md"
+echo "capy script" >"$test_dir/project/.claude/scripts/capy.sh"
+
+pushd "$test_dir/project" >/dev/null || {
+  log_fail "Failed to cd to test directory"
+  exit 1
+}
+MANIFEST_PATH="$FIXTURES_DIR/manifests/valid-manifest.json"
+compare_files "$test_dir/staging" 2>/dev/null
+popd >/dev/null || true
+
+assert_equals "0" "${#DELETED_FILES[@]}" "Built-in excluded files not flagged as deleted"
+
 log_test "compare_files handles multiple exclusion patterns"
 reset_globals
 test_dir=$(create_temp_dir "compare-excl-multi")

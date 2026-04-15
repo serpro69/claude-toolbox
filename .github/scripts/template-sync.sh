@@ -76,6 +76,17 @@ UNCHANGED_FILES=()
 EXCLUDED_FILES=()
 SYNC_EXCLUSIONS=()
 
+# Built-in exclusions: files that fetch_upstream_templates strips from staging
+# because they're per-repo and must never be synced downstream. These patterns
+# must also be honored during deletion detection — otherwise compare_files sees
+# the file in the project but not in staging and incorrectly flags it as deleted.
+# Keep this list in sync with the strip logic in fetch_upstream_templates().
+BUILTIN_EXCLUSIONS=(
+  ".claude/settings.local.json"
+  ".claude/capy/*"
+  ".claude/scripts/capy.sh"
+)
+
 # Resolved version (for reporting)
 RESOLVED_VERSION=""
 
@@ -155,15 +166,20 @@ cleanup_on_exit() {
 # Note: Uses bash case statement glob matching where * matches any characters including /
 is_excluded() {
   local path="$1"
-
-  # If no exclusions configured, nothing is excluded
-  if [[ ${#SYNC_EXCLUSIONS[@]} -eq 0 ]]; then
-    return 1
-  fi
-
   local pattern
-  for pattern in "${SYNC_EXCLUSIONS[@]}"; do
+
+  # Check built-in exclusions first (per-repo files stripped from staging)
+  for pattern in "${BUILTIN_EXCLUSIONS[@]}"; do
     # IMPORTANT: pattern must be unquoted for glob expansion in case
+    case "$path" in
+    $pattern)
+      return 0 # Excluded
+      ;;
+    esac
+  done
+
+  # Check user-configured exclusions from manifest
+  for pattern in "${SYNC_EXCLUSIONS[@]}"; do
     case "$path" in
     $pattern)
       return 0 # Excluded
