@@ -16,5 +16,6 @@ Captured from the Opus 4.7 session started 2026-04-17 in `claude-toolbox`.
 | 09 | `09-local-command-caveats.md` | Envelopes around `/effort`, `/export`, etc. |
 | 10 | `10-tool-schemas.md` | JSONSchema for the 9 non-deferred tools (Agent, Bash, Edit, Glob, Grep, Read, Skill, ToolSearch, Write). Full verbatim text including Bash git/gh sections and Agent `<example>` blocks. |
 | 11 | `11-hooks-raw-outputs.md` | Raw output for every configured hook event, captured by invoking `capy hook <type>` directly. Covers SessionStart, UserPromptSubmit, all PreToolUse matcher branches, PostToolUse, PreCompact, SessionEnd. |
+| 12 | `12-triggered-prompts.md` | Dormant prompts captured by deliberately tripping conditions: plan mode (5-phase), exited plan mode, file-shorter-than-offset, file-unchanged-since-last-read. Plus a documented subagent prompt-dump refusal and indirect tool inventory. |
 
 Anything beyond these was either tool-call content (your messages, tool results, file reads) or produced by my own responses — not additional system prompt.
