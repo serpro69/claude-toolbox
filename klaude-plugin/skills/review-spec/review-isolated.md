@@ -40,7 +40,7 @@ If any are missing, inform the user and stop.
 
 ### 1c) Determine review scope
 
-Build the Task Scope artifact following [shared-review-scope-protocol.md](../_shared/review-scope-protocol.md). Read `tasks.md`, classify each task by its status field, and derive the review mode:
+Build the Task Scope artifact following [shared-review-scope-protocol.md](shared-review-scope-protocol.md). Read `tasks.md`, classify each task by its status field, and derive the review mode:
 
 - **Mid-implementation**: some tasks are `pending`/`in-progress` — review only completed tasks
 - **Post-implementation**: all tasks are `done` — review everything

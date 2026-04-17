@@ -54,6 +54,23 @@ Symmetric naming avoids stuttering (`/kk:cove:cove` → `/kk:chain-of-verificati
 
 Agent names describe the **role**, not the skill that invokes them. `code-reviewer`, `design-reviewer`, `spec-reviewer` persist across skill renames. Don't rename agent files when renaming the skills that delegate to them.
 
+### Shared instructions
+
+Instructions referenced by more than one skill live in `klaude-plugin/skills/_shared/<name>.md` with a bare basename (e.g., `review-scope-protocol.md`, `pal-codereview-invocation.md`).
+
+Each consuming skill gets a **per-skill symlink** at `klaude-plugin/skills/<skill>/shared-<name>.md` pointing to `../_shared/<name>.md`. Reasons:
+
+- Markdown links inside a skill stay local — `[shared-foo.md](shared-foo.md)` resolves without `../` path traversal, which keeps links working when the skill is bundled/copied.
+- The `shared-` prefix in the skill directory makes it obvious at a glance which files are shared vs skill-specific.
+- Only symlink into skills that actually reference the file — don't blanket-symlink.
+
+When adding a new shared instruction:
+
+1. Create `klaude-plugin/skills/_shared/<name>.md` (bare basename, no `shared-` prefix on the source file).
+2. In each consuming skill directory, run `ln -s ../_shared/<name>.md shared-<name>.md`.
+3. Reference it in skill docs as `[shared-<name>.md](shared-<name>.md)`.
+4. Agents (in `klaude-plugin/agents/`) can't use the per-skill symlink pattern — reference shared files by their repo-relative path: `klaude-plugin/skills/_shared/<name>.md`.
+
 ### When renaming
 
 - Update `test/test-plugin-structure.sh` `EXPECTED_SKILLS` and `EXPECTED_COMMANDS`.
