@@ -4,6 +4,13 @@
 
 claude-toolbox is a collection of "tools" for all your Claude Code workflows — pre-configured MCP servers, skills, sub-agents, commands, hooks, statuslines with themes, and more - everything you need for AI-powered development workflows, used and battle-tested daily on many of my own projects.
 
+> [!IMPORTANT]
+> This project was created with the help of Claude-Code. Is it, however, reviewed, tested, and reworked with a human-in-the-loop.
+>
+> No AI slop here. Purely AI-made skills are hot garbage, and that's putting it mildly.
+>
+> That said, if you have any problems with code that is written by AI - you've been warned. But, then again, why would you be interested in AI-related configs and skills in the first place... `¯\_(ツ)_/¯`
+
 <img width="3440" height="521" alt="image" src="https://github.com/user-attachments/assets/27ef7269-0153-47c0-b07d-ed6a9504a176" />
 
 ## Why claude-toolbox?
@@ -157,17 +164,17 @@ See [Pal configuration docs](https://github.com/BeehiveInnovations/pal-mcp-serve
 > [!TIP]
 > Take a look at serena [project.yaml](./.serena/project.yml) configuration file for more details.
 
-   **Option B: Run locally**
+**Option B: Run locally**
 
-   ```bash
-   ./.github/scripts/template-cleanup.sh
-   ```
+```bash
+./.github/scripts/template-cleanup.sh
+```
 
-   Interactive mode walks you through each option. Run with `--help` for all flags, or pass them directly:
+Interactive mode walks you through each option. Run with `--help` for all flags, or pass them directly:
 
-   ```bash
-   ./.github/scripts/template-cleanup.sh --languages python,typescript -y
-   ```
+```bash
+./.github/scripts/template-cleanup.sh --languages python,typescript -y
+```
 
 3. Clone your repo (if using Option A) and verify MCP servers:
 
@@ -313,6 +320,7 @@ Repos created from this template can pull configuration updates via the **Templa
 
 > [!NOTE]
 > Claude Code settings are split between two project-scoped files:
+>
 > - **`.claude/settings.json`** — upstream-managed defaults, synced from this template (permissions baseline, env vars, model, plugins, statusline)
 > - **`.claude/settings.local.json`** — your per-repo overrides, never synced (hooks, MCP server enables, additional permissions, personal preferences)
 >
@@ -339,6 +347,7 @@ Repos created from this template can pull configuration updates via the **Templa
 **Preserved:** Project-specific values (name, language, prompts), `settings.local.json`, gitignored files
 
 **settings.json merge behavior:** The sync uses smart-merge semantics — your downstream `settings.json` is "master" and upstream fills gaps:
+
 - **New keys** from upstream are added (e.g., new deny patterns, new env vars)
 - **Existing values** are never overwritten (your customizations are preserved)
 - **Arrays** are concatenated with deduplication (e.g., new upstream deny rules are appended)
@@ -407,13 +416,13 @@ If you prefer to migrate manually, follow these steps after syncing:
    rm -f .claude/agents/task-checker.md
    ```
 
-3. **Remove Task Master from `~/.claude.json`:** delete the `task-master-ai` entry from your `mcpServers` config.
+1. **Remove Task Master from `~/.claude.json`:** delete the `task-master-ai` entry from your `mcpServers` config.
 
-4. **Remove TM variables from `.github/template-state.json`:** delete `TM_CUSTOM_SYSTEM_PROMPT`, `TM_APPEND_SYSTEM_PROMPT`, and `TM_PERMISSION_MODE` from the `variables` object.
+1. **Remove TM variables from `.github/template-state.json`:** delete `TM_CUSTOM_SYSTEM_PROMPT`, `TM_APPEND_SYSTEM_PROMPT`, and `TM_PERMISSION_MODE` from the `variables` object.
 
-5. **Remove TM references from `CLAUDE.md`:** delete the "Task Master Integration" and "Task Master AI Instructions" sections (including the `@./.taskmaster/CLAUDE.md` import).
+1. **Remove TM references from `CLAUDE.md`:** delete the "Task Master Integration" and "Task Master AI Instructions" sections (including the `@./.taskmaster/CLAUDE.md` import).
 
-6. **Update the template-sync workflow** ([why?](https://github.com/serpro69/claude-toolbox/issues/17)): the old workflow contains taskmaster-specific sync logic that will break future syncs. Run `/kk:sync-workflow:sync-workflow latest` or manually replace both files:
+1. **Update the template-sync workflow** ([why?](https://github.com/serpro69/claude-toolbox/issues/17)): the old workflow contains taskmaster-specific sync logic that will break future syncs. Run `/kk:sync-workflow:sync-workflow latest` or manually replace both files:
 
    ```bash
    VERSION="v0.3.0"  # or use latest tag
@@ -489,13 +498,13 @@ for test in test/test-*.sh; do $test; done
 ./test/test-manifest-jq.sh       # jq JSON pattern tests
 ```
 
-| Test Suite                | Coverage                                                            |
-| ------------------------- | ------------------------------------------------------------------- |
-| test-plugin-structure.sh  | Plugin/marketplace manifests, skills, commands, hooks, cross-refs   |
-| test-template-sync.sh     | CLI parsing, manifest validation, substitutions, plugin migration   |
-| test-template-cleanup.sh  | Manifest generation, variable capture, git tag/SHA detection        |
-| test-claude-extra.sh      | CLAUDE.extra.md existence, compare_files detection, auto-import     |
-| test-manifest-jq.sh       | JSON generation, special character handling, round-trip validation  |
+| Test Suite               | Coverage                                                           |
+| ------------------------ | ------------------------------------------------------------------ |
+| test-plugin-structure.sh | Plugin/marketplace manifests, skills, commands, hooks, cross-refs  |
+| test-template-sync.sh    | CLI parsing, manifest validation, substitutions, plugin migration  |
+| test-template-cleanup.sh | Manifest generation, variable capture, git tag/SHA detection       |
+| test-claude-extra.sh     | CLAUDE.extra.md existence, compare_files detection, auto-import    |
+| test-manifest-jq.sh      | JSON generation, special character handling, round-trip validation |
 
 ## Repository Structure
 
