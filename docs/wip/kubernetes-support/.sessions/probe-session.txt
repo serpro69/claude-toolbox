@@ -1,0 +1,64 @@
+           Claude Code v2.1.112
+ ▐▛███▜▌   Opus 4.7 (1M context) · Claude Team
+▝▜█████▛▘  ~/Projects/personal/claude-toolbox
+  ▘▘ ▝▝    Welcome to Opus 4.7 xhigh! · /effort to tune speed vs. intellige…
+
+❯ Invoke the `kk:dependency-handling` skill via the Skill tool with any short   
+  args                                                                          
+  (e.g., "probe test"). When the skill loads, report back the VERBATIM content  
+  of                                                                            
+  the "TEST_PROBE_F1 — REMOVE AFTER TESTING" section — every character exactly  
+  as                                                                            
+  you see it, including any path strings with or without dollar signs.          
+                                                                                
+  Do not interpret, do not analyze, do not run the skill's workflow. Just load  
+  the skill, find the TEST_PROBE_F1 section in what the Skill tool returned,    
+  and                                                                           
+  paste it back to me in a fenced code block.                                   
+
+● Skill(kk:dependency-handling)
+  ⎿  Successfully loaded skill
+
+● ## TEST_PROBE_F1 — REMOVE AFTER TESTING
+
+  This is a temporary probe inserted to verify whether the Claude Code harness
+  expands `/home/sergio/.claude/plugins/cache/claude-toolbox/kk/0.9.0` in
+  SKILL.md prose.
+
+  - Probe A (dollar-brace form): /home/sergio/.claude/plugins/cache/claude-toolb
+  ox/kk/0.9.0/.claude-plugin/plugin.json
+  - Probe B (bare-dollar form): $CLAUDE_PLUGIN_ROOT/.claude-plugin/plugin.json
+  - Probe C (inline sentence): The plugin root is
+  /home/sergio/.claude/plugins/cache/claude-toolbox/kk/0.9.0.
+
+  Cleanup: `mv /home/sergio/.claude/plugins/cache/claude-toolbox/kk/0.9.0/skills
+  /dependency-handling/SKILL.md.bak /home/sergio/.claude/plugins/cache/claude-to
+  olbox/kk/0.9.0/skills/dependency-handling/SKILL.md`
+
+❯ Get a sub-agent to do the same                                                
+
+● Agent(Probe skill content via subagent)
+  ⎿  Done (1 tool use · 17.4k tokens · 7s)
+  (ctrl+o to expand)
+
+● Sub-agent returned:
+
+  ## TEST_PROBE_F1 — REMOVE AFTER TESTING
+
+  This is a temporary probe inserted to verify whether the Claude Code harness
+  expands `/home/sergio/.claude/plugins/cache/claude-toolbox/kk/0.9.0` in
+  SKILL.md prose.
+
+  - Probe A (dollar-brace form): /home/sergio/.claude/plugins/cache/claude-toolb
+  ox/kk/0.9.0/.claude-plugin/plugin.json
+  - Probe B (bare-dollar form): $CLAUDE_PLUGIN_ROOT/.claude-plugin/plugin.json
+  - Probe C (inline sentence): The plugin root is
+  /home/sergio/.claude/plugins/cache/claude-toolbox/kk/0.9.0.
+
+  Cleanup: `mv /home/sergio/.claude/plugins/cache/claude-toolbox/kk/0.9.0/skills
+  /dependency-handling/SKILL.md.bak /home/sergio/.claude/plugins/cache/claude-to
+  olbox/kk/0.9.0/skills/dependency-handling/SKILL.md`
+
+  Both main agent and sub-agent see identical content — paths are pre-expanded
+  (/home/sergio/.claude/plugins/cache/claude-toolbox/kk/0.9.0), while the bare
+  $CLAUDE_PLUGIN_ROOT in Probe B is preserved unexpanded.

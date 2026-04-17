@@ -27,7 +27,29 @@ Separately, Claude Code's runtime harness provides the environment variable `${C
 
 Skills and agents, when their prose needs to cite profile content, use the variable directly — for example, "load `${CLAUDE_PLUGIN_ROOT}/profiles/<name>/review/index.md` for each active profile". The runtime agent resolves the path; the harness guarantees the variable is set.
 
+**The brace form is mandatory.** Empirical verification (see §Verification) found that `${CLAUDE_PLUGIN_ROOT}` is substituted in SKILL.md prose but bare `$CLAUDE_PLUGIN_ROOT` (without braces) is NOT. Consuming skills and agents must use the brace form exclusively.
+
+**Consuming code must handle the unset case.** If `CLAUDE_PLUGIN_ROOT` is absent (harness bug, manual CLI, local testing), `${CLAUDE_PLUGIN_ROOT}/foo` resolves to `/foo` at filesystem root — silent `ENOENT`. The `_shared/profile-detection.md` procedure (introduced by this feature) MUST include a presence check: fail loudly with an actionable message, or fall back to generic (no-profile) guidance. Every consumer inherits this check through the shared procedure.
+
 The existing `_shared/` symlink pattern is **retained unchanged** for mechanism protocols (`capy-knowledge-protocol.md`, `pal-codereview-invocation.md`, `review-scope-protocol.md`, and the new `profile-detection.md` introduced by this feature). This ADR does *not* migrate those; they continue to use the established convention because they already work, and re-engineering them carries risk without immediate benefit.
+
+## Verification
+
+The mechanism was empirically tested on 2026-04-17 against Claude Code v2.1.112 / Opus 4.7 / `kk` plugin v0.9.0, by injecting three probes into an installed SKILL.md and invoking the skill in a fresh session (session-caching prevents mid-session testing).
+
+Results:
+
+- **`${CLAUDE_PLUGIN_ROOT}/path` in SKILL.md prose** — substituted to absolute path before the agent reads. **Works as specified.**
+- **Mid-sentence substitution** (`The plugin root is ${CLAUDE_PLUGIN_ROOT}.`) — substituted. **Works.**
+- **Sub-agent delivery** — a sub-agent spawned via the Task/Agent tool received the same already-substituted content as the top-level agent. **Works across agent boundaries.**
+- **Bare `$CLAUDE_PLUGIN_ROOT` (no braces)** — NOT substituted; stays literal. **Brace form is required.**
+- **Substitution inside inline code spans** (backticks) — DOES happen. Documentation that needs to reference the variable name literally (e.g., CLAUDE.md convention text) cannot rely on inline backticks to protect it; fenced code blocks may offer escape (untested).
+
+Authoritative spec: [`code.claude.com/docs/en/plugins-reference`](https://code.claude.com/docs/en/plugins-reference) — "`${CLAUDE_PLUGIN_ROOT}` and `${CLAUDE_PLUGIN_DATA}` are substituted inline anywhere they appear in skill content, agent content, hook commands, and MCP or LSP server configs."
+
+Related upstream bug: [claude-code issue #9354](https://github.com/anthropics/claude-code/issues/9354) — `${CLAUDE_PLUGIN_ROOT}` was reportedly not substituted in slash-command markdown. Our empirical result above covers SKILL.md prose specifically, not slash-command markdown. If this plugin ever needs to reference the variable in `klaude-plugin/commands/<name>/*.md` files, re-verify at that time.
+
+Indexed as `kk:arch-decisions` for future retrieval: verification date, results, and caveats.
 
 ## Alternatives considered
 
@@ -97,20 +119,31 @@ A secondary, non-binding aim of this ADR is to document that the `${CLAUDE_PLUGI
 - The `shared-<name>.md` file-naming convention.
 - The need for contributors to remember "add a symlink when a skill starts consuming a shared file".
 
-### Rollout approach (if we pursue this)
+### Rollout approach
 
-1. **Observe this feature's rollout.** Profiles land with `${CLAUDE_PLUGIN_ROOT}`-based references (no symlinks). Watch for failure modes over one or more releases:
-   - Does the variable resolve correctly across all supported Claude Code versions and installers?
-   - Do IDE navigation and markdown-link tooling work acceptably for contributors reading skill prose?
-   - Do sub-agents receive the variable correctly when prompts include it?
+**Phase 1 — Mechanism validation (complete as of 2026-04-17).** See §Verification. Three of the four open questions in the original rollout plan are answered:
 
-2. **If no friction surfaces**, propose a follow-up ADR to deprecate `_shared/` symlinks. The migration is O(N) where N = number of existing symlinks (~18). Mechanical:
-   - Rewrite skill prose to reference `${CLAUDE_PLUGIN_ROOT}/skills/_shared/<name>.md` directly.
-   - `git rm` each `skills/<skill>/shared-<name>.md` symlink.
-   - Update `test/test-plugin-structure.sh` to drop the symlink assertions; keep the existence assertions on the shared files themselves.
-   - Update `CLAUDE.md`'s "Shared instructions" section to describe variable references instead of the symlink pattern.
+- Variable resolves correctly in SKILL.md prose on the tested Claude Code version. ✅
+- Sub-agents receive substituted paths. ✅
+- Brace form is required; bare form is not substituted. ⚠️ (new constraint, documented)
 
-3. **If friction surfaces**, retain the dual approach permanently. `_shared/` keeps symlinks (they work); `profiles/` uses `${CLAUDE_PLUGIN_ROOT}`. The asymmetry becomes a stable pattern, not a transitional one. This ADR already documents why.
+One question remains open and is deferred to real-world usage:
+
+- Do IDE navigation and markdown-link tooling work acceptably for contributors reading skill prose? (`${CLAUDE_PLUGIN_ROOT}/foo/bar` is not a clickable link in most markdown viewers — minor contributor-experience cost, not a behavioral blocker.)
+
+**Phase 2 — Real-world observation (pending).** Profiles ship with the mechanism; watch for issues across Claude Code releases, on OpenCode, and in contributor feedback:
+- Cross-version stability of the substitution spec.
+- Subtle failure modes (e.g., substitution in fenced code blocks, which the verification did not cover).
+- Contributor confusion about where to use the variable vs a relative path.
+
+**Phase 3 — Decision point (future ADR).** If no friction after one or more releases, propose a follow-up ADR to deprecate `_shared/` symlinks. Migration is O(N) where N = number of existing symlinks (~18 today). Mechanical:
+
+- Rewrite skill prose to reference `${CLAUDE_PLUGIN_ROOT}/skills/_shared/<name>.md` directly.
+- `git rm` each `skills/<skill>/shared-<name>.md` symlink.
+- Update `test/test-plugin-structure.sh` to drop the symlink assertions; keep the existence assertions on the shared files themselves.
+- Update `CLAUDE.md`'s "Shared instructions" section to describe variable references instead of the symlink pattern.
+
+If friction surfaces in Phase 2, retain the dual approach permanently. `_shared/` keeps symlinks (they work); `profiles/` uses `${CLAUDE_PLUGIN_ROOT}`. The asymmetry becomes a stable pattern, not a transitional one. This ADR already documents why (see §Asymmetry rationale).
 
 ### Non-goals
 
