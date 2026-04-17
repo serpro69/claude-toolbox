@@ -47,7 +47,14 @@ Three concepts, described here and expanded in their own sections below.
 
 ### A single, additive detection axis
 
-[ADR 0001](../../adr/0001-profile-detection-model.md) records that detection remains a single axis — all detectable artifact types (programming languages, IaC DSLs, config schemas) are equal rows in one detection table. Matching a file contributes that row's reference directory to the set loaded for the current task. Multiple matches are additive. The existing `%LANGUAGE%` placeholder in skill prose retains its current semantics; profile content is consulted additively where it applies.
+[ADR 0001](../../adr/0001-profile-detection-model.md) records that detection remains a single axis — all detectable artifact types (programming languages, IaC DSLs, config schemas) are equal rows in one detection table. Matching a file contributes that row's reference directory to the set loaded for the current task. Multiple matches are additive.
+
+**`%LANGUAGE%` placeholder semantics:**
+- When one or more programming-language profiles are active, `%LANGUAGE%` resolves to the primary programming language (existing behavior).
+- When no programming-language profile is active but an IaC/config-schema profile is (pure-K8s repo, pure-Terraform repo), `%LANGUAGE%` resolves to the dominant non-language profile's natural tongue — Kubernetes → "Kubernetes", Terraform → "Terraform", Helm → "Helm". Prose like "a highly-skilled %LANGUAGE% developer" remains readable ("a highly-skilled Kubernetes developer").
+- When no profile matches at all, `%LANGUAGE%` falls back to generic guidance (existing behavior).
+
+Profile content is consulted additively regardless of how `%LANGUAGE%` resolves.
 
 The term "language" is retained. Editor tooling (LSP, VS Code) already treats YAML, Dockerfile, HCL, and others as "languages" under an umbrella-term usage. Adopting that framing keeps the existing prose honest.
 
@@ -63,28 +70,50 @@ The term "language" is retained. Editor tooling (LSP, VS Code) already treats YA
 
 Detection is the responsibility of each profile, declared in `klaude-plugin/profiles/<name>/DETECTION.md`. Skills consume detection through a shared procedure (see [Shared mechanisms](#shared-mechanisms)), not by replicating per-profile logic.
 
-### Kubernetes detection — combined rule
+### Signal model
 
-A file matches the Kubernetes profile when any of the following holds. The three signals are ordered from cheapest to most authoritative; authority is content.
+Every profile's `DETECTION.md` uses a mandatory, structured three-section schema so that six consuming skills interpret the rule identically. Prose-only detection rules are insufficient — cross-consumer drift is a real risk ([ADR 0002 context](../../adr/0002-profile-content-organization.md)).
 
-1. **Path heuristic (fast pre-filter).** The file lives under one of `k8s/`, `manifests/`, `charts/`, `kustomize/`, `deploy/` (case-insensitive, anywhere in the path). A match under path heuristic alone promotes the file to a candidate but does not decide by itself.
-2. **Filename (authoritative for known names).** `Chart.yaml` → Helm (authoritative). `values*.yaml` at the same directory level as a `Chart.yaml` → Helm values (authoritative by adjacency). `kustomization.yaml` → Kustomize (authoritative). These filenames are unambiguous by definition.
-3. **Content signature (authoritative for generic YAML).** For any `.yaml` or `.yml` file not already resolved by #2, the first few tens of lines are examined for a top-level `apiVersion:` *and* `kind:` at zero indent. Both present → Kubernetes manifest. Either missing → not Kubernetes (the file may still match some other profile; generic YAML that belongs to neither CI configuration nor a config schema is treated as no-profile).
+Required sections (each may be empty if the profile has no signals of that kind):
 
-A file matching under #2 or #3 activates the profile even without a path heuristic hit — the profile works correctly on non-conventional layouts. A file matching only #1, with neither #2 nor #3, does not activate the profile — the path heuristic alone is insufficient signal.
+- **`## Path signals`** — path globs that promote a file to a candidate. Path signals are a *fast pre-filter* only; they do not activate the profile on their own.
+- **`## Filename signals`** — literal filenames or filename globs that are *authoritative*: any matching file activates the profile regardless of path.
+- **`## Content signals`** — content-inspection rules (anchors, regexes, presence-of-keys) that are *authoritative* for files not already resolved by filename signals. Inspection is bounded (first N KB or first document block) and explicitly describes multi-document handling where relevant.
 
-### Multi-profile and no-profile outcomes
+The two-dimensional framing: signals are **ordered by evaluation cost** (path → filename → content; cheapest first), but **authority follows a different order** (filename > content > path; path alone is insufficient). A file not caught by filename or content signals, regardless of any path hit, does not activate the profile.
+
+The `_shared/profile-detection.md` procedure (see [Shared mechanisms](#shared-mechanisms)) applies this fixed algorithm against the per-profile values declared in each `DETECTION.md`.
+
+### Kubernetes detection rule
+
+Path signals:
+
+- `k8s/`, `manifests/`, `charts/`, `kustomize/`, `deploy/`, `templates/` — case-insensitive match anywhere in the path. Candidate pre-filter only.
+
+Filename signals (authoritative):
+
+- `Chart.yaml` → Helm chart root. Authoritative.
+- `values*.yaml` (any filename starting with `values` in a directory that also contains `Chart.yaml`) → Helm values by adjacency. Authoritative.
+- Files with `.yaml`, `.yml`, or `.tpl` extension inside a `templates/` directory whose parent (or any ancestor in the chart structure) contains a `Chart.yaml` → Helm template. Authoritative by adjacency. Avoids the trap where a standalone edit to `templates/deployment.yaml` contains `{{ if ... }}` directives before any `apiVersion:` and would otherwise fail the content signal.
+- `kustomization.yaml`, `kustomization.yml`, or `Kustomization` (exact filenames) → Kustomize. Authoritative.
+
+Content signals (authoritative for generic YAML not caught by filename):
+
+- For any `.yaml` or `.yml` file, scan each `---`-separated document block. A document containing both a top-level `apiVersion:` *and* a top-level `kind:` at zero indent → Kubernetes manifest. A file may contain multiple documents; one matching document activates the profile. If the first document lacks the markers but a later document has them, the profile still activates. Inspection is bounded to the first ~16 KB per file to avoid runaway reads on large generated manifests.
+- A file with no matching document in any block → not Kubernetes (the file may still match some other profile; generic YAML belongs to no profile by default).
+
+Multi-profile and no-profile outcomes:
 
 - **Multiple profiles match in the same diff.** Every matching profile's reference directory is loaded. A Go + Kubernetes diff consults `profiles/go/review/` and `profiles/k8s/review/` both. Findings are emitted grouped by (profile, checklist).
 - **No profile matches.** The skill proceeds with generic guidance, identical to today's "no language detected" fallback.
 
-### Dockerfile interaction
+### Dockerfile non-trigger
 
-If a Dockerfile appears in a diff that also contains Kubernetes artifacts, the Kubernetes profile still activates — but Dockerfile-specific review is not performed. A future container profile can own Dockerfiles independently; this feature explicitly does not widen the Kubernetes profile to cover them.
+A Dockerfile on its own — even under a `deploy/` or `k8s/` directory — does NOT activate the Kubernetes profile. Dockerfiles have no K8s signal: they are not `Chart.yaml`/`values*.yaml`/`kustomization.yaml`, and they do not contain `apiVersion:` + `kind:`. When a Dockerfile appears in the same diff as Kubernetes manifests, the Kubernetes profile activates on the K8s manifests' signals; the Dockerfile is not reviewed by this profile. A future container profile may own Dockerfiles independently.
 
 ### Detection output shape
 
-Detection emits a list of records, one per matched profile: `{profile: <name>, triggered_by: [<signal descriptions>], files: [<paths>]}`. Downstream skills use the `files` field to scope their own behavior — for example, the `test` skill runs `helm lint` only on files that triggered under Helm signals, not on every YAML.
+Detection emits a list of records, one per matched profile: `{profile: <name>, triggered_by: [<signal descriptions>], files: [<paths>]}`. The `triggered_by` list names which signal type fired for each file (e.g., `"filename: Chart.yaml"`, `"content: apiVersion+kind in block 2"`). Downstream skills use the `files` field to scope behavior — for example, the `test` skill runs `helm lint` only on files triggered under Helm signals, not on every YAML.
 
 ## File structure
 
@@ -142,12 +171,27 @@ Each per-phase subdirectory contains an `index.md`. The index is the contract be
 An `index.md` has two sections:
 
 - **Always load.** Files that must be loaded whenever the profile is active. Each entry is a markdown link to the file plus a one-line description of what it covers.
-- **Conditional.** Files that are loaded only when a stated trigger matches the current task. Each entry is the same link + description, followed by an explicit **Load if:** clause naming the trigger condition. Triggers are stated in prose for readability; structured trigger expressions are a possible future extension (see [ADR 0002](../../adr/0002-profile-content-organization.md), "Forward direction").
+- **Conditional.** Files that are loaded only when a stated trigger matches the current task. Each entry is the same link + description, followed by an explicit **Load if:** clause naming the trigger condition.
+
+**Conditional-trigger wording discipline.** Triggers are stated in prose for readability, but the prose must be an unambiguous predicate keyed to concrete diff properties — not a vague category label. Two agents evaluating the same diff against the same trigger must reach the same conclusion.
+
+- Good: `Load if: any file contains a top-level YAML document with kind: Deployment|StatefulSet|DaemonSet|Job|CronJob`
+- Bad: `Load if: workload resources are in the diff`
+
+The good form names what to inspect (`kind:` field) and what to match (specific resource names). The bad form requires the agent to interpret "workload resources" — the interpretation can drift per agent or per prompt context. Structured trigger expressions remain a possible future extension (see [ADR 0002](../../adr/0002-profile-content-organization.md), "Forward direction"); until then, prose must be precise.
 
 For the Kubernetes `review/index.md`:
 
 - Always-load: `security-checklist.md`, `architecture-checklist.md`, `quality-checklist.md`, `removal-plan.md`.
-- Conditional: `reliability-checklist.md` (when workload resources — Deployment / StatefulSet / DaemonSet / Job / CronJob — are in the diff), `helm-checklist.md` (when `Chart.yaml`, `values*.yaml`, or `templates/` appear), `kustomize-checklist.md` (when `kustomization.yaml`, `bases/`, `overlays/`, or patches appear).
+- Conditional entries with predicate-form triggers:
+  - `reliability-checklist.md` — **Load if:** the diff contains any file with a top-level YAML document whose `kind:` is `Deployment`, `StatefulSet`, `DaemonSet`, `Job`, or `CronJob`.
+  - `helm-checklist.md` — **Load if:** the diff contains a file named `Chart.yaml`, or any file named `values*.yaml` in a directory that also contains `Chart.yaml`, or any file under a `templates/` directory whose ancestor contains `Chart.yaml`.
+  - `kustomize-checklist.md` — **Load if:** the diff contains a file named `kustomization.yaml`, `kustomization.yml`, or `Kustomization`; or a file under a `bases/` or `overlays/` directory; or a patch file referenced by a nearby `kustomization.*`.
+
+Edge cases to note explicitly in the index entry prose so agents do not drift:
+
+- A standalone `values.yaml` with NO sibling `Chart.yaml` does NOT trigger `helm-checklist.md` (it is not a Helm-values file; it might be any project's config file).
+- A `deployment.yaml` NOT under a `templates/` directory and NOT containing `{{ ... }}` template directives, matching the K8s content signal, is a plain manifest, not a Helm template.
 
 For the migrated programming-language profiles (e.g., `profiles/go/review/index.md`), all four existing files are always-load; no conditional entries.
 
@@ -159,7 +203,24 @@ Individual checklist files are free-form markdown organized by whatever structur
 
 ### `_shared/profile-detection.md`
 
-A new file, `klaude-plugin/skills/_shared/profile-detection.md`, captures the detection procedure exactly once. Consumers: `review-code`, `review-spec`, `design`, `implement`, `test`, `document`. The procedure takes a diff (or workspace) as input and produces the list of active profiles by iterating `klaude-plugin/profiles/*/DETECTION.md` and applying each rule.
+A new file, `klaude-plugin/skills/_shared/profile-detection.md`, captures the detection procedure exactly once. Consumers: `review-code`, `review-spec`, `design`, `implement`, `test`, `document`.
+
+The file documents:
+
+1. **Inputs per consuming skill.** Not every consumer has a diff available. The procedure defines what *each* skill uses as its detection input:
+   - `review-code` → git diff (staged or explicit range).
+   - `review-spec` → git diff (when invoked standalone) OR feature-directory file list (when invoked by `implement`).
+   - `test` → git diff (when feature work is in progress) OR feature-directory file list (post-implementation).
+   - `implement` → the current sub-task's target file list + any diff accumulated so far in the feature.
+   - `design` → user-declared signal (a direct question in Step 3: "is this a Kubernetes / Terraform / … feature?") OR keyword inference from the initial idea prose (matches like "Kubernetes", "Helm", "manifests", "Deployment" → surface the question, let the user confirm). Detection in the design phase is the only non-file-based input model; the procedure spells out the interaction pattern.
+   - `document` → feature-directory file list; diff optional (post-implementation docs may review the whole feature, not just recent changes).
+2. **The algorithm** applied against each profile's `DETECTION.md`:
+   - Iterate `klaude-plugin/profiles/*/DETECTION.md`.
+   - For each profile, evaluate signals in cost order (path → filename → content).
+   - Apply authority rule: a file activates the profile if a filename or content signal matches; a path-only match is insufficient.
+   - Bounded content inspection: ~16 KB per file, multi-document YAML handled per block.
+3. **Unset-variable handling.** Before emitting results, the procedure checks that `CLAUDE_PLUGIN_ROOT` is set and non-empty. If unset: fail loudly with an actionable error (`CLAUDE_PLUGIN_ROOT is not set; profile detection cannot locate profiles/ directory. See CLAUDE.md §Profile Conventions.`) and fall back to the generic no-profile path. Consumers inherit this check by invoking the shared procedure — they do not need to repeat it.
+4. **Output shape.** A list of records as described in §Detection mechanics.
 
 Per CLAUDE.md's "Shared instructions" convention, each consuming skill gets a symlink: `klaude-plugin/skills/<skill>/shared-profile-detection.md` → `../_shared/profile-detection.md`. Six symlinks total.
 
@@ -168,6 +229,14 @@ Agents (under `klaude-plugin/agents/`) that need to invoke detection reference t
 ### Why this is symlinked but `profiles/` is not
 
 The `_shared/` symlink stays inside `skills/`. A symlink from `skills/<skill>/shared-profile-detection.md` → `../_shared/profile-detection.md` crosses a single directory boundary but does not leave the `skills/` tree, which is the property installers such as OpenCode's Bun-cache preserve reliably. A symlink from `skills/<skill>` into the sibling `profiles/` directory does not share that property. See [ADR 0003](../../adr/0003-plugin-root-referenced-content.md) for the full rationale.
+
+### `${CLAUDE_PLUGIN_ROOT}` — empirically verified
+
+The design's reliance on `${CLAUDE_PLUGIN_ROOT}` substitution in SKILL.md prose was verified on 2026-04-17 against Claude Code v2.1.112 / `kk` plugin v0.9.0. Full results in [ADR 0003 §Verification](../../adr/0003-plugin-root-referenced-content.md). Key constraints consumers must observe:
+
+- **Brace form required.** Use `${CLAUDE_PLUGIN_ROOT}` exclusively. Bare `$CLAUDE_PLUGIN_ROOT` is NOT substituted.
+- **Substitution leaks into inline code spans.** Backtick-quoting does not protect the variable name from expansion. When CLAUDE.md or other docs need to reference the variable literally, use alternative quoting (fenced block or escape).
+- **Sub-agents receive substituted paths.** Task/Agent tool spawns inherit the already-resolved content; no re-substitution needed in sub-agent prompts.
 
 ## Skill integration
 
@@ -192,12 +261,19 @@ Touched files:
 
 ### `design` — P2 Kubernetes-aware idea refinement
 
-When detection identifies Kubernetes in the anticipated surface area of a feature, the `design` skill's idea-refinement step consults `${CLAUDE_PLUGIN_ROOT}/profiles/k8s/design/index.md` for Kubernetes-specific question banks and design-section prompts (cluster topology, GitOps tool choice, secrets strategy, multi-tenancy, observability posture, rollback strategy).
+The `design` skill runs before any implementation exists — there is no diff to inspect. Profile detection in this phase uses the user-declared / keyword-inference input model defined in [Shared mechanisms](#shared-mechanisms):
+
+1. At Step 3 (refine the idea), the skill checks the initial idea prose for Kubernetes-shaped keywords (`Kubernetes`, `K8s`, `Helm`, `chart`, `manifest`, `Deployment`, `Pod`, `cluster`, `namespace`, etc.).
+2. If any keyword matches, the skill surfaces a single confirmation question: "This appears to be a Kubernetes feature. Activate the Kubernetes profile for this design session?" The user answers yes/no.
+3. If no keyword matches but the feature could reasonably involve Kubernetes (ambiguous idea), the skill asks explicitly: "Does this feature involve Kubernetes, Terraform, or other IaC artifacts? If yes, which?"
+4. On user confirmation, the Kubernetes profile is active for the rest of the design session. The skill loads `${CLAUDE_PLUGIN_ROOT}/profiles/k8s/design/index.md` and consults its content (question bank, required design sections) during Step 3 refinement and Step 5 design documentation.
+
+When the profile is active, the design skill asks questions from the K8s question bank (cluster topology, GitOps tool choice, secrets strategy, multi-tenancy, observability posture, rollback strategy) and ensures the resulting `design.md` includes the required K8s-shaped sections (cluster-compat matrix, resource budget, reliability posture, security posture, failure-mode narrative).
 
 Touched files:
 - `klaude-plugin/skills/design/SKILL.md` — top-level prose retains its current meaning.
-- `klaude-plugin/skills/design/idea-process.md` — Step 3 (refine the idea) and Step 5 (document the design) gain a clause: "Run profile detection; for each active profile, load `${CLAUDE_PLUGIN_ROOT}/profiles/<name>/design/index.md` and let it inform the question bank and design sections."
-- `klaude-plugin/skills/design/existing-task-process.md` — equivalent clause in the continue-WIP flow.
+- `klaude-plugin/skills/design/idea-process.md` — Step 3 (refine the idea) gains the user-declared detection model described above; Step 5 (document the design) gains a clause: "for each active profile, load `${CLAUDE_PLUGIN_ROOT}/profiles/<name>/design/index.md` and apply its section requirements to the documented design."
+- `klaude-plugin/skills/design/existing-task-process.md` — equivalent clause in the continue-WIP flow; here the feature directory's existing files ARE available, so detection falls back to the file-based input model.
 - `klaude-plugin/skills/design/shared-profile-detection.md` — symlink (created in P0).
 - `klaude-plugin/profiles/k8s/design/index.md` (new)
 - `klaude-plugin/profiles/k8s/design/<content files>` (new)
@@ -216,30 +292,34 @@ Touched files:
 
 The `test` skill's K8s content mandates a minimum validator floor, catalogs additional tools as a menu, and auto-honors project-local policy toolchains when markers are present. See decisions Q7:C in the design Q&A.
 
-**Minimum floor (mandated when Kubernetes profile is active).**
+**Binary presence is a first-class protocol step.** Before running any validator, the skill checks that the required binary is on `PATH`. If missing, the skill must NOT attempt blind execution — shell errors are a bad user experience. Instead: surface an install hint (per-tool, e.g., `kubeconform: install via 'brew install kubeconform' or 'go install github.com/yannh/kubeconform/cmd/kubeconform@latest'`) and either (a) fall back to descriptive guidance that names what the validator would have checked, or (b) mark the check as skipped in the test report with a clear "binary not installed" note. The protocol applies to floor, menu, and policy tools alike.
+
+**Minimum floor (mandated when Kubernetes profile is active, if binary is present).**
 - `kubeconform` — offline schema validation on all matched K8s YAML.
 - `helm lint` — run on each Helm chart directory matched in the diff (via `Chart.yaml` presence).
 - `kustomize build` — run on each Kustomize directory matched in the diff (via `kustomization.yaml` presence).
 
-Cluster-dependent tools (`kubectl --dry-run=server`, `popeye`) are not in the floor; they are mentioned as optional "if a staging cluster is available".
+If any floor binary is missing, the skill reports it with an install hint and continues with the remaining checks; a missing floor tool does NOT block the test run.
 
-**Menu (suggested).**
+Cluster-dependent tools (`kubectl --dry-run=server`, `popeye`) are not in the floor; they are mentioned as optional "if a staging cluster is available and `kubectl` is configured".
+
+**Menu (suggested, run when binary present and user opts in).**
 - `kube-score`, `kube-linter`, `polaris` — best-practices linters.
 - `trivy config`, `checkov`, `kics` — security scanners (overlapping; projects usually pick one).
 
-**Policy-hook auto-detection.** The skill checks the project for policy-toolchain markers:
-- `.conftest/` directory or `policies/*.rego` → run `conftest test` against the matched manifests.
-- `kyverno-policies/` directory or presence of Kyverno `ClusterPolicy`/`Policy` resources → run `kyverno test`.
-- `.gator/` or Gatekeeper `ConstraintTemplate`/`Constraint` resources → run `gator test`.
-- None present → policy validation is skipped without comment.
+**Policy-hook auto-detection.** The skill checks the project for policy-toolchain markers AND the presence of the corresponding binary:
+- `.conftest/` directory or `policies/*.rego` → if `conftest` is on PATH, run `conftest test` against the matched manifests. If binary missing, surface install hint.
+- `kyverno-policies/` directory or presence of Kyverno `ClusterPolicy`/`Policy` resources → if `kyverno` is on PATH, run `kyverno test`.
+- `.gator/` or Gatekeeper `ConstraintTemplate`/`Constraint` resources → if `gator` is on PATH, run `gator test`.
+- None of the above markers present → policy validation is skipped silently (project has no policy toolchain).
 
-Tools in the floor and the active policy engine are treated as required checks; menu tools are treated as optional.
+Tools in the floor and the active policy engine are treated as required checks when their binaries are available; menu tools are treated as optional.
 
 Touched files:
 - `klaude-plugin/skills/test/SKILL.md` — guidelines gain a clause: "After language-specific test patterns, for each active profile load `${CLAUDE_PLUGIN_ROOT}/profiles/<name>/test/index.md` and apply the validators and check categories it specifies."
 - `klaude-plugin/skills/test/shared-profile-detection.md` — symlink (created in P0).
 - `klaude-plugin/profiles/k8s/test/index.md` (new)
-- `klaude-plugin/profiles/k8s/test/<content files>` (new) — floor validators, the menu, the policy-hook detection procedure.
+- `klaude-plugin/profiles/k8s/test/<content files>` (new) — floor validators, the menu, the policy-hook detection procedure, and the binary-presence protocol.
 
 ### `document` — P2 rubric for K8s artifacts
 
@@ -286,7 +366,8 @@ A new top-level section, **Profile Conventions**, describes:
 - Adding a new profile = copy an existing profile as a template, customize `DETECTION.md` and content, and append to `EXPECTED_PROFILES` in `test/test-plugin-structure.sh`.
 
 A new subsection under **Skill & Command Naming Conventions**, titled **Skill description budget**, records:
-- The `description` frontmatter field of a skill is truncated at 250 characters when surfaced to agents.
+- The `description` frontmatter field of a skill is truncated at **250 characters** when surfaced to Claude Code's agent-selection UI (observed on Claude Code v2.1.112; other surfaces may differ). OpenCode's documented limit for the same field is 1024 characters. Take the stricter bound of the two — 250.
+- Provenance: the 250 figure was surfaced by the project owner during the kubernetes-support design (2026-04-17), citing a truncation observation. The number is not documented in Claude Code's plugin-reference as of that date. When updating this limit in the future, re-verify by observing the UI behavior on the current Claude Code version.
 - Lead with trigger keywords, not prose; truncation happens at the tail.
 - Detailed rules, cascades, and examples belong in the body of SKILL.md, not the description.
 
@@ -306,16 +387,20 @@ Other skills extended in this feature (`design`, `implement`, `test`, `document`
 
 ### Test suite updates
 
-`test/test-plugin-structure.sh` grows an `EXPECTED_PROFILES` array. Per-profile assertions check:
-- `klaude-plugin/profiles/<name>/DETECTION.md` exists.
-- `klaude-plugin/profiles/<name>/overview.md` exists.
-- `klaude-plugin/profiles/<name>/review/index.md` exists.
-- Every file referenced by any `index.md` in the profile actually exists on disk (catches stale indexes).
-- For profiles that declare per-phase content, the corresponding `<phase>/index.md` exists.
+`test/test-plugin-structure.sh` grows an `EXPECTED_PROFILES` array. Per-profile assertions are **presence-conditional** — they predicate on what the profile declares, not on a fixed schema:
+
+- `klaude-plugin/profiles/<name>/DETECTION.md` exists (every profile must declare detection).
+- `klaude-plugin/profiles/<name>/overview.md` exists (every profile must declare an overview).
+- The profile's `DETECTION.md` contains the three required sections (`## Path signals`, `## Filename signals`, `## Content signals`) — any may be empty, but all must be present.
+- For each phase subdirectory that exists under `profiles/<name>/` (`review/`, `design/`, `test/`, `implement/`, `document/`, `review-spec/`), that subdirectory's `index.md` exists. A profile that does not populate a phase simply doesn't have that subdirectory; the test does not require it.
+
+**Bidirectional index invariant** — the index-as-contract rule is enforced symmetrically:
+- Every file referenced by any `index.md` in the profile actually exists on disk (catches stale indexes — an index entry pointing to a deleted file).
+- Every `.md` file inside a profile's phase subdirectory (excluding `index.md` itself) is referenced by that subdirectory's `index.md` (catches orphans — a content file added to the directory but not registered as always-load or conditional).
 
 The six shared-file symlinks (`shared-profile-detection.md` under each consuming skill) are asserted to exist and to resolve to `_shared/profile-detection.md`.
 
-The `dependency-handling` description-length assertion can be added opportunistically once the description rewrite lands, but is not a blocking requirement for the test suite (the 250-character budget is informally documented today; adding enforcement is a judgment call).
+The `dependency-handling` description-length assertion lands when the description rewrite lands: a one-line check that the `description` frontmatter field is ≤250 characters. Not technically required (the budget is a convention documented in CLAUDE.md), but mechanical to add and prevents regression.
 
 ### README.md
 

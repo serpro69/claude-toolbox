@@ -1,0 +1,327 @@
+● Design Review: kubernetes-support
+
+  Scope: design.md + implementation.md + tasks.md (+ ADRs 0001/0002/0003 +
+  design-session)
+  Overall assessment: CONCERNS_FOUND
+  Documents:
+  - Design: docs/wip/kubernetes-support/design.md
+  - Implementation: docs/wip/kubernetes-support/implementation.md
+  - Tasks: docs/wip/kubernetes-support/tasks.md
+  - Supporting: docs/adr/0001-profile-detection-model.md,
+  0002-profile-content-organization.md, 0003-plugin-root-referenced-content.md
+
+  Summary: 12 findings — 0 critical, 5 high, 5 medium, 2 low
+
+  ---
+  Findings
+
+  P0 - Critical
+
+  (none)
+
+  P1 - High
+
+  - [TECH_RISK] ${CLAUDE_PLUGIN_ROOT} resolution in skill/agent markdown prose 
+  is unverified
+    - Section: ADR 0003 §Context, §Decision; design.md §Architecture overview
+  "Plugin-root references instead of outside-tree symlinks"; design.md §Skill
+  integration (every "load ${CLAUDE_PLUGIN_ROOT}/profiles/..." clause)
+    - Confidence: 8/10 — verified by grep that the variable is used nowhere in
+  skill markdown today, only in hooks.json; ADR cites only hooks.json as
+  precedent
+    - Description: The P0-P3 architecture hinges on skills and agents citing
+  ${CLAUDE_PLUGIN_ROOT}/profiles/<name>/... paths inside their markdown prose,
+  and the LLM-driven agent resolving them at runtime. ADR 0003 justifies this by
+   noting "the plugin already uses this variable in
+  klaude-plugin/hooks/hooks.json for hook script references." But hooks.json is
+  consumed by the Claude Code harness at shell-command-invocation time — a
+  totally different substitution context than an LLM reading .md prose. There is
+   no documented precedent for the variable resolving in prose, and no existing
+  test/example in the repo.
+    - Evidence: grep -r CLAUDE_PLUGIN_ROOT --include="*.md" returns only the new
+   design/ADR files; --include="*.json" returns only hooks.json. ADR 0003
+  §Context says "Claude Code's runtime harness provides the environment variable
+   ${CLAUDE_PLUGIN_ROOT}. The plugin already uses this variable in
+  klaude-plugin/hooks/hooks.json."
+    - Recommendation: Before P0 lands, run a throwaway smoke test — put a
+  ${CLAUDE_PLUGIN_ROOT}/... reference in an existing skill (e.g.,
+  review-code/SKILL.md) pointing to a known file, invoke the skill, confirm the
+  agent correctly resolves and reads the file. If it doesn't, the feature needs
+  a different mechanism (literal in-tree paths that agents resolve via their
+  SKILL.md location, or re-accepting the outside-tree symlink trade-off with
+  documented Bun-cache caveat). Update ADR 0003 with the experimental evidence,
+  not just the hooks.json analogy.
+  - [MISSING] DETECTION.md has no structured schema; every consumer must 
+  reinterpret prose
+    - Section: design.md §Detection mechanics; §Shared mechanisms
+  (_shared/profile-detection.md); implementation.md Step 0.2
+    - Confidence: 8/10
+    - Description: _shared/profile-detection.md tells six consuming skills to
+  "iterate klaude-plugin/profiles/*/DETECTION.md; apply each profile's detection
+   rule." Each DETECTION.md is free-form prose. With six consumers and five-plus
+   profiles, the interpretation fanout is high: any consumer can translate a
+  prose rule into diff-matching logic slightly differently, and the result will
+  be silent inconsistency. For the five programming-language profiles today the
+  rule is trivial ("files with .go extension"), but the k8s rule combines path
+  heuristic + filename authority + content signature + adjacency logic
+  (values.yaml adjacent to Chart.yaml) — exactly the kind of rule where
+  inconsistent interpretation produces subtle false-negatives.
+    - Evidence: design.md §Detection mechanics §Kubernetes detection describes
+  three signals and combination rules in prose. No schema. §Shared mechanisms
+  says "applies each profile's detection rule" without specifying how.
+    - Recommendation: Either (a) impose a small mandatory section structure on
+  DETECTION.md (## Path signals, ## Filename signals, ## Content signals, each
+  with explicit patterns) so the shared procedure applies a fixed algorithm with
+   per-profile values, or (b) introduce a lightweight machine-readable block
+  (YAML frontmatter with paths:, filenames:, content_signatures: lists)
+  alongside the prose. Deferring this until consumer divergence is observed
+  means the first bug will land in production.
+  - [AMBIGUOUS] Conditional trigger evaluation relies on prose interpretation
+    - Section: design.md §Content organization within profiles; design.md line
+  150; implementation.md Step 1.3
+    - Confidence: 8/10
+    - Description: index.md conditional entries use prose triggers like "Load
+  if: any of Deployment / StatefulSet / DaemonSet / Job / CronJob are in the
+  diff" and "Load if: Chart.yaml, values*.yaml adjacent to a Chart.yaml, or
+  templates/ directory are in the diff". The design explicitly acknowledges this
+   is a future refinement ("structured trigger expressions are a possible future
+   extension"), but for this feature the prose is what consumers parse. Two
+  agents evaluating the same diff against the same prose trigger can plausibly
+  diverge (e.g., does a pure values.yaml without a sibling Chart.yaml activate
+  the helm conditional? The prose is readable both ways).
+    - Evidence: design.md §Content organization "Triggers are stated in prose
+  for readability; structured trigger expressions are a possible future
+  extension." implementation.md Step 1.3 lists prose triggers that mirror the
+  design.
+    - Recommendation: Tighten each conditional trigger to an unambiguous
+  predicate keyed to concrete diff properties — e.g., "Load if any manifest has
+  kind: matching /^(Deployment|StatefulSet|DaemonSet|Job|CronJob)$/" rather than
+   "workload resources in diff." Prose is acceptable; imprecise prose is not.
+  - [MISSING] Non-diff detection semantics for design skill are undefined
+    - Section: design.md §Skill integration §design — P2; implementation.md Step
+   2.1 (Verify: "synthetic scenario: start a fresh design session for a
+  hypothetical K8s-shaped feature; confirm the profile is detected")
+    - Confidence: 9/10
+    - Description: Profile detection is specified only for diff inputs ("given a
+   diff or workspace, compute the set of active profiles"). design runs before
+  any implementation exists — the feature is being shaped, no K8s YAML has been
+  written yet. The design says design consults profile content "when detection
+  identifies Kubernetes in the anticipated surface area." But design's inputs
+  are idea prose, not files. There's no defined mechanism for detection to fire
+  in the design phase. The P2 verification scenario simply asserts "the profile
+  is detected" without specifying how.
+    - Evidence: design.md §design — P2: "When detection identifies Kubernetes in
+   the anticipated surface area of a feature." design.md §Shared mechanisms:
+  procedure "takes a diff (or workspace) as input." implementation.md §Step 2.1
+  verify clauses.
+    - Recommendation: Declare an explicit signal model per phase. For design,
+  the natural answer is user-declared ("is this a Kubernetes feature?" as part
+  of the Step 3 refinement, or inferred from keywords in the initial idea). For
+  document on a partially-implemented feature, existing files in the feature's
+  scope suffice. Write this into _shared/profile-detection.md so consumers know
+  which mode to use.
+  - [TECH_RISK] Symmetric "orphan-file" assertion is missing from the structure 
+  test
+    - Section: design.md §Test suite updates; implementation.md Step 0.5;
+  tasks.md Task 5
+    - Confidence: 9/10
+    - Description: The structure test asserts "every file referenced by any
+  index.md in the profile actually exists on disk" — but not the reverse. The
+  common failure mode in index-driven loading is adding a new content file to a 
+  profile directory without registering it in the index. Such a file is silently
+   dead content that a consuming skill never loads. The design test catches
+  stale index entries; it does not catch orphaned files. Given that this feature
+   creates dozens of new content files across profiles × phases, orphaning is
+  the high-probability miss.
+    - Evidence: design.md §Test suite updates: "Every file referenced by any
+  index.md in the profile actually exists on disk (catches stale indexes)."
+  Tasks.md Task 5 and 9 match the directional phrasing.
+    - Recommendation: Add the symmetric assertion: "every .md file inside a
+  profile's phase subdirectory (excluding index.md itself) must be referenced by
+   that subdirectory's index.md." Two-sided asserts the index is the contract,
+  not just a manifest subset. Tasks 5 and 9 get a one-line subtask addition.
+
+  P2 - Medium
+
+  - [INCONSISTENT] Dockerfile interaction subsection describes a no-op rule
+    - Section: design.md §Scope (Out of scope — Dockerfile, line 41) vs.
+  design.md §Detection mechanics §Dockerfile interaction (line 83)
+    - Confidence: 7/10
+    - Description: "Out of scope" says Dockerfile is a future container profile.
+   "Dockerfile interaction" says: if Dockerfile appears with K8s artifacts, K8s
+  profile activates but Dockerfile-specific review does not happen. This doesn't
+   actually rule anything in or out — a Dockerfile alone never matches a K8s
+  detection signal (not Chart.yaml, not kustomization.yaml, not
+  apiVersion:+kind: at zero indent), so its presence alongside K8s artifacts was
+   never going to change K8s activation. The subsection reads as a statement
+  without a rule.
+    - Evidence: design.md line 41 (out-of-scope) and line 83 (interaction).
+  Comparing: the first excludes Dockerfile review; the second says K8s still
+  activates when Dockerfile is present — but K8s would activate on its own K8s
+  signals regardless.
+    - Recommendation: Either delete the "Dockerfile interaction" subsection
+  (it's content-free) or make it say something concrete — e.g., "This profile
+  does NOT widen detection to trigger on Dockerfile presence. A Dockerfile in a
+  diff does not on its own activate the K8s profile even when sitting under
+  deploy/."
+  - [AMBIGUOUS] %LANGUAGE% semantics in IaC-only repos disagree between 
+  design.md and design session
+    - Section: design.md §A single, additive detection axis (line 50); vs
+  design-session "Section 5"
+    - Confidence: 7/10
+    - Description: design.md line 50 says: "The existing %LANGUAGE% placeholder
+  in skill prose retains its current semantics." Current semantics fall back to
+  generic guidance when no programming-language is detected. The design session
+  explicitly settled different behavior: "For pure-IaC repos (no programming
+  language detected), %LANGUAGE% resolves to whatever the dominant profile
+  surfaces as its natural tongue (K8s → 'Kubernetes', Terraform → 'Terraform')."
+   That decision is nowhere in design.md. Implementers reading only the
+  committed docs will implement the "current semantics" version; the session
+  intent will be silently lost.
+    - Evidence: design.md line 50 vs. design-session §5 capture in indexed
+  output.
+    - Recommendation: If the dominant-profile fallback is the intended behavior,
+   add it to design.md §A single, additive detection axis. If the "retains
+  current semantics" is correct, drop the session-time divergence. One source of
+   truth.
+  - [TECH_RISK] P2 parallel-task claim conflicts with shared test-file touch
+    - Section: implementation.md §Phase 2 preamble ("The four steps below can be
+   tackled in parallel if desired — they touch disjoint files aside from small
+  shared conventions in test/test-plugin-structure.sh")
+    - Confidence: 8/10
+    - Description: Each of tasks 11–14 adds a new profiles/k8s/<phase>/index.md
+  existence assertion to test/test-plugin-structure.sh. In parallel, four tasks
+  all modify the same section of the same file — merge conflict risk in every
+  combination. Calling this "aside from small shared conventions" understates
+  it.
+    - Evidence: implementation.md §P2 preamble; tasks 11–14 each list "Add
+  per-phase index existence assertion to test/test-plugin-structure.sh" as a
+  subtask.
+    - Recommendation: Either (a) land all four per-phase assertions in a single
+  prep task before the parallel work (preferred — cheapest), or (b) adjust the
+  "parallel" wording to acknowledge the shared test-file touch and its
+  manual-rebase cost. Current wording suggests problem-free parallelism that
+  doesn't exist.
+  - [AMBIGUOUS] 250-character description budget's source is unattributed
+    - Section: design.md §Skill description budget (line 288-292); CLAUDE.md
+  additions
+    - Confidence: 6/10
+    - Description: The design commits to a 250-character truncation as if it
+  were a platform fact. The OpenCode docs (surfaced in capy knowledge base) say
+  descriptions are "1-1024 characters." The 250 value came from the design
+  session as a direct user statement ("descriptions have 250 char cutoff").
+  Neither design.md nor the ADRs cite which surface performs the truncation —
+  Claude Code UI tooltip, agent-selection prompt, IDE auto-complete,
+  plugin-registry display. Contributors landing future skills will hit surprises
+   if the surface changes or if OpenCode's behavior differs.
+    - Evidence: design.md §Skill description budget: "The description
+  frontmatter field of a skill is truncated at 250 characters when surfaced to
+  agents." No citation. OpenCode docs state 1024.
+    - Recommendation: Cite the observed source (which tool, what behavior leads
+  to truncation) in CLAUDE.md's new subsection. Even a one-line note — "observed
+   in Claude Code agent-selection UI as of 2026-04" — anchors the number.
+  - [STRUCTURE] profiles/k8s/implement/ always-load entries are named but not 
+  enumerated
+    - Section: design.md §implement — P2; implementation.md Step 2.2; tasks.md
+  Task 12
+    - Confidence: 7/10
+    - Description: Task 12's subtask says "Create
+  profiles/k8s/implement/index.md — always-load entries" and separately names
+  gotchas.md as the one content file. The same pattern repeats in test/
+  (validators.md + policy-hook.md are named, but index.md always-load entries
+  are not explicit) and document/ (rubric.md, same). The implementer has to
+  infer "gotchas.md is the always-load entry" — which they will, but this is the
+   kind of implicit dependency that rot sets in on.
+    - Evidence: tasks.md Task 12, 13, 14 list content files separately from
+  their index entries.
+    - Recommendation: Tighten each task's index subtask: "always-load entry:
+  gotchas.md" (test: "always-load entries: validators.md, policy-hook.md";
+  document: "always-load entry: rubric.md"). Takes five words per task.
+
+  P3 - Low
+
+  - [STRUCTURE] Task 8 bundles three independent sub-tasks
+    - Section: tasks.md Task 8 ("Author profiles/k8s/DETECTION.md and
+  overview.md, append to EXPECTED_PROFILES")
+    - Confidence: 7/10
+    - Description: The task creates DETECTION.md, overview.md, AND appends the
+  k8s entry to EXPECTED_PROFILES in one bundle. The test-suite append is
+  structurally independent of content authoring and safer to land as its own
+  commit (it changes a test file, not content).
+    - Evidence: tasks.md Task 8.
+    - Recommendation: Low-priority split into 8a (content) + 8b (test array).
+  Current bundle is pragmatic; the recommendation is optional.
+  - [INCOMPLETE] Programming-language profile index.md authoring is explicit, 
+  but the "index content authors" verification is not a separate task
+    - Section: tasks.md Task 1 (final subtask: "author
+  profiles/<lang>/review/index.md per migrated profile") + Task 5 (test
+  assertions)
+    - Confidence: 6/10
+    - Description: Task 1 lists the migration and the five new index files as
+  one big task; the final verify step only checks history preservation and
+  directory existence, not that every index.md was authored. An implementer
+  could commit Task 1 with one or two of the five indexes missing and still pass
+   the listed verification. Task 5's structure test catches this later, but the
+  finding belongs earlier.
+    - Evidence: tasks.md Task 1 subtasks + verify.
+    - Recommendation: Add a verification subtask to Task 1: "For each of
+  go/python/java/js_ts/kotlin: test -f 
+  klaude-plugin/profiles/<lang>/review/index.md."
+
+  ---
+  Clean Areas
+
+  - Phasing. P0 → P1 → P2 → P3 → feature close is coherent; each phase merges
+  independently; P0 is explicitly behavior-preserving and P1 alone closes issue
+  #64.
+  - ADR quality. 0001/0002/0003 follow Nygard structure; rejected alternatives
+  have concrete rationales; forward-compatibility paths (migration to
+  "orthogonal axis", migration of _shared/ to ${CLAUDE_PLUGIN_ROOT}) are
+  documented as non-binding.
+  - Scope discipline. In-scope vs. out-of-scope explicit, with justifications
+  (GitOps, service mesh, observability CRDs, policy engines deferred with stated
+   reasoning).
+  - Dogfooding pattern. Each phase's verification task runs
+  test/document/review-code/review-spec against the phase's own diff — the
+  plugin consumes itself. Consistent across P0–P3.
+  - Detection authority precedence. "Filename → content → path" is the right
+  ordering; path-alone-is-insufficient is a strong rule that avoids
+  false-positives on repos with coincidentally-named directories.
+  - K8s checklist coverage. Seven checklists for review
+  (security/architecture/quality/reliability/helm/kustomize/removal-plan) hit
+  the high-value concerns without becoming a sprawling lowest-common-denominator
+   mess. Always-load vs. conditional split matches real reviewer practice.
+  - Test/validator floor vs. menu distinction. The mandated floor (kubeconform,
+  helm lint, kustomize build) is offline-runnable, non-opinionated, and cheap;
+  the menu catalogs alternatives without imposing them. Policy-hook
+  auto-detection (conftest/kyverno/gator) is strictly opt-in via project markers
+   — a good pattern.
+  - Dependency-handling widening. The 223-char rewritten description keeps the
+  trigger keyword lead, fits the budget, and preserves the "Use BEFORE writing
+  the call" guidance that the current description truncates.
+
+  ---
+  Next Steps
+
+  I found 12 issues (P0: 0, P1: 5, P2: 5, P3: 2). The single most important item
+   is the P1 ${CLAUDE_PLUGIN_ROOT} verification — a failure there reshapes P0's
+  entire reference mechanism. Close behind are DETECTION.md schema +
+  design-phase detection semantics.
+
+  How would you like to proceed?
+
+  1. Update docs — revise design.md / implementation.md / tasks.md / ADR 0003 to
+   address all findings
+  2. Update high severity only — address the five P1 items before implementation
+  3. Discuss specific items — talk through particular findings (I'd prioritize
+  the CLAUDE_PLUGIN_ROOT verification and DETECTION.md schema)
+  4. Proceed to implementation — findings are acceptable, move forward
+  5. No changes — review complete
+
+  Please pick one or give specific instructions. Indexed the
+  ${CLAUDE_PLUGIN_ROOT}-resolution concern as kk:arch-decisions for future
+  reference.
+
+✻ Baked for 5m 38s
+
+※ recap: Reviewing the kubernetes-support design docs; review complete with 12 findings (0 P0, 5 P1, 5 P2, 2 P3). Next: pick option 1-5 on how to proceed, starting with the P1 `${CLAUDE_PLUGIN_ROOT}` resolution verification. (disable recaps in /config)
