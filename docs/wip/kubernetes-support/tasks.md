@@ -55,19 +55,19 @@ Subtasks:
 ## Task 3 — Create the six consumer symlinks for `shared-profile-detection.md`
 
 - **Phase:** P0
-- **Status:** pending
+- **Status:** done
 - **Depends on:** Task 2
 - **Links:** [implementation.md §Step 0.3](implementation.md#step-03--create-the-six-consumer-symlinks), [design.md §Shared mechanisms](design.md#shared-mechanisms)
 
 Subtasks:
 
-- [ ] `klaude-plugin/skills/review-code/shared-profile-detection.md` → `../_shared/profile-detection.md`.
-- [ ] `klaude-plugin/skills/review-spec/shared-profile-detection.md` → `../_shared/profile-detection.md`.
-- [ ] `klaude-plugin/skills/design/shared-profile-detection.md` → `../_shared/profile-detection.md`.
-- [ ] `klaude-plugin/skills/implement/shared-profile-detection.md` → `../_shared/profile-detection.md`.
-- [ ] `klaude-plugin/skills/test/shared-profile-detection.md` → `../_shared/profile-detection.md`.
-- [ ] `klaude-plugin/skills/document/shared-profile-detection.md` → `../_shared/profile-detection.md`.
-- [ ] Verify each symlink: `test -L <path>` succeeds; `readlink` returns `../_shared/profile-detection.md`; `realpath` resolves to the shared file.
+- [x] `klaude-plugin/skills/review-code/shared-profile-detection.md` → `../_shared/profile-detection.md`.
+- [x] `klaude-plugin/skills/review-spec/shared-profile-detection.md` → `../_shared/profile-detection.md`.
+- [x] `klaude-plugin/skills/design/shared-profile-detection.md` → `../_shared/profile-detection.md`.
+- [x] `klaude-plugin/skills/implement/shared-profile-detection.md` → `../_shared/profile-detection.md`.
+- [x] `klaude-plugin/skills/test/shared-profile-detection.md` → `../_shared/profile-detection.md`.
+- [x] `klaude-plugin/skills/document/shared-profile-detection.md` → `../_shared/profile-detection.md`.
+- [x] Verify each symlink: `test -L <path>` succeeds; `readlink` returns `../_shared/profile-detection.md`; `realpath` resolves to the shared file.
 
 ## Task 4 — Restructure the `review-code` workflow for index-driven loading
 
