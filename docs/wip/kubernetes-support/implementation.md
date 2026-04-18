@@ -346,14 +346,14 @@ New content (conditional):
 
 File edits:
 - `klaude-plugin/skills/dependency-handling/SKILL.md`:
-  - **Description frontmatter** rewritten to the 223-character form specified in [design.md §Skill description budget](design.md#skill-description-budget-applied-in-this-feature). Confirm length is ≤250 characters.
+  - **Description frontmatter** rewritten to the 223-character form specified in [design.md §Skill description budget](design.md#skill-description-budget-applied-in-this-feature). Confirm length is ≤1,536 characters (the documented per-entry cap).
   - **Body** gains a short paragraph: the cascade rule (capy-first, context7-second, web-last) applies uniformly to all listed dep categories; per-domain specific lookup targets live in each profile's `overview.md`.
-- `test/test-plugin-structure.sh`: add a description-length assertion — parse the `description:` field of `klaude-plugin/skills/dependency-handling/SKILL.md`'s YAML frontmatter, measure its length, assert ≤250 characters. This is a mechanical check that prevents regression on the budget.
+- `test/test-plugin-structure.sh`: add a description-length assertion — parse the `description:` field of `klaude-plugin/skills/dependency-handling/SKILL.md`'s YAML frontmatter, measure its length, assert ≤1,536 characters (the documented per-entry cap). This is a mechanical check that prevents regression against the harness cap.
 
 **Cross-consistency check.** Re-read `klaude-plugin/profiles/k8s/overview.md`'s "Looking up Kubernetes dependencies" section (authored in Step 1.2). Ensure its section heading and anchor match whatever the new `dependency-handling/SKILL.md` body paragraph cites (e.g., if the body says "see each profile's `overview.md` §Looking up dependencies", the K8s overview must have a heading with that exact text). If the heading anchor in the overview diverges, adjust one or the other so they agree.
 
 **Verify.**
-- `wc -c` (or the new test assertion) on the extracted description field reports a length ≤250.
+- `wc -c` (or the new test assertion) on the extracted description field reports a length ≤1,536.
 - The description contains the phrases "IaC API version", "Helm", "container image" (or equivalent covering terms).
 - The body's "Use BEFORE writing the call" instruction survives and is no longer truncated in agent-visible surfaces.
 - The `dependency-handling/SKILL.md` body paragraph's anchor reference resolves to an existing heading in `profiles/k8s/overview.md`.

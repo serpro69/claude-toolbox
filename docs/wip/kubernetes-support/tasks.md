@@ -109,17 +109,17 @@ Subtasks:
 ## Task 6 — Update `CLAUDE.md` and `README.md`
 
 - **Phase:** P0
-- **Status:** pending
+- **Status:** done
 - **Depends on:** Task 1, Task 2
 - **Links:** [implementation.md §Step 0.6](implementation.md#step-06--update-claudemd-and-readmemd), [design.md §Conventions](design.md#conventions)
 
 Subtasks:
 
-- [ ] Add a new top-level section **Profile Conventions** to `CLAUDE.md` describing profile directory layout, `DETECTION.md`'s three-section schema, `index.md` contract with bidirectional-invariant semantics, naming conventions, `${CLAUDE_PLUGIN_ROOT}` reference pattern per ADR 0003 (including the brace-form-required constraint and the substitution-in-code-spans gotcha), and the steps for adding a new profile.
-- [ ] Add a new subsection **Skill description budget** under "Skill & Command Naming Conventions" — 250-character limit; lead-with-trigger-keywords guidance; **provenance note** citing the 2026-04-17 observation on Claude Code agent-selection UI (OpenCode's documented limit is 1024; take the stricter). Re-verify by UI observation when touching this limit in the future.
-- [ ] Add a new subsection **ADR location** describing `docs/adr/NNNN-slug.md` convention with Michael Nygard template.
-- [ ] Update `README.md` plugin-layout section with a one-paragraph mention of `profiles/` as a peer to `skills/`, `commands/`, `agents/`, `hooks/`.
-- [ ] Verify: both files render as valid Markdown; internal links resolve; no stale references to the old `review-code/reference/<lang>/` path anywhere in `CLAUDE.md` or `README.md`. **Note:** CLAUDE.md and README.md live OUTSIDE the plugin tree and are NOT subject to `${CLAUDE_PLUGIN_ROOT}` substitution — the brace form can be used freely in any container. The literal-reference escape rule (bare `$CLAUDE_PLUGIN_ROOT` or `&#36;{CLAUDE_PLUGIN_ROOT}`) only applies to prose inside `klaude-plugin/` (SKILL.md, agent files, profile content). See [ADR 0003 §Verification](../../adr/0003-plugin-root-referenced-content.md).
+- [x] Add a new top-level section **Profile Conventions** to `CLAUDE.md` describing profile directory layout, `DETECTION.md`'s three-section schema, `index.md` contract with bidirectional-invariant semantics, naming conventions, `${CLAUDE_PLUGIN_ROOT}` reference pattern per ADR 0003 (including the brace-form-required constraint and the substitution-in-code-spans gotcha), and the steps for adding a new profile.
+- [x] Add a new subsection **Skill description budget** under "Skill & Command Naming Conventions" — documented 1,536-character per-entry cap and the 1%/8,000-char global budget (with `SLASH_COMMAND_TOOL_CHAR_BUDGET` override); lead-with-trigger-keywords guidance; OpenCode's 1,024-character soft budget as a portability note. Cite [Claude Code docs — Skill descriptions are cut short](https://code.claude.com/docs/en/skills#skill-descriptions-are-cut-short); re-verify against that page when touching this limit in the future.
+- [x] Add a new subsection **ADR location** describing `docs/adr/NNNN-slug.md` convention with Michael Nygard template.
+- [x] Update `README.md` plugin-layout section with a one-paragraph mention of `profiles/` as a peer to `skills/`, `commands/`, `agents/`, `hooks/`.
+- [x] Verify: both files render as valid Markdown; internal links resolve; no stale references to the old `review-code/reference/<lang>/` path anywhere in `CLAUDE.md` or `README.md`. `bash test/test-plugin-structure.sh` exits 0 (31 cases, 109 assertions). **Note:** CLAUDE.md and README.md live OUTSIDE the plugin tree and are NOT subject to `${CLAUDE_PLUGIN_ROOT}` substitution — the brace form can be used freely in any container. The literal-reference escape rule (bare `$CLAUDE_PLUGIN_ROOT` or `&#36;{CLAUDE_PLUGIN_ROOT}`) only applies to prose inside `klaude-plugin/` (SKILL.md, agent files, profile content). See [ADR 0003 §Verification](../../adr/0003-plugin-root-referenced-content.md).
 
 ## Task 7 — Phase 0 verification
 
@@ -314,7 +314,7 @@ Subtasks:
 - [ ] Rewrite the description frontmatter of `klaude-plugin/skills/dependency-handling/SKILL.md` to the 223-character form specified in design.md (covers library/SDK/framework/API + IaC API version + CRD + container image; leads with TRIGGER keyword; preserves "Use BEFORE writing the call").
 - [ ] Update the body: short paragraph noting that the cascade rule (capy-first, context7-second, web-last) applies uniformly to all listed dep categories; per-domain lookup targets live in each profile's `overview.md`.
 - [ ] Cross-check `klaude-plugin/profiles/k8s/overview.md`'s "Looking up Kubernetes dependencies" section (authored in Task 8) is consistent with the new body paragraph. The body paragraph should reference the overview section by heading anchor; the anchor must resolve.
-- [ ] Add a description-length assertion to `test/test-plugin-structure.sh`: parse the `description:` field of `klaude-plugin/skills/dependency-handling/SKILL.md`'s YAML frontmatter, measure its length, assert ≤250 characters.
+- [ ] Add a description-length assertion to `test/test-plugin-structure.sh`: parse the `description:` field of `klaude-plugin/skills/dependency-handling/SKILL.md`'s YAML frontmatter, measure its length, assert ≤1,536 characters (the documented per-entry cap).
 - [ ] Verify: description-length assertion in the structure test passes. The description contains "IaC API version", "Helm", "container image" (or equivalent covering terms). "Use BEFORE writing the call" is present in the description and not truncated. The body paragraph's anchor reference to `profiles/k8s/overview.md` resolves to an existing heading.
 
 ## Task 18 — Phase 3 verification
