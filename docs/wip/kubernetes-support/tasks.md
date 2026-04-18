@@ -22,15 +22,15 @@
 Subtasks:
 
 - [x] Create the top-level directory `klaude-plugin/profiles/`.
-- [x] For each language in (`go`, `python`, `java`, `js_ts`, `kotlin`): create `klaude-plugin/profiles/<lang>/review/` and `git mv` the four files from `klaude-plugin/skills/review-code/reference/<lang>/` into it. Preserve git history.
+- [x] For each language in (`go`, `python`, `java`, `js_ts`, `kotlin`): create `klaude-plugin/profiles/<lang>/review-code/` and `git mv` the four files from `klaude-plugin/skills/review-code/reference/<lang>/` into it. Preserve git history.
 - [x] Author `klaude-plugin/profiles/<lang>/DETECTION.md` per migrated profile using the mandatory three-section schema: `## Path signals` (empty — language detection is extension-based), `## Filename signals` (empty), `## Content signals` (the file-extension rule for that language). All three headings must be present even when empty.
 - [x] Author `klaude-plugin/profiles/<lang>/overview.md` per migrated profile — one-page summary: what the profile covers, when it activates, "Looking up dependencies" cascade targets.
-- [x] Author `klaude-plugin/profiles/<lang>/review/index.md` per migrated profile — lists the four migrated files under "Always load" with one-line descriptions; no conditional entries.
+- [x] Author `klaude-plugin/profiles/<lang>/review-code/index.md` per migrated profile — lists the four migrated files under "Always load" with one-line descriptions; no conditional entries.
 - [x] Remove each emptied `klaude-plugin/skills/review-code/reference/<lang>/` directory.
 - [x] Remove the now-empty `klaude-plugin/skills/review-code/reference/` directory.
 - [x] **Audit `template-sync.sh` for downstream migration impact.** Decision: **no action needed.** `run_plugin_migration`'s `dirs_to_remove` targets `.claude/skills/*` paths owned by pre-v0.5.0 downstream projects (paths copied out by template-sync before the Claude Code plugin marketplace took over). The removed path `klaude-plugin/skills/review-code/reference/` lives inside the plugin tree itself and is distributed via the marketplace; downstream consumers receive the migration automatically on the next plugin update without any template-sync intervention. Documented in the PR description.
 - [x] Verify: `ls klaude-plugin/profiles/` shows the five languages; `ls klaude-plugin/skills/review-code/reference/` returns ENOENT; `git log --follow` on a migrated file shows continuous history. (First two confirmed now; `--follow` is observable only post-commit, but history is preserved by `git mv`.)
-- [x] Verify: for each of (`go`, `python`, `java`, `js_ts`, `kotlin`): `test -f klaude-plugin/profiles/<lang>/review/index.md` succeeds (explicitly named so the task's verify step catches missing index files before Task 5's structure test does).
+- [x] Verify: for each of (`go`, `python`, `java`, `js_ts`, `kotlin`): `test -f klaude-plugin/profiles/<lang>/review-code/index.md` succeeds (explicitly named so the task's verify step catches missing index files before Task 5's structure test does).
 - [x] Verify: for each migrated profile, `grep -c '^## Path signals\|^## Filename signals\|^## Content signals' klaude-plugin/profiles/<lang>/DETECTION.md` returns 3 (all three required headings present).
 
 ## Task 2 — Author the shared profile-detection procedure
@@ -81,14 +81,14 @@ Subtasks:
 - [ ] Update `klaude-plugin/skills/review-code/SKILL.md`: add reference to `[shared-profile-detection.md](shared-profile-detection.md)` in the appropriate section. Description frontmatter unchanged.
 - [ ] Update `klaude-plugin/skills/review-code/review-process.md`:
   - Rename "Step 2: Detect primary language" to "Step 2: Detect active profiles"; delegate to the shared procedure.
-  - Collapse former Steps 3–6 (SOLID / Removal / Security / Quality) into a two-step sequence: "Step 3: Load profile review indexes" (for each active profile, resolve `${CLAUDE_PLUGIN_ROOT}/profiles/<name>/review/index.md`; collect always-load + matching conditional entries) and "Step 4: Apply checklists" (iterate resolved checklists; emit findings grouped by `(profile, checklist)`).
+  - Collapse former Steps 3–6 (SOLID / Removal / Security / Quality) into a two-step sequence: "Step 3: Load profile review indexes" (for each active profile, resolve `${CLAUDE_PLUGIN_ROOT}/profiles/<name>/review-code/index.md`; collect always-load + matching conditional entries) and "Step 4: Apply checklists" (iterate resolved checklists; emit findings grouped by `(profile, checklist)`).
   - Renumber subsequent steps; verify internal references within the file remain consistent.
   - Replace every literal occurrence of `reference/<lang>/` or `reference/{lang}/` with the index-driven path or a description of the new step.
 - [ ] Update `klaude-plugin/skills/review-code/review-isolated.md`: mirror the restructure; the sub-agent prompt receives the list of resolved checklists, not a hardcoded category sequence. **Specific literal-string edit:** the sub-agent prompt template currently injects `klaude-plugin/skills/review-code/reference/{language_key}/` into the spawned agent's prompt — replace this string with the list of resolved checklists prepared in Step 1.
-- [ ] Update `klaude-plugin/agents/code-reviewer.md`: prompt iterates `(profile, checklist)` from the provided list rather than fixed category names. **Specific literal-string edit:** the agent's current Step 2 says "Load the corresponding reference checklists from `klaude-plugin/skills/review-code/reference/{lang}/`" with the full extension table duplicated — rewrite to "Apply the checklists provided in the input payload; for each `(profile, checklist)` record, read the checklist content from `${CLAUDE_PLUGIN_ROOT}/profiles/<profile>/review/<checklist>` and apply it to the diff." Remove the extension table entirely (detection is no longer the agent's responsibility).
+- [ ] Update `klaude-plugin/agents/code-reviewer.md`: prompt iterates `(profile, checklist)` from the provided list rather than fixed category names. **Specific literal-string edit:** the agent's current Step 2 says "Load the corresponding reference checklists from `klaude-plugin/skills/review-code/reference/{lang}/`" with the full extension table duplicated — rewrite to "Apply the checklists provided in the input payload; for each `(profile, checklist)` record, read the checklist content from `${CLAUDE_PLUGIN_ROOT}/profiles/<profile>/review-code/<checklist>` and apply it to the diff." Remove the extension table entirely (detection is no longer the agent's responsibility).
 - [ ] Verify: `grep -rn 'reference/' klaude-plugin/skills/review-code/ klaude-plugin/agents/code-reviewer.md` finds no residual references to the removed layout (grep scope **expanded to include `agents/`** because `code-reviewer.md` lives there, not under `skills/`).
 - [ ] Verify: `grep -rn '${CLAUDE_PLUGIN_ROOT}/profiles/' klaude-plugin/skills/review-code/` returns matches at Step 3 of `review-process.md` and equivalent points in `review-isolated.md`.
-- [ ] Verify: manual dry-run of `/kk:review-code` on a Go-only commit — output identifies `go` as the active profile; four checklists are loaded from the new `profiles/go/review/` location; finding coverage matches pre-P0.
+- [ ] Verify: manual dry-run of `/kk:review-code` on a Go-only commit — output identifies `go` as the active profile; four checklists are loaded from the new `profiles/go/review-code/` location; finding coverage matches pre-P0.
 
 ## Task 5 — Update `test/test-plugin-structure.sh`
 
@@ -131,7 +131,7 @@ Subtasks:
 Subtasks:
 
 - [ ] **test**: `bash test/test-plugin-structure.sh` exits 0.
-- [ ] **test**: dry-run `/kk:review-code` on a recent Go-only change; confirm `go` profile detected; four checklists loaded from `profiles/go/review/`; findings qualitatively equivalent to pre-P0.
+- [ ] **test**: dry-run `/kk:review-code` on a recent Go-only change; confirm `go` profile detected; four checklists loaded from `profiles/go/review-code/`; findings qualitatively equivalent to pre-P0.
 - [ ] **document**: confirm `CLAUDE.md` and `README.md` updates are accurate; no stale `reference/<lang>/` references anywhere in the plugin.
 - [ ] **review-code**: run `/kk:review-code` against the P0 diff; address P0-blocking findings per project convention.
 - [ ] **review-spec**: run `/kk:review-spec kubernetes-support` with scope `all`; confirm P0's portion of design.md and implementation.md is satisfied by the P0 diff.
@@ -161,7 +161,7 @@ Subtasks:
 - [ ] Create `klaude-plugin/profiles/k8s/overview.md`: what the profile covers, when it activates, per-category lookup-cascade targets for Kubernetes API versions, CRDs, Helm charts, and container images. Include a heading anchor named `Looking up Kubernetes dependencies` (or equivalent) that Task 17's `dependency-handling` body paragraph will cite.
 - [ ] Verify: `test -f klaude-plugin/profiles/k8s/DETECTION.md` and `overview.md`. `grep -c '^## Path signals\|^## Filename signals\|^## Content signals' DETECTION.md` returns 3. DETECTION rule unambiguous enough for a second reader to re-implement without ambiguity on the test cases in [implementation.md §Step 1.1](implementation.md#step-11--author-profilesk8sdetectionmd).
 
-## Task 9 — Author `profiles/k8s/review/` checklists and index; append `k8s` to `EXPECTED_PROFILES`
+## Task 9 — Author `profiles/k8s/review-code/` checklists and index; append `k8s` to `EXPECTED_PROFILES`
 
 - **Phase:** P1
 - **Status:** pending
@@ -170,14 +170,14 @@ Subtasks:
 
 Subtasks:
 
-- [ ] Create `klaude-plugin/profiles/k8s/review/security-checklist.md` — RBAC least privilege, NetworkPolicy default-deny, Pod Security Standards, non-root/readOnlyRootFilesystem, secret handling, image provenance, hostPath/hostNetwork/privileged avoidance.
-- [ ] Create `klaude-plugin/profiles/k8s/review/architecture-checklist.md` — single-concern resources, config injection via env/ConfigMap/Secret, no hardcoded cluster assumptions, explicit labels/selectors, cluster-vs-application separation.
-- [ ] Create `klaude-plugin/profiles/k8s/review/quality-checklist.md` — recommended label set, immutable image tags (digests preferred), resource requests+limits, probe correctness, declarative patterns.
-- [ ] Create `klaude-plugin/profiles/k8s/review/reliability-checklist.md` — PodDisruptionBudget presence, probe semantics, graceful shutdown (`terminationGracePeriodSeconds`, `preStop`), anti-affinity, topology spread, RollingUpdate tuning.
-- [ ] Create `klaude-plugin/profiles/k8s/review/helm-checklist.md` — `Chart.yaml` metadata completeness, values schema, template correctness, dependency pinning, `helm lint` cleanliness, `NOTES.txt`.
-- [ ] Create `klaude-plugin/profiles/k8s/review/kustomize-checklist.md` — base/overlay separation, patch precision, generator stability, common labels, patch-type clarity.
-- [ ] Create `klaude-plugin/profiles/k8s/review/removal-plan.md` — template with "Safe to remove now", "Defer with plan", "Checklist before removal" sections tailored to Kubernetes resources (CRDs, PVs, finalizers).
-- [ ] Create `klaude-plugin/profiles/k8s/review/index.md` with **predicate-form conditional triggers**:
+- [ ] Create `klaude-plugin/profiles/k8s/review-code/security-checklist.md` — RBAC least privilege, NetworkPolicy default-deny, Pod Security Standards, non-root/readOnlyRootFilesystem, secret handling, image provenance, hostPath/hostNetwork/privileged avoidance.
+- [ ] Create `klaude-plugin/profiles/k8s/review-code/architecture-checklist.md` — single-concern resources, config injection via env/ConfigMap/Secret, no hardcoded cluster assumptions, explicit labels/selectors, cluster-vs-application separation.
+- [ ] Create `klaude-plugin/profiles/k8s/review-code/quality-checklist.md` — recommended label set, immutable image tags (digests preferred), resource requests+limits, probe correctness, declarative patterns.
+- [ ] Create `klaude-plugin/profiles/k8s/review-code/reliability-checklist.md` — PodDisruptionBudget presence, probe semantics, graceful shutdown (`terminationGracePeriodSeconds`, `preStop`), anti-affinity, topology spread, RollingUpdate tuning.
+- [ ] Create `klaude-plugin/profiles/k8s/review-code/helm-checklist.md` — `Chart.yaml` metadata completeness, values schema, template correctness, dependency pinning, `helm lint` cleanliness, `NOTES.txt`.
+- [ ] Create `klaude-plugin/profiles/k8s/review-code/kustomize-checklist.md` — base/overlay separation, patch precision, generator stability, common labels, patch-type clarity.
+- [ ] Create `klaude-plugin/profiles/k8s/review-code/removal-plan.md` — template with "Safe to remove now", "Defer with plan", "Checklist before removal" sections tailored to Kubernetes resources (CRDs, PVs, finalizers).
+- [ ] Create `klaude-plugin/profiles/k8s/review-code/index.md` with **predicate-form conditional triggers**:
   - Always-load: `security-checklist.md`, `architecture-checklist.md`, `quality-checklist.md`, `removal-plan.md`.
   - Conditional — `reliability-checklist.md` **Load if:** the diff contains any file with a top-level YAML document whose `kind:` is `Deployment`, `StatefulSet`, `DaemonSet`, `Job`, or `CronJob`.
   - Conditional — `helm-checklist.md` **Load if:** the diff contains a file named `Chart.yaml`; OR a file named `values*.yaml` in a directory that also contains `Chart.yaml`; OR a file under a `templates/` directory whose ancestor contains `Chart.yaml`.

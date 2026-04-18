@@ -104,7 +104,7 @@ Content signals (authoritative for generic YAML not caught by filename):
 
 Multi-profile and no-profile outcomes:
 
-- **Multiple profiles match in the same diff.** Every matching profile's reference directory is loaded. A Go + Kubernetes diff consults `profiles/go/review/` and `profiles/k8s/review/` both. Findings are emitted grouped by (profile, checklist).
+- **Multiple profiles match in the same diff.** Every matching profile's reference directory is loaded. A Go + Kubernetes diff consults `profiles/go/review-code/` and `profiles/k8s/review-code/` both. Findings are emitted grouped by (profile, checklist).
 - **No profile matches.** The skill proceeds with generic guidance, identical to today's "no language detected" fallback.
 
 ### Dockerfile non-trigger
@@ -123,7 +123,7 @@ Per-profile layout is uniform. Every profile under `klaude-plugin/profiles/` fol
 klaude-plugin/profiles/<name>/
   DETECTION.md             # authoritative trigger rule (see §Detection mechanics)
   overview.md              # human-readable profile summary + dependency-lookup targets
-  review/                  # consumed by review-code
+  review-code/             # consumed by review-code
     index.md               # router: always-load entries, conditional entries, one-liners
     <checklist files>      # named to fit the profile's content; no fixed schema
   design/                  # consumed by design (populated per-profile as needed)
@@ -133,7 +133,7 @@ klaude-plugin/profiles/<name>/
   review-spec/             # consumed by review-spec (populated per-profile as needed)
 ```
 
-Not every profile populates every phase subdirectory. A programming-language profile may only ever need `review/`; an IaC profile like Kubernetes populates all six. The plugin structure test (`test/test-plugin-structure.sh`) asserts the *presence* of each directory and file a profile declares — not that every profile populates every slot.
+Not every profile populates every phase subdirectory. A programming-language profile may only ever need `review-code/`; an IaC profile like Kubernetes populates all six. The plugin structure test (`test/test-plugin-structure.sh`) asserts the *presence* of each directory and file a profile declares — not that every profile populates every slot.
 
 **Phase-subdirectory contents.** A phase subdirectory contains only its `index.md` and the checklist/content files the index references. Human-facing documentation (authoring notes, READMEs) lives at the profile root — typically inside `overview.md`, or as a sibling file next to it — never inside a phase subdirectory. This keeps the bidirectional index invariant (§Test suite updates) sharp: an unreferenced `.md` inside a phase dir is always a bug, never a README.
 
@@ -145,7 +145,7 @@ After both P0 and P1 have landed:
 klaude-plugin/profiles/k8s/
   DETECTION.md
   overview.md
-  review/
+  review-code/
     index.md
     security-checklist.md           # RBAC, Pod Security, NetworkPolicy, secrets, image provenance
     architecture-checklist.md       # resource separation of concerns, config injection, no hardcoded cluster assumptions
@@ -162,7 +162,7 @@ P3 adds `profiles/k8s/review-spec/` if K8s-specific spec-vs-implementation seman
 
 ### Migrated programming-language profiles
 
-The existing content under `klaude-plugin/skills/review-code/reference/<lang>/` moves to `klaude-plugin/profiles/<lang>/review/`. Files keep their current names (`security-checklist.md`, `solid-checklist.md`, `code-quality-checklist.md`, `removal-plan.md`) — SOLID *is* the appropriate content for Go and the other programming-language profiles, and "code-quality" fits those profiles naturally. Each profile gains a new `index.md` listing the existing four files as always-load entries. Cross-profile consistency comes from the presence of `index.md`, not from filename uniformity.
+The existing content under `klaude-plugin/skills/review-code/reference/<lang>/` moves to `klaude-plugin/profiles/<lang>/review-code/`. Files keep their current names (`security-checklist.md`, `solid-checklist.md`, `code-quality-checklist.md`, `removal-plan.md`) — SOLID *is* the appropriate content for Go and the other programming-language profiles, and "code-quality" fits those profiles naturally. Each profile gains a new `index.md` listing the existing four files as always-load entries. Cross-profile consistency comes from the presence of `index.md`, not from filename uniformity.
 
 ## Content organization within profiles
 
@@ -182,7 +182,7 @@ An `index.md` has two sections:
 
 The good form names what to inspect (`kind:` field) and what to match (specific resource names). The bad form requires the agent to interpret "workload resources" — the interpretation can drift per agent or per prompt context. Structured trigger expressions remain a possible future extension (see [ADR 0002](../../adr/0002-profile-content-organization.md), "Forward direction"); until then, prose must be precise.
 
-For the Kubernetes `review/index.md`:
+For the Kubernetes `review-code/index.md`:
 
 - Always-load: `security-checklist.md`, `architecture-checklist.md`, `quality-checklist.md`, `removal-plan.md`.
 - Conditional entries with predicate-form triggers:
@@ -195,7 +195,7 @@ Edge cases to note explicitly in the index entry prose so agents do not drift:
 - A standalone `values.yaml` with NO sibling `Chart.yaml` does NOT trigger `helm-checklist.md` (it is not a Helm-values file; it might be any project's config file).
 - A `deployment.yaml` NOT under a `templates/` directory and NOT containing `{{ ... }}` template directives, matching the K8s content signal, is a plain manifest, not a Helm template.
 
-For the migrated programming-language profiles (e.g., `profiles/go/review/index.md`), all four existing files are always-load; no conditional entries.
+For the migrated programming-language profiles (e.g., `profiles/go/review-code/index.md`), all four existing files are always-load; no conditional entries.
 
 ### Content file structure
 
@@ -249,9 +249,9 @@ The design's reliance on `${CLAUDE_PLUGIN_ROOT}` substitution in SKILL.md prose 
 
 Touched files:
 - `klaude-plugin/skills/review-code/SKILL.md` — prose updated to describe profile detection (via shared procedure) and index-driven loading. The description frontmatter does not change.
-- `klaude-plugin/skills/review-code/review-process.md` — the former "Step 2: Detect primary language" renames to "Step 2: Detect active profiles" and consults the shared procedure. Former steps 3–6 (SOLID, Removal, Security, Quality) collapse into a pair of generic steps: "Step 3: For each active profile, load `${CLAUDE_PLUGIN_ROOT}/profiles/<name>/review/index.md`; resolve entries per always-load and conditional triggers" and "Step 4: Apply each resolved checklist; emit findings grouped by (profile, checklist)". Downstream steps (self-check, indexing, output formatting) are unchanged.
+- `klaude-plugin/skills/review-code/review-process.md` — the former "Step 2: Detect primary language" renames to "Step 2: Detect active profiles" and consults the shared procedure. Former steps 3–6 (SOLID, Removal, Security, Quality) collapse into a pair of generic steps: "Step 3: For each active profile, load `${CLAUDE_PLUGIN_ROOT}/profiles/<name>/review-code/index.md`; resolve entries per always-load and conditional triggers" and "Step 4: Apply each resolved checklist; emit findings grouped by (profile, checklist)". Downstream steps (self-check, indexing, output formatting) are unchanged.
 - `klaude-plugin/skills/review-code/review-isolated.md` — parallel restructure; the sub-agent prompt receives the list of resolved checklists, not a hardcoded category sequence.
-- `klaude-plugin/skills/review-code/reference/` — directory removed (its contents have moved to `profiles/<lang>/review/`).
+- `klaude-plugin/skills/review-code/reference/` — directory removed (its contents have moved to `profiles/<lang>/review-code/`).
 - `klaude-plugin/agents/code-reviewer.md` — prompt updated to iterate the resolved-checklists list.
 
 **P1 (Kubernetes content).** No additional `review-code` skill changes. The profile-first architecture absorbs the new profile transparently.
@@ -259,8 +259,8 @@ Touched files:
 Touched files:
 - `klaude-plugin/profiles/k8s/DETECTION.md` (new)
 - `klaude-plugin/profiles/k8s/overview.md` (new)
-- `klaude-plugin/profiles/k8s/review/index.md` (new)
-- `klaude-plugin/profiles/k8s/review/*.md` (seven checklist files, new)
+- `klaude-plugin/profiles/k8s/review-code/index.md` (new)
+- `klaude-plugin/profiles/k8s/review-code/*.md` (seven checklist files, new)
 
 ### `design` — P2 Kubernetes-aware idea refinement
 
@@ -395,7 +395,7 @@ Other skills extended in this feature (`design`, `implement`, `test`, `document`
 - `klaude-plugin/profiles/<name>/DETECTION.md` exists (every profile must declare detection).
 - `klaude-plugin/profiles/<name>/overview.md` exists (every profile must declare an overview).
 - The profile's `DETECTION.md` contains the three required sections (`## Path signals`, `## Filename signals`, `## Content signals`) — any may be empty, but all must be present.
-- For each phase subdirectory that exists under `profiles/<name>/` (`review/`, `design/`, `test/`, `implement/`, `document/`, `review-spec/`), that subdirectory's `index.md` exists. A profile that does not populate a phase simply doesn't have that subdirectory; the test does not require it.
+- For each phase subdirectory that exists under `profiles/<name>/` (`review-code/`, `design/`, `test/`, `implement/`, `document/`, `review-spec/`), that subdirectory's `index.md` exists. A profile that does not populate a phase simply doesn't have that subdirectory; the test does not require it.
 
 **Bidirectional index invariant** — the index-as-contract rule is enforced symmetrically:
 - Every file referenced by any `index.md` in the profile actually exists on disk (catches stale indexes — an index entry pointing to a deleted file).
@@ -446,7 +446,7 @@ Move `docs/wip/kubernetes-support/` → `docs/done/kubernetes-support/`. Update 
 These are small decisions intentionally left for the implementer to resolve during P1–P3:
 
 - **Whether `profiles/k8s/review-spec/` warrants its own directory**, or a single paragraph inline in the three `review-spec` skill files suffices. Apply the threshold rule from §`review-spec` — P3: create the directory when the guidance comprises ≥2 distinct checklists OR any conditional trigger; inline otherwise.
-- **Exact trigger-condition wording** inside `profiles/k8s/review/index.md` for conditional entries (e.g., how to name "Helm context detected"). Prose form is chosen by the author; structured triggers are a future refinement (see [ADR 0002](../../adr/0002-profile-content-organization.md), "Forward direction").
+- **Exact trigger-condition wording** inside `profiles/k8s/review-code/index.md` for conditional entries (e.g., how to name "Helm context detected"). Prose form is chosen by the author; structured triggers are a future refinement (see [ADR 0002](../../adr/0002-profile-content-organization.md), "Forward direction").
 - **Whether to add an opportunistic description-length assertion** to `test/test-plugin-structure.sh` for `dependency-handling`'s description or leave the 250-character budget as informal convention. Either is acceptable for P3 close.
 
 ## Amendments (post-review deferrals)

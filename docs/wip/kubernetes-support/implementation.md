@@ -26,17 +26,17 @@ Before starting P0:
 
 ## Phase 0 — Profile-first refactor
 
-**Goal.** Introduce `klaude-plugin/profiles/` as a top-level directory; migrate programming-language checklist content from `klaude-plugin/skills/review-code/reference/<lang>/` to `klaude-plugin/profiles/<lang>/review/`; author the shared detection procedure and the six consumer symlinks; restructure the `review-code` workflow to be index-driven; update the plugin-structure test, `CLAUDE.md`, and `README.md`. Behavior must remain equivalent to pre-P0 when `review-code` is invoked on diffs affecting the existing programming-language profiles.
+**Goal.** Introduce `klaude-plugin/profiles/` as a top-level directory; migrate programming-language checklist content from `klaude-plugin/skills/review-code/reference/<lang>/` to `klaude-plugin/profiles/<lang>/review-code/`; author the shared detection procedure and the six consumer symlinks; restructure the `review-code` workflow to be index-driven; update the plugin-structure test, `CLAUDE.md`, and `README.md`. Behavior must remain equivalent to pre-P0 when `review-code` is invoked on diffs affecting the existing programming-language profiles.
 
 ### Step 0.1 — Create the `profiles/` top level and migrate programming-language checklists
 
 For each language in (`go`, `python`, `java`, `js_ts`, `kotlin`):
 
-1. Create directory `klaude-plugin/profiles/<lang>/review/`.
-2. Move the existing files from `klaude-plugin/skills/review-code/reference/<lang>/` to `klaude-plugin/profiles/<lang>/review/` using `git mv` (preserves history).
+1. Create directory `klaude-plugin/profiles/<lang>/review-code/`.
+2. Move the existing files from `klaude-plugin/skills/review-code/reference/<lang>/` to `klaude-plugin/profiles/<lang>/review-code/` using `git mv` (preserves history).
 3. Author `klaude-plugin/profiles/<lang>/DETECTION.md` using the mandatory three-section schema (see [design.md §Detection mechanics](design.md#detection-mechanics)): `## Path signals` (empty for programming-language profiles; file-extension detection does not involve path heuristics), `## Filename signals` (empty — language detection is extension-based, not filename-based), `## Content signals` (the file-extension rule: "any file whose extension matches `.go` / `.py` / etc."). The three sections must be present even when empty, so the shared procedure iterates predictably.
 4. Author `klaude-plugin/profiles/<lang>/overview.md` — a one-page summary: what the profile covers (the programming language), when it activates, and "Looking up dependencies" targets (context7, language-specific references).
-5. Author `klaude-plugin/profiles/<lang>/review/index.md` — lists the four migrated files (`security-checklist.md`, `solid-checklist.md`, `code-quality-checklist.md`, `removal-plan.md`) in the "Always load" section with one-line descriptions. No conditional entries for programming-language profiles.
+5. Author `klaude-plugin/profiles/<lang>/review-code/index.md` — lists the four migrated files (`security-checklist.md`, `solid-checklist.md`, `code-quality-checklist.md`, `removal-plan.md`) in the "Always load" section with one-line descriptions. No conditional entries for programming-language profiles.
 6. Remove the now-empty `klaude-plugin/skills/review-code/reference/<lang>/` directory.
 
 After iterating through all five languages, remove `klaude-plugin/skills/review-code/reference/` itself (now empty).
@@ -46,9 +46,9 @@ After iterating through all five languages, remove `klaude-plugin/skills/review-
 **Verify.**
 - `ls klaude-plugin/profiles/` shows exactly `go`, `java`, `js_ts`, `kotlin`, `python` (plus, after P1, `k8s`).
 - `ls klaude-plugin/skills/review-code/reference/` returns "No such file or directory".
-- For each language: `test -f klaude-plugin/profiles/<lang>/{DETECTION.md,overview.md,review/index.md}` succeeds.
+- For each language: `test -f klaude-plugin/profiles/<lang>/{DETECTION.md,overview.md,review-code/index.md}` succeeds.
 - For each language: the profile's `DETECTION.md` contains the three required sections (`## Path signals`, `## Filename signals`, `## Content signals`) — any may be empty but all three headings must be present.
-- `git log --follow klaude-plugin/profiles/go/review/security-checklist.md` shows history continuous with the old path.
+- `git log --follow klaude-plugin/profiles/go/review-code/security-checklist.md` shows history continuous with the old path.
 - Template-sync audit decision documented in the PR description or as a comment in `template-sync.sh`.
 
 ### Step 0.2 — Author the shared profile-detection procedure
@@ -93,7 +93,7 @@ Update the following files to consume `shared-profile-detection.md` and the inde
 - `klaude-plugin/skills/review-code/review-process.md`:
   - "Step 2: Detect primary language" renames to "Step 2: Detect active profiles" and delegates to the shared procedure.
   - Former Steps 3–6 (SOLID / Removal / Security / Quality) collapse into:
-    - "Step 3: Load profile review indexes." For each active profile, resolve `${CLAUDE_PLUGIN_ROOT}/profiles/<name>/review/index.md`; collect always-load entries and conditional entries whose stated triggers match the diff.
+    - "Step 3: Load profile review indexes." For each active profile, resolve `${CLAUDE_PLUGIN_ROOT}/profiles/<name>/review-code/index.md`; collect always-load entries and conditional entries whose stated triggers match the diff.
     - "Step 4: Apply checklists." Iterate the resolved checklists; each checklist's findings are emitted with `(profile, checklist)` as the grouping key.
   - Subsequent steps (self-check, indexing, output formatting) are renumbered but otherwise unchanged.
   - Replace every literal occurrence of `reference/<lang>/` and `reference/{lang}/` (any variant) with the `${CLAUDE_PLUGIN_ROOT}/profiles/...` equivalent or a description of the index-driven loading step.
@@ -101,12 +101,12 @@ Update the following files to consume `shared-profile-detection.md` and the inde
   - **Literal path string to replace:** the sub-agent prompt template in Step 2 currently injects `klaude-plugin/skills/review-code/reference/{language_key}/` into the spawned agent's prompt. This literal string must be replaced with the list of resolved checklists (produced in Step 1 when preparing the scope block). The sub-agent receives the list, not a path.
   - Replace every other literal occurrence of `reference/<lang>/` in the file.
 - `klaude-plugin/agents/code-reviewer.md` — the prompt updates to iterate the `(profile, checklist)` list it is given, rather than iterating fixed category names.
-  - **Literal path string to replace:** the agent's current Step 2 says "Load the corresponding reference checklists from `klaude-plugin/skills/review-code/reference/{lang}/`" with the full extension table duplicated. Rewrite to: "Apply the checklists provided in the input payload; for each `(profile, checklist)` record, read the checklist content from `${CLAUDE_PLUGIN_ROOT}/profiles/<profile>/review/<checklist>` and apply it to the diff." Remove the extension table (detection is no longer the agent's responsibility; the calling skill has already produced the list).
+  - **Literal path string to replace:** the agent's current Step 2 says "Load the corresponding reference checklists from `klaude-plugin/skills/review-code/reference/{lang}/`" with the full extension table duplicated. Rewrite to: "Apply the checklists provided in the input payload; for each `(profile, checklist)` record, read the checklist content from `${CLAUDE_PLUGIN_ROOT}/profiles/<profile>/review-code/<checklist>` and apply it to the diff." Remove the extension table (detection is no longer the agent's responsibility; the calling skill has already produced the list).
 
 **Verify.**
 - Grep check (expanded scope to include `agents/`): `grep -rn 'reference/' klaude-plugin/skills/review-code/ klaude-plugin/agents/code-reviewer.md` returns no lines. If any remain, replacement was incomplete.
 - Grep check: `grep -rn '${CLAUDE_PLUGIN_ROOT}/profiles/' klaude-plugin/skills/review-code/` returns matches at the relevant points (Step 3 of review-process.md, equivalent in review-isolated.md).
-- Manual dry-run: invoke `/kk:review-code` on a Go-only diff (e.g., a recent commit touching only `.go` files). The output identifies the `go` profile as active and loads the four checklists now at `profiles/go/review/`. Findings coverage and categories match pre-P0 output qualitatively.
+- Manual dry-run: invoke `/kk:review-code` on a Go-only diff (e.g., a recent commit touching only `.go` files). The output identifies the `go` profile as active and loads the four checklists now at `profiles/go/review-code/`. Findings coverage and categories match pre-P0 output qualitatively.
 - `klaude-plugin/agents/code-reviewer.md` parses cleanly (front-matter valid, instructions coherent on a manual read).
 
 ### Step 0.5 — Update the plugin-structure test
@@ -128,7 +128,7 @@ Modify `test/test-plugin-structure.sh`:
 
 **Verify.** `bash test/test-plugin-structure.sh` exits 0. Run three targeted break-and-restore experiments to confirm each new assertion produces an actionable message:
 1. `git rm` a file referenced by an index.md → forward assertion should fail with the missing filename.
-2. Create an orphan `touch klaude-plugin/profiles/go/review/__orphan.md` → reverse assertion should fail naming the orphan. Remove the orphan after test.
+2. Create an orphan `touch klaude-plugin/profiles/go/review-code/__orphan.md` → reverse assertion should fail naming the orphan. Remove the orphan after test.
 3. Remove one of the three section headers in a `DETECTION.md` → header assertion should fail naming the missing heading. Restore.
 All three failures must exit non-zero with a message that tells a contributor exactly which assertion failed and which file/profile caused it.
 
@@ -201,9 +201,9 @@ Content:
 
 **Verify.** `test -f klaude-plugin/profiles/k8s/overview.md`. Cascade targets match what [design.md §dependency-handling integration](design.md#dependency-handling-integration) prescribes for P3.
 
-### Step 1.3 — Author `profiles/k8s/review/` checklists and index, then append `k8s` to `EXPECTED_PROFILES`
+### Step 1.3 — Author `profiles/k8s/review-code/` checklists and index, then append `k8s` to `EXPECTED_PROFILES`
 
-Create the following files in `klaude-plugin/profiles/k8s/review/`:
+Create the following files in `klaude-plugin/profiles/k8s/review-code/`:
 
 - `security-checklist.md` — RBAC least privilege (ServiceAccount scoping, avoid cluster-admin), NetworkPolicy presence and default-deny posture, Pod Security Standards level, non-root containers, `readOnlyRootFilesystem`, secret handling (no inline secrets; preference for external secret managers), image provenance and pull-secret hygiene, avoid `hostPath` and `hostNetwork` without justification, avoid privileged containers.
 - `architecture-checklist.md` — one primary concern per resource (don't conflate unrelated services), config injection via env/ConfigMap/Secret rather than hardcoded values, no hardcoded cluster assumptions (cluster-local DNS, namespace names), explicit selectors and labels, clean separation between application code and cluster concerns.
@@ -231,7 +231,7 @@ Clarify explicitly (edge-case wording inside the index entry prose):
 **Verify.**
 - Every checklist file exists and passes a basic readability check (no dangling markdown, no placeholder text).
 - Forward index invariant: `index.md` links resolve to files on disk.
-- Reverse index invariant: every `.md` file in `profiles/k8s/review/` (except `index.md`) is referenced by `index.md`.
+- Reverse index invariant: every `.md` file in `profiles/k8s/review-code/` (except `index.md`) is referenced by `index.md`.
 - Each conditional `Load if:` clause is a concrete predicate (names `kind:` fields by exact values, names filenames by exact strings — not a vague category label).
 - `bash test/test-plugin-structure.sh` exits 0 with `k8s` in `EXPECTED_PROFILES`.
 
