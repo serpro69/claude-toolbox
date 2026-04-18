@@ -23,7 +23,7 @@ klaude-plugin/skills/diff-skill/
 ├── diff-process.md                                (new)
 └── shared-capy-knowledge-protocol.md              (symlink → ../_shared/capy-knowledge-protocol.md)
 
-docs/reviews/skill-diff/                           (directory created on first skill run, not at implementation time)
+docs/reviews/diff-skill/                           (directory created on first skill run, not at implementation time)
 
 test/test-plugin-structure.sh                      (update EXPECTED_SKILLS array)
 klaude-plugin/README.md                            (update skill table + workflow description)
@@ -81,17 +81,17 @@ No new commands directory for v1 (single mode; the skill is invoked directly as 
 **Phases (map 1:1 to design.md):**
 
 1. **Parse invocation** — extract `<skill-name>`, `<ref-a>`, `<ref-b>`, handle `@ref..` rename syntax, apply defaults (working-tree + HEAD).
-2. **Validate** — `git rev-parse` each ref, confirm `klaude-plugin/skills/<name>/SKILL.md` exists at the ref via `git show <ref>:<path>`. Error messages per design.md § Validation.
-3. **Traverse** — build the reachable-file set for each side. For each file: `git show <ref>:<path>` (or filesystem read for working-tree side), extract links using a described regex, resolve relative/absolute paths, dereference symlinks, respect safety rails (50 files, depth 20).
+2. **Validate** — `git rev-parse` each ref, confirm `klaude-plugin/skills/<name>/SKILL.md` exists at the ref via `git cat-file -e <ref>:<path>` (existence-only, avoids reading content). Error messages per design.md § Validation.
+3. **Traverse** — build the reachable-file set for each side. For each file, follow the symlink-aware read protocol from design.md § "Symlink handling at historical refs": (a) `git ls-tree --full-tree <ref> <path>` to check mode; (b) if mode `120000`, resolve target via `git cat-file -p` and recurse; (c) otherwise `git show <ref>:<path>` for content. Working-tree reads use filesystem `readlink` + normal file reads. Extract links using a described regex, resolve relative/absolute paths, respect safety rails (50 files, depth 20).
 4. **Pass 1 — structural extraction** — enumerate normative rules, headings, required outputs, verification steps, tool/agent/command references, file references per design.md. Produce a candidate findings list with categories: `lost-rule`, `weakened-constraint`, `dropped-section`, `dropped-verification`, `dropped-output`, `broken-reference`, `addition`, `prose-only-neutral`, `file-only-on-one-side`.
 5. **Pass 2 — LLM judgment** — reclassify candidates using the asymmetric framing; attach confidence; record reclassification rationales.
-6. **Write report** — create `docs/reviews/skill-diff/` if absent, compute filename per design convention, write the report with the exact structure from design.md § Report.
+6. **Write report** — create `docs/reviews/diff-skill/` if absent, compute filename per design convention, write the report with the exact structure from design.md § Report.
 7. **Present inline summary** — first line is `Verdict: <value>`, then ≤10 lines summarizing findings + report path.
 8. **Index to capy** — only if verdict != `no-degradation`. Use source label `kk:skill-diff-findings`.
 
 **Tools referenced in the process doc:**
 
-- `Bash` — `git rev-parse`, `git show`, `git cat-file`, `mkdir`, `readlink`.
+- `Bash` — `git rev-parse`, `git cat-file -e` (existence), `git ls-tree --full-tree` (mode check), `git cat-file -p` (symlink target read), `git show` (regular-file content), `mkdir`, `readlink`.
 - `Read` — for working-tree file reads.
 - `Write` — the report.
 - The MCP capy index tool — indexing findings.
@@ -123,7 +123,7 @@ No new commands directory for v1 (single mode; the skill is invoked directly as 
 **Verify:**
 
 - `bash test/test-plugin-structure.sh` passes all assertions (in particular Section 3: Skills).
-- `grep -c '^| \*\*' klaude-plugin/README.md` on the Skills table region returns 11, matching the new skill count.
+- The Skills table in `klaude-plugin/README.md` contains exactly 11 rows: one per skill in `EXPECTED_SKILLS`. Verify by either (a) listing each skill name with `grep -c "| \*\*<name>\*\*" klaude-plugin/README.md` returning 1, or (b) using `awk` to extract only the Skills section between its heading and the next `## ` heading, then counting `| **` rows there — do NOT use a raw repo-wide `grep -c '^| \*\*'` as future tables may use the same pattern.
 
 ## Task 5 — Smoke test the skill end-to-end
 
@@ -141,7 +141,7 @@ No new commands directory for v1 (single mode; the skill is invoked directly as 
 **Verify:**
 
 - Each deliberate degradation appears as a distinct finding with correct `Kind` classification.
-- Report path exactly matches `docs/reviews/skill-diff/merge-docs-<short-sha-a>-<short-sha-b>.md`.
+- Report path exactly matches `docs/reviews/diff-skill/merge-docs-<short-sha-a>-<short-sha-b>.md`.
 - Inline summary's first line is `Verdict: degraded`.
 - The `no-degradation` run produces a report with empty Degradations section and skips capy indexing.
 
