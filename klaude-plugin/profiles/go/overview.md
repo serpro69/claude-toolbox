@@ -10,7 +10,7 @@ Any file with a `.go` extension in scope. See [DETECTION.md](DETECTION.md) for t
 
 ## Populated phases
 
-- `review/` — checklists consumed by `review-code` (security, SOLID, code-quality, removal-plan).
+- `review-code/` — checklists consumed by `review-code` (security, SOLID, code-quality, removal-plan).
 
 Other phase subdirectories (`design/`, `test/`, `implement/`, `document/`, `review-spec/`) are not populated for this profile: the generic per-phase behavior is sufficient.
 

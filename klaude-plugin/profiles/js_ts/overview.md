@@ -10,7 +10,7 @@ Any file with one of these extensions in scope: `.js`, `.jsx`, `.mjs`, `.cjs`, `
 
 ## Populated phases
 
-- `review/` — checklists consumed by `review-code` (security, SOLID, code-quality, removal-plan).
+- `review-code/` — checklists consumed by `review-code` (security, SOLID, code-quality, removal-plan).
 
 Other phase subdirectories are not populated for this profile: generic per-phase behavior is sufficient.
 

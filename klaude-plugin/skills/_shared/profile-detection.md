@@ -61,8 +61,7 @@ the same record shape produced by file-based detection (see §Output shape).
 ### Algorithm
 
 1. **Iterate profiles.** For each `${CLAUDE_PLUGIN_ROOT}/profiles/*/DETECTION.md`:
-   load the declared `## Path signals`, `## Filename signals`, and `## Content
-signals`.
+   load the declared `## Path signals`, `## Filename signals`, and `## Content signals`.
 2. **Evaluate in cost order.** For each input file, check signals in this
    order: path → filename → content. Cheapest first.
 3. **Apply the authority rule.** A file activates the profile only if a
@@ -147,9 +146,9 @@ Field semantics:
 
 - `profile` — the directory name under `profiles/` (e.g., `go`, `python`, `k8s`).
   Used downstream to resolve `profiles/<profile>/<phase>/index.md`, where
-  `<phase>` is the profile phase subdirectory the calling skill consumes —
-  `review/` for `review-code`, else the skill name (`design/`, `implement/`,
-  `test/`, `document/`, `review-spec/`).
+  `<phase>` is the profile phase subdirectory named identically to the calling
+  skill: `review-code/`, `review-spec/`, `design/`, `implement/`, `test/`, or
+  `document/`.
 - `triggered_by` — which signal type fired and the specific value that matched.
   For debugging and for explaining detection to the user; never used as the key
   for profile lookup.
