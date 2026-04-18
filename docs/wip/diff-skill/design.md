@@ -46,6 +46,14 @@ return visited
 - YAML frontmatter fields that name a file.
 - Symlinks are dereferenced transparently. The dereferenced path is the comparison key across both sides (so relocations like `shared-foo.md → _shared/foo.md` are tracked as location changes, not content loss).
 
+**Symlink handling at historical refs.** `git show <ref>:<path>` on a symlink returns the symlink *target string*, not the content at the target. The traversal therefore does a two-step dance at refs:
+
+1. `git ls-tree --full-tree <ref> <path>` — check mode. Mode `120000` = symlink.
+2. If symlink: `git cat-file -p <ref>:<path>` returns the target path text; resolve relative to the symlink's directory, then fetch the resolved path (recursively if the target is itself a symlink).
+3. If regular file: `git show <ref>:<path>` returns content directly.
+
+Working-tree reads use filesystem `readlink` + normal file reads — same end result.
+
 ### What is excluded from traversal
 
 - External URLs (`http://`, `https://`)
@@ -97,6 +105,7 @@ A referenced file existing only on one side is *not* automatically classified. I
 - Content removed because it was inlined into `SKILL.md` → neutral (relocation)
 - New file added with new content → likely improvement or neutral
 - New file added that replaces inline content now removed → neutral (relocation)
+- In-tree rename (file at path X in A, path Y in B, both sides link to the respective path) → Pass 2 pairs the removal with the addition when content is ≥70% similar (by line-overlap); treat as neutral when paired. Below the threshold, treat as removal + unrelated addition.
 
 ## Judgment pipeline
 
@@ -108,9 +117,9 @@ For each file in each side's content map, extract and enumerate:
 
 | Element              | Examples                                                             |
 | -------------------- | -------------------------------------------------------------------- |
-| Normative rules      | Lines containing `MUST`, `MUST NOT`, `NEVER`, `ALWAYS`, `DO NOT`, `SHOULD`, `DON'T`, `always`, `never` |
+| Normative rules      | Lines containing all-caps markers: `MUST`, `MUST NOT`, `NEVER`, `ALWAYS`, `DO NOT`, `SHOULD`, `DON'T`. Lowercase forms (`always`, `never`) are deliberately excluded to avoid false positives on prose; Pass 2 still catches load-bearing lowercase prose via LLM judgment. |
 | Section headings     | All `#`, `##`, `###` headings with their full path                   |
-| Required outputs     | Checkbox items under "Required Outputs" / "Outputs" / "Deliverables" headings |
+| Required outputs     | Checkbox items under "Required Outputs" / "Outputs" / "Deliverables" headings. This binds extraction to a heading convention — skills that want required-output coverage MUST use one of those heading names. Checkbox lists under other headings are not extracted by this rule (they may still be picked up as prose by Pass 2). |
 | Verification steps   | Lines matching `Step → verify: <check>` or similar patterns          |
 | Tool/agent/command references | Named tools, agents (`code-reviewer`, `pal`), commands invoked |
 | File references      | All links discovered in the traversal                                |
@@ -157,7 +166,7 @@ Each finding carries `high` / `medium` / `low` confidence. Low-confidence findin
 ### File location
 
 ```
-docs/reviews/skill-diff/<skill-name>-<short-sha-a>-<short-sha-b>.md
+docs/reviews/diff-skill/<skill-name>-<short-sha-a>-<short-sha-b>.md
 ```
 
 - Short SHA = 7 chars.
@@ -205,7 +214,7 @@ docs/reviews/skill-diff/<skill-name>-<short-sha-a>-<short-sha-b>.md
 
 ### Inline summary
 
-The conversation receives a ≤10-line summary following capy routing rules:
+The conversation receives a ≤10-line summary following capy routing rules. The summary MUST contain exactly one line matching the regex `^Verdict: (no-degradation|degraded|unclear)\b` — this is the machine-parseable contract (CI integration depends on it). Position of the line within the summary is not specified; parsers use the regex.
 
 ```
 diff-skill: review-code (HEAD~5 → WORKTREE)
@@ -215,12 +224,12 @@ Degradations:
   1. Dropped `MUST re-read changed files` rule in review-process.md
   2. Security-checklist reference removed from SKILL.md
 
-Full report: docs/reviews/skill-diff/review-code-a1b2c3d-WORKTREE.md
+Full report: docs/reviews/diff-skill/review-code-a1b2c3d-WORKTREE.md
 ```
 
 ### Capy indexing
 
-On completion, index the verdict + finding summaries under `kk:skill-diff-findings`. Skip if verdict is `no-degradation` — nothing durable to record. Follows `review-code`'s `kk:review-findings` pattern.
+On completion, index the verdict + finding summaries under `kk:diff-skill-findings`. Skip if verdict is `no-degradation` — nothing durable to record. Follows `review-code`'s `kk:review-findings` pattern.
 
 ## Extension points
 
@@ -234,7 +243,7 @@ The judgment pipeline has two named phases (Pass 1, Pass 2). A future `--with-ev
 - Parse agent traces / outputs
 - Fold behavioral findings into the candidate list fed to Pass 2
 
-If `skill-creator`'s eval infrastructure is present and produces parseable output, `diff-skill` invokes it. Otherwise, `--with-evals` errors with a pointer.
+*If v2 goes this route:* if `skill-creator`'s eval infrastructure is present and produces parseable output, `diff-skill` invokes it. Otherwise, `--with-evals` errors with a pointer. `skill-creator` is Anthropic-maintained (not owned by this repo) — its output contract isn't guaranteed stable, so this seam is speculative.
 
 ### 2. Isolated mode seam
 
@@ -261,7 +270,7 @@ v1 runs the traversal inside the LLM (via `Bash` for `git show` + `Read` for con
 
 ### 6. CI integration seam
 
-The skill produces a deterministic file artifact (the report) and a machine-friendly verdict in the inline summary's first line (`Verdict: no-degradation|degraded|unclear`). A future GitHub Action / pre-commit hook parses this line to gate merges without needing changes to the skill itself.
+The skill produces a deterministic file artifact (the report) and a single machine-parseable line in the inline summary matching `^Verdict: (no-degradation|degraded|unclear)\b`. A future GitHub Action / pre-commit hook greps for this line to gate merges without needing changes to the skill itself.
 
 ## Non-negotiables
 
@@ -280,3 +289,11 @@ Whatever v2+ adds, these stay:
 - Cross-skill diffing
 - CI integration
 - Reports for multiple skills in one invocation
+
+### Accepted v1 limitations
+
+These are deliberate trade-offs, not oversights. An implementer should not "fix" them without revisiting the design.
+
+- **Prose mentions of agents, tools, and commands are not traversed.** Only markdown relative links and YAML frontmatter file fields count as edges in the reachable-file graph. A skill that names `` `code-reviewer` `` in prose without a markdown link to `klaude-plugin/agents/code-reviewer.md` will not have that agent file included in the diff scope, even when the agent's instructions materially affect the skill's behavior. Trade-off: simple, predictable traversal vs. coverage of textual cross-references. Users who want agent coverage can add a markdown link from `SKILL.md` to the agent file.
+- **Rename auto-detection is not performed.** Users must use the `old@ref..new@ref` syntax when a skill was renamed between refs; git's native rename-tracking is not consulted.
+- **Pass 2 is stochastic.** Identical inputs may produce slightly different reclassifications across runs. The report is advisory, not gating.

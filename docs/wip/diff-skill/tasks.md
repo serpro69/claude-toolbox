@@ -35,13 +35,13 @@
 
 ### Subtasks
 - [ ] 3.1 Write Phase 1 "Parse invocation" — argument extraction, rename syntax, defaults
-- [ ] 3.2 Write Phase 2 "Validate" — ref resolution via `git rev-parse`, SKILL.md existence via `git show`, exact error messages from `design.md#validation-at-invocation`
-- [ ] 3.3 Write Phase 3 "Traverse" — link-extraction algorithm, path resolution, symlink deref, 50-file / depth-20 safety rails, edge cases (code fences, HTML anchors, multi-line links)
+- [ ] 3.2 Write Phase 2 "Validate" — ref resolution via `git rev-parse`, SKILL.md existence via `git cat-file -e`, exact error messages from `design.md#validation-at-invocation`
+- [ ] 3.3 Write Phase 3 "Traverse" — link-extraction algorithm, path resolution, symlink-at-refs dance (`git ls-tree` mode check → `git cat-file -p` for symlinks → `git show` for regular files), 50-file / depth-20 safety rails, edge cases (code fences, HTML anchors, multi-line links)
 - [ ] 3.4 Write Phase 4 "Pass 1 — structural extraction" — enumerate categories of extracted elements, produce candidate findings with category labels
 - [ ] 3.5 Write Phase 5 "Pass 2 — LLM judgment" — asymmetric framing prompt, reclassification rules, confidence tagging
 - [ ] 3.6 Write Phase 6 "Write report" — directory creation, filename convention, full report template from `design.md#report`
 - [ ] 3.7 Write Phase 7 "Present inline summary" — exact ≤10-line format with `Verdict:` as first line
-- [ ] 3.8 Write Phase 8 "Index to capy" — skip on `no-degradation`, source label `kk:skill-diff-findings`
+- [ ] 3.8 Write Phase 8 "Index to capy" — skip on `no-degradation`, source label `kk:diff-skill-findings`
 
 ## Task 4: Wire skill into manifest and tests
 - **Status:** pending
@@ -54,6 +54,7 @@
 - [ ] 4.3 Add `diff-skill` row to the Skills table in `klaude-plugin/README.md`
 - [ ] 4.4 Mention `diff-skill` in the "Utilities" paragraph of `klaude-plugin/README.md`
 - [ ] 4.5 Run `bash test/test-plugin-structure.sh` — all assertions pass
+- [ ] 4.6 Verify the Skills-table row count via a scoped check (per-skill `grep -c "| \*\*<name>\*\*"` returning 1, or `awk` range scoped to the Skills section) — do NOT rely on an unscoped repo-wide count
 
 ## Task 5: End-to-end smoke test
 - **Status:** pending
@@ -64,7 +65,7 @@
 - [ ] 5.1 On a local throwaway branch, deliberately degrade `merge-docs/SKILL.md` with three regressions: `MUST`→`SHOULD`, drop a required-output bullet, remove one link
 - [ ] 5.2 From a fresh Claude Code session, invoke `/kk:diff-skill merge-docs master HEAD` and confirm verdict = `degraded` with all three regressions flagged
 - [ ] 5.3 Invoke `/kk:diff-skill merge-docs master master` and confirm verdict = `no-degradation`, no capy indexing triggered
-- [ ] 5.4 Confirm the report file exists at `docs/reviews/skill-diff/merge-docs-<short-sha-a>-<short-sha-b>.md` and matches the template from `design.md#report`
+- [ ] 5.4 Confirm the report file exists at `docs/reviews/diff-skill/merge-docs-<short-sha-a>-<short-sha-b>.md` and matches the template from `design.md#report`
 - [ ] 5.5 Discard the throwaway branch
 
 ## Task 6: Final verification
