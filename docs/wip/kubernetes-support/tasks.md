@@ -72,7 +72,7 @@ Subtasks:
 ## Task 4 — Restructure the `review-code` workflow for index-driven loading
 
 - **Phase:** P0
-- **Status:** in-progress
+- **Status:** done
 - **Depends on:** Task 1, Task 3
 - **Links:** [implementation.md §Step 0.4](implementation.md#step-04--restructure-the-review-code-workflow), [design.md §review-code — P0 refactor + P1 Kubernetes content](design.md#review-code--p0-refactor--p1-kubernetes-content)
 

@@ -23,7 +23,7 @@ Code Review Progress:
 - **Re-read every changed file** using the Read tool before reviewing. Do NOT rely on file contents read earlier in the conversation — code may have changed since (e.g., fixes applied between reviews in the same session).
 - If needed, use `serena` mcp, `rg` or `grep` to find related modules, usages, and contracts.
 - Identify entry points, ownership boundaries, and critical paths (auth, payments, data writes, network).
-- **Capy search:** Search `kk:review-findings` for prior findings in the same files/modules. Search `kk:lang-idioms` for best practices in the detected language. If `kk:lang-idioms` returns no results for the detected language, optionally use `capy_fetch_and_index` to fetch a well-known idioms resource (e.g., Effective Go for `.go` files) and label it `kk:lang-idioms`.
+- **Capy search:** Search `kk:review-findings` for prior findings in the same files/modules. For each programming language apparent in `git diff --stat` (refined once Step 2 returns the active profile list), search `kk:lang-idioms` for best practices. If `kk:lang-idioms` returns no results for a language, optionally use `capy_fetch_and_index` to fetch a canonical idioms resource (e.g., Effective Go for `go`) and label it `kk:lang-idioms`. Skip the lookup for non-language profiles (e.g., `k8s`) — `kk:lang-idioms` is a programming-language idiom store.
 
 **Edge cases:**
 
@@ -64,12 +64,12 @@ Iterate the `(profile, checklist)` list from Step 3. For each pair:
 2. Apply the checklist to the diff. A checklist may cover SOLID/architecture, security, quality, removal, or a profile-specific concern (e.g., Helm template correctness, RBAC least privilege) — the checklist itself states what to look for.
 3. Emit findings using `(profile, checklist)` as the grouping key so the report in Step 7 can organize them.
 
-General guidance that applies regardless of profile:
+General guidance that applies regardless of profile — apply these categories on every diff, whether or not a profile-specific checklist covered them:
 
-- When you propose a refactor, explain _why_ it improves cohesion/coupling and outline a minimal, safe split. If refactor is non-trivial, propose an incremental plan instead of a large rewrite.
-- Call out both **exploitability** and **impact** on security findings.
-- Flag issues that may cause silent failures or production incidents.
-- Distinguish **safe delete now** vs **defer with plan** on removal findings; provide concrete follow-up steps with checkpoints (tests/metrics).
+- **SOLID / architecture:** SRP violations (overloaded modules with unrelated responsibilities), OCP (frequent edits to add behavior instead of extension points), LSP (subclasses that break expectations or require type checks), ISP (wide interfaces with unused methods), DIP (high-level logic tied to low-level implementations). When you propose a refactor, explain _why_ it improves cohesion/coupling and outline a minimal, safe split. If refactor is non-trivial, propose an incremental plan instead of a large rewrite.
+- **Security / reliability:** XSS, injection (SQL/NoSQL/command), SSRF, path traversal; AuthZ/AuthN gaps, missing tenancy checks; secret leakage or API keys in logs/env/files; rate limits, unbounded loops, CPU/memory hotspots; unsafe deserialization, weak crypto, insecure defaults; race conditions, check-then-act, TOCTOU, missing locks. Call out both **exploitability** and **impact**.
+- **Code quality:** error handling (swallowed exceptions, overly broad catch, missing handling, async errors); performance (N+1 queries, CPU-intensive ops in hot paths, missing cache, unbounded memory); boundary conditions (null/undefined, empty collections, numeric boundaries, off-by-one). Flag issues that may cause silent failures or production incidents.
+- **Removal candidates:** unused, redundant, or feature-flagged-off code. Distinguish **safe delete now** vs **defer with plan**; provide concrete follow-up steps with checkpoints (tests/metrics).
 
 ### 5) Self-check and confidence assessment
 

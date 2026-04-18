@@ -55,7 +55,7 @@ See [review-isolated.md](./review-isolated.md) for the isolated workflow.
 
 ## Workflow
 
-**Phases:**
+**Phases** (summary — the detailed procedure in [review-process.md](./review-process.md) breaks Phase 7 into three distinct numbered steps: present results, next-steps confirmation, verify outputs):
 
 1. Preflight context — scope changes, re-read changed files, search prior findings
 2. Detect active profiles — delegate to `shared-profile-detection.md`; produce the list of `(profile, checklist)` records
