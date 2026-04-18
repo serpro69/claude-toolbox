@@ -102,12 +102,10 @@ You are reviewing the following code changes. Apply your full review workflow.
 
 ## Active Profiles and Resolved Checklists
 
-{list of (profile, checklist) records from Step 1c, formatted as:
-- profile: <name>
-  checklists:
-    - <checklist_filename>
-    - <checklist_filename>
-    ...
+{list of (profile, checklist) records from Step 1c, formatted as a flat tuple list — one pair per line:
+- profile: <name>, checklist: <checklist_filename>
+- profile: <name>, checklist: <checklist_filename>
+...
 }
 
 For each record, read the checklist at `${CLAUDE_PLUGIN_ROOT}/profiles/<profile>/review-code/<checklist>` and apply it to the diff. If no profiles are active (empty list), fall back to general review guidance without profile-specific checklists.

@@ -49,7 +49,7 @@ Follow these steps in order. Each step references the `review-code` methodology.
 - Analyze the git diff provided in your prompt.
 - If needed, use Read/Grep/Glob to find related modules, usages, and contracts in the codebase.
 - Identify entry points, ownership boundaries, and critical paths (auth, payments, data writes, network).
-- **Capy search:** Search `kk:review-findings` for prior findings in the same files/modules. For any programming-language profile in the input payload, search `kk:lang-idioms` for best practices in that language.
+- **Capy search:** Search `kk:review-findings` for prior findings in the same files/modules. For any programming-language profile in the input payload (`go`, `python`, `js_ts`, `kotlin`, `java`), search `kk:lang-idioms` for best practices in that language. Skip the lookup for non-language profiles (e.g., `k8s`) — `kk:lang-idioms` is a programming-language idiom store.
 
 **Edge cases:**
 - **Large diff (>500 lines)**: Summarize by file first, then review in batches by module/feature area.
