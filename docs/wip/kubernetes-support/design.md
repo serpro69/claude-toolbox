@@ -353,7 +353,7 @@ Touched files:
 The skill's description frontmatter and body widen to acknowledge IaC/config artifacts with external versioning. (Rationale: IaC API versions, CRDs, Helm charts, and container images are all dependencies with external versioning that benefit from the same "lookup BEFORE writing" discipline the skill already enforces for libraries and SDKs; see `.sessions/design-session.txt` question Q8 for the scope decision.)
 
 Touched files:
-- `klaude-plugin/skills/dependency-handling/SKILL.md` — description frontmatter rewritten to fit in ≤250 characters (see §[Skill description budget](#skill-description-budget)) while including IaC-dep categories. Body gains a short paragraph pointing to per-profile `overview.md` for domain-specific lookup targets (Kubernetes API versions → context7 k8s.io docs or `kubectl explain`; CRDs → operator docs; Helm charts → chart repo README; container images → registry metadata).
+- `klaude-plugin/skills/dependency-handling/SKILL.md` — description frontmatter rewritten to fit in ≤1,536 characters (the documented per-entry cap; see §[Skill description budget](#skill-description-budget)) while including IaC-dep categories. Body gains a short paragraph pointing to per-profile `overview.md` for domain-specific lookup targets (Kubernetes API versions → context7 k8s.io docs or `kubectl explain`; CRDs → operator docs; Helm charts → chart repo README; container images → registry metadata).
 - `klaude-plugin/profiles/k8s/overview.md` — "Looking up Kubernetes dependencies" section names the cascade targets.
 
 ## Conventions
@@ -369,10 +369,12 @@ A new top-level section, **Profile Conventions**, describes:
 - Adding a new profile = copy an existing profile as a template, customize `DETECTION.md` and content, and append to `EXPECTED_PROFILES` in `test/test-plugin-structure.sh`.
 
 A new subsection under **Skill & Command Naming Conventions**, titled **Skill description budget**, records:
-- The `description` frontmatter field of a skill is truncated at **250 characters** when surfaced to Claude Code's agent-selection UI (observed on Claude Code v2.1.112; other surfaces may differ). OpenCode's documented limit for the same field is 1024 characters. Take the stricter bound of the two — 250.
-- Provenance: the 250 figure was surfaced by the project owner during the kubernetes-support design (2026-04-17), citing a truncation observation. The number is not documented in Claude Code's plugin-reference as of that date. When updating this limit in the future, re-verify by observing the UI behavior on the current Claude Code version.
-- Lead with trigger keywords, not prose; truncation happens at the tail.
-- Detailed rules, cascades, and examples belong in the body of SKILL.md, not the description.
+- **Per-entry cap: 1,536 characters.** Each skill's `description` + `when_to_use` combined text is truncated at 1,536 characters regardless of the global budget (per [Claude Code docs — Skill descriptions are cut short](https://code.claude.com/docs/en/skills#skill-descriptions-are-cut-short)).
+- **Global context budget.** Scales dynamically at 1% of the context window, with a fallback of 8,000 characters. Override via the `SLASH_COMMAND_TOOL_CHAR_BUDGET` environment variable. When many skills are loaded, trailing content of each description gets stripped first.
+- **OpenCode parity.** OpenCode's documented limit is 1,024 characters; treat 1,024 as a soft budget for skills that must work on both harnesses.
+- **Lead with trigger keywords.** Truncation happens at the tail; front-load the key use case.
+- **Keep descriptions tight.** Detailed rules, cascades, and examples belong in the SKILL.md body, not the description.
+- **Re-verify the caps** against the docs page above when touching this limit in the future.
 
 A new subsection, **ADR location**, records:
 - Architecture decisions spanning more than one feature live at `docs/adr/NNNN-slug.md` (Michael Nygard template).
@@ -384,7 +386,7 @@ Only one skill's description changes: `dependency-handling`. The revised descrip
 
 > TRIGGER when: adding or upgrading any dependency — library, SDK, framework, API, IaC API version (K8s/Terraform/Helm), CRD, or container image. Use BEFORE writing the call. Forces context7/capy lookup instead of guessing.
 
-223 characters, under the 250-character budget, leads with the trigger keyword, covers both programming-language and IaC dep categories, and preserves the "Use BEFORE writing the call" instruction that the current (over-budget) description truncates in practice.
+223 characters — well under the 1,536-character per-entry cap and the 1,024-character OpenCode soft budget. Leads with the trigger keyword, covers both programming-language and IaC dep categories, and preserves the "Use BEFORE writing the call" instruction that the current description currently truncates in practice under context-pressure shrinking.
 
 Other skills extended in this feature (`design`, `implement`, `test`, `document`, `review-code`, `review-spec`) acquire new behavior but no new trigger semantics; their descriptions do not change.
 
@@ -403,7 +405,7 @@ Other skills extended in this feature (`design`, `implement`, `test`, `document`
 
 The six shared-file symlinks (`shared-profile-detection.md` under each consuming skill) are asserted to exist and to resolve to `_shared/profile-detection.md`.
 
-The `dependency-handling` description-length assertion lands when the description rewrite lands: a one-line check that the `description` frontmatter field is ≤250 characters. Not technically required (the budget is a convention documented in CLAUDE.md), but mechanical to add and prevents regression.
+The `dependency-handling` description-length assertion lands when the description rewrite lands: a one-line check that the `description` frontmatter field is ≤1,536 characters (the documented per-entry cap). Not technically required (the cap is enforced by the harness, not the plugin), but mechanical to add and prevents regression on the agreed-upon description length.
 
 ### README.md
 
@@ -433,9 +435,9 @@ One task per extended skill. Each task adds the profile-aware clause to the skil
 
 ### P3 — `review-spec` and `dependency-handling`
 
-`review-spec` prose gains the K8s-awareness clause and optional `profiles/k8s/review-spec/` content. `dependency-handling` description is rewritten to fit the 250-character budget while widening to IaC; body gains the per-profile lookup pointer.
+`review-spec` prose gains the K8s-awareness clause and optional `profiles/k8s/review-spec/` content. `dependency-handling` description is rewritten to fit the 1,536-character per-entry cap while widening to IaC; body gains the per-profile lookup pointer.
 
-**Verification criteria.** `dependency-handling` description length ≤250 characters (manual or automated check). Spec-vs-impl scenario on Kubernetes artifacts exercises the widened finding shapes. End-to-end smoke: an entirely synthetic K8s feature is carried through the design → implement → review-code → test → document → review-spec flow; each step invokes profile-aware behavior where applicable.
+**Verification criteria.** `dependency-handling` description length ≤1,536 characters (manual or automated check). Spec-vs-impl scenario on Kubernetes artifacts exercises the widened finding shapes. End-to-end smoke: an entirely synthetic K8s feature is carried through the design → implement → review-code → test → document → review-spec flow; each step invokes profile-aware behavior where applicable.
 
 ### Feature close
 
@@ -447,7 +449,7 @@ These are small decisions intentionally left for the implementer to resolve duri
 
 - **Whether `profiles/k8s/review-spec/` warrants its own directory**, or a single paragraph inline in the three `review-spec` skill files suffices. Apply the threshold rule from §`review-spec` — P3: create the directory when the guidance comprises ≥2 distinct checklists OR any conditional trigger; inline otherwise.
 - **Exact trigger-condition wording** inside `profiles/k8s/review-code/index.md` for conditional entries (e.g., how to name "Helm context detected"). Prose form is chosen by the author; structured triggers are a future refinement (see [ADR 0002](../../adr/0002-profile-content-organization.md), "Forward direction").
-- **Whether to add an opportunistic description-length assertion** to `test/test-plugin-structure.sh` for `dependency-handling`'s description or leave the 250-character budget as informal convention. Either is acceptable for P3 close.
+- **Whether to add an opportunistic description-length assertion** to `test/test-plugin-structure.sh` for `dependency-handling`'s description or leave the 1,536-character cap enforced only by the harness. Either is acceptable for P3 close.
 
 ## Amendments (post-review deferrals)
 

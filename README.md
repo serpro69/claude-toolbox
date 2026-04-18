@@ -259,6 +259,8 @@ The **kk** plugin contains all development workflow functionality — 10 skills,
 
 Includes: **design**, **implement**, **test**, **document**, **development-guidelines**, **review-code**, **review-spec**, **review-design**, **merge-docs**, **chain-of-verification**. Plus commands for CoVe, implementation review, design review, Task Master migration, and sync workflow updates. See the [plugin README](./klaude-plugin/README.md) for full details.
 
+Alongside `skills/`, `commands/`, `agents/`, and `hooks/`, the plugin ships a top-level `profiles/` directory. Each profile (e.g., `go`, `python`, `k8s`) bundles per-domain content — detection rules, review checklists, design prompts, test validators, doc rubrics — that the workflow skills consult when the code under work matches the profile. Profiles are the extension point for new languages and IaC DSLs; see the **Profile Conventions** section of [`CLAUDE.md`](./CLAUDE.md) for the full authoring contract.
+
 ### Configuration
 
 - **Permission allowlist/denylist** (`.claude/settings.json`) — baseline permissions: auto-approves safe bash commands and WebSearch while blocking dangerous patterns. Per-repo MCP tool permissions go in `settings.local.json`.
@@ -514,6 +516,8 @@ klaude-plugin/                   # kk plugin (distributed via plugin system)
 ├── .claude-plugin/plugin.json   # Plugin manifest
 ├── skills/                      # 10 development workflow skills
 ├── commands/                    # 4 slash commands
+├── agents/                      # Sub-agents (code-reviewer, spec-reviewer, design-reviewer)
+├── profiles/                    # Per-domain content (languages, IaC DSLs) — see CLAUDE.md
 ├── hooks/hooks.json             # Bash validation hook config
 └── scripts/validate-bash.sh     # Hook script
 
