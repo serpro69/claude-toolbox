@@ -539,6 +539,29 @@ The `(profile, checklist)` grouping is instructed in three places and silently d
 
 **Out of scope for kubernetes-support.** Yes.
 
+### A4 — Bound the Helm-template ancestor search to the nearest `Chart.yaml`
+
+**Flagged by:** Task 8 P1 isolated code review (2026-04-19) — corroborated between `code-reviewer` sub-agent and `pal codereview` (gemini-3-pro-preview).
+
+**Current state.** The Helm-template filename signal in [§Kubernetes detection rule](#kubernetes-detection-rule) and its implementation in `klaude-plugin/profiles/k8s/DETECTION.md` match any `.yaml` / `.yml` / `.tpl` file inside a `templates/` directory whose ancestor — at any depth — contains `Chart.yaml`. The ancestor search is depth-unbounded.
+
+**Architectural concern.** In a monorepo whose repository root contains a `Chart.yaml` (e.g., an umbrella chart, or a project whose root `Chart.yaml` installs the whole product), every `.yaml`/`.yml`/`.tpl` under any `templates/` directory anywhere in the tree becomes a "Helm template" — including unrelated `templates/` dirs (Go `html/template` assets, CI scaffolding, docs-site templates). The profile activates against files that are not Helm templates, and downstream skills apply the `helm-checklist.md` to them.
+
+The current phrasing has a secondary issue: Task 8's `DETECTION.md:24` prose says "whose chart root ancestor (any ancestor directory that contains `Chart.yaml`) is present" — the parenthetical restates the rule in terms that still leave depth unbounded, and uses two phrasings ("chart root ancestor" vs "ancestor directory that contains `Chart.yaml`") in one sentence. Whichever direction the fix goes, the two phrasings should converge.
+
+**Proposed refactor.**
+
+1. Tighten the rule to the **nearest** ancestor directory containing `Chart.yaml`: walk outward from the file's directory toward the repo root and stop at the first directory containing `Chart.yaml`; that directory is the "chart root" for that file. If the nearest chart root also contains the `templates/` directory the file sits under (directly or via the chart's own subtree), activate. If no `Chart.yaml` is found before the repo root, do not activate on this signal.
+2. Update `klaude-plugin/profiles/k8s/DETECTION.md` filename-signal bullet for Helm templates to say "nearest chart-root ancestor" and drop the parenthetical alternate phrasing.
+3. Update [§Kubernetes detection rule](#kubernetes-detection-rule) to mirror the tighter wording.
+4. Add one synthetic test case to the Task 10 verification matrix: a repo with a root-level `Chart.yaml` and an unrelated `templates/` subdirectory elsewhere in the tree; the unrelated `templates/` must NOT activate `k8s`.
+
+**Why it's deferred.** The depth-unbounded reading is faithful to the current design doc; tightening it is a spec change, not a pure implementation fix. The risk is theoretical until a real repo exhibits the false-positive; the fix cost is small but it drops naturally alongside Task 9 (which authors the Helm checklist) and Task 10 (which owns the synthetic-fixture matrix). Leaving the Task 8 file as a faithful implementation of the current spec — with the as-authored note — preserves the option to either adopt A4 or reject it during P1 verification.
+
+**When to apply.** Before or during Task 10 (P1 verification). A monorepo-shaped synthetic fixture will make the need concrete; resolving A4 at that point is cheaper than reopening Task 8's file in a later phase.
+
+**Out of scope for Task 8.** Yes — deferring via this amendment keeps the Task 8 PR focused on "implement the spec as written."
+
 ## References
 
 - [ADR 0001 — Profile/language detection remains a single additive axis](../../adr/0001-profile-detection-model.md)

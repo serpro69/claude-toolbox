@@ -48,6 +48,8 @@ When adding, modifying, or upgrading a Kubernetes-facing dependency, follow the 
    - web: the chart's repository README and `CHANGELOG.md`. Pin `dependencies[]` in `Chart.yaml` by strict semver or digest; treat floating tags as unsafe.
 
 4. **Container images** (tags, digests, supply-chain metadata)
+   - capy: prior indexed image-digest decisions and registry metadata fetches for this project.
+   - context7: n/a — container registries have no context7 entry; registry APIs are the authoritative source.
    - Local: `skopeo inspect docker://<image>:<tag>` or `crane manifest <image>:<tag>` to read the manifest and retrieve the digest.
    - Registry metadata: pull digest (`sha256:...`) and record alongside the tag; prefer digests over mutable tags in manifests.
    - web: the image's registry listing page and upstream release notes for the underlying software.
