@@ -124,7 +124,7 @@ Subtasks:
 ## Task 7 — Phase 0 verification
 
 - **Phase:** P0
-- **Status:** pending
+- **Status:** in-progress
 - **Depends on:** Task 1, Task 2, Task 3, Task 4, Task 5, Task 6
 - **Links:** [implementation.md §Step 0.V](implementation.md#step-0v--p0-verification-task)
 

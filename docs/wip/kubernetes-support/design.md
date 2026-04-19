@@ -477,6 +477,35 @@ These items were flagged by reviews against in-feature commits but are intention
 
 **Out of scope for kubernetes-support.** Yes.
 
+### A2 — Apply the mandatory-order directive to all skills
+
+**Flagged by:** Task 7 P0 verification dry-run (2026-04-19) — user-led `/kk:review-code` runs in a sibling Go project (`capy`) reproduced the same process-bypass behavior across three consecutive invocations. Diagnosis and fix framework captured in [ADR 0004 — Skill workflow ordering: instructions before action](../../adr/0004-skill-workflow-ordering.md).
+
+**Current state.** [ADR 0004](../../adr/0004-skill-workflow-ordering.md) establishes the universal convention: every plugin skill must fully load its instructions before acting on subject matter. The ADR + [CLAUDE.md §Skill workflow ordering](../../../CLAUDE.md#skill-workflow-ordering--instructions-before-action) bind the rule for future skill authoring. Only `review-code` (`SKILL.md` + `review-process.md`) and its sub-agent (`klaude-plugin/agents/code-reviewer.md`) have been retrofitted as part of Task 7's defect fix. The remaining nine skills still follow the old pattern:
+
+- `review-spec`, `review-design` — review family, same analyze-an-artifact shape as `review-code`
+- `test` — profile-driven validator guidance
+- `implement` — executes a task plan; needs per-task profile gotchas loaded before editing code
+- `design` — turns idea into PRD; needs question bank + section schema loaded before engaging the idea prose
+- `document` — needs profile rubric loaded before writing docs
+- `merge-docs` — needs merge methodology loaded before reading the two docs
+- `dependency-handling` — needs the cascade rule (capy-first, context7-second, web-last) loaded before making lookups
+- `chain-of-verification` — meta-skill; needs the CoVe process loaded before applying verification
+
+**Architectural concern.** The convention binds future work but not existing skills. Each un-swept skill is a latent instance of the same failure mode, waiting to surface the next time a user inspects its behavior carefully.
+
+**Proposed refactor.**
+1. For each of the nine remaining skills, add a **Mandatory ordering** block at the top of its Workflow section in `SKILL.md`, naming the rule by intent (subject matter and minimal-early-scope vary per skill — see the table in [ADR 0004 §Decision](../../adr/0004-skill-workflow-ordering.md#decision)). Reference ADR 0004 for rationale.
+2. For each skill, audit the process/rubric files it references. If content-level read instructions (`git diff`, `Read` of subject-matter files, etc.) appear before instruction-loading steps, reorder so content reads happen once, after instructions are loaded.
+3. For sub-agents referenced by these skills (`design-reviewer`, `spec-reviewer`, any others), apply the same ordering fix internally — payload delivery order does not substitute for the sub-agent reading its instructions before acting.
+4. Dedup pass per skill: grep for repeated `git diff` / subject-matter `Read` instructions; collapse each to one instance at the post-instruction position.
+
+**Why it's deferred.** Nine `SKILL.md` edits plus their referenced process/rubric files plus affected sub-agents is enough diff to deserve its own review pass. Per-skill wording needs tailoring because each skill's "subject matter" and "minimal early scope" differ (a batch copy-paste risks stilted prose). Bundling it into Task 7's defect-fix commit would obscure both changes.
+
+**When to apply.** Any time after Task 7 lands. Ideally before a second skill's process-bypass failure surfaces in practice; ordering is cheaper to fix proactively than to debug via repeated user-led dry-runs.
+
+**Out of scope for kubernetes-support.** Yes.
+
 ## References
 
 - [ADR 0001 — Profile/language detection remains a single additive axis](../../adr/0001-profile-detection-model.md)

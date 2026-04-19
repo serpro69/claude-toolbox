@@ -55,15 +55,23 @@ See [review-isolated.md](./review-isolated.md) for the isolated workflow.
 
 ## Workflow
 
-**Phases** (summary — the detailed procedure in [review-process.md](./review-process.md) breaks Phase 7 into three distinct numbered steps: present results, next-steps confirmation, verify outputs):
+### Mandatory ordering — methodology before evidence
 
-1. Preflight context — scope changes, re-read changed files, search prior findings
+The workflow below is strictly sequential. **Do not read the diff's contents, re-read changed files, run `capy_search`, or begin forming findings until you have completed profile detection and loaded every resolved checklist file.** Until then, your only contact with the changes is `git diff --stat` (filenames only) — enough to drive profile detection, but not enough to pattern-match findings.
+
+This ordering is load-bearing, not stylistic. Reviewing from a diff before loading profile checklists is the known failure mode this skill is designed to prevent: the LLM has enough from the diff to produce plausible findings, and optimizes away the methodology if the workflow permits. See [ADR 0004](../../../docs/adr/0004-skill-workflow-ordering.md) for the rationale.
+
+**Phases** (summary — the detailed procedure in [review-process.md](./review-process.md) breaks presentation into three distinct numbered steps: present results, next-steps confirmation, verify outputs):
+
+1. Scope — `git diff --stat` for filenames only (no content reads)
 2. Detect active profiles — delegate to `shared-profile-detection.md`; produce the list of `(profile, checklist)` records
 3. Load profile review indexes — for each active profile, resolve its `review-code/index.md` and collect always-load + matching conditional checklists
-4. Apply checklists — iterate the resolved list; emit findings grouped by `(profile, checklist)`
-5. Self-check and confidence assessment
-6. Index findings — capy index systemic P0/P1 patterns as `kk:review-findings`
-7. Present results with next steps
+4. Read resolved checklists — read every `(profile, checklist)` file into context
+5. Read the diff and re-read changed files — now, with methodology loaded; also run `capy_search` for `kk:review-findings` and `kk:lang-idioms`
+6. Apply checklists — iterate the resolved list; emit findings grouped by `(profile, checklist)`
+7. Self-check and confidence assessment
+8. Index findings — capy index systemic P0/P1 patterns as `kk:review-findings`
+9. Present results with next steps
 
 See [review-process.md](./review-process.md) for the detailed step-by-step process.
 
