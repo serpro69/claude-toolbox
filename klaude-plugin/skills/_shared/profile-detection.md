@@ -60,8 +60,7 @@ the same record shape produced by file-based detection (see §Output shape).
 
 ### Algorithm
 
-1. **Iterate profiles.** For each `${CLAUDE_PLUGIN_ROOT}/profiles/*/DETECTION.md`:
-   load the declared `## Path signals`, `## Filename signals`, and `## Content signals`.
+1. **Iterate profiles.** Use the `Glob` tool with pattern `${CLAUDE_PLUGIN_ROOT}/profiles/*/DETECTION.md` to enumerate profile definitions. You do **not** need to `ls` or otherwise pre-list the `profiles/` directory first — the glob is the list. For each match, read the file and load the declared `## Path signals`, `## Filename signals`, and `## Content signals` sections.
 2. **Evaluate in cost order.** For each input file, check signals in this
    order: path → filename → content. Cheapest first.
 3. **Apply the authority rule.** A file activates the profile only if a

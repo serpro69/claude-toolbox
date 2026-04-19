@@ -95,6 +95,27 @@ Authoring rules:
 
 When touching a skill description in the future, re-check the docs page linked above in case the caps have shifted.
 
+### Skill workflow ordering — instructions before action
+
+Applies to every plugin skill. The canonical failure example surfaced in `review-code`, but the rule is universal. See [ADR 0004](docs/adr/0004-skill-workflow-ordering.md) for the full rationale and the failure transcripts.
+
+Core rule: a skill MUST fully load its instructions before taking any action on its subject matter.
+
+- **Instructions** = `SKILL.md` + every process/rubric/protocol file it links + every per-skill symlinked shared instruction + (for profile-driven skills) every profile file the detection procedure resolves.
+- **Action on subject matter** = reading diff/file content, editing code, engaging with idea prose beyond detection keywords, running tests, emitting documentation, producing findings.
+- **Minimal early scope is permitted** — enough to drive profile detection. Examples: `git diff --stat` for filenames, a feature-directory listing, a keyword scan of idea prose. Content-level reading is blocked until instructions are fully loaded.
+- **Content-level read instructions appear exactly once** in the workflow, after the instruction-load steps. Restating them earlier — even as a "Preflight" step — re-creates the failure mode.
+
+Profile-driven skills have an additional specialization: profile content (resolved checklists, gotchas, rubrics, validator lists) is part of "instructions". Every `(profile, <phase>/<content>)` pair the detection procedure resolves is read via the `Read` tool before content-level subject-matter reading — index entries alone are not enough.
+
+Authoring requirements for every skill:
+
+1. **Mandatory-order directive** at the top of SKILL.md's Workflow section, explicitly stating that the flow is strictly sequential and subject-matter action is blocked until instructions are loaded. Name the rule by intent, not by step numbers — step numbers drift; intent does not.
+2. **Workflow phase summary in SKILL.md matches the detailed process file.** A reader who skims SKILL.md must not see a different ordering than the process file prescribes.
+3. **Dedup pass.** After drafting, grep the skill directory for repeated content-read instructions — if the same `git diff` / `Read` step appears twice, collapse to one instance at the post-instruction position.
+
+Sub-agents delegated by skills (in `klaude-plugin/agents/`) inherit the same rule. Payload delivery order (the spawning skill passing instructions and subject matter in the same prompt) is not sufficient — the sub-agent's own workflow must read instructions before acting, or the LLM will re-create the shortcut on its side.
+
 ## Profile Conventions
 
 Applies when authoring profiles under `klaude-plugin/profiles/`. Profiles make per-domain concerns (programming languages, IaC DSLs, config schemas) available to every phase of the `design` → `implement` → `review-code` → `test` → `document` flow.

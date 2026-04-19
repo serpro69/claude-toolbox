@@ -42,9 +42,26 @@ Use Read/Grep/Glob to inspect the broader codebase when the diff alone is insuff
 
 ## Review Workflow
 
-Follow these steps in order. Each step references the `review-code` methodology.
+### Mandatory ordering — methodology before evidence
 
-### 1) Preflight Context
+The steps below are strictly sequential. **Do not analyze the git diff, re-read files referenced by the diff, or begin forming findings until you have read every checklist provided in your payload.** Payload delivery order (the spawning skill attaching the diff and the checklist list in the same prompt) is not sufficient — you must read-before-apply on your own side, or you will re-create the shortcut the spawning skill is designed to prevent. See [ADR 0004](../../docs/adr/0004-skill-workflow-ordering.md) for the rationale.
+
+### 1) Read the Provided Checklists
+
+The spawning workflow has already run profile detection and produced a list of `(profile, checklist)` records in your input payload. Do not re-detect profiles; do not hardcode categories.
+
+For each `(profile, checklist)` record in the input payload:
+
+1. Read the checklist at `${CLAUDE_PLUGIN_ROOT}/profiles/<profile>/review-code/<checklist>` using the Read tool.
+2. Hold the content in context for Step 3.
+
+Every checklist file enters your context now, before you analyze the diff. If a checklist read fails (file missing, path unresolved), stop and surface the error — do not proceed with partial methodology.
+
+If the input payload has no active profiles (empty list), skip to Step 2 and apply general guidance in Step 3: SOLID/architecture smells, security/reliability, code quality, and removal candidates as commonly understood.
+
+### 2) Analyze the Diff
+
+Now, with every checklist in context:
 
 - Analyze the git diff provided in your prompt.
 - If needed, use Read/Grep/Glob to find related modules, usages, and contracts in the codebase.
@@ -55,17 +72,11 @@ Follow these steps in order. Each step references the `review-code` methodology.
 - **Large diff (>500 lines)**: Summarize by file first, then review in batches by module/feature area.
 - **Mixed concerns**: Group findings by logical feature, not just file order.
 
-### 2) Apply the Provided Checklists
+### 3) Apply the Checklists
 
-The spawning workflow has already run profile detection and produced a list of `(profile, checklist)` records. Do not re-detect profiles; do not hardcode categories.
+For each `(profile, checklist)` record from Step 1, apply the checklist (already in context) to the diff (in context from Step 2). The checklist states what to look for — it may cover SOLID/architecture, security, code quality, removal candidates, or a profile-specific concern (e.g., Helm template correctness, RBAC least privilege, Kustomize base/overlay separation).
 
-For each `(profile, checklist)` record in the input payload:
-
-1. Read the checklist at `${CLAUDE_PLUGIN_ROOT}/profiles/<profile>/review-code/<checklist>`.
-2. Apply it to the diff. The checklist states what to look for — it may cover SOLID/architecture, security, code quality, removal candidates, or a profile-specific concern (e.g., Helm template correctness, RBAC least privilege, Kustomize base/overlay separation).
-3. Emit findings grouped by `(profile, checklist)` so the report surface can organize them.
-
-If the input payload has no active profiles (empty list), skip profile-specific loading and apply general guidance: SOLID/architecture smells, security/reliability, code quality, and removal candidates as commonly understood.
+Emit findings grouped by `(profile, checklist)` so the report surface can organize them.
 
 General guidance that applies regardless of profile:
 
@@ -74,7 +85,7 @@ General guidance that applies regardless of profile:
 - **Code quality:** swallowed exceptions, overly broad catches, async-error handling; N+1 queries, hot-path CPU/memory issues; null/empty/boundary handling, off-by-one.
 - **Removal candidates:** unused, redundant, feature-flagged-off code. Distinguish **safe delete now** vs **defer with plan**.
 
-### 3) Self-Check and Confidence Assessment
+### 4) Self-Check and Confidence Assessment
 
 For each finding:
 - Re-read the relevant code to confirm the finding is valid

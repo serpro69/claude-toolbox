@@ -1,39 +1,39 @@
 ### Workflow
 
+**Read [SKILL.md §Mandatory ordering — methodology before evidence](./SKILL.md#mandatory-ordering--methodology-before-evidence) before executing this file.** The steps below are strictly sequential. Do not read diff content, re-read changed files, or run `capy_search` before Step 5. Until then, `git diff --stat` (filenames only) is the only contact you have with the changes.
+
 Copy this checklist and check off items as you complete them:
 
 ```
 Code Review Progress:
-- [ ] Step 1: Preflight context
+- [ ] Step 1: Scope (filenames only)
 - [ ] Step 2: Detect active profiles
 - [ ] Step 3: Load profile review indexes
-- [ ] Step 4: Apply checklists
-- [ ] Step 5: Self-check and confidence assessment
-- [ ] Step 6: Index findings
-- [ ] Step 7: Present results
-- [ ] Step 8: Next steps confirmation
-- [ ] Step 9: Verify outputs
+- [ ] Step 4: Read resolved checklists
+- [ ] Step 5: Read diff + re-read changed files + capy search
+- [ ] Step 6: Apply checklists
+- [ ] Step 7: Self-check and confidence assessment
+- [ ] Step 8: Index findings
+- [ ] Step 9: Present results
+- [ ] Step 10: Next steps confirmation
+- [ ] Step 11: Verify outputs
 ```
 
 ---
 
-### 1) Preflight context
+### 1) Scope (filenames only)
 
-- Use `git status -sb`, `git diff --stat`, and `git diff` to scope changes.
-- **Re-read every changed file** using the Read tool before reviewing. Do NOT rely on file contents read earlier in the conversation — code may have changed since (e.g., fixes applied between reviews in the same session).
-- If needed, use `serena` mcp, `rg` or `grep` to find related modules, usages, and contracts.
-- Identify entry points, ownership boundaries, and critical paths (auth, payments, data writes, network).
-- **Capy search:** Search `kk:review-findings` for prior findings in the same files/modules. For each programming language apparent in `git diff --stat` (refined once Step 2 returns the active profile list), search `kk:lang-idioms` for best practices. If `kk:lang-idioms` returns no results for a language, optionally use `capy_fetch_and_index` to fetch a canonical idioms resource (e.g., Effective Go for `go`) and label it `kk:lang-idioms`. Skip the lookup for non-language profiles (e.g., `k8s`) — `kk:lang-idioms` is a programming-language idiom store.
+Run `git status -sb` and `git diff --stat` to get the list of touched files. **Do not run `git diff` yet** — the full diff enters context in Step 5, after methodology is loaded.
 
 **Edge cases:**
 
-- **No changes**: If `git diff` is empty, inform user and ask if they want to review staged changes or a specific commit range.
-- **Large diff (>500 lines)**: Summarize by file first, then review in batches by module/feature area.
-- **Mixed concerns**: Group findings by logical feature, not just file order.
+- **No changes**: If `git diff --stat` is empty, inform user and ask if they want to review staged changes or a specific commit range.
+- **Large diff (>500 lines)**: Proceed through Steps 2–4 normally; Step 5 covers batching.
+- **Mixed concerns**: Note the spread for Step 9 output; grouping happens at findings-emit time.
 
 ### 2) Detect active profiles
 
-Delegate to [shared-profile-detection.md](shared-profile-detection.md). For `review-code`, the detection input is the git diff scoped to the set of touched files (captured in Step 1).
+Delegate to [shared-profile-detection.md](shared-profile-detection.md). Input: the filename list from Step 1. The shared procedure iterates `${CLAUDE_PLUGIN_ROOT}/profiles/*/DETECTION.md` via `Glob` — you do not need to pre-list the profiles directory.
 
 The shared procedure returns a list of records:
 
@@ -41,9 +41,9 @@ The shared procedure returns a list of records:
 [{ profile: "<name>", triggered_by: [...], files: [...] }, ...]
 ```
 
-Hold this list for Step 3. It replaces the former extension-table lookup: there is no single "primary language"; any number of profiles can be active on the same diff (e.g., `go` + `k8s` when a Go service ships a Helm chart).
+Hold this list for Step 3. There is no single "primary language"; any number of profiles can be active on the same diff (e.g., `go` + `k8s` when a Go service ships a Helm chart).
 
-If the list is empty (no profile matched), skip Steps 3–4's profile-specific loading and apply only the general guidance embedded in this file when reviewing.
+If the list is empty (no profile matched), skip Steps 3–4's profile-specific loading and proceed to Step 5 with general guidance only.
 
 ### 3) Load profile review indexes
 
@@ -51,18 +51,34 @@ For each active profile record from Step 2:
 
 1. Resolve `${CLAUDE_PLUGIN_ROOT}/profiles/<profile>/review-code/index.md`.
 2. Read the index. Collect every entry under **Always load**.
-3. For every conditional entry (**Load if:** predicate), evaluate the predicate against the diff. If it matches, collect the entry.
+3. For every conditional entry (**Load if:** predicate), evaluate the predicate against the filenames from Step 1 (and, if the predicate requires content, note it for Step 5 — do **not** read file content here). If the filename-level predicate matches, collect the entry.
 4. Append the collected entries to a flat list keyed by `(profile, checklist filename)`.
 
-The resulting list is the complete set of checklists to apply. Do NOT hardcode checklist names here — the index is authoritative, and new profiles (or new conditional entries added to existing profiles) take effect without edits to this file.
+Do NOT hardcode checklist names — the index is authoritative, and new profiles or new conditional entries take effect without edits to this file.
 
-### 4) Apply checklists
+### 4) Read resolved checklists
 
-Iterate the `(profile, checklist)` list from Step 3. For each pair:
+For each `(profile, checklist)` record from Step 3, use the `Read` tool on `${CLAUDE_PLUGIN_ROOT}/profiles/<profile>/review-code/<checklist>`. Every checklist file enters context now, before any diff content does. The review that follows in Step 6 reads *through* these checklists; if they are not loaded, the review cannot happen.
 
-1. Read the checklist file at `${CLAUDE_PLUGIN_ROOT}/profiles/<profile>/review-code/<checklist>`.
-2. Apply the checklist to the diff. A checklist may cover SOLID/architecture, security, quality, removal, or a profile-specific concern (e.g., Helm template correctness, RBAC least privilege) — the checklist itself states what to look for.
-3. Emit findings using `(profile, checklist)` as the grouping key so the report in Step 7 can organize them.
+This is the single load-bearing gate of the workflow. If a checklist read fails (file missing, path unresolved), stop and surface the error — do not proceed with partial methodology.
+
+### 5) Read the diff, re-read changed files, run capy search
+
+Now, with every checklist in context, read the content:
+
+- Run `git diff` (full output) to capture the changes.
+- **Re-read every changed file** using the Read tool. Do NOT rely on file contents read earlier in the conversation — code may have changed since (e.g., fixes applied between reviews in the same session).
+- If needed, use `serena` mcp, `rg`, or `grep` to find related modules, usages, and contracts.
+- Identify entry points, ownership boundaries, and critical paths (auth, payments, data writes, network).
+- **Capy search:** Search `kk:review-findings` for prior findings in the same files/modules. For each programming-language profile active (from Step 2), search `kk:lang-idioms` for best practices. If `kk:lang-idioms` returns no results for a language, optionally use `capy_fetch_and_index` to fetch a canonical idioms resource (e.g., Effective Go for `go`) and label it `kk:lang-idioms`. Skip the lookup for non-language profiles (e.g., `k8s`) — `kk:lang-idioms` is a programming-language idiom store.
+
+This is the only step that reads artifact content. It appears once, by design. Do not repeat `git diff` or file re-reads in later steps.
+
+### 6) Apply checklists
+
+Iterate the `(profile, checklist)` list from Step 3. For each pair, apply the checklist (already in context from Step 4) to the diff (in context from Step 5). A checklist may cover SOLID/architecture, security, quality, removal, or a profile-specific concern (e.g., Helm template correctness, RBAC least privilege) — the checklist itself states what to look for.
+
+Emit findings using `(profile, checklist)` as the grouping key so the report in Step 9 can organize them.
 
 General guidance that applies regardless of profile — apply these categories on every diff, whether or not a profile-specific checklist covered them:
 
@@ -71,28 +87,28 @@ General guidance that applies regardless of profile — apply these categories o
 - **Code quality:** error handling (swallowed exceptions, overly broad catch, missing handling, async errors); performance (N+1 queries, CPU-intensive ops in hot paths, missing cache, unbounded memory); boundary conditions (null/undefined, empty collections, numeric boundaries, off-by-one). Flag issues that may cause silent failures or production incidents.
 - **Removal candidates:** unused, redundant, or feature-flagged-off code. Distinguish **safe delete now** vs **defer with plan**; provide concrete follow-up steps with checkpoints (tests/metrics).
 
-### 5) Self-check and confidence assessment
+### 7) Self-check and confidence assessment
 
-This is the critical verification step. For **each finding** from Step 4:
+For **each finding** from Step 6:
 
-1. Re-read the relevant code and surrounding context independently
-2. Ask: **"Could I be misreading the code?"** — trace execution paths, check for runtime behavior, configuration, or framework conventions that might make this correct
-3. Ask: **"Is this a real issue or a style preference?"** — distinguish between bugs/risks and subjective choices that don't affect correctness or security
-4. Ask: **"What's the actual impact?"** — verify that the severity matches the real-world consequence, not just the theoretical violation
+1. Re-read the relevant code and surrounding context independently.
+2. Ask: **"Could I be misreading the code?"** — trace execution paths, check for runtime behavior, configuration, or framework conventions that might make this correct.
+3. Ask: **"Is this a real issue or a style preference?"** — distinguish between bugs/risks and subjective choices that don't affect correctness or security.
+4. Ask: **"What's the actual impact?"** — verify that the severity matches the real-world consequence, not just the theoretical violation.
 5. Assign final confidence score (1–100%) with **explicit reasoning** documenting:
    - What was verified
    - What evidence supports the finding
    - What uncertainty remains
-6. Downgrade or **remove** findings that don't survive the self-check
+6. Downgrade or **remove** findings that don't survive the self-check.
 
-### 6) Index findings
+### 8) Index findings
 
 Index any P0/P1 findings that suggest a systemic or structural pattern (not isolated typos or one-off mistakes) as `kk:review-findings`. Index on first encounter — recurrence detection happens on the search side in future reviews.
 
 - If no P0/P1 systemic findings exist, explicitly note "No findings to index" and move on.
 - This step is mandatory — do not skip it even if the review found no issues.
 
-### 7) Present results
+### 9) Present results
 
 #### Output format
 
@@ -157,7 +173,7 @@ Description of the issue and suggested fix.
 - Any areas not covered (e.g., "Did not verify database migrations")
 - Residual risks or recommended follow-up tests
 
-### 8) Next steps confirmation
+### 10) Next steps confirmation
 
 After presenting findings, ask user how to proceed:
 
@@ -180,7 +196,7 @@ Please choose an option or provide specific instructions.
 
 **Important**: Do NOT implement any changes until user explicitly confirms. This is a review-first workflow.
 
-### 9) Verify outputs
+### 11) Verify outputs
 
 Before declaring the review complete, check each item in the **Required Outputs** section of SKILL.md:
 
