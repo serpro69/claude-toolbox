@@ -144,7 +144,7 @@ Subtasks:
 ## Task 8 — Author `profiles/k8s/DETECTION.md` and `overview.md`
 
 - **Phase:** P1
-- **Status:** in-progress
+- **Status:** done
 - **Depends on:** Task 7
 - **Links:** [implementation.md §Step 1.1](implementation.md#step-11--author-profilesk8sdetectionmd), [implementation.md §Step 1.2](implementation.md#step-12--author-profilesk8soverviewmd), [design.md §Kubernetes detection rule](design.md#kubernetes-detection-rule)
 

@@ -20,15 +20,15 @@ Case-insensitive substring match anywhere in the file's path. Pre-filter only �
 Authoritative: any match activates the profile. Filename matches short-circuit content inspection for the matched file.
 
 - `Chart.yaml` (exact) → Helm chart root.
-- Any filename starting with `values` (e.g., `values.yaml`, `values.yml`, `values-prod.yaml`, `values-prod-v2-final.yaml`) when the containing directory also contains `Chart.yaml` → Helm values by adjacency. The `values*` glob has no upper bound on the wildcard; the adjacency rule (sibling `Chart.yaml` in the same directory) is the binding constraint.
-- Any file with extension `.yaml`, `.yml`, or `.tpl` inside a directory named `templates/` whose chart root ancestor (any ancestor directory that contains `Chart.yaml`) is present → Helm template. This rule avoids the trap where a standalone edit to `templates/deployment.yaml` contains `{{ if ... }}` directives before any `apiVersion:` and would otherwise fail the content signal.
+- Any filename starting with `values` (e.g., `values.yaml`, `values.yml`, `values-prod.yaml`, `values-prod-v2-final.yaml`) when the containing directory also contains `Chart.yaml` → Helm values by adjacency. The `values*` glob has no upper bound on the wildcard; the adjacency rule (sibling `Chart.yaml` in the same directory) is the binding constraint. The match is filename-plus-adjacency only — file content is not inspected, so a file named `values-backup.yaml` next to a `Chart.yaml` activates regardless of what it actually contains.
+- Any file with extension `.yaml`, `.yml`, or `.tpl` inside a directory named `templates/` that has an ancestor directory containing `Chart.yaml` → Helm template. The ancestor search is currently depth-unbounded; see [design.md §Amendments — A4](../../../docs/wip/kubernetes-support/design.md#a4--bound-the-helm-template-ancestor-search-to-the-nearest-chartyaml) for the pending tightening to "nearest ancestor". This rule avoids the trap where a standalone edit to `templates/deployment.yaml` contains `{{ if ... }}` directives before any `apiVersion:` and would otherwise fail the content signal.
 - Exact filenames `kustomization.yaml`, `kustomization.yml`, or `Kustomization` → Kustomize.
 
 ## Content signals
 
 Authoritative for generic YAML files (`.yaml` or `.yml`) not already caught by a filename signal. Inspection is bounded to the first ~16 KB per file; large generated manifests beyond that bound are not inspected.
 
-- Split the file on `---` document separators. For each `---`-separated document block, check for a top-level `apiVersion:` AND a top-level `kind:` key at zero indent. A block satisfying both is a Kubernetes manifest document.
+- Split the file on `---` document separators. For each `---`-separated document block, check for a top-level `apiVersion:` AND a top-level `kind:` — parsed as YAML mapping keys at zero indent, not as substrings inside block scalars (`|`, `>`) or comments. A block satisfying both is a Kubernetes manifest document.
 - One matching document activates the profile for that file. The first document need not match — a file whose second or later document is the only K8s document still activates.
 - A `.yaml` / `.yml` file with no matching document in any block → not Kubernetes. (It may still match another profile; generic YAML belongs to no profile by default.)
 
