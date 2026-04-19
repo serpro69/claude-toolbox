@@ -184,7 +184,13 @@ Skills and agents reference profile content via `${CLAUDE_PLUGIN_ROOT}/profiles/
 - Bare `$CLAUDE_PLUGIN_ROOT` (simplest; verified not substituted on 2026-04-18).
 - HTML entity `&#36;{CLAUDE_PLUGIN_ROOT}` (useful when the brace shape must appear in rendered output).
 
-**Tool choice for runtime paths.** `Glob` is scoped to the project `cwd` and returns 0 matches for outside-cwd absolute paths, even when `${CLAUDE_PLUGIN_ROOT}` substitution resolves correctly (verified 2026-04-19). For plugin-root paths, use `Read` (single file) or `Bash` (`ls`/`find` for enumeration). Do NOT use `Glob` against `${CLAUDE_PLUGIN_ROOT}/…` patterns — it will silently miss.
+**Substitution boundary: plugin-load vs `Read` tool.** The harness substitutes `${CLAUDE_PLUGIN_ROOT}` at **plugin-load time** for files the harness loads directly — SKILL.md, `agents/*.md`, hook configs, MCP configs. The brace form in those files reaches the agent as a resolved absolute path and can be used directly in tool arguments. **The `Read` tool does NOT substitute** — it returns file content byte-for-byte. Any `${CLAUDE_PLUGIN_ROOT}` inside a file an agent reads at runtime via `Read` (everything under `klaude-plugin/skills/_shared/`, per-skill referenced content, every `profiles/**/*.md`) reaches the agent as a literal token. Forwarding that literal into another tool call fails: `Bash` shell-expands against the usually-unset env var to empty; `Read` fails `ENOENT`.
+
+Authoring consequence:
+
+- Use `${CLAUDE_PLUGIN_ROOT}/…` freely in plugin-load files (SKILL.md, agent files, hook/MCP configs).
+- In files consumed via `Read` at runtime, **prefer explicit content over tokens**: hard-code the names/paths the procedure needs (e.g., the Known Profiles list in `shared-profile-detection.md`). If the file must describe a plugin-root path, instruct the agent to construct it using the resolved prefix it already knows from the SKILL.md that invoked it — not to forward the literal `${CLAUDE_PLUGIN_ROOT}` token.
+- Never use `Glob` against `${CLAUDE_PLUGIN_ROOT}/…` patterns regardless of substitution: `Glob` is cwd-scoped and returns 0 matches for outside-cwd absolute paths.
 
 Files outside `klaude-plugin/` (this CLAUDE.md, README.md, ADRs under `docs/adr/`) are NOT subject to substitution and may use the brace form freely.
 
@@ -195,7 +201,8 @@ Files outside `klaude-plugin/` (this CLAUDE.md, README.md, ADRs under `docs/adr/
 3. Rewrite `overview.md`: what the profile covers, when it activates, and "Looking up dependencies" cascade targets for each dependency category the profile cares about.
 4. Populate the phase subdirectories the profile needs. Each populated phase must have an `index.md` listing its content files (always-load + conditional with explicit **Load if:** clauses). Leave phases the profile does not serve absent — the structure test's presence-conditional assertion only fires on directories that exist.
 5. Append the profile name to `EXPECTED_PROFILES` in `test/test-plugin-structure.sh` — *after* the profile's files exist, not before. Per-profile assertions will fail if the profile is listed first.
-6. Run `bash test/test-plugin-structure.sh` and confirm green.
+6. Append the profile name to the **Known profiles** list in `klaude-plugin/skills/_shared/profile-detection.md`. This list is the authoritative runtime enumeration — consumers iterate it rather than enumerating the filesystem (see §Referencing profile content for why).
+7. Run `bash test/test-plugin-structure.sh` and confirm green.
 
 ## ADR location
 

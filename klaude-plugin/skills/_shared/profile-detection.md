@@ -58,9 +58,29 @@ auto-activates a profile silently.
 Once activated, subsequent design-phase steps treat the profile as active in
 the same record shape produced by file-based detection (see §Output shape).
 
+### Known profiles
+
+Update this list when adding or removing a profile. This is the authoritative enumeration — do NOT discover profiles via filesystem globbing or `ls`. An explicit list is boring, deterministic, and unambiguous; runtime filesystem enumeration against the plugin tree has proven unreliable.
+
+- `go`
+- `python`
+- `java`
+- `js_ts`
+- `kotlin`
+- `k8s` — added by Phase 1 of the kubernetes-support feature; skip at runtime if the profile directory does not exist yet.
+
+Maintenance rule: whenever a new profile directory is added under `klaude-plugin/profiles/`, append its name here. The structure test in `test/test-plugin-structure.sh` already enforces the list of profile directories that must exist; this list complements it by naming the runtime-iteration order.
+
 ### Algorithm
 
-1. **Iterate profiles.** Run `ls ${CLAUDE_PLUGIN_ROOT}/profiles/*/DETECTION.md` via the `Bash` tool to enumerate profile definitions. Brace-form substitution resolves the absolute path at read time; Bash then lists the matching files. Do **NOT** use the `Glob` tool for this: `Glob` is scoped to the project `cwd` and returns 0 matches for outside-cwd absolute paths even when substitution resolves correctly. For each file `ls` returns, use the `Read` tool to load it and parse the declared `## Path signals`, `## Filename signals`, and `## Content signals` sections.
+Throughout this procedure, `<plugin_root>` denotes the absolute plugin-root path the agent already knows from the SKILL.md that invoked the procedure. Use that resolved absolute path wherever `<plugin_root>` appears.
+
+1. **Iterate profiles.** For each `<name>` in §Known profiles above:
+   1. Use the `Read` tool on `<plugin_root>/profiles/<name>/DETECTION.md`.
+   2. If `Read` fails with ENOENT (profile name in list but directory missing — a stale list entry), skip silently and move on.
+   3. If `Read` succeeds, parse the declared `## Path signals`, `## Filename signals`, and `## Content signals` sections.
+
+   Do NOT use `Glob`, `Bash ls`, or any other enumeration strategy. The Known Profiles list is the source of truth.
 2. **Evaluate in cost order.** For each input file, check signals in this
    order: path → filename → content. Cheapest first.
 3. **Apply the authority rule.** A file activates the profile only if a
@@ -76,6 +96,11 @@ the same record shape produced by file-based detection (see §Output shape).
    to activate the profile.
 5. **Collect records.** Accumulate one record per matched profile with the
    triggering files and the signal descriptions that fired.
+
+### Tool choice
+
+- Single file at `<plugin_root>/…` → `Read`. This is what the algorithm uses.
+- Enumeration across profiles → iterate the §Known profiles list, `Read` each. Never `Glob` (cwd-scoped, misses outside-cwd paths).
 
 ### Two dimensions: cost vs authority
 
@@ -95,30 +120,17 @@ Evaluating cheapest-first optimizes work. Applying authority correctly prevents
 false positives from incidental path matches — a stray `manifests/` directory
 in a Go project does not make the project Kubernetes.
 
-### Unset-variable protocol
+### Plugin-root resolution failure
 
-Before emitting any results, check that `$CLAUDE_PLUGIN_ROOT` is set and
-non-empty. The harness normally guarantees this; the check exists to fail
-loudly when it does not (harness bug, manual CLI invocation, local testing
-outside the plugin context).
+If every `Read` attempt in Algorithm step 1 fails — i.e., `<plugin_root>` could not be resolved from SKILL.md context, or the paths do not exist — the procedure cannot continue.
 
-On unset:
+On that failure:
 
-1. Emit an actionable error naming the variable and pointing to
-   `CLAUDE.md` §Profile Conventions.
-2. Return an empty result set so the calling skill falls back to generic
-   guidance rather than panicking.
+1. Emit an actionable error pointing to `CLAUDE.md` §Profile Conventions.
+2. Return an empty result set so the calling skill falls back to generic guidance rather than panicking.
 3. Do not retry; do not silently guess a path.
 
-Example error string:
-
-```
-$CLAUDE_PLUGIN_ROOT is not set; profile detection cannot locate the
-profiles/ directory. See CLAUDE.md §Profile Conventions.
-```
-
-Consumers inherit this check by invoking the shared procedure — no skill
-re-implements it.
+Consumers inherit this check by invoking the shared procedure — no skill re-implements it.
 
 ### Output shape
 
@@ -157,29 +169,3 @@ Field semantics:
 
 When no profile matches, return the empty list `[]`. The caller falls back to
 generic guidance, identical to today's "no language detected" path.
-
-### Authoring convention (for editors of this file)
-
-This file lives at `klaude-plugin/skills/_shared/profile-detection.md` — INSIDE
-the plugin tree — and is therefore subject to `&#36;{CLAUDE_PLUGIN_ROOT}`
-substitution when an agent reads it (verified 2026-04-18; see
-[ADR 0003 §Verification](../../../docs/adr/0003-plugin-root-referenced-content.md)).
-
-The rule is simple but easy to trip over:
-
-- When prose **references the variable by name** (documenting or explaining it),
-  use the bare form `$CLAUDE_PLUGIN_ROOT` — the harness does NOT substitute the
-  bare form. Alternative: the HTML entity `&#36;{CLAUDE_PLUGIN_ROOT}` when the
-  brace shape must appear in rendered output.
-- When prose **uses the variable as a path** that must resolve at runtime
-  (e.g., `&#36;{CLAUDE_PLUGIN_ROOT}/profiles/*/DETECTION.md`), use the brace form —
-  that IS the intended substitution.
-
-Both conventions coexist in the same file. The path references in §Algorithm
-step 1 use the brace form on purpose. The error-message example in
-§Unset-variable protocol and the text discussing `$CLAUDE_PLUGIN_ROOT` by name
-use the bare form on purpose. When editing this file, match the intent.
-
-Markdown containers (inline backticks, fenced blocks, indented code, blockquotes,
-HTML comments, backslash escape) do NOT protect the brace form from substitution.
-The only escape forms that survive are the bare form and the HTML entity above.

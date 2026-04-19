@@ -33,7 +33,7 @@ Run `git status -sb` and `git diff --stat` to get the list of touched files. **D
 
 ### 2) Detect active profiles
 
-Delegate to [shared-profile-detection.md](shared-profile-detection.md). Input: the filename list from Step 1. The shared procedure iterates `${CLAUDE_PLUGIN_ROOT}/profiles/*/DETECTION.md` via `Glob` — you do not need to pre-list the profiles directory.
+Delegate to [shared-profile-detection.md](shared-profile-detection.md). Input: the filename list from Step 1. The shared procedure iterates its own §Known profiles list and reads each profile's `DETECTION.md` via the `Read` tool — no filesystem enumeration, no `Glob`.
 
 The shared procedure returns a list of records:
 
@@ -49,8 +49,8 @@ If the list is empty (no profile matched), skip Steps 3–4's profile-specific l
 
 For each active profile record from Step 2:
 
-1. Resolve `${CLAUDE_PLUGIN_ROOT}/profiles/<profile>/review-code/index.md`.
-2. Read the index. Collect every entry under **Always load**.
+1. Read `<plugin_root>/profiles/<profile>/review-code/index.md`, where `<plugin_root>` is the absolute plugin-root path you already know from SKILL.md context.
+2. Collect every entry under **Always load**.
 3. For every conditional entry (**Load if:** predicate), evaluate the predicate against the filenames from Step 1 (and, if the predicate requires content, note it for Step 5 — do **not** read file content here). If the filename-level predicate matches, collect the entry.
 4. Append the collected entries to a flat list keyed by `(profile, checklist filename)`.
 
@@ -58,7 +58,7 @@ Do NOT hardcode checklist names — the index is authoritative, and new profiles
 
 ### 4) Read resolved checklists
 
-For each `(profile, checklist)` record from Step 3, use the `Read` tool on `${CLAUDE_PLUGIN_ROOT}/profiles/<profile>/review-code/<checklist>`. Every checklist file enters context now, before any diff content does. The review that follows in Step 6 reads *through* these checklists; if they are not loaded, the review cannot happen.
+For each `(profile, checklist)` record from Step 3, use the `Read` tool on `<plugin_root>/profiles/<profile>/review-code/<checklist>`. Every checklist file enters context now, before any diff content does. The review that follows in Step 6 reads *through* these checklists; if they are not loaded, the review cannot happen.
 
 This is the single load-bearing gate of the workflow. If a checklist read fails (file missing, path unresolved), stop and surface the error — do not proceed with partial methodology.
 

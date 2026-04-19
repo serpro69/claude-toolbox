@@ -62,7 +62,7 @@ Only two forms survive unsubstituted:
 
 Sub-agent context behaves identically to the main context; the substitution happens once in the harness pre-processing step, before any agent reads the content.
 
-**Follow-up verification on 2026-04-19** (same environment; probe skill at `klaude-plugin/skills/test-plugin-root/SKILL.md` — temporary, removed after testing) tested how the substituted path is consumed by each tool the agent has. Substitution itself is not in question — brace form produces a resolved absolute path that the agent then passes to whatever tool the skill instructs. The follow-up tests what each *tool* does with that absolute path:
+**Follow-up verification on 2026-04-19** (same environment; probe skill at `klaude-plugin/skills/test-plugin-root/SKILL.md` — temporary, removed after testing) tested how the substituted path is consumed by each tool the agent has when the substitution appears in **top-level SKILL.md prose**:
 
 | Tool | Brace form in SKILL.md | Agent's tool input | Tool behavior |
 |---|---|---|---|
@@ -72,9 +72,35 @@ Sub-agent context behaves identically to the main context; the substitution happ
 
 The `Glob` tool is scoped to the project `cwd`. Even when given a valid resolved absolute path that points outside `cwd`, it returns 0 matches. Substitution worked; the cwd-scoping is a tool-behavior constraint layered on top.
 
-**Authoring rule — tool choice matters for cross-plugin-tree enumeration.** For file paths anchored at the plugin root (`${CLAUDE_PLUGIN_ROOT}/…`), use `Read` (single file) or `Bash` (`ls`/`find`/etc. for enumeration). Do NOT use `Glob` against outside-cwd plugin-root paths — it will silently miss. Example: when iterating `${CLAUDE_PLUGIN_ROOT}/profiles/*/DETECTION.md`, use `Bash: ls ${CLAUDE_PLUGIN_ROOT}/profiles/*/DETECTION.md` rather than `Glob`.
+**Mechanism clarification (observed 2026-04-19).** A later probe against plugin v0.10.0-rc.1-alpha.3, reading `shared-profile-detection.md` (a `_shared/` referenced content file loaded via a per-skill symlink), emitted a `Bash(ls ${CLAUDE_PLUGIN_ROOT}/profiles/*/DETECTION.md)` call with the **literal `${CLAUDE_PLUGIN_ROOT}` token** reaching the shell. Shell expanded it against the unset env var to empty and silently missed. This pinned down the actual substitution boundary:
 
-**Authoring rule for plugin-tree prose** (SKILL.md, agent files, profile content under `klaude-plugin/`): when the variable name must appear literally (e.g., documentation or convention text *about* the variable, as opposed to using it as a path), use bare `$CLAUDE_PLUGIN_ROOT` or `&#36;{CLAUDE_PLUGIN_ROOT}`. Functional uses (`${CLAUDE_PLUGIN_ROOT}/profiles/...` paths that are *meant* to be resolved at runtime) continue to use the brace form.
+- **Substitution happens at plugin-load time**, for files the harness loads directly: `SKILL.md`, `klaude-plugin/agents/*.md`, hook configs, MCP configs. By the time the agent's context receives these files, `${CLAUDE_PLUGIN_ROOT}` is already replaced with an absolute path.
+- **The `Read` tool does not substitute.** When an agent calls `Read` at runtime on any file — including files inside `klaude-plugin/` (referenced content under `_shared/`, profile files, anything in `profiles/`) — the tool returns the on-disk bytes verbatim. `${CLAUDE_PLUGIN_ROOT}` in that content stays literal. If the agent then copies that literal into another tool argument (Bash, another Read), the downstream tool receives the literal too: Bash shell-expands against the usually-unset env var to empty; Read fails ENOENT.
+
+The 2026-04-17/18 SKILL.md probes were correct — substitution works for SKILL.md. Our 2026-04-18 follow-up note in `shared-profile-detection.md` claiming "verified on 2026-04-18; see ADR 0003 §Verification" was incorrect about *this* file — the probe sessions behind it tested SKILL.md, not `_shared/` content. The conflation was the bug. Symlink traversal, version regression, and install inconsistency all turned out to be non-causes — the mechanism was simply load-time vs runtime.
+
+### Authoring rules
+
+The rules follow directly from the mechanism:
+
+1. **Plugin-load-time-substituted files** (safe to use `${CLAUDE_PLUGIN_ROOT}/…` freely):
+   - `klaude-plugin/skills/<name>/SKILL.md`
+   - `klaude-plugin/agents/<name>.md`
+   - `klaude-plugin/hooks/*.json` command strings
+   - `.mcp.json` / `mcp.json` configs
+
+   Paths written with the brace form here reach the agent as resolved absolute paths and can be copied directly into tool arguments.
+
+2. **Runtime-Read files** (the literal token reaches the agent; do NOT pass it to tools):
+   - Any file referenced from a SKILL.md and loaded via `Read` at runtime. This includes everything in `klaude-plugin/skills/_shared/`, every per-skill referenced content file, every `profiles/**/*.md`, every file an agent reads mid-workflow.
+
+   For these files, two patterns are safe:
+   - **Explicit content** (preferred): hard-code the list of names/paths the procedure needs. Example: the **Known profiles** list in `shared-profile-detection.md` — profiles are enumerated from an explicit list in the file, not from a runtime filesystem walk.
+   - **Inherit the resolved prefix from SKILL.md context**: instruct the agent to construct absolute paths using the resolved plugin-root it already knows from SKILL.md. Document this explicitly — the agent must know to substitute in its own reasoning, not forward the literal.
+
+3. **Never use `Glob` against `${CLAUDE_PLUGIN_ROOT}/…` patterns.** Cwd-scoping applies regardless of substitution — even when the substituted absolute path is valid, `Glob` returns 0 matches for outside-cwd paths.
+
+4. **Referencing the variable *by name* in prose** (documentation, convention text about the variable, not a runtime path): use bare `$CLAUDE_PLUGIN_ROOT` or `&#36;{CLAUDE_PLUGIN_ROOT}` — these survive plugin-load substitution intact. Functional uses in load-time files continue to use the brace form.
 
 CLAUDE.md and `docs/adr/*.md` live outside the plugin tree; they are not subject to substitution and can use the brace form in any container.
 
