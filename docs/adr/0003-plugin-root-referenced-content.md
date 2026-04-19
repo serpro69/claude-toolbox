@@ -62,6 +62,18 @@ Only two forms survive unsubstituted:
 
 Sub-agent context behaves identically to the main context; the substitution happens once in the harness pre-processing step, before any agent reads the content.
 
+**Follow-up verification on 2026-04-19** (same environment; probe skill at `klaude-plugin/skills/test-plugin-root/SKILL.md` — temporary, removed after testing) tested how the substituted path is consumed by each tool the agent has. Substitution itself is not in question — brace form produces a resolved absolute path that the agent then passes to whatever tool the skill instructs. The follow-up tests what each *tool* does with that absolute path:
+
+| Tool | Brace form in SKILL.md | Agent's tool input | Tool behavior |
+|---|---|---|---|
+| `Read`  | `${CLAUDE_PLUGIN_ROOT}/profiles/go/DETECTION.md` | resolved absolute path | reads file — **works** |
+| `Bash`  | `ls ${CLAUDE_PLUGIN_ROOT}/profiles/` | command with resolved path | shell executes, lists files — **works** |
+| `Glob`  | pattern `${CLAUDE_PLUGIN_ROOT}/profiles/*/DETECTION.md` | resolved absolute pattern | returns 0 matches — **fails silently** |
+
+The `Glob` tool is scoped to the project `cwd`. Even when given a valid resolved absolute path that points outside `cwd`, it returns 0 matches. Substitution worked; the cwd-scoping is a tool-behavior constraint layered on top.
+
+**Authoring rule — tool choice matters for cross-plugin-tree enumeration.** For file paths anchored at the plugin root (`${CLAUDE_PLUGIN_ROOT}/…`), use `Read` (single file) or `Bash` (`ls`/`find`/etc. for enumeration). Do NOT use `Glob` against outside-cwd plugin-root paths — it will silently miss. Example: when iterating `${CLAUDE_PLUGIN_ROOT}/profiles/*/DETECTION.md`, use `Bash: ls ${CLAUDE_PLUGIN_ROOT}/profiles/*/DETECTION.md` rather than `Glob`.
+
 **Authoring rule for plugin-tree prose** (SKILL.md, agent files, profile content under `klaude-plugin/`): when the variable name must appear literally (e.g., documentation or convention text *about* the variable, as opposed to using it as a path), use bare `$CLAUDE_PLUGIN_ROOT` or `&#36;{CLAUDE_PLUGIN_ROOT}`. Functional uses (`${CLAUDE_PLUGIN_ROOT}/profiles/...` paths that are *meant* to be resolved at runtime) continue to use the brace form.
 
 CLAUDE.md and `docs/adr/*.md` live outside the plugin tree; they are not subject to substitution and can use the brace form in any container.

@@ -184,6 +184,8 @@ Skills and agents reference profile content via `${CLAUDE_PLUGIN_ROOT}/profiles/
 - Bare `$CLAUDE_PLUGIN_ROOT` (simplest; verified not substituted on 2026-04-18).
 - HTML entity `&#36;{CLAUDE_PLUGIN_ROOT}` (useful when the brace shape must appear in rendered output).
 
+**Tool choice for runtime paths.** `Glob` is scoped to the project `cwd` and returns 0 matches for outside-cwd absolute paths, even when `${CLAUDE_PLUGIN_ROOT}` substitution resolves correctly (verified 2026-04-19). For plugin-root paths, use `Read` (single file) or `Bash` (`ls`/`find` for enumeration). Do NOT use `Glob` against `${CLAUDE_PLUGIN_ROOT}/…` patterns — it will silently miss.
+
 Files outside `klaude-plugin/` (this CLAUDE.md, README.md, ADRs under `docs/adr/`) are NOT subject to substitution and may use the brace form freely.
 
 ### Adding a new profile

@@ -60,7 +60,7 @@ the same record shape produced by file-based detection (see §Output shape).
 
 ### Algorithm
 
-1. **Iterate profiles.** Use the `Glob` tool with pattern `${CLAUDE_PLUGIN_ROOT}/profiles/*/DETECTION.md` to enumerate profile definitions. You do **not** need to `ls` or otherwise pre-list the `profiles/` directory first — the glob is the list. For each match, read the file and load the declared `## Path signals`, `## Filename signals`, and `## Content signals` sections.
+1. **Iterate profiles.** Run `ls ${CLAUDE_PLUGIN_ROOT}/profiles/*/DETECTION.md` via the `Bash` tool to enumerate profile definitions. Brace-form substitution resolves the absolute path at read time; Bash then lists the matching files. Do **NOT** use the `Glob` tool for this: `Glob` is scoped to the project `cwd` and returns 0 matches for outside-cwd absolute paths even when substitution resolves correctly. For each file `ls` returns, use the `Read` tool to load it and parse the declared `## Path signals`, `## Filename signals`, and `## Content signals` sections.
 2. **Evaluate in cost order.** For each input file, check signals in this
    order: path → filename → content. Cheapest first.
 3. **Apply the authority rule.** A file activates the profile only if a
