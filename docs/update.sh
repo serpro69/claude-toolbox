@@ -56,6 +56,8 @@ fi
 
 find "$PROJECT_ROOT" -type f -not -path "*/.git/*" -print0 | $XARGS -I{} -0 $SED -i "s/docs\/wip\/${DIRNAME}/docs\/${DIRNAME}/g" {}
 
-git -C "$PROJECT_ROOT" mv "docs/wip/${DIRNAME}" "docs/${DIRNAME}"
+mkdir -p docs/done
 
-echo "Successfully promoted docs/wip/${DIRNAME} to docs/${DIRNAME}"
+git -C "$PROJECT_ROOT" mv "docs/wip/${DIRNAME}" "docs/done/${DIRNAME}"
+
+echo "Successfully promoted docs/wip/${DIRNAME} to docs/done/${DIRNAME}"
