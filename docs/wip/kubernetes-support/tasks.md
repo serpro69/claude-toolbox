@@ -231,7 +231,7 @@ Subtasks:
 ## Task 12 — Extend `implement` with K8s per-task gotchas
 
 - **Phase:** P2
-- **Status:** in-progress
+- **Status:** done
 - **Depends on:** Task 7
 - **Links:** [implementation.md §Step 2.2](implementation.md#step-22--extend-implement), [design.md §implement — P2 per-task K8s gotchas](design.md#implement--p2-per-task-k8s-gotchas)
 
@@ -241,6 +241,7 @@ Subtasks:
 - [x] Create `klaude-plugin/profiles/k8s/implement/index.md` — always-load entry: `gotchas.md`.
 - [x] Create `klaude-plugin/profiles/k8s/implement/gotchas.md` — API-version pinning, probe-correctness distinctions, image-tag immutability, resource-limits discipline, namespace/label hygiene, CRD-before-CR ordering. (Scope extended slightly over plan wording: also covers admission-webhook/operator timing, Helm-specific gotchas, and Kustomize-specific gotchas — all authoring-time pitfalls that would otherwise surface post-write in `review-code` checklists. Angle is deliberately pre-write-avoidance, not post-write-review, to stay distinct from `review-code/` content.)
 - [x] Verify: structure test passes (presence-conditional covers `profiles/k8s/implement/index.md`). `bash test/test-plugin-structure.sh` → 31 cases, 124 assertions, all pass (up from 121 after Task 11; the new `profiles/k8s/implement/` phase dir adds 3 assertions: presence, forward-index, reverse-index). Synthetic K8s-task / Go-task runtime scenarios deferred to Task 15 P2 verification per the cross-task coordination note at the top of this phase.
+- [x] **Isolated code-review checkpoint (2-track × 2 reviewers = 4 parallel agents).** Track 1 (skill implementation, baseline: `review-code` multilang/profile support): corroborated P1 finding — SKILL.md Step 2 bullet order violated ADR 0004 (action bullet preceded pre-write instruction loads). Fixed by reordering: pre-write gotchas + dependency-handling now bullets 2–3; "Follow the plan exactly" is bullet 4; added explicit mandatory-order directive. Also fixed stale `profiles/k8s/overview.md` "Populated phases" inventory (now lists `review-code/`, `design/`, `implement/`). Track 2 (K8s correctness): corroborated P0 — BestEffort QoS claim factually wrong; rewritten to cover both-missing vs limits-without-requests (Burstable) distinction. Additional K8s corrections applied: Guaranteed QoS scope narrowed to CPU+memory with ephemeral-container note; `kubectl apply` CRD-race causal explanation rewritten (server-side async, not client-side ordering); Argo CD SyncWave vs PreSync conflation fixed; Kustomize `labels[].includeSelectors` now notes ≥4.1 requirement; `extensions/v1beta1` removal stagger (1.16 batch + Ingress 1.22) surfaced; `startupProbe` suspension of liveness/readiness made explicit; cert-manager / external-secrets "looks healthy" framing rewritten to GitOps-sync-masks-unreconciled; Helm `<no value>` behavior corrected (empty string default, nil-pointer panic on nested access); Helm `kubeVersion` `-0` suffix documented; index.md summary updated to include Helm + Kustomize. Total: 14 findings, all applied. Re-ran structure test post-fixes — still green. Corroborated P0/P1 findings indexed as `kk:review-findings`.
 
 ## Task 13 — Extend `test` with K8s validator guidance
 
