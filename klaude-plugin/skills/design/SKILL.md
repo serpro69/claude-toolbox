@@ -13,6 +13,8 @@ description: |
 
 Read capy knowledge base conventions at [shared-capy-knowledge-protocol.md](shared-capy-knowledge-protocol.md).
 
+Profile detection is delegated to [shared-profile-detection.md](shared-profile-detection.md). When an active profile contributes a `design/` subdirectory (e.g., `${CLAUDE_PLUGIN_ROOT}/profiles/k8s/design/`), its `questions.md` feeds the idea-refinement question pool and its `sections.md` lists required sections the design document must cover. Both the idea-to-design and continue-WIP flows consult the shared procedure; see each flow's workflow file for the specific integration points.
+
 ## Ideas and Prototypes
 
 _Use this for ideas that are not fully thought out and do not have a fully-formed design/specification and/or implementation-plan._

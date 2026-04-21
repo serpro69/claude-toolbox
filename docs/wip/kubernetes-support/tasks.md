@@ -214,19 +214,19 @@ Subtasks:
 ## Task 11 — Extend `design` with K8s-aware idea refinement
 
 - **Phase:** P2
-- **Status:** pending
+- **Status:** in-progress
 - **Depends on:** Task 7
 - **Links:** [implementation.md §Step 2.1](implementation.md#step-21--extend-design), [design.md §design — P2 Kubernetes-aware idea refinement](design.md#design--p2-kubernetes-aware-idea-refinement)
 
 Subtasks:
 
-- [ ] Update `klaude-plugin/skills/design/idea-process.md` — Step 3 (refine the idea) gains the user-declared / keyword-inference detection model per [design.md §`design` — P2](design.md#design--p2-kubernetes-aware-idea-refinement): check idea prose against the **high-precision auto-trigger set** (`Kubernetes`, `K8s`, `Helm chart`, `kubectl`, `kustomize`, `manifest.yaml`, `Deployment resource`, `StatefulSet`, `DaemonSet`, `CronJob`) and ask the user to confirm on any match. If no auto-trigger matches but the idea is **ambiguous** (names infrastructure/deployment/runtime/platform concerns without naming a specific technology, OR includes overloaded tokens like `cluster`/`namespace`/`pod`), ask explicitly. Step 5 (document the design) gains the "for each active profile, load `${CLAUDE_PLUGIN_ROOT}/profiles/<name>/design/index.md` and apply its section requirements" clause.
-- [ ] Update `klaude-plugin/skills/design/existing-task-process.md` — equivalent clause in the continue-WIP flow; here the feature directory's files ARE available, so detection falls back to the file-based input model.
-- [ ] Optional prose touch-up in `klaude-plugin/skills/design/SKILL.md` body (no description change).
-- [ ] Create `klaude-plugin/profiles/k8s/design/index.md` — always-load entries: `questions.md`, `sections.md`.
-- [ ] Create `klaude-plugin/profiles/k8s/design/questions.md` — question bank (cluster topology, GitOps choice, secrets strategy, multi-tenancy, observability stack, rollback posture).
-- [ ] Create `klaude-plugin/profiles/k8s/design/sections.md` — required design sections for K8s-shaped features (cluster-compat matrix, resource budget, reliability posture, security posture, failure-mode narrative).
-- [ ] Verify: structure test passes (presence-conditional covers `profiles/k8s/design/index.md` automatically). Synthetic design session for an idea prose with K8s keywords surfaces the confirmation question, activates the profile on user yes, surfaces the K8s question bank in Step 3. Ambiguous-idea scenario asks the explicit IaC question. Regression: pure Go feature design does not activate K8s profile.
+- [x] Update `klaude-plugin/skills/design/idea-process.md` — Step 3 (refine the idea) gains the user-declared / keyword-inference detection model per [design.md §`design` — P2](design.md#design--p2-kubernetes-aware-idea-refinement): check idea prose against the **high-precision auto-trigger set** (`Kubernetes`, `K8s`, `Helm chart`, `kubectl`, `kustomize`, `manifest.yaml`, `Deployment resource`, `StatefulSet`, `DaemonSet`, `CronJob`) and ask the user to confirm on any match. If no auto-trigger matches but the idea is **ambiguous** (names infrastructure/deployment/runtime/platform concerns without naming a specific technology, OR includes overloaded tokens like `cluster`/`namespace`/`pod`), ask explicitly. Step 5 (document the design) gains the "for each active profile, load `${CLAUDE_PLUGIN_ROOT}/profiles/<name>/design/index.md` and apply its section requirements" clause.
+- [x] Update `klaude-plugin/skills/design/existing-task-process.md` — equivalent clause in the continue-WIP flow; here the feature directory's files ARE available, so detection falls back to the file-based input model (with idea-prose fallback when the feature directory has no profile-bearing artifacts yet).
+- [x] Optional prose touch-up in `klaude-plugin/skills/design/SKILL.md` body (no description change). Added a short Conventions subsection pointer to `shared-profile-detection.md` and the per-profile `design/` slot.
+- [x] Create `klaude-plugin/profiles/k8s/design/index.md` — always-load entries: `questions.md`, `sections.md`.
+- [x] Create `klaude-plugin/profiles/k8s/design/questions.md` — question bank (cluster topology, GitOps choice, secrets strategy, multi-tenancy, observability stack, rollback posture).
+- [x] Create `klaude-plugin/profiles/k8s/design/sections.md` — required design sections for K8s-shaped features (cluster-compat matrix, resource budget, reliability posture, security posture, failure-mode narrative).
+- [x] Verify: `bash test/test-plugin-structure.sh` exits 0 — 31 test cases, 121 assertions (up from 109 as the presence-conditional layer picked up `profiles/k8s/design/`). Forward + reverse invariants green for the new phase dir. Synthetic live-session scenarios (K8s keyword auto-activation, ambiguous-idea explicit prompt, pure-Go regression) are deferred to the P2 cumulative verification in Task 15 per the cross-task coordination note above.
 
 ## Task 12 — Extend `implement` with K8s per-task gotchas
 
