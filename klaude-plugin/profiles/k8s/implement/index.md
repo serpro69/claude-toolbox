@@ -4,4 +4,4 @@ Consumed by the `implement` skill when the `k8s` profile is active for the curre
 
 ## Always load
 
-- [gotchas.md](gotchas.md) — per-task pitfalls: API-version pinning, probe correctness, image-tag immutability, resource limits discipline, namespace + label hygiene, CRD-before-CR ordering, webhook timing.
+- [gotchas.md](gotchas.md) — per-task pitfalls: API-version pinning, probe correctness, image-tag immutability, resource limits discipline, namespace + label hygiene, CRD-before-CR ordering, admission-webhook + operator timing, Helm specifics, Kustomize specifics.
