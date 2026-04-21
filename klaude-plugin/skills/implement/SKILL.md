@@ -53,12 +53,14 @@ When set, all review checkpoints automatically use isolated variants (`kk:review
 
 ### Step 2: Execute Sub-Task
 
-1. Update `tasks.md`: set the task's status to `in-progress`
-2. Follow the plan exactly
-3. Check off subtasks (`- [x]`) in `tasks.md` as you complete them
-4. **Profile-aware per-task gotchas.** Before writing, run the shared profile-detection procedure against the sub-task's target files (and any diff-so-far). For each active profile that contributes an `implement/` subdirectory, load `${CLAUDE_PLUGIN_ROOT}/profiles/<name>/implement/index.md` and read the always-load + any matching conditional content. Apply those gotchas to the upcoming edits — they exist to prevent mistakes the post-write reviewer would otherwise catch. If no active profile contributes an `implement/` subdirectory, skip this step.
-5. **Whenever the sub-task introduces or changes a dependency** — new import, version bump, unfamiliar call, **and per the widened trigger also: a Kubernetes API version, a CRD, a Helm chart or chart dependency, or a container image tag/digest** — apply the `dependency-handling` skill BEFORE writing the call. Do not guess signatures, API versions, or configuration; look them up via capy/context7 per that skill's rules. Per-profile lookup cascades live in each profile's `overview.md` (e.g., `${CLAUDE_PLUGIN_ROOT}/profiles/k8s/overview.md` §Looking up Kubernetes dependencies).
-6. Run verifications as specified; use `test` skill
+**Mandatory order — instructions before action.** Steps 1–3 load instructions the sub-task needs; step 4 is the first step that touches subject matter. Do not write code, edit files, or otherwise act on the sub-task until steps 1–3 have been performed in order. If a later step reveals that an instruction was missed, return to step 1.
+
+1. Update `tasks.md`: set the task's status to `in-progress`.
+2. **Profile-aware per-task gotchas (pre-write).** Run the shared profile-detection procedure against the sub-task's target files (and any diff-so-far). For each active profile that contributes an `implement/` subdirectory, load `${CLAUDE_PLUGIN_ROOT}/profiles/<name>/implement/index.md` and read the always-load + any matching conditional content. Apply those gotchas to the upcoming edits — they exist to prevent mistakes the post-write reviewer would otherwise catch. If no active profile contributes an `implement/` subdirectory, skip this step.
+3. **Dependency-handling (pre-write).** Whenever the sub-task introduces or changes a dependency — new import, version bump, unfamiliar call, **and per the widened trigger also: a Kubernetes API version, a CRD, a Helm chart or chart dependency, or a container image tag/digest** — apply the `dependency-handling` skill BEFORE writing the call. Do not guess signatures, API versions, or configuration; look them up via capy/context7 per that skill's rules. Per-profile lookup cascades live in each profile's `overview.md` (e.g., `${CLAUDE_PLUGIN_ROOT}/profiles/k8s/overview.md` §Looking up Kubernetes dependencies).
+4. Follow the plan exactly.
+5. Check off subtasks (`- [x]`) in `tasks.md` as you complete them.
+6. Run verifications as specified; use `test` skill.
 
 ### Step 3: Report
 

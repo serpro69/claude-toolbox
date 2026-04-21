@@ -20,8 +20,10 @@ Activation is additive with other profiles on the same diff (e.g., a Go service 
 ## Populated phases
 
 - `review-code/` — security, architecture, quality, reliability checklists plus Helm/Kustomize-specific checklists and a `removal-plan.md` template, loaded via `index.md`.
+- `design/` — idea-refinement question bank and required-sections list, loaded via `index.md`.
+- `implement/` — per-task pre-write gotchas, loaded via `index.md`.
 
-Phases `design/`, `implement/`, `test/`, `document/`, and `review-spec/` may be populated in later phases of the profile's rollout; consult each directory's `index.md` when present.
+Phases `test/`, `document/`, and `review-spec/` may be populated in later phases of the profile's rollout; consult each directory's `index.md` when present.
 
 ## Architecture in one paragraph
 
