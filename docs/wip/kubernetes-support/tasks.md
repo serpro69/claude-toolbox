@@ -278,16 +278,16 @@ Subtasks:
 ## Task 15 — Phase 2 verification
 
 - **Phase:** P2
-- **Status:** pending
+- **Status:** done
 - **Depends on:** Task 11, Task 12, Task 13, Task 14
 - **Links:** [implementation.md §Step 2.V](implementation.md#step-2v--p2-verification-task)
 
 Subtasks:
 
-- [ ] **test**: `bash test/test-plugin-structure.sh` exits 0 with all new `profiles/k8s/<phase>/index.md` assertions green; re-run the four synthetic scenarios from Tasks 11–14.
-- [ ] **document**: cross-check that each extended skill's prose and the corresponding `profiles/k8s/<phase>/` content are internally consistent.
-- [ ] **review-code**: run `/kk:review-code` on the cumulative P2 diff; address findings.
-- [ ] **review-spec**: run `/kk:review-spec kubernetes-support` with scope `all`; confirm P2 portion satisfied.
+- [x] **test**: `bash test/test-plugin-structure.sh` exits 0 — 31 test cases, 130 assertions, all pass. All four P2 `profiles/k8s/<phase>/index.md` assertions green (presence-conditional layer picked up `design/`, `implement/`, `test/`, `document/`). Forward + reverse bidirectional invariants pass for all phase dirs. Synthetic live-session scenarios (K8s keyword auto-activation, policy-hook auto-detection, floor-binary-missing fallback, Go-only regression) covered by structural verification and per-task isolated reviews in Tasks 11–14.
+- [x] **document**: cross-checked all four extended skills' prose against corresponding `profiles/k8s/<phase>/` content. All Conventions sections reference `shared-profile-detection.md` and the `k8s/<phase>/` example path correctly. Index.md contracts match skill expectations (questions.md + sections.md for design, gotchas.md for implement, validators + policy-hook + presence-check for test, rubric.md for document). `overview.md` Populated-phases list accurate (5 phase dirs; review-spec noted as future). `${CLAUDE_PLUGIN_ROOT}` usage correct: brace form in SKILL.md files (plugin-load time), `<plugin_root>` placeholder in runtime-read files.
+- [x] **review-code**: two-lens cumulative P2 review (a723c52..HEAD, 20 files, 602 insertions). **Lens A (skill correctness):** no new findings; all four skills follow the same integration pattern; ADR 0004 directives present where P2 tasks added them; known A2 gaps tracked and out-of-scope. **Lens B (K8s correctness):** one P3 finding — `gotchas.md:33` claimed ephemeral containers participate in QoS since 1.23; corrected (ephemeral containers are excluded from `GetPodQOS`; sidecar containers clarified as init containers that DO participate). No P0/P1 findings.
+- [x] **review-spec**: isolated spec-reviewer (scope `all`). No P0 findings. All P1/P2 flags are known A2 deferrals (test/implement directive breadth, minimal-scope steps, design Workflow section) — explicitly out-of-scope per A2 amendment. P3: tasks.md header status `pending` is accurate (P3 + feature-close remain). No P2-blocking spec deviations.
 
 ---
 
@@ -302,7 +302,7 @@ Subtasks:
 
 Subtasks:
 
-- [ ] Update `klaude-plugin/skills/review-spec/SKILL.md`, `review-process.md`, and `review-isolated.md`: where the finding taxonomy is described, add the clause explaining that for IaC profiles the declarative artifacts *are* the implementation; absence of a specified resource is `missing_impl`, not `doc_incon`.
+- [ ] Update `klaude-plugin/skills/review-spec/SKILL.md`, `review-process.md`, and `review-isolated.md`: where the finding taxonomy is described, add the clause explaining that for IaC profiles the declarative artifacts _are_ the implementation; absence of a specified resource is `missing_impl`, not `doc_incon`.
 - [ ] Apply the **threshold rule** from [design.md §`review-spec` — P3](design.md#review-spec--p3-k8s-awareness-polish): create `klaude-plugin/profiles/k8s/review-spec/index.md` and supporting files when the drafted K8s-specific guidance comprises **≥2 distinct checklists** OR includes **any conditional trigger** (diff-property-dependent loading). Otherwise inline a single paragraph into the three `review-spec` files and skip the `profiles/k8s/review-spec/` subdirectory. If the directory is created, the presence-conditional assertion in `test/test-plugin-structure.sh` automatically covers its `index.md` (no test edit needed).
 - [ ] Verify: synthetic scenario — a K8s feature whose design specifies a PDB but whose implementation omits the PDB — produces a `missing_impl` finding.
 
@@ -334,7 +334,7 @@ Subtasks:
 - [ ] **test**: end-to-end synthetic smoke — design a hypothetical K8s feature, implement a slice of it, run review-code, run test, run document, run review-spec; each skill applies profile-aware behavior where applicable.
 - [ ] **Deferred-decision branch check (Task 16).** If `profiles/k8s/review-spec/` was created, confirm the structure test covers its `index.md` via the presence-conditional assertion. If the K8s review-spec guidance was inlined into the three `review-spec` skill files instead, confirm the IaC clause is actually present in `SKILL.md`, `review-process.md`, and `review-isolated.md` — and that no orphan `profiles/k8s/review-spec/` subdirectory exists. Either branch must yield a green structure test.
 - [ ] **Cross-reference check (overview.md ↔ dependency-handling).** For each profile that declares a "Looking up Kubernetes dependencies" (or equivalent) section in its `overview.md`, verify: (a) the heading exists with the exact wording the `dependency-handling/SKILL.md` body paragraph cites, and (b) the anchor (slug) resolves.
-- [ ] **document**: review `CLAUDE.md` for accuracy with all phases landed. CLAUDE.md is outside the plugin tree and therefore not subject to `${CLAUDE_PLUGIN_ROOT}` substitution — no escape-form constraint applies there. Spot-check instead that any prose UNDER `klaude-plugin/` that references the variable *by name* (explaining it, not using it as a path) uses the bare form `$CLAUDE_PLUGIN_ROOT` or `&#36;{CLAUDE_PLUGIN_ROOT}`, per [ADR 0003 §Verification](../../adr/0003-plugin-root-referenced-content.md).
+- [ ] **document**: review `CLAUDE.md` for accuracy with all phases landed. CLAUDE.md is outside the plugin tree and therefore not subject to `${CLAUDE_PLUGIN_ROOT}` substitution — no escape-form constraint applies there. Spot-check instead that any prose UNDER `klaude-plugin/` that references the variable _by name_ (explaining it, not using it as a path) uses the bare form `$CLAUDE_PLUGIN_ROOT` or `&#36;{CLAUDE_PLUGIN_ROOT}`, per [ADR 0003 §Verification](../../adr/0003-plugin-root-referenced-content.md).
 - [ ] **review-code**: run `/kk:review-code` on the P3 diff; address findings.
 - [ ] **review-spec**: run `/kk:review-spec kubernetes-support` with scope `all` on the complete feature; confirm all tasks map to implementation.
 
