@@ -11,14 +11,22 @@ description: |
 
 Read capy knowledge base conventions at [shared-capy-knowledge-protocol.md](shared-capy-knowledge-protocol.md).
 
-Profile detection is delegated to [shared-profile-detection.md](shared-profile-detection.md). When an active profile contributes a `test/` subdirectory (e.g., `${CLAUDE_PLUGIN_ROOT}/profiles/k8s/test/`), its `index.md` lists validators, check categories, and any binary-presence or auto-detection protocols the skill must apply. Load profile content BEFORE running validators — a missing pre-check step can crash on a tool that isn't installed.
+Profile detection is delegated to [shared-profile-detection.md](shared-profile-detection.md). When an active profile contributes a `test/` subdirectory (e.g., `${CLAUDE_PLUGIN_ROOT}/profiles/k8s/test/`), its `index.md` lists validators, check categories, and any binary-presence or auto-detection protocols the skill must apply. See Step 2 of the Workflow.
+
+## Workflow
+
+**Mandatory order — instructions before action.** The flow below is strictly sequential. Do not run any validator, test, or binary against subject-matter files until profile detection has completed and all resolved profile content is in context. See [ADR 0004](../../../docs/adr/0004-skill-workflow-ordering.md) for the rationale.
+
+1. **Detect active profiles.** Run the shared profile-detection procedure against the changed files.
+2. **Load profile content.** For each active profile that contributes a `test/` subdirectory, load `${CLAUDE_PLUGIN_ROOT}/profiles/<name>/test/index.md` and read its always-load + any matching conditional content. Honor the binary-presence protocols named there BEFORE any validator invocation — a missing pre-check step can crash on a tool that isn't installed.
+3. **Apply the test guidelines below.** With profile methodology now loaded, run existing tests, add coverage for new or fixed functionality, and execute profile-specific validators per the loaded content.
 
 ## Guidelines
 
 1. Always try to add tests for any new functionality, and make sure to cover all cases and code branches, according to requirements.
 2. Always try to add tests for any bug-fixes, if the discovered bug is not already covered by tests. If the bug was already covered by tests, fix the existing tests as needed.
 3. Always run all existing tests after you are done with a given implementation or bug-fix.
-4. **Profile-aware validator planning (load before running).** After language-specific test patterns, run the shared profile-detection procedure against the changed files. For each active profile that contributes a `test/` subdirectory, load `${CLAUDE_PLUGIN_ROOT}/profiles/<name>/test/index.md` and read the always-load + any matching conditional content BEFORE executing any validator named there. Apply the validators and check categories the profile specifies; honor binary-presence protocols the profile documents (missing binaries should surface install hints, not shell errors).
+4. **Profile-aware validators.** Apply the validators and check categories the active profile's `test/index.md` specifies (loaded in Step 2 of the Workflow); honor the binary-presence protocol documented there — missing binaries should surface install hints, not shell errors.
 
 **Capy search:** Before applying test guidelines, search `kk:test-patterns` for project-specific testing approaches and known edge cases.
 
