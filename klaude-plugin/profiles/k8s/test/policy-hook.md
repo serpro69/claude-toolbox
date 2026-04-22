@@ -20,7 +20,7 @@ Kubernetes projects commonly adopt one of three policy engines: **Conftest/OPA**
 
 - **Project markers** — any one of:
   - A `kyverno-policies/` directory.
-  - Kubernetes resources of `kind: ClusterPolicy` or `kind: Policy` under API group `kyverno.io` (inspect `apiVersion: kyverno.io/v1` etc.) present in the project.
+  - Kubernetes resources with `apiVersion: kyverno.io/v1` (or later) AND `kind: ClusterPolicy` or `kind: Policy`. The API-group qualifier is load-bearing — other projects (e.g., Crossplane) also define a `Policy` kind under different API groups; filter on the `kyverno.io/*` apiVersion first, then the kind.
   - A `kyverno.yaml` or `kyverno-test.yaml` scaffold file.
 - **Binary check** — `command -v kyverno`.
 - **Command when both gates pass**: `kyverno test <policies-dir>` — Kyverno's `test` subcommand validates policies against test cases defined in `kyverno-test.yaml` files alongside the policies. Point it at the directory that contains the test scaffolds, not at the manifest tree.
