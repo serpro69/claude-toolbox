@@ -311,7 +311,7 @@ Subtasks:
 ## Task 17 — Widen `dependency-handling` description and body for IaC
 
 - **Phase:** P3
-- **Status:** in-progress
+- **Status:** done
 - **Depends on:** Task 7
 - **Links:** [implementation.md §Step 3.2](implementation.md#step-32--widen-dependency-handling), [design.md §dependency-handling integration](design.md#dependency-handling-integration), [design.md §Skill description budget](design.md#skill-description-budget-applied-in-this-feature)
 
