@@ -51,6 +51,8 @@ The resulting scope block is inlined into the sub-agent prompt in Step 2.
 
 Collect the absolute paths to `design.md`, `implementation.md`, and `tasks.md`. The sub-agent reads these files itself — do NOT inline their contents into the prompt.
 
+**Detect active profiles** using [shared-profile-detection.md](shared-profile-detection.md). For each active profile that populates a `review-spec/` phase slot, resolve its `index.md` entries (always-load + matching conditional). Collect the resolved checklist paths — these are passed to the sub-agent in the prompt so it can load domain-specific verification patterns.
+
 ---
 
 ## Step 2: Spawn Spec Reviewer
@@ -85,7 +87,19 @@ You are reviewing the implementation of the "{feature_name}" feature against its
 Tasks to review: {list of completed task names/numbers}
 Tasks to skip: {list of pending task names/numbers, or "none — all tasks complete"}
 
-Read the documents yourself using the Read tool. Produce your findings in the output format specified in your agent definition.
+## Profile Context
+
+{if IaC profile active, include this section; otherwise omit}
+IaC profile "{profile_name}" is active. Declarative artifacts (YAML manifests, Helm charts, Kustomize overlays) ARE the implementation. Apply these type-mapping adjustments:
+- Design-specified resource whose manifest is absent → MISSING_IMPL (not DOC_INCON)
+- Field value in manifest disagreeing with design → SPEC_DEV
+- Manifest resource not mentioned in design → EXTRA_IMPL
+
+Profile review-spec checklists to load and apply:
+{list of resolved checklist absolute paths from the profile's review-spec/index.md}
+{/if}
+
+Read the documents yourself using the Read tool. If profile checklists are listed above, read and apply them. Produce your findings in the output format specified in your agent definition.
 ```
 
 This is a single sub-agent, not parallel. Wait for it to complete before proceeding.

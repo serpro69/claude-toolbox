@@ -24,8 +24,7 @@ Activation is additive with other profiles on the same diff (e.g., a Go service 
 - `implement/` — per-task pre-write gotchas, loaded via `index.md`.
 - `test/` — validator catalog (floor / menu / cluster-dependent), policy-toolchain auto-detection, and a binary-presence protocol, loaded via `index.md`.
 - `document/` — doc rubric enumerating required topics for Kubernetes artifacts (RBAC rationale, rollback runbook, resource baseline, cluster-compat matrix, NetworkPolicy posture), loaded via `index.md`.
-
-Phase `review-spec/` may be populated in a later phase of the profile's rollout; consult its `index.md` when present.
+- `review-spec/` — K8s-specific spec verification patterns: type-mapping for declarative artifacts, plus conditional Helm and Kustomize verification checklists, loaded via `index.md`.
 
 ## Architecture in one paragraph
 

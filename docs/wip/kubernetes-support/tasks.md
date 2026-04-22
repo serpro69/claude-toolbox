@@ -296,15 +296,17 @@ Subtasks:
 ## Task 16 — Extend `review-spec` for K8s spec-vs-implementation semantics
 
 - **Phase:** P3
-- **Status:** pending
+- **Status:** in-progress
 - **Depends on:** Task 10
 - **Links:** [implementation.md §Step 3.1](implementation.md#step-31--extend-review-spec), [design.md §review-spec — P3 K8s-awareness polish](design.md#review-spec--p3-k8s-awareness-polish)
 
 Subtasks:
 
-- [ ] Update `klaude-plugin/skills/review-spec/SKILL.md`, `review-process.md`, and `review-isolated.md`: where the finding taxonomy is described, add the clause explaining that for IaC profiles the declarative artifacts _are_ the implementation; absence of a specified resource is `missing_impl`, not `doc_incon`.
-- [ ] Apply the **threshold rule** from [design.md §`review-spec` — P3](design.md#review-spec--p3-k8s-awareness-polish): create `klaude-plugin/profiles/k8s/review-spec/index.md` and supporting files when the drafted K8s-specific guidance comprises **≥2 distinct checklists** OR includes **any conditional trigger** (diff-property-dependent loading). Otherwise inline a single paragraph into the three `review-spec` files and skip the `profiles/k8s/review-spec/` subdirectory. If the directory is created, the presence-conditional assertion in `test/test-plugin-structure.sh` automatically covers its `index.md` (no test edit needed).
-- [ ] Verify: synthetic scenario — a K8s feature whose design specifies a PDB but whose implementation omits the PDB — produces a `missing_impl` finding.
+- [x] Update `klaude-plugin/skills/review-spec/SKILL.md`, `review-process.md`, and `review-isolated.md`: where the finding taxonomy is described, add the clause explaining that for IaC profiles the declarative artifacts _are_ the implementation; absence of a specified resource is `missing_impl`, not `doc_incon`.
+- [x] Apply the **threshold rule** from [design.md §`review-spec` — P3](design.md#review-spec--p3-k8s-awareness-polish): create `klaude-plugin/profiles/k8s/review-spec/index.md` and supporting files when the drafted K8s-specific guidance comprises **≥2 distinct checklists** OR includes **any conditional trigger** (diff-property-dependent loading). Otherwise inline a single paragraph into the three `review-spec` files and skip the `profiles/k8s/review-spec/` subdirectory. If the directory is created, the presence-conditional assertion in `test/test-plugin-structure.sh` automatically covers its `index.md` (no test edit needed).
+  - **Threshold decision: create profile directory.** Drafted K8s review-spec guidance comprises 3 distinct checklists (`type-mapping.md`, `helm-verification.md`, `kustomize-verification.md`) with 2 conditional triggers (Helm signals, Kustomize signals). Meets both the ≥2 checklists AND conditional trigger criteria. Created `klaude-plugin/profiles/k8s/review-spec/` with `index.md` + 3 content files. Also updated `spec-reviewer.md` agent with IaC semantics clause, and updated `profiles/k8s/overview.md` to list `review-spec/` in populated phases.
+- [x] Verify: `bash test/test-plugin-structure.sh` → 31 cases, 133 assertions, all pass (up from 130; the new `profiles/k8s/review-spec/` phase dir adds 3 assertions: presence, forward-index, reverse-index).
+- [x] Verify: synthetic scenario — a K8s feature whose design specifies a PDB but whose implementation omits the PDB — produces a `missing_impl` finding. **Structural verification:** the IaC clause in all four files (`SKILL.md`, `review-process.md`, `review-isolated.md`, `spec-reviewer.md`) explicitly maps "design-specified resource whose manifest is absent" to `MISSING_IMPL`. The `type-mapping.md` content names the PDB case directly: "If the design specifies a PodDisruptionBudget and no PDB manifest exists, that is `MISSING_IMPL`" (line 15) with P1 severity calibration (line 59). The content chain — skill files → sub-agent prompt → profile checklist → concrete example — is complete.
 
 ## Task 17 — Widen `dependency-handling` description and body for IaC
 
