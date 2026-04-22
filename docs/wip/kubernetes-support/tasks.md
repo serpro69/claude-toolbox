@@ -311,17 +311,17 @@ Subtasks:
 ## Task 17 — Widen `dependency-handling` description and body for IaC
 
 - **Phase:** P3
-- **Status:** pending
+- **Status:** in-progress
 - **Depends on:** Task 7
 - **Links:** [implementation.md §Step 3.2](implementation.md#step-32--widen-dependency-handling), [design.md §dependency-handling integration](design.md#dependency-handling-integration), [design.md §Skill description budget](design.md#skill-description-budget-applied-in-this-feature)
 
 Subtasks:
 
-- [ ] Rewrite the description frontmatter of `klaude-plugin/skills/dependency-handling/SKILL.md` to the 223-character form specified in design.md (covers library/SDK/framework/API + IaC API version + CRD + container image; leads with TRIGGER keyword; preserves "Use BEFORE writing the call").
-- [ ] Update the body: short paragraph noting that the cascade rule (capy-first, context7-second, web-last) applies uniformly to all listed dep categories; per-domain lookup targets live in each profile's `overview.md`.
-- [ ] Cross-check `klaude-plugin/profiles/k8s/overview.md`'s "Looking up Kubernetes dependencies" section (authored in Task 8) is consistent with the new body paragraph. The body paragraph should reference the overview section by heading anchor; the anchor must resolve.
-- [ ] Add a description-length assertion to `test/test-plugin-structure.sh`: parse the `description:` field of `klaude-plugin/skills/dependency-handling/SKILL.md`'s YAML frontmatter, measure its length, assert ≤1,536 characters (the documented per-entry cap).
-- [ ] Verify: description-length assertion in the structure test passes. The description contains "IaC API version", "Helm", "container image" (or equivalent covering terms). "Use BEFORE writing the call" is present in the description and not truncated. The body paragraph's anchor reference to `profiles/k8s/overview.md` resolves to an existing heading.
+- [x] Rewrite the description frontmatter of `klaude-plugin/skills/dependency-handling/SKILL.md` to the 223-character form specified in design.md (covers library/SDK/framework/API + IaC API version + CRD + container image; leads with TRIGGER keyword; preserves "Use BEFORE writing the call"). Actual length: 221 characters (minor whitespace difference from design.md's 223-char estimate; content identical).
+- [x] Update the body: short paragraph noting that the cascade rule (capy-first, context7-second, web-last) applies uniformly to all listed dep categories; per-domain lookup targets live in each profile's `overview.md`. Added as new `## IaC and config artifacts` section with explicit link to `profiles/k8s/overview.md §Looking up Kubernetes dependencies`.
+- [x] Cross-check `klaude-plugin/profiles/k8s/overview.md`'s "Looking up Kubernetes dependencies" section (authored in Task 8) is consistent with the new body paragraph. The body paragraph should reference the overview section by heading anchor; the anchor must resolve. Confirmed: overview.md heading is `## Looking up Kubernetes dependencies` (line 33); anchor `#looking-up-kubernetes-dependencies` matches the link in SKILL.md.
+- [x] Add a description-length assertion to `test/test-plugin-structure.sh`: parse the `description:` field of `klaude-plugin/skills/dependency-handling/SKILL.md`'s YAML frontmatter, measure its length, assert ≤1,536 characters (the documented per-entry cap). Added as Section 10 of the structure test.
+- [x] Verify: description-length assertion in the structure test passes. The description contains "IaC API version", "Helm", "container image" (or equivalent covering terms). "Use BEFORE writing the call" is present in the description and not truncated. The body paragraph's anchor reference to `profiles/k8s/overview.md` resolves to an existing heading. `bash test/test-plugin-structure.sh` → 32 cases, 134 assertions, 0 failures.
 
 ## Task 18 — Phase 3 verification
 
