@@ -23,14 +23,7 @@ Proceed with the tool as described in `validators.md` / `policy-hook.md`.
 ## When the binary is missing
 
 1. **Do NOT attempt execution.** A missing-binary path never becomes a shell error in the final report.
-2. **Surface a per-tool install hint.** The hint must name the tool, the recommended install path, and an alternative where one exists. Example shapes:
-   - `kubeconform: install via 'brew install kubeconform' or 'go install github.com/yannh/kubeconform/cmd/kubeconform@latest'`.
-   - `helm: install via 'brew install helm' or follow https://helm.sh/docs/intro/install/`.
-   - `kustomize: install via 'brew install kustomize' or 'go install sigs.k8s.io/kustomize/kustomize/v5@latest'` (note: `kubectl kustomize` ships inside `kubectl` and is acceptable as a fallback when standalone `kustomize` is missing).
-   - `conftest: install via 'brew install conftest' or from https://github.com/open-policy-agent/conftest/releases`.
-   - `kyverno: install via 'brew install kyverno' or from https://github.com/kyverno/kyverno/releases`.
-   - `gator: install via 'go install github.com/open-policy-agent/gatekeeper/v3/cmd/gator@latest' or from https://github.com/open-policy-agent/gatekeeper/releases`.
-   - `kube-score`, `kube-linter`, `polaris`, `trivy`, `checkov`, `kics`, `popeye`: each has `brew install <tool>` and a GitHub Releases page — use the tool's README as the authoritative install source.
+2. **Surface a per-tool install hint.** The hint must name the tool, the recommended install path, and an alternative where one exists. Install hints for every tool named in this profile live next to the tool's description — in [validators.md](validators.md) for floor/menu/cluster-dependent tools and [policy-hook.md](policy-hook.md) for policy engines. Use the hint from the tool's own entry rather than re-deriving it here; if an entry lacks a hint, fall back to the tool's README as the authoritative install source.
 3. **Fall back to descriptive guidance OR mark skipped.** Two acceptable reports — pick whichever fits the check's importance:
    - **Descriptive guidance**: name the category of problems the validator would have caught (e.g., "kubeconform would have schema-validated the 12 matched YAML docs against the Kubernetes API; install it to enable this check"). Useful for floor tools, because the user should understand what coverage they are missing.
    - **Skipped**: a one-line entry in the report (e.g., `[SKIP] kube-score — binary not installed`). Useful for menu tools the user did not opt into.

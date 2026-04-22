@@ -7,11 +7,12 @@ Kubernetes projects commonly adopt one of three policy engines: **Conftest/OPA**
 ## Conftest / OPA
 
 - **Project markers** — any one of:
-  - A `.conftest/` directory at the repo root or in the feature's scope.
-  - `policies/` directory containing `*.rego` files.
+  - `policy/` (singular) directory containing `*.rego` files — Conftest's documented default rules directory.
+  - `policies/` (plural) directory containing `*.rego` files — common non-default; requires explicit `-p policies/` because Conftest does not auto-discover the plural form.
   - A `conftest.toml` file at the repo root.
+  - A `.conftest/` directory (non-standard; some projects use this as a local convention — not a documented Conftest marker).
 - **Binary check** — `command -v conftest`.
-- **Command when both gates pass**: `conftest test <matched-manifests>` from the repo root (or the policy directory the project uses). Defaults to `./policy/` for rule location; pass `-p <dir>` if the project uses a non-default path.
+- **Command when both gates pass**: `conftest test -p <detected-policy-dir> <matched-manifests>` from the repo root. Always pass `-p <dir>` explicitly with the path of whichever marker fired — Conftest's default is `./policy/` (singular) and projects using the plural `policies/` form would otherwise silently load no rules.
 - **What it catches**: rule violations the project has authored in Rego — RBAC over-permission, required labels, banned `hostPath`, enforcement of `imagePullPolicy: IfNotPresent`, custom invariants.
 - **Install hint (binary missing)**: `conftest: install via 'brew install conftest' or from https://github.com/open-policy-agent/conftest/releases`.
 
@@ -33,7 +34,7 @@ Kubernetes projects commonly adopt one of three policy engines: **Conftest/OPA**
   - Kubernetes resources of `kind: ConstraintTemplate` (API group `templates.gatekeeper.sh`) or concrete `Constraint` resources (API group `constraints.gatekeeper.sh`) present in the project.
   - A `gator-test.yaml` or `suite.yaml` Gatekeeper test scaffold.
 - **Binary check** — `command -v gator`.
-- **Command when both gates pass**: `gator test --filename=<constraints-and-templates-dir>` or `gator verify --filename=<suite.yaml>` depending on which scaffold the project uses. `gator test` validates admission against the constraint set; `gator verify` runs the suite of test expectations.
+- **Command when both gates pass**: prefer `gator verify --filename=<suite.yaml>` for CI — it runs `Suite` resources with pass/fail expectations (declarative test scaffolds). When a `Suite` is not available, use `gator test -f <constraints-and-templates-dir> -f <matched-manifests>` — note that BOTH `-f` flags are required: `gator test` needs constraints AND target resources to evaluate against, so passing only the constraints directory silently produces no meaningful output. `gator verify` is the recommended CI path; `gator test` is for interactive evaluation.
 - **What it catches**: constraint-template compilation errors, failing unit tests for the project's admission rules, gaps between design intent and admission behavior.
 - **Install hint (binary missing)**: `gator: install via 'go install github.com/open-policy-agent/gatekeeper/v3/cmd/gator@latest' or from https://github.com/open-policy-agent/gatekeeper/releases`.
 
