@@ -344,6 +344,25 @@ for skill in "${PROFILE_DETECTION_CONSUMERS[@]}"; do
 done
 
 # =============================================================================
+# Section 10: Skill description length
+# =============================================================================
+
+log_section "Section 10: Skill description length"
+
+log_test "dependency-handling description fits within 1,536-character per-entry cap"
+dep_skill="$REPO_ROOT/klaude-plugin/skills/dependency-handling/SKILL.md"
+dep_desc=$(sed -n '/^description:/,/^---$/p' "$dep_skill" \
+  | sed '1d;/^---$/d' \
+  | sed 's/^  //' \
+  | tr -d '\n')
+dep_desc_len=${#dep_desc}
+if (( dep_desc_len <= 1536 )); then
+  log_pass "dependency-handling description length ($dep_desc_len chars) ≤ 1,536"
+else
+  log_fail "dependency-handling description length ($dep_desc_len chars) exceeds 1,536-character cap"
+fi
+
+# =============================================================================
 # Summary
 # =============================================================================
 
