@@ -43,7 +43,7 @@ These tools overlap in coverage; projects typically adopt one of the best-practi
 
 - **`kube-score`** — scores manifests against a fixed best-practices ruleset (probes, resource limits, `imagePullPolicy`, `runAsNonRoot`, etc.). Command: `kube-score score <files>`. Install: `brew install kube-score` or https://github.com/zegl/kube-score/releases.
 - **`kube-linter`** — pluggable linter with a built-in check catalog; disable/enable specific checks via config. Command: `kube-linter lint <files>`. Install: `brew install kube-linter` or `go install github.com/stackrox/kube-linter/cmd/kube-linter@latest` (the `golang.stackrox.io` vanity path also resolves but the GitHub module path is canonical).
-- **`polaris`** — opinionated auditor with a web UI for cluster-level auditing and a CLI for manifest mode. Command: `polaris audit --audit-path <dir>`. Install: `brew install polaris` or https://github.com/FairwindsOps/polaris/releases.
+- **`polaris`** — opinionated auditor with a web UI for cluster-level auditing and a CLI for manifest mode. Command: `polaris audit --audit-path <dir>` (flag verified against FairwindsOps/polaris docs). Install: `brew tap FairwindsOps/tap && brew install FairwindsOps/tap/polaris` or https://github.com/FairwindsOps/polaris/releases — note: a bare `brew install polaris` resolves to an unrelated Homebrew formula; the FairwindsOps tap is required.
 
 Overlap note: `kube-score` and `kube-linter` and `polaris` raise materially different subsets; pick one as the primary and revisit only if the project outgrows it.
 
