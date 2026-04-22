@@ -53,6 +53,16 @@ Classify every finding using exactly one of these types:
 | Outdated Doc | `OUTDATED_DOC` | Code is correct but docs haven't been updated to reflect reality | Endpoint was renamed during implementation but docs still reference old name |
 | Ambiguous Spec | `AMBIGUOUS` | Spec is unclear enough that multiple interpretations are valid | "Support pagination" without specifying cursor vs offset |
 
+### IaC Profile Semantics
+
+When reviewing features that involve Infrastructure-as-Code profiles (Kubernetes, Terraform, etc.), the declarative artifacts ARE the implementation — there is no separate runtime code to trace. Apply these adjusted type-mappings:
+
+- A design-specified resource whose manifest is absent → `MISSING_IMPL` (absence in declarative systems is a gap, not a pending item)
+- A field value in a manifest that disagrees with the design → `SPEC_DEV`
+- A manifest resource the design does not mention → `EXTRA_IMPL`
+
+If the spawning workflow provides profile-specific review-spec checklists, read and apply them alongside the standard finding taxonomy.
+
 ## Severity Levels
 
 | Level | Name | Description | Action |

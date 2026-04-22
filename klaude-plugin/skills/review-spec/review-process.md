@@ -4,7 +4,7 @@ Copy this checklist and check off items as you complete them:
 
 ```
 Implementation Review Progress:
-- [ ] Step 1: Load feature documents
+- [ ] Step 1: Load feature documents and detect profiles
 - [ ] Step 2: Determine review scope
 - [ ] Step 3: Per-task verification
 - [ ] Step 4: Cross-cutting concerns
@@ -14,12 +14,13 @@ Implementation Review Progress:
 - [ ] Step 8: Verify outputs
 ```
 
-**Step 1: Load feature documents**
+**Step 1: Load feature documents and detect profiles**
 
 - Read `tasks.md` from `/docs/wip/[feature-name]/`
 - Read the linked `design.md` and `implementation.md`
 - If the feature name is not provided or ambiguous, list `/docs/wip/` contents and ask the user which feature to review
 - If no WIP docs exist, inform the user and ask if they want to point to alternative documentation
+- **Detect active profiles** using [shared-profile-detection.md](shared-profile-detection.md). For each active profile that populates a `review-spec/` phase slot, load its `index.md` and resolve always-load and matching conditional entries. Load resolved profile content before proceeding to per-task verification.
 
 **Step 2: Determine review scope**
 
@@ -31,6 +32,8 @@ Parse `tasks.md` for task statuses and determine the review mode:
 Build and present a checklist of tasks that will be reviewed.
 
 **Step 3: Per-task verification**
+
+**IaC profile semantics.** When an IaC profile is active (e.g., Kubernetes), declarative artifacts are the implementation. Apply the profile's type-mapping guidance loaded in Step 1: a design-specified resource whose manifest is absent is `MISSING_IMPL` (not `DOC_INCON`); a field-value mismatch between manifest and design is `SPEC_DEV`; an undocumented manifest resource is `EXTRA_IMPL`. See the loaded profile content for domain-specific verification patterns (resource-level, field-level, relationship-chain checks).
 
 For each in-scope task:
 

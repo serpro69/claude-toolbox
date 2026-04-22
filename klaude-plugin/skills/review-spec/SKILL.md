@@ -11,6 +11,8 @@ description: |
 
 Read capy knowledge base conventions at [shared-capy-knowledge-protocol.md](shared-capy-knowledge-protocol.md).
 
+**Profile detection.** See [shared-profile-detection.md](shared-profile-detection.md) for the shared detection procedure. When an active profile populates a `review-spec/` phase slot, its `index.md` content is loaded before per-task verification begins.
+
 ## Overview
 
 Systematically compare implemented code against a feature's `design.md`, `implementation.md`, and `tasks.md` in `/docs/wip/[feature]/`. Works both mid-implementation (reviewing completed tasks only) and post-implementation (full feature review).
@@ -57,6 +59,16 @@ Each finding is classified by type (what kind of mismatch) and severity (how urg
 | Outdated Doc           | `OUTDATED_DOC` | Code is correct but docs haven't been updated to reflect reality | Endpoint was renamed during implementation but docs still reference old name |
 | Ambiguous Spec         | `AMBIGUOUS`    | Spec is unclear enough that multiple interpretations are valid   | "Support pagination" without specifying cursor vs offset                     |
 
+### IaC Profile Semantics
+
+When profile detection identifies an Infrastructure-as-Code profile (e.g., Kubernetes, Terraform), the declarative artifacts ARE the implementation — there is no separate runtime code to trace. Apply these adjusted type-mappings:
+
+- A design-specified resource whose manifest is absent → `MISSING_IMPL` (absence in declarative systems is a gap, not a pending item or inconsistency)
+- A field value in a manifest that disagrees with the design → `SPEC_DEV`
+- A manifest resource the design does not mention → `EXTRA_IMPL`
+
+For each active IaC profile that populates a `review-spec/` slot, load `${CLAUDE_PLUGIN_ROOT}/profiles/<name>/review-spec/index.md` for domain-specific verification patterns.
+
 ## Severity Levels
 
 Same P0–P3 scale as `review-code`, adapted for spec conformance:
@@ -88,12 +100,13 @@ See [review-process.md](./review-process.md) for the detailed step-by-step proce
 
 1. Load feature documents
 2. **Capy search:** Search `kk:arch-decisions` for design rationale that may explain intentional spec deviations. Search `kk:review-findings` for known patterns from prior reviews.
-3. Determine review scope (mid-implementation vs post-implementation)
-4. Per-task verification against spec
-5. Cross-cutting concern check
-6. Self-check and confidence assessment
-7. Present findings
-8. Index confirmed deviations — index user-confirmed intentional `SPEC_DEV`/`EXTRA_IMPL` as `kk:arch-decisions`
+3. Detect active profiles and load `review-spec/` content from matching profiles
+4. Determine review scope (mid-implementation vs post-implementation)
+5. Per-task verification against spec (apply IaC type-mapping when an IaC profile is active)
+6. Cross-cutting concern check
+7. Self-check and confidence assessment
+8. Present findings
+9. Index confirmed deviations — index user-confirmed intentional `SPEC_DEV`/`EXTRA_IMPL` as `kk:arch-decisions`
 
 ## Invocation
 
