@@ -55,7 +55,7 @@ For each active profile, resolve the checklists to apply:
 2. Collect every entry under **Always load**.
 3. For every **Load if:** conditional entry, evaluate the predicate against the diff; collect the entry when it matches.
 
-Accumulate a flat list of `(profile, checklist)` records. This list — not any hardcoded category sequence — is what the sub-agent and pal prompts will receive in Step 2. If no profile matched, the list is empty; both reviewers fall back to general guidance.
+Accumulate a flat list of `(profile, checklist, triggered_by)` records — carry the `triggered_by` signal from each detection record through to every checklist resolved for that profile. This list — not any hardcoded category sequence — is what the sub-agent and pal prompts will receive in Step 2. If no profile matched, the list is empty; both reviewers fall back to general guidance.
 
 ### 1d) Resolve pal model
 
@@ -102,9 +102,9 @@ You are reviewing the following code changes. Apply your full review workflow.
 
 ## Active Profiles and Resolved Checklists
 
-{list of (profile, checklist) records from Step 1c, formatted as a flat tuple list — one pair per line:
-- profile: <name>, checklist: <checklist_filename>
-- profile: <name>, checklist: <checklist_filename>
+{list of (profile, checklist, triggered_by) records from Step 1c, formatted as a flat tuple list — one record per line:
+- profile: <name>, checklist: <checklist_filename>, triggered_by: <signal_type> — <signal_description>
+- profile: <name>, checklist: <checklist_filename>, triggered_by: <signal_type> — <signal_description>
 ...
 }
 
@@ -202,6 +202,8 @@ Use this report template, organized by agreement level:
 (Both reviewers flagged — highest signal)
 
 - **[file:line]** Brief title ⟨corroborated⟩
+  - Profile: {profile_name} · Checklist: {checklist_filename}
+  - Triggered by: {signal_type} — {signal_description}
   - code-reviewer: [severity] — [description]
   - pal: [description in native format]
   - Author context: [optional annotation]
@@ -210,6 +212,8 @@ Use this report template, organized by agreement level:
 (code-reviewer sub-agent only — P0-P3 format)
 
 - **[file:line]** Brief title
+  - Profile: {profile_name} · Checklist: {checklist_filename}
+  - Triggered by: {signal_type} — {signal_description}
   - Severity: P[0-3] | Confidence: [X]%
   - [description and suggested fix]
   - Author context: [optional annotation]
@@ -218,12 +222,16 @@ Use this report template, organized by agreement level:
 (pal codereview — native format)
 
 - [pal output presented in its native format]
+  - Profile: {profile_name} · Checklist: {checklist_filename}
+  - Triggered by: {signal_type} — {signal_description}
   - Author context: [optional annotation]
 
 ### Author-Sourced Findings
 (Main agent observations during annotation — weight accordingly)
 
 - **[file:line]** Brief title ⟨author-sourced⟩
+  - Profile: generic · Checklist: —
+  - Triggered by: —
   - [description]
 ```
 
