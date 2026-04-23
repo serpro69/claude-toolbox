@@ -74,19 +74,12 @@ jobs:
           echo "Current version: $CURRENT_VERSION"
           echo "New version: $NEW_SEMVER"
 
-          if [[ "$NEW_SEMVER" == "$CURRENT_VERSION" ]]; then
-            echo "::error::New version $NEW_SEMVER is the same as the current version."
-            exit 1
-          fi
-
-          # Use sort -V for version comparison
-          HIGHER=$(printf '%s\n%s' "$CURRENT_VERSION" "$NEW_SEMVER" | sort -V | tail -1)
-          if [[ "$HIGHER" != "$NEW_SEMVER" ]]; then
-            echo "::error::New version $NEW_SEMVER is not newer than current version $CURRENT_VERSION."
-            exit 1
-          fi
-
-          echo "Version bump: $CURRENT_VERSION -> $NEW_SEMVER"
+          RESULT=$(bash .github/scripts/semver-compare.sh "$CURRENT_VERSION" "$NEW_SEMVER")
+          case "$RESULT" in
+            lt)  echo "Version bump: $CURRENT_VERSION -> $NEW_SEMVER" ;;
+            eq)  echo "::error::New version $NEW_SEMVER is the same as the current version."; exit 1 ;;
+            gt)  echo "::error::New version $NEW_SEMVER is not newer than current version $CURRENT_VERSION."; exit 1 ;;
+          esac
 
       - name: Dry Run Summary
         if: inputs.dry_run == true
