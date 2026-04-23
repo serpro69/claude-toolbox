@@ -38,15 +38,15 @@ Subtasks:
 ## Task 3 — Update `design` skill files to consume generic iteration
 
 - **Phase:** P1
-- **Status:** pending
+- **Status:** done
 - **Depends on:** Task 2
 - **Links:** [implementation.md §Step 1.3](implementation.md#step-13--update-design-skill-files)
 
 Subtasks:
 
-- [ ] Edit `klaude-plugin/skills/design/idea-process.md` Step 3 — remove the hard-coded K8s token list and hard-coded confirmation prompt. Replace with a reference to the shared procedure's generic design interaction pattern.
-- [ ] Edit `klaude-plugin/skills/design/existing-task-process.md` — equivalent change in the continue-WIP flow.
-- [ ] Verify: `grep -c 'Kubernetes\|K8s\|kubectl\|kustomize\|Helm chart\|StatefulSet\|DaemonSet\|CronJob' klaude-plugin/skills/design/idea-process.md` returns 0.
+- [x] Edit `klaude-plugin/skills/design/idea-process.md` Step 3 — remove the hard-coded K8s token list and hard-coded confirmation prompt. Replace with a reference to the shared procedure's generic design interaction pattern.
+- [x] Edit `klaude-plugin/skills/design/existing-task-process.md` — equivalent change in the continue-WIP flow.
+- [x] Verify: `grep -c 'Kubernetes\|K8s\|kubectl\|kustomize\|Helm chart\|StatefulSet\|DaemonSet\|CronJob' klaude-plugin/skills/design/idea-process.md` returns 0.
 
 ## Task 4 — Update CLAUDE.md for `## Design signals`
 
