@@ -82,15 +82,15 @@ Subtasks:
 ## Task 6 — Update `review-process.md` output template
 
 - **Phase:** P2
-- **Status:** pending
+- **Status:** done
 - **Depends on:** —
 - **Links:** [implementation.md §Step 2.1](implementation.md#step-21--update-review-processmd-output-template)
 
 Subtasks:
 
-- [ ] Edit `klaude-plugin/skills/review-code/review-process.md` Step 10 output template — add `Profile: {name} · Checklist: {filename}` and `Triggered by: {signal}` sub-labels to each finding in the P0–P3 sections. For generic findings: `Profile: generic · Checklist: —`.
-- [ ] Update the instruction at Step 7 (~line 96) to clarify that `(profile, checklist)` materializes as sub-labels in the severity-major template, not separate sections.
-- [ ] Verify: the template shows Profile/Checklist/Triggered-by fields. Step 7 instruction is consistent with the template shape.
+- [x] Edit `klaude-plugin/skills/review-code/review-process.md` Step 10 output template — add `Profile: {name} · Checklist: {filename}` and `Triggered by: {signal}` sub-labels to each finding in the P0–P3 sections. For generic findings: `Profile: generic · Checklist: —`.
+- [x] Update the instruction at Step 7 (~line 96) to clarify that `(profile, checklist)` materializes as sub-labels in the severity-major template, not separate sections.
+- [x] Verify: the template shows Profile/Checklist/Triggered-by fields. Step 7 instruction is consistent with the template shape.
 
 ## Task 7 — Update `code-reviewer.md` output template
 
