@@ -107,14 +107,14 @@ Subtasks:
 ## Task 8 — Update `review-isolated.md` output template
 
 - **Phase:** P2
-- **Status:** pending
+- **Status:** done
 - **Depends on:** —
 - **Links:** [implementation.md §Step 2.3](implementation.md#step-23--update-review-isolatedmd-output-template)
 
 Subtasks:
 
-- [ ] Edit `klaude-plugin/skills/review-code/review-isolated.md` Step 5 template — add Profile/Checklist/Triggered-by metadata alongside the existing reviewer-source grouping.
-- [ ] Verify: the template shows sub-labels in each reviewer-source subsection.
+- [x] Edit `klaude-plugin/skills/review-code/review-isolated.md` Step 5 template — add Profile/Checklist/Triggered-by metadata alongside the existing reviewer-source grouping.
+- [x] Verify: the template shows sub-labels in each reviewer-source subsection.
 
 ## Task 9 — P2 (A3) verification
 
