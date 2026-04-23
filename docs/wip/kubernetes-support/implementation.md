@@ -334,6 +334,7 @@ New content:
 
 File edits:
 - `klaude-plugin/skills/review-spec/SKILL.md`, `review-process.md`, `review-isolated.md` — where the finding taxonomy is described, add the clause from [design.md §review-spec — P3 K8s-awareness polish](design.md#review-spec--p3-k8s-awareness-polish) explaining that for IaC profiles the declarative artifacts *are* the implementation; absence of a specified resource is `missing_impl`, not `doc_incon`.
+- `klaude-plugin/agents/spec-reviewer.md` — add the IaC semantics clause (mirroring SKILL.md) and a "Load profile checklists" step between capy search and scope determination, so the isolated sub-agent reads profile-specific verification patterns before acting on subject matter (per ADR 0004).
 
 New content (conditional):
 - Apply the threshold rule from [design.md §`review-spec` — P3](design.md#review-spec--p3-k8s-awareness-polish): create `klaude-plugin/profiles/k8s/review-spec/index.md` and supporting content files when the drafted guidance comprises **≥2 distinct checklists** OR includes **any conditional trigger**. Otherwise the guidance lives inline in the three `review-spec` skill files and no `profiles/k8s/review-spec/` subdirectory is created.
