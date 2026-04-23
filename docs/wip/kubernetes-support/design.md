@@ -345,6 +345,7 @@ The existing `review-spec` finding taxonomy (missing_impl, spec_dev, doc_incon, 
 Touched files:
 - `klaude-plugin/skills/review-spec/SKILL.md` — prose gains a clause: "When profile detection finds an IaC profile active (e.g., K8s, Terraform), treat the declarative artifacts as the implementation; absence of a specified resource is a `missing_impl` finding, not a `doc_incon`."
 - `klaude-plugin/skills/review-spec/review-process.md` and `klaude-plugin/skills/review-spec/review-isolated.md` — parallel clause where the finding taxonomy is described.
+- `klaude-plugin/agents/spec-reviewer.md` — IaC semantics clause mirroring SKILL.md's, plus a "Load profile checklists" workflow step so the sub-agent reads domain-specific verification patterns before per-task verification. The agent is the isolated-mode reviewer spawned by `review-isolated.md`; it needs the same IaC type-mapping the parent skill applies.
 - `klaude-plugin/skills/review-spec/shared-profile-detection.md` — symlink (created in P0).
 - `klaude-plugin/profiles/k8s/review-spec/index.md` (new) — **create** when the K8s-specific spec-review guidance comprises **two or more distinct checklists** OR includes **any conditional trigger** (diff-property-dependent loading). Otherwise **inline** a single paragraph into `review-spec/SKILL.md`, `review-process.md`, and `review-isolated.md`. The implementation plan defers the choice until writing so the threshold can be applied to the actual drafted content.
 
