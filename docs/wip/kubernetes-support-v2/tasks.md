@@ -236,16 +236,16 @@ Subtasks:
 ## Task 17 — Wave 3: Sub-agent audit
 
 - **Phase:** P4
-- **Status:** pending
+- **Status:** done
 - **Depends on:** Task 16
 - **Links:** [implementation.md §Step 4.3](implementation.md#step-43--wave-3-sub-agent-audit)
 
 Subtasks:
 
-- [ ] List all agent files under `klaude-plugin/agents/`. For each, identify which skill(s) reference it.
-- [ ] Read each agent file. Verify it has an internal instruction-before-action ordering, or document why it doesn't need one.
-- [ ] Fix agents that lack the ordering: add explicit workflow step that reads instructions (profile checklists, process files) before acting on subject matter.
-- [ ] Verify: each agent file has instruction-before-action ordering or a documented exemption.
+- [x] List all agent files under `klaude-plugin/agents/`. For each, identify which skill(s) reference it. *Five agents: `code-reviewer` (review-code), `design-reviewer` (review-design), `eval-grader` (eval harness), `profile-resolver` (eval harness), `spec-reviewer` (review-spec).*
+- [x] Read each agent file. Verify it has an internal instruction-before-action ordering, or document why it doesn't need one. *Two already compliant: `code-reviewer` (has "Mandatory ordering — methodology before evidence"), `profile-resolver` (has "Follow the mandatory-ordering principle (ADR 0004)"). Two needed fixes: `design-reviewer`, `spec-reviewer`. One exempt: `eval-grader`.*
+- [x] Fix agents that lack the ordering: add explicit workflow step that reads instructions (profile checklists, process files) before acting on subject matter. *Added "Mandatory ordering — methodology before evaluation" to `design-reviewer`; added "Mandatory ordering — spec before code" to `spec-reviewer`. Added documented exemption to `eval-grader` (receives no profile content or external instructions — inline payload only).*
+- [x] Verify: each agent file has instruction-before-action ordering or a documented exemption. *All 5 agents confirmed: `grep` for "Mandatory ordering" or "exempt" returns a match in every agent file. 143 structure test assertions passed, 0 failed.*
 
 ## Task 18 — P4 (A2) verification
 
