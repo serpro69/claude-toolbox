@@ -1,0 +1,25 @@
+- repo: samber/cc-skills-golang
+  ref: v1.0.0
+  keep_default: from_first_h1
+  files:
+    - source: skills/golang-security/SKILL.md
+      phase: review-code
+      as: security.md
+
+    - source: skills/golang-security/references/injection.md
+      phase: review-code
+      as: security-injection-ref.md
+      keep: all
+
+    - source: skills/golang-security/SKILL.md
+      phase: implement
+      as: security.md
+
+    - source: skills/golang-testing/SKILL.md
+      phase: test
+      as: testing.md
+
+    - source: skills/golang-security/SKILL.md
+      phase: review-code
+      as: database.md
+      condition: "Diff imports database/sql, sqlx, gorm, ent, or pgx"

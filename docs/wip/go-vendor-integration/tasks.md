@@ -76,15 +76,15 @@
 - [x] 6.5 Write `index_test.go`: new file generation, marker replacement preserving outside content, always-load vs conditional formatting, description extraction
 
 ## Task 7: Integration test and Makefile
-- **Status:** pending
+- **Status:** done
 - **Depends on:** Task 3, Task 4, Task 5, Task 6
 - **Docs:** [implementation.md — Task 1.7, Task 1.8](./implementation.md#task-17-integration-test)
 
 ### Subtasks
-- [ ] 7.1 Create `cmd/vendor-profiles/testdata/` with fixture manifest, sample SKILL.md (frontmatter + persona + H1 + content), sample references file, sample file with internal links
-- [ ] 7.2 Write `main_test.go` integration test: run full pipeline against fixtures, assert output files, assert index.md structure, assert idempotency (second run produces same output)
-- [ ] 7.3 Create `Makefile` with `vendor-go` and `test-structure` targets
-- [ ] 7.4 Verify: `go test ./cmd/vendor-profiles/...` all green, `make vendor-go` runs end-to-end
+- [x] 7.1 Create `cmd/vendor-profiles/testdata/` with fixture manifest, sample SKILL.md (frontmatter + persona + H1 + content), sample references file, sample file with internal links
+- [x] 7.2 Write `main_test.go` integration test: run full pipeline against fixtures, assert output files, assert index.md structure, assert idempotency (second run produces same output)
+- [x] 7.3 Create `Makefile` with `vendor-go` and `test-structure` targets
+- [x] 7.4 Verify: `go test ./cmd/vendor-profiles/...` all green, `make vendor-go` runs end-to-end
 
 ## Task 8: Create manifest and populate Go profile
 - **Status:** pending
