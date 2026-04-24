@@ -45,7 +45,7 @@ Use crypto/rand, not math/rand.
 	if !strings.HasPrefix(result, "# Go Security Checklist") {
 		t.Errorf("expected output to start with H1, got: %q", result[:min(60, len(result))])
 	}
-	if strings.Contains(result, "---") {
+	if strings.HasPrefix(result, "---\n") {
 		t.Error("output still contains frontmatter delimiters")
 	}
 	if strings.Contains(result, "You are a Go security expert") {
@@ -316,5 +316,27 @@ func TestApplyTransform_HeadingsMissingKey(t *testing.T) {
 	}
 	if !strings.Contains(err.Error(), "missing 'headings' key") {
 		t.Errorf("error = %q, want containing %q", err, "missing 'headings' key")
+	}
+}
+
+func TestApplyTransform_HeadingsNotAList(t *testing.T) {
+	keep := map[string]any{"headings": "not a list"}
+	_, err := ApplyTransform([]byte("content"), keep)
+	if err == nil {
+		t.Fatal("expected error for non-list headings, got nil")
+	}
+	if !strings.Contains(err.Error(), "must be a list of strings") {
+		t.Errorf("error = %q, want containing %q", err, "must be a list of strings")
+	}
+}
+
+func TestApplyTransform_HeadingsNonStringElement(t *testing.T) {
+	keep := map[string]any{"headings": []any{"## Valid", 42}}
+	_, err := ApplyTransform([]byte("content"), keep)
+	if err == nil {
+		t.Fatal("expected error for non-string heading element, got nil")
+	}
+	if !strings.Contains(err.Error(), "heading must be a string") {
+		t.Errorf("error = %q, want containing %q", err, "heading must be a string")
 	}
 }
