@@ -41,16 +41,16 @@
 - [x] 3.4 Verify: HTTPFetcher tested in integration test only; LocalFetcher used in all unit tests
 
 ## Task 4: Keep transforms
-- **Status:** pending
+- **Status:** done
 - **Depends on:** Task 2
 - **Docs:** [implementation.md — Task 1.4](./implementation.md#task-14-keep-transforms)
 
 ### Subtasks
-- [ ] 4.1 Implement `TransformAll(content []byte) []byte` — passthrough
-- [ ] 4.2 Implement `TransformFromFirstH1(content []byte) ([]byte, error)` — scan for `^# `, return from that line onward, error if not found
-- [ ] 4.3 Implement `TransformHeadings(content []byte, headings []string) ([]byte, error)` — extract named H2 sections, error if any heading not found
-- [ ] 4.4 Implement dispatch function `ApplyTransform(content []byte, keep any) ([]byte, error)`
-- [ ] 4.5 Write `transform_test.go`: from_first_h1 with frontmatter+persona, no-H1 error, empty file error, headings extraction, nested H3 inclusion, all passthrough
+- [x] 4.1 Implement `TransformAll(content []byte) []byte` — passthrough
+- [x] 4.2 Implement `TransformFromFirstH1(content []byte) ([]byte, error)` — scan for `^# `, return from that line onward, error if not found
+- [x] 4.3 Implement `TransformHeadings(content []byte, headings []string) ([]byte, error)` — extract named H2 sections, error if any heading not found
+- [x] 4.4 Implement dispatch function `ApplyTransform(content []byte, keep any) ([]byte, error)`
+- [x] 4.5 Write `transform_test.go`: from_first_h1 with frontmatter+persona, no-H1 error, empty file error, headings extraction, nested H3 inclusion, all passthrough
 
 ## Task 5: Link rewriting
 - **Status:** pending
