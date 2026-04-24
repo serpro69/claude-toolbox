@@ -1,8 +1,13 @@
-.PHONY: vendor-go test-structure
+.ONESHELL:
+.SHELL      := $(shell which bash)
+.SHELLFLAGS := -ec
 
-vendor-go:
+.PHONY: vendor-profiles test-structure
+
+vendor-profiles:
+	go test ./cmd/vendor-profiles/...
 	go run ./cmd/vendor-profiles -manifest scripts/go-vendor-manifest.yml
-	bash test/test-plugin-structure.sh
+	$(MAKE) test-structure
 
 test-structure:
 	bash test/test-plugin-structure.sh
