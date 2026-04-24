@@ -18,19 +18,17 @@ func main() {
 		os.Exit(1)
 	}
 
-	if err := run(*manifestPath, *targetDir, *dryRun); err != nil {
+	if err := run(*manifestPath, *targetDir, *dryRun, &HTTPFetcher{}); err != nil {
 		fmt.Fprintf(os.Stderr, "error: %v\n", err)
 		os.Exit(1)
 	}
 }
 
-func run(manifestPath, targetDir string, dryRun bool) error {
+func run(manifestPath, targetDir string, dryRun bool, fetcher Fetcher) error {
 	manifest, err := ParseManifest(manifestPath)
 	if err != nil {
 		return fmt.Errorf("parsing manifest: %w", err)
 	}
-
-	fetcher := &HTTPFetcher{}
 
 	for _, upstream := range manifest {
 		for _, file := range upstream.Files {
