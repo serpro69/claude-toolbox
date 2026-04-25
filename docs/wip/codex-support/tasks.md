@@ -107,15 +107,15 @@
 
 ## Task 7: Starlark rules
 
-- **Status:** pending
+- **Status:** done
 - **Depends on:** Task 0
 - **Docs:** [implementation.md#phase-7-rules](./implementation.md#phase-7-rules)
 
 ### Subtasks
 
-- [ ] 7.1 Read `.claude/settings.json` `permissions.deny` array to extract denied commands. **Only `Bash(...)` entries are ported** — `Read(...)` entries handled by PreToolUse hook (Task 5) and SessionStart advisory (Task 4)
-- [ ] 7.2 Create `.codex/rules/default.rules` — one `prefix_rule()` per denied `Bash(...)` command with `decision = "deny"`, `justification`, and at least one `match`/`not_match` inline test case. Port "ask" commands as `decision = "prompt"`
-- [ ] 7.3 Verify: `codex execpolicy check --pretty --rules .codex/rules/default.rules -- rm -rf /tmp/test` shows `deny`; `-- ls` shows `allow`
+- [x] 7.1 Read `.claude/settings.json` `permissions.deny` array to extract denied commands. **Only `Bash(...)` entries are ported** — `Read(...)` entries handled by PreToolUse hook (Task 5) and SessionStart advisory (Task 4)
+- [x] 7.2 Create `.codex/rules/default.rules` — one `prefix_rule()` per denied `Bash(...)` command with `decision = "forbidden"` (codex's equivalent of deny), `justification`, and `match`/`not_match` inline test cases. No "ask" commands to port (empty array)
+- [x] 7.3 Verify: `codex execpolicy check --pretty --rules .codex/rules/default.rules -- rm -rf /tmp/test` shows `forbidden`; `-- ls` shows no matched rules (default allow)
 
 ## Task 8: Config.toml finalization and statusline
 
