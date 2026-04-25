@@ -200,6 +200,14 @@ jobs:
             echo "Applied changes to .serena/"
           fi
 
+          # Copy codex config files
+          if [[ -d "$STAGING_DIR/codex" ]]; then
+            mkdir -p .codex
+            cp -r "$STAGING_DIR/codex/"* .codex/ 2>/dev/null || true
+            chmod +x .codex/scripts/*.sh 2>/dev/null || true
+            echo "Applied changes to .codex/"
+          fi
+
           # Copy workflow files (sync infrastructure)
           if [[ -d "$STAGING_DIR/workflows" ]]; then
             cp -r "$STAGING_DIR/workflows/"* .github/workflows/ 2>/dev/null || true
@@ -244,7 +252,7 @@ jobs:
           fi
 
           # Backfill missing optional variables with defaults
-          DEFAULTS='{"CC_STATUSLINE":"enhanced","CC_EFFORT_LEVEL":"high","CC_PERMISSION_MODE":"default"}'
+          DEFAULTS='{"CC_STATUSLINE":"enhanced","CC_EFFORT_LEVEL":"high","CC_PERMISSION_MODE":"default","CODEX_MODEL":"gpt-5.5","CODEX_APPROVAL_POLICY":"on-request"}'
           for key in $(echo "$DEFAULTS" | jq -r 'keys[]'); do
             if [[ "$(jq -r ".variables.$key // \"__MISSING__\"" .github/template-state.json)" == "__MISSING__" ]]; then
               default_val=$(echo "$DEFAULTS" | jq -r ".$key")
