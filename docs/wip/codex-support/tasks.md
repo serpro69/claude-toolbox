@@ -19,7 +19,7 @@
 - [ ] 0.4 Verify all existing tests pass: `for test in test/test-*.sh; do $test; done` exits 0
 
 ## Task 1: Generation tool (`cmd/generate-kodex/`)
-- **Status:** in-progress
+- **Status:** done
 - **Depends on:** Task 0
 - **Docs:** [implementation.md#phase-1-generate-tool](./implementation.md#phase-1-generate-tool)
 
@@ -35,20 +35,20 @@
 - [x] 1.9 Create `scripts/kodex-generate-manifest.yml` — generation manifest declaring all skills, transforms, agent config, manifest config, MCP config
 - [x] 1.10 Create tests: `cmd/generate-kodex/*_test.go` with testdata fixtures. Cover: manifest parsing, each transform, skill generation, shared dir copy, agent generation (.md → .toml), manifest generation, MCP generation, end-to-end with dry-run
 - [x] 1.11 Run generation and verify: `kodex-plugin/skills/` contains all SKILL.md files; `.codex/agents/` contains all five TOML files; no `${CLAUDE_PLUGIN_ROOT}` literals in generated output; `.codex-plugin/plugin.json` and `.mcp.json` validate as JSON; each TOML parses cleanly
-- [ ] 1.12 Commit generated `kodex-plugin/` and `.codex/agents/` output
+- [x] 1.12 Commit generated `kodex-plugin/` and `.codex/agents/` output
 
 ## Task 2: Makefile integration
-- **Status:** pending
+- **Status:** done
 - **Depends on:** Task 1
 - **Docs:** [implementation.md#phase-2-makefile](./implementation.md#phase-2-makefile)
 
 ### Subtasks
-- [ ] 2.1 Add `generate-kodex` target to `Makefile`: runs `go test`, then `go run`, then `make test-structure`
-- [ ] 2.2 Add `generate-all` target combining `vendor-profiles` and `generate-kodex`
-- [ ] 2.3 Verify: `make generate-kodex` succeeds; modifying a SKILL.md in `klaude-plugin/` then running `make generate-kodex` produces a diff in `kodex-plugin/`
+- [x] 2.1 Add `generate-kodex` target to `Makefile`: runs `go test`, then `go run`, then `make test-structure`
+- [x] 2.2 Add `generate-all` target combining `vendor-profiles` and `generate-kodex`
+- [x] 2.3 Verify: `make generate-kodex` succeeds; modifying a SKILL.md in `klaude-plugin/` then running `make generate-kodex` produces a diff in `kodex-plugin/`
 
 ## Task 3: Codex marketplace
-- **Status:** pending
+- **Status:** in-progress
 - **Depends on:** Task 1
 - **Docs:** [implementation.md#phase-3-marketplace](./implementation.md#phase-3-marketplace)
 
