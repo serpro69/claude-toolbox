@@ -58,16 +58,16 @@
 - [x] 3.3 Verify: `jq . .agents/plugins/marketplace.json` exits 0; path field is `"./kodex-plugin"`
 
 ## Task 4: AGENTS.md and SessionStart hook
-- **Status:** pending
+- **Status:** done
 - **Depends on:** Task 0
 - **Docs:** [implementation.md#phase-4-bootstrap](./implementation.md#phase-4-bootstrap)
 
 ### Subtasks
-- [ ] 4.1 Create `AGENTS.md` at repo root — provider identity block, behavioral instructions (port from `.claude/CLAUDE.extra.md`), capy routing rules (replicate from `.claude/capy/CLAUDE.md`). Use `%PROJECT_NAME%` placeholder for template-sync
-- [ ] 4.2 Create `.codex/scripts/session-start.sh` — shell script emitting SessionStart JSON with `additionalContext` containing: provider identity, tool-name mapping table (Read→read_file, Write→write_file, Edit→apply_patch, Bash→shell, Grep→shell+grep, Glob→shell+find, WebSearch→web_search, WebFetch→capy, Agent/Task→natural-language subagent spawning, Skill→$mention), profile/shared-instruction paths resolved to `<repo-root>/klaude-plugin/...`, capy routing rules, sub-agent roster (all five agents)
-- [ ] 4.3 Create `.codex/hooks.json` — initial hook config: `{"SessionStart": [{"matcher": "startup|resume", "hooks": [{"type": "command", "command": ".codex/scripts/session-start.sh"}]}]}`
-- [ ] 4.4 Create `.codex/config.toml` with initial `[features] codex_hooks = true`
-- [ ] 4.5 Verify: `bash .codex/scripts/session-start.sh < /dev/null | jq .` exits 0; output JSON contains tool-name mapping and profile paths
+- [x] 4.1 Create `AGENTS.md` at repo root — provider identity block, behavioral instructions (port from `.claude/CLAUDE.extra.md`), capy routing rules (replicate from `.claude/capy/CLAUDE.md`). Use `%PROJECT_NAME%` placeholder for template-sync
+- [x] 4.2 Create `.codex/scripts/session-start.sh` — shell script emitting SessionStart JSON with `additionalContext` containing: provider identity, tool-name mapping table (Read→read_file, Write→write_file, Edit→apply_patch, Bash→shell, Grep→shell+grep, Glob→shell+find, WebSearch→web_search, WebFetch→capy, Agent/Task→natural-language subagent spawning, Skill→$mention), profile/shared-instruction paths resolved to `<repo-root>/klaude-plugin/...`, capy routing rules, sub-agent roster (all five agents)
+- [x] 4.3 Create `.codex/hooks.json` — initial hook config: `{"SessionStart": [{"matcher": "startup|resume", "hooks": [{"type": "command", "command": ".codex/scripts/session-start.sh"}]}]}`
+- [x] 4.4 Create `.codex/config.toml` with initial `[features] codex_hooks = true`
+- [x] 4.5 Verify: `bash .codex/scripts/session-start.sh < /dev/null | jq .` exits 0; output JSON contains tool-name mapping and profile paths
 
 ## Task 5: PreToolUse hooks
 - **Status:** pending
