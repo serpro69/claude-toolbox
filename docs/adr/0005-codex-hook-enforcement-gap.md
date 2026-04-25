@@ -56,7 +56,7 @@ We do NOT:
   itself will close.
 - Block codex support on this gap. The advisory layer provides sufficient
   protection for the use cases we care about.
-- Pretend the gap doesn't exist. It's documented in design.md §7.3,
+- Pretend the gap doesn't exist. It's documented in design.md §8.3,
   in the codex plugin README, and in this ADR.
 
 ## Consequences
