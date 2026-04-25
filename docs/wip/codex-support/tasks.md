@@ -24,7 +24,7 @@
 - **Docs:** [implementation.md#phase-1-generate-tool](./implementation.md#phase-1-generate-tool)
 
 ### Subtasks
-- [ ] 1.1 Create `cmd/generate-kodex/manifest.go` — YAML manifest parsing with schema matching design.md §5.2 (source_plugin, target_plugin, skills transforms, shared handling, manifest generation config, MCP config)
+- [ ] 1.1 Create `cmd/generate-kodex/manifest.go` — YAML manifest parsing with schema matching design.md §5.2 (source_plugin, target_plugin, skills transforms, shared handling, agents config, manifest generation config, MCP config)
 - [ ] 1.2 Create `cmd/generate-kodex/transforms.go` — transform implementations: `plugin_root_resolve` (replace `${CLAUDE_PLUGIN_ROOT}` with relative path from target to source plugin), `inject_header` (prepend content to files)
 - [ ] 1.3 Create `cmd/generate-kodex/skills.go` — skill generation: copy entire skill directories from `klaude-plugin/skills/*/` to `kodex-plugin/skills/*/`, apply transform pipeline to SKILL.md, copy auxiliary files (process docs, isolated workflow files, evals) as-is (verified: no `${CLAUDE_PLUGIN_ROOT}` in auxiliary files)
 - [ ] 1.4 Create `cmd/generate-kodex/shared.go` — copy `klaude-plugin/skills/_shared/` to `kodex-plugin/skills/_shared/`. Handle per-skill symlinks to `_shared/` (preserve if they survive codex cache testing, otherwise resolve to copies)
@@ -139,7 +139,7 @@
 
 ### Subtasks
 - [ ] 11.1 Run full test suite including new codex structure checks
-- [ ] 11.2 Run `make generate-kodex` and verify `git diff --exit-code kodex-plugin/` (output is fresh)
+- [ ] 11.2 Run `make generate-kodex` and verify `git diff --exit-code kodex-plugin/ .codex/agents/` (output is fresh)
 - [ ] 11.3 Run `review-code` on new Go code, shell scripts, TOML, Starlark
 - [ ] 11.4 Run `review-spec` to verify implementation matches design.md and implementation.md
 - [ ] 11.5 Smoke test from codex session: install plugin via marketplace, verify skills discoverable, SessionStart hook works, PreToolUse blocks forbidden commands, sub-agents spawnable, capy MCP callable

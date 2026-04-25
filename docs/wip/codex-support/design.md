@@ -170,10 +170,11 @@ agents:
   sandbox_mode: "read-only"            # all five agents are read-only
   model: "gpt-5.5"
   model_reasoning_effort: "high"
-  # Same transforms as skills apply to the prompt body
+  # Same transforms as skills but different replacement_base:
+  # .codex/agents/ is two levels from repo root, not one like kodex-plugin/
   transforms:
     - type: plugin_root_resolve
-      replacement_base: "../klaude-plugin"
+      replacement_base: "../../klaude-plugin"
 
 manifest:
   # Generate .codex-plugin/plugin.json
@@ -227,8 +228,12 @@ For each skill directory in `klaude-plugin/skills/<name>/`:
 For each agent markdown file in `klaude-plugin/agents/`:
 
 1. **Read** the source `.md` file.
-2. **Extract** the markdown body (strip any frontmatter).
-3. **Apply transforms** — same `plugin_root_resolve` as skills.
+2. **Parse frontmatter** — all five agents have YAML frontmatter with
+   `name`, `description`, `tools`, and `model` fields. Extract `name` and
+   `description` for the TOML output; strip the frontmatter from the body.
+3. **Apply transforms** — `plugin_root_resolve` (same as skills but with
+   `../../klaude-plugin` as the replacement base since agents output to
+   `.codex/agents/`, two levels from repo root).
 4. **Wrap** in TOML structure:
    ```toml
    name = "<agent-name>"
@@ -624,9 +629,9 @@ Existing downstream repos that don't set them get sensible defaults.
 
 ### 15.3 Generation freshness check
 
-CI runs `make generate-kodex && git diff --exit-code kodex-plugin/` to ensure
-the committed output matches what the tool would produce. Same pattern as
-`make vendor-profiles`.
+CI runs `make generate-kodex && git diff --exit-code kodex-plugin/ .codex/agents/`
+to ensure the committed output matches what the tool would produce. Same
+pattern as `make vendor-profiles`.
 
 ## 16. Risks and Open Questions
 
