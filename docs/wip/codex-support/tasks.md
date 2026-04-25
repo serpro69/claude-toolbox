@@ -70,14 +70,14 @@
 - [x] 4.5 Verify: `bash .codex/scripts/session-start.sh < /dev/null | jq .` exits 0; output JSON contains tool-name mapping and profile paths
 
 ## Task 5: PreToolUse hooks
-- **Status:** pending
+- **Status:** done
 - **Depends on:** Task 4
 - **Docs:** [implementation.md#phase-5-pretooluse](./implementation.md#phase-5-pretooluse)
 
 ### Subtasks
-- [ ] 5.1 Create `.codex/scripts/pretooluse-bash.sh` — reads `tool_input.command` from stdin JSON; checks file-path denylist (FORBIDDEN_PATTERNS ported from `klaude-plugin/scripts/validate-bash.sh`: `.env`, `.ansible/`, `.terraform/`, `build/`, `dist/`, `node_modules`, `__pycache__`, `.git/`, `venv/`, `.pyc`, `.csv`, `.log`) and capy HTTP patterns (`curl`/`wget`, `fetch('http`, `requests.get(`, `requests.post(`, `http.get(`, `http.request(`); emits `permissionDecision: "deny"` JSON on match, exits 0 with no output on pass-through
-- [ ] 5.2 Update `.codex/hooks.json` — add `PreToolUse` matcher group: `{"PreToolUse": [{"matcher": "Bash", "hooks": [{"type": "command", "command": ".codex/scripts/pretooluse-bash.sh"}]}]}` alongside existing SessionStart entry
-- [ ] 5.3 Verify: `echo '{"tool_input":{"command":"cat .env"}}' | bash .codex/scripts/pretooluse-bash.sh | jq .hookSpecificOutput.permissionDecision` outputs `"deny"`; same for `curl https://example.com`; `echo '{"tool_input":{"command":"ls"}}' | bash .codex/scripts/pretooluse-bash.sh` produces no output with exit 0
+- [x] 5.1 Create `.codex/scripts/pretooluse-bash.sh` — reads `tool_input.command` from stdin JSON; checks file-path denylist (FORBIDDEN_PATTERNS ported from `klaude-plugin/scripts/validate-bash.sh`: `.env`, `.ansible/`, `.terraform/`, `build/`, `dist/`, `node_modules`, `__pycache__`, `.git/`, `venv/`, `.pyc`, `.csv`, `.log`) and capy HTTP patterns (`curl`/`wget`, `fetch('http`, `requests.get(`, `requests.post(`, `http.get(`, `http.request(`); emits `permissionDecision: "deny"` JSON on match, exits 0 with no output on pass-through
+- [x] 5.2 Update `.codex/hooks.json` — add `PreToolUse` matcher group: `{"PreToolUse": [{"matcher": "Bash", "hooks": [{"type": "command", "command": ".codex/scripts/pretooluse-bash.sh"}]}]}` alongside existing SessionStart entry
+- [x] 5.3 Verify: `echo '{"tool_input":{"command":"cat .env"}}' | bash .codex/scripts/pretooluse-bash.sh | jq .hookSpecificOutput.permissionDecision` outputs `"deny"`; same for `curl https://example.com`; `echo '{"tool_input":{"command":"ls"}}' | bash .codex/scripts/pretooluse-bash.sh` produces no output with exit 0
 
 ## Task 6: Sub-agent verification
 - **Status:** pending
