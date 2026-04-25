@@ -73,8 +73,9 @@ pattern.
 - The tool reads the source manifest version and uses it for the generated
   manifest. No separate versioning.
 - `${CLAUDE_PLUGIN_ROOT}` replacement uses `../klaude-plugin` as the
-  relative path from `kodex-plugin/` to `klaude-plugin/`. This works for
-  local development and template-sync users.
+  relative path from `kodex-plugin/` to `klaude-plugin/` for skills, and
+  `../../klaude-plugin` from `.codex/agents/` for agents (two levels from
+  repo root). Both work for local development and template-sync users.
 - The `_shared/` directory is copied in full. Per-skill symlinks to `_shared/`
   are preserved if they survive codex's cache, otherwise resolved to copies.
 
