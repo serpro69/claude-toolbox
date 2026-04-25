@@ -48,14 +48,14 @@
 - [x] 2.3 Verify: `make generate-kodex` succeeds; modifying a SKILL.md in `klaude-plugin/` then running `make generate-kodex` produces a diff in `kodex-plugin/`
 
 ## Task 3: Codex marketplace
-- **Status:** in-progress
+- **Status:** done
 - **Depends on:** Task 1
 - **Docs:** [implementation.md#phase-3-marketplace](./implementation.md#phase-3-marketplace)
 
 ### Subtasks
-- [ ] 3.1 Create `.agents/plugins/marketplace.json` with marketplace entry for `kk` plugin pointing at `./kodex-plugin`
-- [ ] 3.2 Create `kodex-plugin/README.md` — installation via `codex plugin marketplace add`, skill listing, updating, troubleshooting, minimum codex version, no-sparse note
-- [ ] 3.3 Verify: `jq . .agents/plugins/marketplace.json` exits 0; path field is `"./kodex-plugin"`
+- [x] 3.1 Create `.agents/plugins/marketplace.json` with marketplace entry for `kk` plugin pointing at `./kodex-plugin`
+- [x] 3.2 Create `kodex-plugin/README.md` — installation via `codex plugin marketplace add`, skill listing, updating, troubleshooting, minimum codex version, no-sparse note
+- [x] 3.3 Verify: `jq . .agents/plugins/marketplace.json` exits 0; path field is `"./kodex-plugin"`
 
 ## Task 4: AGENTS.md and SessionStart hook
 - **Status:** pending
