@@ -85,6 +85,7 @@ BUILTIN_EXCLUSIONS=(
   ".claude/settings.local.json"
   ".claude/capy/*"
   ".claude/scripts/capy.sh"
+  ".codex/scripts/capy.sh"
 )
 
 # Resolved version (for reporting)
@@ -415,6 +416,8 @@ backfill_manifest_variables() {
     "CC_STATUSLINE:enhanced"
     "CC_EFFORT_LEVEL:high"
     "CC_PERMISSION_MODE:default"
+    "CODEX_MODEL:gpt-5.5"
+    "CODEX_APPROVAL_POLICY:on-request"
   )
 
   local needs_update=false
@@ -745,7 +748,7 @@ fetch_upstream_templates() {
   if ! git sparse-checkout init --cone --quiet 2>/dev/null; then
     log_warn "Sparse-checkout init failed, continuing with full checkout"
   fi
-  if ! git sparse-checkout set .claude .serena .github/workflows/template-sync.yml .github/scripts/template-sync.sh docs/update.sh klaude-plugin/.claude-plugin/plugin.json --quiet 2>/dev/null; then
+  if ! git sparse-checkout set .claude .serena .codex .github/workflows/template-sync.yml .github/scripts/template-sync.sh docs/update.sh klaude-plugin/.claude-plugin/plugin.json --quiet 2>/dev/null; then
     log_warn "Sparse-checkout set failed, config dirs may not exist at this version"
   fi
 
@@ -768,7 +771,10 @@ fetch_upstream_templates() {
   if [[ -d "$upstream_root/.serena" ]]; then
     cp -rp "$upstream_root/.serena" "$FETCHED_TEMPLATES_PATH/serena"
   fi
-
+  if [[ -d "$upstream_root/.codex" ]]; then
+    cp -rp "$upstream_root/.codex" "$FETCHED_TEMPLATES_PATH/codex"
+    rm -f "$FETCHED_TEMPLATES_PATH/codex/scripts/capy.sh"
+  fi
   if [[ ! -d "$FETCHED_TEMPLATES_PATH/claude" && ! -d "$FETCHED_TEMPLATES_PATH/serena" ]]; then
     log_error "Config directories not found in upstream at version: $version"
     log_error "Expected .claude/ and/or .serena/ in the upstream repository."
@@ -901,6 +907,21 @@ apply_substitutions() {
     log_info "Applied Serena settings"
   fi
 
+  # --- Codex Settings (codex/config.toml) ---
+  local codex_config_file="$output_dir/codex/config.toml"
+  if [[ -f "$codex_config_file" ]]; then
+    local codex_model codex_approval_policy
+    codex_model=$(get_manifest_value '.variables.CODEX_MODEL // "gpt-5.5"')
+    codex_approval_policy=$(get_manifest_value '.variables.CODEX_APPROVAL_POLICY // "on-request"')
+
+    sed -i \
+      -e "s|%CODEX_MODEL%|$codex_model|g" \
+      -e "s|%CODEX_APPROVAL_POLICY%|$codex_approval_policy|g" \
+      "$codex_config_file"
+
+    log_info "Applied Codex config.toml settings"
+  fi
+
   log_success "Substitutions applied to $output_dir"
 }
 
@@ -995,6 +1016,7 @@ compare_files() {
   local -A dir_map=(
     ["claude"]=".claude"
     ["serena"]=".serena"
+    ["codex"]=".codex"
     ["workflows"]=".github/workflows"
     ["scripts"]=".github/scripts"
     ["docs"]="docs"
