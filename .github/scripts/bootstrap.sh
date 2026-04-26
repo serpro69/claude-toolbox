@@ -6,7 +6,7 @@ set -e
 SKIP_CAPY="${SKIP_CAPY:-0}"
 for arg in "$@"; do
   case "$arg" in
-    --no-capy) SKIP_CAPY=1 ;;
+  --no-capy) SKIP_CAPY=1 ;;
   esac
 done
 
@@ -32,7 +32,7 @@ claude plugin install kk@claude-toolbox
 if [ "$SKIP_CAPY" = "1" ]; then
   : # skip silently
 elif command -v capy >/dev/null 2>&1; then
-  capy setup
+  capy setup --local
 else
   printf "⚠ capy not found on PATH — skipping knowledge base setup. Install: https://github.com/serpro69/capy\n" >&2
 fi

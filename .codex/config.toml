@@ -23,6 +23,11 @@ status_line = [
 ]
 terminal_title = ["project", "git-branch", "status", "thread", "task-progress"]
 
+# was hardcoded before support for codex is added in capy itself
+# from there, 'capy setup' should handle adding this
+# and it should be excluded from sync if SKIP_CAPY is set in template-state.json
+# (needs to be added there for opt-in), because codex does not have a way to split configs into two,
+# like we do with .claude/settings.json (fully synced) and .claude/settings.local.json (not synced)
 [mcp_servers.capy]
 command = "bash"
 args = [".codex/scripts/capy.sh", "serve"]

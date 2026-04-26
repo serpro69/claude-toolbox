@@ -45,9 +45,9 @@ func runFull(t *testing.T) (targetDir, agentsDir string) {
 	if err := GeneratePluginManifest(m, false); err != nil {
 		t.Fatalf("GeneratePluginManifest: %v", err)
 	}
-	if err := GenerateMCPConfig(m, false); err != nil {
-		t.Fatalf("GenerateMCPConfig: %v", err)
-	}
+	// if err := GenerateMCPConfig(m, false); err != nil {
+	// 	t.Fatalf("GenerateMCPConfig: %v", err)
+	// }
 
 	return targetDir, agentsDir
 }
@@ -296,32 +296,32 @@ func TestGeneratePluginManifest(t *testing.T) {
 	}
 }
 
-func TestGenerateMCPConfig(t *testing.T) {
-	targetDir, _ := runFull(t)
-
-	path := filepath.Join(targetDir, ".mcp.json")
-	data, err := os.ReadFile(path)
-	if err != nil {
-		t.Fatalf("reading .mcp.json: %v", err)
-	}
-
-	var config map[string]any
-	if err := json.Unmarshal(data, &config); err != nil {
-		t.Fatalf("invalid JSON: %v", err)
-	}
-
-	servers, ok := config["mcpServers"].(map[string]any)
-	if !ok {
-		t.Fatal("mcpServers not found or wrong type")
-	}
-	capy, ok := servers["capy"].(map[string]any)
-	if !ok {
-		t.Fatal("capy server not found")
-	}
-	if capy["command"] != "bash" {
-		t.Errorf("capy command = %v, want bash", capy["command"])
-	}
-}
+// func TestGenerateMCPConfig(t *testing.T) {
+// 	targetDir, _ := runFull(t)
+//
+// 	path := filepath.Join(targetDir, ".mcp.json")
+// 	data, err := os.ReadFile(path)
+// 	if err != nil {
+// 		t.Fatalf("reading .mcp.json: %v", err)
+// 	}
+//
+// 	var config map[string]any
+// 	if err := json.Unmarshal(data, &config); err != nil {
+// 		t.Fatalf("invalid JSON: %v", err)
+// 	}
+//
+// 	servers, ok := config["mcpServers"].(map[string]any)
+// 	if !ok {
+// 		t.Fatal("mcpServers not found or wrong type")
+// 	}
+// 	capy, ok := servers["capy"].(map[string]any)
+// 	if !ok {
+// 		t.Fatal("capy server not found")
+// 	}
+// 	if capy["command"] != "bash" {
+// 		t.Errorf("capy command = %v, want bash", capy["command"])
+// 	}
+// }
 
 func TestDryRun_NoFilesWritten(t *testing.T) {
 	targetDir, agentsDir, m := setupTest(t)
@@ -341,9 +341,9 @@ func TestDryRun_NoFilesWritten(t *testing.T) {
 	if err := GeneratePluginManifest(m, true); err != nil {
 		t.Fatalf("GeneratePluginManifest dry-run: %v", err)
 	}
-	if err := GenerateMCPConfig(m, true); err != nil {
-		t.Fatalf("GenerateMCPConfig dry-run: %v", err)
-	}
+	// if err := GenerateMCPConfig(m, true); err != nil {
+	// 	t.Fatalf("GenerateMCPConfig dry-run: %v", err)
+	// }
 
 	for _, dir := range []string{targetDir, agentsDir} {
 		entries, _ := os.ReadDir(dir)
@@ -377,9 +377,9 @@ func TestIdempotent(t *testing.T) {
 		if err := GeneratePluginManifest(m, false); err != nil {
 			t.Fatalf("GeneratePluginManifest: %v", err)
 		}
-		if err := GenerateMCPConfig(m, false); err != nil {
-			t.Fatalf("GenerateMCPConfig: %v", err)
-		}
+		// if err := GenerateMCPConfig(m, false); err != nil {
+		// 	t.Fatalf("GenerateMCPConfig: %v", err)
+		// }
 	}
 
 	generate()
