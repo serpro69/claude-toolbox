@@ -67,9 +67,9 @@ func run(manifestPath, targetOverride string, dryRun bool) error {
 		return fmt.Errorf("generating plugin manifest: %w", err)
 	}
 
-	if err := GenerateMCPConfig(m, dryRun); err != nil {
-		return fmt.Errorf("generating MCP config: %w", err)
-	}
+	// if err := GenerateMCPConfig(m, dryRun); err != nil {
+	// 	return fmt.Errorf("generating MCP config: %w", err)
+	// }
 
 	return nil
 }

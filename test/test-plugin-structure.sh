@@ -376,14 +376,14 @@ else
   log_fail "kodex-plugin/.codex-plugin/plugin.json missing"
 fi
 
-log_test "kodex-plugin/.mcp.json exists and is valid JSON"
-if [[ -f "$REPO_ROOT/kodex-plugin/.mcp.json" ]]; then
-  log_pass "kodex-plugin .mcp.json exists"
-  kodex_mcp_json=$(cat "$REPO_ROOT/kodex-plugin/.mcp.json")
-  assert_json_valid "$kodex_mcp_json" "kodex .mcp.json is valid JSON"
-else
-  log_fail "kodex-plugin/.mcp.json missing"
-fi
+# log_test "kodex-plugin/.mcp.json exists and is valid JSON"
+# if [[ -f "$REPO_ROOT/kodex-plugin/.mcp.json" ]]; then
+#   log_pass "kodex-plugin .mcp.json exists"
+#   kodex_mcp_json=$(cat "$REPO_ROOT/kodex-plugin/.mcp.json")
+#   assert_json_valid "$kodex_mcp_json" "kodex .mcp.json is valid JSON"
+# else
+#   log_fail "kodex-plugin/.mcp.json missing"
+# fi
 
 log_test "kodex-plugin skills match klaude-plugin skills (generation completeness)"
 # Count SKILL.md files in both plugins (excluding _shared)
