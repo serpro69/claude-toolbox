@@ -1,5 +1,8 @@
 # Ported from .claude/settings.json permissions.deny (Bash entries only).
-# Read(...) entries are enforced by the PreToolUse hook and SessionStart advisory.
+# Read(...) deny entries (.env, *.csv, *.log, node_modules, etc.) are NOT enforced
+# here — codex PreToolUse hooks can only intercept shell commands, not read_file.
+# Advisory-only coverage via AGENTS.md and SessionStart context injection.
+# See docs/adr/0005-codex-hook-enforcement-gap.md for details.
 
 prefix_rule(
     pattern = ["rm"],
