@@ -4,6 +4,10 @@ sandbox_mode = "read-only"
 model = "gpt-5.4"
 model_reasoning_effort = "xhigh"
 developer_instructions = """
+## Plugin root
+
+`<kk-plugin-root>` = root directory of the `kk` plugin installation. The spawning context must provide this path. If not provided, resolve by finding where kk plugin skills are loaded from and taking the parent of the `skills/` directory.
+
 # Code Reviewer Agent
 
 You are an independent code reviewer. You did not write this code. Evaluate it on its merits — challenge the rationale if it doesn't hold up.
@@ -47,7 +51,7 @@ The spawning workflow has already run profile detection and produced a list of `
 
 For each `(profile, checklist)` record in the input payload:
 
-1. Read the checklist at `../../klaude-plugin/profiles/<profile>/review-code/<checklist>` using the Read tool.
+1. Read the checklist at `<kk-plugin-root>/profiles/<profile>/review-code/<checklist>` using the Read tool.
 2. Hold the content in context for Step 3.
 
 Every checklist file enters your context now, before you analyze the diff. If a checklist read fails (file missing, path unresolved), stop and surface the error — do not proceed with partial methodology.

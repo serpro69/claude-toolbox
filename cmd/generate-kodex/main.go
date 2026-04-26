@@ -39,6 +39,9 @@ func run(manifestPath, targetOverride string, dryRun bool) error {
 		if err := os.RemoveAll(filepath.Join(m.TargetPlugin, "skills")); err != nil {
 			return fmt.Errorf("cleaning target skills: %w", err)
 		}
+		if err := os.RemoveAll(filepath.Join(m.TargetPlugin, "profiles")); err != nil {
+			return fmt.Errorf("cleaning target profiles: %w", err)
+		}
 		if err := os.RemoveAll(m.Agents.TargetDir); err != nil {
 			return fmt.Errorf("cleaning target agents: %w", err)
 		}
@@ -50,6 +53,10 @@ func run(manifestPath, targetOverride string, dryRun bool) error {
 
 	if err := GenerateShared(m, dryRun); err != nil {
 		return fmt.Errorf("generating shared: %w", err)
+	}
+
+	if err := GenerateProfiles(m, dryRun); err != nil {
+		return fmt.Errorf("generating profiles: %w", err)
 	}
 
 	if err := GenerateAgents(m, dryRun); err != nil {
