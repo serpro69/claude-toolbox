@@ -416,7 +416,7 @@ backfill_manifest_variables() {
     "CC_STATUSLINE:enhanced"
     "CC_EFFORT_LEVEL:high"
     "CC_PERMISSION_MODE:default"
-    "CODEX_MODEL:gpt-5.5"
+    "CODEX_MODEL:o3"
     "CODEX_APPROVAL_POLICY:on-request"
   )
 
@@ -911,12 +911,12 @@ apply_substitutions() {
   local codex_config_file="$output_dir/codex/config.toml"
   if [[ -f "$codex_config_file" ]]; then
     local codex_model codex_approval_policy
-    codex_model=$(get_manifest_value '.variables.CODEX_MODEL // "gpt-5.5"')
+    codex_model=$(get_manifest_value '.variables.CODEX_MODEL // "o3"')
     codex_approval_policy=$(get_manifest_value '.variables.CODEX_APPROVAL_POLICY // "on-request"')
 
     sed -i \
-      -e "s|%CODEX_MODEL%|$codex_model|g" \
-      -e "s|%CODEX_APPROVAL_POLICY%|$codex_approval_policy|g" \
+      -e "s|^model = .*|model = \"$codex_model\"|" \
+      -e "s|^approval_policy = .*|approval_policy = \"$codex_approval_policy\"|" \
       "$codex_config_file"
 
     log_info "Applied Codex config.toml settings"

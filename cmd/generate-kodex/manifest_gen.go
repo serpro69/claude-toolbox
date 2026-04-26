@@ -16,15 +16,21 @@ func GeneratePluginManifest(m *Manifest, dryRun bool) error {
 		return nil
 	}
 
-	version, err := readSourceVersion(m.Manifest.VersionFrom)
+	sourceFields, err := readSourceManifest(m.Manifest.VersionFrom)
 	if err != nil {
-		return fmt.Errorf("reading source version: %w", err)
+		return fmt.Errorf("reading source manifest: %w", err)
 	}
 
 	manifest := map[string]any{
-		"name":    m.Manifest.Name,
-		"version": version,
+		"name": m.Manifest.Name,
 	}
+	// Copy metadata fields from source (description, author, homepage, etc.)
+	for _, key := range []string{"description", "author", "homepage", "repository", "license", "keywords"} {
+		if v, ok := sourceFields[key]; ok {
+			manifest[key] = v
+		}
+	}
+	manifest["version"] = sourceFields["version"]
 	for k, v := range m.Manifest.ExtraFields {
 		manifest[k] = v
 	}
@@ -46,21 +52,19 @@ func GeneratePluginManifest(m *Manifest, dryRun bool) error {
 	return nil
 }
 
-func readSourceVersion(path string) (string, error) {
+func readSourceManifest(path string) (map[string]any, error) {
 	data, err := os.ReadFile(path)
 	if err != nil {
-		return "", fmt.Errorf("reading %s: %w", path, err)
+		return nil, fmt.Errorf("reading %s: %w", path, err)
 	}
 
-	var source struct {
-		Version string `json:"version"`
-	}
+	var source map[string]any
 	if err := json.Unmarshal(data, &source); err != nil {
-		return "", fmt.Errorf("parsing %s: %w", path, err)
+		return nil, fmt.Errorf("parsing %s: %w", path, err)
 	}
-	if source.Version == "" {
-		return "", fmt.Errorf("no version field in %s", path)
+	if _, ok := source["version"]; !ok {
+		return nil, fmt.Errorf("no version field in %s", path)
 	}
 
-	return source.Version, nil
+	return source, nil
 }

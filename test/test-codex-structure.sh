@@ -66,12 +66,12 @@ hooks_json=$(cat "$REPO_ROOT/.codex/hooks.json")
 assert_json_valid "$hooks_json" "hooks.json is valid JSON"
 
 log_test "hooks.json has SessionStart and PreToolUse entries"
-if echo "$hooks_json" | jq -e '.SessionStart' &>/dev/null; then
+if echo "$hooks_json" | jq -e '.hooks.SessionStart' &>/dev/null; then
   log_pass "hooks.json has SessionStart"
 else
   log_fail "hooks.json missing SessionStart"
 fi
-if echo "$hooks_json" | jq -e '.PreToolUse' &>/dev/null; then
+if echo "$hooks_json" | jq -e '.hooks.PreToolUse' &>/dev/null; then
   log_pass "hooks.json has PreToolUse"
 else
   log_fail "hooks.json missing PreToolUse"
