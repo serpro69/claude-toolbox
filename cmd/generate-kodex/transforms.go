@@ -13,6 +13,8 @@ func ApplyTransforms(content []byte, transforms []TransformConfig) ([]byte, erro
 			result = applyPluginRootResolve(result, t.ReplacementBase)
 		case "inject_header":
 			result = applyInjectHeader(result, t.Content)
+		case "plugin_root_placeholder":
+			result = applyPluginRootPlaceholder(result, t.Placeholder, t.Preamble)
 		default:
 			return nil, fmt.Errorf("unknown transform type %q", t.Type)
 		}
@@ -23,6 +25,15 @@ func ApplyTransforms(content []byte, transforms []TransformConfig) ([]byte, erro
 func applyPluginRootResolve(content []byte, replacementBase string) []byte {
 	s := string(content)
 	s = strings.ReplaceAll(s, "${CLAUDE_PLUGIN_ROOT}", replacementBase)
+	return []byte(s)
+}
+
+func applyPluginRootPlaceholder(content []byte, placeholder, preamble string) []byte {
+	s := string(content)
+	s = strings.ReplaceAll(s, "${CLAUDE_PLUGIN_ROOT}", placeholder)
+	if preamble != "" {
+		s = preamble + "\n" + s
+	}
 	return []byte(s)
 }
 

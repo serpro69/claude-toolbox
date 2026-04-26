@@ -36,6 +36,9 @@ func runFull(t *testing.T) (targetDir, agentsDir string) {
 	if err := GenerateShared(m, false); err != nil {
 		t.Fatalf("GenerateShared: %v", err)
 	}
+	if err := GenerateProfiles(m, false); err != nil {
+		t.Fatalf("GenerateProfiles: %v", err)
+	}
 	if err := GenerateAgents(m, false); err != nil {
 		t.Fatalf("GenerateAgents: %v", err)
 	}
@@ -150,7 +153,7 @@ func TestGenerateSkills(t *testing.T) {
 		if strings.Contains(content, "${CLAUDE_PLUGIN_ROOT}") {
 			t.Error("${CLAUDE_PLUGIN_ROOT} not resolved")
 		}
-		if !strings.Contains(content, "../source-plugin/profiles/go/") {
+		if !strings.Contains(content, "../../profiles/go/") {
 			t.Error("replacement path not found")
 		}
 		if !strings.Contains(content, "<!-- codex: generated -->") {
@@ -198,6 +201,32 @@ func TestGenerateSkills(t *testing.T) {
 	})
 }
 
+func TestGenerateProfiles(t *testing.T) {
+	targetDir, _ := runFull(t)
+
+	t.Run("profiles directory copied", func(t *testing.T) {
+		path := filepath.Join(targetDir, "profiles", "test-profile", "DETECTION.md")
+		if _, err := os.Stat(path); err != nil {
+			t.Fatalf("DETECTION.md not found: %v", err)
+		}
+	})
+
+	t.Run("nested profile content copied", func(t *testing.T) {
+		path := filepath.Join(targetDir, "profiles", "test-profile", "review-code", "index.md")
+		if _, err := os.Stat(path); err != nil {
+			t.Fatalf("review-code/index.md not found: %v", err)
+		}
+	})
+
+	t.Run("profile content unchanged", func(t *testing.T) {
+		data, _ := os.ReadFile(filepath.Join(targetDir, "profiles", "test-profile", "DETECTION.md"))
+		content := string(data)
+		if !strings.Contains(content, "## Path signals") {
+			t.Error("profile content was modified")
+		}
+	})
+}
+
 func TestGenerateAgents(t *testing.T) {
 	_, agentsDir := runFull(t)
 
@@ -224,7 +253,8 @@ func TestGenerateAgents(t *testing.T) {
 			{"body content", "# Test Agent", false},
 			{"no frontmatter", "---", true},
 			{"no CLAUDE_PLUGIN_ROOT", "${CLAUDE_PLUGIN_ROOT}", true},
-			{"resolved path", "../../source-plugin/profiles/go/review-code/", false},
+			{"placeholder path", "<kk-plugin-root>/profiles/go/review-code/", false},
+			{"preamble injected", "## Plugin root", false},
 		}
 
 		for _, c := range checks {
@@ -302,6 +332,9 @@ func TestDryRun_NoFilesWritten(t *testing.T) {
 	if err := GenerateShared(m, true); err != nil {
 		t.Fatalf("GenerateShared dry-run: %v", err)
 	}
+	if err := GenerateProfiles(m, true); err != nil {
+		t.Fatalf("GenerateProfiles dry-run: %v", err)
+	}
 	if err := GenerateAgents(m, true); err != nil {
 		t.Fatalf("GenerateAgents dry-run: %v", err)
 	}
@@ -334,6 +367,9 @@ func TestIdempotent(t *testing.T) {
 		}
 		if err := GenerateShared(m, false); err != nil {
 			t.Fatalf("GenerateShared: %v", err)
+		}
+		if err := GenerateProfiles(m, false); err != nil {
+			t.Fatalf("GenerateProfiles: %v", err)
 		}
 		if err := GenerateAgents(m, false); err != nil {
 			t.Fatalf("GenerateAgents: %v", err)

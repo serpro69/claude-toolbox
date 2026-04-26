@@ -6,12 +6,15 @@ skills:
   overrides: []
   transforms:
     - type: plugin_root_resolve
-      replacement_base: "../source-plugin"
+      replacement_base: "../.."
     - type: inject_header
       content: |
         <!-- codex: generated -->
   shared:
     copy: true
+
+profiles:
+  copy: true
 
 agents:
   target_dir: WILL_BE_OVERRIDDEN
@@ -19,8 +22,12 @@ agents:
   model: "test-model"
   model_reasoning_effort: "high"
   transforms:
-    - type: plugin_root_resolve
-      replacement_base: "../../source-plugin"
+    - type: plugin_root_placeholder
+      placeholder: "<kk-plugin-root>"
+      preamble: |
+        ## Plugin root
+
+        `<kk-plugin-root>` = root directory of the `kk` plugin. The spawning context must provide this path. If not provided, resolve by finding where kk plugin skills are loaded from and taking the parent of the `skills/` directory.
 
 manifest:
   name: "kk"

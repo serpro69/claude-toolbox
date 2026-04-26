@@ -12,6 +12,7 @@ type Manifest struct {
 	TargetPlugin string          `yaml:"target_plugin"`
 	Skills       SkillsConfig    `yaml:"skills"`
 	Agents       AgentsConfig    `yaml:"agents"`
+	Profiles     ProfilesConfig  `yaml:"profiles"`
 	Manifest     ManifestConfig  `yaml:"manifest"`
 	MCP          MCPConfig       `yaml:"mcp"`
 }
@@ -32,6 +33,12 @@ type TransformConfig struct {
 	Type            string `yaml:"type"`
 	ReplacementBase string `yaml:"replacement_base"`
 	Content         string `yaml:"content"`
+	Placeholder     string `yaml:"placeholder"`
+	Preamble        string `yaml:"preamble"`
+}
+
+type ProfilesConfig struct {
+	Copy bool `yaml:"copy"`
 }
 
 type SharedConfig struct {
