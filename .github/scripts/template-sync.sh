@@ -85,7 +85,7 @@ BUILTIN_EXCLUSIONS=(
   ".claude/settings.local.json"
   ".claude/capy/*"
   ".claude/scripts/capy.sh"
-  # ".codex/scripts/capy.sh" # NOTE: this should actually be excluded, but commented out until capy adds support for codex
+  ".codex/scripts/capy.sh"
 )
 
 # Resolved version (for reporting)
@@ -418,6 +418,7 @@ backfill_manifest_variables() {
     "CC_PERMISSION_MODE:default"
     "CODEX_MODEL:gpt-5.5"
     "CODEX_APPROVAL_POLICY:on-request"
+    "SKIP_CAPY:false"
   )
 
   local needs_update=false
@@ -914,10 +915,16 @@ apply_substitutions() {
     codex_model=$(get_manifest_value '.variables.CODEX_MODEL // "gpt-5.5"')
     codex_approval_policy=$(get_manifest_value '.variables.CODEX_APPROVAL_POLICY // "on-request"')
 
-    sed -i \
-      -e "s|^model = .*|model = \"$codex_model\"|" \
-      -e "s|^approval_policy = .*|approval_policy = \"$codex_approval_policy\"|" \
+    yq -i -p toml -o toml \
+      ".model = \"$codex_model\" | .approval_policy = \"$codex_approval_policy\"" \
       "$codex_config_file"
+
+    local skip_capy
+    skip_capy=$(get_manifest_value '.variables.SKIP_CAPY // "false"')
+    if [[ "$skip_capy" == "true" ]]; then
+      yq -i -p toml -o toml 'del(.mcp_servers.capy) | with(select(.mcp_servers | length == 0); del(.mcp_servers))' "$codex_config_file"
+      log_info "Stripped capy MCP server config (SKIP_CAPY=true)"
+    fi
 
     log_info "Applied Codex config.toml settings"
   fi

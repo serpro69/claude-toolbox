@@ -252,6 +252,7 @@ backfill_manifest_variables 2>/dev/null
 assert_equals "enhanced" "$(jq -r '.variables.CC_STATUSLINE' "$MANIFEST_PATH")" "CC_STATUSLINE backfilled"
 assert_equals "high" "$(jq -r '.variables.CC_EFFORT_LEVEL' "$MANIFEST_PATH")" "CC_EFFORT_LEVEL backfilled"
 assert_equals "default" "$(jq -r '.variables.CC_PERMISSION_MODE' "$MANIFEST_PATH")" "CC_PERMISSION_MODE backfilled"
+assert_equals "false" "$(jq -r '.variables.SKIP_CAPY' "$MANIFEST_PATH")" "SKIP_CAPY backfilled"
 
 log_test "backfill_manifest_variables does not overwrite existing values"
 reset_globals
@@ -278,6 +279,28 @@ backfill_manifest_variables 2>/dev/null
 assert_equals "low" "$(jq -r '.variables.CC_EFFORT_LEVEL' "$MANIFEST_PATH")" "Existing CC_EFFORT_LEVEL preserved"
 assert_equals "plan" "$(jq -r '.variables.CC_PERMISSION_MODE' "$MANIFEST_PATH")" "Existing CC_PERMISSION_MODE preserved"
 assert_equals "basic" "$(jq -r '.variables.CC_STATUSLINE' "$MANIFEST_PATH")" "Existing CC_STATUSLINE preserved"
+
+log_test "backfill_manifest_variables does not overwrite existing SKIP_CAPY=true"
+reset_globals
+test_dir=$(create_temp_dir "backfill-skip-capy-noop")
+MANIFEST_PATH="$test_dir/manifest.json"
+cat >"$MANIFEST_PATH" <<'EOF'
+{
+  "schema_version": "1",
+  "upstream_repo": "serpro69/claude-toolbox",
+  "template_version": "v1.0.0",
+  "synced_at": "2025-01-27T10:00:00Z",
+  "variables": {
+    "PROJECT_NAME": "test-proj",
+    "LANGUAGES": "bash",
+    "CC_MODEL": "sonnet",
+    "SKIP_CAPY": "true",
+    "SERENA_INITIAL_PROMPT": ""
+  }
+}
+EOF
+backfill_manifest_variables 2>/dev/null
+assert_equals "true" "$(jq -r '.variables.SKIP_CAPY' "$MANIFEST_PATH")" "Existing SKIP_CAPY=true preserved"
 
 # =============================================================================
 # Section 4: Substitution Tests
@@ -584,6 +607,136 @@ apply_substitutions "$test_dir/templates" "$output_dir" 2>/dev/null
 
 result=$(jq -r '.permissions.defaultMode' "$output_dir/claude/settings.json")
 assert_equals "default" "$result" "CC_PERMISSION_MODE defaults to default when missing"
+
+# --- Codex SKIP_CAPY Tests ---
+
+log_test "apply_substitutions strips [mcp_servers.capy] when SKIP_CAPY=true"
+reset_globals
+test_dir=$(create_temp_dir "subst-skip-capy-true")
+
+MANIFEST_PATH="$test_dir/manifest.json"
+cat >"$MANIFEST_PATH" <<'EOF'
+{
+  "schema_version": "1",
+  "upstream_repo": "test/repo",
+  "template_version": "v1.0.0",
+  "synced_at": "2025-01-27T10:00:00Z",
+  "variables": {
+    "PROJECT_NAME": "test-proj",
+    "LANGUAGES": "bash",
+    "CC_MODEL": "sonnet",
+    "SKIP_CAPY": "true",
+    "SERENA_INITIAL_PROMPT": ""
+  }
+}
+EOF
+
+mkdir -p "$test_dir/templates/codex"
+cat >"$test_dir/templates/codex/config.toml" <<'EOF'
+model = "gpt-5.5"
+approval_policy = "on-request"
+
+[features]
+codex_hooks = true
+
+[mcp_servers.capy]
+command = "bash"
+args = [".codex/scripts/capy.sh", "serve"]
+EOF
+
+output_dir="$test_dir/output"
+apply_substitutions "$test_dir/templates" "$output_dir" 2>/dev/null
+
+if grep -q '\[mcp_servers\.capy\]' "$output_dir/codex/config.toml"; then
+  log_fail "[mcp_servers.capy] should be stripped when SKIP_CAPY=true"
+else
+  log_pass "[mcp_servers.capy] stripped when SKIP_CAPY=true"
+fi
+# Verify the rest of the config is preserved
+if grep -q '\[features\]' "$output_dir/codex/config.toml"; then
+  log_pass "Non-capy sections preserved after stripping"
+else
+  log_fail "Non-capy sections should be preserved"
+fi
+
+log_test "apply_substitutions preserves [mcp_servers.capy] when SKIP_CAPY=false"
+reset_globals
+test_dir=$(create_temp_dir "subst-skip-capy-false")
+
+MANIFEST_PATH="$test_dir/manifest.json"
+cat >"$MANIFEST_PATH" <<'EOF'
+{
+  "schema_version": "1",
+  "upstream_repo": "test/repo",
+  "template_version": "v1.0.0",
+  "synced_at": "2025-01-27T10:00:00Z",
+  "variables": {
+    "PROJECT_NAME": "test-proj",
+    "LANGUAGES": "bash",
+    "CC_MODEL": "sonnet",
+    "SKIP_CAPY": "false",
+    "SERENA_INITIAL_PROMPT": ""
+  }
+}
+EOF
+
+mkdir -p "$test_dir/templates/codex"
+cat >"$test_dir/templates/codex/config.toml" <<'EOF'
+model = "gpt-5.5"
+approval_policy = "on-request"
+
+[mcp_servers.capy]
+command = "bash"
+args = [".codex/scripts/capy.sh", "serve"]
+EOF
+
+output_dir="$test_dir/output"
+apply_substitutions "$test_dir/templates" "$output_dir" 2>/dev/null
+
+if grep -q '\[mcp_servers\.capy\]' "$output_dir/codex/config.toml"; then
+  log_pass "[mcp_servers.capy] preserved when SKIP_CAPY=false"
+else
+  log_fail "[mcp_servers.capy] should be preserved when SKIP_CAPY=false"
+fi
+
+log_test "apply_substitutions preserves [mcp_servers.capy] when SKIP_CAPY is missing (default)"
+reset_globals
+test_dir=$(create_temp_dir "subst-skip-capy-default")
+
+MANIFEST_PATH="$test_dir/manifest.json"
+cat >"$MANIFEST_PATH" <<'EOF'
+{
+  "schema_version": "1",
+  "upstream_repo": "test/repo",
+  "template_version": "v1.0.0",
+  "synced_at": "2025-01-27T10:00:00Z",
+  "variables": {
+    "PROJECT_NAME": "test-proj",
+    "LANGUAGES": "bash",
+    "CC_MODEL": "sonnet",
+    "SERENA_INITIAL_PROMPT": ""
+  }
+}
+EOF
+
+mkdir -p "$test_dir/templates/codex"
+cat >"$test_dir/templates/codex/config.toml" <<'EOF'
+model = "gpt-5.5"
+approval_policy = "on-request"
+
+[mcp_servers.capy]
+command = "bash"
+args = [".codex/scripts/capy.sh", "serve"]
+EOF
+
+output_dir="$test_dir/output"
+apply_substitutions "$test_dir/templates" "$output_dir" 2>/dev/null
+
+if grep -q '\[mcp_servers\.capy\]' "$output_dir/codex/config.toml"; then
+  log_pass "[mcp_servers.capy] preserved when SKIP_CAPY not in manifest"
+else
+  log_fail "[mcp_servers.capy] should be preserved when SKIP_CAPY is missing (defaults to false)"
+fi
 
 # =============================================================================
 # Section 5: Smart Merge Tests
