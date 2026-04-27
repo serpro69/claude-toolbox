@@ -28,11 +28,20 @@ jobs:
     permissions:
       contents: write
     steps:
+      - name: Generate GitHub App Token
+        id: app-token
+        if: ${{ vars.CLAUDE_TOOLBOX_APP_ID != '' || vars.JEAN_CLAWDER_APP_ID != '' }}
+        uses: actions/create-github-app-token@v2
+        with:
+          app-id: ${{ vars.CLAUDE_TOOLBOX_APP_ID || vars.JEAN_CLAWDER_APP_ID }}
+          private-key: ${{ secrets.CLAUDE_TOOLBOX_APP_KEY || secrets.JEAN_CLAWDER_APP_KEY }}
+
       - name: Checkout Repository
         uses: actions/checkout@v6
         with:
           fetch-depth: 0
           ref: ${{ github.head_ref || github.ref_name }}
+          token: ${{ steps.app-token.outputs.token || github.token }}
 
       - name: Validate Version Format
         id: validate
@@ -139,13 +148,16 @@ jobs:
         if: inputs.dry_run != true
         run: |
           VERSION="${{ steps.validate.outputs.version }}"
-          git config --local user.email "action@github.com"
-          git config --local user.name "GitHub Action"
+          BOT_USER="${BOT_SLUG}[bot]"
+          git config --local user.name "${BOT_USER}"
+          git config --local user.email "${BOT_USER}@users.noreply.github.com"
           git add klaude-plugin/.claude-plugin/plugin.json
           git add kodex-plugin/.codex-plugin/plugin.json
           git commit -m "Release $VERSION"
           git tag "$VERSION"
           echo "Created commit and tag $VERSION"
+        env:
+          BOT_SLUG: ${{ steps.app-token.outputs.app-slug }}
 
       - name: Push
         if: inputs.dry_run != true
@@ -159,7 +171,7 @@ jobs:
       - name: Create GitHub Release
         if: inputs.dry_run != true
         env:
-          GH_TOKEN: ${{ github.token }}
+          GH_TOKEN: ${{ steps.app-token.outputs.token || github.token }}
         run: |
           VERSION="${{ steps.validate.outputs.version }}"
           gh release create "$VERSION" \
