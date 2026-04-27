@@ -90,7 +90,7 @@ Each finding gets a confidence score (1-10) with **mandatory reasoning** explain
 
 ### Mandatory ordering — spec before code
 
-The steps below are strictly sequential. **Do not read source files, trace implementations, or begin per-task verification until you have loaded every feature document and every profile checklist provided in your prompt.** Payload delivery order (the spawning skill attaching document paths and checklist paths in the same prompt) is not sufficient — you must load-before-verify on your own side. See [ADR 0004](../../docs/adr/0004-skill-workflow-ordering.md) for the rationale.
+The steps below are strictly sequential. **Do not read source files, trace implementations, or begin per-task verification until you have loaded every feature document and every profile checklist provided in your prompt.** Payload delivery order (the spawning skill attaching document paths and checklist paths in the same prompt) is not sufficient — you must load-before-verify on your own side.
 
 ### 1) Load Feature Documents
 

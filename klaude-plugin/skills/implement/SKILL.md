@@ -47,7 +47,7 @@ When set, all review checkpoints automatically use isolated variants (`kk:review
 
 ## Workflow
 
-**Mandatory order — understand before executing.** The flow below is strictly sequential. Do not read source files to modify, write code, edit files, run tests, or otherwise act on any task until you have loaded full context (design, implementation plan, task list in **plan mode**, or full problem understanding in **standalone**) and completed profile detection and loaded all resolved profile content. The only early contact with the codebase is the task's target filenames — enough to drive profile detection, not enough to pattern-match implementation. See [ADR 0004](../../../docs/adr/0004-skill-workflow-ordering.md) for the rationale.
+**Mandatory order — understand before executing.** The flow below is strictly sequential. Do not read source files to modify, write code, edit files, run tests, or otherwise act on any task until you have loaded full context (design, implementation plan, task list in **plan mode**, or full problem understanding in **standalone**) and completed profile detection and loaded all resolved profile content. The only early contact with the codebase is the task's target filenames — enough to drive profile detection, not enough to pattern-match implementation.
 
 ## The Process
 

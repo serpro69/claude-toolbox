@@ -13,7 +13,7 @@ Read capy knowledge base conventions at [shared-capy-knowledge-protocol.md](shar
 
 ## Workflow
 
-**Mandatory order — lookup before usage.** Do not write, modify, or recommend any call, import, config key, or version specifier involving the dependency until you have completed the lookup cascade below. Guessing a signature or API version and fixing it after the fact is the failure mode this skill exists to prevent. See [ADR 0004](../../../docs/adr/0004-skill-workflow-ordering.md) for the rationale.
+**Mandatory order — lookup before usage.** Do not write, modify, or recommend any call, import, config key, or version specifier involving the dependency until you have completed the lookup cascade below. Guessing a signature or API version and fixing it after the fact is the failure mode this skill exists to prevent.
 
 1. **Extract the dependency identity.** From the calling context, identify the dependency name, the version constraint (declared or inferred), and the specific API surface being used (function, config key, API version, image tag). This is the minimal scope — enough to drive the lookup, not enough to guess the answer.
 2. **Capy search.** Search `kk:lang-idioms` and `kk:project-conventions` for previously indexed knowledge about this dependency.
