@@ -60,7 +60,7 @@ See [review-isolated.md](./review-isolated.md) for the isolated workflow.
 
 The workflow below is strictly sequential. **Do not read the diff's contents, re-read changed files, run `capy_search`, or begin forming findings until you have completed profile detection and loaded every resolved checklist file.** Until then, your only contact with the changes is `git diff --stat` (filenames only) — enough to drive profile detection, but not enough to pattern-match findings.
 
-This ordering is load-bearing, not stylistic. Reviewing from a diff before loading profile checklists is the known failure mode this skill is designed to prevent: the LLM has enough from the diff to produce plausible findings, and optimizes away the methodology if the workflow permits. See [ADR 0004](../../../docs/adr/0004-skill-workflow-ordering.md) for the rationale.
+This ordering is load-bearing, not stylistic. Reviewing from a diff before loading profile checklists is the known failure mode this skill is designed to prevent: the LLM has enough from the diff to produce plausible findings, and optimizes away the methodology if the workflow permits.
 
 **Phases** (summary — the detailed procedure in [review-process.md](./review-process.md) breaks presentation into three distinct numbered steps: present results, next-steps confirmation, verify outputs):
 

@@ -15,7 +15,7 @@ Profile detection is delegated to [shared-profile-detection.md](shared-profile-d
 
 ## Workflow
 
-**Mandatory order — instructions before action.** The flow below is strictly sequential. Do not run any validator, test, or binary against subject-matter files until profile detection has completed and all resolved profile content is in context. See [ADR 0004](../../../docs/adr/0004-skill-workflow-ordering.md) for the rationale.
+**Mandatory order — instructions before action.** The flow below is strictly sequential. Do not run any validator, test, or binary against subject-matter files until profile detection has completed and all resolved profile content is in context.
 
 1. **Detect active profiles.** Run the shared profile-detection procedure against the changed files.
 2. **Load profile content.** For each active profile that contributes a `test/` subdirectory, load `${CLAUDE_PLUGIN_ROOT}/profiles/<name>/test/index.md` and read its always-load + any matching conditional content. Honor the binary-presence protocols named there BEFORE any validator invocation — a missing pre-check step can crash on a tool that isn't installed.

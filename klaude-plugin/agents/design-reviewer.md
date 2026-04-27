@@ -77,7 +77,7 @@ Each finding gets a confidence score (1-10) with **mandatory reasoning** explain
 
 ### Mandatory ordering — methodology before evaluation
 
-The steps below are strictly sequential. **Do not evaluate document quality, technical soundness, or cross-document consistency until you have read every document provided in your prompt and completed any capy searches for prior context.** Payload delivery order (the spawning skill attaching document paths in the same prompt) is not sufficient — you must read-before-evaluate on your own side. See [ADR 0004](../../docs/adr/0004-skill-workflow-ordering.md) for the rationale.
+The steps below are strictly sequential. **Do not evaluate document quality, technical soundness, or cross-document consistency until you have read every document provided in your prompt and completed any capy searches for prior context.** Payload delivery order (the spawning skill attaching document paths in the same prompt) is not sufficient — you must read-before-evaluate on your own side.
 
 ### 1) Read Provided Documents
 

@@ -16,7 +16,7 @@ Profile detection is delegated to [shared-profile-detection.md](shared-profile-d
 
 ## Workflow
 
-**Mandatory order — instructions before action.** The flow below is strictly sequential. Do not read feature-tree content, write, or edit documentation files until profile detection has completed and all resolved profile content is in context. See [ADR 0004](../../../docs/adr/0004-skill-workflow-ordering.md) for the rationale.
+**Mandatory order — instructions before action.** The flow below is strictly sequential. Do not read feature-tree content, write, or edit documentation files until profile detection has completed and all resolved profile content is in context.
 
 1. **Minimal-scope listing.** List the feature directory (filenames and metadata only — no file-content reads). This is the input profile detection needs, and nothing more; content-level reading happens after profile content is loaded.
 2. **Detect active profiles.** Run the shared profile-detection procedure against the filename list from Step 1.

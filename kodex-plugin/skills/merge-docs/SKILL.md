@@ -20,6 +20,6 @@ You have two feature directories under `/docs/wip/` for the same feature — eac
 
 ## Workflow
 
-**Mandatory order — grounding before merging.** The flow below is strictly sequential. Do not categorize sections, surface contradictions, or write merged content until you have read both feature directories fully and built a codebase-grounded mental model. Merging without grounding produces decisions based on prose clarity rather than codebase reality — the wrong tiebreaker. See [ADR 0004](../../../docs/adr/0004-skill-workflow-ordering.md) for the rationale.
+**Mandatory order — grounding before merging.** The flow below is strictly sequential. Do not categorize sections, surface contradictions, or write merged content until you have read both feature directories fully and built a codebase-grounded mental model. Merging without grounding produces decisions based on prose clarity rather than codebase reality — the wrong tiebreaker.
 
 See [merge-process.md](./merge-process.md) for the detailed steps.

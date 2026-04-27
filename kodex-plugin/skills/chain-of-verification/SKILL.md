@@ -91,7 +91,7 @@ See [chain-of-verification-isolated.md](./chain-of-verification-isolated.md) for
 
 ## Workflow
 
-**Mandatory order — questions before verification.** The flow below is strictly sequential. Do not answer verification questions, consult external sources, or revise the original response until you have generated the full initial response and formulated all verification questions. Jumping to verification before questions are fully formed collapses the independence that makes CoVe effective. See [ADR 0004](../../../docs/adr/0004-skill-workflow-ordering.md) for the rationale.
+**Mandatory order — questions before verification.** The flow below is strictly sequential. Do not answer verification questions, consult external sources, or revise the original response until you have generated the full initial response and formulated all verification questions. Jumping to verification before questions are fully formed collapses the independence that makes CoVe effective.
 
 1. **Generate initial response.** Produce a baseline answer to the user's question. This is the subject matter — it exists in context but is not yet verified.
 2. **Formulate verification questions.** Create 3–5 targeted questions designed to expose errors in the initial response. The questions must be formulated without consulting external sources — they probe the response's own claims.

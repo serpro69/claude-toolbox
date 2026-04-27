@@ -18,7 +18,7 @@ Profile detection is delegated to [shared-profile-detection.md](shared-profile-d
 
 ## Workflow
 
-**Mandatory order — understanding before engagement.** The flow below is strictly sequential. Do not engage with the idea prose beyond a keyword scan, ask refinement questions, or write design content until all instructions — this SKILL.md, the relevant process file, the shared profile-detection procedure, and every resolved profile's `design/` content — are fully loaded. See [ADR 0004](../../../docs/adr/0004-skill-workflow-ordering.md) for the rationale.
+**Mandatory order — understanding before engagement.** The flow below is strictly sequential. Do not engage with the idea prose beyond a keyword scan, ask refinement questions, or write design content until all instructions — this SKILL.md, the relevant process file, the shared profile-detection procedure, and every resolved profile's `design/` content — are fully loaded.
 
 The `design` skill has two entry points; each has its own process file with a detailed workflow. Both follow the same mandatory ordering:
 
