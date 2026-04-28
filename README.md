@@ -441,7 +441,7 @@ Repos created from this template can pull configuration updates via the **Templa
 
 ### What Gets Synced
 
-**Updated:** `.claude/` (settings, CLAUDE.extra.md, statusline scripts), `.codex/` (config.toml, hooks, rules, scripts, agents), `.serena/`, and the sync infrastructure itself. Skills, commands, and hooks are managed by the plugin system — not template sync.
+**Updated:** `.claude/` (settings, CLAUDE.extra.md, statusline scripts), `.codex/` (config.toml, hooks, rules, scripts, agents), `.serena/`, and the sync infrastructure itself (see [Syncing Workflow Files](#syncing-workflow-files) for permission requirements). Skills, commands, and hooks are managed by the plugin system — not template sync.
 
 **Preserved:** Project-specific values (name, language, prompts), `settings.local.json`, gitignored files
 
@@ -484,6 +484,45 @@ Edit `.github/template-state.json` and add a `sync_exclusions` array:
 - Excluded files are NOT updated if they exist in both places
 - Excluded files are NOT flagged as deleted if they exist locally but not upstream
 - Excluded files appear as "Excluded" in the sync report for transparency
+
+### Syncing Workflow Files
+
+Template sync updates its own workflow and script (`.github/workflows/template-sync.yml` and `.github/scripts/template-sync.sh`) alongside everything else. However, GitHub does not allow the default `GITHUB_TOKEN` to push changes to workflow files — the push is rejected with a `workflows` permission error ([details](https://github.com/peter-evans/create-pull-request/issues/3558)).
+
+These updates are sometimes required for sync to work correctly (e.g., when the sync logic itself changes between versions), so skipping them indefinitely is not recommended.
+
+**Option A: Update manually before running sync**
+
+Update the sync files locally, commit, push, then run the workflow:
+
+```bash
+VERSION="v0.12.0"  # use the version you want to sync to
+curl -fsSL "https://raw.githubusercontent.com/serpro69/claude-toolbox/${VERSION}/.github/workflows/template-sync.yml" \
+  -o .github/workflows/template-sync.yml
+```
+
+Or use the `/kk:sync-workflow:sync-workflow latest` command in Claude Code.
+
+**Option B: Set up a GitHub App for automatic sync**
+
+A GitHub App token has the `workflows` permission that `GITHUB_TOKEN` lacks. Once configured, the sync workflow handles everything automatically — no manual steps needed.
+
+1. **Create a GitHub App** ([guide](https://github.com/peter-evans/create-pull-request/blob/main/docs/concepts-guidelines.md#authenticating-with-github-app-generated-tokens)) with these repository permissions:
+   - **Contents:** Read & Write
+   - **Pull requests:** Read & Write
+   - **Workflows:** Read & Write
+
+2. **Install the app** on the repository (or repositories) where you run template sync.
+
+3. **Generate a private key** for the app (Settings → Private keys → Generate).
+
+4. **Configure your repository:**
+   - Add a **repository variable** named `CLAUDE_TOOLBOX_APP_ID` with the app's numeric ID
+   - Add a **repository secret** named `CLAUDE_TOOLBOX_APP_KEY` with the app's private key (PEM contents)
+
+   Go to repo **Settings** → **Secrets and variables** → **Actions** to add both.
+
+The workflow detects these credentials automatically and uses them for both pushing the branch and creating the PR.
 
 ### Migrating from Task Master
 
