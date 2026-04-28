@@ -53,9 +53,10 @@ compare() {
   done
 }
 
-if [[ $# -ne 2 ]]; then
-  echo "Usage: $0 <version1> <version2>" >&2
-  exit 1
+if [[ "${BASH_SOURCE[0]:-}" == "${0:-}" ]]; then
+  if [[ $# -ne 2 ]]; then
+    echo "Usage: $0 <version1> <version2>" >&2
+    exit 1
+  fi
+  compare "$1" "$2"
 fi
-
-compare "$1" "$2"

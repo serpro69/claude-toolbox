@@ -1393,7 +1393,7 @@ else
   log_skip "Network required to resolve HEAD"
 fi
 
-log_test "resolve_version resolves 'latest' to most recent tag"
+log_test "resolve_version resolves 'latest' to most recent stable tag"
 reset_globals
 set +e
 result=$(resolve_version "latest" "serpro69/claude-toolbox" 2>/dev/null)
@@ -1406,6 +1406,13 @@ if [[ $exit_code -eq 0 ]]; then
     log_pass "latest resolved to tag: $result"
   else
     log_fail "latest should resolve to tag name, got: $result"
+  fi
+  # Must not resolve to a pre-release (e.g. v0.12.0-rc.3 over v0.12.0)
+  stripped="${result#v}"
+  if [[ "$stripped" == "${stripped%%-*}" ]]; then
+    log_pass "latest resolved to stable release (no pre-release suffix)"
+  else
+    log_fail "latest resolved to pre-release tag: $result"
   fi
 else
   log_skip "Network required to resolve 'latest'"
