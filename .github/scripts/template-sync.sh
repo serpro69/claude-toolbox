@@ -51,9 +51,20 @@
 
 set -euo pipefail
 
-# Source semver comparison (provides compare() function)
+# Source semver comparison (provides compare() function).
+# Bootstrap: downstream repos may not have this file yet if they haven't synced
+# since it was introduced — fetch from upstream so the script stays self-contained.
 # shellcheck source=semver-compare.sh
-source "$(dirname "${BASH_SOURCE[0]}")/semver-compare.sh"
+_semver_path="$(dirname "${BASH_SOURCE[0]}")/semver-compare.sh"
+if [[ ! -f "$_semver_path" ]]; then
+  curl -fsSL "https://raw.githubusercontent.com/serpro69/claude-toolbox/master/.github/scripts/semver-compare.sh" \
+    -o "$_semver_path" 2>/dev/null || {
+    echo "Failed to fetch semver-compare.sh" >&2
+    exit 1
+  }
+fi
+source "$_semver_path"
+unset _semver_path
 
 # =============================================================================
 # Global Configuration
