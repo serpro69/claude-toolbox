@@ -85,10 +85,9 @@ jobs:
           UPSTREAM_REPO=$(jq -r '.upstream_repo // "serpro69/claude-toolbox"' .github/template-state.json)
           VERSION="${{ inputs.version }}"
 
-          # Resolve "latest" to the most recent tag
+          # Resolve "latest" via GitHub releases API (excludes pre-releases)
           if [[ "$VERSION" == "latest" ]]; then
-            VERSION=$(git ls-remote --tags --sort=-v:refname "https://github.com/$UPSTREAM_REPO.git" \
-              | grep -v '\^{}' | head -1 | sed 's/.*refs\/tags\///')
+            VERSION=$(gh release view --repo "$UPSTREAM_REPO" --json tagName -q .tagName 2>/dev/null || true)
             if [[ -z "$VERSION" ]]; then
               VERSION="HEAD"
             fi
