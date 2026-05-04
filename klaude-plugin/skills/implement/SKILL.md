@@ -38,12 +38,9 @@ After each execution + review cycle, verify all outputs:
 
 ### Review Mode
 
-By default, review checkpoints use standard mode. The user can request **isolated review mode** for the entire session:
+By default, review checkpoints use **isolated mode** (`kk:review-code:isolated`, `kk:review-spec:isolated`). This is mandatory because the implementing session has authorship bias — the same model that wrote the code produces weaker reviews of it. Isolated mode spawns an independent sub-agent with no prior exposure to the implementation.
 
-- When invoking the skill: "use isolated review" or "isolated mode"
-- In `tasks.md` metadata (plan mode only): a `review-mode: isolated` field in the header
-
-When set, all review checkpoints automatically use isolated variants (`kk:review-code:isolated`, `kk:review-spec:isolated`) without per-checkpoint prompting. The user can override at any checkpoint ("use standard review for this one").
+The user can override at any checkpoint ("use standard review for this one") to fall back to in-session `review-code`.
 
 ## Workflow
 
@@ -75,10 +72,8 @@ After completing the mode's entry procedure, continue with Step 2.
 
 - Show what was implemented
 - Show verification output
-- **If session-level isolated review is set**: automatically use `kk:review-code:isolated` — this handles both sub-agent and pal codereview internally with independent reviewers. Do NOT run a separate `pal` codereview call, as it is already included in the isolated workflow. The user can say "use standard review for this one" to override.
-- **Otherwise**: prompt user for code-review (mention isolated mode as an option); if user responds 'yes':
-  - **Standard review** (default): Use `review-code` skill, then run `pal` mcp code-review, consolidate findings
-  - **Isolated review** (if user requests): Use `kk:review-code:isolated` — same as above
+- **Default (isolated)**: Use `kk:review-code:isolated` — this handles both sub-agent and pal codereview internally with independent reviewers. Do NOT run a separate `pal` codereview call, as it is already included in the isolated workflow.
+- **If user explicitly requests standard review**: Use `review-code` skill in-session, then run `pal` mcp code-review, consolidate findings.
 - Based on user and code-review feedback: apply changes if needed and finalize
 - (Plan mode only) Update `tasks.md`: set the task's status to `done`
 
