@@ -57,6 +57,22 @@ Grep results can flood context. Use `capy_execute(language: "shell", code: "grep
 4. **WEB**: `capy_fetch_and_index(url, source)` then `capy_search(queries)` — Fetch, chunk, index, query. Raw HTML never enters context.
 5. **INDEX**: `capy_index(content, source)` — Store content in FTS5 knowledge base for later search.
 
+## Source kinds
+
+Every indexed entry has a **kind** that controls its lifecycle and search visibility:
+
+| Kind | What produces it | Retention | Included by default in search? |
+|------|-----------------|-----------|-------------------------------|
+| `durable` | `capy_index`, `capy_fetch_and_index` | Retention-score tiers (hot → warm → cold → evictable) | Yes |
+| `ephemeral` | `capy_execute`, `capy_execute_file`, `capy_batch_execute` (auto-indexed output) | Strict TTL — swept after expiry | No |
+| `session` | `capy sweep` (indexes past conversation transcripts) | Strict TTL — swept after expiry | No |
+
+**Querying non-default kinds:** pass `include_kinds` to `capy_search`:
+- `include_kinds: ["durable", "ephemeral"]` — recover output from earlier commands in this session
+- `include_kinds: ["durable", "session"]` — search past conversation transcripts
+- `include_kinds: ["durable", "ephemeral", "session"]` — search everything
+- Or use `source: "<label>"` to bypass kind filtering entirely (matches any kind)
+
 ## Subagent routing
 
 When spawning subagents (Agent/Task tool), the routing block is automatically injected into their prompt. Bash-type subagents are upgraded to general-purpose so they have access to MCP tools. You do NOT need to manually instruct subagents about capy.
