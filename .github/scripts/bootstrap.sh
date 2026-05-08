@@ -13,6 +13,9 @@ done
 cleanup() {
   rm -f "$0"
   git add "$0" || true
+  git add .capy || true
+  git add .codex || true
+  git add .mcp.json || true
   git add CLAUDE.md
   git commit -m "Initialize claude-code"
 }
