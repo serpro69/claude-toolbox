@@ -452,7 +452,7 @@ execute_cleanup() {
     .statusLine.command = (.statusLine.command | gsub("statusline_enhanced\\.sh"; $statusline_script)) |
     # Plugin marketplace: directory -> github source for downstream
     .extraKnownMarketplaces."claude-toolbox".source = { "source": "github", "repo": $repo }
-    ' "$cc_settings_file" > "${cc_settings_file}.tmp" && mv "${cc_settings_file}.tmp" "$cc_settings_file"
+    ' "$cc_settings_file" >"${cc_settings_file}.tmp" && mv "${cc_settings_file}.tmp" "$cc_settings_file"
 
   # Serena MCP Settings
   local serena_settings_file=".serena/project.yml"
@@ -475,6 +475,7 @@ execute_cleanup() {
   log_step "Cleaning up .github/ (preserving sync infrastructure)..."
   rm -f .github/scripts/template-cleanup.sh
   rm -f .github/workflows/template-cleanup.yml
+  rm -f .github/workflows/pre-release.yml
   rm -f .github/workflows/release.yml
 
   log_step "Preserving docs/update.sh..."
