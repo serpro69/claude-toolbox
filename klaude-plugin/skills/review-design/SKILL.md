@@ -13,7 +13,11 @@ Read capy knowledge base conventions at [shared-capy-knowledge-protocol.md](shar
 
 ## Overview
 
-Pre-implementation review gate that evaluates design documents produced by `design` before code is written. Sits between `design` (creates docs) and `implement` (executes them). Reviews two dimensions: document quality/structure (completeness, internal consistency, clarity, convention adherence) and technical soundness (architectural viability, edge cases, failure modes, trade-off analysis).
+Pre-implementation review gate that evaluates design documents produced by `design` before code is written. Sits between `design` (creates docs) and `implement` (executes them). Reviews tree distinct dimensions
+
+- document quality/structure (completeness, internal consistency, clarity, convention adherence)
+- technical soundness (architectural viability, edge cases, failure modes, trade-off analysis)
+- feature value (Does the feature improve things for end-users? Is it useful? Is it correct in _how_ it tries to solve the problem?)
 
 ## Review Modes
 
