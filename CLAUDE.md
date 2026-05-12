@@ -283,6 +283,6 @@ Architecture decisions that span more than one feature live at `docs/adr/NNNN-sl
 
 @.claude/CLAUDE.extra.md
 
-# capy — MANDATORY routing rules
+# capy — context-window routing
 
 @.capy/AGENTS.md
