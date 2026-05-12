@@ -16,12 +16,13 @@ Choose the tool based on what you need from the output:
 - **Files to comprehend or edit:** Read tool. Required before Edit.
 - **Sequential/ordered content:** test output, build logs where order matters — Bash or Read.
 - **Instruction files, checklists, configs:** Read and internalize whole. BM25 returns ranked fragments, destroying structural relationships.
+- **Small authoritative web pages:** GitHub issues, PR descriptions, short specs, doc pages — use runtime-native tools when available (e.g., `gh issue view` for GitHub, `WebSearch` for general queries). These are comprehension content; BM25 fragments destroy context just as they do for diffs.
 
 ## When to use capy tools
 
 - **`capy_batch_execute`:** Broad exploration — multiple commands + queries in one call. Example: initial repo scan with `rg --files` + symbol searches.
 - **`capy_execute` / `capy_execute_file`:** Single command or file producing hundreds+ lines where you only need extracted facts. API calls, log analysis, data processing.
-- **`capy_fetch_and_index`:** Fetch web content. Default ephemeral (24h TTL, excluded from default search). Pass `kind: "durable"` for reference docs. Use `source: "<label>"` for follow-up search.
+- **`capy_fetch_and_index`:** Fetch and index large web content for extraction. Default ephemeral (24h TTL, excluded from default search). Best for large web artifacts (transcripts, logs, long docs) and content needing follow-up `source:` queries. Pass `kind: "durable"` for reference docs to persist across sessions. NOT for small authoritative pages you need to comprehend — use runtime web tools for those.
 - **`capy_index`:** Persist curated knowledge durably. Content you explicitly want searchable across sessions.
 - **`capy_search`:** Query indexed content. Batch all questions as array. Default excludes ephemeral — use `include_kinds` or `source:` to include.
 
@@ -42,6 +43,8 @@ Instead use:
 WebFetch calls are denied entirely. The URL is extracted and you are told to use `capy_fetch_and_index` instead.
 Instead use:
 - `capy_fetch_and_index(url, source)` then `capy_search(queries)` to query the indexed content
+
+**Note:** These blocks prevent raw HTTP output from flooding context. For web *comprehension* of small authoritative pages, use runtime-native tools when available (`gh` CLI for GitHub content, `WebSearch` for general queries). `capy_fetch_and_index` remains the correct path for large web content and extraction.
 
 ## Source kinds
 
