@@ -40,11 +40,10 @@ Instead use:
 - `capy_execute(language, code)` to run HTTP calls in sandbox — only stdout enters context
 
 ### WebFetch — BLOCKED
-WebFetch calls are denied entirely. The URL is extracted and you are told to use `capy_fetch_and_index` instead.
-Instead use:
-- `capy_fetch_and_index(url, source)` then `capy_search(queries)` to query the indexed content
-
-**Note:** These blocks prevent raw HTTP output from flooding context. For web *comprehension* of small authoritative pages, use runtime-native tools when available (`gh` CLI for GitHub content, `WebSearch` for general queries). `capy_fetch_and_index` remains the correct path for large web content and extraction.
+WebFetch calls are denied entirely. Instead use:
+- For git platform issues/PRs/MRs: platform CLI (e.g., `gh issue view N`) or `WebSearch` for full comprehension
+- For other small pages needing comprehension: `WebSearch` or other runtime web tools
+- For large web content or extraction: `capy_fetch_and_index(url, source)` then `capy_search(queries)`
 
 ## Source kinds
 
