@@ -2048,6 +2048,104 @@ else
 fi
 
 # =============================================================================
+# Section: Serena Removal Migration
+# =============================================================================
+
+log_section "Serena Removal Migration"
+
+log_test "needs_serena_removal returns true when SERENA_INITIAL_PROMPT in manifest"
+reset_globals
+test_dir=$(create_temp_dir "serena-needs-remove")
+mkdir -p "$test_dir/.serena"
+echo "project_name: test" > "$test_dir/.serena/project.yml"
+MANIFEST_PATH="$test_dir/manifest.json"
+cat >"$MANIFEST_PATH" <<'EOF'
+{
+  "schema_version": "1",
+  "upstream_repo": "serpro69/claude-toolbox",
+  "template_version": "v1.0.0",
+  "synced_at": "2025-01-27T10:00:00Z",
+  "variables": {
+    "PROJECT_NAME": "test",
+    "LANGUAGES": "bash",
+    "CC_MODEL": "sonnet",
+    "SERENA_INITIAL_PROMPT": ""
+  }
+}
+EOF
+read_manifest
+pushd "$test_dir" >/dev/null
+if needs_serena_removal; then
+  log_pass "needs_serena_removal detected SERENA_INITIAL_PROMPT in manifest"
+else
+  log_fail "needs_serena_removal should return true when SERENA_INITIAL_PROMPT exists"
+fi
+popd >/dev/null
+
+log_test "needs_serena_removal returns false when no serena artifacts exist"
+reset_globals
+test_dir=$(create_temp_dir "serena-already-clean")
+MANIFEST_PATH="$test_dir/manifest.json"
+cat >"$MANIFEST_PATH" <<'EOF'
+{
+  "schema_version": "1",
+  "upstream_repo": "serpro69/claude-toolbox",
+  "template_version": "v1.0.0",
+  "synced_at": "2025-01-27T10:00:00Z",
+  "variables": {
+    "PROJECT_NAME": "test",
+    "LANGUAGES": "bash",
+    "CC_MODEL": "sonnet"
+  }
+}
+EOF
+read_manifest
+pushd "$test_dir" >/dev/null
+if needs_serena_removal; then
+  log_fail "needs_serena_removal should return false when no serena artifacts exist"
+else
+  log_pass "needs_serena_removal correctly skips clean repos"
+fi
+popd >/dev/null
+
+log_test "run_serena_removal deletes .serena/ and cleans manifest"
+reset_globals
+test_dir=$(create_temp_dir "serena-run-remove")
+mkdir -p "$test_dir/.serena"
+echo "project_name: test" > "$test_dir/.serena/project.yml"
+MANIFEST_PATH="$test_dir/manifest.json"
+cat >"$MANIFEST_PATH" <<'EOF'
+{
+  "schema_version": "1",
+  "upstream_repo": "serpro69/claude-toolbox",
+  "template_version": "v1.0.0",
+  "synced_at": "2025-01-27T10:00:00Z",
+  "variables": {
+    "PROJECT_NAME": "test",
+    "LANGUAGES": "bash",
+    "CC_MODEL": "sonnet",
+    "SERENA_INITIAL_PROMPT": ""
+  }
+}
+EOF
+read_manifest
+pushd "$test_dir" >/dev/null
+run_serena_removal 2>/dev/null
+
+if [[ ! -d ".serena" ]]; then
+  log_pass ".serena/ directory removed"
+else
+  log_fail ".serena/ directory should have been removed"
+fi
+
+if jq -e '.variables.SERENA_INITIAL_PROMPT' "$MANIFEST_PATH" &>/dev/null 2>&1; then
+  log_fail "SERENA_INITIAL_PROMPT should have been removed from manifest"
+else
+  log_pass "SERENA_INITIAL_PROMPT removed from manifest"
+fi
+popd >/dev/null
+
+# =============================================================================
 # Summary
 # =============================================================================
 
