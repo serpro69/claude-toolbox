@@ -600,6 +600,84 @@ run_plugin_migration() {
 }
 
 # =============================================================================
+# Serena Removal Migration
+# =============================================================================
+
+# needs_serena_removal()
+# Checks whether the downstream repo still has Serena artifacts from the
+# template defaults that should be cleaned up.
+# Detection is based on the SERENA_INITIAL_PROMPT manifest variable — its
+# presence means the repo was set up when Serena was a template default.
+# If a user manually added .serena/ without the variable, we leave it alone.
+#
+# Returns:
+#   0 if removal is needed
+#   1 if not needed
+needs_serena_removal() {
+  if [[ -f "$MANIFEST_PATH" ]] && jq -e '.variables.SERENA_INITIAL_PROMPT' "$MANIFEST_PATH" &>/dev/null 2>&1; then
+    return 0
+  fi
+
+  return 1
+}
+
+# run_serena_removal()
+# Removes .serena/ directory and SERENA_INITIAL_PROMPT from the manifest.
+# Serena MCP was dropped from upstream defaults — downstream repos no longer
+# need the config directory or the manifest variable.
+#
+# Side effects:
+#   - Deletes .serena/ directory if present
+#   - Removes SERENA_INITIAL_PROMPT from manifest variables
+#   - Appends removed files to DELETED_FILES array
+run_serena_removal() {
+  log_step "Removing Serena artifacts (no longer in upstream defaults)"
+
+  if [[ -d ".serena" ]]; then
+    rm -rf ".serena"
+    DELETED_FILES+=(".serena/")
+    log_info "Removed .serena/"
+  fi
+
+  # Remove !.serena from .gitignore if present
+  if [[ -f ".gitignore" ]] && grep -q '^!\.serena' .gitignore; then
+    sed -i '/^!\.serena$/d' .gitignore
+    MODIFIED_FILES+=(".gitignore")
+    log_info "Removed !.serena from .gitignore"
+  fi
+
+  # Remove mcp__serena__* from settings.local.json permissions if present
+  local local_settings=".claude/settings.local.json"
+  if [[ -f "$local_settings" ]] && jq -e '.permissions.allow | any(startswith("mcp__serena__"))' "$local_settings" &>/dev/null 2>&1; then
+    local tmp
+    tmp=$(mktemp "/tmp/settings-serena.XXXXXX")
+    if jq '.permissions.allow |= map(select(startswith("mcp__serena__") | not))' "$local_settings" >"$tmp"; then
+      mv "$tmp" "$local_settings"
+      MODIFIED_FILES+=("$local_settings")
+      log_info "Removed mcp__serena__* from $local_settings permissions"
+    else
+      rm -f "$tmp"
+    fi
+  fi
+
+  # Clean manifest: remove SERENA_INITIAL_PROMPT variable and set flag
+  if [[ -f "$MANIFEST_PATH" ]]; then
+    local tmp
+    tmp=$(mktemp "/tmp/manifest-serena.XXXXXX")
+    if jq 'del(.variables.SERENA_INITIAL_PROMPT)' "$MANIFEST_PATH" >"$tmp"; then
+      mv "$tmp" "$MANIFEST_PATH"
+      read_manifest
+      log_info "Removed SERENA_INITIAL_PROMPT from manifest"
+    else
+      rm -f "$tmp"
+      log_warn "Failed to update manifest — manual cleanup may be needed"
+    fi
+  fi
+
+  log_success "Serena removal complete"
+}
+
+# =============================================================================
 # Version Resolution and Template Fetching
 # =============================================================================
 
@@ -1490,6 +1568,11 @@ main() {
   if needs_plugin_migration "$STAGING_DIR/upstream"; then
     PLUGIN_MIGRATED=true
     run_plugin_migration
+  fi
+
+  # Remove Serena artifacts if still present (upstream dropped Serena in v0.13.0)
+  if needs_serena_removal; then
+    run_serena_removal
   fi
 
   # Apply substitutions to fetched templates
