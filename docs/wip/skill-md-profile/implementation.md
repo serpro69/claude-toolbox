@@ -6,7 +6,7 @@
 
 Create the profile directory at `klaude-plugin/profiles/skill-md/` with:
 
-- `DETECTION.md` — three mandatory headings (`## Path signals`, `## Filename signals`, `## Content signals`) plus `## Design signals`. Filename signals: `SKILL.md` (exact) and the adjacency rule (any file sibling to a `SKILL.md`). Path and content signals: empty (stated explicitly per schema). Design signals with `display_name: Agent Skills` and the token list.
+- `DETECTION.md` — three mandatory headings (`## Path signals`, `## Filename signals`, `## Content signals`) plus `## Design signals`. Filename signals: `SKILL.md` (exact) and the skill-root adjacency rule (any file whose nearest ancestor directory contains a `SKILL.md` — walk upward from the file's directory, stop at the first directory containing `SKILL.md`). Path and content signals: empty (stated explicitly per schema). Design signals with `display_name: Agent Skills` and the token list.
 - `overview.md` — profile summary, activation conditions, reference to agentskills.io. "Looking up dependencies" section targets provider skill documentation via context7.
 
 Register the profile:
@@ -80,7 +80,7 @@ Always-load section:
 - `[skill-quality-checklist.md](skill-quality-checklist.md)` — Universal skill quality checks.
 
 Conditional section:
-- `[claude-code-checklist.md](claude-code-checklist.md)` — **Load if:** diff contains `${CLAUDE_PLUGIN_ROOT}` or `CLAUDE_PLUGIN_ROOT`, or files are under a Claude Code plugin structure.
+- `[claude-code-checklist.md](claude-code-checklist.md)` — **Load if:** diff contains `${CLAUDE_PLUGIN_ROOT}` or `CLAUDE_PLUGIN_ROOT`, or sibling directories of the skill being reviewed include `hooks/`, `commands/`, or `agents/` alongside `skills/`.
 - `[kk-plugin-checklist.md](kk-plugin-checklist.md)` — **Load if:** files within `klaude-plugin/` or diff touches `_shared/`.
 
 ### `skill-quality-checklist.md`
@@ -113,4 +113,4 @@ kk-plugin-specific review checks:
 - `bash test/test-plugin-structure.sh` — all assertions pass including bidirectional invariant for both phase subdirectories
 - `make generate-kodex && git diff --exit-code kodex-plugin/` — Codex parity clean
 - Manual smoke test: trigger `review-code` on a diff touching a SKILL.md file, verify `skill-md` profile activates and checklists load
-- Manual smoke test: trigger `implement` standalone with "create a skill" prompt, verify profile activates via design signals
+- Manual smoke test: trigger `implement` standalone with "create a skill" prompt, verify profile activates via planned target filenames (e.g., `skills/my-skill/SKILL.md`) through the standard file-based detection path — not design signals

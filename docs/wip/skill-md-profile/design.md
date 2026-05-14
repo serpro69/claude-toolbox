@@ -13,6 +13,8 @@ Create a `skill-md` profile rather than a standalone skill. Agent skills are a [
 
 No new skill is needed. The existing pipeline handles the workflow — `implement` in standalone mode handles ad-hoc "create a skill" requests, `review-code` reviews skill quality, etc. The profile injects domain expertise at each phase.
 
+**How `implement` standalone activates this profile:** The shared detection procedure uses target file lists for `implement`, not design signals (design signals are exclusively for the `design` skill). In standalone mode, `implement` identifies planned target files (step 6 of standalone-mode.md: "identify the set of files that will need changes") before running profile detection. When the user says "create a skill that does X," the planned targets include paths like `skills/my-skill/SKILL.md` — the `SKILL.md` filename signal activates the profile via normal file-based detection.
+
 ### Alternatives considered
 
 - **Standalone skill-creator skill.** Rejected: duplicates the existing pipeline's capabilities. `implement` already supports ad-hoc tasks; `review-code` already reviews; `design` already interviews. A separate skill would need to replicate or delegate to all of these.
@@ -31,7 +33,7 @@ No new skill is needed. The existing pipeline handles the workflow — `implemen
 
 **Filename signals (authoritative):**
 - `SKILL.md` (exact) — the canonical skill entry point.
-- Any file in the same directory as a `SKILL.md` — adjacency rule. If the diff touches `skills/review-code/plan-mode.md` and `skills/review-code/SKILL.md` exists as a sibling, the profile activates. The binding constraint is sibling `SKILL.md` in the same directory, following the same adjacency pattern as the Helm `values*` + `Chart.yaml` rule in the k8s profile.
+- Any file whose nearest ancestor directory contains a `SKILL.md` — skill-root adjacency rule. Walk upward from the file's directory toward the repo root; stop at the first directory containing `SKILL.md`. If found, the file is part of that skill and the profile activates. This covers direct siblings (e.g., `skills/review-code/plan-mode.md`) and files in resource subdirectories (e.g., `skills/my-skill/references/guide.md`, `skills/my-skill/scripts/helper.py`, `skills/my-skill/evals/test-1/eval.json`). The binding constraint is nearest-ancestor `SKILL.md`, following the same ancestor-walk pattern as the Helm template rule in the k8s profile (files under `templates/` activate when the parent contains `Chart.yaml`).
 
 **Content signals:** None.
 
@@ -104,7 +106,7 @@ A `references/skill-building-guide.md` at the profile root, distilled from the A
   - Eval coverage for skills with non-trivial decision logic.
 
 **Conditional:**
-- `claude-code-checklist.md` — **Load if:** diff contains `${CLAUDE_PLUGIN_ROOT}` or `CLAUDE_PLUGIN_ROOT`, or Claude Code plugin structure:
+- `claude-code-checklist.md` — **Load if:** diff contains `${CLAUDE_PLUGIN_ROOT}` or `CLAUDE_PLUGIN_ROOT`, or sibling directories of the skill being reviewed include `hooks/`, `commands/`, or `agents/` alongside `skills/`:
   - Correct `${CLAUDE_PLUGIN_ROOT}` usage (brace form, no forwarding from runtime-read files).
   - Hook script well-formedness.
   - Command variant naming (no stuttering).
