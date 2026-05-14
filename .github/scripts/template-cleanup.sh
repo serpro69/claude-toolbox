@@ -434,6 +434,7 @@ execute_cleanup() {
   fi
 
   log_step "Cleaning up .github/ (preserving sync infrastructure)..."
+  rm -f .github/template-state.example.json
   rm -f .github/scripts/template-cleanup.sh
   rm -f .github/workflows/template-cleanup.yml
   rm -f .github/workflows/pre-release.yml
