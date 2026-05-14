@@ -11,7 +11,7 @@
 - **Docs:** [implementation.md#skeleton](./implementation.md#skeleton)
 
 ### Subtasks
-- [ ] 1.1 Create `klaude-plugin/profiles/skill-md/DETECTION.md` — three mandatory headings (Path signals empty, Filename signals with `SKILL.md` exact + adjacency rule, Content signals empty) plus `## Design signals` with `display_name: Agent Skills` and token list
+- [ ] 1.1 Create `klaude-plugin/profiles/skill-md/DETECTION.md` — three mandatory headings (Path signals empty, Filename signals with `SKILL.md` exact + skill-root adjacency rule via nearest-ancestor walk, Content signals empty) plus `## Design signals` with `display_name: Agent Skills` and token list
 - [ ] 1.2 Create `klaude-plugin/profiles/skill-md/overview.md` — profile summary, activation conditions, agentskills.io reference, dependency-lookup targets
 - [ ] 1.3 Append `skill-md` to `EXPECTED_PROFILES` in `test/test-plugin-structure.sh`
 - [ ] 1.4 Append `skill-md` to the Known Profiles list in `klaude-plugin/skills/_shared/profile-detection.md`
