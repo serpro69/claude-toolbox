@@ -40,16 +40,16 @@
 - [x] 3.5 Verify: `bash test/test-plugin-structure.sh` passes (bidirectional invariant for implement/)
 
 ## Task 4: Review-code phase
-- **Status:** pending
+- **Status:** in-progress
 - **Depends on:** Task 1
 - **Docs:** [implementation.md#review-code](./implementation.md#review-code)
 
 ### Subtasks
-- [ ] 4.1 Create `klaude-plugin/profiles/skill-md/review-code/index.md` — always-load (`skill-quality-checklist.md`) and conditional entries (`claude-code-checklist.md`, `kk-plugin-checklist.md`) with explicit `Load if:` clauses
-- [ ] 4.2 Create `klaude-plugin/profiles/skill-md/review-code/skill-quality-checklist.md` — universal checks (workflow ordering compliance, progressive disclosure, description quality, resource separation, instruction clarity, eval coverage)
-- [ ] 4.3 Create `klaude-plugin/profiles/skill-md/review-code/claude-code-checklist.md` — Claude Code checks (`${CLAUDE_PLUGIN_ROOT}` correctness, hook well-formedness, command naming)
-- [ ] 4.4 Create `klaude-plugin/profiles/skill-md/review-code/kk-plugin-checklist.md` — kk-plugin checks (shared symlinks, bidirectional invariant, naming conventions, test registration, Codex generation)
-- [ ] 4.5 Verify: `bash test/test-plugin-structure.sh` passes (bidirectional invariant for review-code/)
+- [x] 4.1 Create `klaude-plugin/profiles/skill-md/review-code/index.md` — always-load (`skill-quality-checklist.md`) and conditional entries (`claude-code-checklist.md`, `kk-plugin-checklist.md`) with explicit `Load if:` clauses
+- [x] 4.2 Create `klaude-plugin/profiles/skill-md/review-code/skill-quality-checklist.md` — universal checks (workflow ordering compliance, progressive disclosure, description quality, resource separation, instruction clarity, eval coverage)
+- [x] 4.3 Create `klaude-plugin/profiles/skill-md/review-code/claude-code-checklist.md` — Claude Code checks (`${CLAUDE_PLUGIN_ROOT}` correctness, hook well-formedness, command naming)
+- [x] 4.4 Create `klaude-plugin/profiles/skill-md/review-code/kk-plugin-checklist.md` — kk-plugin checks (shared symlinks, bidirectional invariant, naming conventions, test registration, Codex generation)
+- [x] 4.5 Verify: `bash test/test-plugin-structure.sh` passes (bidirectional invariant for review-code/)
 
 ## Task 5: Final verification
 - **Status:** pending
