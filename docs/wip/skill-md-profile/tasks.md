@@ -28,16 +28,16 @@
 - [x] 2.3 Verify: file is self-contained, examples are concrete, no dead links
 
 ## Task 3: Implement phase
-- **Status:** pending
+- **Status:** in-progress
 - **Depends on:** Task 1
 - **Docs:** [implementation.md#implement](./implementation.md#implement)
 
 ### Subtasks
-- [ ] 3.1 Create `klaude-plugin/profiles/skill-md/implement/index.md` — always-load (`skill-structure-gotchas.md`) and conditional entries (`claude-code-gotchas.md`, `kk-plugin-gotchas.md`) with explicit `Load if:` clauses
-- [ ] 3.2 Create `klaude-plugin/profiles/skill-md/implement/skill-structure-gotchas.md` — universal rules (workflow ordering, progressive disclosure, description effectiveness, resource organization, explain-the-why, eval structure)
-- [ ] 3.3 Create `klaude-plugin/profiles/skill-md/implement/claude-code-gotchas.md` — provider-specific gotchas (`${CLAUDE_PLUGIN_ROOT}` substitution, Glob cwd-scoping, hooks contract, command variants)
-- [ ] 3.4 Create `klaude-plugin/profiles/skill-md/implement/kk-plugin-gotchas.md` — kk-plugin gotchas (shared symlinks, bidirectional invariant, test registration, `make generate-kodex`, agent naming)
-- [ ] 3.5 Verify: `bash test/test-plugin-structure.sh` passes (bidirectional invariant for implement/)
+- [x] 3.1 Create `klaude-plugin/profiles/skill-md/implement/index.md` — always-load (`skill-structure-gotchas.md`) and conditional entries (`claude-code-gotchas.md`, `kk-plugin-gotchas.md`) with explicit `Load if:` clauses
+- [x] 3.2 Create `klaude-plugin/profiles/skill-md/implement/skill-structure-gotchas.md` — universal rules (workflow ordering, progressive disclosure, description effectiveness, resource organization, explain-the-why, eval structure)
+- [x] 3.3 Create `klaude-plugin/profiles/skill-md/implement/claude-code-gotchas.md` — provider-specific gotchas (`${CLAUDE_PLUGIN_ROOT}` substitution, Glob cwd-scoping, hooks contract, command variants)
+- [x] 3.4 Create `klaude-plugin/profiles/skill-md/implement/kk-plugin-gotchas.md` — kk-plugin gotchas (shared symlinks, bidirectional invariant, test registration, `make generate-kodex`, agent naming)
+- [x] 3.5 Verify: `bash test/test-plugin-structure.sh` passes (bidirectional invariant for implement/)
 
 ## Task 4: Review-code phase
 - **Status:** pending
