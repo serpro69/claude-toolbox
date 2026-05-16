@@ -8,5 +8,12 @@ Consumed by the `review-code` skill. When the `skill-md` profile is active, ever
 
 ## Conditional
 
-- [claude-code-checklist.md](claude-code-checklist.md) — Claude Code-specific review checks: `${CLAUDE_PLUGIN_ROOT}` usage correctness, hook script well-formedness, command variant naming. **Load if:** diff contains `${CLAUDE_PLUGIN_ROOT}` or `CLAUDE_PLUGIN_ROOT`, or the plugin root contains `hooks/`, `commands/`, or `agents/` directories alongside `skills/`.
-- [kk-plugin-checklist.md](kk-plugin-checklist.md) — kk-plugin-specific review checks: shared symlink correctness, bidirectional index invariant, naming conventions, test registration, Codex generation. **Load if:** files are within a `klaude-plugin/` directory, or diff touches files under `_shared/`.
+- [claude-code-checklist.md](claude-code-checklist.md) — Claude Code-specific review checks: `${CLAUDE_PLUGIN_ROOT}` usage correctness, hook script well-formedness, command variant naming.
+  **Load if:**
+  - diff contains `${CLAUDE_PLUGIN_ROOT}` or `CLAUDE_PLUGIN_ROOT`
+  - OR the plugin root contains `hooks/`, `commands/`, or `agents/` directories alongside `skills/`
+  - OR the repo/plugin root contains `.claude-plugin` dir
+- [kk-plugin-checklist.md](kk-plugin-checklist.md) — kk-plugin-specific review checks: shared symlink correctness, bidirectional index invariant, naming conventions, test registration, Codex generation.
+  **Load if:**
+  - files are within a `klaude-plugin/` directory
+  - OR diff touches files under `skills/_shared/`

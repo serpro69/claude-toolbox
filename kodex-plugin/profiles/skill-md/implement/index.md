@@ -6,5 +6,12 @@
 
 ## Conditional
 
-- [claude-code-gotchas.md](claude-code-gotchas.md) — Claude Code provider-specific gotchas: `${CLAUDE_PLUGIN_ROOT}` substitution boundary, Glob cwd-scoping, hook script contract, command variant naming. **Load if:** diff contains `${CLAUDE_PLUGIN_ROOT}` or `CLAUDE_PLUGIN_ROOT`, or the plugin root contains `hooks/`, `commands/`, or `agents/` directories alongside `skills/`.
-- [kk-plugin-gotchas.md](kk-plugin-gotchas.md) — kk-plugin-specific gotchas: shared instruction symlinks, bidirectional index invariant, test registration, Codex generation, agent naming. **Load if:** files are within a `klaude-plugin/` directory, or diff touches files under `_shared/`.
+- [claude-code-gotchas.md](claude-code-gotchas.md) — Claude Code provider-specific gotchas: `${CLAUDE_PLUGIN_ROOT}` substitution boundary, Glob cwd-scoping, hook script contract, command variant naming.
+  **Load if:**
+  - diff contains `${CLAUDE_PLUGIN_ROOT}` or `CLAUDE_PLUGIN_ROOT`
+  - OR the plugin root contains `hooks/`, `commands/`, or `agents/` directories alongside `skills/`
+  - OR the repo/plugin root contains `.claude-plugin` dir
+- [kk-plugin-gotchas.md](kk-plugin-gotchas.md) — kk-plugin-specific gotchas: shared instruction symlinks, bidirectional index invariant, test registration, Codex generation, agent naming.
+  **Load if:**
+  - files are within a `klaude-plugin/` directory
+  - OR diff touches files under `skills/_shared/`
