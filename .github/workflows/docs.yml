@@ -1,0 +1,70 @@
+---
+name: Docs
+run-name: ${{ github.actor }} is running Docs
+
+on:
+  workflow_dispatch:
+  push:
+    branches:
+      - master
+    tags:
+      - "v[0-9]+.[0-9]+.[0-9]+"
+
+permissions:
+  contents: write
+
+env:
+  MKDOCS_SITE_URL: "https://serpro69.github.io/claude-toolbox/"
+
+jobs:
+  changes:
+    runs-on: ubuntu-latest
+    outputs:
+      docs: ${{ steps.filter.outputs.docs }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: dorny/paths-filter@v3
+        id: filter
+        with:
+          filters: |
+            docs:
+              - '.github/workflows/docs.yml'
+              - 'docs/**'
+              - 'mkdocs.yml'
+              - 'requirements.txt'
+              - 'README.md'
+              - 'CONTRIBUTING.md'
+              - 'LICENSE.md'
+              - 'klaude-plugin/README.md'
+
+  deploy:
+    needs: changes
+    if: ${{ startsWith(github.ref, 'refs/tags/v') || needs.changes.outputs.docs == 'true' }}
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - name: Configure git credentials
+        run: |
+          git config user.name github-actions[bot]
+          git config user.email 41898282+github-actions[bot]@users.noreply.github.com
+      - uses: actions/setup-python@v5
+        with:
+          python-version: 3.x
+      - run: echo "cache_id=$(date --utc '+%V')" >> $GITHUB_ENV
+      - uses: actions/cache@v4
+        with:
+          key: mkdocs-material-${{ env.cache_id }}
+          path: .cache
+          restore-keys: |
+            mkdocs-material-
+      - run: pip install -r requirements.txt
+      - run: |-
+          if [[ ! "${{ github.ref_name }}" =~ ^v[0-9]+\.[0-9]+\.[0-9]+$ ]]; then
+            mike deploy --push latest
+          else
+            version_regex='[^0-9]*\([0-9]*\)[.]\([0-9]*\)[.]\([0-9]*\)'
+            version=$(echo "${{ github.ref_name }}" | sed -e "s#${version_regex}#\1.\2#")
+            mike deploy --push "$version"
+          fi
