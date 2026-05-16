@@ -98,9 +98,9 @@ done
 
 log_section "Section 4: Commands"
 
-EXPECTED_COMMANDS=(chain-of-verification review-spec migrate-from-taskmaster template)
+EXPECTED_COMMANDS=(chain-of-verification review-code review-spec migrate-from-taskmaster template)
 
-log_test "All 4 command directories exist"
+log_test "All 5 command directories exist"
 for cmd in "${EXPECTED_COMMANDS[@]}"; do
   if [[ -d "$REPO_ROOT/klaude-plugin/commands/$cmd" ]]; then
     log_pass "Command exists: $cmd"

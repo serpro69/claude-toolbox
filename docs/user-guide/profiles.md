@@ -17,7 +17,9 @@ The kk plugin ships per-domain profiles that make every workflow skill language-
 | **JS/TS** | Node.js, TypeScript, React, frontend tooling | `*.ts`, `*.tsx`, `*.js`, `package.json` |
 | **Kotlin** | Kotlin/JVM, Android, Gradle | `*.kt`, `*.kts`, `build.gradle.kts` |
 | **Kubernetes** | Helm charts, Kustomize, YAML manifests | `Chart.yaml`, `kustomization.yaml`, K8s resource kinds |
+| **K8s Operator** | kubebuilder, operator-sdk, controller-runtime | `PROJECT`, `config/crd/`, `controller-gen` in Makefile |
 | **Python** | pip, poetry, pytest, Django, FastAPI | `*.py`, `pyproject.toml`, `requirements.txt` |
+| **Skill MD** | Agent skill authoring (Claude Code, Codex) | `SKILL.md`, files under a `SKILL.md`-rooted ancestor |
 
 ## How Detection Works
 
