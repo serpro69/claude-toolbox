@@ -428,6 +428,14 @@ execute_cleanup() {
     .extraKnownMarketplaces."claude-toolbox".source = { "source": "github", "repo": $repo }
     ' "$cc_settings_file" >"${cc_settings_file}.tmp" && mv "${cc_settings_file}.tmp" "$cc_settings_file"
 
+  # Codex Settings — apply model and approval policy
+  local codex_config_file=".codex/config.toml"
+  if [[ -f "$codex_config_file" ]]; then
+    yq -i -p toml -o toml \
+      ".model = \"$CODEX_MODEL\" | .approval_policy = \"$CODEX_APPROVAL_POLICY\"" \
+      "$codex_config_file"
+  fi
+
   if [[ -f .github/scripts/bootstrap.sh ]]; then
     cp .github/scripts/bootstrap.sh .
     rm -f .github/scripts/bootstrap.sh
@@ -453,8 +461,27 @@ execute_cleanup() {
     ! -name '.gitignore' \
     ! -name '.github' \
     ! -name '.claude' \
+    ! -name '.codex' \
+    ! -name '.mcp.json' \
     ! -name 'bootstrap.sh' \
     -exec rm -rf {} +
+
+  log_step "Stripping capy-generated files..."
+  if [[ "$SKIP_CAPY" == "true" ]]; then
+    rm -f .claude/scripts/capy.sh
+    rm -f .codex/scripts/capy.sh
+    if [[ -f .mcp.json ]]; then
+      jq 'del(.mcpServers.capy) | if .mcpServers == {} then del(.mcpServers) else . end' .mcp.json >.mcp.json.tmp && mv .mcp.json.tmp .mcp.json
+      if jq -e 'length == 0' .mcp.json &>/dev/null; then
+        rm -f .mcp.json
+      fi
+    fi
+    if command -v yq &>/dev/null && [[ -f .codex/config.toml ]]; then
+      yq -i -p toml -o toml 'del(.mcp_servers.capy) | with(select(.mcp_servers | length == 0); del(.mcp_servers))' .codex/config.toml
+    fi
+    jq 'del(.mcpServers.capy)' "$cc_settings_file" >"${cc_settings_file}.tmp" && mv "${cc_settings_file}.tmp" "$cc_settings_file"
+    log_info "Stripped all capy config and scripts (SKIP_CAPY=true)"
+  fi
 
   if [[ -n "$tmpfile" ]]; then
     mkdir -p docs
