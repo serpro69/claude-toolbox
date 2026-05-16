@@ -98,7 +98,7 @@ done
 
 log_section "Section 4: Commands"
 
-EXPECTED_COMMANDS=(chain-of-verification review-spec migrate-from-taskmaster sync-workflow)
+EXPECTED_COMMANDS=(chain-of-verification review-spec migrate-from-taskmaster template)
 
 log_test "All 4 command directories exist"
 for cmd in "${EXPECTED_COMMANDS[@]}"; do
