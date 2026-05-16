@@ -67,19 +67,15 @@ If `.github/template-state.json` exists, remove these variables from the `variab
 
 The old template-sync workflow and script contain taskmaster-specific sync logic that will cause issues on future syncs (see https://github.com/serpro69/claude-toolbox/issues/17).
 
-If `.claude/scripts/sync-workflow.sh` does not exist, fetch it first:
+Update by fetching the latest sync infrastructure:
 
 ```bash
-mkdir -p .claude/scripts
-curl -fsSL "https://raw.githubusercontent.com/serpro69/claude-toolbox/master/.claude/scripts/sync-workflow.sh" \
-  -o .claude/scripts/sync-workflow.sh
-chmod +x .claude/scripts/sync-workflow.sh
-```
-
-Then run it:
-
-```bash
-bash .claude/scripts/sync-workflow.sh latest
+VERSION="latest"
+curl -fsSL "https://raw.githubusercontent.com/serpro69/claude-toolbox/master/.github/workflows/template-sync.yml" \
+  -o .github/workflows/template-sync.yml
+curl -fsSL "https://raw.githubusercontent.com/serpro69/claude-toolbox/master/.github/scripts/template-sync.sh" \
+  -o .github/scripts/template-sync.sh
+chmod +x .github/scripts/template-sync.sh
 ```
 
 ## Step 7: Update MCP config
