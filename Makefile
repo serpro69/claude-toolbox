@@ -2,7 +2,7 @@
 .SHELL      := $(shell which bash)
 .SHELLFLAGS := -ec
 
-.PHONY: vendor-profiles generate-kodex generate-all test-structure
+.PHONY: vendor-profiles generate-kodex generate-all test-structure docs-serve docs-build
 
 vendor-profiles:
 	go test ./cmd/vendor-profiles/...
@@ -19,3 +19,9 @@ generate-all: vendor-profiles generate-kodex
 test-structure:
 	bash test/test-plugin-structure.sh
 	bash test/test-codex-structure.sh
+
+docs-serve:
+	MKDOCS_SITE_URL=http://localhost:8000 mkdocs serve
+
+docs-build:
+	MKDOCS_SITE_URL=https://serpro69.github.io/claude-toolbox/ mkdocs build
