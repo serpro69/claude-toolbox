@@ -18,11 +18,12 @@ make docs-build
 
 **How publishing works:**
 
-- Push to `master` → deploys as `latest` via mike
-- Push tag `v0.14.0` → deploys as `0.14` (major.minor) via mike
+- Push to `master` → deploys as `dev` via mike (unreleased docs)
+- Push tag `v0.14.0` → deploys as `0.14` (major.minor) and updates the `latest` alias to point to it
+- The bare URL always redirects to `latest` (most recent release)
 - GitHub Actions workflow at `.github/workflows/docs.yml` handles both
 - Mike pushes to the `gh-pages` branch; GitHub Pages serves from there
-- First deploy requires one-time setup: `mike set-default latest` and enabling GitHub Pages on the `gh-pages` branch in repo Settings
+- First deploy requires enabling GitHub Pages on the `gh-pages` branch in repo Settings
 
 **Content structure:** Pages live in `docs/` alongside internal design docs (`wip/`, `done/`, `adr/`). Internal dirs are excluded from search via `exclude_docs` in `mkdocs.yml` but remain accessible by direct URL. The landing page is a custom template at `docs/overrides/home.html`.
 
