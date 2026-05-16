@@ -310,7 +310,7 @@ Without Capy, each session starts fresh — all skills still work, they just don
 
 The **kk** plugin contains all development workflow functionality — 10 skills, 4 commands, and hooks — distributed via the Claude Code plugin system (see [kodex-plugin](./kodex-plugin/README.md) for the Codex variant). Skills are invoked as `/kk:skill-name`, commands as `/kk:dir:command`.
 
-Includes: **design**, **implement**, **test**, **document**, **development-guidelines**, **review-code**, **review-spec**, **review-design**, **merge-docs**, **chain-of-verification**. Plus commands for CoVe, implementation review, design review, Task Master migration, and sync workflow updates. See the [plugin README](./klaude-plugin/README.md) for full details.
+Includes: **design**, **implement**, **test**, **document**, **development-guidelines**, **review-code**, **review-spec**, **review-design**, **merge-docs**, **chain-of-verification**. Plus commands for CoVe, implementation review, design review, Task Master migration, and template sync. See the [plugin README](./klaude-plugin/README.md) for full details.
 
 Alongside `skills/`, `commands/`, `agents/`, and `hooks/`, the plugin ships a top-level `profiles/` directory. Each profile (e.g., `go`, `python`, `k8s`) bundles per-domain content — detection rules, review checklists, design prompts, test validators, doc rubrics — that the workflow skills consult when the code under work matches the profile. Profiles are the extension point for new languages and IaC DSLs; see the **Profile Conventions** section of [`CLAUDE.md`](./CLAUDE.md) for the full authoring contract.
 
@@ -322,7 +322,7 @@ Alongside `skills/`, `commands/`, `agents/`, and `hooks/`, the plugin ships a to
 ### Template Infrastructure
 
 - **template-cleanup** — GitHub Action or local CLI script to initialize a new repo from this template
-- **template-sync** workflow — pull upstream configuration updates into your project via PR
+- **template-sync** — pull upstream configuration updates via PR (workflow) or locally (`/kk:template:sync`)
 - **Sync exclusions** — prevent specific files from being re-added during sync
 - **Test suite** — tests across 8 suites covering plugin structure, codex structure, sync/cleanup infrastructure
 
@@ -389,11 +389,32 @@ Repos created from this template can pull configuration updates via the **Templa
 
 ### Using Template Sync
 
+**Via GitHub Actions (creates a PR):**
+
 1. Go to **Actions** → **Template Sync** → **Run workflow**
 2. Choose a version: `latest` (default), `master`, or a specific tag (e.g., `v1.2.3`)
 3. Optionally enable **dry_run** to preview changes without creating a PR
 4. Review and merge the created PR
-5. Merge to apply updates
+
+**Locally (applies directly to working tree):**
+
+Run from Claude Code:
+
+```
+/kk:template:sync
+/kk:template:sync --version v1.2.3
+/kk:template:sync --dry-run
+```
+
+Or run the script directly:
+
+```bash
+.github/scripts/template-sync.sh --local
+.github/scripts/template-sync.sh --local --version v1.2.3
+.github/scripts/template-sync.sh --local --dry-run  # preview only
+```
+
+Requires `jq`, `git`, `curl`, and `yq` ([mikefarah/yq](https://github.com/mikefarah/yq)). Review changes with `git diff` before committing.
 
 ### What Gets Synced
 
@@ -457,7 +478,7 @@ curl -fsSL "https://raw.githubusercontent.com/serpro69/claude-toolbox/${VERSION}
   -o .github/workflows/template-sync.yml
 ```
 
-Or use the `/kk:sync-workflow:sync-workflow latest` command in Claude Code.
+Or use `/kk:template:sync` in Claude Code — it syncs everything including the workflow files.
 
 **Option B: Set up a GitHub App for automatic sync**
 
@@ -516,7 +537,7 @@ If you prefer to migrate manually, follow these steps after syncing:
 
 1. **Remove TM references from `CLAUDE.md`:** delete the "Task Master Integration" and "Task Master AI Instructions" sections (including the `@./.taskmaster/CLAUDE.md` import).
 
-1. **Update the template-sync workflow** ([why?](https://github.com/serpro69/claude-toolbox/issues/17)): the old workflow contains taskmaster-specific sync logic that will break future syncs. Run `/kk:sync-workflow:sync-workflow latest` or manually replace both files:
+1. **Update the template-sync workflow** ([why?](https://github.com/serpro69/claude-toolbox/issues/17)): the old workflow contains taskmaster-specific sync logic that will break future syncs. Run `/kk:template:sync` or manually replace both files:
 
    ```bash
    VERSION="v0.3.0"  # or use latest tag
@@ -634,7 +655,7 @@ AGENTS.md                        # Codex project instructions (this repo)
 ├── CLAUDE.extra.md              # Behavioral instructions (synced downstream)
 ├── settings.json                # Upstream-managed: permissions baseline, env, model, plugins
 ├── settings.local.json          # Per-repo: hooks, MCP enables, additional permissions
-└── scripts/                     # statusline.sh, statusline_enhanced.sh, sync-workflow.sh
+└── scripts/                     # statusline.sh, statusline_enhanced.sh
 
 .codex/
 ├── config.toml                  # Codex settings: model, approval policy, features, MCP

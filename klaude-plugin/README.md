@@ -60,7 +60,7 @@ design → review-design → implement → review-code → test → document
 | Design Review | `/kk:review-design [feature] [scope]` | Review design docs for quality and technical soundness |
 | Design Review (isolated) | `/kk:review-design:isolated [feature] [scope]` | Design review with independent sub-agents |
 | Migrate from Task Master | `/kk:migrate-from-taskmaster:migrate` | One-time migration from Task Master MCP |
-| Sync Workflow | `/kk:sync-workflow:sync-workflow [version]` | Update template-sync from upstream |
+| Template Sync | `/kk:template:sync [--version vX.Y.Z] [--dry-run]` | Sync repo with upstream template |
 
 ## Hooks
 
