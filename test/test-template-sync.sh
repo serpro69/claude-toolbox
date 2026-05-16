@@ -29,6 +29,7 @@ reset_globals() {
   CI_MODE=false
   TARGET_VERSION="latest"
   APPLY_MODE=false
+  LOCAL_MODE=false
   # Reset exclusion tracking arrays
   EXCLUDED_FILES=()
   SYNC_EXCLUSIONS=()
@@ -2393,6 +2394,28 @@ parse_arguments --apply --version v3.0.0 --output-dir /tmp/test
 assert_equals "true" "$APPLY_MODE" "--apply with other flags: APPLY_MODE"
 assert_equals "v3.0.0" "$TARGET_VERSION" "--apply with other flags: TARGET_VERSION"
 assert_equals "/tmp/test" "$STAGING_DIR" "--apply with other flags: STAGING_DIR"
+
+# =============================================================================
+# Section: --local argument parsing
+# =============================================================================
+
+log_section "--local argument parsing"
+
+log_test "parse_arguments with --local flag"
+reset_globals
+parse_arguments --local
+assert_equals "true" "$LOCAL_MODE" "--local sets LOCAL_MODE=true"
+
+log_test "parse_arguments with --local and --version"
+reset_globals
+parse_arguments --local --version v2.0.0
+assert_equals "true" "$LOCAL_MODE" "--local with --version: LOCAL_MODE"
+assert_equals "v2.0.0" "$TARGET_VERSION" "--local with --version: TARGET_VERSION"
+
+log_test "--local and --apply are independent"
+reset_globals
+parse_arguments --local
+assert_equals "false" "$APPLY_MODE" "--local does not set APPLY_MODE"
 
 # =============================================================================
 # Section: detect-only mode (APPLY_MODE=false)
