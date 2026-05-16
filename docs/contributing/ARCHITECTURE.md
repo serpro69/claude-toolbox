@@ -136,13 +136,16 @@ Downstream repo triggers sync workflow
 ### Documentation publishing
 
 ```
-Push tag v0.14.0 (or push to master)
+Push to master
   → .github/workflows/docs.yml triggers
-  → Installs Python deps from requirements.txt
-  → Tag push: mike deploy --push "0.14" (extracts major.minor)
-  → Master push: mike deploy --push latest
-  → mike pushes built site to gh-pages branch
-  → GitHub Pages serves from gh-pages
+  → mike deploy --push dev (unreleased docs)
+
+Push tag v0.14.0
+  → .github/workflows/docs.yml triggers
+  → Extracts major.minor → "0.14"
+  → mike deploy --push --update-aliases "0.14" latest
+  → mike set-default --push latest (bare URL → latest release)
+  → GitHub Pages serves from gh-pages branch
 ```
 
 ### Codex generation
