@@ -23,7 +23,7 @@ The kk plugin ships 10 workflow skills that form a complete development pipeline
 | **implement** | Executes a task list from `docs/wip/` with batched steps and code review checkpoints between batches. Updates task status as it goes. |
 | **test** | Generates tests following project conventions: table-driven, integration, mocking, property-based. Runs the full suite and reports coverage. |
 | **document** | Updates ARCHITECTURE.md, TESTING.md, and records ADRs for non-obvious decisions made during implementation. |
-| **review-code** | Reviews git changes for SOLID violations, security risks, and code quality. Language-specific checklists for Go, Java, JS/TS, Kotlin, and Python. Standard and isolated modes. |
+| **review-code** | Reviews git changes for SOLID violations, security risks, and code quality. Domain-specific checklists for Go, Java, JS/TS, Kotlin, Python, Kubernetes, K8s Operator, and agent skills. Standard and isolated modes. |
 | **review-design** | Pre-implementation review gate. Evaluates design docs for completeness, internal consistency, and technical soundness before code is written. |
 | **review-spec** | Compares implemented code against design/implementation docs. Finds spec deviations, missing implementations, and outdated docs — in both directions. |
 | **dependency-handling** | Fires before calling a library/SDK/API or adding a dependency. Forces a capy/context7 lookup instead of guessing signatures or behavior. |
@@ -41,8 +41,6 @@ Commands are skill variants invoked with explicit mode selection:
 | CoVe (isolated) | `/kk:chain-of-verification:isolated [--explore] [--haiku] [question]` | CoVe with true sub-agent isolation |
 | Spec Review | `/kk:review-spec:default [feature]` | Verify code matches design/implementation docs |
 | Spec Review (isolated) | `/kk:review-spec:isolated [feature]` | Spec conformance review with independent sub-agent |
-| Design Review | `/kk:review-design [feature] [scope]` | Review design docs for quality and technical soundness |
-| Design Review (isolated) | `/kk:review-design:isolated [feature] [scope]` | Design review with independent sub-agents |
 | Template Sync | `/kk:template:sync [--version vX.Y.Z] [--dry-run]` | Sync repo with upstream template |
 
 ## Utility Skills
