@@ -10,7 +10,8 @@
 #   ./template-sync.sh --version v1.2.0     # Sync to specific version
 #   ./template-sync.sh --dry-run            # Preview what would change
 #   ./template-sync.sh --ci                 # CI mode for GitHub Actions
-#   ./template-sync.sh --apply --output-dir ./staging  # Apply staged changes
+#   ./template-sync.sh --local                         # Fetch, compare, and apply locally
+#   ./template-sync.sh --apply --output-dir ./staging  # Apply staged changes (CI)
 #
 # OPTIONS:
 #   --version VERSION     Target version to sync (default: latest)
@@ -18,7 +19,8 @@
 #                         - "main": Latest from main branch
 #                         - "v1.2.3": Specific tag
 #   --dry-run             Preview changes without applying them
-#   --apply               Apply staged changes to the working tree (used by CI)
+#   --local               Fetch, compare, and apply in a single invocation
+#   --apply               Apply pre-staged changes to the working tree (used by CI)
 #   --ci                  CI mode for GitHub Actions (structured output)
 #   --output-dir DIR      Directory for staged changes (default: temp)
 #   -h, --help            Show this help message
@@ -114,6 +116,9 @@ PLUGIN_MIGRATED=false
 # Apply mode: when true, migration functions perform filesystem mutations.
 # When false (default), they only populate tracking arrays for reporting.
 APPLY_MODE=false
+
+# Local mode: fetch + compare + apply in a single invocation
+LOCAL_MODE=false
 
 # =============================================================================
 # Color Output
@@ -1570,10 +1575,13 @@ Options:
                         - "v1.2.3": Specific tag
                         - SHA: Specific commit
   --dry-run             Preview changes without applying them
-  --apply               Apply staged changes to the working tree
+  --local               Fetch, compare, and apply in a single invocation
+  --apply               Apply pre-staged changes to the working tree (CI only)
   --ci                  CI mode: outputs GitHub Actions compatible format
   --output-dir DIR      Directory to stage changes (default: temporary directory)
   -h, --help            Show this help message
+
+Requires: jq, git, curl, yq (mikefarah/yq for YAML processing)
 
 Exit Codes:
   0 - Success (changes found or no changes)
@@ -1581,14 +1589,14 @@ Exit Codes:
   2 - Invalid CLI arguments
 
 Examples:
-  # Sync to latest release
-  ./template-sync.sh
-
   # Preview changes without applying
   ./template-sync.sh --dry-run
 
-  # Sync to specific version
-  ./template-sync.sh --version v1.0.0
+  # Sync to latest release and apply locally
+  ./template-sync.sh --local
+
+  # Sync to specific version and apply locally
+  ./template-sync.sh --local --version v1.0.0
 
   # CI mode with custom output directory
   ./template-sync.sh --ci --output-dir ./staging
@@ -1616,6 +1624,10 @@ parse_arguments() {
       ;;
     --apply)
       APPLY_MODE=true
+      shift
+      ;;
+    --local)
+      LOCAL_MODE=true
       shift
       ;;
     --ci)
@@ -1779,6 +1791,10 @@ main() {
     log_success "Templates are up to date - no changes needed"
   elif $DRY_RUN; then
     log_info "Dry run complete - $total_changes file(s) would be changed"
+  elif $LOCAL_MODE; then
+    log_info "Applying $total_changes change(s) locally..."
+    APPLY_MODE=true
+    apply_changes "$SUBSTITUTED_TEMPLATES_PATH" "$RESOLVED_VERSION"
   else
     log_info "Sync complete - $total_changes file(s) identified for update"
     log_info "Review the changes above and apply manually or via PR"
