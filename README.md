@@ -4,6 +4,9 @@
 
 claude-toolbox is a collection of "tools" for all your agentic workflows (**currently supports claude-code and codex!**) — pre-configured MCP servers, skills, sub-agents, commands, hooks, statuslines with themes, and more - everything you need for AI-powered development workflows, used and battle-tested daily on many of my own projects.
 
+> [!NOTE]
+> Full user-documentation avilable at https://serpro69.github.io/claude-toolbox/
+
 > [!IMPORTANT]
 > This project was created with the help of Claude-Code. Is it, however, always reviewed, tested, and reworked with a human-in-the-loop.
 >
