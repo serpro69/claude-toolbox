@@ -448,11 +448,16 @@ execute_cleanup() {
   rm -f .github/workflows/pre-release.yml
   rm -f .github/workflows/release.yml
 
-  log_step "Preserving docs/update.sh..."
-  local tmpfile=""
+  log_step "Preserving files for restore after cleanup..."
+  local tmpfile_update_sh=""
   if [[ -f docs/update.sh ]]; then
-    tmpfile="$(mktemp)"
-    cp docs/update.sh "$tmpfile"
+    tmpfile_update_sh="$(mktemp)"
+    cp docs/update.sh "$tmpfile_update_sh"
+  fi
+  local tmpfile_capy_agents=""
+  if [[ "$SKIP_CAPY" != "true" ]] && [[ -f .capy/AGENTS.md ]]; then
+    tmpfile_capy_agents="$(mktemp)"
+    cp .capy/AGENTS.md "$tmpfile_capy_agents"
   fi
 
   log_step "Cleaning up template-specific files..."
@@ -483,11 +488,16 @@ execute_cleanup() {
     log_info "Stripped all capy config and scripts (SKIP_CAPY=true)"
   fi
 
-  if [[ -n "$tmpfile" ]]; then
+  if [[ -n "$tmpfile_update_sh" ]]; then
     mkdir -p docs
-    cp "$tmpfile" docs/update.sh
+    cp "$tmpfile_update_sh" docs/update.sh
     chmod +x docs/update.sh
-    rm -f "$tmpfile"
+    rm -f "$tmpfile_update_sh"
+  fi
+  if [[ -n "$tmpfile_capy_agents" ]]; then
+    mkdir -p .capy
+    cp "$tmpfile_capy_agents" .capy/AGENTS.md
+    rm -f "$tmpfile_capy_agents"
   fi
 
   log_step "Generating template state manifest..."
