@@ -331,21 +331,21 @@ fi
 log_section "Section 5: Bootstrap Script"
 
 log_test "bootstrap.sh contains import append logic"
-if grep -q '@.claude/CLAUDE.extra.md' "$REPO_ROOT/.claude/toolbox/scripts/bootstrap.sh"; then
+if grep -q '@.claude/CLAUDE.extra.md' "$REPO_ROOT/.github/scripts/bootstrap.sh"; then
   log_pass "bootstrap.sh references CLAUDE.extra.md import"
 else
   log_fail "bootstrap.sh should contain '@.claude/CLAUDE.extra.md'"
 fi
 
 log_test "bootstrap.sh does not contain old behavioral instructions append"
-if grep -q '## Claude-Code Behavioral Instructions' "$REPO_ROOT/.claude/toolbox/scripts/bootstrap.sh"; then
+if grep -q '## Claude-Code Behavioral Instructions' "$REPO_ROOT/.github/scripts/bootstrap.sh"; then
   log_fail "bootstrap.sh should not contain old behavioral instructions (migrated to CLAUDE.extra.md)"
 else
   log_pass "Old behavioral instructions removed from bootstrap.sh"
 fi
 
 log_test "bootstrap.sh has idempotent import (grep guard)"
-if grep -q "grep -q '@.claude/CLAUDE.extra.md'" "$REPO_ROOT/.claude/toolbox/scripts/bootstrap.sh"; then
+if grep -q "grep -q '@.claude/CLAUDE.extra.md'" "$REPO_ROOT/.github/scripts/bootstrap.sh"; then
   log_pass "bootstrap.sh checks for existing import before appending"
 else
   log_fail "bootstrap.sh should check for existing import to be idempotent"

@@ -2547,7 +2547,7 @@ reset_globals
 test_dir=$(create_temp_dir "apply-consolidation")
 mkdir -p "$test_dir/.github/scripts"
 echo "sync" > "$test_dir/.github/scripts/template-sync.sh"
-echo "cleanup" > "$test_dir/.github/scripts/template-cleanup.sh"
+echo "semver" > "$test_dir/.github/scripts/semver-compare.sh"
 mkdir -p "$test_dir/docs"
 echo "update" > "$test_dir/docs/update.sh"
 DELETED_FILES=()
@@ -2558,7 +2558,7 @@ popd >/dev/null
 
 assert_equals "3" "${#DELETED_FILES[@]}" "DELETED_FILES has 3 entries in apply mode"
 assert_file_not_exists "$test_dir/.github/scripts/template-sync.sh" "template-sync.sh removed in apply mode"
-assert_file_not_exists "$test_dir/.github/scripts/template-cleanup.sh" "template-cleanup.sh removed in apply mode"
+assert_file_not_exists "$test_dir/.github/scripts/semver-compare.sh" "semver-compare.sh removed in apply mode"
 assert_file_not_exists "$test_dir/docs/update.sh" "update.sh removed in apply mode"
 
 # =============================================================================
