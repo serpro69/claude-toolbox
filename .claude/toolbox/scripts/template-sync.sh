@@ -1833,15 +1833,17 @@ main() {
   fi
 
   # Compare files and generate report
-  # Save migration deletions before compare_files resets arrays
-  local migration_deletions=()
-  if $PLUGIN_MIGRATED; then
-    migration_deletions=("${DELETED_FILES[@]}")
-  fi
+  # Save pre-compare deletions (from migrations, consolidation, etc.)
+  # before compare_files resets arrays
+  local pre_compare_deletions=("${DELETED_FILES[@]}")
   compare_files "$SUBSTITUTED_TEMPLATES_PATH"
-  # Merge migration deletions back
-  if [[ ${#migration_deletions[@]} -gt 0 ]]; then
-    DELETED_FILES+=("${migration_deletions[@]}")
+  # Merge pre-compare deletions back, skipping any already found by compare
+  if [[ ${#pre_compare_deletions[@]} -gt 0 ]]; then
+    local -A compare_seen=()
+    for f in "${DELETED_FILES[@]}"; do compare_seen["$f"]=1; done
+    for f in "${pre_compare_deletions[@]}"; do
+      [[ -z "${compare_seen[$f]+x}" ]] && DELETED_FILES+=("$f")
+    done
   fi
   generate_diff_report "$SUBSTITUTED_TEMPLATES_PATH"
 

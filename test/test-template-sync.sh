@@ -2463,6 +2463,177 @@ else
 fi
 
 # =============================================================================
+# Section: Script Consolidation Migration
+# =============================================================================
+
+log_section "Script Consolidation Migration"
+
+log_test "needs_script_consolidation returns true when old-location scripts exist"
+reset_globals
+test_dir=$(create_temp_dir "needs-consolidation-true")
+mkdir -p "$test_dir/.github/scripts"
+echo "script" > "$test_dir/.github/scripts/template-sync.sh"
+pushd "$test_dir" >/dev/null
+needs_script_consolidation
+assert_equals "0" "$?" "needs_script_consolidation returns 0 when old scripts exist"
+popd >/dev/null || true
+
+log_test "needs_script_consolidation returns false when no old-location scripts exist"
+reset_globals
+test_dir=$(create_temp_dir "needs-consolidation-false")
+mkdir -p "$test_dir/.claude/toolbox/scripts"
+echo "script" > "$test_dir/.claude/toolbox/scripts/template-sync.sh"
+pushd "$test_dir" >/dev/null
+needs_script_consolidation && rc=0 || rc=$?
+assert_not_equals "0" "$rc" "needs_script_consolidation returns non-zero when no old scripts"
+popd >/dev/null || true
+
+log_test "run_script_consolidation in detect mode populates DELETED_FILES without mutations"
+reset_globals
+test_dir=$(create_temp_dir "detect-consolidation")
+mkdir -p "$test_dir/.github/scripts"
+echo "sync" > "$test_dir/.github/scripts/template-sync.sh"
+echo "semver" > "$test_dir/.github/scripts/semver-compare.sh"
+mkdir -p "$test_dir/.claude/scripts"
+echo "statusline" > "$test_dir/.claude/scripts/statusline.sh"
+mkdir -p "$test_dir/docs"
+echo "update" > "$test_dir/docs/update.sh"
+DELETED_FILES=()
+APPLY_MODE=false
+pushd "$test_dir" >/dev/null
+run_script_consolidation >/dev/null 2>&1
+popd >/dev/null
+
+assert_equals "4" "${#DELETED_FILES[@]}" "DELETED_FILES has 4 entries in detect mode"
+assert_file_exists "$test_dir/.github/scripts/template-sync.sh" "template-sync.sh preserved in detect mode"
+assert_file_exists "$test_dir/.claude/scripts/statusline.sh" "statusline.sh preserved in detect mode"
+assert_file_exists "$test_dir/docs/update.sh" "update.sh preserved in detect mode"
+
+log_test "run_script_consolidation in apply mode removes old files"
+reset_globals
+test_dir=$(create_temp_dir "apply-consolidation")
+mkdir -p "$test_dir/.github/scripts"
+echo "sync" > "$test_dir/.github/scripts/template-sync.sh"
+echo "cleanup" > "$test_dir/.github/scripts/template-cleanup.sh"
+mkdir -p "$test_dir/docs"
+echo "update" > "$test_dir/docs/update.sh"
+DELETED_FILES=()
+APPLY_MODE=true
+pushd "$test_dir" >/dev/null
+run_script_consolidation >/dev/null 2>&1
+popd >/dev/null
+
+assert_equals "3" "${#DELETED_FILES[@]}" "DELETED_FILES has 3 entries in apply mode"
+assert_file_not_exists "$test_dir/.github/scripts/template-sync.sh" "template-sync.sh removed in apply mode"
+assert_file_not_exists "$test_dir/.github/scripts/template-cleanup.sh" "template-cleanup.sh removed in apply mode"
+assert_file_not_exists "$test_dir/docs/update.sh" "update.sh removed in apply mode"
+
+# =============================================================================
+# Section: Pre-compare deletion preservation
+# =============================================================================
+
+log_section "Pre-compare deletion preservation"
+
+log_test "compare_files preserves pre-compare deletions from script consolidation"
+reset_globals
+test_dir=$(create_temp_dir "preserve-consolidation-deletions")
+
+# Simulate a downstream project with old-location scripts
+mkdir -p "$test_dir/project/.github/scripts"
+echo "sync" > "$test_dir/project/.github/scripts/template-sync.sh"
+mkdir -p "$test_dir/project/docs"
+echo "update" > "$test_dir/project/docs/update.sh"
+# New-location scripts in staging
+mkdir -p "$test_dir/staging/claude/toolbox/scripts"
+echo "sync" > "$test_dir/staging/claude/toolbox/scripts/template-sync.sh"
+echo "update" > "$test_dir/staging/claude/toolbox/scripts/update-docs.sh"
+
+pushd "$test_dir/project" >/dev/null || exit 1
+
+# Simulate what run_script_consolidation does in detect mode
+DELETED_FILES=(".github/scripts/template-sync.sh" "docs/update.sh")
+APPLY_MODE=false
+
+# Save pre-compare deletions (mirrors the fixed main() flow)
+_pre_compare=("${DELETED_FILES[@]}")
+
+MANIFEST_PATH="$FIXTURES_DIR/manifests/valid-manifest.json"
+compare_files "$test_dir/staging" 2>/dev/null
+
+# Merge back with dedup (mirrors the fixed main() flow)
+declare -A _seen=()
+for f in "${DELETED_FILES[@]}"; do _seen["$f"]=1; done
+for f in "${_pre_compare[@]}"; do
+  [[ -z "${_seen[$f]+x}" ]] && DELETED_FILES+=("$f")
+done
+unset _seen
+
+popd >/dev/null || true
+
+# .github/scripts/ and docs/ are outside compare_files dir_map,
+# so they can only appear via the pre-compare merge
+_found_github=false
+_found_docs=false
+for f in "${DELETED_FILES[@]}"; do
+  [[ "$f" == ".github/scripts/template-sync.sh" ]] && _found_github=true
+  [[ "$f" == "docs/update.sh" ]] && _found_docs=true
+done
+
+if $_found_github; then
+  log_pass ".github/scripts/template-sync.sh preserved in DELETED_FILES after compare"
+else
+  log_fail ".github/scripts/template-sync.sh should be in DELETED_FILES after compare"
+fi
+
+if $_found_docs; then
+  log_pass "docs/update.sh preserved in DELETED_FILES after compare"
+else
+  log_fail "docs/update.sh should be in DELETED_FILES after compare"
+fi
+
+log_test "compare_files deduplicates overlapping deletions from .claude/scripts/"
+reset_globals
+test_dir=$(create_temp_dir "dedup-deletions")
+
+# Staging has scripts at new location only
+mkdir -p "$test_dir/staging/claude/toolbox/scripts"
+echo "statusline" > "$test_dir/staging/claude/toolbox/scripts/statusline.sh"
+
+# Project has scripts at old location (in .claude/ scope — compare_files sees these)
+mkdir -p "$test_dir/project/.claude/scripts"
+echo "statusline" > "$test_dir/project/.claude/scripts/statusline.sh"
+
+pushd "$test_dir/project" >/dev/null || exit 1
+
+# Simulate: run_script_consolidation already flagged this file
+DELETED_FILES=(".claude/scripts/statusline.sh")
+APPLY_MODE=false
+
+_pre_compare=("${DELETED_FILES[@]}")
+
+MANIFEST_PATH="$FIXTURES_DIR/manifests/valid-manifest.json"
+compare_files "$test_dir/staging" 2>/dev/null
+
+# compare_files also detects .claude/scripts/statusline.sh as deleted
+# (it's in .claude/ but not in staging/claude/). Merge with dedup.
+declare -A _seen2=()
+for f in "${DELETED_FILES[@]}"; do _seen2["$f"]=1; done
+for f in "${_pre_compare[@]}"; do
+  [[ -z "${_seen2[$f]+x}" ]] && DELETED_FILES+=("$f")
+done
+unset _seen2
+
+popd >/dev/null || true
+
+# Count occurrences — should be exactly 1, not 2
+_count=0
+for f in "${DELETED_FILES[@]}"; do
+  [[ "$f" == ".claude/scripts/statusline.sh" ]] && _count=$((_count + 1))
+done
+
+assert_equals "1" "$_count" ".claude/scripts/statusline.sh appears exactly once (deduplicated)"
+
+# =============================================================================
 # Summary
 # =============================================================================
 
