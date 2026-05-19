@@ -211,13 +211,13 @@ Verify with `codex mcp list`. See [Pal configuration docs](https://github.com/se
 **Option B: Run locally**
 
 ```bash
-./.claude/toolbox/scripts/template-cleanup.sh
+./.github/scripts/template-cleanup.sh
 ```
 
 Interactive mode walks you through each option. Run with `--help` for all flags, or pass them directly:
 
 ```bash
-./.claude/toolbox/scripts/template-cleanup.sh --languages python,typescript -y
+./.github/scripts/template-cleanup.sh --languages python,typescript -y
 ```
 
 3. Clone your repo (if using Option A) and verify MCP servers:
@@ -237,7 +237,7 @@ Interactive mode walks you through each option. Run with `--help` for all flags,
 4. Finalize initialization:
 
    ```bash
-   chmod +x .claude/toolbox/scripts/bootstrap.sh && ./.claude/toolbox/scripts/bootstrap.sh
+   chmod +x .github/scripts/bootstrap.sh && ./.github/scripts/bootstrap.sh
    ```
 
    This installs the kk plugin, wires up the Capy knowledge base (if installed), and commits the configuration.
