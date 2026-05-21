@@ -14,9 +14,10 @@
 - **Docs:** [implementation.md#task-11-create-frameworksmd](./implementation.md#task-11-create-frameworksmd)
 
 ### Subtasks
-- [ ] 1.1 Fetch original from `https://raw.githubusercontent.com/addyosmani/agent-skills/main/skills/idea-refine/frameworks.md` (or from capy source `idea-refine-frameworks` if still indexed)
-- [ ] 1.2 Create `klaude-plugin/skills/design/frameworks.md` with all six frameworks (SCAMPER, HMW, First Principles, JTBD, Pre-mortem, Constraint Mapping), each with description and "Best for" guidance
-- [ ] 1.3 Light adaptation: add SE-context framing note at top, replace consumer-product examples with SE equivalents, preserve structure and quality criteria
+- [ ] 1.1 Pin upstream commit SHA: `git ls-remote https://github.com/addyosmani/agent-skills.git HEAD`
+- [ ] 1.2 Fetch original from `https://raw.githubusercontent.com/addyosmani/agent-skills/<SHA>/skills/idea-refine/frameworks.md`
+- [ ] 1.3 Create `klaude-plugin/skills/design/frameworks.md` with license/attribution header (MIT, Copyright Addy Osmani, pinned SHA), all six frameworks, each with description and "Best for" guidance
+- [ ] 1.4 Light adaptation: add SE-context framing note at top, replace consumer-product examples with SE equivalents, preserve structure and quality criteria
 
 ## Task 2: Create refinement-criteria.md reference file
 - **Status:** pending
@@ -26,8 +27,8 @@
 - **Docs:** [implementation.md#task-12-create-refinement-criteriamd](./implementation.md#task-12-create-refinement-criteriamd)
 
 ### Subtasks
-- [ ] 2.1 Fetch original from `https://raw.githubusercontent.com/addyosmani/agent-skills/main/skills/idea-refine/refinement-criteria.md` (or from capy source `idea-refine-criteria` if still indexed)
-- [ ] 2.2 Create `klaude-plugin/skills/design/refinement-criteria.md` with three evaluation dimensions (User Value, Feasibility, Differentiation) plus MVP Scoping section
+- [ ] 2.1 Fetch original from `https://raw.githubusercontent.com/addyosmani/agent-skills/<SHA>/skills/idea-refine/refinement-criteria.md` (same pinned SHA as Task 1)
+- [ ] 2.2 Create `klaude-plugin/skills/design/refinement-criteria.md` with license/attribution header, three evaluation dimensions (User Value, Feasibility, Differentiation) plus MVP Scoping section
 - [ ] 2.3 Light adaptation: add SE-context framing, remove consumer examples, preserve painkiller-vs-vitamin framing, differentiation ranking, value/feasibility matrix, and MVP rules
 
 ## Task 3: Rewrite idea-process.md Step 3
@@ -44,7 +45,7 @@
 - [ ] 3.4 Write sub-phase 3a (HMW framing) with reference to frameworks.md §HMW
 - [ ] 3.5 Write sub-phase 3b (hard gate) with three explicit requirements: who, success, technical constraints
 - [ ] 3.6 Write sub-phase 3c (proportional diverge) with complexity classification confirmation, two paths (non-trivial: 2-3 alternatives, simple: direct + one alternative), and rejection loop
-- [ ] 3.7 Write sub-phase 3d (CoVe-assisted converge) with `/kk:chain-of-verification:isolated` invocation, complexity evaluation, user confirmation gate, and degradation path (manual pros/cons matrix fallback)
+- [ ] 3.7 Write sub-phase 3d (converge): manual criteria-based analysis as default, CoVe scoped to verifiable claims only, concrete fallback triggers
 - [ ] 3.8 Write sub-phase 3e (surface outputs) requiring Assumptions and Not Doing artifacts
 
 ## Task 4: Update idea-process.md Steps 5 and 6
@@ -85,39 +86,56 @@
 - **Docs:** [implementation.md#task-51-reference-new-files-in-skillmd](./implementation.md#task-51-reference-new-files-in-skillmd)
 
 ### Subtasks
-- [ ] 6.1 Update `klaude-plugin/skills/design/SKILL.md` Workflow step 2 to include frameworks.md and refinement-criteria.md in the mandatory instruction-load set for fresh ideas
-- [ ] 6.2 Add sentence to Conventions section mentioning frameworks.md and refinement-criteria.md as methodology/rubric reference files
+- [ ] 6.1 Update mandatory-order directive in `klaude-plugin/skills/design/SKILL.md` §Workflow to name frameworks.md and refinement-criteria.md in the instruction enumeration
+- [ ] 6.2 Update Workflow step 2 to include frameworks.md and refinement-criteria.md in the instruction-load set for fresh ideas
+- [ ] 6.3 Add sentence to Conventions section mentioning frameworks.md and refinement-criteria.md as methodology/rubric reference files
 
-## Task 7: Update review-design review-process.md
+## Task 7: Update review-design (all review paths)
 - **Status:** pending
 - **Depends on:** Task 4
-- **Size:** S
+- **Size:** M
 - **Can run in parallel with:** Task 5, Task 6
 - **Docs:** [implementation.md#task-61-update-review-processmd-steps-3-and-4](./implementation.md#task-61-update-review-processmd-steps-3-and-4)
 
 ### Subtasks
-- [ ] 7.1 Add design.md checks to Step 3: Assumptions section (present, testable), Not Doing section (present, justified). Finding type: `STRUCTURE`
-- [ ] 7.2 Add tasks.md checks to Step 3: Not Doing in header, Size tags, no unbroken L tasks, vertical slicing (flag horizontal layers as `TECH_RISK`), parallel markers, dependency graph. Finding types: `STRUCTURE` and `TECH_RISK`
-- [ ] 7.3 Add to Step 4: assumptions testability check (vague → `AMBIGUOUS`), Not Doing validity check (disguised critical requirement → `TECH_RISK`)
+- [ ] 7.1 Add design.md checks to `review-process.md` Step 3: Assumptions section (present, testable), Not Doing section (present, justified). Finding type: `STRUCTURE`
+- [ ] 7.2 Add tasks.md checks to `review-process.md` Step 3: Not Doing in header, Size tags, no unbroken L tasks, vertical slicing (flag horizontal layers as `TECH_RISK`), parallel markers, dependency graph
+- [ ] 7.3 Add to `review-process.md` Step 4: assumptions testability check (vague → `AMBIGUOUS`), Not Doing validity check (disguised critical requirement → `TECH_RISK`)
+- [ ] 7.4 Add same quality/soundness checks to `klaude-plugin/agents/design-reviewer.md` §3 (Document Quality Pass) and §4 (Technical Soundness Pass)
+- [ ] 7.5 Add scope recommendation to `klaude-plugin/skills/review-design/SKILL.md`: note that `all` scope is recommended after `/kk:design` runs
 
-## Task 8: Final verification
+## Task 8: Create spec-style evals
 - **Status:** pending
-- **Depends on:** Task 5, Task 6, Task 7
+- **Depends on:** Task 3, Task 7
+- **Size:** M
+- **Can run in parallel with:** Task 5, Task 6
+- **Docs:** [implementation.md#task-71-create-spec-style-evals-for-design-skill](./implementation.md#task-71-create-spec-style-evals-for-design-skill)
+
+### Subtasks
+- [ ] 8.1 Create `klaude-plugin/skills/design/evals/hard-gate-enforcement/` with eval.json and test idea that invites skipping the gate
+- [ ] 8.2 Create `klaude-plugin/skills/design/evals/proportional-diverge-routing/` with eval.json and simple single-concern test idea
+- [ ] 8.3 Create `klaude-plugin/skills/design/evals/review-design-catches-missing-sections/` with eval.json and test-files/ containing a design.md missing Assumptions/Not Doing and a tasks.md with horizontal layers and no Size tags
+
+## Task 9: Final verification
+- **Status:** pending
+- **Depends on:** Task 5, Task 6, Task 7, Task 8
 - **Size:** S
 - **Can run in parallel with:** —
 
 ### Subtasks
-- [ ] 8.1 Run `bash test/test-plugin-structure.sh` — all assertions green, new files do not cause failures
-- [ ] 8.2 Run `make generate-kodex && git diff --exit-code kodex-plugin/ .codex/agents/` — Codex plugin freshness check passes
-- [ ] 8.3 Run `/kk:test` skill to verify all tasks
-- [ ] 8.4 Run `/kk:document` skill to update any relevant docs
-- [ ] 8.5 Run `/kk:review-code` skill to review the implementation
-- [ ] 8.6 Run `/kk:review-spec` skill to verify implementation matches design and implementation docs
+- [ ] 9.1 Run full test suite: `for test in test/test-*.sh; do $test; done` — all green
+- [ ] 9.2 Run `make generate-kodex && git diff --exit-code kodex-plugin/ .codex/agents/` — Codex plugin freshness check passes
+- [ ] 9.3 Run `/kk:test` skill to verify all tasks
+- [ ] 9.4 Run `/kk:document` skill to update any relevant docs
+- [ ] 9.5 Run `/kk:review-code` skill to review the implementation
+- [ ] 9.6 Run `/kk:review-spec` skill to verify implementation matches design and implementation docs
 
 ## Dependency Graph
 
 ```
-Task 1 ──→ Task 3 ──→ Task 4 ──→ Task 5 ──→ Task 8
-Task 2 ──→ Task 3     Task 3 ──→ Task 6 ──→ Task 8
-                       Task 4 ──→ Task 7 ──→ Task 8
+Task 1 ──→ Task 3 ──→ Task 4 ──→ Task 5 ──→ Task 9
+Task 2 ──→ Task 3     Task 3 ──→ Task 6 ──→ Task 9
+                       Task 4 ──→ Task 7 ──→ Task 9
+                       Task 3 ──→ Task 8 ──→ Task 9
+                       Task 7 ──→ Task 8
 ```

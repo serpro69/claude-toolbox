@@ -19,14 +19,16 @@ Designs also lack explicit scope boundaries (no "Not Doing" list) and assumption
 3. Enrich Step 6 with vertical slicing mandate, size enforcement (S/M/L with L forbidden), parallel markers, slicing strategy selection, and ASCII dependency graphs
 4. Require Assumptions and Not Doing sections in design.md (Step 5), with Not Doing elevated to tasks.md header
 5. Update review-design to check for new required sections and task format conventions
-6. Document pal integration and Mermaid graphs as future improvements in addendums
+6. Ship spec-style evals for the highest-risk new behaviors: hard gate enforcement, proportional diverge routing, and review-design catching missing/weak conventions
+7. Pin upstream source and include license attribution in adapted reference files
+8. Document pal integration and Mermaid graphs as future improvements in addendums
 
 ## Non-Goals
 
 1. Changing existing-task-process.md (resume WIP flow) — separate concern, not affected
 2. Changing the implement skill — new task fields (Size, Can run in parallel with, Not Doing header, dependency graph) are additive; implement already reads tasks.md and follows whatever structure it finds
 3. Implementing pal-based stress-testing — deferred to addendum as future improvement
-4. Changing the profile detection system or SKILL.md's mandatory ordering — these are stable and unaffected
+4. Changing the profile detection system — stable and unaffected
 5. Adding Mermaid dependency graphs — deferred to addendum; ASCII format used for universal readability
 
 ## Architecture
@@ -54,9 +56,13 @@ Before generating alternatives, the agent states which path it is taking and why
 
 **Rejection loop:** If the user rejects all alternatives, ask what constraint or dimension was missed, then loop back to 3c with that input as an additional lens.
 
-**3d. CoVe-Assisted Converge.** The agent uses the already-loaded refinement-criteria.md for the evaluation rubric (User Value, Feasibility, Differentiation). Each direction/alternative is stress-tested using `/kk:chain-of-verification:isolated`. The agent evaluates complexity to decide single vs multi-round, then confirms the verification approach with the user before invoking CoVe. After verification, present the recommendation with a one-line rationale per rejected alternative.
+**3d. Converge.** The agent uses the already-loaded refinement-criteria.md for the evaluation rubric (User Value, Feasibility, Differentiation).
 
-**Degradation path:** If CoVe returns shallow or unhelpful verification for a given idea (e.g., verification questions are too generic, answers don't meaningfully distinguish alternatives), the agent falls back to manual trade-off analysis — present a pros/cons matrix evaluated against the refinement-criteria.md dimensions without CoVe — and notes the fallback in the design doc. This does not require pal; it means the agent does not get stuck if CoVe does not fit the particular idea's shape.
+**Default: manual criteria-based analysis.** Evaluate each direction against the rubric dimensions. Present a pros/cons matrix and recommend one direction with a one-line rationale per rejected alternative.
+
+**CoVe for verifiable claims only.** When alternatives make specific factual or codebase claims — "API X supports feature Y", "library Z handles concurrency this way", "the existing auth middleware already does W" — invoke `/kk:chain-of-verification:isolated` to verify those claims. CoVe is fact-check oriented; it is not effective for subjective design trade-offs. The agent evaluates whether verifiable claims exist, then confirms the verification approach with the user before invoking CoVe.
+
+**CoVe fallback triggers.** If CoVe is invoked and its verification questions do not reference any specific technical constraint, dependency, or trade-off from the alternatives (i.e., they could apply to any idea), or if CoVe's answers for all alternatives are substantively identical — skip the CoVe results and rely on the manual criteria-based analysis alone. Note the fallback in the design doc.
 
 **3e. Surface Outputs.** Before moving to Step 4, produce two explicit artifacts:
 
@@ -65,7 +71,7 @@ Before generating alternatives, the agent states which path it is taking and why
 
 ### Reference Files
 
-Two new files in the design skill directory, loaded during the mandatory instruction-load phase (SKILL.md step 2) — before any subject-matter engagement. Per the skill workflow ordering rule (CLAUDE.md §Skill workflow ordering), these are rubric/methodology files and therefore classify as instructions:
+Two new files in the design skill directory, loaded during the mandatory instruction-load phase (SKILL.md step 2) — before any subject-matter engagement. Per the skill workflow ordering rule (CLAUDE.md §Skill workflow ordering), these are rubric/methodology files and therefore classify as instructions. The mandatory-order directive in SKILL.md's Workflow section must be updated to name these files alongside the existing instruction set:
 
 **frameworks.md** — A menu of ideation lenses the agent draws from selectively during 3c. Lightly adapted from idea-refine's frameworks.md:
 
@@ -78,7 +84,9 @@ Two new files in the design skill directory, loaded during the mandatory instruc
 
 Each framework has "Best for" guidance. Top-level instruction: "Pick the lens that fits the idea — don't run every framework mechanically."
 
-Light adaptation: product-specific examples (restaurant apps, startup concepts) removed. Brief SE-context framing note added. Structure and quality criteria preserved.
+Light adaptation: product-specific examples (restaurant apps, startup concepts) removed. Brief SE-context framing note added. Structure and quality criteria preserved. Source pinned to a specific commit SHA (not `main`) for reproducibility.
+
+**Attribution:** Both reference files include a license/attribution header noting the upstream source (addyosmani/agent-skills), the pinned commit SHA, and that the original is MIT-licensed. The MIT license requires preserving the copyright notice in substantial copies.
 
 **refinement-criteria.md** — The evaluation rubric used during 3d. Three dimensions:
 
@@ -119,6 +127,8 @@ Existing guidance (H2 per task, checkbox subtasks, dependencies, status, final v
 
 6. **ASCII dependency graph.** A `## Dependency Graph` section at the end of tasks.md. Written once by design, never updated by implement.
 
+7. **Review scope recommendation.** At the end of Step 6, recommend invoking `/kk:review-design <feature> all` as the post-design gate. The default review scope (`design.md + implementation.md`) does not include tasks.md, so the new task-format checks would never run under default invocation.
+
 ### example-tasks.md Update
 
 The example is the agent's primary formatting reference. Changes:
@@ -130,7 +140,9 @@ The example is the agent's primary formatting reference. Changes:
 
 ### review-design Changes
 
-Updates to `review-process.md` (finding types already cover the new checks). Additionally, the design skill's Step 6 should recommend invoking `/kk:review-design <feature> all` as the post-design gate — the default scope (`design.md + implementation.md`) does not include tasks.md, so the new task-format checks would never run under the default invocation.
+Updates to `review-process.md`, `review-isolated.md`, and the `design-reviewer` agent. The finding types and severity levels in review-design's SKILL.md already cover the new checks. The new quality/soundness checks must be consistent across standard mode, isolated mode, and the sub-agent — otherwise isolated reviews silently skip the task-format enforcement that standard reviews catch.
+
+Additionally, review-design's SKILL.md description should note that `all` scope is recommended after `/kk:design` runs, to mitigate the risk of users habitually invoking the default scope and silently skipping task-format checks.
 
 **Step 3 (Document Quality Review)** — new checks:
 
@@ -145,7 +157,7 @@ Updates to `review-process.md` (finding types already cover the new checks). Add
 ## Assumptions
 
 - The implement skill will naturally respect the Not Doing header in tasks.md because it reads the full header metadata block. No implement changes are needed to enforce this — the boundary is informational, relying on the LLM agent to observe it.
-- CoVe isolated mode is useful for design-phase stress-testing, though it was built for fact-checking and accuracy verification. Applying it to open-ended design evaluation is a novel use. If it proves too rigid, the in-scope degradation path (manual pros/cons matrix) handles it gracefully; pal integration (addendum) is the longer-term alternative.
+- CoVe isolated mode is scoped to verifiable factual claims within alternatives, not open-ended design evaluation. Manual criteria-based analysis is the default converge method. CoVe adds value when alternatives make specific technical claims that can be fact-checked.
 - The existing profile detection integration points in Step 3 are compatible with the new sub-phase structure. Profile detection runs before 3a begins; profile questions feed into 3a-3b naturally.
 - Agents executing the updated skill will read frameworks.md and refinement-criteria.md as reference material and exercise judgment about which frameworks/criteria apply, rather than mechanically applying every item.
 
@@ -155,7 +167,7 @@ Updates to `review-process.md` (finding types already cover the new checks). Add
 - **Changing the implement skill** — new task fields are additive; no implement code reads or enforces Size, parallel markers, or dependency graphs today.
 - **Implementing pal-based stress-testing** — deferred to future improvement (see Addendums).
 - **Adding Mermaid dependency graphs** — deferred to future improvement (see Addendums).
-- **Adding evals for the design skill** — the design skill is interactive and conversational, making automated eval scenarios harder to write than for detection-driven skills. Deferred, though the new gating logic (hard gate, proportional diverge classification, CoVe confirmation) and review-design checks (missing Assumptions/Not Doing, horizontal task detection) are the highest-risk untested behaviors. Manual verification (Phase 7) covers this gap for now.
+- **Full eval coverage for the design skill** — only spec-style evals for the highest-risk behaviors are in scope (see Goals). Comprehensive eval coverage for the interactive conversational flow is deferred.
 - **Updating the skill-md profile's design/ subdirectory** — the profile does not currently populate a design/ phase. Adding skill-authoring questions for the design flow is a separate feature.
 
 ## Addendums

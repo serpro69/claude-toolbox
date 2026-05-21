@@ -10,13 +10,14 @@
 
 ## Phases
 
-1. **Reference files** — Create frameworks.md and refinement-criteria.md in the design skill directory.
+1. **Reference files** — Create frameworks.md and refinement-criteria.md with upstream pinning and license attribution.
 2. **Step 3 restructuring** — Rewrite idea-process.md Step 3 into five sub-phases.
 3. **Steps 5 and 6 updates** — Add new required sections and task creation guidance to idea-process.md.
 4. **Example update** — Rework example-tasks.md with new fields and vertical slice examples.
-5. **SKILL.md touch** — Reference the new files in the instruction-load step.
-6. **Review-design update** — Add checks for new outputs to review-process.md.
-7. **Validation** — Run structure tests and verify the full flow.
+5. **SKILL.md update** — Update mandatory-order directive, instruction-load step, and conventions.
+6. **Review-design update** — Add checks to standard mode, isolated mode, design-reviewer agent, and SKILL.md scope guidance.
+7. **Evals** — Spec-style eval scenarios for hard gate, diverge routing, and review-design checks.
+8. **Validation** — Run full test suite and verify the flow.
 
 ---
 
@@ -28,7 +29,14 @@
 
 **Actions:**
 
-- Fetch the original from GitHub: `https://raw.githubusercontent.com/addyosmani/agent-skills/main/skills/idea-refine/frameworks.md` (or from capy source `idea-refine-frameworks` if still indexed).
+- Identify the current HEAD commit SHA of addyosmani/agent-skills `main` branch (`git ls-remote https://github.com/addyosmani/agent-skills.git HEAD`). Pin this SHA — all fetches use it instead of `main`.
+- Fetch the original from GitHub at the pinned SHA: `https://raw.githubusercontent.com/addyosmani/agent-skills/<SHA>/skills/idea-refine/frameworks.md`.
+- Add a license/attribution header at the top of the produced file:
+  ```
+  <!-- Adapted from addyosmani/agent-skills (MIT License, Copyright Addy Osmani)
+       Source: https://github.com/addyosmani/agent-skills/blob/<SHA>/skills/idea-refine/frameworks.md
+       Pinned at: <SHA> -->
+  ```
 - Preserve the full structure: one H2 per framework (SCAMPER, HMW, First Principles, JTBD, Pre-mortem, Constraint Mapping), each with a description, usage guidance, and "Best for" line.
 - Light adaptation:
   - Add a brief framing paragraph at the top: these frameworks apply to software engineering features — APIs, infrastructure, developer tools, internal systems, library design — not just consumer products. The goal is to unlock thinking, not follow a checklist.
@@ -44,7 +52,8 @@
 
 **Actions:**
 
-- Fetch the original from GitHub: `https://raw.githubusercontent.com/addyosmani/agent-skills/main/skills/idea-refine/refinement-criteria.md` (or from capy source `idea-refine-criteria` if still indexed).
+- Fetch the original from GitHub at the same pinned SHA used in Task 1.1: `https://raw.githubusercontent.com/addyosmani/agent-skills/<SHA>/skills/idea-refine/refinement-criteria.md`.
+- Add the same license/attribution header as Task 1.1 (adjusted source path).
 - Preserve the full structure: three evaluation dimensions (User Value, Feasibility, Differentiation) each with questions, red flags, and sub-categories. Plus the MVP Scoping section with its five rules.
 - Light adaptation:
   - Same framing approach as frameworks.md — brief SE-context note.
@@ -88,7 +97,9 @@ Do not advance to 3c until all three are confirmed.
 
 Never skip this step silently — the user always sees at least two options. If the user rejects all alternatives, ask what constraint or dimension was missed, then loop back with that input as an additional lens.
 
-**3d. Stress-test directions.** Evaluate each direction against the already-loaded refinement-criteria.md (User Value, Feasibility, Differentiation). Invoke `/kk:chain-of-verification:isolated` to stress-test the alternatives — the agent evaluates complexity to decide single vs multi-round, then confirms the verification approach with the user before invoking CoVe. After verification, present the recommendation with a one-line rationale per rejected alternative. Degradation path: if CoVe returns shallow or unhelpful verification, fall back to manual trade-off analysis (pros/cons matrix against refinement-criteria.md dimensions) and note the fallback in the design doc.
+**3d. Converge.** Default: evaluate each direction against the already-loaded refinement-criteria.md (User Value, Feasibility, Differentiation) via manual criteria-based analysis. Present a pros/cons matrix and recommend one direction with a one-line rationale per rejected alternative.
+
+CoVe for verifiable claims only: when alternatives make specific factual or codebase claims, invoke `/kk:chain-of-verification:isolated` to verify those claims. The agent evaluates whether verifiable claims exist, then confirms the verification approach with the user before invoking CoVe. Fallback triggers: if CoVe's verification questions don't reference any specific technical constraint or trade-off from the alternatives (could apply to any idea), or if answers for all alternatives are substantively identical — skip CoVe results and rely on the manual analysis.
 
 **3e. Surface assumptions and scope.** Before moving to Step 4, produce and present to the user:
 - **Assumptions** — what is baked into the chosen direction but has not been validated. Each should be specific enough to be testable or falsifiable.
@@ -181,19 +192,21 @@ The example stays a recognizable JWT auth scenario, just resliced to model the v
 
 **Actions:**
 
-Two changes to SKILL.md:
+Three changes to SKILL.md:
 
-1. **Workflow step 2 ("Load instructions"):** Add frameworks.md and refinement-criteria.md to the list of files that must be loaded for the fresh-idea flow. Current text says to read "the relevant process file and the shared profile-detection procedure." Update to: "Read the relevant process file, the shared profile-detection procedure, and (for fresh ideas) the reference files [frameworks.md](./frameworks.md) (ideation lenses) and [refinement-criteria.md](./refinement-criteria.md) (evaluation rubric)." Per the skill workflow ordering rule (CLAUDE.md §Skill workflow ordering), these are methodology/rubric files and classify as instructions — they must be loaded before subject-matter engagement.
+1. **Mandatory-order directive** (the bold paragraph at the top of §Workflow): Update the instruction enumeration from "this SKILL.md, the relevant process file, the shared profile-detection procedure, and every resolved profile's `design/` content" to also include "and (for fresh ideas) the reference files frameworks.md and refinement-criteria.md." The directive defines what counts as "all instructions" — if the new files are not named here, agents may treat them as optional.
 
-2. **Conventions section:** Add a sentence noting the reference files' existence and purpose, similar to how it mentions profile `questions.md` and `sections.md`.
+2. **Workflow step 2 ("Load instructions"):** Add frameworks.md and refinement-criteria.md to the list of files that must be loaded for the fresh-idea flow. Current text says to read "the relevant process file and the shared profile-detection procedure." Update to: "Read the relevant process file, the shared profile-detection procedure, and (for fresh ideas) the reference files [frameworks.md](./frameworks.md) (ideation lenses) and [refinement-criteria.md](./refinement-criteria.md) (evaluation rubric)."
 
-**Step → verify:** Read SKILL.md and confirm: frameworks.md and refinement-criteria.md listed in step 2's instruction-load set for the fresh-idea flow, mentioned in Conventions. The mandatory ordering directive at the top of the Workflow section is unchanged.
+3. **Conventions section:** Add a sentence noting the reference files' existence and purpose, similar to how it mentions profile `questions.md` and `sections.md`.
+
+**Step → verify:** Read SKILL.md and confirm: mandatory-order directive names the new files, step 2 lists them for the fresh-idea flow, Conventions mentions them.
 
 ---
 
 ## Phase 6: Review-Design Update
 
-### Task 6.1: Update review-process.md Steps 3 and 4
+### Task 6.1: Update review-process.md Steps 3 and 4 (standard mode)
 
 **Location:** `klaude-plugin/skills/review-design/review-process.md`
 
@@ -224,11 +237,65 @@ When design.md Not Doing section is in scope:
 
 **Step → verify:** Read review-process.md and confirm: Step 3 has checks for Assumptions, Not Doing, Size, vertical slicing, parallel markers, and dependency graph with correct finding types. Step 4 has testability check for assumptions and validity check for Not Doing exclusions.
 
+### Task 6.2: Update design-reviewer agent
+
+**Location:** `klaude-plugin/agents/design-reviewer.md`
+
+**Actions:**
+
+The design-reviewer agent (used by isolated mode) has its own quality and soundness pass steps (§3 Document Quality Pass, §4 Technical Soundness Pass). These are generic and do not know about the new required sections. Add the same checks from Task 6.1:
+
+- In §3 (Document Quality Pass), under Completeness and Convention adherence: add checks for Assumptions and Not Doing sections in design.md, and task-format checks (Size, vertical slicing, parallel markers, dependency graph, Not Doing header) when tasks.md is in scope.
+- In §4 (Technical Soundness Pass), under Trade-offs: add assumptions testability check and Not Doing validity check.
+
+The agent must produce these checks independently — it does not inherit standard mode's review-process.md.
+
+**Step → verify:** Read design-reviewer.md and confirm: §3 has the new quality checks, §4 has the new soundness checks.
+
+### Task 6.3: Update review-design SKILL.md description
+
+**Location:** `klaude-plugin/skills/review-design/SKILL.md`
+
+**Actions:**
+
+Add a note in the invocation section or description that `all` scope is recommended after `/kk:design` runs, so task-format checks are included. This mitigates the risk of users habitually using the default scope.
+
+**Step → verify:** Read review-design SKILL.md and confirm the scope recommendation is present.
+
 ---
 
-## Phase 7: Validation
+## Phase 7: Evals
 
-### Task 7.1: Structure tests and Codex freshness
+### Task 7.1: Create spec-style evals for design skill
+
+**Location:** `klaude-plugin/skills/design/evals/`
+
+**Actions:**
+
+Per CLAUDE.md §Skill evaluations, create spec-style eval scenarios for the highest-risk new behaviors. Each eval gets its own directory with `eval.json` and `test-files/` as needed:
+
+**Eval 1: hard-gate-enforcement** — Verify the agent does not advance to diverge without all three foundations answered (who, success, constraints).
+- Prompt: an idea that naturally invites jumping to solution ("add Redis caching for the API")
+- Trap: agent skips the hard gate and proposes a design immediately
+- Assertions: HMW framing presented, who/success/constraints each asked before alternatives appear
+
+**Eval 2: proportional-diverge-routing** — Verify the agent classifies complexity correctly and confirms with user.
+- Prompt: a simple, single-concern idea ("add a health check endpoint")
+- Trap: agent generates full 2-3 alternatives for a trivially simple idea
+- Assertions: agent states it's taking the simple path, proposes direct + one alternative, asks if user wants broader exploration
+
+**Eval 3: review-design-catches-missing-sections** — Verify review-design flags missing Assumptions and Not Doing sections.
+- Test files: a design.md with no Assumptions section and no Not Doing section, a tasks.md with no Size tags and horizontal-layer tasks
+- Prompt: invoke review-design on the test files with `all` scope
+- Assertions: STRUCTURE findings for missing Assumptions and Not Doing, TECH_RISK for horizontal tasks, STRUCTURE for missing Size tags
+
+**Step → verify:** Each eval directory contains eval.json with id, name, description, skills, prompt, trap, files, and assertions fields per the CLAUDE.md schema.
+
+---
+
+## Phase 8: Validation
+
+### Task 8.1: Structure tests and Codex freshness
 
 **Actions:**
 
@@ -236,9 +303,11 @@ When design.md Not Doing section is in scope:
 - If the structure test has assertions about files in skill directories (e.g., every .md must be referenced somewhere), check whether the new reference files need to be accounted for.
 - Run `make generate-kodex` to regenerate the Codex plugin from the canonical klaude-plugin source. Then run `git diff --exit-code kodex-plugin/ .codex/agents/` to verify the generated output is fresh. This is required per CLAUDE.md: "After editing skills in `klaude-plugin/`, run `make generate-kodex` to regenerate."
 
-**Step → verify:** `test/test-plugin-structure.sh` exits 0 with all assertions green. `make generate-kodex && git diff --exit-code kodex-plugin/ .codex/agents/` exits 0.
+- Run the full test suite per CLAUDE.md: `for test in test/test-*.sh; do $test; done`. This covers test-plugin-structure.sh, test-codex-structure.sh, test-template-sync.sh, and any other test scripts.
 
-### Task 7.2: Manual flow verification
+**Step → verify:** All test scripts exit 0. `make generate-kodex && git diff --exit-code kodex-plugin/ .codex/agents/` exits 0.
+
+### Task 8.2: Manual flow verification
 
 **Actions:**
 
