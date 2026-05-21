@@ -15,6 +15,7 @@ When executing clear, specific tasks (write this function, fix this bug, run the
 ### Exploration Phase
 
 Always explore on your own to gain complete understanding. Only delegate to exploration agents if the user explicitly requests it.
+
 <!-- Why: Claude tends to first spawn exploration agents,
      and then re-reads all the files on its own...
      resulting in double token consumption -->
@@ -26,7 +27,7 @@ When writing or modifying code:
 - **State assumptions explicitly.** If uncertain, ask. Don't guess silently.
 - **Surface ambiguity.** If the request has multiple reasonable interpretations, present them and let the user choose — don't pick one silently.
 - **Fail loud.** Flag errors explicitly. No softening, no silent corrections, no swallowed exceptions, no assertions you quietly relax to make a test pass.
-- **Pre-existing dead code is not yours to delete.** If you notice unrelated dead code, mention it — don't remove it. Only remove orphans (imports, variables, helpers) that *your* changes made unused.
+- **Pre-existing dead code is not yours to delete.** If you notice unrelated dead code, mention it — don't remove it. Only remove orphans (imports, variables, helpers) that _your_ changes made unused.
 
 ### Document Deferred Work Explicitly
 
@@ -35,7 +36,7 @@ Assume the codebase is touched by many contributors — humans and AI — who do
 When you defer a fix, a partial implementation, or a known-but-unaddressed issue:
 
 - **Write it down where the next contributor will find it.** Inline code comments at the affected site (`TODO:` / `FIXME:` with enough context to act), markdown notes in the relevant design/implementation doc under `docs/wip/<feature>/`, or an entry in `tasks.md` — not just a chat reply.
-- **Be explicit, not handwavy.** "Skipped X because Y; to fix, do Z" beats "postponed — trivial." What seems trivial in-context is opaque without it. State the *what*, the *why it was deferred*, and the *concrete next step*.
+- **Be explicit, not handwavy.** "Skipped X because Y; to fix, do Z" beats "postponed — trivial." What seems trivial in-context is opaque without it. State the _what_, the _why it was deferred_, and the _concrete next step_.
 - **Applies to review outputs too.** When `/kk:review-code`, `/kk:review-design`, or `/kk:review-spec` identifies an issue that won't be fixed in the current task, the reviewer or the consumer must record it durably (task entry, doc note, inline TODO) — not leave it as a conversational aside.
 - **Explicit partial > silent postpone.** A documented partial solution is honest and actionable. A silently deferred fix is invisible technical debt that the next session cannot see.
 
@@ -51,3 +52,9 @@ Task tracking uses simple markdown files co-located with feature design docs:
 - **Format:** H2 headings per task, checkbox subtasks, bold key-value status/dependencies
 
 The full workflow: `/kk:design` (design + create tasks) → `/kk:review-design` → `/kk:implement` (execute tasks + `/kk:review-code`/`/kk:test`/`/kk:document` at the end of each task) → `/kk:test` (verify) → `/kk:document` (document)
+
+## Git
+
+- NO conventional commits!
+- Use rules for Writing Good Commit Messages
+  - Use the body to explain what and why vs. how
