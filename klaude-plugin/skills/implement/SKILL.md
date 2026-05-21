@@ -72,8 +72,7 @@ After completing the mode's entry procedure, continue with Step 2.
 
 - Show what was implemented
 - Show verification output
-- **Default (isolated)**: Use `kk:review-code:isolated` — this handles both sub-agent and pal codereview internally with independent reviewers. Do NOT run a separate `pal` codereview call, as it is already included in the isolated workflow.
-- **If user explicitly requests standard review**: Use `/kk:review-code` skill in-session, then run `pal` mcp code-review, consolidate findings.
+- Load `kk:review-code:isolated` skill — this handles both sub-agent and pal codereview internally with independent reviewers. Do NOT run a separate `pal` codereview call, as it is already included in the isolated workflow.
 - Based on user and code-review feedback: apply changes if needed and finalize
 - (Plan mode only) Update `tasks.md`: set the task's status to `done`
 
@@ -81,7 +80,7 @@ After completing the mode's entry procedure, continue with Step 2.
 
 - [ ] Implementation addresses the requirement (plan mode: implementation matches plan)
 - [ ] Verification/tests pass, `/kk:test` completed
-- [ ] Code review completed (via `/kk:review-code` — which owns indexing its own `kk:review-findings`)
+- [ ] Code review completed (Explicitly via `/kk:review-code:isolated` skill — which owns indexing its own `kk:review-findings`)
 - [ ] New project conventions indexed as `kk:project-conventions` (skip if none established)
 - [ ] (Plan mode only) `tasks.md` updated to `done`
 
@@ -120,6 +119,6 @@ Follow the completion procedure in [plan-mode.md](plan-mode.md) — final valida
 - Review plan critically first
 - Follow plan steps exactly
 - Don't skip verifications
-- Use skills when applicable (/kk:dependency-handling, /kk:test, /kk:review-code) (Plan mode: also when the plan says to do so)
+- Use skills when applicable (`/kk:dependency-handling`, `/kk:test`, `/kk:review-code:isolated`) (Plan mode: also when the plan says to do so)
 - Between batches: just report and wait
 - Stop when blocked, don't guess
