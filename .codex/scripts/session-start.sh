@@ -79,6 +79,12 @@ Task tracking uses simple markdown files co-located with feature design docs:
 - **Format:** H2 headings per task, checkbox subtasks, bold key-value status/dependencies
 
 The full workflow: `$kk:design` (design + create tasks) → `$kk:review-design` → `$kk:implement` (execute tasks + `$kk:review-code`/`$kk:test`/`$kk:document` at the end of each task) → `$kk:test` (verify) → `$kk:document` (document)
+
+## Git
+
+- NO conventional commits!
+- Use rules for Writing Good Commit Messages
+  - Use the body to explain what and why vs. how
 EOF
 
 AGENTS_CAPY_MD=""
