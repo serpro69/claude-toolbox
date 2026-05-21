@@ -28,7 +28,7 @@
 
 **Actions:**
 
-- Fetch the original from `idea-refine-frameworks` capy source (or re-fetch from GitHub raw URL).
+- Fetch the original from GitHub: `https://raw.githubusercontent.com/addyosmani/agent-skills/main/skills/idea-refine/frameworks.md` (or from capy source `idea-refine-frameworks` if still indexed).
 - Preserve the full structure: one H2 per framework (SCAMPER, HMW, First Principles, JTBD, Pre-mortem, Constraint Mapping), each with a description, usage guidance, and "Best for" line.
 - Light adaptation:
   - Add a brief framing paragraph at the top: these frameworks apply to software engineering features — APIs, infrastructure, developer tools, internal systems, library design — not just consumer products. The goal is to unlock thinking, not follow a checklist.
@@ -44,7 +44,7 @@
 
 **Actions:**
 
-- Fetch the original from `idea-refine-criteria` capy source (or re-fetch from GitHub raw URL).
+- Fetch the original from GitHub: `https://raw.githubusercontent.com/addyosmani/agent-skills/main/skills/idea-refine/refinement-criteria.md` (or from capy source `idea-refine-criteria` if still indexed).
 - Preserve the full structure: three evaluation dimensions (User Value, Feasibility, Differentiation) each with questions, red flags, and sub-categories. Plus the MVP Scoping section with its five rules.
 - Light adaptation:
   - Same framing approach as frameworks.md — brief SE-context note.
@@ -61,7 +61,7 @@
 
 ### Task 2.1: Rewrite idea-process.md Step 3
 
-**Location:** `klaude-plugin/skills/design/idea-process.md`, Step 3 section (currently lines 27-35)
+**Location:** `klaude-plugin/skills/design/idea-process.md`, section headed `**Step 3: Help refine the idea/feature**`
 
 **Actions:**
 
@@ -69,9 +69,7 @@ Replace the current Step 3 body with the five sub-phases. The profile detection 
 
 **Step 3: Refine the idea**
 
-Open with: "Read [frameworks.md](./frameworks.md) and [refinement-criteria.md](./refinement-criteria.md) before asking any questions. These are reference material — use judgment about which frameworks and criteria apply."
-
-Then the profile detection paragraph (preserved from current Step 3, starting with "Detect active profiles before refining").
+Open with the profile detection paragraph (preserved from current Step 3, starting with "Detect active profiles before refining"). Note: frameworks.md and refinement-criteria.md are already loaded during the mandatory instruction-load phase (SKILL.md step 2) — do NOT add a redundant load instruction here.
 
 Then the five sub-phases:
 
@@ -84,13 +82,13 @@ Then the five sub-phases:
 
 Do not advance to 3c until all three are confirmed.
 
-**3c. Explore alternatives.** Select frameworks from [frameworks.md](./frameworks.md) that fit the idea — pick by "Best for" guidance, never run every framework. Two paths:
+**3c. Explore alternatives.** Select frameworks from the already-loaded frameworks.md that fit the idea — pick by "Best for" guidance, never run every framework. Before generating alternatives, state which path the agent is taking and why: "This looks like a straightforward single-path problem — I'll propose the direct approach plus one alternative. Want me to explore more broadly instead?" Two paths:
 - **Non-trivial ideas** (multiple valid approaches, significant unknowns, architectural choices): generate 2-3 alternative directions using selected lenses. Present each with a one-sentence trade-off summary.
 - **Simple ideas** (single-concern, low-uncertainty, obvious path): propose the direct implementation path plus briefly mention one alternative optimized for a different constraint (e.g., "We could also do X if extensibility matters more than simplicity"). Ask which to proceed with.
 
-Never skip this step silently — the user always sees at least two options.
+Never skip this step silently — the user always sees at least two options. If the user rejects all alternatives, ask what constraint or dimension was missed, then loop back with that input as an additional lens.
 
-**3d. Stress-test directions.** Evaluate each direction against [refinement-criteria.md](./refinement-criteria.md) (User Value, Feasibility, Differentiation). Invoke `/kk:chain-of-verification:isolated` to stress-test the alternatives — the agent evaluates complexity to decide single vs multi-round, then confirms the verification approach with the user before invoking CoVe. After verification, present the recommendation with a one-line rationale per rejected alternative.
+**3d. Stress-test directions.** Evaluate each direction against the already-loaded refinement-criteria.md (User Value, Feasibility, Differentiation). Invoke `/kk:chain-of-verification:isolated` to stress-test the alternatives — the agent evaluates complexity to decide single vs multi-round, then confirms the verification approach with the user before invoking CoVe. After verification, present the recommendation with a one-line rationale per rejected alternative. Degradation path: if CoVe returns shallow or unhelpful verification, fall back to manual trade-off analysis (pros/cons matrix against refinement-criteria.md dimensions) and note the fallback in the design doc.
 
 **3e. Surface assumptions and scope.** Before moving to Step 4, produce and present to the user:
 - **Assumptions** — what is baked into the chosen direction but has not been validated. Each should be specific enough to be testable or falsifiable.
@@ -108,7 +106,7 @@ Both become first-class artifacts in the design document (Step 5) and tasks.md h
 
 ### Task 3.1: Update Step 5 in idea-process.md
 
-**Location:** `klaude-plugin/skills/design/idea-process.md`, Step 5 section (currently lines 42-71)
+**Location:** `klaude-plugin/skills/design/idea-process.md`, section headed `**Step 5: Document the design**`
 
 **Actions:**
 
@@ -123,7 +121,7 @@ These go after the existing documentation guidelines and before the "DO NOT" lis
 
 ### Task 3.2: Update Step 6 in idea-process.md
 
-**Location:** `klaude-plugin/skills/design/idea-process.md`, Step 6 section (currently lines 73-86)
+**Location:** `klaude-plugin/skills/design/idea-process.md`, section headed `**Step 6: Create the task list**`
 
 **Actions:**
 
@@ -131,15 +129,16 @@ Add to the "Key points" bullet list after the existing bullets:
 
 - **Not Doing in header:** The tasks.md header metadata block includes a `> Not Doing:` line listing the concise scope exclusions from design.md (names only, no extended rationale). The implement skill reads tasks.md first; this puts scope boundaries front and center.
 - **Vertical slicing:** Each task delivers one complete, testable user-facing path — not a horizontal layer. Anti-pattern: "Do not create tasks that complete an entire layer (all database work, then all API work, then all UI work) — this defers integration risk to the end." A task like "create all DB models" is wrong; "create user registration end-to-end (model + endpoint + validation + test)" is right.
-- **Size tags:** Each task gets a `**Size:** S/M/L` field. S = 1-2 files, M = 3-5 files, L = 5+ files. Hard rule: any task tagged L is forbidden as a single task. Break it into smaller vertical slices.
+- **Size tags:** Each task gets a `**Size:** S/M/L` field. S = 1-2 files, M = 3-5 files, L = 5+ files. Size measures complexity, not raw file count — exclude boilerplate registrations, test fixtures, and config entries that are mechanical consequences of the main change. Hard rule: any task tagged L is forbidden as a single task. Break it into smaller vertical slices.
 - **Slicing strategies:** Three strategies, noted per-task only when deviating from default:
   - **Vertical** (default): each task delivers one complete path from input to output, testable in isolation.
   - **Contract-First**: define the interface/API boundary first, then implement each side independently. Use when introducing a new external boundary (API, SDK, message queue).
   - **Risk-First**: tackle the most uncertain piece first to surface unknowns early. Use when one task carries significantly more uncertainty than others.
 - **Parallel markers:** Each task gets a `**Can run in parallel with:**` field listing task numbers with no blocking dependency, or `—`.
 - **Dependency graph:** After all tasks, add a `## Dependency Graph` section with an ASCII diagram showing task relationships. Written once, never updated during implementation.
+- **Review scope recommendation:** At the end of Step 6, recommend invoking `/kk:review-design <feature> all` as the post-design gate. The default review scope (`design.md + implementation.md`) does not include tasks.md, so the new task-format checks would never run under default invocation.
 
-**Step → verify:** Read Step 6 and confirm: all six additions present (Not Doing header, vertical slicing with anti-pattern, Size tags with L-forbidden rule, slicing strategies with definitions, parallel markers, dependency graph), existing bullet points preserved.
+**Step → verify:** Read Step 6 and confirm: all seven additions present (Not Doing header, vertical slicing with anti-pattern, Size tags with L-forbidden rule, slicing strategies with definitions, parallel markers, dependency graph), existing bullet points preserved.
 
 ---
 
@@ -182,13 +181,13 @@ The example stays a recognizable JWT auth scenario, just resliced to model the v
 
 **Actions:**
 
-In the Workflow section's step 2 ("Load instructions"), add frameworks.md and refinement-criteria.md to the list of files that must be loaded. Current text says to read "the relevant process file and the shared profile-detection procedure." Update to also read the two reference files.
+Two changes to SKILL.md:
 
-Alternatively, the loading can happen at the start of Step 3 in idea-process.md (where the agent is already instructed to read frameworks.md and refinement-criteria.md). In that case, SKILL.md's Conventions section should mention the reference files' existence and purpose — similar to how it mentions profile `questions.md` and `sections.md` — so a reader of SKILL.md understands the full instruction set without needing to read idea-process.md first.
+1. **Workflow step 2 ("Load instructions"):** Add frameworks.md and refinement-criteria.md to the list of files that must be loaded for the fresh-idea flow. Current text says to read "the relevant process file and the shared profile-detection procedure." Update to: "Read the relevant process file, the shared profile-detection procedure, and (for fresh ideas) the reference files [frameworks.md](./frameworks.md) (ideation lenses) and [refinement-criteria.md](./refinement-criteria.md) (evaluation rubric)." Per the skill workflow ordering rule (CLAUDE.md §Skill workflow ordering), these are methodology/rubric files and classify as instructions — they must be loaded before subject-matter engagement.
 
-The lighter touch is preferred: add a sentence to the Conventions section noting that the idea refinement flow uses frameworks.md (ideation lenses) and refinement-criteria.md (evaluation rubric) as reference material during Step 3, with the actual loading instruction in idea-process.md.
+2. **Conventions section:** Add a sentence noting the reference files' existence and purpose, similar to how it mentions profile `questions.md` and `sections.md`.
 
-**Step → verify:** Read SKILL.md and confirm: frameworks.md and refinement-criteria.md mentioned in Conventions, no structural changes to mandatory ordering or workflow steps.
+**Step → verify:** Read SKILL.md and confirm: frameworks.md and refinement-criteria.md listed in step 2's instruction-load set for the fresh-idea flow, mentioned in Conventions. The mandatory ordering directive at the top of the Workflow section is unchanged.
 
 ---
 
@@ -229,21 +228,22 @@ When design.md Not Doing section is in scope:
 
 ## Phase 7: Validation
 
-### Task 7.1: Structure tests
+### Task 7.1: Structure tests and Codex freshness
 
 **Actions:**
 
 - Run `bash test/test-plugin-structure.sh` to validate plugin structure. The new files (frameworks.md, refinement-criteria.md) are not skill entry points and have no frontmatter, so they should not trigger skill-specific assertions. Verify they do not cause test failures.
 - If the structure test has assertions about files in skill directories (e.g., every .md must be referenced somewhere), check whether the new reference files need to be accounted for.
+- Run `make generate-kodex` to regenerate the Codex plugin from the canonical klaude-plugin source. Then run `git diff --exit-code kodex-plugin/ .codex/agents/` to verify the generated output is fresh. This is required per CLAUDE.md: "After editing skills in `klaude-plugin/`, run `make generate-kodex` to regenerate."
 
-**Step → verify:** `test/test-plugin-structure.sh` exits 0 with all assertions green.
+**Step → verify:** `test/test-plugin-structure.sh` exits 0 with all assertions green. `make generate-kodex && git diff --exit-code kodex-plugin/ .codex/agents/` exits 0.
 
 ### Task 7.2: Manual flow verification
 
 **Actions:**
 
 - Invoke `/kk:design` with a non-trivial test idea. Verify:
-  - Agent reads frameworks.md and refinement-criteria.md at the start of Step 3
+  - Agent loads frameworks.md and refinement-criteria.md during instruction-load phase (before Step 1)
   - HMW framing presented before questions
   - Hard gate enforced (who, success, constraints)
   - Alternatives generated using framework lenses

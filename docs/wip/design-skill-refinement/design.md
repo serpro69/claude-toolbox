@@ -35,7 +35,7 @@ Designs also lack explicit scope boundaries (no "Not Doing" list) and assumption
 
 The current Step 3 is a single block. It becomes five sequential sub-phases, running after profile detection (which stays in its current position — profile `questions.md` feeds into 3a-3b):
 
-**3a. HMW Framing.** Restate the idea as a "How Might We" problem statement before asking refinement questions. Present to user for confirmation or correction. Forces clarity on what is being solved before architecture discussions begin. The HMW format comes from frameworks.md, which the agent reads at the start of Step 3.
+**3a. HMW Framing.** Restate the idea as a "How Might We" problem statement before asking refinement questions. Present to user for confirmation or correction. Forces clarity on what is being solved before architecture discussions begin. The HMW format comes from frameworks.md, already loaded during the instruction-load phase.
 
 **3b. Hard Gate.** Block progress until three things are explicitly answered:
 
@@ -45,12 +45,18 @@ The current Step 3 is a single block. It becomes five sequential sub-phases, run
 
 One question at a time, multiple choice preferred. The agent may not advance to diverge until all three are confirmed. This prevents designing solutions that conflict with the project's actual technical landscape.
 
-**3c. Proportional Diverge.** The agent reads frameworks.md for available lenses (SCAMPER, First Principles, JTBD, Constraint Mapping, Pre-mortem, HMW) and selects lenses that fit the idea — never runs every framework mechanically. Two paths:
+**3c. Proportional Diverge.** The agent uses the already-loaded frameworks.md for available lenses (SCAMPER, First Principles, JTBD, Constraint Mapping, Pre-mortem, HMW) and selects lenses that fit the idea — never runs every framework mechanically. Two paths based on complexity:
 
 - **Non-trivial ideas** (multiple valid approaches, significant unknowns, architectural choices): generate 2-3 alternative directions using selected lenses. Present each with a one-sentence trade-off summary.
-- **Simple ideas** (single-concern, low-uncertainty, obvious path): propose the direct implementation path plus briefly mention one alternative optimized for a different constraint (e.g., "We could also do X if you want to prioritize extensibility over simplicity"). Ask which to proceed with. Never skip diverge silently.
+- **Simple ideas** (single-concern, low-uncertainty, obvious path): propose the direct implementation path plus briefly mention one alternative optimized for a different constraint (e.g., "We could also do X if you want to prioritize extensibility over simplicity"). Ask which to proceed with.
 
-**3d. CoVe-Assisted Converge.** The agent reads refinement-criteria.md for the evaluation rubric (User Value, Feasibility, Differentiation). Each direction/alternative is stress-tested using `/kk:chain-of-verification:isolated`. The agent evaluates complexity to decide single vs multi-round, then confirms the verification approach with the user before invoking CoVe. After verification, present the recommendation with a one-line rationale per rejected alternative.
+Before generating alternatives, the agent states which path it is taking and why: "This looks like a straightforward single-path problem — I'll propose the direct approach plus one alternative. Want me to explore more broadly instead?" This prevents silent misclassification of complexity. Never skip diverge silently — the user always sees at least two options.
+
+**Rejection loop:** If the user rejects all alternatives, ask what constraint or dimension was missed, then loop back to 3c with that input as an additional lens.
+
+**3d. CoVe-Assisted Converge.** The agent uses the already-loaded refinement-criteria.md for the evaluation rubric (User Value, Feasibility, Differentiation). Each direction/alternative is stress-tested using `/kk:chain-of-verification:isolated`. The agent evaluates complexity to decide single vs multi-round, then confirms the verification approach with the user before invoking CoVe. After verification, present the recommendation with a one-line rationale per rejected alternative.
+
+**Degradation path:** If CoVe returns shallow or unhelpful verification for a given idea (e.g., verification questions are too generic, answers don't meaningfully distinguish alternatives), the agent falls back to manual trade-off analysis — present a pros/cons matrix evaluated against the refinement-criteria.md dimensions without CoVe — and notes the fallback in the design doc. This does not require pal; it means the agent does not get stuck if CoVe does not fit the particular idea's shape.
 
 **3e. Surface Outputs.** Before moving to Step 4, produce two explicit artifacts:
 
@@ -59,7 +65,7 @@ One question at a time, multiple choice preferred. The agent may not advance to 
 
 ### Reference Files
 
-Two new files in the design skill directory, loaded at the start of Step 3:
+Two new files in the design skill directory, loaded during the mandatory instruction-load phase (SKILL.md step 2) — before any subject-matter engagement. Per the skill workflow ordering rule (CLAUDE.md §Skill workflow ordering), these are rubric/methodology files and therefore classify as instructions:
 
 **frameworks.md** — A menu of ideation lenses the agent draws from selectively during 3c. Lightly adapted from idea-refine's frameworks.md:
 
@@ -101,7 +107,7 @@ Existing guidance (H2 per task, checkbox subtasks, dependencies, status, final v
 
 2. **Vertical slicing mandate.** Each task delivers one complete, testable user-facing path. Explicit anti-pattern: "Do not create tasks that complete an entire layer (all database work, then all API work, then all UI work). This defers integration risk to the end."
 
-3. **Size tags.** `**Size:** S/M/L` field on each task. S = 1-2 files, M = 3-5 files, L = 5+ files. Hard rule: L is forbidden as a single task — must be broken into smaller vertical slices.
+3. **Size tags.** `**Size:** S/M/L` field on each task. S = 1-2 files, M = 3-5 files, L = 5+ files. Size measures complexity, not raw file count — exclude boilerplate registrations, test fixtures, and config entries that are mechanical consequences of the main change. Hard rule: L is forbidden as a single task — must be broken into smaller vertical slices.
 
 4. **Slicing strategy selection.** Three strategies, one-sentence definitions:
    - **Vertical** (default): each task delivers one complete path from input to output, testable in isolation.
@@ -124,7 +130,7 @@ The example is the agent's primary formatting reference. Changes:
 
 ### review-design Changes
 
-Updates to `review-process.md` only (SKILL.md unchanged — finding types already cover the new checks):
+Updates to `review-process.md` (finding types already cover the new checks). Additionally, the design skill's Step 6 should recommend invoking `/kk:review-design <feature> all` as the post-design gate — the default scope (`design.md + implementation.md`) does not include tasks.md, so the new task-format checks would never run under the default invocation.
 
 **Step 3 (Document Quality Review)** — new checks:
 
@@ -139,7 +145,7 @@ Updates to `review-process.md` only (SKILL.md unchanged — finding types alread
 ## Assumptions
 
 - The implement skill will naturally respect the Not Doing header in tasks.md because it reads the full header metadata block. No implement changes are needed to enforce this — the boundary is informational, relying on the LLM agent to observe it.
-- CoVe isolated mode is stable enough for design-phase stress-testing. It was built for fact-checking and accuracy verification; applying it to design alternative evaluation is a novel use. If it proves too rigid for open-ended design evaluation, pal integration (addendum) is the fallback.
+- CoVe isolated mode is useful for design-phase stress-testing, though it was built for fact-checking and accuracy verification. Applying it to open-ended design evaluation is a novel use. If it proves too rigid, the in-scope degradation path (manual pros/cons matrix) handles it gracefully; pal integration (addendum) is the longer-term alternative.
 - The existing profile detection integration points in Step 3 are compatible with the new sub-phase structure. Profile detection runs before 3a begins; profile questions feed into 3a-3b naturally.
 - Agents executing the updated skill will read frameworks.md and refinement-criteria.md as reference material and exercise judgment about which frameworks/criteria apply, rather than mechanically applying every item.
 
@@ -149,7 +155,7 @@ Updates to `review-process.md` only (SKILL.md unchanged — finding types alread
 - **Changing the implement skill** — new task fields are additive; no implement code reads or enforces Size, parallel markers, or dependency graphs today.
 - **Implementing pal-based stress-testing** — deferred to future improvement (see Addendums).
 - **Adding Mermaid dependency graphs** — deferred to future improvement (see Addendums).
-- **Adding evals for the design skill** — the design skill is interactive and conversational, making automated eval scenarios harder to write than for detection-driven skills. Deferred.
+- **Adding evals for the design skill** — the design skill is interactive and conversational, making automated eval scenarios harder to write than for detection-driven skills. Deferred, though the new gating logic (hard gate, proportional diverge classification, CoVe confirmation) and review-design checks (missing Assumptions/Not Doing, horizontal task detection) are the highest-risk untested behaviors. Manual verification (Phase 7) covers this gap for now.
 - **Updating the skill-md profile's design/ subdirectory** — the profile does not currently populate a design/ phase. Adding skill-authoring questions for the design flow is a separate feature.
 
 ## Addendums

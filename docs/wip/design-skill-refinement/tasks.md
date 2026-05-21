@@ -14,7 +14,7 @@
 - **Docs:** [implementation.md#task-11-create-frameworksmd](./implementation.md#task-11-create-frameworksmd)
 
 ### Subtasks
-- [ ] 1.1 Fetch original from capy source `idea-refine-frameworks` (or re-fetch from `https://raw.githubusercontent.com/addyosmani/agent-skills/main/skills/idea-refine/frameworks.md`)
+- [ ] 1.1 Fetch original from `https://raw.githubusercontent.com/addyosmani/agent-skills/main/skills/idea-refine/frameworks.md` (or from capy source `idea-refine-frameworks` if still indexed)
 - [ ] 1.2 Create `klaude-plugin/skills/design/frameworks.md` with all six frameworks (SCAMPER, HMW, First Principles, JTBD, Pre-mortem, Constraint Mapping), each with description and "Best for" guidance
 - [ ] 1.3 Light adaptation: add SE-context framing note at top, replace consumer-product examples with SE equivalents, preserve structure and quality criteria
 
@@ -26,7 +26,7 @@
 - **Docs:** [implementation.md#task-12-create-refinement-criteriamd](./implementation.md#task-12-create-refinement-criteriamd)
 
 ### Subtasks
-- [ ] 2.1 Fetch original from capy source `idea-refine-criteria` (or re-fetch from `https://raw.githubusercontent.com/addyosmani/agent-skills/main/skills/idea-refine/refinement-criteria.md`)
+- [ ] 2.1 Fetch original from `https://raw.githubusercontent.com/addyosmani/agent-skills/main/skills/idea-refine/refinement-criteria.md` (or from capy source `idea-refine-criteria` if still indexed)
 - [ ] 2.2 Create `klaude-plugin/skills/design/refinement-criteria.md` with three evaluation dimensions (User Value, Feasibility, Differentiation) plus MVP Scoping section
 - [ ] 2.3 Light adaptation: add SE-context framing, remove consumer examples, preserve painkiller-vs-vitamin framing, differentiation ranking, value/feasibility matrix, and MVP rules
 
@@ -40,11 +40,11 @@
 ### Subtasks
 - [ ] 3.1 Replace current Step 3 body in `klaude-plugin/skills/design/idea-process.md` with five sub-phases (3a-3e)
 - [ ] 3.2 Preserve the profile detection block in its current position (before questions begin)
-- [ ] 3.3 Add instruction to read frameworks.md and refinement-criteria.md at the start of Step 3
+- [ ] 3.3 Ensure Step 3 references frameworks.md and refinement-criteria.md as already-loaded (loaded during SKILL.md step 2, not re-loaded here)
 - [ ] 3.4 Write sub-phase 3a (HMW framing) with reference to frameworks.md §HMW
 - [ ] 3.5 Write sub-phase 3b (hard gate) with three explicit requirements: who, success, technical constraints
-- [ ] 3.6 Write sub-phase 3c (proportional diverge) with two paths: non-trivial (2-3 alternatives) and simple (direct + one alternative)
-- [ ] 3.7 Write sub-phase 3d (CoVe-assisted converge) with `/kk:chain-of-verification:isolated` invocation, complexity evaluation, and user confirmation gate
+- [ ] 3.6 Write sub-phase 3c (proportional diverge) with complexity classification confirmation, two paths (non-trivial: 2-3 alternatives, simple: direct + one alternative), and rejection loop
+- [ ] 3.7 Write sub-phase 3d (CoVe-assisted converge) with `/kk:chain-of-verification:isolated` invocation, complexity evaluation, user confirmation gate, and degradation path (manual pros/cons matrix fallback)
 - [ ] 3.8 Write sub-phase 3e (surface outputs) requiring Assumptions and Not Doing artifacts
 
 ## Task 4: Update idea-process.md Steps 5 and 6
@@ -62,6 +62,7 @@
 - [ ] 4.5 Add slicing strategy definitions (Vertical, Contract-First, Risk-First) to Step 6
 - [ ] 4.6 Add parallel markers requirement to Step 6
 - [ ] 4.7 Add ASCII dependency graph requirement to Step 6
+- [ ] 4.8 Add recommendation to invoke `/kk:review-design <feature> all` as the post-design gate at the end of Step 6
 
 ## Task 5: Rework example-tasks.md
 - **Status:** pending
@@ -84,7 +85,8 @@
 - **Docs:** [implementation.md#task-51-reference-new-files-in-skillmd](./implementation.md#task-51-reference-new-files-in-skillmd)
 
 ### Subtasks
-- [ ] 6.1 Add sentence to `klaude-plugin/skills/design/SKILL.md` Conventions section mentioning frameworks.md and refinement-criteria.md as reference material used during Step 3
+- [ ] 6.1 Update `klaude-plugin/skills/design/SKILL.md` Workflow step 2 to include frameworks.md and refinement-criteria.md in the mandatory instruction-load set for fresh ideas
+- [ ] 6.2 Add sentence to Conventions section mentioning frameworks.md and refinement-criteria.md as methodology/rubric reference files
 
 ## Task 7: Update review-design review-process.md
 - **Status:** pending
@@ -106,10 +108,11 @@
 
 ### Subtasks
 - [ ] 8.1 Run `bash test/test-plugin-structure.sh` — all assertions green, new files do not cause failures
-- [ ] 8.2 Run `/kk:test` skill to verify all tasks
-- [ ] 8.3 Run `/kk:document` skill to update any relevant docs
-- [ ] 8.4 Run `/kk:review-code` skill to review the implementation
-- [ ] 8.5 Run `/kk:review-spec` skill to verify implementation matches design and implementation docs
+- [ ] 8.2 Run `make generate-kodex && git diff --exit-code kodex-plugin/ .codex/agents/` — Codex plugin freshness check passes
+- [ ] 8.3 Run `/kk:test` skill to verify all tasks
+- [ ] 8.4 Run `/kk:document` skill to update any relevant docs
+- [ ] 8.5 Run `/kk:review-code` skill to review the implementation
+- [ ] 8.6 Run `/kk:review-spec` skill to verify implementation matches design and implementation docs
 
 ## Dependency Graph
 
