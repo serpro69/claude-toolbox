@@ -1,6 +1,6 @@
 # Skills
 
-The kk plugin ships 10 workflow skills that form a complete development pipeline.
+The kk plugin ships 11 workflow skills that form a complete development pipeline.
 
 ## The Pipeline
 
@@ -27,6 +27,7 @@ The kk plugin ships 10 workflow skills that form a complete development pipeline
 | **/kk:review-design** | Pre-implementation review gate. Evaluates design docs for completeness, internal consistency, and technical soundness before code is written. |
 | **/kk:review-spec** | Compares implemented code against design/implementation docs. Finds spec deviations, missing implementations, and outdated docs — in both directions. |
 | **/kk:dependency-handling** | Fires before calling a library/SDK/API or adding a dependency. Forces a capy/context7 lookup instead of guessing signatures or behavior. |
+| **/kk:diff-skill** | Compares two versions of a skill's markdown instructions to detect degradations and complexity increases. Asymmetric — only regressions count. |
 | **/kk:merge-docs** | Merges two competing design docs for the same feature into one unified document, resolving conflicts and preserving the best of both. |
 | **/kk:chain-of-verification** | Makes Claude fact-check its own answers. Standard mode (prompt-based) or isolated mode (independent sub-agents). For high-stakes accuracy. |
 
