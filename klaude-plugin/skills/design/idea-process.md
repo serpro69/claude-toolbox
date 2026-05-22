@@ -32,7 +32,7 @@ Note: [frameworks.md](frameworks.md) and [refinement-criteria.md](refinement-cri
 
 **Interaction style throughout:** one question per message, multiple choice preferred. Open-ended questions are OK too. The sub-phases below add structure to _what_ is asked, not _how_.
 
-**3a. Frame the problem.** Restate the idea as a "How Might We" problem statement (format defined in [frameworks.md §HMW](frameworks.md#how-might-we-hmw)). Present to the user for confirmation before proceeding. This anchors all subsequent questions on the problem, not a solution.
+**3a. Frame the problem.** Restate the idea as a rough "How Might We" problem statement — a directional anchor, not a fully specified template. Use [frameworks.md §HMW](frameworks.md#how-might-we-hmw) for format quality guidance (good vs bad HMW qualities), but do not attempt to fill every slot (specific user, key constraint) yet — those come from 3b. Present the framing to the user for confirmation or correction before proceeding. This anchors all subsequent questions on the problem, not a solution.
 
 **3b. Establish foundations.** Three things must be explicitly answered before advancing to alternatives. Ask one at a time, multiple choice preferred:
 
@@ -42,9 +42,14 @@ Note: [frameworks.md](frameworks.md) and [refinement-criteria.md](refinement-cri
 
 Do not advance to 3c until all three are confirmed.
 
-**3c. Explore alternatives.** Select frameworks from the already-loaded [frameworks.md](frameworks.md) that fit the idea — pick by "Best for" guidance, never run every framework. Before generating alternatives, state which path you are taking and why:
+**3c. Explore alternatives.** Select frameworks from the already-loaded [frameworks.md](frameworks.md) that fit the idea — pick by "Best for" guidance, never run every framework.
 
-> "This looks like a straightforward single-path problem — I'll propose the direct approach plus one alternative. Want me to explore more broadly instead?"
+Classify the idea before generating alternatives. **Non-trivial** if it involves architectural choices, multiple valid implementation approaches, or significant unknowns. **Simple** if the implementation path is singular and the main decisions are parameter-level. State which classification and why, then confirm with the user:
+
+- **For simple ideas:**
+  > "This looks like a straightforward single-path problem — I'll propose the direct approach plus one alternative. Want me to explore more broadly instead?"
+- **For non-trivial ideas:**
+  > "This has multiple valid approaches with real trade-offs — I'll explore 2-3 alternative directions using [selected frameworks] and summarize their trade-offs. Sound right, or should I narrow the focus?"
 
 Two paths:
 
@@ -55,13 +60,13 @@ Never skip this step silently — the user always sees at least two options. If 
 
 **3d. Converge.** Default: evaluate each direction against the already-loaded [refinement-criteria.md](refinement-criteria.md) (User Value, Feasibility, Differentiation) via manual criteria-based analysis. Present a pros/cons matrix and recommend one direction with a one-line rationale per rejected alternative.
 
-**CoVe for verifiable claims only:** when alternatives make specific factual or codebase claims — "API X supports feature Y", "library Z handles concurrency this way", "the existing auth middleware already does W" — invoke `/kk:chain-of-verification:isolated` to verify those claims. CoVe is fact-check oriented; it is not effective for subjective design trade-offs. Evaluate whether verifiable claims exist, then confirm the verification approach with the user before invoking CoVe.
+**CoVe pre-check:** before invoking CoVe, evaluate whether any alternative makes a specific verifiable claim — "API X supports feature Y", "library Z handles concurrency this way", "the existing auth middleware already does W". If no verifiable claims exist, skip CoVe entirely and note it. If verifiable claims exist, briefly name them and ask the user to confirm before invoking `/kk:chain-of-verification:isolated`. CoVe is fact-check oriented; it is not effective for subjective design trade-offs.
 
-**CoVe fallback triggers:** if CoVe's verification questions do not reference any specific technical constraint, dependency, or trade-off from the alternatives (i.e., they could apply to any idea), or if CoVe's answers for all alternatives are substantively identical — skip the CoVe results and rely on the manual criteria-based analysis alone. Note the fallback in the design doc.
+**CoVe post-check:** after CoVe returns, evaluate the results. If CoVe's verification questions do not reference any specific technical constraint, dependency, or trade-off from the alternatives (i.e., they could apply to any idea), or if CoVe's answers for all alternatives are substantively identical — skip the CoVe results and rely on the manual criteria-based analysis alone. Note the fallback in the design doc.
 
 **3e. Surface assumptions and scope.** Before moving to Step 4, produce and present to the user:
 
-- **Assumptions** — what is baked into the chosen direction but has not been validated. Each should be specific enough to be testable or falsifiable.
+- **Assumptions** — what is baked into the chosen direction but has not been validated. Categorize using [refinement-criteria.md §Assumption Audit](refinement-criteria.md#assumption-audit): Must Be True (dealbreakers), Should Be True (important), Might Be True (nice to have). Each assumption should be specific enough to be testable or falsifiable.
 - **Not Doing** — explicit scope exclusions with a one-line reason each.
 
 Both become first-class artifacts in the design document (Step 5) and tasks.md header (Step 6).
