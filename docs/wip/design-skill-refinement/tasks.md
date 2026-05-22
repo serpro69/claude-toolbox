@@ -91,18 +91,18 @@
 - [x] 6.3 Add sentence to Conventions section mentioning frameworks.md and refinement-criteria.md as methodology/rubric reference files
 
 ## Task 7: Update review-design (all review paths)
-- **Status:** pending
+- **Status:** done
 - **Depends on:** Task 4
 - **Size:** M
 - **Can run in parallel with:** Task 5, Task 6
 - **Docs:** [implementation.md#task-61-update-review-processmd-steps-3-and-4](./implementation.md#task-61-update-review-processmd-steps-3-and-4)
 
 ### Subtasks
-- [ ] 7.1 Add design.md checks to `review-process.md` Step 3: Assumptions section (present, testable), Not Doing section (present, justified). Finding type: `STRUCTURE`
-- [ ] 7.2 Add tasks.md checks to `review-process.md` Step 3: Not Doing in header, Size tags, no unbroken L tasks, vertical slicing (flag horizontal layers as `TECH_RISK`), parallel markers, dependency graph
-- [ ] 7.3 Add to `review-process.md` Step 4: assumptions testability check (vague → `AMBIGUOUS`), Not Doing validity check (disguised critical requirement → `TECH_RISK`)
-- [ ] 7.4 Add same quality/soundness checks to `klaude-plugin/agents/design-reviewer.md` §3 (Document Quality Pass) and §4 (Technical Soundness Pass)
-- [ ] 7.5 Add scope recommendation to `klaude-plugin/skills/review-design/SKILL.md`: note that `all` scope is recommended after `/kk:design` runs
+- [x] 7.1 Add design.md checks to `review-process.md` Step 3: Assumptions section (present, testable), Not Doing section (present, justified). Finding type: `STRUCTURE`
+- [x] 7.2 Add tasks.md checks to `review-process.md` Step 3: Not Doing in header, Size tags, no unbroken L tasks, vertical slicing (flag horizontal layers as `TECH_RISK`), parallel markers, dependency graph
+- [x] 7.3 Add to `review-process.md` Step 4: assumptions testability check (vague → `AMBIGUOUS`), Not Doing validity check (disguised critical requirement → `TECH_RISK`)
+- [x] 7.4 Add same quality/soundness checks to `klaude-plugin/agents/design-reviewer.md` §3 (Document Quality Pass) and §4 (Technical Soundness Pass)
+- [x] 7.5 Add scope recommendation to `klaude-plugin/skills/review-design/SKILL.md`: note that `all` scope is recommended after `/kk:design` runs
 
 ## Task 8: Create spec-style evals
 - **Status:** pending
