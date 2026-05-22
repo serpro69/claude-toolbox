@@ -27,41 +27,56 @@
 - **Docs:** [implementation.md#diff-processmd-authoring](./implementation.md#diff-processmd-authoring)
 
 ### Subtasks
-- [ ] 2.1 Write progress checklist at top (7 phases) and Phase 1 "Parse invocation" — skill-name extraction, SKILL.md path resolution (convenience shortcut + fallback), ref defaults (working tree vs HEAD)
+- [ ] 2.1 Write progress checklist at top (7 phases) and Phase 1 "Parse invocation" — skill-name extraction, SKILL.md path resolution (convenience shortcut + fallback), ref defaults (`HEAD` → working tree)
 - [ ] 2.2 Write Phase 2 "Validate" — `git rev-parse` for refs, `git cat-file -e` for SKILL.md existence at both refs, clear error messages
-- [ ] 2.3 Write Phase 3 "Build reachable file sets" — link-walk algorithm (frontier/visited), markdown link extraction excluding fenced code blocks and external URLs, relative path resolution, symlink handling, absent-file tracking
+- [ ] 2.3 Write Phase 3 "Build reachable file sets" — link-walk algorithm (frontier/visited), markdown link extraction with best-effort fenced-code-block exclusion, relative path resolution, symlink detection via `git ls-tree` mode `120000` + `git cat-file -p` for target resolution, absent-file tracking, ~100KB content-size warning
 - [ ] 2.4 Write Phase 4 "Judgment" — two-axis framing (degradation + complexity), relocation handling, explicit asymmetric instructions for the LLM
 - [ ] 2.5 Write Phase 5 "Write report" — directory creation, filename convention, report template
 - [ ] 2.6 Write Phase 6 "Present inline summary" — under 10 lines, verdict + counts + report path
-- [ ] 2.7 Write Phase 7 "Index to capy" — conditional indexing under `kk:diff-skill-findings`, skip on clean results
+- [ ] 2.7 Write Phase 7 "Index to capy" — conditional indexing under `kk:review-findings`, skip on clean results
 
-## Task 3: Wire into plugin manifest and tests
+## Task 3: Author eval scenarios
 - **Status:** pending
-- **Depends on:** Task 1, Task 2
+- **Depends on:** Task 1
+- **Size:** S
+- **Can run in parallel with:** Task 2
+- **Docs:** [design.md#evaluation-scenarios](./design.md#evaluation-scenarios)
+
+### Subtasks
+- [ ] 3.1 Create `klaude-plugin/skills/diff-skill/evals/known-degradation/` with `eval.json` and `test-files/` — a minimal SKILL.md + process file where a `MUST` is weakened to `SHOULD`, a required-output bullet is removed, and a link is broken. Assertions: all three flagged as degradations
+- [ ] 3.2 Create `klaude-plugin/skills/diff-skill/evals/clean-refactor/` with `eval.json` and `test-files/` — a restructured skill where content moves between files but no substance is lost. Assertions: no degradations reported
+- [ ] 3.3 Each `eval.json` follows the schema in `CLAUDE.md` §Skill evaluations — `id`, `name`, `description`, `skills`, `prompt`, `trap`, `files`, `assertions` with `<eval-id>.<n>` numbering
+
+## Task 4: Wire into plugin manifest, docs, and tests
+- **Status:** pending
+- **Depends on:** Task 1, Task 2, Task 3
 - **Size:** S
 - **Can run in parallel with:** —
 - **Docs:** [implementation.md#files-to-create](./implementation.md#files-to-create)
 
 ### Subtasks
-- [ ] 3.1 Add `diff-skill` to `EXPECTED_SKILLS` array in `test/test-plugin-structure.sh` and update the skill count in the log message from 10 to 11
-- [ ] 3.2 Add `diff-skill` row to the Skills table in `klaude-plugin/README.md` — one-sentence description matching the tone of surrounding rows
-- [ ] 3.3 Run `bash test/test-plugin-structure.sh` and confirm all assertions pass
-- [ ] 3.4 Verify the Skills-table row count is correct via a scoped check (grep per-skill name within the Skills section, not a repo-wide count)
+- [ ] 4.1 Add `diff-skill` to `EXPECTED_SKILLS` array in `test/test-plugin-structure.sh` and update the skill count in the log message to match the new array length
+- [ ] 4.2 Update `klaude-plugin/README.md` — change "10 workflow skills" bullet to reflect the new count
+- [ ] 4.3 Add `diff-skill` row to the Skill Reference table in `docs/user-guide/skills.md` — one-sentence description matching the tone of surrounding rows. Update the "ships N workflow skills" count in the opening line
+- [ ] 4.4 Run `make generate-kodex` to regenerate `kodex-plugin/` and `.codex/agents/`, then verify no unexpected diffs with `git status`
+- [ ] 4.5 Run `bash test/test-plugin-structure.sh` and confirm all assertions pass (including kodex-plugin skill count parity at line ~388)
 
-## Task 4: Final verification
+## Task 5: Final verification
 - **Status:** pending
-- **Depends on:** Task 1, Task 2, Task 3
+- **Depends on:** Task 1, Task 2, Task 3, Task 4
 - **Size:** S
 - **Can run in parallel with:** —
 
 ### Subtasks
-- [ ] 4.1 Run `/kk:test` skill to verify the full test suite passes
-- [ ] 4.2 Run `/kk:document` skill to update any relevant docs
-- [ ] 4.3 Run `/kk:review-code` skill with markdown/shell input to review the new skill files
-- [ ] 4.4 Run `/kk:review-spec` skill to verify SKILL.md + diff-process.md match design.md and implementation.md
+- [ ] 5.1 Run `/kk:test` skill to verify the full test suite passes
+- [ ] 5.2 Run `/kk:document` skill to update any relevant docs
+- [ ] 5.3 Run `/kk:review-code` skill with markdown/shell input to review the new skill files
+- [ ] 5.4 Run `/kk:review-spec` skill to verify SKILL.md + diff-process.md match design.md and implementation.md
 
 ## Dependency Graph
 
 ```
-Task 1 → Task 2 → Task 3 → Task 4
+Task 1 → Task 2 ──→ Task 4 → Task 5
+  │                    ↑
+  └──→ Task 3 ────────┘
 ```

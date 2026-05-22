@@ -21,13 +21,23 @@ Treat the design document as the source of truth. If a task description disagree
 klaude-plugin/skills/diff-skill/
 ├── SKILL.md                                       (new)
 ├── diff-process.md                                (new)
+├── evals/                                         (new — eval scenarios)
+│   ├── known-degradation/
+│   │   ├── eval.json
+│   │   └── test-files/                            (degraded skill fixtures)
+│   └── clean-refactor/
+│       ├── eval.json
+│       └── test-files/                            (restructured skill fixtures)
 └── shared-capy-knowledge-protocol.md              (symlink → ../_shared/capy-knowledge-protocol.md)
 
 docs/reviews/diff-skill/                           (directory created on first skill run, not at implementation time)
 
 test/test-plugin-structure.sh                      (update EXPECTED_SKILLS array)
-klaude-plugin/README.md                            (update skill table)
+klaude-plugin/README.md                            (update "10 workflow skills" bullet to 11)
+docs/user-guide/skills.md                          (add diff-skill row to Skill Reference table)
 ```
+
+After all klaude-plugin changes, run `make generate-kodex` to regenerate `kodex-plugin/` and `.codex/agents/`. The structure test at `test/test-plugin-structure.sh:388-396` validates that kodex-plugin skill count matches klaude-plugin — without regeneration, tests will fail.
 
 No commands directory for v1 — the skill is invoked directly as `/kk:diff-skill`.
 
@@ -57,7 +67,7 @@ Extract `<skill-name>` from the invocation. Locate SKILL.md:
 - Try `klaude-plugin/skills/<name>/SKILL.md` as a convenience shortcut
 - If not found, ask the user for the full path
 
-Determine comparison refs: default is working tree vs. `HEAD`. If the user specified refs in natural language, parse them.
+Determine comparison refs: default is `HEAD` (before) → working tree (after). The direction matters — "before" is the baseline, "after" is what's being judged for degradation. If the user specified refs in natural language, parse them.
 
 Step → verify: `SKILL.md` path is resolved and both refs are valid.
 
@@ -77,14 +87,21 @@ For each ref, build the set of all files transitively reachable via markdown lin
 1. Start with `frontier = {SKILL.md path}`, `visited = {}`
 2. Pop a file from frontier, add to visited
 3. Retrieve content: `git show <ref>:<path>` for git refs, `Read` for working tree
-4. Extract markdown links: `[text](relative/path.md)` patterns, excluding links inside fenced code blocks and external URLs/anchors
+4. Extract markdown links: `[text](relative/path.md)` patterns, excluding external URLs/anchors. Use best-effort fence detection to skip links inside fenced code blocks (triple-backtick or triple-tilde, with or without info strings) — don't build an elaborate parser; the LLM's judgment is sufficient for typical skill files
 5. Resolve each link relative to the containing file's directory
 6. If the resolved path exists at the ref and is not in visited, add to frontier
 7. Repeat until frontier is empty
 
-Symlinks: follow transparently. For git refs, `git show <ref>:<symlink>` returns the target content. For working tree, `Read` follows symlinks by default.
+Symlinks require special handling at git refs. `git show <ref>:<path>` on a symlink returns the target path string, not the content. The algorithm must:
+   - Check `git ls-tree <ref> <path>` — mode `120000` indicates a symlink
+   - If symlink: read target path via `git cat-file -p <ref>:<path>`, resolve relative to the symlink's directory, then read the resolved target at the same ref (recursively if the target is itself a symlink)
+   - If regular file: `git show <ref>:<path>` returns content directly
+
+For working-tree reads, the `Read` tool follows symlinks transparently.
 
 Files that exist on one side but not the other: note as absent, include in the judgment input (the LLM decides if the absence is a degradation, neutral relocation, or addition).
+
+After building both sets, estimate total content size. If combined content exceeds ~100KB, warn the user with size and file count, and offer to proceed or narrow scope (e.g., compare only changed files). This fails loud about context-window risk without refusing to run.
 
 Step → verify: Two file sets produced, one per ref. Each set is a map of `{path → content}`.
 
@@ -125,7 +142,7 @@ Step → verify: Summary is under 10 lines and contains the report file path.
 
 ### Phase 7: Index to capy
 
-If degradations or significant complexity findings exist, index a summary under source label `kk:diff-skill-findings`. Follow the protocol in `shared-capy-knowledge-protocol.md`.
+If any degradation or complexity findings exist, index a summary under source label `kk:review-findings`. Follow the protocol in `shared-capy-knowledge-protocol.md`.
 
 Skip indexing on clean results — nothing durable to record.
 

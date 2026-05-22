@@ -68,9 +68,9 @@ Start at `SKILL.md`. Extract `[text](relative/path.md)` links. Resolve each path
 - Links inside fenced code blocks
 - Files that don't exist at the ref (noted as absent — fed into judgment, not an error)
 
-**Content retrieval:** For git refs, use `git show <ref>:<path>`. For the working tree, use the `Read` tool. Symlinks are followed transparently — the content matters, not the indirection.
+**Content retrieval:** For git refs, use `git show <ref>:<path>` for regular files. **Symlinks require special handling:** `git show <ref>:<path>` on a symlink returns the target path string, not the target content. Detect symlinks via `git ls-tree <ref> <path>` (mode `120000`), read the target path with `git cat-file -p <ref>:<path>`, resolve relative to the symlink's directory, then read the resolved target at the same ref. For the working tree, the `Read` tool follows symlinks transparently.
 
-**No artificial safety rails.** If a skill has an unusually large reachable set, that's a complexity finding, not a reason to refuse to run.
+**No artificial refusal.** If a skill has an unusually large reachable set, that's a complexity finding, not a reason to refuse to run. However, after building both reachable sets, the skill estimates total content size. If the combined content exceeds ~100KB, it warns the user with the size and file count and offers to proceed or narrow scope (e.g., compare only changed files). This preserves the "no refusal" stance while failing loud about potential context-window degradation.
 
 ### Portability
 
@@ -84,7 +84,7 @@ The scope definition makes no assumption about `_shared/`, `agents/`, or any rep
 
 The skill locates `klaude-plugin/skills/<name>/SKILL.md` as a convenience shortcut. If the shortcut doesn't resolve, it asks the user for the full path.
 
-By default, compares working tree vs. `HEAD` — same ergonomics as `/kk:review-code` operating on the current diff. If the user needs to compare specific refs, they say so in natural language and the skill parses that from context.
+By default, compares `HEAD` (before) → working tree (after). The direction matters — this is an asymmetric tool, so "before" is the baseline and "after" is what's being judged. Same ergonomics as `/kk:review-code` operating on the current diff. If the user needs to compare specific refs, they say so in natural language and the skill parses that from context.
 
 **Validation:** Confirm `SKILL.md` exists at the skill path for both sides. If either is missing, error with a clear message.
 
@@ -124,7 +124,17 @@ A short block (under 10 lines) in the conversation with the verdict, finding cou
 
 ### Capy indexing
 
-If degradations or significant complexity findings exist, index a summary under `kk:diff-skill-findings`. Skip indexing on clean results.
+If any degradation or complexity findings exist, index a summary under `kk:review-findings` (the shared label for review patterns and recurring issues). Skip indexing on clean results.
+
+## Evaluation scenarios
+
+The skill's value is in LLM judgment quality — whether it correctly classifies degradations, neutral changes, and complexity issues. At least two eval scenarios should be authored under `klaude-plugin/skills/diff-skill/evals/`:
+
+**Eval 1: Known degradation.** A deliberately degraded version of an existing skill (e.g., `merge-docs` with a `MUST` weakened to `SHOULD`, a required-output bullet removed, and a link broken). The skill should flag all three as degradations.
+
+**Eval 2: Clean refactor.** A restructured version of a skill where content is moved between files but no substance is lost. The skill should report no degradations. Complexity findings are acceptable if the restructuring genuinely increased complexity.
+
+These follow the eval conventions in `CLAUDE.md` §Skill evaluations — `eval.json` with assertions, real test fixtures under `test-files/`.
 
 ## Assumptions
 
