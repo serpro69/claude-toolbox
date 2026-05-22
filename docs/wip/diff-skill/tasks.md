@@ -20,20 +20,20 @@
 - [x] 1.4 Verify all internal `[text](path)` links in SKILL.md resolve to files in the skill directory
 
 ## Task 2: Author diff-process.md
-- **Status:** pending
+- **Status:** done
 - **Depends on:** Task 1
 - **Size:** M
 - **Can run in parallel with:** —
 - **Docs:** [implementation.md#diff-processmd-authoring](./implementation.md#diff-processmd-authoring)
 
 ### Subtasks
-- [ ] 2.1 Write progress checklist at top (7 phases) and Phase 1 "Parse invocation" — skill-name extraction, SKILL.md path resolution (convenience shortcut + user fallback with repo-relative normalization), report slug extraction (frontmatter `name` or directory basename), ref defaults (`HEAD` → working tree)
-- [ ] 2.2 Write Phase 2 "Validate" — `git rev-parse` for refs, `git cat-file -e` for SKILL.md existence at both refs, clear error messages
-- [ ] 2.3 Write Phase 3 "Build reachable file sets" — link-walk algorithm (frontier/visited), markdown link extraction with fragment stripping (`path.md#anchor` → `path.md`) and best-effort fenced-code-block exclusion, relative path resolution, symlink detection via `git ls-tree` mode `120000` + `git cat-file -p` for target resolution, `missing_links` tracking for broken references, ~100KB combined content-size warning
-- [ ] 2.4 Write Phase 4 "Judgment" — three-axis framing (degradation + complexity regression + pre-existing complexity advisory), missing_links fed as input, relocation handling, explicit asymmetric instructions for the LLM
-- [ ] 2.5 Write Phase 5 "Write report" — directory creation, filename convention, report template
-- [ ] 2.6 Write Phase 6 "Present inline summary" — under 10 lines, verdict + counts + report path
-- [ ] 2.7 Write Phase 7 "Index to capy" — conditional indexing under `kk:review-findings`, skip on clean results
+- [x] 2.1 Write progress checklist at top (7 phases) and Phase 1 "Parse invocation" — skill-name extraction, SKILL.md path resolution (convenience shortcut + user fallback with repo-relative normalization), report slug extraction (frontmatter `name` or directory basename), ref defaults (`HEAD` → working tree)
+- [x] 2.2 Write Phase 2 "Validate" — `git rev-parse` for refs, `git cat-file -e` for SKILL.md existence at both refs, clear error messages
+- [x] 2.3 Write Phase 3 "Build reachable file sets" — link-walk algorithm (frontier/visited), markdown link extraction with fragment stripping (`path.md#anchor` → `path.md`) and best-effort fenced-code-block exclusion, relative path resolution, symlink detection via `git ls-tree` mode `120000` + `git cat-file -p` for target resolution, `missing_links` tracking for broken references, ~100KB combined content-size warning
+- [x] 2.4 Write Phase 4 "Judgment" — three-axis framing (degradation + complexity regression + pre-existing complexity advisory), missing_links fed as input, relocation handling, explicit asymmetric instructions for the LLM
+- [x] 2.5 Write Phase 5 "Write report" — directory creation, filename convention, report template
+- [x] 2.6 Write Phase 6 "Present inline summary" — under 10 lines, verdict + counts + report path
+- [x] 2.7 Write Phase 7 "Index to capy" — conditional indexing under `kk:review-findings`, skip on clean results
 
 ## Task 3: Author eval scenarios
 - **Status:** pending
