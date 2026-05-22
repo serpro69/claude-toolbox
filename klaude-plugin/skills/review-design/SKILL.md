@@ -96,6 +96,8 @@ Standard mode with scope — review specific documents:
 | `tasks`          | `tasks.md` only                                |
 | `all`            | `design.md` + `implementation.md` + `tasks.md` |
 
+**Recommended after `/kk:design`:** use `all` scope so task-format checks (Size tags, vertical slicing, parallel markers, dependency graph, Not Doing header) are included. The default scope (`design.md + implementation.md`) does not include tasks.md.
+
 Isolated mode with independent sub-agents:
 
 ```
