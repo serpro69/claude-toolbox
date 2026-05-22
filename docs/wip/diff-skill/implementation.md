@@ -65,9 +65,12 @@ The detailed workflow the LLM follows step-by-step at invocation time. Model the
 
 Extract `<skill-name>` from the invocation. Locate SKILL.md:
 - Try `klaude-plugin/skills/<name>/SKILL.md` as a convenience shortcut
-- If not found, ask the user for the full path
+- If not found, ask the user for the path to the skill directory
+- Normalize any user-provided path to repo-relative (strip leading absolute prefix up to repo root; reject paths outside the repo). Git object operations (`git cat-file -e`, `git show`) require repo-relative paths.
 
-Determine comparison refs: default is `HEAD` (before) → working tree (after). The direction matters — "before" is the baseline, "after" is what's being judged for degradation. If the user specified refs in natural language, parse them.
+Determine the report slug: read SKILL.md's YAML frontmatter `name` field if present, otherwise use the parent directory basename.
+
+Determine comparison refs: default is `HEAD` (before) → working tree (after). The direction matters — "before" is the baseline, "after" is what's being judged for degradation. If the user specifies different refs in their prompt, use those.
 
 Step → verify: `SKILL.md` path is resolved and both refs are valid.
 
@@ -87,9 +90,9 @@ For each ref, build the set of all files transitively reachable via markdown lin
 1. Start with `frontier = {SKILL.md path}`, `visited = {}`
 2. Pop a file from frontier, add to visited
 3. Retrieve content: `git show <ref>:<path>` for git refs, `Read` for working tree
-4. Extract markdown links: `[text](relative/path.md)` patterns, excluding external URLs/anchors. Use best-effort fence detection to skip links inside fenced code blocks (triple-backtick or triple-tilde, with or without info strings) — don't build an elaborate parser; the LLM's judgment is sufficient for typical skill files
+4. Extract markdown links: `[text](relative/path.md)` and `[text](relative/path.md#anchor)` patterns, excluding external URLs and anchor-only refs. Strip fragment identifiers (`#anchor`) before resolution — `[text](file.md#section)` resolves to `file.md`. Use best-effort fence detection to skip links inside fenced code blocks (triple-backtick or triple-tilde, with or without info strings) — don't build an elaborate parser; the LLM's judgment is sufficient for typical skill files
 5. Resolve each link relative to the containing file's directory
-6. If the resolved path exists at the ref and is not in visited, add to frontier
+6. If the resolved path exists at the ref and is not in visited, add to frontier. If the resolved path does NOT exist at the ref, add to a `missing_links` set with `{source_file, raw_href, resolved_path}` — do not silently drop it
 7. Repeat until frontier is empty
 
 Symlinks require special handling at git refs. `git show <ref>:<path>` on a symlink returns the target path string, not the content. The algorithm must:
@@ -103,7 +106,7 @@ Files that exist on one side but not the other: note as absent, include in the j
 
 After building both sets, estimate total content size. If combined content exceeds ~100KB, warn the user with size and file count, and offer to proceed or narrow scope (e.g., compare only changed files). This fails loud about context-window risk without refusing to run.
 
-Step → verify: Two file sets produced, one per ref. Each set is a map of `{path → content}`.
+Step → verify: Two file sets produced, one per ref. Each set is a map of `{path → content}`. Plus a `missing_links` set per ref with `{source_file, raw_href, resolved_path}` for broken references.
 
 ### Phase 4: Judgment
 
@@ -111,12 +114,15 @@ Present the LLM with:
 1. Full content of all reachable files at ref-a (the "before" state)
 2. Full content of all reachable files at ref-b (the "after" state)
 3. List of files present on only one side
+4. Missing links per ref (from the `missing_links` sets — broken references are a core degradation signal)
 
 Frame the judgment with explicit asymmetric + complexity instructions (lift from design.md §Judgment axes):
 
-**Degradation axis:** "Only regressions count. Additions, clarifications, and strengthenings are NOT degradations. A degradation is: load-bearing instruction lost, weakened constraint, dropped verification, narrowed scope, broken reference, or required output lost. For each finding, state what was lost, where, and why it matters."
+**Degradation axis:** "Only regressions count. Additions, clarifications, and strengthenings are NOT degradations. A degradation is: load-bearing instruction lost, weakened constraint, dropped verification, narrowed scope, broken reference, or required output lost. For each finding, state what was lost, where, and why it matters. Missing links in the after-state that resolved in the before-state are broken references."
 
-**Complexity axis:** "Evaluate the 'after' state for LLM-executability. Flag: instruction density, cross-turn state burden, inline multi-path logic that could be extracted into separate files, contradictory instructions, deep reference chains, ambiguous conditional logic. These are improvement opportunities, not failures."
+**Complexity regression axis:** "Compare both states. Flag complexity that was *introduced or worsened* by the edit: instruction density, cross-turn state burden, inline multi-path logic that could be extracted, contradictory instructions, deep reference chains, ambiguous conditional logic. These affect the verdict."
+
+**Pre-existing complexity advisory:** "Separately, flag structural issues in the after-state that exist regardless of this edit. These are improvement opportunities surfaced as FYI — they do NOT affect the verdict."
 
 For content that was relocated (moved between files, inlined, or extracted): check whether the substance survived. If yes, neutral. If substance was lost in the move, degradation.
 

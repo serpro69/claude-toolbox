@@ -27,10 +27,10 @@
 - **Docs:** [implementation.md#diff-processmd-authoring](./implementation.md#diff-processmd-authoring)
 
 ### Subtasks
-- [ ] 2.1 Write progress checklist at top (7 phases) and Phase 1 "Parse invocation" — skill-name extraction, SKILL.md path resolution (convenience shortcut + fallback), ref defaults (`HEAD` → working tree)
+- [ ] 2.1 Write progress checklist at top (7 phases) and Phase 1 "Parse invocation" — skill-name extraction, SKILL.md path resolution (convenience shortcut + user fallback with repo-relative normalization), report slug extraction (frontmatter `name` or directory basename), ref defaults (`HEAD` → working tree)
 - [ ] 2.2 Write Phase 2 "Validate" — `git rev-parse` for refs, `git cat-file -e` for SKILL.md existence at both refs, clear error messages
-- [ ] 2.3 Write Phase 3 "Build reachable file sets" — link-walk algorithm (frontier/visited), markdown link extraction with best-effort fenced-code-block exclusion, relative path resolution, symlink detection via `git ls-tree` mode `120000` + `git cat-file -p` for target resolution, absent-file tracking, ~100KB content-size warning
-- [ ] 2.4 Write Phase 4 "Judgment" — two-axis framing (degradation + complexity), relocation handling, explicit asymmetric instructions for the LLM
+- [ ] 2.3 Write Phase 3 "Build reachable file sets" — link-walk algorithm (frontier/visited), markdown link extraction with fragment stripping (`path.md#anchor` → `path.md`) and best-effort fenced-code-block exclusion, relative path resolution, symlink detection via `git ls-tree` mode `120000` + `git cat-file -p` for target resolution, `missing_links` tracking for broken references, ~100KB combined content-size warning
+- [ ] 2.4 Write Phase 4 "Judgment" — three-axis framing (degradation + complexity regression + pre-existing complexity advisory), missing_links fed as input, relocation handling, explicit asymmetric instructions for the LLM
 - [ ] 2.5 Write Phase 5 "Write report" — directory creation, filename convention, report template
 - [ ] 2.6 Write Phase 6 "Present inline summary" — under 10 lines, verdict + counts + report path
 - [ ] 2.7 Write Phase 7 "Index to capy" — conditional indexing under `kk:review-findings`, skip on clean results
@@ -44,7 +44,7 @@
 
 ### Subtasks
 - [ ] 3.1 Create `klaude-plugin/skills/diff-skill/evals/known-degradation/` with `eval.json` and `test-files/` — a minimal SKILL.md + process file where a `MUST` is weakened to `SHOULD`, a required-output bullet is removed, and a link is broken. Assertions: all three flagged as degradations
-- [ ] 3.2 Create `klaude-plugin/skills/diff-skill/evals/clean-refactor/` with `eval.json` and `test-files/` — a restructured skill where content moves between files but no substance is lost. Assertions: no degradations reported
+- [ ] 3.2 Create `klaude-plugin/skills/diff-skill/evals/clean-refactor/` with `eval.json` and `test-files/` — a restructured skill where 2 sections are extracted from SKILL.md into a new process file and links are updated accordingly; no substance is lost. Assertions: no degradations reported, pre-existing complexity advisory may appear but no complexity regressions
 - [ ] 3.3 Each `eval.json` follows the schema in `CLAUDE.md` §Skill evaluations — `id`, `name`, `description`, `skills`, `prompt`, `trap`, `files`, `assertions` with `<eval-id>.<n>` numbering
 
 ## Task 4: Wire into plugin manifest, docs, and tests

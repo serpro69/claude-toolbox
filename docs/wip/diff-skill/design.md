@@ -32,7 +32,13 @@ Content that was relocated (inlined elsewhere, extracted to a new file) is neutr
 
 ### Axis 2 — Complexity
 
-Evaluates the "after" state for LLM-executability. A skill can lose no content but still become harder to follow. Complexity signals:
+Complexity assessment has two sub-axes:
+
+**Complexity regression** — comparative. Did the edit make the skill harder to follow than before? The LLM compares both states and flags complexity that was *introduced or worsened* by the edit. Complexity regressions affect the verdict.
+
+**Pre-existing complexity advisory** — after-state only. Structural issues that exist in the "after" state regardless of whether the edit caused them. These are surfaced in a separate report section as improvement opportunities — they do not affect the verdict.
+
+Complexity signals (applied to both sub-axes):
 
 - **Instruction density** — too many rules crammed into one section
 - **Cross-turn state burden** — gates and sub-phase state the LLM must track across multiple user messages
@@ -41,16 +47,18 @@ Evaluates the "after" state for LLM-executability. A skill can lose no content b
 - **Deep reference chains** — files linking to files linking to files, inflating the working set
 - **Ambiguous conditional logic** — gates without clear evaluation criteria
 
-Complexity findings are surfaced as improvement opportunities, not failures. A skill that's complex by necessity (like `/kk:design` with its interactive multi-turn flow) isn't wrong — but the tool flags where that complexity could be reduced.
+A skill that's complex by necessity (like `/kk:design` with its interactive multi-turn flow) isn't wrong — but the tool flags where that complexity could be reduced.
 
 ### Verdict
 
 The verdict combines both axes. Possible outcomes:
 
-- **No issues** — no degradation, no significant complexity concerns
+- **No issues** — no degradation, no complexity regressions
 - **Degraded** — content was lost or weakened
-- **Complexity concerns** — no content lost, but the skill became harder to follow
-- **Both** — degradation and complexity issues
+- **Complexity regressed** — no content lost, but the edit made the skill harder to follow
+- **Both** — degradation and complexity regression
+
+Pre-existing complexity advisories appear in the report regardless of the verdict but do not influence it.
 
 The tool is advisory. It produces a report and an inline summary. It is not a CI gate and does not block merges. The skill author reads the findings and decides what to act on.
 
@@ -60,17 +68,18 @@ The "skill" being compared is everything transitively reachable via markdown lin
 
 ### Link walk
 
-Start at `SKILL.md`. Extract `[text](relative/path.md)` links. Resolve each path relative to the containing file's directory. If the resolved file exists at the ref, add it to the set and recurse. A `visited` set prevents cycles.
+Start at `SKILL.md`. Extract `[text](relative/path.md)` links. Strip fragment identifiers (`#anchor`) before resolution — `[text](file.md#section)` resolves to `file.md`. Resolve each path relative to the containing file's directory. If the resolved file exists at the ref, add it to the set and recurse. A `visited` set prevents cycles.
 
 **Skip:**
 - External URLs (`http://`, `https://`)
 - Anchor-only refs (`#section`)
 - Links inside fenced code blocks
-- Files that don't exist at the ref (noted as absent — fed into judgment, not an error)
+
+**Track broken links:** Files referenced by a link but absent at the ref are collected in a separate `missing_links` set (with source file, raw href, and resolved path). These are NOT silently dropped — they are fed into the judgment phase as potential "broken reference" degradations.
 
 **Content retrieval:** For git refs, use `git show <ref>:<path>` for regular files. **Symlinks require special handling:** `git show <ref>:<path>` on a symlink returns the target path string, not the target content. Detect symlinks via `git ls-tree <ref> <path>` (mode `120000`), read the target path with `git cat-file -p <ref>:<path>`, resolve relative to the symlink's directory, then read the resolved target at the same ref. For the working tree, the `Read` tool follows symlinks transparently.
 
-**No artificial refusal.** If a skill has an unusually large reachable set, that's a complexity finding, not a reason to refuse to run. However, after building both reachable sets, the skill estimates total content size. If the combined content exceeds ~100KB, it warns the user with the size and file count and offers to proceed or narrow scope (e.g., compare only changed files). This preserves the "no refusal" stance while failing loud about potential context-window degradation.
+**No artificial refusal.** If a skill has an unusually large reachable set, that's a complexity finding, not a reason to refuse to run. However, after building both reachable sets, the skill estimates total combined content size (both sides together). The ~100KB threshold accounts for the fact that this content shares context with the skill's own instructions (SKILL.md, diff-process.md, capy protocol). If combined content exceeds ~100KB, the skill warns the user with size and file count, and offers to proceed or narrow scope (e.g., compare only changed files). This preserves the "no refusal" stance while failing loud about potential context-window degradation.
 
 ### Portability
 
@@ -82,11 +91,13 @@ The scope definition makes no assumption about `_shared/`, `agents/`, or any rep
 /kk:diff-skill <skill-name>
 ```
 
-The skill locates `klaude-plugin/skills/<name>/SKILL.md` as a convenience shortcut. If the shortcut doesn't resolve, it asks the user for the full path.
+The skill locates `klaude-plugin/skills/<name>/SKILL.md` as a convenience shortcut. If the shortcut doesn't resolve, it asks the user for the path to the skill directory. Any user-provided path is normalized to a repo-relative path (required for `git cat-file -e <ref>:<path>` and `git show <ref>:<path>` operations). Paths outside the repo are rejected.
 
-By default, compares `HEAD` (before) → working tree (after). The direction matters — this is an asymmetric tool, so "before" is the baseline and "after" is what's being judged. Same ergonomics as `/kk:review-code` operating on the current diff. If the user needs to compare specific refs, they say so in natural language and the skill parses that from context.
+By default, compares `HEAD` (before) → working tree (after). The direction matters — this is an asymmetric tool, so "before" is the baseline and "after" is what's being judged. Same ergonomics as `/kk:review-code` operating on the current diff. If the user needs to compare specific refs, they state so in the prompt.
 
-**Validation:** Confirm `SKILL.md` exists at the skill path for both sides. If either is missing, error with a clear message.
+**Report slug:** The `<skill-name>` used in report filenames is the `name` field from SKILL.md's YAML frontmatter if present, otherwise the parent directory basename of SKILL.md (e.g., `review-code` for `klaude-plugin/skills/review-code/SKILL.md`).
+
+**Validation:** Confirm `SKILL.md` exists at the resolved repo-relative path for both sides. If either is missing, error with a clear message.
 
 ## Report
 
@@ -96,7 +107,7 @@ By default, compares `HEAD` (before) → working tree (after). The direction mat
 docs/reviews/diff-skill/<skill-name>-<short-sha-a>-<short-sha-b>.md
 ```
 
-Short SHA = 7 chars. Working-tree side → `WORKTREE`. Directory created on first run.
+Short SHA = 7 chars. Working-tree side → `WORKTREE`. Directory created on first run. Reports are committed — they serve as review history for the skill's evolution. The `docs/reviews/` convention is new; it sits outside the `docs/wip/` → `docs/done/` lifecycle because reviews are point-in-time snapshots, not living feature docs.
 
 ### Structure
 
@@ -109,8 +120,11 @@ Short SHA = 7 chars. Working-tree side → `WORKTREE`. Directory created on firs
 ## Degradations
 <each finding: what was lost/weakened, where, and why it matters>
 
-## Complexity
-<each finding: what's hard to follow, why, and how it could be simplified>
+## Complexity Regressions
+<each finding: what became harder to follow due to this edit, and how it could be simplified>
+
+## Pre-existing Complexity
+<improvement opportunities that exist in the after-state regardless of this edit>
 
 ## Neutral Changes
 <brief list of changes that are neither degradations nor complexity issues>
@@ -140,8 +154,9 @@ These follow the eval conventions in `CLAUDE.md` §Skill evaluations — `eval.j
 
 1. **SKILL.md links to everything that matters.** If a file influences skill behavior but isn't linked (directly or transitively) from SKILL.md, it won't be compared. This incentivizes skill authors to keep their link graph complete.
 2. **Markdown link extraction is reliable for skill files.** Standard `[text](relative/path.md)` covers the vast majority. Links inside fenced code blocks are excluded. Edge cases (HTML `<a>` tags, reference-style links) are acceptable blind spots for v1.
-3. **Typical skill content fits in context.** A skill's full reachable file set (both refs) fits within the LLM's working context. Skills with 30+ reachable files would be unusual.
-4. **The LLM can meaningfully assess "complexity for an LLM to follow."** Meta-judgment with possible blind spots, but it can reliably spot excessive branching, cross-turn state burden, ambiguous gates, and instruction density.
+3. **Link targets in skill files use relative paths.** The link-walk extracts and resolves relative markdown links. `${CLAUDE_PLUGIN_ROOT}` tokens in file content are not resolved (they're substituted at plugin-load time, not by `git show` or `Read`), but these tokens appear in prose and examples, not in link targets. If a link target contains an unresolvable token, it will be tracked as a missing link.
+4. **Typical skill content fits in context.** A skill's full reachable file set (both refs combined, plus skill instructions) fits within the LLM's working context. The ~100KB threshold is a heuristic; skills with 30+ reachable files would be unusual.
+5. **The LLM can identify complexity regressions when given both states.** Validated by the eval scenarios — the LLM should detect at least 3 of the 6 complexity signal types when they appear in test fixtures. Meta-judgment has inherent blind spots on the LLM's own failure modes, but structured signal types make the task concrete rather than open-ended.
 
 ## Not Doing
 
@@ -151,5 +166,5 @@ These follow the eval conventions in `CLAUDE.md` §Skill evaluations — `eval.j
 - **Behavioral evals** — running the skill against test fixtures to observe behavior changes
 - **CI integration** — no machine-parseable verdict line contract
 - **Multi-skill invocation** — one skill per run
-- **Auto-fix / remediation suggestions**
+- **Auto-fix** — the tool does not apply fixes or generate patches; findings include explanatory context ("how it could be simplified") but not executable remediation
 - **Extension points documentation** — extend when needed, not before
