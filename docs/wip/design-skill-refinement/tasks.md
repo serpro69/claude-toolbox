@@ -32,7 +32,7 @@
 - [x] 2.3 Light adaptation: add SE-context framing, remove consumer examples, preserve painkiller-vs-vitamin framing, differentiation ranking, value/feasibility matrix, and MVP rules
 
 ## Task 3: Rewrite idea-process.md Step 3
-- **Status:** in-progress
+- **Status:** done
 - **Depends on:** Task 1, Task 2
 - **Size:** M
 - **Can run in parallel with:** —
