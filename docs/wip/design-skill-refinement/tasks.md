@@ -7,29 +7,29 @@
 > Not Doing: existing-task-process.md changes, implement skill changes, pal-based stress-testing, Mermaid graphs, design skill evals, skill-md profile design/ subdirectory
 
 ## Task 1: Create frameworks.md reference file
-- **Status:** pending
+- **Status:** done
 - **Depends on:** —
 - **Size:** S
 - **Can run in parallel with:** Task 2
 - **Docs:** [implementation.md#task-11-create-frameworksmd](./implementation.md#task-11-create-frameworksmd)
 
 ### Subtasks
-- [ ] 1.1 Pin upstream commit SHA: `git ls-remote https://github.com/addyosmani/agent-skills.git HEAD`
-- [ ] 1.2 Fetch original from `https://raw.githubusercontent.com/addyosmani/agent-skills/<SHA>/skills/idea-refine/frameworks.md`
-- [ ] 1.3 Create `klaude-plugin/skills/design/frameworks.md` with license/attribution header (MIT, Copyright Addy Osmani, pinned SHA), all six frameworks, each with description and "Best for" guidance
-- [ ] 1.4 Light adaptation: add SE-context framing note at top, replace consumer-product examples with SE equivalents, preserve structure and quality criteria
+- [x] 1.1 Pin upstream commit SHA: `git ls-remote https://github.com/addyosmani/agent-skills.git HEAD`
+- [x] 1.2 Fetch original from `https://raw.githubusercontent.com/addyosmani/agent-skills/<SHA>/skills/idea-refine/frameworks.md`
+- [x] 1.3 Create `klaude-plugin/skills/design/frameworks.md` with license/attribution header (MIT, Copyright Addy Osmani, pinned SHA), all seven frameworks, each with description and "Best for" guidance
+- [x] 1.4 Light adaptation: add SE-context framing note at top, replace consumer-product examples with SE equivalents, preserve structure and quality criteria
 
 ## Task 2: Create refinement-criteria.md reference file
-- **Status:** pending
+- **Status:** done
 - **Depends on:** —
 - **Size:** S
 - **Can run in parallel with:** Task 1
 - **Docs:** [implementation.md#task-12-create-refinement-criteriamd](./implementation.md#task-12-create-refinement-criteriamd)
 
 ### Subtasks
-- [ ] 2.1 Fetch original from `https://raw.githubusercontent.com/addyosmani/agent-skills/<SHA>/skills/idea-refine/refinement-criteria.md` (same pinned SHA as Task 1)
-- [ ] 2.2 Create `klaude-plugin/skills/design/refinement-criteria.md` with license/attribution header, three evaluation dimensions (User Value, Feasibility, Differentiation) plus MVP Scoping section
-- [ ] 2.3 Light adaptation: add SE-context framing, remove consumer examples, preserve painkiller-vs-vitamin framing, differentiation ranking, value/feasibility matrix, and MVP rules
+- [x] 2.1 Fetch original from `https://raw.githubusercontent.com/addyosmani/agent-skills/<SHA>/skills/idea-refine/refinement-criteria.md` (same pinned SHA as Task 1)
+- [x] 2.2 Create `klaude-plugin/skills/design/refinement-criteria.md` with license/attribution header, three evaluation dimensions (User Value, Feasibility, Differentiation) plus MVP Scoping section
+- [x] 2.3 Light adaptation: add SE-context framing, remove consumer examples, preserve painkiller-vs-vitamin framing, differentiation ranking, value/feasibility matrix, and MVP rules
 
 ## Task 3: Rewrite idea-process.md Step 3
 - **Status:** pending
