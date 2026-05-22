@@ -48,18 +48,18 @@
 - [x] 3.3 Each `eval.json` follows the schema in `CLAUDE.md` §Skill evaluations — `id`, `name`, `description`, `skills`, `prompt`, `trap`, `files`, `assertions` with `<eval-id>.<n>` numbering
 
 ## Task 4: Wire into plugin manifest, docs, and tests
-- **Status:** pending
+- **Status:** done
 - **Depends on:** Task 1, Task 2, Task 3
 - **Size:** S
 - **Can run in parallel with:** —
 - **Docs:** [implementation.md#files-to-create](./implementation.md#files-to-create)
 
 ### Subtasks
-- [ ] 4.1 Add `diff-skill` to `EXPECTED_SKILLS` array in `test/test-plugin-structure.sh` and update the skill count in the log message to match the new array length
-- [ ] 4.2 Update `klaude-plugin/README.md` — change "10 workflow skills" bullet to reflect the new count
-- [ ] 4.3 Add `diff-skill` row to the Skill Reference table in `docs/user-guide/skills.md` — one-sentence description matching the tone of surrounding rows. Update the "ships N workflow skills" count in the opening line
-- [ ] 4.4 Run `make generate-kodex` to regenerate `kodex-plugin/` and `.codex/agents/`, then verify no unexpected diffs with `git status`
-- [ ] 4.5 Run `bash test/test-plugin-structure.sh` and confirm all assertions pass (including kodex-plugin skill count parity at line ~388)
+- [x] 4.1 Add `diff-skill` to `EXPECTED_SKILLS` array in `test/test-plugin-structure.sh` and update the skill count in the log message to match the new array length
+- [x] 4.2 Update `klaude-plugin/README.md` — change "10 workflow skills" bullet to reflect the new count
+- [x] 4.3 Add `diff-skill` row to the Skill Reference table in `docs/user-guide/skills.md` — one-sentence description matching the tone of surrounding rows. Update the "ships N workflow skills" count in the opening line
+- [x] 4.4 Run `make generate-kodex` to regenerate `kodex-plugin/` and `.codex/agents/`, then verify no unexpected diffs with `git status`
+- [x] 4.5 Run `bash test/test-plugin-structure.sh` and confirm all assertions pass (including kodex-plugin skill count parity at line ~388)
 
 ## Task 5: Final verification
 - **Status:** pending

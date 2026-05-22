@@ -69,6 +69,7 @@ EXPECTED_SKILLS=(
   design
   chain-of-verification
   dependency-handling
+  diff-skill
   document
   implement
   review-design
@@ -78,7 +79,7 @@ EXPECTED_SKILLS=(
   test
 )
 
-log_test "All 10 skill directories exist"
+log_test "All 11 skill directories exist"
 for skill in "${EXPECTED_SKILLS[@]}"; do
   if [[ -d "$REPO_ROOT/klaude-plugin/skills/$skill" ]]; then
     log_pass "Skill exists: $skill"

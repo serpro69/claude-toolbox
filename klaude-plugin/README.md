@@ -16,7 +16,7 @@ All skills appear as `/skill-name` in the slash command menu (annotated with `(k
 
 ## What's Included
 
-- **10 workflow skills** — `/kk:design` → `/kk:review-design` → `/kk:implement` → `/kk:review-code` → `/kk:test` → `/kk:document`, plus utilities
+- **11 workflow skills** — `/kk:design` → `/kk:review-design` → `/kk:implement` → `/kk:review-code` → `/kk:test` → `/kk:document`, plus utilities
 - **Commands** — isolated variants for code review, CoVe, spec review, design review
 - **Hooks** — Bash validation (blocks commands touching sensitive paths)
 - **Profiles** — per-domain content (Go, Java, JS/TS, Kotlin, K8s, Python) with review checklists, implementation gotchas, design prompts, test validators, and doc rubrics
