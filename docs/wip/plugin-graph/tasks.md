@@ -30,7 +30,7 @@ Validate that goldmark (`github.com/yuin/goldmark`) can extract inline markdown 
 
 ## Task 1: Core graph types and builder
 
-**Status:** pending
+**Status:** done
 **Size:** S
 **Dependencies:** Task 0
 **Can run in parallel with:** —
@@ -39,19 +39,19 @@ Validate that goldmark (`github.com/yuin/goldmark`) can extract inline markdown 
 
 Implement the graph data model and builder in `cmd/plugin-graph/graph.go`.
 
-- [ ] Define `NodeType` and `EdgeType` string enums with all values from design
-- [ ] Define `Node` struct: `Path`, `Type`, `Name`
-- [ ] Define `Edge` struct with dual-layer endpoints: `RawSource`, `RawTarget` (concrete file paths), `Source`, `Target` (normalized), `Type`, `Line`
-- [ ] Define `Graph` struct with `Nodes` map and `Edges` slice
-- [ ] Implement `AddNode`, `AddEdge` (auto-normalizes raw endpoints), `NodeByPath` methods
-- [ ] Implement `OutEdges(path)` and `InEdges(path)` query methods (on normalized endpoints)
-- [ ] Implement `MetricEdges()` — returns edges excluding intra-artifact self-loops (where `Source == Target` after normalization)
-- [ ] Implement `Reachable(path, direction)` — BFS on metric edges following out-edges, in-edges, or both; returns set of reachable node paths
-- [ ] Implement `NormalizePath(path)` — walks up from a file path, returns the **nearest (most specific)** ancestor artifact node. For `profiles/go/review-code/index.md` returns `profiles/go/review-code/` (profile-phase), not `profiles/go/` (profile). Returns original path if no ancestor is an artifact
-- [ ] Implement node classification: given a file path relative to plugin root, return the correct `NodeType` based on the path pattern rules (skill directory with SKILL.md, `_shared/*.md`, `agents/*.md`, etc.)
-- [ ] Write table-driven tests for node classification covering all 7 node types plus edge cases (files outside known directories → `content`)
-- [ ] Write tests for `NormalizePath`: file inside skill dir → skill node (nearest), file in `_shared/` → stays as file, file in profile phase → profile-phase node (not profile), nested artifact specificity
-- [ ] Write tests for `MetricEdges`: intra-artifact edges suppressed, cross-artifact edges preserved
+- [x] Define `NodeType` and `EdgeType` string enums with all values from design
+- [x] Define `Node` struct: `Path`, `Type`, `Name`
+- [x] Define `Edge` struct with dual-layer endpoints: `RawSource`, `RawTarget` (concrete file paths), `Source`, `Target` (normalized), `Type`, `Line`
+- [x] Define `Graph` struct with `Nodes` map and `Edges` slice
+- [x] Implement `AddNode`, `AddEdge` (auto-normalizes raw endpoints), `NodeByPath` methods
+- [x] Implement `OutEdges(path)` and `InEdges(path)` query methods (on normalized endpoints)
+- [x] Implement `MetricEdges()` — returns edges excluding intra-artifact self-loops (where `Source == Target` after normalization)
+- [x] Implement `Reachable(path, direction)` — BFS on metric edges following out-edges, in-edges, or both; returns set of reachable node paths
+- [x] Implement `NormalizePath(path)` — walks up from a file path, returns the **nearest (most specific)** ancestor artifact node. For `profiles/go/review-code/index.md` returns `profiles/go/review-code/` (profile-phase), not `profiles/go/` (profile). Returns original path if no ancestor is an artifact
+- [x] Implement node classification: given a file path relative to plugin root, return the correct `NodeType` based on the path pattern rules (skill directory with SKILL.md, `_shared/*.md`, `agents/*.md`, etc.)
+- [x] Write table-driven tests for node classification covering all 7 node types plus edge cases (files outside known directories → `content`)
+- [x] Write tests for `NormalizePath`: file inside skill dir → skill node (nearest), file in `_shared/` → stays as file, file in profile phase → profile-phase node (not profile), nested artifact specificity
+- [x] Write tests for `MetricEdges`: intra-artifact edges suppressed, cross-artifact edges preserved
 
 **Verify:** `go test ./cmd/plugin-graph/... -run TestGraph` passes. Node classification correctly maps all path patterns. Reachable returns correct sets for a small hand-built graph.
 
