@@ -5,7 +5,8 @@ Already have a project? Install just the plugin to get all 11 workflow skills.
 ## Claude Code
 
 ```
-/plugin install kk@claude-toolbox
+claude plugin marketplace add serpro69/claude-toolbox
+claude plugin install kk@claude-toolbox
 ```
 
 Skills are available as `/kk:(skill-name)` (annotated with `(kk)` in the slash command menu). The Claude plugin also includes commands, hooks (Bash validation), and sub-agents. See the [kk plugin documentation](https://github.com/serpro69/claude-toolbox/tree/master/klaude-plugin) for details.

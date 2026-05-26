@@ -149,11 +149,21 @@ jobs:
         if: inputs.dry_run != true
         run: |
           SEMVER="${{ steps.validate.outputs.semver }}"
+          PLUGIN_NAME=$(jq -r '.name' klaude-plugin/.claude-plugin/plugin.json)
+
           jq --arg v "$SEMVER" '.version = $v' klaude-plugin/.claude-plugin/plugin.json > klaude-plugin/.claude-plugin/plugin.json.tmp
           mv klaude-plugin/.claude-plugin/plugin.json.tmp klaude-plugin/.claude-plugin/plugin.json
+          echo "Updated klaude plugin.json version to $SEMVER"
+
+          jq --arg v "$SEMVER" --arg n "$PLUGIN_NAME" \
+            '(.plugins[] | select(.name == $n)).version = $v' \
+            .claude-plugin/marketplace.json > .claude-plugin/marketplace.json.tmp
+          mv .claude-plugin/marketplace.json.tmp .claude-plugin/marketplace.json
+          echo "Updated klaude marketplace.json $PLUGIN_NAME plugin version to $SEMVER"
+
           jq --arg v "$SEMVER" '.version = $v' kodex-plugin/.codex-plugin/plugin.json > kodex-plugin/.codex-plugin/plugin.json.tmp
           mv kodex-plugin/.codex-plugin/plugin.json.tmp kodex-plugin/.codex-plugin/plugin.json
-          echo "Updated plugin.json version to $SEMVER"
+          echo "Updated kodex plugin.json version to $SEMVER"
 
       - name: Commit and Tag
         if: inputs.dry_run != true
