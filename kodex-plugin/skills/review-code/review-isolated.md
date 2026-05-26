@@ -91,7 +91,11 @@ Assemble the file list that will be passed to pal codereview via `relevant_files
 
 1. **Diff file** — the temp file written in Step 1a.
 2. **Changed source files** — every file touched by the diff (from `git diff --stat`).
-3. **Surrounding code files** — for each changed file, identify direct imports, callers, interfaces, and type definitions referenced in the diff. Use `grep`/`rg` to locate these. Include files that a reviewer would need to verify cross-file correctness (e.g., checking a function signature, confirming an interface contract, comparing with adjacent module conventions). Keep this bounded — aim for the immediate dependency ring, not transitive closure.
+3. **Surrounding code files** — files a reviewer needs to verify cross-file correctness. Collect in priority order, stop at **10 files**:
+   1. Files directly imported by the changed files (type definitions, interfaces, contracts).
+   2. Direct callers of changed public functions/methods (one level up only).
+   3. Adjacent files in the same package/module that share types or conventions with the changed code.
+   Use `grep`/`rg` on import statements and function names to locate these. If more than 10 candidates emerge, keep only categories 1–2. If fewer than 3, that's fine — small diffs legitimately have few dependencies.
 4. **Profile checklist files** — the absolute paths of every resolved `(profile, checklist)` file from Step 1c. These give pal the same domain-specific review criteria as Reviewer A.
 5. **Design/implementation docs** — if spec context was located in Step 1b, include the full `design.md` and `implementation.md` file paths (not excerpts). These enable pal to flag spec deviations.
 
