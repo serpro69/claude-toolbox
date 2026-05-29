@@ -22,10 +22,10 @@ type SkillPair struct {
 
 type GraphMetrics struct {
 	PerNode     map[string]*NodeMetrics `json:"per_node"`
-	Orphans     []string               `json:"orphans"`
-	BrokenEdges []Edge                 `json:"broken_edges"`
-	Hotspots    []string               `json:"hotspots"`
-	Coupling    []SkillPair            `json:"coupling"`
+	Orphans     []string                `json:"orphans"`
+	BrokenEdges []Edge                  `json:"broken_edges"`
+	Hotspots    []string                `json:"hotspots"`
+	Coupling    []SkillPair             `json:"coupling"`
 }
 
 func ComputeMetrics(g *Graph, pluginRoot string, couplingThreshold int) (*GraphMetrics, []string) {

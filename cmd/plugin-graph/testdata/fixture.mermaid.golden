@@ -1,0 +1,32 @@
+flowchart LR
+	README_md["README.md"]
+	agents_reviewer_md["agents/reviewer.md"]
+	commands_alpha_["commands/alpha/"]
+	docs_guide_md["docs/guide.md"]
+	profiles_go_["profiles/go/"]
+	profiles_go_review_code_["profiles/go/review-code/"]
+	skills__shared_common_md["skills/_shared/common.md"]
+	skills__shared_unused_md["skills/_shared/unused.md"]
+	skills_alpha_["skills/alpha/"]
+	skills_beta_["skills/beta/"]
+	skills_alpha_ -->|agent-delegation| agents_reviewer_md
+	skills_alpha_ -->|skill-invocation| commands_alpha_
+	skills_alpha_ -->|template-ref| profiles_go_
+	skills_alpha_ -->|markdown-link| skills__shared_common_md
+	skills_alpha_ -->|skill-invocation| skills_beta_
+	skills_beta_ -->|parameterized-nav| profiles_go_review_code_
+	skills_beta_ -->|symlink| skills__shared_common_md
+	classDef skill fill:#a6cee3;
+	class skills_alpha_,skills_beta_ skill;
+	classDef shared fill:#ffff99;
+	class skills__shared_common_md,skills__shared_unused_md shared;
+	classDef agent fill:#b2df8a;
+	class agents_reviewer_md agent;
+	classDef profile fill:#fb9a99;
+	class profiles_go_ profile;
+	classDef profile_phase fill:#fdbf6f;
+	class profiles_go_review_code_ profile_phase;
+	classDef content fill:#ffffff;
+	class README_md,docs_guide_md content;
+	classDef command fill:#cab2d6;
+	class commands_alpha_ command;

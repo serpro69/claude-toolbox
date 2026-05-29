@@ -1,0 +1,216 @@
+{
+  "nodes": [
+    {
+      "path": "README.md",
+      "type": "content",
+      "name": "README.md"
+    },
+    {
+      "path": "agents/reviewer.md",
+      "type": "agent",
+      "name": "reviewer.md"
+    },
+    {
+      "path": "commands/alpha/",
+      "type": "command",
+      "name": "alpha"
+    },
+    {
+      "path": "docs/guide.md",
+      "type": "content",
+      "name": "guide.md"
+    },
+    {
+      "path": "profiles/go/",
+      "type": "profile",
+      "name": "go"
+    },
+    {
+      "path": "profiles/go/review-code/",
+      "type": "profile-phase",
+      "name": "review-code"
+    },
+    {
+      "path": "skills/_shared/common.md",
+      "type": "shared",
+      "name": "common.md"
+    },
+    {
+      "path": "skills/_shared/unused.md",
+      "type": "shared",
+      "name": "unused.md"
+    },
+    {
+      "path": "skills/alpha/",
+      "type": "skill",
+      "name": "alpha"
+    },
+    {
+      "path": "skills/beta/",
+      "type": "skill",
+      "name": "beta"
+    }
+  ],
+  "edges": [
+    {
+      "raw_source": "skills/alpha/SKILL.md",
+      "raw_target": "agents/reviewer.md",
+      "source": "skills/alpha/",
+      "target": "agents/reviewer.md",
+      "type": "agent-delegation",
+      "line": 40
+    },
+    {
+      "raw_source": "skills/alpha/SKILL.md",
+      "raw_target": "commands/alpha/isolated.md",
+      "source": "skills/alpha/",
+      "target": "commands/alpha/",
+      "type": "skill-invocation",
+      "line": 60
+    },
+    {
+      "raw_source": "skills/alpha/SKILL.md",
+      "raw_target": "profiles/go/overview.md",
+      "source": "skills/alpha/",
+      "target": "profiles/go/",
+      "type": "template-ref",
+      "line": 20
+    },
+    {
+      "raw_source": "skills/alpha/SKILL.md",
+      "raw_target": "skills/_shared/common.md",
+      "source": "skills/alpha/",
+      "target": "skills/_shared/common.md",
+      "type": "markdown-link",
+      "line": 10
+    },
+    {
+      "raw_source": "skills/alpha/SKILL.md",
+      "raw_target": "skills/beta/",
+      "source": "skills/alpha/",
+      "target": "skills/beta/",
+      "type": "skill-invocation",
+      "line": 50
+    },
+    {
+      "raw_source": "skills/beta/SKILL.md",
+      "raw_target": "profiles/go/review-code/index.md",
+      "source": "skills/beta/",
+      "target": "profiles/go/review-code/",
+      "type": "parameterized-nav",
+      "line": 30
+    },
+    {
+      "raw_source": "skills/beta/SKILL.md",
+      "raw_target": "skills/beta/missing.md",
+      "source": "skills/beta/",
+      "target": "skills/beta/",
+      "type": "markdown-link",
+      "line": 12
+    },
+    {
+      "raw_source": "skills/beta/shared-common.md",
+      "raw_target": "skills/_shared/common.md",
+      "source": "skills/beta/",
+      "target": "skills/_shared/common.md",
+      "type": "symlink",
+      "line": 0
+    }
+  ],
+  "metrics": {
+    "per_node": {
+      "README.md": {
+        "fan_out": 0,
+        "fan_in": 0,
+        "depth": 0,
+        "transitive_closure_size": 0
+      },
+      "agents/reviewer.md": {
+        "fan_out": 0,
+        "fan_in": 1,
+        "depth": 0,
+        "transitive_closure_size": 0
+      },
+      "commands/alpha/": {
+        "fan_out": 0,
+        "fan_in": 1,
+        "depth": 0,
+        "transitive_closure_size": 0
+      },
+      "docs/guide.md": {
+        "fan_out": 0,
+        "fan_in": 0,
+        "depth": 0,
+        "transitive_closure_size": 0
+      },
+      "profiles/go/": {
+        "fan_out": 0,
+        "fan_in": 1,
+        "depth": 0,
+        "transitive_closure_size": 0
+      },
+      "profiles/go/review-code/": {
+        "fan_out": 0,
+        "fan_in": 1,
+        "depth": 0,
+        "transitive_closure_size": 0
+      },
+      "skills/_shared/common.md": {
+        "fan_out": 0,
+        "fan_in": 2,
+        "depth": 0,
+        "transitive_closure_size": 0
+      },
+      "skills/_shared/unused.md": {
+        "fan_out": 0,
+        "fan_in": 0,
+        "depth": 0,
+        "transitive_closure_size": 0
+      },
+      "skills/alpha/": {
+        "fan_out": 5,
+        "fan_in": 0,
+        "depth": 2,
+        "transitive_closure_size": 6
+      },
+      "skills/beta/": {
+        "fan_out": 2,
+        "fan_in": 1,
+        "depth": 1,
+        "transitive_closure_size": 2
+      }
+    },
+    "orphans": [
+      "docs/guide.md",
+      "skills/_shared/unused.md"
+    ],
+    "broken_edges": [
+      {
+        "raw_source": "skills/beta/SKILL.md",
+        "raw_target": "skills/beta/missing.md",
+        "source": "skills/beta/",
+        "target": "skills/beta/",
+        "type": "markdown-link",
+        "line": 12
+      }
+    ],
+    "hotspots": [
+      "skills/_shared/common.md",
+      "agents/reviewer.md",
+      "commands/alpha/",
+      "profiles/go/",
+      "profiles/go/review-code/",
+      "skills/beta/"
+    ],
+    "coupling": [
+      {
+        "skill_a": "skills/alpha/",
+        "skill_b": "skills/beta/",
+        "shared_count": 2
+      }
+    ]
+  },
+  "diagnostics": [
+    "example diagnostic: sample warning"
+  ]
+}

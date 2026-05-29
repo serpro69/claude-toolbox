@@ -1,0 +1,34 @@
+digraph plugin {
+	rankdir=LR;
+	node [style=filled];
+
+	subgraph cluster_skills {
+		label="skills";
+		"skills/alpha/" [shape=box, fillcolor="#a6cee3"];
+		"skills/beta/" [shape=box, fillcolor="#a6cee3"];
+	}
+
+	subgraph cluster_profiles {
+		label="profiles";
+		"profiles/go/" [shape=folder, fillcolor="#fb9a99"];
+		"profiles/go/review-code/" [shape=folder, fillcolor="#fdbf6f"];
+	}
+
+	subgraph cluster_agents {
+		label="agents";
+		"agents/reviewer.md" [shape=component, fillcolor="#b2df8a"];
+	}
+	"README.md" [shape=note, fillcolor="#ffffff"];
+	"commands/alpha/" [shape=box, fillcolor="#cab2d6"];
+	"docs/guide.md" [shape=note, fillcolor="#ffffff"];
+	"skills/_shared/common.md" [shape=ellipse, fillcolor="#ffff99"];
+	"skills/_shared/unused.md" [shape=ellipse, fillcolor="#ffff99"];
+
+	"skills/alpha/" -> "agents/reviewer.md" [style=dotted, label="agent-delegation"];
+	"skills/alpha/" -> "commands/alpha/" [style=dotted, label="skill-invocation"];
+	"skills/alpha/" -> "profiles/go/" [style=dashed, label="template-ref"];
+	"skills/alpha/" -> "skills/_shared/common.md" [style=solid, label="markdown-link"];
+	"skills/alpha/" -> "skills/beta/" [style=dotted, label="skill-invocation"];
+	"skills/beta/" -> "profiles/go/review-code/" [style=dashed, label="parameterized-nav"];
+	"skills/beta/" -> "skills/_shared/common.md" [style=solid, label="symlink"];
+}
