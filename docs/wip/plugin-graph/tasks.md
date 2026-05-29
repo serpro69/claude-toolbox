@@ -127,7 +127,7 @@ Implement metric computation in `cmd/plugin-graph/metrics.go`.
 
 ## Task 4: Output formatters
 
-**Status:** pending
+**Status:** done
 **Size:** M
 **Dependencies:** Task 1, Task 3
 **Can run in parallel with:** Task 2
@@ -136,14 +136,30 @@ Implement metric computation in `cmd/plugin-graph/metrics.go`.
 
 Implement the four output formatters in `cmd/plugin-graph/output.go`.
 
-- [ ] Implement JSON formatter: `Report` struct containing nodes, edges, per-node metrics, global metrics. `json.MarshalIndent` for pretty output
-- [ ] Implement text formatter: `text/tabwriter` table with columns Name, Fan-out, Fan-in, Depth, Transitive. Sort by transitive closure desc. Sections for orphans, broken edges, hotspots
-- [ ] Implement DOT formatter: template-based. Nodes get `shape`/`fillcolor` by type. Edges get `style` by type (solid=static, dashed=template/parameterized, dotted=implicit). Subgraph clusters for skills, profiles, agents
-- [ ] Implement Mermaid formatter: flowchart LR syntax. Sanitized node IDs from paths. Edge labels with type
-- [ ] Create `testdata/` golden files for a small fixture graph (manually constructed in test setup) × 4 formats
-- [ ] Write golden file comparison tests in `output_test.go` with `-update` flag support via `go test -update`
+- [x] Implement JSON formatter: `Report` struct containing nodes, edges, per-node metrics, global metrics. `json.MarshalIndent` for pretty output
+- [x] Implement text formatter: `text/tabwriter` table with columns Name, Fan-out, Fan-in, Depth, Transitive. Sort by transitive closure desc. Sections for orphans, broken edges, hotspots
+- [x] Implement DOT formatter: template-based. Nodes get `shape`/`fillcolor` by type. Edges get `style` by type (solid=static, dashed=template/parameterized, dotted=implicit). Subgraph clusters for skills, profiles, agents
+- [x] Implement Mermaid formatter: flowchart LR syntax. Sanitized node IDs from paths. Edge labels with type
+- [x] Create `testdata/` golden files for a small fixture graph (manually constructed in test setup) × 4 formats
+- [x] Write golden file comparison tests in `output_test.go` with `-update` flag support via `go test -update`
 
 **Verify:** `go test ./cmd/plugin-graph/... -run TestOutput` passes. Golden files match expected output. Manual inspection: render a DOT golden file with `dot -Tpng` or paste Mermaid golden into mermaid.live.
+
+**Implementation notes (deviations from plan):**
+
+- **`Render(format, …)` dispatcher added.** A single entry point (`output.go`) returning `([]byte, error)`; unknown format → error (fail-loud), not a silent default. Gives Task 5's CLI a clean call site. `renderJSON`/`renderDOT` return `([]byte, error)` (marshal/template error propagated rather than panicking); `renderText`/`renderMermaid` cannot fail and return `[]byte`.
+- **Coupling section added to text output.** The plan's text spec listed only orphans/broken/hotspots, but coupling is a primary design metric (success metric calls out "flag high coupling"). Omitting it from the only human-readable format was a spec gap; added a Coupling section. JSON already carries it via `metrics`.
+- **Mermaid `classDef` node coloring added.** Honors design's "same visual semantics as DOT" for nodes; node IDs are sanitized-path with collision disambiguation (`uniqueMermaidID`); edge type carried as the `|label|`.
+- **Visual vs programmatic edge split.** JSON dumps all raw edges (full fidelity, incl. intra-artifact self-loops). DOT/Mermaid use `graphEdges()` — normalized endpoints, self-loops removed (`MetricEdges`), deduped by `(Source,Target,Type)`, filtered to declared-node endpoints. All map iteration funneled through sorted slices for deterministic golden output.
+- **gofmt cleanup of `metrics.go`.** The Task-2-deferred struct-tag-alignment gap was resolved here (`gofmt -w`); whitespace-only.
+
+**Code-review fixes applied (isolated review: code-reviewer + pal/gemini-3.1-pro, all findings corroborated):**
+
+- **Output-side escaping (P1, corroborated).** Formatters embedding path-derived strings must escape per the target grammar. `dq()` now uses `strconv.Quote` (valid DOT, escapes `"`/`\`). Mermaid node + edge labels routed through `mermaidLabel()`, which escapes `#`→`#35;` (first), `"`→`#quot;`, `|`→`#124;` via Mermaid's verified HTML-entity syntax (context7-confirmed; `strconv.Quote`'s `\"` is NOT valid Mermaid). No-op for the current clean corpus (goldens unchanged); defense-in-depth ahead of Task 6's untrusted roots. Output-side counterpart to the Task-2 input-side `escapesRoot` finding. Covered by `TestEscapingAdversarialPaths`. Indexed as `kk:review-findings`.
+- **panic→error (P2, corroborated).** `renderJSON`/`renderDOT` return errors via `Render` instead of panicking on the (unreachable) marshal/template-execute failures.
+- **nil-metrics guard (P2, corroborated).** `metricsOrZero()` guards `m.PerNode[path]` lookups in `renderText` + `skillNodesByTransitive` — robust when Task 5 targeted mode renders a graph against metrics computed for a different node set.
+- **`styleFor()` fallback (P3, corroborated).** Unknown `NodeType` → neutral box instead of invalid `shape=, fillcolor=""`.
+- **Not done (deferred, P3):** graphEdges' inline sort comparator structurally duplicates `edgeLess` (deliberate raw-vs-normalized split). Left as-is — extracting a shared comparator risks coupling the two intentionally-different orderings; revisit only if a third edge-sort site appears.
 
 ---
 
