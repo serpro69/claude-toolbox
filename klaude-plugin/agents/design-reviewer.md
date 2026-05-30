@@ -2,6 +2,7 @@
 name: design-reviewer
 description: |
   Independent design document reviewer with no authorship attachment. Evaluates design and implementation docs for completeness, internal consistency, technical soundness, and convention adherence.
+model: claude-opus-4-8
 tools:
   - Read
   - Grep
