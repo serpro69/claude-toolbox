@@ -23,8 +23,11 @@ profiles:
 agents:
   target_dir: ".codex/agents"
   sandbox_mode: "read-only"
-  model: "gpt-5.4"
+  model: "gpt-5.5"
   model_reasoning_effort: "xhigh"
+  overrides:
+    - name: profile-resolver
+      model: "gpt-5.4-mini"
   transforms:
     - type: plugin_root_placeholder
       placeholder: "<kk-plugin-root>"

@@ -48,11 +48,18 @@ type SharedConfig struct {
 	Copy bool `yaml:"copy"`
 }
 
+type AgentOverride struct {
+	Name                 string `yaml:"name"`
+	Model                string `yaml:"model"`
+	ModelReasoningEffort string `yaml:"model_reasoning_effort"`
+}
+
 type AgentsConfig struct {
 	TargetDir            string            `yaml:"target_dir"`
 	SandboxMode          string            `yaml:"sandbox_mode"`
 	Model                string            `yaml:"model"`
 	ModelReasoningEffort string            `yaml:"model_reasoning_effort"`
+	Overrides            []AgentOverride   `yaml:"overrides"`
 	Transforms           []TransformConfig `yaml:"transforms"`
 }
 

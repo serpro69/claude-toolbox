@@ -108,6 +108,23 @@ func parseFrontmatter(content []byte) (AgentFrontmatter, []byte, error) {
 	return fm, []byte(body), nil
 }
 
+func agentOverride(cfg AgentsConfig, name string) (model, effort string) {
+	model = cfg.Model
+	effort = cfg.ModelReasoningEffort
+	for _, o := range cfg.Overrides {
+		if o.Name == name {
+			if o.Model != "" {
+				model = o.Model
+			}
+			if o.ModelReasoningEffort != "" {
+				effort = o.ModelReasoningEffort
+			}
+			break
+		}
+	}
+	return
+}
+
 func formatAgentTOML(fm AgentFrontmatter, body string, cfg AgentsConfig) string {
 	var b strings.Builder
 
@@ -120,9 +137,10 @@ func formatAgentTOML(fm AgentFrontmatter, body string, cfg AgentsConfig) string 
 		fmt.Fprintf(&b, "description = %q\n", desc)
 	}
 
+	model, effort := agentOverride(cfg, fm.Name)
 	fmt.Fprintf(&b, "sandbox_mode = %q\n", cfg.SandboxMode)
-	fmt.Fprintf(&b, "model = %q\n", cfg.Model)
-	fmt.Fprintf(&b, "model_reasoning_effort = %q\n", cfg.ModelReasoningEffort)
+	fmt.Fprintf(&b, "model = %q\n", model)
+	fmt.Fprintf(&b, "model_reasoning_effort = %q\n", effort)
 
 	body = strings.TrimRight(body, "\n")
 	fmt.Fprintf(&b, "developer_instructions = \"\"\"\n%s\n\"\"\"\n", escapeTomlMultiline(body))

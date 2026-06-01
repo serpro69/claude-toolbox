@@ -269,6 +269,21 @@ func TestGenerateAgents(t *testing.T) {
 			}
 		}
 	})
+
+	t.Run("per-agent model override", func(t *testing.T) {
+		data, err := os.ReadFile(filepath.Join(agentsDir, "override-agent.toml"))
+		if err != nil {
+			t.Fatalf("override-agent.toml not found: %v", err)
+		}
+		content := string(data)
+
+		if !strings.Contains(content, `model = "override-model"`) {
+			t.Errorf("expected overridden model, got:\n%s", content)
+		}
+		if !strings.Contains(content, `model_reasoning_effort = "low"`) {
+			t.Errorf("expected overridden reasoning effort, got:\n%s", content)
+		}
+	})
 }
 
 func TestGeneratePluginManifest(t *testing.T) {
