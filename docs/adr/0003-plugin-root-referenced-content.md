@@ -2,7 +2,7 @@
 
 - **Status:** Accepted
 - **Date:** 2026-04-17
-- **Originated in:** [docs/wip/kubernetes-support/design.md](../wip/kubernetes-support/design.md)
+- **Originated in:** [docs/wip/kubernetes-support/design.md](https://github.com/serpro69/claude-toolbox/blob/master/docs/done/kubernetes-support/design.md)
 - **Related:** [ADR 0001](0001-profile-detection-model.md), [ADR 0002](0002-profile-content-organization.md)
 
 ## Context
@@ -212,7 +212,7 @@ This ADR does **not** migrate `_shared/` to `${CLAUDE_PLUGIN_ROOT}` references. 
 ## References
 
 - [ADR 0002 — Profile-first layout](0002-profile-content-organization.md)
-- [CLAUDE.md — Shared instructions](../../CLAUDE.md) (existing convention, retained)
-- [CLAUDE.md — Profile Conventions](../../CLAUDE.md) (added by this feature)
+- [CLAUDE.md — Shared instructions](https://github.com/serpro69/claude-toolbox/blob/master/CLAUDE.md) (existing convention, retained)
+- [CLAUDE.md — Profile Conventions](https://github.com/serpro69/claude-toolbox/blob/master/CLAUDE.md) (added by this feature)
 - `kk:arch-decisions` — OpenCode Bun-cache symlink fragility (from OpenCode-support feature design review)
 - `klaude-plugin/hooks/hooks.json` — prior use of `${CLAUDE_PLUGIN_ROOT}` in the plugin

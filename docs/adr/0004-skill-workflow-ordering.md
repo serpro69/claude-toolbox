@@ -2,7 +2,7 @@
 
 - **Status:** Accepted
 - **Date:** 2026-04-19
-- **Originated in:** [docs/wip/kubernetes-support/tasks.md — Task 7 dry-run findings](../wip/kubernetes-support/tasks.md)
+- **Originated in:** [docs/wip/kubernetes-support/tasks.md — Task 7 dry-run findings](https://github.com/serpro69/claude-toolbox/blob/master/docs/done/kubernetes-support/tasks.md)
 - **Related:** [ADR 0002](0002-profile-content-organization.md), [ADR 0003](0003-plugin-root-referenced-content.md)
 
 ## Context

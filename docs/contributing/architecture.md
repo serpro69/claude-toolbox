@@ -1,6 +1,6 @@
 # Architecture
 
-This document describes how claude-toolbox components fit together. For conventions on authoring skills, profiles, and agents, see [`CLAUDE.md`](../../CLAUDE.md).
+This document describes how claude-toolbox components fit together. For conventions on authoring skills, profiles, and agents, see [`CLAUDE.md`](https://github.com/serpro69/claude-toolbox/blob/master/CLAUDE.md).
 
 ## Overview
 
@@ -200,8 +200,8 @@ Architecture decisions are recorded in `docs/adr/`:
 
 | ADR | Decision |
 |-----|----------|
-| [0001](../../docs/adr/0001-profile-detection-model.md) | Profile detection model (path → filename → content signals) |
-| [0002](../../docs/adr/0002-profile-content-organization.md) | Profile content organization (per-phase subdirectories) |
-| [0003](../../docs/adr/0003-plugin-root-referenced-content.md) | Plugin-root referenced content (no symlinks into profiles) |
-| [0004](../../docs/adr/0004-skill-workflow-ordering.md) | Skill workflow ordering (instructions before action) |
-| [0005](../../docs/adr/0005-codex-hook-enforcement-gap.md) | Codex hook enforcement gap (advisory + hook two-layer approach) |
+| [0001](../adr/0001-profile-detection-model.md) | Profile detection model (path → filename → content signals) |
+| [0002](../adr/0002-profile-content-organization.md) | Profile content organization (per-phase subdirectories) |
+| [0003](../adr/0003-plugin-root-referenced-content.md) | Plugin-root referenced content (no symlinks into profiles) |
+| [0004](../adr/0004-skill-workflow-ordering.md) | Skill workflow ordering (instructions before action) |
+| [0005](../adr/0005-codex-hook-enforcement-gap.md) | Codex hook enforcement gap (advisory + hook two-layer approach) |

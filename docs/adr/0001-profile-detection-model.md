@@ -2,7 +2,7 @@
 
 - **Status:** Accepted
 - **Date:** 2026-04-17
-- **Originated in:** [docs/wip/kubernetes-support/design.md](../wip/kubernetes-support/design.md)
+- **Originated in:** [docs/wip/kubernetes-support/design.md](https://github.com/serpro69/claude-toolbox/blob/master/docs/done/kubernetes-support/design.md)
 - **Related:** [ADR 0002](0002-profile-content-organization.md), [ADR 0003](0003-plugin-root-referenced-content.md)
 
 ## Context
@@ -71,6 +71,6 @@ Until at least one such trigger fires, B remains the decision.
 
 ## References
 
-- [design.md — Detection mechanics](../wip/kubernetes-support/design.md#detection-mechanics)
-- [design.md — Profile content organization](../wip/kubernetes-support/design.md#file-structure)
+- [design.md — Detection mechanics](https://github.com/serpro69/claude-toolbox/blob/master/docs/done/kubernetes-support/design.md#detection-mechanics)
+- [design.md — Profile content organization](https://github.com/serpro69/claude-toolbox/blob/master/docs/done/kubernetes-support/design.md#file-structure)
 - LSP language-ID registry (for the umbrella-term precedent): https://microsoft.github.io/language-server-protocol/

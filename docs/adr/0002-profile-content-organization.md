@@ -2,7 +2,7 @@
 
 - **Status:** Accepted
 - **Date:** 2026-04-17
-- **Originated in:** [docs/wip/kubernetes-support/design.md](../wip/kubernetes-support/design.md)
+- **Originated in:** [docs/wip/kubernetes-support/design.md](https://github.com/serpro69/claude-toolbox/blob/master/docs/done/kubernetes-support/design.md)
 - **Related:** [ADR 0001](0001-profile-detection-model.md), [ADR 0003](0003-plugin-root-referenced-content.md)
 
 ## Context
@@ -101,7 +101,7 @@ Migration back to a flat or pre-profile-first layout would be mechanical (`git m
 
 ## References
 
-- [design.md — Architecture overview](../wip/kubernetes-support/design.md#architecture-overview)
-- [design.md — File structure](../wip/kubernetes-support/design.md#file-structure)
-- [design.md — Content organization within profiles](../wip/kubernetes-support/design.md#content-organization-within-profiles)
-- [CLAUDE.md — Profile Conventions (added by this feature)](../../CLAUDE.md)
+- [design.md — Architecture overview](https://github.com/serpro69/claude-toolbox/blob/master/docs/done/kubernetes-support/design.md#architecture-overview)
+- [design.md — File structure](https://github.com/serpro69/claude-toolbox/blob/master/docs/done/kubernetes-support/design.md#file-structure)
+- [design.md — Content organization within profiles](https://github.com/serpro69/claude-toolbox/blob/master/docs/done/kubernetes-support/design.md#content-organization-within-profiles)
+- [CLAUDE.md — Profile Conventions (added by this feature)](https://github.com/serpro69/claude-toolbox/blob/master/CLAUDE.md)

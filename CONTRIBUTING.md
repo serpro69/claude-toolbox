@@ -2,7 +2,7 @@
 
 Thanks for your interest in contributing to claude-toolbox!
 
-> **Full documentation** lives in [`docs/contributing/`](docs/contributing/) — architecture overview, plugin development guide, testing conventions, and documentation workflow. This file covers the essentials for quick orientation.
+> **Full documentation** lives in [`docs/contributing/`](https://github.com/serpro69/claude-toolbox/tree/master/docs/contributing) — architecture overview, plugin development guide, testing conventions, and documentation workflow. This file covers the essentials for quick orientation.
 
 ## Getting Started
 
@@ -12,7 +12,7 @@ Thanks for your interest in contributing to claude-toolbox!
 
 ## Development
 
-See [Architecture](docs/contributing/architecture.md) for how the components fit together and [Testing](docs/contributing/testing.md) for test conventions. The authoritative reference for all conventions is [`CLAUDE.md`](CLAUDE.md) — this guide summarizes the most important rules for quick orientation.
+See [Architecture](https://github.com/serpro69/claude-toolbox/blob/master/docs/contributing/architecture.md) for how the components fit together and [Testing](https://github.com/serpro69/claude-toolbox/blob/master/docs/contributing/testing.md) for test conventions. The authoritative reference for all conventions is [`CLAUDE.md`](https://github.com/serpro69/claude-toolbox/blob/master/CLAUDE.md) — this guide summarizes the most important rules for quick orientation.
 
 ### Key workflows
 
@@ -29,7 +29,7 @@ See [Architecture](docs/contributing/architecture.md) for how the components fit
 
 ## Plugin Development
 
-The kk plugin lives at `klaude-plugin/`. This section covers the practical rules for authoring each component. For the full specification, see [`CLAUDE.md`](CLAUDE.md).
+The kk plugin lives at `klaude-plugin/`. This section covers the practical rules for authoring each component. For the full specification, see [`CLAUDE.md`](https://github.com/serpro69/claude-toolbox/blob/master/CLAUDE.md).
 
 ### Skills
 
@@ -57,7 +57,7 @@ description: |
 
 **Description budget:** Claude Code truncates skill descriptions at 1,536 characters per entry. OpenCode's limit is 1,024. Lead with trigger keywords — truncation happens at the tail. Detailed rules, cascades, and examples belong in the SKILL.md body, not the description.
 
-**Workflow ordering ([ADR 0004](docs/adr/0004-skill-workflow-ordering.md)):** Every skill MUST fully load its instructions before taking any action on its subject matter. This is the single most critical rule for skill authoring.
+**Workflow ordering ([ADR 0004](https://github.com/serpro69/claude-toolbox/blob/master/docs/adr/0004-skill-workflow-ordering.md)):** Every skill MUST fully load its instructions before taking any action on its subject matter. This is the single most critical rule for skill authoring.
 
 - "Instructions" = SKILL.md + referenced process files + shared protocols + resolved profile content.
 - "Action on subject matter" = reading diff content, editing code, engaging with idea prose, running tests, producing findings.
@@ -77,7 +77,7 @@ ln -s ../_shared/<name>.md shared-<name>.md
 
 Reference in skill prose as `[shared-<name>.md](shared-<name>.md)`. The `shared-` prefix makes it obvious which files are shared vs. skill-specific. Only symlink into skills that actually reference the file.
 
-Symlinks must stay inside the `skills/` tree — cross-boundary symlinks break under some plugin installers (see [ADR 0003](docs/adr/0003-plugin-root-referenced-content.md)).
+Symlinks must stay inside the `skills/` tree — cross-boundary symlinks break under some plugin installers (see [ADR 0003](https://github.com/serpro69/claude-toolbox/blob/master/docs/adr/0003-plugin-root-referenced-content.md)).
 
 ### Commands
 
@@ -133,7 +133,7 @@ Hook scripts read JSON from stdin (the `tool_input` object), return structured J
 
 ### Profiles
 
-Profiles at `klaude-plugin/profiles/<name>/` provide domain-specific content to every workflow phase. See the [Profile Conventions](CLAUDE.md#profile-conventions) section of CLAUDE.md for the full specification.
+Profiles at `klaude-plugin/profiles/<name>/` provide domain-specific content to every workflow phase. See the [Profile Conventions](https://github.com/serpro69/claude-toolbox/blob/master/CLAUDE.md#profile-conventions) section of CLAUDE.md for the full specification.
 
 **Required files:**
 
@@ -187,7 +187,7 @@ Use real filesystem fixtures in `test-files/`, not inline JSON strings. Include 
 
 ## `${CLAUDE_PLUGIN_ROOT}` — Substitution Rules
 
-The harness provides `${CLAUDE_PLUGIN_ROOT}` resolving to the installed plugin's root. Understanding its substitution boundary is critical ([ADR 0003](docs/adr/0003-plugin-root-referenced-content.md)):
+The harness provides `${CLAUDE_PLUGIN_ROOT}` resolving to the installed plugin's root. Understanding its substitution boundary is critical ([ADR 0003](https://github.com/serpro69/claude-toolbox/blob/master/docs/adr/0003-plugin-root-referenced-content.md)):
 
 **Substituted at plugin-load time** (safe to use `${CLAUDE_PLUGIN_ROOT}/...` freely):
 
@@ -227,7 +227,7 @@ Only index non-obvious learnings not derivable from reading the code or git hist
 
 ## Common Pitfalls
 
-1. **Workflow ordering is the #1 failure mode.** If the agent sees subject matter before methodology, it shortcuts the methodology. Structure every workflow so instructions load first. See [ADR 0004](docs/adr/0004-skill-workflow-ordering.md).
+1. **Workflow ordering is the #1 failure mode.** If the agent sees subject matter before methodology, it shortcuts the methodology. Structure every workflow so instructions load first. See [ADR 0004](https://github.com/serpro69/claude-toolbox/blob/master/docs/adr/0004-skill-workflow-ordering.md).
 
 2. **Forgetting `make generate-kodex`.** After editing anything in `klaude-plugin/`, the Codex variant drifts. CI checks this with `make generate-kodex && git diff --exit-code kodex-plugin/ .codex/agents/`.
 
@@ -256,11 +256,11 @@ Non-trivial design decisions are recorded as ADRs in `docs/adr/` using [Michael 
 
 | ADR                                                     | Decision                                                  |
 | ------------------------------------------------------- | --------------------------------------------------------- |
-| [0001](docs/adr/0001-profile-detection-model.md)        | Single additive detection axis for all profile types      |
-| [0002](docs/adr/0002-profile-content-organization.md)   | Profile-first layout with index-driven content loading    |
-| [0003](docs/adr/0003-plugin-root-referenced-content.md) | Plugin-root references instead of cross-boundary symlinks |
-| [0004](docs/adr/0004-skill-workflow-ordering.md)        | Instructions before action in every skill workflow        |
-| [0005](docs/adr/0005-codex-hook-enforcement-gap.md)     | Two-layer hook + advisory enforcement for Codex           |
+| [0001](https://github.com/serpro69/claude-toolbox/blob/master/docs/adr/0001-profile-detection-model.md)        | Single additive detection axis for all profile types      |
+| [0002](https://github.com/serpro69/claude-toolbox/blob/master/docs/adr/0002-profile-content-organization.md)   | Profile-first layout with index-driven content loading    |
+| [0003](https://github.com/serpro69/claude-toolbox/blob/master/docs/adr/0003-plugin-root-referenced-content.md) | Plugin-root references instead of cross-boundary symlinks |
+| [0004](https://github.com/serpro69/claude-toolbox/blob/master/docs/adr/0004-skill-workflow-ordering.md)        | Instructions before action in every skill workflow        |
+| [0005](https://github.com/serpro69/claude-toolbox/blob/master/docs/adr/0005-codex-hook-enforcement-gap.md)     | Two-layer hook + advisory enforcement for Codex           |
 
 ## License
 
