@@ -75,7 +75,7 @@ Examples of actual Claude Code workflows executed using this template's configs,
 
 ## Contributing
 
-Contributions are welcome! See [CONTRIBUTING.md](CONTRIBUTING.md) for guidelines, [Architecture](https://serpro69.github.io/claude-toolbox/latest/contributing/architecture/) for how components fit together, and [Testing](https://serpro69.github.io/claude-toolbox/latest/contributing/testing/) for test conventions.
+Contributions are welcome! See the [Contributing guide](https://serpro69.github.io/claude-toolbox/latest/contributing/) for guidelines, [Architecture](https://serpro69.github.io/claude-toolbox/latest/contributing/architecture/) for how components fit together, and [Testing](https://serpro69.github.io/claude-toolbox/latest/contributing/testing/) for test conventions.
 
 ## License
 
