@@ -37,6 +37,10 @@ for test in test/test-*.sh; do $test; done
 
 Key test suites: `test-plugin-structure.sh` (klaude-plugin + kodex-plugin generated output), `test-codex-structure.sh` (codex config, hooks, agents, rules), `test-template-sync.sh` (sync infrastructure). Tests use shared utilities from `test/helpers.sh`.
 
+The Go tools under `cmd/` have their own tests: `make generate-kodex` (Codex generation + freshness) and `make plugin-graph` (the `cmd/plugin-graph/` dependency-graph analyzer's tests, plus `plugin-graph validate` against `klaude-plugin/` as a broken-link/orphan gate). See [docs/contributing/architecture.md](docs/contributing/architecture.md) for what `plugin-graph` analyzes.
+
+**Eval-fixture links are intentionally partial.** `plugin-graph validate` (and any "fix the broken link" instinct) must not touch deliberately-broken markdown links under `evals/` or in `example-*.md` templates — several eval fixtures omit their link targets precisely to exercise missing-target detection. `validate` exempts these `nonOperativeSource`s by design; "fixing" them breaks the evals.
+
 ## Troubleshooting
 
 See `README.md` for detailed troubleshooting of MCP connection issues and template sync problems.
