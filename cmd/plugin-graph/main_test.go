@@ -259,17 +259,17 @@ func TestMainInvalidDirection(t *testing.T) {
 	}
 }
 
-func TestMainRefNotSupported(t *testing.T) {
-	root := writeCLIFixture(t, false)
-
-	// --ref is parsed (the grammar is stable) but rejected until Task 6 wires
-	// the worktree. Asserting the rejection guards against it silently no-oping.
-	code, _, stderr := runCLI("--root", root, "--ref", "HEAD~1", "metrics")
+func TestMainRefAbsoluteRootRejected(t *testing.T) {
+	// --ref resolves the repo-relative --root inside the worktree. An absolute
+	// --root cannot be located there, so the combination is rejected up front —
+	// before any worktree is created, so this needs no git. The happy path
+	// (--ref against a real repo) is covered in worktree_test.go.
+	code, _, stderr := runCLI("--root", "/abs/klaude-plugin", "--ref", "HEAD~1", "metrics")
 	if code != exitError {
-		t.Fatalf("--ref exit = %d, want %d", code, exitError)
+		t.Fatalf("--ref with absolute root exit = %d, want %d", code, exitError)
 	}
-	if !strings.Contains(stderr, "--ref is not yet supported") {
-		t.Errorf("--ref stderr = %q", stderr)
+	if !strings.Contains(stderr, "repo-relative --root") {
+		t.Errorf("--ref absolute-root stderr = %q, want it to explain the relative-root requirement", stderr)
 	}
 }
 

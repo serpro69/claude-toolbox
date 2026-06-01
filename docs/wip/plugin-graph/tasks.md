@@ -198,7 +198,7 @@ Wire everything together in `cmd/plugin-graph/main.go`.
 
 ## Task 6: Git worktree support
 
-**Status:** pending
+**Status:** done
 **Size:** S
 **Dependencies:** Task 5
 **Can run in parallel with:** —
@@ -207,12 +207,25 @@ Wire everything together in `cmd/plugin-graph/main.go`.
 
 Implement `--ref` flag support via git worktrees in `cmd/plugin-graph/worktree.go`.
 
-- [ ] Implement `WithWorktree(ref string, fn func(root string) error) error`: create temp dir, `git worktree add --detach`, call fn, deferred cleanup via `git worktree remove --force` + `os.RemoveAll`
-- [ ] Wire into `main.go`: when `--ref` is set, wrap the build step in `WithWorktree`
-- [ ] Handle error cases: invalid ref, not a git repo, worktree add failure → clear error message
-- [ ] Write test in `worktree_test.go`: skip if git not available (`exec.LookPath`), create a test repo with two commits, verify worktree at older ref sees the older state, verify cleanup removes worktree
+- [x] Implement `WithWorktree(ref string, fn func(root string) error) error`: create temp dir, `git worktree add --detach`, call fn, deferred cleanup via `git worktree remove --force` + `os.RemoveAll`
+- [x] Wire into `main.go`: when `--ref` is set, wrap the build step in `WithWorktree`
+- [x] Handle error cases: invalid ref, not a git repo, worktree add failure → clear error message
+- [x] Write test in `worktree_test.go`: skip if git not available (`exec.LookPath`), create a test repo with two commits, verify worktree at older ref sees the older state, verify cleanup removes worktree
 
 **Verify:** `go run ./cmd/plugin-graph --root klaude-plugin/ --ref HEAD~1 metrics --format text` produces output reflecting the state at the previous commit. `git worktree list` shows no leftover worktrees after the command completes.
+
+**Implementation notes (deviations from plan):**
+
+- **`--ref` requires a repo-relative `--root` (new guard).** The effective root inside the worktree is `filepath.Join(worktreeRoot, cfg.root)`. An absolute `--root` cannot be located inside the worktree, so `run` rejects `--ref` + absolute `--root` with a loud error rather than joining into a nonsense path. The documented/default usage (`--root klaude-plugin/`) is unaffected. Covered by `TestMainRefAbsoluteRootRejected`.
+- **`git` resolves from the process cwd (not a new param).** Kept the design's 2-arg `WithWorktree(ref, fn)` signature; `exec.Command` inherits cwd, so the tool must run from inside the repo being analyzed (the design's stated assumption). Tests point git at a synthetic two-commit repo via `t.Chdir` (Go 1.24+; `go.mod` is `go 1.25.2`).
+- **Argument-injection guard.** Beyond passing `ref` as a separate argv entry (no shell), a leading-dash guard rejects refs git would otherwise parse as an option. Empty/`-x`/`--detach` refs are rejected before any git call.
+- **Exit-code precedence on cleanup failure.** A worktree setup/teardown failure is an environment problem (exit 2) but must not erase a more specific analysis result: `validate`'s findings (exit 1) take precedence once `execute` has run. `execute`'s code is captured by closure side-effect; the closure returns `nil` intentionally.
+
+**Code-review fixes applied (isolated review: code-reviewer + pal/gemini-3.1-pro, CORROBORATED):**
+
+- **Cleanup error-swallowing (P1/HIGH, corroborated).** The original defer gated all teardown-error reporting on `os.RemoveAll` succeeding; a `git worktree remove` failure was silently swallowed whenever `RemoveAll` succeeded, leaking a dangling worktree registration in the parent repo's `.git/worktrees/` (directly contradicting this task's "no leftover worktrees" verify criterion). Fixed: each teardown step's error is evaluated independently and combined with `errors.Join`, surfaced only when `err == nil` (don't mask fn's error). A `registered bool` (set after a successful `add`) skips `git worktree remove` on the add-failed path, removing a spurious discarded git error (folds in the related single-reviewer P2). Indexed as `kk:review-findings`.
+- **`main.go` readability (P3).** Added an inline comment clarifying that the `WithWorktree` callback captures `execute`'s exit code by side-effect and returns `nil` intentionally.
+- **Kept as-is:** multi-line git-stderr-in-error normalization (P2) — `git worktree add/remove` errors are single-line, `TrimSpace` covers the common case, and raw git text is more useful on CLI stderr. The sub-agent's reraise of the Task 4 output-escaping finding is a non-issue — that was already fixed in Task 4 (`escapesRoot` + `mermaidLabel`/`dq`, `TestEscapingAdversarialPaths`).
 
 ---
 

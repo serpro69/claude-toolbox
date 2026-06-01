@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"io"
 	"os"
+	"path/filepath"
 	"slices"
 )
 
@@ -91,21 +92,47 @@ func run(args []string, stdout, stderr io.Writer) int {
 		return exitError
 	}
 
-	if *ref != "" {
-		// TODO(Task 6): wrap the build below in WithWorktree(*ref, ...) once
-		// worktree.go lands. Until then the flag is parsed (so the grammar is
-		// stable) but rejected loudly rather than silently ignored.
-		fmt.Fprintln(stderr, "error: --ref is not yet supported")
-		return exitError
-	}
-
-	return execute(runConfig{
+	cfg := runConfig{
 		subcommand: sub,
 		root:       *root,
 		format:     *format,
 		direction:  dir,
 		targets:    targets,
-	}, stdout, stderr)
+	}
+
+	if *ref != "" {
+		// --ref analyzes a past commit via a temporary worktree. The effective
+		// root is the same repo-relative --root resolved inside the worktree
+		// (<worktree>/klaude-plugin/), so an absolute --root cannot be located
+		// there — reject the combination loudly rather than join it into nonsense.
+		if filepath.IsAbs(cfg.root) {
+			fmt.Fprintln(stderr, "error: --ref requires a repo-relative --root, got an absolute path")
+			return exitError
+		}
+		code := exitOK
+		werr := WithWorktree(*ref, func(worktreeRoot string) error {
+			wtCfg := cfg
+			wtCfg.root = filepath.Join(worktreeRoot, cfg.root)
+			// execute reports its own output/errors to stdout/stderr and returns an
+			// exit code, which we capture by side-effect. Returning nil here is
+			// intentional: WithWorktree's error path is reserved for worktree
+			// setup/teardown failures, not analysis results.
+			code = execute(wtCfg, stdout, stderr)
+			return nil
+		})
+		if werr != nil {
+			// A worktree setup/teardown failure is an environment problem (exit 2),
+			// but it must not erase a more specific analysis result: validate's
+			// findings (exit 1) still take precedence once execute has run.
+			fmt.Fprintf(stderr, "error: %v\n", werr)
+			if code == exitOK {
+				return exitError
+			}
+		}
+		return code
+	}
+
+	return execute(cfg, stdout, stderr)
 }
 
 // runConfig is the parsed CLI invocation handed from run to execute. Grouping
