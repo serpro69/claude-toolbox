@@ -17,8 +17,10 @@ on:
       - 'README.md'
       - 'CONTRIBUTING.md'
       - 'LICENSE.md'
-      - 'klaude-plugin/README.md'
+      - 'klaude-plugin/**'
       - 'kodex-plugin/README.md'
+      - 'cmd/plugin-graph/**'
+      - 'Makefile'
 
 permissions:
   contents: write
@@ -62,6 +64,11 @@ jobs:
           restore-keys: |
             mkdocs-material-
       - run: pip install -r requirements.txt
+      - uses: actions/setup-go@v5
+        with:
+          go-version: stable
+      - name: Regenerate plugin-graph docs
+        run: make plugin-graph-docs
       - run: |-
           if [[ ! "${{ github.ref_name }}" =~ ^v[0-9]+\.[0-9]+\.[0-9]+$ ]]; then
             mike deploy --push dev

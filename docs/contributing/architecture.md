@@ -51,6 +51,29 @@ Subcommands: `graph` (emit the graph), `metrics` (complexity numbers), `validate
 
 Broken-edge detection exempts **non-operative sources** — links from `evals/` fixtures (deliberately partial) and `example-*.md` templates — mirroring the orphan-detection `evals/` exemption. Run via `make plugin-graph` (Go tests + `validate` against the real plugin); see [Testing](testing.md).
 
+#### The model at a glance
+
+The six edge types connect a handful of artifact types. Each arrow below is one edge type; the concrete graph expands these over every skill, command, agent, profile phase, and shared instruction.
+
+```mermaid
+flowchart LR
+    cmd["Command<br>/kk:name"] -->|"/kk: invocation"| skill["Skill<br>SKILL.md"]
+    skill -->|"subagent_type delegation"| agent["Agent"]
+    skill -->|"symlink · markdown link"| shared["_shared/<br>instruction"]
+    skill -->|"plugin-root ref · &lt;name&gt;/&lt;phase&gt; nav"| pidx["Profile phase<br>index.md"]
+    pidx -->|"markdown link"| chk["Checklist /<br>content file"]
+    agent -->|"plugin-root ref"| pidx
+    agent -->|"markdown link"| shared
+```
+
+For the complete, zoomable node-and-edge graph of the real plugin, see [Plugin Graph](plugin-graph.md).
+
+#### Current metrics
+
+Regenerated from the live plugin on every docs build (`make plugin-graph-docs`), so these numbers track the plugin as it stands:
+
+--8<-- "contributing/_generated/plugin-graph-metrics.md"
+
 ### Claude Code Config (`.claude/`)
 
 - **`settings.json`** — Permission baselines (allow/deny lists), env vars, model, plugin marketplace
