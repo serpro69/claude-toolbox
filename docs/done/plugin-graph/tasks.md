@@ -2,7 +2,7 @@
 
 > **Feature:** plugin-graph
 > **Design:** [design.md](design.md) | **Implementation:** [implementation.md](implementation.md)
-> **Status:** pending
+> **Status:** done (all 8 tasks complete; Task 8 gate passed 2026-06-01)
 > **Not Doing:** Review skill integration, committed JSON artifact, interactive visualization, diff subcommand, cross-plugin analysis, semantic prose analysis.
 
 ---
@@ -267,19 +267,28 @@ Create the integration test fixture and wire up Makefile/CI.
 
 ## Task 8: Gate — Post-implementation verification
 
-**Status:** pending
+**Status:** done
 **Size:** S
 **Dependencies:** Task 7
 **Can run in parallel with:** —
 
 Post-implementation gate (not an implementation task — workflow verification steps).
 
-- [ ] Run `/kk:test` — full test suite including `make plugin-graph` and `test/test-plugin-structure.sh`
-- [ ] Run `/kk:document` — update any relevant docs (README mention of the new tool, CLAUDE.md if conventions change)
-- [ ] Run `/kk:review-code` — review all changes for the feature
-- [ ] Run `/kk:review-spec` — verify implementation matches design.md and implementation.md
+- [x] Run `/kk:test` — full test suite including `make plugin-graph` and `test/test-plugin-structure.sh`
+- [x] Run `/kk:document` — update any relevant docs (README mention of the new tool, CLAUDE.md if conventions change)
+- [x] Run `/kk:review-code` — review all changes for the feature
+- [x] Run `/kk:review-spec` — verify implementation matches design.md and implementation.md
 
 **Verify:** All four skills pass without blocking findings.
+
+**Gate outcome (all four skills passed, no blocking findings):**
+
+- **`/kk:test`** — Go tests pass with `-race`, **91.6% coverage**; `make plugin-graph` exits 0 (`validate` clean, only the expected SCC `cycle detected` stderr diagnostic); `test/test-plugin-structure.sh` 175/0; remaining shell suites green. (The `test-template-sync.sh` pre-release-tag failure is environment-dependent and unrelated to this feature — disregarded per user.)
+- **`/kk:document`** — Documented `cmd/plugin-graph/` in `docs/contributing/architecture.md` (new component section) and `docs/contributing/testing.md` (Go tests + `make plugin-graph` release gate); added a `CLAUDE.md` Testing note plus the eval-fixture broken-link convention (don't "fix" deliberately-broken `evals/` / `example-*.md` links — they're exempt by `nonOperativeSource`). README intentionally left unchanged (user-facing marketing; plugin-graph is an internal maintainer tool). `go` doc rubric topics (CLI, CI/CD) both covered.
+- **`/kk:review-code`** — Holistic pass over the whole feature diff: **0 P0/P1/P2**. Security vectors (command injection, path traversal, template injection) all defended; gofmt clean; no kodex drift. Only 2 P3 idiom notes (`Direction` zero-value, `flag.ErrHelp` `==`), both defensible as-is. No new `kk:review-findings` to index (the Task-6 worktree pattern is already indexed).
+- **`/kk:review-spec`** — **0 MISSING_IMPL / SPEC_DEV / DOC_INCON.** Implementation faithfully matches design intent. Five P3 doc-lag items (code ahead of implementation.md, all already logged in this file) were resolved by syncing `implementation.md` §Extractors (path-confinement/placeholder/dedup, goldmark infallibility), §Output (Render dispatcher + `([]byte,error)`, coupling in text, output escaping), and §Git Worktree (input guards + `errors.Join` cleanup).
+
+Docs remain in `docs/wip/plugin-graph/` (not yet moved to `docs/done/`).
 
 ---
 

@@ -89,7 +89,7 @@ Each extractor is a standalone function: `func(filePath string, content []byte, 
 
 Before running regex-based extractors (3–5), content is pre-processed to replace fenced code blocks (`` ``` `` and `~~~`` delimited) with blank lines of equal length (preserving line numbers for edge diagnostics). Extractor 1 (goldmark AST) is inherently code-block-safe. Extractor 2 (symlinks) operates on the filesystem.
 
-**Extractor 1 — Markdown links:** Parse with goldmark, walk AST for `ast.Link` nodes, extract `Destination`. Resolve relative paths against the file's directory. Filter: skip external URLs (`://`), anchor-only (`#...`), non-`.md` targets. Each surviving link → `markdown-link` edge with line number from AST position. Code-block-safe via AST. **Error handling:** if goldmark fails to parse a file (malformed markdown), emit a diagnostic to stderr, skip Extractor 1 for that file, and continue — other extractors still run on it.
+**Extractor 1 — Markdown links:** Parse with goldmark, walk AST for `ast.Link` nodes, extract `Destination`. Resolve relative paths against the file's directory. Filter: skip external URLs (`://`), anchor-only (`#...`), non-`.md` targets. Each surviving link → `markdown-link` edge with line number from AST position. Code-block-safe via AST. A fresh `goldmark.New()` parser is built per file (its parser is stateful per `Parse`, not safe to share). No parse-error path is needed — goldmark's markdown grammar is total, so `Parse` always returns a document; malformed input simply yields fewer link nodes.
 
 **Extractor 2 — Symlinks:** Called before content extraction. `os.Lstat(path)` → if `ModeSymlink`, `os.Readlink(path)` → resolve target relative to symlink's directory → `symlink` edge. The symlink file is **skipped for content extraction** — the walker does not run other extractors on it. The symlink target's canonical file is processed separately when the walker encounters it at its real path (e.g., `skills/_shared/profile-detection.md`). This prevents double-counting: shared files' outgoing links are attributed only to the canonical shared node, not duplicated across every consuming skill.
 
@@ -111,6 +111,14 @@ Runs on code-block-stripped content.
 
 Runs on code-block-stripped content.
 
+#### Path confinement, placeholder skipping, and edge dedup
+
+Three robustness measures apply across the extractors (see tasks.md §Task 2 for the full rationale):
+
+- **Path confinement (`escapesRoot`).** Every resolver (markdown link, symlink, concrete template-ref, parameterized expansion) rejects a resolved path that escapes the plugin root (`..`/`../`-prefixed after `path.Clean`). A plugin-authored link or symlink therefore cannot produce an edge — or a broken-edge `stat` — outside the analyzed tree.
+- **Doc-placeholder skipping.** Concrete `${CLAUDE_PLUGIN_ROOT}/…` refs containing `*`, `…` (Unicode ellipsis), or `...` are prose placeholders, not real paths, so they are skipped rather than reported as broken edges.
+- **Edge dedup (`dedupEdges`).** `BuildGraph` collapses repeats to one edge per `(RawSource, RawTarget, Type)` (first line wins) before normalization, so a skill that mentions `/kk:review-code` N times does not inflate fan-in/out.
+
 ### Metrics (`metrics.go`)
 
 **`NodeMetrics`** struct: `FanOut`, `FanIn`, `Depth`, `TransitiveClosureSize` (all `int`).
@@ -127,11 +135,11 @@ Computation uses `MetricEdges()` (excluding intra-artifact self-loops) for all m
 
 ### Output (`output.go`)
 
-Four formatter functions, each taking `*Graph` and `*GraphMetrics` and returning `[]byte`. Structured output goes to **stdout**; diagnostics (cycles, parse warnings, skipped files) go to **stderr**.
+A single `Render(format, g, m, diagnostics)` dispatcher selects the formatter and returns `([]byte, error)`; an unknown format is a loud error, not a silent default. `renderJSON`/`renderDOT` return `([]byte, error)` (propagating marshal/template-execute failures rather than panicking); `renderText`/`renderMermaid` cannot fail and return `[]byte`. The `validate` subcommand uses a separate `renderValidate(format, m)` that supports `json`/`text` only. Path-derived strings are escaped per target grammar before embedding — `dq()` (`strconv.Quote`) for DOT identifiers, `mermaidLabel()` (Mermaid `#code;` entities) for Mermaid labels — so an unusual path cannot corrupt the output. Structured output goes to **stdout**; diagnostics (cycles, parse warnings, skipped files) go to **stderr**.
 
 **JSON:** Marshal a `Report` struct containing `nodes`, `edges`, `metrics`, and `diagnostics` arrays. Pretty-printed with `json.MarshalIndent`. The `diagnostics` array captures cycle reports, parse warnings, etc. so programmatic consumers get the full picture.
 
-**Text:** Table formatted with `text/tabwriter`. Header row, one row per skill node sorted by transitive closure size descending. Columns: Name, Fan-out, Fan-in, Depth, Transitive. Followed by sections for orphans, broken edges, hotspots. Diagnostics appended at the end.
+**Text:** Table formatted with `text/tabwriter`. Header row, one row per skill node sorted by transitive closure size descending. Columns: Name, Fan-out, Fan-in, Depth, Transitive. Followed by sections for orphans, broken edges, hotspots, and coupling (coupling is a primary design metric, so the only human-readable format surfaces it too). Diagnostics appended at the end.
 
 **DOT:** Template-based. Nodes get `shape` and `fillcolor` by type. Edges get `style` by type (solid for static, dashed for template/parameterized, dotted for implicit). Subgraph clusters for skills, profiles, agents. Diagnostics only on stderr.
 
@@ -160,6 +168,10 @@ func WithWorktree(ref string, fn func(root string) error) error
 4. Deferred: `git worktree remove --force <tempdir>` then `os.RemoveAll(tempdir)`.
 
 Error handling: if `git worktree add` fails (invalid ref, not a git repo), return a clear error message. The `--force` on remove handles the case where the worktree has uncommitted changes (shouldn't happen since we're read-only, but defensive).
+
+Input guards (`ref` is untrusted CLI input): empty refs and refs beginning with `-` are rejected before any git call (the latter would otherwise be parsed by git as an option — `ref` is already passed as a separate argv entry, never through a shell). `main` additionally rejects `--ref` combined with an absolute `--root`, since the effective root is `filepath.Join(worktreeRoot, root)` and an absolute root cannot live inside the worktree.
+
+Cleanup robustness: the two teardown steps (`git worktree remove`, `os.RemoveAll`) are evaluated **independently** and combined with `errors.Join`, surfaced via a named `err` return only when `fn` itself succeeded — so a `git worktree remove` failure is never silently swallowed by a successful `RemoveAll` (which would leak a dangling registration in `.git/worktrees/`), and a teardown hiccup never masks a real `fn` error. A `registered` flag (set only after `add` succeeds) skips the remove step on the add-failed path. See tasks.md §Task 6.
 
 ### Makefile Integration
 

@@ -47,16 +47,26 @@ Test fixtures live in `test/fixtures/`.
 
 ## Go Tests
 
-The generation tool (`cmd/generate-kodex/`) has Go unit tests:
+The Go tools under `cmd/` ship unit and integration tests:
 
 ```bash
-go test ./cmd/generate-kodex/...
+go test ./cmd/generate-kodex/...   # Codex generation tool
+go test ./cmd/plugin-graph/...     # plugin dependency-graph analyzer
 ```
 
-These are also run as part of `make generate-kodex`.
+`cmd/generate-kodex` tests also run as part of `make generate-kodex`.
+
+`cmd/plugin-graph` tests run via `make plugin-graph`, which additionally runs
+`go run ./cmd/plugin-graph --root klaude-plugin/ validate` against the real
+plugin — a structural-health gate that exits non-zero on broken markdown/template
+links or orphaned content. It complements `test-plugin-structure.sh`'s
+bidirectional index invariant: the structure test enforces profile `index.md`
+completeness, while `plugin-graph validate` catches broken links and orphans
+across the whole plugin. See [Architecture › Plugin Graph Analysis](architecture.md).
 
 ## Validation Before Release
 
 - All 8 shell test suites must pass
 - `make generate-kodex` must leave `kodex-plugin/` and `.codex/agents/` clean (`git diff --exit-code`)
+- `make plugin-graph` must pass (Go tests + `validate` exits 0 against `klaude-plugin/`)
 - Go tests must pass (`go test ./...`)

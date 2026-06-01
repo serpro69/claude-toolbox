@@ -41,6 +41,16 @@ A Go tool that transforms `klaude-plugin/` into Codex-compatible artifacts:
 
 Driven by `scripts/kodex-generate-manifest.yml`. Run via `make generate-kodex`.
 
+### Plugin Graph Analysis (`cmd/plugin-graph/`)
+
+A Go tool that builds a directed dependency graph of `klaude-plugin/` and reports complexity metrics, impact analysis, and structural health. It gives maintainers and review skills a measured view of the skill web rather than a felt one.
+
+It discovers six edge types across the plugin's link taxonomy: markdown links, symlinks, `${CLAUDE_PLUGIN_ROOT}` template references, parameterized navigation paths (`<name>`/`<phase>`/`<checklist>` expanded over known sets), agent delegations (`subagent_type` table rows), and `/kk:` skill/command invocations. Edges use a **dual-layer model** — raw file endpoints drive broken-edge validation, while endpoints normalized to the owning artifact node drive metrics (fan-in/out, depth, transitive closure, coupling). Intra-artifact self-references are suppressed from the metric graph.
+
+Subcommands: `graph` (emit the graph), `metrics` (complexity numbers), `validate` (broken-edge/orphan gate, exit 1 on findings). Output formats: `text`, `json`, `dot`, `mermaid`. Global `--root` selects the plugin directory; `--ref <git-ref>` analyzes a past commit via a throwaway `git worktree`. `graph`/`metrics` support targeted mode (positional args slice the graph to nodes reachable from a start set); `validate` rejects targets because its findings are whole-graph health signals.
+
+Broken-edge detection exempts **non-operative sources** — links from `evals/` fixtures (deliberately partial) and `example-*.md` templates — mirroring the orphan-detection `evals/` exemption. Run via `make plugin-graph` (Go tests + `validate` against the real plugin); see [Testing](testing.md).
+
 ### Claude Code Config (`.claude/`)
 
 - **`settings.json`** — Permission baselines (allow/deny lists), env vars, model, plugin marketplace
