@@ -191,18 +191,18 @@ flowchart LR
 	skills_test_ -->|template-ref| profiles_k8s_test_
 	skills_test_ -->|symlink| skills__shared_capy_knowledge_protocol_md
 	skills_test_ -->|symlink| skills__shared_profile_detection_md
-	classDef skill fill:#a6cee3;
+	classDef skill fill:#a6cee3,color:#1a1a1a;
 	class skills_chain_of_verification_,skills_dependency_handling_,skills_design_,skills_diff_skill_,skills_document_,skills_implement_,skills_merge_docs_,skills_review_code_,skills_review_design_,skills_review_spec_,skills_test_ skill;
-	classDef shared fill:#ffff99;
+	classDef shared fill:#ffff99,color:#1a1a1a;
 	class skills__shared_capy_knowledge_protocol_md,skills__shared_pal_codereview_invocation_md,skills__shared_profile_detection_md,skills__shared_review_scope_protocol_md shared;
-	classDef agent fill:#b2df8a;
+	classDef agent fill:#b2df8a,color:#1a1a1a;
 	class agents_code_reviewer_md,agents_design_reviewer_md,agents_eval_grader_md,agents_profile_resolver_md,agents_spec_reviewer_md agent;
-	classDef profile fill:#fb9a99;
+	classDef profile fill:#fb9a99,color:#1a1a1a;
 	class profiles_go_,profiles_java_,profiles_js_ts_,profiles_k8s_operator_,profiles_k8s_,profiles_kotlin_,profiles_python_,profiles_skill_md_ profile;
-	classDef profile_phase fill:#fdbf6f;
+	classDef profile_phase fill:#fdbf6f,color:#1a1a1a;
 	class profiles_go_design_,profiles_go_document_,profiles_go_implement_,profiles_go_review_code_,profiles_go_test_,profiles_java_review_code_,profiles_js_ts_review_code_,profiles_k8s_operator_design_,profiles_k8s_design_,profiles_k8s_document_,profiles_k8s_implement_,profiles_k8s_review_code_,profiles_k8s_review_spec_,profiles_k8s_test_,profiles_kotlin_review_code_,profiles_python_review_code_,profiles_skill_md_implement_,profiles_skill_md_review_code_ profile_phase;
-	classDef content fill:#ffffff;
+	classDef content fill:#ffffff,color:#1a1a1a;
 	class README_md content;
-	classDef command fill:#cab2d6;
+	classDef command fill:#cab2d6,color:#1a1a1a;
 	class commands_chain_of_verification_,commands_migrate_from_taskmaster_,commands_review_code_,commands_review_spec_,commands_template_ command;
 ```

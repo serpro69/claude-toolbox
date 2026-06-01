@@ -37,6 +37,13 @@ var nodeStyle = map[NodeType]struct {
 	NodeCommand:      {"box", "#cab2d6"},
 }
 
+// mermaidLabelColor is the node-label text color emitted in every Mermaid
+// classDef. All node fills are light pastels, so a fixed dark label color stays
+// legible under both the light and dark site themes — without it, Mermaid's
+// dark-theme default uses light label text, which is unreadable on the light
+// fills (white-on-pastel). DOT needs no equivalent: its default font is black.
+const mermaidLabelColor = "#1a1a1a"
+
 // nodeTypeOrder fixes the iteration order over node types so grouped output
 // (Mermaid classDef blocks) is deterministic regardless of map ordering.
 var nodeTypeOrder = []NodeType{
@@ -322,7 +329,7 @@ func renderMermaid(g *Graph, _ *GraphMetrics, _ []string) []byte {
 			continue
 		}
 		cls := sanitizeClass(string(t))
-		fmt.Fprintf(&b, "\tclassDef %s fill:%s;\n", cls, nodeStyle[t].Color)
+		fmt.Fprintf(&b, "\tclassDef %s fill:%s,color:%s;\n", cls, nodeStyle[t].Color, mermaidLabelColor)
 		fmt.Fprintf(&b, "\tclass %s %s;\n", strings.Join(members, ","), cls)
 	}
 	return []byte(b.String())
