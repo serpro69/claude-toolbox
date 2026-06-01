@@ -75,6 +75,8 @@ release:
 		exit 1
 	fi
 	gh workflow run release.yml -f version=v$(VERSION)
+	sleep 1
+	gh run watch $(gh run list --workflow=release.yml --json databaseId | jq -r 'first | .databaseId')
 
 pre-release:
 	@:$(call check_defined, VERSION, semantic version string - 'X.Y.Z(-rc.\d+)?')
@@ -91,3 +93,5 @@ pre-release:
 		fi
 	fi
 	gh workflow run pre-release.yml -f version=v$(VERSION) -r $(REF)
+	sleep 1
+	gh run watch $(gh run list --workflow=pre-release.yml --json databaseId | jq -r 'first | .databaseId')
