@@ -6,6 +6,7 @@ skills:
   overrides: []
   transforms:
     - type: plugin_root_resolve
+      scope: all_md
       replacement_base: "../.."
     - type: inject_header
       content: |
@@ -19,6 +20,13 @@ skills:
 
 profiles:
   copy: true
+  # Profiles deliberately do NOT get plugin_root_resolve: profiles/skill-md/*
+  # documents the ${...PLUGIN_ROOT} convention and must keep the tokens literal.
+  transforms:
+    - type: skill_prefix_rewrite
+      scope: all_md
+      from: "/kk:"
+      to: "$kk:"
 
 agents:
   target_dir: ".codex/agents"

@@ -23,7 +23,11 @@ func GenerateProfiles(m *Manifest, dryRun bool) error {
 		return nil
 	}
 
-	if err := copySkillDir(srcProfiles, dstProfiles, m.Skills.Transforms); err != nil {
+	// Profiles use their own transform list — deliberately WITHOUT
+	// plugin_root_resolve — so files that *document* the ${...PLUGIN_ROOT}
+	// convention (e.g. profiles/skill-md/*) keep their tokens literal instead
+	// of being rewritten to a path.
+	if err := copySkillDir(srcProfiles, dstProfiles, m.Profiles.Transforms); err != nil {
 		return fmt.Errorf("copying profiles directory: %w", err)
 	}
 

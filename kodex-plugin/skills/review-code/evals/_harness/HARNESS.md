@@ -45,10 +45,16 @@ and captures the full output as `DIFF_TEXT`. Also capture `git diff --cached --n
 
 ### 3. Spawn profile-resolver sub-agents (parallel)
 
+The sub-agents cannot resolve the plugin root themselves (no shell). Resolve it once — the installed plugin root (`$TOOLBOX_PLUGIN_ROOT`), or the working-tree `klaude-plugin/` absolute path when grading local profile changes — and inject it under `## Plugin Root` in both the resolver and reviewer prompts as `PLUGIN_ROOT`.
+
 Spawn one `kk:profile-resolver` sub-agent per eval, all in the same turn. Resolver prompt template:
 
 ```
 Resolve profiles for the following staged diff. Follow your agent instructions.
+
+## Plugin Root
+
+<PLUGIN_ROOT>
 
 Worktree root: <STAGE_DIR>/<eval-name>
 
@@ -58,7 +64,7 @@ Diff (git diff --cached):
 ---
 ```
 
-Nothing else. No eval prompt, no assertions, no hints. Capture the resolver's output as `RESOLUTION` per eval.
+Nothing else (beyond the plugin root). No eval prompt, no assertions, no hints. Capture the resolver's output as `RESOLUTION` per eval.
 
 ### 4. Spawn kk:code-reviewer sub-agents (after resolver returns)
 
@@ -67,6 +73,10 @@ For each eval, once its resolver has returned, spawn `kk:code-reviewer` with the
 ```
 Review the following staged diff against the resolved profiles + checklists.
 Follow your agent instructions (isolated-mode contract).
+
+## Plugin Root
+
+<PLUGIN_ROOT>
 
 Active profiles and resolved checklists (already resolved — do not re-detect):
 ---

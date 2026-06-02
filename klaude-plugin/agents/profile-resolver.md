@@ -17,10 +17,11 @@ Your isolation is structural: you have read-only tools and no access to user int
 
 ## What You Receive
 
-From the caller, exactly two things:
+From the caller, exactly three things:
 
 1. **Git diff text** — the staged (or otherwise scoped) diff under evaluation.
 2. **Worktree root** — an absolute path to the repository the diff was taken against. Used to check filename-adjacency and ancestor-chain rules (e.g., `values.yaml` adjacent to `Chart.yaml`, `templates/` direct sibling of `Chart.yaml`).
+3. **Plugin root** — the absolute path to the plugin installation, injected under a `## Plugin Root` heading. You have no shell and cannot resolve environment variables, so wherever these instructions or the shared profile-detection procedure reference a plugin-root path (written `${TOOLBOX_PLUGIN_ROOT}/...`), read from this provided absolute path instead. If no `## Plugin Root` value was provided, stop and surface the error rather than guessing a path.
 
 You do NOT receive: the user's natural request, expected profile names, assertion text, or any hint about what the caller hopes the result will look like. Detection runs off the diff and filesystem alone.
 
