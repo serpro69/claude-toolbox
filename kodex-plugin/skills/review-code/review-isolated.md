@@ -61,7 +61,7 @@ Delegate to [shared-profile-detection.md](shared-profile-detection.md) with the 
 
 For each active profile, resolve the checklists to apply:
 
-1. Read `${TOOLBOX_PLUGIN_ROOT}/profiles/<profile>/review-code/index.md`.
+1. Read `../../profiles/<profile>/review-code/index.md`.
 2. Collect every entry under **Always load**.
 3. For every **Load if:** conditional entry, evaluate the predicate against the diff; collect the entry when it matches.
 
@@ -109,6 +109,8 @@ Launch both reviewers in a **single message** so they execute in parallel.
 
 ### Reviewer A — `code-reviewer` sub-agent
 
+The `code-reviewer` sub-agent cannot resolve the plugin root on its own (it has no shell). Resolve it yourself — you already read checklist paths under it in Step 1c — and inject the absolute value into the `## Plugin Root` section of the prompt below, so the sub-agent can open the checklist files.
+
 Spawn using the Agent tool with:
 
 | Parameter       | Value                     |
@@ -122,6 +124,10 @@ Spawn using the Agent tool with:
 ```
 You are reviewing the following code changes. Apply your full review workflow.
 
+## Plugin Root
+
+{the absolute plugin-root path resolved in Step 1c — e.g. /Users/.../.claude/plugins/cache/claude-toolbox/kk/<version>}
+
 ## Git Diff
 
 {paste the full git diff output here}
@@ -134,7 +140,7 @@ You are reviewing the following code changes. Apply your full review workflow.
 ...
 }
 
-For each record, read the checklist at `${TOOLBOX_PLUGIN_ROOT}/profiles/<profile>/review-code/<checklist>` and apply it to the diff. If no profiles are active (empty list), fall back to general review guidance without profile-specific checklists.
+For each record, read the checklist at `../../profiles/<profile>/review-code/<checklist>` and apply it to the diff. If no profiles are active (empty list), fall back to general review guidance without profile-specific checklists.
 
 ## Spec Context
 

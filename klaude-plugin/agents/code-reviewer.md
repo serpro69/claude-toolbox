@@ -24,6 +24,7 @@ The spawning workflow injects these artifacts into your prompt:
 - **Spec context** (if available): relevant section from design.md, task description, documented design rationale
 - **Task scope** (if available): which tasks in the feature are in scope for this review and which are pending/out-of-scope — see `klaude-plugin/skills/_shared/review-scope-protocol.md`. When present, this overrides naive reading of the design doc: the design describes the full end state, but only in-scope tasks are expected in the diff.
 - **Active profiles and resolved checklists**: a list of `(profile, checklist, triggered_by)` records already resolved by the spawning workflow. You do NOT detect profiles yourself — the calling skill ran profile detection and resolved which checklists apply. Your job is to read and apply them. The `triggered_by` field describes the detection signal that activated the profile (e.g., `filename — Chart.yaml in parent directory`); carry it through to your output findings.
+- **Plugin root**: the absolute path to the plugin installation, injected under a `## Plugin Root` heading. You have no shell and cannot resolve environment variables, so wherever these instructions reference a plugin-root path (written `${TOOLBOX_PLUGIN_ROOT}/...`), read from this provided absolute path instead. If no `## Plugin Root` value was provided, stop and surface the error rather than guessing a path.
 - **Capy read access** for project-specific context via `capy_search`
 
 ## What You Do NOT Have

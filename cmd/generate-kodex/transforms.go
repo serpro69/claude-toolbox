@@ -26,13 +26,18 @@ func ApplyTransforms(content []byte, transforms []TransformConfig) ([]byte, erro
 
 func applyPluginRootResolve(content []byte, replacementBase string) []byte {
 	s := string(content)
+	// Codex has no runtime plugin-root variable, so both the harness var
+	// (${CLAUDE_PLUGIN_ROOT}) and the session var (${TOOLBOX_PLUGIN_ROOT})
+	// resolve to the same concrete base at generation time.
 	s = strings.ReplaceAll(s, "${CLAUDE_PLUGIN_ROOT}", replacementBase)
+	s = strings.ReplaceAll(s, "${TOOLBOX_PLUGIN_ROOT}", replacementBase)
 	return []byte(s)
 }
 
 func applyPluginRootPlaceholder(content []byte, placeholder, preamble string) []byte {
 	s := string(content)
 	s = strings.ReplaceAll(s, "${CLAUDE_PLUGIN_ROOT}", placeholder)
+	s = strings.ReplaceAll(s, "${TOOLBOX_PLUGIN_ROOT}", placeholder)
 	if preamble != "" {
 		s = preamble + "\n" + s
 	}
