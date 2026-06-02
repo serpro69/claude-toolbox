@@ -114,6 +114,26 @@ func TestTransform_PluginRootResolve(t *testing.T) {
 	}
 }
 
+func TestTransform_PluginRootResolve_ToolboxVar(t *testing.T) {
+	// Codex has no runtime plugin-root var, so ${TOOLBOX_PLUGIN_ROOT} must
+	// resolve to the same concrete base as ${CLAUDE_PLUGIN_ROOT}.
+	input := []byte("a ${CLAUDE_PLUGIN_ROOT}/x and ${TOOLBOX_PLUGIN_ROOT}/y")
+	result := applyPluginRootResolve(input, "../klaude-plugin")
+	want := "a ../klaude-plugin/x and ../klaude-plugin/y"
+	if string(result) != want {
+		t.Errorf("got %q, want %q", string(result), want)
+	}
+}
+
+func TestTransform_PluginRootPlaceholder_ToolboxVar(t *testing.T) {
+	input := []byte("a ${CLAUDE_PLUGIN_ROOT}/x and ${TOOLBOX_PLUGIN_ROOT}/y")
+	result := applyPluginRootPlaceholder(input, "<kk-plugin-root>", "")
+	want := "a <kk-plugin-root>/x and <kk-plugin-root>/y"
+	if string(result) != want {
+		t.Errorf("got %q, want %q", string(result), want)
+	}
+}
+
 func TestTransform_InjectHeader_WithFrontmatter(t *testing.T) {
 	input := []byte("---\nname: test\n---\n\n# Title\n")
 	result := applyInjectHeader(input, "<!-- header -->\n")
@@ -161,10 +181,22 @@ func TestGenerateSkills(t *testing.T) {
 		}
 	})
 
-	t.Run("auxiliary files copied as-is", func(t *testing.T) {
+	t.Run("auxiliary files get plugin-root resolved (all_md) but no header", func(t *testing.T) {
 		data, _ := os.ReadFile(filepath.Join(targetDir, "skills", "test-skill", "process.md"))
-		if !strings.Contains(string(data), "auxiliary file") {
+		content := string(data)
+		if !strings.Contains(content, "auxiliary file") {
 			t.Error("auxiliary file not copied")
+		}
+		// plugin_root_resolve is all_md-scoped, so aux files resolve too.
+		if strings.Contains(content, "${CLAUDE_PLUGIN_ROOT}") {
+			t.Error("${CLAUDE_PLUGIN_ROOT} not resolved in auxiliary file")
+		}
+		if !strings.Contains(content, "../../profiles/go/") {
+			t.Error("aux-file plugin-root path not resolved to ../../profiles/go/")
+		}
+		// inject_header stays skill_md-scoped — aux files must NOT get the header.
+		if strings.Contains(content, "codex: generated") {
+			t.Error("header should not be injected into auxiliary files")
 		}
 	})
 
@@ -223,6 +255,19 @@ func TestGenerateProfiles(t *testing.T) {
 		content := string(data)
 		if !strings.Contains(content, "## Path signals") {
 			t.Error("profile content was modified")
+		}
+	})
+
+	t.Run("profile plugin-root tokens NOT resolved", func(t *testing.T) {
+		// Profiles use m.Profiles.Transforms (no plugin_root_resolve) so files
+		// that document the ${...PLUGIN_ROOT} convention keep their tokens literal.
+		data, _ := os.ReadFile(filepath.Join(targetDir, "profiles", "test-profile", "review-code", "checklist.md"))
+		content := string(data)
+		if !strings.Contains(content, "${CLAUDE_PLUGIN_ROOT}") {
+			t.Error("profile doc token was resolved — profiles must NOT get plugin_root_resolve")
+		}
+		if strings.Contains(content, "../../profiles") {
+			t.Error("profile content was path-resolved unexpectedly")
 		}
 	})
 }

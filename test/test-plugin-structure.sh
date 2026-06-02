@@ -411,6 +411,30 @@ else
   log_fail "Dangling symlinks found: $dangling"
 fi
 
+log_test "No \${TOOLBOX_PLUGIN_ROOT} brace literals in generated kodex-plugin skills"
+# The codex generator resolves the brace form to a relative path. Bare
+# \$TOOLBOX_PLUGIN_ROOT (variable-name mentions) is allowed and intentional.
+if grep -rlF '${TOOLBOX_PLUGIN_ROOT}' "$REPO_ROOT/kodex-plugin/skills/" &>/dev/null; then
+  log_fail "Found unresolved \${TOOLBOX_PLUGIN_ROOT} brace literals in kodex-plugin/skills/"
+else
+  log_pass "No \${TOOLBOX_PLUGIN_ROOT} brace literals in generated skills"
+fi
+
+# The codex plugin_root_resolve transform substitutes a FIXED relative base
+# ("../..") that only points at the plugin root for files exactly two levels
+# below it: skills/<name>/ and skills/_shared/. A brace plugin-root path ref in
+# a deeper source file (e.g. skills/<name>/evals/.../foo.md) would resolve to
+# the WRONG directory in codex output. Fail loudly so it gets bare-formed or the
+# file relocated. (Name-mentions use bare \$TOOLBOX_PLUGIN_ROOT and are exempt.)
+log_test "Plugin-root brace path refs only at codex-resolvable depth"
+deep_refs=$(grep -rlnF -e '${TOOLBOX_PLUGIN_ROOT}' -e '${CLAUDE_PLUGIN_ROOT}' "$REPO_ROOT/klaude-plugin/skills" 2>/dev/null \
+  | sed "s#$REPO_ROOT/##" | awk -F/ 'NF>4' || true)
+if [[ -z "$deep_refs" ]]; then
+  log_pass "All brace plugin-root path refs are at skills/<name>/ or skills/_shared/ depth"
+else
+  log_fail "Brace plugin-root path ref below codex-resolvable depth (../.. would mis-resolve): $deep_refs"
+fi
+
 # =============================================================================
 # Summary
 # =============================================================================

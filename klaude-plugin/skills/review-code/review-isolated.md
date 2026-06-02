@@ -109,6 +109,8 @@ Launch both reviewers in a **single message** so they execute in parallel.
 
 ### Reviewer A — `code-reviewer` sub-agent
 
+The `code-reviewer` sub-agent cannot resolve the plugin root on its own (it has no shell). Resolve it yourself — you already read checklist paths under it in Step 1c — and inject the absolute value into the `## Plugin Root` section of the prompt below, so the sub-agent can open the checklist files.
+
 Spawn using the Agent tool with:
 
 | Parameter       | Value                     |
@@ -121,6 +123,10 @@ Spawn using the Agent tool with:
 
 ```
 You are reviewing the following code changes. Apply your full review workflow.
+
+## Plugin Root
+
+{the absolute plugin-root path resolved in Step 1c — e.g. /Users/.../.claude/plugins/cache/claude-toolbox/kk/<version>}
 
 ## Git Diff
 

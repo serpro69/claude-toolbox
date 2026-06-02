@@ -41,7 +41,8 @@ type TransformConfig struct {
 }
 
 type ProfilesConfig struct {
-	Copy bool `yaml:"copy"`
+	Copy       bool              `yaml:"copy"`
+	Transforms []TransformConfig `yaml:"transforms"`
 }
 
 type SharedConfig struct {

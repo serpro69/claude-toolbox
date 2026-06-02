@@ -1,5 +1,6 @@
 #!/usr/bin/env bash
-# Test suite for .claude/toolbox/scripts/cpr.py (Claude Plugin Root resolver)
+# Test suite for klaude-plugin/scripts/cpr.py (Claude Plugin Root resolver)
+# and klaude-plugin/scripts/set-plugin-root.sh (SessionStart export hook)
 set -euo pipefail
 
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
@@ -7,6 +8,7 @@ source "$SCRIPT_DIR/helpers.sh"
 
 REPO_ROOT="$(cd "$SCRIPT_DIR/.." && pwd)"
 CPR="$REPO_ROOT/klaude-plugin/scripts/cpr.py"
+SET_PLUGIN_ROOT="$REPO_ROOT/klaude-plugin/scripts/set-plugin-root.sh"
 
 # =============================================================================
 # Fixture setup
@@ -200,6 +202,36 @@ EOF
 log_test "Entry with non-existent installPath is skipped"
 rc=$(set +e; CPR_PLUGINS_FILE="$MISSING_DIR_JSON" python3 "$CPR" "ghost" >/dev/null 2>&1; echo $?)
 assert_not_equals "0" "$rc" "Non-existent installPath should not be returned"
+
+# =============================================================================
+# Section 6: set-plugin-root.sh (SessionStart export)
+# =============================================================================
+
+log_section "Section 6: set-plugin-root.sh"
+
+KK_PATH="$FIXTURE_DIR/cache/claude-toolbox/kk/0.17.3"
+
+log_test "Writes export line resolved via cpr.py"
+ENV_FILE="$FIXTURE_DIR/env-out-1.sh"
+: > "$ENV_FILE"
+CPR_PLUGINS_FILE="$PLUGINS_JSON" CLAUDE_ENV_FILE="$ENV_FILE" bash "$SET_PLUGIN_ROOT" "" >/dev/null 2>&1
+assert_output_contains "export TOOLBOX_PLUGIN_ROOT=\"$KK_PATH\"" "cat '$ENV_FILE'" "cpr.py-resolved path is exported"
+
+log_test "Falls back to \$1 when cpr.py cannot resolve"
+ENV_FILE="$FIXTURE_DIR/env-out-2.sh"
+: > "$ENV_FILE"
+CPR_PLUGINS_FILE="/nonexistent/file.json" CLAUDE_ENV_FILE="$ENV_FILE" bash "$SET_PLUGIN_ROOT" "$FIXTURE_DIR/env-root" >/dev/null 2>&1
+assert_output_contains "export TOOLBOX_PLUGIN_ROOT=\"$FIXTURE_DIR/env-root\"" "cat '$ENV_FILE'" "argument fallback is exported"
+
+log_test "Unset CLAUDE_ENV_FILE exits cleanly without error"
+rc=$(set +e; env -u CLAUDE_ENV_FILE CPR_PLUGINS_FILE="$PLUGINS_JSON" bash "$SET_PLUGIN_ROOT" "" >/dev/null 2>&1; echo $?)
+assert_equals "0" "$rc" "no ambiguous-redirect error when CLAUDE_ENV_FILE is unset"
+
+log_test "Neither cpr.py nor \$1 resolves: nothing written"
+ENV_FILE="$FIXTURE_DIR/env-out-3.sh"
+: > "$ENV_FILE"
+CPR_PLUGINS_FILE="/nonexistent/file.json" CLAUDE_ENV_FILE="$ENV_FILE" bash "$SET_PLUGIN_ROOT" "/nonexistent/dir" >/dev/null 2>&1
+assert_output_not_contains "TOOLBOX_PLUGIN_ROOT" "cat '$ENV_FILE'" "no export line when no valid root found"
 
 # =============================================================================
 # Summary

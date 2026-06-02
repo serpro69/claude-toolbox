@@ -10,6 +10,7 @@ Review checks specific to skills within the `klaude-plugin/` directory structure
 - [ ] Are only skills that actually reference the shared file symlinked? (No blanket-symlinking.)
 - [ ] Does profile content use `${TOOLBOX_PLUGIN_ROOT}` references instead of symlinks?
 - [ ] Do skills and agents reference profile paths via `${TOOLBOX_PLUGIN_ROOT}`, not `${CLAUDE_PLUGIN_ROOT}`? (`${CLAUDE_PLUGIN_ROOT}` is only for `hooks.json` and MCP configs where the harness must resolve the path.)
+- [ ] Do Read-only sub-agent definitions (e.g. `code-reviewer`, `profile-resolver`) receive the plugin root as an injected `## Plugin Root` value, rather than expecting to resolve `${TOOLBOX_PLUGIN_ROOT}` themselves? (They have no shell.)
 
 ## Bidirectional index invariant
 

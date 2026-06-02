@@ -58,7 +58,7 @@ An explicit list is boring, deterministic, and unambiguous; runtime filesystem e
 
 ### Algorithm
 
-Resolve the plugin root by running `echo ${TOOLBOX_PLUGIN_ROOT}` in a Bash call before starting the algorithm.
+This procedure reads files under the plugin root. The main agent resolves the plugin root from its shell variable `$TOOLBOX_PLUGIN_ROOT`; a Read-only sub-agent uses the absolute plugin-root path injected into its prompt under `## Plugin Root` (see its agent definition). Substitute that resolved path for the plugin-root prefix in every `…/profiles/…` read below.
 
 1. **Iterate profiles.** For each §Known profiles `<name>`:
    1. Use the `Read` tool on `${TOOLBOX_PLUGIN_ROOT}/profiles/<name>/DETECTION.md`.
@@ -95,7 +95,7 @@ Evaluating cheapest-first optimizes work. Applying authority correctly prevents 
 
 ### Plugin-root resolution failure
 
-If every `Read` attempt in Algorithm step 1 fails — i.e., `${TOOLBOX_PLUGIN_ROOT}` is unset or the paths do not exist — the procedure cannot continue.
+If every `Read` attempt in Algorithm step 1 fails — i.e., the plugin root could not be resolved (the variable is unset for the main agent, or no `## Plugin Root` path was provided to a sub-agent) or the paths do not exist — the procedure cannot continue.
 
 On that failure:
 

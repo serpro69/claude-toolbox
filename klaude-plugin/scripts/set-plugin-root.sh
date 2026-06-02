@@ -18,4 +18,10 @@ if [ -z "$PLUGIN_ROOT" ] || [ ! -d "$PLUGIN_ROOT" ]; then
   exit 0
 fi
 
+# Without CLAUDE_ENV_FILE there is nowhere to export to; appending to an empty
+# path would be an ambiguous redirect. Nothing to do — exit cleanly.
+if [ -z "${CLAUDE_ENV_FILE:-}" ]; then
+  exit 0
+fi
+
 echo "export TOOLBOX_PLUGIN_ROOT=\"$PLUGIN_ROOT\"" >> "$CLAUDE_ENV_FILE"
