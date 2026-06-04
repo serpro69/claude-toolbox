@@ -10,16 +10,16 @@ on:
     tags:
       - "v[0-9]+.[0-9]+.[0-9]+"
     paths:
-      - '.github/workflows/docs.yml'
-      - 'docs/**'
-      - 'mkdocs.yml'
-      - 'requirements.txt'
-      - 'README.md'
-      - 'LICENSE.md'
-      - 'klaude-plugin/**'
-      - 'kodex-plugin/README.md'
-      - 'cmd/plugin-graph/**'
-      - 'Makefile'
+      - ".github/workflows/docs.yml"
+      - "docs/**"
+      - "mkdocs.yml"
+      - "requirements.txt"
+      - "README.md"
+      - "LICENSE.md"
+      - "klaude-plugin/**"
+      - "kodex-plugin/README.md"
+      - "cmd/plugin-graph/**"
+      - "Makefile"
 
 permissions:
   contents: write
@@ -29,6 +29,9 @@ env:
 
 jobs:
   deploy:
+    concurrency:
+      group: ${{ github.workflow }}
+      queue: max
     runs-on: ubuntu-latest
     steps:
       - name: Generate GitHub App Token
