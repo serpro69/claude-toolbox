@@ -107,7 +107,7 @@ Hook definitions in `klaude-plugin/hooks/hooks.json`:
 }
 ```
 
-**SessionStart hook:** Exports `TOOLBOX_PLUGIN_ROOT` into the session via `$CLAUDE_ENV_FILE`. The harness-substituted `${CLAUDE_PLUGIN_ROOT}` is passed as an argument; a standalone resolver (`cpr.py`) serves as fallback. Once set, every Bash tool call in the session has `${TOOLBOX_PLUGIN_ROOT}` available — this gives LLMs a reliable path to the plugin root without guessing.
+**SessionStart hook:** Exports `TOOLBOX_PLUGIN_ROOT` into the session via `$CLAUDE_ENV_FILE`. A standalone resolver (`cpr.py`) reads `installed_plugins.json` to find the install that applies to the current project (passed as `$CLAUDE_PROJECT_DIR`); the harness-substituted `${CLAUDE_PLUGIN_ROOT}`, passed as an argument, is the fallback. Once set, every Bash tool call in the session has `${TOOLBOX_PLUGIN_ROOT}` available — this gives LLMs a reliable path to the plugin root without guessing.
 
 **PreToolUse hooks:** Read JSON from stdin (the `tool_input` object), return structured JSON for deny decisions. Always exit 0 — use `permissionDecision: "deny"` in the JSON output to block a tool call. See `klaude-plugin/scripts/validate-bash.sh` for the pattern.
 
