@@ -20,18 +20,20 @@ PLUGINS_JSON="$FIXTURE_DIR/installed_plugins.json"
 # Create fake install directories
 mkdir -p "$FIXTURE_DIR/cache/claude-toolbox/kk/0.17.3"
 mkdir -p "$FIXTURE_DIR/cache/cortex-ai/cortex/0.3.0"
-mkdir -p "$FIXTURE_DIR/cache/claude-toolbox/kk/0.16.0"
 mkdir -p "$FIXTURE_DIR/cache/other-repo/kk-utils/1.0.0"
-mkdir -p "$FIXTURE_DIR/cache/user-scope/kk/0.17.3"
+mkdir -p "$FIXTURE_DIR/cache/proj-a/kk/0.16.0"
+mkdir -p "$FIXTURE_DIR/cache/proj-b/kk/0.17.3"
+mkdir -p "$FIXTURE_DIR/cache/user/kk/0.10.0"
 mkdir -p "$FIXTURE_DIR/env-root"
 
+# Base fixture: user-scope (global) entries with no projectPath, so the
+# name-matching tests resolve via the global tier regardless of cwd.
 cat > "$PLUGINS_JSON" <<EOF
 {
   "plugins": {
     "kk@claude-toolbox": [
       {
-        "scope": "project",
-        "projectPath": "/tmp/some-project",
+        "scope": "user",
         "installPath": "$FIXTURE_DIR/cache/claude-toolbox/kk/0.17.3",
         "version": "0.17.3",
         "installedAt": "2026-05-28T10:00:00.000Z"
@@ -39,8 +41,7 @@ cat > "$PLUGINS_JSON" <<EOF
     ],
     "cortex@cortex-ai": [
       {
-        "scope": "local",
-        "projectPath": "/tmp/cortex",
+        "scope": "user",
         "installPath": "$FIXTURE_DIR/cache/cortex-ai/cortex/0.3.0",
         "version": "0.3.0",
         "installedAt": "2026-05-20T10:00:00.000Z"
@@ -58,9 +59,15 @@ cat > "$PLUGINS_JSON" <<EOF
 }
 EOF
 
-# Helper: run cpr.py with fixtures
+# Helper: run cpr.py against the base fixture
 run_cpr() {
   CPR_PLUGINS_FILE="$PLUGINS_JSON" python3 "$CPR" "$@"
+}
+
+# Helper: run cpr.py against an arbitrary plugins file
+run_cpr_file() {
+  local plugins_file="$1"; shift
+  CPR_PLUGINS_FILE="$plugins_file" python3 "$CPR" "$@"
 }
 
 # Helper: run cpr.py and capture exit code without set -e aborting
@@ -99,37 +106,88 @@ actual=$(run_cpr "kk-utils")
 assert_equals "$FIXTURE_DIR/cache/other-repo/kk-utils/1.0.0" "$actual" "kk-utils resolves to kk-utils@other-repo"
 
 # =============================================================================
-# Section 2: Scope priority
+# Section 2: Project resolution cascade (projectPath -> user -> last-installed)
 # =============================================================================
 
-log_section "Section 2: Scope Priority"
+log_section "Section 2: Project Resolution Cascade"
 
-MULTI_SCOPE_JSON="$FIXTURE_DIR/multi-scope.json"
-cat > "$MULTI_SCOPE_JSON" <<EOF
+# Two project-bound installs (for distinct projects) plus a global user-scope
+# install. The project entries are listed in non-recency order on purpose.
+CASCADE_JSON="$FIXTURE_DIR/cascade.json"
+cat > "$CASCADE_JSON" <<EOF
 {
   "plugins": {
     "kk@claude-toolbox": [
       {
-        "scope": "user",
-        "installPath": "$FIXTURE_DIR/cache/user-scope/kk/0.17.3",
+        "scope": "project",
+        "projectPath": "/tmp/proj-a",
+        "installPath": "$FIXTURE_DIR/cache/proj-a/kk/0.16.0",
+        "version": "0.16.0",
+        "installedAt": "2026-05-20T10:00:00.000Z"
+      },
+      {
+        "scope": "project",
+        "projectPath": "/tmp/proj-b",
+        "installPath": "$FIXTURE_DIR/cache/proj-b/kk/0.17.3",
         "version": "0.17.3",
         "installedAt": "2026-05-28T10:00:00.000Z"
       },
       {
-        "scope": "project",
-        "projectPath": "/tmp/some-project",
-        "installPath": "$FIXTURE_DIR/cache/claude-toolbox/kk/0.17.3",
-        "version": "0.17.3",
-        "installedAt": "2026-05-20T10:00:00.000Z"
+        "scope": "user",
+        "installPath": "$FIXTURE_DIR/cache/user/kk/0.10.0",
+        "version": "0.10.0",
+        "installedAt": "2026-05-10T10:00:00.000Z"
       }
     ]
   }
 }
 EOF
 
-log_test "Project scope preferred over user scope"
-actual=$(CPR_PLUGINS_FILE="$MULTI_SCOPE_JSON" python3 "$CPR" "kk")
-assert_equals "$FIXTURE_DIR/cache/claude-toolbox/kk/0.17.3" "$actual" "project scope wins over user scope"
+log_test "Project-bound install wins when projectPath matches (proj-a)"
+actual=$(run_cpr_file "$CASCADE_JSON" "kk" "/tmp/proj-a")
+assert_equals "$FIXTURE_DIR/cache/proj-a/kk/0.16.0" "$actual" "proj-a resolves to its own install, not the newer proj-b"
+
+log_test "Project-bound install wins when projectPath matches (proj-b)"
+actual=$(run_cpr_file "$CASCADE_JSON" "kk" "/tmp/proj-b")
+assert_equals "$FIXTURE_DIR/cache/proj-b/kk/0.17.3" "$actual" "proj-b resolves to its own install"
+
+log_test "A nested cwd matches its project root"
+actual=$(run_cpr_file "$CASCADE_JSON" "kk" "/tmp/proj-a/nested/dir")
+assert_equals "$FIXTURE_DIR/cache/proj-a/kk/0.16.0" "$actual" "subdirectory of proj-a resolves to proj-a"
+
+log_test "Falls back to the user-scope (global) entry when no project matches"
+actual=$(run_cpr_file "$CASCADE_JSON" "kk" "/tmp/unrelated")
+assert_equals "$FIXTURE_DIR/cache/user/kk/0.10.0" "$actual" "unrelated project gets the global install"
+
+# No user-scope entry: the cascade must fall through to the most-recently
+# installed entry regardless of project (this is the real kk@gh-arc situation).
+LAST_INSTALLED_JSON="$FIXTURE_DIR/last-installed.json"
+cat > "$LAST_INSTALLED_JSON" <<EOF
+{
+  "plugins": {
+    "kk@claude-toolbox": [
+      {
+        "scope": "project",
+        "projectPath": "/tmp/proj-a",
+        "installPath": "$FIXTURE_DIR/cache/proj-a/kk/0.16.0",
+        "version": "0.16.0",
+        "installedAt": "2026-05-20T10:00:00.000Z"
+      },
+      {
+        "scope": "project",
+        "projectPath": "/tmp/proj-b",
+        "installPath": "$FIXTURE_DIR/cache/proj-b/kk/0.17.3",
+        "version": "0.17.3",
+        "installedAt": "2026-05-28T10:00:00.000Z"
+      }
+    ]
+  }
+}
+EOF
+
+log_test "No project match and no user scope: falls back to last installed"
+actual=$(run_cpr_file "$LAST_INSTALLED_JSON" "kk" "/tmp/unrelated")
+assert_equals "$FIXTURE_DIR/cache/proj-b/kk/0.17.3" "$actual" "most-recently-installed cross-project entry wins as last resort"
 
 # =============================================================================
 # Section 3: Fuzzy matching
@@ -140,6 +198,18 @@ log_section "Section 3: Fuzzy Matching"
 log_test "Fuzzy match on close name"
 actual=$(run_cpr "corte")
 assert_equals "$FIXTURE_DIR/cache/cortex-ai/cortex/0.3.0" "$actual" "corte fuzzy-matches cortex"
+
+log_test "Fuzzy match warns on stderr (fail loud — may be the wrong plugin)"
+set +e
+stderr=$(run_cpr "corte" 2>&1 >/dev/null)
+set -e
+assert_output_contains "fuzzy" "echo '$stderr'" "fuzzy match emits a warning on stderr"
+
+log_test "Exact match is silent on stderr"
+set +e
+stderr=$(run_cpr "kk" 2>&1 >/dev/null)
+set -e
+assert_output_not_contains "Warning" "echo '$stderr'" "exact match emits no warning"
 
 log_test "No match for completely unrelated name"
 rc=$(run_cpr_rc "zzzzz")
@@ -189,7 +259,7 @@ cat > "$MISSING_DIR_JSON" <<EOF
   "plugins": {
     "ghost@repo": [
       {
-        "scope": "project",
+        "scope": "user",
         "installPath": "$FIXTURE_DIR/does-not-exist",
         "version": "1.0.0",
         "installedAt": "2026-05-28T10:00:00.000Z"
@@ -202,6 +272,35 @@ EOF
 log_test "Entry with non-existent installPath is skipped"
 rc=$(set +e; CPR_PLUGINS_FILE="$MISSING_DIR_JSON" python3 "$CPR" "ghost" >/dev/null 2>&1; echo $?)
 assert_not_equals "0" "$rc" "Non-existent installPath should not be returned"
+
+# A project-bound match whose installPath is missing must fall through to the
+# next tier (here, the valid user-scope entry) rather than returning nothing.
+FALLTHROUGH_JSON="$FIXTURE_DIR/fallthrough.json"
+cat > "$FALLTHROUGH_JSON" <<EOF
+{
+  "plugins": {
+    "kk@claude-toolbox": [
+      {
+        "scope": "project",
+        "projectPath": "/tmp/proj-a",
+        "installPath": "$FIXTURE_DIR/cache/gone/kk/9.9.9",
+        "version": "9.9.9",
+        "installedAt": "2026-05-28T10:00:00.000Z"
+      },
+      {
+        "scope": "user",
+        "installPath": "$FIXTURE_DIR/cache/user/kk/0.10.0",
+        "version": "0.10.0",
+        "installedAt": "2026-05-10T10:00:00.000Z"
+      }
+    ]
+  }
+}
+EOF
+
+log_test "Missing project-bound installPath falls through to a valid lower tier"
+actual=$(run_cpr_file "$FALLTHROUGH_JSON" "kk" "/tmp/proj-a")
+assert_equals "$FIXTURE_DIR/cache/user/kk/0.10.0" "$actual" "missing tier-1 path falls through to the user-scope install"
 
 # =============================================================================
 # Section 6: set-plugin-root.sh (SessionStart export)
@@ -216,6 +315,12 @@ ENV_FILE="$FIXTURE_DIR/env-out-1.sh"
 : > "$ENV_FILE"
 CPR_PLUGINS_FILE="$PLUGINS_JSON" CLAUDE_ENV_FILE="$ENV_FILE" bash "$SET_PLUGIN_ROOT" "" >/dev/null 2>&1
 assert_output_contains "export TOOLBOX_PLUGIN_ROOT=\"$KK_PATH\"" "cat '$ENV_FILE'" "cpr.py-resolved path is exported"
+
+log_test "Passes \$CLAUDE_PROJECT_DIR through to cpr.py"
+ENV_FILE="$FIXTURE_DIR/env-out-proj.sh"
+: > "$ENV_FILE"
+CPR_PLUGINS_FILE="$CASCADE_JSON" CLAUDE_PROJECT_DIR="/tmp/proj-b" CLAUDE_ENV_FILE="$ENV_FILE" bash "$SET_PLUGIN_ROOT" "" >/dev/null 2>&1
+assert_output_contains "export TOOLBOX_PLUGIN_ROOT=\"$FIXTURE_DIR/cache/proj-b/kk/0.17.3\"" "cat '$ENV_FILE'" "CLAUDE_PROJECT_DIR selects the project-bound install"
 
 log_test "Falls back to \$1 when cpr.py cannot resolve"
 ENV_FILE="$FIXTURE_DIR/env-out-2.sh"
@@ -232,6 +337,13 @@ ENV_FILE="$FIXTURE_DIR/env-out-3.sh"
 : > "$ENV_FILE"
 CPR_PLUGINS_FILE="/nonexistent/file.json" CLAUDE_ENV_FILE="$ENV_FILE" bash "$SET_PLUGIN_ROOT" "/nonexistent/dir" >/dev/null 2>&1
 assert_output_not_contains "TOOLBOX_PLUGIN_ROOT" "cat '$ENV_FILE'" "no export line when no valid root found"
+
+log_test "Exits cleanly when the env file append fails (unwritable target)"
+# CLAUDE_ENV_FILE points into a directory that does not exist, so the `>>`
+# redirect fails. The hook must still exit 0 — a non-zero exit is read as a
+# hook failure, not a no-op.
+rc=$(set +e; CPR_PLUGINS_FILE="$PLUGINS_JSON" CLAUDE_ENV_FILE="$FIXTURE_DIR/no-such-dir/env.sh" bash "$SET_PLUGIN_ROOT" "" >/dev/null 2>&1; echo $?)
+assert_equals "0" "$rc" "append failure does not produce a non-zero hook exit"
 
 # =============================================================================
 # Summary

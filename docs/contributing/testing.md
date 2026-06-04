@@ -25,7 +25,7 @@ Run a single suite:
 | `test-claude-extra.sh` | CLAUDE.extra.md existence, compare_files detection, auto-import |
 | `test-manifest-jq.sh` | JSON generation patterns, special character handling, schema validation, round-trip |
 | `test-semver-compare.sh` | Semver comparison logic used by release workflows |
-| `test-cpr.sh` | Claude Plugin Root resolver — exact/fuzzy matching, scope priority, env var precedence, error handling |
+| `test-cpr.sh` | Claude Plugin Root resolver — exact/fuzzy matching, project-path resolution cascade (project → user → last-installed), install-path validation, env var precedence, error handling |
 | `test-hooks.sh` | Hook script validation (Bash denylist patterns, capy HTTP interception) |
 
 ## Test Infrastructure
