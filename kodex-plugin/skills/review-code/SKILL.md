@@ -14,9 +14,8 @@ Perform a structured review of the current git changes with focus on SOLID, arch
 
 ## Conventions
 
-Read capy knowledge base conventions at [shared-capy-knowledge-protocol.md](shared-capy-knowledge-protocol.md).
-
-Profile detection — the set of reference checklists loaded for a given diff — is delegated to the shared procedure at [shared-profile-detection.md](shared-profile-detection.md). The workflow below invokes it in Step 2 and uses the resulting `(profile, checklist)` list to drive Steps 3–4.
+- **Read capy knowledge base conventions** at [shared-capy-knowledge-protocol.md](shared-capy-knowledge-protocol.md).
+- **Read profile detection** — the set of reference checklists loaded for a given diff — at [shared-profile-detection.md](shared-profile-detection.md). The workflow below invokes it in Step 2 and uses the resulting `(profile, checklist)` list to drive Steps 3–4.
 
 ## Required Outputs
 
