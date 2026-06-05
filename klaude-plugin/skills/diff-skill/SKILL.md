@@ -15,11 +15,11 @@ description: |
 Two judgment axes:
 
 1. **Degradation (asymmetric)** — load-bearing instruction dropped, constraint weakened, verification step removed, scope narrowed, required output dropped, or reference broken. Content relocated but preserved is neutral.
-2. **Complexity** — split into *regressions* (introduced or worsened by the edit, affects verdict) and *pre-existing advisories* (exist regardless of the edit, surfaced as improvement opportunities, does NOT affect verdict).
+2. **Complexity** — split into _regressions_ (introduced or worsened by the edit, affects verdict) and _pre-existing advisories_ (exist regardless of the edit, surfaced as improvement opportunities, does NOT affect verdict).
 
 ## Conventions
 
-Read capy knowledge base conventions at [shared-capy-knowledge-protocol.md](shared-capy-knowledge-protocol.md).
+- **Read capy knowledge base conventions** at [shared-capy-knowledge-protocol.md](shared-capy-knowledge-protocol.md).
 
 ## Required Outputs
 
