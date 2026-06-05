@@ -9,9 +9,8 @@ description: |
 
 ## Conventions
 
-Read capy knowledge base conventions at [shared-capy-knowledge-protocol.md](shared-capy-knowledge-protocol.md).
-
-**Profile detection.** See [shared-profile-detection.md](shared-profile-detection.md) for the shared detection procedure. When an active profile populates a `review-spec/` phase slot, its `index.md` content is loaded before per-task verification begins.
+- **Read capy knowledge base conventions** at [shared-capy-knowledge-protocol.md](shared-capy-knowledge-protocol.md).
+- **Read profile detection** at [shared-profile-detection.md](shared-profile-detection.md) for the shared detection procedure. When an active profile populates a `review-spec/` phase slot, its `index.md` content is loaded before per-task verification begins.
 
 ## Overview
 
