@@ -12,7 +12,7 @@ description: |
 
 ## Conventions
 
-Read capy knowledge base conventions at [shared-capy-knowledge-protocol.md](shared-capy-knowledge-protocol.md).
+- **Read capy knowledge base conventions** at [shared-capy-knowledge-protocol.md](shared-capy-knowledge-protocol.md).
 
 ## When to Use
 

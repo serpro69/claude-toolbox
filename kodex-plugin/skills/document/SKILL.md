@@ -10,16 +10,15 @@ description: |
 
 ## Conventions
 
-Read capy knowledge base conventions at [shared-capy-knowledge-protocol.md](shared-capy-knowledge-protocol.md).
-
-Profile detection is delegated to [shared-profile-detection.md](shared-profile-detection.md). When an active profile contributes a `document/` subdirectory (e.g., `../../profiles/k8s/document/`), its `index.md` lists a doc rubric — required topics the documentation for that artifact type must cover. See the Workflow below for the load order.
+- **Read capy knowledge base conventions** at [shared-capy-knowledge-protocol.md](shared-capy-knowledge-protocol.md).
+- **Read profile detection** at [shared-profile-detection.md](shared-profile-detection.md). When an active profile contributes a `document/` subdirectory (e.g., `../../profiles/k8s/document/`), its `index.md` lists a doc rubric — required topics the documentation for that artifact type must cover. See the Workflow below for the load order.
 
 ## Workflow
 
 **Mandatory order — instructions before action.** The flow below is strictly sequential. Do not read feature-tree content, write, or edit documentation files until profile detection has completed and all resolved profile content is in context.
 
 1. **Minimal-scope listing.** List the feature directory (filenames and metadata only — no file-content reads). This is the input profile detection needs, and nothing more; content-level reading happens after profile content is loaded.
-2. **Detect active profiles.** Run the shared profile-detection procedure against the filename list from Step 1.
+2. **Detect active profiles.** Run the `shared-profile-detection.md` procedure against the filename list from Step 1.
 3. **Load profile content.** For each active profile that contributes a `document/` subdirectory, load `../../profiles/<name>/document/index.md` and read its always-load + any matching conditional content. The rubric named there specifies topics the documentation must cover for that profile's artifacts.
 4. **Read the feature-tree content** the documentation will cover. This is the first step that touches subject-matter content; the profile rubric is now loaded and frames what to look for.
 5. **Apply the doc guidelines below.** Write or update documentation applying the rubric's required topics where applicable.
