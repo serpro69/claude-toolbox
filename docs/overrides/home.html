@@ -44,6 +44,12 @@
 
 .lp-hero-content { position: relative; z-index: 2; }
 
+/* ── Title block ─── */
+.lp-title-block {
+  display: inline-block;
+  text-align: left;
+}
+
 /* ── Title ─── */
 .lp-prompt {
   font-family: 'Space Mono', monospace;
@@ -72,6 +78,41 @@
   font-size: clamp(13px, 2vw, 16px);
   color: var(--tn-comment);
   margin: 16px 0 8px; letter-spacing: 0.02em;
+}
+
+/* ── Verb ticker ─── */
+.lp-verb {
+  font-family: 'Space Mono', monospace;
+  font-size: clamp(11px, 1.6vw, 14px);
+  opacity: 0.55;
+  letter-spacing: 0.06em;
+  white-space: nowrap;
+  margin-top: 6px;
+}
+.lp-verb-glyph {
+  display: inline-block;
+  width: 1.2em; text-align: center;
+}
+.lp-verb-text {
+  display: inline-block;
+  background: linear-gradient(90deg,
+    #bb9af7 0%, #bb9af7 30%,
+    #e8d4ff 46%, #fff2fc 50%, #e8d4ff 54%,
+    #bb9af7 70%, #bb9af7 100%
+  );
+  background-size: 300% 100%;
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+  animation: lpShimmer 2.8s linear infinite;
+  transition: opacity 400ms ease, transform 400ms ease;
+}
+@keyframes lpShimmer {
+  0%   { background-position: 100% 0; }
+  100% { background-position: -100% 0; }
+}
+.lp-verb-text.is-fading {
+  opacity: 0; transform: translateY(-4px);
 }
 
 /* ── Typewriter ─── */
@@ -404,6 +445,7 @@
   }
   .lp-backdrop { display: none; }
   .lp-cursor { animation: none; opacity: 1; }
+  .lp-verb-text { transition: none !important; animation: none !important; -webkit-text-fill-color: #bb9af7 !important; background: none !important; }
   .lp-reveal { opacity: 1 !important; transform: none !important; transition: none !important; }
 }
 </style>
@@ -419,8 +461,11 @@
 <section class="lp-hero lp-hero--pinned">
   <div class="lp-backdrop" id="lpBackdrop"></div>
   <div class="lp-hero-content">
-    <div class="lp-prompt">
-      <span class="lp-prompt-chevron">&gt;</span> claude-<span class="lp-prompt-accent">toolbox</span><span class="lp-cursor"></span>
+    <div class="lp-title-block">
+      <div class="lp-prompt">
+        <span class="lp-prompt-chevron">&gt;</span> claude-<span class="lp-prompt-accent">toolbox</span><span class="lp-cursor"></span>
+      </div>
+      <div class="lp-verb" id="lpVerb"><span class="lp-verb-glyph" id="lpVerbGlyph">✽</span> <span class="lp-verb-text" id="lpVerbText">umm…</span></div>
     </div>
     <div class="lp-tagline">a structured AI development pipeline</div>
     <div class="lp-tw" id="lpTw"></div>
@@ -845,6 +890,83 @@ document.addEventListener('DOMContentLoaded', function() {
     }
   }
   tick();
+
+  // ── SPINNER + VERB TICKER ─────────────────────────────────
+  var SPINNER_GLYPHS = ['·', '✢', '✳', '✶', '✻', '✽'];
+  var verbs = [
+    'Accomplishing', 'Actioning', 'Actualizing', 'Architecting', 'Baking', 'Beaming',
+    "Beboppin'", 'Befuddling', 'Billowing', 'Blanching', 'Bloviating', 'Boogieing',
+    'Boondoggling', 'Booping', 'Bootstrapping', 'Brewing', 'Bunning', 'Burrowing',
+    'Calculating', 'Canoodling', 'Caramelizing', 'Cascading', 'Catapulting',
+    'Cerebrating', 'Channeling', 'Channelling', 'Choreographing', 'Churning',
+    'Clauding', 'Coalescing', 'Cogitating', 'Combobulating', 'Composing', 'Computing',
+    'Concocting', 'Considering', 'Contemplating', 'Cooking', 'Crafting', 'Creating',
+    'Crunching', 'Crystallizing', 'Cultivating', 'Deciphering', 'Deliberating',
+    'Determining', 'Dilly-dallying', 'Discombobulating', 'Doing', 'Doodling',
+    'Drizzling', 'Ebbing', 'Effecting', 'Elucidating', 'Embellishing', 'Enchanting',
+    'Envisioning', 'Evaporating', 'Fermenting', 'Fiddle-faddling', 'Finagling',
+    'Flambéing', 'Flibbertigibbeting', 'Flowing', 'Flummoxing', 'Fluttering', 'Forging',
+    'Forming', 'Frolicking', 'Frosting', 'Gallivanting', 'Galloping', 'Garnishing',
+    'Generating', 'Gesticulating', 'Germinating', 'Gitifying', 'Grooving', 'Gusting',
+    'Harmonizing', 'Hashing', 'Hatching', 'Herding', 'Honking', 'Hullaballooing',
+    'Hyperspacing', 'Ideating', 'Imagining', 'Improvising', 'Incubating', 'Inferring',
+    'Infusing', 'Ionizing', 'Jitterbugging', 'Julienning', 'Kneading', 'Leavening',
+    'Levitating', 'Lollygagging', 'Manifesting', 'Marinating', 'Meandering',
+    'Metamorphosing', 'Misting', 'Moonwalking', 'Moseying', 'Mulling', 'Mustering',
+    'Musing', 'Nebulizing', 'Nesting', 'Newspapering', 'Noodling', 'Nucleating',
+    'Orbiting', 'Orchestrating', 'Osmosing', 'Perambulating', 'Percolating', 'Perusing',
+    'Philosophising', 'Photosynthesizing', 'Pollinating', 'Pondering', 'Pontificating',
+    'Pouncing', 'Precipitating', 'Prestidigitating', 'Processing', 'Proofing',
+    'Propagating', 'Puttering', 'Puzzling', 'Quantumizing', 'Razzle-dazzling',
+    'Razzmatazzing', 'Recombobulating', 'Reticulating', 'Roosting', 'Ruminating',
+    'Sautéing', 'Scampering', 'Schlepping', 'Scurrying', 'Seasoning', 'Shenaniganing',
+    'Shimmying', 'Simmering', 'Skedaddling', 'Sketching', 'Slithering', 'Smooshing',
+    'Sock-hopping', 'Spelunking', 'Spinning', 'Sprouting', 'Stewing', 'Sublimating',
+    'Swirling', 'Swooping', 'Symbioting', 'Synthesizing', 'Tempering', 'Thinking',
+    'Thundering', 'Tinkering', 'Tomfoolering', 'Topsy-turvying', 'Transfiguring',
+    'Transmuting', 'Twisting', 'Undulating', 'Unfurling', 'Unravelling', 'Vibing',
+    'Waddling', 'Wandering', 'Warping', 'Whatchamacalliting', 'Whirlpooling', 'Whirring',
+    'Whisking', 'Wibbling', 'Working', 'Wrangling', 'Zesting', 'Zigzagging'
+  ];
+  var verbGlyph = document.getElementById('lpVerbGlyph');
+  var verbText = document.getElementById('lpVerbText');
+  var vi = 0, gi = 0, hue = 0;
+
+  function hueToRgb(h) {
+    h = ((h % 360) + 360) % 360;
+    var s = 0.7, l = 0.6;
+    var c = (1 - Math.abs(2 * l - 1)) * s;
+    var x = c * (1 - Math.abs((h / 60) % 2 - 1));
+    var m = l - c / 2;
+    var r = 0, g = 0, b = 0;
+    if (h < 60)       { r = c; g = x; }
+    else if (h < 120) { r = x; g = c; }
+    else if (h < 180) { g = c; b = x; }
+    else if (h < 240) { g = x; b = c; }
+    else if (h < 300) { r = x; b = c; }
+    else              { r = c; b = x; }
+    return 'rgb(' + Math.round((r+m)*255) + ',' + Math.round((g+m)*255) + ',' + Math.round((b+m)*255) + ')';
+  }
+
+  if (verbGlyph && !prefersReduced) {
+    setInterval(function() {
+      gi = (gi + 1) % SPINNER_GLYPHS.length;
+      hue = (hue + 45) % 360;
+      verbGlyph.textContent = SPINNER_GLYPHS[gi];
+      verbGlyph.style.color = hueToRgb(hue);
+    }, 120);
+  }
+
+  if (verbText) {
+    setInterval(function() {
+      verbText.classList.add('is-fading');
+      setTimeout(function() {
+        var next; do { next = Math.floor(Math.random() * verbs.length); } while (next === vi && verbs.length > 1); vi = next;
+        verbText.textContent = verbs[vi] + '…';
+        verbText.classList.remove('is-fading');
+      }, 400);
+    }, 3000);
+  }
 
   // ── SCROLL REVEAL (for sections after the pinned transition) ──
   if (!prefersReduced) {
