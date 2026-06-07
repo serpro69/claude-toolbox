@@ -1,6 +1,13 @@
+<div align="center">
+  <picture>
+    <source media="(prefers-color-scheme: dark)" srcset="docs/assets/images/lockup-dark.svg">
+    <img src="docs/assets/images/lockup-light.svg" alt="claude-toolbox" width="720">
+  </picture>
+</div>
+
 # claude-toolbox
 
-[![GitHub Release](https://img.shields.io/github/v/release/serpro69/claude-toolbox?style=for-the-badge)](https://github.com/serpro69/claude-toolbox/releases)
+[![GitHub Release](https://img.shields.io/github/v/release/serpro69/claude-toolbox?style=for-the-badge&color=D9683D)](https://github.com/serpro69/claude-toolbox/releases)
 [![Mentioned in Awesome Claude Code](https://img.shields.io/badge/Awesome-Claude%20Code-fc60a8?style=for-the-badge&logo=awesomelists&logoColor=white)](https://github.com/hesreallyhim/awesome-claude-code)
 [![Documentation](https://img.shields.io/badge/docs-serpro69.github.io%2Fclaude--toolbox-blue?style=for-the-badge)](https://serpro69.github.io/claude-toolbox/)
 
