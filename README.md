@@ -12,10 +12,12 @@
 [![Documentation](https://img.shields.io/badge/docs-serpro69.github.io%2Fclaude--toolbox-blue?style=for-the-badge)](https://serpro69.github.io/claude-toolbox/)
 
 <div align="center"
-  <img width="1080" alt="image" src="https://github.com/user-attachments/assets/27ef7269-0153-47c0-b07d-ed6a9504a176" />
+  <picture>
+    <img width="1080" alt="image" src="https://github.com/user-attachments/assets/27ef7269-0153-47c0-b07d-ed6a9504a176" />
+  </picture>
 </div>
 
-claude-toolbox is a collection of "tools" for all your agentic workflows — pre-configured MCP servers, skills, sub-agents, commands, hooks, statuslines with themes, and more - everything you need for AI-powered development workflows, used and battle-tested daily on many of my own projects.
+`claude-toolbox` is a collection of "tools" for all your agentic workflows — pre-configured MCP servers, skills, sub-agents, commands, hooks, statuslines with themes, and more - everything you need for AI-powered development workflows, used and battle-tested daily on many of my own projects.
 
 **Supported providers:** [Claude Code](https://serpro69.github.io/claude-toolbox/latest/providers/claude-code/) · [Codex](https://serpro69.github.io/claude-toolbox/latest/providers/codex/)
 
