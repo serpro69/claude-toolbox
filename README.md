@@ -11,6 +11,10 @@
 [![Mentioned in Awesome Claude Code](https://img.shields.io/badge/Awesome-Claude%20Code-fc60a8?style=for-the-badge&logo=awesomelists&logoColor=white)](https://github.com/hesreallyhim/awesome-claude-code)
 [![Documentation](https://img.shields.io/badge/docs-serpro69.github.io%2Fclaude--toolbox-blue?style=for-the-badge)](https://serpro69.github.io/claude-toolbox/)
 
+<div align="center"
+  <img width="1080" alt="image" src="https://github.com/user-attachments/assets/27ef7269-0153-47c0-b07d-ed6a9504a176" />
+</div>
+
 claude-toolbox is a collection of "tools" for all your agentic workflows — pre-configured MCP servers, skills, sub-agents, commands, hooks, statuslines with themes, and more - everything you need for AI-powered development workflows, used and battle-tested daily on many of my own projects.
 
 **Supported providers:** [Claude Code](https://serpro69.github.io/claude-toolbox/latest/providers/claude-code/) · [Codex](https://serpro69.github.io/claude-toolbox/latest/providers/codex/)
@@ -19,7 +23,13 @@ claude-toolbox is a collection of "tools" for all your agentic workflows — pre
 
 ## [Read the full documentation →](https://serpro69.github.io/claude-toolbox/)
 
+  <a href="https://serpro69.github.io/claude-toolbox/">
+    <img width="1080" alt="image" src="https://github.com/user-attachments/assets/7b735db9-9fa2-425b-8176-0991f6ff64ad" />
+  </a>
+
 </div>
+
+---
 
 > [!IMPORTANT]
 > This project was created with the help of Claude-Code. Is it, however, always reviewed, tested, and reworked with a human-in-the-loop.
@@ -27,8 +37,6 @@ claude-toolbox is a collection of "tools" for all your agentic workflows — pre
 > No AI slop here. Purely AI-made skills are hot garbage, and that's putting it mildly.
 >
 > That said, if you have any problems with code that is written by AI - you've been warned. But, then again, why would you be interested in AI-related configs and skills in the first place... `¯\_(ツ)_/¯`
-
-<img width="3440" height="521" alt="image" src="https://github.com/user-attachments/assets/27ef7269-0153-47c0-b07d-ed6a9504a176" />
 
 ## Why claude-toolbox?
 
