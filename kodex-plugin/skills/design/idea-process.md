@@ -40,7 +40,7 @@ Note: [frameworks.md](frameworks.md) and [refinement-criteria.md](refinement-cri
 - [ ] 3c complexity classification confirmed
 - [ ] 3c alternatives presented
 - [ ] 3d direction chosen
-- [ ] 3e assumptions and Not Doing presented
+- [ ] 3e assumptions, Not Doing, and Rejected Alternatives presented
 
 **3a. Frame the problem.** Restate the idea as a rough "How Might We" problem statement — a directional anchor, not a fully specified template. Use [frameworks.md §HMW](frameworks.md#how-might-we-hmw) for format quality guidance (good vs bad HMW qualities), but do not attempt to fill every slot (specific user, key constraint) yet — those come from 3b. Present the framing to the user for confirmation or correction before proceeding. This anchors all subsequent questions on the problem, not a solution.
 
@@ -76,8 +76,9 @@ If alternatives make specific factual claims about APIs, libraries, or existing 
 
 - **Assumptions** — what is baked into the chosen direction but has not been validated. Each assumption should be specific enough to be testable or falsifiable — not vague hedges like "the API is fast enough."
 - **Not Doing** — explicit scope exclusions with a one-line reason each.
+- **Rejected Alternatives** — each alternative evaluated in 3d that was not chosen, with a one-line rationale for why it lost. This is the convergence rationale from the pros/cons matrix, persisted so future reviewers can see what was considered and why.
 
-Both become first-class artifacts in the design document (Step 5) and tasks.md header (Step 6).
+All three become first-class artifacts in the design document (Step 5) and tasks.md header (Step 6 — Not Doing only).
 
 **Step 4: Describe the design**
 
@@ -108,6 +109,7 @@ When creating documentation, follow this approach:
 - **Pair each step with an explicit verification.** Every implementation step should name *how the developer will know it worked* — a specific test to run, a command whose output to check, or an observable behavior. Use the form `Step → verify: <check>`. Steps without a verification are a smell: either the step is too vague, or the work isn't really done when the step is.
 - **Include an Assumptions section** — carried from Step 3e. List assumptions baked into the design, each specific enough to be validated or invalidated during implementation. Assumptions are not caveats — they are testable bets the design depends on.
 - **Include a Not Doing section** — carried from Step 3e. Explicit scope exclusions with a one-line rationale each. These are genuine scope decisions, not deferred work items. If something is deferred (will be done later), say so in the implementation plan, not in Not Doing.
+- **Include a Rejected Alternatives section** — carried from Step 3e. Each alternative considered during convergence (3d) that was not chosen, with a one-line rationale for why it was rejected. Serves a different audience than Not Doing: Not Doing tells the implementer what's out of scope; Rejected Alternatives tells a future reviewer why this approach was chosen over others.
 
 But, of course, **DO NOT:**
 
