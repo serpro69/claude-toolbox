@@ -35,7 +35,7 @@ Write the diff to a temp file for pal consumption:
 
 ```bash
 diff_file=$(mktemp /tmp/kk-review-code-XXXXXXXX.patch)
-git diff > "$diff_file"
+git diff > "$diff_file" && wc -l "$diff_file"
 ```
 
 Adjust the `git diff` command to match the actual scope (staged, unstaged, or commit range). The temp file is passed to pal via `relevant_files` in Step 2 and should be cleaned up after the review completes (`rm "$diff_file"`).
@@ -95,7 +95,7 @@ Assemble the file list that will be passed to pal codereview via `relevant_files
    1. Files directly imported by the changed files (type definitions, interfaces, contracts).
    2. Direct callers of changed public functions/methods (one level up only).
    3. Adjacent files in the same package/module that share types or conventions with the changed code.
-   Use `grep`/`rg` on import statements and function names to locate these. If more than 10 candidates emerge, keep only categories 1–2. If fewer than 3, that's fine — small diffs legitimately have few dependencies.
+      Use `grep`/`rg` on import statements and function names to locate these. If more than 10 candidates emerge, keep only categories 1–2. If fewer than 3, that's fine — small diffs legitimately have few dependencies.
 4. **Profile checklist files** — the absolute paths of every resolved `(profile, checklist)` file from Step 1c. These give pal the same domain-specific review criteria as Reviewer A.
 5. **Design/implementation docs** — if spec context was located in Step 1b, include the full `design.md` and `implementation.md` file paths (not excerpts). These enable pal to flag spec deviations.
 
@@ -130,7 +130,7 @@ You are reviewing the following code changes. Apply your full review workflow.
 
 ## Git Diff
 
-{paste the full git diff output here}
+{paste the git diff_file path here}
 
 ## Active Profiles and Resolved Checklists
 
