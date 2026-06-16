@@ -171,7 +171,7 @@
 /* ── Scroll-pinned hero → pipeline transition ─── */
 .lp-hero-wrap {
   position: relative;
-  height: 560vh;   /* hero/rain intro + scroll room for 6 cycling phases */
+  height: 720vh;   /* hero/rain intro + scroll room for 6 cycling phases */
 }
 .lp-pin-stack {
   position: sticky; top: 0;
@@ -645,6 +645,63 @@ document.addEventListener('DOMContentLoaded', function() {
   var COL_W = 18;
   var FONT_SIZE = 14;
   var rainIntensity = 0;
+  var verbs = [
+    'Accomplishing', 'Actioning', 'Actualizing', 'Architecting', 'Baking', 'Beaming',
+    "Beboppin'", 'Befuddling', 'Billowing', 'Blanching', 'Bloviating', 'Boogieing',
+    'Boondoggling', 'Booping', 'Bootstrapping', 'Brewing', 'Bunning', 'Burrowing',
+    'Calculating', 'Canoodling', 'Caramelizing', 'Cascading', 'Catapulting',
+    'Cerebrating', 'Channeling', 'Channelling', 'Choreographing', 'Churning',
+    'Clauding', 'Coalescing', 'Cogitating', 'Combobulating', 'Composing', 'Computing',
+    'Concocting', 'Considering', 'Contemplating', 'Cooking', 'Crafting', 'Creating',
+    'Crunching', 'Crystallizing', 'Cultivating', 'Deciphering', 'Deliberating',
+    'Determining', 'Dilly-dallying', 'Discombobulating', 'Doing', 'Doodling',
+    'Drizzling', 'Ebbing', 'Effecting', 'Elucidating', 'Embellishing', 'Enchanting',
+    'Envisioning', 'Evaporating', 'Fermenting', 'Fiddle-faddling', 'Finagling',
+    'Flambéing', 'Flibbertigibbeting', 'Flowing', 'Flummoxing', 'Fluttering', 'Forging',
+    'Forming', 'Frolicking', 'Frosting', 'Gallivanting', 'Galloping', 'Garnishing',
+    'Generating', 'Gesticulating', 'Germinating', 'Gitifying', 'Grooving', 'Gusting',
+    'Harmonizing', 'Hashing', 'Hatching', 'Herding', 'Honking', 'Hullaballooing',
+    'Hyperspacing', 'Ideating', 'Imagining', 'Improvising', 'Incubating', 'Inferring',
+    'Infusing', 'Ionizing', 'Jitterbugging', 'Julienning', 'Kneading', 'Leavening',
+    'Levitating', 'Lollygagging', 'Manifesting', 'Marinating', 'Meandering',
+    'Metamorphosing', 'Misting', 'Moonwalking', 'Moseying', 'Mulling', 'Mustering',
+    'Musing', 'Nebulizing', 'Nesting', 'Newspapering', 'Noodling', 'Nucleating',
+    'Orbiting', 'Orchestrating', 'Osmosing', 'Perambulating', 'Percolating', 'Perusing',
+    'Philosophising', 'Photosynthesizing', 'Pollinating', 'Pondering', 'Pontificating',
+    'Pouncing', 'Precipitating', 'Prestidigitating', 'Processing', 'Proofing',
+    'Propagating', 'Puttering', 'Puzzling', 'Quantumizing', 'Razzle-dazzling',
+    'Razzmatazzing', 'Recombobulating', 'Reticulating', 'Roosting', 'Ruminating',
+    'Sautéing', 'Scampering', 'Schlepping', 'Scurrying', 'Seasoning', 'Shenaniganing',
+    'Shimmying', 'Simmering', 'Skedaddling', 'Sketching', 'Slithering', 'Smooshing',
+    'Sock-hopping', 'Spelunking', 'Spinning', 'Sprouting', 'Stewing', 'Sublimating',
+    'Swirling', 'Swooping', 'Symbioting', 'Synthesizing', 'Tempering', 'Thinking',
+    'Thundering', 'Tinkering', 'Tomfoolering', 'Topsy-turvying', 'Transfiguring',
+    'Transmuting', 'Twisting', 'Undulating', 'Unfurling', 'Unravelling', 'Vibing',
+    'Waddling', 'Wandering', 'Warping', 'Whatchamacalliting', 'Whirlpooling', 'Whirring',
+    'Whisking', 'Wibbling', 'Working', 'Wrangling', 'Zesting', 'Zigzagging'
+  ];
+  var VERB_CHANCE = 0.3;
+  var CHAR_COUNT = 30;
+
+  function fillColChars(col) {
+    col.chars = [];
+    col.verbStart = -1;
+    col.verbEnd = -1;
+    var verb = Math.random() < VERB_CHANCE
+      ? verbs[Math.floor(Math.random() * verbs.length)] : null;
+    if (verb) {
+      col.verbStart = Math.floor(Math.random() * Math.max(1, CHAR_COUNT - verb.length));
+      col.verbEnd = col.verbStart + verb.length;
+      col.verbChars = verb.split('');
+    }
+    for (var j = 0; j < CHAR_COUNT; j++) {
+      if (verb && j >= col.verbStart && j < col.verbEnd) {
+        col.chars.push(verb[j - col.verbStart]);
+      } else {
+        col.chars.push(GLYPHS[Math.floor(Math.random() * GLYPHS.length)]);
+      }
+    }
+  }
 
   function initRain() {
     if (!canvas) return;
@@ -654,16 +711,15 @@ document.addEventListener('DOMContentLoaded', function() {
     var nCols = Math.ceil(canvas.offsetWidth / COL_W);
     columns = [];
     for (var i = 0; i < nCols; i++) {
-      columns.push({
+      var c = {
         x: i * COL_W,
         y: Math.random() * -canvas.offsetHeight,
-        speed: 1.5 + Math.random() * 3,
+        speed: 0.8 + Math.random() * 1.5,
         color: COLORS[i % COLORS.length],
-        chars: []
-      });
-      for (var j = 0; j < 30; j++) {
-        columns[i].chars.push(GLYPHS[Math.floor(Math.random() * GLYPHS.length)]);
-      }
+        chars: [], verbStart: -1, verbEnd: -1
+      };
+      fillColChars(c);
+      columns.push(c);
     }
   }
 
@@ -680,17 +736,27 @@ document.addEventListener('DOMContentLoaded', function() {
       col.y += col.speed * rainIntensity;
       if (col.y > h + FONT_SIZE * col.chars.length) {
         col.y = Math.random() * -h * 0.5;
-        col.speed = 1.5 + Math.random() * 3;
+        col.speed = 0.8 + Math.random() * 1.5;
+        fillColChars(col);
       }
 
       for (var j = 0; j < col.chars.length; j++) {
         var cy = col.y + j * FONT_SIZE;
         if (cy < -FONT_SIZE || cy > h + FONT_SIZE) continue;
-        var alpha = (j === 0 ? 1.0 : Math.max(0.05, 1 - j / col.chars.length)) * rainIntensity;
+        var isVerb = j >= col.verbStart && j < col.verbEnd;
+        var baseAlpha = j === 0 ? 1.0 : Math.max(0.05, 1 - j / col.chars.length);
+        if (isVerb) baseAlpha = Math.min(1, baseAlpha + 0.3);
         ctx.fillStyle = col.color;
-        ctx.globalAlpha = alpha;
+        ctx.globalAlpha = baseAlpha * rainIntensity;
         ctx.fillText(col.chars[j], col.x, cy);
-        if (Math.random() < 0.02) {
+        if (isVerb) {
+          var origChar = col.verbChars[j - col.verbStart];
+          if (col.chars[j] === origChar && Math.random() < 0.005) {
+            col.chars[j] = GLYPHS[Math.floor(Math.random() * GLYPHS.length)];
+          } else if (col.chars[j] !== origChar && Math.random() < 0.08) {
+            col.chars[j] = origChar;
+          }
+        } else if (Math.random() < 0.02) {
           col.chars[j] = GLYPHS[Math.floor(Math.random() * GLYPHS.length)];
         }
       }
@@ -892,41 +958,6 @@ document.addEventListener('DOMContentLoaded', function() {
 
   // ── SPINNER + VERB TICKER ─────────────────────────────────
   var SPINNER_GLYPHS = ['·', '✢', '✳', '✶', '✻', '✽'];
-  var verbs = [
-    'Accomplishing', 'Actioning', 'Actualizing', 'Architecting', 'Baking', 'Beaming',
-    "Beboppin'", 'Befuddling', 'Billowing', 'Blanching', 'Bloviating', 'Boogieing',
-    'Boondoggling', 'Booping', 'Bootstrapping', 'Brewing', 'Bunning', 'Burrowing',
-    'Calculating', 'Canoodling', 'Caramelizing', 'Cascading', 'Catapulting',
-    'Cerebrating', 'Channeling', 'Channelling', 'Choreographing', 'Churning',
-    'Clauding', 'Coalescing', 'Cogitating', 'Combobulating', 'Composing', 'Computing',
-    'Concocting', 'Considering', 'Contemplating', 'Cooking', 'Crafting', 'Creating',
-    'Crunching', 'Crystallizing', 'Cultivating', 'Deciphering', 'Deliberating',
-    'Determining', 'Dilly-dallying', 'Discombobulating', 'Doing', 'Doodling',
-    'Drizzling', 'Ebbing', 'Effecting', 'Elucidating', 'Embellishing', 'Enchanting',
-    'Envisioning', 'Evaporating', 'Fermenting', 'Fiddle-faddling', 'Finagling',
-    'Flambéing', 'Flibbertigibbeting', 'Flowing', 'Flummoxing', 'Fluttering', 'Forging',
-    'Forming', 'Frolicking', 'Frosting', 'Gallivanting', 'Galloping', 'Garnishing',
-    'Generating', 'Gesticulating', 'Germinating', 'Gitifying', 'Grooving', 'Gusting',
-    'Harmonizing', 'Hashing', 'Hatching', 'Herding', 'Honking', 'Hullaballooing',
-    'Hyperspacing', 'Ideating', 'Imagining', 'Improvising', 'Incubating', 'Inferring',
-    'Infusing', 'Ionizing', 'Jitterbugging', 'Julienning', 'Kneading', 'Leavening',
-    'Levitating', 'Lollygagging', 'Manifesting', 'Marinating', 'Meandering',
-    'Metamorphosing', 'Misting', 'Moonwalking', 'Moseying', 'Mulling', 'Mustering',
-    'Musing', 'Nebulizing', 'Nesting', 'Newspapering', 'Noodling', 'Nucleating',
-    'Orbiting', 'Orchestrating', 'Osmosing', 'Perambulating', 'Percolating', 'Perusing',
-    'Philosophising', 'Photosynthesizing', 'Pollinating', 'Pondering', 'Pontificating',
-    'Pouncing', 'Precipitating', 'Prestidigitating', 'Processing', 'Proofing',
-    'Propagating', 'Puttering', 'Puzzling', 'Quantumizing', 'Razzle-dazzling',
-    'Razzmatazzing', 'Recombobulating', 'Reticulating', 'Roosting', 'Ruminating',
-    'Sautéing', 'Scampering', 'Schlepping', 'Scurrying', 'Seasoning', 'Shenaniganing',
-    'Shimmying', 'Simmering', 'Skedaddling', 'Sketching', 'Slithering', 'Smooshing',
-    'Sock-hopping', 'Spelunking', 'Spinning', 'Sprouting', 'Stewing', 'Sublimating',
-    'Swirling', 'Swooping', 'Symbioting', 'Synthesizing', 'Tempering', 'Thinking',
-    'Thundering', 'Tinkering', 'Tomfoolering', 'Topsy-turvying', 'Transfiguring',
-    'Transmuting', 'Twisting', 'Undulating', 'Unfurling', 'Unravelling', 'Vibing',
-    'Waddling', 'Wandering', 'Warping', 'Whatchamacalliting', 'Whirlpooling', 'Whirring',
-    'Whisking', 'Wibbling', 'Working', 'Wrangling', 'Zesting', 'Zigzagging'
-  ];
   var verbGlyph = document.getElementById('lpVerbGlyph');
   var verbText = document.getElementById('lpVerbText');
   var vi = 0, gi = 0, hue = 0;
