@@ -77,7 +77,7 @@ GENERATED=$(jq -n \
   --arg cc_effort "high" \
   --arg cc_permission "default" \
   --arg cc_statusline "enhanced" \
-  --arg codex_model "gpt-5.5" \
+  --arg codex_model "gpt-5.6-sol" \
   --arg codex_approval "on-request" \
   --arg skip_capy "false" \
   '{

@@ -466,7 +466,7 @@ backfill_manifest_variables() {
     "CC_STATUSLINE:enhanced"
     "CC_EFFORT_LEVEL:high"
     "CC_PERMISSION_MODE:default"
-    "CODEX_MODEL:gpt-5.5"
+    "CODEX_MODEL:gpt-5.6-sol"
     "CODEX_APPROVAL_POLICY:on-request"
     "SKIP_CAPY:false"
   )
@@ -1109,7 +1109,7 @@ apply_substitutions() {
   local codex_config_file="$output_dir/codex/config.toml"
   if [[ -f "$codex_config_file" ]]; then
     local codex_model codex_approval_policy
-    codex_model=$(get_manifest_value '.variables.CODEX_MODEL // "gpt-5.5"')
+    codex_model=$(get_manifest_value '.variables.CODEX_MODEL // "gpt-5.6-sol"')
     codex_approval_policy=$(get_manifest_value '.variables.CODEX_APPROVAL_POLICY // "on-request"')
 
     yq -i -p toml -o toml \
