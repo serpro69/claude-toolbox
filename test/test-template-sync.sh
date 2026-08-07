@@ -584,7 +584,7 @@ EOF
 
 mkdir -p "$test_dir/templates/codex"
 cat >"$test_dir/templates/codex/config.toml" <<'EOF'
-model = "gpt-5.5"
+model = "gpt-5.6-sol"
 approval_policy = "on-request"
 
 [features]
@@ -632,7 +632,7 @@ EOF
 
 mkdir -p "$test_dir/templates/codex"
 cat >"$test_dir/templates/codex/config.toml" <<'EOF'
-model = "gpt-5.5"
+model = "gpt-5.6-sol"
 approval_policy = "on-request"
 
 [mcp_servers.capy]
@@ -670,7 +670,7 @@ EOF
 
 mkdir -p "$test_dir/templates/codex"
 cat >"$test_dir/templates/codex/config.toml" <<'EOF'
-model = "gpt-5.5"
+model = "gpt-5.6-sol"
 approval_policy = "on-request"
 
 [mcp_servers.capy]

@@ -25,7 +25,7 @@ You don't need to create a repo from this template to use the full configuration
         "CC_EFFORT_LEVEL": "high",
         "CC_PERMISSION_MODE": "default",
         "CC_STATUSLINE": "enhanced",
-        "CODEX_MODEL": "gpt-5.5",
+        "CODEX_MODEL": "gpt-5.6-sol",
         "CODEX_APPROVAL_POLICY": "on-request",
         "SKIP_CAPY": "false"
       }

@@ -29,7 +29,7 @@ CC_MODEL="default"
 CC_EFFORT_LEVEL="high"
 CC_PERMISSION_MODE="default"
 CC_STATUSLINE="enhanced"
-CODEX_MODEL="gpt-5.5"
+CODEX_MODEL="gpt-5.6-sol"
 CODEX_APPROVAL_POLICY="on-request"
 SKIP_CAPY="false"
 NO_COMMIT=false
@@ -46,7 +46,7 @@ load_env_vars() {
   CC_PERMISSION_MODE="${CC_PERMISSION_MODE:-default}"
   CC_STATUSLINE="${CC_STATUSLINE:-enhanced}"
   LANGUAGES="${LANGUAGES:-}"
-  CODEX_MODEL="${CODEX_MODEL:-gpt-5.5}"
+  CODEX_MODEL="${CODEX_MODEL:-gpt-5.6-sol}"
   CODEX_APPROVAL_POLICY="${CODEX_APPROVAL_POLICY:-on-request}"
   SKIP_CAPY="${SKIP_CAPY:-false}"
 }
