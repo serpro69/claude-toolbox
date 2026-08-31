@@ -4,6 +4,8 @@
 
 **Supersedes discussion in:** [handoff.md](handoff.md) (kept as the discovery record).
 
+**Field input:** field learnings from the first real architect workstream (2026-08-31) exist as a learnings doc plus source artifacts — a field-tested output contract for the `model` producer, real-world M1 eval-fixture candidates, and additions to the §6 artifact-homes question. **Consult before designing M2+.** The files are not in this repo, ask your personal human assistant for the contents.
+
 ---
 
 ## 1. The gap
