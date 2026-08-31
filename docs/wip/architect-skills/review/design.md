@@ -21,11 +21,13 @@ This line is the load-bearing constraint. Without it every dimension silently ex
 
 ### 2a. Acceptance — what is allowed through the door
 
-`review-architecture` accepts a **committed written artifact that makes falsifiable structural/decision claims**:
+`review-architecture` accepts **exactly one committed written artifact per invocation** that makes falsifiable structural/decision claims:
 
-- one or more ADRs (`docs/adr/`), or
+- an ADR (`docs/adr/`), or
 - a broader architecture doc, or
 - the architecture section of a design doc.
+
+Single-artifact scope is deliberate: Pass 1 verifies claims independently and Pass 2 grades an artifact against its *own* stated context — nothing in the engine detects contradictions *between* artifacts (a superseded ADR contradicting its successor). Accepting artifact sets would silently imply cross-artifact consistency checking the engine does not do. Multi-artifact review is deferred (see §Not Doing).
 
 Diagrams count **only** when accompanied by prose asserting what they mean. **Verbal or diagram-only proposals are out of scope** until captured as an artifact — that capture is a future M2 *producer* skill's job, not the reviewer's. This mirrors every existing reviewer (code→diff, design→doc, spec→design+impl): each demands claims already committed to text.
 
@@ -33,7 +35,7 @@ M1 only *reads* whatever architecture docs exist; it never writes a broader arch
 
 ### 2b. Normalization — heterogeneous prose → uniform claim-set
 
-An ADR and a loose design-doc section both pass acceptance but express claims in different shapes. The engine needs a consistent list of `{claim, implicated-evidence-location}` tuples.
+An ADR and a loose design-doc section both pass acceptance but express claims in different shapes. The engine needs a consistent claim-set (full schema in §4).
 
 If extraction were a *hidden* internal step, an eval could not distinguish "reviewer failed to verify a claim" from "extractor never found the claim" — two failure modes collapse into one ungradeable blur, and you grade the extractor's interpretation instead of the artifact.
 
@@ -49,27 +51,48 @@ Each pass has its own eval seam so no pass does two jobs:
 
 ## 4. Pass 0 — Claim Extraction
 
-Turns the accepted artifact into the explicit `{claim, implicated-evidence-location}` claim-set. Graded on **three separable sub-metrics** — this separation is what makes the whole engine eval-able:
+Turns the accepted artifact into the explicit claim-set. **Pass 0 is repo-blind** — it reads only the artifact, never the codebase. Every field below is derivable from the artifact text alone; this keeps extraction pure normalization and precision grading span-grounded.
+
+**Claim schema** (one entry per extracted claim):
+
+| Field | Content |
+| --- | --- |
+| `id` | Stable per-review identifier (`C1`, `C2`, …). |
+| `claim` | The assertion, tightly paraphrased. |
+| `source_span` | The artifact quote (or heading + line) grounding it. |
+| `dimension` | One of the six Pass 1 dimensions, `pass2` (decision/trade-off claims), `delegated` (security → PAL `secaudit`), or `unrouted` (fits nothing). `delegated`/`unrouted` claims are never dropped — they surface in the report's Not Reviewed section (§7). |
+| `tense` | `present` (describes the system as it is) or `future` (proposed/intended). Derived from artifact metadata (ADR status: Accepted vs Proposed) plus claim wording. Drives the Pass 1 mode decision (§5). |
+| `evidence_class` | The *abstract* class of evidence the claim implicates ("dependency manifests of service A", "mutating route bindings for entity E") — never a resolved repo path. Pass 1 resolves classes to concrete paths; Pass 0 stays repo-blind. |
+
+Graded on **four separable sub-metrics** — this separation is what makes the whole engine eval-able:
 
 1. **Precision — "did it invent a claim?"** Self-grounding: every extracted claim cites a span in the artifact; the grader confirms that span actually asserts it. No gold set needed; works in eval and production.
 2. **Recall — "did it miss a claim?"** Intrinsically extrinsic.
-   - *In evals:* fully gradeable, and **not a new burden** — the oracle is the fixture's expected-claim list, which *is* the `assertions[]` array the eval convention already mandates. Recall-grading = set-difference against that list.
+   - *In evals:* fully gradeable against a structured **`gold-claims.json`** in the eval's `test-files/`; the `assertions[]` bullets reference its entries ("claim G3 is extracted"), so the eval-grader grades each expected claim PASS/FAIL — no free-form set arithmetic.
    - *In production:* unprovable (no oracle); a missed claim is silent. This is the **one irreducible limitation** — per fail-loud it is **documented, not hidden**: the reviewer does not certify extraction completeness.
-3. **Evidence-location accuracy — "right target per claim?"** Eval-gradeable against expected locations; in production partially self-checking — a claim pointing at a nonexistent path/symbol is a catchable dangling reference.
+3. **Evidence-class accuracy — "right evidence class per claim?"** Eval-gradeable against the gold set's expected classes. (Resolved-path dangling references are Pass 1's concern — the anchor rule, §5.)
+4. **Routing accuracy — "right `dimension` and `tense` per claim?"** Eval-gradeable against the gold set. A misrouted claim sends a verifiable assertion to the wrong verifier or the wrong mode — a distinct failure mode that, ungraded, collapses back into the blur §2b exists to prevent.
 
 **Production recall mitigations (raise recall without a gold set):**
 
-- **Structural-slot heuristics per artifact type** — an ADR *must* have decision/options/consequences → assert each slot yielded ≥1 claim; catches gross omissions. (Per-artifact-type catalog is an implementation detail — see §9.)
-- **Optional ensemble extraction** — N passes, union claims; a confidence *estimate*, never a completeness *proof*. Worth-the-token-cost is measured during eval (§9).
+- **Structural-slot heuristics per artifact type** — an ADR *must* have decision/options/consequences → assert each slot yielded ≥1 claim; catches gross omissions. (Per-artifact-type catalog is an implementation detail — see §10.)
+- **Optional ensemble extraction** — N passes, union claims; a confidence *estimate*, never a completeness *proof*. Worth-the-token-cost is measured during eval (§10).
 
-No circularity: grading is strictly easier than producing — "is this claim in the text" is a bounded lookup, recall-grading is a set-diff, dangling-location detection is a file check.
+No circularity: grading is strictly easier than producing — "is this claim in the text" is a bounded lookup, recall-grading is a per-entry lookup against the gold file, routing-grading is a label comparison.
 
 ## 5. Pass 1 — Topology Verification (six dimensions)
 
 Each claim is graded **per-claim** in one of two modes:
 
-- **Reality mode** — evidence exists → locate the bounded evidence the claim implicates, verify.
-- **Internal-soundness fallback** — forward-looking/greenfield, no evidence → grade that the claim is well-formed.
+- **Reality mode** — locate the bounded evidence the claim implicates, verify.
+- **Internal-soundness mode** — grade that the claim is well-formed.
+
+**Mode decision — the anchor rule.** Absence of evidence is ambiguous on its own: it is simultaneously the violation signal ("claimed mechanism missing") and the greenfield signal ("not built yet"). Left implicit, the reviewer is either toothless (every absence excused as greenfield) or false-positive-prone (every proposed mechanism flagged missing — and the day-one input is ADRs *proposing* mechanisms in existing repos). The rule, per claim:
+
+1. `tense: future` (from Pass 0 — Proposed ADR status, forward-looking wording) → **internal-soundness mode**. Proposals are never graded against the repo.
+2. `tense: present` → resolve the claim's **anchor** — the component/boundary the claim names (service directory, module, manifest), not the mechanism itself.
+   - **Anchor exists → reality mode.** A mechanism absent inside an existing anchor is a **violation** — the case the reviewer exists to catch.
+   - **Anchor does not exist → `dangling-anchor`** — its own loud verdict (§7), never a silent fallback. A present-tense claim about a component that is not there is doc drift or a false claim; both are findings.
 
 "Consistency with reality" is this *mode*, not a separate dimension.
 
@@ -96,22 +119,44 @@ The six dimensions (`claim class → evidence source → greenfield fallback`):
 
 Why a separate pass, not a seventh row: Pass 1 is a strict `extract → grep bounded evidence → grade` loop; Pass 2 needs whole-artifact context and has no greppable evidence. Forcing it into Pass 1's schema wrecks the prompt (the model hunting "grep evidence" for a philosophical trade-off). Separation also keeps evals clean: **Pass 1 evals test extraction+verification; Pass 2 evals test judgment.** "Appropriateness" — the highest-value architectural judgment — lives here, scoped to *stated context* because true appropriateness (write-heavy vs read-heavy in reality) needs live profiling the agent cannot do.
 
-## 7. Profiles — optional enrichment, NOT load-bearing
+## 7. Output contract
+
+**Invocation:** `/kk:review-architecture <artifact-path>` — exactly one artifact per invocation (§2a); a second path argument is rejected with guidance to run per artifact. For a design doc, an optional heading argument scopes the review to its architecture section. No path given → list candidate artifacts (`docs/adr/`, `docs/wip/*/design.md`) and ask.
+
+**Report** (presented inline, mirroring the review-skill family):
+
+1. **Claim Set** — the full Pass 0 output, verbatim. This *is* the inspectable intermediate artifact (§2b): the read-only reviewer agent has no Write tool, so the report section is the artifact's home.
+2. **Verdicts by dimension** — one verdict per claim: `verified` / `violated` / `internally-sound` / `ill-formed` / `dangling-anchor`.
+3. **Not Reviewed** — `delegated` claims (with a `secaudit` pointer) and `unrouted` claims, listed explicitly. Fail-loud: extraction happened, review didn't, and the report says so.
+4. **Pass 2 findings** — appropriateness / reversibility.
+
+**Severity mapping** (reuses the review family's P0–P3 scale):
+
+| Verdict | Severity |
+| --- | --- |
+| `violated` | P1 — escalates to P0 when Pass 2 marks the underlying decision a one-way door |
+| `dangling-anchor` | P2 |
+| `ill-formed` (internal-soundness claim missing required elements) | P2 |
+| Pass 2 inappropriate-mechanism / missing reversibility justification | P1 / P2 |
+| `unrouted` / `delegated` | informational |
+
+## 8. Profiles — optional enrichment, NOT load-bearing
 
 A modern agent can deduce evidence-gathering mechanics ("grep `go.mod` for the forbidden import") from a few short **inline examples** embedded in the skill. Profiles are only warranted where a domain has **non-obvious gotchas** the agent won't infer (e.g., k8s: a Deployment claiming HA needs `podAntiAffinity`, not just `replicas: 3`).
 
 So M1 ships evidence-gathering examples inline. Profile detection in `review-architecture` and a profile `architecture/` phase are **deferred to M4** and are not required for the engine to work.
 
-## 8. Eval strategy
+## 9. Eval strategy
 
 Evals live at `klaude-plugin/skills/review-architecture/evals/<name>/{eval.json,test-files/}` per the toolbox convention (one directory per eval; real fixtures, not inline-in-prompt). Each pass gets its own seam:
 
-- **Pass 0 fixtures** — an artifact + a gold claim-set (the `assertions[]`) → grade precision / recall / location.
-- **Pass 1 fixtures** — a fixed claim-set + a `test-files/` codebase slice where some claims hold and some are violated → assert the reviewer catches the false ones, does not flag the true ones, and correctly falls back to internal-soundness where no evidence exists.
+- **Pass 0 fixtures** — an artifact + a structured `gold-claims.json` in `test-files/`; `assertions[]` bullets reference gold entries → grade precision / recall / evidence-class / routing per entry.
+- **Pass 1 fixtures** — a fixed claim-set + a `test-files/` codebase slice where some claims hold and some are violated → assert the reviewer catches the false ones, does not flag the true ones, and applies the anchor rule correctly.
+- **Anchor-rule fixture** — an existing codebase slice + a claim-set mixing a `future` proposal, a `present` violated claim, and a `present` claim naming a nonexistent component → assert internal-soundness / violation / dangling-anchor respectively (all three outcomes discriminated).
 - **Pass 2 fixtures** — an artifact with a stated-context/mechanism mismatch → assert the reviewer flags the inappropriate choice.
 - **Regression eval** — a clean artifact that should produce no findings.
 
-## 9. Open questions (deferred, documented)
+## 10. Open questions (deferred, documented)
 
 - **Broader-architecture-doc home** (`docs/architecture/` vs `docs/wip/<x>/architecture.md`) — deferred to M2; M1 only reads.
 - **Per-artifact-type structural-slot heuristic catalog** (§4) — implementation detail; enumerate as Pass 0 is built.
@@ -120,7 +165,7 @@ Evals live at `klaude-plugin/skills/review-architecture/evals/<name>/{eval.json,
 ## Assumptions
 
 - The LLM reliably greps static manifests for topology evidence given inline examples (§7).
-- The gold-claim-set-as-`assertions[]` approach makes recall gradeable in evals without extra authoring burden (§4).
+- A per-eval `gold-claims.json` oracle makes recall/routing gradeable in evals without disproportionate authoring burden (§4).
 - Hand-written ADRs / design-doc architecture sections exist to review on day one (before M2 producers).
 
 ## Not Doing (M1)
@@ -131,6 +176,7 @@ Evals live at `klaude-plugin/skills/review-architecture/evals/<name>/{eval.json,
 - Behavioral / runtime verification — belongs to `/kk:review-code` / `/kk:review-spec`.
 - Security architecture — delegated to PAL `secaudit`.
 - Writing broader architecture docs — M1 only reads.
+- Multi-artifact invocations and cross-artifact consistency (contradicting/superseded ADRs) — single artifact per invocation (§2a); revisit at M2 when producers create artifact families.
 
 ## Rejected Alternatives
 
@@ -138,5 +184,6 @@ Evals live at `klaude-plugin/skills/review-architecture/evals/<name>/{eval.json,
 - **Role-axis execution units** — under-scoped, no eval surface.
 - **Five merged dimensions** (blast-radius + idempotency in one) — muddy eval signal (§5).
 - **Hidden extraction step** — collapses two failure modes into one (§2b).
-- **Call-graph evidence for boundaries** — LLM-intractable; use static dependency manifests (§5.1).
+- **Call-graph evidence for boundaries** — LLM-intractable; use static dependency manifests (§5, dimension 1).
+- **Absence-of-evidence as an implicit mode signal** — treating a missing mechanism as greenfield excuses every violation; treating it as a violation flags every proposal. Replaced by the explicit anchor rule (§5).
 - **Pass 2 as a peer topology dimension** — breaks the Pass-1 map-reduce contract (§6).

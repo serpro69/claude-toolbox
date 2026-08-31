@@ -50,7 +50,7 @@ Architecture-implement's output = feature-design's *optional* input. This reuses
 
 **M3 — the nested flow.** `review-architecture` (M1) + producers (M2) + the architecture-implement hand-off that seeds feature-`design`. Formalizes the §4 nesting.
 
-**M4 (optional) — architecture as a profile phase.** Profiles contribute an `architecture/` phase and `review-architecture` does profile detection. Decide *after* M1 ships (see [review/design.md](review/design.md) §7 Profiles).
+**M4 (optional) — architecture as a profile phase.** Profiles contribute an `architecture/` phase and `review-architecture` does profile detection. Decide *after* M1 ships (see [review/design.md](review/design.md) §8 Profiles).
 
 ## 6. Artifact homes
 

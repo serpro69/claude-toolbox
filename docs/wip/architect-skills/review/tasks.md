@@ -2,7 +2,7 @@
 
 > **Design:** [design.md](design.md) · **Implementation:** [implementation.md](implementation.md) · **Umbrella:** [../design.md](../design.md)
 > **Status:** pending
-> **Not Doing:** producer skills (decompose/decide/model); nested flow & architecture-implement hand-off; profile `architecture/` phase + profile detection; behavioral/runtime verification; security architecture (→ PAL `secaudit`); writing broader architecture docs.
+> **Not Doing:** producer skills (decompose/decide/model); nested flow & architecture-implement hand-off; profile `architecture/` phase + profile detection; behavioral/runtime verification; security architecture (→ PAL `secaudit`); writing broader architecture docs; multi-artifact invocations & cross-artifact consistency (single artifact per invocation).
 
 ---
 
@@ -16,10 +16,11 @@
 **Docs:** [design.md §2](design.md) · [implementation.md — Build order 1](implementation.md)
 
 - [ ] Create `klaude-plugin/skills/review-architecture/SKILL.md` with frontmatter (`name`, trigger-keyword-first `description` ≤1024 soft/1536 hard chars) and a Workflow section carrying the ADR-0004 mandatory-order directive.
-- [ ] Create `klaude-plugin/skills/review-architecture/input-contract.md` (accepted artifact types; diagram-with-prose rule; verbal/diagram-only rejection with actionable message).
+- [ ] Create `klaude-plugin/skills/review-architecture/input-contract.md` (accepted artifact types; single-artifact-per-invocation rule; diagram-with-prose rule; verbal/diagram-only rejection with actionable message).
+- [ ] Create `klaude-plugin/skills/review-architecture/output-contract.md` (invocation/scope; report structure — Claim Set, verdicts by dimension, Not Reviewed, Pass 2 findings; verdict vocabulary + severity mapping per design §7).
 - [ ] Create `klaude-plugin/agents/architecture-reviewer.md` — read-only tools (`Read`/`Grep`/`Glob`/`mcp__capy__capy_search`), role-named, restates instruction-before-action rule, `## Plugin Root` injection.
-- [ ] Add `review-architecture` to `EXPECTED_SKILLS` in `test/test-plugin-structure.sh`; decide on `commands/` pair by mirroring existing review skills, updating `EXPECTED_COMMANDS` if added.
-- [ ] **verify:** invoke on a verbal-only input → rejected w/ message; on a real ADR → accepted; `bash test/test-plugin-structure.sh` green.
+- [ ] Add `review-architecture` to `EXPECTED_SKILLS` in `test/test-plugin-structure.sh`. No command pair in M1 (decided — see implementation.md Orientation); `EXPECTED_COMMANDS` untouched.
+- [ ] **verify:** invoke on a verbal-only input → rejected w/ message; on two ADRs at once → rejected (single-artifact rule); on a real ADR → accepted; `bash test/test-plugin-structure.sh` green.
 
 ## Task 2 — Pass 0: claim extraction + recall eval
 
@@ -29,9 +30,9 @@
 **Can run in parallel with:** —
 **Docs:** [design.md §4](design.md) · [implementation.md — Build order 2](implementation.md)
 
-- [ ] Create `pass0-extraction.md` — `{claim, implicated-evidence-location}` schema, three sub-metrics (precision/recall/location), structural-slot heuristics per artifact type.
-- [ ] Build eval `evals/pass0-extraction-recall/` — artifact fixture + gold claim-set in `assertions[]`.
-- [ ] **verify:** run the eval; extractor emits a claim-set; grader set-diffs against gold; precision/recall/location reported. Regression check: a fabricated claim is caught by precision grading.
+- [ ] Create `pass0-extraction.md` — full claim schema (`id`/`claim`/`source_span`/`dimension`/`tense`/`evidence_class`), repo-blind rule, four sub-metrics (precision/recall/evidence-class/routing), structural-slot heuristics per artifact type.
+- [ ] Build eval `evals/pass0-extraction-recall/` — artifact fixture + `gold-claims.json` in `test-files/`; `assertions[]` bullets reference gold entries.
+- [ ] **verify:** run the eval; extractor emits a claim-set; grader checks each gold entry PASS/FAIL; precision/recall/evidence-class/routing reported. Regression checks: a fabricated claim is caught by precision grading; a misrouted `dimension`/`tense` is caught by routing grading.
 
 ## Task 3 — Pass 1: engine + dimensions 1–3 (Boundaries, Data Ownership, NFR)
 
@@ -41,9 +42,9 @@
 **Can run in parallel with:** —
 **Docs:** [design.md §5](design.md) · [implementation.md — Build order 3](implementation.md)
 
-- [ ] Create `pass1-topology.md` with the reality-mode vs internal-soundness-mode decision and dimensions 1–3, each with inline evidence-gathering examples (profile-substitute).
-- [ ] Build evals `evals/pass1-boundary-violation/` (manifest with a real forbidden dependency) and `evals/pass1-greenfield-fallback/` (forward-looking claims, no code).
-- [ ] **verify:** boundary violation caught against a static manifest; greenfield claims fall back to internal-soundness (not flagged as failures).
+- [ ] Create `pass1-topology.md` with the anchor-rule mode decision (tense + anchor existence → reality / internal-soundness / dangling-anchor) and dimensions 1–3, each with inline evidence-gathering examples (profile-substitute).
+- [ ] Build evals `evals/pass1-boundary-violation/` (manifest with a real forbidden dependency), `evals/pass1-greenfield-fallback/` (forward-looking claims, no code), and `evals/pass1-brownfield-proposed/` (existing repo + mixed `future` proposal / `present` violation / dangling-anchor claims).
+- [ ] **verify:** boundary violation caught against a static manifest; greenfield `future` claims fall back to internal-soundness (not flagged as failures); brownfield fixture discriminates violation vs proposal vs dangling-anchor.
 
 ## Task 4 — Pass 1: dimensions 4–6 (Failure Isolation, State Consistency, Evolution)
 
