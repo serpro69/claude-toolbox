@@ -44,7 +44,7 @@ This ordering is load-bearing (ADR 0004), not stylistic: with the artifact text 
    - the procedure files to read, by plugin-root path: `../../skills/review-architecture/pass0-extraction.md`, `../../skills/review-architecture/pass1-topology.md`, `../../skills/review-architecture/pass2-soundness.md`, and `../../skills/review-architecture/output-contract.md`;
    - the resolved `## Plugin Root` absolute path.
 
-3. **Present** — relay the agent's report per [output-contract.md](output-contract.md): the verbatim Claim Set, per-dimension verdicts, the Not Reviewed section (`delegated`/`unrouted` claims), and Pass 2 findings, with the verdict→severity mapping applied. Then confirm next steps with the user.
+3. **Present** — relay the agent's report **verbatim** per [output-contract.md](output-contract.md) — do not summarize, compress, or re-narrate it: the full Claim Set table, per-dimension verdicts, the Not Reviewed section (`delegated`/`unrouted` claims), and Pass 2 findings, with the verdict→severity mapping applied. A summarized relay destroys the inspectable intermediate artifact the Claim Set exists to be (the read-only agent has no other home for it). Then confirm next steps with the user.
 
 ## Invocation
 
