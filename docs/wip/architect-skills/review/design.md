@@ -114,7 +114,7 @@ The six dimensions (`claim class → evidence source → greenfield fallback`):
 
 **Not a peer of the six topology dimensions — it has no reality branch.** It runs only in internal-soundness mode: it grades the artifact's *reasoning* against the artifact's *own stated context*:
 
-- Are the mechanisms chosen in Pass 1 appropriate **given the constraints the document itself states**? (Doc claims write-heavy but specifies a write-through cache with no stale-read mitigation → fails.)
+- Are the mechanisms chosen in Pass 1 appropriate **given the constraints the document itself states**? (Doc claims write-heavy but specifies a write-through cache → fails: a read-optimizing cache taxes every write to serve a minority read path. *The original "with no stale-read mitigation" gloss is imprecise — write-through writes cache and store synchronously, so it never serves stale reads; the clash is read-optimizer-vs-write-heavy. The M1 eval builds it that way.*)
 - Are one-way vs two-way doors identified, and do irreversible decisions carry proportional justification?
 
 Why a separate pass, not a seventh row: Pass 1 is a strict `extract → grep bounded evidence → grade` loop; Pass 2 needs whole-artifact context and has no greppable evidence. Forcing it into Pass 1's schema wrecks the prompt (the model hunting "grep evidence" for a philosophical trade-off). Separation also keeps evals clean: **Pass 1 evals test extraction+verification; Pass 2 evals test judgment.** "Appropriateness" — the highest-value architectural judgment — lives here, scoped to *stated context* because true appropriateness (write-heavy vs read-heavy in reality) needs live profiling the agent cannot do.

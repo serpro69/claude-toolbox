@@ -61,15 +61,15 @@
 
 ## Task 5 — Pass 2: decision soundness & reversibility
 
-**Status:** pending
+**Status:** done
 **Size:** S
 **Depends on:** 2
 **Can run in parallel with:** 4
 **Docs:** [design.md §6](design.md) · [implementation.md — Build order 5](implementation.md)
 
-- [ ] Create `pass2-soundness.md` — appropriateness-against-stated-context + one-way/two-way door + proportional-justification procedure; internal-soundness-only (no reality branch).
-- [ ] Build eval `evals/pass2-inappropriate-mechanism/` (write-heavy + write-through cache, no stale-read mitigation).
-- [ ] **verify:** the mismatch is flagged; a context-appropriate choice is not.
+- [x] Create `pass2-soundness.md` — appropriateness-against-stated-context + one-way/two-way door + proportional-justification procedure; internal-soundness-only (no reality branch). (Made the input scope explicit — Pass 2 grades ALL decision-bearing claims, not only `pass2`-routed ones, per design §6; added the stated-context "no finding without a quotable constraint" guard and the P1→P0 escalation coupling to Pass 1.)
+- [x] Build eval `evals/pass2-inappropriate-mechanism/` (write-heavy ADR + write-through cache). Proposed ADR (all `future` → Pass 1 internal-soundness, no repo) so the eval isolates Pass 2 judgment; three decisions — write-through cache (appropriateness P1), shard-key with no reversibility justification (reversibility P2), bounded admission queue (negative control). Grader-only `expected-findings.json` excluded from `files[]`.
+- [x] **verify:** the mismatch is flagged; a context-appropriate choice is not. (JSON valid; full `test/test-*.sh` suite green; `make plugin-graph` validate clean; `make generate-kodex` fresh. No automated eval harness — the behavioral flag/no-flag run is graded by a reviewer/future harness per the eval convention. Isolated `/kk:review-code` applied — see Task 5 note.)
 
 ## Task 6 — Regression eval, Codex parity, tests, docs (final verification)
 
@@ -80,6 +80,7 @@
 **Docs:** [implementation.md — Build order 6 + Conventions checklist](implementation.md)
 
 - [ ] Build eval `evals/regression-clean-artifact/` — sound artifact matching its `test-files/`; asserts no findings.
+- [ ] **Pass 2 coverage gap (deferred from Task 5 review).** The `pass2-inappropriate-mechanism` fixture exercises appropriateness (F1) and reversibility (F2), but two Pass 2 paths are unexercised: (a) a *purely* rationale/trade-off claim routed to `pass2` (Inputs bullet 2 of `pass2-soundness.md`), and (b) the **P1→P0 escalation** of a Pass 1 `violated` verdict whose decision Pass 2 classifies a one-way door — which needs a repo (a real `violated`) plus a one-way-door decision in the same artifact. Add a dedicated fixture (or extend the regression/brownfield fixtures) to cover both, or explicitly document them as untested in M1.
 - [ ] **Oracle-staging convention (deferred from Task 4 review).** Every eval's grader-only oracle (`expected-verdicts.json`, `gold-claims.json`) currently lives *inside* `test-files/` and is only kept out of `eval.json` `files[]`. A harness that stages the whole `test-files/` directory (per the eval-running convention in root `CLAUDE.md` §Skill evaluations) would copy the oracle alongside the artifact, leaking answers to the model under test. Pre-existing across all evals (`pass0-extraction-recall`, `pass1-boundary-violation`, `pass1-greenfield-fallback`, `pass1-brownfield-proposed`, `pass1-independent-4-5`) — not introduced by Task 4. **Fix:** move oracles out of `test-files/` (e.g. a sibling `oracle/` dir) and update the eval convention + each `eval.json` `description`. Confirm nothing references the old path first.
 - [ ] Run `make generate-kodex`; confirm `git diff --exit-code kodex-plugin/ .codex/agents/` is clean.
 - [ ] Run `make plugin-graph` (broken-link/orphan gate) and `bash test/test-plugin-structure.sh` — both green.
