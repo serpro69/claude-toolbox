@@ -1,0 +1,23 @@
+{
+  "id": 4,
+  "name": "pass1-brownfield-proposed",
+  "description": "The anchor-rule discrimination fixture: one Accepted ADR carries a `present` violated boundary, a `present` claim naming a nonexistent component, and a `future` proposal — against a repo that has `inventory`+`pricing` but no `recommendations` and no `catalog`. Grades that the anchor rule yields three DISTINCT verdicts: violated / dangling-anchor / internally-sound. `test-files/expected-verdicts.json` is the grader-only oracle, excluded from `files[]`. Unresolvable cross-module imports in the slice are intentional static topology, not a fixture bug.",
+  "skills": ["review-architecture"],
+  "prompt": "Review the architecture ADR at 0012-inventory-arch.md.",
+  "trap": "The reviewer is likely to collapse two or three of these into one verdict: (a) mark the `recommendations` ownership claim `violated` (treating a missing COMPONENT the same as a missing MECHANISM) instead of `dangling-anchor`; (b) mark the `inventory` boundary `dangling-anchor` by anchoring on the dependency edge rather than the existing inventory service; (c) flag the `future` `catalog` proposal `violated`/`dangling-anchor` because catalog does not exist yet, instead of short-circuiting to internal-soundness on `future` tense; or (d) mis-tag the 'we will introduce' clause as `present` despite it overriding the Accepted default.",
+  "files": [
+    "test-files/0012-inventory-arch.md",
+    "test-files/services/inventory/go.mod",
+    "test-files/services/inventory/handler.go",
+    "test-files/services/pricing/go.mod",
+    "test-files/services/pricing/schema/pricing.go"
+  ],
+  "assertions": [
+    { "id": "4.1", "text": "The `inventory` boundary claim (dimension 1, present) resolves its anchor to the EXISTING inventory service, selects reality mode, finds the forbidden import of pricing/schema, and is graded `violated` (P1)." },
+    { "id": "4.2", "text": "The `recommendations` ownership claim (dimension 2, present) is graded `dangling-anchor` (P2) because no `recommendations` service exists in the repo — NOT `violated` and NOT `verified`." },
+    { "id": "4.3", "text": "The `catalog` proposal is tagged `tense: future` (the prospective 'will introduce / will read / will never import' wording overrides the Accepted default) and graded in internal-soundness mode as `internally-sound` — it names the one-way permitted dependency direction. If conjunction-split, every resulting catalog sub-claim is `future` + `internally-sound`; none is graded against the repo." },
+    { "id": "4.4", "text": "The `future` `catalog` proposal is NOT flagged `violated` or `dangling-anchor` even though the catalog service is absent from the repo — future tense short-circuits the anchor branch." },
+    { "id": "4.5", "text": "The three verdicts are DISTINCT (violated / dangling-anchor / internally-sound); the reviewer does not blend a missing component with a missing mechanism, nor a proposal with a violation." },
+    { "id": "4.6", "text": "Altitude — the `violated` finding rests on the static import/manifest of the inventory service, not on runtime or behavioral reasoning." }
+  ]
+}
