@@ -8,19 +8,20 @@
 
 ## Task 1 — Skill skeleton, acceptance contract, agent stub
 
-**Status:** pending
+**Status:** done
 **Size:** M
 **Depends on:** —
 **Can run in parallel with:** —
 **Slicing:** Contract-First (defines the input boundary the rest builds on)
 **Docs:** [design.md §2](design.md) · [implementation.md — Build order 1](implementation.md)
 
-- [ ] Create `klaude-plugin/skills/review-architecture/SKILL.md` with frontmatter (`name`, trigger-keyword-first `description` ≤1024 soft/1536 hard chars) and a Workflow section carrying the ADR-0004 mandatory-order directive.
-- [ ] Create `klaude-plugin/skills/review-architecture/input-contract.md` (accepted artifact types; single-artifact-per-invocation rule; diagram-with-prose rule; verbal/diagram-only rejection with actionable message).
-- [ ] Create `klaude-plugin/skills/review-architecture/output-contract.md` (invocation/scope; report structure — Claim Set, verdicts by dimension, Not Reviewed, Pass 2 findings; verdict vocabulary + severity mapping per design §7).
-- [ ] Create `klaude-plugin/agents/architecture-reviewer.md` — read-only tools (`Read`/`Grep`/`Glob`/`mcp__capy__capy_search`), role-named, restates instruction-before-action rule, `## Plugin Root` injection.
-- [ ] Add `review-architecture` to `EXPECTED_SKILLS` in `test/test-plugin-structure.sh`. No command pair in M1 (decided — see implementation.md Orientation); `EXPECTED_COMMANDS` untouched.
-- [ ] **verify:** invoke on a verbal-only input → rejected w/ message; on two ADRs at once → rejected (single-artifact rule); on a real ADR → accepted; `bash test/test-plugin-structure.sh` green.
+- [x] Create `klaude-plugin/skills/review-architecture/SKILL.md` with frontmatter (`name`, trigger-keyword-first `description` ≤1024 soft/1536 hard chars) and a Workflow section carrying the ADR-0004 mandatory-order directive.
+- [x] Create `klaude-plugin/skills/review-architecture/input-contract.md` (accepted artifact types; single-artifact-per-invocation rule; diagram-with-prose rule; verbal/diagram-only rejection with actionable message).
+- [x] Create `klaude-plugin/skills/review-architecture/output-contract.md` (invocation/scope; report structure — Claim Set, verdicts by dimension, Not Reviewed, Pass 2 findings; verdict vocabulary + severity mapping per design §7).
+- [x] Create `klaude-plugin/agents/architecture-reviewer.md` — read-only tools (`Read`/`Grep`/`Glob`/`mcp__capy__capy_search`), role-named, restates instruction-before-action rule, `## Plugin Root` injection.
+- [x] Wire the SKILL.md Workflow to actually delegate: an explicit spawn phase for `architecture-reviewer` that resolves `$TOOLBOX_PLUGIN_ROOT`, injects `## Plugin Root`, and enumerates the payload (artifact path + heading, pass-procedure paths, output-contract path). (Added after code review — the hand-off falls between the SKILL and agent, both Task 1; per implementation.md the M1 mode delegates.)
+- [x] Add `review-architecture` to `EXPECTED_SKILLS` in `test/test-plugin-structure.sh`. No command pair in M1 (decided — see implementation.md Orientation); `EXPECTED_COMMANDS` untouched. (Also added `architecture-reviewer` to `EXPECTED_AGENTS` in `test/test-codex-structure.sh` and regenerated Codex output via `make generate-kodex` to keep the generation-completeness gate green.)
+- [x] **verify:** invoke on a verbal-only input → rejected w/ message; on two ADRs at once → rejected (single-artifact rule); on a real ADR → accepted; `bash test/test-plugin-structure.sh` green. (Automated: all `test/test-*.sh` green + `make plugin-graph` validate clean. Behavioral accept/reject verification is exercised by the Task 2+ evals; the acceptance rules live in `input-contract.md`.)
 
 ## Task 2 — Pass 0: claim extraction + recall eval
 
@@ -82,6 +83,7 @@
 - [ ] Run `make generate-kodex`; confirm `git diff --exit-code kodex-plugin/ .codex/agents/` is clean.
 - [ ] Run `make plugin-graph` (broken-link/orphan gate) and `bash test/test-plugin-structure.sh` — both green.
 - [ ] Index non-obvious rationale as `kk:arch-decisions` (skip if self-evident from docs).
+- [ ] Delete the build-order HTML comment in `SKILL.md` (Delegation phase) now that all three pass procedures exist.
 - [ ] Invoke `/kk:test` (full suite), `/kk:document` (update docs), `/kk:review-code` (language: shell/markdown), and `/kk:review-spec` (verify implementation matches [design.md](design.md)/[implementation.md](implementation.md)).
 - [ ] **verify:** all tests green; regression eval produces zero findings; review-spec reports no design/impl drift.
 

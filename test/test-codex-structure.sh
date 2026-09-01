@@ -7,7 +7,7 @@ source "$SCRIPT_DIR/helpers.sh"
 
 REPO_ROOT="$(cd "$SCRIPT_DIR/.." && pwd)"
 
-EXPECTED_AGENTS=(code-reviewer design-reviewer eval-grader profile-resolver spec-reviewer)
+EXPECTED_AGENTS=(architecture-reviewer code-reviewer design-reviewer eval-grader profile-resolver spec-reviewer)
 
 # Helper: validate TOML using whatever python+library is available
 validate_toml() {
@@ -83,7 +83,7 @@ fi
 
 log_section "Section 4: Codex agents"
 
-log_test "All five agent TOML files exist"
+log_test "All six agent TOML files exist"
 for agent in "${EXPECTED_AGENTS[@]}"; do
   assert_file_exists "$REPO_ROOT/.codex/agents/$agent.toml" "Agent $agent.toml exists"
 done
