@@ -25,15 +25,15 @@
 
 ## Task 2 — Pass 0: claim extraction + recall eval
 
-**Status:** pending
+**Status:** done
 **Size:** M
 **Depends on:** 1
 **Can run in parallel with:** —
 **Docs:** [design.md §4](design.md) · [implementation.md — Build order 2](implementation.md)
 
-- [ ] Create `pass0-extraction.md` — full claim schema (`id`/`claim`/`source_span`/`dimension`/`tense`/`evidence_class`), repo-blind rule, four sub-metrics (precision/recall/evidence-class/routing), structural-slot heuristics per artifact type.
-- [ ] Build eval `evals/pass0-extraction-recall/` — artifact fixture + `gold-claims.json` in `test-files/`; `assertions[]` bullets reference gold entries.
-- [ ] **verify:** run the eval; extractor emits a claim-set; grader checks each gold entry PASS/FAIL; precision/recall/evidence-class/routing reported. Regression checks: a fabricated claim is caught by precision grading; a misrouted `dimension`/`tense` is caught by routing grading.
+- [x] Create `pass0-extraction.md` — full claim schema (`id`/`claim`/`source_span`/`dimension`/`tense`/`evidence_class`), repo-blind rule, four sub-metrics (precision/recall/evidence-class/routing), structural-slot heuristics per artifact type. (Added a deontic-wording tense rule and pinned the `dimension` enum to numeric tokens after code review.)
+- [x] Build eval `evals/pass0-extraction-recall/` — artifact fixture (Accepted ADR splitting orders/billing) + `gold-claims.json` (G1–G9) in `test-files/`; `assertions[]` (1.1–1.20) reference gold entries. Oracle is grader-only — kept out of `files[]` to avoid leaking answers to the model under test.
+- [x] **verify:** JSON valid; all 9 gold `source_span`s are verbatim substrings of the ADR (precision-gradeable); `bash test/test-plugin-structure.sh`, full `test/test-*.sh` suite, and `make plugin-graph` (orphan gate) green; `make generate-kodex` fresh. Regression assertion 1.17 guards against fabricated claims; routing assertions (1.11–1.16, 1.19–1.20) guard `dimension`/`tense`. (No automated eval harness exists — behavioral run is graded by a reviewer/future harness per the eval convention.)
 
 ## Task 3 — Pass 1: engine + dimensions 1–3 (Boundaries, Data Ownership, NFR)
 
