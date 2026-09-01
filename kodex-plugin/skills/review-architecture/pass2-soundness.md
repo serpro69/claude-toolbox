@@ -59,10 +59,14 @@ Findings:
 
 Reversibility is where a Pass 1 `violated` verdict can escalate. When a claim graded `violated` in Pass 1 rests on a decision Pass 2 classifies as a **one-way door**, the violation's severity escalates **P1 → P0** (per [output-contract.md](output-contract.md)): shipping the wrong irreversible mechanism is materially worse than shipping the wrong reversible one. Flag the escalation explicitly, naming both the Pass 1 claim and the door classification.
 
+**Which decision a violated claim "rests on."** The governing decision is the one the claimed mechanism exists to enforce, contain, or implement — never the enforcement convention itself. Trace the violated claim to the artifact decision it protects, and classify *that* decision's door. This matters most for containment and isolation claims: repairing the guard is almost always cheap (an import to reroute, a convention to re-apply), so classifying the guard's own repair cost makes every containment violation look like a two-way door and the escalation never fires — an inversion of the rule. A breached guard around a one-way door is exactly the P0 case: the violation is silently widening a commitment the artifact itself says cannot be walked back, and the cheapness of the repair is an argument for fixing it now, not for downgrading it.
+
 ## Self-check before emitting a Pass 2 finding
 
 - **Appropriateness:** can you quote the stated constraint *and* the mechanism? If you cannot quote the constraint from the artifact, drop the finding — you are importing an outside assumption, not grading stated context.
 - **Reversibility:** did you first classify the door? A two-way door is never a finding, however thin its justification. Only one-way doors demand proportional justification.
+- **Escalation coupling:** for each Pass 1 `violated` verdict, did you trace the claim to the decision its mechanism protects — not the enforcement convention — and check that decision's door classification before settling the severity?
+- **Coverage:** does every `pass2`-routed claim from the claim-set appear somewhere in your output? A `pass2` claim Pass 1 skipped by design and Pass 2 never mentions has silently fallen through both passes.
 - **Altitude:** did you open a source file or resolve a repo path? If so you have left Pass 2 — this pass grades the artifact's reasoning against its own words, nothing else.
 
 ## Output
@@ -71,5 +75,7 @@ Feed the results into the report's **Pass 2 — Decision Soundness & Reversibili
 
 - **Appropriateness** — mechanism-vs-stated-context findings (each with the quoted constraint + mechanism, P1), or "no mismatch found."
 - **Reversibility** — for each decision-bearing claim, its **door classification** (one-way / two-way) — record findings *and* sound doors alike, so a justified one-way door leaves an auditable trace. Then the findings (irreversible decisions lacking proportional justification, P2) and any P1→P0 escalation of a Pass 1 `violated` verdict whose decision this pass classified a one-way door. Use "n/a" only when the artifact makes no decisions to classify.
+
+**Account for every `pass2`-routed claim explicitly.** Each one appears at least once in this section — as a door classification, an appropriateness note, or an explicit "consistent with stated context — no finding." Pass 1 skips these claims by design, so a `pass2` claim this section never mentions has been reviewed by nobody; fail-loud forbids that silence.
 
 These are findings and door classifications, not per-claim topology verdicts — do not emit `verified`/`violated`/etc. here.
