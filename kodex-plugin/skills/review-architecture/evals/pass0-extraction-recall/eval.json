@@ -1,0 +1,33 @@
+{
+  "id": 1,
+  "name": "pass0-extraction-recall",
+  "description": "An Accepted ADR splitting orders/billing is normalized into a claim-set; grades Pass 0 on precision, recall (per gold-claims.json entry), evidence-class, and routing (dimension + tense). `test-files/gold-claims.json` is the grader-only recall oracle — it is NOT staged as skill input (it is deliberately absent from `files`); the skill is invoked with the ADR path alone and Pass 0 is repo-blind.",
+  "skills": ["review-architecture"],
+  "prompt": "Review the architecture ADR at 0007-orders-billing-split.md.",
+  "trap": "The extractor is likely to (a) fail to split the single compound sentence 'A is sole owner, and billing must not depend on the schema' into two claims — G1 (dim 2) and G2 (dim 1); (b) inherit the Accepted-status `present` default for G6 and miss that 'will expose' makes it `future`, or conversely mis-tag the deontic 'must not' in G2 as `future` when it is a `present` invariant; (c) route the mTLS claim (G5) into a topology dimension instead of `delegated`; (d) force-fit the reversibility claim (G7 → pass2) or the trunk-based-development claim (G8 → unrouted) into a dimension; (e) skip the Context section entirely, missing G9 (the structural-slot heuristic requires Context to yield a claim); or (f) resolve evidence classes to concrete repo paths, violating the repo-blind rule.",
+  "files": [
+    "test-files/0007-orders-billing-split.md"
+  ],
+  "assertions": [
+    { "id": "1.1", "text": "Precision — every extracted claim cites a `source_span` that is an actual quote/location in the ADR; no claim is fabricated (self-grounding holds for the whole set)." },
+    { "id": "1.2", "text": "Recall — G1 (orders is the sole mutating owner of Order) is extracted." },
+    { "id": "1.3", "text": "Recall + conjunction split — G2 (billing must not depend on the order schema) is extracted as a SEPARATE claim from G1, not merged into one ownership+boundary claim." },
+    { "id": "1.4", "text": "Recall — G3 (Redis read-through cache for the p99 NFR) is extracted." },
+    { "id": "1.5", "text": "Recall — G4 (idempotency-key unique constraint on order creation) is extracted." },
+    { "id": "1.6", "text": "Recall — G5 (mTLS on service-to-service orders API calls) is extracted." },
+    { "id": "1.7", "text": "Recall — G6 (the `/v2/` versioned route) is extracted." },
+    { "id": "1.8", "text": "Recall — G7 (Redis-vs-in-process is a two-way door) is extracted." },
+    { "id": "1.9", "text": "Recall — G8 (team adopts trunk-based development) is extracted, not silently dropped as non-architectural." },
+    { "id": "1.10", "text": "Evidence-class / repo-blind — each dimension-routed claim's `evidence_class` names an ABSTRACT class (e.g. 'dependency manifests of the billing service', 'unique constraint on idempotency_key'), never a resolved concrete repo file path." },
+    { "id": "1.11", "text": "Routing — G1 → dimension 2 (Data Ownership) and G2 → dimension 1 (Structural Boundaries); the two are not swapped and not blended." },
+    { "id": "1.12", "text": "Routing — G3 → dimension 3 (NFR Mechanisms) and G4 → dimension 5 (State Consistency), kept distinct." },
+    { "id": "1.13", "text": "Routing — G5 → `delegated` (security), NOT any Pass 1 dimension; it surfaces under Not Reviewed with a `secaudit` pointer." },
+    { "id": "1.14", "text": "Tense override — G6 is tagged `tense: future` because of 'will expose', despite the ADR Status being Accepted (default `present`); it is NOT forced to `present`." },
+    { "id": "1.15", "text": "Routing — G7 → `pass2` and G8 → `unrouted`; neither is force-fitted into a topology dimension." },
+    { "id": "1.16", "text": "Tense — G1–G5 are tagged `present`; in particular G2's deontic 'must not depend' is `present` (an invariant of the built system), NOT `future`." },
+    { "id": "1.17", "text": "Regression — the extractor does NOT invent claims absent from the ADR (e.g. no message-queue, saga, or sharding claim that the text never asserts)." },
+    { "id": "1.18", "text": "Recall + Context slot — G9 (billing must never be on the critical path for order writes) is extracted from the ADR Context section, exercising the structural-slot heuristic that requires Context to yield >=1 claim, and routes to dimension 4 (Failure Isolation)." },
+    { "id": "1.19", "text": "Routing — G6 is tagged `dimension: 6` (Evolution & Versioning), not merely tense-checked." },
+    { "id": "1.20", "text": "Tense — G7 (reversibility statement) is `present` and G8 (trunk-based development) is `future`." }
+  ]
+}
