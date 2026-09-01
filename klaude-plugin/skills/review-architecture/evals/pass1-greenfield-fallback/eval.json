@@ -1,0 +1,19 @@
+{
+  "id": 3,
+  "name": "pass1-greenfield-fallback",
+  "description": "Pass 1 anchor-rule greenfield branch: a Proposed ADR with only forward-looking claims and NO code staged. Grades that every `future` claim falls into internal-soundness mode (no `violated`/`dangling-anchor` from absent mechanisms) while still discriminating well-formed proposals (`internally-sound`) from underspecified ones (`ill-formed`). `test-files/expected-verdicts.json` is the grader-only oracle, excluded from `files[]`.",
+  "skills": ["review-architecture"],
+  "prompt": "Review the architecture ADR at 0011-read-model-proposal.md.",
+  "trap": "The reviewer is likely to (a) grade the proposed mechanisms against the empty repo, marking them `violated` or `dangling-anchor` because the read-model service / Redis cache do not exist yet — the exact toothless-vs-trigger-happy failure the anchor rule prevents; (b) mis-tag the Proposed-status 'will' claims as `present`, forcing them onto the reality branch; or (c) over-correct and rubber-stamp EVERY proposal as `internally-sound`, missing that 'strictly isolated' (no permitted direction) and 'use a cache to stay responsive' (mechanism named but NFR unquantified) are `ill-formed`.",
+  "files": [
+    "test-files/0011-read-model-proposal.md"
+  ],
+  "assertions": [
+    { "id": "3.1", "text": "Every extracted claim is tagged `tense: future` (Status: Proposed + prospective 'will' wording)." },
+    { "id": "3.2", "text": "Every claim is graded in internal-soundness mode — the anchor rule short-circuits on `future` before resolving any anchor or grepping the repo." },
+    { "id": "3.3", "text": "Regression — NO claim is marked `violated` or `dangling-anchor` merely because its mechanism/component is absent from the (empty) staged repo. This is the core greenfield-fallback behavior." },
+    { "id": "3.4", "text": "The read-model boundary proposal (names the permitted dependency direction) is `internally-sound`; the data-ownership proposal (one named owner + defined read path) is `internally-sound`." },
+    { "id": "3.5", "text": "The 'analytics ... strictly isolated at the dependency tier' claim routes to dimension 1 (on the isolation keyword) and is `ill-formed` (P2) — a boundary proposal naming no permitted dependency direction is rejected even in internal-soundness mode. It must NOT be dropped to `unrouted`." },
+    { "id": "3.6", "text": "The NFR proposals discriminate on the QUANTIFIED requirement: 'Redis-backed projection cache, p95 < 100ms' (mechanism + quantity) is `internally-sound`, while 'will use a cache to stay responsive' (mechanism named, but no quantified NFR) routes to dimension 3 and is `ill-formed`." }
+  ]
+}

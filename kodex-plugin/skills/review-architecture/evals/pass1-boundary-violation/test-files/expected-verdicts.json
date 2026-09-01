@@ -1,0 +1,29 @@
+{
+  "oracle_note": "Grader-only Pass 1 verdict oracle. Deliberately absent from eval.json `files[]` so it is NOT staged as skill input — the reviewer sees only the ADR + the services/ slice and must reach these verdicts itself. Extracted claim ids `Cn` are matched to expected entries `Vn` by asserted content, not by id number. Both boundary claims are `present` (Accepted status + deontic 'must not depend'), so both take the reality branch of the anchor rule (anchor exists → reality mode).",
+  "expected": [
+    {
+      "id": "V1",
+      "claim": "The `payments` service must not depend on the `ledger` schema module directly.",
+      "dimension": "1",
+      "tense": "present",
+      "anchor": "services/payments/ (exists)",
+      "mode": "reality",
+      "verdict": "violated",
+      "severity": "P1",
+      "evidence": "services/payments/handler.go imports github.com/acme/ledger/schema; services/payments/go.mod requires github.com/acme/ledger — a forbidden static dependency edge.",
+      "note": "The anchor is the payments SERVICE (which exists), not the dependency edge; the mechanism (isolation) is contradicted inside an existing anchor → violated, NOT dangling-anchor."
+    },
+    {
+      "id": "V2",
+      "claim": "The `reporting` service must not depend on the `payments` schema module directly.",
+      "dimension": "1",
+      "tense": "present",
+      "anchor": "services/reporting/ (exists)",
+      "mode": "reality",
+      "verdict": "verified",
+      "severity": "n/a",
+      "evidence": "services/reporting/report.go imports github.com/acme/payments/api (the published API). The forbidden target — github.com/acme/payments/schema — exists in the slice (services/payments/schema/payment.go) but reporting does NOT import it; go.mod's `require github.com/acme/payments` is for the api package, an allowed edge.",
+      "note": "Proves the reviewer discriminates a satisfied boundary from a violated one — it must inspect the imported PACKAGE (api vs schema), not just the module-level require, and must NOT fire on every boundary claim. The contrast is real: a payments schema package is present and deliberately unimported."
+    }
+  ]
+}

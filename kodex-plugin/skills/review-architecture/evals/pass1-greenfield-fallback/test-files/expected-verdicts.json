@@ -1,0 +1,55 @@
+{
+  "oracle_note": "Grader-only Pass 1 verdict oracle. Absent from eval.json `files[]` so it is not staged. The repo staged to the reviewer contains NO code — only the Proposed ADR. Every claim is `future` (Status: Proposed + prospective 'will'), so the anchor rule short-circuits to internal-soundness mode BEFORE any anchor resolution: no claim may be `violated` or `dangling-anchor` merely because its mechanism/component is absent from the empty repo. Internal-soundness is still discriminating — well-formed claims are `internally-sound`, underspecified ones are `ill-formed`. `Vn` matched to extracted claims by content, not id.",
+  "expected": [
+    {
+      "id": "V1",
+      "claim": "Introduce a read-model service; write side will not import the read-model package; read model will consume the write side's event stream, write side never the reverse.",
+      "dimension": "1",
+      "tense": "future",
+      "mode": "internal-soundness",
+      "verdict": "internally-sound",
+      "severity": "n/a",
+      "reason": "Names the boundary AND the permitted dependency direction (read model → write-side event stream, never the reverse)."
+    },
+    {
+      "id": "V2",
+      "claim": "The read-model service will be the sole owner of the projection store; write side reads projections only through the read-model API.",
+      "dimension": "2",
+      "tense": "future",
+      "mode": "internal-soundness",
+      "verdict": "internally-sound",
+      "severity": "n/a",
+      "reason": "Exactly one named owner for the projection store, and the dependent's read path (the read-model API) is defined."
+    },
+    {
+      "id": "V3",
+      "claim": "List queries will hit a Redis-backed projection cache to keep p95 under 100ms.",
+      "dimension": "3",
+      "tense": "future",
+      "mode": "internal-soundness",
+      "verdict": "internally-sound",
+      "severity": "n/a",
+      "reason": "NFR is quantified (p95 < 100ms) AND mapped to a named mechanism (Redis-backed projection cache)."
+    },
+    {
+      "id": "V4",
+      "claim": "The `analytics` component and the write side will be strictly isolated at the dependency tier.",
+      "dimension": "1",
+      "tense": "future",
+      "mode": "internal-soundness",
+      "verdict": "ill-formed",
+      "severity": "P2",
+      "reason": "Routes to dim 1 on the 'strictly isolated at the dependency tier' keywords, but names no permitted dependency direction (which side may depend on which) — internal-soundness mode still rejects it; it is not a rubber stamp. Phrased with an explicit isolation keyword (not the vaguer 'loosely coupled') so Pass 0 routes it to dim 1 rather than `unrouted`; the Pass 1 well-formedness check on the missing direction is what this entry actually tests."
+    },
+    {
+      "id": "V5",
+      "claim": "The dashboard will use a cache to stay responsive.",
+      "dimension": "3",
+      "tense": "future",
+      "mode": "internal-soundness",
+      "verdict": "ill-formed",
+      "severity": "P2",
+      "reason": "Names a mechanism (a cache) so Pass 0 routes it to dim 3, but the NFR is not quantified — dim 3 well-formedness requires quantified AND mapped-to-a-mechanism. Isolates the 'quantified' half of the criterion, contrasting with V3 (Redis cache + p95 < 100ms → internally-sound)."
+    }
+  ]
+}
