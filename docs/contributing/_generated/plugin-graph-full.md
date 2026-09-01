@@ -3,6 +3,7 @@
 ```mermaid
 flowchart LR
 	README_md["README.md"]
+	agents_architecture_reviewer_md["agents/architecture-reviewer.md"]
 	agents_code_reviewer_md["agents/code-reviewer.md"]
 	agents_design_reviewer_md["agents/design-reviewer.md"]
 	agents_eval_grader_md["agents/eval-grader.md"]
@@ -50,6 +51,7 @@ flowchart LR
 	skills_document_["skills/document/"]
 	skills_implement_["skills/implement/"]
 	skills_merge_docs_["skills/merge-docs/"]
+	skills_review_architecture_["skills/review-architecture/"]
 	skills_review_code_["skills/review-code/"]
 	skills_review_design_["skills/review-design/"]
 	skills_review_spec_["skills/review-spec/"]
@@ -60,29 +62,8 @@ flowchart LR
 	README_md -->|skill-invocation| skills_review_code_
 	README_md -->|skill-invocation| skills_review_design_
 	README_md -->|skill-invocation| skills_test_
-	agents_code_reviewer_md -->|parameterized-nav| profiles_go_review_code_
-	agents_code_reviewer_md -->|parameterized-nav| profiles_java_review_code_
-	agents_code_reviewer_md -->|parameterized-nav| profiles_js_ts_review_code_
-	agents_code_reviewer_md -->|parameterized-nav| profiles_k8s_review_code_
-	agents_code_reviewer_md -->|parameterized-nav| profiles_kotlin_review_code_
-	agents_code_reviewer_md -->|parameterized-nav| profiles_python_review_code_
-	agents_code_reviewer_md -->|parameterized-nav| profiles_skill_md_review_code_
-	agents_profile_resolver_md -->|parameterized-nav| profiles_go_
-	agents_profile_resolver_md -->|parameterized-nav| profiles_go_review_code_
-	agents_profile_resolver_md -->|parameterized-nav| profiles_java_
-	agents_profile_resolver_md -->|parameterized-nav| profiles_java_review_code_
-	agents_profile_resolver_md -->|parameterized-nav| profiles_js_ts_
-	agents_profile_resolver_md -->|parameterized-nav| profiles_js_ts_review_code_
-	agents_profile_resolver_md -->|parameterized-nav| profiles_k8s_operator_
-	agents_profile_resolver_md -->|parameterized-nav| profiles_k8s_
-	agents_profile_resolver_md -->|parameterized-nav| profiles_k8s_review_code_
-	agents_profile_resolver_md -->|parameterized-nav| profiles_kotlin_
-	agents_profile_resolver_md -->|parameterized-nav| profiles_kotlin_review_code_
-	agents_profile_resolver_md -->|parameterized-nav| profiles_python_
-	agents_profile_resolver_md -->|parameterized-nav| profiles_python_review_code_
-	agents_profile_resolver_md -->|parameterized-nav| profiles_skill_md_
-	agents_profile_resolver_md -->|parameterized-nav| profiles_skill_md_review_code_
-	agents_profile_resolver_md -->|template-ref| skills__shared_profile_detection_md
+	agents_architecture_reviewer_md -->|skill-invocation| skills_review_code_
+	agents_architecture_reviewer_md -->|skill-invocation| skills_review_spec_
 	agents_profile_resolver_md -->|skill-invocation| skills_review_code_
 	agents_spec_reviewer_md -->|skill-invocation| skills_review_spec_
 	profiles_go_ -->|skill-invocation| skills_dependency_handling_
@@ -131,10 +112,8 @@ flowchart LR
 	skills__shared_review_scope_protocol_md -->|skill-invocation| skills_implement_
 	skills_chain_of_verification_ -->|skill-invocation| commands_chain_of_verification_
 	skills_chain_of_verification_ -->|symlink| skills__shared_capy_knowledge_protocol_md
-	skills_dependency_handling_ -->|template-ref| profiles_k8s_
 	skills_dependency_handling_ -->|symlink| skills__shared_capy_knowledge_protocol_md
 	skills_design_ -->|skill-invocation| commands_chain_of_verification_
-	skills_design_ -->|template-ref| profiles_k8s_design_
 	skills_design_ -->|symlink| skills__shared_capy_knowledge_protocol_md
 	skills_design_ -->|symlink| skills__shared_profile_detection_md
 	skills_design_ -->|skill-invocation| skills_chain_of_verification_
@@ -146,17 +125,9 @@ flowchart LR
 	skills_design_ -->|skill-invocation| skills_review_spec_
 	skills_design_ -->|skill-invocation| skills_test_
 	skills_diff_skill_ -->|symlink| skills__shared_capy_knowledge_protocol_md
-	skills_document_ -->|parameterized-nav| profiles_go_document_
-	skills_document_ -->|parameterized-nav| profiles_k8s_document_
-	skills_document_ -->|template-ref| profiles_k8s_document_
 	skills_document_ -->|symlink| skills__shared_capy_knowledge_protocol_md
 	skills_document_ -->|symlink| skills__shared_profile_detection_md
 	skills_implement_ -->|skill-invocation| commands_review_code_
-	skills_implement_ -->|parameterized-nav| profiles_go_implement_
-	skills_implement_ -->|template-ref| profiles_k8s_
-	skills_implement_ -->|parameterized-nav| profiles_k8s_implement_
-	skills_implement_ -->|template-ref| profiles_k8s_implement_
-	skills_implement_ -->|parameterized-nav| profiles_skill_md_implement_
 	skills_implement_ -->|symlink| skills__shared_capy_knowledge_protocol_md
 	skills_implement_ -->|symlink| skills__shared_profile_detection_md
 	skills_implement_ -->|skill-invocation| skills_dependency_handling_
@@ -166,6 +137,8 @@ flowchart LR
 	skills_implement_ -->|skill-invocation| skills_test_
 	skills_merge_docs_ -->|symlink| skills__shared_capy_knowledge_protocol_md
 	skills_merge_docs_ -->|markdown-link| skills_design_
+	skills_review_architecture_ -->|skill-invocation| skills_review_code_
+	skills_review_architecture_ -->|skill-invocation| skills_review_spec_
 	skills_review_code_ -->|agent-delegation| agents_code_reviewer_md
 	skills_review_code_ -->|skill-invocation| commands_review_code_
 	skills_review_code_ -->|symlink| skills__shared_capy_knowledge_protocol_md
@@ -180,23 +153,19 @@ flowchart LR
 	skills_review_design_ -->|skill-invocation| skills_implement_
 	skills_review_spec_ -->|agent-delegation| agents_spec_reviewer_md
 	skills_review_spec_ -->|skill-invocation| commands_review_spec_
-	skills_review_spec_ -->|parameterized-nav| profiles_k8s_review_spec_
 	skills_review_spec_ -->|symlink| skills__shared_capy_knowledge_protocol_md
 	skills_review_spec_ -->|symlink| skills__shared_profile_detection_md
 	skills_review_spec_ -->|symlink| skills__shared_review_scope_protocol_md
 	skills_review_spec_ -->|skill-invocation| skills_implement_
 	skills_review_spec_ -->|skill-invocation| skills_review_code_
-	skills_test_ -->|parameterized-nav| profiles_go_test_
-	skills_test_ -->|parameterized-nav| profiles_k8s_test_
-	skills_test_ -->|template-ref| profiles_k8s_test_
 	skills_test_ -->|symlink| skills__shared_capy_knowledge_protocol_md
 	skills_test_ -->|symlink| skills__shared_profile_detection_md
 	classDef skill fill:#a6cee3,color:#1a1a1a;
-	class skills_chain_of_verification_,skills_dependency_handling_,skills_design_,skills_diff_skill_,skills_document_,skills_implement_,skills_merge_docs_,skills_review_code_,skills_review_design_,skills_review_spec_,skills_test_ skill;
+	class skills_chain_of_verification_,skills_dependency_handling_,skills_design_,skills_diff_skill_,skills_document_,skills_implement_,skills_merge_docs_,skills_review_architecture_,skills_review_code_,skills_review_design_,skills_review_spec_,skills_test_ skill;
 	classDef shared fill:#ffff99,color:#1a1a1a;
 	class skills__shared_capy_knowledge_protocol_md,skills__shared_pal_codereview_invocation_md,skills__shared_profile_detection_md,skills__shared_review_scope_protocol_md shared;
 	classDef agent fill:#b2df8a,color:#1a1a1a;
-	class agents_code_reviewer_md,agents_design_reviewer_md,agents_eval_grader_md,agents_profile_resolver_md,agents_spec_reviewer_md agent;
+	class agents_architecture_reviewer_md,agents_code_reviewer_md,agents_design_reviewer_md,agents_eval_grader_md,agents_profile_resolver_md,agents_spec_reviewer_md agent;
 	classDef profile fill:#fb9a99,color:#1a1a1a;
 	class profiles_go_,profiles_java_,profiles_js_ts_,profiles_k8s_operator_,profiles_k8s_,profiles_kotlin_,profiles_python_,profiles_skill_md_ profile;
 	classDef profile_phase fill:#fdbf6f,color:#1a1a1a;

@@ -1,0 +1,40 @@
+{
+  "oracle_note": "Grader-only Pass 1 verdict oracle. Lives in the eval's grader-only `oracle/` dir — outside `test-files/` — so neither `files[]` listing nor whole-directory staging can leak it to the model under test. This is the anchor-rule discrimination fixture: three claims in one Accepted ADR must reach three DIFFERENT verdicts. The staged repo has `inventory` and `pricing` services but NO `recommendations` and NO `catalog` service. `Vn` matched to extracted claims by content, not id. All three claims route to dimensions 1-2 (the dimensions implemented in this milestone task); dimensions 4-6 land in a later task.",
+  "expected": [
+    {
+      "id": "V1",
+      "claim": "The `inventory` service must not depend on the `pricing` schema module directly.",
+      "dimension": "1",
+      "tense": "present",
+      "anchor": "services/inventory/ (exists)",
+      "mode": "reality",
+      "verdict": "violated",
+      "severity": "P1",
+      "evidence": "services/inventory/handler.go imports github.com/acme/pricing/schema; go.mod requires github.com/acme/pricing — a forbidden static edge inside an anchor that EXISTS.",
+      "note": "Anchor (inventory service) exists AND the mechanism (isolation) is contradicted inside it → violated. Contrast with V2, where the anchor itself is missing."
+    },
+    {
+      "id": "V2",
+      "claim": "The `recommendations` service is the sole mutating owner of the Recommendation entity.",
+      "dimension": "2",
+      "tense": "present",
+      "anchor": "services/recommendations/ (DOES NOT EXIST)",
+      "mode": "reality",
+      "verdict": "dangling-anchor",
+      "severity": "P2",
+      "evidence": "No `recommendations` service directory in the staged repo — the present-tense claim names a component that is not there.",
+      "note": "The anchor (the named component) is absent → dangling-anchor. This is doc drift / a false claim, NOT a violation (nothing to inspect inside a non-existent anchor) and NOT excused as greenfield (the claim is present-tense, not a proposal)."
+    },
+    {
+      "id": "V3",
+      "claim": "Introduce a `catalog` service with a one-way dependency direction: `catalog` reads prices via the pricing API; `pricing` will never import the `catalog` package.",
+      "dimension": "1",
+      "tense": "future",
+      "mode": "internal-soundness",
+      "verdict": "internally-sound",
+      "severity": "n/a",
+      "evidence": "n/a — internal-soundness. Every clause uses prospective wording ('will introduce', 'will read', 'will never import') → `future`, overriding the Accepted default.",
+      "note": "The clauses are deliberately phrased with 'will' rather than a deontic 'must not' so the direction constraint on the EXISTING `pricing` service stays `future` — a deontic 'pricing must not import catalog' in this Accepted ADR would be tagged `present` (per the pass0 deontic rule), split off, anchor on the existing pricing service in reality mode, and land as `verified`, muddying the three-verdict contrast. If an extractor conjunction-splits this bullet, it yields multiple `future` sub-claims, all `internally-sound`. future tense short-circuits the anchor branch: the not-yet-existent `catalog` service is NOT flagged dangling-anchor or violated; the named one-way direction makes it well-formed → internally-sound."
+    }
+  ]
+}

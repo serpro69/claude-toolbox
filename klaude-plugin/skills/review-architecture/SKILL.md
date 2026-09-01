@@ -43,8 +43,6 @@ This ordering is load-bearing (ADR 0004), not stylistic: with the artifact text 
    - the procedure files to read, by plugin-root path: `${TOOLBOX_PLUGIN_ROOT}/skills/review-architecture/pass0-extraction.md`, `${TOOLBOX_PLUGIN_ROOT}/skills/review-architecture/pass1-topology.md`, `${TOOLBOX_PLUGIN_ROOT}/skills/review-architecture/pass2-soundness.md`, and `${TOOLBOX_PLUGIN_ROOT}/skills/review-architecture/output-contract.md`;
    - the resolved `## Plugin Root` absolute path.
 
-   <!-- Build order (contract-first, M1): pass0-extraction.md lands in Task 2, pass1-topology.md in Tasks 3–4, pass2-soundness.md in Task 5. Until each exists the delegated agent's corresponding pass is a no-op, so the M1 skill runs acceptance + report skeleton end-to-end and fills in verification as the passes land. Remove this comment in Task 6 once all three exist. -->
-
 3. **Present** — relay the agent's report per [output-contract.md](output-contract.md): the verbatim Claim Set, per-dimension verdicts, the Not Reviewed section (`delegated`/`unrouted` claims), and Pass 2 findings, with the verdict→severity mapping applied. Then confirm next steps with the user.
 
 ## Invocation

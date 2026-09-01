@@ -28,7 +28,7 @@ Pass 2 produces separate findings (appropriateness / reversibility), not per-cla
 
 The report is presented inline, mirroring the review-skill family. The `architecture-reviewer` agent is read-only (no Write tool), so the report section — not a file — is the home of the inspectable claim-set.
 
-1. **Claim Set** — the full Pass 0 output, **verbatim**. This *is* the inspectable intermediate artifact (each claim's `id`/`claim`/`source_span`/`dimension`/`tense`/`evidence_class`). Presenting it verbatim keeps "reviewer missed a claim" distinguishable from "extractor never found the claim."
+1. **Claim Set** — the full Pass 0 output, **verbatim**. This *is* the inspectable intermediate artifact (each claim's `id`/`claim`/`source_span`/`dimension`/`tense`/`evidence_class`). Presenting it verbatim keeps "reviewer missed a claim" distinguishable from "extractor never found the claim." The section header carries the extraction-completeness disclaimer (see Output rules) — recall has no production oracle, so the set is never certified complete.
 2. **Verdicts by dimension** — one verdict per claim (vocabulary above), grouped by the six Pass 1 dimensions.
 3. **Not Reviewed** — `delegated` claims (with a `secaudit` pointer: security architecture → `mcp__pal__secaudit`) and `unrouted` claims, listed explicitly. Fail-loud: extraction happened, review did not, and the report says so. These claims are never silently dropped.
 4. **Pass 2 findings** — appropriateness (mechanism vs the artifact's own stated context) and reversibility (one-way vs two-way doors; proportional justification for irreversible decisions).
@@ -57,6 +57,10 @@ Reuses the review family's P0–P3 scale:
 ---
 
 ### Claim Set (Pass 0 — verbatim)
+
+> Extraction is graded on precision (every claim is span-grounded) but recall has
+> no production oracle — this claim-set is not certified complete; a claim the
+> extractor missed is silently absent.
 
 | id | claim | source_span | dimension | tense | evidence_class |
 | --- | --- | --- | --- | --- | --- |
@@ -96,6 +100,7 @@ Reuses the review family's P0–P3 scale:
 ### Output rules
 
 - Present the Claim Set verbatim — do not summarize or omit claims.
+- State the extraction-completeness disclaimer with the Claim Set (fail-loud, per the Pass 0 procedure): the reviewer does not certify that every claim in the artifact was extracted.
 - Every verdict states its mode (reality vs internal-soundness) and, for reality mode, the resolved evidence path inspected.
 - `delegated` and `unrouted` claims always appear under Not Reviewed — never dropped.
 - Use `(none)` under any empty section.
