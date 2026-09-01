@@ -44,7 +44,7 @@ The reviewer triad is the template. Before writing anything, read:
 - `pass1-boundary-violation` — claim-set + `test-files/` with a real forbidden dependency in a manifest; assert caught.
 - `pass1-greenfield-fallback` — forward-looking (`future`-tense) claims, no code; assert internal-soundness mode, not a false "unverified" failure.
 - `pass1-brownfield-proposed` — existing codebase slice + claim-set mixing a `future` proposal, a `present` violated claim, and a `present` claim naming a nonexistent component; assert internal-soundness / violation / dangling-anchor respectively (the anchor rule discriminates all three).
-- `pass2-inappropriate-mechanism` — artifact stating write-heavy + write-through cache w/o stale-read mitigation; assert flagged.
+- `pass2-inappropriate-mechanism` — artifact stating write-heavy + a write-through cache; assert flagged. (As built: the clash is read-optimizer-vs-write-heavy — a write-through cache taxes every append to serve a minority read path — **not** stale reads. Write-through writes cache and store synchronously, so it cannot serve stale reads and is durable; assertion 6.8 guards against the durability misreading.)
 - `regression-clean-artifact` — a sound artifact matching its `test-files/`; assert no findings (proves the skill does not over-fire).
 
 ## Build order (vertical slices — each ends in a runnable review + green eval)

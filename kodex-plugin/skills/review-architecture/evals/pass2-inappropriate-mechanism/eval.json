@@ -1,0 +1,21 @@
+{
+  "id": 6,
+  "name": "pass2-inappropriate-mechanism",
+  "description": "Pass 2 (Decision Soundness & Reversibility) graded on a single Proposed ADR with no repo — internal-soundness only, no reality branch. The ADR states a write-heavy workload (~92% appends / ~8% reads) and proposes three write-path changes: a write-through cache (appropriateness clash — a read-optimizer taxing a write-heavy path), a shard-key choice with no reversibility justification (one-way door, unjustified), and a bounded admission queue (appropriate + explicitly reversible — the negative control). Grades that Pass 2 flags the first two (P1 appropriateness, P2 reversibility) against the artifact's OWN stated context, does NOT flag the third, and that appropriateness is judged separately from Pass 1 well-formedness. `test-files/expected-findings.json` is the grader-only oracle, excluded from `files[]`.",
+  "skills": ["review-architecture"],
+  "prompt": "Review the architecture ADR at 0014-ledger-write-path.md.",
+  "trap": "The reviewer is likely to (a) skip Pass 2 entirely and only run Pass 1, emitting internal-soundness verdicts and no appropriateness/reversibility findings; (b) rubber-stamp the write-through cache because the claim is well-formed (names a mechanism + a quantified <100 ms target) — conflating Pass 1 well-formedness with Pass 2 fit; (c) miss the reversibility finding because the shard-key choice reads as a routine engineering decision, not noticing it is an unjustified one-way door on a live ledger; (d) over-fire on the admission queue (the negative control), which is appropriate and explicitly a two-way door; (e) manufacture an appropriateness finding from outside knowledge rather than the ADR's stated 92/8 split; or (f) falsely flag the write-through cache as a durability gap (write-through is synchronous, so acknowledged appends are durable).",
+  "files": [
+    "test-files/0014-ledger-write-path.md"
+  ],
+  "assertions": [
+    { "id": "6.1", "text": "Pass 0 extracts the three Decision-section changes as separate claims, each citing its span; all are `tense: future` (the ADR Status is Proposed)." },
+    { "id": "6.2", "text": "Pass 1 grades every claim in internal-soundness mode (future tense, no repo) — it emits NO `violated` or `dangling-anchor` topology verdict. Well-formed proposals resolve to `internally-sound`." },
+    { "id": "6.3", "text": "Pass 2 flags the write-through cache as an inappropriate mechanism given the ADR's OWN stated context: the workload is ~92% writes / ~8% reads, and a write-through cache taxes every append to accelerate the minority read path. Severity P1. The finding quotes the stated read/write split and the cache mechanism." },
+    { "id": "6.4", "text": "Pass 2 flags the shard-key choice under reversibility: partitioning a live financial ledger by account_id is a one-way (irreversible/expensive-to-reverse) door, and the ADR neither acknowledges the irreversibility nor gives proportional justification. Severity P2. The finding is the missing acknowledgment/justification, not the key choice itself." },
+    { "id": "6.5", "text": "Pass 2 does NOT flag the bounded admission queue (negative control): it is appropriate for the write-heavy workload and is explicitly a two-way door ('can be raised, or the queue removed'), so no proportional justification is owed. Over-firing on it is a failure." },
+    { "id": "6.6", "text": "Pass separation is demonstrated: the write-through cache claim is `internally-sound` in Pass 1 (well-formed — quantified <100 ms target + named mechanism) yet still flagged by Pass 2 — proving Pass 1 grades well-formedness and Pass 2 grades appropriateness." },
+    { "id": "6.7", "text": "Every Pass 2 finding is derived from the artifact's own quoted stated context, not from outside workload assumptions or repo inspection; no source files are opened (Pass 2 is internal-soundness only, with no reality branch)." },
+    { "id": "6.8", "text": "The write-through cache is NOT flagged as a durability violation: write-through persists to Postgres synchronously before acknowledgment, so the 'acknowledged appends must never be lost' constraint is honored — the only cache finding is the appropriateness clash." }
+  ]
+}
