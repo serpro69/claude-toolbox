@@ -49,15 +49,15 @@
 
 ## Task 4 — Pass 1: dimensions 4–6 (Failure Isolation, State Consistency, Evolution)
 
-**Status:** pending
+**Status:** done
 **Size:** M
 **Depends on:** 3
 **Can run in parallel with:** 5
 **Docs:** [design.md §5](design.md) · [implementation.md — Build order 4](implementation.md)
 
-- [ ] Extend `pass1-topology.md` with dimensions 4, 5, 6 (each claim/evidence/fallback + inline examples).
-- [ ] Add a fixture proving 4 and 5 grade **independently** (circuit-breaker present, idempotency absent).
-- [ ] **verify:** the fixture scores dim 4 pass / dim 5 fail separately — no blended verdict.
+- [x] Extend `pass1-topology.md` with dimensions 4, 5, 6 (each claim/evidence/fallback + inline examples). (Post-review hardening: dim 5 gained a **placement qualifier** — the unique constraint must cover the key the claimed mutation writes, not any incidental `UNIQUE`; dim 6's accept criterion was tightened from "versioned routes and/or migration tooling" to **consumer-facing version routing OR expand-contract migrations** — a bare `migrations/` dir is insufficient and collides with dim 2's evidence; dim 6 gained the `/kk:review-code` behavioral pointer and a "no dim-6 claim → no dim-6 verdict" scope note; Glob example fixed to match files not dirs.)
+- [x] Add a fixture proving 4 and 5 grade **independently** (`evals/pass1-independent-4-5/`: circuit-breaker present → dim 4 `verified`, idempotency absent → dim 5 `violated`). (Post-review: stripped dimension numbers / verdict tokens / behavioral conclusions from the code+SQL fixture comments — they were dictating the graded assertions and the negative fixture's comment text matched the dim-5 Grep pattern, inverting the verdict; renamed the ADR's dimension-named bullet labels ("Failure isolation"/"State consistency") to neutral mechanism-tied framing ("Payments dependency"/"Retry safety") to force routing to be earned from mechanism words and avoid the dim-1 "isolation" keyword collision.)
+- [x] **verify:** the fixture scores dim 4 pass / dim 5 fail separately — no blended verdict. (JSON valid; full `test/test-*.sh` suite green (179/0); `make plugin-graph` validate clean; `make generate-kodex` fresh + idempotent. No automated eval harness exists — the behavioral dim-4-pass/dim-5-fail run is graded by a reviewer/future harness per the eval convention. Isolated `/kk:review-code` applied: 1×P1 (fixture verdict-leak) + 3×P2 (dim-5 placement, dim-6 criterion, ADR routing labels) + 3×P3 fixed; see the Task 4 subtask notes above.)
 
 ## Task 5 — Pass 2: decision soundness & reversibility
 
@@ -80,6 +80,7 @@
 **Docs:** [implementation.md — Build order 6 + Conventions checklist](implementation.md)
 
 - [ ] Build eval `evals/regression-clean-artifact/` — sound artifact matching its `test-files/`; asserts no findings.
+- [ ] **Oracle-staging convention (deferred from Task 4 review).** Every eval's grader-only oracle (`expected-verdicts.json`, `gold-claims.json`) currently lives *inside* `test-files/` and is only kept out of `eval.json` `files[]`. A harness that stages the whole `test-files/` directory (per the eval-running convention in root `CLAUDE.md` §Skill evaluations) would copy the oracle alongside the artifact, leaking answers to the model under test. Pre-existing across all evals (`pass0-extraction-recall`, `pass1-boundary-violation`, `pass1-greenfield-fallback`, `pass1-brownfield-proposed`, `pass1-independent-4-5`) — not introduced by Task 4. **Fix:** move oracles out of `test-files/` (e.g. a sibling `oracle/` dir) and update the eval convention + each `eval.json` `description`. Confirm nothing references the old path first.
 - [ ] Run `make generate-kodex`; confirm `git diff --exit-code kodex-plugin/ .codex/agents/` is clean.
 - [ ] Run `make plugin-graph` (broken-link/orphan gate) and `bash test/test-plugin-structure.sh` — both green.
 - [ ] Index non-obvious rationale as `kk:arch-decisions` (skip if self-evident from docs).
