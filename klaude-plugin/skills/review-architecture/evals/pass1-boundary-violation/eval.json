@@ -1,0 +1,27 @@
+{
+  "id": 2,
+  "name": "pass1-boundary-violation",
+  "description": "Pass 1 dimension 1 (Structural Boundaries) against a real static-manifest slice: an Accepted ADR asserts two 'must not depend' boundaries; one is violated by a forbidden import, the other is satisfied. Grades that the reviewer catches the violated boundary and does NOT fire on the satisfied one. `test-files/expected-verdicts.json` is the grader-only oracle — deliberately excluded from `files[]` so it is not staged as skill input. Cross-module imports in the fixture slice are intentionally unresolvable by a compiler (they exist only as static topology for grep/Read inspection), not a fixture bug.",
+  "skills": ["review-architecture"],
+  "prompt": "Review the architecture ADR at 0010-payments-ledger-isolation.md.",
+  "trap": "The reviewer is likely to (a) resolve the anchor as the dependency EDGE rather than the payments SERVICE, then mislabel the violation as `dangling-anchor`; (b) mis-tag the deontic 'must not depend' as `future` and drop into internal-soundness mode, excusing the violation; (c) rubber-stamp BOTH boundary claims as verified without actually inspecting go.mod/imports; (d) fire on the satisfied `reporting` boundary too, failing to distinguish an API import from a schema import; or (e) drift into behavioral reasoning ('does payments use the balance correctly') instead of the static-manifest existence check.",
+  "files": [
+    "test-files/0010-payments-ledger-isolation.md",
+    "test-files/services/payments/go.mod",
+    "test-files/services/payments/handler.go",
+    "test-files/services/payments/api/api.go",
+    "test-files/services/payments/schema/payment.go",
+    "test-files/services/ledger/go.mod",
+    "test-files/services/ledger/schema/ledger.go",
+    "test-files/services/reporting/go.mod",
+    "test-files/services/reporting/report.go"
+  ],
+  "assertions": [
+    { "id": "2.1", "text": "Pass 0 extracts both boundary claims, each routed to dimension 1 (Structural Boundaries) with `tense: present` — the deontic 'must not depend' is treated as a present invariant, NOT `future`." },
+    { "id": "2.2", "text": "Anchor rule — for the `payments` boundary claim the anchor is the `payments` SERVICE (services/payments/, which exists), not the dependency edge; the claim is therefore graded in reality mode." },
+    { "id": "2.3", "text": "The forbidden static edge is found by inspecting the manifest/imports: services/payments/handler.go imports github.com/acme/ledger/schema (and/or go.mod requires github.com/acme/ledger)." },
+    { "id": "2.4", "text": "Verdict for the `payments` boundary claim is `violated` at severity P1 — NOT `dangling-anchor` (the service exists) and NOT `internally-sound` (present tense, reality mode)." },
+    { "id": "2.5", "text": "Verdict for the `reporting` boundary claim is `verified` — report.go imports the published `payments/api`, not a payments schema package, so the boundary holds; the reviewer does NOT fire on it." },
+    { "id": "2.6", "text": "Altitude — the finding rests on the static dependency manifest / import list, not a synthesized call graph or any runtime/behavioral reasoning about how payments uses ledger data." }
+  ]
+}

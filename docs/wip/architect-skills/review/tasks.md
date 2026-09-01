@@ -37,15 +37,15 @@
 
 ## Task 3 — Pass 1: engine + dimensions 1–3 (Boundaries, Data Ownership, NFR)
 
-**Status:** pending
+**Status:** done
 **Size:** M
 **Depends on:** 1, 2
 **Can run in parallel with:** —
 **Docs:** [design.md §5](design.md) · [implementation.md — Build order 3](implementation.md)
 
-- [ ] Create `pass1-topology.md` with the anchor-rule mode decision (tense + anchor existence → reality / internal-soundness / dangling-anchor) and dimensions 1–3, each with inline evidence-gathering examples (profile-substitute).
-- [ ] Build evals `evals/pass1-boundary-violation/` (manifest with a real forbidden dependency), `evals/pass1-greenfield-fallback/` (forward-looking claims, no code), and `evals/pass1-brownfield-proposed/` (existing repo + mixed `future` proposal / `present` violation / dangling-anchor claims).
-- [ ] **verify:** boundary violation caught against a static manifest; greenfield `future` claims fall back to internal-soundness (not flagged as failures); brownfield fixture discriminates violation vs proposal vs dangling-anchor.
+- [x] Create `pass1-topology.md` with the anchor-rule mode decision (tense + anchor existence → reality / internal-soundness / dangling-anchor) and dimensions 1–3, each with inline evidence-gathering examples (profile-substitute). Dimensions 4–6 deferred to Task 4 via a build-order comment. (Post-review hardening: added a **prohibitive-polarity** rule to the anchor decision — for "must not depend" claims the mechanism is the *absence* of a forbidden edge, so absence ⇒ `verified`, not `violated`; dangling-anchor now reports searched locations; dim 2 closes the "owner holds no migrations/routes" case; inline examples phrased as Grep-tool ops, not shell/pipes, since the reviewer agent has no Bash.)
+- [x] Build evals `evals/pass1-boundary-violation/` (manifest with a real forbidden dependency), `evals/pass1-greenfield-fallback/` (forward-looking claims, no code), and `evals/pass1-brownfield-proposed/` (existing repo + mixed `future` proposal / `present` violation / dangling-anchor claims). Each ships a grader-only `expected-verdicts.json` (excluded from `files[]`, mirroring Task 2's `gold-claims.json`).
+- [x] **verify:** boundary violation caught against a static manifest; greenfield `future` claims fall back to internal-soundness (not flagged as failures); brownfield fixture discriminates violation vs proposal vs dangling-anchor. (Automated gates: JSON valid; `bash test/test-plugin-structure.sh` green (179/0); `make plugin-graph` validate clean; `make generate-kodex` fresh + idempotent. Behavioral eval runs are graded by a reviewer/future harness per the eval convention. Isolated `/kk:review-code` applied: 2×P1 + 1×P2 + supporting findings fixed — see note below; also hardened `pass0-extraction.md` for the Proposed-ADR deontic tense gap the fixtures surfaced.)
 
 ## Task 4 — Pass 1: dimensions 4–6 (Failure Isolation, State Consistency, Evolution)
 
