@@ -1,0 +1,26 @@
+{
+  "id": 8,
+  "name": "pass2-escalation-one-way-door",
+  "description": "The P1→P0 escalation + pure-rationale routing fixture, covering the two Pass 2 paths no other eval exercises. An Accepted ADR commits telemetry ingestion to a proprietary vendor agent SDK (an explicitly acknowledged, proportionally justified one-way door — 200k deployed agents cannot be force-updated) and asserts that no ingest handler imports the SDK directly (all access goes through a shared envelope package) — but the staged repo has a diagnostics handler importing the vendor SDK directly, so the containment claim is `violated` (baseline P1) and must escalate to P0 because the decision it rests on is a one-way door. The ADR also carries a purely rationale trade-off bullet (vendor risk accepted to stay focused on analytics) that must route `pass2`, be considered by Pass 2, and yield no finding. `oracle/expected-verdicts.json` is the grader-only oracle — outside `test-files/`, never staged as skill input. Cross-module imports in the slice are intentionally compiler-unresolvable static topology for Grep/Read inspection, not a fixture bug.",
+  "skills": ["review-architecture"],
+  "prompt": "Review the architecture ADR at 0016-device-telemetry-vendor-platform.md.",
+  "trap": "The reviewer is likely to (a) report the SDK-containment violation at P1 and never apply the P1→P0 escalation — missing the coupling that a violated claim resting on a one-way-door decision is materially worse; (b) penalize the vendor-platform decision with a reversibility finding even though the ADR explicitly names the one-way door and justifies it proportionally (the rule rewards naming the door); (c) drop the pure trade-off bullet to `unrouted`/Not Reviewed or force-fit it into a topology dimension instead of routing it `pass2`; (d) misread the deontic containment claim ('no handler imports the DeviceCloud SDK directly') as future intent and send it to internal-soundness, so the violation is never checked against the repo; (e) call the violation `dangling-anchor` even though the ingest anchor exists and only the forbidden edge inside it is present; or (f) manufacture an appropriateness finding against the vendor choice despite the stated context (only delta-sync offering, two-engineer team) supporting it.",
+  "files": [
+    "test-files/0016-device-telemetry-vendor-platform.md",
+    "test-files/services/ingest/go.mod",
+    "test-files/services/ingest/envelope/envelope.go",
+    "test-files/services/ingest/handlers/server.go",
+    "test-files/services/ingest/handlers/telemetry.go",
+    "test-files/services/ingest/handlers/diagnostics.go"
+  ],
+  "assertions": [
+    { "id": "8.1", "text": "Pass 0 extracts the SDK-containment claim ('every ingest handler consumes device messages exclusively through the shared envelope package; no handler imports the DeviceCloud SDK directly') with `tense: present` — deontic wording in an Accepted ADR asserts a present invariant — and routes it to dimension 1 (a prohibitive permitted-dependency claim whose evidence is static import statements). It is NOT routed to `pass2` or `unrouted` and NOT marked `future`." },
+    { "id": "8.2", "text": "The containment claim is graded in reality mode: the anchor (the ingest service, services/ingest/) exists, so the verdict is neither `dangling-anchor` nor an internal-soundness verdict." },
+    { "id": "8.3", "text": "The containment claim is graded `violated`, citing services/ingest/handlers/diagnostics.go's direct import of github.com/devicecloud/sdk-go (the forbidden static edge, present — prohibitive polarity) while acknowledging telemetry.go's compliant envelope.Open path. The evidence names the actual file(s) inspected." },
+    { "id": "8.4", "text": "Pass 2 classifies the vendor-platform decision (DeviceCloud SDK + envelope embedded in 200k un-updatable agents) as a ONE-WAY door, and the classification is recorded in the report even though the door is sound." },
+    { "id": "8.5", "text": "The P1→P0 escalation fires: because the violated containment claim rests on a decision Pass 2 classified a one-way door, its severity is reported as P0 (not P1), and the escalation explicitly names both the Pass 1 claim and the door classification." },
+    { "id": "8.6", "text": "NO reversibility finding is emitted against the vendor-platform decision: the ADR explicitly acknowledges the one-way door and justifies it proportionally (only delta-sync offering, 18-engineer-month in-house estimate, MQTT alternative weighed and rejected with reasons). Flagging the acknowledged, justified door is a failure." },
+    { "id": "8.7", "text": "The trade-off bullet (vendor-dependency risk accepted in exchange for analytics focus) is routed `pass2` as a purely rationale claim — it appears in Pass 2's consideration (door classification and/or appropriateness), NOT under Not Reviewed as `unrouted`, and receives no topology verdict." },
+    { "id": "8.8", "text": "No appropriateness finding is manufactured: the stated context (delta-sync required and only DeviceCloud offers it; two-engineer platform team; differentiation is analytics) is consistent with every chosen mechanism, and Pass 2 quotes no clashing constraint because none exists. Pass 2 opens no source files — only Pass 1 touches the repo." }
+  ]
+}

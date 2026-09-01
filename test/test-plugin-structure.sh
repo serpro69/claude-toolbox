@@ -94,6 +94,19 @@ for skill in "${EXPECTED_SKILLS[@]}"; do
   assert_file_exists "$REPO_ROOT/klaude-plugin/skills/$skill/SKILL.md" "SKILL.md for $skill"
 done
 
+# Eval oracle-staging invariant (CLAUDE.md §Skill evaluations): grader-only
+# oracles live in a sibling oracle/ dir, never inside test-files/ — a harness
+# that stages the whole test-files/ directory must not leak graded answers to
+# the model under test.
+log_test "Eval oracles stay out of test-files/ (grader-only oracle/ convention)"
+oracle_leaks=$(find "$REPO_ROOT/klaude-plugin/skills"/*/evals/*/test-files \
+  \( -name 'gold-claims*.json' -o -name 'expected-*.json' \) -type f 2>/dev/null)
+if [[ -z "$oracle_leaks" ]]; then
+  log_pass "No oracle files inside any eval's test-files/"
+else
+  log_fail "Oracle file(s) staged inside test-files/: $oracle_leaks"
+fi
+
 # =============================================================================
 # Section 4: Commands
 # =============================================================================

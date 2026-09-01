@@ -68,7 +68,7 @@ Graded on **four separable sub-metrics** — this separation is what makes the w
 
 1. **Precision — "did it invent a claim?"** Self-grounding: every extracted claim cites a span in the artifact; the grader confirms that span actually asserts it. No gold set needed; works in eval and production.
 2. **Recall — "did it miss a claim?"** Intrinsically extrinsic.
-   - *In evals:* fully gradeable against a structured **`gold-claims.json`** in the eval's `test-files/`; the `assertions[]` bullets reference its entries ("claim G3 is extracted"), so the eval-grader grades each expected claim PASS/FAIL — no free-form set arithmetic.
+   - *In evals:* fully gradeable against a structured **`gold-claims.json`** in the eval's grader-only `oracle/` dir (a sibling of `test-files/`, so staging fixtures never leaks it); the `assertions[]` bullets reference its entries ("claim G3 is extracted"), so the eval-grader grades each expected claim PASS/FAIL — no free-form set arithmetic.
    - *In production:* unprovable (no oracle); a missed claim is silent. This is the **one irreducible limitation** — per fail-loud it is **documented, not hidden**: the reviewer does not certify extraction completeness.
 3. **Evidence-class accuracy — "right evidence class per claim?"** Eval-gradeable against the gold set's expected classes. (Resolved-path dangling references are Pass 1's concern — the anchor rule, §5.)
 4. **Routing accuracy — "right `dimension` and `tense` per claim?"** Eval-gradeable against the gold set. A misrouted claim sends a verifiable assertion to the wrong verifier or the wrong mode — a distinct failure mode that, ungraded, collapses back into the blur §2b exists to prevent.
@@ -148,12 +148,13 @@ So M1 ships evidence-gathering examples inline. Profile detection in `review-arc
 
 ## 9. Eval strategy
 
-Evals live at `klaude-plugin/skills/review-architecture/evals/<name>/{eval.json,test-files/}` per the toolbox convention (one directory per eval; real fixtures, not inline-in-prompt). Each pass gets its own seam:
+Evals live at `klaude-plugin/skills/review-architecture/evals/<name>/{eval.json,test-files/,oracle/}` per the toolbox convention (one directory per eval; real fixtures, not inline-in-prompt; grader-only oracles in the `oracle/` sibling so staging `test-files/` never leaks answers). Each pass gets its own seam:
 
-- **Pass 0 fixtures** — an artifact + a structured `gold-claims.json` in `test-files/`; `assertions[]` bullets reference gold entries → grade precision / recall / evidence-class / routing per entry.
-- **Pass 1 fixtures** — a fixed claim-set + a `test-files/` codebase slice where some claims hold and some are violated → assert the reviewer catches the false ones, does not flag the true ones, and applies the anchor rule correctly.
+- **Pass 0 fixtures** — an artifact in `test-files/` + a structured `gold-claims.json` in the grader-only `oracle/` dir; `assertions[]` bullets reference gold entries → grade precision / recall / evidence-class / routing per entry.
+- **Pass 1 fixtures** — an artifact + a `test-files/` codebase slice where some of its claims hold and some are violated → assert the reviewer catches the false ones, does not flag the true ones, and applies the anchor rule correctly. *(As built: fixtures are seeded with the artifact — not a pre-extracted claim-set — because eval prompts must mirror real invocations (`Review the architecture ADR at <path>`); the Pass 0/Pass 1 seam is preserved by dedicating separate assertions to extraction/routing vs verdicts, so a Pass 0 miss fails an extraction assertion, not a blurred verdict assertion.)*
 - **Anchor-rule fixture** — an existing codebase slice + a claim-set mixing a `future` proposal, a `present` violated claim, and a `present` claim naming a nonexistent component → assert internal-soundness / violation / dangling-anchor respectively (all three outcomes discriminated).
 - **Pass 2 fixtures** — an artifact with a stated-context/mechanism mismatch → assert the reviewer flags the inappropriate choice.
+- **Escalation fixture** — a repo-backed `violated` claim resting on an acknowledged one-way-door decision → assert the P1→P0 escalation fires, the sound door draws no reversibility finding, and a purely-rationale claim routes `pass2`. *(Added in Task 6 to close the two Pass 2 paths the mismatch fixture cannot reach.)*
 - **Regression eval** — a clean artifact that should produce no findings.
 
 ## 10. Open questions (deferred, documented)
