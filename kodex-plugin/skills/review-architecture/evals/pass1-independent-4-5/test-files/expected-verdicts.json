@@ -1,0 +1,29 @@
+{
+  "oracle_note": "Grader-only Pass 1 verdict oracle. Absent from eval.json `files[]` so it is not staged as skill input. This is the dimension-independence fixture: one Accepted ADR carries a dimension-4 (Failure Isolation) claim and a dimension-5 (State Consistency) claim about the SAME `orders` service. Dim 4's mechanism (circuit breaker) is PRESENT; dim 5's mechanism (idempotency key + unique constraint) is ABSENT. The two must reach DIFFERENT verdicts — proving 4 and 5 are graded independently, not blended into one 'is orders resilient' verdict. `Vn` matched to extracted claims by content, not id.",
+  "expected": [
+    {
+      "id": "V1",
+      "claim": "The `orders` service survives the `payments` service failing: every call to `payments` is wrapped in a circuit breaker.",
+      "dimension": "4",
+      "tense": "present",
+      "anchor": "services/orders/ (exists)",
+      "mode": "reality",
+      "verdict": "verified",
+      "severity": "n/a",
+      "evidence": "services/orders/client/payments.go wraps the payments api.Client call in a gobreaker.CircuitBreaker (Charge runs through cb.Execute); go.mod requires github.com/sony/gobreaker. The failure-isolation mechanism is present and placed on the payments call path.",
+      "note": "Anchor (orders service) exists and the isolation mechanism is present with correct placement → verified. Altitude: the check rests on the presence/placement of the breaker in the static source, NOT on whether the fallback behaves correctly at runtime (that is $kk:review-code)."
+    },
+    {
+      "id": "V2",
+      "claim": "Order creation is idempotent under retries: the create-order mutation is guarded by an idempotency key with a unique constraint.",
+      "dimension": "5",
+      "tense": "present",
+      "anchor": "services/orders/ (exists)",
+      "mode": "reality",
+      "verdict": "violated",
+      "severity": "P1",
+      "evidence": "services/orders/migrations/0001_create_orders.sql defines the orders table with NO idempotency_key column and NO unique constraint; services/orders/handler.go CreateOrder issues a bare INSERT with no idempotency/dedup guard. The claimed state-consistency mechanism is absent inside an anchor that exists.",
+      "note": "The dim-5 mechanism is absent → violated, EVEN THOUGH the dim-4 circuit breaker (V1) is present on the same service. The present breaker must NOT excuse the missing idempotency guard: dim 4 and dim 5 are opposite sides of the CAP trade-off and are graded on separate evidence. A blended 'orders is resilient' verdict that reports both as satisfied (or both as failed) is the failure this fixture catches."
+    }
+  ]
+}

@@ -1,0 +1,23 @@
+{
+  "id": 5,
+  "name": "pass1-independent-4-5",
+  "description": "Pass 1 dimensions 4 (Failure Isolation) and 5 (State Consistency) graded independently against one `orders` service slice. An Accepted ADR asserts both a dim-4 invariant (circuit breaker around payments — PRESENT) and a dim-5 invariant (idempotency key with a unique constraint — ABSENT). Grades that the reviewer emits TWO distinct verdicts (dim 4 `verified`, dim 5 `violated`) rather than blending them into a single 'is orders resilient' judgment — the CAP trade-off means these are opposing physics and must not share a verdict. `test-files/expected-verdicts.json` is the grader-only oracle, excluded from `files[]`. Cross-module imports in the slice (payments, gobreaker) are intentionally compiler-unresolvable static topology for grep/Read inspection, not a fixture bug.",
+  "skills": ["review-architecture"],
+  "prompt": "Review the architecture ADR at 0013-orders-resilience.md.",
+  "trap": "The reviewer is likely to (a) blend both claims into a single 'orders resilience' verdict, letting the present circuit breaker (dim 4) excuse the missing idempotency guard (dim 5) — the exact CAP conflation the dimensions are kept separate to prevent; (b) mark BOTH `verified` because it saw the breaker and stopped inspecting; (c) mark BOTH `violated` because it noticed the missing idempotency and generalized; (d) route the idempotency claim to dim 4 (or the breaker claim to dim 5), collapsing the two dimensions; or (e) drift into behavioral reasoning ('does the retry actually stay idempotent') instead of the static presence-of-mechanism check on the migration and handler.",
+  "files": [
+    "test-files/0013-orders-resilience.md",
+    "test-files/services/orders/go.mod",
+    "test-files/services/orders/client/payments.go",
+    "test-files/services/orders/handler.go",
+    "test-files/services/orders/migrations/0001_create_orders.sql"
+  ],
+  "assertions": [
+    { "id": "5.1", "text": "Pass 0 extracts two distinct claims from the Decision section: the failure-isolation claim routes to dimension 4, the state-consistency claim routes to dimension 5. Neither is misrouted to the other dimension." },
+    { "id": "5.2", "text": "Both claims are `tense: present` (Accepted ADR, present-tense invariants) and both anchor on the EXISTING `orders` service, so both are graded in reality mode — not internal-soundness, not dangling-anchor." },
+    { "id": "5.3", "text": "The dimension-4 claim is graded `verified`: services/orders/client/payments.go wraps the payments call in a gobreaker circuit breaker (and go.mod requires gobreaker) — the isolation mechanism is present on the call path." },
+    { "id": "5.4", "text": "The dimension-5 claim is graded `violated` (P1): migrations/0001_create_orders.sql has no idempotency_key column and no unique constraint, and handler.go issues a bare INSERT — the claimed state-consistency mechanism is absent inside an anchor that exists." },
+    { "id": "5.5", "text": "The two verdicts are DIFFERENT and independently justified: the present circuit breaker does NOT cause dim 5 to pass, and the missing idempotency guard does NOT cause dim 4 to fail. No single blended 'resilience' verdict is emitted." },
+    { "id": "5.6", "text": "Altitude — both verdicts rest on static evidence (breaker in source / migration + handler), not on runtime or behavioral reasoning about whether retries actually stay idempotent or the fallback actually degrades correctly." }
+  ]
+}
