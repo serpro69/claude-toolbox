@@ -1,0 +1,42 @@
+{
+  "oracle_note": "Grader-only oracle. Lives in the eval's grader-only `oracle/` dir — outside `test-files/` — so neither `files[]` listing nor whole-directory staging can leak it to the model under test. This fixture exercises the two Pass 2 paths untested elsewhere: (1) the P1→P0 escalation coupling — one present-tense SDK-containment claim is `violated` in the staged repo (baseline P1), and Pass 2 classifies the vendor-platform decision it rests on as a one-way door, so the violation escalates P1 → P0; (2) a PURELY rationale/trade-off claim (the vendor-risk-for-focus bullet) that must route `pass2` and be considered by Pass 2 without producing a finding. The vendor-platform door itself is acknowledged and proportionally justified → door recorded, NO reversibility finding. `Vn` matched to extracted claims by content, not id.",
+  "expected": [
+    {
+      "id": "V1",
+      "claim": "Every ingest handler consumes device messages exclusively through the shared envelope package; no handler imports the DeviceCloud SDK directly (the envelope package is the only module that may depend on the SDK).",
+      "dimension": "1",
+      "tense": "present",
+      "anchor": "services/ingest/ (exists)",
+      "mode": "reality",
+      "verdict": "violated",
+      "severity": "P0 (baseline P1, escalated by the Pass 2 one-way-door classification of the vendor-platform decision)",
+      "evidence": "services/ingest/handlers/telemetry.go consumes messages via envelope.Open (compliant), but services/ingest/handlers/diagnostics.go imports github.com/devicecloud/sdk-go directly and calls sdk.ParseEnvelope — a forbidden static import edge from a handler to the vendor SDK, bypassing the envelope containment layer. The prohibited edge is PRESENT inside an existing anchor.",
+      "note": "Deontic wording ('no handler imports the DeviceCloud SDK directly') in an Accepted ADR asserts a present invariant → reality mode, not internal-soundness. This is a prohibitive dimension-1 claim: the evidence is a static import statement (dimension 1's declared evidence source), and prohibitive polarity means the forbidden edge's PRESENCE is the violation. The anchor (ingest service) exists, so this is `violated`, not `dangling-anchor`. Baseline severity P1; the final report must show P0 because the decision this claim contains (the DeviceCloud commitment) is a one-way door — a handler importing the SDK directly widens the lock-in surface the ADR's own migration plan says must stay scoped to the envelope package."
+    },
+    {
+      "id": "V2",
+      "claim": "Building ingestion on DeviceCloud's proprietary agent SDK and envelope is a one-way door (200k deployed agents cannot be force-updated; migrating off means a years-long fleet-wide replacement), justified by delta-sync being unavailable elsewhere, an 18-engineer-month in-house estimate, and a weighed-and-rejected MQTT alternative.",
+      "dimension": "pass2",
+      "tense": "present",
+      "anchor": "n/a — pass2 claims have no anchor and no reality branch",
+      "mode": "pass2",
+      "verdict": "n/a — pass2 claims receive door classifications/findings, never topology verdicts",
+      "severity": "n/a",
+      "evidence": "n/a — Pass 2 grades the artifact's own words only",
+      "note": "Check B: one-way door, explicitly acknowledged by the artifact ('This is a one-way door') and proportionally justified (the only delta-sync offering, a concrete in-house cost estimate, a named rejected alternative with reasons). Sound door → NO reversibility finding. The classification must still be recorded — it is what drives the V1 escalation."
+    },
+    {
+      "id": "V3",
+      "claim": "Accept the vendor-dependency risk in exchange for not building device infrastructure, because the company's differentiation is analytics, not device plumbing.",
+      "dimension": "pass2",
+      "tense": "present",
+      "anchor": "n/a",
+      "mode": "pass2",
+      "verdict": "n/a",
+      "severity": "n/a",
+      "evidence": "n/a",
+      "note": "A PURELY rationale/trade-off claim — it names no topological mechanism of its own, so it must route `pass2` (not a dimension, not `unrouted`). Pass 2 considers it against the stated context and finds it consistent ('The platform team is two engineers, and the company's differentiation is telemetry analytics, not device infrastructure') → NO finding. Failure modes: dropping it to `unrouted`/Not Reviewed, force-fitting it into a topology dimension, or manufacturing an appropriateness finding from it with no quotable clashing constraint."
+    }
+  ],
+  "expected_escalation": "Exactly one escalation: V1's `violated` verdict escalates P1 → P0 because the decision it rests on (the DeviceCloud vendor commitment, V2) is classified a one-way door by Pass 2. Per the pass2 coupling rule, the report must flag the escalation explicitly, naming BOTH the Pass 1 claim and the door classification. Reporting the violation at P1 with no escalation is the primary failure this fixture catches."
+}

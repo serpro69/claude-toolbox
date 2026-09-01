@@ -1,0 +1,58 @@
+{
+  "oracle_note": "Grader-only regression oracle. Lives in the eval's grader-only `oracle/` dir — outside `test-files/` — so neither `files[]` listing nor whole-directory staging can leak it to the model under test. This is the no-findings regression fixture: every present-tense claim is satisfied by the staged slice, the future claim is well-formed, and both Pass 2 checks come back clean (the denormalized read table matches the stated read-mostly workload; the EDI-214 one-way door is acknowledged and proportionally justified). The correct review reports ZERO findings — no violated, no dangling-anchor, no ill-formed, no Pass 2 findings, no escalations; overall assessment SOUND. `Vn` matched to extracted claims by content, not id. The artifact may also yield additional pass2-routed rationale claims (the accepted seconds-of-staleness trade-off, the EDI-214 justification prose); all are consistent with the stated context and none may produce a finding.",
+  "expected": [
+    {
+      "id": "V1",
+      "claim": "The `tracking` service must not depend on the `shipments` service's internal schema package; it consumes the published shipment events package only.",
+      "dimension": "1",
+      "tense": "present",
+      "anchor": "services/tracking/ (exists)",
+      "mode": "reality",
+      "verdict": "verified",
+      "severity": "n/a",
+      "evidence": "services/tracking/projector.go imports github.com/acme/shipments/events only; a Grep for `shipments/schema` under services/tracking/ finds no hit. Prohibitive polarity: the forbidden edge (internal schema dependency) is absent, so the claim is satisfied.",
+      "note": "The tracking go.mod `require github.com/acme/shipments` line and the events-package import are NOT violations — the claim forbids only the internal schema package and explicitly permits the published events package. Flagging the events import (or the module require that carries it) is the over-fire this regression fixture catches."
+    },
+    {
+      "id": "V2",
+      "claim": "Every call from `shipments` to the external carrier API is wrapped in a per-call timeout with a bounded retry.",
+      "dimension": "4",
+      "tense": "present",
+      "anchor": "services/shipments/ (exists)",
+      "mode": "reality",
+      "verdict": "verified",
+      "severity": "n/a",
+      "evidence": "services/shipments/client/carrier.go wraps c.api.Status in context.WithTimeout (2s per call) inside a bounded maxAttempts=3 retry loop — the claimed isolation mechanism is present and placed on the carrier call path.",
+      "note": "The claim names timeout + bounded retry; that is what must be present. Demanding a circuit breaker the artifact never claimed — and flagging its absence — is an over-fire."
+    },
+    {
+      "id": "V3",
+      "claim": "Tracking status lookups are served from a denormalized tracking_status table maintained by an event projector (the mechanism behind the p95 < 150 ms target); lookups never call the carrier API or join shipment tables.",
+      "dimension": "3",
+      "tense": "present",
+      "anchor": "services/tracking/ (exists)",
+      "mode": "reality",
+      "verdict": "verified",
+      "severity": "n/a",
+      "evidence": "services/tracking/migrations/0001_create_tracking_status.sql defines the tracking_status table; projector.go maintains it from shipment events; handler.go GetStatus reads tracking_status directly with no carrier client or shipment-table join in the read path. Mechanism present and correctly placed.",
+      "note": "The p95 < 150 ms number itself is the statically unverifiable NFR outcome — the check is the mechanism's presence and placement only. Attempting to 'verify' the latency figure is an altitude violation."
+    },
+    {
+      "id": "V4",
+      "claim": "When shipment-event volume passes 10k/min, event delivery will move to at-least-once with consumer-side dedup keyed by event_id.",
+      "dimension": "5",
+      "tense": "future",
+      "anchor": "n/a — internal-soundness (future claim, never graded against the repo)",
+      "mode": "internal-soundness",
+      "verdict": "internally-sound",
+      "severity": "n/a",
+      "evidence": "n/a — internal-soundness. The claim declares delivery semantics (at-least-once) and names a dedup strategy (consumer-side, keyed by event_id): both halves of the dimension-5 fallback are present.",
+      "note": "Prospective wording ('we will move') overrides the Accepted-ADR present default → future → internal-soundness mode. Grading it against the repo and emitting `violated` because no dedup exists today is the false positive this fixture catches."
+    }
+  ],
+  "expected_pass2": {
+    "appropriateness": "No mismatch found. The only workload characterization ('lookups outnumber shipment mutations roughly 40:1', 'p95 < 150 ms' lookups, carrier API 'must not be called on the customer read path') is served by a read-optimizing denormalized table fed by a projector — the mechanism matches the stated context. There is no quotable stated constraint that any chosen mechanism clashes with, so any appropriateness finding here is manufactured from outside assumptions.",
+    "reversibility": "The EDI-214 format commitment is a one-way door the artifact itself names ('This is a one-way door') and justifies proportionally (only format all three contracted carriers emit; per-carrier custom JSON adapters weighed and rejected with reasons) — recorded as a sound one-way door, NO finding. The denormalized read table and the timeout/retry settings are two-way doors; no justification owed, no findings.",
+    "escalations": "None — there is no violated verdict to escalate."
+  }
+}

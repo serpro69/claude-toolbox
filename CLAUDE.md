@@ -141,9 +141,12 @@ Directory layout:
 klaude-plugin/skills/<skill>/evals/
   <eval-name>/
     eval.json          # scenario definition
-    test-files/        # real fixtures (YAML, code, configs, …)
+    test-files/        # real fixtures (YAML, code, configs, …) — everything here may be staged for the model under test
       …
+    oracle/            # grader-only expected outputs (gold-claims.json, expected-verdicts.json, …) — optional
 ```
+
+**Oracles are grader-only and live outside `test-files/`.** Expected-output files (`gold-claims.json`, `expected-verdicts.json`, …) go in a sibling `oracle/` directory, never inside `test-files/`. A harness may stage the whole `test-files/` directory, so an oracle placed there would leak the graded answers to the model under test even when omitted from `files[]`. `oracle/` contents are consumed only by the grader.
 
 **One directory per eval, not a single `evals.json`.** Skills that detect on paths or directory adjacency (e.g., `/kk:review-code` → `values*` adjacent to `Chart.yaml`, `templates/` ancestor chains, `kustomization.yaml` filename signal) can only be exercised against real filesystem structure. Inline-in-prompt fixtures force the evaluator to describe directory layout in prose, which tests pattern-matching on prose rather than the detection logic. Real fixtures are also syntax-highlightable, validatable (`kubeconform`, `helm lint`, `go build`), and trivial to edit — YAML embedded in JSON strings as `\n`-escaped text is not.
 
@@ -171,7 +174,7 @@ klaude-plugin/skills/<skill>/evals/
 
 **When to author evals.** Proactively, for skills with detection/routing logic where false positives and false negatives both matter; for skills with conditional content loading; and include at least one **regression eval** proving the skill does NOT activate (or falls back to default behavior) when it shouldn't. Skip for trivial skills whose behavior is captured by the skill's markdown alone.
 
-**Running.** No built-in harness. A reviewer (or a future harness) stages the eval's `test-files/` where the skill expects input, sends `prompt` with the target skill available, and grades the response against each assertion. Keep per-eval directories self-contained so the harness has zero external dependencies.
+**Running.** No built-in harness. A reviewer (or a future harness) stages the eval's `test-files/` where the skill expects input — never the `oracle/` directory — sends `prompt` with the target skill available, and grades the response against each assertion (consulting `oracle/` for expected outputs). Keep per-eval directories self-contained so the harness has zero external dependencies.
 
 ## Profile Conventions
 

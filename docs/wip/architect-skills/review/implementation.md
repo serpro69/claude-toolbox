@@ -20,13 +20,13 @@ The reviewer triad is the template. Before writing anything, read:
 
 **Skill** — `klaude-plugin/skills/review-architecture/`:
 
-- `SKILL.md` — entry point. Frontmatter `name`/`description` (trigger keywords first, ≤1024 soft/1536 hard chars). Workflow section with the **mandatory-order directive** (ADR 0004): load ALL instructions — this SKILL.md, `input-contract.md`, `output-contract.md`, `pass0-extraction.md`, `pass1-topology.md`, `pass2-soundness.md` — before reading any artifact content. Describes delegation to the `architecture-reviewer` agent and resolves `${TOOLBOX_PLUGIN_ROOT}`.
+- `SKILL.md` — entry point. Frontmatter `name`/`description` (trigger keywords first, ≤1024 soft/1536 hard chars). Workflow section with the **mandatory-order directive** (ADR 0004), split across the delegation boundary as built: the main agent loads this SKILL.md + `input-contract.md` + `output-contract.md` before touching the artifact (and reads only its *shape* for acceptance); the pass procedures (`pass0-extraction.md`, `pass1-topology.md`, `pass2-soundness.md`) are the delegated `architecture-reviewer`'s instructions, and the agent restates instructions-before-action on its own side. Describes delegation to the agent and resolves `${TOOLBOX_PLUGIN_ROOT}`.
 - `input-contract.md` — acceptance rules (§2a of design): what artifacts are accepted, the single-artifact-per-invocation rule (multi-artifact rejected with guidance to run per artifact), diagram-with-prose rule, verbal/diagram-only rejection with an actionable message.
 - `output-contract.md` — invocation/scope rules, report structure (Claim Set section, verdicts by dimension, Not Reviewed section, Pass 2 findings), verdict vocabulary, and the verdict→severity mapping (design §7).
 - `pass0-extraction.md` — the extraction procedure, the full claim schema (`id`/`claim`/`source_span`/`dimension`/`tense`/`evidence_class`), the repo-blind rule, the four grading sub-metrics framing, and the structural-slot heuristics per artifact type.
 - `pass1-topology.md` — the six dimensions with **inline evidence-gathering examples** per dimension (the profile-substitute, §7), the anchor-rule mode decision (tense + anchor existence → reality / internal-soundness / dangling-anchor), and per-dimension claim/evidence/fallback spec.
 - `pass2-soundness.md` — the internal-soundness/appropriateness/reversibility procedure.
-- `evals/<name>/{eval.json,test-files/}` — see Eval fixtures below.
+- `evals/<name>/{eval.json,test-files/,oracle/}` — see Eval fixtures below; `oracle/` holds the grader-only expected outputs, outside `test-files/` per root `CLAUDE.md` §Skill evaluations.
 
 **Agent** — `klaude-plugin/agents/architecture-reviewer.md`:
 
@@ -40,11 +40,13 @@ The reviewer triad is the template. Before writing anything, read:
 
 ## Eval fixtures (build alongside each pass, TDD)
 
-- `pass0-extraction-recall` — artifact + `gold-claims.json` in `test-files/`; `assertions[]` bullets reference gold entries; assert precision/recall/evidence-class/routing.
+- `pass0-extraction-recall` — artifact in `test-files/` + `gold-claims.json` in the grader-only `oracle/` dir; `assertions[]` bullets reference gold entries; assert precision/recall/evidence-class/routing.
 - `pass1-boundary-violation` — claim-set + `test-files/` with a real forbidden dependency in a manifest; assert caught.
 - `pass1-greenfield-fallback` — forward-looking (`future`-tense) claims, no code; assert internal-soundness mode, not a false "unverified" failure.
 - `pass1-brownfield-proposed` — existing codebase slice + claim-set mixing a `future` proposal, a `present` violated claim, and a `present` claim naming a nonexistent component; assert internal-soundness / violation / dangling-anchor respectively (the anchor rule discriminates all three).
+- `pass1-independent-4-5` — one Accepted ADR with a dim-4 claim (isolation mechanism PRESENT) and a dim-5 claim (consistency mechanism ABSENT) on the same service; assert two distinct verdicts (dim 4 pass, dim 5 fail), never a blended one.
 - `pass2-inappropriate-mechanism` — artifact stating write-heavy + a write-through cache; assert flagged. (As built: the clash is read-optimizer-vs-write-heavy — a write-through cache taxes every append to serve a minority read path — **not** stale reads. Write-through writes cache and store synchronously, so it cannot serve stale reads and is durable; assertion 6.8 guards against the durability misreading.)
+- `pass2-escalation-one-way-door` — Accepted ADR committing to a vendor agent SDK (acknowledged + justified one-way door) with an SDK-containment claim violated in the staged repo; assert the P1→P0 escalation fires (naming both the violated claim and the door), the sound door draws no reversibility finding, and the ADR's purely-rationale trade-off bullet routes `pass2` without a manufactured finding. (Added in Task 6 to close the two Pass 2 coverage gaps deferred from Task 5.)
 - `regression-clean-artifact` — a sound artifact matching its `test-files/`; assert no findings (proves the skill does not over-fire).
 
 ## Build order (vertical slices — each ends in a runnable review + green eval)

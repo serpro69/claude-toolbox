@@ -1,0 +1,28 @@
+{
+  "id": 7,
+  "name": "regression-clean-artifact",
+  "description": "The no-findings regression fixture: a sound Accepted ADR (shipment tracking read path) whose staged repo slice satisfies every present-tense claim, whose one future claim is well-formed, and whose Pass 2 checks are clean (read-optimizing mechanism under a stated read-mostly 40:1 workload; a one-way door explicitly named and proportionally justified). Grades that the reviewer does NOT over-fire: zero findings of any severity, overall assessment SOUND. `oracle/expected-verdicts.json` is the grader-only oracle — outside `test-files/`, never staged as skill input. Cross-module imports in the slice are intentionally compiler-unresolvable static topology for Grep/Read inspection, not a fixture bug.",
+  "skills": ["review-architecture"],
+  "prompt": "Review the architecture ADR at 0015-shipment-tracking-read-path.md.",
+  "trap": "The reviewer is likely to manufacture findings to justify its existence: (a) flag tracking's import of the published shipments events package (or the go.mod require line that carries it) as a dimension-1 violation, though the claim forbids only the internal schema package; (b) grade the future at-least-once/dedup claim against the repo and emit `violated` because no dedup config exists today, ignoring that prospective wording overrides the Accepted default to `future`; (c) fail the carrier-call claim for lacking a circuit breaker the artifact never claimed — the claim names a timeout plus bounded retry, which is present; (d) flag the EDI-214 commitment as a reversibility finding even though the ADR explicitly names the one-way door and justifies it proportionally; (e) invent a Pass 2 appropriateness finding (e.g. against eventual consistency/staleness) with no quotable stated constraint that clashes; or (f) cross the altitude line by trying to verify the p95 < 150 ms figure itself.",
+  "files": [
+    "test-files/0015-shipment-tracking-read-path.md",
+    "test-files/services/shipments/go.mod",
+    "test-files/services/shipments/events/events.go",
+    "test-files/services/shipments/client/carrier.go",
+    "test-files/services/tracking/go.mod",
+    "test-files/services/tracking/projector.go",
+    "test-files/services/tracking/handler.go",
+    "test-files/services/tracking/migrations/0001_create_tracking_status.sql"
+  ],
+  "assertions": [
+    { "id": "7.1", "text": "Pass 0 extracts the Decision-section claims with `tense: present` (Accepted ADR, present/deontic invariants) and the Consequences 'we will move event delivery to at-least-once' claim as `tense: future` (prospective wording overrides the Accepted default). No claim is fabricated — every claim cites a real span." },
+    { "id": "7.2", "text": "The boundary claim (tracking must not depend on shipments' internal schema package) is graded `verified` in reality mode: no `shipments/schema` import exists under services/tracking/. The events-package import and the go.mod require line are NOT flagged — the claim explicitly permits the published events package." },
+    { "id": "7.3", "text": "The carrier-call claim is graded `verified`: carrier.go wraps the call in context.WithTimeout inside a bounded (maxAttempts=3) retry loop. The reviewer does not demand a circuit breaker the artifact never claimed." },
+    { "id": "7.4", "text": "The read-path claim is graded `verified`: the tracking_status migration, the projector maintaining it, and the read handler querying it directly (no carrier client, no shipment-table join) are all located. The p95 < 150 ms figure itself is NOT 'verified' — the mechanism's presence and placement is the whole check." },
+    { "id": "7.5", "text": "The future at-least-once/dedup claim is graded in internal-soundness mode and resolves to `internally-sound` (declares delivery semantics AND names a dedup strategy keyed by event_id). It is NOT graded against the repo and NOT marked `violated`/`dangling-anchor` for the absence of dedup config today." },
+    { "id": "7.6", "text": "Pass 2 appropriateness reports no mismatch: the denormalized read table is a read-optimizing mechanism under the stated read-mostly (40:1) workload. No appropriateness finding is manufactured without a quotable clashing constraint from the artifact." },
+    { "id": "7.7", "text": "Pass 2 reversibility records the EDI-214 commitment as a one-way door that the artifact itself acknowledges and proportionally justifies — sound, NO finding. Flagging the acknowledged, justified door is a failure." },
+    { "id": "7.8", "text": "The review reports ZERO findings overall: no `violated`, no `dangling-anchor`, no `ill-formed`, no Pass 2 findings, no P1→P0 escalations, and an overall assessment of SOUND." }
+  ]
+}
