@@ -23,7 +23,7 @@ Audience: a skilled contributor with **zero context** on this codebase. Read [de
 - `model-process.md` — the detailed seven-phase workflow (design §4): scope intake + mode detection, requirements gate, archaeology, kit drafting, verification, self-check, surface & close.
 - `kit-contract.md` — the output contract (design §3): the two page formats, conventions-index content, status markers, freshness banner, homes-resolution precedence, kit-scope pushback, term-count guideline with variance drivers.
 - `archaeology.md` — the state → time → invariants reading method and two-clock discipline (single-consumer content; promote to `_shared/` only when a second producer needs it).
-- `shared-requirements-harvesting.md`, `shared-open-question-pass.md`, `shared-fact-flip-propagation.md`, `shared-contact-ratio-guard.md` — symlinks to `_shared/`.
+- `shared-requirements-harvesting.md`, `shared-open-question-pass.md`, `shared-fact-flip-propagation.md`, `shared-contact-ratio-guard.md` — symlinks to `_shared/` (new guard files), plus `shared-capy-knowledge-protocol.md` — symlink to the **existing** `_shared/capy-knowledge-protocol.md` (searched at intake: `kk:arch-decisions`, `kk:project-conventions`; indexed at close).
 - `evals/<name>/{eval.json,test-files/,oracle/}` — five evals per design §7.
 
 **Shared guards** — `klaude-plugin/skills/_shared/`:
@@ -32,10 +32,13 @@ Audience: a skilled contributor with **zero context** on this codebase. Read [de
 
 **M1 extensions** — `klaude-plugin/skills/review-architecture/`:
 
-- `pass0-extraction.md` — add the `provenance` field (values, derivation-from-artifact-text rules, repo-blind preserved) and the self-certification check (P2, internal-soundness).
-- `input-contract.md` — add the composite domain-reference-kit acceptance clause (glossary + traps pair as one artifact; rationale: hard cross-references).
-- `pass1-topology.md` — add dimension 7 (Domain Binding): claim class, evidence (element existence via Grep/Glob), greenfield fallback (`Bindings: none yet` = well-formed `future`), anchor-rule application, altitude-line note (behavior → review-code/review-spec). Inline examples must be domain-disjoint from every fixture, including counterfactual branches.
-- `output-contract.md` — extend the verdict/report vocabulary only if dimension 7 or the self-certification check needs it (expected: dimension list mention; no new verdicts).
+- `pass0-extraction.md` — add the `provenance` field (values, derivation-from-artifact-text rules, repo-blind preserved; Pass 0 *records* provenance only — the check runs in Pass 2) **and the dimension-7 routing set**: extend the `dimension` token enum to `7`, add the Domain Binding row to §Dimension routing, add a domain-reference-kit row to the artifact-type mining table (per-term Bindings and rules-table enforcement pointers → dimension 7; rule intent → provenance-labeled, not truth-verified).
+- `input-contract.md` — add the composite domain-reference-kit acceptance clause with its invocation mechanics: either page's path invokes the pair (one path, CLI shape preserved); counterpart resolved by the `<context>.md` ↔ `<context>-traps.md` sibling naming convention, cross-link fallback for non-conforming brownfield kits; two explicit paths still rejected — the rejection message gains the kit clause; single-page kits accepted solo with an unresolvable-cross-references note.
+- `pass1-topology.md` — add dimension 7 (Domain Binding): claim class, evidence (element existence via Grep/Glob), both fallback outcomes (`Bindings: none yet` = `internally-sound`; a future binding naming no code-element kind = `ill-formed`), anchor-rule application, altitude-line note (behavior → review-code/review-spec). Inline examples must be domain-disjoint from every fixture, including counterfactual branches.
+- `pass2-soundness.md` — add the **provenance-consistency check** as Pass 2's third check (alongside appropriateness and reversibility): `canonical`/ratified status + `reverse-engineered` provenance + no cited ratification record → P2 finding.
+- `output-contract.md` — no new verdicts, but: dimension 7 in the Verdicts-by-dimension skeleton, a **Provenance** subsection under Pass 2 findings, the self-certification severity row (P2), and the composite-kit invocation/acceptance wording.
+- `SKILL.md` (review-architecture) — frontmatter description: add the domain-reference-kit artifact type and glossary/domain-kit trigger keywords, extend the dimension enumeration, re-check the ≤1024 budget; amend Phase 1 acceptance text and the Invocation section for the composite-kit shape.
+- `../agents/architecture-reviewer.md` — description's artifact-type enumeration + the "path to the single accepted artifact" payload line, amended for the composite kit. Agent file change ⇒ `.codex/agents/` regenerates via `make generate-kodex`.
 - `evals/` — three new evals per design §7.
 
 **Tests** — `test/test-plugin-structure.sh`: add `model` to `EXPECTED_SKILLS`; per-skill assertions pick up the new eval dirs and symlinks automatically — verify, don't assume.
@@ -46,7 +49,7 @@ Audience: a skilled contributor with **zero context** on this codebase. Read [de
 
 ## Eval fixtures (build alongside each slice, TDD)
 
-Per design §7. Authoring rules that bit M1 (all indexed in `kk:review-findings`): neutral fixture comments (no verdict/dimension tokens); fixture domains disjoint from procedure inline examples **including their counterfactual branches**; oracles in grader-only `oracle/` siblings, never in `test-files/`; eval prompts mirror real invocations (natural user phrasing, no harness language). The `pass1-domain-binding` fixture is adapted from the field workstream's kit **re-skinned to a fictional domain** — no real project names, tickets, or people.
+Per design §7. Authoring rules that bit M1 (all indexed in `kk:review-findings`): neutral fixture comments (no verdict/dimension tokens); fixture domains disjoint from procedure inline examples **including their counterfactual branches**; oracles in grader-only `oracle/` siblings, never in `test-files/`; eval prompts mirror real invocations (natural user phrasing, no harness language) — for the two kit evals that means passing a **single page path**, with the composite counterpart auto-discovered. The `pass1-domain-binding` fixture is adapted from the field workstream's kit **re-skinned to a fictional domain** — no real project names, tickets, or people.
 
 ## Build order (vertical slices — each ends runnable + green)
 
@@ -57,8 +60,8 @@ Each step names its verification.
 3. **Process + archaeology + requirements-gate & hidden-invariant evals.** Write `model-process.md` + `archaeology.md`; build `evals/requirements-gate/` and `evals/hidden-invariant/`. → *verify:* SKILL.md phase summary matches `model-process.md` (dedup pass per ADR-0004 authoring rule 3); both evals' traps map to F1/F4.
 4. **Brownfield mode + brownfield-update eval.** Extend `model-process.md` intake + close phases; build `evals/brownfield-update/` (existing kit + drifted code + ≥2 seeded stale assertions in distinct files). → *verify:* eval asserts all seeded stale assertions are caught (fact-flip), and the no-unilateral-flip assertion is present.
 5. **Scope-pushback regression eval.** Build `evals/scope-pushback/`. → *verify:* the prompt asks for a durable ERD/schema mirror naturally; assertions require refusal-with-maintenance-cost, not silent compliance.
-6. **M1 extension: provenance + composite acceptance + self-certification check + `pass0-provenance` eval.** → *verify:* Pass 0 stays repo-blind (provenance derives from artifact text only — assert in eval); the properly-labeled twin claim draws no finding.
-7. **M1 extension: dimension 7 + `pass1-domain-binding` + `regression-clean-kit` evals; eval-8 re-run.** → *verify:* dimension-7 verdicts discriminate all four outcomes; clean kit yields zero findings; re-run M1 eval 8 and confirm assertions 8.5/8.7 now pass (closing the deliberately-unverified fix from M1).
+6. **M1 extension: provenance + composite acceptance + self-certification check + surface updates + `pass0-provenance` eval.** → *verify:* Pass 0 stays repo-blind (provenance derives from artifact text only — assert in eval); the finding surfaces in the Pass 2 Provenance subsection; the properly-labeled twin claim draws no finding; SKILL.md description within budget.
+7. **M1 extension: dimension 7 (incl. Pass 0 routing set) + `pass1-domain-binding` + `regression-clean-kit` evals; eval-8 re-run.** → *verify:* binding claims route to token 7 (none `unrouted`); verdicts discriminate `verified` / `violated` / `dangling-anchor` / `internally-sound`, with the `ill-formed` negative control; clean kit yields zero findings; re-run M1 eval 8 and confirm assertions 8.5/8.7 now pass (closing the deliberately-unverified fix from M1).
 8. **Final verification.** → *verify:* full `test/test-*.sh` green; `make plugin-graph` clean; `make generate-kodex` fresh + idempotent; `/kk:test`, `/kk:document`, `/kk:review-code`, `/kk:review-spec` run per the tasks file.
 
 ## Conventions checklist (do not skip)

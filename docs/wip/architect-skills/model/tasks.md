@@ -17,7 +17,7 @@
 
 - [ ] Create `klaude-plugin/skills/_shared/requirements-harvesting.md`, `open-question-pass.md`, `fact-flip-propagation.md`, `contact-ratio-guard.md` — each opens with its motivating failure (design §1 F1/F4/F2/F5), then the rule as a mandatory workflow step, written producer-generic (consumable by `decide` later without edits).
 - [ ] Create `klaude-plugin/skills/model/SKILL.md` — frontmatter (`name: model`, trigger-keyword-first description ≤1024 soft), ADR-0004 mandatory-order directive, seven-phase Workflow summary (placeholder links to files landing in Tasks 2–4 are acceptable only if `make plugin-graph` stays green — otherwise stub the files in this task).
-- [ ] Create the four `shared-` symlinks in `klaude-plugin/skills/model/` (`ln -s ../_shared/<name>.md shared-<name>.md`).
+- [ ] Create the five `shared-` symlinks in `klaude-plugin/skills/model/` (`ln -s ../_shared/<name>.md shared-<name>.md`): the four new guards plus the existing `capy-knowledge-protocol.md`.
 - [ ] Add `model` to `EXPECTED_SKILLS` in `test/test-plugin-structure.sh`; run `make generate-kodex`.
 - [ ] **verify:** `bash test/test-plugin-structure.sh` green; `make plugin-graph` link/orphan gate clean; `git diff --exit-code kodex-plugin/` clean after regen.
 
@@ -41,7 +41,7 @@
 **Can run in parallel with:** 6
 **Docs:** [design.md §4](design.md) · [implementation.md — Build order 3](implementation.md)
 
-- [ ] Create `klaude-plugin/skills/model/model-process.md` — the seven phases (greenfield path): scope intake + forcing question, requirements gate (invokes the shared guard), archaeology (links `archaeology.md`), kit drafting (links `kit-contract.md`), verification (confirm-pass + open-question pass via shared guard), conventions-bind-author self-check, surface & close (RQ queue with role deciders + contact-ratio guard).
+- [ ] Create `klaude-plugin/skills/model/model-process.md` — the seven phases (greenfield path): scope intake + forcing question + capy search per the shared protocol (`kk:arch-decisions`, `kk:project-conventions`), requirements gate (invokes the shared guard), archaeology (links `archaeology.md`), kit drafting (links `kit-contract.md`), verification (confirm-pass + open-question pass via shared guard), conventions-bind-author self-check, surface & close (RQ queue with role deciders, appended to the feature's `docs/wip/<feature>/design.md` **Open Questions** section when the feature dir exists; contact-ratio guard; capy indexing of non-obvious rationale).
 - [ ] Create `klaude-plugin/skills/model/archaeology.md` — state → time → invariants reading order; two-clock discipline; model-in-service-of-the-decision scoping.
 - [ ] Sync the SKILL.md phase summary with `model-process.md`; run the ADR-0004 dedup pass (no repeated content-read instructions).
 - [ ] Build `evals/requirements-gate/` (ticket files present; trap: modelling without quoting the asks / inventing a brief) and `evals/hidden-invariant/` (code slice hiding a single-result-lookup-class cross-file trap; trap: confirm-only verification missing it).
@@ -80,10 +80,12 @@
 **Docs:** [design.md §6.1–6.2](design.md) · [implementation.md — Build order 6](implementation.md)
 
 - [ ] Extend `klaude-plugin/skills/review-architecture/pass0-extraction.md` — `provenance` field (`harvested` / `reverse-engineered` / `fabricated-labeled`; derived from artifact text only; repo-blind preserved) + the self-certification check (canonical-status + reverse-engineered provenance + no ratification source → P2, internal-soundness).
-- [ ] Extend `input-contract.md` — composite domain-reference-kit acceptance (glossary + traps pair as one artifact; cross-reference rationale; all other single-artifact rules unchanged).
-- [ ] Update `output-contract.md` only if the new finding type needs report vocabulary.
-- [ ] Build `evals/pass0-provenance/` — canonical-by-decree artifact + properly-labeled twin claim (negative control); oracle with expected provenance per claim + the expected finding.
-- [ ] **verify:** the P2 finding fires only for the decree claim; existing M1 evals' gold files unaffected (provenance is additive — confirm no gold-claims schema break); all gates green.
+- [ ] Extend `input-contract.md` — composite domain-reference-kit acceptance with invocation mechanics per design §6.2: either page's path invokes the pair (sibling naming convention `<context>.md` ↔ `<context>-traps.md`, cross-link fallback); two explicit paths still rejected, rejection message gains the kit clause; single-page kits accepted solo with an unresolvable-cross-references note.
+- [ ] Extend `pass2-soundness.md` — the provenance-consistency check as Pass 2's third check: `canonical`/ratified status + `reverse-engineered` provenance + no cited ratification record → P2.
+- [ ] Update `output-contract.md` — **Provenance** subsection under Pass 2 findings, the self-certification severity row (P2), composite-kit invocation/acceptance wording.
+- [ ] Update `review-architecture/SKILL.md` (description: domain-reference-kit artifact type + glossary/domain-kit trigger keywords + dimension enumeration, ≤1024 recheck; Phase 1 + Invocation composite wording) and `klaude-plugin/agents/architecture-reviewer.md` (description artifact types; "single accepted artifact" payload line).
+- [ ] Build `evals/pass0-provenance/` — canonical-by-decree artifact + properly-labeled twin claim (negative control); oracle with expected provenance per claim + the expected finding (Pass 2 Provenance subsection); assertions split the Pass 0 field-assignment seam from the Pass 2 finding seam.
+- [ ] **verify:** the P2 finding fires only for the decree claim, in the Provenance subsection; existing M1 evals' gold files unaffected (provenance is additive — confirm no gold-claims schema break); SKILL.md description within budget; all gates green (incl. kodex regen for the agent file).
 
 ## Task 7 — M1 extension: dimension 7 + binding evals + eval-8 re-run
 
@@ -93,11 +95,12 @@
 **Can run in parallel with:** 4, 5
 **Docs:** [design.md §6.3](design.md) · [implementation.md — Build order 7](implementation.md)
 
-- [ ] Extend `pass1-topology.md` — dimension 7 (Domain Binding): claim class, existence-only evidence via Grep/Glob, anchor-rule application, `Bindings: none yet` as well-formed `future`, altitude-line note. Inline examples domain-disjoint from all fixtures **including counterfactual branches**.
-- [ ] Build `evals/pass1-domain-binding/` — fictional-domain two-page kit (re-skinned from the field kit's trap structure) + code slice; verdicts to discriminate: `verified`, `violated` (missing symbol in existing anchor), `dangling-anchor` (nonexistent file), well-formed `future`.
+- [ ] Extend `pass0-extraction.md` — the dimension-7 routing set: `dimension` token enum → `7`, Domain Binding row in §Dimension routing, domain-reference-kit row in the artifact-type mining table (per-term Bindings + rules-table enforcement pointers → dim 7; rule intent → provenance-labeled, not truth-verified).
+- [ ] Extend `pass1-topology.md` — dimension 7 (Domain Binding): claim class, existence-only evidence via Grep/Glob, anchor-rule application, both fallback outcomes (`Bindings: none yet` → `internally-sound`; future binding naming no code-element kind → `ill-formed`), altitude-line note. Inline examples domain-disjoint from all fixtures **including counterfactual branches**.
+- [ ] Build `evals/pass1-domain-binding/` — fictional-domain two-page kit (re-skinned from the field kit's trap structure) + code slice; prompt passes one page's path (counterpart auto-discovered); assertions cover extraction routing (binding claims → dim 7, none `unrouted`) and verdicts: `verified`, `violated` (missing symbol in existing anchor), `dangling-anchor` (nonexistent file), `internally-sound` (`future`), `ill-formed` negative control.
 - [ ] Build `evals/regression-clean-kit/` — sound kit matching its slice; zero findings.
 - [ ] Re-run M1 eval 8 (`pass2-escalation-one-way-door`) per the M1 live-pass procedure; confirm assertions 8.5 and 8.7 pass post-fix.
-- [ ] **verify:** all four dimension-7 outcomes discriminated; clean kit zero findings; eval-8 assertions 8.5/8.7 PASS recorded in [../review/tasks.md](../review/tasks.md); all gates green.
+- [ ] **verify:** binding claims route to token 7 with no `unrouted` leakage; all dimension-7 verdict outcomes discriminated; clean kit zero findings; eval-8 assertions 8.5/8.7 PASS recorded in [../review/tasks.md](../review/tasks.md); all gates green.
 
 ## Task 8 — Final verification
 
