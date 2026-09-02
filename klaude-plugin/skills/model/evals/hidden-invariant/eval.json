@@ -1,0 +1,22 @@
+{
+  "id": 3,
+  "name": "hidden-invariant",
+  "description": "Producer eval: runs /kk:model against a small fictional campground-booking slice hiding a single-result-lookup-class cross-file trap, and grades the open-question verification pass (design §4 phase 5, F4) — verification must ask new questions of the source (cardinalities, single-result lookups, unchecked writes), not only re-confirm drafted claims, and the surfaced invariant must be recorded, never dropped. `oracle/gold-invariant.json` is the grader-only answer key (the seeded hazard, its symbols, the expected traps entry and decision-queue question); it lives outside `test-files/` so it is never staged as skill input. The slice is a standalone Go module; its cross-file references are intentionally package-internal (topology for reading, not a compilable workspace).",
+  "skills": ["model"],
+  "prompt": "Build a domain-reference kit for the campground booking code under campground/ so we have a glossary and traps page for this bounded context.",
+  "trap": "Confirm-only verification: the model drafts glossary claims from a per-file read, then \"verifies\" by re-confirming what it already wrote. The seeded hazard — Book (booking.go) never checks for overlapping active bookings on a site, while OccupantOf (occupancy.go) and GateCode (gate.go) treat the first covering booking as THE occupant — is a single-result lookup over writes with no uniqueness guarantee: invisible to any single file and invisible to any confirm-pass, because no drafted claim mentions it. A run that skips the open-question pass produces a clean-looking kit that silently asserts single-occupancy.",
+  "files": [
+    "test-files/campground/go.mod",
+    "test-files/campground/site.go",
+    "test-files/campground/booking.go",
+    "test-files/campground/occupancy.go",
+    "test-files/campground/gate.go"
+  ],
+  "assertions": [
+    { "id": "3.1", "text": "The verification phase visibly includes a distinct open-question pass — new questions asked of the source (cardinalities, single-result lookups, unchecked writes, silent defaults, time/ordering) — as its own step in addition to a confirm-pass over drafted claims. A run whose verification output shows only re-confirmation of previously drafted claims, with no new questions asked of the source, does not satisfy this assertion." },
+    { "id": "3.2", "text": "The seeded cross-file hazard is surfaced: Book (booking.go) enforces no non-overlap between a site's active bookings, while OccupantOf (occupancy.go) / GateCode (gate.go) return the first covering booking as the single occupant — so a double-booked site hands the gate code to whichever overlapping booking was recorded first." },
+    { "id": "3.3", "text": "The hazard is recorded on the traps page as a P# cross-file entry (a fact no single file reveals), naming the involved symbols (Book plus OccupantOf and/or GateCode) with file-or-symbol citations, and stating a retirement condition (e.g. Book gains an overlap check, or overlapping stays are ratified as legitimate)." },
+    { "id": "3.4", "text": "The unratified intent lands in the decision queue: a precise, role-tagged question asking whether a site may ever hold overlapping active bookings (decider: product owner or equivalent business role) — the kit does not silently assert single-occupancy as settled business intent." },
+    { "id": "3.5", "text": "The glossary does not present \"a site has at most one active booking at a time\" as an enforced code-clock fact: if the Site–Booking relationship is stated, it is marked as an unenforced assumption (`proposed`/`undecided`) or routed to the traps page / decision queue." }
+  ]
+}
