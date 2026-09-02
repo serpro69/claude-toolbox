@@ -23,15 +23,16 @@
 
 ## Task 2 — Kit output contract + kit-format eval
 
-**Status:** pending
+**Status:** done
 **Size:** M
 **Depends on:** 1
 **Can run in parallel with:** 6
 **Docs:** [design.md §3](design.md) · [implementation.md — Build order 2](implementation.md)
 
-- [ ] Create `klaude-plugin/skills/model/kit-contract.md` — glossary page format (dual-audience entry fields, status markers, rules table + provenance banner, one conceptual-altitude diagram, Derived-from footer, no line numbers, ticket-note retirement discipline, 10–20 term guideline with variance drivers), traps page format (P#/D# stable numbering, no schema mirror, self-limiting entries), conventions-index content (once per home), freshness banner (proposed-until-reviewed + re-verification via `/kk:review-architecture`), homes-resolution precedence, kit-scope pushback.
-- [ ] Build `evals/kit-format/` — small fictional-domain code slice in `test-files/`; oracle checklist in `oracle/` covering every kit convention; assertions per convention (all intent claims `proposed`; no line numbers; footer complete; exactly one diagram; no schema mirror in traps).
-- [ ] **verify:** eval JSON valid; every design-§3 convention has a corresponding assertion; structure tests + plugin-graph green.
+- [x] Create `klaude-plugin/skills/model/kit-contract.md` — glossary page format (dual-audience entry fields, status markers, rules table + provenance banner, one conceptual-altitude diagram, Derived-from footer, no line numbers, ticket-note retirement discipline, 10–20 term guideline with variance drivers), traps page format (P#/D# stable numbering, no schema mirror, self-limiting entries), conventions-index content (once per home), freshness banner (proposed-until-reviewed + re-verification via `/kk:review-architecture`), homes-resolution precedence, kit-scope pushback.
+- [x] Build `evals/kit-format/` — small fictional-domain code slice in `test-files/`; oracle checklist in `oracle/` covering every kit convention; assertions per convention (all intent claims `proposed`; no line numbers; footer complete; exactly one diagram; no schema mirror in traps). *(Bike-share domain slice, disjoint from the contract's library-lending examples; oracle at `oracle/kit-conventions-checklist.json` maps every §3 convention → assertion 2.1–2.13.)*
+- [x] **verify:** eval JSON valid; every design-§3 convention has a corresponding assertion; structure tests + plugin-graph green. *(`test-plugin-structure.sh` 182/182; `make plugin-graph` no broken edges/orphans; `make generate-kodex` regenerated the `kodex-plugin/skills/model/` mirror, identical modulo the documented `/kk:`→`$kk:` transform — the 7 `test-codex-structure.sh` TOML failures are the pre-existing no-`tomllib` env issue from Task 1, `.codex/agents/` unchanged.)*
+- [x] **isolated code review (kk:review-code:isolated):** code-reviewer sub-agent + pal (gemini-3.1-pro-preview). Applied: seeded a neutral `TODO(BIKE-204)` in `dock.go` + added assertion **2.14** (ticket-note retirement discipline — previously an untested §3 convention: no ticket in the fixture meant a model never emits a ticket note); clarified **2.7** so `go.mod` (no domain fact) isn't required in the Derived-from footer; softened the oracle term-count band to name the 4 core concepts (removes grader ambiguity); annotated the `canonical` example in `kit-contract.md` so it can't contaminate assertion 2.5 (greenfield defaults to `proposed`). Rejected: the "backticks impossible in JSON" 2.10 nit (false — 2.10 uses backticks); "add a regression eval" (that is Task 5 `scope-pushback`). Two systemic eval-authoring lessons indexed to `kk:review-findings`.
 
 ## Task 3 — Production workflow + requirements-gate & hidden-invariant evals
 

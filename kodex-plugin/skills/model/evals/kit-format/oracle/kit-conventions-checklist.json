@@ -1,0 +1,37 @@
+{
+  "oracle_note": "Grader-only convention checklist for the kit-format producer eval. Lives outside `test-files/` so it is never staged as skill input — the model under test sees only the bikeshare/ slice and must produce a conventions-clean kit itself. `conventions[]` enumerates every design-§3 kit convention and the correct behavior; `fixture_facts[]` lists the concrete domain facts a correct run must surface (rules, terms, divergences) so the grader can check the kit is anchored in THIS slice, not a generic template. Grade each eval assertion against the produced kit text using this as the answer key.",
+  "conventions": [
+    { "convention": "two-pages", "expected": "Exactly two durable pages for the context: glossary `<context>.md` and traps `<context>-traps.md`. No standing ERD/logical/physical model page.", "assert": "2.1" },
+    { "convention": "one-conceptual-diagram", "expected": "Glossary has a summary and exactly one text-based diagram at conceptual altitude (entities + relationships + load-bearing attributes only). A field-by-field struct dump is a schema mirror and fails.", "assert": "2.2" },
+    { "convention": "rules-provenance-proposed", "expected": "Rules in a numbered L# table under a provenance banner; every code-reverse-engineered rule is `proposed`, never `canonical`.", "assert": "2.3" },
+    { "convention": "dual-audience-entries", "expected": "Each term entry has Definition (business clock) + Bindings (code clock: dir/collection/constant/field/symbol) + Status, with Aliases / Not to be confused with / Notes where applicable.", "assert": "2.4" },
+    { "convention": "status-marker-set", "expected": "Status is one of canonical/proposed/undecided/deprecated-alias/overloaded. No `canonical` here (no ratification available).", "assert": "2.5" },
+    { "convention": "no-line-numbers", "expected": "No line numbers in any citation — file or symbol only.", "assert": "2.6" },
+    { "convention": "derived-from-complete", "expected": "Derived-from footer lists every read path carrying a domain fact: bike.go, dock.go, ride.go, policy.go. go.mod carries no domain fact — it may be listed but is not required; omitting any of the four .go files fails.", "assert": "2.7" },
+    { "convention": "traps-no-schema-mirror", "expected": "Traps page holds only no-single-file-reveals facts (D# divergences, P# cross-file hazards) with stable numbering; no restated struct fields.", "assert": "2.8" },
+    { "convention": "traps-self-limiting", "expected": "Each traps entry names the fix/condition that retires it.", "assert": "2.9" },
+    { "convention": "freshness-banner", "expected": "Each page states (a) proposed-until-reviewed-by-another-human (no self-certification) and (b) re-verify via $kk:review-architecture against Derived-from anchors at consumption time.", "assert": "2.10" },
+    { "convention": "conventions-index-once-per-home", "expected": "One index.md for the home declares entry fields, status markers, two-clock rule, citation rules, freshness model — not duplicated per page.", "assert": "2.11" },
+    { "convention": "homes-resolution", "expected": "No existing kit + no user-declared home → propose docs/architecture/ default and confirm; do not silently write elsewhere.", "assert": "2.12" },
+    { "convention": "term-count-guideline", "expected": "Term count fits the slice: 4 core concepts (Ride, Bike, Dock, Rider), with BikeStatus and Trip/alias as optional additions. A run emitting 4-8 well-motivated terms passes; padding toward 10-20 or collapsing the four core concepts fails. 10-20 is a guideline for larger slices, not a floor.", "assert": "2.13" },
+    { "convention": "ticket-note-retirement", "expected": "A note recording the BIKE-204 live-capacity TODO states its retirement condition (BIKE-204 shipping / the dock-sensor rollout). A bare ticket reference with no retirement condition fails.", "assert": "2.14" }
+  ],
+  "fixture_facts": {
+    "expected_terms": ["Ride", "Bike", "Dock", "Rider"],
+    "optional_terms": ["BikeStatus", "Trip (alias of Ride)"],
+    "reverse_engineered_rules_all_proposed": [
+      "A ride open longer than 24h is auto-closed and billed a full-day rate (policy.go MaxRideDuration / AutoClose).",
+      "A dock accepts a returned bike only while below capacity (dock.go CanAccept).",
+      "A bike under maintenance is not eligible to start a ride (bike.go Eligible)."
+    ],
+    "expected_divergence_D": "Maintenance-ineligibility rule is declared (bike.go Eligible + comment) but StartRide (ride.go) never calls Eligible, so a maintenance bike can start a ride. Reveals only by reading bike.go + ride.go together.",
+    "expected_cross_file_hazard_P": "AutoClose (policy.go) stamps Ride.EndedAt but never returns the bike to StatusAvailable, leaving it StatusInUse indefinitely after an auto-close. Reveals only by reading policy.go + ride.go + bike.go together.",
+    "ticket_reference": "dock.go carries `// TODO(BIKE-204): replace the static Capacity with live occupancy once the dock-sensor rollout ships.` A note recording it must state the retirement condition (BIKE-204 shipping); a bare ticket reference fails 2.14.",
+    "must_not_appear": [
+      "any term marked `canonical`",
+      "line numbers in bindings or Derived-from",
+      "a struct field dump in the diagram or on the traps page",
+      "a self-certified 'verified/trusted' status without external review"
+    ]
+  }
+}
