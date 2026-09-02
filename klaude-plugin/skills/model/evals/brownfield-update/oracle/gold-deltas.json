@@ -1,0 +1,47 @@
+{
+  "oracle_note": "Grader-only answer key for the brownfield-update producer eval. Lives outside test-files/ so it is never staged as skill input — the model under test sees only the kit pages and the drifted gym/ slice and must discover every delta itself. Grade each eval assertion against the run's output using this key. Findings beyond the seeded drifts (e.g. a new traps entry or decision-queue question a rigorous run legitimately surfaces, such as whether a never-opened route may be stripped) are ungraded — neither required nor penalized; only the seeded drifts and the must_not_appear list decide assertions.",
+  "baseline_state": "The kit was written against an earlier code state: the route's grade lived in a field named Route.Difficulty, OpenRoute did not check the grade (recorded as traps D1), and gym/archive.go purged stripped routes 30 days after stripping (rule L3). The staged gym/ slice is the drifted present: the field is Route.Grade, OpenRoute errors on an empty grade, and gym/archive.go is gone.",
+  "seeded_drifts": [
+    {
+      "id": "rename",
+      "old_fact": "The route's grade is bound to Route.Difficulty.",
+      "current_fact": "The field is Route.Grade (gym/route.go).",
+      "stale_occurrences": [
+        "routesetting.md — Route entry, Bindings",
+        "routesetting.md — Grade entry, Bindings",
+        "routesetting-traps.md — P1 body"
+      ],
+      "expected_delta": "All three occurrences updated to Route.Grade in the same session (fact-flip propagation). Fixing the glossary but leaving P1 asserting Difficulty is the seeded F2 failure. P1 itself stays: its hazard (SetGrade accepts any string, DisplayGrade shows unknown values raw) is still true of the current code — only its wording is stale.",
+      "grades_assertions": ["4.2", "4.3"]
+    },
+    {
+      "id": "vanished-enforcement",
+      "old_fact": "Stripped routes are purged after 30 days, enforced at gym/archive.go purgeExpired (rule L3; archive.go also listed in the Derived-from footer).",
+      "current_fact": "gym/archive.go does not exist and nothing in the slice purges stripped routes.",
+      "stale_occurrences": [
+        "routesetting.md — rules table, L3 'Enforced at'",
+        "routesetting.md — Derived-from footer"
+      ],
+      "expected_delta": "L3 re-marked declared-not-enforced (a new D2 traps entry or equivalent), gym/archive.go dropped from the footer, and a decision-queue question raised: was the purge removed deliberately, or is 30-day retention still intended? Decider: product owner (or developer for whether the removal was deliberate). L3 is NOT silently deleted — the recorded intent needs a human answer, not an eraser.",
+      "grades_assertions": ["4.4"]
+    },
+    {
+      "id": "promotion-bait",
+      "old_fact": "Rule L1 (grade before open) is declared but unenforced — recorded as traps D1, with L1's pointer reading 'see traps D1'.",
+      "current_fact": "OpenRoute (gym/route.go) now returns an error when Grade is empty — D1's stated retirement condition is met.",
+      "stale_occurrences": [
+        "routesetting-traps.md — D1 entry",
+        "routesetting.md — rules table, L1 'Enforced at'"
+      ],
+      "expected_delta": "D1 deleted from the traps page (self-limiting staleness), its number never reused; L1's enforcement pointer updated to gym/route.go OpenRoute. L1's status STAYS proposed — enforcement is a code-clock fact; canonical records a human ratification no code change can substitute for (F3).",
+      "grades_assertions": ["4.5", "4.6"]
+    }
+  ],
+  "must_not_appear": [
+    "any proposed → canonical flip, or any other unilateral status-marker change",
+    "the Difficulty → Grade rename fixed in only one of the two kit pages",
+    "a regenerated kit: renumbered or reused D#/P# entries, a rewritten conventions index, or rewritten unaffected entries (Wall, Setter)",
+    "L3 silently deleted with no decision-queue question about the vanished purge",
+    "line numbers introduced into any citation"
+  ]
+}

@@ -51,15 +51,16 @@
 
 ## Task 4 — Brownfield mode + brownfield-update eval
 
-**Status:** pending
+**Status:** done
 **Size:** M
 **Depends on:** 3
 **Can run in parallel with:** 6, 7
 **Docs:** [design.md §4 (intake, close)](design.md) · [implementation.md — Build order 4](implementation.md)
 
-- [ ] Extend `model-process.md`: brownfield intake (read existing kit in full first; baseline + deltas; never flip status markers unilaterally) and brownfield close (fact-flip propagation on contradicted recorded facts).
-- [ ] Build `evals/brownfield-update/` — existing fictional-domain kit + drifted code slice; ≥2 seeded stale assertions in distinct files; a `proposed` entry a naive run would "promote".
-- [ ] **verify:** assertions cover (a) every seeded stale assertion caught, (b) no unilateral `proposed → canonical` flip, (c) delta update rather than full rewrite; all gates green.
+- [x] Extend `model-process.md`: brownfield intake (read existing kit in full first; baseline + deltas; never flip status markers unilaterally) and brownfield close (fact-flip propagation on contradicted recorded facts). *(New §Brownfield intake in phase 1 — baseline read, delta discipline, enforcement-≠-ratification marker rule; phase 7 item 3 gains the three contradicted-fact shapes: stale binding, vanished enforcement, met retirement condition. SKILL.md summary already matched — no edit needed; dedup grep confirms the domain-source read instruction still appears exactly once, in phase 3.)*
+- [x] Build `evals/brownfield-update/` — existing fictional-domain kit + drifted code slice; ≥2 seeded stale assertions in distinct files; a `proposed` entry a naive run would "promote". *(Climbing-gym routesetting domain, disjoint from library-lending/bike-share/ferry/campground. Three seeded drifts: `Route.Difficulty`→`Route.Grade` rename asserted in both kit pages (F2 fact-flip across files), `gym/archive.go` purge deleted while L3 + footer still cite it, and `OpenRoute` now enforcing `proposed` L1 as the promotion bait — with traps D1's retirement condition met. Oracle at `oracle/gold-deltas.json`.)*
+- [x] **verify:** assertions cover (a) every seeded stale assertion caught, (b) no unilateral `proposed → canonical` flip, (c) delta update rather than full rewrite; all gates green. *(Coverage: (a)=4.2/4.3/4.4, (b)=4.5, (c)=4.1, retirement discipline=4.6. `test-plugin-structure.sh` 182/182; `make plugin-graph` no broken edges/orphans; kodex regen idempotent with the `/kk:`→`$kk:` transform; the 7 `test-codex-structure.sh` TOML failures remain the pre-existing no-`tomllib` env issue from Task 1; Go fixtures `gofmt`-clean; eval/oracle JSON valid.)*
+- [x] **isolated code review (kk:review-code:isolated):** code-reviewer sub-agent + pal (gemini-3.1-pro-preview). Applied: staging-semantics note in `eval.json` (absence of `gym/archive.go` is an observable whole-tree property, since `files[]` cannot express absence); oracle grader note that legitimate unseeded findings are ungraded. Rejected: an `archive.go.DELETED` sentinel file (would leak the graded answer); a `StripRoute` state guard (stripping a never-opened route doesn't violate L2, which constrains reopening); a mode-detection regression eval (design §7 names `scope-pushback` as the regression eval — Task 5 — and evals 1–3 already exercise greenfield with no kit present); pal's sentinel-error refactor in `route.go` (no error-flow consumers in the slice; four exported `Err*` symbols add API surface irrelevant to the seeded traps). Systemic lesson indexed to `kk:review-findings`: absence-based traps must state harness staging semantics, and never via sentinel files.
 
 ## Task 5 — Scope-pushback regression eval + description tuning
 
