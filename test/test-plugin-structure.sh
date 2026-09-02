@@ -101,7 +101,7 @@ done
 # the model under test.
 log_test "Eval oracles stay out of test-files/ (grader-only oracle/ convention)"
 oracle_leaks=$(find "$REPO_ROOT/klaude-plugin/skills"/*/evals/*/test-files \
-  \( -name 'gold-claims*.json' -o -name 'expected-*.json' \) -type f 2>/dev/null)
+  \( -name 'gold-*.json' -o -name 'expected-*.json' \) -type f 2>/dev/null)
 if [[ -z "$oracle_leaks" ]]; then
   log_pass "No oracle files inside any eval's test-files/"
 else

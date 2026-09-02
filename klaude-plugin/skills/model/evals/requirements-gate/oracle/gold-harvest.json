@@ -1,0 +1,40 @@
+{
+  "oracle_note": "Grader-only answer key for the requirements-gate producer eval. Lives outside `test-files/` so it is never staged as skill input — the model under test sees only the ferry/ slice (code + tickets) and must run the harvesting gate itself. `required_quotes[]` are the asks a correct run quotes verbatim with attribution before modelling; `facts_only_in_tickets[]` and `ask_vs_code_conflicts[]` let the grader check that harvesting was consequential, not ceremonial. Grade each eval assertion against the run's output using this as the answer key.",
+  "required_quotes": [
+    {
+      "source": "FERRY-31",
+      "reporter": "Maren Kull (product owner, bookings)",
+      "ask": "Price vehicle-deck space per lane-metre with a class multiplier, and guarantee that a confirmed advance reservation is never displaced by a walk-up sale.",
+      "asserts": "1.1"
+    },
+    {
+      "source": "FERRY-12",
+      "reporter": "Jonas Priel (harbour safety officer)",
+      "ask": "A sailing carries at most one dangerous-goods vehicle. A dangerous-goods vehicle boards last and parks in the stern lane, isolated from passenger vehicles.",
+      "reached_via": "one-hop reference from FERRY-31 (References: FERRY-12 + the 'read it before touching boarding' pointer)",
+      "asserts": "1.2"
+    }
+  ],
+  "facts_only_in_tickets": [
+    {
+      "fact": "Dangerous-goods segregation (max one DG vehicle per sailing; boards last; stern lane). No code file mentions dangerous goods — the concept is harvestable only from FERRY-12, and it is still pending harbour-master sign-off, so it is unratified input.",
+      "expected_in_kit": "cited to FERRY-12 as harvested and unratified (rule awaiting sign-off / declared-but-unimplemented gap / decision-queue question); NOT presented as reverse-engineered from code, NOT presented as enforced.",
+      "asserts": "1.4"
+    }
+  ],
+  "ask_vs_code_conflicts": [
+    {
+      "ask": "FERRY-31's never-displaced guarantee for confirmed advance reservations.",
+      "code_behavior": "Reserve (boarding.go) frees deck space by truncating the reservation-list tail without inspecting Source, so an advance reservation can be displaced by any later Reserve call, including a walk-up sale.",
+      "expected_in_kit": "surfaced as a divergence or decision-queue question — the ask is unmet by current code.",
+      "asserts": "1.5"
+    }
+  ],
+  "must_not_appear": [
+    "a stakeholder, brief, or requirement not present in the two tickets (invented input)",
+    "the labeled-fabrication fallback (real input exists, so its use means the tickets were not read)",
+    "the DG segregation rule presented as reverse-engineered from code, as enforced, or as ratified",
+    "paraphrase-only rendering of the asks with no verbatim quote or no source attribution",
+    "kit or model content emitted before the quoted asks appear in the output"
+  ]
+}
