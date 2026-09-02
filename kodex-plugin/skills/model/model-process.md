@@ -4,8 +4,6 @@ The authoritative seven-phase workflow. SKILL.md carries the one-line phase summ
 
 Phases 1–2 touch no domain code. Phase 3 is the single point where domain source is read — the content-read step appears exactly once, there (ADR-0004). Phases 4–7 work from what phases 2–3 harvested; they re-open sources to check claims, never to widen scope.
 
-<!-- Brownfield intake/close specifics are extended in M2 Task 4 (docs/wip/architect-skills/model/tasks.md). The greenfield path below is complete; brownfield is covered at the level SKILL.md states (read in full, deltas only, no unilateral marker flips). -->
-
 ## Phase 1 — Scope intake
 
 Establish three things, in conversation with the user where the request leaves them open:
@@ -14,7 +12,15 @@ Establish three things, in conversation with the user where the request leaves t
 2. **The forcing question.** The feature, ticket, or decision that makes modelling worth doing *now*. It bounds everything downstream: what archaeology reads, how many terms the glossary carries, which questions reach the decision queue. Model in service of the decision — a run with no forcing question boils the ocean, and an ocean-boiling model is sophistication nobody asked for. If the user names none, ask for one before proceeding.
 3. **The mode.**
    - **Greenfield** — no kit exists for this context. Produce the initial two pages (+ the conventions index if the home has none), per [kit-contract.md](kit-contract.md).
-   - **Brownfield** — an existing kit is found (check the homes in [kit-contract.md](kit-contract.md) §Homes-resolution precedence) or pointed at. Read it **in full** before anything else; it becomes the baseline and every change is a delta. Existing status markers are **never flipped unilaterally** — `proposed → canonical` requires a recorded human decision, which is out of this skill's scope.
+   - **Brownfield** — an existing kit is found (check the homes in [kit-contract.md](kit-contract.md) §Homes-resolution precedence) or pointed at. Follow §Brownfield intake below.
+
+### Brownfield intake
+
+The existing kit is the **baseline**; the run updates it, never replaces it.
+
+1. **Read the kit in full first** — glossary page, traps page, and the home's conventions index — before phase 2 runs. This is baseline-loading, not domain reading; phase 3 remains the run's only domain-source read. A delta computed against a half-read baseline is a rewrite wearing a delta's name.
+2. **Every change is a delta.** The baseline's structure is the frame: entries the drift does not touch stay as they are, `D#`/`P#` numbers are never reset or reused, and the home's conventions index is never rewritten — the updated pages conform to it. If the baseline conflicts with [kit-contract.md](kit-contract.md), raise the conflict with the user; do not silently reformat.
+3. **Status markers are never flipped unilaterally.** In particular, discovering that code **now enforces** a `proposed` rule updates the rule's *enforcement pointer*, not its status — enforcement is a code-clock fact, and `canonical` records a human ratification no code change can substitute for (F3). `proposed → canonical` requires a recorded human decision, out of this skill's scope.
 
 Close intake with the capy knowledge search per [shared-capy-knowledge-protocol.md](shared-capy-knowledge-protocol.md): query `kk:arch-decisions` and `kk:project-conventions` for prior modelling decisions and conventions in this area. Empty results are normal; contradicting results are raised with the user before proceeding.
 
@@ -61,5 +67,8 @@ Grade the produced pages against the checklist in [kit-contract.md](kit-contract
 
    The queue is presented inline, and **appended to the active feature's `docs/wip/<feature>/design.md` under an "Open Questions" heading when that feature directory exists** (inline-only otherwise).
 2. **Apply the contact-ratio guard** per [shared-contact-ratio-guard.md](shared-contact-ratio-guard.md): if this run brings the artifact-to-stakeholder-contact ratio to N:0, state plainly that the next unit of progress is a conversation, name the role (and person/ticket if known), and route the decision queue to them instead of producing more.
-3. **Brownfield only — fact-flip propagation** per [shared-fact-flip-propagation.md](shared-fact-flip-propagation.md): any recorded fact this run contradicted is fixed at **every** occurrence across the workspace in this same session, not just where it was noticed.
+3. **Brownfield only — fact-flip propagation** per [shared-fact-flip-propagation.md](shared-fact-flip-propagation.md): any recorded fact this run contradicted is fixed at **every** occurrence across the workspace in this same session, not just where it was noticed. The usual shapes of a contradicted fact in a kit update:
+   - **A stale binding** — the symbol a kit entry cites was renamed or moved. Fix every page that asserts the old name: entry Bindings, traps-page prose, the rules table — a rename fixed in the glossary but still asserted on the traps page is F2 verbatim.
+   - **A vanished enforcement** — code a rule's pointer cites no longer exists. Correct the pointer (declared-not-enforced, or a new `D#`), drop the path from the Derived-from footer, and route the question of whether the removal was deliberate to the decision queue — never silently drop the rule.
+   - **A met retirement condition** — the divergence a traps entry describes has been fixed. Delete the entry in this update (self-limiting staleness), never reuse its number, and update the rule row that pointed at it.
 4. **Index the rationale.** Per [shared-capy-knowledge-protocol.md](shared-capy-knowledge-protocol.md), index non-obvious modelling rationale (why a term was scoped this way, why a status is `undecided`) to `kk:arch-decisions`. Skip anything self-evident from the kit pages themselves.

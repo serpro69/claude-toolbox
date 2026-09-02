@@ -1,0 +1,25 @@
+{
+  "id": 4,
+  "name": "brownfield-update",
+  "description": "Producer eval: runs /kk:model in brownfield mode against an existing routesetting kit whose code slice has drifted since the kit was written. Grades the brownfield discipline (design §4 phases 1 and 7, F2/F3): delta update against the read-in-full baseline rather than a rewrite, fact-flip propagation across every file asserting a contradicted fact, no unilateral status-marker promotion, and retirement of a traps entry whose fix has shipped. oracle/gold-deltas.json is the grader-only answer key (each seeded drift, its stale occurrences, and the expected delta); it lives outside test-files/ so it is never staged as skill input. The slice is a standalone Go module; cross-file references are package-internal (topology for reading, not a compilable workspace). Staging note: the harness stages the whole test-files/ tree (repo convention), so the absence of gym/archive.go — which the kit cites — is an observable fixture property, not an omission from files[].",
+  "skills": ["model"],
+  "prompt": "The routesetting kit in docs/architecture/ was written a while ago and the gym code under gym/ has moved on since. We're about to plan changes to how stripped routes are handled, so bring the kit up to date with the current code first.",
+  "trap": "Brownfield discipline has three baits here. (1) The promotion bait: OpenRoute now enforces rule L1 (grade before open), so a naive run flips L1 — and the Grade entry — from proposed to canonical, though enforcement is a code-clock fact and canonical records a human ratification. (2) The single-point correction (F2): the Route.Difficulty → Route.Grade rename is noticed in the glossary Bindings and fixed there, while traps P1 keeps asserting Difficulty — the correction is applied where discovered, not propagated. (3) The full rewrite: regenerating both pages from scratch — renumbering D#/P#, rewriting the conventions index, restating untouched entries — instead of applying deltas to the baseline.",
+  "files": [
+    "test-files/gym/go.mod",
+    "test-files/gym/route.go",
+    "test-files/gym/wall.go",
+    "test-files/gym/grading.go",
+    "test-files/docs/architecture/index.md",
+    "test-files/docs/architecture/routesetting.md",
+    "test-files/docs/architecture/routesetting-traps.md"
+  ],
+  "assertions": [
+    { "id": "4.1", "text": "The existing kit (both pages plus the conventions index) is read in full and treated as the baseline, and the update is applied as deltas: entries the drift does not touch (Wall, Setter) are preserved rather than regenerated, D#/P# numbering is not reset or reused, and docs/architecture/index.md is not rewritten." },
+    { "id": "4.2", "text": "The stale binding is caught in the glossary: both occurrences of Route.Difficulty (the Route entry's Bindings and the Grade entry's Bindings) are corrected to Route.Grade." },
+    { "id": "4.3", "text": "The rename is propagated beyond the page where it was noticed: traps P1's text no longer asserts Route.Difficulty. A run that fixes the glossary Bindings but leaves P1 citing Difficulty fails this assertion (F2 — non-propagated correction)." },
+    { "id": "4.4", "text": "The vanished enforcement is caught: gym/archive.go no longer exists, so L3's 'Enforced at' pointer no longer cites it, the Derived-from footer drops it, L3 is re-marked as declared-not-enforced (a new D# entry or equivalent) rather than silently deleted, and a precise role-tagged decision-queue question asks whether the purge's removal was deliberate or 30-day retention is still intended." },
+    { "id": "4.5", "text": "No unilateral promotion: although OpenRoute now enforces L1's grade-before-open rule, every status marker stays as the baseline recorded it — L1 and the affected entries remain proposed, with L1's enforcement pointer updated to gym/route.go OpenRoute. Any proposed → canonical flip (or other unilateral marker change) without a cited recorded human decision fails this assertion." },
+    { "id": "4.6", "text": "Retirement discipline: D1's stated retirement condition (OpenRoute gains a grade check) is met in the current code, so the D1 entry is deleted from the traps page in this update, and the number D1 is not reused for any new entry." }
+  ]
+}
