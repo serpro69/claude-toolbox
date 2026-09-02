@@ -8,18 +8,18 @@
 
 ## Task 1 — Shared guards + `/kk:model` skeleton
 
-**Status:** pending
+**Status:** done
 **Size:** M
 **Depends on:** —
 **Can run in parallel with:** 6
 **Slicing:** Contract-First (the guard files define the producer workflow spine every later task builds on)
 **Docs:** [design.md §5](design.md) · [implementation.md — Build order 1](implementation.md)
 
-- [ ] Create `klaude-plugin/skills/_shared/requirements-harvesting.md`, `open-question-pass.md`, `fact-flip-propagation.md`, `contact-ratio-guard.md` — each opens with its motivating failure (design §1 F1/F4/F2/F5), then the rule as a mandatory workflow step, written producer-generic (consumable by `decide` later without edits).
-- [ ] Create `klaude-plugin/skills/model/SKILL.md` — frontmatter (`name: model`, trigger-keyword-first description ≤1024 soft), ADR-0004 mandatory-order directive, seven-phase Workflow summary (placeholder links to files landing in Tasks 2–4 are acceptable only if `make plugin-graph` stays green — otherwise stub the files in this task).
-- [ ] Create the five `shared-` symlinks in `klaude-plugin/skills/model/` (`ln -s ../_shared/<name>.md shared-<name>.md`): the four new guards plus the existing `capy-knowledge-protocol.md`.
-- [ ] Add `model` to `EXPECTED_SKILLS` in `test/test-plugin-structure.sh`; run `make generate-kodex`.
-- [ ] **verify:** `bash test/test-plugin-structure.sh` green; `make plugin-graph` link/orphan gate clean; `git diff --exit-code kodex-plugin/` clean after regen.
+- [x] Create `klaude-plugin/skills/_shared/requirements-harvesting.md`, `open-question-pass.md`, `fact-flip-propagation.md`, `contact-ratio-guard.md` — each opens with its motivating failure (design §1 F1/F4/F2/F5), then the rule as a mandatory workflow step, written producer-generic (consumable by `decide` later without edits).
+- [x] Create `klaude-plugin/skills/model/SKILL.md` — frontmatter (`name: model`, trigger-keyword-first description ≤1024 soft), ADR-0004 mandatory-order directive, seven-phase Workflow summary (placeholder links to files landing in Tasks 2–4 are acceptable only if `make plugin-graph` stays green — otherwise stub the files in this task). *(Stubbed `model-process.md`, `kit-contract.md`, `archaeology.md` to keep the link/orphan gate green; populated in Tasks 2–4.)*
+- [x] Create the five `shared-` symlinks in `klaude-plugin/skills/model/` (`ln -s ../_shared/<name>.md shared-<name>.md`): the four new guards plus the existing `capy-knowledge-protocol.md`.
+- [x] Add `model` to `EXPECTED_SKILLS` in `test/test-plugin-structure.sh`; run `make generate-kodex`.
+- [x] **verify:** `bash test/test-plugin-structure.sh` green; `make plugin-graph` link/orphan gate clean; `git diff --exit-code kodex-plugin/` clean after regen. *(`make generate-kodex`'s bundled `test-codex-structure.sh` reports 7 pre-existing TOML failures — this env has Python 3.10 with no `tomllib`/`tomli`; unrelated to this change, `.codex/` regen is idempotent.)*
 
 ## Task 2 — Kit output contract + kit-format eval
 
