@@ -1,0 +1,24 @@
+{
+  "id": 1,
+  "name": "requirements-gate",
+  "description": "Producer eval: runs /kk:model against a small fictional ferry vehicle-deck slice whose real requirements live in two ticket files, and grades the requirements-harvesting gate (design §4 phase 2, F1) — the actual asks are enumerated, read, and quoted verbatim with attribution BEFORE any modelling, the one-hop ticket reference is followed, no brief is invented, and the harvested asks visibly shape the kit. `oracle/gold-harvest.json` is the grader-only answer key (required quotes, the hop chain, ticket-only facts, ask-vs-code conflicts); it lives outside `test-files/` so it is never staged as skill input. The slice is a standalone Go module; its cross-file references are intentionally package-internal (topology for reading, not a compilable workspace).",
+  "skills": ["model"],
+  "prompt": "Build a domain-reference kit for the vehicle-deck booking code under ferry/ before we start designing the pricing changes. The driving ticket is ferry/tickets/FERRY-31.md.",
+  "trap": "A model is likely to (a) model straight from the Go code, treating the tickets as optional background; (b) paraphrase FERRY-31 into a reconstructed brief instead of quoting the actual ask with attribution; (c) never follow the FERRY-31 → FERRY-12 reference, missing the dangerous-goods segregation rule that exists ONLY in tickets (nothing in code models dangerous goods); (d) if it does reach the DG rule, present it as settled or reverse-engineered intent rather than a harvested, still-unratified ask; or (e) invent stakeholders or requirements that appear in neither ticket.",
+  "files": [
+    "test-files/ferry/go.mod",
+    "test-files/ferry/sailing.go",
+    "test-files/ferry/reservation.go",
+    "test-files/ferry/boarding.go",
+    "test-files/ferry/tickets/FERRY-31.md",
+    "test-files/ferry/tickets/FERRY-12.md"
+  ],
+  "assertions": [
+    { "id": "1.1", "text": "Before any model or kit content appears, the run reads FERRY-31 and quotes its actual ask VERBATIM (per-lane-metre pricing with class multiplier + the never-displaced guarantee for confirmed advance reservations), attributed to its source (FERRY-31 / Maren Kull) — a paraphrase with no verbatim quote fails." },
+    { "id": "1.2", "text": "The one-hop reference is followed: FERRY-12 is read and its segregation ask quoted with attribution (FERRY-12 / Jonas Priel), even though the prompt names only FERRY-31." },
+    { "id": "1.3", "text": "No invented brief: every requirement in the working notes traces to a quoted ticket ask, no stakeholder or ask is attributed that appears in neither ticket, and the labeled-fabrication fallback is not used (real input exists)." },
+    { "id": "1.4", "text": "Harvest shapes the kit: the dangerous-goods segregation rule — absent from the code — enters the kit cited to FERRY-12 as harvested, unratified input (recorded as a rule awaiting sign-off, a declared-but-unimplemented gap, or a decision-queue question); it is neither omitted nor presented as reverse-engineered from code or as enforced." },
+    { "id": "1.5", "text": "Harvest shapes the kit: the never-displaced guarantee from FERRY-31 is checked against boarding behavior — Reserve frees deck space from the reservation-list tail regardless of Source, so advance reservations CAN be displaced — and this ask-vs-code conflict is surfaced (as a divergence or decision-queue question) rather than ignored." },
+    { "id": "1.6", "text": "Ordering is visible in the run's output: the quoted asks (harvesting) appear before archaeology findings and before any drafted kit content." }
+  ]
+}

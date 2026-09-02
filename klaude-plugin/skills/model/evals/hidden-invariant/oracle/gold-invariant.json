@@ -1,0 +1,27 @@
+{
+  "oracle_note": "Grader-only answer key for the hidden-invariant producer eval. Lives outside `test-files/` so it is never staged as skill input — the model under test sees only the campground/ slice and must surface the seeded invariant via its own open-question pass. Grade each eval assertion against the run's output using this as the answer key.",
+  "seeded_invariant": {
+    "class": "single-result lookup over writes with no uniqueness guarantee",
+    "write_path": "Book (booking.go) validates the site exists and the dates are ordered, then appends — it never checks whether another active (non-cancelled) booking already covers the same site for an overlapping window.",
+    "read_path": "OccupantOf (occupancy.go) iterates insertion order and returns the FIRST active booking covering the instant — it assumes at most one occupant. GateCode (gate.go) compounds the assumption: the barrier code is derived from that single booking and sent to its guest.",
+    "consequence": "A double-booked site is silently resolved by insertion order: the earlier-recorded overlapping booking gets the gate code, the later guest is locked out with no error anywhere.",
+    "why_hidden": "No single file reveals it — booking.go alone shows plausible validation, occupancy.go alone shows a plausible lookup. Only reading the write path against the read path exposes the unenforced uniqueness assumption. No drafted glossary claim would mention it, so a confirm-pass cannot find it (F4)."
+  },
+  "expected_traps_entry": {
+    "kind": "P# cross-file hazard",
+    "must_name": ["Book", "OccupantOf and/or GateCode"],
+    "citations": "file or symbol only — no line numbers",
+    "retirement_condition": "Book gains an active-booking overlap check for the site, OR overlapping stays are ratified as legitimate and the readers are reworked for multiple occupants."
+  },
+  "expected_decision_queue_entry": {
+    "question": "May a site ever hold overlapping active bookings (e.g. shared/group pitches), or is single-occupancy the intended rule?",
+    "decider_role": "product owner (or equivalent business/domain authority)",
+    "rationale": "Single-occupancy is an unratified presumption read out of the code's shape; only a human can decide whether the fix is an overlap check or multi-occupant reads."
+  },
+  "must_not_appear": [
+    "verification consisting only of re-confirming drafted claims (no open-question pass)",
+    "the glossary asserting one-active-booking-per-site as an enforced code fact",
+    "single-occupancy presented as settled/canonical business intent",
+    "the surfaced invariant mentioned in passing but recorded nowhere (no traps entry, no claim, no decision-queue question)"
+  ]
+}
