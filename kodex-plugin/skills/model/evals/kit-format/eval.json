@@ -1,0 +1,31 @@
+{
+  "id": 2,
+  "name": "kit-format",
+  "description": "Producer eval: runs $kk:model against a small greenfield code slice (a fictional bike-share domain) and grades the STRUCTURAL conventions of the produced domain-reference kit (design §3) — two pages, one conceptual diagram, provenance-labeled rules, dual-audience term entries, no line numbers, complete Derived-from footer, a traps page that is not a schema mirror, freshness banner, once-per-home conventions index. Mechanically gradeable from the produced kit text. `oracle/kit-conventions-checklist.json` is the grader-only convention checklist plus the fixture facts a correct run must surface; it lives outside `test-files/` so it is never staged as skill input. The slice is a standalone Go module; its cross-file references are intentionally package-internal (topology for reading, not a compilable workspace).",
+  "skills": ["model"],
+  "prompt": "Build a domain-reference kit for the bike-share code under bikeshare/ so we have a durable glossary and traps page for this bounded context.",
+  "trap": "A model is likely to (a) present rules reverse-engineered from code (24h auto-close, dock-capacity limit, maintenance-ineligibility) as settled/`canonical` business intent instead of `proposed`; (b) render the diagram as a field-by-field dump of the Go structs — a schema mirror at the wrong altitude; (c) cite line numbers in bindings or the Derived-from footer; (d) restate struct fields on the traps page (schema mirror) instead of recording only the cross-file facts no single file reveals; (e) self-certify the pages as 'verified/trusted' and omit the freshness/re-verification banner; (f) skip the once-per-home conventions index or duplicate it per page; (g) pad the glossary toward a term count instead of modelling the handful of concepts the slice actually contains; or (h) record the BIKE-204 TODO as a bare ticket note without stating what retires it, so the durable page rots as the ticket ships.",
+  "files": [
+    "test-files/bikeshare/go.mod",
+    "test-files/bikeshare/bike.go",
+    "test-files/bikeshare/dock.go",
+    "test-files/bikeshare/ride.go",
+    "test-files/bikeshare/policy.go"
+  ],
+  "assertions": [
+    { "id": "2.1", "text": "Produces exactly two durable kit pages for the context — a glossary `<context>.md` and a divergences/traps `<context>-traps.md` (e.g. `bikeshare.md` + `bikeshare-traps.md`) — and nothing else durable (no standing ERD or physical-model page)." },
+    { "id": "2.2", "text": "The glossary page opens with a prose summary and exactly ONE diagram, at conceptual altitude: entities, their relationships, and only load-bearing attributes — NOT a field-by-field dump of the Go structs." },
+    { "id": "2.3", "text": "Business rules appear as a numbered `L#` table headed by a provenance banner, and every rule reverse-engineered from code (the 24h auto-close, the dock-capacity limit, the maintenance-ineligibility rule) is marked `proposed` — no code-derived intent claim is presented as `canonical`/ratified." },
+    { "id": "2.4", "text": "Every per-term entry carries the dual-audience fields — a business Definition and code Bindings (directory / collection / constant / field / symbol) — plus a Status, using Aliases / Not to be confused with / Notes where applicable." },
+    { "id": "2.5", "text": "Status markers are drawn only from the allowed set (`canonical` / `proposed` / `undecided` / `deprecated-alias` / `overloaded`); because no human ratification exists in the slice, no term is marked `canonical`." },
+    { "id": "2.6", "text": "No citation anywhere uses line numbers — bindings and the Derived-from footer cite files and symbols only." },
+    { "id": "2.7", "text": "A Derived-from footer lists every source path read to build the page (bike.go, dock.go, ride.go, policy.go) and is complete — no read file carrying a domain fact is omitted; go.mod carries no domain fact and need not appear." },
+    { "id": "2.8", "text": "The traps page records only facts no single file reveals and contains no schema mirror (no restated struct field lists): it captures the declared-but-unenforced maintenance-ineligibility rule (Eligible exists but StartRide never calls it) as a `D#` divergence, and the cross-file hazard that AutoClose stamps the ride end but never returns the bike to `available` (leaving it `in_use`) as a `P#`, with stable numbering." },
+    { "id": "2.9", "text": "Each traps entry is self-limiting — it names the fix or condition that retires it (deleted in the PR that fixes the divergence), rather than reading as a permanent record." },
+    { "id": "2.10", "text": "A freshness banner on each page states BOTH that the page is `proposed` until reviewed by a human other than its author (not self-certified) AND that staleness is re-checked by re-running `$kk:review-architecture` against the Derived-from anchors at consumption time." },
+    { "id": "2.11", "text": "Because the home has no conventions index, exactly one `index.md` is produced for the home — declaring entry fields, status markers, the two-clock rule, citation rules, and the freshness model — rather than duplicating those conventions inside each page." },
+    { "id": "2.12", "text": "Home resolution: with no existing kit and no user-declared home, the skill proposes `docs/architecture/` as the default home and confirms, rather than silently writing pages to an arbitrary location." },
+    { "id": "2.13", "text": "Term count is proportionate to this small slice (a handful of concepts — Ride, Bike, Dock, Rider): the run follows the 10–20 figure as a guideline, neither padding the glossary to hit a number nor collapsing distinct concepts to undercut it." },
+    { "id": "2.14", "text": "Ticket-note retirement discipline: any note that records the ticket surfaced in the slice (the BIKE-204 live-capacity TODO in dock.go) states the condition that retires it (BIKE-204 shipping / the dock-sensor rollout), rather than leaving a bare ticket reference that would rot on the durable page as the ticket ships." }
+  ]
+}
