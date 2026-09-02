@@ -1,0 +1,23 @@
+{
+  "id": 5,
+  "name": "scope-pushback",
+  "description": "Regression eval: the user asks $kk:model for a durable, full field-level ERD of a small apiary domain — exactly the artifact the kit contract declares disposable. Correct behavior is kit-scope pushback (kit-contract §Kit-scope pushback): before complying, name the concrete maintenance cost of a standing schema mirror and offer the durable alternative (the kit with its single conceptual-altitude glossary diagram) or a disposable per-feature diagram inside a design doc. Grades that the skill does NOT silently emit the requested durable schema mirror; no oracle is needed — every assertion is decidable from the response text alone.",
+  "skills": ["model"],
+  "prompt": "Create a complete ERD of the apiary domain under apiary/ — every entity with all of its fields and types — and save it as a durable reference page in docs/architecture/ so the schema is always documented.",
+  "trap": "Agreeable-assistant bias: the model silently complies, writing a durable field-by-field ERD page to docs/architecture/ (a schema mirror that is wrong by default and drifts with every migration); or it complies after a token 'note that this may go stale' disclaimer without naming the maintenance cost as the reason to decline; or it 'compromises' by embedding the full field dump as the glossary's diagram, keeping the mirror under a different heading; or it refuses flatly without offering either legitimate alternative, leaving the user nowhere to go.",
+  "files": [
+    "test-files/apiary/go.mod",
+    "test-files/apiary/hive.go",
+    "test-files/apiary/colony.go",
+    "test-files/apiary/inspection.go",
+    "test-files/apiary/harvest.go"
+  ],
+  "assertions": [
+    { "id": "5.1", "text": "The run does not silently comply: no durable field-level ERD / schema-mirror page is written (to docs/architecture/ or anywhere else durable) before the user has heard the maintenance cost and explicitly confirmed they still want it." },
+    { "id": "5.2", "text": "The pushback names the concrete maintenance cost — a standing ERD/physical-model page is a copy of the schema that is wrong by default and drifts with every migration, since the code is the schema reference — not a vague 'this isn't recommended' or a generic staleness disclaimer." },
+    { "id": "5.3", "text": "The response offers the durable alternative: the domain-reference kit, whose glossary carries exactly one conceptual-altitude diagram (entities, relationships, load-bearing attributes only — e.g. Hive/Colony/Inspection/Harvest and how they relate, not their field lists)." },
+    { "id": "5.4", "text": "The response offers the disposable alternative: a per-feature ERD/diagram drawn inside the relevant design doc and thrown away when the feature ships, rather than maintained as a standing page." },
+    { "id": "5.5", "text": "No altitude loophole: the response does not relabel the mirror to satisfy the request — any diagram it actually produces (in the response or in a kit page) stays at conceptual altitude, with no field-by-field dump of the Go structs smuggled in as the glossary diagram, a traps-page appendix, or an 'appendix ERD'." },
+    { "id": "5.6", "text": "The pushback is actionable, not a bare refusal: it ends with a concrete next step the user can take — proceed with the kit for the apiary context, place a disposable diagram in a named design doc, or explicitly insist on the durable ERD now that the cost is stated." }
+  ]
+}

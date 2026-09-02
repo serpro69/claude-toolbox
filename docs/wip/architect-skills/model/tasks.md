@@ -64,15 +64,16 @@
 
 ## Task 5 — Scope-pushback regression eval + description tuning
 
-**Status:** pending
+**Status:** done
 **Size:** S
 **Depends on:** 3
 **Can run in parallel with:** 4, 6, 7
 **Docs:** [design.md §7](design.md) · [implementation.md — Build order 5](implementation.md)
 
-- [ ] Build `evals/scope-pushback/` — natural prompt asking `/kk:model` for a durable full ERD / schema-mirror page; assertions require pushback naming the maintenance cost (and offering the kit or a disposable per-feature diagram instead), not silent compliance.
-- [ ] Re-check the SKILL.md description against the trigger list and budget now that all skill content exists.
-- [ ] **verify:** eval JSON valid; assertions decidable; description ≤1024 chars with triggers front-loaded.
+- [x] Build `evals/scope-pushback/` — natural prompt asking `/kk:model` for a durable full ERD / schema-mirror page; assertions require pushback naming the maintenance cost (and offering the kit or a disposable per-feature diagram instead), not silent compliance. *(Apiary/beekeeping domain slice — disjoint from library-lending, bike-share, ferry, campground, climbing-gym; grep-verified no term collision with instruction files. Eval id 5 per design §7 ordering; assertions 5.1–5.6 all decidable from response text alone, so no `oracle/` dir — stated in the eval description. 5.5 closes the altitude loophole (field dump smuggled in as the glossary diagram); 5.6 requires the pushback to be actionable, not a bare refusal.)*
+- [x] Re-check the SKILL.md description against the trigger list and budget now that all skill content exists. *(652 chars — under the 1024 soft budget; triggers front-loaded and all design-§SKILL trigger keywords present: domain model(ling), glossary, bounded context, domain reference, information architecture. No edit needed.)*
+- [x] **verify:** eval JSON valid; assertions decidable; description ≤1024 chars with triggers front-loaded. *(`jq` valid; fixtures `gofmt`-clean; `test-plugin-structure.sh` 182/182; `make plugin-graph` no broken edges/orphans; kodex regen idempotent with the `/kk:`→`$kk:` transform applied — the 7 `test-codex-structure.sh` TOML failures remain the pre-existing no-`tomllib` env issue from Task 1.)*
+- [x] **isolated code review (kk:review-code:isolated):** code-reviewer sub-agent + pal (gemini-3.1-pro-preview). Both reviewers approved; no P0/P1. Applied (all fixture polish): `Colony.SwarmedAt` `string`→`time.Time` with `IsZero()` (corroborated primitive-obsession nit), `Overdue` package-level function → method on `Inspection` (consistency with the slice's other rule methods), `go.mod` `github.com/example/apiary`→`module apiary` (matches the ferry/campground/gym plain-name majority; kit-format's `github.com/example/bikeshare` is the pre-existing straggler — left untouched, candidate for Task 8 alignment). Rejected: sub-agent's 55%-confidence suggestion to add a staging-semantics note to the eval description — that systemic rule (Task 4 lesson) applies to absence-based traps only; this eval is presence-based and its description already states all assertions are decidable from response text alone. No systemic P0/P1 findings to index.
 
 ## Task 6 — M1 extension: provenance + composite acceptance + self-certification check
 
