@@ -32,7 +32,7 @@ Before declaring the review complete, verify all outputs are delivered:
 
 The workflow below is strictly sequential. **Do not read the artifact's content, extract claims, or form any verdict until you have loaded every instruction file: this SKILL.md, [input-contract.md](input-contract.md), and [output-contract.md](output-contract.md).** Your only early contact with the input is the artifact *path(s)* passed on invocation — enough to apply the acceptance contract, not enough to pattern-match claims. The pass procedures (`pass0-extraction.md`, `pass1-topology.md`, `pass2-soundness.md`) are the delegated agent's to load; the agent restates the same instruction-before-action rule on its own side.
 
-This ordering is load-bearing (ADR 0004), not stylistic: with the artifact text in context before the contracts are loaded, the model has enough to emit plausible claims and verdicts and will optimize away the methodology.
+This ordering is load-bearing, not stylistic: with the artifact text in context before the contracts are loaded, the model has enough to emit plausible claims and verdicts and will optimize away the methodology.
 
 **Phases:**
 

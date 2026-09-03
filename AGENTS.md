@@ -69,6 +69,10 @@ Symmetric naming avoids stuttering (`/kk:cove:cove` → `/kk:chain-of-verificati
 
 Agent names describe the **role**, not the skill that invokes them. `code-reviewer`, `design-reviewer`, `spec-reviewer` persist across skill renames. Don't rename agent files when renaming the skills that delegate to them.
 
+### Plugin content is self-contained
+
+`klaude-plugin/` ships standalone via the plugin marketplace — consumers get the plugin tree only, never this repo's `docs/`. Therefore skill, agent, and profile prose must NEVER reference toolbox-repo documents: no "(ADR NNNN)" citations, no `docs/adr/`-as-this-repo links, no `docs/wip|done` pointers. For a consumer these are unresolvable at best; at worst they collide with the consumer repo's own ADR numbering and point to unrelated decisions. State the rule and its rationale in full in the plugin file itself; keep the ADR back-reference in repo-side docs only (the ADR cites the operative plugin files, not the other way around). Distinguish: consumer-repo paths as *behavioral targets* (e.g. review-architecture accepting artifacts from the consumer's `docs/adr/`, the document skill writing ADRs to the consumer's `/docs/adr`) are correct and expected.
+
 ### Shared instructions
 
 Instructions referenced by more than one skill live in `klaude-plugin/skills/_shared/<name>.md` with a bare basename (e.g., `review-scope-protocol.md`, `pal-codereview-invocation.md`).
