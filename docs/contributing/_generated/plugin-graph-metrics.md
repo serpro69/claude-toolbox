@@ -2,29 +2,31 @@
 
 ```text
 NAME                   FAN-OUT  FAN-IN  DEPTH  TRANSITIVE
+model                  12       0       -1     24
 merge-docs             2        0       -1     19
-review-architecture    5        0       -1     19
-design                 15       7       -1     18
+review-architecture    6        6       -1     19
+design                 15       8       -1     18
 document               2        6       -1     18
 implement              9        10      -1     18
 review-code            8        25      -1     18
 review-design          5        3       -1     18
-review-spec            8        12      -1     18
+review-spec            8        13      -1     18
 test                   2        9       -1     18
 chain-of-verification  3        3       1      2
 dependency-handling    1        11      1      1
 diff-skill             1        0       1      1
 
-Hotspots (20):
+Hotspots (25):
   skills/review-code/  (fan-in 25)
-  skills/review-spec/  (fan-in 12)
-  skills/_shared/capy-knowledge-protocol.md  (fan-in 11)
+  skills/review-spec/  (fan-in 13)
+  skills/_shared/capy-knowledge-protocol.md  (fan-in 12)
   skills/dependency-handling/  (fan-in 11)
   skills/implement/  (fan-in 10)
   skills/test/  (fan-in 9)
-  skills/design/  (fan-in 7)
+  skills/design/  (fan-in 8)
   skills/_shared/profile-detection.md  (fan-in 6)
   skills/document/  (fan-in 6)
+  skills/review-architecture/  (fan-in 6)
   commands/chain-of-verification/  (fan-in 5)
   skills/chain-of-verification/  (fan-in 3)
   skills/review-design/  (fan-in 3)
@@ -36,19 +38,32 @@ Hotspots (20):
   agents/spec-reviewer.md  (fan-in 1)
   commands/review-spec/  (fan-in 1)
   profiles/k8s/  (fan-in 1)
+  skills/_shared/contact-ratio-guard.md  (fan-in 1)
+  skills/_shared/fact-flip-propagation.md  (fan-in 1)
+  skills/_shared/open-question-pass.md  (fan-in 1)
+  skills/_shared/requirements-harvesting.md  (fan-in 1)
 
-Coupling (36):
+Coupling (45):
+  skills/merge-docs/ <-> skills/model/  (19 shared)
   skills/merge-docs/ <-> skills/review-architecture/  (19 shared)
+  skills/model/ <-> skills/review-architecture/  (19 shared)
   skills/design/ <-> skills/merge-docs/  (18 shared)
+  skills/design/ <-> skills/model/  (18 shared)
   skills/design/ <-> skills/review-architecture/  (18 shared)
   skills/document/ <-> skills/merge-docs/  (18 shared)
+  skills/document/ <-> skills/model/  (18 shared)
   skills/document/ <-> skills/review-architecture/  (18 shared)
   skills/implement/ <-> skills/merge-docs/  (18 shared)
+  skills/implement/ <-> skills/model/  (18 shared)
   skills/implement/ <-> skills/review-architecture/  (18 shared)
   skills/merge-docs/ <-> skills/review-code/  (18 shared)
   skills/merge-docs/ <-> skills/review-design/  (18 shared)
   skills/merge-docs/ <-> skills/review-spec/  (18 shared)
   skills/merge-docs/ <-> skills/test/  (18 shared)
+  skills/model/ <-> skills/review-code/  (18 shared)
+  skills/model/ <-> skills/review-design/  (18 shared)
+  skills/model/ <-> skills/review-spec/  (18 shared)
+  skills/model/ <-> skills/test/  (18 shared)
   skills/review-architecture/ <-> skills/review-code/  (18 shared)
   skills/review-architecture/ <-> skills/review-design/  (18 shared)
   skills/review-architecture/ <-> skills/review-spec/  (18 shared)
@@ -76,5 +91,5 @@ Coupling (36):
   skills/review-spec/ <-> skills/test/  (17 shared)
 
 Diagnostics (1):
-  cycle detected affecting: README.md, agents/architecture-reviewer.md, agents/profile-resolver.md, agents/spec-reviewer.md, profiles/go/review-code/, profiles/java/, profiles/java/review-code/, profiles/js_ts/, profiles/js_ts/review-code/, profiles/k8s-operator/design/, profiles/k8s/design/, profiles/k8s/document/, profiles/k8s/implement/, profiles/k8s/review-code/, profiles/k8s/review-spec/, profiles/k8s/test/, profiles/kotlin/, profiles/kotlin/review-code/, profiles/python/, profiles/python/review-code/, profiles/skill-md/review-code/, skills/_shared/profile-detection.md, skills/_shared/review-scope-protocol.md, skills/design/, skills/document/, skills/implement/, skills/merge-docs/, skills/review-architecture/, skills/review-code/, skills/review-design/, skills/review-spec/, skills/test/
+  cycle detected affecting: README.md, agents/architecture-reviewer.md, agents/profile-resolver.md, agents/spec-reviewer.md, profiles/go/review-code/, profiles/java/, profiles/java/review-code/, profiles/js_ts/, profiles/js_ts/review-code/, profiles/k8s-operator/design/, profiles/k8s/design/, profiles/k8s/document/, profiles/k8s/implement/, profiles/k8s/review-code/, profiles/k8s/review-spec/, profiles/k8s/test/, profiles/kotlin/, profiles/kotlin/review-code/, profiles/python/, profiles/python/review-code/, profiles/skill-md/review-code/, skills/_shared/profile-detection.md, skills/_shared/review-scope-protocol.md, skills/design/, skills/document/, skills/implement/, skills/merge-docs/, skills/model/, skills/review-architecture/, skills/review-code/, skills/review-design/, skills/review-spec/, skills/test/
 ```

@@ -1,6 +1,6 @@
 # Skills
 
-The kk plugin ships 12 workflow skills that form a complete development pipeline.
+The kk plugin ships 13 workflow skills that form a complete development pipeline.
 
 ## The Pipeline
 
@@ -26,7 +26,8 @@ The kk plugin ships 12 workflow skills that form a complete development pipeline
 | **/kk:review-code** | Reviews git changes for SOLID violations, security risks, and code quality. Domain-specific checklists for Go, Java, JS/TS, Kotlin, Python, Kubernetes, K8s Operator, and agent skills. Standard and isolated modes. |
 | **/kk:review-design** | Pre-implementation review gate. Evaluates design docs for completeness, internal consistency, and technical soundness before code is written. |
 | **/kk:review-spec** | Compares implemented code against design/implementation docs. Finds spec deviations, missing implementations, and outdated docs — in both directions. |
-| **/kk:review-architecture** | Reviews a written architecture artifact (ADR, architecture doc, or a design doc's architecture section) against the system it describes. Claim-driven: extracts an inspectable claim-set, verifies mechanism existence/topology across six dimensions, and grades decision soundness and reversibility. Security architecture is delegated to PAL `secaudit`. |
+| **/kk:model** | Produces or updates a domain-reference kit — a durable glossary + divergences/traps page pair per bounded context, with concept-to-code bindings. Its primary output is a decision queue of precise, role-tagged questions only a human can close. Runs upstream of `/kk:design` as the first producer of the architecture flow. |
+| **/kk:review-architecture** | Reviews a written architecture artifact (ADR, architecture doc, a design doc's architecture section, or a domain-reference kit — glossary + traps pages reviewed as one composite artifact) against the system it describes. Claim-driven: extracts an inspectable claim-set, verifies mechanism existence/topology across seven dimensions, and grades decision soundness, reversibility, and provenance (self-certification of reverse-engineered claims). Security architecture is delegated to PAL `secaudit`. |
 | **/kk:dependency-handling** | Fires before calling a library/SDK/API or adding a dependency. Forces a capy/context7 lookup instead of guessing signatures or behavior. |
 | **/kk:diff-skill** | Compares two versions of a skill's markdown instructions to detect degradations and complexity increases. Asymmetric — only regressions count. |
 | **/kk:merge-docs** | Merges two competing design docs for the same feature into one unified document, resolving conflicts and preserving the best of both. |
@@ -51,7 +52,9 @@ Commands are skill variants invoked with explicit mode selection:
 
 **/kk:review-spec** verifies code matches design/spec and detects deviations — use during or after implementation.
 
-**/kk:review-architecture** reviews an ADR or architecture doc against the codebase it claims to describe — use after an architecture artifact is written, before or during implementation.
+**/kk:model** produces the domain-reference kit (glossary + traps pages) and a role-tagged decision queue for a bounded context — use before feature design when the domain's concepts, code bindings, or open questions need mapping.
+
+**/kk:review-architecture** reviews an ADR, architecture doc, or domain-reference kit against the codebase it claims to describe — use after an architecture artifact is written, before or during implementation.
 
 **/kk:merge-docs** reconciles competing design docs into one unified document.
 
