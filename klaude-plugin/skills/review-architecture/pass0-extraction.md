@@ -19,6 +19,7 @@ One entry per extracted claim. Every field comes from the artifact text.
 | `source_span` | The artifact quote grounding the claim, or `heading + line` locating it. This is what precision grading checks against — it must actually assert the claim. |
 | `dimension` | Exactly one of the tokens `1`, `2`, `3`, `4`, `5`, `6` (the six Pass 1 dimensions below), `pass2`, `delegated`, or `unrouted`. Emit the numeric id for a topology dimension, never its name — downstream grading matches the token. See §Routing. |
 | `tense` | `present` (describes the system as it is) or `future` (proposed/intended). Drives the Pass 1 anchor-rule mode decision. See §Tense. |
+| `provenance` | Where the claim's content came from, per the artifact's own text: `harvested` / `reverse-engineered` / `fabricated-labeled`. Orthogonal to `tense`. Pass 0 only records it; the consistency check runs in Pass 2. See §Provenance. |
 | `evidence_class` | The **abstract class** of evidence the claim implicates — e.g. "dependency manifests of service A", "mutating route bindings for entity E". Never a resolved repo path. |
 
 ### Dimension routing
@@ -55,6 +56,22 @@ Derive from artifact metadata first (ADR status), then claim wording. When metad
 
 **But the deontic⇒`present` shortcut presupposes a present-default artifact.** In a **Proposed** ADR — or any artifact whose tense default is `future` — a deontic clause states the *intended* invariant of the not-yet-built system; it stays `future` unless the clause asserts state that already exists. Do not let "must not" drag a proposal into reality mode against an empty or partial repo. Concretely: in a Proposed ADR, "the write side must not import the read-model package" is `future` (the read model is not built yet), not a present invariant to grade against the repo.
 
+### Provenance
+
+`provenance` records where the claim's *content* came from — who or what asserted it — per the artifact's own text. It is orthogonal to `tense`: tense asks whether the described mechanism/behavior exists; provenance asks where the assertion's authority comes from.
+
+- `harvested` — from a cited stakeholder/product source (a ticket, a named decision record, a named decider), or asserted first-hand by the artifact's authors as their own decision or requirement. An ADR's Decision section is its authors' own record — the artifact itself is the source.
+- `reverse-engineered` — derived from code or system inspection. Requires an explicit derivation signal in the text: a provenance banner ("the rules below are reverse-engineered"), derivation wording ("derived from reading X", "observed in the implementation", "recovered from the enforcement code").
+- `fabricated-labeled` — explicitly marked invented input ("invented placeholder", "assumed pending real data", "no real input exists yet").
+
+Derivation rules:
+
+- **Artifact text only — the repo-blind rule applies unchanged.** Provenance derives from status markers, provenance banners, source citations, and derivation wording in the artifact. Never open the repo to decide provenance; whether code *agrees* with a claim is irrelevant to where the claim came from.
+- **Default is `harvested`.** `reverse-engineered` and `fabricated-labeled` each require their explicit textual signal; a claim with neither is its authors' first-hand assertion. The default is deliberately conservative: the downstream self-certification check (Pass 2's provenance-consistency check) fires only on non-default provenance (`reverse-engineered` / `fabricated-labeled` presented as settled), so an ordinary ADR with no derivation wording never draws a provenance finding.
+- **Per-claim signals override section-level banners.** A section banner ("the rules below were recovered from code") sets the default for the claims under it; a per-claim cited source (a named decision record, ticket, or decider) overrides the banner for that claim → `harvested`. Precedence: per-claim citation > per-claim derivation wording > section banner > artifact default.
+- **Per-claim ratification markers do not set tense.** An artifact-level Status (ADR **Proposed** / **Accepted**) still sets the tense default per §Tense. But a per-claim ratification marker (`proposed` / `canonical` on a rule entry) speaks to the provenance axis — whether a human has ratified the *intent* — not to whether the behavior exists. A rule reverse-engineered from a currently-enforced validator is `tense: present` (the behavior is built) even while its ratification status is `proposed` (the intent is unratified). Do not let a `proposed` marker drag tense to `future`, or a `canonical` marker drag provenance to `harvested`.
+- **Record only, here.** Pass 0 stays single-purpose normalization: it records provenance per claim and moves on. Checking that a claim's *presentation* (settled/`canonical`) is consistent with its provenance is Pass 2's provenance-consistency check.
+
 ## Grading — four separable sub-metrics
 
 Pass 0 is graded on four independent axes. This separation is what makes the engine eval-able — each axis has its own failure mode and its own oracle.
@@ -64,7 +81,7 @@ Pass 0 is graded on four independent axes. This separation is what makes the eng
    - *In evals:* gradeable against a structured `gold-claims.json` in the eval's grader-only `oracle/` directory (a sibling of `test-files/`, so staging fixtures never leaks it); the `assertions[]` bullets reference gold entries ("claim G3 is extracted"), so each expected claim is graded PASS/FAIL individually — no free-form set arithmetic.
    - *In production:* unprovable — there is no oracle, so a missed claim is silent. This is the **one irreducible limitation.** Per fail-loud, it is documented, not hidden: **the reviewer does not certify extraction completeness.** State this in the report rather than implying the claim-set is exhaustive.
 3. **Evidence-class accuracy — "right evidence class per claim?"** Gradeable against the gold set's expected classes. (Dangling *resolved-path* references are Pass 1's anchor-rule concern, not this.)
-4. **Routing accuracy — "right `dimension` and `tense` per claim?"** Gradeable against the gold set. A misrouted claim sends a verifiable assertion to the wrong verifier or the wrong mode — a distinct failure that, ungraded, collapses back into the precision/recall blur this pass exists to prevent.
+4. **Routing accuracy — "right `dimension`, `tense`, and `provenance` per claim?"** Gradeable against the gold set. A misrouted claim sends a verifiable assertion to the wrong verifier or the wrong mode — a distinct failure that, ungraded, collapses back into the precision/recall blur this pass exists to prevent. (Provenance is additive: gold sets that predate the field simply don't grade it.)
 
 Grading is strictly easier than producing: "is this claim in the text" is a bounded lookup, recall-grading is a per-entry lookup against the gold file, routing-grading is a label comparison. No circularity.
 
@@ -90,4 +107,4 @@ Run extraction N times and union the claims. This is a confidence *estimate* (mo
 
 ## Output
 
-Emit the claim-set as the report's **Claim Set** section, verbatim (one row per claim, all six fields). This *is* the inspectable intermediate artifact — the read-only agent has no Write tool, so the report section is its only home. Do not summarize, merge, or omit claims; `delegated` and `unrouted` claims stay in the set. Pass 1 and Pass 2 consume this exact set.
+Emit the claim-set as the report's **Claim Set** section, verbatim (one row per claim, all seven fields). This *is* the inspectable intermediate artifact — the read-only agent has no Write tool, so the report section is its only home. Do not summarize, merge, or omit claims; `delegated` and `unrouted` claims stay in the set. Pass 1 and Pass 2 consume this exact set.
