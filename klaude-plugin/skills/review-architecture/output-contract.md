@@ -20,7 +20,7 @@ Each Pass 1 claim resolves to exactly one verdict:
 | `verified` | Reality mode: the claimed mechanism exists in the expected evidence with the expected topology. |
 | `violated` | Reality mode: the anchor (the component/boundary the claim names) exists, but the claimed mechanism is absent or contradicted inside it. The case the reviewer exists to catch. |
 | `internally-sound` | Internal-soundness mode: a `future`/proposed claim (or a fallback claim with no reality branch) is well-formed — names its boundaries, owners, degradation, etc. |
-| `ill-formed` | Internal-soundness mode: the claim is missing required structural elements (e.g., a proposed boundary with no permitted-dependency direction stated). |
+| `ill-formed` | Internal-soundness mode: the claim is missing required structural elements (e.g., a proposed boundary with no permitted-dependency direction stated). Also graded — regardless of mode — for a kit enforcement pointer citing an entry in a missing or unresolvable counterpart page (see the dimension-7 cross-page-pointer rule). |
 | `dangling-anchor` | Reality mode: a `present`-tense claim names a component/boundary that does not exist in the repo. Doc drift or a false claim — always a finding. |
 
 Pass 2 produces separate findings (appropriateness / reversibility), not per-claim topology verdicts.
@@ -30,7 +30,7 @@ Pass 2 produces separate findings (appropriateness / reversibility), not per-cla
 The report is presented inline, mirroring the review-skill family. The `architecture-reviewer` agent is read-only (no Write tool), so the report section — not a file — is the home of the inspectable claim-set.
 
 1. **Claim Set** — the full Pass 0 output, **verbatim**. This *is* the inspectable intermediate artifact (each claim's `id`/`claim`/`source_span`/`dimension`/`tense`/`provenance`/`evidence_class`). Presenting it verbatim keeps "reviewer missed a claim" distinguishable from "extractor never found the claim." The section header carries the extraction-completeness disclaimer (see Output rules) — recall has no production oracle, so the set is never certified complete.
-2. **Verdicts by dimension** — one verdict per claim (vocabulary above), grouped by the six Pass 1 dimensions.
+2. **Verdicts by dimension** — one verdict per claim (vocabulary above), grouped by the seven Pass 1 dimensions.
 3. **Not Reviewed** — `delegated` claims (with a `secaudit` pointer: security architecture → `mcp__pal__secaudit`) and `unrouted` claims, listed explicitly. Fail-loud: extraction happened, Pass 1 verification did not, and the report says so. (Pass 2's provenance-consistency check is routing-independent, so a settled-presented `unrouted` claim can appear both here and under the Provenance subsection.) These claims are never silently dropped.
 4. **Pass 2 findings** — appropriateness (mechanism vs the artifact's own stated context), reversibility (one-way vs two-way doors; proportional justification for irreversible decisions), and provenance (self-certification: claims presented as settled whose provenance is `reverse-engineered`/`fabricated-labeled` with no cited ratification record).
 
@@ -52,8 +52,8 @@ Reuses the review family's P0–P3 scale:
 ```markdown
 ## Architecture Review — {artifact path}
 
-**Artifact type**: {ADR | architecture doc | design-doc architecture section}
-**Scope**: {full artifact | heading: <name>}
+**Artifact type**: {ADR | architecture doc | design-doc architecture section | domain-reference kit (composite | solo page)}
+**Scope**: {full artifact | heading: <name> | kit pages: <glossary> + <traps>}
 **Overall assessment**: [SOUND / VIOLATIONS_FOUND / DRIFT_FOUND]
 
 ---
@@ -83,6 +83,7 @@ Reuses the review family's P0–P3 scale:
 #### 4. Failure Isolation
 #### 5. State Consistency
 #### 6. Evolution & Versioning
+#### 7. Domain Binding
 
 ---
 

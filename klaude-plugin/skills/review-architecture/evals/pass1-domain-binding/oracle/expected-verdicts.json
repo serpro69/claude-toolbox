@@ -1,0 +1,123 @@
+{
+  "oracle_note": "Grader-only dimension-7 oracle. Lives in the eval's grader-only `oracle/` dir — outside `test-files/` — so neither `files[]` listing nor whole-directory staging can leak it to the model under test. Extracted claim ids `Cn` are matched to expected entries `Vn` by asserted content, not by id number. The absence of berths/waitlist.go is an observable fixture property because the harness stages the whole test-files/ tree. Legitimate unseeded findings (e.g. extra observations about the slice) are ungraded — neither required nor penalized; only the entries below and the Check C finding are graded.",
+  "composite": {
+    "invoked_path": "marina.md",
+    "expected_counterpart": "marina-traps.md",
+    "resolution": "sibling naming convention <context>.md ↔ <context>-traps.md; reviewed as one composite artifact"
+  },
+  "expected": [
+    {
+      "id": "V1",
+      "claim": "The Berth concept is bound to berths/ · berths/registry.go · Berth.Pier.",
+      "dimension": "7",
+      "tense": "present",
+      "anchor": "berths/registry.go (exists)",
+      "mode": "reality",
+      "verdict": "verified",
+      "severity": "n/a",
+      "evidence": "berths/registry.go declares `type Berth struct` with a `Pier` field; the berths/ directory exists."
+    },
+    {
+      "id": "V2",
+      "claim": "The Mooring Assignment concept is bound to moorings/assign.go · Assignment · Assignment.Ended.",
+      "dimension": "7",
+      "tense": "present",
+      "anchor": "moorings/assign.go (exists)",
+      "mode": "reality",
+      "verdict": "verified",
+      "severity": "n/a",
+      "evidence": "moorings/assign.go declares `type Assignment struct` with an `Ended *time.Time` field."
+    },
+    {
+      "id": "V3",
+      "claim": "The Vessel concept is bound to the Assignment.VesselID field in moorings/assign.go.",
+      "dimension": "7",
+      "tense": "present",
+      "anchor": "moorings/assign.go (exists)",
+      "mode": "reality",
+      "verdict": "verified",
+      "severity": "n/a",
+      "evidence": "moorings/assign.go declares `VesselID string` on Assignment."
+    },
+    {
+      "id": "V4",
+      "claim": "Rule L1 (at most one active mooring assignment per vessel) is enforced at moorings/assign.go hasActiveAssignment.",
+      "dimension": "7",
+      "tense": "present",
+      "anchor": "moorings/assign.go (exists)",
+      "mode": "reality",
+      "verdict": "verified",
+      "severity": "n/a",
+      "evidence": "moorings/assign.go declares `hasActiveAssignment` and AssignBerth consults it. Existence of the named element at the cited location is the whole check — L1's intent-truth is not graded here.",
+      "note": "The enforcement pointer is the dim-7 claim; the rule's intent stays provenance-labeled (`proposed`)."
+    },
+    {
+      "id": "V5",
+      "claim": "The Dockage Rate concept is bound to berths/registry.go · symbol RateSchedule.",
+      "dimension": "7",
+      "tense": "present",
+      "anchor": "berths/registry.go (exists)",
+      "mode": "reality",
+      "verdict": "violated",
+      "severity": "P1",
+      "evidence": "berths/registry.go exists but declares no `RateSchedule` symbol (only Berth, Registry, Register, FindByName).",
+      "note": "Missing element inside an existing anchor → violated, NOT dangling-anchor. The anchor is the cited location; the mechanism is the named element inside it."
+    },
+    {
+      "id": "V6",
+      "claim": "The Waitlist Entry concept is bound to berths/waitlist.go · WaitlistEntry.",
+      "dimension": "7",
+      "tense": "present",
+      "anchor": "berths/waitlist.go (does NOT exist)",
+      "mode": "reality",
+      "verdict": "dangling-anchor",
+      "severity": "P2",
+      "evidence": "No berths/waitlist.go anywhere in the tree (searched berths/). The kit cites a location that is not there — doc drift.",
+      "note": "Anchor absent → dangling-anchor, NOT violated. The term is present-tense, so it is not excused as greenfield."
+    },
+    {
+      "id": "V7",
+      "claim": "Haul-Out will be introduced with next season's dry-storage offering; Bindings: none yet.",
+      "dimension": "7",
+      "tense": "future",
+      "anchor": "n/a — internal-soundness",
+      "mode": "internal-soundness",
+      "verdict": "internally-sound",
+      "severity": "n/a",
+      "evidence": "n/a — the kit states outright that no binding exists yet; nothing to grade against the repo."
+    },
+    {
+      "id": "V8",
+      "claim": "Transient Stay will be represented in code (no element kind, no location class named).",
+      "dimension": "7",
+      "tense": "future",
+      "anchor": "n/a — internal-soundness",
+      "mode": "internal-soundness",
+      "verdict": "ill-formed",
+      "severity": "P2",
+      "evidence": "n/a — a future binding claim naming no code-element kind has no checkable shape.",
+      "note": "The fallback-arm negative control: internal-soundness mode is not a rubber stamp."
+    },
+    {
+      "id": "V9",
+      "claim": "Rule L2 (maintenance berths cannot be assigned) is declared, not enforced — see traps D1.",
+      "dimension": "7",
+      "tense": "present",
+      "anchor": "marina-traps.md entry D1 (exists)",
+      "mode": "reality",
+      "verdict": "verified",
+      "severity": "n/a",
+      "evidence": "The cross-page pointer resolves: D1 is present in marina-traps.md and documents the divergence with a retirement condition.",
+      "note": "The pointer earns a `verified` verdict with the counterpart entry as evidence, and the documented divergence is not re-reported as a new finding. Had the counterpart been missing, this pointer would grade `ill-formed` regardless of mode."
+    }
+  ],
+  "pass2_provenance": {
+    "expected_finding": {
+      "rule": "L3 — transient vessels limited to 14 consecutive nights",
+      "severity": "P2",
+      "basis": "fabricated-labeled provenance (the note explicitly marks the 14-night figure an invented placeholder with no harbor-office input) + settled presentation ('canonical — settled harbor policy') + no cited ratification source.",
+      "home": "Pass 2 Provenance subsection — not a Pass 1 verdict, not an appropriateness finding"
+    },
+    "negative_controls": "No provenance finding for L1 or L2 (reverse-engineered, correctly `proposed` under the banner) and none for the `proposed` term entries or the freshness banners."
+  }
+}

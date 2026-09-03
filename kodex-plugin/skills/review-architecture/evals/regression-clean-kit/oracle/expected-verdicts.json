@@ -1,0 +1,69 @@
+{
+  "oracle_note": "Grader-only clean-kit oracle. Lives in the eval's grader-only `oracle/` dir — outside `test-files/` — so neither `files[]` listing nor whole-directory staging can leak it to the model under test. Extracted claim ids `Cn` are matched to expected entries `Vn` by asserted content, not by id number. Every graded outcome is a non-finding: the eval fails when the reviewer manufactures any finding. Rule-intent claims surfacing as `unrouted`/`pass2` under Not Reviewed is correct behavior (informational, not a finding). Legitimate unseeded observations are ungraded — neither required nor penalized.",
+  "composite": {
+    "invoked_path": "nursery-traps.md",
+    "expected_counterpart": "nursery.md",
+    "resolution": "sibling naming convention resolved in the reverse direction (<context>-traps.md → <context>.md); reviewed as one composite artifact"
+  },
+  "expected": [
+    {
+      "id": "V1",
+      "claim": "The Cultivar concept is bound to cultivars/ · cultivars/catalog.go · Cultivar.Species.",
+      "dimension": "7",
+      "tense": "present",
+      "mode": "reality",
+      "verdict": "verified",
+      "evidence": "cultivars/catalog.go declares `type Cultivar struct` with a `Species` field; cultivars/ exists."
+    },
+    {
+      "id": "V2",
+      "claim": "The Lot concept is bound to lots/placement.go · Lot · Lot.CultivarID.",
+      "dimension": "7",
+      "tense": "present",
+      "mode": "reality",
+      "verdict": "verified",
+      "evidence": "lots/placement.go declares `type Lot struct` with a `CultivarID` field."
+    },
+    {
+      "id": "V3",
+      "claim": "The Bench concept is bound to benches/ · benches/capacity.go · Bench.Capacity.",
+      "dimension": "7",
+      "tense": "present",
+      "mode": "reality",
+      "verdict": "verified",
+      "evidence": "benches/capacity.go declares `type Bench struct` with a `Capacity` field; benches/ exists."
+    },
+    {
+      "id": "V4",
+      "claim": "Rule L1 (a lot occupies exactly one bench at a time) is enforced at lots/placement.go PlaceLot.",
+      "dimension": "7",
+      "tense": "present",
+      "mode": "reality",
+      "verdict": "verified",
+      "evidence": "lots/placement.go declares `PlaceLot`. Element existence at the cited location is the whole check — whether the map-replace semantics are the right business policy is not graded."
+    },
+    {
+      "id": "V5",
+      "claim": "Rule L2 (a bench cannot exceed its lot capacity) is enforced at benches/capacity.go CanAccept.",
+      "dimension": "7",
+      "tense": "present",
+      "mode": "reality",
+      "verdict": "verified",
+      "evidence": "benches/capacity.go declares `CanAccept`. The caller-side gating split is documented by traps P1 and is NOT a reviewer finding."
+    },
+    {
+      "id": "V6",
+      "claim": "Hardening Run will be tracked once the hardening feature ships; Bindings: none yet — planned as a HardeningRecord struct under lots/.",
+      "dimension": "7",
+      "tense": "future",
+      "mode": "internal-soundness",
+      "verdict": "internally-sound",
+      "evidence": "n/a — 'Bindings: none yet' with a named planned element kind (struct) and location class (lots/) is well-formed; nothing is graded against the repo."
+    }
+  ],
+  "pass2": {
+    "provenance": "No finding: L1/L2 are reverse-engineered and correctly `proposed` under the banner; no settled presentation without a source exists anywhere in the kit.",
+    "appropriateness_reversibility": "No findings — the kit states no mechanism-vs-context decisions; 'no mismatch found' / 'n/a' (or equivalent) is the expected output."
+  },
+  "overall": "Zero findings of any severity; overall assessment SOUND."
+}
