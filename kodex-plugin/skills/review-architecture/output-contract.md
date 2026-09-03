@@ -7,6 +7,7 @@ $kk:review-architecture <artifact-path> [heading]
 ```
 
 - **Exactly one artifact per invocation** (see [input-contract.md](input-contract.md)). A second path argument is rejected with guidance to run the review once per artifact.
+- **Domain-reference kit.** Pass either kit page's path (`<context>.md` or `<context>-traps.md`); the counterpart is auto-discovered (sibling naming convention, cross-link fallback) and the pair is reviewed as **one composite artifact**. Two explicit paths are still rejected. An unresolvable counterpart → the page is reviewed solo with a loud report note.
 - **Design-doc scoping.** For a design doc, an optional heading argument scopes the review to that architecture section — extract and verify only claims under the named heading.
 - **No path given** → list candidate artifacts (`docs/adr/*.md`, `docs/wip/*/design.md`) and ask; do not guess.
 
@@ -28,10 +29,10 @@ Pass 2 produces separate findings (appropriateness / reversibility), not per-cla
 
 The report is presented inline, mirroring the review-skill family. The `architecture-reviewer` agent is read-only (no Write tool), so the report section — not a file — is the home of the inspectable claim-set.
 
-1. **Claim Set** — the full Pass 0 output, **verbatim**. This *is* the inspectable intermediate artifact (each claim's `id`/`claim`/`source_span`/`dimension`/`tense`/`evidence_class`). Presenting it verbatim keeps "reviewer missed a claim" distinguishable from "extractor never found the claim." The section header carries the extraction-completeness disclaimer (see Output rules) — recall has no production oracle, so the set is never certified complete.
+1. **Claim Set** — the full Pass 0 output, **verbatim**. This *is* the inspectable intermediate artifact (each claim's `id`/`claim`/`source_span`/`dimension`/`tense`/`provenance`/`evidence_class`). Presenting it verbatim keeps "reviewer missed a claim" distinguishable from "extractor never found the claim." The section header carries the extraction-completeness disclaimer (see Output rules) — recall has no production oracle, so the set is never certified complete.
 2. **Verdicts by dimension** — one verdict per claim (vocabulary above), grouped by the six Pass 1 dimensions.
-3. **Not Reviewed** — `delegated` claims (with a `secaudit` pointer: security architecture → `mcp__pal__secaudit`) and `unrouted` claims, listed explicitly. Fail-loud: extraction happened, review did not, and the report says so. These claims are never silently dropped.
-4. **Pass 2 findings** — appropriateness (mechanism vs the artifact's own stated context) and reversibility (one-way vs two-way doors; proportional justification for irreversible decisions).
+3. **Not Reviewed** — `delegated` claims (with a `secaudit` pointer: security architecture → `mcp__pal__secaudit`) and `unrouted` claims, listed explicitly. Fail-loud: extraction happened, Pass 1 verification did not, and the report says so. (Pass 2's provenance-consistency check is routing-independent, so a settled-presented `unrouted` claim can appear both here and under the Provenance subsection.) These claims are never silently dropped.
+4. **Pass 2 findings** — appropriateness (mechanism vs the artifact's own stated context), reversibility (one-way vs two-way doors; proportional justification for irreversible decisions), and provenance (self-certification: claims presented as settled whose provenance is `reverse-engineered`/`fabricated-labeled` with no cited ratification record).
 
 ## Severity mapping
 
@@ -43,6 +44,7 @@ Reuses the review family's P0–P3 scale:
 | `dangling-anchor` | **P2** |
 | `ill-formed` (internal-soundness claim missing required elements) | **P2** |
 | Pass 2 inappropriate-mechanism / missing reversibility justification | **P1** / **P2** |
+| Pass 2 self-certification (`canonical` by decree: settled presentation, `reverse-engineered`/`fabricated-labeled` provenance, no cited ratification record) | **P2** |
 | `unrouted` / `delegated` | **informational** |
 
 ## Report skeleton
@@ -62,9 +64,9 @@ Reuses the review family's P0–P3 scale:
 > no production oracle — this claim-set is not certified complete; a claim the
 > extractor missed is silently absent.
 
-| id | claim | source_span | dimension | tense | evidence_class |
-| --- | --- | --- | --- | --- | --- |
-| C1 | … | … | … | … | … |
+| id | claim | source_span | dimension | tense | provenance | evidence_class |
+| --- | --- | --- | --- | --- | --- | --- |
+| C1 | … | … | … | … | … | … |
 
 ---
 
@@ -95,6 +97,7 @@ Reuses the review family's P0–P3 scale:
 
 - **Appropriateness**: {mechanism-vs-stated-context findings, or "no mismatch found"}
 - **Reversibility**: {one-way/two-way door findings + proportional-justification, or "n/a"}
+- **Provenance**: {self-certification findings — settled presentation + `reverse-engineered`/`fabricated-labeled` provenance + no cited ratification record (P2), each quoting the presentation and the derivation signal — or "no provenance inconsistency found"}
 ```
 
 ### Output rules

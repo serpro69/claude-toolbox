@@ -1,7 +1,7 @@
 ---
 name: review-architecture
 description: |
-  Review a written architecture artifact — an ADR (docs/adr/), a broader architecture doc, or the architecture section of a design doc — against the system it claims to describe. Verifies the EXISTENCE and TOPOLOGY of declared mechanisms (structural boundaries, data ownership, NFR mechanisms, failure isolation, state consistency, evolution/versioning) plus decision soundness and reversibility. Use after an ADR or architecture doc is written, before or during implementation. NOT for behavioral/runtime correctness (that is $kk:review-code and $kk:review-spec). Security architecture is out of scope — delegate threat modeling to the PAL secaudit tool (mcp__pal__secaudit).
+  Review a written architecture artifact — an ADR (docs/adr/), a broader architecture doc, the architecture section of a design doc, or a domain-reference kit (glossary + traps pages, reviewed as one composite artifact) — against the system it claims to describe. Verifies the EXISTENCE and TOPOLOGY of declared mechanisms (structural boundaries, data ownership, NFR mechanisms, failure isolation, state consistency, evolution/versioning, domain binding) plus decision soundness, reversibility, and provenance (self-certification of reverse-engineered claims). Use after an ADR, architecture doc, domain glossary, or domain kit is written, before or during implementation. NOT for behavioral/runtime correctness (that is $kk:review-code and $kk:review-spec). Security architecture is out of scope — delegate threat modeling to the PAL secaudit tool (mcp__pal__secaudit).
 ---
 <!-- codex: tool-name mapping applied. See .codex/scripts/session-start.sh -->
 
@@ -37,10 +37,10 @@ This ordering is load-bearing (ADR 0004), not stylistic: with the artifact text 
 
 **Phases:**
 
-1. **Acceptance** — apply [input-contract.md](input-contract.md) to the invocation path(s): exactly one committed written artifact per invocation; diagrams count only with accompanying prose; verbal/diagram-only or multi-artifact inputs are rejected with an actionable message. No path given → list candidate artifacts (`docs/adr/`, `docs/wip/*/design.md`) and ask. This is the only phase the main agent performs against the input directly, and it reads the artifact's *shape*, not its claims.
+1. **Acceptance** — apply [input-contract.md](input-contract.md) to the invocation path(s): exactly one committed written artifact per invocation; diagrams count only with accompanying prose; verbal/diagram-only or multi-artifact inputs are rejected with an actionable message. A domain-reference kit is the one composite exception: pass either kit page's path and resolve the counterpart (`<context>.md` ↔ `<context>-traps.md` sibling naming, cross-link fallback) so the pair is reviewed as one artifact — two explicit paths are still rejected, and an unresolvable counterpart means the page is reviewed solo with a loud report note. No path given → list candidate artifacts (`docs/adr/`, `docs/wip/*/design.md`) and ask. This is the only phase the main agent performs against the input directly, and it reads the artifact's *shape*, not its claims.
 
 2. **Delegate to `architecture-reviewer`** — spawn the read-only `architecture-reviewer` agent (via the Agent tool) to run Pass 0 → Pass 1 → Pass 2. The agent has no shell, so resolve the plugin root yourself first (`echo "${TOOLBOX_PLUGIN_ROOT:-NOT_SET}"`) and inject the absolute path under a `## Plugin Root` heading. Pass the agent:
-   - the accepted artifact path (and, for a design doc, the scoping heading);
+   - the accepted artifact path (and, for a design doc, the scoping heading; for a composite domain-reference kit, both resolved page paths — or the solo page plus the unresolvable-counterpart note);
    - the procedure files to read, by plugin-root path: `../../skills/review-architecture/pass0-extraction.md`, `../../skills/review-architecture/pass1-topology.md`, `../../skills/review-architecture/pass2-soundness.md`, and `../../skills/review-architecture/output-contract.md`;
    - the resolved `## Plugin Root` absolute path.
 
@@ -52,4 +52,4 @@ This ordering is load-bearing (ADR 0004), not stylistic: with the artifact text 
 $kk:review-architecture <artifact-path>
 ```
 
-Exactly one artifact per invocation. For a design doc, an optional heading argument scopes the review to its architecture section. See [output-contract.md](output-contract.md) for full invocation/scope rules.
+Exactly one artifact per invocation. For a design doc, an optional heading argument scopes the review to its architecture section. For a domain-reference kit, pass either page's path — the glossary/traps counterpart is auto-discovered and the pair is reviewed as one composite artifact. See [output-contract.md](output-contract.md) for full invocation/scope rules.

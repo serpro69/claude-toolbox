@@ -1,0 +1,31 @@
+{
+  "id": 9,
+  "name": "pass0-provenance",
+  "description": "An as-built architecture doc for a fictional broadcast ad-traffic domain carries three airing rules with explicit status + origin wording — one canonical-by-decree (reverse-engineered, no ratification record), one properly `proposed` reverse-engineered twin, and one `canonical` rule with a cited product decision — plus an explicitly invented capacity placeholder and two first-hand component claims. Grades the Pass 0 provenance field-assignment seam separately from the Pass 2 provenance-consistency (self-certification) finding seam. A small code slice that genuinely enforces the rules is staged so 'the code agrees' is available as bait. `oracle/gold-provenance.json` is the grader-only oracle — outside `test-files/`, never staged as skill input.",
+  "skills": ["review-architecture"],
+  "prompt": "Review the architecture doc at traffic-scheduling-arch.md.",
+  "trap": "The reviewer is likely to (a) omit the provenance field from the claim-set entirely; (b) under-fire on A1 because the rotation guard in the code enforces the 3-airings cap — 'verified in code' feels like it settles the claim, but code agreement establishes the code-clock fact, not intent ratification (the exact self-certification failure the check exists to catch); (c) over-fire on A2 (treating any reverse-engineered claim as a finding, ignoring that its `proposed` label is the CORRECT behavior) or on A3 (treating `canonical` as decree despite the cited RAD-88 decision record); (d) assign provenance by inspecting the repo instead of the artifact's own Origin wording, violating Pass 0's repo-blind rule; (e) let A2's `proposed` status marker drag its tense to `future`, conflating the ratification axis with the tense axis; or (f) report the self-certification as a Pass 1 verdict or an appropriateness finding rather than in the Pass 2 Provenance subsection.",
+  "files": [
+    "test-files/traffic-scheduling-arch.md",
+    "test-files/services/traffic/go.mod",
+    "test-files/services/traffic/airlog.go",
+    "test-files/services/traffic/rotation.go",
+    "test-files/services/traffic/separation.go",
+    "test-files/services/sales/go.mod",
+    "test-files/services/sales/campaigns.go"
+  ],
+  "assertions": [
+    { "id": "9.1", "text": "The Claim Set records a `provenance` value for every claim, drawn from `harvested` / `reverse-engineered` / `fabricated-labeled`." },
+    { "id": "9.2", "text": "The 3-airings-per-daypart rule (A1) is extracted and tagged `provenance: reverse-engineered` — its Origin wording ('recovered by reading the rotation guard') is a derivation signal, not a stakeholder source." },
+    { "id": "9.3", "text": "The category-separation rule (A2) is tagged `provenance: reverse-engineered` (Origin: 'reverse-engineered from the scheduler')." },
+    { "id": "9.4", "text": "The PSA-exemption rule (A3) is tagged `provenance: harvested` — it cites programming decision RAD-88 and its decider." },
+    { "id": "9.5", "text": "The 12-concurrent-streams capacity assumption is tagged `provenance: fabricated-labeled` (the text explicitly marks it an invented placeholder)." },
+    { "id": "9.6", "text": "The two component claims (traffic is the sole mutating owner of the AirLog; sales reads air logs only via the traffic HTTP API), which carry no derivation signal, default to `provenance: harvested` — NOT `reverse-engineered`." },
+    { "id": "9.7", "text": "Repo-blind: every provenance assignment is justified from the artifact's own text (Status/Origin wording); no provenance value appeals to what the staged code contains." },
+    { "id": "9.8", "text": "Orthogonality: A2 is `tense: present` (the doc describes the separation rule as currently enforced) despite its `proposed` status marker — the per-claim ratification marker does not drag tense to `future`." },
+    { "id": "9.9", "text": "Pass 2 emits the self-certification finding for A1: severity P2, quoting the settled presentation ('canonical — settled station policy') and the derivation signal, and stating that no ratification record is cited." },
+    { "id": "9.10", "text": "The A1 finding appears under the Pass 2 Provenance subsection — not as a Pass 1 verdict and not as an appropriateness finding." },
+    { "id": "9.11", "text": "Under-fire control: the A1 finding stands even though `services/traffic/rotation.go` genuinely enforces the 3-airings cap — the response does not dismiss or downgrade the finding on the grounds that the code agrees (code agreement is a code-clock fact, not intent ratification)." },
+    { "id": "9.12", "text": "Over-fire controls: NO provenance finding for A2 (reverse-engineered but correctly `proposed`), for A3 (settled but harvested, with a cited decision record), or for the two first-hand component claims." }
+  ]
+}
