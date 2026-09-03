@@ -1,6 +1,6 @@
 # Pass 2 — Decision Soundness & Reversibility
 
-Grades the artifact's **reasoning** against the artifact's **own stated context**. Unlike Pass 1, this pass has **no reality branch** — it never resolves an anchor, greps the repo, or opens a source file. It runs in **internal-soundness mode only**, on the whole-artifact context Pass 1's per-claim map-reduce cannot see. Two checks: **appropriateness** (is each chosen mechanism a fit for the constraints the document itself states?) and **reversibility** (are one-way vs two-way doors identified, and do irreversible decisions carry proportional justification?).
+Grades the artifact's **reasoning** against the artifact's **own stated context**. Unlike Pass 1, this pass has **no reality branch** — it never resolves an anchor, greps the repo, or opens a source file. It runs in **internal-soundness mode only**, on the whole-artifact context Pass 1's per-claim map-reduce cannot see. Three checks: **appropriateness** (is each chosen mechanism a fit for the constraints the document itself states?), **reversibility** (are one-way vs two-way doors identified, and do irreversible decisions carry proportional justification?), and **provenance consistency** (is each claim presented as settled actually backed by a ratification trail, or self-certified?).
 
 ## Why this is a separate pass, not a seventh dimension
 
@@ -10,7 +10,7 @@ Pass 1 is a strict `extract → locate bounded evidence → grade` loop. Pass 2 
 
 **Grade only against the constraints the artifact itself states.** The yardstick is the document's own Context / Status / stated NFRs / workload characterization — never outside knowledge of what the real workload is, and never the repo. True appropriateness (is the system *actually* write-heavy in production) needs live profiling the reviewer cannot do; scoping to *stated* context is what keeps this pass gradeable instead of an open-ended "I'd have chosen differently" critique.
 
-**This rule governs Check A (appropriateness); Check B (reversibility) is scoped differently.** Classifying a decision as a one-way vs two-way door draws on general knowledge of the *mechanism's* reversal cost (resharding a live store is expensive; adding a replica is not) — an artifact rarely states its own reversal cost, so requiring a quoted constraint there would suppress every reversibility finding. What Check B grades against the artifact's own words is only whether an irreversible decision carries *proportional justification*. So: appropriateness needs a quotable stated constraint; reversibility needs a door classification (general mechanism knowledge) **plus** a justification check (artifact words).
+**This rule governs Check A (appropriateness); Check B (reversibility) is scoped differently.** Classifying a decision as a one-way vs two-way door draws on general knowledge of the *mechanism's* reversal cost (resharding a live store is expensive; adding a replica is not) — an artifact rarely states its own reversal cost, so requiring a quoted constraint there would suppress every reversibility finding. What Check B grades against the artifact's own words is only whether an irreversible decision carries *proportional justification*. So: appropriateness needs a quotable stated constraint; reversibility needs a door classification (general mechanism knowledge) **plus** a justification check (artifact words). Check C (provenance consistency) is artifact-internal by construction — it compares two properties of the artifact's own text: how a claim is presented and where the text says it came from.
 
 The consequence cuts both ways:
 
@@ -23,7 +23,8 @@ Pass 2 reads more of the claim-set than Pass 1's per-claim loop does:
 
 - **Every decision-bearing claim**, whatever dimension it routed to — the *mechanism* each dimension-1–6 claim names is a decision, and its appropriateness is Pass 2's business. Pass 2 is not limited to `pass2`-routed claims.
 - **The `pass2`-routed claims** ([pass0-extraction.md](pass0-extraction.md)) — claims that are *purely* rationale / trade-off / reversibility with no topological mechanism of their own.
-- **The artifact's stated context** — the Context section, the Status (tense default), the stated NFRs and workload characterization. This is the yardstick both checks measure against.
+- **The artifact's stated context** — the Context section, the Status (tense default), the stated NFRs and workload characterization. This is the yardstick the appropriateness and reversibility checks measure against.
+- **Per-claim `provenance` and the artifact's own status markers** — Pass 0 records `provenance` (`harvested` / `reverse-engineered` / `fabricated-labeled`) per claim from the artifact's text; Check C consumes it together with each claim's presentation (settled/`canonical` vs provisional/`proposed`).
 
 ## Check A — Appropriateness
 
@@ -55,6 +56,19 @@ Findings:
 
 > **Inline example.** Decision states "expose the public mobile API over gRPC." Committing an unmanaged external client population to a wire protocol is a one-way door — migrating millions of already-installed apps off it later is slow and disruptive. If the ADR neither acknowledges the irreversibility nor justifies gRPC specifically (no payload/latency analysis, no alternatives weighed) → **reversibility finding, P2**. Had it said "this is a one-way door; gRPC cuts payload 40% at our scale and forced-update lets us control client rollout," that is proportional justification → no finding.
 
+## Check C — Provenance consistency
+
+For each claim presented as **settled** — a `canonical` status marker, "ratified", "settled business policy", or equivalent — check that the presentation is consistent with the claim's `provenance` (recorded per claim by Pass 0):
+
+- `reverse-engineered` provenance + settled presentation + **no cited ratification record** → **finding, P2** (self-certification). Code verification establishes *code-clock* facts only — what the implementation does. The claim's *intent* — that the behavior is desired business policy — is a presumption until a human other than the author ratifies it. An artifact that marks its own reverse-engineered presumptions as settled is certifying itself, and code agreement does not clear the finding: enforcement in code proves the behavior exists, not that anyone decided it should.
+- `reverse-engineered` + explicitly provisional presentation (`proposed`, "pending ratification") → **sound, no finding.** Correct labeling is the desired behavior — reward it.
+- `harvested` + settled presentation → no finding. A cited stakeholder/product source *is* the ratification trail; for a first-hand assertion (the artifact's authors' own decision — e.g. an Accepted ADR's Decision section), the artifact itself is the trail. Do not demand an external citation from a first-hand claim — the check exists to catch *derived* content presented as settled, not to tax ordinary authorship.
+- `fabricated-labeled` + settled presentation → the same **P2** finding; an explicitly invented input presented as settled is self-certification in its loudest form. (Fabricated inputs that stay labeled provisional are sound.)
+
+**The check is routing-independent.** It runs over every settled-presented claim whatever its `dimension` — `unrouted` and `pass2` claims included. Business-policy rules are exactly the claim class most likely to be unrouted, and the most tempting to self-certify; Pass 1 skips them by design, so this check is the only place they are graded at all.
+
+Report each finding with the quoted settled presentation, the quoted derivation signal that makes the provenance `reverse-engineered` (or the invented-input marker), and the absence of any cited ratification record. Like every Pass 2 check, this is artifact-internal — the yardstick is what the artifact says about its own claims' origins, never the repo.
+
 ## Coupling to Pass 1 — the P1→P0 escalation
 
 Reversibility is where a Pass 1 `violated` verdict can escalate. When a claim graded `violated` in Pass 1 rests on a decision Pass 2 classifies as a **one-way door**, the violation's severity escalates **P1 → P0** (per [output-contract.md](output-contract.md)): shipping the wrong irreversible mechanism is materially worse than shipping the wrong reversible one. Flag the escalation explicitly, naming both the Pass 1 claim and the door classification.
@@ -66,6 +80,7 @@ Reversibility is where a Pass 1 `violated` verdict can escalate. When a claim gr
 - **Appropriateness:** can you quote the stated constraint *and* the mechanism? If you cannot quote the constraint from the artifact, drop the finding — you are importing an outside assumption, not grading stated context.
 - **Reversibility:** did you first classify the door? A two-way door is never a finding, however thin its justification. Only one-way doors demand proportional justification.
 - **Escalation coupling:** for each Pass 1 `violated` verdict, did you trace the claim to the decision its mechanism protects — not the enforcement convention — and check that decision's door classification before settling the severity?
+- **Provenance:** does every Check C finding quote both the settled presentation and the derivation signal? A reverse-engineered claim labeled `proposed` is never a finding. And did you dismiss a finding because the code enforces the rule? Code agreement is a code-clock fact — it does not ratify intent; the finding stands.
 - **Coverage:** does every `pass2`-routed claim from the claim-set appear somewhere in your output? A `pass2` claim Pass 1 skipped by design and Pass 2 never mentions has silently fallen through both passes.
 - **Altitude:** did you open a source file or resolve a repo path? If so you have left Pass 2 — this pass grades the artifact's reasoning against its own words, nothing else.
 
@@ -75,6 +90,7 @@ Feed the results into the report's **Pass 2 — Decision Soundness & Reversibili
 
 - **Appropriateness** — mechanism-vs-stated-context findings (each with the quoted constraint + mechanism, P1), or "no mismatch found."
 - **Reversibility** — for each decision-bearing claim, its **door classification** (one-way / two-way) — record findings *and* sound doors alike, so a justified one-way door leaves an auditable trace. Then the findings (irreversible decisions lacking proportional justification, P2) and any P1→P0 escalation of a Pass 1 `violated` verdict whose decision this pass classified a one-way door. Use "n/a" only when the artifact makes no decisions to classify.
+- **Provenance** — the Check C findings (settled presentation + `reverse-engineered`/`fabricated-labeled` provenance + no cited ratification record, P2), each with its quoted presentation and derivation signal — or "no provenance inconsistency found."
 
 **Account for every `pass2`-routed claim explicitly.** Each one appears at least once in this section — as a door classification, an appropriateness note, or an explicit "consistent with stated context — no finding." Pass 1 skips these claims by design, so a `pass2` claim this section never mentions has been reviewed by nobody; fail-loud forbids that silence.
 

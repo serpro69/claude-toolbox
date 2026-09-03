@@ -1,0 +1,88 @@
+{
+  "artifact": "traffic-scheduling-arch.md",
+  "artifact_type": "broader architecture doc",
+  "status_tense_default": "present",
+  "notes": "The doc describes the system as built, so the tense default is `present` for every claim, including A2 — its `proposed` status marker speaks to the ratification (provenance) axis, not tense. The gold set is a FLOOR, not an exhaustive list: an extractor may surface additional well-grounded claims (e.g. the PSA exemption's scheduler skip as a separate mechanism claim) without failing precision, and legitimate unseeded findings are ungraded. Extracted claim ids `Cn` are matched to gold `GPn` by asserted content, not id number. The staged code slice INTENTIONALLY enforces A1 and A2: 'the code agrees' must not clear the A1 finding — enforcement proves the code-clock fact, not intent ratification. The doc's intro banner ('recovered during a code archaeology session') covers the whole rules section, but per-claim signals override section-level banners (pass0 §Provenance precedence rule): A3's Origin cites decision RAD-88, so A3 is `harvested` despite the banner — tagging A3 `reverse-engineered` from the banner alone is the graded failure. Pass 1 verdicts on the two component claims are not graded by this eval (both should verify against the slice, but the graded seams are Pass 0 provenance assignment and the Pass 2 provenance-consistency finding).",
+  "gold": [
+    {
+      "id": "GP1",
+      "claim": "A spot may air at most 3 times within one daypart (rule A1).",
+      "source_span": "A1 | A spot may air at most 3 times within one daypart. | canonical — settled station policy | Recovered by reading the rotation guard in `services/traffic/rotation.go`.",
+      "tense": "present",
+      "provenance": "reverse-engineered",
+      "settled_presentation": true,
+      "derivation_signal": "Recovered by reading the rotation guard in `services/traffic/rotation.go`.",
+      "ratification_record": null
+    },
+    {
+      "id": "GP2",
+      "claim": "Two spots from the same advertiser category must be separated by at least 15 minutes of air time (rule A2).",
+      "source_span": "A2 | Two spots from the same advertiser category must be separated by at least 15 minutes of air time. | proposed — pending confirmation with the sales director | Reverse-engineered from the scheduler in `services/traffic/separation.go`.",
+      "tense": "present",
+      "provenance": "reverse-engineered",
+      "settled_presentation": false,
+      "derivation_signal": "Reverse-engineered from the scheduler in `services/traffic/separation.go`.",
+      "ratification_record": null
+    },
+    {
+      "id": "GP3",
+      "claim": "Public-service announcements are exempt from the category-separation rule (rule A3).",
+      "source_span": "A3 | Public-service announcements are exempt from the category-separation rule. | canonical | Per programming decision RAD-88 (programming director, 2026-06).",
+      "tense": "present",
+      "provenance": "harvested",
+      "settled_presentation": true,
+      "derivation_signal": null,
+      "ratification_record": "programming decision RAD-88 (programming director, 2026-06)"
+    },
+    {
+      "id": "GP4",
+      "claim": "Capacity planning assumes 12 concurrent station streams.",
+      "source_span": "Planning assumes 12 concurrent station streams. This figure is an invented placeholder — no real concurrency measurements exist yet",
+      "tense": "present",
+      "provenance": "fabricated-labeled",
+      "settled_presentation": false,
+      "derivation_signal": "invented placeholder — no real concurrency measurements exist yet",
+      "ratification_record": null
+    },
+    {
+      "id": "GP5",
+      "claim": "The traffic service is the sole mutating owner of the AirLog.",
+      "source_span": "The `traffic` service is the sole mutating owner of the `AirLog`, the append-only record of aired spots.",
+      "dimension": "2",
+      "tense": "present",
+      "provenance": "harvested",
+      "settled_presentation": false,
+      "derivation_signal": null,
+      "note": "First-hand assertion with no derivation signal — Pass 0's conservative default applies. Tagging this `reverse-engineered` is a field-assignment failure."
+    },
+    {
+      "id": "GP6",
+      "claim": "The sales service reads air logs only through the traffic service's HTTP API.",
+      "source_span": "The `sales` service reads air logs only through the traffic service's HTTP API.",
+      "dimension": "1",
+      "tense": "present",
+      "provenance": "harvested",
+      "settled_presentation": false,
+      "derivation_signal": null,
+      "note": "Same conservative default as GP5."
+    }
+  ],
+  "expected_finding": {
+    "check": "provenance-consistency (Pass 2, Check C)",
+    "claim": "GP1 (rule A1)",
+    "severity": "P2",
+    "location": "Pass 2 — Provenance subsection (not a Pass 1 verdict, not an appropriateness finding)",
+    "must_include": [
+      "the quoted settled presentation ('canonical — settled station policy')",
+      "the quoted derivation signal ('Recovered by reading the rotation guard…')",
+      "that no ratification record is cited for A1"
+    ],
+    "must_not": "be dismissed or downgraded because the staged code enforces the 3-airings cap — code agreement does not ratify intent"
+  },
+  "negative_controls": [
+    { "claim": "GP2 (rule A2)", "reason": "reverse-engineered but explicitly provisional (`proposed — pending confirmation`) — correct labeling, no finding" },
+    { "claim": "GP3 (rule A3)", "reason": "settled presentation backed by a cited ratification record (RAD-88) — harvested, no finding" },
+    { "claim": "GP4 (capacity placeholder)", "reason": "fabricated but labeled and not presented as settled — no finding" },
+    { "claim": "GP5 / GP6 (component claims)", "reason": "first-hand harvested assertions — no provenance finding" }
+  ]
+}
