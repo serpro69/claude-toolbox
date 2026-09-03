@@ -47,7 +47,7 @@ Restricted via frontmatter allowlist to: Read, Grep, Glob, and `capy_search`. Us
 
 ### Mandatory ordering — instructions before artifact
 
-The steps below are strictly sequential. **Do not read the artifact's content, extract claims, resolve evidence, or form any verdict until you have read every pass procedure and the output contract provided in your prompt.** Payload delivery order (the spawning skill attaching the artifact path and the procedure paths in the same prompt) is not sufficient — you must read-before-act on your own side, or you will re-create the shortcut the workflow is designed to prevent (ADR 0004). Your only early contact with the input is the artifact *path* — enough to open the right file after the procedures are loaded, not before.
+The steps below are strictly sequential. **Do not read the artifact's content, extract claims, resolve evidence, or form any verdict until you have read every pass procedure and the output contract provided in your prompt.** Payload delivery order (the spawning skill attaching the artifact path and the procedure paths in the same prompt) is not sufficient — you must read-before-act on your own side, or you will re-create the shortcut the workflow is designed to prevent. Your only early contact with the input is the artifact *path* — enough to open the right file after the procedures are loaded, not before.
 
 ### 1) Load the pass procedures
 

@@ -41,8 +41,12 @@ flowchart LR
 	profiles_skill_md_implement_["profiles/skill-md/implement/"]
 	profiles_skill_md_review_code_["profiles/skill-md/review-code/"]
 	skills__shared_capy_knowledge_protocol_md["skills/_shared/capy-knowledge-protocol.md"]
+	skills__shared_contact_ratio_guard_md["skills/_shared/contact-ratio-guard.md"]
+	skills__shared_fact_flip_propagation_md["skills/_shared/fact-flip-propagation.md"]
+	skills__shared_open_question_pass_md["skills/_shared/open-question-pass.md"]
 	skills__shared_pal_codereview_invocation_md["skills/_shared/pal-codereview-invocation.md"]
 	skills__shared_profile_detection_md["skills/_shared/profile-detection.md"]
+	skills__shared_requirements_harvesting_md["skills/_shared/requirements-harvesting.md"]
 	skills__shared_review_scope_protocol_md["skills/_shared/review-scope-protocol.md"]
 	skills_chain_of_verification_["skills/chain-of-verification/"]
 	skills_dependency_handling_["skills/dependency-handling/"]
@@ -51,6 +55,7 @@ flowchart LR
 	skills_document_["skills/document/"]
 	skills_implement_["skills/implement/"]
 	skills_merge_docs_["skills/merge-docs/"]
+	skills_model_["skills/model/"]
 	skills_review_architecture_["skills/review-architecture/"]
 	skills_review_code_["skills/review-code/"]
 	skills_review_design_["skills/review-design/"]
@@ -137,6 +142,13 @@ flowchart LR
 	skills_implement_ -->|skill-invocation| skills_test_
 	skills_merge_docs_ -->|symlink| skills__shared_capy_knowledge_protocol_md
 	skills_merge_docs_ -->|markdown-link| skills_design_
+	skills_model_ -->|symlink| skills__shared_capy_knowledge_protocol_md
+	skills_model_ -->|symlink| skills__shared_contact_ratio_guard_md
+	skills_model_ -->|symlink| skills__shared_fact_flip_propagation_md
+	skills_model_ -->|symlink| skills__shared_open_question_pass_md
+	skills_model_ -->|symlink| skills__shared_requirements_harvesting_md
+	skills_model_ -->|skill-invocation| skills_design_
+	skills_model_ -->|skill-invocation| skills_review_architecture_
 	skills_review_architecture_ -->|skill-invocation| skills_review_code_
 	skills_review_architecture_ -->|skill-invocation| skills_review_spec_
 	skills_review_code_ -->|agent-delegation| agents_code_reviewer_md
@@ -161,9 +173,9 @@ flowchart LR
 	skills_test_ -->|symlink| skills__shared_capy_knowledge_protocol_md
 	skills_test_ -->|symlink| skills__shared_profile_detection_md
 	classDef skill fill:#a6cee3,color:#1a1a1a;
-	class skills_chain_of_verification_,skills_dependency_handling_,skills_design_,skills_diff_skill_,skills_document_,skills_implement_,skills_merge_docs_,skills_review_architecture_,skills_review_code_,skills_review_design_,skills_review_spec_,skills_test_ skill;
+	class skills_chain_of_verification_,skills_dependency_handling_,skills_design_,skills_diff_skill_,skills_document_,skills_implement_,skills_merge_docs_,skills_model_,skills_review_architecture_,skills_review_code_,skills_review_design_,skills_review_spec_,skills_test_ skill;
 	classDef shared fill:#ffff99,color:#1a1a1a;
-	class skills__shared_capy_knowledge_protocol_md,skills__shared_pal_codereview_invocation_md,skills__shared_profile_detection_md,skills__shared_review_scope_protocol_md shared;
+	class skills__shared_capy_knowledge_protocol_md,skills__shared_contact_ratio_guard_md,skills__shared_fact_flip_propagation_md,skills__shared_open_question_pass_md,skills__shared_pal_codereview_invocation_md,skills__shared_profile_detection_md,skills__shared_requirements_harvesting_md,skills__shared_review_scope_protocol_md shared;
 	classDef agent fill:#b2df8a,color:#1a1a1a;
 	class agents_architecture_reviewer_md,agents_code_reviewer_md,agents_design_reviewer_md,agents_eval_grader_md,agents_profile_resolver_md,agents_spec_reviewer_md agent;
 	classDef profile fill:#fb9a99,color:#1a1a1a;

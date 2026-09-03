@@ -2,7 +2,7 @@
 
 The authoritative seven-phase workflow. SKILL.md carries the one-line phase summary; this file carries the full procedure. Phases run **strictly in order** — each phase exists to prevent a recorded field failure (the F-numbers cited below; each guard file opens with its failure), and reordering re-creates the failure the order prevents.
 
-Phases 1–2 touch no domain code. Phase 3 is the single point where domain source is read — the content-read step appears exactly once, there (ADR-0004). Phases 4–7 work from what phases 2–3 harvested; they re-open sources to check claims, never to widen scope.
+Phases 1–2 touch no domain code. Phase 3 is the single point where domain source is read — the content-read step appears exactly once, there. Phases 4–7 work from what phases 2–3 harvested; they re-open sources to check claims, never to widen scope.
 
 ## Phase 1 — Scope intake
 

@@ -55,6 +55,10 @@ Reference in skill prose as `[shared-<name>.md](shared-<name>.md)`. The `shared-
 
 Symlinks must stay inside the `skills/` tree — cross-boundary symlinks break under some plugin installers (see [ADR 0003](../adr/0003-plugin-root-referenced-content.md)).
 
+## Plugin Content Is Self-Contained
+
+`klaude-plugin/` ships standalone via the plugin marketplace — consumers get the plugin tree only, never this repo's `docs/`. Skill, agent, and profile prose must never reference toolbox-repo documents: no "(ADR NNNN)" citations, no links into this repo's `docs/adr/` or `docs/wip|done/`. For a consumer these are unresolvable at best; at worst they collide with the consumer repo's own ADR numbering and point to unrelated decisions. State each rule and its rationale in full in the plugin file itself; the back-reference lives on the repo side (the ADR cites the operative plugin files, not the other way around). Consumer-repo paths as *behavioral targets* (e.g. `/kk:review-architecture` accepting artifacts from the consumer's `docs/adr/`) are correct and expected.
+
 ## Commands
 
 Commands live under `klaude-plugin/commands/<name>/`. For skills with standard + isolated modes:

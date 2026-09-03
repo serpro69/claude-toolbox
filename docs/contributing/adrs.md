@@ -11,6 +11,8 @@ Architecture decisions that span more than one feature are recorded as ADRs usin
 | [0003](../adr/0003-plugin-root-referenced-content.md) | Plugin Root Referenced Content | Accepted |
 | [0004](../adr/0004-skill-workflow-ordering.md) | Skill Workflow Ordering | Accepted |
 | [0005](../adr/0005-codex-hook-enforcement-gap.md) | Codex Hook Enforcement Gap | Accepted |
+| [0006](../adr/0006-composite-artifact-acceptance.md) | Composite-Artifact Acceptance for Domain-Reference Kits | Accepted |
+| [0007](../adr/0007-failure-citing-defaults.md) | Producer Rules Are Failure-Citing, Falsifiable Defaults | Accepted |
 
 ## Location
 
