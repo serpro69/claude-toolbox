@@ -89,7 +89,7 @@ Exactly one per term:
 
 ### 5. Derived-from footer
 
-End the page with a **Derived-from footer** listing **every path read to build it** — no line numbers, files and symbols only. This is what makes each binding re-checkable at its source and what `$kk:review-architecture` re-verifies for freshness.
+End the page with a **Derived-from footer** listing **every path a recorded domain fact derives from** — no line numbers, files and symbols only. This is what makes each binding re-checkable at its source and what `$kk:review-architecture` re-verifies for freshness.
 
 ```markdown
 ---
@@ -181,7 +181,7 @@ Before surfacing, grade the produced pages against this contract — the author 
 
 - [ ] Every intent claim reverse-engineered from code is `proposed`, not `canonical`.
 - [ ] No line numbers anywhere — citations are file or symbol only.
-- [ ] Derived-from footer present and lists **every** path read.
+- [ ] Derived-from footer present and lists **every** path a recorded fact derives from (a file that contributed no domain fact — e.g. a bare `go.mod` — is not required).
 - [ ] **Exactly one** diagram on the glossary page, at conceptual altitude.
 - [ ] Traps page contains **no schema mirror**; every entry names what retires it.
 - [ ] Every ticket-citing note states its retirement condition.
