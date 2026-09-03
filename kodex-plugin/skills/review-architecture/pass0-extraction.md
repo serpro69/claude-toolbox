@@ -17,14 +17,14 @@ One entry per extracted claim. Every field comes from the artifact text.
 | `id` | Stable per-review identifier — `C1`, `C2`, … Assign in reading order; never reuse or renumber mid-review. |
 | `claim` | The assertion, tightly paraphrased. One verifiable proposition per entry — split conjunctions ("A is isolated *and* owns E") into separate claims so each routes and verifies independently. |
 | `source_span` | The artifact quote grounding the claim, or `heading + line` locating it. This is what precision grading checks against — it must actually assert the claim. |
-| `dimension` | Exactly one of the tokens `1`, `2`, `3`, `4`, `5`, `6` (the six Pass 1 dimensions below), `pass2`, `delegated`, or `unrouted`. Emit the numeric id for a topology dimension, never its name — downstream grading matches the token. See §Routing. |
+| `dimension` | Exactly one of the tokens `1`, `2`, `3`, `4`, `5`, `6`, `7` (the seven Pass 1 dimensions below), `pass2`, `delegated`, or `unrouted`. Emit the numeric id for a topology dimension, never its name — downstream grading matches the token. See §Routing. |
 | `tense` | `present` (describes the system as it is) or `future` (proposed/intended). Drives the Pass 1 anchor-rule mode decision. See §Tense. |
 | `provenance` | Where the claim's content came from, per the artifact's own text: `harvested` / `reverse-engineered` / `fabricated-labeled`. Orthogonal to `tense`. Pass 0 only records it; the consistency check runs in Pass 2. See §Provenance. |
 | `evidence_class` | The **abstract class** of evidence the claim implicates — e.g. "dependency manifests of service A", "mutating route bindings for entity E". Never a resolved repo path. |
 
 ### Dimension routing
 
-Route each claim to exactly one target. The six Pass 1 dimensions:
+Route each claim to exactly one target. The seven Pass 1 dimensions:
 
 | # | Dimension | Route here when the claim is about… |
 | --- | --- | --- |
@@ -34,6 +34,7 @@ Route each claim to exactly one target. The six Pass 1 dimensions:
 | 4 | **Failure Isolation** | surviving a dependency failure — timeouts, retries, bulkheads, circuit breakers, degradation. |
 | 5 | **State Consistency** | duplicate/race safety — idempotency keys, dedup, unique constraints, delivery semantics, sagas. |
 | 6 | **Evolution & Versioning** | independent deployability — API version routing, migration tooling, expand/contract. |
+| 7 | **Domain Binding** | where a domain concept lives in code — "concept X is bound to code element Y", where Y names a directory, a collection/constant, a field, or a symbol. A domain-reference kit's per-term **Bindings** lines and its rules-table **enforcement pointers** ("Ln is enforced at `<file>` `<symbol>`") are this claim class. Route the *location* assertion here; a rule's *intent* (what the business means the rule to be) is never a dimension-7 claim — see the kit row in the mining table. |
 
 Non-dimension targets (never dropped — they surface in the report's Not Reviewed section):
 
@@ -98,6 +99,7 @@ Each artifact type has mandatory *slots* that should each yield at least one cla
 | **ADR** (Nygard) | **Context** (constraints/forces → often `pass2` or `future`), **Decision** (the chosen mechanism → a dimension claim), **Consequences** (resulting boundaries/trade-offs → dimension or `pass2`). Also mine **Status** for the tense default. |
 | **Broader architecture doc** | Each named **component/boundary** (→ dimension 1/2), each stated **NFR** (→ dimension 3, with its mechanism), each **cross-component data flow** (→ dimension 2/5). |
 | **Design-doc architecture section** | The **component decomposition**, the **data-ownership** statement, and any **failure/consistency/versioning** subsection present. Scope strictly to the heading passed on invocation — do not extract from unrelated design sections. |
+| **Domain-reference kit** (glossary + traps, composite) | Each per-term **Bindings** line (→ dimension `7`, one claim per term's cited location set) and each rules-table **enforcement pointer** (→ dimension `7`). Each rule's **intent** yields its own claim, provenance-labeled per §Provenance and routed by content — rationale/trade-off wording → `pass2`; a bare invariant statement → `unrouted`. A rule's intent is **never truth-verified** against the repo; only its enforcement pointer is checkable. Mine **status markers** and the provenance banner as tense/provenance signals (per §Provenance, a per-term ratification marker does not set tense). |
 
 Treat the catalog as a floor, not a ceiling: an artifact can assert claims outside these slots, and those must still be extracted. The slots exist to catch omissions, not to cap the claim-set.
 

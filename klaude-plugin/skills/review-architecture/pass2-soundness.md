@@ -21,7 +21,7 @@ The consequence cuts both ways:
 
 Pass 2 reads more of the claim-set than Pass 1's per-claim loop does:
 
-- **Every decision-bearing claim**, whatever dimension it routed to — the *mechanism* each dimension-1–6 claim names is a decision, and its appropriateness is Pass 2's business. Pass 2 is not limited to `pass2`-routed claims.
+- **Every decision-bearing claim**, whatever dimension it routed to — the *mechanism* a topology-routed claim (dimensions 1–6) names is a decision, and its appropriateness is Pass 2's business. Pass 2 is not limited to `pass2`-routed claims. (A dimension-7 binding claim names a *location*, not a mechanism decision — binding claims carry no appropriateness question of their own; a kit rule's intent is Check C's business.)
 - **The `pass2`-routed claims** ([pass0-extraction.md](pass0-extraction.md)) — claims that are *purely* rationale / trade-off / reversibility with no topological mechanism of their own.
 - **The artifact's stated context** — the Context section, the Status (tense default), the stated NFRs and workload characterization. This is the yardstick the appropriateness and reversibility checks measure against.
 - **Per-claim `provenance` and the artifact's own status markers** — Pass 0 records `provenance` (`harvested` / `reverse-engineered` / `fabricated-labeled`) per claim from the artifact's text; Check C consumes it together with each claim's presentation (settled/`canonical` vs provisional/`proposed`).
@@ -36,6 +36,8 @@ A finding requires an explicit, quotable clash between a **stated constraint** a
 - The document states a hard constraint the mechanism structurally cannot honor (a write-behind cache that acknowledges before durable persistence, under a stated "acknowledged writes must never be lost").
 
 The clash must be derivable from the artifact's own words. If honoring the constraint would need a mechanism the doc does not have (e.g. the stated constraint needs stale-read mitigation and none is specified), name the *missing* element — that is still a stated-context finding.
+
+**Check A grades decisions, and descriptive artifacts make few of their own.** A domain-reference kit documents the system *as found*: its reverse-engineered rules and traps entries are observations, not mechanisms the artifact chose. A rule stated as an invariant whose enforcement gap the kit itself documents — an enforcement pointer citing a traps `D#`/`P#` entry, or a divergence entry carrying its retirement condition — is the kit doing exactly its job; re-deriving that documented divergence as an appropriateness clash double-reports the artifact's own content and is **not** a finding. Fire Check A only on a decision the artifact makes or proposes, never on a divergence it honestly documents.
 
 **Severity: P1.** Report the finding, the quoted stated constraint, and the quoted mechanism.
 
@@ -77,7 +79,7 @@ Reversibility is where a Pass 1 `violated` verdict can escalate. When a claim gr
 
 ## Self-check before emitting a Pass 2 finding
 
-- **Appropriateness:** can you quote the stated constraint *and* the mechanism? If you cannot quote the constraint from the artifact, drop the finding — you are importing an outside assumption, not grading stated context.
+- **Appropriateness:** can you quote the stated constraint *and* the mechanism? If you cannot quote the constraint from the artifact, drop the finding — you are importing an outside assumption, not grading stated context. And is your "mechanism" a decision the artifact makes, or a divergence it documents (a rules-table pointer into the traps page, a `D#`/`P#` entry with a retirement condition)? A documented divergence is never an appropriateness finding.
 - **Reversibility:** did you first classify the door? A two-way door is never a finding, however thin its justification. Only one-way doors demand proportional justification.
 - **Escalation coupling:** for each Pass 1 `violated` verdict, did you trace the claim to the decision its mechanism protects — not the enforcement convention — and check that decision's door classification before settling the severity?
 - **Provenance:** does every Check C finding quote both the settled presentation and the derivation signal? A reverse-engineered claim labeled `proposed` is never a finding. And did you dismiss a finding because the code enforces the rule? Code agreement is a code-clock fact — it does not ratify intent; the finding stands.

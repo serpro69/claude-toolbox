@@ -1,6 +1,6 @@
 # Pass 1 — Topology Verification
 
-Consumes the Pass 0 claim-set ([pass0-extraction.md](pass0-extraction.md)) and assigns **exactly one verdict per claim** routed to a topology dimension (`1`–`6`). Claims routed to `pass2`, `delegated`, or `unrouted` are NOT handled here — they flow straight to the report's Not Reviewed / Pass 2 sections per [output-contract.md](output-contract.md).
+Consumes the Pass 0 claim-set ([pass0-extraction.md](pass0-extraction.md)) and assigns **exactly one verdict per claim** routed to a topology dimension (`1`–`7`). Claims routed to `pass2`, `delegated`, or `unrouted` are NOT handled here — they flow straight to the report's Not Reviewed / Pass 2 sections per [output-contract.md](output-contract.md).
 
 ## The altitude line (repeat, because it is the whole game)
 
@@ -29,7 +29,9 @@ Absence of evidence is ambiguous on its own: a missing mechanism is simultaneous
 | `violated` | reality | anchor exists; mechanism absent or contradicted inside it |
 | `dangling-anchor` | reality | present-tense claim; the named component/boundary is not in the repo |
 | `internally-sound` | internal-soundness | `future` (or fallback) claim that satisfies its dimension's well-formedness criteria |
-| `ill-formed` | internal-soundness | `future` (or fallback) claim missing a required structural element (e.g. a proposed boundary that names no permitted dependency direction) |
+| `ill-formed` | internal-soundness¹ | `future` (or fallback) claim missing a required structural element (e.g. a proposed boundary that names no permitted dependency direction) |
+
+¹ With one mode-independent exception: a kit enforcement pointer citing an entry in an unresolvable or missing counterpart page grades `ill-formed` **regardless of mode** — see Dimension 7's cross-page-pointer rule.
 
 Internal-soundness mode is **not a rubber stamp**: a proposal still earns `ill-formed` when it omits the structural element its dimension requires. The mode changes *what* you check (well-formedness of the claim vs presence in the repo), not *whether* you check.
 
@@ -98,6 +100,18 @@ Same shape as 1–3 (**claim class → evidence source → greenfield fallback**
 - **Greenfield fallback (internal-soundness):** a backward-compat / migration strategy is stated (versioning scheme, expand-contract, deprecation window). A proposal claiming independent deployability with no stated compatibility strategy is **`ill-formed`**.
 
 > **Inline example.** Claim: "the `orders` API evolves independently of its consumers via versioned routes" (`present`, anchor = `orders`). Grep `services/orders/` with pattern `/v1/|/v2/|apiVersion` at route registration; if the claim instead rests on migrations, Glob pattern `services/orders/migrations/*` (Glob matches files, not directories) and read the latest migration for expand-contract shape — additive/nullable columns, not a destructive in-place `ALTER`/`DROP`. Consumer-facing versioned route prefixes, or expand-contract migrations → `verified`; a single unversioned `/orders` route mutated in place → `violated`. A bare `migrations/` directory whose latest migration is a destructive in-place alter is **not** evidence of independent evolution.
+
+## Dimension 7 — Domain Binding
+
+The domain-reference kit's dimension ([pass0-extraction.md](pass0-extraction.md) routes a kit's per-term **Bindings** lines and rules-table **enforcement pointers** here). Same shape as every dimension: claim class → evidence source → fallback outcomes.
+
+- **Claim class:** "domain concept X is bound to code element Y" — Y naming a **code-element kind**: a directory, a collection/constant, a field, or a symbol. A rules-table enforcement pointer ("L3 is enforced at `<file>` `<symbol>`") is the same claim class with the rule as the concept.
+- **Evidence source — existence only, via Grep/Glob.** The named element exists at the cited location: the directory is there (Glob), the symbol/field/constant is declared in the cited file (Grep). This is pure existence-and-topology. **The altitude line holds:** whether the code's *behavior* matches the term's definition — whether the symbol does what the glossary says the concept means — is `$kk:review-code` / `$kk:review-spec` territory, never this dimension. Likewise a rule's *intent-truth* is never verified here: the enforcement pointer's existence is dimension-7 evidence; whether the rule is desired business policy is exactly what its provenance label defers to humans (Pass 2, Check C).
+- **Reality mode (anchor rule applied):** the **anchor is the cited location** — the directory or file the binding names; the **mechanism is the named element inside it**. Cited file/directory absent from the repo → **`dangling-anchor`** (the kit cites a location that is not there — doc drift). Location exists but the named symbol/field/constant is not declared in it → **`violated`** (the binding's mechanism is absent inside an existing anchor). All named elements present at their cited locations → **`verified`**.
+- **Greenfield fallback (internal-soundness) — both outcomes:** a `future` term carrying **`Bindings: none yet`** is **`internally-sound`** (the kit says outright that no binding exists; nothing to grade against the repo). A binding claim that **names no code-element kind at all** (e.g. "will be represented in code" — neither an element kind nor a location class) is **`ill-formed`** — regardless of tense: with no named location there is no anchor to resolve and no element to check, so the claim has no checkable shape in either mode.
+- **Cross-page pointers (mode-independent).** An enforcement pointer may cite a traps-page entry instead of code ("see traps `D2` — declared, not enforced"). Resolve it against the counterpart page: the cited `D#`/`P#` entry **present** → **`verified`**, with the counterpart entry as the evidence (a documented divergence is the kit doing its job, **not** a finding — emit the verdict, never a re-report of the divergence). The cited entry **absent** — or the counterpart page itself unresolvable (single-page kit, per [input-contract.md](input-contract.md)) — → **`ill-formed`**: the claim's required supporting element is missing. This is the one place `ill-formed` fires **regardless of mode** — never silently skip a pointer whose target page is missing.
+
+> **Inline example.** Claim: "the Voucher concept is bound to `services/orders/vouchers/`, symbol `Voucher.Code`" (`present`, anchor = the cited location `services/orders/vouchers/`). Glob pattern `services/orders/vouchers/*` to confirm the directory exists, then Grep pattern `type Voucher|Code` scoped to that path. Directory present and a `Voucher` type with a `Code` field declared → `verified`; directory present but no `Voucher` declaration anywhere in it → `violated`; no `services/orders/vouchers/` in the repo at all → `dangling-anchor`. Do **not** check whether voucher codes are validated correctly — element existence at the cited location is the whole check.
 
 ## Output
 
