@@ -37,12 +37,12 @@ jobs:
       - name: Generate GitHub App Token
         id: app-token
         if: ${{ vars.CLAUDE_TOOLBOX_APP_ID != '' || vars.JEAN_CLAWDER_APP_ID != '' }}
-        uses: actions/create-github-app-token@v2
+        uses: actions/create-github-app-token@v3
         with:
           app-id: ${{ vars.CLAUDE_TOOLBOX_APP_ID || vars.JEAN_CLAWDER_APP_ID }}
           private-key: ${{ secrets.CLAUDE_TOOLBOX_APP_KEY || secrets.JEAN_CLAWDER_APP_KEY }}
 
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
         with:
           fetch-depth: 0
           token: ${{ steps.app-token.outputs.token || github.token }}
@@ -55,18 +55,18 @@ jobs:
         env:
           BOT_SLUG: ${{ steps.app-token.outputs.app-slug }}
 
-      - uses: actions/setup-python@v5
+      - uses: actions/setup-python@v7
         with:
           python-version: 3.x
       - run: echo "cache_id=$(date --utc '+%V')" >> $GITHUB_ENV
-      - uses: actions/cache@v4
+      - uses: actions/cache@v6
         with:
           key: mkdocs-material-${{ env.cache_id }}
           path: .cache
           restore-keys: |
             mkdocs-material-
       - run: pip install -r requirements.txt
-      - uses: actions/setup-go@v5
+      - uses: actions/setup-go@v7
         with:
           go-version: stable
       - name: Regenerate plugin-graph docs
