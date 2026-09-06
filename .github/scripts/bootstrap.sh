@@ -28,6 +28,11 @@ if ! grep -q '@.claude/CLAUDE.extra.md' CLAUDE.md 2>/dev/null; then
   printf '@.claude/CLAUDE.extra.md\n' >>CLAUDE.md
 fi
 
+# Append @import reference for toolbox-specific claude instructions (synced from upstream template)
+if ! grep -q '@.claude/toolbox/CLAUDE.md' CLAUDE.md 2>/dev/null; then
+  printf '@.claude/CLAUDE.extra.md\n' >>CLAUDE.md
+fi
+
 # Install the kk plugin from the claude-toolbox marketplace
 claude plugin install kk@claude-toolbox
 
