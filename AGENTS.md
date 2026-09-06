@@ -1,6 +1,6 @@
 # AGENTS.md
 
-Provider: Codex (OpenAI). This file is the Codex equivalent of CLAUDE.md.
+This file provides guidance to AI agents like claude-code, codex, and others, when working with this repository.
 
 ## Repository Overview
 
@@ -71,7 +71,7 @@ Agent names describe the **role**, not the skill that invokes them. `code-review
 
 ### Plugin content is self-contained
 
-`klaude-plugin/` ships standalone via the plugin marketplace — consumers get the plugin tree only, never this repo's `docs/`. Therefore skill, agent, and profile prose must NEVER reference toolbox-repo documents: no "(ADR NNNN)" citations, no `docs/adr/`-as-this-repo links, no `docs/wip|done` pointers. For a consumer these are unresolvable at best; at worst they collide with the consumer repo's own ADR numbering and point to unrelated decisions. State the rule and its rationale in full in the plugin file itself; keep the ADR back-reference in repo-side docs only (the ADR cites the operative plugin files, not the other way around). Distinguish: consumer-repo paths as *behavioral targets* (e.g. review-architecture accepting artifacts from the consumer's `docs/adr/`, the document skill writing ADRs to the consumer's `/docs/adr`) are correct and expected.
+`klaude-plugin/` ships standalone via the plugin marketplace — consumers get the plugin tree only, never this repo's `docs/`. Therefore skill, agent, and profile prose must NEVER reference toolbox-repo documents: no "(ADR NNNN)" citations, no `docs/adr/`-as-this-repo links, no `docs/wip|done` pointers. For a consumer these are unresolvable at best; at worst they collide with the consumer repo's own ADR numbering and point to unrelated decisions. State the rule and its rationale in full in the plugin file itself; keep the ADR back-reference in repo-side docs only (the ADR cites the operative plugin files, not the other way around). Distinguish: consumer-repo paths as _behavioral targets_ (e.g. review-architecture accepting artifacts from the consumer's `docs/adr/`, the document skill writing ADRs to the consumer's `/docs/adr`) are correct and expected.
 
 ### Shared instructions
 
@@ -145,9 +145,12 @@ Directory layout:
 klaude-plugin/skills/<skill>/evals/
   <eval-name>/
     eval.json          # scenario definition
-    test-files/        # real fixtures (YAML, code, configs, …)
+    test-files/        # real fixtures (YAML, code, configs, …) — everything here may be staged for the model under test
       …
+    oracle/            # grader-only expected outputs (gold-claims.json, expected-verdicts.json, …) — optional
 ```
+
+**Oracles are grader-only and live outside `test-files/`.** Expected-output files (`gold-claims.json`, `expected-verdicts.json`, …) go in a sibling `oracle/` directory, never inside `test-files/`. A harness may stage the whole `test-files/` directory, so an oracle placed there would leak the graded answers to the model under test even when omitted from `files[]`. `oracle/` contents are consumed only by the grader.
 
 **One directory per eval, not a single `evals.json`.** Skills that detect on paths or directory adjacency (e.g., `/kk:review-code` → `values*` adjacent to `Chart.yaml`, `templates/` ancestor chains, `kustomization.yaml` filename signal) can only be exercised against real filesystem structure. Inline-in-prompt fixtures force the evaluator to describe directory layout in prose, which tests pattern-matching on prose rather than the detection logic. Real fixtures are also syntax-highlightable, validatable (`kubeconform`, `helm lint`, `go build`), and trivial to edit — YAML embedded in JSON strings as `\n`-escaped text is not.
 
@@ -175,7 +178,7 @@ klaude-plugin/skills/<skill>/evals/
 
 **When to author evals.** Proactively, for skills with detection/routing logic where false positives and false negatives both matter; for skills with conditional content loading; and include at least one **regression eval** proving the skill does NOT activate (or falls back to default behavior) when it shouldn't. Skip for trivial skills whose behavior is captured by the skill's markdown alone.
 
-**Running.** No built-in harness. A reviewer (or a future harness) stages the eval's `test-files/` where the skill expects input, sends `prompt` with the target skill available, and grades the response against each assertion. Keep per-eval directories self-contained so the harness has zero external dependencies.
+**Running.** No built-in harness. A reviewer (or a future harness) stages the eval's `test-files/` where the skill expects input — never the `oracle/` directory — sends `prompt` with the target skill available, and grades the response against each assertion (consulting `oracle/` for expected outputs). Keep per-eval directories self-contained so the harness has zero external dependencies.
 
 ## Profile Conventions
 
@@ -199,7 +202,7 @@ klaude-plugin/profiles/<name>/
   review-spec/
 ```
 
-Not every profile populates every phase — a programming-language profile may only need `review-code/`; an IaC profile like `k8s` populates all six. A phase subdirectory contains only its `index.md` and the files the index references; human-facing authoring notes belong in `overview.md` or a sibling file at the profile root.
+Not every profile populates every phase — a programming-language profile may only need `review-code/`; an IaC profile like `k8s` populates all six; a tooling profile like `skill-md` populates only the phases where domain-specific guidance adds value. A phase subdirectory contains only its `index.md` and the files the index references; human-facing authoring notes belong in `overview.md` or a sibling file at the profile root.
 
 ### `DETECTION.md` — schema
 
