@@ -833,7 +833,7 @@ resolve_version() {
           resolved="$tag"
         fi
       fi
-    done <<< "$tags"
+    done <<<"$tags"
 
     # If no tags exist, resolve default branch to SHA
     if [[ -z "$resolved" ]]; then
@@ -1572,7 +1572,7 @@ apply_changes() {
         if grep -q '^!\.claude' .gitignore; then
           sed -i '/^!\.claude$/a !.codex' .gitignore
         else
-          printf '!.codex\n' >> .gitignore
+          printf '!.codex\n' >>.gitignore
         fi
         log_info "Added !.codex to .gitignore (was excluded by .* pattern)"
       fi
@@ -1582,11 +1582,14 @@ apply_changes() {
   # --- Auto-import CLAUDE.extra.md ---
   if [[ -f "$staging_dir/claude/CLAUDE.extra.md" && -f "CLAUDE.md" ]]; then
     if ! grep -q '@.claude/CLAUDE.extra.md' CLAUDE.md; then
-      printf '\n# Extra Instructions\n' >> CLAUDE.md
-      printf '@.claude/CLAUDE.extra.md\n' >> CLAUDE.md
+      printf '\n# Extra Instructions\n' >>CLAUDE.md
+      printf '@.claude/CLAUDE.extra.md\n' >>CLAUDE.md
       log_info "Added @import reference for .claude/CLAUDE.extra.md to CLAUDE.md"
     fi
   fi
+
+  # --- Auto-import .claude/toolbox/CLAUDE.md ---
+  # TODO: auto-import .claude/toolbox/CLAUDE.md
 
   # --- Update manifest version ---
   local synced_at
