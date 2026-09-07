@@ -2436,6 +2436,34 @@ else
   log_fail "toolbox @import should appear exactly once (found $count)"
 fi
 
+# Regression: the @import wiring must be reachable independently of apply_changes.
+# main() calls apply_wiring on the 0-change local path (templates already in sync,
+# version already bumped) — otherwise a newly-introduced @import can never land on
+# a re-run. apply_changes is NOT invoked here; apply_wiring alone must do the work.
+log_test "apply_wiring adds toolbox @import without apply_changes (0-change re-run)"
+reset_globals
+test_dir=$(create_temp_dir "wiring-standalone")
+mkdir -p "$test_dir/staging/substituted/claude/toolbox"
+echo "toolbox" > "$test_dir/staging/substituted/claude/toolbox/CLAUDE.md"
+echo "extra" > "$test_dir/staging/substituted/claude/CLAUDE.extra.md"
+# CLAUDE.md already has the extra import but is missing the toolbox one (the stuck state)
+printf '# My Project\n@.claude/CLAUDE.extra.md\n' > "$test_dir/CLAUDE.md"
+pushd "$test_dir" >/dev/null
+apply_wiring "$test_dir/staging/substituted" 2>/dev/null
+popd >/dev/null
+
+if grep -q '@.claude/toolbox/CLAUDE.md' "$test_dir/CLAUDE.md"; then
+  log_pass "apply_wiring added toolbox @import on its own"
+else
+  log_fail "apply_wiring should add toolbox @import without apply_changes"
+fi
+next_line=$(grep -A1 '^@\.claude/CLAUDE\.extra\.md$' "$test_dir/CLAUDE.md" | sed -n '2p')
+if [[ "$next_line" == '@.claude/toolbox/CLAUDE.md' ]]; then
+  log_pass "apply_wiring places toolbox @import next to CLAUDE.extra.md import"
+else
+  log_fail "toolbox @import should follow CLAUDE.extra.md import (next line: '$next_line')"
+fi
+
 log_test "apply_changes backfills manifest variables"
 reset_globals
 test_dir=$(create_temp_dir "apply-backfill")
