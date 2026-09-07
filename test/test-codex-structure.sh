@@ -133,6 +133,28 @@ else
   log_fail "session-start.sh output is not valid JSON"
 fi
 
+log_test "session-start.sh aggregates all .claude/CLAUDE.*.md files"
+tmp_root=$(mktemp -d)
+mkdir -p "$tmp_root/.codex/scripts" "$tmp_root/.claude/toolbox"
+cp "$REPO_ROOT/.codex/scripts/session-start.sh" "$tmp_root/.codex/scripts/"
+echo "extra-marker-content" > "$tmp_root/.claude/CLAUDE.extra.md"
+echo "custom-marker-content" > "$tmp_root/.claude/CLAUDE.custom.md"
+echo "toolbox-marker-content" > "$tmp_root/.claude/toolbox/CLAUDE.md"
+ctx=$(bash "$tmp_root/.codex/scripts/session-start.sh" < /dev/null | jq -r '.hookSpecificOutput.additionalContext')
+if [[ "$ctx" == *"extra-marker-content"* && "$ctx" == *"custom-marker-content"* ]]; then
+  log_pass "all .claude/CLAUDE.*.md files appear in session context"
+else
+  log_fail "session context should include every .claude/CLAUDE.*.md file"
+fi
+
+log_test "session-start.sh excludes .claude/toolbox/CLAUDE.md"
+if [[ "$ctx" == *"toolbox-marker-content"* ]]; then
+  log_fail ".claude/toolbox/CLAUDE.md is Claude-specific and should not be injected into Codex"
+else
+  log_pass ".claude/toolbox/CLAUDE.md not injected into Codex context"
+fi
+rm -rf "$tmp_root"
+
 # =============================================================================
 # Section 7: Root-level files
 # =============================================================================

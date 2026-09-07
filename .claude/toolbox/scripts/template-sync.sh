@@ -217,6 +217,22 @@ is_excluded() {
   return 1 # Not excluded
 }
 
+# sed_inplace()
+# Portable in-place sed: GNU sed uses `-i`, BSD/macOS sed needs `-i ''`.
+#
+# Args:
+#   $@ - sed script(s) and target file(s), as accepted by sed
+#
+# Note: scripts passed here must stick to POSIX sed syntax — e.g. `a\` followed
+# by a literal newline, not GNU's one-line `a text` form — so both dialects work.
+sed_inplace() {
+  if sed --version >/dev/null 2>&1; then
+    sed -i "$@"
+  else
+    sed -i '' "$@"
+  fi
+}
+
 # =============================================================================
 # Dependency Check
 # =============================================================================
@@ -684,7 +700,7 @@ run_serena_removal() {
     if [[ -f ".gitignore" ]] && grep -q '^!\.serena' .gitignore; then
       MODIFIED_FILES+=(".gitignore")
       if $APPLY_MODE; then
-        sed -i '/^!\.serena$/d' .gitignore
+        sed_inplace '/^!\.serena$/d' .gitignore
         log_info "Removed !.serena from .gitignore"
       else
         log_info "Would remove !.serena from .gitignore"
@@ -1570,7 +1586,8 @@ apply_changes() {
     if git check-ignore -q .codex 2>/dev/null; then
       if ! grep -q '^!\.codex' .gitignore; then
         if grep -q '^!\.claude' .gitignore; then
-          sed -i '/^!\.claude$/a !.codex' .gitignore
+          sed_inplace '/^!\.claude$/a\
+!.codex' .gitignore
         else
           printf '!.codex\n' >>.gitignore
         fi
@@ -1589,7 +1606,18 @@ apply_changes() {
   fi
 
   # --- Auto-import .claude/toolbox/CLAUDE.md ---
-  # TODO: auto-import .claude/toolbox/CLAUDE.md
+  if [[ -f "$staging_dir/claude/toolbox/CLAUDE.md" && -f "CLAUDE.md" ]]; then
+    if ! grep -q '@.claude/toolbox/CLAUDE.md' CLAUDE.md; then
+      # Keep the import next to the CLAUDE.extra.md one when it exists
+      if grep -q '^@\.claude/CLAUDE\.extra\.md$' CLAUDE.md; then
+        sed_inplace '/^@\.claude\/CLAUDE\.extra\.md$/a\
+@.claude/toolbox/CLAUDE.md' CLAUDE.md
+      else
+        printf '\n@.claude/toolbox/CLAUDE.md\n' >>CLAUDE.md
+      fi
+      log_info "Added @import reference for .claude/toolbox/CLAUDE.md to CLAUDE.md"
+    fi
+  fi
 
   # --- Update manifest version ---
   local synced_at

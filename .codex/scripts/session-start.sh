@@ -24,13 +24,14 @@ Skills reference Claude Code tool names. Apply this mapping:
 - Skill → use $mention or /skills
 CONTEXT_EOF
 
+# Aggregate all .claude/CLAUDE.<name>.md instruction files (CLAUDE.extra.md and
+# any custom extras). Deliberately excludes .claude/toolbox/CLAUDE.md — that file
+# is Claude-harness-specific (plugin-root override does not apply to Codex).
 AGENTS_EXTRA_MD=""
-if [[ -f "${REPO_ROOT}/.claude/CLAUDE.extra.md" ]]; then
-  AGENTS_EXTRA_MD=$(cat "${REPO_ROOT}/.claude/CLAUDE.extra.md")
-fi
-
-# TODO: dynamically discover and append to AGENTS_EXTRA_MD
-# any other existing ${REPO_ROOT}/.claude/CLAUDE.xxx.md files
+for extra_md in "${REPO_ROOT}"/.claude/CLAUDE.*.md; do
+  [[ -f "$extra_md" ]] || continue
+  AGENTS_EXTRA_MD="${AGENTS_EXTRA_MD}$(cat "$extra_md")"$'\n\n'
+done
 
 AGENTS_CAPY_MD=""
 if [[ -f "${REPO_ROOT}/.capy/AGENTS.md" ]]; then
