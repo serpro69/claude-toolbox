@@ -1527,6 +1527,53 @@ generate_markdown_summary() {
 # Apply Changes (consolidates all mutations the YAML used to do inline)
 # =============================================================================
 
+# apply_wiring()
+# Wires the root CLAUDE.md @import references (CLAUDE.extra.md and
+# toolbox/CLAUDE.md) and cleans up the obsolete "# Extra Instructions" header.
+#
+# The root CLAUDE.md is NOT a tracked template file, so its @import state is
+# independent of the template diff. This function must therefore run even when
+# `compare_files` reports zero changes (e.g. a re-run after the manifest version
+# was already bumped) — otherwise a newly-introduced @import can never land.
+# apply_changes() calls it on every apply; main() also calls it on the
+# 0-change local path.
+#
+# Args:
+#   $1 - Staging directory containing substituted templates
+#
+# Side effects:
+#   Mutates the working tree's root CLAUDE.md (idempotent — guarded by grep)
+apply_wiring() {
+  local staging_dir="$1"
+
+  # Cleanup obsolete header
+  if grep -q '^# Extra Instructions$' CLAUDE.md 2>/dev/null; then
+    sed_inplace 's/^# Extra Instructions$//' CLAUDE.md
+  fi
+
+  # --- Auto-import CLAUDE.extra.md ---
+  if [[ -f "$staging_dir/claude/CLAUDE.extra.md" && -f "CLAUDE.md" ]]; then
+    if ! grep -q '@.claude/CLAUDE.extra.md' CLAUDE.md; then
+      printf '@.claude/CLAUDE.extra.md\n' >>CLAUDE.md
+      log_info "Added @import reference for .claude/CLAUDE.extra.md to CLAUDE.md"
+    fi
+  fi
+
+  # --- Auto-import .claude/toolbox/CLAUDE.md ---
+  if [[ -f "$staging_dir/claude/toolbox/CLAUDE.md" && -f "CLAUDE.md" ]]; then
+    if ! grep -q '@.claude/toolbox/CLAUDE.md' CLAUDE.md; then
+      # Keep the import next to the CLAUDE.extra.md one when it exists
+      if grep -q '^@\.claude/CLAUDE\.extra\.md$' CLAUDE.md; then
+        sed_inplace '/^@\.claude\/CLAUDE\.extra\.md$/a\
+@.claude/toolbox/CLAUDE.md' CLAUDE.md
+      else
+        printf '\n@.claude/toolbox/CLAUDE.md\n' >>CLAUDE.md
+      fi
+      log_info "Added @import reference for .claude/toolbox/CLAUDE.md to CLAUDE.md"
+    fi
+  fi
+}
+
 # apply_changes()
 # Applies all staged changes to the working tree: copies files, runs
 # migrations, patches gitignore, auto-imports CLAUDE.extra.md, and
@@ -1545,6 +1592,14 @@ apply_changes() {
   log_step "Applying staged changes"
 
   # --- Copy staged files into working tree ---
+  # FIXME: this cp overwrites .claude/toolbox/scripts/template-sync.sh in place
+  # (same inode, truncate+rewrite) while that very script is executing. bash reads
+  # scripts lazily by byte offset, so once the on-disk file grows underneath it,
+  # the running shell reads corrupted content after apply_changes returns and dies
+  # with a spurious "syntax error near unexpected token" at the tail of main().
+  # The apply itself has already completed, so this is cosmetic-but-alarming.
+  # Proper fix: re-exec the script from a stable temp copy at startup (self-updater
+  # pattern) or replace the self file via atomic rename instead of in-place cp.
   local -A dir_map=(
     ["claude"]=".claude"
     ["codex"]=".codex"
@@ -1596,32 +1651,10 @@ apply_changes() {
     fi
   fi
 
-  # Cleanup obsolete header
-  if grep -q '^# Extra Instructions$' CLAUDE.md 2>/dev/null; then
-    sed_inplace 's/^# Extra Instructions$//' CLAUDE.md
-  fi
-
-  # --- Auto-import CLAUDE.extra.md ---
-  if [[ -f "$staging_dir/claude/CLAUDE.extra.md" && -f "CLAUDE.md" ]]; then
-    if ! grep -q '@.claude/CLAUDE.extra.md' CLAUDE.md; then
-      printf '@.claude/CLAUDE.extra.md\n' >>CLAUDE.md
-      log_info "Added @import reference for .claude/CLAUDE.extra.md to CLAUDE.md"
-    fi
-  fi
-
-  # --- Auto-import .claude/toolbox/CLAUDE.md ---
-  if [[ -f "$staging_dir/claude/toolbox/CLAUDE.md" && -f "CLAUDE.md" ]]; then
-    if ! grep -q '@.claude/toolbox/CLAUDE.md' CLAUDE.md; then
-      # Keep the import next to the CLAUDE.extra.md one when it exists
-      if grep -q '^@\.claude/CLAUDE\.extra\.md$' CLAUDE.md; then
-        sed_inplace '/^@\.claude\/CLAUDE\.extra\.md$/a\
-@.claude/toolbox/CLAUDE.md' CLAUDE.md
-      else
-        printf '\n@.claude/toolbox/CLAUDE.md\n' >>CLAUDE.md
-      fi
-      log_info "Added @import reference for .claude/toolbox/CLAUDE.md to CLAUDE.md"
-    fi
-  fi
+  # --- Wire root CLAUDE.md @imports ---
+  # Independent of template file diffs (CLAUDE.md is not a tracked template),
+  # so this also runs from main() on 0-change re-runs. See apply_wiring().
+  apply_wiring "$staging_dir"
 
   # --- Update manifest version ---
   local synced_at
@@ -1881,6 +1914,12 @@ main() {
   local total_changes=$((${#ADDED_FILES[@]} + ${#MODIFIED_FILES[@]} + ${#DELETED_FILES[@]}))
   if [[ $total_changes -eq 0 ]]; then
     log_success "Templates are up to date - no changes needed"
+    # Root CLAUDE.md @import wiring is not a tracked template file, so it must
+    # run even when no template files changed — e.g. a re-run after the version
+    # was already bumped by a prior sync. Only mutate in local apply mode.
+    if $LOCAL_MODE && ! $DRY_RUN; then
+      apply_wiring "$SUBSTITUTED_TEMPLATES_PATH"
+    fi
   elif $DRY_RUN; then
     log_info "Dry run complete - $total_changes file(s) would be changed"
   elif $LOCAL_MODE; then
