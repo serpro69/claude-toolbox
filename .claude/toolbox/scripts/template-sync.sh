@@ -1596,10 +1596,14 @@ apply_changes() {
     fi
   fi
 
+  # Cleanup obsolete header
+  if grep -q '^# Extra Instructions$' CLAUDE.md 2>/dev/null; then
+    sed_inplace 's/^# Extra Instructions$//' CLAUDE.md
+  fi
+
   # --- Auto-import CLAUDE.extra.md ---
   if [[ -f "$staging_dir/claude/CLAUDE.extra.md" && -f "CLAUDE.md" ]]; then
     if ! grep -q '@.claude/CLAUDE.extra.md' CLAUDE.md; then
-      printf '\n# Extra Instructions\n' >>CLAUDE.md
       printf '@.claude/CLAUDE.extra.md\n' >>CLAUDE.md
       log_info "Added @import reference for .claude/CLAUDE.extra.md to CLAUDE.md"
     fi
