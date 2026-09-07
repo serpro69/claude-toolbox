@@ -22,12 +22,6 @@ cleanup() {
 
 trap cleanup EXIT
 
-# Append @import reference for extra instructions (synced from upstream template)
-if ! grep -q '@.claude/CLAUDE.extra.md' CLAUDE.md 2>/dev/null; then
-  printf '\n# Extra Instructions\n' >>CLAUDE.md
-  printf '@.claude/CLAUDE.extra.md\n' >>CLAUDE.md
-fi
-
 # Portable in-place sed: GNU sed uses `-i`, BSD/macOS sed needs `-i ''`
 sed_inplace() {
   if sed --version >/dev/null 2>&1; then
@@ -36,6 +30,15 @@ sed_inplace() {
     sed -i '' "$@"
   fi
 }
+
+if grep -q '^# Extra Instructions$' CLAUDE.md 2>/dev/null; then
+  sed_inplace 's/^# Extra Instructions$//' CLAUDE.md
+fi
+
+# Append @import reference for extra instructions (synced from upstream template)
+if ! grep -q '@.claude/CLAUDE.extra.md' CLAUDE.md 2>/dev/null; then
+  printf '\n@.claude/CLAUDE.extra.md\n' >>CLAUDE.md
+fi
 
 # Append @import reference for toolbox-specific claude instructions (synced from upstream template),
 # next to the CLAUDE.extra.md import when it exists

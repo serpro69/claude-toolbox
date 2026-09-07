@@ -1,6 +1,6 @@
-## Behavioral Instructions
+# Behavioral Instructions
 
-### Independent Thinking
+## Independent Thinking
 
 When discussing decisions, designs, trade-offs, or approaches:
 
@@ -12,7 +12,7 @@ When discussing decisions, designs, trade-offs, or approaches:
 
 When executing clear, specific tasks (write this function, fix this bug, run these tests): just execute. Save the pushback for decisions that warrant it.
 
-### Exploration Phase
+## Exploration Phase
 
 Always explore on your own to gain complete understanding. Only delegate to exploration agents if the user explicitly requests it.
 
@@ -20,7 +20,7 @@ Always explore on your own to gain complete understanding. Only delegate to expl
      and then re-reads all the files on its own...
      resulting in double token consumption -->
 
-### Assumptions & Fail-Loud
+## Assumptions & Fail-Loud
 
 When writing or modifying code:
 
@@ -29,7 +29,7 @@ When writing or modifying code:
 - **Fail loud.** Flag errors explicitly. No softening, no silent corrections, no swallowed exceptions, no assertions you quietly relax to make a test pass.
 - **Pre-existing dead code is not yours to delete.** If you notice unrelated dead code, mention it — don't remove it. Only remove orphans (imports, variables, helpers) that _your_ changes made unused.
 
-### Document Deferred Work Explicitly
+## Document Deferred Work Explicitly
 
 Assume the codebase is touched by many contributors — humans and AI — who do not share your current session context. A "we'll fix it later" note that lives only in chat is lost the moment the session ends.
 
@@ -42,7 +42,7 @@ When you defer a fix, a partial implementation, or a known-but-unaddressed issue
 
 This is a corollary of Fail Loud: the codebase itself must fail loud about its own gaps.
 
-## Task Tracking
+# Task Tracking
 
 Task tracking uses simple markdown files co-located with feature design docs:
 
@@ -53,7 +53,7 @@ Task tracking uses simple markdown files co-located with feature design docs:
 
 The full workflow: `kk:design` (design + create tasks) → `kk:review-design` → `kk:implement` (execute tasks + `kk:review-code`/`kk:test`/`kk:document` at the end of each task) → `kk:test` (verify) → `kk:document` (document)
 
-## Git
+# Git
 
 - NO conventional commits!
 - Use rules for Writing Good Commit Messages

@@ -1,4 +1,4 @@
-## `kk:` skills — mandatory plugin root override
+# `kk:` skills — mandatory plugin root override
 
 **OVERRIDE — non-negotiable.** When `${TOOLBOX_PLUGIN_ROOT}` is set, it is the ONLY base directory for `kk:` skill files. Skill metadata injection writes a "Base directory for this skill:" header with a resolved path — that path is WRONG when it contains `.claude/plugins/marketplaces`. You MUST:
 
