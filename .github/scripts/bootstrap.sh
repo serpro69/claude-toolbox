@@ -28,9 +28,24 @@ if ! grep -q '@.claude/CLAUDE.extra.md' CLAUDE.md 2>/dev/null; then
   printf '@.claude/CLAUDE.extra.md\n' >>CLAUDE.md
 fi
 
-# Append @import reference for toolbox-specific claude instructions (synced from upstream template)
+# Portable in-place sed: GNU sed uses `-i`, BSD/macOS sed needs `-i ''`
+sed_inplace() {
+  if sed --version >/dev/null 2>&1; then
+    sed -i "$@"
+  else
+    sed -i '' "$@"
+  fi
+}
+
+# Append @import reference for toolbox-specific claude instructions (synced from upstream template),
+# next to the CLAUDE.extra.md import when it exists
 if ! grep -q '@.claude/toolbox/CLAUDE.md' CLAUDE.md 2>/dev/null; then
-  printf '@.claude/CLAUDE.extra.md\n' >>CLAUDE.md
+  if grep -q '^@\.claude/CLAUDE\.extra\.md$' CLAUDE.md 2>/dev/null; then
+    sed_inplace '/^@\.claude\/CLAUDE\.extra\.md$/a\
+@.claude/toolbox/CLAUDE.md' CLAUDE.md
+  else
+    printf '\n@.claude/toolbox/CLAUDE.md\n' >>CLAUDE.md
+  fi
 fi
 
 # Install the kk plugin from the claude-toolbox marketplace

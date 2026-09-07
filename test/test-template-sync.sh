@@ -2338,6 +2338,104 @@ else
   log_fail "@import should appear exactly once (found $count)"
 fi
 
+log_test "apply_changes auto-imports .claude/toolbox/CLAUDE.md"
+reset_globals
+test_dir=$(create_temp_dir "apply-import-toolbox")
+mkdir -p "$test_dir/staging/substituted/claude/toolbox"
+mkdir -p "$test_dir/staging/upstream"
+echo "toolbox" > "$test_dir/staging/substituted/claude/toolbox/CLAUDE.md"
+mkdir -p "$test_dir/.github" "$test_dir/.claude"
+cat > "$test_dir/.github/template-state.json" <<'JSON'
+{
+  "schema_version": "1",
+  "upstream_repo": "serpro69/claude-toolbox",
+  "template_version": "v0.1.0",
+  "synced_at": "2025-01-01T00:00:00Z",
+  "variables": { "PROJECT_NAME": "test", "LANGUAGES": "bash", "CC_MODEL": "default" }
+}
+JSON
+echo "# My Project" > "$test_dir/CLAUDE.md"
+MANIFEST_PATH="$test_dir/.github/template-state.json"
+STAGING_DIR="$test_dir/staging"
+APPLY_MODE=true
+read_manifest
+pushd "$test_dir" >/dev/null
+apply_changes "$test_dir/staging/substituted" "v2.0.0" 2>/dev/null
+popd >/dev/null
+APPLY_MODE=false
+
+if grep -q '@.claude/toolbox/CLAUDE.md' "$test_dir/CLAUDE.md"; then
+  log_pass "toolbox CLAUDE.md @import added to CLAUDE.md"
+else
+  log_fail "toolbox CLAUDE.md @import should be added to CLAUDE.md"
+fi
+
+log_test "apply_changes places toolbox import next to CLAUDE.extra.md import"
+reset_globals
+test_dir=$(create_temp_dir "apply-import-toolbox-adjacent")
+mkdir -p "$test_dir/staging/substituted/claude/toolbox"
+mkdir -p "$test_dir/staging/upstream"
+echo "toolbox" > "$test_dir/staging/substituted/claude/toolbox/CLAUDE.md"
+mkdir -p "$test_dir/.github" "$test_dir/.claude"
+cat > "$test_dir/.github/template-state.json" <<'JSON'
+{
+  "schema_version": "1",
+  "upstream_repo": "serpro69/claude-toolbox",
+  "template_version": "v0.1.0",
+  "synced_at": "2025-01-01T00:00:00Z",
+  "variables": { "PROJECT_NAME": "test", "LANGUAGES": "bash", "CC_MODEL": "default" }
+}
+JSON
+printf '# My Project\n@.claude/CLAUDE.extra.md\n\n# capy\n@.capy/AGENTS.md\n' > "$test_dir/CLAUDE.md"
+MANIFEST_PATH="$test_dir/.github/template-state.json"
+STAGING_DIR="$test_dir/staging"
+APPLY_MODE=true
+read_manifest
+pushd "$test_dir" >/dev/null
+apply_changes "$test_dir/staging/substituted" "v2.0.0" 2>/dev/null
+popd >/dev/null
+APPLY_MODE=false
+
+next_line=$(grep -A1 '^@\.claude/CLAUDE\.extra\.md$' "$test_dir/CLAUDE.md" | sed -n '2p')
+if [[ "$next_line" == '@.claude/toolbox/CLAUDE.md' ]]; then
+  log_pass "toolbox @import inserted directly after CLAUDE.extra.md import"
+else
+  log_fail "toolbox @import should follow CLAUDE.extra.md import (next line: '$next_line')"
+fi
+
+log_test "apply_changes skips toolbox CLAUDE.md import when already present"
+reset_globals
+test_dir=$(create_temp_dir "apply-import-toolbox-skip")
+mkdir -p "$test_dir/staging/substituted/claude/toolbox"
+mkdir -p "$test_dir/staging/upstream"
+echo "toolbox" > "$test_dir/staging/substituted/claude/toolbox/CLAUDE.md"
+mkdir -p "$test_dir/.github" "$test_dir/.claude"
+cat > "$test_dir/.github/template-state.json" <<'JSON'
+{
+  "schema_version": "1",
+  "upstream_repo": "serpro69/claude-toolbox",
+  "template_version": "v0.1.0",
+  "synced_at": "2025-01-01T00:00:00Z",
+  "variables": { "PROJECT_NAME": "test", "LANGUAGES": "bash", "CC_MODEL": "default" }
+}
+JSON
+printf '# My Project\n@.claude/toolbox/CLAUDE.md\n' > "$test_dir/CLAUDE.md"
+MANIFEST_PATH="$test_dir/.github/template-state.json"
+STAGING_DIR="$test_dir/staging"
+APPLY_MODE=true
+read_manifest
+pushd "$test_dir" >/dev/null
+apply_changes "$test_dir/staging/substituted" "v2.0.0" 2>/dev/null
+popd >/dev/null
+APPLY_MODE=false
+
+count=$(grep -c '@.claude/toolbox/CLAUDE.md' "$test_dir/CLAUDE.md")
+if [[ "$count" -eq 1 ]]; then
+  log_pass "toolbox @import not duplicated when already present"
+else
+  log_fail "toolbox @import should appear exactly once (found $count)"
+fi
+
 log_test "apply_changes backfills manifest variables"
 reset_globals
 test_dir=$(create_temp_dir "apply-backfill")
