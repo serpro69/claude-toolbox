@@ -15,7 +15,7 @@ description: |
 
 ## Overview
 
-Systematically compare implemented code against a feature's `design.md`, `implementation.md`, and `tasks.md` in `/docs/wip/[feature]/`. Works both mid-implementation (reviewing completed tasks only) and post-implementation (full feature review).
+Systematically compare implemented code against a feature's `design.md`, `implementation.md`, and `tasks.md` in `/docs/feat/wip/[feature]/`. Works both mid-implementation (reviewing completed tasks only) and post-implementation (full feature review).
 
 Findings go in **both directions** — code that deviates from spec AND spec that is wrong or outdated given the code.
 

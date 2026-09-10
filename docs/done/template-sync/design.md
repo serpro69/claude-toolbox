@@ -116,7 +116,7 @@ The manifest variables must align exactly with those used in `.github/scripts/te
 
 **Schema Validation:**
 
-The JSON Schema at `docs/wip/template-sync/template-state-schema.json` enforces:
+The JSON Schema at `docs/feat/wip/template-sync/template-state-schema.json` enforces:
 - `PROJECT_NAME` is required (always derived from repo name)
 - `TM_PERMISSION_MODE` restricted to enum: `["default", "full", "minimal"]`
 - All other variables are optional strings with empty string defaults

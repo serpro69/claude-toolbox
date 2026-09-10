@@ -57,7 +57,7 @@ Symlinks must stay inside the `skills/` tree — cross-boundary symlinks break u
 
 ## Plugin Content Is Self-Contained
 
-`klaude-plugin/` ships standalone via the plugin marketplace — consumers get the plugin tree only, never this repo's `docs/`. Skill, agent, and profile prose must never reference toolbox-repo documents: no "(ADR NNNN)" citations, no links into this repo's `docs/adr/` or `docs/wip|done/`. For a consumer these are unresolvable at best; at worst they collide with the consumer repo's own ADR numbering and point to unrelated decisions. State each rule and its rationale in full in the plugin file itself; the back-reference lives on the repo side (the ADR cites the operative plugin files, not the other way around). Consumer-repo paths as *behavioral targets* (e.g. `/kk:review-architecture` accepting artifacts from the consumer's `docs/adr/`) are correct and expected.
+`klaude-plugin/` ships standalone via the plugin marketplace — consumers get the plugin tree only, never this repo's `docs/`. Skill, agent, and profile prose must never reference toolbox-repo documents: no "(ADR NNNN)" citations, no links into this repo's `docs/adr/` or `docs/feat/wip|done/`. For a consumer these are unresolvable at best; at worst they collide with the consumer repo's own ADR numbering and point to unrelated decisions. State each rule and its rationale in full in the plugin file itself; the back-reference lives on the repo side (the ADR cites the operative plugin files, not the other way around). Consumer-repo paths as *behavioral targets* (e.g. `/kk:review-architecture` accepting artifacts from the consumer's `docs/adr/`) are correct and expected.
 
 ## Commands
 
@@ -227,6 +227,6 @@ Only index non-obvious learnings not derivable from reading the code or git hist
 
 6. **Stale Known Profiles list.** When adding a profile, you must update both `EXPECTED_PROFILES` in the test file and the Known Profiles list in `klaude-plugin/skills/_shared/profile-detection.md`. The list is the runtime enumeration — consumers iterate it rather than walking the filesystem.
 
-7. **Renaming skills.** Update `EXPECTED_SKILLS` / `EXPECTED_COMMANDS` in tests. Don't rename agent files. Don't touch `run_plugin_migration`'s `dirs_to_remove` in `.claude/toolbox/scripts/template-sync.sh` (historical cleanup paths). Don't touch `docs/done/` (frozen history). Watch for substring collisions in sed operations.
+7. **Renaming skills.** Update `EXPECTED_SKILLS` / `EXPECTED_COMMANDS` in tests. Don't rename agent files. Don't touch `run_plugin_migration`'s `dirs_to_remove` in `.claude/toolbox/scripts/template-sync.sh` (historical cleanup paths). Don't touch `docs/feat/done/` (frozen history). Watch for substring collisions in sed operations.
 
 8. **Vague `Load if:` clauses.** Conditional entries in profile `index.md` must name concrete diff properties (field values, filenames, directory names) — not vague category labels. Two agents evaluating the same diff must reach the same conclusion.

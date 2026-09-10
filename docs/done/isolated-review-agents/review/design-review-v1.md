@@ -1,6 +1,6 @@
 # Design Review: Isolated Review Agents
 
-**Spec reviewed:** `docs/wip/isolated-review-agents/design.md`
+**Spec reviewed:** `docs/feat/wip/isolated-review-agents/design.md`
 **Date:** 2026-04-03
 **Verdict:** Conditionally approve — architecture is sound, several design-level issues to address before implementation is complete.
 

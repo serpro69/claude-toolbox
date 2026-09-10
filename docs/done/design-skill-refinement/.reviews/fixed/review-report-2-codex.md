@@ -22,7 +22,7 @@ From the skill-complexity lens, the design is beneficial but close to the edge o
 
 ## Review Scope
 
-Reviewed the branch diff against `origin/master`, staged generated Codex changes, untracked generated Codex files, and the feature docs under `docs/wip/design-skill-refinement/`.
+Reviewed the branch diff against `origin/master`, staged generated Codex changes, untracked generated Codex files, and the feature docs under `docs/feat/wip/design-skill-refinement/`.
 
 Primary files reviewed:
 
@@ -37,7 +37,7 @@ Primary files reviewed:
 - `klaude-plugin/skills/review-design/review-isolated.md`
 - `klaude-plugin/agents/design-reviewer.md`
 - generated mirrors under `kodex-plugin/` and `.codex/agents/`
-- `docs/wip/design-skill-refinement/{design.md,implementation.md,tasks.md}`
+- `docs/feat/wip/design-skill-refinement/{design.md,implementation.md,tasks.md}`
 
 Profile detection for `/kk:review-code` resolved `skill-md` for skill-rooted files. Loaded checklists:
 
@@ -62,7 +62,7 @@ None.
 
 #### CR-1. Codex freshness check misses untracked generated files
 
-**File:** `docs/wip/design-skill-refinement/tasks.md`, Task 9.2
+**File:** `docs/feat/wip/design-skill-refinement/tasks.md`, Task 9.2
 **Profile:** `skill-md`
 **Checklist:** `kk-plugin-checklist.md`
 **Confidence:** 95%
@@ -114,9 +114,9 @@ This makes the new regression eval test stale invocation behavior. Depending on 
 
 **Files:**
 
-- `docs/wip/design-skill-refinement/design.md`
-- `docs/wip/design-skill-refinement/implementation.md`
-- `docs/wip/design-skill-refinement/tasks.md`
+- `docs/feat/wip/design-skill-refinement/design.md`
+- `docs/feat/wip/design-skill-refinement/implementation.md`
+- `docs/feat/wip/design-skill-refinement/tasks.md`
 
 **Confidence:** 95%
 
@@ -184,7 +184,7 @@ Those are abstract judgments, and the post-check is especially fragile. Once an 
 
 #### CR-7. Task checklist currently marks skills as run when they were not run as skills
 
-**File:** `docs/wip/design-skill-refinement/tasks.md`
+**File:** `docs/feat/wip/design-skill-refinement/tasks.md`
 **Confidence:** 95%
 
 Task 9.3 and 9.4 are currently checked:
@@ -198,7 +198,7 @@ During this Codex review, I ran shell tests and `make generate-kodex`, but I did
 
 #### CR-8. `Not Doing` still lists design skill evals while Task 8 adds evals
 
-**File:** `docs/wip/design-skill-refinement/tasks.md`
+**File:** `docs/feat/wip/design-skill-refinement/tasks.md`
 **Confidence:** 90%
 
 The tasks header says `design skill evals` are not in scope, but Task 8 creates design skill evals. The design doc uses a more precise boundary: comprehensive eval coverage is out of scope, while spec-style evals for high-risk behaviors are in scope.

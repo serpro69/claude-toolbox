@@ -416,8 +416,8 @@
   stay where they are. Migration is a refactor, not a rewrite.
 
   One sub-question: where does it live?
-  - Feature-local (docs/wip/k8s-support/adr/0001-profile-detection-model.md) —
-  moves with the feature to docs/done/ when shipped. Less invasive; no new
+  - Feature-local (docs/feat/wip/k8s-support/adr/0001-profile-detection-model.md) —
+  moves with the feature to docs/feat/done/ when shipped. Less invasive; no new
   top-level convention.
   - Top-level (docs/adr/0001-profile-detection-model.md) — standard ADR
   location; discoverable independent of the originating feature; introduces a
@@ -425,7 +425,7 @@
 
   My recommendation: top-level docs/adr/. Reason: this decision affects the
   plugin's entire skill architecture, not just the K8s feature. Burying it under
-   docs/done/k8s-support/adr/ when you ship makes it hard to find when the
+   docs/feat/done/k8s-support/adr/ when you ship makes it hard to find when the
   Terraform designer comes along in 3 months. New top-level dir is one-time cost
    for long-term discoverability.
 
@@ -1016,9 +1016,9 @@
   - P2 verification: same for each of the 4 skills extended.
   - P3 verification: same for review-spec + dependency-handling.
   - Feature-level closer: one short task that promotes
-  docs/wip/kubernetes-support/ → docs/done/, updates any status metadata.
+  docs/feat/wip/kubernetes-support/ → docs/feat/done/, updates any status metadata.
 
-  Also: feature directory name — proposing docs/wip/kubernetes-support/ (full
+  Also: feature directory name — proposing docs/feat/wip/kubernetes-support/ (full
   name, more discoverable than k8s-support). Branch name stays k8s_support for
   continuity. Fine?
 
@@ -1428,7 +1428,7 @@
   - New subsection: "ADR location." Architecture decisions spanning more than
   one feature live at docs/adr/NNNN-slug.md using Michael Nygard's template
   (Context / Decision / Alternatives / Consequences / Migration Path). Existing
-  per-feature design docs keep living in docs/wip/<feature>/; ADRs are
+  per-feature design docs keep living in docs/feat/wip/<feature>/; ADRs are
   cross-cutting.
 
   ADRs authored in the design phase (this session):
@@ -1575,8 +1575,8 @@
   exercise the skill; integration smoke test of the full flow on a synthetic K8s
    feature (design → implement → review-* → test → document).
 
-  Feature close — 1 task. Move docs/wip/kubernetes-support/ →
-  docs/done/kubernetes-support/; update any status metadata. Branch-level merge
+  Feature close — 1 task. Move docs/feat/wip/kubernetes-support/ →
+  docs/feat/done/kubernetes-support/; update any status metadata. Branch-level merge
   remains a human action (CLAUDE.md: no commits/pushes unsolicited).
 
   Phase independence: each phase's verification task is self-contained; each
@@ -1586,8 +1586,8 @@
   ---
   End of design description. Look right overall? If yes, I move to Step 5
   (document the design): author
-  docs/wip/kubernetes-support/{design.md,implementation.md},
-  docs/adr/000{1,2}-*.md, and Step 6: docs/wip/kubernetes-support/tasks.md
+  docs/feat/wip/kubernetes-support/{design.md,implementation.md},
+  docs/adr/000{1,2}-*.md, and Step 6: docs/feat/wip/kubernetes-support/tasks.md
   (phase-grouped per Q9:B). Flag anything to adjust before I start writing.
 
 ✻ Churned for 1m 7s
@@ -1634,7 +1634,7 @@
        1 # ADR 0003 — Profile content referenced via `${CLAUDE_PLUGIN_ROO
        2 
        4 - **Date:** 2026-04-17
-       5 - **Originated in:** [docs/wip/kubernetes-support/design.md](../
+       5 - **Originated in:** [docs/feat/wip/kubernetes-support/design.md](../
        6 - **Related:** [ADR 0001](0001-profile-detection-model.md), [ADR
        7 
        9 
@@ -1643,8 +1643,8 @@
           `test`, `document`) and by their sub-agents.
      … +232 lines (ctrl+o to expand)
 
-● Write(docs/wip/kubernetes-support/design.md)
-  ⎿  Wrote 371 lines to docs/wip/kubernetes-support/design.md
+● Write(docs/feat/wip/kubernetes-support/design.md)
+  ⎿  Wrote 371 lines to docs/feat/wip/kubernetes-support/design.md
       1 # Kubernetes support — design
       3 - **Feature:** kubernetes-support
       4 - **Status:** in-design
@@ -1657,8 +1657,8 @@
         ./adr/0003-plugin-root-referenced-content.md)
      … +725 lines (ctrl+o to expand)
 
-● Write(docs/wip/kubernetes-support/implementation.md)
-  ⎿  Wrote 321 lines to docs/wip/kubernetes-support/implementation.md
+● Write(docs/feat/wip/kubernetes-support/implementation.md)
+  ⎿  Wrote 321 lines to docs/feat/wip/kubernetes-support/implementation.md
       1 # Kubernetes support — implementation plan
       2 
       3 - **Feature:** kubernetes-support
@@ -1670,8 +1670,8 @@
         . Each step is paired with an explicit verification. Tasks in [ta
         sks.md](tasks.md) reference the corresponding steps here.
      … +618 lines (ctrl+o to expand)
-● Write(docs/wip/kubernetes-support/tasks.md)
-  ⎿  Wrote 330 lines to docs/wip/kubernetes-support/tasks.md
+● Write(docs/feat/wip/kubernetes-support/tasks.md)
+  ⎿  Wrote 330 lines to docs/feat/wip/kubernetes-support/tasks.md
       1 # Tasks — kubernetes-support
       3 - **Feature status:** pending
       4 - **Design:** [design.md](design.md)
@@ -1699,12 +1699,12 @@
   ${CLAUDE_PLUGIN_ROOT}/profiles/... references; inside-vs-outside-tree symlink
   asymmetry explained; doubles as prototype for future _shared/ symlink removal
   with rollout criteria.
-  - docs/wip/kubernetes-support/design.md — 371 lines; full architecture,
+  - docs/feat/wip/kubernetes-support/design.md — 371 lines; full architecture,
   detection mechanics, file structure, per-skill integration, conventions, phase
    overview.
-  - docs/wip/kubernetes-support/implementation.md — 321 lines; step-by-step plan
+  - docs/feat/wip/kubernetes-support/implementation.md — 321 lines; step-by-step plan
    with explicit verify clauses per step.
-  - docs/wip/kubernetes-support/tasks.md — 330 lines; 19 tasks grouped into P0
+  - docs/feat/wip/kubernetes-support/tasks.md — 330 lines; 19 tasks grouped into P0
   (7), P1 (3), P2 (5), P3 (3), feature close (1), with per-phase verification
   tasks.
 
@@ -2758,7 +2758,7 @@
 ● Starting the design.md edits. Batch 1 — %LANGUAGE% semantics + detection
   mechanics (normalized framing + schema + updated rule).
 
-● Update(docs/wip/kubernetes-support/design.md)
+● Update(docs/feat/wip/kubernetes-support/design.md)
   ⎿  Added 8 lines, removed 1 line
       47  
       48  ### A single, additive detection axis
@@ -2801,7 +2801,7 @@
       60  
       61  ### Profile-first content layout
 
-● Update(docs/wip/kubernetes-support/design.md)
+● Update(docs/feat/wip/kubernetes-support/design.md)
   ⎿  Added 32 lines, removed 10 lines
        70  
        71  Detection is the responsibility of each profile, declared in `
@@ -2958,7 +2958,7 @@
 
   Read 1 file (ctrl+o to expand)
 
-● Update(docs/wip/kubernetes-support/design.md)
+● Update(docs/feat/wip/kubernetes-support/design.md)
   ⎿  Added 17 lines, removed 2 lines
       171  An `index.md` has two sections:
       172  
@@ -3034,7 +3034,7 @@
       197  
       198  ### Content file structure
 
-● Update(docs/wip/kubernetes-support/design.md)
+● Update(docs/feat/wip/kubernetes-support/design.md)
   ⎿  Added 26 lines, removed 1 line
       203  
       204  ### `_shared/profile-detection.md`
@@ -3138,7 +3138,7 @@
 
   Read 1 file (ctrl+o to expand)
 
-● Update(docs/wip/kubernetes-support/design.md)
+● Update(docs/feat/wip/kubernetes-support/design.md)
   ⎿  Added 10 lines, removed 3 lines
       261  
       262  ### `design` — P2 Kubernetes-aware idea refinement
@@ -3207,7 +3207,7 @@
 
 ● Now test section (F19 — promote binary presence checks).
 
-● Update(docs/wip/kubernetes-support/design.md)
+● Update(docs/feat/wip/kubernetes-support/design.md)
   ⎿  Added 14 lines, removed 10 lines
       292  
       293  The `test` skill's K8s content mandates a minimum validator fl
@@ -3309,7 +3309,7 @@
 
   Read 1 file (ctrl+o to expand)
 
-● Update(docs/wip/kubernetes-support/design.md)
+● Update(docs/feat/wip/kubernetes-support/design.md)
   ⎿  Added 2 lines, removed 1 line
       366  - Adding a new profile = copy an existing profile as a templat
            e, customize `DETECTION.md` and content, and append to `EXPECT
@@ -3336,7 +3336,7 @@
             SKILL.md, not the description.
       373  
 
-● Update(docs/wip/kubernetes-support/design.md)
+● Update(docs/feat/wip/kubernetes-support/design.md)
   ⎿  Added 11 lines, removed 7 lines
       387  
       388  ### Test suite updates
@@ -3400,7 +3400,7 @@
   F2/F3/F4/F6/F7/F8/F9/F10/F12/F14/F16/F17/F19/F20). Now implementation.md —
   batch all the plan-quality and content edits.
 
-● Update(docs/wip/kubernetes-support/implementation.md)
+● Update(docs/feat/wip/kubernetes-support/implementation.md)
   ⎿  Added 6 lines, removed 2 lines
       34  
       35  1. Create directory `klaude-plugin/profiles/<lang>/review/`.
@@ -3470,7 +3470,7 @@
       53  
       54  ### Step 0.2 — Author the shared profile-detection procedure
       55  
-● Update(docs/wip/kubernetes-support/implementation.md)
+● Update(docs/feat/wip/kubernetes-support/implementation.md)
   ⎿  Added 13 lines, removed 6 lines
       53  
       54  ### Step 0.2 — Author the shared profile-detection procedure
@@ -3551,7 +3551,7 @@
 
 ● Now Step 0.4 — literal path replacements + expanded grep (F11).
 
-● Update(docs/wip/kubernetes-support/implementation.md)
+● Update(docs/feat/wip/kubernetes-support/implementation.md)
   ⎿  Added 8 lines, removed 4 lines
       85  
       86  ### Step 0.4 — Restructure the `review-code` workflow
@@ -3640,7 +3640,7 @@
 ● Now Step 0.5 — presence-conditional assertions + symmetric orphan check (F4 +
   F6).
 
-● Update(docs/wip/kubernetes-support/implementation.md)
+● Update(docs/feat/wip/kubernetes-support/implementation.md)
   ⎿  Added 17 lines, removed 10 lines
       111  
       112  Modify `test/test-plugin-structure.sh`:
@@ -3725,7 +3725,7 @@
 
   Read 1 file (ctrl+o to expand)
 
-● Update(docs/wip/kubernetes-support/implementation.md)
+● Update(docs/feat/wip/kubernetes-support/implementation.md)
   ⎿  Added 20 lines, removed 2 lines
       162  
       163  ### Step 1.1 — Author `profiles/k8s/DETECTION.md`
@@ -3794,7 +3794,7 @@
       188  
       189  Content:
 
-● Update(docs/wip/kubernetes-support/implementation.md)
+● Update(docs/feat/wip/kubernetes-support/implementation.md)
   ⎿  Added 19 lines, removed 12 lines
       199  
       200  **Verify.** `test -f klaude-plugin/profiles/k8s/overview.md`. 
@@ -3920,7 +3920,7 @@
            ` + `templates/`; confirm `helm-checklist.md` loads. Regressio
            n: a Go-only diff does not activate the `k8s` profile.
 
-● Update(docs/wip/kubernetes-support/implementation.md)
+● Update(docs/feat/wip/kubernetes-support/implementation.md)
   ⎿  Added 6 lines, removed 2 lines
       243  
       244  ## Phase 2 — `design` / `implement` / `test` / `document` K8s-
@@ -3971,7 +3971,7 @@
 
   Read 1 file (ctrl+o to expand)
 
-● Update(docs/wip/kubernetes-support/implementation.md)
+● Update(docs/feat/wip/kubernetes-support/implementation.md)
   ⎿  Added 10 lines, removed 7 lines
       288  - `klaude-plugin/skills/test/SKILL.md` — guidelines gain the p
            rofile-aware clause.
@@ -4051,7 +4051,7 @@
       307  ### Step 2.4 — Extend `document`
       308  
 
-● Update(docs/wip/kubernetes-support/implementation.md)
+● Update(docs/feat/wip/kubernetes-support/implementation.md)
   ⎿  Added 4 lines, removed 3 lines
       264  - `klaude-plugin/profiles/k8s/design/sections.md` — required s
            ections for K8s-shaped designs: cluster-compat matrix (K8s API
@@ -4088,7 +4088,7 @@
       272  ### Step 2.2 — Extend `implement`
       273  
 
-● Update(docs/wip/kubernetes-support/implementation.md)
+● Update(docs/feat/wip/kubernetes-support/implementation.md)
   ⎿  Added 1 line, removed 1 line
       279  - `klaude-plugin/profiles/k8s/implement/gotchas.md` — API-vers
            ion pinning (avoid `extensions/v1beta1` or other deprecated/re
@@ -4114,7 +4114,7 @@
            ; behavior is unchanged.
       285  
 
-● Update(docs/wip/kubernetes-support/implementation.md)
+● Update(docs/feat/wip/kubernetes-support/implementation.md)
   ⎿  Added 1 line, removed 1 line
       315  - `klaude-plugin/profiles/k8s/document/rubric.md` — required d
            ocumentation topics for K8s artifacts: RBAC decision rationale
@@ -4137,7 +4137,7 @@
 
   Read 1 file (ctrl+o to expand)
 
-● Update(docs/wip/kubernetes-support/implementation.md)
+● Update(docs/feat/wip/kubernetes-support/implementation.md)
   ⎿  Added 11 lines, removed 4 lines
       346  - `klaude-plugin/skills/dependency-handling/SKILL.md`:
       347    - **Description frontmatter** rewritten to the 223-character
@@ -4223,7 +4223,7 @@
 
 ● Now tasks.md — biggest batch of edits. Let me tackle it.
 
-● Update(docs/wip/kubernetes-support/tasks.md)
+● Update(docs/feat/wip/kubernetes-support/tasks.md)
   ⎿  Added 4 lines, removed 1 line
       23  
       24  - [ ] Create the top-level directory `klaude-plugin/profiles/`.
@@ -4276,7 +4276,7 @@
       36  ## Task 2 — Author the shared profile-detection procedure
       37  
 
-● Update(docs/wip/kubernetes-support/tasks.md)
+● Update(docs/feat/wip/kubernetes-support/tasks.md)
   ⎿  Added 7 lines, removed 5 lines
       43  Subtasks:
       44  
@@ -4328,7 +4328,7 @@
       54  ## Task 3 — Create the six consumer symlinks for `shared-profil
           e-detection.md`
       55  
-● Update(docs/wip/kubernetes-support/tasks.md)
+● Update(docs/feat/wip/kubernetes-support/tasks.md)
   ⎿  Added 5 lines, removed 3 lines
       82    - Rename "Step 2: Detect primary language" to "Step 2: Detect
            active profiles"; delegate to the shared procedure.
@@ -4386,7 +4386,7 @@
       91  
       92  ## Task 5 — Update `test/test-plugin-structure.sh`
 
-● Update(docs/wip/kubernetes-support/tasks.md)
+● Update(docs/feat/wip/kubernetes-support/tasks.md)
   ⎿  Added 6 lines, removed 5 lines
        93  
        94  - **Phase:** P0
@@ -4445,7 +4445,7 @@
       108  ## Task 6 — Update `CLAUDE.md` and `README.md`
       109  
 
-● Update(docs/wip/kubernetes-support/tasks.md)
+● Update(docs/feat/wip/kubernetes-support/tasks.md)
   ⎿  Added 3 lines, removed 3 lines
       114  
       115  Subtasks:
@@ -4493,7 +4493,7 @@
 ● Now Task 8 (remove EXPECTED_PROFILES append; update DETECTION content) and
   Task 9 (add EXPECTED_PROFILES append; tighten triggers).
 
-● Update(docs/wip/kubernetes-support/tasks.md)
+● Update(docs/feat/wip/kubernetes-support/tasks.md)
   ⎿  Added 12 lines, removed 7 lines
       140  
       141  > **Phase 1 — Kubernetes profile for `review-code`.** Closes i
@@ -4586,7 +4586,7 @@
       163  ## Task 9 — Author `profiles/k8s/review/` checklists and index
       164  
 
-● Update(docs/wip/kubernetes-support/tasks.md)
+● Update(docs/feat/wip/kubernetes-support/tasks.md)
   ⎿  Added 10 lines, removed 4 lines
       160  - [ ] Create `klaude-plugin/profiles/k8s/overview.md`: what th
            e profile covers, when it activates, per-category lookup-casca
@@ -4683,7 +4683,7 @@
 
   Read 1 file (ctrl+o to expand)
 
-● Update(docs/wip/kubernetes-support/tasks.md)
+● Update(docs/feat/wip/kubernetes-support/tasks.md)
   ⎿  Added 15 lines, removed 16 lines
       207  
       208  > **Phase 2 — `design` / `implement` / `test` / `document` K8s
@@ -4869,7 +4869,7 @@
 
   Read 1 file (ctrl+o to expand)
 
-● Update(docs/wip/kubernetes-support/tasks.md)
+● Update(docs/feat/wip/kubernetes-support/tasks.md)
   ⎿  Added 7 lines, removed 5 lines
       311  Subtasks:
       312  
@@ -4966,11 +4966,11 @@
   ┌─────────────────────────────────────────────────┬────────┬───────┬───────┐
   │                      File                       │ Before │ After │   Δ   │
   ├─────────────────────────────────────────────────┼────────┼───────┼───────┤
-  │ docs/wip/kubernetes-support/design.md           │    371 │   456 │   +85 │
+  │ docs/feat/wip/kubernetes-support/design.md           │    371 │   456 │   +85 │
   ├─────────────────────────────────────────────────┼────────┼───────┼───────┤
-  │ docs/wip/kubernetes-support/implementation.md   │    321 │   383 │   +62 │
+  │ docs/feat/wip/kubernetes-support/implementation.md   │    321 │   383 │   +62 │
   ├─────────────────────────────────────────────────┼────────┼───────┼───────┤
-  │ docs/wip/kubernetes-support/tasks.md            │    330 │   350 │   +20 │
+  │ docs/feat/wip/kubernetes-support/tasks.md            │    330 │   350 │   +20 │
   ├─────────────────────────────────────────────────┼────────┼───────┼───────┤
   │ docs/adr/0003-plugin-root-referenced-content.md │    125 │   158 │   +33 │
   ├─────────────────────────────────────────────────┼────────┼───────┼───────┤

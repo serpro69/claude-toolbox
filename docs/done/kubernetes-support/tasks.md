@@ -351,10 +351,10 @@ Subtasks:
 
 Subtasks:
 
-- [x] `git mv docs/wip/kubernetes-support docs/done/kubernetes-support`.
+- [x] `git mv docs/feat/wip/kubernetes-support docs/feat/done/kubernetes-support`.
 - [x] Update the feature-status metadata in the moved `design.md` and `implementation.md` (status → `done`).
 - [x] Update this `tasks.md`'s header status to `done`; confirm every task above is `done`. Task 20 is a post-close handoff pointer and is EXEMPT from this gate — it intentionally remains `pending` in the frozen feature dir until a follow-up cycle picks it up.
-- [x] Verify: `docs/done/kubernetes-support/` exists; `docs/wip/kubernetes-support/` does not; `git log --stat docs/done/kubernetes-support/` shows history preserved.
+- [x] Verify: `docs/feat/done/kubernetes-support/` exists; `docs/feat/wip/kubernetes-support/` does not; `git log --stat docs/feat/done/kubernetes-support/` shows history preserved.
 
 ---
 
@@ -367,10 +367,10 @@ Subtasks:
 
 Subtasks:
 
-- [x] Read `design.md §Amendments` (post-close: `docs/done/kubernetes-support/design.md`) and enumerate every amendment entry (A1, A2, …).
+- [x] Read `design.md §Amendments` (post-close: `docs/feat/done/kubernetes-support/design.md`) and enumerate every amendment entry (A1, A2, …).
 - [x] Confirm no new review findings have accumulated since feature close that warrant inclusion in the same follow-up cycle.
-- [x] Invoke `/kk:design` with the amendment list as the scope. The session decides feature-directory placement per prevailing `design` skill conventions (new `docs/wip/kubernetes-support-v2/` is the default; a versioned-in-place approach is acceptable if the skill convention permits).
-- [x] Produce `design-v2.md`, `implementation-v2.md`, `tasks-v2.md` as a versioned follow-up bundle. The v2 docs refine or extend the current design; they do NOT replace `docs/done/kubernetes-support/design.md`, which remains frozen history.
+- [x] Invoke `/kk:design` with the amendment list as the scope. The session decides feature-directory placement per prevailing `design` skill conventions (new `docs/feat/wip/kubernetes-support-v2/` is the default; a versioned-in-place approach is acceptable if the skill convention permits).
+- [x] Produce `design-v2.md`, `implementation-v2.md`, `tasks-v2.md` as a versioned follow-up bundle. The v2 docs refine or extend the current design; they do NOT replace `docs/feat/done/kubernetes-support/design.md`, which remains frozen history.
 - [x] For each amendment: either (a) include a concrete implementation plan in the v2 docs, or (b) record the amendment as declined with rationale in v2 `design.md`.
 - [x] Cross-link: each v2 doc cites the originating amendment entry by ID (`A1`, `A2`, …). The original §Amendments section is NOT edited (frozen history); amendment lifecycle (planned / in-progress / done / declined) is tracked in the v2 tasks bundle.
 - [x] Verify: every amendment in the source list appears in the v2 docs with an explicit disposition; the v2 bundle builds a complete picture without requiring the reader to cross-reference the frozen source for any load-bearing detail.

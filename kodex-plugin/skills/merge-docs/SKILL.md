@@ -16,7 +16,7 @@ description: |
 
 ## When to Use
 
-You have two feature directories under `/docs/wip/` for the same feature — each with its own design, implementation plan, and task list — and you need to combine them into one coherent set of docs.
+You have two feature directories under `/docs/feat/wip/` for the same feature — each with its own design, implementation plan, and task list — and you need to combine them into one coherent set of docs.
 
 ## Workflow
 

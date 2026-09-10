@@ -52,5 +52,5 @@ session-close/handoff guard without new field evidence.
   justification — "seems prudent" is not an admission criterion for a
   guard.
 - Evidence base and per-failure catalog:
-  `docs/wip/architect-skills/model/design.md` §1 (frozen into
-  `docs/done/` on completion).
+  `docs/feat/wip/architect-skills/model/design.md` §1 (frozen into
+  `docs/feat/done/` on completion).

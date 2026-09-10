@@ -4,7 +4,7 @@ This playbook describes the orchestration an agent (typically the main Claude Co
 
 ## Why this exists
 
-The prior harness pattern (documented in `docs/wip/kubernetes-support/.sessions/task10-eval-runs.txt` and `rerun-eval-runs.txt`) had three structural weaknesses:
+The prior harness pattern (documented in `docs/feat/wip/kubernetes-support/.sessions/task10-eval-runs.txt` and `rerun-eval-runs.txt`) had three structural weaknesses:
 
 1. **Self-grading** — each reviewer sub-agent graded its own output.
 2. **Rubric leakage** — reviewers saw the eval's `assertions` / `trap` while producing the review, which primes the model toward satisfying them.
@@ -131,7 +131,7 @@ Collect the grader tables. Roll up into a single markdown table matching the for
 | **Total** | ... | ... | ... | ... |
 ```
 
-Write a session note under `docs/wip/kubernetes-support/.sessions/` (filename pattern: `harness-<YYYY-MM-DD>-eval-runs.txt`) with: harness version reference (link back here), results table, per-eval highlights, and any new regressions vs prior runs.
+Write a session note under `docs/feat/wip/kubernetes-support/.sessions/` (filename pattern: `harness-<YYYY-MM-DD>-eval-runs.txt`) with: harness version reference (link back here), results table, per-eval highlights, and any new regressions vs prior runs.
 
 ### 7. (No teardown)
 

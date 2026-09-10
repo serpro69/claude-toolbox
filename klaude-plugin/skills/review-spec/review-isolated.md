@@ -27,7 +27,7 @@ Isolated Implementation Review Progress:
 
 ### 1a) Locate feature directory
 
-Find the feature directory in `/docs/wip/[feature]/`. If the user specified a feature name, use it directly. If invoked from `/kk:implement`, the feature directory is already known.
+Find the feature directory in `/docs/feat/wip/[feature]/`. If the user specified a feature name, use it directly. If invoked from `/kk:implement`, the feature directory is already known.
 
 ### 1b) Verify docs exist
 
@@ -72,7 +72,7 @@ You are reviewing the implementation of the "{feature_name}" feature against its
 
 ## Feature Directory
 
-{absolute path to /docs/wip/[feature]/}
+{absolute path to /docs/feat/wip/[feature]/}
 
 ## Documents
 

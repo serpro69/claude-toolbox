@@ -66,5 +66,5 @@ Invocation mechanics:
 - Operative mechanics live in
   `klaude-plugin/skills/review-architecture/input-contract.md`
   (§The composite-kit amendment); design rationale in
-  `docs/wip/architect-skills/model/design.md` §6.2 (frozen into
-  `docs/done/` on completion).
+  `docs/feat/wip/architect-skills/model/design.md` §6.2 (frozen into
+  `docs/feat/done/` on completion).

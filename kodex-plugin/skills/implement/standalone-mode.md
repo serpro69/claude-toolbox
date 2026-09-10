@@ -1,6 +1,6 @@
 # Standalone Mode
 
-Applies for bug fixes, GitHub issues, one-off tasks, and any work without docs/wip infrastructure.
+Applies for bug fixes, GitHub issues, one-off tasks, and any work without docs/feat/wip infrastructure.
 
 ## Entry Procedure
 

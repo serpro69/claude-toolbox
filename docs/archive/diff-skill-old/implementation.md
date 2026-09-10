@@ -11,7 +11,7 @@ Familiarity needed:
 
 - How the repo lays out skills — see `CLAUDE.md` § "Skill & Command Naming Conventions".
 - How existing skills structure `SKILL.md` + a process file + `_shared` symlinks — read `klaude-plugin/skills/merge-docs/` and `klaude-plugin/skills/review-code/` for the two closest shapes.
-- The `docs/wip/` ↔ `docs/done/` lifecycle for feature docs.
+- The `docs/feat/wip/` ↔ `docs/feat/done/` lifecycle for feature docs.
 
 Treat the design document as the source of truth. If a task description disagrees with the design, the design wins and the task needs updating.
 
@@ -103,7 +103,7 @@ No new commands directory for v1 (single mode; the skill is invoked directly as 
 - All eight phases present with clear step-by-step content.
 - Error messages match design.md § Validation word-for-word (user-facing strings are part of the spec).
 - Every instruction the LLM would take action on is prescriptive (`Do X`, `MUST X`, `Never X`) rather than descriptive.
-- Links to `design.md` use repo-root-absolute paths (`/docs/wip/diff-skill/design.md`) so they work when the skill is copied out into a plugin cache.
+- Links to `design.md` use repo-root-absolute paths (`/docs/feat/wip/diff-skill/design.md`) so they work when the skill is copied out into a plugin cache.
 
 ## Task 4 — Wire the skill into the plugin manifest and tests
 

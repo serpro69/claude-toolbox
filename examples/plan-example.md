@@ -419,13 +419,13 @@ But keep it practical and to-the-point, avoid redundant details like framework c
   ---
   Step 5: Document the Design
 
-  I'll now create comprehensive design and implementation documentation in /docs/wip/language-specific-skills/. Let me create these files:
+  I'll now create comprehensive design and implementation documentation in /docs/feat/wip/language-specific-skills/. Let me create these files:
 
-● Bash(mkdir -p /home/sergio/Projects/personal/claude-starter-kit/docs/wip/language-specific-skills)
+● Bash(mkdir -p /home/sergio/Projects/personal/claude-starter-kit/docs/feat/wip/language-specific-skills)
   ⎿  (No content)
 
-● Write(docs/wip/language-specific-skills/design.md)
-  ⎿  Wrote 225 lines to docs/wip/language-specific-skills/design.md
+● Write(docs/feat/wip/language-specific-skills/design.md)
+  ⎿  Wrote 225 lines to docs/feat/wip/language-specific-skills/design.md
      # Language-Specific Skills Design
      ## Overview
      This feature extends the claude-starter-kit template with language-specific development skills that provide comprehensive guidance on code style, testing strategies,
@@ -435,8 +435,8 @@ But keep it practical and to-the-point, avoid redundant details like framework c
      flexibility, it means:
      … +215 lines (ctrl+o to expand)
 
-● Write(docs/wip/language-specific-skills/implementation.md)
-  ⎿  Wrote 830 lines to docs/wip/language-specific-skills/implementation.md
+● Write(docs/feat/wip/language-specific-skills/implementation.md)
+  ⎿  Wrote 830 lines to docs/feat/wip/language-specific-skills/implementation.md
      # Language-Specific Skills Implementation Plan
      ## Prerequisites
      Before starting implementation, ensure you understand:
@@ -459,8 +459,8 @@ But keep it practical and to-the-point, avoid redundant details like framework c
   - [ ] Step 8: Expand the new task into subtasks
 
   The design documentation is complete at:
-  - /docs/wip/language-specific-skills/design.md (7,800+ words)
-  - /docs/wip/language-specific-skills/implementation.md (5,600+ words)
+  - /docs/feat/wip/language-specific-skills/design.md (7,800+ words)
+  - /docs/feat/wip/language-specific-skills/implementation.md (5,600+ words)
 
   ---
   Step 6: Create Task-Master PRD
@@ -562,11 +562,11 @@ But keep it practical and to-the-point, avoid redundant details like framework c
 
   📄 Documentation Created
 
-  1. Design Document (/docs/wip/language-specific-skills/design.md)
+  1. Design Document (/docs/feat/wip/language-specific-skills/design.md)
     - Comprehensive 7,800+ word design specification
     - Architecture, content guidelines, user experience flows
     - Success metrics and future considerations
-  2. Implementation Plan (/docs/wip/language-specific-skills/implementation.md)
+  2. Implementation Plan (/docs/feat/wip/language-specific-skills/implementation.md)
     - Detailed 5,600+ word implementation guide
     - 5 phases broken into 23 actionable tasks
     - Testing strategy and rollout plan
@@ -601,7 +601,7 @@ But keep it practical and to-the-point, avoid redundant details like framework c
   1. Start implementation: Use /project:tm/next to begin working on tasks
   2. Review tasks: Run /project:tm/list to see all tasks
   3. Analyze complexity: Run /project:tm/analyze-complexity for insights
-  4. Reference docs: All design details are in /docs/wip/language-specific-skills/
+  4. Reference docs: All design details are in /docs/feat/wip/language-specific-skills/
 
   Would you like to start implementing this feature, or would you like me to make any adjustments to the design or task breakdown?
 
@@ -624,7 +624,7 @@ But keep it practical and to-the-point, avoid redundant details like framework c
   The plan workflow is complete! 🎉
 
   The workflow ends at step 8. At this point, you have:
-  - ✅ A fully-formed design documented in /docs/wip/language-specific-skills/
+  - ✅ A fully-formed design documented in /docs/feat/wip/language-specific-skills/
   - ✅ A comprehensive PRD in .taskmaster/docs/language-skills-prd.txt
   - ✅ 5 main tasks with detailed subtasks ready for implementation in Task Master
 
@@ -635,7 +635,7 @@ But keep it practical and to-the-point, avoid redundant details like framework c
 
   1. Start implementing: Use the development-process skill to begin working on the tasks
   2. Get the next task: Run /project:tm/next to see what to work on first
-  3. Review the plan: Check the implementation plan at /docs/wip/language-specific-skills/implementation.md
+  3. Review the plan: Check the implementation plan at /docs/feat/wip/language-specific-skills/implementation.md
   4. Ask questions: If you want to discuss any aspect of the design before implementing
 
   Did you perhaps mean something else by "step 9", or would you like to proceed with implementation?
@@ -661,16 +661,16 @@ But keep it practical and to-the-point, avoid redundant details like framework c
   Let me update each task with links to the design and implementation documentation:
 
 ● task-master-ai - update_task (MCP)(projectRoot: "/home/sergio/Projects/personal/claude-starter-kit", id: "1", prompt: "Add reference links to design and implementation
-                                    documentation at the end of the details section:\n\nReference Documentation:\n- Design: /docs/wip/language-specific-skills/design.md\n-
-                                    Implementation Plan: /docs/wip/language-specific-skills/implementation.md (Phase 1, Tasks 1.1-1.4)")
+                                    documentation at the end of the details section:\n\nReference Documentation:\n- Design: /docs/feat/wip/language-specific-skills/design.md\n-
+                                    Implementation Plan: /docs/feat/wip/language-specific-skills/implementation.md (Phase 1, Tasks 1.1-1.4)")
   ⎿  {
        "data": {
          "message": "Successfully updated task with ID 1 based on the prompt",
      … +137 lines (ctrl+o to expand)
 
 ● task-master-ai - update_task (MCP)(projectRoot: "/home/sergio/Projects/personal/claude-starter-kit", id: "2", prompt: "Add reference links to design and implementation
-                                    documentation at the end of the details section:\n\nReference Documentation:\n- Design: /docs/wip/language-specific-skills/design.md (see
-                                    \"Content Guidelines\" and \"Language Coverage\" sections)\n- Implementation Plan: /docs/wip/language-specific-skills/implementation.md
+                                    documentation at the end of the details section:\n\nReference Documentation:\n- Design: /docs/feat/wip/language-specific-skills/design.md (see
+                                    \"Content Guidelines\" and \"Language Coverage\" sections)\n- Implementation Plan: /docs/feat/wip/language-specific-skills/implementation.md
                                     (Phase 2, Tasks 2.1-2.5)")
   ⎿  {
        "data": {
@@ -678,8 +678,8 @@ But keep it practical and to-the-point, avoid redundant details like framework c
      … +136 lines (ctrl+o to expand)
 
 ● task-master-ai - update_task (MCP)(projectRoot: "/home/sergio/Projects/personal/claude-starter-kit", id: "3", prompt: "Add reference links to design and implementation
-                                    documentation at the end of the details section:\n\nReference Documentation:\n- Design: /docs/wip/language-specific-skills/design.md (see
-                                    \"Template Cleanup Workflow\" section)\n- Implementation Plan: /docs/wip/language-specific-skills/implementation.md (Phase 3, Tasks
+                                    documentation at the end of the details section:\n\nReference Documentation:\n- Design: /docs/feat/wip/language-specific-skills/design.md (see
+                                    \"Template Cleanup Workflow\" section)\n- Implementation Plan: /docs/feat/wip/language-specific-skills/implementation.md (Phase 3, Tasks
                                     3.1-3.5)")
   ⎿  {
        "data": {
@@ -687,8 +687,8 @@ But keep it practical and to-the-point, avoid redundant details like framework c
      … +130 lines (ctrl+o to expand)
 
 ● task-master-ai - update_task (MCP)(projectRoot: "/home/sergio/Projects/personal/claude-starter-kit", id: "4", prompt: "Add reference links to design and implementation
-                                    documentation at the end of the details section:\n\nReference Documentation:\n- Design: /docs/wip/language-specific-skills/design.md (see
-                                    \"Integration with Process Skills\" section)\n- Implementation Plan: /docs/wip/language-specific-skills/implementation.md (Phase 4, Tasks
+                                    documentation at the end of the details section:\n\nReference Documentation:\n- Design: /docs/feat/wip/language-specific-skills/design.md (see
+                                    \"Integration with Process Skills\" section)\n- Implementation Plan: /docs/feat/wip/language-specific-skills/implementation.md (Phase 4, Tasks
                                     4.1-4.2)")
   ⎿  {
        "data": {
@@ -696,8 +696,8 @@ But keep it practical and to-the-point, avoid redundant details like framework c
      … +134 lines (ctrl+o to expand)
 
 ● task-master-ai - update_task (MCP)(projectRoot: "/home/sergio/Projects/personal/claude-starter-kit", id: "5", prompt: "Add reference links to design and implementation
-                                    documentation at the end of the details section:\n\nReference Documentation:\n- Design: /docs/wip/language-specific-skills/design.md (see
-                                    \"User Experience\" section)\n- Implementation Plan: /docs/wip/language-specific-skills/implementation.md (Phase 4, Tasks 4.3-4.5)")
+                                    documentation at the end of the details section:\n\nReference Documentation:\n- Design: /docs/feat/wip/language-specific-skills/design.md (see
+                                    \"User Experience\" section)\n- Implementation Plan: /docs/feat/wip/language-specific-skills/implementation.md (Phase 4, Tasks 4.3-4.5)")
   ⎿  {
        "data": {
          "message": "Successfully updated task with ID 5 based on the prompt",
@@ -722,8 +722,8 @@ But keep it practical and to-the-point, avoid redundant details like framework c
 
   📚 Documentation Created
 
-  1. Design Document - /docs/wip/language-specific-skills/design.md
-  2. Implementation Plan - /docs/wip/language-specific-skills/implementation.md
+  1. Design Document - /docs/feat/wip/language-specific-skills/design.md
+  2. Implementation Plan - /docs/feat/wip/language-specific-skills/implementation.md
   3. PRD - .taskmaster/docs/language-skills-prd.txt
 
   ✅ Task Master Tasks Ready

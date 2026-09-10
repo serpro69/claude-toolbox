@@ -1,6 +1,6 @@
 # Plan Mode
 
-Applies when the user references a docs/wip feature or task number.
+Applies when the user references a docs/feat/wip feature or task number.
 
 ## Entry Procedure
 

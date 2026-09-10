@@ -22,7 +22,7 @@ The skill achieves **perfect format compliance** across all 3 evals. Baselines d
 ### Eval 1: WIP Language-Specific Skills (Default Scope)
 
 **Prompt:** `/kk:review-design language-specific-skills`
-**Documents:** `docs/wip/language-specific-skills/design.md` + `implementation.md`
+**Documents:** `docs/feat/wip/language-specific-skills/design.md` + `implementation.md`
 **Purpose:** Test the skill on a real, organic WIP feature with genuine codebase inconsistencies.
 
 #### Scores
@@ -55,8 +55,8 @@ The skill achieves **perfect format compliance** across all 3 evals. Baselines d
 **Overall assessment:** CONCERNS_FOUND
 **Documents:**
 
-- Design: `/docs/wip/language-specific-skills/design.md` (224 lines)
-- Implementation: `/docs/wip/language-specific-skills/implementation.md` (829 lines)
+- Design: `/docs/feat/wip/language-specific-skills/design.md` (224 lines)
+- Implementation: `/docs/feat/wip/language-specific-skills/implementation.md` (829 lines)
 
 **Summary:** 9 findings: 2 critical, 3 high, 3 medium, 1 low
 
@@ -152,8 +152,8 @@ I found 9 issues (P0: 2, P1: 3, P2: 3, P3: 1).
 # Design Review: Language-Specific Skills
 
 **Documents reviewed:**
-- `docs/wip/language-specific-skills/design.md`
-- `docs/wip/language-specific-skills/implementation.md`
+- `docs/feat/wip/language-specific-skills/design.md`
+- `docs/feat/wip/language-specific-skills/implementation.md`
 
 **Reviewer:** Claude (no skill guidance, natural review)
 
@@ -226,7 +226,7 @@ The baseline found 2 additional issues the skill missed (cleanup script deletion
 ### Eval 2: Synthetic Flawed Design (Issue Detection)
 
 **Prompt:** `/kk:review-design synthetic-flawed-feature`
-**Documents:** `docs/wip/synthetic-flawed-feature/design.md` + `implementation.md`
+**Documents:** `docs/feat/wip/synthetic-flawed-feature/design.md` + `implementation.md`
 **Purpose:** Objective test with 6 planted flaws — measures detection accuracy rather than format compliance.
 
 #### Planted Flaws
@@ -365,8 +365,8 @@ The +22% delta is the smallest across all evals because this eval's assertions a
 
 ### Eval 3: Completed Capy-Integration (All Scope)
 
-**Prompt:** `Review the design docs for the capy-integration feature. The docs are at docs/done/capy-integration/. Review all documents including tasks.`
-**Documents:** `docs/done/capy-integration/design.md` + `implementation.md` + `tasks.md`
+**Prompt:** `Review the design docs for the capy-integration feature. The docs are at docs/feat/done/capy-integration/. Review all documents including tasks.`
+**Documents:** `docs/feat/done/capy-integration/design.md` + `implementation.md` + `tasks.md`
 **Purpose:** Test multi-document review (all scope) on completed, higher-quality docs. Tests cross-document consistency analysis and codebase cross-referencing.
 
 #### Scores

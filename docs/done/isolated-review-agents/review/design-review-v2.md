@@ -1,6 +1,6 @@
 # Design Review v2: Isolated Review Agents
 
-**Spec reviewed:** `docs/wip/isolated-review-agents/design.md`
+**Spec reviewed:** `docs/feat/wip/isolated-review-agents/design.md`
 **Prior review:** `design-review-v1.md` — this review supersedes it
 **Date:** 2026-04-03
 **Verdict:** Conditionally approve — architecture is sound, reconciliation model needs rework, several design gaps to fill.

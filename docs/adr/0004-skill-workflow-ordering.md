@@ -2,7 +2,7 @@
 
 - **Status:** Accepted
 - **Date:** 2026-04-19
-- **Originated in:** [docs/wip/kubernetes-support/tasks.md — Task 7 dry-run findings](https://github.com/serpro69/claude-toolbox/blob/master/docs/done/kubernetes-support/tasks.md)
+- **Originated in:** [docs/feat/wip/kubernetes-support/tasks.md — Task 7 dry-run findings](https://github.com/serpro69/claude-toolbox/blob/master/docs/feat/done/kubernetes-support/tasks.md)
 - **Related:** [ADR 0002](0002-profile-content-organization.md), [ADR 0003](0003-plugin-root-referenced-content.md)
 
 ## Context
@@ -88,6 +88,6 @@ The ordering change was applied to `/kk:review-code` concurrently with the accep
 - `klaude-plugin/skills/review-code/review-process.md` — reordered so Step 1 is filename-only scope, Step 2 is profile detection, Step 3 loads profile `review-code/index.md` files, Step 4 reads every resolved checklist, Step 5 (new dedicated step) reads the full diff + re-reads changed files + runs `capy_search`, Step 6 applies checklists. Content-level read instructions appear exactly once, at Step 5.
 - `klaude-plugin/agents/code-reviewer.md` — same ordering applied to the sub-agent: read provided checklists before analyzing the injected diff.
 
-A follow-up dry-run (three consecutive invocations on the same diff, mirroring the Context section's experiment) confirms whether the failure mode reproduces. The result is recorded in `docs/wip/kubernetes-support/tasks.md` Task 7.
+A follow-up dry-run (three consecutive invocations on the same diff, mirroring the Context section's experiment) confirms whether the failure mode reproduces. The result is recorded in `docs/feat/wip/kubernetes-support/tasks.md` Task 7.
 
-Applying the mandatory-order directive to the remaining nine skills (`/kk:review-spec`, `/kk:review-design`, `/kk:test`, `/kk:implement`, `/kk:design`, `/kk:document`, `/kk:merge-docs`, `/kk:dependency-handling`, `/kk:chain-of-verification`) is tracked as amendment A2 in `docs/wip/kubernetes-support/design.md §Amendments`. The per-skill sweep needs tailored wording since each skill's subject matter and minimal early scope differ; it is deliberately staged as its own review pass rather than bundled into this commit.
+Applying the mandatory-order directive to the remaining nine skills (`/kk:review-spec`, `/kk:review-design`, `/kk:test`, `/kk:implement`, `/kk:design`, `/kk:document`, `/kk:merge-docs`, `/kk:dependency-handling`, `/kk:chain-of-verification`) is tracked as amendment A2 in `docs/feat/wip/kubernetes-support/design.md §Amendments`. The per-skill sweep needs tailored wording since each skill's subject matter and minimal early scope differ; it is deliberately staged as its own review pass rather than bundled into this commit.

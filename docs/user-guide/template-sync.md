@@ -137,7 +137,7 @@ It will port pending tasks, clean up TM files, update configs, and walk you thro
 
     If you prefer to migrate manually, follow these steps after syncing:
 
-    1. **Port any pending tasks** to the new format: create `docs/wip/[feature]/tasks.md` files following the example task file in the plugin. Completed tasks don't need porting.
+    1. **Port any pending tasks** to the new format: create `docs/feat/wip/[feature]/tasks.md` files following the example task file in the plugin. Completed tasks don't need porting.
 
     2. **Remove Task Master files and config:**
 
@@ -167,7 +167,7 @@ It will port pending tasks, clean up TM files, update configs, and walk you thro
         chmod +x .claude/toolbox/scripts/template-sync.sh
         ```
 
-    Task tracking now lives in simple markdown files (`docs/wip/[feature]/tasks.md`) created by the `/kk:design` skill and consumed by `/kk:implement`. No external MCP server required.
+    Task tracking now lives in simple markdown files (`docs/feat/wip/[feature]/tasks.md`) created by the `/kk:design` skill and consumed by `/kk:implement`. No external MCP server required.
 
 ## Upgrading to the Plugin System (v0.5.0+)
 

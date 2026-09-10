@@ -9,7 +9,7 @@
 - **Exactly one artifact per invocation** (see [input-contract.md](input-contract.md)). A second path argument is rejected with guidance to run the review once per artifact.
 - **Domain-reference kit.** Pass either kit page's path (`<context>.md` or `<context>-traps.md`); the counterpart is auto-discovered (sibling naming convention, cross-link fallback) and the pair is reviewed as **one composite artifact**. Two explicit paths are still rejected. An unresolvable counterpart → the page is reviewed solo with a loud report note.
 - **Design-doc scoping.** For a design doc, an optional heading argument scopes the review to that architecture section — extract and verify only claims under the named heading.
-- **No path given** → list candidate artifacts (`docs/adr/*.md`, `docs/wip/*/design.md`) and ask; do not guess.
+- **No path given** → list candidate artifacts (`docs/adr/*.md`, `docs/feat/wip/*/design.md`) and ask; do not guess.
 
 ## Verdict vocabulary
 

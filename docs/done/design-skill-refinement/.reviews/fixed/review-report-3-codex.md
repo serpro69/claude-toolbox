@@ -12,9 +12,9 @@ Reviewed the current branch against `master...HEAD`, plus staged generated Codex
 
 Canonical files reviewed:
 
-- `docs/wip/design-skill-refinement/design.md`
-- `docs/wip/design-skill-refinement/implementation.md`
-- `docs/wip/design-skill-refinement/tasks.md`
+- `docs/feat/wip/design-skill-refinement/design.md`
+- `docs/feat/wip/design-skill-refinement/implementation.md`
+- `docs/feat/wip/design-skill-refinement/tasks.md`
 - `klaude-plugin/agents/design-reviewer.md`
 - `klaude-plugin/skills/design/SKILL.md`
 - `klaude-plugin/skills/design/idea-process.md`
@@ -89,8 +89,8 @@ If committed this way, the canonical plugin and generated Codex plugin will dive
 - `klaude-plugin/skills/design/refinement-criteria.md:7`
 - `klaude-plugin/skills/design/refinement-criteria.md:97`
 - `klaude-plugin/skills/design/refinement-criteria.md:103`
-- `docs/wip/design-skill-refinement/implementation.md:42`
-- `docs/wip/design-skill-refinement/implementation.md:59`
+- `docs/feat/wip/design-skill-refinement/implementation.md:42`
+- `docs/feat/wip/design-skill-refinement/implementation.md:59`
 
 **Profile:** `skill-md`
 **Checklist:** `skill-quality-checklist.md`
@@ -128,9 +128,9 @@ None.
 - `klaude-plugin/skills/review-design/review-process.md:25`
 - `klaude-plugin/skills/review-design/review-isolated.md:28`
 - `klaude-plugin/skills/design/evals/review-design-catches-missing-sections/eval.json:6`
-- `docs/wip/design-skill-refinement/tasks.md:66`
-- `docs/wip/design-skill-refinement/design.md:130`
-- `docs/wip/design-skill-refinement/implementation.md:150`
+- `docs/feat/wip/design-skill-refinement/tasks.md:66`
+- `docs/feat/wip/design-skill-refinement/design.md:130`
+- `docs/feat/wip/design-skill-refinement/implementation.md:150`
 
 **Confidence:** 95%
 
@@ -151,8 +151,8 @@ This creates a real behavioral mismatch. If the command parser follows the new s
 **Type:** `SPEC_DEV`
 **Files:**
 
-- `docs/wip/design-skill-refinement/tasks.md:20`
-- `docs/wip/design-skill-refinement/tasks.md:32`
+- `docs/feat/wip/design-skill-refinement/tasks.md:20`
+- `docs/feat/wip/design-skill-refinement/tasks.md:32`
 - `klaude-plugin/skills/design/frameworks.md:7`
 - `klaude-plugin/skills/design/refinement-criteria.md:7`
 

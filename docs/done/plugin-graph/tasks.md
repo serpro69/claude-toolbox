@@ -288,7 +288,7 @@ Post-implementation gate (not an implementation task — workflow verification s
 - **`/kk:review-code`** — Holistic pass over the whole feature diff: **0 P0/P1/P2**. Security vectors (command injection, path traversal, template injection) all defended; gofmt clean; no kodex drift. Only 2 P3 idiom notes (`Direction` zero-value, `flag.ErrHelp` `==`), both defensible as-is. No new `kk:review-findings` to index (the Task-6 worktree pattern is already indexed).
 - **`/kk:review-spec`** — **0 MISSING_IMPL / SPEC_DEV / DOC_INCON.** Implementation faithfully matches design intent. Five P3 doc-lag items (code ahead of implementation.md, all already logged in this file) were resolved by syncing `implementation.md` §Extractors (path-confinement/placeholder/dedup, goldmark infallibility), §Output (Render dispatcher + `([]byte,error)`, coupling in text, output escaping), and §Git Worktree (input guards + `errors.Join` cleanup).
 
-Docs remain in `docs/wip/plugin-graph/` (not yet moved to `docs/done/`).
+Docs remain in `docs/feat/wip/plugin-graph/` (not yet moved to `docs/feat/done/`).
 
 ---
 

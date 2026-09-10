@@ -65,7 +65,7 @@ Grade the produced pages against the checklist in [kit-contract.md](kit-contract
 
    > **RQ-1** — Does a hold expire if the patron never collects, and after how many days? — **Decider:** product owner — **Unblocks:** rule L4, term `Hold`.
 
-   The queue is presented inline, and **appended to the active feature's `docs/wip/<feature>/design.md` under an "Open Questions" heading when that feature directory exists** (inline-only otherwise).
+   The queue is presented inline, and **appended to the active feature's `docs/feat/wip/<feature>/design.md` under an "Open Questions" heading when that feature directory exists** (inline-only otherwise).
 2. **Apply the contact-ratio guard** per [shared-contact-ratio-guard.md](shared-contact-ratio-guard.md): if this run brings the artifact-to-stakeholder-contact ratio to N:0, state plainly that the next unit of progress is a conversation, name the role (and person/ticket if known), and route the decision queue to them instead of producing more.
 3. **Brownfield only — fact-flip propagation** per [shared-fact-flip-propagation.md](shared-fact-flip-propagation.md): any recorded fact this run contradicted is fixed at **every** occurrence across the workspace in this same session, not just where it was noticed. The usual shapes of a contradicted fact in a kit update:
    - **A stale binding** — the symbol a kit entry cites was renamed or moved. Fix every page that asserts the old name: entry Bindings, traps-page prose, the rules table — a rename fixed in the glossary but still asserted on the traps page is F2 verbatim.

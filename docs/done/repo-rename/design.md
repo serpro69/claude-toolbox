@@ -24,7 +24,7 @@ All occurrences of `claude-starter-kit` across:
 | Config | `.github/templates/serena/project.yml` | `project_name` field |
 | Example manifest | `.github/templates/template-state.example.json` | `"upstream_repo"` value |
 | README | `README.md` | URLs, instructions, examples |
-| WIP docs | `docs/wip/extract-plugin/`, `docs/wip/language-specific-skills/` | Design/implementation references |
+| WIP docs | `docs/feat/wip/extract-plugin/`, `docs/feat/wip/language-specific-skills/` | Design/implementation references |
 | Completed docs | `docs/template-sync/` | Design docs, schema |
 | Commands | `.claude/commands/sync-workflow/`, `.claude/commands/migrate-from-taskmaster/` | URLs to raw content |
 
@@ -87,7 +87,7 @@ Add a migration step early in the sync script's `main()` function that detects a
 
 ### 4. Relationship to #33 (Plugin Extraction)
 
-The plugin extraction design docs (`docs/wip/extract-plugin/`) contain extensive references to `claude-starter-kit` in marketplace names, install commands, and repository URLs. The rename should land before (or simultaneously with) plugin extraction so that all plugin-related names use `claude-toolbox` from the start. No special coordination mechanism is needed — the rename PR simply needs to merge first.
+The plugin extraction design docs (`docs/feat/wip/extract-plugin/`) contain extensive references to `claude-starter-kit` in marketplace names, install commands, and repository URLs. The rename should land before (or simultaneously with) plugin extraction so that all plugin-related names use `claude-toolbox` from the start. No special coordination mechanism is needed — the rename PR simply needs to merge first.
 
 ## Out of Scope
 

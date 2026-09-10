@@ -2,7 +2,7 @@
 
 - **Status:** Accepted
 - **Date:** 2026-04-17
-- **Originated in:** [docs/wip/kubernetes-support/design.md](https://github.com/serpro69/claude-toolbox/blob/master/docs/done/kubernetes-support/design.md)
+- **Originated in:** [docs/feat/wip/kubernetes-support/design.md](https://github.com/serpro69/claude-toolbox/blob/master/docs/feat/done/kubernetes-support/design.md)
 - **Related:** [ADR 0001](0001-profile-detection-model.md), [ADR 0002](0002-profile-content-organization.md)
 
 ## Context
@@ -45,7 +45,7 @@ Results:
 - **Bare `$CLAUDE_PLUGIN_ROOT` (no braces)** — NOT substituted; stays literal. **Brace form is required.**
 - **Substitution inside inline code spans** (backticks) — DOES happen. Documentation that needs to reference the variable name literally cannot rely on inline backticks to protect it.
 
-**Follow-up verification on 2026-04-18** (same environment; full results in `docs/wip/kubernetes-support/.sessions/probe-session-2.txt` and `probe-session-2-subagent.txt`) tested 14 markdown containers across both main-conversation and sub-agent contexts. Result: substitution is a pre-rendering text replacement matching the literal token `${CLAUDE_PLUGIN_ROOT}`, **unaware of any markdown container**. The following ALL substitute:
+**Follow-up verification on 2026-04-18** (same environment; full results in `docs/feat/wip/kubernetes-support/.sessions/probe-session-2.txt` and `probe-session-2-subagent.txt`) tested 14 markdown containers across both main-conversation and sub-agent contexts. Result: substitution is a pre-rendering text replacement matching the literal token `${CLAUDE_PLUGIN_ROOT}`, **unaware of any markdown container**. The following ALL substitute:
 
 - inline backticks (`` ` ``)
 - fenced code blocks (plain ```, ```bash, ```markdown, `~~~` tilde)

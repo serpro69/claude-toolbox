@@ -3,9 +3,9 @@
 **Scope:** 9 of 9 tasks reviewed | Mode: post-implementation
 **Documents reviewed:**
 
-- Design: [docs/wip/design-skill-refinement/design.md](../design.md)
-- Implementation: [docs/wip/design-skill-refinement/implementation.md](../implementation.md)
-- Tasks: [docs/wip/design-skill-refinement/tasks.md](../tasks.md)
+- Design: [docs/feat/wip/design-skill-refinement/design.md](../design.md)
+- Implementation: [docs/feat/wip/design-skill-refinement/implementation.md](../implementation.md)
+- Tasks: [docs/feat/wip/design-skill-refinement/tasks.md](../tasks.md)
 
 **Profile:** `skill-md` active (no `review-spec/` phase content)
 **Date:** 2026-05-22

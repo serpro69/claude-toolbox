@@ -76,7 +76,7 @@ Out of the box you get:
 
 After setup, try the core workflow:
 
-1. **Start with an idea.** Type `/kk:design` and describe a feature you want to build. Claude will ask you refinement questions one at a time, then produce design docs and a task list in `docs/wip/`.
+1. **Start with an idea.** Type `/kk:design` and describe a feature you want to build. Claude will ask you refinement questions one at a time, then produce design docs and a task list in `docs/feat/wip/`.
 
 2. **Review the design.** Run `/kk:review-design your-feature` to catch gaps before writing code.
 

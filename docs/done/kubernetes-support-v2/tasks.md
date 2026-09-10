@@ -290,7 +290,7 @@ Subtasks:
 
 Subtasks:
 
-- [x] `git mv docs/wip/kubernetes-support-v2 docs/done/kubernetes-support-v2`.
+- [x] `git mv docs/feat/wip/kubernetes-support-v2 docs/feat/done/kubernetes-support-v2`.
 - [x] Update feature-status metadata in the moved `design.md` and `implementation.md` (status → `done`).
 - [x] Update this `tasks.md`'s header status to `done`; confirm every task above is `done`.
-- [x] Verify: `docs/done/kubernetes-support-v2/` exists; `docs/wip/kubernetes-support-v2/` does not.
+- [x] Verify: `docs/feat/done/kubernetes-support-v2/` exists; `docs/feat/wip/kubernetes-support-v2/` does not.
