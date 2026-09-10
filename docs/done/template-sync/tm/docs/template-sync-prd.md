@@ -102,8 +102,8 @@ As a developer, I want to sync to a specific template version, so I can choose s
 ## Implementation Reference
 
 See detailed design and implementation plan:
-- Design: `/docs/wip/template-sync/design.md`
-- Implementation: `/docs/wip/template-sync/implementation.md`
+- Design: `/docs/feat/wip/template-sync/design.md`
+- Implementation: `/docs/feat/wip/template-sync/implementation.md`
 
 ## Success Metrics
 

@@ -38,6 +38,6 @@ description: |
 ## Required Outputs
 
 - [ ] The two durable kit pages (glossary + traps) for the context, provenance-clean, per [kit-contract.md](kit-contract.md) (+ conventions index if the home lacked one).
-- [ ] The **decision queue** — precise, decidable, role-tagged questions — presented inline and appended to the active feature's `docs/wip/<feature>/design.md` under an **Open Questions** heading when that directory exists.
+- [ ] The **decision queue** — precise, decidable, role-tagged questions — presented inline and appended to the active feature's `docs/feat/wip/<feature>/design.md` under an **Open Questions** heading when that directory exists.
 - [ ] Contact-ratio guard applied; brownfield fact-flips propagated across the workspace.
 - [ ] Non-obvious modelling rationale indexed to `kk:arch-decisions`.

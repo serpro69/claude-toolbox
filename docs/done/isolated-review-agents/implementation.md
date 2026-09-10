@@ -137,7 +137,7 @@ Isolated Code Review Progress:
 Gather the artifacts that will be passed to the sub-agent:
 
 - Run `git diff --stat` and `git diff` to capture the diff
-- Identify the spec context: if this review is happening within `implementation-process`, locate the relevant design.md section and task description from tasks.md. If standalone, check if the user provided context or if design docs exist in `/docs/wip/`.
+- Identify the spec context: if this review is happening within `implementation-process`, locate the relevant design.md section and task description from tasks.md. If standalone, check if the user provided context or if design docs exist in `/docs/feat/wip/`.
 - Detect the primary language from file extensions in the diff (same logic as existing skill's step 2)
 - Call `pal` `listmodels` to get available models, select the most capable model (prefer latest generation with thinking/reasoning support) for the `pal` codereview call in Step 2
 
@@ -203,7 +203,7 @@ Isolated Implementation Review Progress:
 
 #### Step 1: Prepare artifacts
 
-- Locate the feature directory in `/docs/wip/[feature]/`
+- Locate the feature directory in `/docs/feat/wip/[feature]/`
 - Verify design.md, implementation.md, and tasks.md exist
 - Determine review scope: read tasks.md to identify which tasks are done vs pending
 - Prepare file paths to pass to the sub-agent

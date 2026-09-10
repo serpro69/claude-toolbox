@@ -19,8 +19,8 @@ The kk plugin ships 13 workflow skills that form a complete development pipeline
 
 | Skill | What it does |
 |-------|-------------|
-| **/kk:design** | Turns an idea into design docs, an implementation plan, and a task list in `docs/wip/`. Asks refinement questions, then documents everything a developer needs to start coding. |
-| **/kk:implement** | Executes a task list from `docs/wip/` with batched steps and code review checkpoints between batches. Updates task status as it goes. |
+| **/kk:design** | Turns an idea into design docs, an implementation plan, and a task list in `docs/feat/wip/`. Asks refinement questions, then documents everything a developer needs to start coding. |
+| **/kk:implement** | Executes a task list from `docs/feat/wip/` with batched steps and code review checkpoints between batches. Updates task status as it goes. |
 | **/kk:test** | Generates tests following project conventions: table-driven, integration, mocking, property-based. Runs the full suite and reports coverage. |
 | **/kk:document**  | Updates project documentation and records ADRs for non-obvious decisions made during implementation.                                                                     |
 | **/kk:review-code** | Reviews git changes for SOLID violations, security risks, and code quality. Domain-specific checklists for Go, Java, JS/TS, Kotlin, Python, Kubernetes, K8s Operator, and agent skills. Standard and isolated modes. |

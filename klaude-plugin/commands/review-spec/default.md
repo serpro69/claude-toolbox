@@ -5,10 +5,10 @@ Arguments: $ARGUMENTS
 ## Invocation
 
 **If $ARGUMENTS is provided:**
-Treat `$ARGUMENTS` as the feature name. Look for documentation in `/docs/wip/$ARGUMENTS/` and run the implementation review process against it.
+Treat `$ARGUMENTS` as the feature name. Look for documentation in `/docs/feat/wip/$ARGUMENTS/` and run the implementation review process against it.
 
 **If $ARGUMENTS is empty:**
-List the contents of `/docs/wip/` and ask the user which feature to review. If only one feature exists, use it automatically.
+List the contents of `/docs/feat/wip/` and ask the user which feature to review. If only one feature exists, use it automatically.
 
 ## Process
 

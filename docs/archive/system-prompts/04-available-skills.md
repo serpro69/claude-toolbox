@@ -16,7 +16,7 @@ Use when performing code reviews.
 Use when writing documentation, after finishing the implementation phase for a feature or a bug-fix.
 - kk:review-spec: Use after implementing tasks or mid-feature to verify code matches design docs and ensure they are in sync.
 Detects spec deviations, missing implementations, doc inconsistencies, and outdated docs in design and implementation documentation.
-- kk:implement: TRIGGER when: user asks to work on, implement, or continue tasks from docs/wip (e.g. "work on task 1", "do the next task", "implement first task for X").
+- kk:implement: TRIGGER when: user asks to work on, implement, or continue tasks from docs/feat/wip (e.g. "work on task 1", "do the next task", "implement first task for X").
 Executes written implementation plans with review checkpoints. Use when you have a fully-formed implementation plan to execute in a separate session.
 - kk:dependency-handling: TRIGGER when: adding or upgrading a dependency; calling a library, SDK, framework, or external API; unsure how a third-party function behaves; about to guess a signature, config key, or version-specific behavior.
 Use BEFORE writing the call — not after it fails. Forces a context7/capy lookup instead of guessing.
@@ -27,7 +27,7 @@ Use when you have competing or complementary design/implementation docs (e.g. fr
 - kk:chain-of-verification: Apply Chain-of-Verification (CoVe) prompting to improve response accuracy through self-verification.
 Use when complex questions require fact-checking, technical accuracy, or multi-step reasoning.
 - kk:plan: Use in pre-implementation (idea-to-design) stages to understand spec/requirements and create a correct implementation plan before writing actual code.
-Turns ideas into a fully-formed PRD/design/specification and implementation-plan. Creates design docs and task lists in docs/wip/.
+Turns ideas into a fully-formed PRD/design/specification and implementation-plan. Creates design docs and task lists in docs/feat/wip/.
 - skill-creator:skill-creator: Create new skills, modify and improve existing skills, and measure skill performance. Use when users want to create a skill from scratch, update or optimize an existing skill, run evals to test a skill, benchmark skill performance with variance analysis, or optimize a skill's description for better triggering accuracy.
 - init: Initialize a new CLAUDE.md file with codebase documentation
 - review: Review a pull request

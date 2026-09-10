@@ -8,7 +8,7 @@ This file governs **acceptance**: what is allowed through the door. Normalizatio
 
 - an **ADR** (`docs/adr/NNNN-slug.md`), or
 - a **broader architecture doc**, or
-- the **architecture section of a design doc** (e.g., `docs/wip/<feature>/design.md`, optionally scoped by a heading argument), or
+- the **architecture section of a design doc** (e.g., `docs/feat/wip/<feature>/design.md`, optionally scoped by a heading argument), or
 - a **domain-reference kit** — the glossary page (`<context>.md`) and its divergences/traps page (`<context>-traps.md`), reviewed together as **one composite artifact** (see §The composite-kit amendment).
 
 "Committed written artifact" means the claims are already captured as prose in a file. The reviewer reads whatever architecture docs exist; in M1 it never writes one.
@@ -51,7 +51,7 @@ Diagrams count **only** when accompanied by prose asserting what they mean. A di
 
 ## No path given
 
-If no path is provided, do **not** guess. List candidate artifacts (`docs/adr/*.md`, `docs/wip/*/design.md`) and ask which one to review.
+If no path is provided, do **not** guess. List candidate artifacts (`docs/adr/*.md`, `docs/feat/wip/*/design.md`) and ask which one to review.
 
 ## Acceptance decision (summary)
 

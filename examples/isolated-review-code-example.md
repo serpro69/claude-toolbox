@@ -40,7 +40,7 @@ docs, but let's do the "thinking" and "polishing" part before we implement.
   Ran 2 bash commands (ctrl+o to expand)
 
 ● Good, I have the full diff. Primary language is bash/shell (.sh files) and
-  markdown. No spec context from /docs/wip/. Now let me resolve the pal model
+  markdown. No spec context from /docs/feat/wip/. Now let me resolve the pal model
   and launch both reviewers in parallel.
 ● Launching both reviewers in parallel:
 

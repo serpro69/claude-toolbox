@@ -67,9 +67,9 @@ Design Review Progress:
   - `implementation` → `implementation.md` only
   - `tasks` → `tasks.md` only
   - `all` → `design.md` + `implementation.md` + `tasks.md`
-- Argument disambiguation: if the first argument matches a directory in `/docs/wip/`, treat it as the feature name. If it matches a scope keyword (`design`, `implementation`, `tasks`, `all`) and no such feature directory exists, treat it as the scope and prompt the user for the feature name.
-- Locate `/docs/wip/[feature-name]/` directory
-- If feature name not provided or ambiguous, list `/docs/wip/` contents and ask user
+- Argument disambiguation: if the first argument matches a directory in `/docs/feat/wip/`, treat it as the feature name. If it matches a scope keyword (`design`, `implementation`, `tasks`, `all`) and no such feature directory exists, treat it as the scope and prompt the user for the feature name.
+- Locate `/docs/feat/wip/[feature-name]/` directory
+- If feature name not provided or ambiguous, list `/docs/feat/wip/` contents and ask user
 - If a requested doc is missing, inform the user and proceed with available docs (do NOT stop)
 - Read the in-scope documents
 
@@ -206,7 +206,7 @@ Isolated Design Review Progress:
 
 #### 1a) Read documents
 
-Parse scope argument (same logic as standard mode Step 1). Read the in-scope documents from `/docs/wip/[feature]/`.
+Parse scope argument (same logic as standard mode Step 1). Read the in-scope documents from `/docs/feat/wip/[feature]/`.
 
 #### 1b) Resolve pal model
 
@@ -239,7 +239,7 @@ You are reviewing the design documents for the "{feature_name}" feature. Apply y
 
 ## Feature Directory
 
-{absolute path to /docs/wip/[feature]/}
+{absolute path to /docs/feat/wip/[feature]/}
 
 ## Documents to Review
 

@@ -2,7 +2,7 @@
 name: design
 description: |
   Use in pre-implementation (idea-to-design) stages to understand spec/requirements and create a correct implementation plan before writing actual code.
-  Turns ideas into a fully-formed PRD/design/specification and implementation-plan. Creates design docs and task lists in docs/wip/.
+  Turns ideas into a fully-formed PRD/design/specification and implementation-plan. Creates design docs and task lists in docs/feat/wip/.
 ---
 <!-- codex: tool-name mapping applied. See .codex/scripts/session-start.sh -->
 
@@ -41,7 +41,7 @@ See [idea-process.md](./idea-process.md).
 
 ## Continue WIP Feature
 
-_Use this to resume work on a feature that already has design docs and a task list in `/docs/wip/`._
+_Use this to resume work on a feature that already has design docs and a task list in `/docs/feat/wip/`._
 
 **For example:** Let's continue working on the auth system.
 

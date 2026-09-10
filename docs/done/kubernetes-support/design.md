@@ -379,7 +379,7 @@ A new subsection under **Skill & Command Naming Conventions**, titled **Skill de
 
 A new subsection, **ADR location**, records:
 - Architecture decisions spanning more than one feature live at `docs/adr/NNNN-slug.md` (Michael Nygard template).
-- Per-feature design docs continue to live at `docs/wip/<feature>/` and move to `docs/done/<feature>/` on completion.
+- Per-feature design docs continue to live at `docs/feat/wip/<feature>/` and move to `docs/feat/done/<feature>/` on completion.
 
 ### Skill description budget applied in this feature
 
@@ -442,7 +442,7 @@ One task per extended skill. Each task adds the profile-aware clause to the skil
 
 ### Feature close
 
-Move `docs/wip/kubernetes-support/` → `docs/done/kubernetes-support/`. Update any status metadata in the feature's own docs. Branch-level merge is a human action, not a task.
+Move `docs/feat/wip/kubernetes-support/` → `docs/feat/done/kubernetes-support/`. Update any status metadata in the feature's own docs. Branch-level merge is a human action, not a task.
 
 ## Open questions deferred to implementation
 

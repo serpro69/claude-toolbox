@@ -1,6 +1,6 @@
 ### Workflow: Continue WIP Feature
 
-1. **Find the feature** — Locate the feature directory in `/docs/wip/`. If multiple WIP features exist, ask the user which one to work on.
+1. **Find the feature** — Locate the feature directory in `/docs/feat/wip/`. If multiple WIP features exist, ask the user which one to work on.
 
 2. **Review progress** — Read `tasks.md` to understand:
    - Which tasks are done, in-progress, or pending

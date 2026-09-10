@@ -71,7 +71,7 @@ Agent names describe the **role**, not the skill that invokes them. `code-review
 
 ### Plugin content is self-contained
 
-`klaude-plugin/` ships standalone via the plugin marketplace — consumers get the plugin tree only, never this repo's `docs/`. Therefore skill, agent, and profile prose must NEVER reference toolbox-repo documents: no "(ADR NNNN)" citations, no `docs/adr/`-as-this-repo links, no `docs/wip|done` pointers. For a consumer these are unresolvable at best; at worst they collide with the consumer repo's own ADR numbering and point to unrelated decisions. State the rule and its rationale in full in the plugin file itself; keep the ADR back-reference in repo-side docs only (the ADR cites the operative plugin files, not the other way around). Distinguish: consumer-repo paths as _behavioral targets_ (e.g. review-architecture accepting artifacts from the consumer's `docs/adr/`, the document skill writing ADRs to the consumer's `/docs/adr`) are correct and expected.
+`klaude-plugin/` ships standalone via the plugin marketplace — consumers get the plugin tree only, never this repo's `docs/`. Therefore skill, agent, and profile prose must NEVER reference toolbox-repo documents: no "(ADR NNNN)" citations, no `docs/adr/`-as-this-repo links, no `docs/feat/wip|done` pointers. For a consumer these are unresolvable at best; at worst they collide with the consumer repo's own ADR numbering and point to unrelated decisions. State the rule and its rationale in full in the plugin file itself; keep the ADR back-reference in repo-side docs only (the ADR cites the operative plugin files, not the other way around). Distinguish: consumer-repo paths as _behavioral targets_ (e.g. review-architecture accepting artifacts from the consumer's `docs/adr/`, the document skill writing ADRs to the consumer's `/docs/adr`) are correct and expected.
 
 ### Shared instructions
 
@@ -94,7 +94,7 @@ When adding a new shared instruction:
 
 - Update `test/test-plugin-structure.sh` `EXPECTED_SKILLS` and `EXPECTED_COMMANDS`.
 - **Don't touch `run_plugin_migration`'s `dirs_to_remove` in `.claude/toolbox/scripts/template-sync.sh`** — those are historical paths for cleaning up pre-v0.5.0 downstream projects. They must stay as the names that existed at migration time.
-- Leave `docs/done/**` untouched — it's frozen history.
+- Leave `docs/feat/done/**` untouched — it's frozen history.
 - Watch for substring collisions (e.g., a `design-review` → `/kk:review-design` rename will also hit the `design-reviewer` agent name via simple sed; hand-fix those).
 
 ### Skill description budget
@@ -285,8 +285,8 @@ Some profiles populate phase content by vendoring files from external upstream r
 - **Add a file to an existing profile:** Add a `files` entry to the manifest, run `make vendor-go`.
 - **Add vendoring for a new profile:** Create `scripts/<profile>-vendor-manifest.yml`, add a `make vendor-<profile>` target. The tool is profile-agnostic.
 
-The `make vendor-go` target runs the vendor tool and then `test/test-plugin-structure.sh` to validate the bidirectional index invariant. See `docs/wip/go-vendor-integration/design.md` for the full manifest schema and transform details.
+The `make vendor-go` target runs the vendor tool and then `test/test-plugin-structure.sh` to validate the bidirectional index invariant. See `docs/feat/wip/go-vendor-integration/design.md` for the full manifest schema and transform details.
 
 ## ADR location
 
-Architecture decisions that span more than one feature live at `docs/adr/NNNN-slug.md` using [Michael Nygard's template](https://cognitect.com/blog/2011/11/15/documenting-architecture-decisions) (Context, Decision, Consequences). Per-feature design docs live at `docs/wip/<feature>/` while work is active and move to `docs/done/<feature>/` on completion — they are not ADRs.
+Architecture decisions that span more than one feature live at `docs/adr/NNNN-slug.md` using [Michael Nygard's template](https://cognitect.com/blog/2011/11/15/documenting-architecture-decisions) (Context, Decision, Consequences). Per-feature design docs live at `docs/feat/wip/<feature>/` while work is active and move to `docs/feat/done/<feature>/` on completion — they are not ADRs.

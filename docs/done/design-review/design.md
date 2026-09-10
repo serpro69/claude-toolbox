@@ -14,7 +14,7 @@ The skill evaluates two dimensions:
 
 ## Document Scope
 
-Default scope is `design.md` + `implementation.md` from `/docs/wip/[feature]/`. Scope is configurable via argument:
+Default scope is `design.md` + `implementation.md` from `/docs/feat/wip/[feature]/`. Scope is configurable via argument:
 
 | Argument | Documents reviewed |
 |----------|-------------------|

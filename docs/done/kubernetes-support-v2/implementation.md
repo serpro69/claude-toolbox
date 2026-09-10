@@ -248,7 +248,7 @@ For each agent file under `klaude-plugin/agents/`:
 Move the WIP docs to completed:
 
 ```
-git mv docs/wip/kubernetes-support-v2 docs/done/kubernetes-support-v2
+git mv docs/feat/wip/kubernetes-support-v2 docs/feat/done/kubernetes-support-v2
 ```
 
 Update feature-status metadata in the moved files (status → `done`).
