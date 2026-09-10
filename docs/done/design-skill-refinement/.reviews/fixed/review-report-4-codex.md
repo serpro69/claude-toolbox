@@ -23,7 +23,7 @@ I found one remaining non-blocking followability issue: the non-trivial alternat
 
 Reviewed canonical files and generated mirrors changed on the branch:
 
-- `docs/wip/design-skill-refinement/{design.md,implementation.md,tasks.md}`
+- `docs/feat/wip/design-skill-refinement/{design.md,implementation.md,tasks.md}`
 - `klaude-plugin/skills/design/{SKILL.md,idea-process.md,example-tasks.md,frameworks.md,refinement-criteria.md}`
 - `klaude-plugin/skills/design/evals/**`
 - `klaude-plugin/skills/review-design/{SKILL.md,review-process.md,review-isolated.md}`
@@ -32,7 +32,7 @@ Reviewed canonical files and generated mirrors changed on the branch:
 - `kodex-plugin/skills/design/**`
 - `kodex-plugin/skills/review-design/**`
 - `.gitignore`
-- historical reports under `docs/wip/design-skill-refinement/.reviews/fixed/`
+- historical reports under `docs/feat/wip/design-skill-refinement/.reviews/fixed/`
 
 For `/kk:review-code`, profile detection activated `skill-md`. Loaded checklists:
 
@@ -161,7 +161,7 @@ Commands run:
 ```bash
 git diff --stat master...HEAD
 git diff --find-renames master...HEAD
-git ls-files --others --exclude-standard kodex-plugin .codex/agents docs/wip/design-skill-refinement/.reviews
+git ls-files --others --exclude-standard kodex-plugin .codex/agents docs/feat/wip/design-skill-refinement/.reviews
 git diff --exit-code kodex-plugin/ .codex/agents/
 go test ./cmd/generate-kodex/...
 for test in test/test-*.sh; do $test; done

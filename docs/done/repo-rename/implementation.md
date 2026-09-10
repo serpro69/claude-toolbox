@@ -48,11 +48,11 @@ All occurrences of the literal string `claude-starter-kit` are replaced with `cl
 
 #### WIP Documentation
 
-- **`docs/wip/extract-plugin/design.md`** — marketplace config, install commands, repo URLs
-- **`docs/wip/extract-plugin/implementation.md`** — plugin config, marketplace JSON, install commands, migration steps
-- **`docs/wip/extract-plugin/tasks.md`** — task descriptions referencing repo name
-- **`docs/wip/language-specific-skills/design.md`** — context reference
-- **`docs/wip/language-specific-skills/implementation.md`** — context reference
+- **`docs/feat/wip/extract-plugin/design.md`** — marketplace config, install commands, repo URLs
+- **`docs/feat/wip/extract-plugin/implementation.md`** — plugin config, marketplace JSON, install commands, migration steps
+- **`docs/feat/wip/extract-plugin/tasks.md`** — task descriptions referencing repo name
+- **`docs/feat/wip/language-specific-skills/design.md`** — context reference
+- **`docs/feat/wip/language-specific-skills/implementation.md`** — context reference
 
 #### Commands
 

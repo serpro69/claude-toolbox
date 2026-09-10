@@ -38,7 +38,7 @@ Architecture is the dev flow one altitude up, with the two flows **nested** and 
 - architecture **review** → `review-architecture` skill + `architecture-reviewer` agent
 - architecture **implement** → *elaborate / hand-off*: turn architecture into buildable specs + ADR-constraints that **seed** feature `/kk:design`
 
-Architecture-implement's output = feature-design's *optional* input. This reuses every existing convention (family prefixes, read-only reviewer agents, profiles, evals, `docs/wip` staging) instead of splicing architecture into the linear flow.
+Architecture-implement's output = feature-design's *optional* input. This reuses every existing convention (family prefixes, read-only reviewer agents, profiles, evals, `docs/feat/wip` staging) instead of splicing architecture into the linear flow.
 
 ## 5. Milestone roadmap
 

@@ -2,7 +2,7 @@
 name: implement
 description: |
   TRIGGER when: user asks to implement, fix, build, or work on something — whether from a
-  docs/wip plan OR a standalone task (bug fix, GitHub issue, one-off change).
+  docs/feat/wip plan OR a standalone task (bug fix, GitHub issue, one-off change).
   Examples: "work on task 1", "fix this bug", "implement feature X from the issue".
   Provides structured execution with profile detection, dependency handling, review checkpoints.
 ---
@@ -16,7 +16,7 @@ description: |
 
 ## Modes
 
-Two modes, determined automatically: **plan mode** when the user references a docs/wip feature or task number; **standalone mode** otherwise (bug fix, GitHub issue, one-off change). When ambiguous, ask.
+Two modes, determined automatically: **plan mode** when the user references a docs/feat/wip feature or task number; **standalone mode** otherwise (bug fix, GitHub issue, one-off change). When ambiguous, ask.
 
 - **Plan mode:** Read [plan-mode.md](plan-mode.md) for entry, iteration, and completion procedures.
 - **Standalone mode:** Read [standalone-mode.md](standalone-mode.md) for entry procedure.

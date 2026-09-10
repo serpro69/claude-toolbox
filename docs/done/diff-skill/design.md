@@ -107,7 +107,7 @@ By default, compares `HEAD` (before) → working tree (after). The direction mat
 docs/reviews/diff-skill/<skill-name>-<short-sha-a>-<short-sha-b>.md
 ```
 
-Short SHA = 7 chars. Working-tree side → `WORKTREE`. Directory created on first run. Reports are committed — they serve as review history for the skill's evolution. The `docs/reviews/` convention is new; it sits outside the `docs/wip/` → `docs/done/` lifecycle because reviews are point-in-time snapshots, not living feature docs.
+Short SHA = 7 chars. Working-tree side → `WORKTREE`. Directory created on first run. Reports are committed — they serve as review history for the skill's evolution. The `docs/reviews/` convention is new; it sits outside the `docs/feat/wip/` → `docs/feat/done/` lifecycle because reviews are point-in-time snapshots, not living feature docs.
 
 ### Structure
 

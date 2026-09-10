@@ -96,9 +96,9 @@ Feel free to break out the design/implementation documents into multi-part files
 
 When creating documentation, follow this approach:
 
-- IF this is this a completely new feature - document it in in `/docs/wip/[feature-title]/{design,implementation}.md`.
+- IF this is this a completely new feature - document it in in `/docs/feat/wip/[feature-title]/{design,implementation}.md`.
 - ELSE this an improvement or an addition to an existing feature:
-  - If the feature is still WIP (documented under `/docs/wip`) - ask the user if you should update the existing design/implementation documents, or create new ones in a sub-directory of the existing feature.
+  - If the feature is still WIP (documented under `/docs/feat/wip`) - ask the user if you should update the existing design/implementation documents, or create new ones in a sub-directory of the existing feature.
   - Else the feature is completed (documented under root of `/docs`) - create new design/implementation documents in a sub-directory of the existing feature.
 
 **When documenting design and implementation plan**:
@@ -121,7 +121,7 @@ But, of course, **DO NOT:**
 
 **Step 6: Create the task list**
 
-Based on the implementation plan documented in Step 5, create a `tasks.md` file in the same `/docs/wip/[feature-title]/` directory.
+Based on the implementation plan documented in Step 5, create a `tasks.md` file in the same `/docs/feat/wip/[feature-title]/` directory.
 
 Follow the structure and conventions in the [example task file](./example-tasks.md). Key points:
 

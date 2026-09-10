@@ -17,4 +17,4 @@ Architecture decisions that span more than one feature are recorded as ADRs usin
 ## Location
 
 - Cross-feature ADRs: `docs/adr/NNNN-slug.md`
-- Per-feature design docs: `docs/wip/<feature>/` (active) → `docs/done/<feature>/` (completed)
+- Per-feature design docs: `docs/feat/wip/<feature>/` (active) → `docs/feat/done/<feature>/` (completed)

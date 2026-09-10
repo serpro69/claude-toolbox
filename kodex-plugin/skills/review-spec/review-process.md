@@ -16,9 +16,9 @@ Implementation Review Progress:
 
 **Step 1: Load feature documents and detect profiles**
 
-- Read `tasks.md` from `/docs/wip/[feature-name]/`
+- Read `tasks.md` from `/docs/feat/wip/[feature-name]/`
 - Read the linked `design.md` and `implementation.md`
-- If the feature name is not provided or ambiguous, list `/docs/wip/` contents and ask the user which feature to review
+- If the feature name is not provided or ambiguous, list `/docs/feat/wip/` contents and ask the user which feature to review
 - If no WIP docs exist, inform the user and ask if they want to point to alternative documentation
 - **Detect active profiles** using [shared-profile-detection.md](shared-profile-detection.md). For each active profile that populates a `review-spec/` phase slot, load its `index.md` and resolve always-load and matching conditional entries. Load resolved profile content before proceeding to per-task verification.
 

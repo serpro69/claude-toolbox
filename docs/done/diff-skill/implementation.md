@@ -11,7 +11,7 @@ Familiarity needed:
 
 - How the repo lays out skills — see `CLAUDE.md` § "Skill & Command Naming Conventions"
 - How existing skills structure `SKILL.md` + a process file + `_shared` symlinks — read `klaude-plugin/skills/merge-docs/` as the closest shape (simple, single-mode skill with one process file)
-- The `docs/wip/` ↔ `docs/done/` lifecycle for feature docs
+- The `docs/feat/wip/` ↔ `docs/feat/done/` lifecycle for feature docs
 
 Treat the design document as the source of truth. If a task description disagrees with the design, the design wins and the task needs updating.
 

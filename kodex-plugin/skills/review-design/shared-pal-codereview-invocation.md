@@ -35,7 +35,7 @@ The `step` field carries the review framing — not the diff or file contents. S
    - Changed: src/service.go, src/handler.go
    - Surrounding: src/types.go, src/middleware.go
    - Review checklists: .../profiles/go/review-code/solid-checklist.md
-   - Design: docs/wip/auth-refactor/design.md, implementation.md
+   - Design: docs/feat/wip/auth-refactor/design.md, implementation.md
    ```
 
    This tells pal which files are code under review, which are review criteria to apply, and which provide design intent. Without it, pal may treat checklists as code to review rather than guidance to follow.
@@ -50,7 +50,7 @@ The caller assembles this list from artifacts gathered during preparation. All p
 2. **Changed source files** — every file touched by the diff. These give pal the full file context around each change.
 3. **Surrounding code files** — direct imports, callers (one level up), and adjacent same-package files that share types with the changed code. Capped at 10 files; prioritize imports and callers over adjacency. These enable cross-file reasoning (e.g., verifying a called function's signature, checking convention consistency).
 4. **Profile checklist files** — resolved `(profile, checklist)` file paths from profile detection (e.g., `../../profiles/go/review-code/solid-checklist.md`). These give pal the same domain-specific review criteria as the sub-agent reviewer.
-5. **Design/implementation docs** — `design.md` and `implementation.md` from the feature's `docs/wip/<feature>/` directory, when available. These enable pal to flag spec deviations, not just code smells.
+5. **Design/implementation docs** — `design.md` and `implementation.md` from the feature's `docs/feat/wip/<feature>/` directory, when available. These enable pal to flag spec deviations, not just code smells.
 
 The caller is responsible for collecting these paths during its preparation steps and passing the assembled list here. pal handles file reading, token budgeting, and cross-turn deduplication internally.
 

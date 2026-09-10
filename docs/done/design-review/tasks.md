@@ -26,7 +26,7 @@
 
 ### Subtasks
 - [x] 2.1 Create `klaude-plugin/skills/design-review/review-process.md` with the capy knowledge base convention reference and progress checklist
-- [x] 2.2 Implement Step 1 (Load documents) — argument parsing with disambiguation rule (check `/docs/wip/` for feature name first, then scope keyword), scope resolution logic (none/design/implementation/tasks/all — note `tasks` = only tasks.md), feature directory lookup, graceful handling of missing docs
+- [x] 2.2 Implement Step 1 (Load documents) — argument parsing with disambiguation rule (check `/docs/feat/wip/` for feature name first, then scope keyword), scope resolution logic (none/design/implementation/tasks/all — note `tasks` = only tasks.md), feature directory lookup, graceful handling of missing docs
 - [x] 2.3 Implement Step 2 (Capy search) — search `kk:arch-decisions` and `kk:review-findings` for prior context
 - [x] 2.4 Implement Step 3 (Document quality review) — completeness, clarity, internal consistency, cross-document consistency, convention adherence, subtask quality checks
 - [x] 2.5 Implement Step 4 (Technical soundness review) — viability, edge cases, trade-offs, scalability, testing strategy, migration/rollback, codebase cross-reference

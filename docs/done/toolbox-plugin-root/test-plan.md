@@ -236,7 +236,7 @@ this into a proper design.
 
 ### C4 — `/kk:implement` pre-write profile gotchas
 
-Reuse `~/rc-test/k8s`. Create a trivial `docs/wip/<feature>/tasks.md` with one task that
+Reuse `~/rc-test/k8s`. Create a trivial `docs/feat/wip/<feature>/tasks.md` with one task that
 edits a chart template, then:
 
 ```
@@ -443,7 +443,7 @@ with the same hand-built prompts (with and without the `## Plugin Root` section)
 
 ## 7. Results template
 
-Copy into a session note (`docs/wip/toolbox-plugin-root/.sessions/rc-<version>-<date>.md`):
+Copy into a session note (`docs/feat/wip/toolbox-plugin-root/.sessions/rc-<version>-<date>.md`):
 
 ```
 RC: <version>      Date: <date>      Tester: <name>

@@ -11,9 +11,9 @@ Task Progress:
 - [ ] Step 5: Final review
 ```
 
-**Inputs:** Two feature directories under `/docs/wip/` (e.g., `auth-system-v1/` and `auth-system-v2/`).
+**Inputs:** Two feature directories under `/docs/feat/wip/` (e.g., `auth-system-v1/` and `auth-system-v2/`).
 
-**Output:** A new directory `/docs/wip/[feature-title]-merged/` containing the unified `design.md`, `implementation.md`, and `tasks.md`.
+**Output:** A new directory `/docs/feat/wip/[feature-title]-merged/` containing the unified `design.md`, `implementation.md`, and `tasks.md`.
 
 ---
 
@@ -51,7 +51,7 @@ Read both design docs and categorize every section/decision into one of four buc
   - Ask the user to pick or provide an alternative
 - One question per message. Wait for a response before moving on.
 
-After all decisions are made, write the merged `design.md` to `/docs/wip/[feature-title]-merged/`.
+After all decisions are made, write the merged `design.md` to `/docs/feat/wip/[feature-title]-merged/`.
 
 **Step 3: Merge implementation docs**
 
@@ -70,7 +70,7 @@ Apply the same four-bucket categorization (agreement, gap, contradiction, error)
 
 Surface contradictions and judgment calls to the user the same way as in Step 2.
 
-Write the merged `implementation.md` to `/docs/wip/[feature-title]-merged/`.
+Write the merged `implementation.md` to `/docs/feat/wip/[feature-title]-merged/`.
 
 **Step 4: Generate task list**
 
@@ -84,7 +84,7 @@ The task list is a **derived artifact** — generate it from the merged implemen
 3. Preserve dependency ordering based on the merged implementation plan
 4. Include a final verification task (same pattern as design)
 
-Write `tasks.md` to `/docs/wip/[feature-title]-merged/`.
+Write `tasks.md` to `/docs/feat/wip/[feature-title]-merged/`.
 
 **Step 5: Final review**
 

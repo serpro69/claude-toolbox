@@ -20,7 +20,7 @@ This document is a step-by-step guide for implementing the design. Each step is 
 Before starting P0:
 
 1. The three ADRs ([0001](../../adr/0001-profile-detection-model.md), [0002](../../adr/0002-profile-content-organization.md), [0003](../../adr/0003-plugin-root-referenced-content.md)) have been authored in `docs/adr/`.
-2. `docs/wip/kubernetes-support/` exists with this file, `design.md`, and `tasks.md`.
+2. `docs/feat/wip/kubernetes-support/` exists with this file, `design.md`, and `tasks.md`.
 3. The branch `k8s_support` is checked out (confirm with `git branch --show-current`).
 4. The plugin-structure test currently passes on the branch (confirm with `bash test/test-plugin-structure.sh` — captures the pre-P0 baseline).
 
@@ -374,7 +374,7 @@ File edits:
 Move the WIP docs to completed:
 
 ```
-git mv docs/wip/kubernetes-support docs/done/kubernetes-support
+git mv docs/feat/wip/kubernetes-support docs/feat/done/kubernetes-support
 ```
 
 Update the feature status metadata inside the moved files (e.g., `Status: done` in `design.md` and `implementation.md`). `tasks.md` header status set to `done`; all task statuses reported as `done`.
@@ -382,5 +382,5 @@ Update the feature status metadata inside the moved files (e.g., `Status: done` 
 Branch merge and PR process is outside this plan — it is a human decision.
 
 **Verify.**
-- `test -d docs/done/kubernetes-support && ! test -d docs/wip/kubernetes-support`.
-- `git log --stat docs/done/kubernetes-support/` shows the move preserved history.
+- `test -d docs/feat/done/kubernetes-support && ! test -d docs/feat/wip/kubernetes-support`.
+- `git log --stat docs/feat/done/kubernetes-support/` shows the move preserved history.

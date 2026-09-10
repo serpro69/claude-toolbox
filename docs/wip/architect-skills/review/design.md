@@ -121,7 +121,7 @@ Why a separate pass, not a seventh row: Pass 1 is a strict `extract → grep bou
 
 ## 7. Output contract
 
-**Invocation:** `/kk:review-architecture <artifact-path>` — exactly one artifact per invocation (§2a); a second path argument is rejected with guidance to run per artifact. For a design doc, an optional heading argument scopes the review to its architecture section. No path given → list candidate artifacts (`docs/adr/`, `docs/wip/*/design.md`) and ask.
+**Invocation:** `/kk:review-architecture <artifact-path>` — exactly one artifact per invocation (§2a); a second path argument is rejected with guidance to run per artifact. For a design doc, an optional heading argument scopes the review to its architecture section. No path given → list candidate artifacts (`docs/adr/`, `docs/feat/wip/*/design.md`) and ask.
 
 **Report** (presented inline, mirroring the review-skill family):
 
@@ -159,7 +159,7 @@ Evals live at `klaude-plugin/skills/review-architecture/evals/<name>/{eval.json,
 
 ## 10. Open questions (deferred, documented)
 
-- **Broader-architecture-doc home** (`docs/architecture/` vs `docs/wip/<x>/architecture.md`) — deferred to M2; M1 only reads.
+- **Broader-architecture-doc home** (`docs/architecture/` vs `docs/feat/wip/<x>/architecture.md`) — deferred to M2; M1 only reads.
 - **Per-artifact-type structural-slot heuristic catalog** (§4) — implementation detail; enumerate as Pass 0 is built.
 - **Pass 0 ensemble worth the token cost?** — measure during eval before committing to it.
 

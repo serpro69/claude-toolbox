@@ -9,17 +9,17 @@
 
 ## Scope
 
-Reviewed the current branch implementation for `docs/wip/design-skill-refinement/`.
+Reviewed the current branch implementation for `docs/feat/wip/design-skill-refinement/`.
 
 Primary files reviewed:
 
-- `docs/wip/design-skill-refinement/{design.md,implementation.md,tasks.md}`
+- `docs/feat/wip/design-skill-refinement/{design.md,implementation.md,tasks.md}`
 - `klaude-plugin/skills/design/{SKILL.md,idea-process.md,example-tasks.md,frameworks.md,refinement-criteria.md}`
 - `klaude-plugin/skills/design/evals/**`
 - `klaude-plugin/skills/review-design/{SKILL.md,review-process.md,review-isolated.md}`
 - `klaude-plugin/agents/design-reviewer.md`
 - generated mirrors under `kodex-plugin/skills/**` and `.codex/agents/design-reviewer.toml`
-- fixed prior review reports under `docs/wip/design-skill-refinement/.reviews/fixed/`
+- fixed prior review reports under `docs/feat/wip/design-skill-refinement/.reviews/fixed/`
 
 `kk:review-code` profile detection resolved `skill-md` and loaded:
 
@@ -62,9 +62,9 @@ That is a skill-complexity issue: it partially recreates the “jump ahead” fa
 #### SC-1. Task tracker still claims CoVe fallback triggers were implemented
 
 **Type:** `OUTDATED_DOC`  
-**File:** `docs/wip/design-skill-refinement/tasks.md:48`  
+**File:** `docs/feat/wip/design-skill-refinement/tasks.md:48`  
 **Related implementation:** `klaude-plugin/skills/design/idea-process.md:73`  
-**Related specs:** `docs/wip/design-skill-refinement/design.md:63`, `docs/wip/design-skill-refinement/implementation.md:102`  
+**Related specs:** `docs/feat/wip/design-skill-refinement/design.md:63`, `docs/feat/wip/design-skill-refinement/implementation.md:102`  
 **Confidence:** 9/10
 
 Task 3.7 says Step 3d implemented “CoVe scoped to verifiable claims only, concrete fallback triggers.” The current design and implementation intentionally removed the fallback-trigger machinery and simplified CoVe to a user-confirmed option:
