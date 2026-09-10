@@ -2688,6 +2688,84 @@ assert_file_not_exists "$test_dir/.github/scripts/semver-compare.sh" "semver-com
 assert_file_not_exists "$test_dir/docs/update.sh" "update.sh removed in apply mode"
 
 # =============================================================================
+# Section: Feature-docs relocation migration
+# =============================================================================
+
+log_section "Feature-docs relocation migration"
+
+log_test "needs_docs_feat_migration returns true when legacy docs dirs exist"
+reset_globals
+test_dir=$(create_temp_dir "needs-docs-feat-true")
+mkdir -p "$test_dir/docs/wip/some-feature"
+pushd "$test_dir" >/dev/null
+needs_docs_feat_migration
+assert_equals "0" "$?" "needs_docs_feat_migration returns 0 when docs/wip exists"
+popd >/dev/null || true
+
+log_test "needs_docs_feat_migration returns false when only docs/feat exists"
+reset_globals
+test_dir=$(create_temp_dir "needs-docs-feat-false")
+mkdir -p "$test_dir/docs/feat/wip/some-feature"
+pushd "$test_dir" >/dev/null
+needs_docs_feat_migration && rc=0 || rc=$?
+assert_not_equals "0" "$rc" "needs_docs_feat_migration returns non-zero when no legacy dirs"
+popd >/dev/null || true
+
+log_test "run_docs_feat_migration in detect mode tracks moves without mutating"
+reset_globals
+test_dir=$(create_temp_dir "detect-docs-feat")
+mkdir -p "$test_dir/docs/wip/feat-a"
+mkdir -p "$test_dir/docs/done/feat-b"
+mkdir -p "$test_dir/docs/archive/feat-c"
+echo "wip" > "$test_dir/docs/wip/feat-a/design.md"
+ADDED_FILES=()
+DELETED_FILES=()
+APPLY_MODE=false
+pushd "$test_dir" >/dev/null
+run_docs_feat_migration >/dev/null 2>&1
+popd >/dev/null
+
+assert_equals "3" "${#DELETED_FILES[@]}" "DELETED_FILES has 3 entries in detect mode"
+assert_equals "3" "${#ADDED_FILES[@]}" "ADDED_FILES has 3 entries in detect mode"
+assert_file_exists "$test_dir/docs/wip/feat-a/design.md" "docs/wip preserved in detect mode"
+assert_file_not_exists "$test_dir/docs/feat/wip/feat-a/design.md" "docs/feat/wip not created in detect mode"
+
+log_test "run_docs_feat_migration in apply mode relocates legacy dirs"
+reset_globals
+test_dir=$(create_temp_dir "apply-docs-feat")
+mkdir -p "$test_dir/docs/wip/feat-a"
+mkdir -p "$test_dir/docs/done/feat-b"
+echo "wip" > "$test_dir/docs/wip/feat-a/design.md"
+echo "done" > "$test_dir/docs/done/feat-b/design.md"
+ADDED_FILES=()
+DELETED_FILES=()
+APPLY_MODE=true
+pushd "$test_dir" >/dev/null
+run_docs_feat_migration >/dev/null 2>&1
+popd >/dev/null
+
+assert_equals "2" "${#DELETED_FILES[@]}" "DELETED_FILES has 2 entries in apply mode"
+assert_file_not_exists "$test_dir/docs/wip/feat-a/design.md" "docs/wip removed in apply mode"
+assert_file_exists "$test_dir/docs/feat/wip/feat-a/design.md" "docs/feat/wip created in apply mode"
+assert_file_exists "$test_dir/docs/feat/done/feat-b/design.md" "docs/feat/done created in apply mode"
+
+log_test "run_docs_feat_migration skips a pair when the target already exists"
+reset_globals
+test_dir=$(create_temp_dir "collision-docs-feat")
+mkdir -p "$test_dir/docs/wip/feat-a"
+mkdir -p "$test_dir/docs/feat/wip"          # target already present -> collision
+echo "legacy" > "$test_dir/docs/wip/feat-a/design.md"
+ADDED_FILES=()
+DELETED_FILES=()
+APPLY_MODE=true
+pushd "$test_dir" >/dev/null
+run_docs_feat_migration >/dev/null 2>&1
+popd >/dev/null
+
+assert_equals "0" "${#DELETED_FILES[@]}" "no deletions tracked when target collides"
+assert_file_exists "$test_dir/docs/wip/feat-a/design.md" "legacy docs/wip left in place on collision"
+
+# =============================================================================
 # Section: Pre-compare deletion preservation
 # =============================================================================
 
