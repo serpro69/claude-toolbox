@@ -53,7 +53,7 @@ if [[ ! -d "${PROJECT_ROOT}/docs/feat/wip/${DIRNAME}" ]]; then
   exit 1
 fi
 
-find "$PROJECT_ROOT" -type f -not -path "*/.git/*" -print0 | $XARGS -I{} -0 $SED -i "s/docs\/wip\/${DIRNAME}/docs\/${DIRNAME}/g" {}
+find "$PROJECT_ROOT" -type f -not -path "*/.git/*" -print0 | $XARGS -I{} -0 $SED -i "s/docs\/feat\/wip\/${DIRNAME}/docs\/feat\/done\/${DIRNAME}/g" {}
 
 mkdir -p docs/feat/done
 
