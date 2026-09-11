@@ -20,7 +20,7 @@ Run a single suite:
 |-------|----------------|
 | `test-plugin-structure.sh` | Plugin/marketplace manifests, skills, commands, hooks, profiles, cross-references, kodex-plugin generated output validation |
 | `test-codex-structure.sh` | Codex marketplace, config.toml, hooks.json, agent TOMLs, Starlark rules, scripts, AGENTS.md |
-| `test-template-sync.sh` | CLI parsing, manifest validation, variable substitution, settings merge, plugin migration, sync exclusions |
+| `test-template-sync.sh` | CLI parsing, manifest validation, variable substitution, settings merge, plugin migration, sync exclusions, self-update handoff |
 | `test-template-cleanup.sh` | Manifest generation, variable capture, git tag/SHA detection |
 | `test-claude-extra.sh` | CLAUDE.extra.md existence, compare_files detection, auto-import |
 | `test-manifest-jq.sh` | JSON generation patterns, special character handling, schema validation, round-trip |

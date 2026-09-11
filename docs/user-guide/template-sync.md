@@ -82,6 +82,17 @@ Edit `.github/template-state.json` and add a `sync_exclusions` array:
 - Excluded files are NOT flagged as deleted if they exist locally but not upstream
 - Excluded files appear as "Excluded" in the sync report for transparency
 
+## Self-Updating Sync Script
+
+The sync script is itself a synced file. When the target version ships a different `template-sync.sh`, the running script hands the whole run over to that copy before touching anything: it stages the upstream script in a temp location and re-executes it with the same arguments. The version that matches the templates therefore drives the entire sync — including migrations that only the newer script knows about — in one invocation, and `--dry-run` previews reflect exactly what will be applied.
+
+This applies to local runs (`--local`), to the CI workflow's staging run, and to the `--apply` step that turns staged changes into a PR.
+
+Set `TEMPLATE_SYNC_NO_HANDOFF=1` to disable the handoff and run the locally installed script as-is (useful while developing the script itself).
+
+!!! note "One-time transition for existing consumers"
+    Scripts installed before this behavior existed cannot hand off. The first sync that crosses over to a handoff-capable version still behaves the old way: the report and apply complete, but bash may print a spurious `syntax error near unexpected token` right at the end because the script overwrote itself mid-run, and migrations introduced by the new version land on the next run. Simply run the sync once more. Every sync after that is single-pass.
+
 ## Syncing Workflow Files
 
 Template sync updates its own workflow (`.github/workflows/template-sync.yml`) alongside everything else — the sync script is part of the `.claude/` directory and is synced as part of that tree. However, GitHub does not allow the default `GITHUB_TOKEN` to push changes to workflow files — the push is rejected with a `workflows` permission error ([details](https://github.com/peter-evans/create-pull-request/issues/3558)).
