@@ -30,6 +30,9 @@ reset_globals() {
   TARGET_VERSION="latest"
   APPLY_MODE=false
   LOCAL_MODE=false
+  IS_ENTRYPOINT=false
+  TEMP_DIR=""
+  unset TEMPLATE_SYNC_NO_HANDOFF TEMPLATE_SYNC_HANDOFF_CLEANUP
   # Reset exclusion tracking arrays
   EXCLUDED_FILES=()
   SYNC_EXCLUSIONS=()
@@ -2869,6 +2872,197 @@ for f in "${DELETED_FILES[@]}"; do
 done
 
 assert_equals "1" "$_count" ".claude/scripts/statusline.sh appears exactly once (deduplicated)"
+
+# =============================================================================
+# Section: handoff_to_upstream_script (self-update handoff)
+# =============================================================================
+
+log_section "handoff_to_upstream_script"
+
+# Builds a staging tree whose upstream template-sync.sh is a stub that records
+# how it was invoked, so a real exec() can be observed from a subshell.
+# Usage: setup_handoff_fixture <test_dir> <templates_subdir>
+setup_handoff_fixture() {
+  local test_dir="$1" templates_subdir="$2"
+  local scripts_dir="$test_dir/staging/$templates_subdir/claude/toolbox/scripts"
+  mkdir -p "$scripts_dir"
+  cat > "$scripts_dir/template-sync.sh" <<'STUB'
+#!/usr/bin/env bash
+echo "STUB_ARGS=$*"
+echo "STUB_NO_HANDOFF=${TEMPLATE_SYNC_NO_HANDOFF:-unset}"
+echo "STUB_CLEANUP=${TEMPLATE_SYNC_HANDOFF_CLEANUP:-unset}"
+echo "STUB_SELF=$0"
+exit 0
+STUB
+  echo "# stub semver" > "$scripts_dir/semver-compare.sh"
+}
+
+log_test "handoff is a no-op when sourced (not the entry point)"
+reset_globals
+test_dir=$(create_temp_dir "handoff-sourced")
+setup_handoff_fixture "$test_dir" "fetched"
+STAGING_DIR="$test_dir/staging"
+# IS_ENTRYPOINT=false from reset_globals — an exec() here would kill the test suite
+result=$(handoff_to_upstream_script "$test_dir/staging/fetched" --local; echo "returned=$?")
+assert_equals "returned=0" "$result" "returns 0 without exec when IS_ENTRYPOINT=false"
+assert_file_not_exists "$test_dir/staging/bin/template-sync.sh" "no bin/ copy staged when not entry point"
+
+log_test "handoff is a no-op when TEMPLATE_SYNC_NO_HANDOFF is set"
+reset_globals
+test_dir=$(create_temp_dir "handoff-disabled")
+setup_handoff_fixture "$test_dir" "fetched"
+STAGING_DIR="$test_dir/staging"
+result=$(IS_ENTRYPOINT=true TEMPLATE_SYNC_NO_HANDOFF=1 handoff_to_upstream_script "$test_dir/staging/fetched" --local; echo "returned=$?")
+assert_equals "returned=0" "$result" "returns 0 without exec when disabled via env"
+assert_file_not_exists "$test_dir/staging/bin/template-sync.sh" "no bin/ copy staged when disabled"
+
+log_test "handoff is a no-op when upstream script is byte-identical"
+reset_globals
+test_dir=$(create_temp_dir "handoff-identical")
+mkdir -p "$test_dir/staging/fetched/claude/toolbox/scripts"
+cp "$TEMPLATE_SYNC_SCRIPT" "$test_dir/staging/fetched/claude/toolbox/scripts/template-sync.sh"
+STAGING_DIR="$test_dir/staging"
+result=$(IS_ENTRYPOINT=true handoff_to_upstream_script "$test_dir/staging/fetched" --local; echo "returned=$?")
+assert_equals "returned=0" "$result" "returns 0 without exec when scripts match"
+assert_file_not_exists "$test_dir/staging/bin/template-sync.sh" "no bin/ copy staged when scripts match"
+
+log_test "handoff is a no-op when upstream has no sync script"
+reset_globals
+test_dir=$(create_temp_dir "handoff-missing")
+mkdir -p "$test_dir/staging/fetched/claude"
+STAGING_DIR="$test_dir/staging"
+result=$(IS_ENTRYPOINT=true handoff_to_upstream_script "$test_dir/staging/fetched" --local; echo "returned=$?")
+assert_equals "returned=0" "$result" "returns 0 when target version ships no template-sync.sh"
+
+log_test "handoff execs the upstream script with original args (fetch mode)"
+reset_globals
+test_dir=$(create_temp_dir "handoff-exec")
+setup_handoff_fixture "$test_dir" "fetched"
+mkdir -p "$test_dir/staging/upstream" "$test_dir/staging/substituted"
+STAGING_DIR="$test_dir/staging"
+# Subshell: exec() replaces only the subshell, and its output is what we assert on.
+output=$(
+  IS_ENTRYPOINT=true
+  TEMP_DIR="$test_dir/staging"
+  handoff_to_upstream_script "$test_dir/staging/fetched" --local --version v9.9.9
+  echo "NOT_REACHED"
+)
+if [[ "$output" == *"NOT_REACHED"* ]]; then
+  log_fail "handoff should exec() and never return"
+else
+  log_pass "handoff exec()'d the upstream script (parent code not reached)"
+fi
+if [[ "$output" == *"STUB_ARGS=--local --version v9.9.9"* ]]; then
+  log_pass "original CLI arguments passed through verbatim"
+else
+  log_fail "expected STUB_ARGS=--local --version v9.9.9 in output, got: $output"
+fi
+if [[ "$output" == *"STUB_NO_HANDOFF=1"* ]]; then
+  log_pass "child receives TEMPLATE_SYNC_NO_HANDOFF=1 (loop guard)"
+else
+  log_fail "child should receive TEMPLATE_SYNC_NO_HANDOFF=1, got: $output"
+fi
+if [[ "$output" == *"STUB_CLEANUP=$test_dir/staging"* ]]; then
+  log_pass "child receives parent TEMP_DIR via TEMPLATE_SYNC_HANDOFF_CLEANUP"
+else
+  log_fail "child should receive TEMPLATE_SYNC_HANDOFF_CLEANUP=$test_dir/staging, got: $output"
+fi
+if [[ "$output" == *"STUB_SELF=$test_dir/staging/bin/template-sync.sh"* ]]; then
+  log_pass "upstream script runs from stable \$STAGING_DIR/bin copy"
+else
+  log_fail "expected exec from $test_dir/staging/bin/template-sync.sh, got: $output"
+fi
+assert_file_exists "$test_dir/staging/bin/semver-compare.sh" "semver-compare.sh copied next to the script"
+assert_file_not_exists "$test_dir/staging/fetched/claude/toolbox/scripts/template-sync.sh" "fetched/ cleared so child can re-fetch"
+if [[ ! -d "$test_dir/staging/upstream" && ! -d "$test_dir/staging/substituted" ]]; then
+  log_pass "upstream/ and substituted/ cleared in fetch mode"
+else
+  log_fail "upstream/ and substituted/ should be removed before child re-fetches"
+fi
+
+log_test "handoff preserves staged tree in --apply mode"
+reset_globals
+test_dir=$(create_temp_dir "handoff-apply")
+setup_handoff_fixture "$test_dir" "substituted"
+mkdir -p "$test_dir/staging/upstream"
+echo "staged" > "$test_dir/staging/substituted/claude/CLAUDE.extra.md"
+STAGING_DIR="$test_dir/staging"
+output=$(
+  IS_ENTRYPOINT=true
+  APPLY_MODE=true
+  handoff_to_upstream_script "$test_dir/staging/substituted" --apply --version v9.9.9 --output-dir "$test_dir/staging"
+  echo "NOT_REACHED"
+)
+if [[ "$output" == *"STUB_ARGS=--apply --version v9.9.9 --output-dir $test_dir/staging"* ]]; then
+  log_pass "apply-mode arguments passed through verbatim"
+else
+  log_fail "expected apply-mode args in output, got: $output"
+fi
+if [[ "$output" == *"STUB_CLEANUP=unset"* ]]; then
+  log_pass "no cleanup delegation when staging dir is user-provided (TEMP_DIR empty)"
+else
+  log_fail "TEMPLATE_SYNC_HANDOFF_CLEANUP should be unset without TEMP_DIR, got: $output"
+fi
+assert_file_exists "$test_dir/staging/substituted/claude/CLAUDE.extra.md" "substituted/ kept for the child to apply"
+assert_dir_exists "$test_dir/staging/upstream" "upstream/ kept in apply mode"
+
+log_test "cleanup_on_exit removes the parent temp dir delegated via handoff"
+reset_globals
+test_dir=$(create_temp_dir "handoff-cleanup")
+mkdir -p "$test_dir/template-sync.parent" "$test_dir/not-ours"
+# cleanup_on_exit calls exit — run it in a subshell
+(
+  TEMP_DIR=""
+  TEMPLATE_SYNC_HANDOFF_CLEANUP="$test_dir/template-sync.parent"
+  cleanup_on_exit
+) >/dev/null 2>&1
+assert_file_not_exists "$test_dir/template-sync.parent" "delegated template-sync.* temp dir removed"
+(
+  TEMP_DIR=""
+  TEMPLATE_SYNC_HANDOFF_CLEANUP="$test_dir/not-ours"
+  cleanup_on_exit
+) >/dev/null 2>&1
+assert_dir_exists "$test_dir/not-ours" "paths outside the mktemp naming pattern are left alone"
+
+log_test "entry point exits cleanly after main (self-overwrite guard)"
+# Run the real script directly with --help: exercises the IS_ENTRYPOINT guard
+# and the trailing exit in the bottom block.
+if output=$("$TEMPLATE_SYNC_SCRIPT" --help 2>&1); then
+  log_pass "script executed directly exits 0 via the entry-point guard"
+else
+  log_fail "script executed directly should exit 0 for --help, got: $output"
+fi
+# Simulate the actual failure mode: a running script whose file is replaced by
+# a longer one mid-run. The guard's trailing `exit` must keep bash from reading
+# the new content at a stale offset.
+victim="$test_dir/victim.sh"
+cat > "$victim" <<'VICTIM'
+#!/usr/bin/env bash
+set -euo pipefail
+IS_ENTRYPOINT=false
+main() {
+  # Overwrite ourselves with a much longer file whose tail would be a syntax
+  # error / arbitrary command if bash read past the guard block.
+  {
+    cat "$0"
+    for _ in $(seq 1 200); do echo 'echo "READ_PAST_GUARD"; )))) unexpected token'; done
+  } > "$0.new"
+  cat "$0.new" > "$0"
+  echo "MAIN_DONE"
+}
+if [[ "${BASH_SOURCE[0]:-}" == "${0:-}" ]]; then
+  IS_ENTRYPOINT=true
+  main "$@"
+  exit $?
+fi
+VICTIM
+chmod +x "$victim"
+output=$("$victim" 2>&1); rc=$?
+if [[ $rc -eq 0 && "$output" == "MAIN_DONE" ]]; then
+  log_pass "trailing exit prevents reading the overwritten script (rc=0, no stray output)"
+else
+  log_fail "self-overwrite guard failed: rc=$rc output=$output"
+fi
 
 # =============================================================================
 # Summary
