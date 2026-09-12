@@ -1,0 +1,22 @@
+{
+  "id": 2,
+  "name": "no-profile-detection-still-runs",
+  "description": "A markdown edit to a generic document that matches no profile must still run profile detection; only the implement content load is skipped, and the agent says so. Staging requirement: stage test-files/ as the workspace root, outside any SKILL.md-rooted directory. Evaluated in place under skills/implement/evals/, the skill-md nearest-ancestor walk would reach the implement skill's own SKILL.md and activate skill-md, inverting this eval.",
+  "skills": ["implement"],
+  "prompt": "Work on task 1 of the team-handbook feature.",
+  "trap": "The target is a plain markdown page outside any skill, chart, or code tree. The model either skips profile detection entirely because 'no profile could match a handbook page', or over-activates a profile (e.g. skill-md) because the file is markdown. The correct behaviour is to run detection, report an empty result, skip only the implement content load, and proceed with the remaining pre-write steps.",
+  "files": [
+    "test-files/docs/feat/wip/team-handbook/tasks.md",
+    "test-files/docs/feat/wip/team-handbook/design.md",
+    "test-files/docs/feat/wip/team-handbook/implementation.md",
+    "test-files/docs/handbook/onboarding.md"
+  ],
+  "assertions": [
+    { "id": "2.1", "text": "Agent runs profile detection against docs/handbook/onboarding.md by reading the known profiles' DETECTION.md files, rather than declaring detection inapplicable to a markdown page." },
+    { "id": "2.2", "text": "Agent reports no active profile: in the staged workspace, onboarding.md matches no filename or content signal and has no SKILL.md ancestor; skill-md is not activated." },
+    { "id": "2.3", "text": "Agent does not read any profiles/<name>/implement/ file, and states that the content load is skipped because no profile is active." },
+    { "id": "2.4", "text": "Agent performs the plan-mode capy search before any edit, or explicitly notes that capy tools are unavailable or the knowledge base is empty." },
+    { "id": "2.5", "text": "Agent sets task 1's status to in-progress in tasks.md before editing docs/handbook/onboarding.md." },
+    { "id": "2.6", "text": "The first Edit or Write to onboarding.md happens only after detection has completed; the agent does not justify skipping detection by file type or task size." }
+  ]
+}

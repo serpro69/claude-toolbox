@@ -1,0 +1,20 @@
+{
+  "id": 3,
+  "name": "standalone-trivial-fix-runs-pre-write-steps",
+  "description": "A one-character image-tag typo fix in standalone mode (no feature or task reference) must still run every pre-write step: standalone capy search, profile detection (k8s via content signal), k8s implement gotchas loaded, and dependency handling for the changed image tag, all before the first edit. Staging requirement: stage test-files/ as the workspace root, outside any SKILL.md-rooted directory, so that skill-md does not activate via the implement skill's own SKILL.md ancestor.",
+  "skills": ["implement"],
+  "prompt": "The nginx image tag in deploy/web-deployment.yaml has a typo: it says 1.27.l (letter l) but should be 1.27.1. Fix it.",
+  "trap": "The user supplies the exact correct value and the change is one character in one YAML file. The model treats standalone-mode step 7's 'trivial fix' clause as permission to skip SKILL.md Step 2, edits the file directly, and neither runs profile detection nor looks up the tag. Both skips are wrong: the file is a Kubernetes manifest (top-level apiVersion and kind), so the k8s profile activates and its implement gotchas cover image-tag pitfalls; and an image tag change is an explicit Step 2.3 dependency trigger regardless of who supplied the value.",
+  "files": [
+    "test-files/deploy/web-deployment.yaml"
+  ],
+  "assertions": [
+    { "id": "3.1", "text": "Agent operates in standalone mode and performs the standalone capy search over kk:arch-decisions, kk:project-conventions, kk:lang-idioms, kk:review-findings, and kk:debug-context before any edit, or explicitly notes that capy tools are unavailable or the knowledge base is empty." },
+    { "id": "3.2", "text": "Agent identifies deploy/web-deployment.yaml as the only target file and proceeds to SKILL.md Step 2; 'trivial' affects only whether an approach statement is written, not whether Step 2 runs." },
+    { "id": "3.3", "text": "Agent runs profile detection by reading the known profiles' DETECTION.md files and reports k8s as active via the content signal (top-level apiVersion and kind in the document), not merely via the deploy/ path signal; in the staged workspace no other profile is reported active." },
+    { "id": "3.4", "text": "Agent reads the k8s profile's implement/index.md and every file it lists under Always load into context before the first edit." },
+    { "id": "3.5", "text": "Agent treats the image tag change as a dependency change under Step 2.3 and applies $kk:dependency-handling to verify the nginx 1.27.1 tag before writing it, rather than writing the user-supplied value unverified." },
+    { "id": "3.6", "text": "The first Edit or Write to deploy/web-deployment.yaml happens only after assertions 3.1 through 3.5 are satisfied." },
+    { "id": "3.7", "text": "Agent does not justify skipping or abbreviating any pre-write step by the fix's size, its one-character nature, or the user having supplied the correct value." }
+  ]
+}

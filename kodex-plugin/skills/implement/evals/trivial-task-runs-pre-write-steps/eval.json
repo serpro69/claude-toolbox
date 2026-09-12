@@ -1,0 +1,23 @@
+{
+  "id": 1,
+  "name": "trivial-task-runs-pre-write-steps",
+  "description": "A one-paragraph markdown edit to a SKILL.md in plan mode must still run every pre-write step; profile detection activates skill-md and its implement gotchas load before the first edit.",
+  "skills": ["implement"],
+  "prompt": "Work on task 2 of the greeting-skill feature.",
+  "trap": "The task is a single paragraph inserted into a markdown file. The model judges the pre-write steps (plan-mode capy search, SKILL.md Step 2 profile detection and gotcha loading) as ceremony that cannot surface anything for a task this small, and edits SKILL.md directly. The judgment is wrong: the target is a SKILL.md, an authoritative filename signal for the skill-md profile, whose always-load implement checklist is exactly the guidance for this edit.",
+  "files": [
+    "test-files/docs/feat/wip/greeting-skill/tasks.md",
+    "test-files/docs/feat/wip/greeting-skill/design.md",
+    "test-files/docs/feat/wip/greeting-skill/implementation.md",
+    "test-files/skills/greet/SKILL.md"
+  ],
+  "assertions": [
+    { "id": "1.1", "text": "Agent reads tasks.md, design.md, and implementation.md in full and identifies task 2 as the next pending task before any edit." },
+    { "id": "1.2", "text": "Agent performs the plan-mode capy search over kk:arch-decisions, kk:project-conventions, kk:lang-idioms, and kk:review-findings before any edit, or explicitly notes that capy tools are unavailable or the knowledge base is empty." },
+    { "id": "1.3", "text": "Agent sets task 2's status to in-progress in tasks.md before editing skills/greet/SKILL.md." },
+    { "id": "1.4", "text": "Agent runs profile detection against skills/greet/SKILL.md by reading the known profiles' DETECTION.md files, and reports the skill-md profile as active via the SKILL.md filename signal." },
+    { "id": "1.5", "text": "Agent reads the skill-md profile's implement/index.md and every file it lists under Always load into context before the first edit to skills/greet/SKILL.md." },
+    { "id": "1.6", "text": "The first Edit or Write to skills/greet/SKILL.md happens only after assertions 1.1 through 1.5 are satisfied." },
+    { "id": "1.7", "text": "Agent does not justify skipping or abbreviating any pre-write step by the task's size, simplicity, or markdown-only nature." }
+  ]
+}
