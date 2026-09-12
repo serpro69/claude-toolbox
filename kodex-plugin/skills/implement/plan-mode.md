@@ -7,7 +7,7 @@ Applies when the user references a docs/feat/wip feature or task number.
 1. Read the feature's `tasks.md` file to get the task list and current progress
 2. Read the entire `design.md` and `implementation.md` files to **understand the full feature context**
 3. Identify the next pending task (one whose dependencies are all done)
-4. **Capy search:** Search `kk:arch-decisions`, `kk:project-conventions`, `kk:lang-idioms`, and `kk:review-findings` for context relevant to the identified task
+4. **Capy search:** Search `kk:arch-decisions`, `kk:project-conventions`, `kk:lang-idioms`, and `kk:review-findings` for context relevant to the identified task. Run it for every task, however small — whether the knowledge base holds something relevant is unknowable until searched, and an empty result costs nothing
 5. Review critically — identify any questions or concerns about the plan
 6. If concerns: Raise them with your human partner before starting
 

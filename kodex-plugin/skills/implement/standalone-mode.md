@@ -10,6 +10,6 @@ Applies for bug fixes, GitHub issues, one-off tasks, and any work without docs/f
 4. Identify questions or ambiguities — ask before assuming
 5. Investigate the relevant code — read files, trace call paths, reproduce the bug if applicable
 6. Identify the set of files that will need changes
-7. State the approach briefly if the fix is non-trivial (more than a few lines across 1–2 files). For trivial fixes, proceed directly.
+7. State the approach briefly if the fix is non-trivial (more than a few lines across 1–2 files). For trivial fixes, skip the approach statement only — "trivial" never exempts a fix from SKILL.md Step 2's pre-write steps (profile detection, dependency handling), which run for every fix however small.
 
 After completing the entry procedure, return to SKILL.md Step 2 (Execute).
