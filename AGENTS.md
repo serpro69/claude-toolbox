@@ -204,6 +204,8 @@ klaude-plugin/profiles/<name>/
 
 Not every profile populates every phase — a programming-language profile may only need `review-code/`; an IaC profile like `k8s` populates all six; a tooling profile like `skill-md` populates only the phases where domain-specific guidance adds value. A phase subdirectory contains only its `index.md` and the files the index references; human-facing authoring notes belong in `overview.md` or a sibling file at the profile root.
 
+**Design-only profile archetype.** A valid profile may populate *only* `design/`, with all three `DETECTION.md` file-signal sections (`## Path signals`, `## Filename signals`, `## Content signals`) left empty and only `## Design signals` populated. Empty file signals mean the profile never activates in file-based phases — it is reachable solely through the confirm-gated `/kk:design` design-token path. This is the shape used to adopt cross-cutting methodologies that have no reliable file-detection signal (see ADR 0008); the first instance is the `twelve-factor` profile.
+
 ### `DETECTION.md` — schema
 
 `DETECTION.md` is the single authoritative source for "when does this profile activate". It has three mandatory sections (every heading must be present even when its body is empty) and one optional section:
