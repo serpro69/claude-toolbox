@@ -9,19 +9,19 @@
 > Not Doing: code-level factor checks (approach B, deferred), skill-file edits, the *Beyond the Twelve-Factor App* 15-factor extension (API First / Telemetry / Security) and the `twelve-factor/twelve-factor` `next` branch, review-architecture changes
 
 ## Task 1: Author the twelve-factor profile
-- **Status:** pending
+- **Status:** done
 - **Depends on:** —
 - **Size:** M
 - **Can run in parallel with:** —
 - **Docs:** [implementation.md#build-order](./implementation.md#build-order)
 
 ### Subtasks
-- [ ] 1.1 Create `klaude-plugin/profiles/twelve-factor/DETECTION.md` — three signal headings (`## Path signals`, `## Filename signals`, `## Content signals`) left empty, each with a one-line note that this profile does no file-based detection (code-level checks deferred to approach B); populated `## Design signals` with `display_name: 12-Factor App` and the narrow token list from design.md
-- [ ] 1.2 Create `klaude-plugin/profiles/twelve-factor/overview.md` — coverage (classic 12 factors, design-phase lens), activation rules (design-token match, confirm-gated; never file-based phases), a compact enumeration of the 12 factors. Note: required by convention and for humans/authoring; the design flow does NOT load overview.md, so factor content the flow uses lives in questions.md/sections.md
-- [ ] 1.3 Create `klaude-plugin/profiles/twelve-factor/design/questions.md` — refinement-question pool, one entry per factor cluster (design.md §questions.md); MUST open with the skip-preamble (skip questions already answered by user / codebase / prior decisions / existing design.md / another active profile) and defer to co-active domain profiles (e.g. k8s) the factors they already cover. Factor-accurate phrasing: III = environment variables (or named justified deviation); IX = graceful SIGTERM drain AND sudden-death robustness + reentrant/idempotent jobs; II = exact/version-pinned + isolated dependencies
-- [ ] 1.4 Create `klaude-plugin/profiles/twelve-factor/design/sections.md` — four grouped required sections + the one-line codebase/dependencies (I/II) preamble + the "omit none / justify N/A" rule + the co-active merge/cross-reference rule (cover an overlapping factor once, cross-reference the domain profile's section) (design.md §sections.md)
-- [ ] 1.5 Create `klaude-plugin/profiles/twelve-factor/design/index.md` — list `questions.md` and `sections.md` under **Always load** (link + one-line description each)
-- [ ] 1.6 Verify locally: `DETECTION.md` has all four headings; `questions.md` contains the skip-preamble and `sections.md` the I/II preamble; every `design/index.md` link resolves and no `design/*.md` is orphaned
+- [x] 1.1 Create `klaude-plugin/profiles/twelve-factor/DETECTION.md` — three signal headings (`## Path signals`, `## Filename signals`, `## Content signals`) left empty, each with a one-line note that this profile does no file-based detection (code-level checks deferred to approach B); populated `## Design signals` with `display_name: 12-Factor App` and the narrow token list from design.md
+- [x] 1.2 Create `klaude-plugin/profiles/twelve-factor/overview.md` — coverage (classic 12 factors, design-phase lens), activation rules (design-token match, confirm-gated; never file-based phases), a compact enumeration of the 12 factors. Note: required by convention and for humans/authoring; the design flow does NOT load overview.md, so factor content the flow uses lives in questions.md/sections.md
+- [x] 1.3 Create `klaude-plugin/profiles/twelve-factor/design/questions.md` — refinement-question pool, one entry per factor cluster (design.md §questions.md); MUST open with the skip-preamble (skip questions already answered by user / codebase / prior decisions / existing design.md / another active profile) and defer to co-active domain profiles (e.g. k8s) the factors they already cover. Factor-accurate phrasing: III = environment variables (or named justified deviation); IX = graceful SIGTERM drain AND sudden-death robustness + reentrant/idempotent jobs; II = exact/version-pinned + isolated dependencies
+- [x] 1.4 Create `klaude-plugin/profiles/twelve-factor/design/sections.md` — four grouped required sections + the one-line codebase/dependencies (I/II) preamble + the "omit none / justify N/A" rule + the co-active merge/cross-reference rule (cover an overlapping factor once, cross-reference the domain profile's section) (design.md §sections.md)
+- [x] 1.5 Create `klaude-plugin/profiles/twelve-factor/design/index.md` — list `questions.md` and `sections.md` under **Always load** (link + one-line description each)
+- [x] 1.6 Verify locally: `DETECTION.md` has all four headings; `questions.md` contains the skip-preamble and `sections.md` the I/II preamble; every `design/index.md` link resolves and no `design/*.md` is orphaned
 
 ## Task 2: Register the profile
 - **Status:** pending

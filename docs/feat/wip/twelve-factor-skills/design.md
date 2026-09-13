@@ -118,8 +118,10 @@ skip any question already answered by the user, the codebase, prior decisions
 another active profile**. When a domain profile (e.g. `k8s`) is co-active, defer
 the factors it already covers to it rather than re-asking — `k8s` already asks the
 rollback trigger, the graceful-shutdown window (`terminationGracePeriodSeconds` /
-`preStop` / drain), structured logs, and secrets/config; `twelve-factor` must not
-re-ask these when `k8s` is present.
+`preStop` / drain), structured logs, and the secrets source; `twelve-factor` must
+not re-ask these when `k8s` is present. `k8s` does **not** ask whether non-secret
+config lives in environment variables versus committed files, so the env-var
+config-strategy question (III) is still asked under co-activation.
 
 Coverage of the 12 factors:
 
@@ -167,10 +169,11 @@ Codebase/dependencies (I/II) fold into a one-line deployment-context preamble
 rather than a standalone section.
 
 **Co-active domain profiles:** when another profile (e.g. `k8s`) is active and its
-required sections already cover an overlapping concern (disposability, config,
-secrets, rollout/rollback), merge rather than duplicate — cover the factor once
-and cross-reference the domain profile's section, while ensuring every factor
-remains visibly addressed somewhere in the document.
+required sections already cover an overlapping concern (disposability, secrets,
+rollout/rollback), merge rather than duplicate — cover the factor once and
+cross-reference the domain profile's section, while ensuring every factor remains
+visibly addressed somewhere in the document. `k8s` has no required logs section,
+so logs (XI) stay with the twelve-factor **Parity & observability** section.
 
 ## Registration
 
