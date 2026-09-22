@@ -109,7 +109,7 @@ Launch both reviewers in a **single message** so they execute in parallel.
 
 ### Reviewer A — `code-reviewer` sub-agent
 
-The `code-reviewer` sub-agent cannot resolve the plugin root on its own (it has no shell). Resolve it yourself — you already read checklist paths under it in Step 1c — and inject the absolute value into the `## Plugin Root` section of the prompt below, so the sub-agent can open the checklist files. Expand plugin-relative checklist paths to absolute paths before passing the prompt to the sub-agent.
+The `code-reviewer` sub-agent must use the plugin root supplied by its parent. Resolve it yourself — you already read checklist paths under it in Step 1c — and inject the absolute value into the `## Plugin Root` section of the prompt below, so the sub-agent can open the checklist files. Expand plugin-relative checklist paths to absolute paths before passing the prompt to the sub-agent.
 
 Spawn using the Agent tool with:
 

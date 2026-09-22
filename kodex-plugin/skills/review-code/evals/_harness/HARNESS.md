@@ -45,7 +45,7 @@ and captures the full output as `DIFF_TEXT`. Also capture `git diff --cached --n
 
 ### 3. Spawn profile-resolver sub-agents (parallel)
 
-The sub-agents cannot resolve the plugin root themselves (no shell). Resolve it once — the installed plugin root (derived from the installed skill's absolute `SKILL.md` path (the plugin root is the parent of the `skills/` directory)), or the working-tree `klaude-plugin/` absolute path when grading local profile changes — and inject it under `## Plugin Root` in both the resolver and reviewer prompts as `PLUGIN_ROOT`.
+The sub-agents must use the plugin root supplied by their parent. Resolve it once — the installed plugin root (derived from the installed skill's absolute `SKILL.md` path (the plugin root is the parent of the `skills/` directory)), or the working-tree `klaude-plugin/` absolute path when grading local profile changes — and inject it under `## Plugin Root` in both the resolver and reviewer prompts as `PLUGIN_ROOT`.
 
 Spawn one `kk:profile-resolver` sub-agent per eval, all in the same turn. Resolver prompt template:
 

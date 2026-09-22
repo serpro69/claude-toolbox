@@ -5,6 +5,8 @@ skills:
   include_all: true
   overrides: []
   transforms:
+    - type: read_only_tool_guidance
+      scope: all_md
     - type: plugin_root_resolve
       scope: all_md
       replacement_base: "../.."
@@ -37,6 +39,7 @@ agents:
     - name: profile-resolver
       model: "gpt-5.6-luna"
   transforms:
+    - type: read_only_tool_guidance
     - type: plugin_root_placeholder
       placeholder: "<kk-plugin-root>"
       preamble: |
