@@ -10,8 +10,9 @@ import (
 )
 
 type AgentFrontmatter struct {
-	Name        string `yaml:"name"`
-	Description string `yaml:"description"`
+	Name        string   `yaml:"name"`
+	Description string   `yaml:"description"`
+	Tools       []string `yaml:"tools"`
 }
 
 func GenerateAgents(m *Manifest, dryRun bool) error {
@@ -72,9 +73,48 @@ func generateAgent(src, dst string, cfg AgentsConfig) error {
 		return fmt.Errorf("transforming agent body: %w", err)
 	}
 
-	toml := formatAgentTOML(fm, string(body), cfg)
+	toolPolicy, err := agentToolPolicy(fm.Tools)
+	if err != nil {
+		return fmt.Errorf("mapping agent tools: %w", err)
+	}
+	toml := formatAgentTOML(fm, toolPolicy+string(body), cfg)
 
 	return os.WriteFile(dst, []byte(toml), 0o644)
+}
+
+// Codex exposes different tool names, so preserve the source allowlist as
+// permitted operations. The read-only sandbox remains configured separately.
+func agentToolPolicy(toolNames []string) (string, error) {
+	if toolNames == nil {
+		return "", nil
+	}
+	if len(toolNames) == 0 {
+		return "## Codex Tool Access\n\nNo tool operations are permitted. Work only from the provided input.\n\n", nil
+	}
+
+	var b strings.Builder
+	b.WriteString("## Codex Tool Access\n\n")
+	b.WriteString("Claude tool names in these instructions denote permitted operations, not literal Codex tool names. ")
+	b.WriteString("Use native file tools when available; otherwise use `exec_command` for the read-only commands below, ")
+	b.WriteString("directly or through a tool wrapper such as `functions.exec`. ")
+	b.WriteString("Only the listed operations are permitted, subject to all role-specific path and input restrictions.\n\n")
+	for _, name := range toolNames {
+		switch name {
+		case "Read":
+			b.WriteString("- `Read`: read permitted files with a native file reader or `cat`/`sed` through `exec_command`.\n")
+		case "Grep":
+			b.WriteString("- `Grep`: search permitted file contents with a native search tool or `rg` through `exec_command`.\n")
+		case "Glob":
+			b.WriteString("- `Glob`: locate permitted paths with a native file-listing tool or `rg --files`/`ls` through `exec_command`.\n")
+		case "mcp__capy__capy_search":
+			b.WriteString("- `capy_search`: query project knowledge using the available Capy search tool.\n")
+		default:
+			return "", fmt.Errorf("unsupported agent tool %q", name)
+		}
+	}
+	b.WriteString("\nDo not edit files, run tests or repository scripts, or request elevated permissions. ")
+	b.WriteString("Shell access and tool wrappers do not grant additional operations or access to excluded inputs.\n\n")
+	return b.String(), nil
 }
 
 func parseFrontmatter(content []byte) (AgentFrontmatter, []byte, error) {

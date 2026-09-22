@@ -43,6 +43,25 @@ Driven by `scripts/kodex-generate-manifest.yml`. Run via `make generate-kodex`.
 
 Codex resolves the plugin root from the installed skill's absolute `SKILL.md` path: the root is the parent of `skills/`. Generated relative paths such as `../../profiles/` are relative to the installed skill directory, not the consumer's working directory. The generator rewrites Claude-specific shell lookup instructions; Codex does not look up `TOOLBOX_PLUGIN_ROOT`. When delegating, the parent supplies the absolute root under `## Plugin Root` and expands checklist paths before passing them. Sub-agents report a missing root instead of discovering one themselves. Profile authoring checklists retain literal Claude variable names because they describe the canonical Claude plugin's conventions.
 
+Agent generation also translates the canonical frontmatter `tools` list into a
+`Codex Tool Access` section. `Read`, `Grep`, and `Glob` permit their native Codex
+equivalents, including read-only `exec_command` calls when dedicated file tools
+are unavailable. Tool wrappers such as `functions.exec` carry those calls
+without granting additional operations. Capy search is included only for agents
+that declare it. The eval grader keeps only file reading and its fixture-access
+prohibition; the profile resolver keeps its worktree/plugin path restriction.
+Unknown tool declarations fail generation instead of being silently discarded.
+An explicit empty list permits no tool operations; an omitted list keeps the
+source's inherited-access behavior.
+
+These operation restrictions are instructions, not a separate Codex runtime tool
+allowlist. Generated agents retain `sandbox_mode = "read-only"` and explicitly
+prohibit edits, test/script execution, and permission escalation. This follows
+the [Codex custom-agent configuration model](https://learn.chatgpt.com/docs/agent-configuration/subagents#custom-agents).
+The `read_only_tool_guidance` transform removes contradictory Claude-only tool
+claims from generated agents and runtime-read skill procedures. Canonical Claude
+files and profile authoring guidance retain their provider-specific conventions.
+
 ### Plugin Graph Analysis (`cmd/plugin-graph/`)
 
 A Go tool that builds a directed dependency graph of `klaude-plugin/` and reports complexity metrics, impact analysis, and structural health. It gives maintainers and review skills a measured view of the skill web rather than a felt one.

@@ -27,7 +27,7 @@ Pass 2 produces separate findings (appropriateness / reversibility), not per-cla
 
 ## Report structure
 
-The report is presented inline, mirroring the review-skill family. The `architecture-reviewer` agent is read-only (no Write tool), so the report section — not a file — is the home of the inspectable claim-set.
+The report is presented inline, mirroring the review-skill family. The `architecture-reviewer` agent is read-only (no permission to write files), so the report section — not a file — is the home of the inspectable claim-set.
 
 1. **Claim Set** — the full Pass 0 output, **verbatim**. This *is* the inspectable intermediate artifact (each claim's `id`/`claim`/`source_span`/`dimension`/`tense`/`provenance`/`evidence_class`). Presenting it verbatim keeps "reviewer missed a claim" distinguishable from "extractor never found the claim." The section header carries the extraction-completeness disclaimer (see Output rules) — recall has no production oracle, so the set is never certified complete.
 2. **Verdicts by dimension** — one verdict per claim (vocabulary above), grouped by the seven Pass 1 dimensions.

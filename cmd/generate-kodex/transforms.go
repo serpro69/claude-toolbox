@@ -17,11 +17,45 @@ func ApplyTransforms(content []byte, transforms []TransformConfig) ([]byte, erro
 			result = applyPluginRootPlaceholder(result, t.Placeholder, t.Preamble)
 		case "skill_prefix_rewrite":
 			result = applySkillPrefixRewrite(result, t.From, t.To)
+		case "read_only_tool_guidance":
+			result = applyReadOnlyToolGuidance(result)
 		default:
 			return nil, fmt.Errorf("unknown transform type %q", t.Type)
 		}
 	}
 	return result, nil
+}
+
+// Keep runtime instructions consistent with the operation mappings generated
+// from agent frontmatter. Canonical Claude files and authoring profiles retain
+// their provider-specific tool descriptions.
+var readOnlyToolGuidance = strings.NewReplacer(
+	"Your tool access is restricted via frontmatter allowlist to:",
+	"Your permitted operations, mapped under **Codex Tool Access**, are:",
+	"Restricted via frontmatter allowlist to:",
+	"Permitted operations, mapped under **Codex Tool Access**, are:",
+	"You have no shell and cannot resolve environment variables",
+	"The plugin root must come from the spawning context",
+	"You have `Read` only",
+	"You may perform only the mapped `Read` operation",
+	"you have read-only tools",
+	"you have read-only access",
+	"A Write tool.",
+	"Permission to write files.",
+	"no Write tool",
+	"no permission to write files",
+	"The `code-reviewer` sub-agent cannot resolve the plugin root on its own (it has no shell).",
+	"The `code-reviewer` sub-agent must use the plugin root supplied by its parent.",
+	"The sub-agents cannot resolve the plugin root themselves (no shell).",
+	"The sub-agents must use the plugin root supplied by their parent.",
+	"The agent has no shell, so",
+	"The agent needs the plugin root from its parent, so",
+	"the reviewer has no shell — Grep/Glob/Read only",
+	"use the native equivalents of the Grep/Glob/Read operations",
+)
+
+func applyReadOnlyToolGuidance(content []byte) []byte {
+	return []byte(readOnlyToolGuidance.Replace(string(content)))
 }
 
 func applyPluginRootResolve(content []byte, replacementBase string) []byte {
