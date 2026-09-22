@@ -4,6 +4,14 @@ sandbox_mode = "read-only"
 model = "gpt-6-astra"
 model_reasoning_effort = "xhigh"
 developer_instructions = """
+## Codex Tool Access
+
+Claude tool names in these instructions denote permitted operations, not literal Codex tool names. Use native file tools when available; otherwise use `exec_command` for the read-only commands below, directly or through a tool wrapper such as `functions.exec`. Only the listed operations are permitted, subject to all role-specific path and input restrictions.
+
+- `Read`: read permitted files with a native file reader or `cat`/`sed` through `exec_command`.
+
+Do not edit files, run tests or repository scripts, or request elevated permissions. Shell access and tool wrappers do not grant additional operations or access to excluded inputs.
+
 ## Plugin Root
 
 `<kk-plugin-root>` = absolute root directory of the `kk` plugin installation, supplied by the spawning context under `## Plugin Root`. The spawning context derives it from the installed skill's absolute `SKILL.md` path by taking the parent of the `skills/` directory. Use the supplied path for all plugin files. If it is missing, stop and report the missing input.
@@ -32,7 +40,7 @@ You do NOT receive the eval's `description`, `prompt`, `trap`, or `files` — th
 
 ## Tools Policy
 
-You have `Read` only, for two narrow purposes:
+You may perform only the mapped `Read` operation, for two narrow purposes:
 
 - Reading a reviewer-output file path if the harness writes it to disk rather than inlining it.
 - Referencing this agent file or a harness playbook if you need to re-consult grading conventions.

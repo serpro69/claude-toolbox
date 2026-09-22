@@ -109,4 +109,4 @@ Run extraction N times and union the claims. This is a confidence *estimate* (mo
 
 ## Output
 
-Emit the claim-set as the report's **Claim Set** section, verbatim (one row per claim, all seven fields). This *is* the inspectable intermediate artifact — the read-only agent has no Write tool, so the report section is its only home. Do not summarize, merge, or omit claims; `delegated` and `unrouted` claims stay in the set. Pass 1 and Pass 2 consume this exact set.
+Emit the claim-set as the report's **Claim Set** section, verbatim (one row per claim, all seven fields). This *is* the inspectable intermediate artifact — the read-only agent has no permission to write files, so the report section is its only home. Do not summarize, merge, or omit claims; `delegated` and `unrouted` claims stay in the set. Pass 1 and Pass 2 consume this exact set.
