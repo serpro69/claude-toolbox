@@ -22,7 +22,7 @@ Run a single suite:
 | `test-codex-structure.sh` | Codex marketplace, config.toml, hooks.json, agent TOMLs, Starlark rules, scripts, AGENTS.md |
 | `test-template-sync.sh` | CLI parsing, manifest validation, variable substitution, settings merge, plugin migration, sync exclusions, self-update handoff |
 | `test-template-cleanup.sh` | Manifest generation, variable capture, git tag/SHA detection |
-| `test-claude-extra.sh` | CLAUDE.extra.md existence, compare_files detection, auto-import |
+| `test-claude-extra.sh` | CLAUDE.extra.md headings, CLAUDE.md imports of behavioral and AGENTS.md project instructions, compare_files detection, auto-import |
 | `test-manifest-jq.sh` | JSON generation patterns, special character handling, schema validation, round-trip |
 | `test-semver-compare.sh` | Semver comparison logic used by release workflows |
 | `test-cpr.sh` | Claude Plugin Root resolver — exact/fuzzy matching, project-path resolution cascade (project → user → last-installed), install-path validation, env var precedence, error handling |
@@ -67,7 +67,7 @@ across the whole plugin. See [Architecture › Plugin Graph Analysis](architectu
 
 ## Validation Before Release
 
-- All 8 shell test suites must pass
+- All 9 shell test suites must pass
 - `make generate-kodex` must leave `kodex-plugin/` and `.codex/agents/` clean (`git diff --exit-code`)
 - `make plugin-graph` must pass (Go tests + `validate` exits 0 against `klaude-plugin/`)
 - Go tests must pass (`go test ./...`)
