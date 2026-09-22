@@ -36,10 +36,12 @@ Skills reference shared instructions via symlinks to `skills/_shared/`. Profiles
 
 A Go tool that transforms `klaude-plugin/` into Codex-compatible artifacts:
 
-- **`kodex-plugin/`** — Skills with `${CLAUDE_PLUGIN_ROOT}` resolved to relative paths, injected headers, and copied profiles
+- **`kodex-plugin/`** — Skills with `${CLAUDE_PLUGIN_ROOT}` and `${TOOLBOX_PLUGIN_ROOT}` resolved to relative paths, installed-path root-resolution instructions, injected headers, and copied profiles
 - **`.codex/agents/*.toml`** — Sub-agent markdown converted to TOML format with `developer_instructions`
 
 Driven by `scripts/kodex-generate-manifest.yml`. Run via `make generate-kodex`.
+
+Codex resolves the plugin root from the installed skill's absolute `SKILL.md` path: the root is the parent of `skills/`. Generated relative paths such as `../../profiles/` are relative to the installed skill directory, not the consumer's working directory. The generator rewrites Claude-specific shell lookup instructions; Codex does not look up `TOOLBOX_PLUGIN_ROOT`. When delegating, the parent supplies the absolute root under `## Plugin Root` and expands checklist paths before passing them. Sub-agents report a missing root instead of discovering one themselves. Profile authoring checklists retain literal Claude variable names because they describe the canonical Claude plugin's conventions.
 
 ### Plugin Graph Analysis (`cmd/plugin-graph/`)
 
