@@ -24,16 +24,28 @@ from plugin-root resolution.
 - All Go packages pass `go test ./...`.
 - Plugin structure: 182 assertions pass. Codex structure: 29 assertions pass
   using the installed Python 3.12 (system Python 3.10 lacks a TOML parser).
-- Seven of nine shell suites pass. The five failures below also reproduce in a
-  clean `git archive HEAD` checkout at `60f5564`, before this fix.
+- Initially, seven of nine shell suites passed. The five failures below also
+  reproduced in a clean `git archive HEAD` checkout at `60f5564`, before this fix.
 
-Deferred baseline test maintenance, outside issue #154:
+Baseline test maintenance resolved in the follow-up:
 
-- `test/test-claude-extra.sh`: four assertions expect instruction headings to
-  reside directly in `.claude/CLAUDE.extra.md` and `CLAUDE.md`. Update the checks
-  for the current instruction-file organization.
-- `test/test-manifest-jq.sh`: the generated fixture uses `gpt-6-astra`, while the
-  example manifest uses `gpt-5.6-sol`. Align the fixture and example model values.
+- `test/test-claude-extra.sh`: updated three heading checks for the current
+  levels in `.claude/CLAUDE.extra.md`. Replaced the stale project-content check
+  with checks for the `@AGENTS.md` import and the expected sections in
+  `AGENTS.md`. The duplicate behavioral-heading check now covers all heading
+  levels.
+- `test/test-manifest-jq.sh`: aligned the example manifest with the existing
+  `gpt-6-astra` value used by the generated fixture and template-sync defaults.
+
+Follow-up verification: all nine shell suites pass, with 600 assertions and
+zero failures, using Python 3.12 for TOML parsing. Shell syntax checks pass.
+Independent external review identified an end-of-line anchor that could let a
+duplicate behavioral heading with trailing whitespace or a suffix escape the
+negative check. Removed that anchor and reran the affected suite successfully.
+No systemic P0/P1 findings to index.
+
+Remaining generation follow-up, outside the failing-test fixes:
+
 - Generation also copies the existing canonical `twelve-factor` profile into an
   untracked Codex directory. That unrelated output is excluded from this fix;
   regenerate and commit it with the twelve-factor work.

@@ -41,24 +41,24 @@ log_test "CLAUDE.extra.md exists"
 assert_file_exists "$REPO_ROOT/.claude/CLAUDE.extra.md" "CLAUDE.extra.md should exist"
 
 log_test "CLAUDE.extra.md contains behavioral instructions"
-if grep -q "## Behavioral Instructions" "$REPO_ROOT/.claude/CLAUDE.extra.md"; then
+if grep -Fxq "# Behavioral Instructions" "$REPO_ROOT/.claude/CLAUDE.extra.md"; then
   log_pass "Contains behavioral instructions section"
 else
-  log_fail "Should contain '## Behavioral Instructions'"
+  log_fail "Should contain '# Behavioral Instructions'"
 fi
 
 log_test "CLAUDE.extra.md contains task tracking"
-if grep -q "## Task Tracking" "$REPO_ROOT/.claude/CLAUDE.extra.md"; then
+if grep -Fxq "# Task Tracking" "$REPO_ROOT/.claude/CLAUDE.extra.md"; then
   log_pass "Contains task tracking section"
 else
-  log_fail "Should contain '## Task Tracking'"
+  log_fail "Should contain '# Task Tracking'"
 fi
 
 log_test "CLAUDE.extra.md contains exploration phase"
-if grep -q "### Exploration Phase" "$REPO_ROOT/.claude/CLAUDE.extra.md"; then
+if grep -Fxq "## Exploration Phase" "$REPO_ROOT/.claude/CLAUDE.extra.md"; then
   log_pass "Contains exploration phase section"
 else
-  log_fail "Should contain '### Exploration Phase'"
+  log_fail "Should contain '## Exploration Phase'"
 fi
 
 # =============================================================================
@@ -75,18 +75,25 @@ else
 fi
 
 log_test "CLAUDE.md does not contain migrated behavioral instructions"
-if grep -q "### Independent Thinking" "$REPO_ROOT/CLAUDE.md"; then
+if grep -Eq '^#{1,6} Independent Thinking' "$REPO_ROOT/CLAUDE.md"; then
   log_fail "CLAUDE.md should not contain 'Independent Thinking' (migrated to CLAUDE.extra.md)"
 else
   log_pass "Behavioral instructions correctly removed from CLAUDE.md"
 fi
 
-log_test "CLAUDE.md retains project-specific sections"
-if grep -q "## Repository Overview" "$REPO_ROOT/CLAUDE.md" && \
-   grep -q "## Testing" "$REPO_ROOT/CLAUDE.md"; then
-  log_pass "CLAUDE.md retains project-specific sections"
+log_test "CLAUDE.md imports project instructions from AGENTS.md"
+if grep -Fxq '@AGENTS.md' "$REPO_ROOT/CLAUDE.md"; then
+  log_pass "CLAUDE.md imports AGENTS.md"
 else
-  log_fail "CLAUDE.md should retain Repository Overview and Testing sections"
+  log_fail "CLAUDE.md should contain '@AGENTS.md'"
+fi
+
+log_test "AGENTS.md retains project-specific sections"
+if grep -Fxq "## Repository Overview" "$REPO_ROOT/AGENTS.md" && \
+   grep -Fxq "## Testing" "$REPO_ROOT/AGENTS.md"; then
+  log_pass "AGENTS.md retains project-specific sections"
+else
+  log_fail "AGENTS.md should retain Repository Overview and Testing sections"
 fi
 
 # =============================================================================
