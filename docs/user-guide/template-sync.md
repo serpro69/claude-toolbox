@@ -34,6 +34,76 @@ Repos created from this template can pull configuration updates via the **Templa
 
     Requires `jq`, `git`, `curl`, and `yq` ([mikefarah/yq](https://github.com/mikefarah/yq)). Review changes with `git diff` before committing.
 
+## Troubleshooting
+
+### Sync stalls at "Fetching templates"
+
+The script suppresses Git progress, so a slow or stalled transfer can leave this
+message on screen without further output. It does not, by itself, establish
+whether GitHub, your network, or your Git client is responsible.
+
+If you already have a complete local checkout of `claude-toolbox`, you can use
+it as the source and bypass the GitHub Git download. The checkout must contain
+the desired commit and its file contents; a partial clone with missing objects
+may still need network access. Obtain or update the checkout first if needed.
+
+Set an **absolute path** to that checkout and pin its local `master` commit:
+
+```bash
+TOOLBOX_SOURCE="/absolute/path/to/claude-toolbox"
+TOOLBOX_VERSION=$(git -C "$TOOLBOX_SOURCE" rev-parse --verify 'refs/heads/master^{commit}')
+```
+
+From the **downstream project's root**, preview the sync:
+
+```bash
+GIT_CONFIG_COUNT=1 \
+GIT_CONFIG_KEY_0="url.file://${TOOLBOX_SOURCE}.insteadOf" \
+GIT_CONFIG_VALUE_0=https://github.com/serpro69/claude-toolbox.git \
+.claude/toolbox/scripts/template-sync.sh --local \
+  --version "$TOOLBOX_VERSION" --dry-run
+```
+
+Review the preview, then repeat the same command without `--dry-run` to apply.
+Review the resulting `git diff` before committing.
+
+The environment variables supply one temporary Git setting: replace the
+upstream HTTPS URL with the local `file://` URL. The setting is inherited by
+the script's Git subprocesses, including after a script handoff, and does not
+change your global Git configuration. See [Git's configuration documentation][git-config].
+
+- **The source is local.** This does not refresh it from GitHub. `master` means
+  the local source's branch, and uncommitted source edits are not included.
+- **`--local` applies to the destination.** It applies changes to the current
+  project; the Git URL rewrite is what selects the local source.
+- **Reuse it across projects.** Update the source once and use the same pinned
+  `TOOLBOX_VERSION` from each downstream project's root. No separate upstream
+  Git download is needed for each project.
+- **Match your upstream.** The example assumes `upstream_repo` in
+  `.github/template-state.json` is `serpro69/claude-toolbox`. For a fork, change
+  `GIT_CONFIG_VALUE_0` to its HTTPS Git URL and use a checkout of that repository.
+
+If your environment already supplies `GIT_CONFIG_COUNT` entries, append the
+rewrite at the next index and increase the count instead of replacing them.
+The rewrite affects Git operations only, not other network requests.
+
+#### Optional time limit
+
+For a bounded preview, insert `timeout --kill-after=5 45` immediately before
+`.claude/toolbox/scripts/template-sync.sh` in the preview command above.
+[GNU `timeout`][gnu-timeout] sends `TERM` after 45 seconds, then `KILL` five
+seconds later if the command remains running. The limit covers the entire run,
+including any handoff, so adjust it for your project.
+
+This requires GNU Coreutils; on macOS the command may be named `gtimeout`.
+Omit the timeout prefix if neither command is installed.
+
+**A timeout does not roll back applied changes.** If you also use it for an
+apply run and it expires, inspect `git diff` for partial updates before retrying.
+
+[git-config]: https://git-scm.com/docs/git-config
+[gnu-timeout]: https://www.gnu.org/software/coreutils/manual/html_node/timeout-invocation.html
+
 ## What Gets Synced
 
 **Updated:** `.claude/` (settings, CLAUDE.extra.md, statusline scripts), `.codex/` (config.toml, hooks, rules, scripts, agents), and the sync infrastructure itself (see [Syncing Workflow Files](#syncing-workflow-files) for permission requirements). Skills, commands, and hooks are managed by the plugin system — not template sync.
