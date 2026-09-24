@@ -252,8 +252,8 @@ Only index non-obvious learnings not derivable from reading the code or git hist
 
 Non-trivial design decisions are recorded as ADRs in `docs/adr/` using [Michael Nygard's template](https://cognitect.com/blog/2011/11/15/documenting-architecture-decisions) (Context, Decision, Consequences). Per-feature design docs live at `docs/feat/wip/<feature>/` while work is active and move to `docs/feat/done/<feature>/` on completion.
 
-| ADR                                              | Decision                                                  |
-| ------------------------------------------------ | --------------------------------------------------------- |
+| ADR                                                   | Decision                                                  |
+| ----------------------------------------------------- | --------------------------------------------------------- |
 | [0001](../adr/0001-profile-detection-model.md)        | Single additive detection axis for all profile types      |
 | [0002](../adr/0002-profile-content-organization.md)   | Profile-first layout with index-driven content loading    |
 | [0003](../adr/0003-plugin-root-referenced-content.md) | Plugin-root references instead of cross-boundary symlinks |
@@ -339,8 +339,11 @@ docs/                            # MkDocs site + internal design docs
 ├── contributing/                # architecture.md, testing.md, plugin dev
 ├── about/                       # License, changelog
 ├── adr/                         # Architecture decision records
-├── wip/                         # In-progress feature design docs (excluded from search)
-└── done/                        # Completed feature docs (excluded from search)
+└── feat/                        # Feature design docs (excluded from search)
+    ├── archive/                 # Feature docs that weren't worked on, but were preserved for discovery purposes
+    ├── done/                    # Completed features
+    ├── reviews/                 # Reviews reports for features and standalone issues
+    └── wip/                     # In-progress features
 
 mkdocs.yml                       # MkDocs Material config
 requirements.txt                 # Python deps for docs site
