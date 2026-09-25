@@ -21,14 +21,12 @@ FORBIDDEN_PATTERNS=(
   "\.terraform\/"
   "build\/"
   "dist\/"
-  "node_modules\/"
   "target\/"
   "__pycache__\/"
   "\.git\/"
   "venv\/"
   "\.pyc$"
   "\.csv$"
-  "\.log$"
 )
 
 # Check if command contains any forbidden patterns
