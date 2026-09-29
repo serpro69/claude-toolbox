@@ -3,7 +3,7 @@
 > Design: [design.md](design.md)
 > Implementation: [implementation.md](implementation.md)
 > Issue: [#156](https://github.com/serpro69/claude-toolbox/issues/156)
-> Status: in-progress — Tasks 1–2 done; Tasks 3–5 pending
+> Status: in-progress — Tasks 1–3 done; Tasks 4–5 pending
 > Created: 2026-09-29
 > Not Doing: global brevity prompts, product/code changes, automatic publication, bulk cleanup, new profiles, eval harness, automatic standalone-implementation completion
 
@@ -11,7 +11,7 @@
 
 **Status:** done — findings assessed, design corrections applied, checks and independent follow-up review passed
 
-[Assessment of both reports](review-assessment.md) records eight distinct issues
+[Assessment of both reports](reviews/archive/review-design-assessment.md) records eight distinct issues
 from nine findings, their evidence and dispositions. Task 1 implementation is now
 complete. The optional isolated runtime verifier remains an explicitly owned
 [deferred item](implementation.md#deferred-work), not a v1 acceptance requirement.
@@ -60,17 +60,25 @@ Task 4 to clarify; destination drafts contain no prohibited workspace pointers.
 
 ## Task 3: Apply the shared pass after design and documentation drafting
 
-**Status:** pending
+**Status:** done
 **Depends on:** Task 1
 **Size:** M
 **Can run in parallel with:** Task 2
 **Docs:** [Workflow integration](implementation.md#3-reuse-in-existing-writing-workflows)
 
-- [ ] Add `shared-document-clarity.md` symlinks in `design/` and `document/`; load the procedure in both `SKILL.md` files before subject-matter action → verify: summaries and detailed workflows agree on ordering.
-- [ ] Update `design/idea-process.md` to edit the completed design/implementation/task artifacts and `design/existing-task-process.md` to edit only refined documents → verify: required sections, decisions, task state and links survive; unchanged resumes produce no rewrite.
-- [ ] Add the post-draft pass to `document/SKILL.md` while retaining applicable profile rubrics → verify: one pass over invocation outputs, with no extra summary file or dropped required topic.
-- [ ] Add consumer integration evals and user-guide coverage; retain `/kk:implement`'s existing plan-mode call chain → verify: instructions precede reads, editing follows drafting, and no recursive/duplicate pass or new standalone completion call appears; per-entry-point review limits are explicit.
-- [ ] Regenerate Codex output and run structure/graph checks → verify: all consumer symlinks resolve and generated workflows match canonical behavior.
+- [x] Add `shared-document-clarity.md` symlinks in `design/` and `document/`; load the procedure in both `SKILL.md` files before subject-matter action → verify: summaries and detailed workflows agree on ordering.
+- [x] Update `design/idea-process.md` to edit the completed design/implementation/task artifacts and `design/existing-task-process.md` to edit only refined documents → verify: required sections, decisions, task state and links survive; unchanged resumes produce no rewrite.
+- [x] Add the post-draft pass to `document/SKILL.md` while retaining applicable profile rubrics → verify: one pass over invocation outputs, with no extra summary file or dropped required topic.
+- [x] Add consumer integration evals and user-guide coverage; retain `/kk:implement`'s existing plan-mode call chain → verify: instructions precede reads, editing follows drafting, and no recursive/duplicate pass or new standalone completion call appears; per-entry-point review limits are explicit.
+- [x] Regenerate Codex output and run structure/graph checks → verify: all consumer symlinks resolve and generated workflows match canonical behavior.
+
+**Verification:** [Task 3 evidence](verification.md#task-3-verification) records
+21/21 latest applicable assertions passing across five procedural consumer evals.
+The first run's two PARTIALs are preserved; focused reruns passed after an explicit
+review-limit reporting instruction and a clarified routing prompt. Generation is
+stable; structure/graph checks and isolated review pass. Eight of nine shell suites
+pass, with the same two pre-existing hook failures. Full comprehension trials remain
+Task 4; the mode regression is a read-only route inspection, not lifecycle execution.
 
 Task 2 and Task 3 can proceed independently after Task 1's shared contract is stable.
 Coordinate shared-procedure changes; logical parallelism does not imply concurrent
@@ -106,6 +114,12 @@ versus prohibited source pointers and add coverage, as described in the
 - [ ] Run `/kk:document` to finalize relevant user guidance and inventory updates → verify: standalone and automatic entry points, source prerequisites, output boundaries and limitations are clear.
 - [ ] Run `/kk:review-code` with the active skill-markdown profile and `/kk:review-spec` against this design and implementation plan → verify: findings are fixed or durably recorded with an owner and next step; no unaddressed acceptance failure is labeled complete.
 - [ ] Update feature status and record verification limits → verify: authored evals are not reported as executed and no claim of improved human comprehension exceeds the collected evidence.
+
+**Documentation follow-up:** Task 3 repaired the current design/task pointers to
+`reviews/archive/review-design-assessment.md`. That relocated assessment still
+contains its original relative links. **Owner:** feature maintainer. **Next step
+(Task 5):** verify archived-review navigation and repair relocated links without
+changing historical findings; this is deferred to final documentation verification.
 
 ## Dependency Graph
 

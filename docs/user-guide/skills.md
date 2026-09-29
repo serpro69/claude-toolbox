@@ -77,8 +77,7 @@ additional summary file is produced, and a document that already meets the
 requirements stays unchanged. Clear prose can still receive a source-backed factual
 correction.
 
-This utility supports local human documentation and PR-description drafts. Automatic
-passes in `/kk:design` and `/kk:document` are not implemented yet. It does not change
+This utility supports local human documentation and PR-description drafts. It does not change
 code or configuration, publish externally, or edit agent/skill instructions. An
 explicit `AGENTS.md`, `CLAUDE.md` or `SKILL.md` target receives a suggestion to use
 `/kk:implement`, with no edit or automatic handoff. Generic requests for shorter
@@ -87,6 +86,26 @@ chat answers do not activate it.
 The final comprehension and fidelity check runs in the editing session. Normal
 project review remains the caller's responsibility; the skill does not provide
 independent runtime verification or a guarantee of improved human comprehension.
+
+### Clarity after drafting
+
+`/kk:design` and `/kk:document` also use the shared clarity procedure. They load it
+before reading content and apply it once after drafting, reusing applicable source
+understanding and inspecting any missing evidence.
+
+| Entry point | Selected outputs and review boundary |
+| --- | --- |
+| `/kk:design` for a fresh idea | All completed design, implementation and task artifacts; required sections and task format survive. It then recommends `/kk:review-design`, without running that review automatically. |
+| `/kk:design` resuming WIP | Only documents changed by refinement, before handoff. An unchanged resume does not rewrite documents. Refined outputs retain the review recommendation. |
+| `/kk:document` | The invocation's drafted or updated documentation, preserving applicable profile topics, N/A explanations and inherited-source citations. Further project review remains the caller's responsibility. |
+| `/kk:implement` plan mode | Inherits the pass through its existing `/kk:document` call when the whole plan completes; individual tasks do not get an extra pass. |
+| `/kk:implement` standalone mode | No automatic documentation completion call. Invoke `/kk:document` to update documentation or `/kk:clarify-docs` to edit existing prose explicitly. |
+
+For example, `/kk:design` refining only `implementation.md` edits that artifact and
+can read its linked design for context without rewriting the design. `/kk:document`
+updating a deployment guide retains its rollback steps and required domain topics.
+These passes create no separate summary and use an in-session fidelity check; they
+do not provide independent verification.
 
 ### Clarify a PR draft
 

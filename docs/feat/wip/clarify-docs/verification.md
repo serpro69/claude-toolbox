@@ -231,3 +231,70 @@ maintainer. **Next step (Task 4):** clarify the distinction between a caller-onl
 output link and private source pointers disclosed in a destination artifact, then
 exercise it explicitly. This is retained as a runtime instruction-precedence
 limitation; passing the current assertions does not establish a path-free report.
+
+## Task 3 verification
+
+Task 3 integrates the shared clarity procedure into `/kk:design` and `/kk:document`.
+Instructions load before subject matter; one final pass follows drafting. Resumes
+edit only refined documents, and unchanged resumes skip editing. Domain topics,
+task state and links remain protected. The existing `/kk:implement` call chain is
+unchanged: plan completion invokes documentation; standalone completion does not.
+The user guide explains each entry point and its review limit.
+
+Five new consumer evals ran in fresh sessions. The [first grade](verification/task3-20260929/verdicts.md)
+records **19 PASS / 2 PARTIAL**, with all ordering, file-boundary, pass-count and
+artifact-preservation assertions passing. The partials concern omitted reporting:
+the document response did not state its in-session review limit, and the route
+inspection omitted a later explicit documentation request. Both initial results
+remain preserved.
+
+The document consumer now explicitly requires the review-limit statement in its
+change report. The routing prompt now asks about a separate documentation request;
+its assertions are unchanged. [Focused reruns](verification/task3-20260929-retry1/run.md)
+use fresh sessions and separate evidence. Their [independent grade](verification/task3-20260929-retry1/verdicts.md)
+records **9/9 PASS**, bringing the latest applicable results to **21/21 PASS**.
+The three design cases remain applicable because their instructions and inputs did
+not change in this correction.
+
+The [independent code review and follow-up](verification/task3-20260929/code-reviewer.md)
+found no P0–P3 issues. A [fresh external review](verification/task3-20260929/external-review-fresh.md)
+returned no actionable findings. The first external submission disclosed the code
+reviewer's approval; its [independence limitation](verification/task3-20260929/external-review.md)
+is preserved, and the fresh review omitted that information. Its sole LOW tracker
+observation is addressed by finalizing Task 3 after grading. No systemic P0/P1
+finding or new project convention needed indexing.
+
+### Task 3 checks and limits
+
+- `make generate-kodex`: PASS, including Go generator tests, **184 plugin-structure**
+  and **29 Codex-structure** assertions. The first sandbox attempt could not write
+  `.codex/agents`; authorized generation with a temporary Go cache succeeded.
+  The checks used the existing Python 3.12 through a temporary PATH shim.
+- Final repeated generation: PASS, no further generated changes. The aggregate
+  checksum is recorded in [additional checks](verification/task3-20260929/checks/fixture-validation.md).
+- `make plugin-graph`: PASS; no broken edges or orphans. The existing cycle warning
+  remains advisory. Deliberately partial fixture links remain unchanged.
+- All nine shell suites ran; **eight pass**. Two schema suites initially failed
+  on sandboxed uv-cache access and passed with authorized cache access. The same
+  two pre-existing `node_modules` / `.log` hook assertions fail. The repository
+  maintainer's [existing follow-up](#follow-up-outside-task-1) remains applicable.
+- Both skill validators pass. All nine design/document eval definitions parse,
+  resolve declared fixtures and use sequential assertion IDs. The new empty
+  Kustomize fixture builds to no resources. `kubeconform` is unavailable; its
+  install hint and skipped schema coverage are recorded in additional checks.
+- The mandatory shared procedure remains **1,000 words**. Skill descriptions,
+  dependencies and implementation completion instructions did not change.
+
+The [run manifest](verification/task3-20260929/run.md) and retry manifest record
+requests, instruction/input hashes, drafts, final outputs and tool traces. Editors
+used `gpt-6-astra` / `xhigh`, `fork_turns="none"`; model build and temperature are
+not exposed. The independent grader used the same model/settings. Allowed-file
+manifests and trace audits constrain shared-filesystem access; there is no claim
+of separate OS sandboxes. Committed request copies omit only terminal blank lines;
+verbatim runtime text remains in the traces.
+
+These are procedural integration checks. The implementation-mode case is a
+read-only instruction-route inspection, not a completed implementation lifecycle.
+Separate original/revised comprehension readers and final feature-wide acceptance
+remain owned by Tasks 4–5. No Task 3 result proves improved human comprehension or
+re-certifies the earlier standalone/PR scenarios at the combined feature revision.
