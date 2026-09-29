@@ -1,6 +1,6 @@
 # Implementation: comprehension-focused editing
 
-> Status: in-progress — Tasks 1–2 complete; Tasks 3–5 pending
+> Status: in-progress — Tasks 1–3 complete; Tasks 4–5 pending
 > Design: [design.md](design.md)
 > Execution: [tasks.md](tasks.md)
 

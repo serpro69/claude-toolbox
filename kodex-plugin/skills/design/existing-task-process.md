@@ -1,16 +1,18 @@
 ### Workflow: Continue WIP Feature
 
-1. **Find the feature** — Locate the feature directory in `/docs/feat/wip/`. If multiple WIP features exist, ask the user which one to work on.
+**Entry prerequisite — instructions before subject matter.** Use filename-level discovery to locate the requested feature in `/docs/feat/wip/`; ask which feature only if the request leaves multiple candidates. Complete [SKILL.md's instruction-loading workflow](SKILL.md#workflow), including [shared-document-clarity.md](shared-document-clarity.md), before the content steps below. For its profile-detection phase, supply the feature-directory file list and any artifacts produced so far. If no file signal matches, use the shared design interaction pattern with a keyword-only scan of `design.md`; confirm inferred profiles. Load all resolved design guidance before reviewing progress or context. Do not repeat detection afterward.
 
-2. **Review progress** — Read `tasks.md` to understand:
+1. **Review progress** — Read `tasks.md` to understand:
    - Which tasks are done, in-progress, or pending
    - What dependencies exist between remaining tasks
    - Any notes logged on previous subtasks
 
-3. **Review context** — Read the linked `design.md` and `implementation.md` to understand the full picture. Also check any relevant contributing guidelines and documentation. **Capy search:** Search `kk:arch-decisions` and `kk:project-conventions` for context relevant to the feature being resumed.
+2. **Review context** — Read the linked `design.md` and `implementation.md` to understand the full picture. Also check any relevant contributing guidelines and documentation. **Capy search:** Search `kk:arch-decisions` and `kk:project-conventions` for context relevant to the feature being resumed. Audit the design against the already-loaded profile sections, including designs authored before the rubric existed.
 
-4. **Detect active profiles** — Apply [shared-profile-detection.md](shared-profile-detection.md). Unlike the fresh-idea flow, the feature directory's files ARE available: feed the full feature-directory file list (and any in-tree artifacts the feature has produced so far) to the shared procedure's file-based input model. If the file list yields no profile — common when the design is for future work that has not emitted profile-bearing artifacts yet — fall back to the [design interaction pattern](shared-profile-detection.md#the-design-interaction-pattern) against the `design.md` prose; it iterates all profiles with `## Design signals` and handles token matching + confirmation. For each active profile, use the `Read` tool on `../../profiles/<name>/design/index.md`; skip silently if absent. Load every always-load entry; the profile's `questions.md` guides any further refinement and its `sections.md` lists required sections the design document must cover. A design authored before the profile rubric existed should be audited against `sections.md` on resumption.
-
-5. **Assess readiness:**
+3. **Assess readiness:**
    - **If tasks are well-documented and clear** → proceed to implement using the `$kk:implement` skill.
-   - **If tasks need refinement** (missing details, unclear subtasks, gaps in the plan) → update `tasks.md` and/or the design/implementation docs before proceeding. Follow the documentation guidelines from the [Ideas and Prototypes](#ideas-and-prototypes) section.
+   - **If tasks need refinement** (missing details, unclear subtasks, gaps in the plan) → refine `tasks.md` and/or design/implementation docs using the drafting guidelines and task-format example loaded during entry. Use the existing decisions and loaded profile guidance; do not restart fresh-idea sub-phases.
+
+4. **Clarify refined documents before handoff.** If refinement changed documents, apply the already-loaded shared clarity procedure once to those documents only, with their intended reader, accepted requirements and applicable evidence. This is the final pass summarized in SKILL.md. Reuse relevant context; preserve decisions, required sections, task state and cross-file links. Unchanged documents may supply context but are outside the edit scope; an unchanged resume performs no pass and no rewrite.
+
+   Recommend `$kk:review-design <feature>` after refinement, then hand off to `$kk:implement` when ready. The recommendation is not automatic independent review. Do not invoke another writing skill for this pass.

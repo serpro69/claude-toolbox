@@ -1,10 +1,10 @@
 # Design: documentation readers can understand
 
 > Issue: [#156](https://github.com/serpro69/claude-toolbox/issues/156)
-> Status: implementation — Tasks 1–2 complete; Tasks 3–5 pending
+> Status: implementation — Tasks 1–3 complete; Tasks 4–5 pending
 > Created: 2026-09-29
 > Related: [Implementation plan](implementation.md), [tasks](tasks.md)
-> Review reconciliation: [assessment](review-assessment.md)
+> Review reconciliation: [assessment](reviews/archive/review-design-assessment.md)
 
 ## Problem and outcome
 
@@ -42,9 +42,10 @@ The new entry point is `/kk:clarify-docs`. One shared procedure supplies its beh
 and the final editing passes in `/kk:design` and `/kk:document`. Editing happens
 after drafting. It does not impose brevity on coding, investigation or reasoning.
 
-The current `/kk:design` instructions emphasize comprehensive implementation
-guidance; `/kk:document` covers documentation discovery and domain rubrics. Neither
-provides this evidence-grounded editorial pass. `/kk:implement` invokes
+At the design baseline, `/kk:design` emphasized comprehensive implementation
+guidance and `/kk:document` covered documentation discovery and domain rubrics.
+Task 3 has now added the shared evidence-grounded editorial pass to both.
+`/kk:implement` invokes
 `/kk:document` at **plan-mode completion only**. Standalone implementation has no
 prescribed documentation completion step. The plugin has no PR-writing workflow to extend.
 

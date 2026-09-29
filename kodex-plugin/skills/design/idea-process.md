@@ -1,5 +1,7 @@
 ### Workflow
 
+**Entry prerequisite — instructions before subject matter.** Complete the mandatory instruction loading and profile resolution in [SKILL.md](SKILL.md#workflow) before Step 1 below. That includes the shared clarity procedure and task-format example. The steps below begin with subject matter and do not repeat detection.
+
 Copy this checklist and check off items as you complete them:
 
 ```
@@ -10,6 +12,7 @@ Task Progress:
 - [ ] Step 4: Describe the design
 - [ ] Step 5: Document the design
 - [ ] Step 6: Create the task list
+- [ ] Step 7: Clarify completed artifacts and recommend review
 ```
 
 **Step 1: Understand the current state of the project**
@@ -24,9 +27,7 @@ In order to gain a better understanding of the project, **check the contributing
 
 **Step 3: Refine the idea**
 
-**Detect active profiles before refining.** The design phase runs before any code exists, so file-based detection is impossible. Run the design interaction pattern from [shared-profile-detection.md §The `$kk:design` interaction pattern](shared-profile-detection.md) — it iterates all profiles with `## Design signals`, matches their declared tokens against the idea prose, and handles confirmation prompts. Never auto-activate a profile silently.
-
-For each active profile, use the `Read` tool on `../../profiles/<name>/design/index.md`. Surface and skip if absent; not every profile populates a `design/` subdirectory. Load every file listed under **Always load**; a profile's `questions.md` (when present) seeds the refinement question pool. Integrate the profile's questions into the sub-phases below — one question per message, as always.
+Use the profiles resolved during entry; their loaded questions seed the refinement question pool. Integrate those questions into the sub-phases below — one question per message, as always.
 
 Note: [frameworks.md](frameworks.md) and [refinement-criteria.md](refinement-criteria.md) are already loaded during the mandatory instruction-load phase (SKILL.md step 2). Do not reload them here.
 
@@ -92,7 +93,7 @@ Document in .md files the entire design and write a comprehensive implementation
 
 Feel free to break out the design/implementation documents into multi-part files, if necessary.
 
-**For each active profile** (from Step 3), re-consult `../../profiles/<name>/design/index.md` (using the same resolved plugin-root path you used in Step 3) and apply every always-load entry whose content shapes the final design document. Profile-contributed `sections.md` (when present) names required sections the design document must cover. Do not drop a required section silently; if a section genuinely does not apply, state so explicitly with a one-line justification.
+**For each active profile** resolved during entry, apply the loaded guidance that shapes the final design document. Profile-contributed `sections.md` (when present) names required sections the design document must cover. Do not drop a required section silently; if a section genuinely does not apply, state so explicitly with a one-line justification.
 
 When creating documentation, follow this approach:
 
@@ -143,4 +144,8 @@ Follow the structure and conventions in the [example task file](./example-tasks.
 - **Parallel markers:** Each task gets a `**Can run in parallel with:**` field listing task numbers with no blocking dependency, or `—`.
 - **Dependency graph:** After all tasks, add a `## Dependency Graph` section with an ASCII diagram showing task relationships. Written once, never updated during implementation.
 
-At the end of Step 6, recommend invoking `$kk:review-design <feature>` as the post-design gate. The default scope reviews all documents (`design.md + implementation.md + tasks.md`), including the task-format checks.
+**Step 7: Clarify completed artifacts and recommend review**
+
+After all design, implementation and task artifacts exist, apply [shared-document-clarity.md](shared-document-clarity.md) once to that selected set, using the accepted requirements and applicable source understanding from drafting. Keep the required sections and task format above. This is the final pass summarized in SKILL.md, not an additional pass or skill invocation.
+
+Then recommend invoking `$kk:review-design <feature>` as the post-design gate. The default scope reviews all documents (`design.md + implementation.md + tasks.md`), including the task-format checks. The recommendation does not execute independent review.
