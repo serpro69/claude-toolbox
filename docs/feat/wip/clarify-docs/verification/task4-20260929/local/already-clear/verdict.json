@@ -1,0 +1,120 @@
+{
+  "scenario": "already-clear",
+  "overall": "PASS",
+  "assertions": [
+    {
+      "id": "5.1",
+      "verdict": "PASS",
+      "evidence": "original-reader-output.md and revised-reader-output.md answers 1-5 each match oracle/expected.json: default/exceptions, persistent zero and order snapshot example, increment, exclusion and badge decision."
+    },
+    {
+      "id": "5.2",
+      "verdict": "PASS",
+      "evidence": "Byte comparison and independently recomputed manifest.json hash maps show original/guide.md equals revised/guide.md. The guide leads with purpose, defines snapshot, explicitly handles 15→20, and matches both source files."
+    },
+    {
+      "id": "5.3",
+      "verdict": "PASS",
+      "evidence": "editor-trace.jsonl ordinals 17-25 load full instructions; 27-32 read guide, requirements and prep.py. editor-output.md explicitly reports source consistency and no material gaps before choosing no-op."
+    },
+    {
+      "id": "5.4",
+      "verdict": "PASS",
+      "evidence": "No mutation tool appears in editor-trace.jsonl; complete original/revised file sets and hashes are identical. editor-output.md begins 'Left guide.md unchanged.'"
+    }
+  ],
+  "comprehension": {
+    "applicable": true,
+    "original": [
+      {
+        "question": "Why does this work exist?",
+        "verdict": "PASS",
+        "evidence": "original-reader-output.md answer 1 explains a restaurant default with item exceptions."
+      },
+      {
+        "question": "What happens in a representative case?",
+        "verdict": "PASS",
+        "evidence": "original-reader-output.md answer 2 supplies inherited 15, explicit zero, changed default 20 affecting subsequent inherited lookups and old order 15. 'Explicit zero stays/remains zero' is read as the persistent override rule, not a time-limited value."
+      },
+      {
+        "question": "What changes in the current increment?",
+        "verdict": "PASS",
+        "evidence": "original-reader-output.md answer 3 identifies lookup through effective_minutes and order snapshot through create_order."
+      },
+      {
+        "question": "What remains outside it?",
+        "verdict": "PASS",
+        "evidence": "original-reader-output.md answer 4 excludes scheduling."
+      },
+      {
+        "question": "What still needs a decision?",
+        "verdict": "PASS",
+        "evidence": "original-reader-output.md answer 5 assigns the open badge decision to the product owner."
+      }
+    ],
+    "revised": [
+      {
+        "question": "Why does this work exist?",
+        "verdict": "PASS",
+        "evidence": "revised-reader-output.md answer 1 explains a restaurant default with item exceptions."
+      },
+      {
+        "question": "What happens in a representative case?",
+        "verdict": "PASS",
+        "evidence": "revised-reader-output.md answer 2 supplies inherited 15, explicit zero, changed default 20 affecting subsequent inherited lookups and old order 15. 'Explicit zero stays/remains zero' is read as the persistent override rule, not a time-limited value."
+      },
+      {
+        "question": "What changes in the current increment?",
+        "verdict": "PASS",
+        "evidence": "revised-reader-output.md answer 3 identifies lookup through effective_minutes and order snapshot through create_order."
+      },
+      {
+        "question": "What remains outside it?",
+        "verdict": "PASS",
+        "evidence": "revised-reader-output.md answer 4 excludes scheduling."
+      },
+      {
+        "question": "What still needs a decision?",
+        "verdict": "PASS",
+        "evidence": "revised-reader-output.md answer 5 assigns the open badge decision to the product owner."
+      }
+    ],
+    "original_passes": 5,
+    "revised_passes": 5
+  },
+  "fidelity": {
+    "verdict": "PASS",
+    "evidence": [
+      "The baseline already covers the five questions and protected null/missing, zero, live lookup, saved order, identifiers, exclusion and ownership claims, consistent with original/requirements.md and original/prep.py.",
+      "oracle/expected.json declares no baseline defects; all files remain byte-for-byte unchanged. There is no unsolicited summary, new structure, changed link, task state or factual claim."
+    ]
+  },
+  "isolation": {
+    "verdict": "PASS",
+    "evidence": [
+      "editor-trace.jsonl contains four paired calls/results and only its request, copied instructions and three allowed fixture reads. Both reader traces contain two paired calls/results and only their request and own guide.",
+      "The revised guide's bytes equal the original, but the revised reader's tool call still addresses only revised/guide.md. All final outputs and complete trace/request/snapshot hashes match; no source-only evidence, oracle, other version or skill was read by readers."
+    ],
+    "limitations": [
+      "Isolation is assessed from prompt manifests and complete captured visible traces on a shared filesystem, not OS-enforced separation; shared cwd metadata does not establish subject-content access.",
+      "Initial request reads used default login-shell startup and returned denied navi log-initialization warnings before the request's login:false instruction was available. Later subject reads used login:false. No out-of-manifest subject content appeared."
+    ]
+  },
+  "limitations": [
+    "These are single AI-reader observations, not proof of improved human comprehension; text length is not a success measure.",
+    "Isolation is assessed from prompt manifests and complete captured visible traces on a shared filesystem, not OS-enforced separation; shared cwd metadata does not establish subject-content access.",
+    "Initial request reads used default login-shell startup and returned denied navi log-initialization warnings before the request's login:false instruction was available. Later subject reads used login:false. No out-of-manifest subject content appeared.",
+    "Session metadata records gpt-6-astra, xhigh effort, default collaboration mode, OpenAI provider and CLI 0.159.0; temperature and an exact model build are not recorded."
+  ],
+  "execution": {
+    "model": "gpt-6-astra",
+    "reasoning_effort": "xhigh",
+    "collaboration_mode": "default",
+    "provider": "openai",
+    "cli_version": "0.159.0",
+    "temperature": null,
+    "exact_model_build": null,
+    "evidence": "editor-session.json and editor-trace.jsonl session_meta/turn_context; where applicable, both reader-session.json files and reader traces agree."
+  },
+  "grading_method": "Fixed oracle; PASS requires the complete expected answer, PARTIAL means material expected content is absent, and FAIL denotes a material wrong answer. Answers are read as a whole only where explicitly noted. Complete JSONL traces were audited, including nested tool inputs and full results; exact repeated request/instruction/snapshot contents were compared byte-for-byte when compacting audit display. No hidden reasoning or additional source-rollout access was used."
+}

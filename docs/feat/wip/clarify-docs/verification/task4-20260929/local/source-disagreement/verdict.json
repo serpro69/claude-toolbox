@@ -1,0 +1,125 @@
+{
+  "scenario": "source-disagreement",
+  "overall": "PASS",
+  "assertions": [
+    {
+      "id": "2.1",
+      "verdict": "PASS",
+      "evidence": "revised/guide.md:10-18 explicitly contrasts required next-day behavior with immediate current lookup, preserving earlier order 15; revised-reader-output.md answers 1-5 match oracle/expected.json."
+    },
+    {
+      "id": "2.2",
+      "verdict": "PASS",
+      "evidence": "revised/guide.md:11-13 and :20-24 calls the next-day rule mandatory and still binding while describing immediate code behavior, without changing either evidence source."
+    },
+    {
+      "id": "2.3",
+      "verdict": "PASS",
+      "evidence": "editor-trace.jsonl ordinals 19-27 load full instructions; 29-34 inspect guide, requirements and implementation; the patch follows at 38."
+    },
+    {
+      "id": "2.4",
+      "verdict": "PASS",
+      "evidence": "revised/guide.md:20-24 names the feature maintainer and concrete reconciliation options: implement accepted timing or obtain an explicit requirements decision. It retains the unresolved scheduling boundary and claims no implementation fix."
+    },
+    {
+      "id": "2.5",
+      "verdict": "PASS",
+      "evidence": "Recomputed original/ and revised/ hash maps differ only for guide.md; editor-trace.jsonl ordinals 38-46 show only its native patch and readback."
+    }
+  ],
+  "comprehension": {
+    "applicable": true,
+    "original": [
+      {
+        "question": "Why does this work exist?",
+        "verdict": "PASS",
+        "evidence": "original-reader-output.md answer 1 identifies defaults with item exceptions."
+      },
+      {
+        "question": "When a restaurant default changes from 15 to 20, what happens to new inherited lookups and existing orders?",
+        "verdict": "FAIL",
+        "evidence": "original-reader-output.md answer 2 presents new inherited lookups remaining 15 until tomorrow as current behavior. oracle/expected.json requires distinguishing intent from the current immediate return of 20; the original guide does not expose that discrepancy."
+      },
+      {
+        "question": "What changes in the current increment?",
+        "verdict": "PARTIAL",
+        "evidence": "original-reader-output.md answer 3 identifies lookup and order snapshots but does not identify their timing mismatch. Answer 4's scheduling ambiguity is not a statement of the actual intent/code disagreement."
+      },
+      {
+        "question": "What remains outside it?",
+        "verdict": "PASS",
+        "evidence": "original-reader-output.md answer 4 correctly excludes scheduling."
+      },
+      {
+        "question": "What still needs a decision?",
+        "verdict": "PARTIAL",
+        "evidence": "original-reader-output.md answer 5 preserves Product's badge decision but omits the feature maintainer's timing-reconciliation responsibility required by oracle/expected.json."
+      }
+    ],
+    "revised": [
+      {
+        "question": "Why does this work exist?",
+        "verdict": "PASS",
+        "evidence": "revised-reader-output.md answer 1 states the default/item-exception purpose."
+      },
+      {
+        "question": "When a restaurant default changes from 15 to 20, what happens to new inherited lookups and existing orders?",
+        "verdict": "PASS",
+        "evidence": "revised-reader-output.md answer 2 states required next-day 15 versus immediate implemented 20 and old order 15."
+      },
+      {
+        "question": "What changes in the current increment?",
+        "verdict": "PASS",
+        "evidence": "revised-reader-output.md answer 3 states lookup and snapshots; answer 2 explicitly supplies the oracle's timing-mismatch qualification. Evaluated as a whole."
+      },
+      {
+        "question": "What remains outside it?",
+        "verdict": "PASS",
+        "evidence": "revised-reader-output.md answer 4 excludes scheduling and preserves the unresolved boundary."
+      },
+      {
+        "question": "What still needs a decision?",
+        "verdict": "PASS",
+        "evidence": "revised-reader-output.md answer 5 states Product's badge decision and the maintainer's reconciliation action without discarding the requirement."
+      }
+    ],
+    "original_passes": 2,
+    "revised_passes": 5
+  },
+  "fidelity": {
+    "verdict": "PASS",
+    "evidence": [
+      "revised/guide.md preserves mandatory next-day intent, zero overrides and unchanged snapshots against original/requirements.md; original/prep.py supports the separately described immediate current behavior.",
+      "The owner and next step remain explicit, source links resolve within the captured file set, and the document neither changes requirements nor claims code has been fixed. The predeclared factual discrepancy justifies the revision."
+    ]
+  },
+  "isolation": {
+    "verdict": "PASS",
+    "evidence": [
+      "editor-trace.jsonl has six paired calls/results; each reader trace has two. Full shared instructions return before all three allowed subject files. The native patch and readback affect only the selected guide.",
+      "Both readers read only their own request and guide, leaving the guide's evidence links unfollowed as required. Final output preservation and all trace/request/snapshot hashes match; no missing result or out-of-manifest subject read was found."
+    ],
+    "limitations": [
+      "Isolation is assessed from prompt manifests and complete captured visible traces on a shared filesystem, not OS-enforced separation; shared cwd metadata does not establish subject-content access.",
+      "Initial request reads used default login-shell startup and returned denied navi log-initialization warnings before the request's login:false instruction was available. Later subject reads used login:false. No out-of-manifest subject content appeared."
+    ]
+  },
+  "limitations": [
+    "These are single AI-reader observations, not proof of improved human comprehension; text length is not a success measure.",
+    "Isolation is assessed from prompt manifests and complete captured visible traces on a shared filesystem, not OS-enforced separation; shared cwd metadata does not establish subject-content access.",
+    "Initial request reads used default login-shell startup and returned denied navi log-initialization warnings before the request's login:false instruction was available. Later subject reads used login:false. No out-of-manifest subject content appeared.",
+    "Session metadata records gpt-6-astra, xhigh effort, default collaboration mode, OpenAI provider and CLI 0.159.0; temperature and an exact model build are not recorded."
+  ],
+  "execution": {
+    "model": "gpt-6-astra",
+    "reasoning_effort": "xhigh",
+    "collaboration_mode": "default",
+    "provider": "openai",
+    "cli_version": "0.159.0",
+    "temperature": null,
+    "exact_model_build": null,
+    "evidence": "editor-session.json and editor-trace.jsonl session_meta/turn_context; where applicable, both reader-session.json files and reader traces agree."
+  },
+  "grading_method": "Fixed oracle; PASS requires the complete expected answer, PARTIAL means material expected content is absent, and FAIL denotes a material wrong answer. Answers are read as a whole only where explicitly noted. Complete JSONL traces were audited, including nested tool inputs and full results; exact repeated request/instruction/snapshot contents were compared byte-for-byte when compacting audit display. No hidden reasoning or additional source-rollout access was used."
+}

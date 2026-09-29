@@ -1,0 +1,49 @@
+{
+  "reader_protocol": "Fresh neutral read-only original/revised sessions; artifact and listed audience reading path only. Same five questions and inherited model/settings. Answers require pointers and explicit uncertainty. AI-reader observations only.",
+  "acceptance": "All applicable comprehension, fidelity, correctness, structure, orientation and visibility assertions must pass. PARTIAL is not pass. If baseline answers all pass, edits require repair of a predeclared defect; a fully clean baseline requires no-op.",
+  "baseline": "Original docs/operations.md plus audience-accessible docs/platform.md; revised versions use the same reading path.",
+  "reader_manifest": [
+    "docs/operations.md",
+    "docs/platform.md"
+  ],
+  "questions": [
+    {
+      "question": "Why does this work exist?",
+      "expected": "Prepare a stable overlay location for the future catalog workload.",
+      "source": "infra/decision.md first paragraph"
+    },
+    {
+      "question": "What does the current overlay produce, and what happens if this preparation is reverted?",
+      "expected": "It emits no resources and nothing is deployed; reverting the empty input has no cluster effect, so no runtime rollback command applies.",
+      "source": "infra/kustomization.yaml resources: []; infra/decision.md first and second paragraphs"
+    },
+    {
+      "question": "What does this increment establish or validate?",
+      "expected": "Only an empty Kustomize preparation input; no workload resources, permissions/pods/images/policies/CRDs/gates are declared and no cluster compatibility validation or measurements have run.",
+      "source": "infra/decision.md first paragraph"
+    },
+    {
+      "question": "What work remains outside this increment, and which inherited requirement applies later?",
+      "expected": "Workload design, measurements, cluster support and deployment rollback are future work. Future workloads require reviewed network policy before deployment under platform.md; this overlay neither implements that policy nor grants an exception.",
+      "source": "infra/decision.md second and third paragraphs; docs/platform.md"
+    },
+    {
+      "question": "Who owns the next work, and what must they supply before the overlay is populated?",
+      "expected": "Release team owns supplying workload design and validation evidence before population; platform team owns enforcement details of inherited network policy.",
+      "source": "infra/decision.md second paragraph; docs/platform.md"
+    }
+  ],
+  "protected_claims": [
+    "Only docs/operations.md changes; infra/, platform.md and unrelated.md remain byte-identical.",
+    "No current resource emission, deployment, measurements or compatibility validation is invented.",
+    "All five Kubernetes rubric topics survive as supported content, explicit N/A reasons or inherited source: RBAC/PSS, rollback, resource baseline, cluster compatibility, network/egress.",
+    "Keep platform.md citation and distinguish future prerequisite from current policy installation.",
+    "Release team workload design/evidence next step and platform enforcement ownership remain explicit."
+  ],
+  "orientation_assertions": [
+    "Opening explains preparation purpose and empty current behavior before infrastructure detail.",
+    "Replace resource emission is null and rollback applicability follows that result with explicit no resources/no cluster rollback consequence.",
+    "Every applicable rubric topic is locatable with a reason for N/A or future work, rather than silently absent."
+  ],
+  "baseline_defects": "Original operations guide omits explicit five-topic rubric coverage and leaves the current no-resource/no-cluster-rollback consequence implicit in abstract phrases. It also omits the preparation purpose and unperformed compatibility validation."
+}

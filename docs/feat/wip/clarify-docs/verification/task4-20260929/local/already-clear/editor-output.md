@@ -1,0 +1,1 @@
+Left `guide.md` unchanged. Its example clearly explains defaults, item overrides, and saved order times, and matches `requirements.md` and `prep.py`. Scope limits and the pending product-owner decision are explicit. No material evidence gaps found.

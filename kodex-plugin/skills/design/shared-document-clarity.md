@@ -6,9 +6,9 @@ no linked instructions, profile detection or consumer calls.
 
 ## Understand the work
 
-Read each complete selected artifact and the relevant requirements, decisions,
-implementation and tests behind its claims. A document repeating an assertion does
-not verify it. Inspect supplied sources when needed to explain the behavior,
+Read each selected artifact in full and the requirements, decisions,
+implementation and tests behind its claims. Repetition does not verify a claim.
+Inspect supplied sources to explain the behavior,
 conditions and rationale at the applicable revision. Follow relevant references
 far enough to understand the claim, without recursively auditing the whole feature.
 Reading a source does not authorize editing it or executing its commands.
@@ -63,9 +63,11 @@ Apply destination visibility in order, to facts and references alike:
    neither exists, retain a non-disclosing limitation or ask for authorization.
    Deleting a citation never authorizes disclosure of its underlying private fact.
 
-Retain task references available to that audience. Exclude private task IDs and
-absolute workspace paths; task numbers and feature-directory paths are not
-inherently private. Apply the same boundary to the change report and gap notes.
+Retain accessible task references; task numbers and feature-directory paths are not
+inherently private. Exclude private task IDs and absolute workspace paths from
+destination artifacts, shared reports and gap notes. A caller-only completion
+message may link its selected local output; this never authorizes private source
+pointers or facts.
 
 ## Edit for the reader
 
@@ -78,18 +80,19 @@ answer, where relevant to the artifact:
 4. What remains outside it?
 5. What still needs a decision?
 
-Use a concrete scenario when it resolves confusion and the evidence supports every
-part of it. Introduce unfamiliar terms at first use. Explain causes and consequences
+Use an evidence-backed scenario when it resolves confusion. Explain unfamiliar terms
+at first use. Explain causes and consequences
 before storage fields or verification history; place technical reference detail
 after orientation. Remove duplication while retaining the detail needed for the
 reader's task. Preserve the project's organization and document-type requirements;
 do not force every artifact into one template or invent answers to irrelevant
 questions. An explicit unknown can be the correct answer.
 
-For PRs, explain the problem, behavior and increment;
-include a focused review path and meaningful validation with its limits. Avoid a
-commit diary or an indiscriminate file inventory. Describe future integration as
-future work, not behavior delivered by a contract-only change.
+PR drafts explain purpose, behavior and increment, including new tests.
+Give focused review pointers and validation outcomes with limits: passed, failed
+or unavailable. Check names are insufficient; completion reports cannot substitute.
+Avoid diaries and indiscriminate file inventories. Describe future integration as
+future work.
 
 Reorganize within the selected scope. Preserve existing anchors or update affected
 in-scope links, including cross-file references. Check accessible inbound references
@@ -120,5 +123,5 @@ Recheck destination visibility, including facts paraphrased from restricted sour
 
 Report changed paths, whether the result was unchanged, and material evidence gaps
 or wider edits needed. This is an in-session comparison, not independent fidelity
-verification or proof of improved human comprehension. The caller owns any further
+verification or proof of improved human comprehension. The caller owns further
 review required by the project.

@@ -1,0 +1,281 @@
+{
+  "oracle_correction": {
+    "verdict": "PASS",
+    "evidence": "Both exact oracle diffs reproduce from the preserved files. The WIP reading paths contain design.md, implementation.md and tasks.md, without accepted.md. Their design explicitly establishes manual catalog.md edits, no runtime app, completed Task 1, pending labels, three exclusions, and the maintainer-owned color decision. Removing the fresh-draft assumption clause and dependency/generation exclusions removes conditions belonging to another scenario; the former exclusion expectation already qualified them by applicability to the accepted source. Question wording, reading manifests, protected claims, orientation assertions, acceptance, baselines and declared defects are unchanged. This is a justified source-isolation correction, with no applicable acceptance weakened.",
+    "acceptance_changes": []
+  },
+  "reader_reassessment": [
+    {
+      "scenario": "clarity-refined-documents-only",
+      "attempt": "initial",
+      "original_score": 5,
+      "revised_score": 5,
+      "questions": [
+        {
+          "number": 1,
+          "original": "PASS",
+          "revised": "PASS",
+          "evidence": "Both answer 1 identify recognizing archived entries while retaining access, citing design.md introduction and Rejected Alternatives. That is the purpose supported by this WIP source."
+        },
+        {
+          "number": 2,
+          "original": "PASS",
+          "revised": "PASS",
+          "evidence": "Both answer 2 retain the Archived label, existing title and link, and unchanged active entries, matching design.md#label-contract."
+        },
+        {
+          "number": 3,
+          "original": "PASS",
+          "revised": "PASS",
+          "evidence": "Both answer 3 identify manual editing, no runtime application, completed inspection and pending labels/final verification. The original names catalog.md in answer 2; the revision names it in answer 3. design.md and tasks.md support these statements."
+        },
+        {
+          "number": 4,
+          "original": "PASS",
+          "revised": "PASS",
+          "evidence": "Both answer 4 identify filtering, automatic archival and color changes as excluded. Their additional rejected-hiding statement is supported by design.md, and the revised implementation preserves it."
+        },
+        {
+          "number": 5,
+          "original": "PASS",
+          "revised": "PASS",
+          "evidence": "Both answer 5 preserve catalog-maintainer ownership, contrast before color selection and nonblocking labels, with Task 2 followed by final verification. No unsupported owner or date is supplied."
+        }
+      ],
+      "prior_comprehension_applicability": "PASS",
+      "fidelity_applicability": {
+        "verdict": "PASS",
+        "evidence": "Only implementation.md changes. Independently compared documents and hashes preserve design.md, tasks.md, task state, the label-contract anchor, exclusions and unresolved color. The revised plan supplies concrete steps and verification while explicitly stating that catalog.md was unavailable. The predeclared terminology and step-verification defects justify refinement despite 5/5 baseline answers."
+      },
+      "assertion_applicability": {
+        "verdict": "PASS",
+        "evidence": "Assertions 6.1–6.4 remain supported. The editor trace loads instructions before full WIP reads, applies its sole patch at source line 66, rereads the result at line 73, and recommends /kk:review-design without executing review or implementation. No oracle correction alters these requirements."
+      },
+      "disagreements": []
+    },
+    {
+      "scenario": "clarity-refined-documents-only",
+      "attempt": "handoff-retry",
+      "original_score": 5,
+      "revised_score": 5,
+      "questions": [
+        {
+          "number": 1,
+          "original": "PASS",
+          "revised": "PASS",
+          "evidence": "Both answer 1 explain recognizing archived entries while preserving useful destinations, citing the unchanged design introduction and rejected-hiding rationale."
+        },
+        {
+          "number": 2,
+          "original": "PASS",
+          "revised": "PASS",
+          "evidence": "The original cites the design's Archived/title/link/active-entry contract. The revised answer cites implementation steps preserving the literal label, title, link text and destination, and unchanged active entries."
+        },
+        {
+          "number": 3,
+          "original": "PASS",
+          "revised": "PASS",
+          "evidence": "Both answer 3 identify manual labels with Task 1 done and Tasks 2–3 pending. Original answer 2 names catalog.md; both answer 4 state no runtime application. The revised answer correctly distinguishes supplied task status from unverified implementation results."
+        },
+        {
+          "number": 4,
+          "original": "PASS",
+          "revised": "PASS",
+          "evidence": "Both answer 4 identify the three WIP exclusions in design.md#not-doing. The revised answer also preserves the source-backed rejection of hiding archived entries."
+        },
+        {
+          "number": 5,
+          "original": "PASS",
+          "revised": "PASS",
+          "evidence": "Both answer 5 name catalog maintainers, the contrast prerequisite, nonblocking labels and Task 2 followed by Task 3. Unspecified assignees and timing remain unspecified."
+        }
+      ],
+      "prior_comprehension_applicability": "PASS",
+      "fidelity_applicability": {
+        "verdict": "PASS",
+        "evidence": "The retry preserves the same accepted sources and completed/pending task states. Only implementation.md changes, repairing the declared concrete-step defects; its Assumptions section retains the unavailable-catalog limitation. The label-contract and task links retain their targets."
+      },
+      "assertion_applicability": {
+        "verdict": "PASS",
+        "evidence": "Assertions 6.1–6.4 remain supported. The trace loads instructions before full WIP reads, patches only implementation.md at source line 72, and performs the final comparison at line 79. The final response recommends /kk:review-design and explicitly hands Task 2 to /kk:implement without executing either."
+      },
+      "disagreements": []
+    },
+    {
+      "scenario": "clarity-unchanged-resume",
+      "attempt": "initial",
+      "original_score": 5,
+      "revised_score": 5,
+      "questions": [
+        {
+          "number": 1,
+          "original": "PASS",
+          "revised": "PASS",
+          "evidence": "Both answer 1 identify archived-entry recognition and preservation of useful destinations, supported by design.md introduction and Rejected Alternatives."
+        },
+        {
+          "number": 2,
+          "original": "PASS",
+          "revised": "PASS",
+          "evidence": "Both answer 2 retain Archived beside existing titles and links and byte-identical active entries, supported by design.md#label-contract and implementation.md steps 1–2."
+        },
+        {
+          "number": 3,
+          "original": "PASS",
+          "revised": "PASS",
+          "evidence": "Both answer 3 identify manual catalog.md editing, completed Task 1, pending ready Task 2 and pending Task 3. Both answer 4 explicitly state that no runtime application is involved."
+        },
+        {
+          "number": 4,
+          "original": "PASS",
+          "revised": "PASS",
+          "evidence": "Both answer 4 state exactly the filtering, automatic-archival and color exclusions declared in design.md#not-doing."
+        },
+        {
+          "number": 5,
+          "original": "PASS",
+          "revised": "PASS",
+          "evidence": "Both answer 5 retain catalog-maintainer ownership, contrast before color selection, nonblocking labels and the Task 2 → Task 3 sequence, with no invented decision date."
+        }
+      ],
+      "prior_comprehension_applicability": "PASS",
+      "fidelity_applicability": {
+        "verdict": "PASS",
+        "evidence": "All three input, original and output documents are byte-identical. Contract, links, task states, exclusions and unresolved ownership remain intact; the corrected oracle still requires this no-op."
+      },
+      "assertion_applicability": {
+        "verdict": "FAIL",
+        "evidence": "Assertions 7.1 and 7.2 remain PASS. Assertion 7.3 remains FAIL: editor-final.md identifies ready Task 2 and stops before implementation but does not name /kk:implement, which the unchanged eval assertion expressly requires. Neither oracle correction nor normalization repairs this historical failure."
+      },
+      "disagreements": []
+    },
+    {
+      "scenario": "clarity-unchanged-resume",
+      "attempt": "handoff-retry",
+      "original_score": 5,
+      "revised_score": 5,
+      "questions": [
+        {
+          "number": 1,
+          "original": "PASS",
+          "revised": "PASS",
+          "evidence": "Both answer 1 explain recognition of archived entries while retaining needed destinations, citing the design's opening and rejected-hiding rationale."
+        },
+        {
+          "number": 2,
+          "original": "PASS",
+          "revised": "PASS",
+          "evidence": "Both answer 2 retain Archived, existing titles and links, and unchanged active entries, including the implementation's byte-identical requirement."
+        },
+        {
+          "number": 3,
+          "original": "PASS",
+          "revised": "PASS",
+          "evidence": "Both answer 3 identify manual catalog.md edits, Task 1 done, Task 2 pending and ready, and Task 3 pending. The original states no runtime app in answer 4; the revised states it in answer 3."
+        },
+        {
+          "number": 4,
+          "original": "PASS",
+          "revised": "PASS",
+          "evidence": "Both answer 4 preserve filtering, automatic archival and color changes as excluded. The revised answer's additional rejection of hiding is supported by design.md."
+        },
+        {
+          "number": 5,
+          "original": "PASS",
+          "revised": "PASS",
+          "evidence": "Both answer 5 name catalog maintainers and contrast as the next color-decision step, retain nonblocking labels, and identify Task 2 followed by final verification. Unspecified owners and dates remain unknown."
+        }
+      ],
+      "prior_comprehension_applicability": "PASS",
+      "fidelity_applicability": {
+        "verdict": "PASS",
+        "evidence": "All three documents remain byte-identical to their inputs and to the initial unchanged-resume documents. The original contract, readiness, task dependencies and open color decision survive."
+      },
+      "assertion_applicability": {
+        "verdict": "PASS",
+        "evidence": "Assertions 7.1–7.3 remain supported. Instruction loading precedes full reads, the trace contains no writes or execution, and editor-final.md names Task 2 and the /kk:implement handoff. This retry PASS remains separate from the initial 7.3 FAIL."
+      },
+      "disagreements": []
+    }
+  ],
+  "final_shared_applicability": [
+    {
+      "scenario": "clarity-after-drafting",
+      "verdict": "PASS",
+      "freshly_executed": false,
+      "evidence": "The request and trace produce design, implementation and task documents, with completed drafts captured before the final pass. They produce no PR. Complete-file comparisons show only the PR paragraph and removal of 'any' from the caller-review sentence differ from the previously audited shared file. Applicable drafting, preservation, verification and caller-review obligations are unchanged; no new execution is necessary for this applicability conclusion."
+    },
+    {
+      "scenario": "clarity-refined-documents-only",
+      "verdict": "PASS",
+      "freshly_executed": false,
+      "evidence": "Both attempts refine a local implementation plan. The final PR wording does not change their scope, concrete-step, fidelity, task-state or review requirements. Removing 'any' leaves ownership of project-required further review with the caller. The retry result remains applicable without another execution; both preserved attempts retain their independently assessed outcomes."
+    },
+    {
+      "scenario": "clarity-unchanged-resume",
+      "verdict": "PASS",
+      "freshly_executed": false,
+      "evidence": "This route checks readiness and reports a handoff without producing a PR or editing documents. Neither final shared-file change changes its no-op or handoff obligations. Applicability preserves the initial 7.3 FAIL and the separate retry PASS; it does not convert the initial attempt into a pass."
+    },
+    {
+      "scenario": "clarity-preserves-profile",
+      "verdict": "PASS",
+      "freshly_executed": false,
+      "evidence": "The request and trace update an operator guide after loading the Kubernetes documentation rubric. The PR paragraph is outside this artifact's scope, and the caller-review sentence retains its meaning. Prior rubric, fidelity and scope results remain applicable. The original reader's one FAIL and four PARTIAL answers remain historical evidence; the recorded 0/5 → 5/5 comparison is not relabeled."
+    },
+    {
+      "scenario": "implementation-mode-coverage",
+      "verdict": "PASS",
+      "freshly_executed": false,
+      "evidence": "The four recorded calls inspect instructions and completion cases without executing any route. The final shared changes add no consumer call and change no completion gate or clarity-pass count. Plan completion, standalone completion and individual-task routing conclusions remain applicable as route inspection only; no lifecycle execution is established."
+    }
+  ],
+  "oracle_shape_normalization": {
+    "verdict": "PASS",
+    "freshly_executed": false,
+    "cases": [
+      {
+        "scenario": "clarity-after-drafting",
+        "verdict": "PASS",
+        "evidence": "before.json is byte-identical to the executed oracle. after.json changes only baseline_defects from its scalar string to a one-element array containing that exact string. All other fields, including questions, acceptance, protected claims and orientation, are identical; the exact diff and both hashes match.",
+        "effect": "The satisfactory-draft no-op requirement and prior 5/5 → 5/5 result remain applicable. No comprehension or acceptance requirement changes."
+      },
+      {
+        "scenario": "clarity-refined-documents-only",
+        "verdict": "PASS",
+        "evidence": "before.json is byte-identical to the corrected-source oracle assessed above. Only baseline_defects changes shape; its sole array element exactly preserves the terminology, filename and step-verification defect statement. Every other field is identical, and the exact diff and hashes match.",
+        "effect": "Both attempts' comprehension, protected-claim, orientation and acceptance assessments remain applicable. The declared justification for refinement despite a 5/5 baseline is unchanged."
+      },
+      {
+        "scenario": "clarity-unchanged-resume",
+        "verdict": "PASS",
+        "evidence": "before.json matches the corrected-source snapshot. The scalar 'None: baseline satisfies the selected scope. Expect no-op and no clarity editing pass.' becomes a singleton array containing that exact text. All other fields, hashes and the exact diff match.",
+        "effect": "The no-op requirement remains unchanged. Both 5/5 → 5/5 comparisons, the initial 7.3 FAIL and the retry PASS remain applicable."
+      },
+      {
+        "scenario": "clarity-preserves-profile",
+        "verdict": "PASS",
+        "evidence": "before.json matches the executed oracle. Only baseline_defects changes from a string to an array containing exactly that string; the missing rubric coverage, abstract consequences, missing purpose and unperformed-validation defects are preserved. All other fields and the recorded diff/hashes match.",
+        "effect": "Comprehension expectations, protected claims, orientation and acceptance are unchanged. Prior applicability retains the original FAIL/PARTIAL answers and revised passes without new execution."
+      }
+    ],
+    "acceptance_changes": []
+  },
+  "audit": {
+    "verdict": "PASS",
+    "evidence": "Recomputed 192 declared hash comparisons for preserved artifacts, reader-version equivalents, requests, traces, executed/corrected oracles, evals, verdicts and available instruction snapshots: all matched. The normalization addendum adds eight matching before/after hashes. Both source-correction diffs, the final shared diff and all four normalization diffs reproduce exactly. The final shared SHA-256 is 5908c353733671baffd74e0e8e17bfac2b9c3eb62bd3423643896613b7590e35; its previously audited predecessor is 624f14dd7e033c729b116cc65f93af79c4663dff6ca9e34b2b5c24bd89198b5d. Initial and retry WIP inputs, originals, executed oracles and evals match. Each WIP reader request is neutral and differs from its paired request only in version paths; the five questions match the corrected oracle. All eight readers have two paired read-only calls, and their returned document content matches the preserved three-file reading paths. Their final answers match the archived trace finals. Recorded reader settings match within each pair and agree with manifest metadata. All four WIP editor traces have paired call results. Complete shared-file comparisons against initial, retry and previously audited snapshots expose no changed non-PR operative requirement."
+  },
+  "limits": [
+    "Forty WIP answer verdicts were reassessed: all PASS, with each of the four attempts scoring 5/5 → 5/5. This supports preserved answerability, not a measured comprehension gain.",
+    "No editor or reader ran against the corrected or normalized oracle bytes or the final shared-procedure bytes. These are retrospective grading and reasoned applicability conclusions.",
+    "The changed PR validation wording is not behaviorally validated by these five non-PR consumer cases.",
+    "AI-reader observations do not establish improved human comprehension. Text length was not used as comprehension evidence.",
+    "catalog.md was unavailable. Task 1 completion is a supplied record; implementation and verification results were not independently established.",
+    "The initial unchanged-resume assertion 7.3 remains FAIL. The operator-guide baseline's FAIL and PARTIAL answer grades also remain preserved.",
+    "The audit is limited to supplied evidence. Full external frozen instruction trees, hidden reasoning and unprovided sessions were not accessed; their complete contents were not independently rehashed here.",
+    "Isolation relies on allowed-file requests and visible traces on a shared filesystem. Recorded login-shell startup warnings include an unsuccessful attempt to create an outside-scope log; no successful outside-scope content read or artifact write is demonstrated.",
+    "Model build and temperature are unexposed. Recorded model, effort and other available settings match, but unexposed settings cannot be verified.",
+    "Oracle normalization preserves grading meaning. No automated harness was executed to establish compatibility with the changed JSON field type.",
+    "Implementation-mode coverage remains route inspection, not lifecycle execution."
+  ]
+}

@@ -1,0 +1,1 @@
+Updated [pr-draft.md](/tmp/clarify-task4/pr/destination-visibility/editor/pr-draft.md), removing restricted facts and references while preserving accessible links, contract scope, and the unresolved badge decision. Verified the review diff and JSON parsing; runtime integration remains future work.

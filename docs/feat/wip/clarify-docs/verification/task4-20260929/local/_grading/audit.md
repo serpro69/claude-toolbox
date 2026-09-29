@@ -1,0 +1,9 @@
+# Grader session audit
+
+Fresh default general-purpose agent with `fork_turns="none"`, session `01a0ee9c-66eb-7c92-9d87-1a7ca5bc67d5`. The captured trace contains 29 tool calls and 29 corresponding results, plus its visible final response. It reads the listed scenario evidence and copied instruction files, writes only the permitted per-scenario verdict files, and sends progress reports to the coordinator. No out-of-manifest subject read was observed.
+
+The grader read all original/revised artifacts, source evidence, fixed oracles, requests, reader answers and complete editor/reader trace sequences. It compacted exact repeated file text by byte-matching it to already inspected artifacts; unmatched content and call code remained visible. An initial combined dense-case display was truncated; the dense trace was subsequently emitted separately after compacting repeated output. A preliminary broad instruction-hash/directory listing was also truncated; the relevant instruction hashes and complete per-case artifact/session hashes were checked later in a focused pass.
+
+An initial attempt to repair report links failed because its native patch contained multiple operations on one file. Subsequent native patches corrected the reports. Final direct-path readback of the skill-instruction-target report hit the environment directory-name hook; this did not remove or alter earlier grading evidence. The grader completed unaffected report checks and preserved that limitation in its final response. The coordinator separately parsed all ten final JSON verdicts and checked the full assertion ID sets and report links.
+
+These tool errors and their corrections are retained in the raw visible trace, not reconstructed as successful calls. Actual metadata records gpt-6-astra with xhigh effort; no temperature or exact model build is inferred. Shared-filesystem isolation remains a prompt/trace control, not an OS guarantee.

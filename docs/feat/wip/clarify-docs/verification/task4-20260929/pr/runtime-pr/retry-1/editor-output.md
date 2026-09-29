@@ -1,0 +1,1 @@
+Created [pr-12-draft.md](/tmp/clarify-task4/pr/runtime-pr/retry-1/editor/docs/feat/wip/prep/pr-12-draft.md), clarifying runtime behavior, the actual PR increment, and validation limits. The badge decision remains open for the product owner. The unrelated draft is unchanged.

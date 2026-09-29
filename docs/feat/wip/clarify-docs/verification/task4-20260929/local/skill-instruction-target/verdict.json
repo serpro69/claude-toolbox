@@ -1,0 +1,66 @@
+{
+  "scenario": "skill-instruction-target",
+  "overall": "PASS",
+  "assertions": [
+    {
+      "id": "7.1",
+      "verdict": "PASS",
+      "evidence": "editor-output.md explicitly states that the supplied skill excludes agent and skill instructions and suggests /kk:implement."
+    },
+    {
+      "id": "7.2",
+      "verdict": "PASS",
+      "evidence": "editor-trace.jsonl reads only the request and copied instructions, with no implementation invocation or edit; original/SKILL.md and revised/SKILL.md are byte-identical."
+    },
+    {
+      "id": "7.3",
+      "verdict": "PASS",
+      "evidence": "Complete original/revised file maps are identical and the trace contains no artifact write; this routing-only request has no original/revised reader sessions."
+    }
+  ],
+  "comprehension": {
+    "applicable": false,
+    "original": [],
+    "revised": [],
+    "original_passes": null,
+    "revised_passes": null
+  },
+  "fidelity": {
+    "verdict": "PASS",
+    "evidence": [
+      "The operative Greeting instructions and frontmatter in original/SKILL.md remain byte-identical in revised/SKILL.md. The final response respects the explicit boundary and makes only a suggestion; no automatic handoff occurs."
+    ]
+  },
+  "isolation": {
+    "verdict": "PASS",
+    "evidence": [
+      "editor-trace.jsonl has three paired calls/results: the initial request command is denied, then the allowed request is read by basename with its workdir, followed by copied skill/shared instructions. No target subject content or unrelated repository content is read.",
+      "The final visible message matches editor-output.md; request, trace, instruction and snapshot hashes match manifest.json. Reader isolation is N/A because no readers ran."
+    ],
+    "limitations": [
+      "Isolation is assessed from prompt manifests and complete captured visible traces on a shared filesystem, not OS-enforced separation; shared cwd metadata does not establish subject-content access.",
+      "Initial request reads used default login-shell startup and returned denied navi log-initialization warnings before the request's login:false instruction was available. Later subject reads used login:false. No out-of-manifest subject content appeared.",
+      "editor-trace.jsonl ordinals 10-12 record a PreToolUse denial for the benign target/ substring in the request path. The next call at ordinal 16 reads the same allowed request using workdir plus basename; record this hook interaction separately from successful routing and subject-content isolation.",
+      "Before loading the skill, commentary announced a possible edit; after instruction loading, the final response correctly refuses the edit. No subject read or mutation occurred."
+    ]
+  },
+  "limitations": [
+    "Routing observations only; no original/revised comprehension-reader comparison was applicable or performed.",
+    "Isolation is assessed from prompt manifests and complete captured visible traces on a shared filesystem, not OS-enforced separation; shared cwd metadata does not establish subject-content access.",
+    "Initial request reads used default login-shell startup and returned denied navi log-initialization warnings before the request's login:false instruction was available. Later subject reads used login:false. No out-of-manifest subject content appeared.",
+    "Session metadata records gpt-6-astra, xhigh effort, default collaboration mode, OpenAI provider and CLI 0.159.0; temperature and an exact model build are not recorded.",
+    "editor-trace.jsonl ordinals 10-12 record a PreToolUse denial for the benign target/ substring in the request path. The next call at ordinal 16 reads the same allowed request using workdir plus basename; record this hook interaction separately from successful routing and subject-content isolation.",
+    "Before loading the skill, commentary announced a possible edit; after instruction loading, the final response correctly refuses the edit. No subject read or mutation occurred."
+  ],
+  "execution": {
+    "model": "gpt-6-astra",
+    "reasoning_effort": "xhigh",
+    "collaboration_mode": "default",
+    "provider": "openai",
+    "cli_version": "0.159.0",
+    "temperature": null,
+    "exact_model_build": null,
+    "evidence": "editor-session.json and editor-trace.jsonl session_meta/turn_context; where applicable, both reader-session.json files and reader traces agree."
+  },
+  "grading_method": "Fixed oracle; PASS requires the complete expected answer, PARTIAL means material expected content is absent, and FAIL denotes a material wrong answer. Answers are read as a whole only where explicitly noted. Complete JSONL traces were audited, including nested tool inputs and full results; exact repeated request/instruction/snapshot contents were compared byte-for-byte when compacting audit display. No hidden reasoning or additional source-rollout access was used."
+}

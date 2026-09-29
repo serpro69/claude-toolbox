@@ -1,0 +1,9 @@
+1. **Why it exists:** Restaurant owners need a default preparation time with item-specific exceptions. [guide.md, lines 3–6](/home/sergio/Projects/personal/claude-toolbox/docs/feat/wip/clarify-docs/verification/task4-20260929/local/source-disagreement/revised/guide.md:3)
+
+2. **Default changes from 15 to 20:** The accepted requirement keeps new inherited lookups at 15 until the next day; the implementation returns 20 immediately. Existing orders retain their stored 15 in both cases. [guide.md, lines 10–18](/home/sergio/Projects/personal/claude-toolbox/docs/feat/wip/clarify-docs/verification/task4-20260929/local/source-disagreement/revised/guide.md:10)
+
+3. **Current increment:** Preparation-time lookup and order snapshots. Null or missing `prep_minutes` inherits the default; explicit values, including zero, override it. Orders store the resolved time at creation. [guide.md, lines 4–8](/home/sergio/Projects/personal/claude-toolbox/docs/feat/wip/clarify-docs/verification/task4-20260929/local/source-disagreement/revised/guide.md:4)
+
+4. **Outside it:** Scheduling is excluded. How the required next-day behavior fits that exclusion remains unresolved. [guide.md, lines 4–5 and 20–24](/home/sergio/Projects/personal/claude-toolbox/docs/feat/wip/clarify-docs/verification/task4-20260929/local/source-disagreement/revised/guide.md:20)
+
+5. **Decisions remaining:** The feature maintainer must reconcile the implementation with the next-day requirement or obtain an explicit requirements decision, including resolving the scheduling boundary. The accepted requirement remains binding meanwhile. Product owns the unresolved inheritance-badge decision. [guide.md, lines 20–26](/home/sergio/Projects/personal/claude-toolbox/docs/feat/wip/clarify-docs/verification/task4-20260929/local/source-disagreement/revised/guide.md:20)

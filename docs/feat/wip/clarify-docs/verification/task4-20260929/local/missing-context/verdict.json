@@ -1,0 +1,125 @@
+{
+  "scenario": "missing-context",
+  "overall": "PASS",
+  "assertions": [
+    {
+      "id": "3.1",
+      "verdict": "PASS",
+      "evidence": "revised/guide.md:3-10 supports all five oracle answers; revised-reader-output.md identifies the accepted CSV contract, unverified runtime, scheduling exclusion and missing retention decision."
+    },
+    {
+      "id": "3.2",
+      "verdict": "PASS",
+      "evidence": "editor-trace.jsonl ordinals 29-34 inspect requirements.md and attempt the expressly allowed retention.md; its missing-file result precedes the limitation written at 38."
+    },
+    {
+      "id": "3.3",
+      "verdict": "PASS",
+      "evidence": "revised/guide.md:5-10 explicitly says implementation was not supplied and retention duration cannot be inferred; no duration or settled cleanup behavior appears."
+    },
+    {
+      "id": "3.4",
+      "verdict": "PASS",
+      "evidence": "revised/guide.md:8-10 identifies the unavailable decision, data steward and prerequisite of supplying it before documenting cleanup."
+    },
+    {
+      "id": "3.5",
+      "verdict": "PASS",
+      "evidence": "Only guide.md differs between original/ and revised/ complete hash maps; editor-trace.jsonl writes only the guide at 38 and creates neither retention.md nor any summary."
+    }
+  ],
+  "comprehension": {
+    "applicable": true,
+    "original": [
+      {
+        "question": "Why does this work exist?",
+        "verdict": "PASS",
+        "evidence": "original-reader-output.md answer 1 states downloadable completed-order records."
+      },
+      {
+        "question": "What happens in a representative case?",
+        "verdict": "PARTIAL",
+        "evidence": "original-reader-output.md answer 2 describes CSV plus download link but does not qualify it as an accepted contract with unverified implementation, as oracle/expected.json requires."
+      },
+      {
+        "question": "What changes in the current increment?",
+        "verdict": "PARTIAL",
+        "evidence": "original-reader-output.md answer 3 gives on-demand CSV scope but presents it as current behavior, omitting accepted-contract status throughout the answer set."
+      },
+      {
+        "question": "What remains outside it?",
+        "verdict": "PARTIAL",
+        "evidence": "original-reader-output.md answer 4 excludes scheduling but lacks the oracle's unavailable implementation-evidence qualification."
+      },
+      {
+        "question": "What still needs a decision?",
+        "verdict": "PARTIAL",
+        "evidence": "original-reader-output.md answer 5 notices uncertain retention/cleanup despite the guide's 'none remain' claim, but cannot identify the data steward or the required next action from its allowed guide."
+      }
+    ],
+    "revised": [
+      {
+        "question": "Why does this work exist?",
+        "verdict": "PASS",
+        "evidence": "revised-reader-output.md answer 1 states completed-order exports for service owners."
+      },
+      {
+        "question": "What happens in a representative case?",
+        "verdict": "PASS",
+        "evidence": "revised-reader-output.md answer 2 gives one CSV and a link, explicitly qualified as an accepted contract with unverified running behavior."
+      },
+      {
+        "question": "What changes in the current increment?",
+        "verdict": "PASS",
+        "evidence": "revised-reader-output.md answer 3 identifies requested CSV exports; answer 2 supplies accepted-contract status. Its uncertainty about prior behavior adds no unsupported claim."
+      },
+      {
+        "question": "What remains outside it?",
+        "verdict": "PASS",
+        "evidence": "revised-reader-output.md answer 4 excludes scheduling; answer 2 supplies the oracle's unavailable runtime-verification qualification. Evaluated as a whole."
+      },
+      {
+        "question": "What still needs a decision?",
+        "verdict": "PASS",
+        "evidence": "revised-reader-output.md answer 5 names the data steward and obtaining the missing decision before documenting cleanup; it correctly distinguishes unavailable evidence from proof that no decision exists."
+      }
+    ],
+    "original_passes": 1,
+    "revised_passes": 5
+  },
+  "fidelity": {
+    "verdict": "PASS",
+    "evidence": [
+      "revised/guide.md preserves purpose, one CSV per request, download link and scheduling exclusion while correcting the false no-open-decisions claim against original/requirements.md.",
+      "The unavailable retention reference is rendered as a limitation rather than a broken markdown link, with known owner and next step. No invented duration, code execution, runtime claim or fabricated file appears."
+    ]
+  },
+  "isolation": {
+    "verdict": "PASS",
+    "evidence": [
+      "editor-trace.jsonl has six paired calls/results; reader traces have two each. The only failed subject read is the manifest-authorized missing retention.md, with its complete error captured at ordinal 34.",
+      "Readers see only their own request and guide, never the requirement, oracle, skill or other version. All final outputs and trace/request/snapshot hashes match the records; no unmatched call or out-of-manifest subject read was found."
+    ],
+    "limitations": [
+      "Isolation is assessed from prompt manifests and complete captured visible traces on a shared filesystem, not OS-enforced separation; shared cwd metadata does not establish subject-content access.",
+      "Initial request reads used default login-shell startup and returned denied navi log-initialization warnings before the request's login:false instruction was available. Later subject reads used login:false. No out-of-manifest subject content appeared."
+    ]
+  },
+  "limitations": [
+    "These are single AI-reader observations, not proof of improved human comprehension; text length is not a success measure.",
+    "Isolation is assessed from prompt manifests and complete captured visible traces on a shared filesystem, not OS-enforced separation; shared cwd metadata does not establish subject-content access.",
+    "Initial request reads used default login-shell startup and returned denied navi log-initialization warnings before the request's login:false instruction was available. Later subject reads used login:false. No out-of-manifest subject content appeared.",
+    "Session metadata records gpt-6-astra, xhigh effort, default collaboration mode, OpenAI provider and CLI 0.159.0; temperature and an exact model build are not recorded."
+  ],
+  "execution": {
+    "model": "gpt-6-astra",
+    "reasoning_effort": "xhigh",
+    "collaboration_mode": "default",
+    "provider": "openai",
+    "cli_version": "0.159.0",
+    "temperature": null,
+    "exact_model_build": null,
+    "evidence": "editor-session.json and editor-trace.jsonl session_meta/turn_context; where applicable, both reader-session.json files and reader traces agree."
+  },
+  "grading_method": "Fixed oracle; PASS requires the complete expected answer, PARTIAL means material expected content is absent, and FAIL denotes a material wrong answer. Answers are read as a whole only where explicitly noted. Complete JSONL traces were audited, including nested tool inputs and full results; exact repeated request/instruction/snapshot contents were compared byte-for-byte when compacting audit display. No hidden reasoning or additional source-rollout access was used."
+}
