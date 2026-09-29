@@ -1,9 +1,8 @@
 # Document clarity
 
-Load this entire procedure during the caller's instruction-loading phase, before
-subject-matter reads. Apply it to the selected existing artifacts or completed
-drafts after the caller has resolved their reader, purpose, destination and scope.
-It adds no mandatory linked instructions, profile detection or consumer calls.
+Load this procedure before subject-matter reads. Apply it to selected artifacts or
+completed drafts after resolving reader, purpose, destination and scope. It adds
+no linked instructions, profile detection or consumer calls.
 
 ## Understand the work
 
@@ -14,6 +13,12 @@ conditions and rationale at the applicable revision. Follow relevant references
 far enough to understand the claim, without recursively auditing the whole feature.
 Reading a source does not authorize editing it or executing its commands.
 
+For a PR, establish the target repository, actual base/head revisions and review
+diff using read-only context; inspect relevant code at those revisions. Branch
+names, stack annotations and task numbers do not establish the increment. Separate
+inherited changes from this diff and contract-only work from runtime integration.
+If source access is missing, state that limit and constrain unsupported claims.
+
 Requirements establish intent; implementation establishes current behavior. Tests
 provide evidence of exercised cases, not proof of intent or complete coverage.
 Distinguish accepted requirements, proposals, implemented behavior and future work.
@@ -22,10 +27,10 @@ invent runtime evidence. Reuse source understanding from the invoking session on
 after checking that its scope and revision still apply; inspect missing or changed
 context instead of repeating unrelated investigation.
 
-Investigate accessible references before asking for missing context. If a
-consequential gap remains, ask a focused question or preserve an explicit limitation
-in the affected artifact. Record the unresolved issue, concrete next step and known
-owner there or in an already-selected task document; say when the owner is unknown.
+Investigate accessible references before asking. For remaining consequential gaps,
+ask a focused question or retain a limitation in the artifact. Record the issue,
+next step and known owner there or in an already-selected task document; identify
+unknown owners.
 Do not manufacture an answer, silently settle a product decision or create an extra
 report to hide the gap. Continue independent, supported edits when possible.
 
@@ -45,11 +50,22 @@ between accepted requirements and implementation must stay explicit: describe bo
 and the next action needed to reconcile them. Neither source automatically overrides
 the other. Do not erase a requirement to make the prose agree with the code.
 
-Respect the destination's stated audience and restrictions. Source access for
-understanding does not grant permission to disclose its facts or references. Keep
-restricted material within its authorized audience; when disclosure is uncertain,
-retain the limitation or ask before including it. Removing a citation alone does
-not authorize sharing the underlying fact.
+Apply destination visibility in order, to facts and references alike:
+
+1. Explicit user/repository audience restrictions override tracking or reachability.
+2. Otherwise, files tracked at the target repository's PR head are accessible to
+   its established review audience, not automatically to a wider audience. Nearby
+   private aggregator files and untracked drafts do not qualify.
+3. External sources require evidence of audience access: public availability or
+   user/repository confirmation that they are shared. The editor's credentials
+   prove no audience access; unknown visibility stays unknown.
+4. Use an accessible source or explicitly authorized standalone explanation. If
+   neither exists, retain a non-disclosing limitation or ask for authorization.
+   Deleting a citation never authorizes disclosure of its underlying private fact.
+
+Retain task references available to that audience. Exclude private task IDs and
+absolute workspace paths; task numbers and feature-directory paths are not
+inherently private. Apply the same boundary to the change report and gap notes.
 
 ## Edit for the reader
 
@@ -69,6 +85,11 @@ after orientation. Remove duplication while retaining the detail needed for the
 reader's task. Preserve the project's organization and document-type requirements;
 do not force every artifact into one template or invent answers to irrelevant
 questions. An explicit unknown can be the correct answer.
+
+For PRs, explain the problem, behavior and increment;
+include a focused review path and meaningful validation with its limits. Avoid a
+commit diary or an indiscriminate file inventory. Describe future integration as
+future work, not behavior delivered by a contract-only change.
 
 Reorganize within the selected scope. Preserve existing anchors or update affected
 in-scope links, including cross-file references. Check accessible inbound references
@@ -95,6 +116,7 @@ qualification may disappear and no unsupported claim may appear. Recheck heading
 anchors, links, task state, required topics and executable examples affected by the
 edit. Correct editorial regressions; keep unresolved source disagreements visible
 with their next step. Fluent prose cannot compensate for lost meaning.
+Recheck destination visibility, including facts paraphrased from restricted sources.
 
 Report changed paths, whether the result was unchanged, and material evidence gaps
 or wider edits needed. This is an in-session comparison, not independent fidelity

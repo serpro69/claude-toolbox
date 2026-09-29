@@ -3,7 +3,7 @@
 > Design: [design.md](design.md)
 > Implementation: [implementation.md](implementation.md)
 > Issue: [#156](https://github.com/serpro69/claude-toolbox/issues/156)
-> Status: in-progress — Task 1 done; Tasks 2–5 pending
+> Status: in-progress — Tasks 1–2 done; Tasks 3–5 pending
 > Created: 2026-09-29
 > Not Doing: global brevity prompts, product/code changes, automatic publication, bulk cleanup, new profiles, eval harness, automatic standalone-implementation completion
 
@@ -39,16 +39,24 @@ owner and next step. No claim of a fully green repository suite is made.
 
 ## Task 2: Clarify PR drafts without leaking private context
 
-**Status:** pending
+**Status:** done
 **Depends on:** Task 1
 **Size:** M
 **Can run in parallel with:** Task 3
 **Docs:** [PR drafts and visibility](implementation.md#2-pr-drafts-and-audience-boundaries)
 
-- [ ] Extend `clarify-docs/SKILL.md` and the shared procedure for local PR drafts and read-only remote inputs, with explicit output location rules → verify: editing produces a local draft and makes no external write.
-- [ ] Ground PR explanations in the actual base/head, diff, requirements and relevant code; distinguish current behavior from future integration → verify: contract-only and runtime fixtures produce accurate, distinct explanations and focused review paths.
-- [ ] Apply the design's ordered destination-visibility rules in the shared procedure → verify: declared-private and tracked-but-restricted fixtures do not leak, shared task references remain usable, and credential-only or unknown external access is not treated as audience access.
-- [ ] Add PR and privacy evals plus user-guide examples; regenerate Codex output → verify: assertions pass, shared prose stays single-sourced and structural checks remain green.
+- [x] Extend `clarify-docs/SKILL.md` and the shared procedure for local PR drafts and read-only remote inputs, with explicit output location rules → verify: editing produces a local draft and makes no external write.
+- [x] Ground PR explanations in the actual base/head, diff, requirements and relevant code; distinguish current behavior from future integration → verify: contract-only and runtime fixtures produce accurate, distinct explanations and focused review paths.
+- [x] Apply the design's ordered destination-visibility rules in the shared procedure → verify: declared-private and tracked-but-restricted fixtures do not leak, shared task references remain usable, and credential-only or unknown external access is not treated as audience access.
+- [x] Add PR and privacy evals plus user-guide examples; regenerate Codex output → verify: assertions pass, shared prose stays single-sourced and structural checks remain green.
+
+**Verification:** [Task 2 evidence](verification.md#task-2-verification) records
+24/24 applicable assertions and 20/20 revised-reader answers passing across five
+scenarios, with the first partial attempts preserved. Shared instructions total
+1,000 words; generation is stable and isolated review is complete. Eight of nine
+shell suites pass; the two pre-existing hook assertions still fail. Caller-only
+absolute output links have a documented instruction-precedence limitation for
+Task 4 to clarify; destination drafts contain no prohibited workspace pointers.
 
 ## Task 3: Apply the shared pass after design and documentation drafting
 
@@ -80,6 +88,10 @@ edits to the same file are safe.
 - [ ] Stage and execute the editor plus separate original/revised reader sessions and independent grading according to the protocol → verify: readers have no inherited author context or oracle, source-access traces are available, and each assertion has an evidence-backed PASS/FAIL/PARTIAL.
 - [ ] Apply baseline-aware acceptance and fix discovered problems → verify: all applicable comprehension, correctness, fidelity, visibility, structure and orientation assertions pass; clear-prose fixtures still permit factual/privacy repairs; only a baseline meeting every applicable requirement requires no-op; affected evals are rerun after fixes.
 - [ ] Record isolation limits and human-comprehension limits → verify: shared-filesystem leakage or missing evidence cannot yield a valid run, and AI-reader results are reported only as the evidence actually collected.
+
+**Owned follow-up:** the feature maintainer must clarify caller-only output links
+versus prohibited source pointers and add coverage, as described in the
+[report-path limitation](verification.md#report-path-limitation).
 
 ## Task 5: Final verification and documentation
 

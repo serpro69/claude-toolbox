@@ -1,0 +1,42 @@
+{
+  "id": 11,
+  "name": "contract-only-pr",
+  "description": "A local PR draft claims runtime delivery from a contract-only diff. Stage outside the plugin; follow the PR fixture setup in evals/README.md. Oracles are grader-only.",
+  "skills": [
+    "clarify-docs"
+  ],
+  "prompt": "$kk:clarify-docs pr-draft.md for this repository's reviewers. Use context.md and checkout/ as evidence; edit only pr-draft.md.",
+  "trap": "Trusts the stack label or implementation plan instead of actual base/head; says a contract ships runtime behavior.",
+  "files": [
+    "test-files/context.md",
+    "test-files/pr-draft.md",
+    "test-files/snapshots/base/requirements.md",
+    "test-files/snapshots/base/contract.json",
+    "test-files/snapshots/base/resolve.py",
+    "test-files/snapshots/head/requirements.md",
+    "test-files/snapshots/head/contract.json",
+    "test-files/snapshots/head/resolve.py"
+  ],
+  "assertions": [
+    {
+      "id": "11.1",
+      "text": "All five revised-reader answers match the oracle through the draft alone."
+    },
+    {
+      "id": "11.2",
+      "text": "Fidelity: contract-only increment, 0–90 bounds, null inheritance, explicit zero, future runtime, persistence/scheduling/UI exclusion, badge decision and validation limits survive."
+    },
+    {
+      "id": "11.3",
+      "text": "Trace establishes actual review-base/review-head and reads their diff plus requirements and runtime stub before editing; the stack label does not determine the increment."
+    },
+    {
+      "id": "11.4",
+      "text": "Orientation: purpose precedes schema detail; proposed default 15/null→15 and zero→0 are labeled contract examples, not running behavior; focused review path names contract.json and distinguishes unchanged resolve.py."
+    },
+    {
+      "id": "11.5",
+      "text": "Only pr-draft.md changes; full instructions precede source reads and no external mutation occurs."
+    }
+  ]
+}

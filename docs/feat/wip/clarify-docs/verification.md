@@ -1,4 +1,9 @@
-# Task 1 verification
+# Clarify-docs verification
+
+Task 1 evidence below describes its original local-document revision. Task 2's
+PR and visibility evidence is recorded in [Task 2 verification](#task-2-verification).
+
+## Task 1 verification
 
 Date: 2026-09-29. Scope: local-document editing only; Tasks 2–5 remain pending.
 
@@ -122,3 +127,107 @@ readers already answered correctly, so those edits demonstrate correction of the
 predeclared orientation defects while preserving answers, not improved answer
 accuracy. The encrypted prompt-export issue and manual trace-audit limitations are
 recorded above; the export lesson was indexed under `kk:test-patterns`.
+
+## Task 2 verification
+
+Date: 2026-09-29. Scope: PR drafts and audience boundaries only. Tasks 3–5 remain
+pending. Five new scenarios are authored and executed, with two separately
+preserved reruns. **Task 2 complete:** all **24 applicable assertions** and
+**20 revised-reader answers** pass at their latest applicable fixture revisions.
+
+### Behavior and review
+
+The new entry point accepts local drafts, remote PR bodies and pasted text. Edits
+stay local, use actual base/head evidence when accessible, and apply the ordered
+audience rules. The user guide documents destination selection, collision handling,
+source-access limits and publication boundaries. No dependency or profile was added.
+
+| Scenario | Latest verdict | Evidence |
+| --- | --- | --- |
+| Contract-only PR | 5/5 PASS; readers 1/5 → 5/5 | [Final verdicts](verification/task2-20260929-retry1/contract-only-pr/verdicts.md); [first PARTIAL](verification/task2-20260929/contract-only-pr/verdicts.md) |
+| Runtime PR and draft collision | 6/6 PASS; readers 0/5 → 5/5 | [Verdicts](verification/task2-20260929/runtime-pr/verdicts.md) |
+| Destination visibility and clear-prose repair | 6/6 PASS; readers 5/5 → 5/5 | [Verdicts](verification/task2-20260929/destination-visibility/verdicts.md) |
+| Missing destination/source | 3/3 PASS; readers N/A | [Verdicts](verification/task2-20260929/pr-missing-context/verdicts.md) |
+| Unavailable source with authorized destination | 4/4 PASS; readers 4/5 → 5/5 | [Final verdicts](verification/task2-20260929-retry1/pr-unavailable-source/verdicts.md); [first PARTIAL](verification/task2-20260929/pr-unavailable-source/verdicts.md) |
+
+The [first run](verification/task2-20260929/summary.md) had 21/24 assertion passes
+and three PARTIALs. The contract editor chose a valid 20-minute example, while the
+oracle required 15 without supplying that example to the editor. The current base
+and head requirements now explicitly provide the 15-minute example; the assertion
+is unchanged. The unavailable-source reader omitted the verification owner/action
+from broad questions. Its third question now explicitly asks for missing evidence
+and ownership; that expectation moved from answer five to answer three, preserving
+all protected claims. Both cases received fresh editors and original/revised
+readers after those refinements. Operative skill instructions stayed unchanged.
+Earlier PARTIALs are not reclassified as passes.
+The [retry grade](verification/task2-20260929-retry1/summary.md) confirms 9/9
+assertions and 10/10 revised answers for those two cases. These are refined-input
+runs, not repeated trials on identical conditions or changed skill instructions.
+
+[Independent code review](verification/task2-20260929/code-reviewer.md) found no
+P0–P3 defects, including a follow-up review of the final fixture refinements.
+[External review](verification/task2-20260929/external-review.md) reported two LOW
+items: finish task tracking after grading, and correct a temporary diff capture
+that omitted added files. The capture was corrected before the code reviewer
+finished; its 97-file review included all added fixtures and generated counterparts.
+Task tracking is now complete. These two LOW observations require no further action.
+No P0/P1 systemic findings qualified for indexing. New learnings are recorded here;
+no additional project convention was established.
+
+### Checks and reproducibility
+
+- The shared procedure is **1,000 whitespace-delimited words**, with no mandatory
+  linked instructions. The frontmatter description is **418 characters**. Current
+  [Claude Code description guidance](https://code.claude.com/docs/en/skills#skill-descriptions-are-cut-short)
+  was checked before editing; the description remains below the repository's
+  portable ceiling. The skill-creator validator passes.
+- Active profiles: `skill-md`, plus `python` for synthetic sources. All applicable
+  implement/review checklists were read. Neither installed profile contributes a
+  test or documentation phase index. No new dependency lookup was necessary.
+- `make generate-kodex`: PASS, including Go tests, **184 plugin-structure** and
+  **29 Codex-structure** assertions. Initial sandbox cache/agent-write restrictions
+  were resolved using a temporary Go cache and authorized generation escalation.
+  The default Python 3.10 lacked a TOML parser; selecting the existing Python 3.12
+  for these checks resolved all seven misleading parse failures without file changes.
+- Second generation: PASS, no further output changes. SHA-256 over sorted generated
+  file checksums before and after:
+  `8307312bea859c921985422be9d04604a9f6175860166c0aea0beeebf6d758a8`.
+- `make plugin-graph`: PASS, including Go tests; no broken edges or orphans. Its
+  existing cycle warning remains advisory. Deliberately partial fixture links remain.
+- All nine shell suites ran; **eight pass**. Manifest/schema suites initially hit
+  cache restrictions and temporary-commit signing errors; reruns with cache access
+  and process-local `commit.gpgsign=false` passed. The only remaining failures are
+  the same two unchanged hook expectations documented in Task 1 (node_modules and
+  .log). The maintainer's existing follow-up above still applies.
+- All 15 eval definitions parse and resolve declared fixture paths; assertion IDs
+  are sequential. The runtime fixture's three assertions pass. `git diff --check`
+  passes. The ten Task 1 scenarios were not rerun for this slice; their historical
+  results do not certify the final combined feature revision. Task 4 owns that run.
+
+Raw [check logs](verification/task2-20260929/checks/) retain initial failures and
+successful retries. Behavioral evidence records source/instruction hashes, actual
+Git refs/diffs, original/revised artifacts, prompts, tool calls/results, reader
+answers and independent per-assertion grades. Remote reads are simulated by declared
+offline platform responses and synthetic URLs; no live connector was exercised.
+
+All editor and reader sessions used `gpt-6-astra` with `xhigh` reasoning and no
+inherited author history. Model build and sampling temperature are not exposed.
+The independent general-purpose grader used the same model/settings, with no
+inherited author history; its session record accompanies the first run.
+Separate readers receive only their artifact. Editors and readers receive no oracle.
+Shared-filesystem isolation uses allowed-file manifests and trace audits, not OS
+sandbox separation. The observed traces stay within those manifests. Encrypted
+spawn transport is preserved alongside orchestrator-attested plaintext prompts;
+that transcription is not cryptographically verified. Results describe these AI
+reader sessions, not general human comprehension or repeatability.
+
+### Report-path limitation
+
+The contract editor's caller-facing completion message uses an absolute clickable
+link to its selected output. The PR body contains no absolute workspace pointer.
+The harness prefers absolute links for real local artifacts, while the shared
+procedure applies its path restriction to change reports too. **Owner:** feature
+maintainer. **Next step (Task 4):** clarify the distinction between a caller-only
+output link and private source pointers disclosed in a destination artifact, then
+exercise it explicitly. This is retained as a runtime instruction-precedence
+limitation; passing the current assertions does not establish a path-free report.
