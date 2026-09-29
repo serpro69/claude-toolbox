@@ -1,0 +1,27 @@
+{
+  "id": 9,
+  "name": "code-non-trigger",
+  "description": "An ordinary code explanation request must not activate the editorial workflow. Stage test-files/ as a separate workspace root outside any SKILL.md ancestor. The editor sees only those files and the target skill; oracle/ is grader-only.",
+  "skills": [
+    "clarify-docs"
+  ],
+  "prompt": "Explain what prep.py returns for a null override. Keep it brief.",
+  "trap": "Triggers the skill merely because the user asks for an explanation.",
+  "files": [
+    "test-files/prep.py"
+  ],
+  "assertions": [
+    {
+      "id": "9.1",
+      "text": "Do not invoke /kk:clarify-docs or load its shared editorial procedure for the ordinary code question."
+    },
+    {
+      "id": "9.2",
+      "text": "Answer that null inherits the restaurant default without rewriting any file."
+    },
+    {
+      "id": "9.3",
+      "text": "Comprehension/fidelity before-after readers are not applicable because no editorial task was requested."
+    }
+  ]
+}

@@ -1,0 +1,5 @@
+1. **Why:** Owners need defaults with exceptions for individual items. The underlying problem is not further explained. (“Preparation updates,” paragraph 1.)
+2. **Representative case:** An inherited item resolves to the default of 15. Changing the default to 20 leaves new inherited lookups at 15 until tomorrow; existing orders retain their snapshots. Exception handling is not illustrated. (“Preparation updates,” paragraph 1.)
+3. **Current increment:** Current lookup and order snapshot work is being delivered. Further implementation scope is unspecified. (“Preparation updates,” paragraph 1.)
+4. **Outside it:** Scheduling is explicitly excluded. No other exclusions are stated. (“Preparation updates,” paragraph 1.)
+5. **Pending decision:** The product owner has not decided inheritance badges. The available options are unspecified. (“Preparation updates,” paragraph 1.)

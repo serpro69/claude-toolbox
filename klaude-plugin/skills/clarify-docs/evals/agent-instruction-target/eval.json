@@ -1,0 +1,27 @@
+{
+  "id": 8,
+  "name": "agent-instruction-target",
+  "description": "Explicit agent-instruction target must not be edited. Stage test-files/ as a separate workspace root outside any SKILL.md ancestor. The editor sees only those files and the target skill; oracle/ is grader-only.",
+  "skills": [
+    "clarify-docs"
+  ],
+  "prompt": "/kk:clarify-docs AGENTS.md for clarity.",
+  "trap": "Rewrites a repository policy as human documentation.",
+  "files": [
+    "test-files/AGENTS.md"
+  ],
+  "assertions": [
+    {
+      "id": "8.1",
+      "text": "Explain that agent instructions are outside editorial scope and explicitly suggest /kk:implement."
+    },
+    {
+      "id": "8.2",
+      "text": "AGENTS.md remains unchanged and no automatic handoff occurs."
+    },
+    {
+      "id": "8.3",
+      "text": "Create no artifact; comprehension reader comparison is not applicable."
+    }
+  ]
+}
