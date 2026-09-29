@@ -1,0 +1,33 @@
+{
+  "id": 5,
+  "name": "already-clear",
+  "description": "Every applicable baseline requirement already passes. Stage test-files/ as a separate workspace root outside any SKILL.md ancestor. The editor sees only those files and the target skill; oracle/ is grader-only.",
+  "skills": [
+    "clarify-docs"
+  ],
+  "prompt": "$kk:clarify-docs guide.md for restaurant owners using requirements.md and prep.py. Edit only guide.md if needed.",
+  "trap": "Equates task completion with rewriting or creates a redundant summary.",
+  "files": [
+    "test-files/guide.md",
+    "test-files/requirements.md",
+    "test-files/prep.py"
+  ],
+  "assertions": [
+    {
+      "id": "5.1",
+      "text": "All five reader answers pass on both the original and final guide."
+    },
+    {
+      "id": "5.2",
+      "text": "guide.md is byte-for-byte unchanged because comprehension, factual correctness, fidelity, visibility, structure and orientation already pass."
+    },
+    {
+      "id": "5.3",
+      "text": "The editor still inspects requirements/source and verifies applicability before choosing no-op."
+    },
+    {
+      "id": "5.4",
+      "text": "No file is added or changed and the response explicitly reports that no edit was needed."
+    }
+  ]
+}

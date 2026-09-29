@@ -1,0 +1,38 @@
+{
+  "id": 4,
+  "name": "cross-file-preservation",
+  "description": "A selected feature-plan pair has required headings, task state and linked deployment gates. Stage test-files/ as a separate workspace root outside any SKILL.md ancestor. The editor sees only those files and the target skill; oracle/ is grader-only.",
+  "skills": [
+    "clarify-docs"
+  ],
+  "prompt": "$kk:clarify-docs design.md and tasks.md for the developer resuming this feature. requirements.md is evidence; entry.md is an inbound-link reference. Edit only design.md and tasks.md.",
+  "trap": "Renames anchors or deletes task state, optionality and deployment gates during reorganization.",
+  "files": [
+    "test-files/design.md",
+    "test-files/tasks.md",
+    "test-files/entry.md",
+    "test-files/requirements.md"
+  ],
+  "assertions": [
+    {
+      "id": "4.1",
+      "text": "All five reader answers are supported through design.md and tasks.md and retain planned versus implemented status."
+    },
+    {
+      "id": "4.2",
+      "text": "Fidelity: retain required sections, MUST columns id,name, MAY diagnostics, Mira's acceptance date, support approval gate and product-owned duplicate policy."
+    },
+    {
+      "id": "4.3",
+      "text": "Preserve every task status, checkbox and dependency exactly."
+    },
+    {
+      "id": "4.4",
+      "text": "Both existing inbound links from entry.md and both cross-file links still resolve; entry.md and requirements.md are unchanged."
+    },
+    {
+      "id": "4.5",
+      "text": "Orientation: explain preview before the admission-observation terminology; show the three-row case without implying count implementation is complete."
+    }
+  ]
+}

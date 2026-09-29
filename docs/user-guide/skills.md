@@ -1,6 +1,6 @@
 # Skills
 
-The kk plugin ships 13 workflow skills that form a complete development pipeline.
+The kk plugin ships 14 workflow and utility skills, including a complete development pipeline.
 
 ## The Pipeline
 
@@ -31,6 +31,7 @@ The kk plugin ships 13 workflow skills that form a complete development pipeline
 | **/kk:dependency-handling** | Fires before calling a library/SDK/API or adding a dependency. Forces a capy/context7 lookup instead of guessing signatures or behavior. |
 | **/kk:diff-skill** | Compares two versions of a skill's markdown instructions to detect degradations and complexity increases. Asymmetric — only regressions count. |
 | **/kk:merge-docs** | Merges two competing design docs for the same feature into one unified document, resolving conflicts and preserving the best of both. |
+| **/kk:clarify-docs** | Improves explanations in selected existing local documentation after understanding the relevant requirements and source. Preserves technical meaning and leaves already-clear, correct material unchanged. |
 | **/kk:chain-of-verification** | Makes Claude fact-check its own answers. Standard mode (prompt-based) or isolated mode (independent sub-agents). For high-stakes accuracy. |
 
 ## Commands
@@ -59,3 +60,30 @@ Commands are skill variants invoked with explicit mode selection:
 **/kk:merge-docs** reconciles competing design docs into one unified document.
 
 **/kk:chain-of-verification** adds self-verification for high-stakes accuracy at any stage.
+
+### Clarify an existing document
+
+Use `/kk:clarify-docs docs/configuration.md for service owners; use src/config/`
+to improve an existing guide, or select a design document or implementation plan
+for the developer who needs to resume the work. Supply the target paths and any
+known audience, purpose, requirements or source references. A directory helps find
+the target; it does not authorize rewriting every document inside it.
+
+The skill first understands the requirements and relevant implementation, then edits
+the selected document in place. It explains purpose and behavior before reference
+detail while preserving requirements, exceptions, decisions, task state and links.
+Source disagreements and missing context remain explicit with a next step. No
+additional summary file is produced, and a document that already meets the
+requirements stays unchanged. Clear prose can still receive a source-backed factual
+correction.
+
+This utility currently supports local human documentation. PR drafts and automatic
+passes in `/kk:design` and `/kk:document` are not implemented yet. It does not change
+code or configuration, publish externally, or edit agent/skill instructions. An
+explicit `AGENTS.md`, `CLAUDE.md` or `SKILL.md` target receives a suggestion to use
+`/kk:implement`, with no edit or automatic handoff. Generic requests for shorter
+chat answers do not activate it.
+
+The final comprehension and fidelity check runs in the editing session. Normal
+project review remains the caller's responsibility; the skill does not provide
+independent runtime verification or a guarantee of improved human comprehension.

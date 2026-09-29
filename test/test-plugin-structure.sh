@@ -67,6 +67,7 @@ log_section "Section 3: Skills"
 
 EXPECTED_SKILLS=(
   design
+  clarify-docs
   chain-of-verification
   dependency-handling
   diff-skill
@@ -208,7 +209,7 @@ log_section "Section 7: Cross-references"
 
 log_test "Skill references do NOT have kk: prefix (skills are unprefixed)"
 # Skills should be referenced without kk: prefix in skill files
-wrongly_prefixed=$(grep -rE '`kk:(plan|implement|test|document|review-code|review-spec|merge-docs)`' \
+wrongly_prefixed=$(grep -rE '`kk:(plan|implement|test|document|review-code|review-spec|merge-docs|clarify-docs)`' \
   "$REPO_ROOT/klaude-plugin/skills/" 2>/dev/null || true)
 if [[ -z "$wrongly_prefixed" ]]; then
   log_pass "Skill references correctly unprefixed"

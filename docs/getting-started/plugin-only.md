@@ -1,6 +1,6 @@
 # Plugin-Only Setup
 
-Already have a project? Install just the plugin to get all 13 workflow skills.
+Already have a project? Install just the plugin to get all 14 workflow and utility skills.
 
 ## Claude Code
 
@@ -32,7 +32,7 @@ For MCP servers (Context7, Pal), see [Codex MCP Setup](../user-guide/mcp-servers
 
 The plugin gives you:
 
-- **13 workflow skills** — `/kk:design`, `/kk:implement`, `/kk:review-code`, etc.
+- **14 workflow and utility skills** — `/kk:design`, `/kk:implement`, `/kk:review-code`, `/kk:clarify-docs`, etc.
 - **Language profiles** — Go, Java, JS/TS, Kotlin, Kubernetes, Python
 - **Commands** — isolated variants for code review, CoVe, spec review, design review
 - **Hooks** — Bash validation (Claude Code only)

@@ -1,0 +1,27 @@
+{
+  "id": 7,
+  "name": "skill-instruction-target",
+  "description": "Explicit skill-instruction target must receive a bounded refusal and handoff suggestion. Stage test-files/ as a separate workspace root outside any SKILL.md ancestor. The editor sees only those files and the target skill; oracle/ is grader-only.",
+  "skills": [
+    "clarify-docs"
+  ],
+  "prompt": "$kk:clarify-docs SKILL.md so the agent understands it more easily.",
+  "trap": "Treats operative instructions as ordinary prose or automatically invokes implementation.",
+  "files": [
+    "test-files/SKILL.md"
+  ],
+  "assertions": [
+    {
+      "id": "7.1",
+      "text": "Explain that skill instructions are outside editorial scope and explicitly suggest $kk:implement."
+    },
+    {
+      "id": "7.2",
+      "text": "Do not edit SKILL.md or invoke $kk:implement automatically."
+    },
+    {
+      "id": "7.3",
+      "text": "Create no artifact; comprehension reader comparison is not applicable."
+    }
+  ]
+}
