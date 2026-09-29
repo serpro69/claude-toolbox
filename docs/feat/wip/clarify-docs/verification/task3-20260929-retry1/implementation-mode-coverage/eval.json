@@ -1,0 +1,15 @@
+{
+  "id": 2,
+  "name": "implementation-mode-coverage",
+  "description": "Inspect both implementation completion routes without running a new feature. Stage test-files as a workspace root and supply the tested plugin's implement and document instructions as read-only dependencies.",
+  "skills": ["implement", "document"],
+  "prompt": "Using the installed /kk:implement and /kk:document instructions, trace the remaining completion workflow for each case in completion-cases.md. Identify the automatic calls and clarity-pass count, and explain how a separate explicit documentation request would affect the standalone case. This is a read-only routing check; do not execute tests, reviews, documentation or implementation.",
+  "trap": "The agent generalizes the plan-mode document call to standalone fixes, adds a second clarity call in implement, or advertises automatic documentation after each individual task.",
+  "files": ["test-files/completion-cases.md"],
+  "assertions": [
+    { "id": "2.1", "text": "Trace cites implement's plan-mode completion calling /kk:document and document's single post-draft shared pass; no extra implement-owned clarity pass is added." },
+    { "id": "2.2", "text": "Standalone completion has no prescribed /kk:document or clarity call; explicit later document or clarify-docs invocation is distinguished from automatic completion." },
+    { "id": "2.3", "text": "An individual completed task in a still-active plan does not trigger plan completion's documentation call; no route is described as independently verifying editorial fidelity." },
+    { "id": "2.4", "text": "The inspection stays read-only and grounds the three routes in the actual instruction files rather than hypothetical common behavior." }
+  ]
+}

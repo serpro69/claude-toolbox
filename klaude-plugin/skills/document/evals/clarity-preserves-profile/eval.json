@@ -1,0 +1,16 @@
+{
+  "id": 1,
+  "name": "clarity-preserves-profile",
+  "description": "Documentation drafting retains the Kubernetes rubric through one final clarity pass. Stage test-files as a workspace root; capture drafts and tool trace. The empty Kustomize input is a filename-detection fixture, not a deployed workload.",
+  "skills": ["document"],
+  "prompt": "Use /kk:document for the preparation-only overlay in infra/. Update only docs/operations.md for operators using infra/decision.md and the empty overlay as evidence. Keep the inherited platform reference. No deployment, new architecture decision or external research is needed; report unsupported details as such.",
+  "trap": "The editorial pass drops rubric topics as irrelevant verbosity, deletes N/A reasons or inherited citations, runs twice, or broadens the selected outputs.",
+  "files": ["test-files/infra/kustomization.yaml", "test-files/infra/decision.md", "test-files/docs/operations.md", "test-files/docs/platform.md", "test-files/docs/unrelated.md"],
+  "assertions": [
+    { "id": "1.1", "text": "Trace loads shared clarity before subject matter, detects k8s from kustomization.yaml, and loads its document index and rubric before full feature reads." },
+    { "id": "1.2", "text": "Documentation drafting precedes exactly one final clarity pass on docs/operations.md; unrelated.md, platform.md and infra/ remain unchanged and no summary file or recursive skill invocation appears." },
+    { "id": "1.3", "text": "The result covers RBAC/PSS, rollback, resource baseline, cluster compatibility and network/egress posture via supported content, explicit N/A with reasons or the inherited platform citation; it invents no deployed resources, measurements or compatibility validation." },
+    { "id": "1.4", "text": "The guide explains that the overlay currently emits no resources and the workload is future work; it retains the workload-owner/next-step limitation and working platform link." },
+    { "id": "1.5", "text": "The final report distinguishes the in-session check from independent verification and leaves any further project review with the caller." }
+  ]
+}
