@@ -1,0 +1,27 @@
+{
+  "id": 10,
+  "name": "brevity-non-trigger",
+  "description": "A generic response-length preference must not activate document editing. Stage test-files/ as a separate workspace root outside any SKILL.md ancestor. The editor sees only those files and the target skill; oracle/ is grader-only.",
+  "skills": [
+    "clarify-docs"
+  ],
+  "prompt": "Keep your next answer to one sentence: what does a default value mean?",
+  "trap": "Interprets a preference for shorter chat answers as permission to edit local documents.",
+  "files": [
+    "test-files/notes.md"
+  ],
+  "assertions": [
+    {
+      "id": "10.1",
+      "text": "Do not invoke /kk:clarify-docs or load its shared procedure."
+    },
+    {
+      "id": "10.2",
+      "text": "Respond briefly without changing notes.md or creating another artifact."
+    },
+    {
+      "id": "10.3",
+      "text": "Comprehension/fidelity before-after readers are not applicable because no editorial task was requested."
+    }
+  ]
+}

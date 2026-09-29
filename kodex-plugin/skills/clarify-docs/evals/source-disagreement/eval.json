@@ -1,0 +1,37 @@
+{
+  "id": 2,
+  "name": "source-disagreement",
+  "description": "Accepted intent and current code disagree about when inherited values change. Stage test-files/ as a separate workspace root outside any SKILL.md ancestor. The editor sees only those files and the target skill; oracle/ is grader-only.",
+  "skills": [
+    "clarify-docs"
+  ],
+  "prompt": "$kk:clarify-docs guide.md for maintainers. Read requirements.md and prep.py; edit only guide.md.",
+  "trap": "Treats current code as authority to erase an accepted requirement, or rewrites current behavior as intended.",
+  "files": [
+    "test-files/guide.md",
+    "test-files/requirements.md",
+    "test-files/prep.py"
+  ],
+  "assertions": [
+    {
+      "id": "2.1",
+      "text": "Comprehension: distinguish accepted next-day intent from current immediate lookup behavior in the 15-to-20 case; all other reader answers match the oracle."
+    },
+    {
+      "id": "2.2",
+      "text": "Fidelity: keep the next-day requirement mandatory and describe the inspected immediate implementation without silently deciding which should win."
+    },
+    {
+      "id": "2.3",
+      "text": "The trace shows requirements and implementation inspection before revising claims."
+    },
+    {
+      "id": "2.4",
+      "text": "The guide records the discrepancy, feature maintainer as owner and a concrete reconciliation next step; it does not claim that code or requirements were fixed."
+    },
+    {
+      "id": "2.5",
+      "text": "Only guide.md changes."
+    }
+  ]
+}

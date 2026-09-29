@@ -3,7 +3,7 @@
 > Design: [design.md](design.md)
 > Implementation: [implementation.md](implementation.md)
 > Issue: [#156](https://github.com/serpro69/claude-toolbox/issues/156)
-> Status: pending
+> Status: in-progress — Task 1 done; Tasks 2–5 pending
 > Created: 2026-09-29
 > Not Doing: global brevity prompts, product/code changes, automatic publication, bulk cleanup, new profiles, eval harness, automatic standalone-implementation completion
 
@@ -12,23 +12,30 @@
 **Status:** done — findings assessed, design corrections applied, checks and independent follow-up review passed
 
 [Assessment of both reports](review-assessment.md) records eight distinct issues
-from nine findings, their evidence and dispositions. Feature implementation below
-has not started. The optional isolated runtime verifier remains an explicitly owned
+from nine findings, their evidence and dispositions. Task 1 implementation is now
+complete. The optional isolated runtime verifier remains an explicitly owned
 [deferred item](implementation.md#deferred-work), not a v1 acceptance requirement.
 
 ## Task 1: Clarify an existing local document from requirements and source
 
-**Status:** pending
+**Status:** done
 **Depends on:** —
 **Size:** M
 **Can run in parallel with:** —
 **Docs:** [Standalone editing](implementation.md#1-standalone-editing-of-local-documentation)
 
-- [ ] Create `klaude-plugin/skills/clarify-docs/SKILL.md`, `_shared/document-clarity.md` and the per-skill shared symlink. Define bounded inputs, mandatory instruction loading, source understanding, editing and verification → verify: a selected local document completes the workflow with all reader answers and protected meaning intact; new mandatory shared instructions meet the 1,000-word target / 1,200-word ceiling and the measured count is recorded.
-- [ ] Implement evidence-grounding rules for requirements versus current implementation, missing context and already-clear material → verify: supplied source is inspected when needed; disagreements remain explicit; an already-clear fixture has no gratuitous changes.
-- [ ] Add self-contained evals under `clarify-docs/evals/` for dense prose, source disagreement, missing context, cross-file preservation, no-op behavior and non-triggers → verify: expected claims stay outside staged `test-files/`; instruction targets receive an explicit `/kk:implement` suggestion without edits or automatic handoff.
-- [ ] Register the skill in `test/test-plugin-structure.sh`; document local use in `docs/user-guide/skills.md` and update `README.md` plus the other [named inventories](implementation.md#1-standalone-editing-of-local-documentation) → verify: current description-budget guidance is checked and maintained counts/catalogs reflect the new utility without inserting a mandatory pipeline stage.
-- [ ] Regenerate Codex output and run relevant structure/graph checks and behavioral evals → verify: generated entry point/shared references resolve and recorded eval results distinguish comprehension from fidelity.
+- [x] Create `klaude-plugin/skills/clarify-docs/SKILL.md`, `_shared/document-clarity.md` and the per-skill shared symlink. Define bounded inputs, mandatory instruction loading, source understanding, editing and verification → verify: a selected local document completes the workflow with all reader answers and protected meaning intact; new mandatory shared instructions meet the 1,000-word target / 1,200-word ceiling and the measured count is recorded.
+- [x] Implement evidence-grounding rules for requirements versus current implementation, missing context and already-clear material → verify: supplied source is inspected when needed; disagreements remain explicit; an already-clear fixture has no gratuitous changes.
+- [x] Add self-contained evals under `clarify-docs/evals/` for dense prose, source disagreement, missing context, cross-file preservation, no-op behavior and non-triggers → verify: expected claims stay outside staged `test-files/`; instruction targets receive an explicit `/kk:implement` suggestion without edits or automatic handoff.
+- [x] Register the skill in `test/test-plugin-structure.sh`; document local use in `docs/user-guide/skills.md` and update `README.md` plus the other [named inventories](implementation.md#1-standalone-editing-of-local-documentation) → verify: current description-budget guidance is checked and maintained counts/catalogs reflect the new utility without inserting a mandatory pipeline stage.
+- [x] Regenerate Codex output and run relevant structure/graph checks and behavioral evals → verify: generated entry point/shared references resolve and recorded eval results distinguish comprehension from fidelity.
+
+**Verification:** [Task 1 evidence](verification.md) records 40/40 applicable
+assertions passing across ten current scenarios, separate reader/fidelity grading,
+the 820-word shared-instruction budget, stable generation and isolated review.
+Two earlier partial source-disagreement attempts are preserved. Eight of nine shell
+suites passed; two unchanged hook-test failures are documented with a follow-up
+owner and next step. No claim of a fully green repository suite is made.
 
 ## Task 2: Clarify PR drafts without leaking private context
 

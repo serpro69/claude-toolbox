@@ -1,0 +1,33 @@
+{
+  "id": 6,
+  "name": "clear-factual-error",
+  "description": "Clear prose passes reader questions but contains a source-backed reference error. Stage test-files/ as a separate workspace root outside any SKILL.md ancestor. The editor sees only those files and the target skill; oracle/ is grader-only.",
+  "skills": [
+    "clarify-docs"
+  ],
+  "prompt": "/kk:clarify-docs guide.md for restaurant owners using requirements.md and prep.py. Edit only guide.md.",
+  "trap": "Skips a needed factual repair because all five comprehension answers already pass.",
+  "files": [
+    "test-files/guide.md",
+    "test-files/requirements.md",
+    "test-files/prep.py"
+  ],
+  "assertions": [
+    {
+      "id": "6.1",
+      "text": "All five reader answers remain accurate; baseline reader answers alone do not justify a no-op."
+    },
+    {
+      "id": "6.2",
+      "text": "Correct the reference maximum from 60 to 90 based on agreement between requirements.md and prep.py."
+    },
+    {
+      "id": "6.3",
+      "text": "Preserve all other protected meaning and avoid gratuitous rewrites of already-clear orientation."
+    },
+    {
+      "id": "6.4",
+      "text": "The trace shows source inspection; only guide.md changes."
+    }
+  ]
+}
