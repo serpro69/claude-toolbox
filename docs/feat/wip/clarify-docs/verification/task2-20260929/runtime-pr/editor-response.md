@@ -1,0 +1,1 @@
+Created `docs/feat/wip/prep/pr-12-draft.md`, clarifying the runtime resolver change, inherited contract, review path and validation limits. The badge decision remains with the product owner. Existing draft preserved.
