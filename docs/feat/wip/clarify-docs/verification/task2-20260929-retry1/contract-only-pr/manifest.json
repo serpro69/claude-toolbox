@@ -1,0 +1,41 @@
+{
+  "scenario": "contract-only-pr",
+  "date": "2026-09-29",
+  "status": "graded-pass",
+  "staged_workspace": "/tmp/clarify-docs-task2-retry1/contract-only-pr",
+  "model": "gpt-6-astra",
+  "reasoning_effort": "xhigh",
+  "fork_turns": "none",
+  "model_build": "not exposed",
+  "temperature": "not exposed",
+  "scenario_prompt": "/kk:clarify-docs pr-draft.md for this repository's reviewers. Use context.md and checkout/ as evidence; edit only pr-draft.md.",
+  "instructions": [
+    "/tmp/clarify-docs-task2-retry1/instructions/SKILL.md",
+    "/tmp/clarify-docs-task2-retry1/instructions/shared-document-clarity.md"
+  ],
+  "editor_allowed_reads": [
+    "/tmp/clarify-docs-task2-retry1/contract-only-pr/context.md",
+    "/tmp/clarify-docs-task2-retry1/contract-only-pr/pr-draft.md",
+    "/tmp/clarify-docs-task2-retry1/contract-only-pr/checkout/**"
+  ],
+  "editor_authorized_target": "pr-draft.md",
+  "readers": {
+    "original": [
+      "/tmp/clarify-docs-task2-retry1/originals/contract-only-pr/pr-draft.md"
+    ],
+    "revised": [
+      "/tmp/clarify-docs-task2-retry1/contract-only-pr/pr-draft.md"
+    ]
+  },
+  "reader_questions": [
+    "Why does this work exist?",
+    "What happens in a representative case?",
+    "What changes in the current increment?",
+    "What remains outside it?",
+    "What still needs a decision?"
+  ],
+  "reader_role": "Neutral documentation reader; cite artifact wording/section and mark uncertainty. No other files, skills, links, network, writes or delegation.",
+  "isolation": "Fresh sessions without author history. Shared filesystem: enforced prompt allowlists and audit of all raw tool calls/results. No oracle staged. checkout/** includes Git metadata for read-only queries. Any out-of-manifest content access or incomplete trace invalidates run.",
+  "prompt_export": "Raw spawn transport is encrypted in session log; scenario_prompt is copied from eval.json. Plaintext full prompts are orchestrator-attested in prompt-plaintext.md; not cryptographically matched to transport.",
+  "retry_reason": "First run supplied no fixed numeric example although oracle required 15. Added accepted example to both source snapshots; unchanged assertions and operative skill."
+}

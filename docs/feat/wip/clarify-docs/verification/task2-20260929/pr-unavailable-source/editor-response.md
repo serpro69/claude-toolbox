@@ -1,0 +1,1 @@
+Saved `drafts/pr-15.md`, clarifying the confirmed contract and open badge decision. Runtime delivery and passing tests remain explicitly unverified pending revisions, diff, and test output from the PR author.

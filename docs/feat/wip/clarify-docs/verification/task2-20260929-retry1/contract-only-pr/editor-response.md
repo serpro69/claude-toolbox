@@ -1,0 +1,1 @@
+Updated [pr-draft.md](/tmp/clarify-docs-task2-retry1/contract-only-pr/pr-draft.md) to explain the contract, concrete inheritance example, actual PR scope and validation limits. Preserved the product owner’s unresolved badge decision and clarified that runtime integration remains future work.

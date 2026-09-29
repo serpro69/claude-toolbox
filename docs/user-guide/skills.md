@@ -31,7 +31,7 @@ The kk plugin ships 14 workflow and utility skills, including a complete develop
 | **/kk:dependency-handling** | Fires before calling a library/SDK/API or adding a dependency. Forces a capy/context7 lookup instead of guessing signatures or behavior. |
 | **/kk:diff-skill** | Compares two versions of a skill's markdown instructions to detect degradations and complexity increases. Asymmetric — only regressions count. |
 | **/kk:merge-docs** | Merges two competing design docs for the same feature into one unified document, resolving conflicts and preserving the best of both. |
-| **/kk:clarify-docs** | Improves explanations in selected existing local documentation after understanding the relevant requirements and source. Preserves technical meaning and leaves already-clear, correct material unchanged. |
+| **/kk:clarify-docs** | Improves selected human documentation and PR drafts after understanding requirements and source. Produces local edits, preserves meaning and respects the intended audience's access. |
 | **/kk:chain-of-verification** | Makes Claude fact-check its own answers. Standard mode (prompt-based) or isolated mode (independent sub-agents). For high-stakes accuracy. |
 
 ## Commands
@@ -77,7 +77,7 @@ additional summary file is produced, and a document that already meets the
 requirements stays unchanged. Clear prose can still receive a source-backed factual
 correction.
 
-This utility currently supports local human documentation. PR drafts and automatic
+This utility supports local human documentation and PR-description drafts. Automatic
 passes in `/kk:design` and `/kk:document` are not implemented yet. It does not change
 code or configuration, publish externally, or edit agent/skill instructions. An
 explicit `AGENTS.md`, `CLAUDE.md` or `SKILL.md` target receives a suggestion to use
@@ -87,3 +87,27 @@ chat answers do not activate it.
 The final comprehension and fidelity check runs in the editing session. Normal
 project review remains the caller's responsibility; the skill does not provide
 independent runtime verification or a guarantee of improved human comprehension.
+
+### Clarify a PR draft
+
+Use `/kk:clarify-docs pr-draft.md for repository reviewers` to edit a local draft
+in place. Supply the PR or base/head context and any relevant requirements. The
+skill checks the actual review diff and source before explaining what this increment
+delivers, which files deserve attention and what validation supports it. A contract
+change is described separately from future runtime integration.
+
+Use `/kk:clarify-docs <PR URL>; save to docs/feat/wip/import/pr-draft.md` to obtain
+a PR body through read-only tools and produce a local draft. Pasted bodies work
+the same way. Without a supplied destination, the skill names a draft under the
+clearly established current feature directory; if neither is clear, it asks before
+writing. Unrelated existing files are never overwritten. Missing source access
+stays explicit and limits what the draft claims. No PR update, comment or message
+is sent by this workflow.
+
+Declare the intended audience and any private sources. Explicit restrictions take
+precedence even for tracked files. Otherwise, files tracked at the PR head can be
+referenced for that repository's review audience, including shared task documents.
+External references need evidence that the audience can access them; the editor's
+credentials alone are insufficient. Private context may help explain the work,
+but removing its citation does not make its facts shareable. The skill uses an
+accessible source or an explicitly authorized explanation, or retains a limitation.

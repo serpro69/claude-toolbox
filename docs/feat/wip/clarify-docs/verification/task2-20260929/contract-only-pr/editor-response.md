@@ -1,0 +1,1 @@
+Updated [pr-draft.md](/tmp/clarify-docs-task2-FRZOBXeu/contract-only-pr/pr-draft.md) to explain the contract-only scope, null/zero behavior, review path, and validation limits. Preserved the product owner’s pending badge decision.
