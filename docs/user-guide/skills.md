@@ -114,6 +114,8 @@ in place. Supply the PR or base/head context and any relevant requirements. The
 skill checks the actual review diff and source before explaining what this increment
 delivers, which files deserve attention and what validation supports it. A contract
 change is described separately from future runtime integration.
+The draft identifies newly added tests and records validation outcomes and limits;
+those details belong in the draft, even when the completion message reports them.
 
 Use `/kk:clarify-docs <PR URL>; save to docs/feat/wip/import/pr-draft.md` to obtain
 a PR body through read-only tools and produce a local draft. Pasted bodies work
@@ -130,3 +132,8 @@ External references need evidence that the audience can access them; the editor'
 credentials alone are insufficient. Private context may help explain the work,
 but removing its citation does not make its facts shareable. The skill uses an
 accessible source or an explicitly authorized explanation, or retains a limitation.
+
+Destination drafts, shared reports and gap notes exclude absolute workspace paths
+and private source pointers. A completion message visible only to you may use an
+absolute link to the selected local output so you can open it. That exception does
+not authorize sharing private source paths or facts.

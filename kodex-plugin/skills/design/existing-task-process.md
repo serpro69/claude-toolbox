@@ -16,3 +16,5 @@
 4. **Clarify refined documents before handoff.** If refinement changed documents, apply the already-loaded shared clarity procedure once to those documents only, with their intended reader, accepted requirements and applicable evidence. This is the final pass summarized in SKILL.md. Reuse relevant context; preserve decisions, required sections, task state and cross-file links. Unchanged documents may supply context but are outside the edit scope; an unchanged resume performs no pass and no rewrite.
 
    Recommend `$kk:review-design <feature>` after refinement, then hand off to `$kk:implement` when ready. The recommendation is not automatic independent review. Do not invoke another writing skill for this pass.
+
+   When the caller asks to stop at the handoff, name the next pending task and the `$kk:implement` invocation in the response, without starting implementation. This applies to both refined and unchanged resumes.

@@ -1,0 +1,51 @@
+{
+  "reader_protocol": "Fresh neutral read-only original/revised sessions; artifact and listed audience reading path only. Same five questions and inherited model/settings. Answers require pointers and explicit uncertainty. AI-reader observations only.",
+  "acceptance": "All applicable comprehension, fidelity, correctness, structure, orientation and visibility assertions must pass. PARTIAL is not pass. If baseline answers all pass, edits require repair of a predeclared defect; a fully clean baseline requires no-op.",
+  "baseline": "Full original design.md, implementation.md and tasks.md. Revised versions should be byte-identical.",
+  "reader_manifest": [
+    "docs/feat/wip/archive-label/design.md",
+    "docs/feat/wip/archive-label/implementation.md",
+    "docs/feat/wip/archive-label/tasks.md"
+  ],
+  "questions": [
+    {
+      "question": "Why does this work exist?",
+      "expected": "Let contributors recognize archived catalog entries without opening each entry.",
+      "source": "design.md introduction"
+    },
+    {
+      "question": "What should a reader see for an archived entry and for an active entry?",
+      "expected": "Archived entries display Archived and retain their existing title and clickable destination; active entries are unchanged.",
+      "source": "design.md#label-contract"
+    },
+    {
+      "question": "What work is included now, and what is its implementation status?",
+      "expected": "Planned manual text edits in catalog.md, with no runtime app. Task 1 inspection is done and Task 2 text edits are pending.",
+      "source": "design.md#label-contract and #assumptions; tasks.md statuses"
+    },
+    {
+      "question": "What is outside the selected work?",
+      "expected": "Filtering, automatic archival and color changes are excluded.",
+      "source": "design.md#not-doing"
+    },
+    {
+      "question": "What remains to be decided, by whom, and what happens next?",
+      "expected": "Catalog maintainers must choose a color after checking site contrast. Text labels do not depend on that choice.",
+      "source": "design.md#open-decision"
+    }
+  ],
+  "protected_claims": [
+    "All input files remain byte-identical, no new files.",
+    "Task 1 done, Task 2 pending and ready after Task 1; Task 3 pending after Task 2.",
+    "Archived entries get Archived retaining titles/links; active entries unchanged.",
+    "Text edits are planned manual work; no runtime app exists.",
+    "Catalog maintainers own unresolved color after contrast; no filtering/automatic archival/color work."
+  ],
+  "orientation_assertions": [
+    "Full reading path already gives purpose, planned behavior, readiness, exclusions and unresolved owner/next action.",
+    "Readiness report names Task 2 and implementation handoff without executing it."
+  ],
+  "baseline_defects": [
+    "None: baseline satisfies the selected scope. Expect no-op and no clarity editing pass."
+  ]
+}

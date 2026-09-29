@@ -2,6 +2,7 @@
 
 Task 1 evidence below describes its original local-document revision. Task 2's
 PR and visibility evidence is recorded in [Task 2 verification](#task-2-verification).
+The combined-revision evaluation is tracked in [Task 4 verification](#task-4-verification).
 
 ## Task 1 verification
 
@@ -232,6 +233,10 @@ output link and private source pointers disclosed in a destination artifact, the
 exercise it explicitly. This is retained as a runtime instruction-precedence
 limitation; passing the current assertions does not establish a path-free report.
 
+Task 4 resolves this boundary: the caller-only message may link the selected output,
+while destination drafts and shared reports retain the source-pointer prohibition.
+Assertion 13.7 explicitly covers it; see [Task 4 verification](#task-4-verification).
+
 ## Task 3 verification
 
 Task 3 integrates the shared clarity procedure into `/kk:design` and `/kk:document`.
@@ -298,3 +303,88 @@ read-only instruction-route inspection, not a completed implementation lifecycle
 Separate original/revised comprehension readers and final feature-wide acceptance
 remain owned by Tasks 4–5. No Task 3 result proves improved human comprehension or
 re-certifies the earlier standalone/PR scenarios at the combined feature revision.
+
+## Task 4 verification
+
+**Task 4 complete.** All **87 applicable assertions** pass across **20 feature
+scenarios**; all **70 revised-reader answers** pass across fourteen document cases.
+The other six cases grade routing or missing-destination behavior without readers.
+No assigned scenario remains authored-but-unrun. Task 5 stays pending.
+
+Date: 2026-09-29. Starting revision:
+`9a7ad32eef89a3b8c9b366292ac1f4776c7d005f`.
+The [run record](verification/task4-20260929/run.md) identifies instruction revisions,
+staged hashes, exact requests, artifacts, traces, session metadata and verdicts.
+
+| Group | Applicable assertions | Revised-reader answers | Evidence |
+| --- | --- | --- | --- |
+| Local documents and routing: ten cases | 40/40 PASS | 30/30 PASS | [Local run](verification/task4-20260929/local/run.md) |
+| PR drafts and visibility: five cases | 26/26 PASS | 20/20 PASS | [PR run](verification/task4-20260929/pr/run.md) |
+| Writing consumers: five cases | 21/21 PASS | 20/20 PASS | [Consumer run](verification/task4-20260929/consumers/run.md) |
+
+### Corrections and preserved attempts
+
+The shared procedure distinguishes caller-only links to selected outputs from
+private source pointers. Destination drafts, shared reports and gap notes still
+exclude absolute workspace paths and restricted facts. Assertion 13.7 tests the
+exception explicitly. The final shared procedure is **1,000 words**, with no added
+mandatory linked instructions.
+
+The [initial PR grade](verification/task4-20260929/pr/grading/verdicts.md) records
+24 PASS / 1 PARTIAL. Runtime answer 12.1 omitted the newly added tests, although
+their cases and validation limits survived. Explicit increment guidance fixed this;
+a [fresh runtime retry](verification/task4-20260929/pr/runtime-pr/retry-1/run.md)
+passes all six assertions and five revised-reader answers with unchanged inputs.
+
+Making validation outcomes explicit exposed another gap: two visibility reruns
+passed their seven assertions and all reader answers but failed full procedure
+compliance by naming the check without its result in the destination draft.
+Both are preserved. The final rule distinguishes passed, failed or unavailable
+from a method name. Assertion 13.8 and its baseline defect were added before the
+next editor; questions, original assertions, source and user prompt stayed intact.
+The [final visibility grade](verification/task4-20260929/pr/destination-visibility/retry-3/grading/verdicts.md)
+passes all eight assertions and procedure/fidelity/visibility/isolation checks,
+and independently retains the other four latest PR results.
+
+The [initial consumer grade](verification/task4-20260929/consumers/grading/verdicts.json)
+records 20 PASS / 1 FAIL: an unchanged resume named Task 2 but omitted
+`/kk:implement`. The WIP process now requires that handoff when the caller asks
+to stop. [Fresh WIP retries](verification/task4-20260929/consumers/retry-handoff/run.md)
+pass seven assertions and ten revised-reader answers. The other fourteen consumer
+assertions retain independently assessed applicability.
+
+[Isolated code review](verification/task4-20260929/review.md) identified two
+low-severity oracle issues: cross-scenario citations/irrelevant clauses and
+inconsistent baseline-defect field shapes. Both were fixed. The
+[final consumer audit](verification/task4-20260929/consumers/final-applicability/run.md)
+rechecked all forty preserved WIP answer verdicts against the local-source
+corrections, verified text-preserving array normalization, and confirmed final
+instruction applicability. Earlier snapshots and failures remain unchanged.
+Applicability checks are identified separately from fresh executions.
+
+### Checks and limits
+
+[Repository checks](verification/task4-20260929/checks.md) pass generation,
+generation stability, graph validation and both structure suites. All nine shell
+suites ran; eight pass. The two unchanged `node_modules` / `.log` hook assertions
+still fail, with the repository-maintainer follow-up retained. This is not a fully
+green repository suite. A directory-name hook blocked one initial routing attempt;
+its valid replacement used a wholly restaged fixture with matching bytes. The
+blocked attempt and [matcher follow-up](verification/task4-20260929/checks.md#tooling-follow-up-outside-task-4)
+remain recorded.
+
+Editors and paired readers used fresh general-purpose sessions with no inherited
+author conversation; graders independently inspected sources, answers and traces.
+Recorded settings are `gpt-6-astra` / `xhigh`, CLI `0.159.0`; model build and
+temperature are unexposed. Allowed-file manifests and trace audits constrain a
+shared filesystem, not an OS-isolated environment. Invalid or missing evidence
+does not count as a pass. Execution-method and encrypted-dispatch limitations are
+recorded in the group reports.
+
+These are AI-reader observations, not proof of improved human comprehension or
+repeatability. Clean baselines stayed unchanged; factual/privacy/orientation
+repairs remain distinct from better answer accuracy. The documentation-profile
+comparison measures the whole drafting invocation, not the final pass alone.
+Implementation-mode coverage inspects routes rather than executing a lifecycle.
+No independent runtime editorial gate or standalone-implementation completion
+call was added. Task 5 owns final release verification and documentation.

@@ -3,7 +3,7 @@
 > Design: [design.md](design.md)
 > Implementation: [implementation.md](implementation.md)
 > Issue: [#156](https://github.com/serpro69/claude-toolbox/issues/156)
-> Status: in-progress — Tasks 1–3 done; Tasks 4–5 pending
+> Status: in-progress — Tasks 1–4 done; Task 5 pending
 > Created: 2026-09-29
 > Not Doing: global brevity prompts, product/code changes, automatic publication, bulk cleanup, new profiles, eval harness, automatic standalone-implementation completion
 
@@ -86,20 +86,27 @@ edits to the same file are safe.
 
 ## Task 4: Execute comprehension and fidelity evaluations
 
-**Status:** pending
+**Status:** done
 **Depends on:** Task 1, Task 2, Task 3
 **Size:** M
 **Can run in parallel with:** —
 **Docs:** [Fresh-reader protocol](implementation.md#fresh-reader-protocol)
 
-- [ ] Create `verification.md` and `verification/<run-id>/<scenario>/` evidence as runs begin → verify: the index records date, model/version/settings, staged revision or hashes, artifact links and authored-versus-executed status for every scenario.
-- [ ] Stage and execute the editor plus separate original/revised reader sessions and independent grading according to the protocol → verify: readers have no inherited author context or oracle, source-access traces are available, and each assertion has an evidence-backed PASS/FAIL/PARTIAL.
-- [ ] Apply baseline-aware acceptance and fix discovered problems → verify: all applicable comprehension, correctness, fidelity, visibility, structure and orientation assertions pass; clear-prose fixtures still permit factual/privacy repairs; only a baseline meeting every applicable requirement requires no-op; affected evals are rerun after fixes.
-- [ ] Record isolation limits and human-comprehension limits → verify: shared-filesystem leakage or missing evidence cannot yield a valid run, and AI-reader results are reported only as the evidence actually collected.
+- [x] Create `verification.md` and `verification/<run-id>/<scenario>/` evidence as runs begin → verify: the index records date, model/version/settings, staged revision or hashes, artifact links and authored-versus-executed status for every scenario.
+- [x] Stage and execute the editor plus separate original/revised reader sessions and independent grading according to the protocol → verify: readers have no inherited author context or oracle, source-access traces are available, and each assertion has an evidence-backed PASS/FAIL/PARTIAL.
+- [x] Apply baseline-aware acceptance and fix discovered problems → verify: all applicable comprehension, correctness, fidelity, visibility, structure and orientation assertions pass; clear-prose fixtures still permit factual/privacy repairs; only a baseline meeting every applicable requirement requires no-op; affected evals are rerun after fixes.
+- [x] Record isolation limits and human-comprehension limits → verify: shared-filesystem leakage or missing evidence cannot yield a valid run, and AI-reader results are reported only as the evidence actually collected.
 
-**Owned follow-up:** the feature maintainer must clarify caller-only output links
-versus prohibited source pointers and add coverage, as described in the
-[report-path limitation](verification.md#report-path-limitation).
+**Resolved follow-up:** caller-only selected-output links are distinguished from
+prohibited source pointers. The destination-visibility scenario explicitly covers
+that boundary; see [Task 4 verification](verification.md#task-4-verification).
+
+**Verification:** all 20 feature scenarios have passing applicable evidence:
+87/87 assertions and 70/70 revised-reader answers. Initial failures, focused reruns,
+instruction/oracle revisions and independent applicability checks are preserved.
+Generation is stable; graph/structure checks pass. Eight of nine shell suites pass;
+the two unchanged hook assertions and owned follow-up remain explicit. Task 5 is
+still pending; AI-reader observations do not establish human-comprehension gains.
 
 ## Task 5: Final verification and documentation
 

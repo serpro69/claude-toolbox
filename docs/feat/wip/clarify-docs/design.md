@@ -1,7 +1,7 @@
 # Design: documentation readers can understand
 
 > Issue: [#156](https://github.com/serpro69/claude-toolbox/issues/156)
-> Status: implementation — Tasks 1–3 complete; Tasks 4–5 pending
+> Status: implementation — Tasks 1–4 complete; Task 5 pending
 > Created: 2026-09-29
 > Related: [Implementation plan](implementation.md), [tasks](tasks.md)
 > Review reconciliation: [assessment](reviews/archive/review-design-assessment.md)
@@ -134,8 +134,11 @@ visibility rules in order, to both facts and references:
    do not disclose the private fact merely by deleting its citation.
 
 A task number is not inherently private. Retain it when its referenced task is
-available to the intended audience; exclude private task IDs and absolute workspace
-paths. Fixtures must declare the destination, access facts and restrictions so this
+available to the intended audience. Exclude private task IDs and absolute workspace
+paths from destination artifacts, shared reports and gap notes. A completion message
+visible only to the caller may link the selected local output; it still cannot
+disclose private source pointers or facts. Fixtures must declare the destination,
+access facts and restrictions so this
 decision is reproducible, including tracked-but-restricted and shared-task cases.
 
 ## Integration boundaries
