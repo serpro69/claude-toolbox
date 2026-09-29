@@ -1,0 +1,1 @@
+Updated [pr-draft.md](/tmp/clarify-task4/pr/destination-visibility/retry-3/editor/pr-draft.md). Removed restricted business facts, preserved accessible references, and clarified the contract and JSON-validation outcome. Runtime integration remains future work.

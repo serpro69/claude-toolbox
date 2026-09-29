@@ -1,0 +1,1 @@
+Blocked before reading the request: the PreToolUse security hook denied its path because it matches `target\/`. Please provide the request at an authorized accessible path or in a message. No files were inspected or changed.

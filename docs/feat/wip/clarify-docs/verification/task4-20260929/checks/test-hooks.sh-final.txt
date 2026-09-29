@@ -1,0 +1,48 @@
+
+=== Section 1: validate-bash.sh — Allow cases ===
+[1;33m[TEST][0m Allow: safe command exits 0 with no stdout
+[0;32m[PASS][0m Exit code is 0
+[0;32m[PASS][0m No stdout for allowed command
+[1;33m[TEST][0m Allow: empty command exits 0 with no stdout
+[0;32m[PASS][0m Exit code is 0 for empty command
+[0;32m[PASS][0m No stdout for empty command
+[1;33m[TEST][0m Allow: missing tool_input exits 0 with no stdout
+[0;32m[PASS][0m Exit code is 0 for missing tool_input
+[0;32m[PASS][0m No stdout for missing tool_input
+
+=== Section 2: validate-bash.sh — Deny cases ===
+[1;33m[TEST][0m Deny: .env pattern produces structured JSON
+[0;32m[PASS][0m Exit code is 0 even when denying
+[0;32m[PASS][0m Deny output is valid JSON
+[0;32m[PASS][0m hookEventName is PreToolUse
+[0;32m[PASS][0m permissionDecision is deny
+[1;33m[TEST][0m Deny: reason contains the matched pattern
+[0;32m[PASS][0m Reason mentions .env pattern
+[1;33m[TEST][0m Deny: no output on stderr
+[0;32m[PASS][0m No stderr output when denying
+
+=== Section 3: validate-bash.sh — All forbidden patterns ===
+[1;33m[TEST][0m Each forbidden pattern triggers deny with structured JSON
+[0;32m[PASS][0m Pattern '.env' correctly denied
+[0;32m[PASS][0m Pattern '.ansible/' correctly denied
+[0;32m[PASS][0m Pattern '.terraform/' correctly denied
+[0;32m[PASS][0m Pattern 'build/' correctly denied
+[0;32m[PASS][0m Pattern 'dist/' correctly denied
+[0;31m[FAIL][0m Pattern 'node_modules': expected deny, got ''
+[0;32m[PASS][0m Pattern '__pycache__' correctly denied
+[0;32m[PASS][0m Pattern '.git/' correctly denied
+[0;32m[PASS][0m Pattern 'venv/' correctly denied
+[0;32m[PASS][0m Pattern '.pyc' correctly denied
+[0;32m[PASS][0m Pattern '.csv' correctly denied
+[0;31m[FAIL][0m Pattern '.log': expected deny, got ''
+
+=== Section 4: capy.sh — Graceful degradation ===
+[1;33m[TEST][0m capy.sh exits 0 when capy binary is not found
+[0;32m[PASS][0m Exit code is 0 when capy not found
+
+=== Test Summary ===
+Test cases:        8
+Assertions passed: [0;32m23[0m
+Assertions failed: [0;31m2[0m
+
+[0;31mSome tests failed![0m

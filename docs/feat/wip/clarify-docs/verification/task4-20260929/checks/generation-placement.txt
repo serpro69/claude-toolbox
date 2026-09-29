@@ -1,0 +1,349 @@
+go test ./cmd/generate-kodex/...
+go run ./cmd/generate-kodex -manifest scripts/kodex-generate-manifest.yml
+make test-structure
+ok  	github.com/serpro69/claude-toolbox/cmd/generate-kodex	0.070s
+generated skill chain-of-verification
+generated skill clarify-docs
+generated skill dependency-handling
+generated skill design
+generated skill diff-skill
+generated skill document
+generated skill implement
+generated skill merge-docs
+generated skill model
+generated skill review-architecture
+generated skill review-code
+generated skill review-design
+generated skill review-spec
+generated skill test
+generated _shared/
+generated profiles/
+generated agent architecture-reviewer
+generated agent code-reviewer
+generated agent design-reviewer
+generated agent eval-grader
+generated agent profile-resolver
+generated agent spec-reviewer
+generated kodex-plugin/.codex-plugin/plugin.json
+make[1]: Entering directory '/home/sergio/Projects/personal/claude-toolbox'
+bash test/test-plugin-structure.sh
+bash test/test-codex-structure.sh
+
+=== Section 1: Plugin Manifest ===
+[1;33m[TEST][0m plugin.json exists
+[0;32m[PASS][0m Plugin manifest exists
+[1;33m[TEST][0m plugin.json is valid JSON
+[0;32m[PASS][0m Plugin manifest is valid JSON
+[1;33m[TEST][0m plugin.json has correct name
+[0;32m[PASS][0m Plugin name is kk
+[1;33m[TEST][0m plugin.json has required metadata fields
+[0;32m[PASS][0m Author is serpro69
+[0;32m[PASS][0m plugin.json has description
+[0;32m[PASS][0m plugin.json has version
+[0;32m[PASS][0m plugin.json has homepage
+[0;32m[PASS][0m plugin.json has repository
+[0;32m[PASS][0m plugin.json has license
+
+=== Section 2: Marketplace Manifest ===
+[1;33m[TEST][0m marketplace.json exists
+[0;32m[PASS][0m Marketplace manifest exists
+[1;33m[TEST][0m marketplace.json is valid JSON
+[0;32m[PASS][0m Marketplace manifest is valid JSON
+[1;33m[TEST][0m marketplace.json has correct name
+[0;32m[PASS][0m Marketplace name is claude-toolbox
+[1;33m[TEST][0m marketplace.json plugin source is relative path to klaude-plugin
+[0;32m[PASS][0m Plugin source is ./klaude-plugin
+[1;33m[TEST][0m marketplace.json plugin name matches plugin.json
+[0;32m[PASS][0m Marketplace plugin name matches plugin name
+
+=== Section 3: Skills ===
+[1;33m[TEST][0m All 14 skill directories exist
+[0;32m[PASS][0m Skill exists: design
+[0;32m[PASS][0m Skill exists: clarify-docs
+[0;32m[PASS][0m Skill exists: chain-of-verification
+[0;32m[PASS][0m Skill exists: dependency-handling
+[0;32m[PASS][0m Skill exists: diff-skill
+[0;32m[PASS][0m Skill exists: document
+[0;32m[PASS][0m Skill exists: implement
+[0;32m[PASS][0m Skill exists: review-design
+[0;32m[PASS][0m Skill exists: review-spec
+[0;32m[PASS][0m Skill exists: merge-docs
+[0;32m[PASS][0m Skill exists: model
+[0;32m[PASS][0m Skill exists: review-code
+[0;32m[PASS][0m Skill exists: review-architecture
+[0;32m[PASS][0m Skill exists: test
+[1;33m[TEST][0m Each skill has a SKILL.md
+[0;32m[PASS][0m SKILL.md for design
+[0;32m[PASS][0m SKILL.md for clarify-docs
+[0;32m[PASS][0m SKILL.md for chain-of-verification
+[0;32m[PASS][0m SKILL.md for dependency-handling
+[0;32m[PASS][0m SKILL.md for diff-skill
+[0;32m[PASS][0m SKILL.md for document
+[0;32m[PASS][0m SKILL.md for implement
+[0;32m[PASS][0m SKILL.md for review-design
+[0;32m[PASS][0m SKILL.md for review-spec
+[0;32m[PASS][0m SKILL.md for merge-docs
+[0;32m[PASS][0m SKILL.md for model
+[0;32m[PASS][0m SKILL.md for review-code
+[0;32m[PASS][0m SKILL.md for review-architecture
+[0;32m[PASS][0m SKILL.md for test
+[1;33m[TEST][0m Eval oracles stay out of test-files/ (grader-only oracle/ convention)
+[0;32m[PASS][0m No oracle files inside any eval's test-files/
+
+=== Section 4: Commands ===
+[1;33m[TEST][0m All 5 command directories exist
+[0;32m[PASS][0m Command exists: chain-of-verification
+[0;32m[PASS][0m Command exists: review-code
+[0;32m[PASS][0m Command exists: review-spec
+[0;32m[PASS][0m Command exists: migrate-from-taskmaster
+[0;32m[PASS][0m Command exists: template
+
+=== Section 5: Hooks and Scripts ===
+[1;33m[TEST][0m hooks.json exists and is valid JSON
+[0;32m[PASS][0m hooks.json exists
+[0;32m[PASS][0m hooks.json is valid JSON
+[1;33m[TEST][0m hooks.json references CLAUDE_PLUGIN_ROOT
+[0;32m[PASS][0m hooks.json uses CLAUDE_PLUGIN_ROOT path
+[1;33m[TEST][0m validate-bash.sh exists and is executable
+[0;32m[PASS][0m validate-bash.sh exists
+[0;32m[PASS][0m validate-bash.sh is executable
+
+=== Section 6: Config Slimmed Down ===
+[1;33m[TEST][0m .claude/ does not have skills directory
+[0;32m[PASS][0m skills/ not in .claude/
+[1;33m[TEST][0m .claude/ does not have commands directory
+[0;32m[PASS][0m commands/ not in .claude/
+[1;33m[TEST][0m .claude/ does not have validate-bash.sh
+[0;32m[PASS][0m validate-bash.sh not in .claude/
+[1;33m[TEST][0m settings.json has no hooks section
+[0;32m[PASS][0m hooks section removed from settings.json
+[1;33m[TEST][0m settings.json has marketplace config
+[0;32m[PASS][0m settings.json has extraKnownMarketplaces
+[1;33m[TEST][0m settings.json has enabledPlugins
+[0;32m[PASS][0m settings.json has kk@claude-toolbox enabled
+
+=== Section 7: Cross-references ===
+[1;33m[TEST][0m Skill references do NOT have kk: prefix (skills are unprefixed)
+[0;32m[PASS][0m Skill references correctly unprefixed
+[1;33m[TEST][0m Command references use /kk: prefix
+[0;32m[PASS][0m Command references use /kk: prefix
+
+=== Section 8: Profiles ===
+[1;33m[TEST][0m All profile directories exist
+[0;32m[PASS][0m Profile exists: go
+[0;32m[PASS][0m Profile exists: java
+[0;32m[PASS][0m Profile exists: js_ts
+[0;32m[PASS][0m Profile exists: k8s
+[0;32m[PASS][0m Profile exists: k8s-operator
+[0;32m[PASS][0m Profile exists: kotlin
+[0;32m[PASS][0m Profile exists: python
+[0;32m[PASS][0m Profile exists: skill-md
+[1;33m[TEST][0m Each profile has DETECTION.md and overview.md
+[0;32m[PASS][0m DETECTION.md for go
+[0;32m[PASS][0m overview.md for go
+[0;32m[PASS][0m DETECTION.md for java
+[0;32m[PASS][0m overview.md for java
+[0;32m[PASS][0m DETECTION.md for js_ts
+[0;32m[PASS][0m overview.md for js_ts
+[0;32m[PASS][0m DETECTION.md for k8s
+[0;32m[PASS][0m overview.md for k8s
+[0;32m[PASS][0m DETECTION.md for k8s-operator
+[0;32m[PASS][0m overview.md for k8s-operator
+[0;32m[PASS][0m DETECTION.md for kotlin
+[0;32m[PASS][0m overview.md for kotlin
+[0;32m[PASS][0m DETECTION.md for python
+[0;32m[PASS][0m overview.md for python
+[0;32m[PASS][0m DETECTION.md for skill-md
+[0;32m[PASS][0m overview.md for skill-md
+[1;33m[TEST][0m Each DETECTION.md has the three required section headings
+[0;32m[PASS][0m DETECTION.md (go) has heading: ## Path signals
+[0;32m[PASS][0m DETECTION.md (go) has heading: ## Filename signals
+[0;32m[PASS][0m DETECTION.md (go) has heading: ## Content signals
+[0;32m[PASS][0m DETECTION.md (java) has heading: ## Path signals
+[0;32m[PASS][0m DETECTION.md (java) has heading: ## Filename signals
+[0;32m[PASS][0m DETECTION.md (java) has heading: ## Content signals
+[0;32m[PASS][0m DETECTION.md (js_ts) has heading: ## Path signals
+[0;32m[PASS][0m DETECTION.md (js_ts) has heading: ## Filename signals
+[0;32m[PASS][0m DETECTION.md (js_ts) has heading: ## Content signals
+[0;32m[PASS][0m DETECTION.md (k8s) has heading: ## Path signals
+[0;32m[PASS][0m DETECTION.md (k8s) has heading: ## Filename signals
+[0;32m[PASS][0m DETECTION.md (k8s) has heading: ## Content signals
+[0;32m[PASS][0m DETECTION.md (k8s-operator) has heading: ## Path signals
+[0;32m[PASS][0m DETECTION.md (k8s-operator) has heading: ## Filename signals
+[0;32m[PASS][0m DETECTION.md (k8s-operator) has heading: ## Content signals
+[0;32m[PASS][0m DETECTION.md (kotlin) has heading: ## Path signals
+[0;32m[PASS][0m DETECTION.md (kotlin) has heading: ## Filename signals
+[0;32m[PASS][0m DETECTION.md (kotlin) has heading: ## Content signals
+[0;32m[PASS][0m DETECTION.md (python) has heading: ## Path signals
+[0;32m[PASS][0m DETECTION.md (python) has heading: ## Filename signals
+[0;32m[PASS][0m DETECTION.md (python) has heading: ## Content signals
+[0;32m[PASS][0m DETECTION.md (skill-md) has heading: ## Path signals
+[0;32m[PASS][0m DETECTION.md (skill-md) has heading: ## Filename signals
+[0;32m[PASS][0m DETECTION.md (skill-md) has heading: ## Content signals
+[1;33m[TEST][0m Presence-conditional: each existing phase subdirectory has index.md
+[0;32m[PASS][0m index.md for go/review-code
+[0;32m[PASS][0m index.md for go/design
+[0;32m[PASS][0m index.md for go/test
+[0;32m[PASS][0m index.md for go/implement
+[0;32m[PASS][0m index.md for go/document
+[0;32m[PASS][0m index.md for java/review-code
+[0;32m[PASS][0m index.md for js_ts/review-code
+[0;32m[PASS][0m index.md for k8s/review-code
+[0;32m[PASS][0m index.md for k8s/design
+[0;32m[PASS][0m index.md for k8s/test
+[0;32m[PASS][0m index.md for k8s/implement
+[0;32m[PASS][0m index.md for k8s/document
+[0;32m[PASS][0m index.md for k8s/review-spec
+[0;32m[PASS][0m index.md for k8s-operator/design
+[0;32m[PASS][0m index.md for kotlin/review-code
+[0;32m[PASS][0m index.md for python/review-code
+[0;32m[PASS][0m index.md for skill-md/review-code
+[0;32m[PASS][0m index.md for skill-md/implement
+[1;33m[TEST][0m Bidirectional index invariant: forward (all index references resolve)
+[0;32m[PASS][0m Forward invariant: go/review-code/index.md references all resolve
+[0;32m[PASS][0m Forward invariant: go/design/index.md references all resolve
+[0;32m[PASS][0m Forward invariant: go/test/index.md references all resolve
+[0;32m[PASS][0m Forward invariant: go/implement/index.md references all resolve
+[0;32m[PASS][0m Forward invariant: go/document/index.md references all resolve
+[0;32m[PASS][0m Forward invariant: java/review-code/index.md references all resolve
+[0;32m[PASS][0m Forward invariant: js_ts/review-code/index.md references all resolve
+[0;32m[PASS][0m Forward invariant: k8s/review-code/index.md references all resolve
+[0;32m[PASS][0m Forward invariant: k8s/design/index.md references all resolve
+[0;32m[PASS][0m Forward invariant: k8s/test/index.md references all resolve
+[0;32m[PASS][0m Forward invariant: k8s/implement/index.md references all resolve
+[0;32m[PASS][0m Forward invariant: k8s/document/index.md references all resolve
+[0;32m[PASS][0m Forward invariant: k8s/review-spec/index.md references all resolve
+[0;32m[PASS][0m Forward invariant: k8s-operator/design/index.md references all resolve
+[0;32m[PASS][0m Forward invariant: kotlin/review-code/index.md references all resolve
+[0;32m[PASS][0m Forward invariant: python/review-code/index.md references all resolve
+[0;32m[PASS][0m Forward invariant: skill-md/review-code/index.md references all resolve
+[0;32m[PASS][0m Forward invariant: skill-md/implement/index.md references all resolve
+[1;33m[TEST][0m Bidirectional index invariant: reverse (no orphan .md files)
+[0;32m[PASS][0m Reverse invariant: go/review-code/ has no orphan .md files
+[0;32m[PASS][0m Reverse invariant: go/design/ has no orphan .md files
+[0;32m[PASS][0m Reverse invariant: go/test/ has no orphan .md files
+[0;32m[PASS][0m Reverse invariant: go/implement/ has no orphan .md files
+[0;32m[PASS][0m Reverse invariant: go/document/ has no orphan .md files
+[0;32m[PASS][0m Reverse invariant: java/review-code/ has no orphan .md files
+[0;32m[PASS][0m Reverse invariant: js_ts/review-code/ has no orphan .md files
+[0;32m[PASS][0m Reverse invariant: k8s/review-code/ has no orphan .md files
+[0;32m[PASS][0m Reverse invariant: k8s/design/ has no orphan .md files
+[0;32m[PASS][0m Reverse invariant: k8s/test/ has no orphan .md files
+[0;32m[PASS][0m Reverse invariant: k8s/implement/ has no orphan .md files
+[0;32m[PASS][0m Reverse invariant: k8s/document/ has no orphan .md files
+[0;32m[PASS][0m Reverse invariant: k8s/review-spec/ has no orphan .md files
+[0;32m[PASS][0m Reverse invariant: k8s-operator/design/ has no orphan .md files
+[0;32m[PASS][0m Reverse invariant: kotlin/review-code/ has no orphan .md files
+[0;32m[PASS][0m Reverse invariant: python/review-code/ has no orphan .md files
+[0;32m[PASS][0m Reverse invariant: skill-md/review-code/ has no orphan .md files
+[0;32m[PASS][0m Reverse invariant: skill-md/implement/ has no orphan .md files
+
+=== Section 9: Profile-detection shared file and consumer symlinks ===
+[1;33m[TEST][0m Shared profile-detection.md exists
+[0;32m[PASS][0m _shared/profile-detection.md exists
+[1;33m[TEST][0m Each consumer skill has a shared-profile-detection.md symlink
+[0;32m[PASS][0m Symlink target correct for review-code: ../_shared/profile-detection.md
+[0;32m[PASS][0m Symlink resolves to existing file for review-code
+[0;32m[PASS][0m Symlink target correct for review-spec: ../_shared/profile-detection.md
+[0;32m[PASS][0m Symlink resolves to existing file for review-spec
+[0;32m[PASS][0m Symlink target correct for design: ../_shared/profile-detection.md
+[0;32m[PASS][0m Symlink resolves to existing file for design
+[0;32m[PASS][0m Symlink target correct for implement: ../_shared/profile-detection.md
+[0;32m[PASS][0m Symlink resolves to existing file for implement
+[0;32m[PASS][0m Symlink target correct for test: ../_shared/profile-detection.md
+[0;32m[PASS][0m Symlink resolves to existing file for test
+[0;32m[PASS][0m Symlink target correct for document: ../_shared/profile-detection.md
+[0;32m[PASS][0m Symlink resolves to existing file for document
+
+=== Section 10: Skill description length ===
+[1;33m[TEST][0m dependency-handling description fits within 1,536-character per-entry cap
+[0;32m[PASS][0m dependency-handling description length (221 chars) ≤ 1,536
+
+=== Section 11: Kodex plugin (generated output) ===
+[1;33m[TEST][0m kodex-plugin/.codex-plugin/plugin.json exists and is valid JSON
+[0;32m[PASS][0m kodex-plugin plugin.json exists
+[0;32m[PASS][0m kodex plugin.json is valid JSON
+[1;33m[TEST][0m kodex-plugin skills match klaude-plugin skills (generation completeness)
+[0;32m[PASS][0m Skill count matches: 14 in both plugins
+[1;33m[TEST][0m No ${CLAUDE_PLUGIN_ROOT} literals in generated kodex-plugin skills
+[0;32m[PASS][0m No CLAUDE_PLUGIN_ROOT literals in generated skills
+[1;33m[TEST][0m No dangling symlinks in kodex-plugin
+[0;32m[PASS][0m No dangling symlinks in kodex-plugin
+[1;33m[TEST][0m No ${TOOLBOX_PLUGIN_ROOT} brace literals in generated kodex-plugin skills
+[0;32m[PASS][0m No ${TOOLBOX_PLUGIN_ROOT} brace literals in generated skills
+[1;33m[TEST][0m Plugin-root brace path refs only at codex-resolvable depth
+[0;32m[PASS][0m All brace plugin-root path refs are at skills/<name>/ or skills/_shared/ depth
+
+=== Test Summary ===
+Test cases:        39
+Assertions passed: [0;32m184[0m
+Assertions failed: [0;31m0[0m
+
+[0;32mAll tests passed![0m
+
+=== Section 1: Codex marketplace ===
+[1;33m[TEST][0m .agents/plugins/marketplace.json exists and is valid JSON
+[0;32m[PASS][0m Codex marketplace exists
+[0;32m[PASS][0m Codex marketplace is valid JSON
+[1;33m[TEST][0m marketplace.json has kk plugin pointing at kodex-plugin
+[0;32m[PASS][0m Codex marketplace plugin path
+
+=== Section 2: Codex config ===
+[1;33m[TEST][0m config.toml exists
+[0;32m[PASS][0m config.toml exists
+[1;33m[TEST][0m config.toml is valid TOML
+[0;32m[PASS][0m config.toml parses as valid TOML
+
+=== Section 3: Codex hooks ===
+[1;33m[TEST][0m hooks.json exists and is valid JSON
+[0;32m[PASS][0m hooks.json exists
+[0;32m[PASS][0m hooks.json is valid JSON
+[1;33m[TEST][0m hooks.json has SessionStart and PreToolUse entries
+[0;32m[PASS][0m hooks.json has SessionStart
+[0;32m[PASS][0m hooks.json has PreToolUse
+
+=== Section 4: Codex agents ===
+[1;33m[TEST][0m All six agent TOML files exist
+[0;32m[PASS][0m Agent architecture-reviewer.toml exists
+[0;32m[PASS][0m Agent code-reviewer.toml exists
+[0;32m[PASS][0m Agent design-reviewer.toml exists
+[0;32m[PASS][0m Agent eval-grader.toml exists
+[0;32m[PASS][0m Agent profile-resolver.toml exists
+[0;32m[PASS][0m Agent spec-reviewer.toml exists
+[1;33m[TEST][0m Agent TOML files parse cleanly
+[0;32m[PASS][0m Agent architecture-reviewer.toml parses as valid TOML
+[0;32m[PASS][0m Agent code-reviewer.toml parses as valid TOML
+[0;32m[PASS][0m Agent design-reviewer.toml parses as valid TOML
+[0;32m[PASS][0m Agent eval-grader.toml parses as valid TOML
+[0;32m[PASS][0m Agent profile-resolver.toml parses as valid TOML
+[0;32m[PASS][0m Agent spec-reviewer.toml parses as valid TOML
+[1;33m[TEST][0m No ${CLAUDE_PLUGIN_ROOT} literals in agent files
+[0;32m[PASS][0m No CLAUDE_PLUGIN_ROOT literals in agent files
+
+=== Section 5: Codex rules ===
+[1;33m[TEST][0m default.rules exists
+[0;32m[PASS][0m default.rules exists
+
+=== Section 6: Codex scripts ===
+[1;33m[TEST][0m session-start.sh exists
+[0;32m[PASS][0m session-start.sh exists
+[1;33m[TEST][0m pretooluse-bash.sh exists
+[0;32m[PASS][0m pretooluse-bash.sh exists
+[1;33m[TEST][0m session-start.sh produces valid JSON
+[0;32m[PASS][0m session-start.sh output is valid JSON
+[1;33m[TEST][0m session-start.sh aggregates all .claude/CLAUDE.*.md files
+[0;32m[PASS][0m all .claude/CLAUDE.*.md files appear in session context
+[1;33m[TEST][0m session-start.sh excludes .claude/toolbox/CLAUDE.md
+[0;32m[PASS][0m .claude/toolbox/CLAUDE.md not injected into Codex context
+
+=== Section 7: Root-level files ===
+[1;33m[TEST][0m AGENTS.md exists at repo root
+[0;32m[PASS][0m AGENTS.md exists
+
+=== Test Summary ===
+Test cases:        16
+Assertions passed: [0;32m29[0m
+Assertions failed: [0;31m0[0m
+
+[0;32mAll tests passed![0m
+make[1]: Leaving directory '/home/sergio/Projects/personal/claude-toolbox'

@@ -1,0 +1,39 @@
+$ git show-ref
+029cd45cbd545c31eb03e28d14337e4577614e50 refs/heads/master
+95c9bd21db7109ae21ca612118b8f83d8b794bd5 refs/tags/review-base
+029cd45cbd545c31eb03e28d14337e4577614e50 refs/tags/review-head
+
+$ git log --format=raw review-head
+commit 029cd45cbd545c31eb03e28d14337e4577614e50
+tree b0e3a2a6c68f7eab55ec8d150e6254dcbba81290
+parent 95c9bd21db7109ae21ca612118b8f83d8b794bd5
+author Fixture <fixture@example.invalid> 1790708466 +0200
+committer Fixture <fixture@example.invalid> 1790708466 +0200
+
+    Head snapshot
+
+commit 95c9bd21db7109ae21ca612118b8f83d8b794bd5
+tree 34196cc634c9dc81bdf7cdd383262ac7f0186cfb
+author Fixture <fixture@example.invalid> 1790708466 +0200
+committer Fixture <fixture@example.invalid> 1790708466 +0200
+
+    Base snapshot
+
+$ git ls-tree -r review-base
+100644 blob 0967ef424bce6791893e9a57bb952f80fd536e93	contract.json
+100644 blob 5e5a1b13c810da6bb0d5f9c555d9e2db9e8b8a53	requirements.md
+100644 blob 2f0f50558a0de8ec3b01251ee68e045d04493df2	resolve.py
+
+$ git ls-tree -r review-head
+100644 blob a4cebdfc4ddfa5bc325ab33ec72ed1dcd3ed8230	contract.json
+100644 blob 5e5a1b13c810da6bb0d5f9c555d9e2db9e8b8a53	requirements.md
+100644 blob 2f0f50558a0de8ec3b01251ee68e045d04493df2	resolve.py
+
+$ git diff review-base review-head
+diff --git a/contract.json b/contract.json
+index 0967ef4..a4cebdf 100644
+--- a/contract.json
++++ b/contract.json
+@@ -1 +1 @@
+-{}
++{"prep_minutes":{"type":["integer","null"],"minimum":0,"maximum":90},"null":"inherit restaurant default","zero":"explicit override"}

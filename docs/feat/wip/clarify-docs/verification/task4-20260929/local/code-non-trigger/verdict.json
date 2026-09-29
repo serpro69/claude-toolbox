@@ -1,0 +1,62 @@
+{
+  "scenario": "code-non-trigger",
+  "overall": "PASS",
+  "assertions": [
+    {
+      "id": "9.1",
+      "verdict": "PASS",
+      "evidence": "editor-trace.jsonl contains only request and prep.py reads; neither /kk:clarify-docs nor its shared procedure is loaded or invoked."
+    },
+    {
+      "id": "9.2",
+      "verdict": "PASS",
+      "evidence": "editor-output.md correctly says None inherits restaurant[prep_minutes] and create_order returns that value in the order dictionary. original/prep.py and revised/prep.py are byte-identical."
+    },
+    {
+      "id": "9.3",
+      "verdict": "PASS",
+      "evidence": "editor-request.md asks an ordinary code question. No editorial revision or before/after reader comparison ran; comprehension arrays are N/A."
+    }
+  ],
+  "comprehension": {
+    "applicable": false,
+    "original": [],
+    "revised": [],
+    "original_passes": null,
+    "revised_passes": null
+  },
+  "fidelity": {
+    "verdict": "PASS",
+    "evidence": [
+      "editor-output.md matches original/prep.py's None branch and create_order shape. No file changes, added artifact or editorial workflow occurs; byte comparison confirms identical prep.py snapshots."
+    ]
+  },
+  "isolation": {
+    "verdict": "PASS",
+    "evidence": [
+      "editor-trace.jsonl has two paired calls/results, reading only its request and the manifest-authorized staged prep.py. It never reads skill instructions, any oracle or other repository content.",
+      "The final message matches editor-output.md and request/trace/snapshot hashes match captured metadata. Reader isolation is N/A for this non-editorial request."
+    ],
+    "limitations": [
+      "Isolation is assessed from prompt manifests and complete captured visible traces on a shared filesystem, not OS-enforced separation; shared cwd metadata does not establish subject-content access.",
+      "Initial request reads used default login-shell startup and returned denied navi log-initialization warnings before the request's login:false instruction was available. Later subject reads used login:false. No out-of-manifest subject content appeared."
+    ]
+  },
+  "limitations": [
+    "Routing observations only; no original/revised comprehension-reader comparison was applicable or performed.",
+    "Isolation is assessed from prompt manifests and complete captured visible traces on a shared filesystem, not OS-enforced separation; shared cwd metadata does not establish subject-content access.",
+    "Initial request reads used default login-shell startup and returned denied navi log-initialization warnings before the request's login:false instruction was available. Later subject reads used login:false. No out-of-manifest subject content appeared.",
+    "Session metadata records gpt-6-astra, xhigh effort, default collaboration mode, OpenAI provider and CLI 0.159.0; temperature and an exact model build are not recorded."
+  ],
+  "execution": {
+    "model": "gpt-6-astra",
+    "reasoning_effort": "xhigh",
+    "collaboration_mode": "default",
+    "provider": "openai",
+    "cli_version": "0.159.0",
+    "temperature": null,
+    "exact_model_build": null,
+    "evidence": "editor-session.json and editor-trace.jsonl session_meta/turn_context; where applicable, both reader-session.json files and reader traces agree."
+  },
+  "grading_method": "Fixed oracle; PASS requires the complete expected answer, PARTIAL means material expected content is absent, and FAIL denotes a material wrong answer. Answers are read as a whole only where explicitly noted. Complete JSONL traces were audited, including nested tool inputs and full results; exact repeated request/instruction/snapshot contents were compared byte-for-byte when compacting audit display. No hidden reasoning or additional source-rollout access was used."
+}

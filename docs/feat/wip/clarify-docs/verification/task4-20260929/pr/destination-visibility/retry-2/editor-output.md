@@ -1,0 +1,1 @@
+Updated [pr-draft.md](/tmp/clarify-task4/pr/destination-visibility/retry-2/editor/pr-draft.md), removing facts and references unauthorized for reviewers. Preserved the verified contract, accessible references, pending decision, and validation limits.

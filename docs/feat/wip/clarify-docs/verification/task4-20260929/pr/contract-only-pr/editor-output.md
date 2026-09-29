@@ -1,0 +1,1 @@
+Updated [pr-draft.md](/tmp/clarify-task4/pr/contract-only-pr/editor/pr-draft.md) to explain the contract-only change, null/zero example, focused review path, and validation limits. Preserved future runtime work and the product owner’s pending badge decision.

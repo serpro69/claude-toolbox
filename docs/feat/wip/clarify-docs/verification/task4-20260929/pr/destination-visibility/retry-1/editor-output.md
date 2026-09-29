@@ -1,0 +1,1 @@
+Updated [pr-draft.md](/tmp/clarify-task4/pr/destination-visibility/retry-1/editor/pr-draft.md), removing restricted facts and references while preserving accessible links and contract details. The draft records the unresolved disclosure authorization and unknown owner. JSON parsing passed; runtime remains future work.

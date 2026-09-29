@@ -1,0 +1,1 @@
+Updated [guide.md](/tmp/clarify-task4/local/missing-context/editor/guide.md) to distinguish the accepted contract from verified behavior. Preserved the export scope and documented the missing retention decision, which the data steward must supply. Only `guide.md` changed.

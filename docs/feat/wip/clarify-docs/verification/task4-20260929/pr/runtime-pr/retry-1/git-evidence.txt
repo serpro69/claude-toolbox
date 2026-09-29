@@ -1,0 +1,52 @@
+$ git show-ref
+af341ff761181751094e5ed58ee7fde3cf6ef65d refs/heads/master
+08e5cd169c65117c509ec3b58bebdd229df194a0 refs/tags/review-base
+af341ff761181751094e5ed58ee7fde3cf6ef65d refs/tags/review-head
+
+$ git log --format=raw review-head
+commit af341ff761181751094e5ed58ee7fde3cf6ef65d
+tree f6b05eb0cfc7a0d912fb696496ebd89eda90df77
+parent 08e5cd169c65117c509ec3b58bebdd229df194a0
+author Fixture <fixture@example.invalid> 1790708466 +0200
+committer Fixture <fixture@example.invalid> 1790708466 +0200
+
+    Head snapshot
+
+commit 08e5cd169c65117c509ec3b58bebdd229df194a0
+tree 688eab4757b4f53f9dd8b731aa1bd8f5fa6a35d6
+author Fixture <fixture@example.invalid> 1790708466 +0200
+committer Fixture <fixture@example.invalid> 1790708466 +0200
+
+    Base snapshot
+
+$ git ls-tree -r review-base
+100644 blob a4cebdfc4ddfa5bc325ab33ec72ed1dcd3ed8230	contract.json
+100644 blob 5e9e483da463959a06eba96a762a3a2af5ccd468	requirements.md
+100644 blob 2f0f50558a0de8ec3b01251ee68e045d04493df2	resolve.py
+
+$ git ls-tree -r review-head
+100644 blob a4cebdfc4ddfa5bc325ab33ec72ed1dcd3ed8230	contract.json
+100644 blob 5e9e483da463959a06eba96a762a3a2af5ccd468	requirements.md
+100644 blob 83e110b4480740571c682bae481fad808f766f7f	resolve.py
+100644 blob f0fda3d08db71a25845851da621cedf6202cab40	test_resolve.py
+
+$ git diff review-base review-head
+diff --git a/resolve.py b/resolve.py
+index 2f0f505..83e110b 100644
+--- a/resolve.py
++++ b/resolve.py
+@@ -1,2 +1,2 @@
+ def effective_minutes(default, override):
+-    raise NotImplementedError("runtime integration is future work")
++    return default if override is None else override
+diff --git a/test_resolve.py b/test_resolve.py
+new file mode 100644
+index 0000000..f0fda3d
+--- /dev/null
++++ b/test_resolve.py
+@@ -0,0 +1,5 @@
++from resolve import effective_minutes
++
++assert effective_minutes(15, None) == 15
++assert effective_minutes(15, 0) == 0
++assert effective_minutes(15, 7) == 7

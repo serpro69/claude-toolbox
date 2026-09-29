@@ -1,0 +1,1 @@
+Corrected the maximum default in [guide.md](/tmp/clarify-task4/local/clear-factual-error/editor/guide.md) from 60 to 90 minutes, matching the requirements and source constant. Verified the remaining guide against both sources; only this correction was needed.
