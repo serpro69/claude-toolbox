@@ -1,7 +1,7 @@
 # Design Review: clarify-docs
 
 > Historical review of the initial design. All findings are assessed in
-> [the combined assessment](review-assessment.md); the original report follows unchanged.
+> [the combined assessment](review-design-assessment.md); findings are unchanged; the relocated assessment link was repaired during Task 5.
 
 Scope: design.md + implementation.md + tasks.md
 Overall assessment: CONCERNS_FOUND

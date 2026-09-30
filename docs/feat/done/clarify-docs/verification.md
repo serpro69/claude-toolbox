@@ -3,6 +3,7 @@
 Task 1 evidence below describes its original local-document revision. Task 2's
 PR and visibility evidence is recorded in [Task 2 verification](#task-2-verification).
 The combined-revision evaluation is tracked in [Task 4 verification](#task-4-verification).
+Final checks and evidence applicability are recorded in [Task 5 verification](#task-5-verification).
 
 ## Task 1 verification
 
@@ -107,6 +108,11 @@ or incomplete trace invalidates the corresponding run. Reader answers are eviden
 about these AI sessions, not proof of improved comprehension for human readers.
 
 ## Follow-up outside Task 1
+
+**Resolved in Task 5 (2026-09-30).** Commit `3b08e13` had already established
+that logs and dependency sources must remain readable for debugging. The stale
+deny assertions now test allowed access; hook policy is unchanged. All nine shell
+suites pass. The original follow-up below records the earlier verification limit.
 
 **Owner:** repository maintainer. **Issue:** reconcile the two stale hook-test
 expectations with the intended deny policy. Both hook and test are unchanged from
@@ -388,3 +394,43 @@ comparison measures the whole drafting invocation, not the final pass alone.
 Implementation-mode coverage inspects routes rather than executing a lifecycle.
 No independent runtime editorial gate or standalone-implementation completion
 call was added. Task 5 owns final release verification and documentation.
+
+## Task 5 verification
+
+Date: 2026-09-30. Starting revision: `a7e2eaa` (completed Task 4).
+Status: complete. Independent code and spec reviews approve; all five tasks are done.
+
+All nine repository shell suites pass, including the repaired hook expectations.
+All Go packages pass, graph validation reports no broken edges or orphans, and
+two Codex generations produce no tracked output changes. The existing graph-cycle
+warning remains advisory. [Final check record and logs](verification/task5-20260930/checks.md)
+distinguish these new checks from the earlier behavioral executions.
+
+Task 4's **87/87 applicable assertions** and **70/70 revised-reader answers** remain
+applicable across all 20 scenarios. Shipped instructions, fixtures, oracles,
+generated output and Task 4 evidence are unchanged from `a7e2eaa`. The final shared
+procedure still matches the recorded SHA-256 and totals 1,000 words. No editor or
+reader evaluation was rerun in Task 5; none was invalidated by its test/documentation
+changes. This retains Task 4's scoped applicability assessments and initial failures,
+without reclassifying old attempts or claiming fresh execution.
+
+The user guide already explains local and automatic entry points, source
+prerequisites, audience restrictions, local output, and each entry point's review
+limits. All seven maintained inventories still match 14 skills; no cosmetic rewrite
+was needed. Relocated links in the three archived design-review documents were
+repaired without changing their findings. The documentation clarity/fidelity pass
+was performed in-session; the [independent review report](verification/task5-20260930/review.md)
+records their scope, findings and inspection limits separately.
+
+The stale hook-test follow-up is resolved using the explicit policy in commit
+`3b08e13`. The [build-directory substring matcher follow-up](verification/task4-20260929/checks.md#tooling-follow-up-outside-task-4)
+remains owned by the repository maintainer, with its concrete next step unchanged.
+The [optional runtime verifier and future PR integration](implementation.md#deferred-work)
+remain excluded from v1 acceptance. AI-reader observations do not establish human
+comprehension gains or repeatability; prompt manifests and trace audits do not
+provide OS isolation.
+
+Final verification required one small change beyond the planned documentation:
+replacing obsolete deny assertions with allow regressions for a policy already
+decided before this feature. No operative editorial instruction changed, so the
+behavioral evidence could be retained without another execution cycle.

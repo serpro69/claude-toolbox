@@ -35,6 +35,16 @@ exit_code=$?
 assert_equals "0" "$exit_code" "Exit code is 0 for missing tool_input"
 assert_equals "" "$output" "No stdout for missing tool_input"
 
+# Logs and dependency sources are deliberately readable for debugging. Keep these
+# as allow regressions so an obsolete deny expectation cannot reverse that policy.
+for command in "cat node_modules/foo" "cat app.log"; do
+  log_test "Allow: $command exits 0 with no stdout"
+  output=$(echo "{\"tool_input\":{\"command\":\"$command\"}}" | bash "$VALIDATE_BASH" 2>/dev/null)
+  exit_code=$?
+  assert_equals "0" "$exit_code" "Exit code is 0 for $command"
+  assert_equals "" "$output" "No stdout for $command"
+done
+
 # =============================================================================
 # Section 2: validate-bash.sh — Deny cases
 # =============================================================================
@@ -73,13 +83,11 @@ FORBIDDEN_PATTERNS=(
   ".terraform/:cat .terraform/state"
   "build/:rm -rf build/output"
   "dist/:cat dist/bundle.js"
-  "node_modules:cat node_modules/foo"
   "__pycache__:rm __pycache__/bar"
   ".git/:cat .git/config"
   "venv/:cat venv/bin/activate"
   ".pyc:cat foo.pyc"
   ".csv:cat data.csv"
-  ".log:cat app.log"
 )
 
 log_test "Each forbidden pattern triggers deny with structured JSON"

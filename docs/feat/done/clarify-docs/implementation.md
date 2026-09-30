@@ -1,6 +1,6 @@
 # Implementation: comprehension-focused editing
 
-> Status: in-progress — Tasks 1–4 complete; Task 5 pending
+> Status: done — all five tasks complete; final verification 2026-09-30
 > Design: [design.md](design.md)
 > Execution: [tasks.md](tasks.md)
 
