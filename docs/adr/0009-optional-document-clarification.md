@@ -26,10 +26,10 @@ Design presents optional clarification before its existing `/kk:review-design`
 recommendation so a user choosing both can review the final wording. Clarification
 does not replace review or become a required gate before implementation.
 
-Operative instructions live in the [design entry point](../../klaude-plugin/skills/design/SKILL.md),
-its [fresh-idea](../../klaude-plugin/skills/design/idea-process.md) and
-[resume](../../klaude-plugin/skills/design/existing-task-process.md) workflows,
-and the [document entry point](../../klaude-plugin/skills/document/SKILL.md).
+Operative instructions live in the design entry point (see `design/SKILL.md`),
+its [fresh-idea](see `design/idea-process.md`) and
+[resume](see `design/existing-task-process.md`) workflows,
+and the [document entry point](see `document/SKILL.md`).
 
 ## Consequences
 
