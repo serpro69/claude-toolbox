@@ -3,7 +3,7 @@
 > Design: [design.md](design.md)
 > Implementation: [implementation.md](implementation.md)
 > Issue: [#156](https://github.com/serpro69/claude-toolbox/issues/156)
-> Status: in-progress — Tasks 1–4 done; Task 5 pending
+> Status: done — all five tasks complete; final verification 2026-09-30
 > Created: 2026-09-29
 > Not Doing: global brevity prompts, product/code changes, automatic publication, bulk cleanup, new profiles, eval harness, automatic standalone-implementation completion
 
@@ -104,29 +104,34 @@ that boundary; see [Task 4 verification](verification.md#task-4-verification).
 **Verification:** all 20 feature scenarios have passing applicable evidence:
 87/87 assertions and 70/70 revised-reader answers. Initial failures, focused reruns,
 instruction/oracle revisions and independent applicability checks are preserved.
-Generation is stable; graph/structure checks pass. Eight of nine shell suites pass;
-the two unchanged hook assertions and owned follow-up remain explicit. Task 5 is
-still pending; AI-reader observations do not establish human-comprehension gains.
+Generation is stable; graph/structure checks pass. At Task 4's close, eight of nine
+shell suites passed; the two hook assertions were resolved during Task 5 below.
+AI-reader observations do not establish human-comprehension gains.
 
 ## Task 5: Final verification and documentation
 
-**Status:** pending
+**Status:** done
 **Depends on:** Task 1, Task 2, Task 3, Task 4
 **Size:** S
 **Can run in parallel with:** —
 **Docs:** [Release checks](implementation.md#release-checks)
 
-- [ ] Run `/kk:test` for the full repository shell/Go checks, generation and graph validation → verify: required checks pass and repeat generation produces no further changes.
-- [ ] Check Task 4's `verification.md` evidence against the final diff → verify: all applicable assertions pass at the applicable revision; rerun only evals invalidated by subsequent changes.
-- [ ] Run `/kk:document` to finalize relevant user guidance and inventory updates → verify: standalone and automatic entry points, source prerequisites, output boundaries and limitations are clear.
-- [ ] Run `/kk:review-code` with the active skill-markdown profile and `/kk:review-spec` against this design and implementation plan → verify: findings are fixed or durably recorded with an owner and next step; no unaddressed acceptance failure is labeled complete.
-- [ ] Update feature status and record verification limits → verify: authored evals are not reported as executed and no claim of improved human comprehension exceeds the collected evidence.
+- [x] Run `/kk:test` for the full repository shell/Go checks, generation and graph validation → verify: required checks pass and repeat generation produces no further changes.
+- [x] Check Task 4's `verification.md` evidence against the final diff → verify: all applicable assertions pass at the applicable revision; rerun only evals invalidated by subsequent changes.
+- [x] Run `/kk:document` to finalize relevant user guidance and inventory updates → verify: standalone and automatic entry points, source prerequisites, output boundaries and limitations are clear.
+- [x] Run `/kk:review-code` with the active skill-markdown profile and `/kk:review-spec` against this design and implementation plan → verify: findings are fixed or durably recorded with an owner and next step; no unaddressed acceptance failure is labeled complete.
+- [x] Update feature status and record verification limits → verify: authored evals are not reported as executed and no claim of improved human comprehension exceeds the collected evidence.
 
-**Documentation follow-up:** Task 3 repaired the current design/task pointers to
-`reviews/archive/review-design-assessment.md`. That relocated assessment still
-contains its original relative links. **Owner:** feature maintainer. **Next step
-(Task 5):** verify archived-review navigation and repair relocated links without
-changing historical findings; this is deferred to final documentation verification.
+**Verification:** [Task 5 evidence](verification.md#task-5-verification) records all
+nine shell suites and Go packages passing, graph validation, and two generations
+without output drift. Task 4's 87 assertion passes and 70 revised-reader answer
+passes remain applicable; no behavioral reruns were needed. Independent code and
+spec reviews approve, with limits and one optional cosmetic advisory durably
+recorded in the [review report](verification/task5-20260930/review.md).
+
+**Documentation follow-up resolved:** Task 5 repaired relocated links in all three
+archived design-review documents, including their assessment links and source
+pointers. Historical findings remain unchanged.
 
 ## Dependency Graph
 
