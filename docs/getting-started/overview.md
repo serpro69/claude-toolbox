@@ -25,7 +25,7 @@ Tools like Claude Code and Codex are powerful on their own, but LLMs don't know 
 
 ## Features at a Glance
 
-- **14 workflow and utility skills** — a complete development pipeline invoked as `/kk:<skill-name>`, plus utilities such as `/kk:clarify-docs` for existing local documentation
+- **14 workflow and utility skills** — a complete development pipeline invoked as `/kk:<skill-name>`, plus utilities such as `/kk:clarify-docs` for existing documentation and PR drafts
 - **Multi-language support** — precise and distinct instructions from design, to implementation, to testing, to review for: Go, Java, JS/TS, Kotlin, Kubernetes, and Python
 - **Multi-model code review** — independent reviewers using sub-agents and external models (Gemini, etc.)
 - **Persistent knowledge base** — findings, decisions, and conventions that survive across sessions via Capy
