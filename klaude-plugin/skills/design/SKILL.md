@@ -18,18 +18,20 @@ For fresh ideas, two reference files provide methodology and evaluation rubric: 
 
 ## Workflow
 
-**Mandatory order — understanding before engagement.** The flow below is strictly sequential. Do not engage with idea prose beyond a keyword scan, read WIP document content, ask refinement questions, or write design content until all instructions — this SKILL.md, the relevant process file, the shared protocols including [shared-document-clarity.md](shared-document-clarity.md), every resolved profile's `design/` content, and the fresh-idea references below when applicable — are fully loaded. Bounded signal inspection for profile detection is the only content-read exception.
+**Mandatory order — understanding before engagement.** The flow below is strictly sequential. Do not engage with idea prose beyond a keyword scan, read WIP document content, ask refinement questions, or write design content until all instructions — this SKILL.md, the relevant process file, the shared protocols, every resolved profile's `design/` content, and the fresh-idea references below (when applicable) — are fully loaded. Bounded signal inspection for profile detection is the only content-read exception.
 
 The `/kk:design` skill has two entry points; each has its own process file with a detailed workflow. Both follow the same mandatory ordering:
 
 1. **Keyword scan only.** The idea prose (or WIP feature directory) is scanned at the keyword/filename level — enough to drive profile detection, not enough to engage with the content.
-2. **Load instructions.** Read the relevant process file ([idea-process.md](./idea-process.md) or [existing-task-process.md](./existing-task-process.md)), the shared protocols above, [shared-document-clarity.md](shared-document-clarity.md) and [example-tasks.md](./example-tasks.md) (task format), even on an unchanged resume. For WIP, also load the drafting guidelines in idea-process.md for potential refinement, without running its fresh-idea sub-phases. For fresh ideas, also read [frameworks.md](./frameworks.md) (ideation lenses) and [refinement-criteria.md](./refinement-criteria.md) (evaluation rubric).
+2. **Load instructions.** Read the relevant process file ([idea-process.md](./idea-process.md) or [existing-task-process.md](./existing-task-process.md)), the shared protocols above and [example-tasks.md](./example-tasks.md) (task format), even on an unchanged resume.
+  - For WIP, also load the drafting guidelines in idea-process.md for potential refinement, without running its fresh-idea sub-phases.
+  - For fresh ideas, also read [frameworks.md](./frameworks.md) (ideation lenses) and [refinement-criteria.md](./refinement-criteria.md) (evaluation rubric).
 3. **Detect active profiles.** Delegate to [shared-profile-detection.md](shared-profile-detection.md). For fresh ideas, this uses the design interaction pattern (token matching against idea prose). For WIP features, this uses file-based detection with design-pattern fallback.
 4. **Load profile content.** For each active profile contributing a `design/` subdirectory, read its `index.md` and all always-load and matching conditional entries. These feed the refinement question pool and required design sections.
 5. **Engage with subject matter.** Follow the selected process file's content-reading, refinement and drafting steps.
-6. **Clarify completed outputs.** Apply the loaded shared procedure once after all design, implementation and task artifacts are drafted; on resume, apply it only to documents changed by refinement. Supply the intended implementer/reviewer, selected outputs, accepted requirements and applicable source context. Preserve required sections, profile topics, decisions, task state and links. An unchanged resume skips the pass. The process file places this before review recommendation or implementation handoff.
+6. **Recommend next steps.** After drafting or substantive refinement, suggest an optional `/kk:clarify-docs` invocation naming the created or materially revised documents, before the `/kk:review-design` recommendation. An unchanged resume skips the clarification suggestion. Follow the selected process file for review recommendation and implementation handoff.
 
-Use the shared procedure directly, without invoking `/kk:clarify-docs` or another writing skill. Its comparison is in-session; retain the `/kk:review-design` recommendation, without claiming independent verification or automatically running that review.
+Clarification is a separate user-selected editing workflow: this skill neither loads its procedure nor runs it automatically. Drafting still owns clear explanations and preservation of required sections, profile topics, decisions, task state and links. A clarification suggestion does not replace design review; neither recommendation executes a review or establishes independent verification.
 
 ## Ideas and Prototypes
 
