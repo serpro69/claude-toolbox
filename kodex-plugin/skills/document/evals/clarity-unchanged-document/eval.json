@@ -1,0 +1,14 @@
+{
+  "id": 3,
+  "name": "clarity-unchanged-document",
+  "description": "An already-current document needs no changes and receives no clarification suggestion. Stage test-files as a separate workspace root outside any SKILL.md ancestor.",
+  "skills": ["document"],
+  "prompt": "Use $kk:document to check docs/archive-guide.md against feature/requirements.md. Update only that guide if it needs a substantive correction; otherwise leave it unchanged. The requirements file is the complete accepted contract for this documentation-only change; there is no application code or implementation work to inspect.",
+  "trap": "The agent rewrites an accurate guide to justify the invocation or recommends clarification despite producing no substantive output.",
+  "files": ["test-files/docs/archive-guide.md", "test-files/feature/requirements.md"],
+  "assertions": [
+    { "id": "3.1", "text": "The guide and requirements are inspected after the document skill's required instruction loading and profile detection; neither clarify-docs nor the shared clarity procedure is loaded." },
+    { "id": "3.2", "text": "Both fixture files remain byte-identical and no new output, summary or separate clarity pass is introduced." },
+    { "id": "3.3", "text": "The response says no documentation update was needed and does not suggest clarification, invoke another writing skill, or claim independent review." }
+  ]
+}

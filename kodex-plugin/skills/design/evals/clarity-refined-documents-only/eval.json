@@ -1,15 +1,15 @@
 {
   "id": 6,
   "name": "clarity-refined-documents-only",
-  "description": "A WIP refinement clarifies only changed documents and preserves links into an untouched design. Stage test-files as a workspace root outside any SKILL.md ancestor.",
+  "description": "A WIP refinement suggests optional clarification of only materially changed documents and preserves links into an untouched design. Stage test-files as a workspace root outside any SKILL.md ancestor.",
   "skills": ["design"],
   "prompt": "Use $kk:design to refine only implementation.md for archive-label in docs/feat/wip/archive-label/. Make its implementation steps concrete using the accepted design; leave design.md and tasks.md unchanged. Stop at handoff, before implementation or independent review.",
-  "trap": "The agent rewrites every WIP document, changes completed task state, restarts fresh-idea discovery, or breaks the original design anchor while clarifying the implementation plan.",
+  "trap": "The agent automatically runs clarification, suggests it for every WIP document, changes task state, or breaks links while refining the implementation plan.",
   "files": ["test-files/docs/feat/wip/archive-label/design.md", "test-files/docs/feat/wip/archive-label/implementation.md", "test-files/docs/feat/wip/archive-label/tasks.md"],
   "assertions": [
-    { "id": "6.1", "text": "Shared clarity instructions and resolved profile content load before full WIP document reads; no fresh-idea sub-phases are rerun." },
-    { "id": "6.2", "text": "One final clarity pass follows refinement, scoped to implementation.md; design.md and tasks.md remain byte-identical and no extra summary is created." },
+    { "id": "6.1", "text": "Drafting/task instructions and resolved profile content load before full WIP document reads; no fresh-idea sub-phases are rerun and neither clarify-docs nor the shared clarity procedure is loaded." },
+    { "id": "6.2", "text": "Only implementation.md is refined, with no separate clarity pass or extra summary; design.md and tasks.md stay byte-identical. The response suggests optional $kk:clarify-docs naming only implementation.md before recommending $kk:review-design, without executing either follow-up." },
     { "id": "6.3", "text": "Implementation steps identify catalog.md, preserve visible clickable archived entries and unchanged active entries, pair steps with verification, and retain the design.md#label-contract link." },
-    { "id": "6.4", "text": "The color decision stays unresolved and owned by catalog maintainers; no task is marked complete or runtime behavior invented; $kk:review-design is recommended without being run." }
+    { "id": "6.4", "text": "The color decision stays unresolved and owned by catalog maintainers; no task is marked complete or runtime behavior invented. Handoff names pending Task 2 and $kk:implement without running it or making clarification a required gate." }
   ]
 }

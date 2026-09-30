@@ -87,25 +87,27 @@ The final comprehension and fidelity check runs in the editing session. Normal
 project review remains the caller's responsibility; the skill does not provide
 independent runtime verification or a guarantee of improved human comprehension.
 
-### Clarity after drafting
+### Optional clarification after drafting
 
-`/kk:design` and `/kk:document` also use the shared clarity procedure. They load it
-before reading content and apply it once after drafting, reusing applicable source
-understanding and inspecting any missing evidence.
+`/kk:design` and `/kk:document` suggest `/kk:clarify-docs` after creating or materially
+revising documents, naming the relevant paths. You decide whether to run it. Neither
+writing skill loads the clarification procedure or applies a separate editorial
+pass automatically. Both remain responsible for clear, accurate drafts and their
+required content.
 
-| Entry point | Selected outputs and review boundary |
+| Entry point | Recommendation and review boundary |
 | --- | --- |
-| `/kk:design` for a fresh idea | All completed design, implementation and task artifacts; required sections and task format survive. It then recommends `/kk:review-design`, without running that review automatically. |
-| `/kk:design` resuming WIP | Only documents changed by refinement, before handoff. An unchanged resume does not rewrite documents. Refined outputs retain the review recommendation. |
-| `/kk:document` | The invocation's drafted or updated documentation, preserving applicable profile topics, N/A explanations and inherited-source citations. Further project review remains the caller's responsibility. |
-| `/kk:implement` plan mode | Inherits the pass through its existing `/kk:document` call when the whole plan completes; individual tasks do not get an extra pass. |
+| `/kk:design` for a fresh idea | Suggests clarification of all created design, implementation and task documents, including split parts, before recommending `/kk:review-design`. Neither follow-up runs automatically. |
+| `/kk:design` resuming WIP | Suggests clarification of only materially refined documents before recommending review and handing off. An unchanged resume does not rewrite documents or suggest clarification. |
+| `/kk:document` | Suggests clarification of created or materially revised outputs; no suggestion when there are none. Project-prescribed review remains separate. |
+| `/kk:implement` plan mode | Calls `/kk:document` when the whole plan completes, which may suggest clarification. It runs no automatic clarification pass; individual tasks do not trigger this completion call. |
 | `/kk:implement` standalone mode | No automatic documentation completion call. Invoke `/kk:document` to update documentation or `/kk:clarify-docs` to edit existing prose explicitly. |
 
-For example, `/kk:design` refining only `implementation.md` edits that artifact and
-can read its linked design for context without rewriting the design. `/kk:document`
-updating a deployment guide retains its rollback steps and required domain topics.
-These passes create no separate summary and use an in-session fidelity check; they
-do not provide independent verification.
+For example, `/kk:design` refining only `implementation.md` suggests clarification
+of that path, leaving the linked design outside the suggested edit scope. Clarification
+improves the explanation; `/kk:review-design` evaluates the design. If you choose both,
+clarify first so the review assesses the final wording. The standalone clarification
+skill's fidelity check remains in-session, not independent verification.
 
 ### Clarify a PR draft
 

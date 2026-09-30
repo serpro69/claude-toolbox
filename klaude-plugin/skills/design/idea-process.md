@@ -1,6 +1,6 @@
 ### Workflow
 
-**Entry prerequisite — instructions before subject matter.** Complete the mandatory instruction loading and profile resolution in [SKILL.md](SKILL.md#workflow) before Step 1 below. That includes the shared clarity procedure and task-format example. The steps below begin with subject matter and do not repeat detection.
+**Entry prerequisite — instructions before subject matter.** Complete the mandatory instruction loading and profile resolution in [SKILL.md](SKILL.md#workflow) before Step 1 below, including the task-format example. The steps below begin with subject matter and do not repeat detection.
 
 Copy this checklist and check off items as you complete them:
 
@@ -12,7 +12,7 @@ Task Progress:
 - [ ] Step 4: Describe the design
 - [ ] Step 5: Document the design
 - [ ] Step 6: Create the task list
-- [ ] Step 7: Clarify completed artifacts and recommend review
+- [ ] Step 7: Suggest optional clarification and recommend review
 ```
 
 **Step 1: Understand the current state of the project**
@@ -144,8 +144,8 @@ Follow the structure and conventions in the [example task file](./example-tasks.
 - **Parallel markers:** Each task gets a `**Can run in parallel with:**` field listing task numbers with no blocking dependency, or `—`.
 - **Dependency graph:** After all tasks, add a `## Dependency Graph` section with an ASCII diagram showing task relationships. Written once, never updated during implementation.
 
-**Step 7: Clarify completed artifacts and recommend review**
+**Step 7: Suggest optional clarification and recommend review**
 
-After all design, implementation and task artifacts exist, apply [shared-document-clarity.md](shared-document-clarity.md) once to that selected set, using the accepted requirements and applicable source understanding from drafting. Keep the required sections and task format above. This is the final pass summarized in SKILL.md, not an additional pass or skill invocation.
+After all design, implementation and task artifacts exist, suggest `/kk:clarify-docs` as an optional follow-up, naming all created design, implementation and task artifact paths. This is the recommendation summarized in SKILL.md, not an editing pass. The user decides whether to run it.
 
 Then recommend invoking `/kk:review-design <feature>` as the post-design gate. The default scope reviews all documents (`design.md + implementation.md + tasks.md`), including the task-format checks. The recommendation does not execute independent review.

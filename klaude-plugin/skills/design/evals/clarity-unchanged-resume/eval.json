@@ -1,14 +1,14 @@
 {
   "id": 7,
   "name": "clarity-unchanged-resume",
-  "description": "A ready WIP resume still loads shared instructions but performs no editorial pass. Stage test-files as a workspace root outside any SKILL.md ancestor.",
+  "description": "A ready WIP resume neither loads nor runs clarification and omits the clarification suggestion. Stage test-files as a workspace root outside any SKILL.md ancestor.",
   "skills": ["design"],
   "prompt": "Use /kk:design to resume archive-label in docs/feat/wip/archive-label/. Check readiness and stop at the implementation handoff. The accepted plan needs no refinement; do not begin implementation.",
-  "trap": "The agent treats mandatory clarity loading as a mandate to rewrite already-ready documents or restarts idea discovery.",
+  "trap": "The agent retains automatic clarity loading, rewrites already-ready documents, or emits an unnecessary clarification suggestion on an unchanged resume.",
   "files": ["test-files/docs/feat/wip/archive-label/design.md", "test-files/docs/feat/wip/archive-label/implementation.md", "test-files/docs/feat/wip/archive-label/tasks.md"],
   "assertions": [
-    { "id": "7.1", "text": "Shared clarity instructions and any resolved profile content load before full WIP content reads, even though the resume produces no edits." },
+    { "id": "7.1", "text": "Required design instructions and any resolved profile content load before full WIP content reads; neither clarify-docs nor the shared clarity procedure is loaded." },
     { "id": "7.2", "text": "All staged files remain byte-identical; no clarity editing pass, summary file or fresh-idea sub-phase is introduced." },
-    { "id": "7.3", "text": "Handoff identifies pending Task 2 and /kk:implement without executing implementation or independent review and without changing done/pending task state." }
+    { "id": "7.3", "text": "Handoff identifies pending Task 2 and /kk:implement without executing implementation or independent review, changing task state, or suggesting clarification." }
   ]
 }
