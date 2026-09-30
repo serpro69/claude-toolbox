@@ -67,6 +67,17 @@ within the instruction budget remains unproven. File and word counts do not
 establish maintenance effort, token cost, latency, or reliability. These limits
 remain explicit assumptions below; no live tracker integration was verified.
 
+### Review findings disposition
+
+The subsequent external review's findings were checked against all three artifacts
+and the operative shared procedure before changes were made:
+
+| Finding | Verdict and evidence | Resolution |
+| --- | --- | --- |
+| P1: budget check cannot catch overflow | Partly valid. The implementation plan already required counting the complete cumulative procedure, so overflow would be detected. Late discovery across serial slices could nevertheless force rework. The existing design-reopen instruction was a stop condition, not a predetermined fallback. | Draft and check the complete candidate before operative Task 1 changes. Sergio selected retaining A and raising the ceiling with a recorded justification if necessary; the budget policy below defines that fallback. |
+| P2: no same-repository audience default | Valid. The original rules required public availability or explicit sharing confirmation and provided no default for private same-repository issues. | Add the bounded GitHub default, with restriction and audience overrides; exercise it in scenario 16 and its limits in scenario 19. |
+| P3: title-editing scope unclear | Valid. The title was named as input context without an explicit output boundary. | Titles remain read-only for description edits; scenarios 16 and 18 protect them. |
+
 ## Request and output contract
 
 Extend the existing entry point to accept a selected local issue-description draft,
@@ -87,6 +98,11 @@ skill-instruction, and generic-brevity boundaries remain intact.
 | Pasted description or remote body, with destination | Save one revised local draft at the selected destination, subject to collision rules. |
 | Pasted description or remote body, with established feature scope | Name one unused draft within that scope. |
 | Pasted description or remote body, with neither | Ask for a destination or feature scope before writing. |
+
+An issue's tracker title and type are read-only context for description edits.
+Do not propose a replacement title; if a local draft carries the supplied title,
+preserve its wording. Headings within the description remain editable. Editing a
+tracker title requires a separately scoped request and is outside this follow-up.
 
 An immutable fixture or capture of a pasted/remote body is input, not automatically
 the selected local draft. Never overwrite an unrelated file. If a proposed path
@@ -142,10 +158,23 @@ continues to require its actual review context.
 
 Apply the existing restrictions to facts as well as citations. Establish the
 intended audience for the resulting issue description even when saving it locally.
-Explicit restrictions win. Public availability or user/repository confirmation
-can establish sharing; editor credentials, common organizational membership, or
-mere repository tracking cannot establish access for a different issue audience.
-Keep the PR-head presumption explicitly restricted to its existing review context.
+For a GitHub issue identified as belonging to repository R, default to R's issue
+audience when the caller specifies no different audience. Files tracked in R at
+the relevant inspected revision are presumed accessible to that audience, including
+in a private repository. Use R's default branch when no source revision is otherwise
+established; that choice does not prove behavior in an older reported version.
+Neither an audience question nor a disclosure limitation is needed solely because
+this same-repository case is private.
+
+This is a bounded design default, supported by GitHub's
+[repository permissions](https://docs.github.com/en/organizations/managing-user-access-to-your-organizations-repositories/managing-repository-roles/repository-roles-for-an-organization).
+Explicit restrictions override it, including restrictions on tracked files. It
+does not cover untracked drafts, private aggregators, another repository, or a
+different intended audience. Do not infer GitHub repository access from a Linear
+issue or another tracker's link to that repository. For those cases, public
+availability or user/repository confirmation must establish sharing; editor
+credentials or common organizational membership are insufficient. Keep the
+PR-head presumption restricted to its existing review context.
 
 Retain legitimate audience-accessible task references. Exclude restricted facts,
 private source pointers, and absolute workspace paths from drafts and shared gap
@@ -160,7 +189,7 @@ remains limited to the selected output.
 | Body exists; supporting source is unavailable | Continue supported edits at an established destination, retaining reported/proposed status and verification limits. |
 | Requirements and source disagree | Preserve both, their provenance, and the next action needed; do not silently ratify one. |
 | Destination is unresolved | Inspect available context and ask before writing. |
-| Audience access is unknown | Do not disclose the unsupported private fact; ask or retain a non-disclosing limitation. |
+| Audience access remains unknown after applying the bounded same-repository default and any explicit restrictions | Do not disclose the unsupported private fact; ask or retain a non-disclosing limitation. |
 
 ## Instruction size and compatibility
 
@@ -170,12 +199,31 @@ profile, or automatic consumer invocation. Preserve the PR paragraphs and common
 rules while removing duplication only where meaning remains intact.
 
 At the inspected baseline the shared procedure contains 1,000 whitespace-delimited
-words. This follow-up retains the original 1,200-word ceiling for that procedure
-and any mandatory dependencies it introduces. Count the final text and record the
-result. Do not preserve the limit by dropping a safeguard, hiding instructions in
-another mandatory file, or moving a necessary load after source reads. If it cannot
-fit, record the actual count and needed rules in the implementation evidence and
-revisit this design before treating that task as complete.
+words. Use 1,200 words as the initial ceiling for the complete procedure and any
+mandatory dependencies, with this explicit fallback:
+
+1. Before operative Task 1 edits or candidate behavioral grading, draft the complete
+   replacement procedure and entry point covering Tasks 1–3, including all issue
+   types, gaps, audience rules, title scope, and existing safeguards. Remove
+   duplication and check requirement coverage. Count the whole procedure plus
+   mandatory dependencies, not just added paragraphs or the first slice. Measure
+   the entry point separately; its trigger/input rules are not all procedure text.
+2. If the full candidate is at most 1,200 words, retain that ceiling. If it exceeds
+   1,200 after deduplication and a preservation check, keep A and set this
+   follow-up's ceiling to the full candidate's measured count. Before proceeding,
+   record the exact count, increase over 1,200, duplication removed, and why the
+   remaining additional guidance is necessary. This fallback was explicitly
+   selected by Sergio; it does not authorize dropping safeguards or adopting B.
+3. Record the ceiling and complete candidate revision in the implementation
+   evidence. Every slice checks both the operative cumulative procedure and the
+   candidate representing all remaining planned rules against that same ceiling.
+   If later wording needs more room, repeat the complete-candidate preflight and
+   record the revised ceiling and rationale before applying it; rerun affected
+   behavioral checks after the change. No slice receives a fresh 200-word allowance.
+
+Do not meet the budget by hiding instructions in another mandatory file, weakening
+protected meaning, or loading necessary instructions after source reads. Budget
+increases cover only the agreed issue scope. They do not authorize extra features.
 
 Recheck current provider description guidance when editing the skill description,
 as required by repository conventions. Canonical changes live in `klaude-plugin/`;
@@ -205,21 +253,25 @@ comprehension. No new eval runner is included.
 
 ## Assumptions
 
-- **Compact guidance:** complete issue rules can fit within the retained ceiling.
-  Validate with a count and fidelity review after each instruction change.
+- **Compact guidance:** complete issue rules may fit within the initial 1,200-word
+  ceiling. Validate the full candidate before operative changes; otherwise retain
+  A and use the measured, justified ceiling under the budget policy above.
 - **Available evidence:** existing read-only tools or caller-supplied descriptions
   can supply enough context for useful edits. Validate positive and missing-access
   paths with synthetic responses; no particular tracker tool is assumed present.
 - **Compatibility:** additive issue guidance can preserve document/PR routing,
   fidelity, visibility, and output behavior. Validate by executing existing evals.
-- **Audience resolution:** explicit context can establish sharing without inferring
-  access from credentials. Validate both shared and restricted evidence cases.
+- **Audience resolution:** the GitHub same-repository default and explicit sharing
+  declarations can resolve access without relying on editor credentials. Validate
+  an undeclared private same-repository audience, restriction overrides, and a
+  declared different audience.
 
 ## Not Doing
 
 - Remote publication, issue updates, comments, or messages: editing authorizes local output only.
 - Implementing, fixing, or reproducing the described work: those are separate execution tasks.
 - New product decisions or acceptance criteria: clarification preserves meaning and uncertainty.
+- Tracker-title editing: titles are context for the selected description, not another output.
 - Mandatory tracker integrations or live connector certification: use available read-only capabilities and supplied text.
 - A separate issue guide, new skill/profile, or automatic clarification: reuse the chosen workflow and preserve ADR 0009.
 - Bulk rewrites, new summary artifacts, or edits to completed designs: keep targets bounded and history frozen.
@@ -228,7 +280,7 @@ comprehension. No new eval runner is included.
 
 | Alternative | User value | Feasibility and trade-off | Reason not selected |
 | --- | --- | --- | --- |
-| B: conditionally loaded issue guide | Intended reader outcome is the same; equivalence is untested. | Reduces non-issue instruction text but adds routing, a dependency, and loading-order coverage. | The bounded extension can reuse the existing procedure; revisit only if complete guidance cannot remain compact. |
+| B: conditionally loaded issue guide | Intended reader outcome is the same; equivalence is untested. | Reduces non-issue instruction text but adds routing, a dependency, and loading-order coverage. | Retain A, including on budget overflow: the selected fallback is a measured, justified ceiling increase, not a separate guide. |
 
 No reliability, latency, or maintenance-time advantage has been measured for either
 approach. A is selected for its simpler instruction structure, subject to the
