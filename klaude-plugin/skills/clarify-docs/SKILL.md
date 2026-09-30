@@ -1,10 +1,10 @@
 ---
 name: clarify-docs
 description: |
-  TRIGGER when: asked to clarify or improve the explanation in existing local human
-  documentation or a PR-description draft, including a PR URL or pasted body. Grounds
-  edits in requirements and source while preserving technical meaning. Not for code,
-  config, generic response brevity, or agent instructions. Explicit
+  TRIGGER when: asked to clarify or improve the explanation in existing documentation
+  or a PR-description draft, including a PR URL or pasted body. Saves results locally.
+  Grounds edits in requirements and source while preserving technical meaning. Not for
+  code, config, generic response brevity, or agent instructions. Explicit
   instruction or SKILL.md targets receive a /kk:implement suggestion without edits
   or automatic handoff.
 ---
@@ -17,7 +17,7 @@ document-length target.
 
 ## Inputs and boundaries
 
-Accept selected local documents or PR drafts, a PR URL or pasted PR body, plus any
+Accept local documentation files, local PR drafts, a PR URL or pasted PR body, plus any
 audience, purpose, requirements and source references. Examples:
 
 - `/kk:clarify-docs docs/configuration.md for service owners; use src/config/`

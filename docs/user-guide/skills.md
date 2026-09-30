@@ -31,7 +31,7 @@ The kk plugin ships 14 workflow and utility skills, including a complete develop
 | **/kk:dependency-handling** | Fires before calling a library/SDK/API or adding a dependency. Forces a capy/context7 lookup instead of guessing signatures or behavior. |
 | **/kk:diff-skill** | Compares two versions of a skill's markdown instructions to detect degradations and complexity increases. Asymmetric — only regressions count. |
 | **/kk:merge-docs** | Merges two competing design docs for the same feature into one unified document, resolving conflicts and preserving the best of both. |
-| **/kk:clarify-docs** | Improves selected human documentation and PR drafts after understanding requirements and source. Produces local edits, preserves meaning and respects the intended audience's access. |
+| **/kk:clarify-docs** | Improves selected documentation and PR drafts after understanding requirements and source. Produces local edits, preserves meaning and respects the intended audience's access. |
 | **/kk:chain-of-verification** | Makes Claude fact-check its own answers. Standard mode (prompt-based) or isolated mode (independent sub-agents). For high-stakes accuracy. |
 
 ## Commands
@@ -77,9 +77,9 @@ additional summary file is produced, and a document that already meets the
 requirements stays unchanged. Clear prose can still receive a source-backed factual
 correction.
 
-This utility supports local human documentation and PR-description drafts. It does not change
-code or configuration, publish externally, or edit agent/skill instructions. An
-explicit `AGENTS.md`, `CLAUDE.md` or `SKILL.md` target receives a suggestion to use
+This utility improves existing documentation and PR-description drafts, saving results
+locally. It does not change code or configuration, publish externally, or edit
+agent/skill instructions. An explicit `AGENTS.md`, `CLAUDE.md` or `SKILL.md` target receives a suggestion to use
 `/kk:implement`, with no edit or automatic handoff. Generic requests for shorter
 chat answers do not activate it.
 
