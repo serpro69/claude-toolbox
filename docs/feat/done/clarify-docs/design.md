@@ -1,7 +1,7 @@
 # Design: documentation readers can understand
 
 > Issue: [#156](https://github.com/serpro69/claude-toolbox/issues/156)
-> Status: implementation — Tasks 1–4 complete; Task 5 pending
+> Status: done — all five tasks complete; final verification 2026-09-30
 > Created: 2026-09-29
 > Related: [Implementation plan](implementation.md), [tasks](tasks.md)
 > Review reconciliation: [assessment](reviews/archive/review-design-assessment.md)
