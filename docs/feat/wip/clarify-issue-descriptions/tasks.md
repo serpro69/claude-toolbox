@@ -5,7 +5,7 @@
 > Issue: [#157](https://github.com/serpro69/claude-toolbox/issues/157)
 > Status: pending
 > Created: 2026-09-30
-> Not Doing: remote publication/comments, issue implementation/reproduction, invented decisions/criteria, mandatory integrations/live certification, separate issue guide/new skill/profile, automatic clarification, bulk rewrites/extra summaries, completed-design edits
+> Not Doing: remote publication/comments, issue implementation/reproduction, invented decisions/criteria, tracker-title editing, mandatory integrations/live certification, separate issue guide/new skill/profile, automatic clarification, bulk rewrites/extra summaries, completed-design edits
 
 ## Task 1: Clarify bug reports into local drafts
 
@@ -13,15 +13,17 @@
 - **Depends on:** —
 - **Size:** M
 - **Can run in parallel with:** —
-- **Docs:** [Bug-report slice](implementation.md#task-1-clarify-bug-reports-locally), [request contract](design.md#request-and-output-contract)
+- **Slicing strategy:** Risk-First budget preflight, followed by the complete bug-report path.
+- **Docs:** [Budget preflight](implementation.md#budget-preflight), [bug-report slice](implementation.md#task-1-clarify-bug-reports-locally), [request contract](design.md#request-and-output-contract)
 
 ### Subtasks
 
-- [ ] 1.1 Author `github-issue-bug` and `issue-local-draft` under `klaude-plugin/skills/clarify-docs/evals/`, with isolated grader oracles → verify: scenario IDs 16/17 are unique, manifests are self-contained, and baseline runs record observed routing/evidence/file effects.
-- [ ] 1.2 Extend `klaude-plugin/skills/clarify-docs/SKILL.md` for issue-description inputs and explicit implement/fix non-triggers → verify: preserve existing scope/loading rules and recheck current description guidance and measured length.
-- [ ] 1.3 Add issue evidence and bug-report preservation guidance to `klaude-plugin/skills/_shared/document-clarity.md` → verify: scenarios 16/17 preserve reported versus verified behavior, reproduction details, local output, and collision protection without requiring PR revisions.
-- [ ] 1.4 Extend `clarify-docs/evals/README.md` with offline issue staging → verify: both scenarios run without live tracker access, oracle leakage, or PR base/head setup.
-- [ ] 1.5 Count shared instructions, run `make generate-kodex` and `make plugin-graph`, inspect generated changes, and run `dense-source`/`runtime-pr` smoke regressions → verify: at most 1,200 words, structural checks pass, all applicable behavioral assertions pass with recorded evidence.
+- [ ] 1.1 Draft complete non-operative procedure and entry-point candidates for Tasks 1–3 under this feature's `verification/budget/`, including all planned rules and existing safeguards; remove duplication → verify: count the entire procedure and mandatory dependencies, record coverage and candidate hashes in `decision.md`, retain 1,200 if sufficient or explicitly raise the ceiling to the measured candidate count with justification, all before operative edits or candidate behavioral grading.
+- [ ] 1.2 Author `github-issue-bug` and `issue-local-draft` under `klaude-plugin/skills/clarify-docs/evals/`, with isolated grader oracles → verify: scenario IDs 16/17 are unique, scenario 16 covers a private same-repository issue without a caller-declared audience and protects the original title, manifests are self-contained, and baseline runs record observed routing/evidence/file effects.
+- [ ] 1.3 Apply the candidate's entry-point changes to `klaude-plugin/skills/clarify-docs/SKILL.md` for issue-description inputs, read-only tracker titles, and explicit implement/fix non-triggers → verify: preserve existing scope/loading rules and recheck current description guidance and measured length.
+- [ ] 1.4 Apply the candidate's issue evidence, bug-report preservation, and bounded GitHub same-repository audience default to `klaude-plugin/skills/_shared/document-clarity.md` → verify: scenarios 16/17 preserve reported versus verified behavior, reproduction details, local output, and collision protection; scenario 16 needs no audience question solely for privacy, retains accessible R references, and excludes explicitly restricted tracked facts.
+- [ ] 1.5 Extend `clarify-docs/evals/README.md` with offline issue staging → verify: both scenarios run without live tracker access, oracle leakage, or PR base/head setup.
+- [ ] 1.6 Check operative and complete-candidate instruction counts against the recorded ceiling; run `make generate-kodex` and `make plugin-graph`, inspect generated changes, and run `dense-source`/`runtime-pr` smoke regressions → verify: both counts fit, structural checks pass, all applicable behavioral assertions pass with recorded evidence.
 
 ## Task 2: Clarify unimplemented features for the intended audience
 
@@ -33,10 +35,10 @@
 
 ### Subtasks
 
-- [ ] 2.1 Author `linear-issue-feature` and `issue-destination-visibility` evals, IDs 18/19 → verify: baseline evidence records existing behavior and oracles separate accepted intent, proposals, unknown decisions, and actual audience access.
-- [ ] 2.2 Extend the shared procedure's feature/other-issue guidance → verify: scenario 18 preserves existing criteria and unknowns without demanding implementation, inventing criteria, or imposing bug-report sections.
-- [ ] 2.3 Scope PR-head visibility to its existing audience and apply common sharing rules to issue readers → verify: scenario 19 retains shared references and excludes restricted facts/pointers from the draft and report, including uncited paraphrases.
-- [ ] 2.4 Regenerate Codex output, count instructions, and run structure/graph checks plus `contract-only-pr`/`destination-visibility` regressions → verify: all applicable assertions pass; rerun 16/17 when changed rules affect them.
+- [ ] 2.1 Author `linear-issue-feature` and `issue-destination-visibility` evals, IDs 18/19 → verify: baseline evidence records existing behavior; oracles separate accepted intent, proposals, unknown decisions, and actual audience access; scenario 18 forbids title changes or replacement-title suggestions.
+- [ ] 2.2 Apply the preflight candidate's shared-procedure feature/other-issue guidance → verify: scenario 18 preserves existing criteria and unknowns without demanding implementation, inventing criteria, or imposing bug-report sections.
+- [ ] 2.3 Scope PR-head visibility to its existing audience, retain Task 1's same-repository default, and apply common sharing rules outside that default → verify: scenario 19's declared different audience overrides the default, retains shared references, and excludes restricted facts/pointers from the draft and report, including uncited paraphrases.
+- [ ] 2.4 Regenerate Codex output, count operative and complete-candidate instructions against the recorded ceiling, and run structure/graph checks plus `contract-only-pr`/`destination-visibility` regressions → verify: both counts fit and all applicable assertions pass; repeat the full preflight before any ceiling increase and rerun 16/17 when changed rules affect them.
 
 ## Task 3: Handle incomplete inputs and execution non-triggers
 
@@ -49,9 +51,9 @@
 ### Subtasks
 
 - [ ] 3.1 Author `issue-pasted-missing-destination`, `issue-unavailable-source`, and `issue-unavailable-body` evals, IDs 20–22 → verify: respectively ask before writing, produce a qualified draft, and request missing body text without fabricated output.
-- [ ] 3.2 Clarify entry-point/shared rules only where these cases reveal a gap → verify: accessible context is investigated first; input captures and unrelated files remain unchanged; unresolved claims retain next steps and known/unknown ownership.
+- [ ] 3.2 Apply the preflight candidate's remaining entry-point/shared gap-handling rules, refining them where the cases reveal omissions → verify: accessible context is investigated first; input captures and unrelated files remain unchanged; unresolved claims retain next steps and known/unknown ownership.
 - [ ] 3.3 Author separate `issue-implement-non-trigger` and `issue-fix-non-trigger` evals, IDs 23/24, with ordinary execution requests and small source fixtures; expose only the skill description for selection → verify: normal fixture handling does not load editorial instructions, edit issue text, or create an editorial draft; do not prime the agent with classification-only prompts.
-- [ ] 3.4 Regenerate and run instruction-size/structure/graph checks and applicable existing missing-context/non-trigger regressions → verify: all assertions pass with complete traces and no instruction-budget regression.
+- [ ] 3.4 Regenerate and run instruction-size/structure/graph checks and applicable existing missing-context/non-trigger regressions → verify: all assertions pass with complete traces and the complete procedure fits the recorded ceiling; repeat the full preflight before any ceiling increase.
 
 ## Task 4: Document and verify the complete extension
 
