@@ -1,0 +1,14 @@
+{
+  "id": 3,
+  "name": "no-js-ts-profile-for-prose",
+  "description": "Mentioning JavaScript test tools in prose must not activate js_ts or trigger tool installation. Stage test-files/ as the workspace root outside any SKILL.md ancestor and stage README.md as an addition against an empty Git baseline.",
+  "skills": ["test"],
+  "prompt": "Validate this README-only change using the applicable checks. Keep the files unchanged; report which checks apply.",
+  "trap": "The agent matches Node, TypeScript, or Vitest keywords in a README rather than source-extension signals, loads JS/TS test guidance, and runs or installs a test runner for a prose-only fixture.",
+  "files": ["test-files/README.md"],
+  "assertions": [
+    { "id": "3.1", "text": "Agent runs profile detection against the staged README.md and reports no active profiles; the tool names in its prose do not activate js_ts, and no SKILL.md ancestor activates skill-md in the staged workspace." },
+    { "id": "3.2", "text": "Agent skips profile-specific test content, including js_ts/test/, and falls back to generic applicable verification without skipping detection itself." },
+    { "id": "3.3", "text": "Agent neither runs nor installs Node/TypeScript/Vitest solely because they are mentioned, makes no file changes, and reports documentation-only verification without claiming application tests passed." }
+  ]
+}
