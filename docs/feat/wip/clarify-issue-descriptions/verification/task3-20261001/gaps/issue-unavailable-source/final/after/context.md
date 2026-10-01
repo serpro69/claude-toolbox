@@ -1,0 +1,3 @@
+# Offline access response
+
+`pasted-body.md` is an immutable capture of the caller's pasted bug description. The selected destination is the new file `drafts/issue-21.md`; no other file is selected for editing. The intended audience is export maintainers, who may receive all supplied body facts. The referenced source at https://source.example.invalid/export/revision/v2.1/export.py is unavailable (read-only response: access denied). No source, tests, logs, PR or alternate copy is accessible. Do not contact the network. Mina owns obtaining an accessible source snapshot for v2.1. The owner of reproduction and cause confirmation has not been assigned. `notes.md` is unrelated and must stay unchanged.

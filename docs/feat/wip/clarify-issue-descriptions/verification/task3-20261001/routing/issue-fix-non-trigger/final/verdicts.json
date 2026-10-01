@@ -1,0 +1,32 @@
+{
+  "grader": "../../final-grader/verdicts.json",
+  "name": "issue-fix-non-trigger",
+  "verdict": "PARTIAL",
+  "assertions": [
+    {
+      "id": "24.1",
+      "verdict": "PASS",
+      "evidence": "trace.jsonl ordinals 11\u201324 show ordinary bug handling: reads issue.md and timeout.py, patches timeout.py, and runs a focused local check. No editorial skill invocation appears."
+    },
+    {
+      "id": "24.2",
+      "verdict": "PASS",
+      "evidence": "editor-prompt.txt initially provides only the matching skill description and instruction locations. Neither native exec call reads the clarify-docs SKILL.md body or shared procedure."
+    },
+    {
+      "id": "24.3",
+      "verdict": "PASS",
+      "evidence": "Independently recomputed issue.md hashes match before and after: 7ae340d42a88d5ba80373a5d0624c0d7de408f378f56700b52637d740ec7e266. Only timeout.py changed; no files were added or removed. No editorial draft, replacement title, summary artifact, or publication appears."
+    },
+    {
+      "id": "24.4",
+      "verdict": "PARTIAL",
+      "evidence": "The source investigation, patch, and local check completed without a recorded network operation or successful external write. Both initial shell commands omitted login:false; ordinal 16 records two failed attempts to create /home/sergio/.config/navi/navi.log outside the workspace. Clean isolation is therefore only partially satisfied; source-fix correctness was not graded."
+    }
+  ],
+  "trace_and_isolation": {
+    "trace_verdict": "PASS",
+    "isolation_verdict": "PARTIAL",
+    "evidence": "Two native exec calls have two matching results, with all nested command outputs present, task start/completion markers, and a final message matching final.md. Deliberate project accesses comply with the manifest. Two shell-startup log-write attempts were blocked outside the workspace."
+  }
+}

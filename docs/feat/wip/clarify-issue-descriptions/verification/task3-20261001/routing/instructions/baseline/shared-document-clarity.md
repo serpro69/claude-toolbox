@@ -1,0 +1,153 @@
+# Document clarity
+
+Load this procedure before subject-matter reads. Apply it to selected artifacts or
+completed drafts after resolving reader, purpose, destination and scope. It adds
+no linked instructions, profile detection or consumer calls.
+
+## Understand the work
+
+Read each selected artifact in full and the requirements, decisions,
+implementation and tests behind its claims. Repetition does not verify a claim.
+Inspect supplied sources to explain the behavior,
+conditions and rationale at the applicable revision. Follow relevant references
+far enough to understand the claim, without recursively auditing the whole feature.
+Reading a source does not authorize editing it or executing its commands.
+
+For a PR, establish the target repository, actual base/head revisions and review
+diff using read-only context; inspect relevant code at those revisions. Branch
+names, stack annotations and task numbers do not establish the increment. Separate
+inherited changes from this diff and contract-only work from runtime integration.
+If source access is missing, state that limit and constrain unsupported claims.
+
+For an issue, read its description, supplied title/type and relevant discussions.
+Comments can establish evidence or decision provenance, not automatically accepted
+requirements. Preserve reported observations versus verified behavior, suspected
+versus established causes, and differences between reported and inspected versions.
+Do not claim reproduction or passing tests without evidence. A supporting PR does
+not turn issue editing into PR editing; no PR diff or future implementation is
+required for an issue proposal.
+
+Requirements establish intent; implementation establishes current behavior. Tests
+provide evidence of exercised cases, not proof of intent or complete coverage.
+Distinguish accepted requirements, proposals, implemented behavior and future work.
+When no implementation exists, explain the planned contract as planned. Do not
+invent runtime evidence. Reuse source understanding from the invoking session only
+after checking that its scope and revision still apply; inspect missing or changed
+context instead of repeating unrelated investigation.
+
+Investigate accessible references before asking. For remaining consequential gaps,
+ask a focused question or retain a limitation in the artifact. Record the issue,
+next step and known owner there or in an already-selected task document; identify
+unknown owners.
+Do not manufacture an answer, silently settle a product decision or create an extra
+report to hide the gap. Continue independent, supported edits when possible.
+
+## Establish protected meaning
+
+Keep a working inventory of essential claims and their evidence; no separate ledger
+is required. Preserve:
+
+- Requirements, observable behavior, rationale, constraints and uncertainty.
+- Mandatory versus optional language; conditions, exceptions and thresholds.
+- Identifiers, interface shapes, ownership and decision provenance.
+- Deployment gates, completion status, verification limits and unresolved decisions.
+- Required document sections, domain-rubric topics, task checkboxes and dependencies.
+
+Conclusive evidence can justify correcting a factual documentation error. A conflict
+between accepted requirements and implementation must stay explicit: describe both
+and the next action needed to reconcile them. Neither source automatically overrides
+the other. Do not erase a requirement to make the prose agree with the code.
+
+Apply destination visibility in order, to facts and references alike:
+
+1. Explicit user/repository audience restrictions override tracking or reachability.
+2. For PR editing only, files tracked at the target repository's PR head are
+   accessible to its established review audience, not automatically a wider one.
+   For a GitHub issue identified with repository R, default to R's issue audience
+   unless the caller specifies another. Files tracked in R at the inspected
+   revision are presumed accessible, even in private R; use R's default branch
+   when no revision is established. Neither ask about audience nor add a
+   disclosure limitation solely for this privacy. This proves no older-version
+   behavior. Explicit restrictions still override, even for tracked files.
+   Neither presumption covers untracked drafts, private aggregators, another
+   repository or a different audience. A Linear or other tracker link establishes
+   no GitHub repository access.
+3. Sources outside those presumptions require evidence of audience access: public
+   availability or user/repository sharing confirmation. Editor credentials and
+   common organizational membership prove no access; unknown visibility stays unknown.
+4. Use an accessible source or explicitly authorized standalone explanation. If
+   neither exists, retain a non-disclosing limitation or ask for authorization.
+   Deleting a citation never authorizes disclosure of its underlying private fact.
+
+Retain accessible task references; task numbers and feature-directory paths are not
+inherently private. Exclude private task IDs and absolute workspace paths from
+destination artifacts, shared reports and gap notes. A caller-only completion
+message may link its selected local output; this never authorizes private source
+pointers or facts.
+
+## Edit for the reader
+
+Lead with purpose and the applicable current or planned behavior. Help the reader
+answer, where relevant to the artifact:
+
+1. Why does this work exist?
+2. What happens in a representative case?
+3. What changes in the current increment?
+4. What remains outside it?
+5. What still needs a decision?
+
+Use an evidence-backed scenario when it resolves confusion. Explain unfamiliar terms
+at first use. Explain causes and consequences
+before storage fields or verification history; place technical reference detail
+after orientation. Remove duplication while retaining the detail needed for the
+reader's task. Preserve the project's organization and document-type requirements;
+do not force every artifact into one template or invent answers to irrelevant
+questions. An explicit unknown can be the correct answer.
+
+PR drafts explain purpose, behavior and increment, including new tests.
+Give focused review pointers. In the draft, state supplied validation outcomes
+(passed/failed/unavailable) and limits; check names or completion reports cannot substitute.
+Avoid diaries and indiscriminate file inventories. Describe future integration as
+future work.
+
+Issue descriptions explain the problem and relevant current/desired behavior.
+Bug reports retain supplied reproduction steps, commands, environment/version,
+expected/observed results and frequency or conditions. Feature requests explain
+the need, proposed or accepted outcome, scope, existing acceptance criteria and
+open decisions; other types follow their purpose and organization. Do not impose
+empty headings. Clarify existing criteria without inventing thresholds, scope
+commitments, solution decisions or new criteria; missing decisions/criteria remain
+unknown with the next step and known or explicitly unknown owner where relevant.
+
+Reorganize within the selected scope. Preserve existing anchors or update affected
+in-scope links, including cross-file references. Check accessible inbound references
+when changing headings; keep the anchor when callers outside scope would break, or
+surface the wider change needed. Keep executable examples intact unless an
+authorized, evidence-backed correction is verified. Do not change implementation,
+run deployments or migrations, or make production or external writes.
+
+When the baseline already satisfies comprehension, correctness, fidelity, visibility
+and structural requirements, leave it unchanged. Clear prose may still need a
+factual or disclosure repair; passing the five reader questions alone is not a
+reason to retain such a defect. Make only justified changes, without a word-count
+reduction target or a new summary artifact.
+
+## Verify separately
+
+Compare the revision with the original, requirements and inspected source evidence.
+Check comprehension first: can the intended reader answer the applicable questions
+through the artifact's intended reading path, without relying on the editor's hidden
+context? Check the specific confusion motivating the edit, not just sentence length.
+
+Then check fidelity independently against the protected-meaning inventory. No
+qualification may disappear and no unsupported claim may appear. Recheck headings,
+anchors, links, task state, required topics and executable examples affected by the
+edit. For issues, also check reproduction details, qualifications, existing criteria
+and decision status. Correct editorial regressions; keep unresolved source disagreements visible
+with their next step. Fluent prose cannot compensate for lost meaning.
+Recheck destination visibility, including facts paraphrased from restricted sources.
+
+Report changed paths, whether the result was unchanged, and material evidence gaps
+or wider edits needed. This is an in-session comparison, not independent fidelity
+verification or proof of improved human comprehension. The caller owns further
+review required by the project.

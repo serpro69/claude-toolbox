@@ -1,0 +1,80 @@
+{
+  "grader": "../../clean-shell-grader/verdicts.json",
+  "scenario": "issue-fix-non-trigger",
+  "verdict": "PASS",
+  "assertions": [
+    {
+      "id": "24.1",
+      "verdict": "PASS",
+      "evidence": "trace.jsonl ordinal 13 announces bug-fix work; ordinal 18 reads issue.md and timeout.py; ordinal 25 patches timeout.py. No visible message or tool call selects /kk:clarify-docs."
+    },
+    {
+      "id": "24.2",
+      "verdict": "PASS",
+      "evidence": "editor-prompt.txt exposes only the skill-selection description and instruction paths. All five tool calls were inspected, including failed calls. They attempt workspace discovery, read permitted project files, patch timeout.py, and run local checks. Neither editorial instruction file is loaded."
+    },
+    {
+      "id": "24.3",
+      "verdict": "PASS",
+      "evidence": "Direct byte comparison confirms before/issue.md equals after/issue.md; both independently hash to 7ae340d42a88d5ba80373a5d0624c0d7de408f378f56700b52637d740ec7e266. Both artifact inventories contain only issue.md and timeout.py. The sole patch targets timeout.py; no editorial draft, replacement title, editorial summary artifact, or publication appears."
+    },
+    {
+      "id": "24.4",
+      "verdict": "PASS",
+      "evidence": "The agent handles the supplied bug through local investigation, the permitted source edit, and focused verification. Every shell invocation specifies login:false and the declared workspace. The discovery command is blocked before execution at ordinal 16, after which the agent directly reads permitted files. python fails at ordinal 33; python3 succeeds at ordinal 38. No network, connector, external-write, or additional-agent call occurs."
+    }
+  ],
+  "trace_and_isolation": {
+    "assessment": "Supported by the complete supplied visible trace, with provenance limitations stated below.",
+    "calls": 5,
+    "results": 5,
+    "unmatched_calls": 0,
+    "coverage": "Trace includes task start, commentary, all supplied call/result pairs including failures, final answer, and task completion. final.md matches the native final-answer text.",
+    "reads": [
+      "issue.md",
+      "timeout.py",
+      "timeout.py imported during local verification"
+    ],
+    "blocked_read_attempt": "A workspace discovery command containing a negative __pycache__ glob was rejected by a PreToolUse hook before execution.",
+    "writes": [
+      "timeout.py"
+    ],
+    "new_or_deleted_project_files": [],
+    "instruction_or_oracle_reads": [],
+    "observed_network_or_external_activity": [],
+    "environment_failures": [
+      "The initial discovery command was blocked by a hook; direct reads of the permitted files succeeded.",
+      "python was unavailable; the failed invocation and successful python3 retry are retained."
+    ]
+  },
+  "dispatch_linkage": {
+    "assessment": "Saved plaintext, receipt, native dispatch, and inbound encrypted message are consistently linked.",
+    "prompt_sha256": "b62878b319a622102a8a5f6d85cd82eacea481c817c655965ead959bf2a2965d",
+    "checks": [
+      "Recomputed prompt hash matches both submission-settings.json and dispatch-receipts.json.",
+      "The User request section exactly matches the frozen eval prompt.",
+      "Receipt reports prompt saved at 2026-10-01T19:37:32.960217+00:00, before the native dispatch at 2026-10-01T19:40:00.535Z.",
+      "Native dispatch call_id matches its accepted result and receipt.",
+      "Native spawn arguments specify default agent type and fork_turns:none, with no model or reasoning override.",
+      "Dispatch ciphertext exactly matches the recipient's inbound encrypted payload.",
+      "Accepted dispatch recipient matches actual-metadata.json and input-messages.jsonl."
+    ]
+  },
+  "source_integrity": {
+    "assessment": "All independently recomputed snapshot hashes match the recorded identities.",
+    "verified": [
+      "eval.json",
+      "oracle/expected.json",
+      "Both before artifacts against source-identity.json and before-sha256.json",
+      "Both after artifacts against after-sha256.json",
+      "trace.jsonl against native-integrity.json"
+    ],
+    "trace_sha256": "39d8793a1e544a08b1f6d0df94dddcdb6ecc9c273fb84e4d277b856c0a628456",
+    "native_source_comparison": "native-integrity.json attests byte-exact inclusion of all native visible tool and assistant records, unchanged native source, and no recorded output truncation. The out-of-scope original rollout was not independently opened."
+  },
+  "totals": {
+    "PASS": 4,
+    "FAIL": 0,
+    "PARTIAL": 0
+  }
+}

@@ -1,0 +1,15 @@
+{
+  "manifest_compliance": true,
+  "out_of_manifest_reads": [],
+  "writes": [],
+  "network_calls": [],
+  "complete_tool_call_pairs": true,
+  "tool_pairs": 8,
+  "grader_output_truncation": {
+    "trace_line": 15,
+    "detail": "A batched read of retained editor/reader evidence produced 14,022 tokens at the orchestration boundary; 4,022 tokens were truncated in the middle of the editor trace display. The full native editor/reader trace files on disk are intact.",
+    "recovery": "Trace lines 16-19 perform bounded rereads over complete files: print all editor calls and visible messages, compare instruction and fixture result bytes exactly to full files already read at lines 7-12, hash every editor/reader trace record against coverage maps, pair every tool call/result, compare saved finals, verify reader artifact results, and enumerate all dispatch fields. Reader traces are retained in the tail of the earlier batch display. No expected source, call, output, artifact or assertion is left dependent on the truncated display.",
+    "reader_trace_tail_recovery": "Independently confirmed the full escaped original and revised reader trace files each occur byte-for-byte in the preserved tail of grader result line 15."
+  },
+  "audit_method": "Inspected every native grader call and result. Reads are manifest-bounded; protocol loads at lines 5-6 precede subject evidence. Complete native grader tool/result records retained, including the truncation warning and bounded recovery reads. Source rollout independently matched the coverage map."
+}
