@@ -10,9 +10,10 @@ Any file with one of these extensions in scope: `.js`, `.jsx`, `.mjs`, `.cjs`, `
 
 ## Populated phases
 
+- `implement/` — pre-write gotchas consumed by `$kk:implement` (runtime validation, typing, async ownership, module/runtime boundaries, shared state, and React lifecycles where applicable).
 - `review-code/` — checklists consumed by `$kk:review-code` (security, SOLID, code-quality, removal-plan).
 
-Other phase subdirectories are not populated for this profile: generic per-phase behavior is sufficient.
+Other phase subdirectories are not populated for this profile: generic per-phase behavior is sufficient. Implementation guidance loads for both standalone and plan-mode tasks through the shared profile loader; it does not require a separate invocation or additional detection signals.
 
 ## Looking up JS/TS dependencies
 
