@@ -110,8 +110,8 @@ do not force every artifact into one template or invent answers to irrelevant
 questions. An explicit unknown can be the correct answer.
 
 PR drafts explain purpose, behavior and increment, including new tests.
-Give focused review pointers and validation outcomes with limits: passed, failed
-or unavailable. Check names are insufficient; completion reports cannot substitute.
+Give focused review pointers. In the draft, state supplied validation outcomes
+(passed/failed/unavailable) and limits; check names or completion reports cannot substitute.
 Avoid diaries and indiscriminate file inventories. Describe future integration as
 future work.
 

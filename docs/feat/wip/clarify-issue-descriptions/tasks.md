@@ -3,7 +3,7 @@
 > Design: [design.md](design.md)
 > Implementation: [implementation.md](implementation.md)
 > Issue: [#157](https://github.com/serpro69/claude-toolbox/issues/157)
-> Status: in-progress (Task 1 done; Tasks 2–4 pending)
+> Status: in-progress (Tasks 1–2 done; Tasks 3–4 pending)
 > Created: 2026-09-30
 > Not Doing: remote publication/comments, issue implementation/reproduction, invented decisions/criteria, tracker-title editing, mandatory integrations/live certification, separate issue guide/new skill/profile, automatic clarification, bulk rewrites/extra summaries, completed-design edits
 
@@ -28,11 +28,11 @@
 Completed 2026-10-01. [Verification and evidence](verification.md): 23 behavioral
 assertions pass across the two new scenarios and two regressions; required reviews,
 generation and repository checks are recorded. Original failures and the independently
-reviewed oracle correction remain available. Task 2 is next.
+reviewed oracle correction remain available.
 
 ## Task 2: Clarify unimplemented features for the intended audience
 
-- **Status:** pending
+- **Status:** done
 - **Depends on:** Task 1
 - **Size:** M
 - **Can run in parallel with:** —
@@ -40,10 +40,18 @@ reviewed oracle correction remain available. Task 2 is next.
 
 ### Subtasks
 
-- [ ] 2.1 Author `linear-issue-feature` and `issue-destination-visibility` evals, IDs 18/19 → verify: baseline evidence records existing behavior; oracles separate accepted intent, proposals, unknown decisions, and actual audience access; scenario 18 forbids title changes or replacement-title suggestions.
-- [ ] 2.2 Apply the preflight candidate's shared-procedure feature/other-issue guidance → verify: scenario 18 preserves existing criteria and unknowns without demanding implementation, inventing criteria, or imposing bug-report sections.
-- [ ] 2.3 Scope PR-head visibility to its existing audience, retain Task 1's same-repository default, and apply common sharing rules outside that default → verify: scenario 19's declared different audience overrides the default, retains shared references, and excludes restricted facts/pointers from the draft and report, including uncited paraphrases.
-- [ ] 2.4 Regenerate Codex output, count operative and complete-candidate instructions against the recorded ceiling, and run structure/graph checks plus `contract-only-pr`/`destination-visibility` regressions → verify: both counts fit and all applicable assertions pass; repeat the full preflight before any ceiling increase and rerun 16/17 when changed rules affect them.
+- [x] 2.1 Author `linear-issue-feature` and `issue-destination-visibility` evals, IDs 18/19 → verify: baseline evidence records existing behavior; oracles separate accepted intent, proposals, unknown decisions, and actual audience access; scenario 18 forbids title changes or replacement-title suggestions.
+- [x] 2.2 Apply the preflight candidate's shared-procedure feature/other-issue guidance → verify: scenario 18 preserves existing criteria and unknowns without demanding implementation, inventing criteria, or imposing bug-report sections.
+- [x] 2.3 Scope PR-head visibility to its existing audience, retain Task 1's same-repository default, and apply common sharing rules outside that default → verify: scenario 19's declared different audience overrides the default, retains shared references, and excludes restricted facts/pointers from the draft and report, including uncited paraphrases.
+- [x] 2.4 Regenerate Codex output, count operative and complete-candidate instructions against the recorded ceiling, and run structure/graph checks plus `contract-only-pr`/`destination-visibility` regressions → verify: both counts fit and all applicable assertions pass; repeat the full preflight before any ceiling increase and rerun 16/17 when changed rules affect them.
+
+Completed 2026-10-01. [Verification and evidence](verification.md#task-2--feature-proposals-and-intended-audiences):
+25 final behavioral assertions pass; generated output, structure/graph checks,
+all shell suites and Go tests pass (three unrelated network cases remain skipped).
+The independent source review approves the final change; PAL was unavailable.
+The first PR validation-outcome failure, the corrected eval wording and complete
+trace/coverage audits are preserved. Operative/candidate counts are 1,248/1,297
+against the unchanged 1,297-word ceiling. Task 3 is next.
 
 ## Task 3: Handle incomplete inputs and execution non-triggers
 

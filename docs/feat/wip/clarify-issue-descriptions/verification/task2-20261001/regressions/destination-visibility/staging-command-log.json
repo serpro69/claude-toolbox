@@ -1,0 +1,176 @@
+[
+  {
+    "argv": [
+      "git",
+      "--no-optional-locks",
+      "-c",
+      "core.hooksPath=/dev/null",
+      "-c",
+      "commit.gpgsign=false",
+      "-c",
+      "tag.gpgsign=false",
+      "init",
+      "--quiet",
+      "--template=",
+      "--initial-branch=fixture"
+    ],
+    "cwd": "/tmp/clarify-issue-task2/regressions/destination-visibility/editor-workspace/checkout",
+    "returncode": 0,
+    "stdout": "",
+    "stderr": ""
+  },
+  {
+    "argv": [
+      "git",
+      "--no-optional-locks",
+      "-c",
+      "core.hooksPath=/dev/null",
+      "-c",
+      "commit.gpgsign=false",
+      "-c",
+      "tag.gpgsign=false",
+      "add",
+      "--all"
+    ],
+    "cwd": "/tmp/clarify-issue-task2/regressions/destination-visibility/editor-workspace/checkout",
+    "returncode": 0,
+    "stdout": "",
+    "stderr": ""
+  },
+  {
+    "argv": [
+      "git",
+      "--no-optional-locks",
+      "-c",
+      "core.hooksPath=/dev/null",
+      "-c",
+      "commit.gpgsign=false",
+      "-c",
+      "tag.gpgsign=false",
+      "commit",
+      "--quiet",
+      "-m",
+      "Synthetic review base"
+    ],
+    "cwd": "/tmp/clarify-issue-task2/regressions/destination-visibility/editor-workspace/checkout",
+    "returncode": 0,
+    "stdout": "",
+    "stderr": ""
+  },
+  {
+    "argv": [
+      "git",
+      "--no-optional-locks",
+      "-c",
+      "core.hooksPath=/dev/null",
+      "-c",
+      "commit.gpgsign=false",
+      "-c",
+      "tag.gpgsign=false",
+      "tag",
+      "review-base"
+    ],
+    "cwd": "/tmp/clarify-issue-task2/regressions/destination-visibility/editor-workspace/checkout",
+    "returncode": 0,
+    "stdout": "",
+    "stderr": ""
+  },
+  {
+    "argv": [
+      "git",
+      "--no-optional-locks",
+      "-c",
+      "core.hooksPath=/dev/null",
+      "-c",
+      "commit.gpgsign=false",
+      "-c",
+      "tag.gpgsign=false",
+      "add",
+      "--all"
+    ],
+    "cwd": "/tmp/clarify-issue-task2/regressions/destination-visibility/editor-workspace/checkout",
+    "returncode": 0,
+    "stdout": "",
+    "stderr": ""
+  },
+  {
+    "argv": [
+      "git",
+      "--no-optional-locks",
+      "-c",
+      "core.hooksPath=/dev/null",
+      "-c",
+      "commit.gpgsign=false",
+      "-c",
+      "tag.gpgsign=false",
+      "commit",
+      "--quiet",
+      "-m",
+      "Synthetic review head"
+    ],
+    "cwd": "/tmp/clarify-issue-task2/regressions/destination-visibility/editor-workspace/checkout",
+    "returncode": 0,
+    "stdout": "",
+    "stderr": ""
+  },
+  {
+    "argv": [
+      "git",
+      "--no-optional-locks",
+      "-c",
+      "core.hooksPath=/dev/null",
+      "-c",
+      "commit.gpgsign=false",
+      "-c",
+      "tag.gpgsign=false",
+      "tag",
+      "review-head"
+    ],
+    "cwd": "/tmp/clarify-issue-task2/regressions/destination-visibility/editor-workspace/checkout",
+    "returncode": 0,
+    "stdout": "",
+    "stderr": ""
+  },
+  {
+    "argv": [
+      "git",
+      "--no-optional-locks",
+      "-c",
+      "core.hooksPath=/dev/null",
+      "-c",
+      "commit.gpgsign=false",
+      "-c",
+      "tag.gpgsign=false",
+      "rev-parse",
+      "review-base",
+      "review-head",
+      "HEAD"
+    ],
+    "cwd": "/tmp/clarify-issue-task2/regressions/destination-visibility/editor-workspace/checkout",
+    "returncode": 0,
+    "stdout": "790b05efd10ac8a6c2809b62629f6b110ac1df60\n399c61c9cbc4dbb4f11db3df947e8baae0acef28\n399c61c9cbc4dbb4f11db3df947e8baae0acef28\n",
+    "stderr": ""
+  },
+  {
+    "argv": [
+      "git",
+      "--no-optional-locks",
+      "-c",
+      "core.hooksPath=/dev/null",
+      "-c",
+      "commit.gpgsign=false",
+      "-c",
+      "tag.gpgsign=false",
+      "diff",
+      "--no-ext-diff",
+      "--no-textconv",
+      "review-base",
+      "review-head",
+      "--"
+    ],
+    "cwd": "/tmp/clarify-issue-task2/regressions/destination-visibility/editor-workspace/checkout",
+    "returncode": 0,
+    "stdout": "diff --git a/contract.json b/contract.json\nindex 0967ef4..a4cebdf 100644\n--- a/contract.json\n+++ b/contract.json\n@@ -1 +1 @@\n-{}\n+{\"prep_minutes\":{\"type\":[\"integer\",\"null\"],\"minimum\":0,\"maximum\":90},\"null\":\"inherit restaurant default\",\"zero\":\"explicit override\"}\n",
+    "stderr": ""
+  }
+]

@@ -1,0 +1,1 @@
+Updated [pr-draft.md](/tmp/clarify-issue-task2/regressions/contract-only-pr-retry/editor-workspace/pr-draft.md) to explain the contract-only change, null/zero example, future runtime work, pending badge decision, and validation limits. Verified against the base/head diff.

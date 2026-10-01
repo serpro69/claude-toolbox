@@ -1,0 +1,1 @@
+Updated [issue-draft.md](/tmp/clarify-issue-task2/issues/issue-destination-visibility/revised/issue-draft.md) for external partners. Removed unauthorized background while preserving the title, accepted criterion, exclusions, pending rollout decision, and shared references.

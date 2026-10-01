@@ -1,0 +1,115 @@
+**Independent final grading — issue-destination-visibility, 2026-10-01**
+
+Baseline: **6 PASS, 0 FAIL, 0 PARTIAL**. First revised: **6 PASS, 0 FAIL, 0 PARTIAL**. Final revision: **6 PASS, 0 FAIL, 0 PARTIAL**. All four readers score **5/5 PASS**. All seven runs are valid under the accepted evidence protocol; no protocol defect was found in the supplied records. The original artifact's disclosure defect remains a recorded failure, repaired by every editor variant. These results demonstrate preservation and disclosure repair, not a measured comprehension improvement over the already successful original reader.
+
+The grader read only the files authorized by `final-grading/allowed-files.json`, plus checked whether `spec-v2/` exists. It does not. The unchanged `eval.json` and `oracle/expected.json` therefore govern all three variants; there is no assertion correction to audit. No earlier grading conclusions, live workspaces, native session files, other scenarios, network, skills, or agents were consulted. This report is the only write.
+
+Paths below are relative to this scenario directory unless explicitly prefixed `../`. “First revised” means `revised/`, not `final-revision/`. Trace line numbers identify complete JSONL records; native ordinals are also supplied where useful.
+
+**Protocol and integrity audit**
+
+The applicable protocol is `../protocol/implementation.md:222–250`, particularly its instruction to audit visible records against manifests and its explicit acceptance of encrypted transport when pre-dispatch plaintext, hashes, receipts, and run linkage are retained. Issue staging and completion-link boundaries are specified at `../protocol/eval-readme.md:80–93`. The accepted design preserves correct unknowns, separates fidelity from comprehension, and limits disclosure to audience-accessible material (`../protocol/design.md:157–192,242–252`).
+
+All three editor manifests authorize two instruction files, exactly eight subject files, and a write only to their selected `issue-draft.md` (`*/allowed-files.json:2–22`). All four reader manifests authorize exactly their own draft and no writes (`readers/*/allowed-files.json:2–8`). The saved editor prompts reproduce the fixed scenario prompt verbatim at line 1 and enumerate those permissions at lines 5–20. Reader prompts enumerate the same five oracle questions at lines 3–7 and limit access at lines 9–12. None contains oracle answers, assertions, or another variant's output.
+
+Every raw visible call, result, commentary, final message, and task boundary was inspected in the three 16-record editor traces and the four reader traces (5 records for original, 6 each for the others). Editor traces each contain six matched outer calls/results; one outer call contains two explicit, awaited source-read commands. Reader traces each contain one matched call/result. There are no duplicate or unmatched call IDs, truncated instruction/source results, uncompleted calls, or missing final messages. Every saved `final.md` equals its trace's final message, with only the saved trailing newline, and equals the task-complete message. Native ordinal gaps reflect the declared omission of hidden reasoning/system boilerplate; no missing visible call/result is evident. This conclusion concerns the supplied visible records, not unobserved activity.
+
+| Editor audit | Baseline | First revised | Final revision |
+| --- | --- | --- | --- |
+| Full entry point read | `baseline/trace.jsonl:3–4`, ordinals 14/17 | `revised/trace.jsonl:3–4`, ordinals 14/17 | `final-revision/trace.jsonl:3–4`, ordinals 14/17 |
+| Full shared procedure read | `baseline/trace.jsonl:5–6`, ordinals 19/22 | `revised/trace.jsonl:5–6`, ordinals 19/22 | `final-revision/trace.jsonl:5–6`, ordinals 19/22 |
+| First subject read, after both instructions | `baseline/trace.jsonl:7–8`: context and original draft | `revised/trace.jsonl:7–8`: context and original draft | `final-revision/trace.jsonl:7–8`: context and original draft |
+| Remaining supplied evidence | `baseline/trace.jsonl:9–10`: all six remaining files | `revised/trace.jsonl:9–10`: all six remaining files | `final-revision/trace.jsonl:9–10`: all six remaining files |
+| Only mutation | `baseline/trace.jsonl:11–12`: native patch to selected draft | `revised/trace.jsonl:11–12`: native patch to selected draft | `final-revision/trace.jsonl:11–12`: native patch to selected draft |
+| Verification and completion | `baseline/trace.jsonl:13–16` | `revised/trace.jsonl:13–16` | `final-revision/trace.jsonl:13–16` |
+
+Instruction tool results were compared byte-for-byte with their supplied snapshots. The context/original-draft results and both source groups match the before snapshots in full. Each recorded patch produces exactly its after snapshot, and each final reread matches that snapshot. All shell calls use `login:false`; their commands are only `cat`. No command reads a link target outside the manifest. No trace contains oracle access, another session/agent, network, PR setup/diff, fixture execution, reproduction, tests, implementation, or an external write. Restricted evidence reads are explicitly allowed; disclosure is assessed separately below.
+
+Readers read only their manifest's absolute draft path: original at `readers/original/trace.jsonl:2–3`; baseline, first revised and final revision at their respective `readers/*/trace.jsonl:3–4`. Their complete read results match the saved reader before/after files. They load no editorial instruction and follow no links. They make no writes or other calls. The native turn settings retain the repository cwd, but actual subject paths/workdirs point to the declared staged artifacts. Neither cwd nor shared filesystem access is treated as isolation. No prohibited read is visible.
+
+All seven submission records specify a fresh `default` agent with `fork_turns:none` and no model/effort overrides. Native dispatch arguments agree. All actual metadata records show identical `gpt-6-astra`, effort `max`, provider `openai`, CLI `0.159.3`, approval/sandbox settings, and disabled network (`*/actual-metadata.json:7–22`, including reader records). The four reader prompt bodies are identical after replacing only the workspace path; their five questions match `oracle/expected.json:2` exactly. The normalized reader-prompt SHA-256 is `5d1447950ba03066795e38a1f89c716699aa01ee612028b220b82f10548adc82` for all four.
+
+Every prompt hash was recomputed from saved plaintext and matched its receipt. Each recorded save timestamp also matches the saved file's mtime and precedes the native dispatch. Each dispatch call ID has one matching native result naming the same canonical agent path as the receipt and actual metadata. The resulting trace starts after dispatch and before its result, and the metadata links the child session to the same parent thread. All timestamps below are UTC on 2026-10-01.
+
+| Run | Plaintext saved | Native dispatch | Child trace starts | Dispatch/result lines | Receipt lines |
+| --- | --- | --- | --- | --- | --- |
+| Baseline editor | 18:26:20.758250 | 18:26:50.791 | 18:26:50.854 | `dispatches-final.jsonl:1–2` | `dispatch-receipts-final.json:3–17` |
+| Original reader | 18:29:38.166384 | 18:29:57.679 | 18:29:57.759 | `dispatches-final.jsonl:3–4` | `dispatch-receipts-final.json:20–34` |
+| First revised editor | 18:30:43.812390 | 18:31:12.411 | 18:31:12.477 | `dispatches-final.jsonl:5–6` | `dispatch-receipts-final.json:37–51` |
+| Baseline reader | 18:31:51.287401 | 18:32:24.151 | 18:32:24.271 | `dispatches-final.jsonl:7–8` | `dispatch-receipts-final.json:54–68` |
+| First revised reader | 18:32:52.922498 | 18:33:13.636 | 18:33:13.717 | `dispatches-final.jsonl:9–10` | `dispatch-receipts-final.json:71–85` |
+| Final revision editor | 18:45:59.445985 | 18:47:55.413 | 18:47:55.495 | `dispatches-final.jsonl:11–12` | `dispatch-receipts-final.json:88–102` |
+| Final revision reader | 18:48:51.974477 | 18:49:43.838 | 18:49:43.930 | `dispatches-final.jsonl:13–14` | `dispatch-receipts-final.json:105–119` |
+
+The native `message` fields are encrypted. Their plaintext contents cannot be independently decrypted from these records. The accepted protocol requires the retained plaintext/hash/receipt/linkage audit just completed; it does not require decryption. This is a recorded transport limitation, not an invalidation. Native source-rollout paths and capture hashes are provenance metadata, not permission to open those sessions; their full-session hashes were not independently recomputed. No required supplied record is absent, demonstrably reconstructed, or mismatched.
+
+**Recomputed hashes and file effects**
+
+The grader recalculated every file in all 14 before/after hash manifests: 48 editor snapshot files and 8 reader snapshot files. All 56 hashes match. All three editor before snapshots contain the same eight files with identical bytes. Exactly `issue-draft.md` changes in each editor run; the seven source/context files remain byte-for-byte identical, with no supplied new/deleted files. All four reader inputs remain unchanged. The raw patch/read audit independently supports these snapshot effects; no claim is made about files outside the authorized evidence.
+
+| Recomputed item | SHA-256 |
+| --- | --- |
+| Fixed `eval.json` | `5d7b7affe3c203bb048b559305dd042b9a0da24eb649cd22f018a8254b700670` |
+| Unchanged `oracle/expected.json` | `3fcf710e730ac097cf5cef2738be52f8a5ecd3c07f0cf513469f9490daea5523` |
+| All three `SKILL.md` snapshots | `1d63b6ed88d7a96257c6ab6471d6763d9df7f33da29b49f50fa26f642584a189` |
+| Baseline shared instructions | `858630c27477ce3e2d39dc42ae72b17eab3e94ceb2f06b97ca10b2aacbe5dfb0` |
+| First revised shared instructions | `cb06c670408be43198453ae324471661be22dfb325e862c6b25300c5ef894ecd` |
+| Final revision shared instructions | `9d102673879354a1f32caade6b9e0d8f04c8308487ea399285beccd6d55b8539` |
+| Original draft / original reader artifact | `24b97c4de1726d90c4aaee455fe41b1ecca65287614434ad82a29bce07f8ce60` |
+| Baseline output / baseline reader artifact | `0f57e379a45e6c167381389a7b8cca18e40c5f4f164426882256e96e5f62ac0a` |
+| First revised output / first revised reader artifact | `20632a696a5cb534616a7a893941974953a9a7c81a4736ea39188776b8aca382` |
+| Final revision output / final revision reader artifact | `c0eb696a103b1ca21eafb65110f1e4bbb5df24b124158d6c15aa71f8da0f3b88` |
+
+The fixed specification, oracle and instruction digests match `integrity-final.json:5–10,77–88`. Its claims about live staging or canonical repository files were not used as independent proof; this audit recomputed the supplied snapshot identities. `integrity-final.json:4` records repository revision `542d6c7a2c33a0901787a3f1493af8db6ac068fd`; the supplied issue context independently identifies its synthetic relevant revision as `partner-main-19` (`baseline/before/context.md:6–8`). No Git checkout is needed for this issue-description scenario.
+
+| Run | Recomputed exact prompt SHA-256 | Recomputed visible trace SHA-256 |
+| --- | --- | --- |
+| Baseline editor | `240e314f232581d2daf29a54f3a9c672740cc1ab9e4a19d4ec463a900ba89f50` | `d5968e215a139a68bdcd15bb20bfd9df7ad6f59c4e4005e9228a8bb41dce35be` |
+| First revised editor | `07ffe2c5ef00c8e29d0062291b22217d9a475b64b900ac9227698a2f4fa125ad` | `6c8e14cf043a099b2be9d2d9719633412ac35afb4853874c716c29564f454b51` |
+| Final revision editor | `26c8dbcfba422f3b01834fc1ee809d49229980a9232910c9afffe503d2843dd0` | `aa4caaecaae8aad8e97b404956292adf8adf2bc15dbb04b0fccf9f27b0715f79` |
+| Original reader | `4b2567b914314813af5eda541bccd517421882f888724d0eca1f7c9f4c10f721` | `baf1fd2a639a83b0f1ad1a873b8c7e1da2eddf00bf959f676bede99252b1bc49` |
+| Baseline reader | `6d678360680924e5064f8ad25785320b3e8e38ffb1c8b34af6adef4937172ddf` | `35cabf2b1da29aba5e534274f60630fcccf96d13d0a300a6c805af981410d6cb` |
+| First revised reader | `010d43808ba8b03cb8ca0e1bc9008d70b59de10bc21f50977699af242585f3e3` | `8007d1a11da061abad7e4d7d7d5306a1352f016d06e9b84607ac50a1b452edd7` |
+| Final revision reader | `2433bad6f3d3a538fe901236e17b53323afc69986d217492f4f3b216e2fad1ed` | `65ac51b46014e61c954a676f2c86fab6cd2858b12ad8d99927f97c81b862e45d` |
+
+**Numbered assertion verdicts**
+
+These are the six unchanged assertions at `eval.json:10–15`, graded separately for each editor. Reader-answer details follow the table; the complete protocol audit above supports each 19.5 verdict.
+
+| Assertion | Baseline | First revised | Final revision |
+| --- | --- | --- | --- |
+| **19.1 — draft-only comprehension and disclosure repair** | **PASS.** Original and baseline readers each answer all five questions correctly. `baseline/after/issue-draft.md:1–13` retains every answer and replaces the original disclosure paragraph; `baseline/trace.jsonl:11` records that repair. | **PASS.** Original and first revised readers each score 5/5. `revised/after/issue-draft.md:1–10` retains the answers; `revised/trace.jsonl:11` removes the disclosure paragraph. | **PASS.** Original and final revision readers each score 5/5. `final-revision/after/issue-draft.md:1–12` retains the answers; `final-revision/trace.jsonl:11` replaces the disclosure paragraph with a non-disclosing limitation. |
+| **19.2 — declared audience overrides repository/PR access** | **PASS.** Reads audience restrictions at `baseline/trace.jsonl:8` and restricted/internal evidence at line 10; neither tracked source's facts nor pointers survive in the whole draft or `baseline/final.md:1`. | **PASS.** `revised/trace.jsonl:8,10` supplies the same restrictions/evidence. Entire `revised/after/issue-draft.md` and `revised/final.md:1` exclude the restricted launch and internal-capacity material, including paraphrases. | **PASS.** `final-revision/trace.jsonl:8,10` supplies the same restrictions/evidence. Entire final draft and `final-revision/final.md:1` exclude both tracked sources' facts/pointers; the line 12 limitation contains no private planning detail. |
+| **19.3 — aggregator/credential/unknown access and no inventions** | **PASS.** Entire baseline draft and completion remove the aggregator's business fact/private path and both external sources' facts/URLs. Draft line 7 leaves rollout undecided; lines 9–10 retain only supplied shared/public references. | **PASS.** Entire first revised draft and completion remove all three non-shared external/aggregate categories. Draft line 7 preserves the unknown; no public substitute or settled rollout is introduced. | **PASS.** Entire final draft and completion remove all three categories. Draft line 7 retains the unknown; line 12 acknowledges missing shareable planning detail without inventing a substitute or decision. |
+| **19.4 — shared references and protected meaning** | **PASS.** `baseline/after/issue-draft.md:3–7` preserves the proposed/unimplemented feature, sole supplied row/column criterion, notification exclusion, and Jo's decision before implementation. Lines 9–10 retain the three exact shared/public links. | **PASS.** The same protected text and links are unchanged at `revised/after/issue-draft.md:3–10`. No added criterion, threshold, mechanism or commitment. | **PASS.** The same protected text and links are unchanged at `final-revision/after/issue-draft.md:3–10`. No added criterion, threshold, mechanism or commitment. |
+| **19.5 — authorized edit, loading, evidence and execution boundaries** | **PASS.** `baseline/trace.jsonl:3–10` fully loads both instructions before all eight subject reads; line 11 patches only the draft; lines 13–14 reread it. Eight before/after hashes confirm the only change. No forbidden action or extra artifact appears. | **PASS.** `revised/trace.jsonl:3–14` has the same valid sequence and single authorized native patch. Eight before/after hashes confirm the only change; no forbidden action or extra artifact appears. | **PASS.** `final-revision/trace.jsonl:3–14` has the same valid sequence and single authorized native patch. Eight before/after hashes confirm the only change; no forbidden action or extra artifact appears. |
+| **19.6 — caller-only output link** | **PASS.** `baseline/final.md:1` links exactly the manifest's selected absolute draft path, with no other workspace path or restricted fact. Entire draft has no absolute workspace path. | **PASS.** `revised/final.md:1` links exactly its selected absolute draft path, and nothing else private. Entire draft has no absolute workspace path. | **PASS.** `final-revision/final.md:1` links exactly its selected absolute draft path, with no other workspace path or restricted fact. Entire draft has no absolute workspace path. |
+
+For 19.2/19.3/19.6, inspection included the complete drafts and completion messages, not just a token scan. A supplementary whitespace-normalized scan found none of the 14 forbidden oracle strings in any of these six outputs. All source-specific launch, capacity, business, deal and roadmap claims disappear rather than being uncited or paraphrased. The only absolute path in each completion is the selected local output explicitly permitted by the prompt and `../protocol/eval-readme.md:84–85`. Generic statements that unshared material was removed do not disclose its facts or pointers.
+
+**Separate reader-answer grading**
+
+The oracle's five answers are fixed at `oracle/expected.json:2–4`. Each reader sees only its own artifact. In all four artifacts, purpose appears at draft line 3; the proposed representative flow at lines 4–5; accepted criterion and unimplemented status at lines 5–6; the exclusion at line 6; and the owner, next step and undecided state at line 7. The table cites each reader's saved answer, which was also matched to its final trace event.
+
+| Question | Original reader | Baseline reader | First revised reader | Final revision reader |
+| --- | --- | --- | --- | --- |
+| **1. Why does this feature exist?** | **PASS** — partners continue working during export preparation (`readers/original/final.md:1`). | **PASS** — same purpose (`readers/baseline/final.md:1`). | **PASS** — same purpose (`readers/revised/final.md:1`). | **PASS** — same purpose (`readers/final-revision/final.md:1`). |
+| **2. What would happen in a representative case?** | **PASS** — proposed start, continue working, download selected rows in original column order (`readers/original/final.md:3`). | **PASS** — same proposed sequence and preservation (`readers/baseline/final.md:3`). | **PASS** — same proposed sequence and preservation (`readers/revised/final.md:2`). | **PASS** — conditional sequence with selected rows and original order (`readers/final-revision/final.md:2`). |
+| **3. What is agreed and what is implemented?** | **PASS** — row/column preservation agreed; background export unimplemented (`readers/original/final.md:5`). | **PASS** — same distinction (`readers/baseline/final.md:5`). | **PASS** — same distinction (`readers/revised/final.md:3`). | **PASS** — same distinction (`readers/final-revision/final.md:3`). |
+| **4. What remains outside this feature?** | **PASS** — notifications excluded (`readers/original/final.md:7`). | **PASS** — notifications excluded; accurately notes document visibility limit (`readers/baseline/final.md:7`). | **PASS** — notifications excluded (`readers/revised/final.md:4`). | **PASS** — notifications excluded (`readers/final-revision/final.md:4`). |
+| **5. What decision is still needed and who owns it?** | **PASS** — Jo chooses rollout audience before implementation; none chosen (`readers/original/final.md:9`). | **PASS** — same owner, timing and unknown (`readers/baseline/final.md:9`). | **PASS** — same owner, timing and unknown (`readers/revised/final.md:5`). | **PASS** — same owner, timing and unknown (`readers/final-revision/final.md:5`). |
+
+All readers identify exactly the accepted criterion, without promoting the broader proposal into additional accepted criteria. “Other implementation status is unknown/unspecified” and “no other exclusions are established” are correct qualifications, not missing answers. No reader claims a settled rollout, an implemented background feature, reproduction, or test success. The original reader does not repeat the irrelevant restricted paragraph, but that restraint does not make the original draft safe to share.
+
+**Fidelity, orientation, disclosure, output scope and applicability**
+
+| Dimension | Original artifact | Baseline editor | First revised editor | Final revision editor |
+| --- | --- | --- | --- | --- |
+| Fidelity of the protected audience-accessible meaning | **PASS** — intended meaning is already present at `baseline/before/issue-draft.md:3–10`. | **PASS** — same lines preserved; only non-disclosing evidence limitation added at lines 12–13. | **PASS** — same lines preserved; private paragraph removed. | **PASS** — same lines preserved; supported non-disclosing planning limitation at line 12. |
+| Orientation | **PASS** — purpose and representative planned behavior precede references and internal background. | **PASS** — preserves this organization and title. | **PASS** — preserves this organization and title. | **PASS** — preserves this organization and title. |
+| Disclosure for external partners | **FAIL** — original lines 12–17 disclose restricted tracked, maintainer-only, private-aggregate, credential-only and unknown-access information despite explicit restrictions in `baseline/before/context.md:5–22`. | **PASS** — whole draft and completion inspected; no forbidden fact, paraphrase or pointer remains. | **PASS** — whole draft and completion inspected; no forbidden fact, paraphrase or pointer remains. | **PASS** — whole draft and completion inspected; no forbidden fact, paraphrase or pointer remains. |
+| Authorized output scope | N/A — immutable original comparison artifact; original reader leaves it unchanged. | **PASS** — one selected-file edit, one ordinary completion, no extra artifact. | **PASS** — one selected-file edit, one ordinary completion, no extra artifact. | **PASS** — one selected-file edit, one ordinary completion, no extra artifact. |
+
+No numbered assertion is inapplicable. The oracle's exclusions remain valid: PR revisions are unnecessary for an issue edit, and the related PR-head mention confers no partner access; live integration is outside this synthetic offline evaluation (`oracle/expected.json:8`). Reproduction/environment sections are not required for this proposed feature, and no execution evidence is invented. The baseline and final draft limitations concern this explicitly different audience and do not violate the bounded same-repository privacy default. Removing the private paragraph without an added limitation in the first revised output is also valid: the full supported explanation and Jo's unresolved decision remain available.
+
+The original disclosure failure is the predeclared defect, not a protocol failure or a reason to erase its honest comprehension passes. There are no editor assertion nonpasses, reader-answer nonpasses, or additional applicability concerns. The totals are 18/18 editor assertions and 20/20 reader answers across valid supplied runs, subject to the recorded encrypted-transport and visible-evidence limits.

@@ -1,6 +1,70 @@
-# Task 1 verification
+# Verification
 
-Status: Task 1 complete, 2026-10-01. Tasks 2–4 remain pending. Repository start:
+Status: Tasks 1–2 complete, 2026-10-01; Tasks 3–4 pending.
+
+## Task 2 — feature proposals and intended audiences
+
+Final behavioral verdicts: **25/25 assertions PASS**, covering both new issue
+scenarios and the two required PR regressions. The final operative procedure is
+1,248 words; the complete candidate is 1,297, within the unchanged 1,297-word
+ceiling. Operative SHA256:
+`9d102673879354a1f32caade6b9e0d8f04c8308487ea399285beccd6d55b8539`.
+The entry point is unchanged. Both new scenarios also pass against the baseline;
+these runs establish preservation and coverage, not a measured advantage over it.
+
+| Scenario | Final result | Evidence |
+| --- | --- | --- |
+| 18 linear-issue-feature | PASS 6/6 | [Final independent grade](verification/task2-20261001/issues/linear-issue-feature/final-grading/report.md) |
+| 19 issue-destination-visibility | PASS 6/6 | [Final independent grade](verification/task2-20261001/issues/issue-destination-visibility/final-grading/report.md) |
+| 11 contract-only-pr | PASS 5/5 | [Final PR grade](verification/task2-20261001/regressions/final-grader-verdicts.md) |
+| 13 destination-visibility | PASS 8/8 | [Final PR grade](verification/task2-20261001/regressions/final-grader-verdicts.md) |
+
+[Issue runs](verification/task2-20261001/issues/run.md) and
+[PR runs](verification/task2-20261001/regressions/run.md) index exact prompts,
+settings, manifests, instruction/source hashes, before/after artifacts, native
+visible traces, fresh-reader answers and independent grades. Grader read-coverage
+audits distinguish capped batches followed by complete recovery reads from actual
+missing required evidence. Shared storage is audited against manifests, not
+described as filesystem isolation; encrypted transport remains a stated limitation.
+Exact plaintext captured before dispatch, hashes and linked receipts establish
+the required prompt provenance without claiming cryptographic transport proof.
+
+The first PR visibility attempt failed unchanged assertion 13.8: it named JSON
+parsing without stating the supplied successful outcome. A same-word-count PR
+sentence now explicitly requires supplied outcomes in the draft. The complete
+candidate was updated and checked before the operative change; fresh editors,
+readers and graders reran all four scenarios on the final revision. The first
+failure and all original artifacts remain preserved.
+
+Independent code review found one P2 in new assertion 18.5: its broad command
+prohibition could reject ordinary evidence reads. The
+[versioned correction](verification/task2-20261001/eval-correction.md) explicitly
+permits read/search operations while prohibiting execution of supplied source,
+examples, reproduction commands or tests. Fixtures, questions and oracle answers
+are unchanged. Fresh final graders applied the corrected assertion to all saved
+variants without seeing earlier verdicts. The original Linear reader's scope
+answer received different applicability assessments across graders; both reports
+remain, and no editor assertion depends on that disagreement.
+
+[Final source review](verification/task2-20261001/review-final.md): APPROVE, no
+remaining findings. The external PAL reviewer failed after four 503 responses;
+the isolated workflow's independent-reviewer fallback was used. No systemic P0/P1
+finding or uncaptured project convention needs indexing.
+
+[Repository checks](verification/task2-20261001/checks.md): all nine shell suites
+and Go command-package tests pass; generation, final idempotence and graph checks
+pass. Three unrelated network-dependent template-sync cases remain skipped for
+Task 4 to rerun. Initial cache-access and Python/TOML failures and successful
+retries are retained. Canonical/generated output matches, with no agent-file diff.
+
+Tasks 3–4 retain gap/non-trigger scenarios, maintained usage documentation, the
+complete behavioral matrix and final spec review. Task 1's bug routing, evidence,
+output and audience rules are unchanged, so cases 16/17 were not rerun in Task 2.
+Synthetic tracker fixtures do not certify live integrations.
+
+## Task 1 — original completion record
+
+Task 1 completed 2026-10-01, before Tasks 2–4 began. Repository start:
 `283f8da4606db7b1ad109b597f193bc9c0399377`.
 
 The [budget preflight](verification/budget/decision.md) covers all planned rules

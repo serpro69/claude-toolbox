@@ -1,0 +1,1 @@
+Updated [pr-draft.md](/tmp/clarify-issue-task2/regressions/destination-visibility/editor-workspace/pr-draft.md), removing restricted facts and references while preserving contract details and accessible links. Additional business context requires an audience-approved source.

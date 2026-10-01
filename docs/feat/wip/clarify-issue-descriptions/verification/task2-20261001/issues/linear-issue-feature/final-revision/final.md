@@ -1,0 +1,1 @@
+Saved [issue-draft.md](/tmp/clarify-issue-task2/issues/linear-issue-feature/final-revision/issue-draft.md), preserving the title, acceptance criterion, and task status. Mira’s expiry decision remains open; mechanism selection follows it.

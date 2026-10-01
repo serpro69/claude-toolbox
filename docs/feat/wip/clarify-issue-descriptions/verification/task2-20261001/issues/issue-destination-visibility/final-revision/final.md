@@ -1,0 +1,1 @@
+Updated [issue-draft.md](/tmp/clarify-issue-task2/issues/issue-destination-visibility/final-revision/issue-draft.md) for external partners. Removed unshared facts and references, preserved the agreed criterion and pending rollout decision, and noted the limits of shared planning evidence.
