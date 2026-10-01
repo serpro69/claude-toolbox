@@ -1,0 +1,39 @@
+{
+  "questions": [
+    "Why does this issue exist?",
+    "What happens in the reported example, and what was expected?",
+    "What is verified, reported or still unknown?",
+    "What remains outside this issue?",
+    "What happens next and who owns it?"
+  ],
+  "reader_manifest": [
+    "issue-draft.md"
+  ],
+  "answers": [
+    "Synchronous export delays maintainers checking a ready invoice despite requesting zero wait.",
+    "On ExportKit 2.3.1, macOS 15 arm64, exportctl send invoice-17 --timeout-ms 0 --mode sync reportedly waited 30 seconds in 3/3 attempts; expected zero wait.",
+    "The source uses timeout_ms or 30000 and replaces zero with the fallback; this is source evidence, not runtime confirmation of the reported behavior or its cause, and Mina still needs to confirm the reported build before a fix is chosen.",
+    "Asynchronous export.",
+    "Mina confirms on the reported build, then a fix must be chosen; no fix has been accepted."
+  ],
+  "protected_claims": [
+    "exportctl send invoice-17 --timeout-ms 0 --mode sync",
+    "ExportKit 2.3.1",
+    "macOS 15 arm64",
+    "3/3",
+    "30 seconds",
+    "timeout_ms",
+    "[x] Record command and environment",
+    "[ ] Mina: confirm on the reported build",
+    "[ ] Choose fix after confirmation",
+    "requirements.md",
+    "export.py"
+  ],
+  "baseline_defects": [
+    "Source detail precedes the maintainer problem.",
+    "The draft suspects a fallback but does not distinguish inspected code evidence from runtime confirmation."
+  ],
+  "not_applicable": {
+    "PR increment": "This is a bug-description edit without a PR."
+  }
+}

@@ -1,4 +1,4 @@
-# Document and PR scenarios
+# Document, PR and issue scenarios
 
 Stage each scenario's test-files/ as its own workspace root, outside the plugin and
 any SKILL.md ancestor. Load only the skill under test, its shared instructions and
@@ -51,3 +51,30 @@ Case 13 requests a caller-only completion link to the selected local output by
 absolute path. Grade that link separately from prohibited private source pointers;
 the exception applies only to this completion message, never to the destination
 draft or disclosure of restricted facts.
+
+## Issue fixture setup
+
+Cases 16–17 use supplied offline issue context, not PR base/head pairs. Stage only
+each scenario's `test-files/` as an independent workspace. Do not initialize a PR
+checkout, contact a tracker, run reproduction commands or expose the oracle to the
+editor. Synthetic URLs and repository snapshots stand in for read-only responses;
+they do not certify a live integration.
+
+Case 16 identifies a private GitHub repository, its default-branch revision and
+tracked snapshot files in `context.md`. It deliberately declares no alternative
+audience. Preserve that setup: do not add a sharing declaration to make the case
+easier. The explicit restriction on one tracked source still applies. The body
+capture `remote-body.md` is immutable input; the existing feature draft is unrelated.
+Authorize only one new draft within the established feature directory. Retain the
+supplied title/type as context, distinct from editable description headings.
+
+Case 17 explicitly selects `issue-draft.md` for in-place editing; requirements and
+source remain read-only. Its commands are documentation, not test instructions.
+
+Both cases use fresh original/revised readers with the fixed questions and
+manifests in `oracle/expected.json`. Resolve `<produced-local-draft>` after editing;
+readers receive only their respective artifact. Grade fidelity and audience access
+separately from reader answers. Inspect draft and completion message for restricted
+facts and source pointers, including uncited paraphrases, and compare all other
+files byte-for-byte. Record baseline and revised-instruction runs separately with
+their actual instruction hashes, exact prompts, manifests, traces and verdicts.

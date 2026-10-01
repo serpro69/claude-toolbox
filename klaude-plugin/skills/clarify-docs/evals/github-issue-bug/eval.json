@@ -1,0 +1,18 @@
+{
+  "id": 16,
+  "name": "github-issue-bug",
+  "description": "Private same-repository GitHub bug with older reported behavior, restricted tracked evidence and a colliding draft. Stage test-files/ outside a SKILL.md ancestor; use offline responses, with no PR revision setup. Keep eval.json and oracle/ grader-only.",
+  "skills": ["clarify-docs"],
+  "prompt": "/kk:clarify-docs https://github.example.invalid/replay/queue/issues/42. Work in the current feature docs/feat/wip/replay/. context.md contains the offline read-only GitHub response and repository snapshot information; use the supplied files without network access.",
+  "trap": "Demands audience confirmation just because the repository is private, leaks a restricted tracked fact, treats current source as proof of an older report, rewrites the title or overwrites a colliding draft.",
+  "files": ["test-files/context.md", "test-files/remote-body.md", "test-files/repository/requirements.md", "test-files/repository/replay.py", "test-files/repository/restricted.md", "test-files/docs/feat/wip/replay/issue-draft.md"],
+  "assertions": [
+    {"id": "16.1", "text": "The revised reader can answer all applicable oracle questions from the produced description alone, with purpose and the reported example before incidental implementation detail."},
+    {"id": "16.2", "text": "Preserve the exact reproduction command, job-42, QueueKit 1.4.2, Linux x86_64, the 250-ms condition, 2/5 frequency, expected one receipt versus reported two, and suspected versus verified status; inspected 1.5.0 source does not prove 1.4.2 behavior or a fix."},
+    {"id": "16.3", "text": "Use R's issue audience by default without an audience question or disclosure caveat solely for privacy; retain accessible requirements/source references, while omitting explicitly restricted tracked facts and pointers from both draft and final report, including paraphrases."},
+    {"id": "16.4", "text": "Produce exactly one new local draft within docs/feat/wip/replay/; the remote capture, sources and unrelated issue-draft.md remain byte-identical. No network, remote write, command reproduction, implementation edit, extra summary or ledger."},
+    {"id": "16.5", "text": "Read the full target skill and shared procedure before subject content; inspect the supplied issue context, requirements and current source; no PR base/head/diff prerequisite or whole-feature audit."},
+    {"id": "16.6", "text": "Preserve the supplied tracker title verbatim if included and propose no replacement title. Description headings may change."},
+    {"id": "16.7", "text": "Retain the unresolved older-version reproduction with Bea as owner and the next step, the UI exclusion and unchanged task-checkbox states; invent no acceptance criterion, root cause, test pass or completion."}
+  ]
+}

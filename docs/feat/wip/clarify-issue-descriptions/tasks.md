@@ -3,13 +3,13 @@
 > Design: [design.md](design.md)
 > Implementation: [implementation.md](implementation.md)
 > Issue: [#157](https://github.com/serpro69/claude-toolbox/issues/157)
-> Status: pending
+> Status: in-progress (Task 1 done; Tasks 2–4 pending)
 > Created: 2026-09-30
 > Not Doing: remote publication/comments, issue implementation/reproduction, invented decisions/criteria, tracker-title editing, mandatory integrations/live certification, separate issue guide/new skill/profile, automatic clarification, bulk rewrites/extra summaries, completed-design edits
 
 ## Task 1: Clarify bug reports into local drafts
 
-- **Status:** pending
+- **Status:** done
 - **Depends on:** —
 - **Size:** M
 - **Can run in parallel with:** —
@@ -18,12 +18,17 @@
 
 ### Subtasks
 
-- [ ] 1.1 Draft complete non-operative procedure and entry-point candidates for Tasks 1–3 under this feature's `verification/budget/`, including all planned rules and existing safeguards; remove duplication → verify: count the entire procedure and mandatory dependencies, record coverage and candidate hashes in `decision.md`, retain 1,200 if sufficient or explicitly raise the ceiling to the measured candidate count with justification, all before operative edits or candidate behavioral grading.
-- [ ] 1.2 Author `github-issue-bug` and `issue-local-draft` under `klaude-plugin/skills/clarify-docs/evals/`, with isolated grader oracles → verify: scenario IDs 16/17 are unique, scenario 16 covers a private same-repository issue without a caller-declared audience and protects the original title, manifests are self-contained, and baseline runs record observed routing/evidence/file effects.
-- [ ] 1.3 Apply the candidate's entry-point changes to `klaude-plugin/skills/clarify-docs/SKILL.md` for issue-description inputs, read-only tracker titles, and explicit implement/fix non-triggers → verify: preserve existing scope/loading rules and recheck current description guidance and measured length.
-- [ ] 1.4 Apply the candidate's issue evidence, bug-report preservation, and bounded GitHub same-repository audience default to `klaude-plugin/skills/_shared/document-clarity.md` → verify: scenarios 16/17 preserve reported versus verified behavior, reproduction details, local output, and collision protection; scenario 16 needs no audience question solely for privacy, retains accessible R references, and excludes explicitly restricted tracked facts.
-- [ ] 1.5 Extend `clarify-docs/evals/README.md` with offline issue staging → verify: both scenarios run without live tracker access, oracle leakage, or PR base/head setup.
-- [ ] 1.6 Check operative and complete-candidate instruction counts against the recorded ceiling; run `make generate-kodex` and `make plugin-graph`, inspect generated changes, and run `dense-source`/`runtime-pr` smoke regressions → verify: both counts fit, structural checks pass, all applicable behavioral assertions pass with recorded evidence.
+- [x] 1.1 Draft complete non-operative procedure and entry-point candidates for Tasks 1–3 under this feature's `verification/budget/`, including all planned rules and existing safeguards; remove duplication → verify: count the entire procedure and mandatory dependencies, record coverage and candidate hashes in `decision.md`, retain 1,200 if sufficient or explicitly raise the ceiling to the measured candidate count with justification, all before operative edits or candidate behavioral grading.
+- [x] 1.2 Author `github-issue-bug` and `issue-local-draft` under `klaude-plugin/skills/clarify-docs/evals/`, with isolated grader oracles → verify: scenario IDs 16/17 are unique, scenario 16 covers a private same-repository issue without a caller-declared audience and protects the original title, manifests are self-contained, and baseline runs record observed routing/evidence/file effects.
+- [x] 1.3 Apply the candidate's entry-point changes to `klaude-plugin/skills/clarify-docs/SKILL.md` for issue-description inputs, read-only tracker titles, and explicit implement/fix non-triggers → verify: preserve existing scope/loading rules and recheck current description guidance and measured length.
+- [x] 1.4 Apply the candidate's issue evidence, bug-report preservation, and bounded GitHub same-repository audience default to `klaude-plugin/skills/_shared/document-clarity.md` → verify: scenarios 16/17 preserve reported versus verified behavior, reproduction details, local output, and collision protection; scenario 16 needs no audience question solely for privacy, retains accessible R references, and excludes explicitly restricted tracked facts.
+- [x] 1.5 Extend `clarify-docs/evals/README.md` with offline issue staging → verify: both scenarios run without live tracker access, oracle leakage, or PR base/head setup.
+- [x] 1.6 Check operative and complete-candidate instruction counts against the recorded ceiling; run `make generate-kodex` and `make plugin-graph`, inspect generated changes, and run `dense-source`/`runtime-pr` smoke regressions → verify: both counts fit, structural checks pass, all applicable behavioral assertions pass with recorded evidence.
+
+Completed 2026-10-01. [Verification and evidence](verification.md): 23 behavioral
+assertions pass across the two new scenarios and two regressions; required reviews,
+generation and repository checks are recorded. Original failures and the independently
+reviewed oracle correction remain available. Task 2 is next.
 
 ## Task 2: Clarify unimplemented features for the intended audience
 

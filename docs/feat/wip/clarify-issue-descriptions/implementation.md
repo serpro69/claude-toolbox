@@ -3,8 +3,12 @@
 > Design: [design.md](design.md)
 > Tasks: [tasks.md](tasks.md)
 > Issue: [#157](https://github.com/serpro69/claude-toolbox/issues/157)
-> Status: pending; no implementation or behavioral evals performed for this follow-up
+> Status: Task 1 done; Tasks 2–4 pending (2026-10-01)
 > Created: 2026-09-30
+
+Task 1 progress and executed evidence are recorded in [verification.md](verification.md).
+The complete candidate and its measured 1,297-word ceiling are recorded in the
+[budget decision](verification/budget/decision.md). Tasks 2–4 remain pending.
 
 ## Repository map
 
