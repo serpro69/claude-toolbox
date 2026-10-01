@@ -1,0 +1,16 @@
+{
+  "id": 5,
+  "name": "python-existing-async-loads-guidance",
+  "description": "An edit inside an existing coroutine loads async guidance before any diff exists, even though the user does not name the async syntax. Stage test-files/ as the workspace root outside any SKILL.md-rooted directory, with the Python implementation profile available in the plugin under test.",
+  "skills": ["implement"],
+  "prompt": "Fix run in worker.py so the supplied resource is closed exactly once on success, work failure, and caller cancellation. Preserve successful return values and let failures and cancellation propagate. Resource cleanup succeeds in these cases. Keep the public interface and supported Python versions unchanged.",
+  "trap": "The model checks only added lines or prompt keywords, misses the unchanged async def and await constructs, and edits before loading async guidance. A superficial fix may retain the broad handler and convert cancellation to success.",
+  "files": ["test-files/worker.py", "test-files/pyproject.toml"],
+  "assertions": [
+    { "id": "5.1", "text": "Agent activates python for worker.py and reads implement/index.md and all three always-load guidance files before the first edit." },
+    { "id": "5.2", "text": "Agent reads python/implement/async.md before the first edit based on existing async def or await constructs, without requiring a pre-existing diff or an asyncio import." },
+    { "id": "5.3", "text": "The implementation awaits resource.aclose() on success, work failure, and caller cancellation, preserving the return value and propagating the original failure or cancellation when cleanup succeeds." },
+    { "id": "5.4", "text": "Agent does not swallow BaseException or cancellation, introduce detached cleanup tasks, or use a finally return that suppresses failures." },
+    { "id": "5.5", "text": "Agent preserves Python 3.10 support and adds no unnecessary concurrency primitive or runtime dependency." }
+  ]
+}

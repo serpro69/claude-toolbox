@@ -2,7 +2,7 @@
 
 ## What this profile covers
 
-Idiomatic Python source code: type hints and `typing` usage, mutability and aliasing, context managers, exception hygiene, packaging boundaries, async idioms, testing/mocking pitfalls, and SOLID principles adapted to Python's duck-typed model.
+Idiomatic Python source code and stubs: type hints and `typing` usage, mutability and aliasing, context managers, exception hygiene, packaging boundaries, async idioms, testing/mocking pitfalls, and SOLID principles adapted to Python's duck-typed model. Implementation guidance respects the consumer project's supported Python versions and existing tools.
 
 ## When it activates
 
@@ -10,9 +10,10 @@ Any file with a `.py` or `.pyi` extension in scope. See [DETECTION.md](DETECTION
 
 ## Populated phases
 
+- [implement/](implement/index.md) — guidance consumed by `/kk:implement` before edits: project compatibility and idioms, type contracts, exceptions, and resource ownership. Async guidance loads only for concrete async constructs or async-runtime imports in target files or planned edits; the index defines the exact conditions.
 - `review-code/` — checklists consumed by `/kk:review-code` (security, SOLID, code-quality, removal-plan).
 
-Other phase subdirectories are not populated for this profile: generic per-phase behavior is sufficient.
+Other phase subdirectories are not populated for this profile; those phases use generic guidance. The implementation phase does not prescribe a package manager, linter, type checker, framework, or new minimum Python version.
 
 ## Looking up Python dependencies
 

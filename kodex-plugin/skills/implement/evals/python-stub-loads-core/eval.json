@@ -1,0 +1,15 @@
+{
+  "id": 7,
+  "name": "python-stub-loads-core",
+  "description": "A stub-only task gets Python implementation guidance without inventing a runtime implementation. Stage test-files/ as the workspace root outside any SKILL.md-rooted directory, with the Python implementation profile available in the plugin under test.",
+  "skills": ["implement"],
+  "prompt": "Correct api.pyi so lookup_name may return None for a missing key. Preserve the parameter, exported function name, and synchronous interface. Only update this stub; no runtime implementation is available here.",
+  "trap": "The model treats only .py files as Python implementation targets, skips guidance for .pyi, or creates a runtime implementation to satisfy a stub-only request.",
+  "files": ["test-files/api.pyi"],
+  "assertions": [
+    { "id": "7.1", "text": "Agent activates python via the .pyi extension and reads implement/index.md and all three always-load guidance files before editing api.pyi." },
+    { "id": "7.2", "text": "Agent does not load python/implement/async.md because the stub and planned change have no async code signal." },
+    { "id": "7.3", "text": "The updated stub describes a str-or-None return while retaining the key: str parameter, lookup_name export, and synchronous callable shape." },
+    { "id": "7.4", "text": "Agent creates no runtime implementation and does not claim runtime conformance or checker validation that it could not verify." }
+  ]
+}

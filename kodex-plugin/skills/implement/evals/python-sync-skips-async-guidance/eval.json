@@ -1,0 +1,15 @@
+{
+  "id": 6,
+  "name": "python-sync-skips-async-guidance",
+  "description": "Regression: async terms in strings and a separate coroutine file do not activate async guidance for a synchronous target. Stage test-files/ as the workspace root outside any SKILL.md-rooted directory, with the Python implementation profile available in the plugin under test.",
+  "skills": ["implement"],
+  "prompt": "In labels.py, make normalize_label strip surrounding whitespace and casefold the result. Preserve HELP_TEXT exactly and keep the function synchronous. No other file needs changing.",
+  "trap": "A substring search for async terms or a scan of unrelated Python files incorrectly loads async.md despite no qualifying code construct or import in the target file or planned edit.",
+  "files": ["test-files/labels.py", "test-files/background.py"],
+  "assertions": [
+    { "id": "6.1", "text": "Agent activates python for labels.py and reads implement/index.md plus all three always-load guidance files before editing." },
+    { "id": "6.2", "text": "Agent does not load python/implement/async.md: HELP_TEXT contains only literal text, and background.py is outside the task's target files." },
+    { "id": "6.3", "text": "Agent implements strip followed by casefold without introducing async constructs, runtime imports, or new dependencies." },
+    { "id": "6.4", "text": "HELP_TEXT and background.py remain unchanged." }
+  ]
+}
