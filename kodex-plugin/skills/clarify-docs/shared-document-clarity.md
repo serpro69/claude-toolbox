@@ -19,6 +19,14 @@ names, stack annotations and task numbers do not establish the increment. Separa
 inherited changes from this diff and contract-only work from runtime integration.
 If source access is missing, state that limit and constrain unsupported claims.
 
+For an issue, read its description, supplied title/type and relevant discussions.
+Comments can establish evidence or decision provenance, not automatically accepted
+requirements. Preserve reported observations versus verified behavior, suspected
+versus established causes, and differences between reported and inspected versions.
+Do not claim reproduction or passing tests without evidence. A supporting PR does
+not turn issue editing into PR editing; no PR diff or future implementation is
+required for an issue proposal.
+
 Requirements establish intent; implementation establishes current behavior. Tests
 provide evidence of exercised cases, not proof of intent or complete coverage.
 Distinguish accepted requirements, proposals, implemented behavior and future work.
@@ -53,12 +61,20 @@ the other. Do not erase a requirement to make the prose agree with the code.
 Apply destination visibility in order, to facts and references alike:
 
 1. Explicit user/repository audience restrictions override tracking or reachability.
-2. Otherwise, files tracked at the target repository's PR head are accessible to
-   its established review audience, not automatically to a wider audience. Nearby
-   private aggregator files and untracked drafts do not qualify.
-3. External sources require evidence of audience access: public availability or
-   user/repository confirmation that they are shared. The editor's credentials
-   prove no audience access; unknown visibility stays unknown.
+2. For PR editing only, files tracked at the target repository's PR head are
+   accessible to its established review audience, not automatically a wider one.
+   For a GitHub issue identified with repository R, default to R's issue audience
+   unless the caller specifies another. Files tracked in R at the inspected
+   revision are presumed accessible, even in private R; use R's default branch
+   when no revision is established. Neither ask about audience nor add a
+   disclosure limitation solely for this privacy. This proves no older-version
+   behavior. Explicit restrictions still override, even for tracked files.
+   Neither presumption covers untracked drafts, private aggregators, another
+   repository or a different audience. A Linear or other tracker link establishes
+   no GitHub repository access.
+3. Sources outside those presumptions require evidence of audience access: public
+   availability or user/repository sharing confirmation. Editor credentials and
+   common organizational membership prove no access; unknown visibility stays unknown.
 4. Use an accessible source or explicitly authorized standalone explanation. If
    neither exists, retain a non-disclosing limitation or ask for authorization.
    Deleting a citation never authorizes disclosure of its underlying private fact.
@@ -94,6 +110,10 @@ or unavailable. Check names are insufficient; completion reports cannot substitu
 Avoid diaries and indiscriminate file inventories. Describe future integration as
 future work.
 
+Issue descriptions explain the problem and relevant current/desired behavior.
+Bug reports retain supplied reproduction steps, commands, environment/version,
+expected/observed results and frequency or conditions.
+
 Reorganize within the selected scope. Preserve existing anchors or update affected
 in-scope links, including cross-file references. Check accessible inbound references
 when changing headings; keep the anchor when callers outside scope would break, or
@@ -117,7 +137,8 @@ context? Check the specific confusion motivating the edit, not just sentence len
 Then check fidelity independently against the protected-meaning inventory. No
 qualification may disappear and no unsupported claim may appear. Recheck headings,
 anchors, links, task state, required topics and executable examples affected by the
-edit. Correct editorial regressions; keep unresolved source disagreements visible
+edit. For issues, also check reproduction details, qualifications, existing criteria
+and decision status. Correct editorial regressions; keep unresolved source disagreements visible
 with their next step. Fluent prose cannot compensate for lost meaning.
 Recheck destination visibility, including facts paraphrased from restricted sources.
 

@@ -1,0 +1,16 @@
+{
+  "id": 17,
+  "name": "issue-local-draft",
+  "description": "Selected local bug draft with exact reproduction commands, state and source evidence. Stage test-files/ outside a SKILL.md ancestor, with no network or PR setup; oracle/ and eval.json remain grader-only.",
+  "skills": ["clarify-docs"],
+  "prompt": "$kk:clarify-docs issue-draft.md for export maintainers. Use requirements.md and export.py as evidence. Those files are shared with this audience. Edit only the selected issue-draft.md; do not run the reproduction command.",
+  "trap": "Turns a reported zero-timeout bug into a verified runtime diagnosis, changes the command or checkbox state, or edits source instead of the selected issue draft.",
+  "files": ["test-files/issue-draft.md", "test-files/requirements.md", "test-files/export.py"],
+  "assertions": [
+    {"id": "17.1", "text": "All applicable reader answers are available in the revised draft alone; explain the user problem before incidental code detail."},
+    {"id": "17.2", "text": "Preserve the exact command, invoice-17, ExportKit 2.3.1, macOS 15 arm64, sync-mode condition, 3/3 frequency, expected zero wait versus reported 30 seconds, timeout_ms identifier and all task-checkbox states and links."},
+    {"id": "17.3", "text": "Keep source-supported fallback distinct from unexecuted runtime evidence; no invented reproduction, test pass, accepted fix, acceptance criterion or completion. Retain Mina's pending confirmation and asynchronous-export exclusion."},
+    {"id": "17.4", "text": "Only issue-draft.md changes in place; source and requirements remain byte-identical, no extra summary/ledger or new draft is created, no reproduction, network or external write occurs."},
+    {"id": "17.5", "text": "Full skill/shared instructions load before target/source content, and requirements.md plus export.py are inspected before editing without unrelated investigation or a PR-diff prerequisite."}
+  ]
+}
