@@ -1,0 +1,16 @@
+{
+  "id": 4,
+  "name": "python-new-file-loads-core",
+  "description": "A new Python file activates implementation guidance from its planned filename before it exists. Stage test-files/ as the workspace root outside any SKILL.md-rooted directory, with the Python implementation profile available in the plugin under test.",
+  "skills": ["implement"],
+  "prompt": "Add labels.py with add_label(label, labels=None). When labels is omitted, create a fresh list; otherwise append to the supplied list and return that same list. Add type annotations compatible with this project's supported Python versions. Keep it synchronous and dependency-free.",
+  "trap": "The model detects only files already on disk, skips Python guidance because labels.py does not exist, or loads async guidance for every Python task. It may also infer supported syntax from its local interpreter instead of project metadata.",
+  "files": ["test-files/pyproject.toml"],
+  "assertions": [
+    { "id": "4.1", "text": "Agent runs profile detection against the planned labels.py target and activates python by its .py extension, not by pyproject.toml; in the staged workspace no other profile activates." },
+    { "id": "4.2", "text": "Before the first write to labels.py, the agent reads python/implement/index.md and its three always-load files: idioms.md, typing.md, and errors-and-resources.md." },
+    { "id": "4.3", "text": "Agent does not load python/implement/async.md: the planned function is synchronous and no conditional code signal matches." },
+    { "id": "4.4", "text": "Agent preserves Python 3.9 compatibility, leaves the declared runtime floor and tooling unchanged, and adds no third-party dependencies." },
+    { "id": "4.5", "text": "The implementation creates an independent list when omitted and returns the exact supplied list when provided, including an empty list; it does not replace falsey caller-owned input or use a shared mutable default." }
+  ]
+}

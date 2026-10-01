@@ -18,8 +18,10 @@ The kk plugin ships per-domain profiles that make every workflow skill language-
 | **Kotlin** | Kotlin/JVM, Android, Gradle | `*.kt`, `*.kts`, `build.gradle.kts` |
 | **Kubernetes** | Helm charts, Kustomize, YAML manifests | `Chart.yaml`, `kustomization.yaml`, K8s resource kinds |
 | **K8s Operator** | kubebuilder, operator-sdk, controller-runtime | `PROJECT`, `config/crd/`, `controller-gen` in Makefile |
-| **Python** | pip, poetry, pytest, Django, FastAPI | `*.py`, `pyproject.toml`, `requirements.txt` |
+| **Python** | Python implementation guidance and review checklists | `*.py`, `*.pyi` |
 | **Skill MD** | Agent skill authoring (Claude Code, Codex) | `SKILL.md`, files under a `SKILL.md`-rooted ancestor |
+
+<!-- TODO: Reconcile the other language rows and detection examples below with their DETECTION.md files. Several metadata filenames are listed as triggers despite extension-only detection. This broader documentation audit is outside the Python implementation-phase addition. -->
 
 ## How Detection Works
 
@@ -43,6 +45,12 @@ Each profile populates phase-specific content for the skills that consume it:
 | `test/` | /kk:test | Testing frameworks, conventions, validators |
 | `document/` | /kk:document | Documentation rubrics |
 | `review-spec/` | /kk:review-spec | Spec conformance rules |
+
+## Python Implementation Guidance
+
+For Python tasks, `/kk:implement` loads guidance on project compatibility, idioms, typing, exceptions, and resource ownership before editing. Async guidance is conditional on concrete async constructs or async-runtime imports in target files or planned edits; mentions in comments or strings do not trigger it.
+
+The guidance applies to new `.py` files and `.pyi` stub changes as well as existing Python code. It follows the project's supported Python versions and existing tools. Packaging metadata alone does not activate the Python profile.
 
 ## Vendored Content
 
