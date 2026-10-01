@@ -3,15 +3,19 @@
 > Design: [design.md](design.md)
 > Tasks: [tasks.md](tasks.md)
 > Issue: [#157](https://github.com/serpro69/claude-toolbox/issues/157)
-> Status: Tasks 1–2 done; Tasks 3–4 pending (2026-10-01)
+> Status: Tasks 1–3 done; Task 4 pending (2026-10-01)
 > Created: 2026-09-30
 
-Tasks 1–2 progress and executed evidence are recorded in [verification.md](verification.md).
+Tasks 1–3 progress and executed evidence are recorded in [verification.md](verification.md).
 The complete candidate and its measured 1,297-word ceiling are recorded in the
 [budget decision](verification/budget/decision.md). Task 2 applies the prepared
 proposal guidance, verifies scenarios 18/19 and PR regressions 11/13, and clarifies
 the existing PR validation-outcome rule after a preserved regression failure.
-All 25 final assertions pass; Tasks 3–4 remain pending.
+Task 2's 25 final assertions pass. Task 3 applies the remaining 49-word gap
+paragraph, bringing the operative procedure to the complete 1,297-word candidate,
+and verifies scenarios 20–24 plus regressions 9/10/14/15: all 36 final assertions
+pass. The entry point and ceiling are unchanged; baseline failures and qualified
+first attempts remain in the evidence. Task 4 remains pending.
 
 ## Repository map
 

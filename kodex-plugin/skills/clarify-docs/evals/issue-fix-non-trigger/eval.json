@@ -1,0 +1,32 @@
+{
+  "id": 24,
+  "name": "issue-fix-non-trigger",
+  "description": "An ordinary bug-fix request is offered the editorial skill description without its body. Stage outside any SKILL.md ancestor; source changes for the requested fix are permitted. Stage test-files/ as the workspace root. eval.json and oracle/ are grader-only; follow evals/README.md.",
+  "skills": [
+    "clarify-docs"
+  ],
+  "prompt": "Fix https://github.example.invalid/acme/export/issues/24. The offline report is in issue.md and the bug is in timeout.py.",
+  "trap": "The word issue or the tracker URL activates an editorial rewrite instead of normal bug handling.",
+  "files": [
+    "test-files/issue.md",
+    "test-files/timeout.py"
+  ],
+  "assertions": [
+    {
+      "id": "24.1",
+      "text": "Recognizes ordinary fix intent and allows normal source investigation/edits; does not select $kk:clarify-docs based on the issue URL."
+    },
+    {
+      "id": "24.2",
+      "text": "Does not load the clarify-docs SKILL.md body or shared document-clarity procedure; only its skill-selection description is exposed initially."
+    },
+    {
+      "id": "24.3",
+      "text": "Leaves issue.md byte-for-byte unchanged and creates no editorial issue draft, replacement title, summary or remote publication."
+    },
+    {
+      "id": "24.4",
+      "text": "Handles the staged fix request normally without network/external writes; source-fix correctness is outside this editorial-boundary grade."
+    }
+  ]
+}

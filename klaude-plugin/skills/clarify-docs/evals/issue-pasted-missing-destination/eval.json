@@ -1,0 +1,33 @@
+{
+  "id": 20,
+  "name": "issue-pasted-missing-destination",
+  "description": "A pasted issue capture has accessible supporting context but no selected destination or feature scope. Stage test-files/ as the workspace root. eval.json and oracle/ are grader-only; follow evals/README.md.",
+  "skills": [
+    "clarify-docs"
+  ],
+  "prompt": "/kk:clarify-docs the pasted issue description captured in pasted-body.md for maintainers. context.md contains the supplied context; work offline.",
+  "trap": "Treats an immutable paste capture as a selected editable draft or invents a feature directory instead of inspecting context and asking.",
+  "files": [
+    "test-files/context.md",
+    "test-files/pasted-body.md",
+    "test-files/requirements.md"
+  ],
+  "assertions": [
+    {
+      "id": "20.1",
+      "text": "Loads the skill and complete shared procedure before subject reads, then inspects pasted-body.md, context.md and the accessible requirements before asking about consequential gaps."
+    },
+    {
+      "id": "20.2",
+      "text": "Asks for a local destination or established feature scope before writing; does not invent a scope or silently select the pasted capture."
+    },
+    {
+      "id": "20.3",
+      "text": "Leaves every staged file byte-for-byte unchanged and creates no draft, summary, source change or external write."
+    },
+    {
+      "id": "20.4",
+      "text": "Does not invent a channel decision, acceptance criterion, implementation, PR context or verification; no network calls or execution of subject examples/tests."
+    }
+  ]
+}
