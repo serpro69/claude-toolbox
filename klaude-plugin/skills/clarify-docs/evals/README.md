@@ -54,7 +54,7 @@ draft or disclosure of restricted facts.
 
 ## Issue fixture setup
 
-Cases 16–17 use supplied offline issue context, not PR base/head pairs. Stage only
+Cases 16–19 use supplied offline issue context, not PR base/head pairs. Stage only
 each scenario's `test-files/` as an independent workspace. Do not initialize a PR
 checkout, contact a tracker, run reproduction commands or expose the oracle to the
 editor. Synthetic URLs and repository snapshots stand in for read-only responses;
@@ -71,7 +71,20 @@ supplied title/type as context, distinct from editable description headings.
 Case 17 explicitly selects `issue-draft.md` for in-place editing; requirements and
 source remain read-only. Its commands are documentation, not test instructions.
 
-Both cases use fresh original/revised readers with the fixed questions and
+Case 18 supplies a Linear feature proposal with confirmed sharing for its intended
+audience. Preserve the immutable title/body capture and authorize only a new
+`issue-draft.md`. Existing synchronous source is evidence of current behavior;
+no future implementation or PR checkout is required. Comments distinguish an
+unaccepted mechanism from accepted intent and the pending owner's decision.
+
+Case 19 selects a local GitHub issue draft for an explicitly different audience:
+external integration partners. Keep the supplied access declarations, including
+the distinction between shared references, restricted tracked facts, merely
+tracked internal material, and credential-only or unknown-access sources.
+Its caller-only completion link is permitted only for the selected local output;
+it does not permit private source pointers or facts in either output.
+
+All four cases use fresh original/revised readers with the fixed questions and
 manifests in `oracle/expected.json`. Resolve `<produced-local-draft>` after editing;
 readers receive only their respective artifact. Grade fidelity and audience access
 separately from reader answers. Inspect draft and completion message for restricted
