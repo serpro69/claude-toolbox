@@ -1,0 +1,16 @@
+{
+  "id": 5,
+  "name": "python-async-unittest-lifecycle",
+  "description": "Async guidance preserves an existing IsolatedAsyncioTestCase suite and tests cancellation and cleanup behavior. Stage test-files/ as the workspace root outside any SKILL.md-rooted directory, with the Python test profile and a supported Python interpreter available.",
+  "skills": ["test"],
+  "prompt": "Use /kk:test for worker.py and tests/test_worker.py. Extend the existing unittest suite to cover work failure and caller cancellation as well as success, checking that resource.aclose is awaited exactly once and the original failure or cancellation propagates. Cleanup succeeds in these cases. Keep worker.py unchanged and use no third-party dependencies.",
+  "trap": "The model adds pytest-asyncio to a unittest project, skips conditional async instructions, checks only that cancel() was called, or lets runner teardown hide unowned tasks.",
+  "files": ["test-files/README.md", "test-files/worker.py", "test-files/tests/__init__.py", "test-files/tests/test_worker.py"],
+  "assertions": [
+    { "id": "5.1", "text": "Agent loads the Python test index, both core guides, and async.md before running checks, based on actual async constructs or IsolatedAsyncioTestCase/AsyncMock usage." },
+    { "id": "5.2", "text": "Agent preserves the existing IsolatedAsyncioTestCase style and documented unittest runner without adding pytest or async plugins." },
+    { "id": "5.3", "text": "The added failure test proves that the original work failure propagates and resource.aclose is awaited once; a mock-called assertion alone is insufficient." },
+    { "id": "5.4", "text": "The cancellation test coordinates task startup deterministically, cancels and awaits the task, checks propagated cancellation and awaited cleanup, and does not rely on arbitrary sleeps or loop teardown to establish correctness." },
+    { "id": "5.5", "text": "Agent runs and reports the expanded suite, preserves worker.py and project dependencies, and does not hide unawaited-coroutine or leaked-task diagnostics." }
+  ]
+}

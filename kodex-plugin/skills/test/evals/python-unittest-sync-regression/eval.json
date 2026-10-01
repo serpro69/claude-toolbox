@@ -1,0 +1,15 @@
+{
+  "id": 2,
+  "name": "python-unittest-sync-regression",
+  "description": "Regression: an existing synchronous unittest suite must not acquire pytest or async tooling because strings mention async concepts. Stage test-files/ as the workspace root outside any SKILL.md-rooted directory, with the Python test profile available and a supported Python interpreter.",
+  "skills": ["test"],
+  "prompt": "Use $kk:test for helpers.py and tests/test_helpers.py. Follow README.md to run this project's existing tests and report the results. Keep the project dependency-free and do not modify files.",
+  "trap": "The model treats pytest as mandatory for Python, scans literal async terms as code signals, or bypasses the documented unittest discovery root.",
+  "files": ["test-files/README.md", "test-files/helpers.py", "test-files/tests/__init__.py", "test-files/tests/test_helpers.py"],
+  "assertions": [
+    { "id": "2.1", "text": "Agent loads the Python test index and both core guides before running checks." },
+    { "id": "2.2", "text": "Agent follows the documented unittest discovery command with the selected supported interpreter, and reports both test methods executed successfully." },
+    { "id": "2.3", "text": "Agent does not load async.md merely because HELP_TEXT mentions async def, await, asyncio, AsyncMock, or pytest.mark.asyncio." },
+    { "id": "2.4", "text": "Agent does not install or recommend pytest, async plugins, or unrelated quality tools as requirements for this standard-library suite; project files remain unchanged." }
+  ]
+}
