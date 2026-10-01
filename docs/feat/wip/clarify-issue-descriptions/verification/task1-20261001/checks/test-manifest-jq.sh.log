@@ -1,0 +1,57 @@
+
+=== Section 1: Basic JSON Validation ===
+[1;33m[TEST][0m Example manifest is valid JSON
+[0;32m[PASS][0m Valid JSON syntax
+
+=== Section 2: Field Extraction Patterns ===
+[1;33m[TEST][0m Extract schema_version
+[0;32m[PASS][0m schema_version = 1
+[1;33m[TEST][0m Extract upstream_repo
+[0;32m[PASS][0m upstream_repo = serpro69/claude-toolbox
+[1;33m[TEST][0m Extract template_version
+[0;32m[PASS][0m template_version = v1.0.0
+[1;33m[TEST][0m Extract synced_at
+[0;32m[PASS][0m synced_at = 2025-01-27T10:00:00Z
+[1;33m[TEST][0m Extract PROJECT_NAME
+[0;32m[PASS][0m PROJECT_NAME = my-project
+[1;33m[TEST][0m Extract all variable keys
+[0;32m[PASS][0m All 9 variable keys present
+
+=== Section 3: Manifest Generation Pattern ===
+[1;33m[TEST][0m Generate manifest with jq -n
+[0;32m[PASS][0m Generated manifest matches example
+
+=== Section 4: Special Character Handling ===
+[1;33m[TEST][0m Handle quotes in string values
+[0;32m[PASS][0m Quotes preserved correctly
+[1;33m[TEST][0m Handle backslashes in string values
+[0;32m[PASS][0m Backslashes preserved correctly
+[1;33m[TEST][0m Handle newlines in string values
+[0;32m[PASS][0m Newlines preserved correctly
+[1;33m[TEST][0m Handle project names with hyphens and underscores
+[0;32m[PASS][0m Special characters in project name preserved
+[1;33m[TEST][0m Handle empty strings correctly
+[0;32m[PASS][0m Empty strings handled correctly
+
+=== Section 5: Round-Trip Test ===
+[1;33m[TEST][0m Generate -> Parse -> Verify round-trip
+[0;32m[PASS][0m Round-trip preserves all values
+
+=== Section 6: Schema Validation ===
+[1;33m[TEST][0m Validate example manifest against JSON Schema
+error: Failed to initialize cache at `/Users/sergio/.cache/uv`
+  cause: failed to open file `/Users/sergio/.cache/uv/sdists-v9/.git`: Operation not permitted (os error 1)
+[0;31m[FAIL][0m Example manifest fails schema validation
+
+=== Section 7: Test Fixtures Validation ===
+[1;33m[TEST][0m Valid fixture is valid JSON
+[0;32m[PASS][0m valid-manifest.json is valid JSON
+[1;33m[TEST][0m Invalid JSON fixture is actually invalid
+[0;32m[PASS][0m invalid-json.txt is correctly invalid JSON
+
+=== Test Summary ===
+Test cases:        17
+Assertions passed: [0;32m16[0m
+Assertions failed: [0;31m1[0m
+
+[0;31mSome tests failed![0m

@@ -1,0 +1,1 @@
+Updated [issue-draft.md](/tmp/clarify-issue-task1/issues/issue-local-draft/baseline/issue-draft.md), separating reported behavior, required behavior, and source evidence. Preserved Mina’s confirmation gate and task states. The reproduction command was not run.

@@ -1,0 +1,61 @@
+
+=== Section 1: Basic Manifest Generation ===
+[1;33m[TEST][0m generate_manifest creates .github/template-state.json
+[0;32m[PASS][0m Manifest file created
+[1;33m[TEST][0m Generated manifest is valid JSON
+[0;32m[PASS][0m Generated manifest is valid JSON
+
+=== Section 2: Required Fields ===
+[1;33m[TEST][0m Manifest contains schema_version = 1
+[0;32m[PASS][0m schema_version is 1
+[1;33m[TEST][0m Manifest contains upstream_repo with default value
+[0;32m[PASS][0m upstream_repo has default value
+[1;33m[TEST][0m Manifest uses custom UPSTREAM_REPO when set
+[0;32m[PASS][0m upstream_repo uses custom value
+[1;33m[TEST][0m Manifest contains synced_at in ISO 8601 format
+[0;32m[PASS][0m synced_at is in ISO 8601 format: 2026-10-01T10:07:37Z
+
+=== Section 3: Variable Capture ===
+[1;33m[TEST][0m Manifest captures PROJECT_NAME
+[0;32m[PASS][0m PROJECT_NAME captured correctly
+[1;33m[TEST][0m Manifest captures all 6 variables
+[0;32m[PASS][0m PROJECT_NAME
+[0;32m[PASS][0m LANGUAGES
+[0;32m[PASS][0m CC_MODEL
+[0;32m[PASS][0m CC_EFFORT_LEVEL
+[0;32m[PASS][0m CC_PERMISSION_MODE
+[0;32m[PASS][0m CC_STATUSLINE
+[1;33m[TEST][0m Manifest handles empty string values for optional fields
+[0;32m[PASS][0m Empty CC_MODEL captured as empty string
+[0;32m[PASS][0m LANGUAGES has required value
+
+=== Section 4: Special Characters ===
+[1;33m[TEST][0m Manifest handles hyphens and underscores in project name
+[0;32m[PASS][0m Hyphens and underscores preserved
+
+=== Section 5: Template Version Detection (from upstream) ===
+[1;33m[TEST][0m Manifest fetches version from upstream repo (default)
+[0;32m[PASS][0m template_version is from upstream, not local repo: initial
+[1;33m[TEST][0m Manifest uses custom UPSTREAM_REPO when set
+[0;32m[PASS][0m upstream_repo uses custom value
+[0;32m[PASS][0m template_version fetched from custom upstream: initial
+
+=== Section 6: Schema Validation ===
+[1;33m[TEST][0m Generated manifest passes JSON Schema validation
+error: Failed to initialize cache at `/Users/sergio/.cache/uv`
+  cause: failed to open file `/Users/sergio/.cache/uv/sdists-v9/.git`: Operation not permitted (os error 1)
+[0;31m[FAIL][0m Generated manifest fails JSON Schema validation
+
+=== Section 7: Edge Cases ===
+[1;33m[TEST][0m generate_manifest creates .github directory if missing
+[0;32m[PASS][0m .github directory created
+[0;32m[PASS][0m Manifest created in new directory
+[1;33m[TEST][0m generate_manifest overwrites existing manifest
+[0;32m[PASS][0m Existing manifest overwritten with new content
+
+=== Test Summary ===
+Test cases:        15
+Assertions passed: [0;32m22[0m
+Assertions failed: [0;31m1[0m
+
+[0;31mSome tests failed![0m

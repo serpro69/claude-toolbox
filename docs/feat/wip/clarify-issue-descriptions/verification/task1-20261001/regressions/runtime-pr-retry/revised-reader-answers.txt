@@ -1,0 +1,5 @@
+1. Restaurant defaults avoid repeating preparation times for each item; explicit item overrides replace the default, including zero.
+2. With a 15-minute default, a null override yields 15, zero yields 0, and 7 yields 7.
+3. This increment replaces `NotImplementedError` in `effective_minutes` with selection logic and adds three passing assertions. The nullable 0–90 schema contract already exists.
+4. Persistence, scheduling, and UI remain separate work. The helper does not enforce the range; persistence and deployment validation are unrecorded.
+5. The product owner must decide whether inherited values display a badge in the UI.

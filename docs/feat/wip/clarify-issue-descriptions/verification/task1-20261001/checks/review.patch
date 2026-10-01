@@ -1,0 +1,900 @@
+diff --git a/klaude-plugin/skills/_shared/document-clarity.md b/klaude-plugin/skills/_shared/document-clarity.md
+index 967d2df..88e0dd9 100644
+--- a/klaude-plugin/skills/_shared/document-clarity.md
++++ b/klaude-plugin/skills/_shared/document-clarity.md
+@@ -19,6 +19,14 @@ names, stack annotations and task numbers do not establish the increment. Separa
+ inherited changes from this diff and contract-only work from runtime integration.
+ If source access is missing, state that limit and constrain unsupported claims.
+ 
++For an issue, read its description, supplied title/type and relevant discussions.
++Comments can establish evidence or decision provenance, not automatically accepted
++requirements. Preserve reported observations versus verified behavior, suspected
++versus established causes, and differences between reported and inspected versions.
++Do not claim reproduction or passing tests without evidence. A supporting PR does
++not turn issue editing into PR editing; no PR diff or future implementation is
++required for an issue proposal.
++
+ Requirements establish intent; implementation establishes current behavior. Tests
+ provide evidence of exercised cases, not proof of intent or complete coverage.
+ Distinguish accepted requirements, proposals, implemented behavior and future work.
+@@ -53,12 +61,20 @@ the other. Do not erase a requirement to make the prose agree with the code.
+ Apply destination visibility in order, to facts and references alike:
+ 
+ 1. Explicit user/repository audience restrictions override tracking or reachability.
+-2. Otherwise, files tracked at the target repository's PR head are accessible to
+-   its established review audience, not automatically to a wider audience. Nearby
+-   private aggregator files and untracked drafts do not qualify.
+-3. External sources require evidence of audience access: public availability or
+-   user/repository confirmation that they are shared. The editor's credentials
+-   prove no audience access; unknown visibility stays unknown.
++2. For PR editing only, files tracked at the target repository's PR head are
++   accessible to its established review audience, not automatically a wider one.
++   For a GitHub issue identified with repository R, default to R's issue audience
++   unless the caller specifies another. Files tracked in R at the inspected
++   revision are presumed accessible, even in private R; use R's default branch
++   when no revision is established. Neither ask about audience nor add a
++   disclosure limitation solely for this privacy. This proves no older-version
++   behavior. Explicit restrictions still override, even for tracked files.
++   Neither presumption covers untracked drafts, private aggregators, another
++   repository or a different audience. A Linear or other tracker link establishes
++   no GitHub repository access.
++3. Sources outside those presumptions require evidence of audience access: public
++   availability or user/repository sharing confirmation. Editor credentials and
++   common organizational membership prove no access; unknown visibility stays unknown.
+ 4. Use an accessible source or explicitly authorized standalone explanation. If
+    neither exists, retain a non-disclosing limitation or ask for authorization.
+    Deleting a citation never authorizes disclosure of its underlying private fact.
+@@ -94,6 +110,10 @@ or unavailable. Check names are insufficient; completion reports cannot substitu
+ Avoid diaries and indiscriminate file inventories. Describe future integration as
+ future work.
+ 
++Issue descriptions explain the problem and relevant current/desired behavior.
++Bug reports retain supplied reproduction steps, commands, environment/version,
++expected/observed results and frequency or conditions.
++
+ Reorganize within the selected scope. Preserve existing anchors or update affected
+ in-scope links, including cross-file references. Check accessible inbound references
+ when changing headings; keep the anchor when callers outside scope would break, or
+@@ -117,7 +137,8 @@ context? Check the specific confusion motivating the edit, not just sentence len
+ Then check fidelity independently against the protected-meaning inventory. No
+ qualification may disappear and no unsupported claim may appear. Recheck headings,
+ anchors, links, task state, required topics and executable examples affected by the
+-edit. Correct editorial regressions; keep unresolved source disagreements visible
++edit. For issues, also check reproduction details, qualifications, existing criteria
++and decision status. Correct editorial regressions; keep unresolved source disagreements visible
+ with their next step. Fluent prose cannot compensate for lost meaning.
+ Recheck destination visibility, including facts paraphrased from restricted sources.
+ 
+diff --git a/klaude-plugin/skills/clarify-docs/SKILL.md b/klaude-plugin/skills/clarify-docs/SKILL.md
+index 29d5cfe..1202573 100644
+--- a/klaude-plugin/skills/clarify-docs/SKILL.md
++++ b/klaude-plugin/skills/clarify-docs/SKILL.md
+@@ -1,15 +1,15 @@
+ ---
+ name: clarify-docs
+ description: |
+-  TRIGGER when: asked to clarify or improve the explanation in existing documentation
+-  or a PR-description draft, including a PR URL or pasted body. Saves results locally.
+-  Grounds edits in requirements and source while preserving technical meaning. Not for
+-  code, config, generic response brevity, or agent instructions. Explicit
+-  instruction or SKILL.md targets receive a /kk:implement suggestion without edits
+-  or automatic handoff.
++  TRIGGER when: asked to clarify or improve existing documentation, PR drafts or
++  issue descriptions, including URLs and pasted bodies. Saves results locally,
++  grounded in requirements and source while preserving meaning. Not for requests
++  to implement, fix or work on an issue, code, config, generic response brevity,
++  or agent instructions. Explicit instruction or SKILL.md targets receive a
++  /kk:implement suggestion without edits or automatic handoff.
+ ---
+ 
+-# Clarify Documentation and PR Drafts
++# Clarify Documentation, PR Drafts and Issue Descriptions
+ 
+ Improve an existing document so its intended reader can understand the underlying
+ work. Produce a local edit; success depends on comprehension and fidelity, with no
+@@ -17,31 +17,43 @@ document-length target.
+ 
+ ## Inputs and boundaries
+ 
+-Accept local documentation files, local PR drafts, a PR URL or pasted PR body, plus any
+-audience, purpose, requirements and source references. Examples:
++Accept local documentation, PR or issue-description drafts, remote PR/issue URLs
++or pasted bodies, plus audience, purpose, requirements and source references.
++GitHub and Linear are examples, not required integrations. Examples:
+ 
+ - `/kk:clarify-docs docs/configuration.md for service owners; use src/config/`
+ - `/kk:clarify-docs docs/feat/wip/import/design.md for the implementing developer`
+ - `/kk:clarify-docs pr-draft.md for repository reviewers; use the actual PR base/head`
+ - `/kk:clarify-docs <PR URL>; save the revised body to docs/feat/wip/import/pr-draft.md`
++- `/kk:clarify-docs issue-draft.md; preserve the reported reproduction details`
++- `/kk:clarify-docs <issue URL>; save to docs/feat/wip/import/issue-draft.md`
+ 
+ A directory permits discovery and selection, not a bulk rewrite. If selection is
+ consequentially ambiguous, ask which artifact to edit. Related requirements and
+ code may be read as evidence; only selected documentation may be changed.
+ 
+-Edit an existing local draft in place. For remote or pasted input, use the caller's
++Edit an explicitly selected local draft in place. A capture of pasted/remote input
++is not automatically that draft. For remote or pasted input, use the caller's
+ destination or name a local draft under the clearly established current feature
+ directory. If neither is clear, ask before writing. Check for an existing file:
+ overwrite only the selected draft, never unrelated content; otherwise choose an
+ unused name within that feature scope or clarify the destination. Obtain remote
+-bodies and review context through available read-only tools during the shared
+-procedure's source-reading phase. Reading a PR grants no publishing authority.
++bodies and relevant context through available read-only tools or supplied text
++during the shared procedure's source-reading phase. Reading grants no publishing
++authority.
++
++Issue tracker titles and types are read-only context: preserve a supplied title
++when included in a local draft and propose no replacement title. Description
++headings remain editable. Title editing requires a separately scoped request.
+ 
+ Code, config, agent instructions (including `AGENTS.md` and `CLAUDE.md`), skill
+ instructions are outside this entry point's scope. An
+ explicit instruction-editing request receives an explanation of this boundary and
+ a suggestion to use `/kk:implement`; do not invoke it or edit the target. Ordinary
+ code requests and generic requests for shorter answers do not activate this skill.
++Route by the requested action: implementing, fixing or working on an issue belongs
++to `/kk:implement`, not description editing. A URL alone establishes no editorial
++intent; clarify consequential ambiguity before selecting a task.
+ 
+ ## Workflow
+ 
+@@ -52,7 +64,8 @@ may be used for early scope selection.
+ 
+ 1. Load [shared-document-clarity.md](shared-document-clarity.md) in full.
+ 2. Resolve the selected artifacts, reader, purpose and destination from the request
+-   and repository instructions. Reuse known answers; clarify consequential gaps.
++   and repository instructions. Reuse known answers; investigate accessible context
++   in the shared procedure before asking about consequential gaps.
+ 3. Apply the shared procedure in order: understand the relevant work, establish
+    protected meaning, edit for the reader, then verify comprehension and fidelity.
+ 4. Report changed paths and material unresolved gaps briefly. If no edit was needed,
+@@ -62,4 +75,4 @@ The shared procedure performs no profile detection and invokes no consumer skill
+ Verification is an in-session check; the caller retains responsibility for normal
+ document review. This entry point adds no independent runtime review gate and makes
+ no external writes, publication, deployment or implementation changes.
+-PR updates, comments and messages remain separate actions outside this workflow.
++PR/issue updates, comments and messages remain separate actions outside this workflow.
+diff --git a/klaude-plugin/skills/clarify-docs/evals/README.md b/klaude-plugin/skills/clarify-docs/evals/README.md
+index 09d12ea..78229b4 100644
+--- a/klaude-plugin/skills/clarify-docs/evals/README.md
++++ b/klaude-plugin/skills/clarify-docs/evals/README.md
+@@ -1,4 +1,4 @@
+-# Document and PR scenarios
++# Document, PR and issue scenarios
+ 
+ Stage each scenario's test-files/ as its own workspace root, outside the plugin and
+ any SKILL.md ancestor. Load only the skill under test, its shared instructions and
+@@ -51,3 +51,30 @@ Case 13 requests a caller-only completion link to the selected local output by
+ absolute path. Grade that link separately from prohibited private source pointers;
+ the exception applies only to this completion message, never to the destination
+ draft or disclosure of restricted facts.
++
++## Issue fixture setup
++
++Cases 16–17 use supplied offline issue context, not PR base/head pairs. Stage only
++each scenario's `test-files/` as an independent workspace. Do not initialize a PR
++checkout, contact a tracker, run reproduction commands or expose the oracle to the
++editor. Synthetic URLs and repository snapshots stand in for read-only responses;
++they do not certify a live integration.
++
++Case 16 identifies a private GitHub repository, its default-branch revision and
++tracked snapshot files in `context.md`. It deliberately declares no alternative
++audience. Preserve that setup: do not add a sharing declaration to make the case
++easier. The explicit restriction on one tracked source still applies. The body
++capture `remote-body.md` is immutable input; the existing feature draft is unrelated.
++Authorize only one new draft within the established feature directory. Retain the
++supplied title/type as context, distinct from editable description headings.
++
++Case 17 explicitly selects `issue-draft.md` for in-place editing; requirements and
++source remain read-only. Its commands are documentation, not test instructions.
++
++Both cases use fresh original/revised readers with the fixed questions and
++manifests in `oracle/expected.json`. Resolve `<produced-local-draft>` after editing;
++readers receive only their respective artifact. Grade fidelity and audience access
++separately from reader answers. Inspect draft and completion message for restricted
++facts and source pointers, including uncited paraphrases, and compare all other
++files byte-for-byte. Record baseline and revised-instruction runs separately with
++their actual instruction hashes, exact prompts, manifests, traces and verdicts.
+diff --git a/kodex-plugin/skills/_shared/document-clarity.md b/kodex-plugin/skills/_shared/document-clarity.md
+index 967d2df..88e0dd9 100644
+--- a/kodex-plugin/skills/_shared/document-clarity.md
++++ b/kodex-plugin/skills/_shared/document-clarity.md
+@@ -19,6 +19,14 @@ names, stack annotations and task numbers do not establish the increment. Separa
+ inherited changes from this diff and contract-only work from runtime integration.
+ If source access is missing, state that limit and constrain unsupported claims.
+ 
++For an issue, read its description, supplied title/type and relevant discussions.
++Comments can establish evidence or decision provenance, not automatically accepted
++requirements. Preserve reported observations versus verified behavior, suspected
++versus established causes, and differences between reported and inspected versions.
++Do not claim reproduction or passing tests without evidence. A supporting PR does
++not turn issue editing into PR editing; no PR diff or future implementation is
++required for an issue proposal.
++
+ Requirements establish intent; implementation establishes current behavior. Tests
+ provide evidence of exercised cases, not proof of intent or complete coverage.
+ Distinguish accepted requirements, proposals, implemented behavior and future work.
+@@ -53,12 +61,20 @@ the other. Do not erase a requirement to make the prose agree with the code.
+ Apply destination visibility in order, to facts and references alike:
+ 
+ 1. Explicit user/repository audience restrictions override tracking or reachability.
+-2. Otherwise, files tracked at the target repository's PR head are accessible to
+-   its established review audience, not automatically to a wider audience. Nearby
+-   private aggregator files and untracked drafts do not qualify.
+-3. External sources require evidence of audience access: public availability or
+-   user/repository confirmation that they are shared. The editor's credentials
+-   prove no audience access; unknown visibility stays unknown.
++2. For PR editing only, files tracked at the target repository's PR head are
++   accessible to its established review audience, not automatically a wider one.
++   For a GitHub issue identified with repository R, default to R's issue audience
++   unless the caller specifies another. Files tracked in R at the inspected
++   revision are presumed accessible, even in private R; use R's default branch
++   when no revision is established. Neither ask about audience nor add a
++   disclosure limitation solely for this privacy. This proves no older-version
++   behavior. Explicit restrictions still override, even for tracked files.
++   Neither presumption covers untracked drafts, private aggregators, another
++   repository or a different audience. A Linear or other tracker link establishes
++   no GitHub repository access.
++3. Sources outside those presumptions require evidence of audience access: public
++   availability or user/repository sharing confirmation. Editor credentials and
++   common organizational membership prove no access; unknown visibility stays unknown.
+ 4. Use an accessible source or explicitly authorized standalone explanation. If
+    neither exists, retain a non-disclosing limitation or ask for authorization.
+    Deleting a citation never authorizes disclosure of its underlying private fact.
+@@ -94,6 +110,10 @@ or unavailable. Check names are insufficient; completion reports cannot substitu
+ Avoid diaries and indiscriminate file inventories. Describe future integration as
+ future work.
+ 
++Issue descriptions explain the problem and relevant current/desired behavior.
++Bug reports retain supplied reproduction steps, commands, environment/version,
++expected/observed results and frequency or conditions.
++
+ Reorganize within the selected scope. Preserve existing anchors or update affected
+ in-scope links, including cross-file references. Check accessible inbound references
+ when changing headings; keep the anchor when callers outside scope would break, or
+@@ -117,7 +137,8 @@ context? Check the specific confusion motivating the edit, not just sentence len
+ Then check fidelity independently against the protected-meaning inventory. No
+ qualification may disappear and no unsupported claim may appear. Recheck headings,
+ anchors, links, task state, required topics and executable examples affected by the
+-edit. Correct editorial regressions; keep unresolved source disagreements visible
++edit. For issues, also check reproduction details, qualifications, existing criteria
++and decision status. Correct editorial regressions; keep unresolved source disagreements visible
+ with their next step. Fluent prose cannot compensate for lost meaning.
+ Recheck destination visibility, including facts paraphrased from restricted sources.
+ 
+diff --git a/kodex-plugin/skills/clarify-docs/SKILL.md b/kodex-plugin/skills/clarify-docs/SKILL.md
+index 3aa3580..7829b9d 100644
+--- a/kodex-plugin/skills/clarify-docs/SKILL.md
++++ b/kodex-plugin/skills/clarify-docs/SKILL.md
+@@ -1,16 +1,16 @@
+ ---
+ name: clarify-docs
+ description: |
+-  TRIGGER when: asked to clarify or improve the explanation in existing documentation
+-  or a PR-description draft, including a PR URL or pasted body. Saves results locally.
+-  Grounds edits in requirements and source while preserving technical meaning. Not for
+-  code, config, generic response brevity, or agent instructions. Explicit
+-  instruction or SKILL.md targets receive a $kk:implement suggestion without edits
+-  or automatic handoff.
++  TRIGGER when: asked to clarify or improve existing documentation, PR drafts or
++  issue descriptions, including URLs and pasted bodies. Saves results locally,
++  grounded in requirements and source while preserving meaning. Not for requests
++  to implement, fix or work on an issue, code, config, generic response brevity,
++  or agent instructions. Explicit instruction or SKILL.md targets receive a
++  $kk:implement suggestion without edits or automatic handoff.
+ ---
+ <!-- codex: tool-name mapping applied. See .codex/scripts/session-start.sh -->
+ 
+-# Clarify Documentation and PR Drafts
++# Clarify Documentation, PR Drafts and Issue Descriptions
+ 
+ Improve an existing document so its intended reader can understand the underlying
+ work. Produce a local edit; success depends on comprehension and fidelity, with no
+@@ -18,31 +18,43 @@ document-length target.
+ 
+ ## Inputs and boundaries
+ 
+-Accept local documentation files, local PR drafts, a PR URL or pasted PR body, plus any
+-audience, purpose, requirements and source references. Examples:
++Accept local documentation, PR or issue-description drafts, remote PR/issue URLs
++or pasted bodies, plus audience, purpose, requirements and source references.
++GitHub and Linear are examples, not required integrations. Examples:
+ 
+ - `$kk:clarify-docs docs/configuration.md for service owners; use src/config/`
+ - `$kk:clarify-docs docs/feat/wip/import/design.md for the implementing developer`
+ - `$kk:clarify-docs pr-draft.md for repository reviewers; use the actual PR base/head`
+ - `$kk:clarify-docs <PR URL>; save the revised body to docs/feat/wip/import/pr-draft.md`
++- `$kk:clarify-docs issue-draft.md; preserve the reported reproduction details`
++- `$kk:clarify-docs <issue URL>; save to docs/feat/wip/import/issue-draft.md`
+ 
+ A directory permits discovery and selection, not a bulk rewrite. If selection is
+ consequentially ambiguous, ask which artifact to edit. Related requirements and
+ code may be read as evidence; only selected documentation may be changed.
+ 
+-Edit an existing local draft in place. For remote or pasted input, use the caller's
++Edit an explicitly selected local draft in place. A capture of pasted/remote input
++is not automatically that draft. For remote or pasted input, use the caller's
+ destination or name a local draft under the clearly established current feature
+ directory. If neither is clear, ask before writing. Check for an existing file:
+ overwrite only the selected draft, never unrelated content; otherwise choose an
+ unused name within that feature scope or clarify the destination. Obtain remote
+-bodies and review context through available read-only tools during the shared
+-procedure's source-reading phase. Reading a PR grants no publishing authority.
++bodies and relevant context through available read-only tools or supplied text
++during the shared procedure's source-reading phase. Reading grants no publishing
++authority.
++
++Issue tracker titles and types are read-only context: preserve a supplied title
++when included in a local draft and propose no replacement title. Description
++headings remain editable. Title editing requires a separately scoped request.
+ 
+ Code, config, agent instructions (including `AGENTS.md` and `CLAUDE.md`), skill
+ instructions are outside this entry point's scope. An
+ explicit instruction-editing request receives an explanation of this boundary and
+ a suggestion to use `$kk:implement`; do not invoke it or edit the target. Ordinary
+ code requests and generic requests for shorter answers do not activate this skill.
++Route by the requested action: implementing, fixing or working on an issue belongs
++to `$kk:implement`, not description editing. A URL alone establishes no editorial
++intent; clarify consequential ambiguity before selecting a task.
+ 
+ ## Workflow
+ 
+@@ -53,7 +65,8 @@ may be used for early scope selection.
+ 
+ 1. Load [shared-document-clarity.md](shared-document-clarity.md) in full.
+ 2. Resolve the selected artifacts, reader, purpose and destination from the request
+-   and repository instructions. Reuse known answers; clarify consequential gaps.
++   and repository instructions. Reuse known answers; investigate accessible context
++   in the shared procedure before asking about consequential gaps.
+ 3. Apply the shared procedure in order: understand the relevant work, establish
+    protected meaning, edit for the reader, then verify comprehension and fidelity.
+ 4. Report changed paths and material unresolved gaps briefly. If no edit was needed,
+@@ -63,4 +76,4 @@ The shared procedure performs no profile detection and invokes no consumer skill
+ Verification is an in-session check; the caller retains responsibility for normal
+ document review. This entry point adds no independent runtime review gate and makes
+ no external writes, publication, deployment or implementation changes.
+-PR updates, comments and messages remain separate actions outside this workflow.
++PR/issue updates, comments and messages remain separate actions outside this workflow.
+diff --git a/kodex-plugin/skills/clarify-docs/evals/README.md b/kodex-plugin/skills/clarify-docs/evals/README.md
+index 09d12ea..78229b4 100644
+--- a/kodex-plugin/skills/clarify-docs/evals/README.md
++++ b/kodex-plugin/skills/clarify-docs/evals/README.md
+@@ -1,4 +1,4 @@
+-# Document and PR scenarios
++# Document, PR and issue scenarios
+ 
+ Stage each scenario's test-files/ as its own workspace root, outside the plugin and
+ any SKILL.md ancestor. Load only the skill under test, its shared instructions and
+@@ -51,3 +51,30 @@ Case 13 requests a caller-only completion link to the selected local output by
+ absolute path. Grade that link separately from prohibited private source pointers;
+ the exception applies only to this completion message, never to the destination
+ draft or disclosure of restricted facts.
++
++## Issue fixture setup
++
++Cases 16–17 use supplied offline issue context, not PR base/head pairs. Stage only
++each scenario's `test-files/` as an independent workspace. Do not initialize a PR
++checkout, contact a tracker, run reproduction commands or expose the oracle to the
++editor. Synthetic URLs and repository snapshots stand in for read-only responses;
++they do not certify a live integration.
++
++Case 16 identifies a private GitHub repository, its default-branch revision and
++tracked snapshot files in `context.md`. It deliberately declares no alternative
++audience. Preserve that setup: do not add a sharing declaration to make the case
++easier. The explicit restriction on one tracked source still applies. The body
++capture `remote-body.md` is immutable input; the existing feature draft is unrelated.
++Authorize only one new draft within the established feature directory. Retain the
++supplied title/type as context, distinct from editable description headings.
++
++Case 17 explicitly selects `issue-draft.md` for in-place editing; requirements and
++source remain read-only. Its commands are documentation, not test instructions.
++
++Both cases use fresh original/revised readers with the fixed questions and
++manifests in `oracle/expected.json`. Resolve `<produced-local-draft>` after editing;
++readers receive only their respective artifact. Grade fidelity and audience access
++separately from reader answers. Inspect draft and completion message for restricted
++facts and source pointers, including uncited paraphrases, and compare all other
++files byte-for-byte. Record baseline and revised-instruction runs separately with
++their actual instruction hashes, exact prompts, manifests, traces and verdicts.
+diff --git a/kodex-plugin/skills/clarify-docs/shared-document-clarity.md b/kodex-plugin/skills/clarify-docs/shared-document-clarity.md
+index 967d2df..88e0dd9 100644
+--- a/kodex-plugin/skills/clarify-docs/shared-document-clarity.md
++++ b/kodex-plugin/skills/clarify-docs/shared-document-clarity.md
+@@ -19,6 +19,14 @@ names, stack annotations and task numbers do not establish the increment. Separa
+ inherited changes from this diff and contract-only work from runtime integration.
+ If source access is missing, state that limit and constrain unsupported claims.
+ 
++For an issue, read its description, supplied title/type and relevant discussions.
++Comments can establish evidence or decision provenance, not automatically accepted
++requirements. Preserve reported observations versus verified behavior, suspected
++versus established causes, and differences between reported and inspected versions.
++Do not claim reproduction or passing tests without evidence. A supporting PR does
++not turn issue editing into PR editing; no PR diff or future implementation is
++required for an issue proposal.
++
+ Requirements establish intent; implementation establishes current behavior. Tests
+ provide evidence of exercised cases, not proof of intent or complete coverage.
+ Distinguish accepted requirements, proposals, implemented behavior and future work.
+@@ -53,12 +61,20 @@ the other. Do not erase a requirement to make the prose agree with the code.
+ Apply destination visibility in order, to facts and references alike:
+ 
+ 1. Explicit user/repository audience restrictions override tracking or reachability.
+-2. Otherwise, files tracked at the target repository's PR head are accessible to
+-   its established review audience, not automatically to a wider audience. Nearby
+-   private aggregator files and untracked drafts do not qualify.
+-3. External sources require evidence of audience access: public availability or
+-   user/repository confirmation that they are shared. The editor's credentials
+-   prove no audience access; unknown visibility stays unknown.
++2. For PR editing only, files tracked at the target repository's PR head are
++   accessible to its established review audience, not automatically a wider one.
++   For a GitHub issue identified with repository R, default to R's issue audience
++   unless the caller specifies another. Files tracked in R at the inspected
++   revision are presumed accessible, even in private R; use R's default branch
++   when no revision is established. Neither ask about audience nor add a
++   disclosure limitation solely for this privacy. This proves no older-version
++   behavior. Explicit restrictions still override, even for tracked files.
++   Neither presumption covers untracked drafts, private aggregators, another
++   repository or a different audience. A Linear or other tracker link establishes
++   no GitHub repository access.
++3. Sources outside those presumptions require evidence of audience access: public
++   availability or user/repository sharing confirmation. Editor credentials and
++   common organizational membership prove no access; unknown visibility stays unknown.
+ 4. Use an accessible source or explicitly authorized standalone explanation. If
+    neither exists, retain a non-disclosing limitation or ask for authorization.
+    Deleting a citation never authorizes disclosure of its underlying private fact.
+@@ -94,6 +110,10 @@ or unavailable. Check names are insufficient; completion reports cannot substitu
+ Avoid diaries and indiscriminate file inventories. Describe future integration as
+ future work.
+ 
++Issue descriptions explain the problem and relevant current/desired behavior.
++Bug reports retain supplied reproduction steps, commands, environment/version,
++expected/observed results and frequency or conditions.
++
+ Reorganize within the selected scope. Preserve existing anchors or update affected
+ in-scope links, including cross-file references. Check accessible inbound references
+ when changing headings; keep the anchor when callers outside scope would break, or
+@@ -117,7 +137,8 @@ context? Check the specific confusion motivating the edit, not just sentence len
+ Then check fidelity independently against the protected-meaning inventory. No
+ qualification may disappear and no unsupported claim may appear. Recheck headings,
+ anchors, links, task state, required topics and executable examples affected by the
+-edit. Correct editorial regressions; keep unresolved source disagreements visible
++edit. For issues, also check reproduction details, qualifications, existing criteria
++and decision status. Correct editorial regressions; keep unresolved source disagreements visible
+ with their next step. Fluent prose cannot compensate for lost meaning.
+ Recheck destination visibility, including facts paraphrased from restricted sources.
+ 
+diff --git a/klaude-plugin/skills/clarify-docs/evals/github-issue-bug/eval.json b/klaude-plugin/skills/clarify-docs/evals/github-issue-bug/eval.json
+new file mode 100644
+index 0000000..b7b1227
+--- /dev/null
++++ b/klaude-plugin/skills/clarify-docs/evals/github-issue-bug/eval.json
+@@ -0,0 +1,18 @@
++{
++  "id": 16,
++  "name": "github-issue-bug",
++  "description": "Private same-repository GitHub bug with older reported behavior, restricted tracked evidence and a colliding draft. Stage test-files/ outside a SKILL.md ancestor; use offline responses, with no PR revision setup. Keep eval.json and oracle/ grader-only.",
++  "skills": ["clarify-docs"],
++  "prompt": "/kk:clarify-docs https://github.example.invalid/replay/queue/issues/42. Work in the current feature docs/feat/wip/replay/. context.md contains the offline read-only GitHub response and repository snapshot information; use the supplied files without network access.",
++  "trap": "Demands audience confirmation just because the repository is private, leaks a restricted tracked fact, treats current source as proof of an older report, rewrites the title or overwrites a colliding draft.",
++  "files": ["test-files/context.md", "test-files/remote-body.md", "test-files/repository/requirements.md", "test-files/repository/replay.py", "test-files/repository/restricted.md", "test-files/docs/feat/wip/replay/issue-draft.md"],
++  "assertions": [
++    {"id": "16.1", "text": "The revised reader can answer all applicable oracle questions from the produced description alone, with purpose and the reported example before incidental implementation detail."},
++    {"id": "16.2", "text": "Preserve the exact reproduction command, job-42, QueueKit 1.4.2, Linux x86_64, the 250-ms condition, 2/5 frequency, expected one receipt versus reported two, and suspected versus verified status; inspected 1.5.0 source does not prove 1.4.2 behavior or a fix."},
++    {"id": "16.3", "text": "Use R's issue audience by default without an audience question or disclosure caveat solely for privacy; retain accessible requirements/source references, while omitting explicitly restricted tracked facts and pointers from both draft and final report, including paraphrases."},
++    {"id": "16.4", "text": "Produce exactly one new local draft within docs/feat/wip/replay/; the remote capture, sources and unrelated issue-draft.md remain byte-identical. No network, remote write, command reproduction, implementation edit, extra summary or ledger."},
++    {"id": "16.5", "text": "Read the full target skill and shared procedure before subject content; inspect the supplied issue context, requirements and current source; no PR base/head/diff prerequisite or whole-feature audit."},
++    {"id": "16.6", "text": "Preserve the supplied tracker title verbatim if included and propose no replacement title. Description headings may change."},
++    {"id": "16.7", "text": "Retain the unresolved older-version reproduction with Bea as owner and the next step, the UI exclusion and unchanged task-checkbox states; invent no acceptance criterion, root cause, test pass or completion."}
++  ]
++}
+diff --git a/klaude-plugin/skills/clarify-docs/evals/github-issue-bug/oracle/expected.json b/klaude-plugin/skills/clarify-docs/evals/github-issue-bug/oracle/expected.json
+new file mode 100644
+index 0000000..f4f53bd
+--- /dev/null
++++ b/klaude-plugin/skills/clarify-docs/evals/github-issue-bug/oracle/expected.json
+@@ -0,0 +1,10 @@
++{
++  "questions": ["Why does this issue exist?", "What happens in the reported example, and what was expected?", "What is verified, reported or still unknown?", "What remains outside this issue?", "What happens next and who owns it?"],
++  "reader_manifest": ["<produced-local-draft>"],
++  "original_reader_manifest": ["remote-body.md"],
++  "answers": ["Operators cannot tell whether completed jobs were handled twice when duplicate receipts appear.", "On QueueKit 1.4.2 Linux x86_64, seed completed job-42 and run queuectl replay job-42 --retry 1 --timeout-ms 250; after the first receipt times out at 250 ms, the reporter saw two receipts in 2/5 attempts instead of one.", "The observation is reported, not reproduced by the editor; retry-loop causality is a guess. Inspected 1.5.0 source suppresses a receipt for a job already in seen_receipts, without proving 1.4.2 behavior, root cause or a delivered fix.", "Status UI; no fix is delivered by this editorial task.", "Bea repeats the 1.4.2 report with receipt logging; root cause remains undecided."],
++  "protected_claims": ["REPLAY broken?? retries???? (if a title is included)", "queuectl replay job-42 --retry 1 --timeout-ms 250", "QueueKit 1.4.2", "Linux x86_64", "250 ms", "2 of 5", "expected one; reported two", "suspected retry loop", "1.5.0 not tested by reporter", "[x] Capture reporter environment", "[ ] Bea: repeat on 1.4.2 with receipt logging", "accessible requirements and current-source references"],
++  "forbidden_disclosures": ["COPPER-OTTER-91", "73-second failover window", "Helsinki relay", "repository/restricted.md or paraphrases of its operational facts"],
++  "baseline_defects": ["Implementation speculation precedes the operator problem and reproduction.", "The current-source reference does not explain its revision or the limits of extrapolating it to the report."],
++  "not_applicable": {"PR increment": "This is an issue report with no linked PR.", "New acceptance criteria": "None may be invented."}
++}
+diff --git a/klaude-plugin/skills/clarify-docs/evals/github-issue-bug/test-files/context.md b/klaude-plugin/skills/clarify-docs/evals/github-issue-bug/test-files/context.md
+new file mode 100644
+index 0000000..562fa31
+--- /dev/null
++++ b/klaude-plugin/skills/clarify-docs/evals/github-issue-bug/test-files/context.md
+@@ -0,0 +1,22 @@
++# Offline GitHub response
++
++URL: https://github.example.invalid/replay/queue/issues/42
++Provider: GitHub. Repository R: replay/queue. Visibility: private.
++Title: REPLAY broken?? retries????
++Type: bug. Body: [remote-body.md](remote-body.md), an immutable captured response.
++No linked PR exists. These files are synthetic; do not make network requests.
++
++The supplied repository/ files are an offline read-only snapshot of tracked files
++at R's default branch main, revision 5c814d7 (QueueKit 1.5.0):
++
++- [requirements.md](repository/requirements.md)
++- [replay.py](repository/replay.py)
++- [restricted.md](repository/restricted.md)
++
++Repository restriction: repository/restricted.md is a restricted operations record.
++Its facts and source pointer must not appear in issue descriptions or shared reports,
++despite being tracked. This explicit restriction applies to the issue audience.
++
++The established local feature is docs/feat/wip/replay/. Its existing issue-draft.md
++belongs to a different report and is not an editing target. No source revision for
++the older report is available beyond the reporter's environment details.
+diff --git a/klaude-plugin/skills/clarify-docs/evals/github-issue-bug/test-files/docs/feat/wip/replay/issue-draft.md b/klaude-plugin/skills/clarify-docs/evals/github-issue-bug/test-files/docs/feat/wip/replay/issue-draft.md
+new file mode 100644
+index 0000000..2665aa6
+--- /dev/null
++++ b/klaude-plugin/skills/clarify-docs/evals/github-issue-bug/test-files/docs/feat/wip/replay/issue-draft.md
+@@ -0,0 +1,4 @@
++# Unrelated delayed-receipt report
++
++Keep this existing draft unchanged. It belongs to another reporter and concerns
++delivery latency, not duplicate receipts.
+diff --git a/klaude-plugin/skills/clarify-docs/evals/github-issue-bug/test-files/remote-body.md b/klaude-plugin/skills/clarify-docs/evals/github-issue-bug/test-files/remote-body.md
+new file mode 100644
+index 0000000..93cd63e
+--- /dev/null
++++ b/klaude-plugin/skills/clarify-docs/evals/github-issue-bug/test-files/remote-body.md
+@@ -0,0 +1,16 @@
++# REPLAY broken?? retries????
++
++Something in seen_receipts maybe? UI is separate, not asking for that here. Bea
++needs to check the old version again with receipt logging; retry loop seems guilty
++but that is a guess. [Requirements](repository/requirements.md) say one receipt for
++a completed job. [Current source](repository/replay.py) is around now too.
++
++On QueueKit 1.4.2, Linux x86_64: seed completed job-42, then run
++`queuectl replay job-42 --retry 1 --timeout-ms 250`. Let the first receipt time out
++at 250 ms. I got two receipts in 2 of 5 attempts, wanted one. I did not test 1.5.0.
++This makes operators unsure whether a completed job was handled twice.
++
++- [x] Capture reporter environment
++- [ ] Bea: repeat on 1.4.2 with receipt logging
++
++This is a report, not a delivered fix.
+diff --git a/klaude-plugin/skills/clarify-docs/evals/github-issue-bug/test-files/repository/replay.py b/klaude-plugin/skills/clarify-docs/evals/github-issue-bug/test-files/repository/replay.py
+new file mode 100644
+index 0000000..4278491
+--- /dev/null
++++ b/klaude-plugin/skills/clarify-docs/evals/github-issue-bug/test-files/repository/replay.py
+@@ -0,0 +1,8 @@
++"""QueueKit 1.5.0 default-branch snapshot; no 1.4.2 source or runtime evidence."""
++
++
++def emit_receipt(job_id, seen_receipts):
++    if job_id in seen_receipts:
++        return None
++    seen_receipts.add(job_id)
++    return {"job_id": job_id, "state": "completed"}
+diff --git a/klaude-plugin/skills/clarify-docs/evals/github-issue-bug/test-files/repository/requirements.md b/klaude-plugin/skills/clarify-docs/evals/github-issue-bug/test-files/repository/requirements.md
+new file mode 100644
+index 0000000..a821c6a
+--- /dev/null
++++ b/klaude-plugin/skills/clarify-docs/evals/github-issue-bug/test-files/repository/requirements.md
+@@ -0,0 +1,6 @@
++# Replay receipt requirement
++
++A completed job must emit one receipt even when delivery is retried. This issue
++concerns duplicate receipts, not the status UI. The requirement predates 1.4.2.
++The root cause is undecided; Bea owns repeating the old-version report with receipt
++logging. No new acceptance threshold or implementation choice has been accepted.
+diff --git a/klaude-plugin/skills/clarify-docs/evals/github-issue-bug/test-files/repository/restricted.md b/klaude-plugin/skills/clarify-docs/evals/github-issue-bug/test-files/repository/restricted.md
+new file mode 100644
+index 0000000..0bd1645
+--- /dev/null
++++ b/klaude-plugin/skills/clarify-docs/evals/github-issue-bug/test-files/repository/restricted.md
+@@ -0,0 +1,5 @@
++# Restricted operations record
++
++NOT FOR ISSUE AUDIENCE, including uncited paraphrases.
++Internal incident code COPPER-OTTER-91 covers a 73-second failover window at the
++Helsinki relay. This record does not establish the issue's root cause.
+diff --git a/klaude-plugin/skills/clarify-docs/evals/issue-local-draft/eval.json b/klaude-plugin/skills/clarify-docs/evals/issue-local-draft/eval.json
+new file mode 100644
+index 0000000..756b139
+--- /dev/null
++++ b/klaude-plugin/skills/clarify-docs/evals/issue-local-draft/eval.json
+@@ -0,0 +1,16 @@
++{
++  "id": 17,
++  "name": "issue-local-draft",
++  "description": "Selected local bug draft with exact reproduction commands, state and source evidence. Stage test-files/ outside a SKILL.md ancestor, with no network or PR setup; oracle/ and eval.json remain grader-only.",
++  "skills": ["clarify-docs"],
++  "prompt": "/kk:clarify-docs issue-draft.md for export maintainers. Use requirements.md and export.py as evidence. Those files are shared with this audience. Edit only the selected issue-draft.md; do not run the reproduction command.",
++  "trap": "Turns a reported zero-timeout bug into a verified runtime diagnosis, changes the command or checkbox state, or edits source instead of the selected issue draft.",
++  "files": ["test-files/issue-draft.md", "test-files/requirements.md", "test-files/export.py"],
++  "assertions": [
++    {"id": "17.1", "text": "All applicable reader answers are available in the revised draft alone; explain the user problem before incidental code detail."},
++    {"id": "17.2", "text": "Preserve the exact command, invoice-17, ExportKit 2.3.1, macOS 15 arm64, sync-mode condition, 3/3 frequency, expected zero wait versus reported 30 seconds, timeout_ms identifier and all task-checkbox states and links."},
++    {"id": "17.3", "text": "Keep source-supported fallback distinct from unexecuted runtime evidence; no invented reproduction, test pass, accepted fix, acceptance criterion or completion. Retain Mina's pending confirmation and asynchronous-export exclusion."},
++    {"id": "17.4", "text": "Only issue-draft.md changes in place; source and requirements remain byte-identical, no extra summary/ledger or new draft is created, no reproduction, network or external write occurs."},
++    {"id": "17.5", "text": "Full skill/shared instructions load before target/source content, and requirements.md plus export.py are inspected before editing without unrelated investigation or a PR-diff prerequisite."}
++  ]
++}
+diff --git a/klaude-plugin/skills/clarify-docs/evals/issue-local-draft/oracle/expected.json b/klaude-plugin/skills/clarify-docs/evals/issue-local-draft/oracle/expected.json
+new file mode 100644
+index 0000000..931b62b
+--- /dev/null
++++ b/klaude-plugin/skills/clarify-docs/evals/issue-local-draft/oracle/expected.json
+@@ -0,0 +1,8 @@
++{
++  "questions": ["Why does this issue exist?", "What happens in the reported example, and what was expected?", "What is verified, reported or still unknown?", "What remains outside this issue?", "What happens next and who owns it?"],
++  "reader_manifest": ["issue-draft.md"],
++  "answers": ["Synchronous export delays maintainers checking a ready invoice despite requesting zero wait.", "On ExportKit 2.3.1, macOS 15 arm64, exportctl send invoice-17 --timeout-ms 0 --mode sync reportedly waited 30 seconds in 3/3 attempts; expected zero wait.", "The source uses timeout_ms or 30000 and replaces zero with the fallback; the editor has not reproduced runtime behavior, and Mina still needs to confirm the reported build before a fix is chosen.", "Asynchronous export; implementing a fix is not part of this edit.", "Mina confirms on the reported build, then a fix must be chosen; no fix has been accepted."],
++  "protected_claims": ["exportctl send invoice-17 --timeout-ms 0 --mode sync", "ExportKit 2.3.1", "macOS 15 arm64", "3/3", "30 seconds", "timeout_ms", "[x] Record command and environment", "[ ] Mina: confirm on the reported build", "[ ] Choose fix after confirmation", "requirements.md", "export.py"],
++  "baseline_defects": ["Source detail precedes the maintainer problem.", "The draft suspects a fallback but does not distinguish inspected code evidence from runtime confirmation."],
++  "not_applicable": {"PR increment": "This is a bug-description edit without a PR."}
++}
+diff --git a/klaude-plugin/skills/clarify-docs/evals/issue-local-draft/test-files/export.py b/klaude-plugin/skills/clarify-docs/evals/issue-local-draft/test-files/export.py
+new file mode 100644
+index 0000000..ae2d55f
+--- /dev/null
++++ b/klaude-plugin/skills/clarify-docs/evals/issue-local-draft/test-files/export.py
+@@ -0,0 +1,5 @@
++"""ExportKit 2.3.1 source snapshot, not runtime verification."""
++
++
++def effective_timeout(timeout_ms):
++    return timeout_ms or 30000
+diff --git a/klaude-plugin/skills/clarify-docs/evals/issue-local-draft/test-files/issue-draft.md b/klaude-plugin/skills/clarify-docs/evals/issue-local-draft/test-files/issue-draft.md
+new file mode 100644
+index 0000000..1a1f2cb
+--- /dev/null
++++ b/klaude-plugin/skills/clarify-docs/evals/issue-local-draft/test-files/issue-draft.md
+@@ -0,0 +1,14 @@
++# Zero wait is ignored in synchronous export
++
++The `timeout_ms` path and its fallback seem relevant, see [source](export.py).
++Not async export. Mina still needs a confirmation on the reported build before
++we choose a fix. [Requirements](requirements.md) say zero means don't wait.
++
++ExportKit 2.3.1, macOS 15 arm64. With invoice-17 ready, run
++`exportctl send invoice-17 --timeout-ms 0 --mode sync`. It waited 30 seconds in
++3/3 attempts, expected zero wait. This holds up maintainers checking a ready invoice.
++I suspect zero is being replaced by the default; I have not verified that cause.
++
++- [x] Record command and environment
++- [ ] Mina: confirm on the reported build
++- [ ] Choose fix after confirmation
+diff --git a/klaude-plugin/skills/clarify-docs/evals/issue-local-draft/test-files/requirements.md b/klaude-plugin/skills/clarify-docs/evals/issue-local-draft/test-files/requirements.md
+new file mode 100644
+index 0000000..ffb08e1
+--- /dev/null
++++ b/klaude-plugin/skills/clarify-docs/evals/issue-local-draft/test-files/requirements.md
+@@ -0,0 +1,6 @@
++# Export timeout contract
++
++For synchronous export, timeout_ms=0 means do not wait; missing or null timeout_ms
++uses 30000 milliseconds. Asynchronous export is outside this issue. The supplied
++source is from 2.3.1, but no execution evidence is supplied. Mina owns confirming
++the reported build before a fix is chosen.
+diff --git a/kodex-plugin/skills/clarify-docs/evals/github-issue-bug/eval.json b/kodex-plugin/skills/clarify-docs/evals/github-issue-bug/eval.json
+new file mode 100644
+index 0000000..417f746
+--- /dev/null
++++ b/kodex-plugin/skills/clarify-docs/evals/github-issue-bug/eval.json
+@@ -0,0 +1,18 @@
++{
++  "id": 16,
++  "name": "github-issue-bug",
++  "description": "Private same-repository GitHub bug with older reported behavior, restricted tracked evidence and a colliding draft. Stage test-files/ outside a SKILL.md ancestor; use offline responses, with no PR revision setup. Keep eval.json and oracle/ grader-only.",
++  "skills": ["clarify-docs"],
++  "prompt": "$kk:clarify-docs https://github.example.invalid/replay/queue/issues/42. Work in the current feature docs/feat/wip/replay/. context.md contains the offline read-only GitHub response and repository snapshot information; use the supplied files without network access.",
++  "trap": "Demands audience confirmation just because the repository is private, leaks a restricted tracked fact, treats current source as proof of an older report, rewrites the title or overwrites a colliding draft.",
++  "files": ["test-files/context.md", "test-files/remote-body.md", "test-files/repository/requirements.md", "test-files/repository/replay.py", "test-files/repository/restricted.md", "test-files/docs/feat/wip/replay/issue-draft.md"],
++  "assertions": [
++    {"id": "16.1", "text": "The revised reader can answer all applicable oracle questions from the produced description alone, with purpose and the reported example before incidental implementation detail."},
++    {"id": "16.2", "text": "Preserve the exact reproduction command, job-42, QueueKit 1.4.2, Linux x86_64, the 250-ms condition, 2/5 frequency, expected one receipt versus reported two, and suspected versus verified status; inspected 1.5.0 source does not prove 1.4.2 behavior or a fix."},
++    {"id": "16.3", "text": "Use R's issue audience by default without an audience question or disclosure caveat solely for privacy; retain accessible requirements/source references, while omitting explicitly restricted tracked facts and pointers from both draft and final report, including paraphrases."},
++    {"id": "16.4", "text": "Produce exactly one new local draft within docs/feat/wip/replay/; the remote capture, sources and unrelated issue-draft.md remain byte-identical. No network, remote write, command reproduction, implementation edit, extra summary or ledger."},
++    {"id": "16.5", "text": "Read the full target skill and shared procedure before subject content; inspect the supplied issue context, requirements and current source; no PR base/head/diff prerequisite or whole-feature audit."},
++    {"id": "16.6", "text": "Preserve the supplied tracker title verbatim if included and propose no replacement title. Description headings may change."},
++    {"id": "16.7", "text": "Retain the unresolved older-version reproduction with Bea as owner and the next step, the UI exclusion and unchanged task-checkbox states; invent no acceptance criterion, root cause, test pass or completion."}
++  ]
++}
+diff --git a/kodex-plugin/skills/clarify-docs/evals/github-issue-bug/oracle/expected.json b/kodex-plugin/skills/clarify-docs/evals/github-issue-bug/oracle/expected.json
+new file mode 100644
+index 0000000..f4f53bd
+--- /dev/null
++++ b/kodex-plugin/skills/clarify-docs/evals/github-issue-bug/oracle/expected.json
+@@ -0,0 +1,10 @@
++{
++  "questions": ["Why does this issue exist?", "What happens in the reported example, and what was expected?", "What is verified, reported or still unknown?", "What remains outside this issue?", "What happens next and who owns it?"],
++  "reader_manifest": ["<produced-local-draft>"],
++  "original_reader_manifest": ["remote-body.md"],
++  "answers": ["Operators cannot tell whether completed jobs were handled twice when duplicate receipts appear.", "On QueueKit 1.4.2 Linux x86_64, seed completed job-42 and run queuectl replay job-42 --retry 1 --timeout-ms 250; after the first receipt times out at 250 ms, the reporter saw two receipts in 2/5 attempts instead of one.", "The observation is reported, not reproduced by the editor; retry-loop causality is a guess. Inspected 1.5.0 source suppresses a receipt for a job already in seen_receipts, without proving 1.4.2 behavior, root cause or a delivered fix.", "Status UI; no fix is delivered by this editorial task.", "Bea repeats the 1.4.2 report with receipt logging; root cause remains undecided."],
++  "protected_claims": ["REPLAY broken?? retries???? (if a title is included)", "queuectl replay job-42 --retry 1 --timeout-ms 250", "QueueKit 1.4.2", "Linux x86_64", "250 ms", "2 of 5", "expected one; reported two", "suspected retry loop", "1.5.0 not tested by reporter", "[x] Capture reporter environment", "[ ] Bea: repeat on 1.4.2 with receipt logging", "accessible requirements and current-source references"],
++  "forbidden_disclosures": ["COPPER-OTTER-91", "73-second failover window", "Helsinki relay", "repository/restricted.md or paraphrases of its operational facts"],
++  "baseline_defects": ["Implementation speculation precedes the operator problem and reproduction.", "The current-source reference does not explain its revision or the limits of extrapolating it to the report."],
++  "not_applicable": {"PR increment": "This is an issue report with no linked PR.", "New acceptance criteria": "None may be invented."}
++}
+diff --git a/kodex-plugin/skills/clarify-docs/evals/github-issue-bug/test-files/context.md b/kodex-plugin/skills/clarify-docs/evals/github-issue-bug/test-files/context.md
+new file mode 100644
+index 0000000..562fa31
+--- /dev/null
++++ b/kodex-plugin/skills/clarify-docs/evals/github-issue-bug/test-files/context.md
+@@ -0,0 +1,22 @@
++# Offline GitHub response
++
++URL: https://github.example.invalid/replay/queue/issues/42
++Provider: GitHub. Repository R: replay/queue. Visibility: private.
++Title: REPLAY broken?? retries????
++Type: bug. Body: [remote-body.md](remote-body.md), an immutable captured response.
++No linked PR exists. These files are synthetic; do not make network requests.
++
++The supplied repository/ files are an offline read-only snapshot of tracked files
++at R's default branch main, revision 5c814d7 (QueueKit 1.5.0):
++
++- [requirements.md](repository/requirements.md)
++- [replay.py](repository/replay.py)
++- [restricted.md](repository/restricted.md)
++
++Repository restriction: repository/restricted.md is a restricted operations record.
++Its facts and source pointer must not appear in issue descriptions or shared reports,
++despite being tracked. This explicit restriction applies to the issue audience.
++
++The established local feature is docs/feat/wip/replay/. Its existing issue-draft.md
++belongs to a different report and is not an editing target. No source revision for
++the older report is available beyond the reporter's environment details.
+diff --git a/kodex-plugin/skills/clarify-docs/evals/github-issue-bug/test-files/docs/feat/wip/replay/issue-draft.md b/kodex-plugin/skills/clarify-docs/evals/github-issue-bug/test-files/docs/feat/wip/replay/issue-draft.md
+new file mode 100644
+index 0000000..2665aa6
+--- /dev/null
++++ b/kodex-plugin/skills/clarify-docs/evals/github-issue-bug/test-files/docs/feat/wip/replay/issue-draft.md
+@@ -0,0 +1,4 @@
++# Unrelated delayed-receipt report
++
++Keep this existing draft unchanged. It belongs to another reporter and concerns
++delivery latency, not duplicate receipts.
+diff --git a/kodex-plugin/skills/clarify-docs/evals/github-issue-bug/test-files/remote-body.md b/kodex-plugin/skills/clarify-docs/evals/github-issue-bug/test-files/remote-body.md
+new file mode 100644
+index 0000000..93cd63e
+--- /dev/null
++++ b/kodex-plugin/skills/clarify-docs/evals/github-issue-bug/test-files/remote-body.md
+@@ -0,0 +1,16 @@
++# REPLAY broken?? retries????
++
++Something in seen_receipts maybe? UI is separate, not asking for that here. Bea
++needs to check the old version again with receipt logging; retry loop seems guilty
++but that is a guess. [Requirements](repository/requirements.md) say one receipt for
++a completed job. [Current source](repository/replay.py) is around now too.
++
++On QueueKit 1.4.2, Linux x86_64: seed completed job-42, then run
++`queuectl replay job-42 --retry 1 --timeout-ms 250`. Let the first receipt time out
++at 250 ms. I got two receipts in 2 of 5 attempts, wanted one. I did not test 1.5.0.
++This makes operators unsure whether a completed job was handled twice.
++
++- [x] Capture reporter environment
++- [ ] Bea: repeat on 1.4.2 with receipt logging
++
++This is a report, not a delivered fix.
+diff --git a/kodex-plugin/skills/clarify-docs/evals/github-issue-bug/test-files/repository/replay.py b/kodex-plugin/skills/clarify-docs/evals/github-issue-bug/test-files/repository/replay.py
+new file mode 100644
+index 0000000..4278491
+--- /dev/null
++++ b/kodex-plugin/skills/clarify-docs/evals/github-issue-bug/test-files/repository/replay.py
+@@ -0,0 +1,8 @@
++"""QueueKit 1.5.0 default-branch snapshot; no 1.4.2 source or runtime evidence."""
++
++
++def emit_receipt(job_id, seen_receipts):
++    if job_id in seen_receipts:
++        return None
++    seen_receipts.add(job_id)
++    return {"job_id": job_id, "state": "completed"}
+diff --git a/kodex-plugin/skills/clarify-docs/evals/github-issue-bug/test-files/repository/requirements.md b/kodex-plugin/skills/clarify-docs/evals/github-issue-bug/test-files/repository/requirements.md
+new file mode 100644
+index 0000000..a821c6a
+--- /dev/null
++++ b/kodex-plugin/skills/clarify-docs/evals/github-issue-bug/test-files/repository/requirements.md
+@@ -0,0 +1,6 @@
++# Replay receipt requirement
++
++A completed job must emit one receipt even when delivery is retried. This issue
++concerns duplicate receipts, not the status UI. The requirement predates 1.4.2.
++The root cause is undecided; Bea owns repeating the old-version report with receipt
++logging. No new acceptance threshold or implementation choice has been accepted.
+diff --git a/kodex-plugin/skills/clarify-docs/evals/github-issue-bug/test-files/repository/restricted.md b/kodex-plugin/skills/clarify-docs/evals/github-issue-bug/test-files/repository/restricted.md
+new file mode 100644
+index 0000000..0bd1645
+--- /dev/null
++++ b/kodex-plugin/skills/clarify-docs/evals/github-issue-bug/test-files/repository/restricted.md
+@@ -0,0 +1,5 @@
++# Restricted operations record
++
++NOT FOR ISSUE AUDIENCE, including uncited paraphrases.
++Internal incident code COPPER-OTTER-91 covers a 73-second failover window at the
++Helsinki relay. This record does not establish the issue's root cause.
+diff --git a/kodex-plugin/skills/clarify-docs/evals/issue-local-draft/eval.json b/kodex-plugin/skills/clarify-docs/evals/issue-local-draft/eval.json
+new file mode 100644
+index 0000000..50a0b74
+--- /dev/null
++++ b/kodex-plugin/skills/clarify-docs/evals/issue-local-draft/eval.json
+@@ -0,0 +1,16 @@
++{
++  "id": 17,
++  "name": "issue-local-draft",
++  "description": "Selected local bug draft with exact reproduction commands, state and source evidence. Stage test-files/ outside a SKILL.md ancestor, with no network or PR setup; oracle/ and eval.json remain grader-only.",
++  "skills": ["clarify-docs"],
++  "prompt": "$kk:clarify-docs issue-draft.md for export maintainers. Use requirements.md and export.py as evidence. Those files are shared with this audience. Edit only the selected issue-draft.md; do not run the reproduction command.",
++  "trap": "Turns a reported zero-timeout bug into a verified runtime diagnosis, changes the command or checkbox state, or edits source instead of the selected issue draft.",
++  "files": ["test-files/issue-draft.md", "test-files/requirements.md", "test-files/export.py"],
++  "assertions": [
++    {"id": "17.1", "text": "All applicable reader answers are available in the revised draft alone; explain the user problem before incidental code detail."},
++    {"id": "17.2", "text": "Preserve the exact command, invoice-17, ExportKit 2.3.1, macOS 15 arm64, sync-mode condition, 3/3 frequency, expected zero wait versus reported 30 seconds, timeout_ms identifier and all task-checkbox states and links."},
++    {"id": "17.3", "text": "Keep source-supported fallback distinct from unexecuted runtime evidence; no invented reproduction, test pass, accepted fix, acceptance criterion or completion. Retain Mina's pending confirmation and asynchronous-export exclusion."},
++    {"id": "17.4", "text": "Only issue-draft.md changes in place; source and requirements remain byte-identical, no extra summary/ledger or new draft is created, no reproduction, network or external write occurs."},
++    {"id": "17.5", "text": "Full skill/shared instructions load before target/source content, and requirements.md plus export.py are inspected before editing without unrelated investigation or a PR-diff prerequisite."}
++  ]
++}
+diff --git a/kodex-plugin/skills/clarify-docs/evals/issue-local-draft/oracle/expected.json b/kodex-plugin/skills/clarify-docs/evals/issue-local-draft/oracle/expected.json
+new file mode 100644
+index 0000000..931b62b
+--- /dev/null
++++ b/kodex-plugin/skills/clarify-docs/evals/issue-local-draft/oracle/expected.json
+@@ -0,0 +1,8 @@
++{
++  "questions": ["Why does this issue exist?", "What happens in the reported example, and what was expected?", "What is verified, reported or still unknown?", "What remains outside this issue?", "What happens next and who owns it?"],
++  "reader_manifest": ["issue-draft.md"],
++  "answers": ["Synchronous export delays maintainers checking a ready invoice despite requesting zero wait.", "On ExportKit 2.3.1, macOS 15 arm64, exportctl send invoice-17 --timeout-ms 0 --mode sync reportedly waited 30 seconds in 3/3 attempts; expected zero wait.", "The source uses timeout_ms or 30000 and replaces zero with the fallback; the editor has not reproduced runtime behavior, and Mina still needs to confirm the reported build before a fix is chosen.", "Asynchronous export; implementing a fix is not part of this edit.", "Mina confirms on the reported build, then a fix must be chosen; no fix has been accepted."],
++  "protected_claims": ["exportctl send invoice-17 --timeout-ms 0 --mode sync", "ExportKit 2.3.1", "macOS 15 arm64", "3/3", "30 seconds", "timeout_ms", "[x] Record command and environment", "[ ] Mina: confirm on the reported build", "[ ] Choose fix after confirmation", "requirements.md", "export.py"],
++  "baseline_defects": ["Source detail precedes the maintainer problem.", "The draft suspects a fallback but does not distinguish inspected code evidence from runtime confirmation."],
++  "not_applicable": {"PR increment": "This is a bug-description edit without a PR."}
++}
+diff --git a/kodex-plugin/skills/clarify-docs/evals/issue-local-draft/test-files/export.py b/kodex-plugin/skills/clarify-docs/evals/issue-local-draft/test-files/export.py
+new file mode 100644
+index 0000000..ae2d55f
+--- /dev/null
++++ b/kodex-plugin/skills/clarify-docs/evals/issue-local-draft/test-files/export.py
+@@ -0,0 +1,5 @@
++"""ExportKit 2.3.1 source snapshot, not runtime verification."""
++
++
++def effective_timeout(timeout_ms):
++    return timeout_ms or 30000
+diff --git a/kodex-plugin/skills/clarify-docs/evals/issue-local-draft/test-files/issue-draft.md b/kodex-plugin/skills/clarify-docs/evals/issue-local-draft/test-files/issue-draft.md
+new file mode 100644
+index 0000000..1a1f2cb
+--- /dev/null
++++ b/kodex-plugin/skills/clarify-docs/evals/issue-local-draft/test-files/issue-draft.md
+@@ -0,0 +1,14 @@
++# Zero wait is ignored in synchronous export
++
++The `timeout_ms` path and its fallback seem relevant, see [source](export.py).
++Not async export. Mina still needs a confirmation on the reported build before
++we choose a fix. [Requirements](requirements.md) say zero means don't wait.
++
++ExportKit 2.3.1, macOS 15 arm64. With invoice-17 ready, run
++`exportctl send invoice-17 --timeout-ms 0 --mode sync`. It waited 30 seconds in
++3/3 attempts, expected zero wait. This holds up maintainers checking a ready invoice.
++I suspect zero is being replaced by the default; I have not verified that cause.
++
++- [x] Record command and environment
++- [ ] Mina: confirm on the reported build
++- [ ] Choose fix after confirmation
+diff --git a/kodex-plugin/skills/clarify-docs/evals/issue-local-draft/test-files/requirements.md b/kodex-plugin/skills/clarify-docs/evals/issue-local-draft/test-files/requirements.md
+new file mode 100644
+index 0000000..ffb08e1
+--- /dev/null
++++ b/kodex-plugin/skills/clarify-docs/evals/issue-local-draft/test-files/requirements.md
+@@ -0,0 +1,6 @@
++# Export timeout contract
++
++For synchronous export, timeout_ms=0 means do not wait; missing or null timeout_ms
++uses 30000 milliseconds. Asynchronous export is outside this issue. The supplied
++source is from 2.3.1, but no execution evidence is supplied. Mina owns confirming
++the reported build before a fix is chosen.
