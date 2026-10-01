@@ -12,8 +12,9 @@ Any file with one of these extensions in scope: `.js`, `.jsx`, `.mjs`, `.cjs`, `
 
 - `implement/` — pre-write gotchas consumed by `$kk:implement` (runtime validation, typing, async ownership, module/runtime boundaries, shared state, and React lifecycles where applicable).
 - `review-code/` — checklists consumed by `$kk:review-code` (security, SOLID, code-quality, removal-plan).
+- `test/` — validation preflight and testing guidance consumed by `$kk:test` (project-local tool discovery, runtime tests versus type checking, async assertions, isolation, and applicable UI/integration checks).
 
-Other phase subdirectories are not populated for this profile: generic per-phase behavior is sufficient. Implementation guidance loads for both standalone and plan-mode tasks through the shared profile loader; it does not require a separate invocation or additional detection signals.
+Other phase subdirectories are not populated for this profile: generic per-phase behavior is sufficient. Implementation guidance loads for both standalone and plan-mode tasks through the shared profile loader. Test guidance loads when `$kk:test` detects JS/TS source in scope, including verification invoked by `$kk:implement`; neither phase needs additional detection signals. Package metadata alone does not activate the profile.
 
 ## Looking up JS/TS dependencies
 

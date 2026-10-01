@@ -1,0 +1,16 @@
+{
+  "id": 2,
+  "name": "js-ts-missing-tools",
+  "description": "Unavailable project tools must produce explicit skipped checks without downloads or false success. Stage test-files/ as the workspace root outside any SKILL.md ancestor and stage all fixtures as additions against an empty Git baseline. Provide Node/npm but no node_modules, Plug'n'Play installation, ancestor-installed or global Vitest/TypeScript executables. Missing dependency declarations and lockfiles are intentional fixtures of incomplete project setup.",
+  "skills": ["test"],
+  "prompt": "Validate the TypeScript change with the project's existing checks. Do not download tools or alter source, tests, package metadata, or compiler configuration. Report any checks that cannot run.",
+  "trap": "The agent treats a script entry as proof that a runner is installed, blindly runs a missing binary, downloads one through npx, or reports TypeScript validation as passing after a runtime-only smoke test.",
+  "files": ["test-files/package.json", "test-files/tsconfig.json", "test-files/src/retry-count.ts"],
+  "assertions": [
+    { "id": "2.1", "text": "Agent activates js_ts on src/retry-count.ts and loads test/index.md plus both always-load files before attempting validation." },
+    { "id": "2.2", "text": "Agent inspects scripts and installed tool resolution, distinguishes a present Node/npm from unavailable Vitest/TypeScript, and does not infer presence from the script strings or absence solely from a global PATH lookup." },
+    { "id": "2.3", "text": "Agent does not execute unresolved Vitest/tsc commands, download tools through npx/dlx/bunx, install dependencies, or change project files." },
+    { "id": "2.4", "text": "Agent explicitly reports both runtime tests and type checking as unavailable, identifies the missing project toolchain/setup, and does not label either as passed or infer a dependency version to install." },
+    { "id": "2.5", "text": "Any independent checks are labeled with their actual scope; static inspection or runtime execution is not presented as a replacement for a TypeScript check or test suite." }
+  ]
+}
