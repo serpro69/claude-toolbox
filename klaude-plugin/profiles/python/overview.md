@@ -2,7 +2,7 @@
 
 ## What this profile covers
 
-Idiomatic Python source code and stubs: type hints and `typing` usage, mutability and aliasing, context managers, exception hygiene, packaging boundaries, async idioms, testing/mocking pitfalls, and SOLID principles adapted to Python's duck-typed model. Implementation guidance respects the consumer project's supported Python versions and existing tools.
+Idiomatic Python source code and stubs: type hints and `typing` usage, mutability and aliasing, context managers, exception hygiene, packaging boundaries, async idioms, testing/mocking pitfalls, and SOLID principles adapted to Python's duck-typed model. Implementation and test guidance respect the consumer project's supported Python versions and existing tools.
 
 ## When it activates
 
@@ -12,8 +12,9 @@ Any file with a `.py` or `.pyi` extension in scope. See [DETECTION.md](DETECTION
 
 - [implement/](implement/index.md) — guidance consumed by `/kk:implement` before edits: project compatibility and idioms, type contracts, exceptions, and resource ownership. Async guidance loads only for concrete async constructs or async-runtime imports in target files or planned edits; the index defines the exact conditions.
 - `review-code/` — checklists consumed by `/kk:review-code` (security, SOLID, code-quality, removal-plan).
+- [test/](test/index.md) — guidance consumed by `/kk:test`: behavioral coverage, fixtures and mocks, project-aware runner/validator selection, environment availability, and accurate result reporting. Async testing guidance loads for the concrete code or configuration signals defined in the index.
 
-Other phase subdirectories are not populated for this profile; those phases use generic guidance. The implementation phase does not prescribe a package manager, linter, type checker, framework, or new minimum Python version.
+Other phase subdirectories are not populated for this profile; those phases use generic guidance. Neither implementation nor testing prescribes a package manager, linter, type checker, framework, or new minimum Python version. Test commands use the existing environment; missing tools and zero-test runs are reported without claiming complete verification.
 
 ## Looking up Python dependencies
 

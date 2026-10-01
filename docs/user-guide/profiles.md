@@ -18,7 +18,7 @@ The kk plugin ships per-domain profiles that make every workflow skill language-
 | **Kotlin** | Kotlin/JVM, Android, Gradle | `*.kt`, `*.kts`, `build.gradle.kts` |
 | **Kubernetes** | Helm charts, Kustomize, YAML manifests | `Chart.yaml`, `kustomization.yaml`, K8s resource kinds |
 | **K8s Operator** | kubebuilder, operator-sdk, controller-runtime | `PROJECT`, `config/crd/`, `controller-gen` in Makefile |
-| **Python** | Python implementation guidance and review checklists | `*.py`, `*.pyi` |
+| **Python** | Python implementation, testing, and review guidance | `*.py`, `*.pyi` |
 | **Skill MD** | Agent skill authoring (Claude Code, Codex) | `SKILL.md`, files under a `SKILL.md`-rooted ancestor |
 
 <!-- TODO: Reconcile the other language rows and detection examples below with their DETECTION.md files. Several metadata filenames are listed as triggers despite extension-only detection. This broader documentation audit is outside the Python implementation-phase addition. -->
@@ -51,6 +51,12 @@ Each profile populates phase-specific content for the skills that consume it:
 For Python tasks, `/kk:implement` loads guidance on project compatibility, idioms, typing, exceptions, and resource ownership before editing. Async guidance is conditional on concrete async constructs or async-runtime imports in target files or planned edits; mentions in comments or strings do not trigger it.
 
 The guidance applies to new `.py` files and `.pyi` stub changes as well as existing Python code. It follows the project's supported Python versions and existing tools. Packaging metadata alone does not activate the Python profile.
+
+## Python Testing Guidance
+
+For Python tasks, `/kk:test` loads behavioral testing guidance and a validator protocol before running checks. It follows the owning project's test command, environment, discovery settings, and configured quality gates. Pytest, unittest, and framework-specific entry points retain their existing role; the profile does not introduce a new toolchain.
+
+Async testing guidance loads for concrete async code or explicit async-test configuration. Missing environments, unavailable tools, skipped async tests, and zero executed tests are reported as verification gaps. Stub changes use the project's available type/stub checks and relevant runtime tests.
 
 ## Vendored Content
 

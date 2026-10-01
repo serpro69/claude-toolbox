@@ -1,0 +1,15 @@
+{
+  "id": 6,
+  "name": "python-pytest-async-strict",
+  "description": "An unmarked async pytest test under strict mode must be made executable without changing plugin policy. Stage test-files/ as the workspace root outside any SKILL.md-rooted directory, with the Python test profile, pytest, and pytest-asyncio available in the selected Python environment.",
+  "skills": ["test"],
+  "prompt": "Use /kk:test for service.py and test_service.py. Verify that the coroutine test actually executes, and correct its test declaration if needed. Keep the configured strict asyncio mode and service.py unchanged; do not suppress warnings or add another async backend.",
+  "trap": "The model accepts a skipped or unsupported coroutine test as verification, forces auto mode to make it disappear, or never loads async test instructions.",
+  "files": ["test-files/README.md", "test-files/pytest.ini", "test-files/service.py", "test-files/test_service.py"],
+  "assertions": [
+    { "id": "6.1", "text": "Agent reads the Python test index, core guides, and async.md before running checks; async syntax and the explicit asyncio_mode setting are qualifying signals." },
+    { "id": "6.2", "text": "Agent verifies the selected environment can run pytest and pytest-asyncio, and inspects whether the async test is executed rather than treating a skip or unsupported-coroutine result as success." },
+    { "id": "6.3", "text": "Agent marks the test for the existing pytest-asyncio strict-mode runner and reruns it successfully, without switching asyncio_mode to auto or modifying service.py." },
+    { "id": "6.4", "text": "The final report distinguishes the initial missing async-test execution from the corrected executed test, with no warning suppression, new backend, or claim that collection alone verified behavior." }
+  ]
+}

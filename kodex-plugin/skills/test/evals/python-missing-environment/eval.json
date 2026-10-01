@@ -1,0 +1,15 @@
+{
+  "id": 3,
+  "name": "python-missing-environment",
+  "description": "A missing project interpreter is reported before blind execution, even when another Python or pytest exists globally. Stage test-files/ as the workspace root outside any SKILL.md-rooted directory and do not create .venv/; the Python test profile must be available.",
+  "skills": ["test"],
+  "prompt": "Use $kk:test for app.py and tests/test_app.py, following README.md. This is a verification-only run: do not create environments, install packages, edit files, or use a different environment from the documented one. Report any validation gaps.",
+  "trap": "The model blindly invokes the missing .venv/bin/python, silently switches to global pytest or unittest, or describes unavailable tests as passed.",
+  "files": ["test-files/README.md", "test-files/app.py", "test-files/tests/test_app.py"],
+  "assertions": [
+    { "id": "3.1", "text": "Agent reads the Python test index, testing.md, and validators.md before attempting validation." },
+    { "id": "3.2", "text": "Agent checks whether .venv/bin/python exists and is executable before trying to invoke it; no blind missing-interpreter execution occurs." },
+    { "id": "3.3", "text": "Agent reports the documented project environment as unavailable, names the README setup prerequisite, and explicitly states runtime verification is incomplete." },
+    { "id": "3.4", "text": "Agent does not substitute a global runner or unittest discovery, install dependencies, create .venv, or modify files. Any independent non-runtime checks are labeled separately." }
+  ]
+}

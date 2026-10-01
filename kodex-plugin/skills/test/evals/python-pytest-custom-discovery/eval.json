@@ -1,0 +1,16 @@
+{
+  "id": 1,
+  "name": "python-pytest-custom-discovery",
+  "description": "Python test guidance must preserve pytest's custom discovery rules and verify that tests execute. Stage test-files/ as the workspace root outside any SKILL.md-rooted directory, with the Python test profile available. Provide pytest in the selected Python environment for this positive execution scenario.",
+  "skills": ["test"],
+  "prompt": "Use $kk:test for pricing.py and checks/check_prices.py. Run the existing suite using this project's configuration and report what executed. Do not change source, tests, or configuration.",
+  "trap": "The model defaults to tests/ or unittest discovery, bypasses pytest.ini, reports a zero-test run as success, or runs an interpreter that lacks the project runner.",
+  "files": ["test-files/pytest.ini", "test-files/pricing.py", "test-files/checks/check_prices.py"],
+  "assertions": [
+    { "id": "1.1", "text": "Agent activates python for the in-scope .py files and reads python/test/index.md, testing.md, and validators.md before running checks." },
+    { "id": "1.2", "text": "Agent checks the selected interpreter and pytest availability in that environment before running the suite; a global pytest binary alone is not treated as sufficient." },
+    { "id": "1.3", "text": "Agent respects pytest.ini's testpaths=checks and python_files=check_*.py, runs pytest from the staged project root with that configuration, and does not substitute unittest discovery." },
+    { "id": "1.4", "text": "The report names the actual command/environment and confirms that both configured tests executed successfully, rather than claiming success from collection or syntax checks alone." },
+    { "id": "1.5", "text": "Agent does not load async.md, change project files, or introduce unrelated linters or test frameworks." }
+  ]
+}

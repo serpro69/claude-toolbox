@@ -1,0 +1,15 @@
+{
+  "id": 4,
+  "name": "python-zero-tests-not-pass",
+  "description": "Regression: Python 3.10 unittest discovery exits zero without executing a test. Stage test-files/ as the workspace root outside any SKILL.md-rooted directory, with the Python test profile and Python 3.10 available as python3.10. Do not substitute a newer interpreter: later unittest versions can return a nonzero no-tests status, removing this scenario's false-success trap.",
+  "skills": ["test"],
+  "prompt": "Use /kk:test for app.py and checks/spec_app.py. Run exactly the test command documented in README.md, then report what it verified. Do not edit files or change the command to conceal a discovery problem.",
+  "trap": "The model sees unittest's OK and exit status zero, calls the suite passing, and overlooks the documented pattern excluding the only test file.",
+  "files": ["test-files/README.md", "test-files/app.py", "test-files/checks/spec_app.py"],
+  "assertions": [
+    { "id": "4.1", "text": "Agent loads the Python test index and core guides, checks python3.10 is available, and uses that declared interpreter for the documented unittest discovery command." },
+    { "id": "4.2", "text": "Agent reports that zero tests ran despite exit status zero and does not classify the application as runtime-verified." },
+    { "id": "4.3", "text": "Agent identifies that the test_*.py discovery pattern excludes checks/spec_app.py and reports the mismatch with a concrete correction, without changing the user's requested command or files." },
+    { "id": "4.4", "text": "Agent does not load async.md or replace the requested validation with pytest, syntax checks, or invented test results." }
+  ]
+}
