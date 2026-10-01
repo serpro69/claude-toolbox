@@ -1,0 +1,21 @@
+{
+  "id": 4,
+  "name": "js-ts-standalone-loads-implement-guidance",
+  "description": "A standalone JavaScript and TypeScript fix must load the js_ts implement guide before source inspection or editing, and apply its async and runtime-validation guidance without introducing a framework. Stage test-files/ as the workspace root outside any SKILL.md-rooted directory so skill-md does not activate through the host implement skill.",
+  "skills": ["implement"],
+  "prompt": "Fix src/map-values.mjs so mapValues(values, transform) resolves to the transformed values in input order and propagates a transform rejection. Also fix src/retry-count.ts so readRetryCount(value) returns any non-negative integer number including 0, returns 3 only for null or undefined, and throws for all other inputs. Keep the existing files and exports, and add no dependencies.",
+  "trap": "The agent recognizes two small fixes and edits immediately, remembers js_ts as a review-only profile, or claims a TypeScript assertion validates runtime input. Another failure is treating the always-loaded React section as a requirement to add React to framework-free utilities.",
+  "files": [
+    "test-files/src/map-values.mjs",
+    "test-files/src/retry-count.ts"
+  ],
+  "assertions": [
+    { "id": "4.1", "text": "Agent uses standalone mode and runs the standalone capy lookup, or explicitly reports unavailable capy tools or empty results, before editing." },
+    { "id": "4.2", "text": "Agent reads the known profiles' DETECTION.md files and activates js_ts via the .mjs and .ts extension content signals. In the staged workspace these fixtures activate no other profile." },
+    { "id": "4.3", "text": "Agent reads profiles/js_ts/implement/index.md and its always-load gotchas.md before inspecting source content or making the first edit; it does not skip the new phase because the task is small or js_ts previously contributed only review guidance." },
+    { "id": "4.4", "text": "mapValues resolves to transformed values, not promises, preserves input order, handles an empty array, and propagates a rejected transform rather than swallowing it or returning success-shaped partial results." },
+    { "id": "4.5", "text": "readRetryCount accepts 0 and other non-negative integers, defaults only null/undefined to 3, and rejects strings, booleans, objects, arrays, negative numbers, fractions, NaN, and infinities using runtime checks rather than assertions alone." },
+    { "id": "4.6", "text": "Agent preserves JavaScript in map-values.mjs and TypeScript in retry-count.ts, adds no dependency or React-specific code, and applies the guide's framework advice only when relevant." },
+    { "id": "4.7", "text": "Agent verifies the requested behaviors with available tools and explicitly reports any unavailable checks; it does not fetch a compiler or add a test framework solely to validate the fixtures." }
+  ]
+}
