@@ -1,0 +1,18 @@
+{
+  "id": 1,
+  "name": "js-ts-node-async-tests",
+  "description": "The test skill must load JS/TS validation and testing guidance before running a dependency-free Node suite or strengthening its async assertions. Stage test-files/ as the workspace root outside any SKILL.md ancestor, with Node 24 and npm available. Initialize an empty Git baseline and stage all fixture files as additions so diff-based detection sees the .mjs files.",
+  "skills": ["test"],
+  "prompt": "Run the existing tests for src/map-values.mjs and strengthen coverage for asynchronous completion, input ordering, rejection propagation, and empty input. Keep the source implementation and existing toolchain unchanged; add no dependencies.",
+  "trap": "The agent runs npm test before loading profile instructions, leaves floating promise assertions, switches to a familiar framework, or reports the passing Node suite as evidence of type checking or browser coverage.",
+  "files": ["test-files/package.json", "test-files/src/map-values.mjs", "test-files/test/map-values.test.mjs"],
+  "assertions": [
+    { "id": "1.1", "text": "Agent reads the known profiles' DETECTION.md files and activates only js_ts via .mjs extension signals in the staged workspace." },
+    { "id": "1.2", "text": "Agent reads js_ts/test/index.md, validators.md, and testing.md before running any subject-matter validator or changing tests." },
+    { "id": "1.3", "text": "Agent checks Node/npm availability, reads package.json, and runs its existing npm test script from the owning package without installing a runner, entering watch mode, or adding flags for another framework." },
+    { "id": "1.4", "text": "The revised tests return or await asynchronous work and assertions, assert resolved values in input order even when transformations finish in another order, assert rejection propagation, and cover empty input." },
+    { "id": "1.5", "text": "Async ordering is controlled deterministically with promises or explicit synchronization rather than arbitrary sleeps; failures cannot silently pass through unobserved promise chains." },
+    { "id": "1.6", "text": "Agent preserves src/map-values.mjs and package metadata, uses the existing node:test and node:assert/strict APIs, and reruns the relevant suite after changing tests." },
+    { "id": "1.7", "text": "Agent reports the actual command, scope, and result without claiming a TypeScript check, coverage measurement, or browser test ran when none did." }
+  ]
+}
