@@ -1,0 +1,1010 @@
+diff --git a/klaude-plugin/skills/_shared/document-clarity.md b/klaude-plugin/skills/_shared/document-clarity.md
+index 3e8e610..1a95fd4 100644
+--- a/klaude-plugin/skills/_shared/document-clarity.md
++++ b/klaude-plugin/skills/_shared/document-clarity.md
+@@ -41,6 +41,11 @@ next step and known owner there or in an already-selected task document; identif
+ unknown owners.
+ Do not manufacture an answer, silently settle a product decision or create an extra
+ report to hide the gap. Continue independent, supported edits when possible.
++If an issue body is unavailable, explain the access limit and request text or an
++accessible source; write no purported revision. With a body but unavailable
++supporting evidence, continue supported edits at an established destination,
++preserving reported/proposed status and verification limits. An unresolved
++destination requires a question before writing.
+ 
+ ## Establish protected meaning
+ 
+diff --git a/klaude-plugin/skills/clarify-docs/evals/README.md b/klaude-plugin/skills/clarify-docs/evals/README.md
+index ae8933b..eeabc70 100644
+--- a/klaude-plugin/skills/clarify-docs/evals/README.md
++++ b/klaude-plugin/skills/clarify-docs/evals/README.md
+@@ -54,11 +54,12 @@ draft or disclosure of restricted facts.
+ 
+ ## Issue fixture setup
+ 
+-Cases 16–19 use supplied offline issue context, not PR base/head pairs. Stage only
++Cases 16–24 use supplied offline issue context, not PR base/head pairs. Stage only
+ each scenario's `test-files/` as an independent workspace. Do not initialize a PR
+-checkout, contact a tracker, run reproduction commands or expose the oracle to the
+-editor. Synthetic URLs and repository snapshots stand in for read-only responses;
+-they do not certify a live integration.
++checkout, contact a tracker or expose the oracle to the editor. Editing cases
++16–22 must not execute reproduction commands; execution cases 23/24 permit local
++source checks as described below. Synthetic URLs and repository snapshots stand
++in for read-only responses; they do not certify a live integration.
+ 
+ Case 16 identifies a private GitHub repository, its default-branch revision and
+ tracked snapshot files in `context.md`. It deliberately declares no alternative
+@@ -84,10 +85,32 @@ tracked internal material, and credential-only or unknown-access sources.
+ Its caller-only completion link is permitted only for the selected local output;
+ it does not permit private source pointers or facts in either output.
+ 
+-All four cases use fresh original/revised readers with the fixed questions and
++Cases 16–19 and 21 use fresh original/revised readers with the fixed questions and
+ manifests in `oracle/expected.json`. Resolve `<produced-local-draft>` after editing;
+ readers receive only their respective artifact. Grade fidelity and audience access
+ separately from reader answers. Inspect draft and completion message for restricted
+ facts and source pointers, including uncited paraphrases, and compare all other
+ files byte-for-byte. Record baseline and revised-instruction runs separately with
+ their actual instruction hashes, exact prompts, manifests, traces and verdicts.
++
++Case 20 supplies an immutable pasted-body capture and accessible requirements,
++without a destination or feature scope. Authorize no writes; grade the context
++inspection, destination question and unchanged files instead of a revised reader.
++
++Case 21 supplies an immutable pasted body and a definitive offline failure for its
++supporting source. Authorize only the new `drafts/issue-21.md`. The draft can clarify
++the reported behavior while retaining verification limits, Mina's source-retrieval
++step and the unassigned reproduction/cause owner. No source checkout is needed.
++
++Case 22 supplies an access failure with a cached title but no issue body or alternate
++copy. A destination is specified; it does not authorize inventing a description or
++writing a placeholder. Grade the request for body text/access and unchanged files;
++reader comparison is not applicable.
++
++Cases 23/24 use ordinary implement/fix requests and small source fixtures. Expose
++only the skill's description in the selection catalog; do not preload its body or
++shared procedure, tell the editor which skill to reject, or substitute a request
++to classify intent. Make the normal skill-loading path available so mistaken
++activation is observable in the trace. Permit normal source edits and local checks
++within the staged fixture. Grade editorial non-activation and unchanged issue text,
++not source implementation correctness. No original/revised readers are needed.
+diff --git a/kodex-plugin/skills/_shared/document-clarity.md b/kodex-plugin/skills/_shared/document-clarity.md
+index 3e8e610..1a95fd4 100644
+--- a/kodex-plugin/skills/_shared/document-clarity.md
++++ b/kodex-plugin/skills/_shared/document-clarity.md
+@@ -41,6 +41,11 @@ next step and known owner there or in an already-selected task document; identif
+ unknown owners.
+ Do not manufacture an answer, silently settle a product decision or create an extra
+ report to hide the gap. Continue independent, supported edits when possible.
++If an issue body is unavailable, explain the access limit and request text or an
++accessible source; write no purported revision. With a body but unavailable
++supporting evidence, continue supported edits at an established destination,
++preserving reported/proposed status and verification limits. An unresolved
++destination requires a question before writing.
+ 
+ ## Establish protected meaning
+ 
+diff --git a/kodex-plugin/skills/clarify-docs/evals/README.md b/kodex-plugin/skills/clarify-docs/evals/README.md
+index ae8933b..eeabc70 100644
+--- a/kodex-plugin/skills/clarify-docs/evals/README.md
++++ b/kodex-plugin/skills/clarify-docs/evals/README.md
+@@ -54,11 +54,12 @@ draft or disclosure of restricted facts.
+ 
+ ## Issue fixture setup
+ 
+-Cases 16–19 use supplied offline issue context, not PR base/head pairs. Stage only
++Cases 16–24 use supplied offline issue context, not PR base/head pairs. Stage only
+ each scenario's `test-files/` as an independent workspace. Do not initialize a PR
+-checkout, contact a tracker, run reproduction commands or expose the oracle to the
+-editor. Synthetic URLs and repository snapshots stand in for read-only responses;
+-they do not certify a live integration.
++checkout, contact a tracker or expose the oracle to the editor. Editing cases
++16–22 must not execute reproduction commands; execution cases 23/24 permit local
++source checks as described below. Synthetic URLs and repository snapshots stand
++in for read-only responses; they do not certify a live integration.
+ 
+ Case 16 identifies a private GitHub repository, its default-branch revision and
+ tracked snapshot files in `context.md`. It deliberately declares no alternative
+@@ -84,10 +85,32 @@ tracked internal material, and credential-only or unknown-access sources.
+ Its caller-only completion link is permitted only for the selected local output;
+ it does not permit private source pointers or facts in either output.
+ 
+-All four cases use fresh original/revised readers with the fixed questions and
++Cases 16–19 and 21 use fresh original/revised readers with the fixed questions and
+ manifests in `oracle/expected.json`. Resolve `<produced-local-draft>` after editing;
+ readers receive only their respective artifact. Grade fidelity and audience access
+ separately from reader answers. Inspect draft and completion message for restricted
+ facts and source pointers, including uncited paraphrases, and compare all other
+ files byte-for-byte. Record baseline and revised-instruction runs separately with
+ their actual instruction hashes, exact prompts, manifests, traces and verdicts.
++
++Case 20 supplies an immutable pasted-body capture and accessible requirements,
++without a destination or feature scope. Authorize no writes; grade the context
++inspection, destination question and unchanged files instead of a revised reader.
++
++Case 21 supplies an immutable pasted body and a definitive offline failure for its
++supporting source. Authorize only the new `drafts/issue-21.md`. The draft can clarify
++the reported behavior while retaining verification limits, Mina's source-retrieval
++step and the unassigned reproduction/cause owner. No source checkout is needed.
++
++Case 22 supplies an access failure with a cached title but no issue body or alternate
++copy. A destination is specified; it does not authorize inventing a description or
++writing a placeholder. Grade the request for body text/access and unchanged files;
++reader comparison is not applicable.
++
++Cases 23/24 use ordinary implement/fix requests and small source fixtures. Expose
++only the skill's description in the selection catalog; do not preload its body or
++shared procedure, tell the editor which skill to reject, or substitute a request
++to classify intent. Make the normal skill-loading path available so mistaken
++activation is observable in the trace. Permit normal source edits and local checks
++within the staged fixture. Grade editorial non-activation and unchanged issue text,
++not source implementation correctness. No original/revised readers are needed.
+diff --git a/kodex-plugin/skills/clarify-docs/shared-document-clarity.md b/kodex-plugin/skills/clarify-docs/shared-document-clarity.md
+index 3e8e610..1a95fd4 100644
+--- a/kodex-plugin/skills/clarify-docs/shared-document-clarity.md
++++ b/kodex-plugin/skills/clarify-docs/shared-document-clarity.md
+@@ -41,6 +41,11 @@ next step and known owner there or in an already-selected task document; identif
+ unknown owners.
+ Do not manufacture an answer, silently settle a product decision or create an extra
+ report to hide the gap. Continue independent, supported edits when possible.
++If an issue body is unavailable, explain the access limit and request text or an
++accessible source; write no purported revision. With a body but unavailable
++supporting evidence, continue supported edits at an established destination,
++preserving reported/proposed status and verification limits. An unresolved
++destination requires a question before writing.
+ 
+ ## Establish protected meaning
+ 
+diff --git a/klaude-plugin/skills/clarify-docs/evals/issue-fix-non-trigger/eval.json b/klaude-plugin/skills/clarify-docs/evals/issue-fix-non-trigger/eval.json
+new file mode 100644
+index 0000000..c15e0d2
+--- /dev/null
++++ b/klaude-plugin/skills/clarify-docs/evals/issue-fix-non-trigger/eval.json
+@@ -0,0 +1,32 @@
++{
++  "id": 24,
++  "name": "issue-fix-non-trigger",
++  "description": "An ordinary bug-fix request is offered the editorial skill description without its body. Stage outside any SKILL.md ancestor; source changes for the requested fix are permitted. Stage test-files/ as the workspace root. eval.json and oracle/ are grader-only; follow evals/README.md.",
++  "skills": [
++    "clarify-docs"
++  ],
++  "prompt": "Fix https://github.example.invalid/acme/export/issues/24. The offline report is in issue.md and the bug is in timeout.py.",
++  "trap": "The word issue or the tracker URL activates an editorial rewrite instead of normal bug handling.",
++  "files": [
++    "test-files/issue.md",
++    "test-files/timeout.py"
++  ],
++  "assertions": [
++    {
++      "id": "24.1",
++      "text": "Recognizes ordinary fix intent and allows normal source investigation/edits; does not select /kk:clarify-docs based on the issue URL."
++    },
++    {
++      "id": "24.2",
++      "text": "Does not load the clarify-docs SKILL.md body or shared document-clarity procedure; only its skill-selection description is exposed initially."
++    },
++    {
++      "id": "24.3",
++      "text": "Leaves issue.md byte-for-byte unchanged and creates no editorial issue draft, replacement title, summary or remote publication."
++    },
++    {
++      "id": "24.4",
++      "text": "Handles the staged fix request normally without network/external writes; source-fix correctness is outside this editorial-boundary grade."
++    }
++  ]
++}
+diff --git a/klaude-plugin/skills/clarify-docs/evals/issue-fix-non-trigger/oracle/expected.json b/klaude-plugin/skills/clarify-docs/evals/issue-fix-non-trigger/oracle/expected.json
+new file mode 100644
+index 0000000..fb6b1ef
+--- /dev/null
++++ b/klaude-plugin/skills/clarify-docs/evals/issue-fix-non-trigger/oracle/expected.json
+@@ -0,0 +1,10 @@
++{
++  "expected_action": "Ordinary bug handling is allowed; grade editorial non-activation and immutable issue only.",
++  "allowed_source_changes": [
++    "timeout.py"
++  ],
++  "not_applicable": {
++    "reader comparison": "No editorial output is requested.",
++    "implementation correctness": "This scenario grades routing, not correctness of the source fix."
++  }
++}
+diff --git a/klaude-plugin/skills/clarify-docs/evals/issue-fix-non-trigger/test-files/issue.md b/klaude-plugin/skills/clarify-docs/evals/issue-fix-non-trigger/test-files/issue.md
+new file mode 100644
+index 0000000..ff778a6
+--- /dev/null
++++ b/klaude-plugin/skills/clarify-docs/evals/issue-fix-non-trigger/test-files/issue.md
+@@ -0,0 +1,5 @@
++# Bug: zero timeout replaced
++
++Read-only offline issue for https://github.example.invalid/acme/export/issues/24.
++
++`resolve_timeout(0)` currently returns 30 but must return 0. Only `None` should select the default 30; positive values such as 5 must be preserved. Fix timeout.py. No external dependencies or live tracker access are needed.
+diff --git a/klaude-plugin/skills/clarify-docs/evals/issue-fix-non-trigger/test-files/timeout.py b/klaude-plugin/skills/clarify-docs/evals/issue-fix-non-trigger/test-files/timeout.py
+new file mode 100644
+index 0000000..1603aff
+--- /dev/null
++++ b/klaude-plugin/skills/clarify-docs/evals/issue-fix-non-trigger/test-files/timeout.py
+@@ -0,0 +1,2 @@
++def resolve_timeout(timeout):
++    return timeout or 30
+diff --git a/klaude-plugin/skills/clarify-docs/evals/issue-implement-non-trigger/eval.json b/klaude-plugin/skills/clarify-docs/evals/issue-implement-non-trigger/eval.json
+new file mode 100644
+index 0000000..e4cf295
+--- /dev/null
++++ b/klaude-plugin/skills/clarify-docs/evals/issue-implement-non-trigger/eval.json
+@@ -0,0 +1,32 @@
++{
++  "id": 23,
++  "name": "issue-implement-non-trigger",
++  "description": "An ordinary feature implementation request is offered the editorial skill description without its body. Stage outside any SKILL.md ancestor; source changes for the requested feature are permitted. Stage test-files/ as the workspace root. eval.json and oracle/ are grader-only; follow evals/README.md.",
++  "skills": [
++    "clarify-docs"
++  ],
++  "prompt": "Implement https://github.example.invalid/acme/greeting/issues/23. The offline issue is in issue.md; update greeting.py to support it.",
++  "trap": "An issue URL routes ordinary execution into description clarification, or the evaluator replaces the natural work request with classification-only instructions.",
++  "files": [
++    "test-files/issue.md",
++    "test-files/greeting.py"
++  ],
++  "assertions": [
++    {
++      "id": "23.1",
++      "text": "Treats the request as ordinary implementation work (source edits/checks are permitted); does not select /kk:clarify-docs merely because the request contains an issue URL."
++    },
++    {
++      "id": "23.2",
++      "text": "Does not load the clarify-docs SKILL.md body or shared document-clarity procedure; only its skill-selection description is exposed initially."
++    },
++    {
++      "id": "23.3",
++      "text": "Leaves issue.md byte-for-byte unchanged and creates no editorial issue draft, replacement title, summary or remote publication."
++    },
++    {
++      "id": "23.4",
++      "text": "Handles the staged implementation request normally without network/external writes; implementation correctness is outside this editorial-boundary grade."
++    }
++  ]
++}
+diff --git a/klaude-plugin/skills/clarify-docs/evals/issue-implement-non-trigger/oracle/expected.json b/klaude-plugin/skills/clarify-docs/evals/issue-implement-non-trigger/oracle/expected.json
+new file mode 100644
+index 0000000..56e9f33
+--- /dev/null
++++ b/klaude-plugin/skills/clarify-docs/evals/issue-implement-non-trigger/oracle/expected.json
+@@ -0,0 +1,10 @@
++{
++  "expected_action": "Ordinary implementation handling is allowed; grade editorial non-activation and immutable issue only.",
++  "allowed_source_changes": [
++    "greeting.py"
++  ],
++  "not_applicable": {
++    "reader comparison": "No editorial output is requested.",
++    "implementation correctness": "This scenario grades routing, not the proposed source implementation."
++  }
++}
+diff --git a/klaude-plugin/skills/clarify-docs/evals/issue-implement-non-trigger/test-files/greeting.py b/klaude-plugin/skills/clarify-docs/evals/issue-implement-non-trigger/test-files/greeting.py
+new file mode 100644
+index 0000000..2b3ee25
+--- /dev/null
++++ b/klaude-plugin/skills/clarify-docs/evals/issue-implement-non-trigger/test-files/greeting.py
+@@ -0,0 +1,2 @@
++def greet():
++    return "Hello, world!"
+diff --git a/klaude-plugin/skills/clarify-docs/evals/issue-implement-non-trigger/test-files/issue.md b/klaude-plugin/skills/clarify-docs/evals/issue-implement-non-trigger/test-files/issue.md
+new file mode 100644
+index 0000000..844500a
+--- /dev/null
++++ b/klaude-plugin/skills/clarify-docs/evals/issue-implement-non-trigger/test-files/issue.md
+@@ -0,0 +1,5 @@
++# Feature: optional greeting name
++
++Read-only offline issue for https://github.example.invalid/acme/greeting/issues/23.
++
++Allow `greet(name)` to return `Hello, <name>!`. Calling `greet()` without a name must continue returning `Hello, world!`. An empty string is a supplied name and should return `Hello, !`. No external dependencies are needed. Work only on the staged source; no live tracker access is available.
+diff --git a/klaude-plugin/skills/clarify-docs/evals/issue-pasted-missing-destination/eval.json b/klaude-plugin/skills/clarify-docs/evals/issue-pasted-missing-destination/eval.json
+new file mode 100644
+index 0000000..acea48e
+--- /dev/null
++++ b/klaude-plugin/skills/clarify-docs/evals/issue-pasted-missing-destination/eval.json
+@@ -0,0 +1,33 @@
++{
++  "id": 20,
++  "name": "issue-pasted-missing-destination",
++  "description": "A pasted issue capture has accessible supporting context but no selected destination or feature scope. Stage test-files/ as the workspace root. eval.json and oracle/ are grader-only; follow evals/README.md.",
++  "skills": [
++    "clarify-docs"
++  ],
++  "prompt": "/kk:clarify-docs the pasted issue description captured in pasted-body.md for maintainers. context.md contains the supplied context; work offline.",
++  "trap": "Treats an immutable paste capture as a selected editable draft or invents a feature directory instead of inspecting context and asking.",
++  "files": [
++    "test-files/context.md",
++    "test-files/pasted-body.md",
++    "test-files/requirements.md"
++  ],
++  "assertions": [
++    {
++      "id": "20.1",
++      "text": "Loads the skill and complete shared procedure before subject reads, then inspects pasted-body.md, context.md and the accessible requirements before asking about consequential gaps."
++    },
++    {
++      "id": "20.2",
++      "text": "Asks for a local destination or established feature scope before writing; does not invent a scope or silently select the pasted capture."
++    },
++    {
++      "id": "20.3",
++      "text": "Leaves every staged file byte-for-byte unchanged and creates no draft, summary, source change or external write."
++    },
++    {
++      "id": "20.4",
++      "text": "Does not invent a channel decision, acceptance criterion, implementation, PR context or verification; no network calls or execution of subject examples/tests."
++    }
++  ]
++}
+diff --git a/klaude-plugin/skills/clarify-docs/evals/issue-pasted-missing-destination/oracle/expected.json b/klaude-plugin/skills/clarify-docs/evals/issue-pasted-missing-destination/oracle/expected.json
+new file mode 100644
+index 0000000..a794851
+--- /dev/null
++++ b/klaude-plugin/skills/clarify-docs/evals/issue-pasted-missing-destination/oracle/expected.json
+@@ -0,0 +1,6 @@
++{
++  "expected_action": "Inspect all supplied context and ask for a destination or feature scope; do not write.",
++  "not_applicable": {
++    "reader comparison": "No authorized output destination exists."
++  }
++}
+diff --git a/klaude-plugin/skills/clarify-docs/evals/issue-pasted-missing-destination/test-files/context.md b/klaude-plugin/skills/clarify-docs/evals/issue-pasted-missing-destination/test-files/context.md
+new file mode 100644
+index 0000000..0debfd1
+--- /dev/null
++++ b/klaude-plugin/skills/clarify-docs/evals/issue-pasted-missing-destination/test-files/context.md
+@@ -0,0 +1,3 @@
++# Supplied context
++
++The caller pasted the body now captured in `pasted-body.md`; it is an immutable input capture, not a selected local draft. No destination or current feature directory has been established. `requirements.md` is the complete accessible requirement, approved for this description's maintainer audience. There is no tracker response or additional implementation evidence. Work offline.
+diff --git a/klaude-plugin/skills/clarify-docs/evals/issue-pasted-missing-destination/test-files/pasted-body.md b/klaude-plugin/skills/clarify-docs/evals/issue-pasted-missing-destination/test-files/pasted-body.md
+new file mode 100644
+index 0000000..8b045e6
+--- /dev/null
++++ b/klaude-plugin/skills/clarify-docs/evals/issue-pasted-missing-destination/test-files/pasted-body.md
+@@ -0,0 +1,3 @@
++# Export ready notification
++
++People wait at the exports screen because we only show ready there. A completion notice is wanted for manual exports, not scheduled ones. We have no channel decision yet; read the requirement.
+diff --git a/klaude-plugin/skills/clarify-docs/evals/issue-pasted-missing-destination/test-files/requirements.md b/klaude-plugin/skills/clarify-docs/evals/issue-pasted-missing-destination/test-files/requirements.md
+new file mode 100644
+index 0000000..62823b0
+--- /dev/null
++++ b/klaude-plugin/skills/clarify-docs/evals/issue-pasted-missing-destination/test-files/requirements.md
+@@ -0,0 +1,3 @@
++# Accepted scope
++
++Notify maintainers when a manual export becomes ready so they need not keep the exports screen open. Scheduled exports are excluded. Product owner Mina will decide the delivery channel; no channel or acceptance threshold has been accepted. Future implementation has not started.
+diff --git a/klaude-plugin/skills/clarify-docs/evals/issue-unavailable-body/eval.json b/klaude-plugin/skills/clarify-docs/evals/issue-unavailable-body/eval.json
+new file mode 100644
+index 0000000..67057ef
+--- /dev/null
++++ b/klaude-plugin/skills/clarify-docs/evals/issue-unavailable-body/eval.json
+@@ -0,0 +1,32 @@
++{
++  "id": 22,
++  "name": "issue-unavailable-body",
++  "description": "An issue URL has a supplied output path but its read-only response contains no body and no accessible alternate copy. Stage test-files/ as the workspace root. eval.json and oracle/ are grader-only; follow evals/README.md.",
++  "skills": [
++    "clarify-docs"
++  ],
++  "prompt": "/kk:clarify-docs https://github.example.invalid/acme/export/issues/22 for repository maintainers; save to drafts/issue-22.md. context.md contains the offline read-only response. Do not contact the network.",
++  "trap": "Treats a title or URL as enough evidence to fabricate a revised issue description, or tries live access despite the supplied failure.",
++  "files": [
++    "test-files/context.md",
++    "test-files/notes.md"
++  ],
++  "assertions": [
++    {
++      "id": "22.1",
++      "text": "Loads full editorial instructions before reading the supplied access response; investigates the accessible context without inventing a body or hidden alternate source."
++    },
++    {
++      "id": "22.2",
++      "text": "Explains that the issue body could not be retrieved and requests pasted text or an accessible copy/access."
++    },
++    {
++      "id": "22.3",
++      "text": "Writes no purported revision, placeholder draft, summary or implementation; leaves all files unchanged despite the supplied output path."
++    },
++    {
++      "id": "22.4",
++      "text": "Does not infer behavior, cause or criteria from the cached title/URL, suggest a replacement tracker title, attempt live network access or perform any external write."
++    }
++  ]
++}
+diff --git a/klaude-plugin/skills/clarify-docs/evals/issue-unavailable-body/oracle/expected.json b/klaude-plugin/skills/clarify-docs/evals/issue-unavailable-body/oracle/expected.json
+new file mode 100644
+index 0000000..7980e88
+--- /dev/null
++++ b/klaude-plugin/skills/clarify-docs/evals/issue-unavailable-body/oracle/expected.json
+@@ -0,0 +1,6 @@
++{
++  "expected_action": "Explain missing body/access limitation and request body text or accessible source, without creating any output.",
++  "not_applicable": {
++    "reader comparison": "No body exists to revise."
++  }
++}
+diff --git a/klaude-plugin/skills/clarify-docs/evals/issue-unavailable-body/test-files/context.md b/klaude-plugin/skills/clarify-docs/evals/issue-unavailable-body/test-files/context.md
+new file mode 100644
+index 0000000..54a717f
+--- /dev/null
++++ b/klaude-plugin/skills/clarify-docs/evals/issue-unavailable-body/test-files/context.md
+@@ -0,0 +1,8 @@
++# Offline read-only response
++
++Provider: synthetic GitHub response for https://github.example.invalid/acme/export/issues/22.
++Repository: acme/export (private).
++Requested resource: issue description.
++Result: access denied; no issue body was returned.
++Cached title only: Exports freeze mysteriously sometimes.
++No comments, source references, requirements or alternate body copy are accessible in this workspace. A selected local destination `drafts/issue-22.md` is available, but there is no description to revise. The failure is definitive for this offline run; do not attempt live network access.
+diff --git a/klaude-plugin/skills/clarify-docs/evals/issue-unavailable-body/test-files/notes.md b/klaude-plugin/skills/clarify-docs/evals/issue-unavailable-body/test-files/notes.md
+new file mode 100644
+index 0000000..823ff55
+--- /dev/null
++++ b/klaude-plugin/skills/clarify-docs/evals/issue-unavailable-body/test-files/notes.md
+@@ -0,0 +1,3 @@
++# Unrelated note
++
++No issue description is stored here.
+diff --git a/klaude-plugin/skills/clarify-docs/evals/issue-unavailable-source/eval.json b/klaude-plugin/skills/clarify-docs/evals/issue-unavailable-source/eval.json
+new file mode 100644
+index 0000000..5a7b044
+--- /dev/null
++++ b/klaude-plugin/skills/clarify-docs/evals/issue-unavailable-source/eval.json
+@@ -0,0 +1,45 @@
++{
++  "id": 21,
++  "name": "issue-unavailable-source",
++  "description": "A pasted bug report has a selected output destination but its supporting source cannot be retrieved. Stage test-files/ as the workspace root. eval.json and oracle/ are grader-only; follow evals/README.md.",
++  "skills": [
++    "clarify-docs"
++  ],
++  "prompt": "/kk:clarify-docs the pasted issue description captured in pasted-body.md for export maintainers; save the revision to drafts/issue-21.md. Use context.md as the offline access response.",
++  "trap": "Refuses all editing because support is unavailable, or promotes reported behavior and a proposed cause into verified findings.",
++  "files": [
++    "test-files/context.md",
++    "test-files/pasted-body.md",
++    "test-files/notes.md"
++  ],
++  "assertions": [
++    {
++      "id": "21.1",
++      "text": "Loads instructions before subject reads and inspects the available body/access context; does not demand PR base/head or invent missing source."
++    },
++    {
++      "id": "21.2",
++      "text": "Creates only drafts/issue-21.md with supported editorial improvements; capture and unrelated files remain byte-for-byte unchanged, with no extra summary or blanket refusal."
++    },
++    {
++      "id": "21.3",
++      "text": "Preserves reported versus verified behavior and suspected versus established cause, including the unavailable-source limitation; invents no reproduction, test result or chosen fix."
++    },
++    {
++      "id": "21.4",
++      "text": "Preserves the exact command, identifier, version/environment, 30-second observation, 2-of-3 frequency, immediate-return expectation, async exclusion and checklist states."
++    },
++    {
++      "id": "21.5",
++      "text": "Retains Mina's source-retrieval next step and the explicitly unknown reproduction/cause owner, with reproduction on the reported version and timeout inspection needed before choosing a fix."
++    },
++    {
++      "id": "21.6",
++      "text": "All revised-reader answers match the oracle's supported knowns/unknowns; repairs the declared orientation defect without fabrication."
++    },
++    {
++      "id": "21.7",
++      "text": "No network, external write, implementation change or execution of subject commands/tests; completion reports only the selected output and material gaps."
++    }
++  ]
++}
+diff --git a/klaude-plugin/skills/clarify-docs/evals/issue-unavailable-source/oracle/expected.json b/klaude-plugin/skills/clarify-docs/evals/issue-unavailable-source/oracle/expected.json
+new file mode 100644
+index 0000000..65de62d
+--- /dev/null
++++ b/klaude-plugin/skills/clarify-docs/evals/issue-unavailable-source/oracle/expected.json
+@@ -0,0 +1,39 @@
++{
++  "questions": [
++    "Why does this issue exist?",
++    "What happens in the reported example, and what was expected?",
++    "What is verified, reported or still unknown?",
++    "What remains outside this issue?",
++    "What happens next and who owns it?"
++  ],
++  "reader_manifest": [
++    "<produced-local-draft>"
++  ],
++  "original_reader_manifest": [
++    "pasted-body.md"
++  ],
++  "answers": [
++    "A delay blocks maintainers checking an invoice when they request zero wait.",
++    "On ExportKit 2.1 / Ubuntu 24.04, exportctl send invoice-21 --timeout-ms 0 --mode sync reportedly waited 30 seconds in 2 of 3 attempts; immediate return was expected.",
++    "The observation is reported and timeout fallback is only suspected. Source access is unavailable, reproduction/cause are unverified, and no fix is agreed.",
++    "Async export is excluded.",
++    "Mina obtains an accessible v2.1 source snapshot; the reproduction/cause owner is unassigned. Reproduce on the reported version and compare timeout handling before choosing a fix."
++  ],
++  "protected_claims": [
++    "exportctl send invoice-21 --timeout-ms 0 --mode sync",
++    "ExportKit 2.1",
++    "Ubuntu 24.04",
++    "30 seconds",
++    "2 of 3",
++    "[x] Record command and environment",
++    "[ ] Mina: obtain accessible v2.1 source",
++    "[ ] Assign reproduction/cause owner"
++  ],
++  "baseline_defects": [
++    "Speculation about a cause precedes the maintainer problem and reported behavior."
++  ],
++  "not_applicable": {
++    "PR increment": "This is an issue report without a PR.",
++    "Original-reader source access limitation": "The immutable original does not include the separate access response; do not require its reader to infer that response."
++  }
++}
+diff --git a/klaude-plugin/skills/clarify-docs/evals/issue-unavailable-source/test-files/context.md b/klaude-plugin/skills/clarify-docs/evals/issue-unavailable-source/test-files/context.md
+new file mode 100644
+index 0000000..b2cc7be
+--- /dev/null
++++ b/klaude-plugin/skills/clarify-docs/evals/issue-unavailable-source/test-files/context.md
+@@ -0,0 +1,3 @@
++# Offline access response
++
++`pasted-body.md` is an immutable capture of the caller's pasted bug description. The selected destination is the new file `drafts/issue-21.md`; no other file is selected for editing. The intended audience is export maintainers, who may receive all supplied body facts. The referenced source at https://source.example.invalid/export/revision/v2.1/export.py is unavailable (read-only response: access denied). No source, tests, logs, PR or alternate copy is accessible. Do not contact the network. Mina owns obtaining an accessible source snapshot for v2.1. The owner of reproduction and cause confirmation has not been assigned. `notes.md` is unrelated and must stay unchanged.
+diff --git a/klaude-plugin/skills/clarify-docs/evals/issue-unavailable-source/test-files/notes.md b/klaude-plugin/skills/clarify-docs/evals/issue-unavailable-source/test-files/notes.md
+new file mode 100644
+index 0000000..d0f2fd8
+--- /dev/null
++++ b/klaude-plugin/skills/clarify-docs/evals/issue-unavailable-source/test-files/notes.md
+@@ -0,0 +1,3 @@
++# Other work
++
++Keep this unrelated note unchanged.
+diff --git a/klaude-plugin/skills/clarify-docs/evals/issue-unavailable-source/test-files/pasted-body.md b/klaude-plugin/skills/clarify-docs/evals/issue-unavailable-source/test-files/pasted-body.md
+new file mode 100644
+index 0000000..ea4927d
+--- /dev/null
++++ b/klaude-plugin/skills/clarify-docs/evals/issue-unavailable-source/test-files/pasted-body.md
+@@ -0,0 +1,9 @@
++# Zero wait still waits
++
++Maybe timeout fallback. On ExportKit 2.1 / Ubuntu 24.04, I ran `exportctl send invoice-21 --timeout-ms 0 --mode sync` and got a 30-second wait, 2 of 3 tries. Expected immediate return when zero is requested. This delays checking the invoice. I suspect the zero gets replaced with a default but haven't confirmed the cause. Mina is getting the v2.1 source; nobody is assigned to reproduce or confirm cause. After it is available, reproduce on the reported version and compare timeout handling before choosing a fix. Async export is out of scope; no fix is agreed.
++
++- [x] Record command and environment
++- [ ] Mina: obtain accessible v2.1 source
++- [ ] Assign reproduction/cause owner
++
++Source reference: https://source.example.invalid/export/revision/v2.1/export.py
+diff --git a/kodex-plugin/skills/clarify-docs/evals/issue-fix-non-trigger/eval.json b/kodex-plugin/skills/clarify-docs/evals/issue-fix-non-trigger/eval.json
+new file mode 100644
+index 0000000..fcd70a2
+--- /dev/null
++++ b/kodex-plugin/skills/clarify-docs/evals/issue-fix-non-trigger/eval.json
+@@ -0,0 +1,32 @@
++{
++  "id": 24,
++  "name": "issue-fix-non-trigger",
++  "description": "An ordinary bug-fix request is offered the editorial skill description without its body. Stage outside any SKILL.md ancestor; source changes for the requested fix are permitted. Stage test-files/ as the workspace root. eval.json and oracle/ are grader-only; follow evals/README.md.",
++  "skills": [
++    "clarify-docs"
++  ],
++  "prompt": "Fix https://github.example.invalid/acme/export/issues/24. The offline report is in issue.md and the bug is in timeout.py.",
++  "trap": "The word issue or the tracker URL activates an editorial rewrite instead of normal bug handling.",
++  "files": [
++    "test-files/issue.md",
++    "test-files/timeout.py"
++  ],
++  "assertions": [
++    {
++      "id": "24.1",
++      "text": "Recognizes ordinary fix intent and allows normal source investigation/edits; does not select $kk:clarify-docs based on the issue URL."
++    },
++    {
++      "id": "24.2",
++      "text": "Does not load the clarify-docs SKILL.md body or shared document-clarity procedure; only its skill-selection description is exposed initially."
++    },
++    {
++      "id": "24.3",
++      "text": "Leaves issue.md byte-for-byte unchanged and creates no editorial issue draft, replacement title, summary or remote publication."
++    },
++    {
++      "id": "24.4",
++      "text": "Handles the staged fix request normally without network/external writes; source-fix correctness is outside this editorial-boundary grade."
++    }
++  ]
++}
+diff --git a/kodex-plugin/skills/clarify-docs/evals/issue-fix-non-trigger/oracle/expected.json b/kodex-plugin/skills/clarify-docs/evals/issue-fix-non-trigger/oracle/expected.json
+new file mode 100644
+index 0000000..fb6b1ef
+--- /dev/null
++++ b/kodex-plugin/skills/clarify-docs/evals/issue-fix-non-trigger/oracle/expected.json
+@@ -0,0 +1,10 @@
++{
++  "expected_action": "Ordinary bug handling is allowed; grade editorial non-activation and immutable issue only.",
++  "allowed_source_changes": [
++    "timeout.py"
++  ],
++  "not_applicable": {
++    "reader comparison": "No editorial output is requested.",
++    "implementation correctness": "This scenario grades routing, not correctness of the source fix."
++  }
++}
+diff --git a/kodex-plugin/skills/clarify-docs/evals/issue-fix-non-trigger/test-files/issue.md b/kodex-plugin/skills/clarify-docs/evals/issue-fix-non-trigger/test-files/issue.md
+new file mode 100644
+index 0000000..ff778a6
+--- /dev/null
++++ b/kodex-plugin/skills/clarify-docs/evals/issue-fix-non-trigger/test-files/issue.md
+@@ -0,0 +1,5 @@
++# Bug: zero timeout replaced
++
++Read-only offline issue for https://github.example.invalid/acme/export/issues/24.
++
++`resolve_timeout(0)` currently returns 30 but must return 0. Only `None` should select the default 30; positive values such as 5 must be preserved. Fix timeout.py. No external dependencies or live tracker access are needed.
+diff --git a/kodex-plugin/skills/clarify-docs/evals/issue-fix-non-trigger/test-files/timeout.py b/kodex-plugin/skills/clarify-docs/evals/issue-fix-non-trigger/test-files/timeout.py
+new file mode 100644
+index 0000000..1603aff
+--- /dev/null
++++ b/kodex-plugin/skills/clarify-docs/evals/issue-fix-non-trigger/test-files/timeout.py
+@@ -0,0 +1,2 @@
++def resolve_timeout(timeout):
++    return timeout or 30
+diff --git a/kodex-plugin/skills/clarify-docs/evals/issue-implement-non-trigger/eval.json b/kodex-plugin/skills/clarify-docs/evals/issue-implement-non-trigger/eval.json
+new file mode 100644
+index 0000000..f426651
+--- /dev/null
++++ b/kodex-plugin/skills/clarify-docs/evals/issue-implement-non-trigger/eval.json
+@@ -0,0 +1,32 @@
++{
++  "id": 23,
++  "name": "issue-implement-non-trigger",
++  "description": "An ordinary feature implementation request is offered the editorial skill description without its body. Stage outside any SKILL.md ancestor; source changes for the requested feature are permitted. Stage test-files/ as the workspace root. eval.json and oracle/ are grader-only; follow evals/README.md.",
++  "skills": [
++    "clarify-docs"
++  ],
++  "prompt": "Implement https://github.example.invalid/acme/greeting/issues/23. The offline issue is in issue.md; update greeting.py to support it.",
++  "trap": "An issue URL routes ordinary execution into description clarification, or the evaluator replaces the natural work request with classification-only instructions.",
++  "files": [
++    "test-files/issue.md",
++    "test-files/greeting.py"
++  ],
++  "assertions": [
++    {
++      "id": "23.1",
++      "text": "Treats the request as ordinary implementation work (source edits/checks are permitted); does not select $kk:clarify-docs merely because the request contains an issue URL."
++    },
++    {
++      "id": "23.2",
++      "text": "Does not load the clarify-docs SKILL.md body or shared document-clarity procedure; only its skill-selection description is exposed initially."
++    },
++    {
++      "id": "23.3",
++      "text": "Leaves issue.md byte-for-byte unchanged and creates no editorial issue draft, replacement title, summary or remote publication."
++    },
++    {
++      "id": "23.4",
++      "text": "Handles the staged implementation request normally without network/external writes; implementation correctness is outside this editorial-boundary grade."
++    }
++  ]
++}
+diff --git a/kodex-plugin/skills/clarify-docs/evals/issue-implement-non-trigger/oracle/expected.json b/kodex-plugin/skills/clarify-docs/evals/issue-implement-non-trigger/oracle/expected.json
+new file mode 100644
+index 0000000..56e9f33
+--- /dev/null
++++ b/kodex-plugin/skills/clarify-docs/evals/issue-implement-non-trigger/oracle/expected.json
+@@ -0,0 +1,10 @@
++{
++  "expected_action": "Ordinary implementation handling is allowed; grade editorial non-activation and immutable issue only.",
++  "allowed_source_changes": [
++    "greeting.py"
++  ],
++  "not_applicable": {
++    "reader comparison": "No editorial output is requested.",
++    "implementation correctness": "This scenario grades routing, not the proposed source implementation."
++  }
++}
+diff --git a/kodex-plugin/skills/clarify-docs/evals/issue-implement-non-trigger/test-files/greeting.py b/kodex-plugin/skills/clarify-docs/evals/issue-implement-non-trigger/test-files/greeting.py
+new file mode 100644
+index 0000000..2b3ee25
+--- /dev/null
++++ b/kodex-plugin/skills/clarify-docs/evals/issue-implement-non-trigger/test-files/greeting.py
+@@ -0,0 +1,2 @@
++def greet():
++    return "Hello, world!"
+diff --git a/kodex-plugin/skills/clarify-docs/evals/issue-implement-non-trigger/test-files/issue.md b/kodex-plugin/skills/clarify-docs/evals/issue-implement-non-trigger/test-files/issue.md
+new file mode 100644
+index 0000000..844500a
+--- /dev/null
++++ b/kodex-plugin/skills/clarify-docs/evals/issue-implement-non-trigger/test-files/issue.md
+@@ -0,0 +1,5 @@
++# Feature: optional greeting name
++
++Read-only offline issue for https://github.example.invalid/acme/greeting/issues/23.
++
++Allow `greet(name)` to return `Hello, <name>!`. Calling `greet()` without a name must continue returning `Hello, world!`. An empty string is a supplied name and should return `Hello, !`. No external dependencies are needed. Work only on the staged source; no live tracker access is available.
+diff --git a/kodex-plugin/skills/clarify-docs/evals/issue-pasted-missing-destination/eval.json b/kodex-plugin/skills/clarify-docs/evals/issue-pasted-missing-destination/eval.json
+new file mode 100644
+index 0000000..485c6c8
+--- /dev/null
++++ b/kodex-plugin/skills/clarify-docs/evals/issue-pasted-missing-destination/eval.json
+@@ -0,0 +1,33 @@
++{
++  "id": 20,
++  "name": "issue-pasted-missing-destination",
++  "description": "A pasted issue capture has accessible supporting context but no selected destination or feature scope. Stage test-files/ as the workspace root. eval.json and oracle/ are grader-only; follow evals/README.md.",
++  "skills": [
++    "clarify-docs"
++  ],
++  "prompt": "$kk:clarify-docs the pasted issue description captured in pasted-body.md for maintainers. context.md contains the supplied context; work offline.",
++  "trap": "Treats an immutable paste capture as a selected editable draft or invents a feature directory instead of inspecting context and asking.",
++  "files": [
++    "test-files/context.md",
++    "test-files/pasted-body.md",
++    "test-files/requirements.md"
++  ],
++  "assertions": [
++    {
++      "id": "20.1",
++      "text": "Loads the skill and complete shared procedure before subject reads, then inspects pasted-body.md, context.md and the accessible requirements before asking about consequential gaps."
++    },
++    {
++      "id": "20.2",
++      "text": "Asks for a local destination or established feature scope before writing; does not invent a scope or silently select the pasted capture."
++    },
++    {
++      "id": "20.3",
++      "text": "Leaves every staged file byte-for-byte unchanged and creates no draft, summary, source change or external write."
++    },
++    {
++      "id": "20.4",
++      "text": "Does not invent a channel decision, acceptance criterion, implementation, PR context or verification; no network calls or execution of subject examples/tests."
++    }
++  ]
++}
+diff --git a/kodex-plugin/skills/clarify-docs/evals/issue-pasted-missing-destination/oracle/expected.json b/kodex-plugin/skills/clarify-docs/evals/issue-pasted-missing-destination/oracle/expected.json
+new file mode 100644
+index 0000000..a794851
+--- /dev/null
++++ b/kodex-plugin/skills/clarify-docs/evals/issue-pasted-missing-destination/oracle/expected.json
+@@ -0,0 +1,6 @@
++{
++  "expected_action": "Inspect all supplied context and ask for a destination or feature scope; do not write.",
++  "not_applicable": {
++    "reader comparison": "No authorized output destination exists."
++  }
++}
+diff --git a/kodex-plugin/skills/clarify-docs/evals/issue-pasted-missing-destination/test-files/context.md b/kodex-plugin/skills/clarify-docs/evals/issue-pasted-missing-destination/test-files/context.md
+new file mode 100644
+index 0000000..0debfd1
+--- /dev/null
++++ b/kodex-plugin/skills/clarify-docs/evals/issue-pasted-missing-destination/test-files/context.md
+@@ -0,0 +1,3 @@
++# Supplied context
++
++The caller pasted the body now captured in `pasted-body.md`; it is an immutable input capture, not a selected local draft. No destination or current feature directory has been established. `requirements.md` is the complete accessible requirement, approved for this description's maintainer audience. There is no tracker response or additional implementation evidence. Work offline.
+diff --git a/kodex-plugin/skills/clarify-docs/evals/issue-pasted-missing-destination/test-files/pasted-body.md b/kodex-plugin/skills/clarify-docs/evals/issue-pasted-missing-destination/test-files/pasted-body.md
+new file mode 100644
+index 0000000..8b045e6
+--- /dev/null
++++ b/kodex-plugin/skills/clarify-docs/evals/issue-pasted-missing-destination/test-files/pasted-body.md
+@@ -0,0 +1,3 @@
++# Export ready notification
++
++People wait at the exports screen because we only show ready there. A completion notice is wanted for manual exports, not scheduled ones. We have no channel decision yet; read the requirement.
+diff --git a/kodex-plugin/skills/clarify-docs/evals/issue-pasted-missing-destination/test-files/requirements.md b/kodex-plugin/skills/clarify-docs/evals/issue-pasted-missing-destination/test-files/requirements.md
+new file mode 100644
+index 0000000..62823b0
+--- /dev/null
++++ b/kodex-plugin/skills/clarify-docs/evals/issue-pasted-missing-destination/test-files/requirements.md
+@@ -0,0 +1,3 @@
++# Accepted scope
++
++Notify maintainers when a manual export becomes ready so they need not keep the exports screen open. Scheduled exports are excluded. Product owner Mina will decide the delivery channel; no channel or acceptance threshold has been accepted. Future implementation has not started.
+diff --git a/kodex-plugin/skills/clarify-docs/evals/issue-unavailable-body/eval.json b/kodex-plugin/skills/clarify-docs/evals/issue-unavailable-body/eval.json
+new file mode 100644
+index 0000000..4c4b046
+--- /dev/null
++++ b/kodex-plugin/skills/clarify-docs/evals/issue-unavailable-body/eval.json
+@@ -0,0 +1,32 @@
++{
++  "id": 22,
++  "name": "issue-unavailable-body",
++  "description": "An issue URL has a supplied output path but its read-only response contains no body and no accessible alternate copy. Stage test-files/ as the workspace root. eval.json and oracle/ are grader-only; follow evals/README.md.",
++  "skills": [
++    "clarify-docs"
++  ],
++  "prompt": "$kk:clarify-docs https://github.example.invalid/acme/export/issues/22 for repository maintainers; save to drafts/issue-22.md. context.md contains the offline read-only response. Do not contact the network.",
++  "trap": "Treats a title or URL as enough evidence to fabricate a revised issue description, or tries live access despite the supplied failure.",
++  "files": [
++    "test-files/context.md",
++    "test-files/notes.md"
++  ],
++  "assertions": [
++    {
++      "id": "22.1",
++      "text": "Loads full editorial instructions before reading the supplied access response; investigates the accessible context without inventing a body or hidden alternate source."
++    },
++    {
++      "id": "22.2",
++      "text": "Explains that the issue body could not be retrieved and requests pasted text or an accessible copy/access."
++    },
++    {
++      "id": "22.3",
++      "text": "Writes no purported revision, placeholder draft, summary or implementation; leaves all files unchanged despite the supplied output path."
++    },
++    {
++      "id": "22.4",
++      "text": "Does not infer behavior, cause or criteria from the cached title/URL, suggest a replacement tracker title, attempt live network access or perform any external write."
++    }
++  ]
++}
+diff --git a/kodex-plugin/skills/clarify-docs/evals/issue-unavailable-body/oracle/expected.json b/kodex-plugin/skills/clarify-docs/evals/issue-unavailable-body/oracle/expected.json
+new file mode 100644
+index 0000000..7980e88
+--- /dev/null
++++ b/kodex-plugin/skills/clarify-docs/evals/issue-unavailable-body/oracle/expected.json
+@@ -0,0 +1,6 @@
++{
++  "expected_action": "Explain missing body/access limitation and request body text or accessible source, without creating any output.",
++  "not_applicable": {
++    "reader comparison": "No body exists to revise."
++  }
++}
+diff --git a/kodex-plugin/skills/clarify-docs/evals/issue-unavailable-body/test-files/context.md b/kodex-plugin/skills/clarify-docs/evals/issue-unavailable-body/test-files/context.md
+new file mode 100644
+index 0000000..54a717f
+--- /dev/null
++++ b/kodex-plugin/skills/clarify-docs/evals/issue-unavailable-body/test-files/context.md
+@@ -0,0 +1,8 @@
++# Offline read-only response
++
++Provider: synthetic GitHub response for https://github.example.invalid/acme/export/issues/22.
++Repository: acme/export (private).
++Requested resource: issue description.
++Result: access denied; no issue body was returned.
++Cached title only: Exports freeze mysteriously sometimes.
++No comments, source references, requirements or alternate body copy are accessible in this workspace. A selected local destination `drafts/issue-22.md` is available, but there is no description to revise. The failure is definitive for this offline run; do not attempt live network access.
+diff --git a/kodex-plugin/skills/clarify-docs/evals/issue-unavailable-body/test-files/notes.md b/kodex-plugin/skills/clarify-docs/evals/issue-unavailable-body/test-files/notes.md
+new file mode 100644
+index 0000000..823ff55
+--- /dev/null
++++ b/kodex-plugin/skills/clarify-docs/evals/issue-unavailable-body/test-files/notes.md
+@@ -0,0 +1,3 @@
++# Unrelated note
++
++No issue description is stored here.
+diff --git a/kodex-plugin/skills/clarify-docs/evals/issue-unavailable-source/eval.json b/kodex-plugin/skills/clarify-docs/evals/issue-unavailable-source/eval.json
+new file mode 100644
+index 0000000..88b2994
+--- /dev/null
++++ b/kodex-plugin/skills/clarify-docs/evals/issue-unavailable-source/eval.json
+@@ -0,0 +1,45 @@
++{
++  "id": 21,
++  "name": "issue-unavailable-source",
++  "description": "A pasted bug report has a selected output destination but its supporting source cannot be retrieved. Stage test-files/ as the workspace root. eval.json and oracle/ are grader-only; follow evals/README.md.",
++  "skills": [
++    "clarify-docs"
++  ],
++  "prompt": "$kk:clarify-docs the pasted issue description captured in pasted-body.md for export maintainers; save the revision to drafts/issue-21.md. Use context.md as the offline access response.",
++  "trap": "Refuses all editing because support is unavailable, or promotes reported behavior and a proposed cause into verified findings.",
++  "files": [
++    "test-files/context.md",
++    "test-files/pasted-body.md",
++    "test-files/notes.md"
++  ],
++  "assertions": [
++    {
++      "id": "21.1",
++      "text": "Loads instructions before subject reads and inspects the available body/access context; does not demand PR base/head or invent missing source."
++    },
++    {
++      "id": "21.2",
++      "text": "Creates only drafts/issue-21.md with supported editorial improvements; capture and unrelated files remain byte-for-byte unchanged, with no extra summary or blanket refusal."
++    },
++    {
++      "id": "21.3",
++      "text": "Preserves reported versus verified behavior and suspected versus established cause, including the unavailable-source limitation; invents no reproduction, test result or chosen fix."
++    },
++    {
++      "id": "21.4",
++      "text": "Preserves the exact command, identifier, version/environment, 30-second observation, 2-of-3 frequency, immediate-return expectation, async exclusion and checklist states."
++    },
++    {
++      "id": "21.5",
++      "text": "Retains Mina's source-retrieval next step and the explicitly unknown reproduction/cause owner, with reproduction on the reported version and timeout inspection needed before choosing a fix."
++    },
++    {
++      "id": "21.6",
++      "text": "All revised-reader answers match the oracle's supported knowns/unknowns; repairs the declared orientation defect without fabrication."
++    },
++    {
++      "id": "21.7",
++      "text": "No network, external write, implementation change or execution of subject commands/tests; completion reports only the selected output and material gaps."
++    }
++  ]
++}
+diff --git a/kodex-plugin/skills/clarify-docs/evals/issue-unavailable-source/oracle/expected.json b/kodex-plugin/skills/clarify-docs/evals/issue-unavailable-source/oracle/expected.json
+new file mode 100644
+index 0000000..65de62d
+--- /dev/null
++++ b/kodex-plugin/skills/clarify-docs/evals/issue-unavailable-source/oracle/expected.json
+@@ -0,0 +1,39 @@
++{
++  "questions": [
++    "Why does this issue exist?",
++    "What happens in the reported example, and what was expected?",
++    "What is verified, reported or still unknown?",
++    "What remains outside this issue?",
++    "What happens next and who owns it?"
++  ],
++  "reader_manifest": [
++    "<produced-local-draft>"
++  ],
++  "original_reader_manifest": [
++    "pasted-body.md"
++  ],
++  "answers": [
++    "A delay blocks maintainers checking an invoice when they request zero wait.",
++    "On ExportKit 2.1 / Ubuntu 24.04, exportctl send invoice-21 --timeout-ms 0 --mode sync reportedly waited 30 seconds in 2 of 3 attempts; immediate return was expected.",
++    "The observation is reported and timeout fallback is only suspected. Source access is unavailable, reproduction/cause are unverified, and no fix is agreed.",
++    "Async export is excluded.",
++    "Mina obtains an accessible v2.1 source snapshot; the reproduction/cause owner is unassigned. Reproduce on the reported version and compare timeout handling before choosing a fix."
++  ],
++  "protected_claims": [
++    "exportctl send invoice-21 --timeout-ms 0 --mode sync",
++    "ExportKit 2.1",
++    "Ubuntu 24.04",
++    "30 seconds",
++    "2 of 3",
++    "[x] Record command and environment",
++    "[ ] Mina: obtain accessible v2.1 source",
++    "[ ] Assign reproduction/cause owner"
++  ],
++  "baseline_defects": [
++    "Speculation about a cause precedes the maintainer problem and reported behavior."
++  ],
++  "not_applicable": {
++    "PR increment": "This is an issue report without a PR.",
++    "Original-reader source access limitation": "The immutable original does not include the separate access response; do not require its reader to infer that response."
++  }
++}
+diff --git a/kodex-plugin/skills/clarify-docs/evals/issue-unavailable-source/test-files/context.md b/kodex-plugin/skills/clarify-docs/evals/issue-unavailable-source/test-files/context.md
+new file mode 100644
+index 0000000..b2cc7be
+--- /dev/null
++++ b/kodex-plugin/skills/clarify-docs/evals/issue-unavailable-source/test-files/context.md
+@@ -0,0 +1,3 @@
++# Offline access response
++
++`pasted-body.md` is an immutable capture of the caller's pasted bug description. The selected destination is the new file `drafts/issue-21.md`; no other file is selected for editing. The intended audience is export maintainers, who may receive all supplied body facts. The referenced source at https://source.example.invalid/export/revision/v2.1/export.py is unavailable (read-only response: access denied). No source, tests, logs, PR or alternate copy is accessible. Do not contact the network. Mina owns obtaining an accessible source snapshot for v2.1. The owner of reproduction and cause confirmation has not been assigned. `notes.md` is unrelated and must stay unchanged.
+diff --git a/kodex-plugin/skills/clarify-docs/evals/issue-unavailable-source/test-files/notes.md b/kodex-plugin/skills/clarify-docs/evals/issue-unavailable-source/test-files/notes.md
+new file mode 100644
+index 0000000..d0f2fd8
+--- /dev/null
++++ b/kodex-plugin/skills/clarify-docs/evals/issue-unavailable-source/test-files/notes.md
+@@ -0,0 +1,3 @@
++# Other work
++
++Keep this unrelated note unchanged.
+diff --git a/kodex-plugin/skills/clarify-docs/evals/issue-unavailable-source/test-files/pasted-body.md b/kodex-plugin/skills/clarify-docs/evals/issue-unavailable-source/test-files/pasted-body.md
+new file mode 100644
+index 0000000..ea4927d
+--- /dev/null
++++ b/kodex-plugin/skills/clarify-docs/evals/issue-unavailable-source/test-files/pasted-body.md
+@@ -0,0 +1,9 @@
++# Zero wait still waits
++
++Maybe timeout fallback. On ExportKit 2.1 / Ubuntu 24.04, I ran `exportctl send invoice-21 --timeout-ms 0 --mode sync` and got a 30-second wait, 2 of 3 tries. Expected immediate return when zero is requested. This delays checking the invoice. I suspect the zero gets replaced with a default but haven't confirmed the cause. Mina is getting the v2.1 source; nobody is assigned to reproduce or confirm cause. After it is available, reproduce on the reported version and compare timeout handling before choosing a fix. Async export is out of scope; no fix is agreed.
++
++- [x] Record command and environment
++- [ ] Mina: obtain accessible v2.1 source
++- [ ] Assign reproduction/cause owner
++
++Source reference: https://source.example.invalid/export/revision/v2.1/export.py

@@ -1,0 +1,118 @@
+{
+  "current_runs": [
+    {
+      "scenario": "issue-implement-non-trigger",
+      "variant": "clean-shell",
+      "verdict_file": "issue-implement-non-trigger/clean-shell/verdicts.json",
+      "assertions": [
+        {
+          "id": "23.1",
+          "verdict": "PASS",
+          "evidence": "trace.jsonl ordinal 13 announces implementation work; ordinal 14 reads issue.md and greeting.py; ordinal 21 patches greeting.py. No visible message or tool call selects /kk:clarify-docs."
+        },
+        {
+          "id": "23.2",
+          "verdict": "PASS",
+          "evidence": "editor-prompt.txt exposes the skill-selection description and instruction paths, without either instruction body. All three recorded tool calls were inspected: they read staged project files, patch greeting.py, and run local checks. Neither SKILL.md nor shared-document-clarity.md is loaded."
+        },
+        {
+          "id": "23.3",
+          "verdict": "PASS",
+          "evidence": "Direct byte comparison confirms before/issue.md equals after/issue.md; both independently hash to 72006ac69606cc9b99d4ad11905443678cfc4fbca448b59f62e6b80e1fc57f9e. Both artifact inventories contain only issue.md and greeting.py. The sole patch targets greeting.py; no editorial draft, replacement title, editorial summary artifact, or publication appears."
+        },
+        {
+          "id": "23.4",
+          "verdict": "PASS",
+          "evidence": "The agent investigates the supplied issue, edits the permitted source file, and runs checks in the declared offline workspace. Every shell invocation specifies login:false. The initial python command fails with exit 127 at ordinal 25; python3 succeeds at ordinal 30. No network, connector, external-write, or additional-agent call occurs."
+        }
+      ]
+    },
+    {
+      "scenario": "issue-fix-non-trigger",
+      "variant": "clean-shell",
+      "verdict_file": "issue-fix-non-trigger/clean-shell/verdicts.json",
+      "assertions": [
+        {
+          "id": "24.1",
+          "verdict": "PASS",
+          "evidence": "trace.jsonl ordinal 13 announces bug-fix work; ordinal 18 reads issue.md and timeout.py; ordinal 25 patches timeout.py. No visible message or tool call selects /kk:clarify-docs."
+        },
+        {
+          "id": "24.2",
+          "verdict": "PASS",
+          "evidence": "editor-prompt.txt exposes only the skill-selection description and instruction paths. All five tool calls were inspected, including failed calls. They attempt workspace discovery, read permitted project files, patch timeout.py, and run local checks. Neither editorial instruction file is loaded."
+        },
+        {
+          "id": "24.3",
+          "verdict": "PASS",
+          "evidence": "Direct byte comparison confirms before/issue.md equals after/issue.md; both independently hash to 7ae340d42a88d5ba80373a5d0624c0d7de408f378f56700b52637d740ec7e266. Both artifact inventories contain only issue.md and timeout.py. The sole patch targets timeout.py; no editorial draft, replacement title, editorial summary artifact, or publication appears."
+        },
+        {
+          "id": "24.4",
+          "verdict": "PASS",
+          "evidence": "The agent handles the supplied bug through local investigation, the permitted source edit, and focused verification. Every shell invocation specifies login:false and the declared workspace. The discovery command is blocked before execution at ordinal 16, after which the agent directly reads permitted files. python fails at ordinal 33; python3 succeeds at ordinal 38. No network, connector, external-write, or additional-agent call occurs."
+        }
+      ]
+    },
+    {
+      "scenario": "code-non-trigger",
+      "variant": "final",
+      "verdict_file": "code-non-trigger/final/verdicts.json",
+      "assertions": [
+        {
+          "id": "9.1",
+          "verdict": "PASS",
+          "evidence": "The only tool actions are rg --files and cat prep.py, both with login:false. No clarify-docs invocation or editorial-instruction read appears."
+        },
+        {
+          "id": "9.2",
+          "verdict": "PASS",
+          "evidence": "The brief final answer correctly states that a None override returns restaurant[\"prep_minutes\"], and that create_order wraps this value in the result. The inspected source supports both statements. prep.py remains byte-identical, with SHA-256 85cadce9673511a138860dd7e7ce34e067f88e2f01e9323ac9f10758e55a0ff2; no files were added."
+        },
+        {
+          "id": "9.3",
+          "verdict": "PASS",
+          "evidence": "The actual request asks for a code explanation. No editorial output or before/after reader comparison was attempted; reader comparison is N/A."
+        }
+      ]
+    },
+    {
+      "scenario": "brevity-non-trigger",
+      "variant": "final",
+      "verdict_file": "brevity-non-trigger/final/verdicts.json",
+      "assertions": [
+        {
+          "id": "10.1",
+          "verdict": "PASS",
+          "evidence": "The trace contains no tool calls and only the final response between task_started and task_complete. No skill invocation or procedure loading occurred."
+        },
+        {
+          "id": "10.2",
+          "verdict": "PASS",
+          "evidence": "The entire answer is one 14-word sentence: \"A default value is the value used automatically when no other value is provided.\" notes.md remains byte-identical, with SHA-256 fda68a1fdc3215e3854ecb0453711294faaae5e9cdf7d66af1e48f61e3da8451; no artifact was added."
+        },
+        {
+          "id": "10.3",
+          "verdict": "PASS",
+          "evidence": "The request is a general question with a response-length preference. No editorial task or reader comparison was undertaken; reader comparison is N/A."
+        }
+      ]
+    }
+  ],
+  "totals": {
+    "PASS": 14,
+    "FAIL": 0,
+    "PARTIAL": 0
+  },
+  "preserved_attempts": {
+    "baseline": "baseline-grader/verdicts.json",
+    "first_final": "final-grader/verdicts.json",
+    "first_final_totals": {
+      "PASS": 12,
+      "FAIL": 0,
+      "PARTIAL": 2
+    }
+  },
+  "reader_comparison": "N/A for all routing cases",
+  "instruction_identity": "instructions/final/identity.json"
+}

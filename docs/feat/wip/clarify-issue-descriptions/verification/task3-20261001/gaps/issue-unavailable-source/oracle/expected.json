@@ -1,0 +1,39 @@
+{
+  "questions": [
+    "Why does this issue exist?",
+    "What happens in the reported example, and what was expected?",
+    "What is verified, reported or still unknown?",
+    "What remains outside this issue?",
+    "What happens next and who owns it?"
+  ],
+  "reader_manifest": [
+    "<produced-local-draft>"
+  ],
+  "original_reader_manifest": [
+    "pasted-body.md"
+  ],
+  "answers": [
+    "A delay blocks maintainers checking an invoice when they request zero wait.",
+    "On ExportKit 2.1 / Ubuntu 24.04, exportctl send invoice-21 --timeout-ms 0 --mode sync reportedly waited 30 seconds in 2 of 3 attempts; immediate return was expected.",
+    "The observation is reported and timeout fallback is only suspected. Source access is unavailable, reproduction/cause are unverified, and no fix is agreed.",
+    "Async export is excluded.",
+    "Mina obtains an accessible v2.1 source snapshot; the reproduction/cause owner is unassigned. Reproduce on the reported version and compare timeout handling before choosing a fix."
+  ],
+  "protected_claims": [
+    "exportctl send invoice-21 --timeout-ms 0 --mode sync",
+    "ExportKit 2.1",
+    "Ubuntu 24.04",
+    "30 seconds",
+    "2 of 3",
+    "[x] Record command and environment",
+    "[ ] Mina: obtain accessible v2.1 source",
+    "[ ] Assign reproduction/cause owner"
+  ],
+  "baseline_defects": [
+    "Speculation about a cause precedes the maintainer problem and reported behavior."
+  ],
+  "not_applicable": {
+    "PR increment": "This is an issue report without a PR.",
+    "Original-reader source access limitation": "The immutable original does not include the separate access response; do not require its reader to infer that response."
+  }
+}

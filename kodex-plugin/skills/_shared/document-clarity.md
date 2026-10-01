@@ -41,6 +41,11 @@ next step and known owner there or in an already-selected task document; identif
 unknown owners.
 Do not manufacture an answer, silently settle a product decision or create an extra
 report to hide the gap. Continue independent, supported edits when possible.
+If an issue body is unavailable, explain the access limit and request text or an
+accessible source; write no purported revision. With a body but unavailable
+supporting evidence, continue supported edits at an established destination,
+preserving reported/proposed status and verification limits. An unresolved
+destination requires a question before writing.
 
 ## Establish protected meaning
 

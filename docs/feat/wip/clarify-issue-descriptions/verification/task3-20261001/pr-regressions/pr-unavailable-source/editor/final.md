@@ -1,0 +1,1 @@
+Saved [drafts/pr-15.md](/tmp/clarify-issue-task3/pr-regressions/pr-unavailable-source/editor/drafts/pr-15.md). Clarified the intended behavior, excluded scope, and open badge decision. Runtime delivery and test claims remain explicitly unverified pending the author’s revisions, diff, and test output.

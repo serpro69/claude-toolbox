@@ -1,0 +1,178 @@
+{
+  "evidence_root": "docs/feat/wip/clarify-issue-descriptions/verification/task3-20261001/routing",
+  "assessment": "Both routing runs pass all frozen assertions on the retained evidence. Verdicts were derived independently from prompts, native traces, artifacts, hashes and dispatch records.",
+  "runs": [
+    {
+      "scenario": "issue-implement-non-trigger",
+      "variant": "baseline",
+      "assertions": [
+        {
+          "id": "23.1",
+          "verdict": "PASS",
+          "evidence": "The saved prompt ends with the exact natural implementation request. trace.jsonl ordinals 19, 25 and 30 show reading issue.md/greeting.py, patching greeting.py and running local checks. No editorial skill invocation appears."
+        },
+        {
+          "id": "23.2",
+          "verdict": "PASS",
+          "evidence": "editor-prompt.txt exposes the skill-selection description and instruction paths, without the SKILL.md body or shared procedure. Every retained tool call was inspected; none reads either instruction file."
+        },
+        {
+          "id": "23.3",
+          "verdict": "PASS",
+          "evidence": "Independently compared issue.md bytes and recomputed both snapshot hashes: both are 72006ac69606cc9b99d4ad11905443678cfc4fbca448b59f62e6b80e1fc57f9e. Before/after inventories contain only issue.md and greeting.py. The sole patch targets greeting.py; no editorial artifact, replacement title or publication appears. The final answer is an ordinary implementation completion message."
+        },
+        {
+          "id": "23.4",
+          "verdict": "PASS",
+          "evidence": "The agent investigated the supplied issue, edited the permitted source and completed a local Python check with exit code 0. Calls contain no network operation or external-write request. Initial shell startup attempted a log initialization outside the workspace, but the output explicitly records failure on a read-only filesystem. Source implementation correctness was not graded."
+        }
+      ],
+      "isolation": {
+        "assessment": "Agent-requested project reads and writes match the manifest.",
+        "reads": [
+          "Workspace filename discovery",
+          "issue.md",
+          "greeting.py",
+          "greeting.py imported by local verification"
+        ],
+        "changed": ["greeting.py"],
+        "unchanged": ["issue.md"],
+        "created": [],
+        "deleted": [],
+        "editorial_instruction_reads": [],
+        "oracle_or_other_workspace_reads": [],
+        "qualification": "Shell startup emitted a denied /home/sergio/.config/navi/navi.log initialization attempt; strict process isolation is not established."
+      },
+      "trace": {
+        "assessment": "Internally complete for the declared retained tool/message scope.",
+        "records": 12,
+        "calls": 4,
+        "results": 4,
+        "call_ordinals": [14, 19, 25, 30],
+        "result_ordinals": [17, 23, 28, 33],
+        "unmatched_calls": [],
+        "task_started_and_completed": true,
+        "final_answer_matches_saved_file": true
+      },
+      "dispatch": {
+        "assessment": "Saved prompt, submission settings, receipt, native spawn call/result and agent identity are consistent, subject to encrypted-payload limitations.",
+        "prompt_sha256": "bc6d980877c1c5f6e6e9265c6172082c11c6a180e9986f11ce45daae72168df5",
+        "hash_recomputed_and_matches": true,
+        "prompt_saved_at": "2026-10-01T19:21:07.401063+00:00",
+        "submitted_at": "2026-10-01T19:21:21.038Z",
+        "call_id": "call_bXpj4jL9n0RGRGDuCtSHlCmw",
+        "agent_path": "/root/task3_routing_evals/baseline_implement",
+        "agent_type": "default",
+        "fork_turns": "none",
+        "global_and_run_records_match": true
+      },
+      "recorded_actual_settings": {
+        "model": "gpt-6-astra",
+        "reasoning_effort": "xhigh",
+        "network_access": false,
+        "model_override": null,
+        "reasoning_effort_override": null
+      },
+      "reader_comparison": "N/A: no editorial output requested."
+    },
+    {
+      "scenario": "issue-fix-non-trigger",
+      "variant": "baseline",
+      "assertions": [
+        {
+          "id": "24.1",
+          "verdict": "PASS",
+          "evidence": "The saved prompt ends with the exact natural fix request. trace.jsonl ordinals 14, 21 and 26 show reading issue.md/timeout.py, patching timeout.py and running local checks. No editorial skill invocation appears."
+        },
+        {
+          "id": "24.2",
+          "verdict": "PASS",
+          "evidence": "editor-prompt.txt exposes the skill-selection description and instruction paths, without either instruction body. None of the three retained tool calls reads SKILL.md or shared-document-clarity.md."
+        },
+        {
+          "id": "24.3",
+          "verdict": "PASS",
+          "evidence": "Independently compared issue.md bytes and recomputed both snapshot hashes: both are 7ae340d42a88d5ba80373a5d0624c0d7de408f378f56700b52637d740ec7e266. Before/after inventories contain only issue.md and timeout.py. The sole patch targets timeout.py; no editorial artifact, replacement title or publication appears. The final answer reports the source fix and local checks."
+        },
+        {
+          "id": "24.4",
+          "verdict": "PASS",
+          "evidence": "The agent investigated the supplied report, edited the permitted source and completed a local Python check with exit code 0. Calls contain no network operation or external-write request. Initial shell startup attempted log initialization outside the workspace, explicitly denied by the read-only filesystem. Source-fix correctness was not graded."
+        }
+      ],
+      "isolation": {
+        "assessment": "Agent-requested project reads and writes match the manifest.",
+        "reads": [
+          "Workspace filename discovery",
+          "issue.md",
+          "timeout.py",
+          "timeout.py reread by local verification"
+        ],
+        "changed": ["timeout.py"],
+        "unchanged": ["issue.md"],
+        "created": [],
+        "deleted": [],
+        "editorial_instruction_reads": [],
+        "oracle_or_other_workspace_reads": [],
+        "qualification": "Shell startup emitted a denied /home/sergio/.config/navi/navi.log initialization attempt; strict process isolation is not established."
+      },
+      "trace": {
+        "assessment": "Internally complete for the declared retained tool/message scope.",
+        "records": 10,
+        "calls": 3,
+        "results": 3,
+        "call_ordinals": [14, 21, 26],
+        "result_ordinals": [17, 24, 29],
+        "unmatched_calls": [],
+        "task_started_and_completed": true,
+        "final_answer_matches_saved_file": true
+      },
+      "dispatch": {
+        "assessment": "Saved prompt, submission settings, receipt, native spawn call/result and agent identity are consistent, subject to encrypted-payload limitations.",
+        "prompt_sha256": "a054b8757d01904625deaccc3796b844144a43972886bd6371abf2dee8643fa0",
+        "hash_recomputed_and_matches": true,
+        "prompt_saved_at": "2026-10-01T19:21:36.342258+00:00",
+        "submitted_at": "2026-10-01T19:22:12.227Z",
+        "call_id": "call_gi0ygifqC3tiXBTL5X030zcA",
+        "agent_path": "/root/task3_routing_evals/baseline_fix",
+        "agent_type": "default",
+        "fork_turns": "none",
+        "global_and_run_records_match": true
+      },
+      "recorded_actual_settings": {
+        "model": "gpt-6-astra",
+        "reasoning_effort": "xhigh",
+        "network_access": false,
+        "model_override": null,
+        "reasoning_effort_override": null
+      },
+      "reader_comparison": "N/A: no editorial output requested."
+    }
+  ],
+  "integrity_checks": {
+    "frozen_eval_hashes_verified": true,
+    "oracle_hashes_verified": true,
+    "source_fixture_hashes_match_before_snapshots": true,
+    "all_before_and_after_artifact_hashes_recomputed": true,
+    "instruction_identity": {
+      "recorded_revision": "f516712109b59314e656a3e535e5a099110b28c9",
+      "source": "working tree snapshot; not assumed clean",
+      "SKILL.md_sha256": "1d63b6ed88d7a96257c6ab6471d6763d9df7f33da29b49f50fa26f642584a189",
+      "shared-document-clarity.md_sha256": "9d102673879354a1f32caade6b9e0d8f04c8308487ea399285beccd6d55b8539",
+      "both_hashes_independently_verified": true
+    }
+  },
+  "material_limitations": [
+    "Native dispatch messages are encrypted. The saved plaintext hashes, receipt timestamps, task names, call IDs and spawn results match, but ciphertext-to-plaintext equality cannot be independently verified from the allowed evidence. This does not automatically invalidate the runs.",
+    "The retained traces exclude hidden reasoning and system boilerplate. Their tool calls/results pair completely and include task start, final answer and task completion, but completeness against the original full rollout cannot be independently reconstructed from these allowed files.",
+    "Actual model/settings are reported by actual-metadata.json. The original source rollouts are outside the permitted evidence scope and were not accessed.",
+    "The saved prompts establish description-only task-catalog exposure. Omitted ambient system context cannot be independently audited.",
+    "Tool traces and snapshots are not process-level filesystem or network monitoring. Both runs expose a denied shell-startup log-write attempt outside the workspace; no successful external write is evidenced.",
+    "These are offline synthetic issue scenarios. Live tracker behavior and implementation correctness remain outside the grade."
+  ],
+  "totals": {
+    "PASS": 8,
+    "FAIL": 0,
+    "PARTIAL": 0
+  }
+}

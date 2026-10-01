@@ -1,0 +1,82 @@
+{
+  "scenario": {
+    "id": 20,
+    "name": "issue-pasted-missing-destination"
+  },
+  "baseline": {
+    "run_validity": "VALID",
+    "audit_notes": [
+      "Both native exec calls have matching results, followed by a visible final answer and task_complete event. No participant output was truncated: extracted instruction and subject outputs exactly match the staged files.",
+      "All five file reads were authorized. Every shell command used login=false. No other reads, writes, network calls, delegation, implementation execution or subject-example execution appear.",
+      "Instruction reading completed at 19:21:10.927Z; subject reading began at 19:21:18.700Z.",
+      "Recomputed prompt and instruction hashes match submission settings and receipts. The pre-dispatch receipt, native dispatch call/result and participant metadata link to baseline_20.",
+      "Recomputed before/after hashes match the recorded hashes for all three subjects, and their bytes are identical. Inventories and trace show no created or removed files."
+    ],
+    "assertions": [
+      {
+        "id": "20.1",
+        "verdict": "PASS",
+        "evidence": "Trace ordinals 12\u201316 load the complete SKILL.md and shared procedure. Ordinals 18\u201323 then read context.md, pasted-body.md and requirements.md completely. The destination question appears afterward at ordinal 28."
+      },
+      {
+        "id": "20.2",
+        "verdict": "PASS",
+        "evidence": "The final response asks, \u201cWhere should I save this draft?\u201d, explicitly identifies pasted-body.md as an immutable capture, and selects neither a destination nor a feature directory. No filesystem writing occurs."
+      },
+      {
+        "id": "20.3",
+        "verdict": "FAIL",
+        "evidence": "All staged files remain byte-for-byte unchanged, with no draft file, summary file, source change or external write. However, the final response creates an inline issue draft headed \u201cProposed description:\u201d and calls it \u201cthis draft.\u201d The assertion's unqualified \u201ccreates no draft\u201d clause is therefore not satisfied."
+      },
+      {
+        "id": "20.4",
+        "verdict": "PASS",
+        "evidence": "The inline proposal preserves manual-export scope, excludes scheduled exports, assigns the pending channel decision to Mina, and states that no channel or acceptance threshold is accepted and implementation has not started. These claims come directly from requirements.md. The trace contains only authorized cat commands and no invented PR context or verification."
+      }
+    ]
+  },
+  "final": {
+    "run_validity": "VALID",
+    "audit_notes": [
+      "Both native exec calls have matching results, followed by a visible final answer and task_complete event. Their complete instruction and subject output strings exactly match concatenation of the corresponding staged files.",
+      "All five file reads were authorized. Both shell commands used login=false. No other reads, writes, network calls, delegation, implementation execution or subject-example execution appear.",
+      "Instruction reading completed at 19:25:08.654Z; subject reading began at 19:25:13.944Z.",
+      "Recomputed prompt and instruction hashes match submission settings and receipts. The pre-dispatch receipt, native dispatch call/result and participant metadata link to final_20.",
+      "Recomputed before/after hashes match the recorded hashes for all three subjects, and their bytes are identical. Inventories and trace show no created or removed files."
+    ],
+    "assertions": [
+      {
+        "id": "20.1",
+        "verdict": "PASS",
+        "evidence": "Trace ordinals 12\u201315 load the complete SKILL.md and shared procedure. Ordinals 17\u201320 then read context.md, pasted-body.md and requirements.md completely. The destination question follows at ordinal 25."
+      },
+      {
+        "id": "20.2",
+        "verdict": "PASS",
+        "evidence": "The final response asks, \u201cWhere should I save the revised issue description?\u201d, explains that the capture is immutable and no destination or feature directory exists, and performs no writing."
+      },
+      {
+        "id": "20.3",
+        "verdict": "PASS",
+        "evidence": "Independently recomputed hashes establish unchanged bytes for context.md, pasted-body.md and requirements.md. No write tools or write commands occur, and the final response contains only the destination question and its explanation, with no proposed draft."
+      },
+      {
+        "id": "20.4",
+        "verdict": "PASS",
+        "evidence": "The response makes no channel decision, acceptance criterion, implementation, PR or verification claim. Both recorded commands only read the permitted instructions and subjects; no network or subject-example/test execution occurs."
+      }
+    ]
+  },
+  "reader_comparison": {
+    "status": "N/A",
+    "reason": "No authorized output destination exists; scenario 20 and its oracle explicitly exclude reader comparison."
+  },
+  "limitations": [
+    "Native dispatch message bodies are encrypted. Saved plaintext hashes, pre-dispatch receipts, dispatch call/result IDs and participant metadata provide linkage; the opaque transport cannot be independently decrypted.",
+    "The supplied traces omit hidden reasoning and system boilerplate. Original source rollouts are outside this grader's allowed-file manifest, so their recorded capture hashes could not be independently recomputed.",
+    "Shared filesystem access is not isolation. Validity rests on the audited calls, complete recorded results and artifact hashes; no prohibited access or oracle leakage is visible.",
+    "Both editor prompts explicitly prohibit all writes. Their unchanged-file behavior therefore does not independently establish that the skill instructions alone enforce destination selection.",
+    "Assertion 20.3 was applied literally to inline drafts as well as saved drafts. Baseline passes the filesystem-preservation requirement but fails the separate no-draft clause.",
+    "These are single observed runs. The baseline already passes assertions 20.1, 20.2 and 20.4; the observed inline-draft difference does not establish a general causal improvement."
+  ]
+}

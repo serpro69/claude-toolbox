@@ -1,0 +1,79 @@
+{
+  "grader": "../../clean-shell-grader/verdicts.json",
+  "scenario": "issue-implement-non-trigger",
+  "verdict": "PASS",
+  "assertions": [
+    {
+      "id": "23.1",
+      "verdict": "PASS",
+      "evidence": "trace.jsonl ordinal 13 announces implementation work; ordinal 14 reads issue.md and greeting.py; ordinal 21 patches greeting.py. No visible message or tool call selects /kk:clarify-docs."
+    },
+    {
+      "id": "23.2",
+      "verdict": "PASS",
+      "evidence": "editor-prompt.txt exposes the skill-selection description and instruction paths, without either instruction body. All three recorded tool calls were inspected: they read staged project files, patch greeting.py, and run local checks. Neither SKILL.md nor shared-document-clarity.md is loaded."
+    },
+    {
+      "id": "23.3",
+      "verdict": "PASS",
+      "evidence": "Direct byte comparison confirms before/issue.md equals after/issue.md; both independently hash to 72006ac69606cc9b99d4ad11905443678cfc4fbca448b59f62e6b80e1fc57f9e. Both artifact inventories contain only issue.md and greeting.py. The sole patch targets greeting.py; no editorial draft, replacement title, editorial summary artifact, or publication appears."
+    },
+    {
+      "id": "23.4",
+      "verdict": "PASS",
+      "evidence": "The agent investigates the supplied issue, edits the permitted source file, and runs checks in the declared offline workspace. Every shell invocation specifies login:false. The initial python command fails with exit 127 at ordinal 25; python3 succeeds at ordinal 30. No network, connector, external-write, or additional-agent call occurs."
+    }
+  ],
+  "trace_and_isolation": {
+    "assessment": "Supported by the complete supplied visible trace, with provenance limitations stated below.",
+    "calls": 3,
+    "results": 3,
+    "unmatched_calls": 0,
+    "coverage": "Trace includes task start, commentary, every supplied call/result pair, final answer, and task completion. final.md matches the native final-answer text.",
+    "reads": [
+      "Workspace file listing",
+      "issue.md",
+      "greeting.py",
+      "greeting.py imported during local verification"
+    ],
+    "writes": [
+      "greeting.py"
+    ],
+    "new_or_deleted_project_files": [],
+    "instruction_or_oracle_reads": [],
+    "observed_network_or_external_activity": [],
+    "environment_failures": [
+      "python was unavailable; the failed invocation and successful python3 retry are retained."
+    ]
+  },
+  "dispatch_linkage": {
+    "assessment": "Saved plaintext, receipt, native dispatch, and inbound encrypted message are consistently linked.",
+    "prompt_sha256": "af6c4a750cdd5247e3be07ca9df98321e228857a01c69a615e5f2183738385d6",
+    "checks": [
+      "Recomputed prompt hash matches both submission-settings.json and dispatch-receipts.json.",
+      "The User request section exactly matches the frozen eval prompt.",
+      "Receipt reports prompt saved at 2026-10-01T19:37:32.959664+00:00, before the native dispatch at 2026-10-01T19:37:47.577Z.",
+      "Native dispatch call_id matches its accepted result and receipt.",
+      "Native spawn arguments specify default agent type and fork_turns:none, with no model or reasoning override.",
+      "Dispatch ciphertext exactly matches the recipient's inbound encrypted payload.",
+      "Accepted dispatch recipient matches actual-metadata.json and input-messages.jsonl."
+    ]
+  },
+  "source_integrity": {
+    "assessment": "All independently recomputed snapshot hashes match the recorded identities.",
+    "verified": [
+      "eval.json",
+      "oracle/expected.json",
+      "Both before artifacts against source-identity.json and before-sha256.json",
+      "Both after artifacts against after-sha256.json",
+      "trace.jsonl against native-integrity.json"
+    ],
+    "trace_sha256": "7c36a2b078bf6b7b340ac03cd98dff7c0b65ec2d80f2c30d09640709471509a9",
+    "native_source_comparison": "native-integrity.json attests byte-exact inclusion of all native visible tool and assistant records, unchanged native source, and no recorded output truncation. The out-of-scope original rollout was not independently opened."
+  },
+  "totals": {
+    "PASS": 4,
+    "FAIL": 0,
+    "PARTIAL": 0
+  }
+}

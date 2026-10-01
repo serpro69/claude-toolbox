@@ -83,6 +83,17 @@ behavioral attempts, then rerun affected PR cases 11/13 on the corrected operati
 revision. Issue behavior is unchanged, but final issue runs will also use the final
 instruction snapshot. This is a preservation preflight, not a behavioral pass.
 
+Task 3 pre-application check (2026-10-01): all five new baseline editors have
+finished before operative editing. Apply the remaining 49-word gap paragraph
+without changing the complete candidate. The resulting procedure will match the
+candidate byte-for-byte: **1,297 words**, SHA256
+`519f3fa45ae1954154aa292eff8e14abdcfadfb6b2e924214c2092b03a66d681`.
+The ceiling remains **1,297**; no mandatory dependency, entry-point change or
+description revision is needed. Coverage remains the full mapping above, including
+missing body versus missing support, accessible investigation, destination and
+ownership. Final behavioral runs follow this application; baseline observations
+do not establish final-instruction acceptance.
+
 ## Provider description check
 
 Rechecked [Claude Code skill documentation](https://code.claude.com/docs/en/skills#skill-descriptions-are-cut-short)

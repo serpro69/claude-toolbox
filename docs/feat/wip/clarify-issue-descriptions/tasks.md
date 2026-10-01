@@ -3,7 +3,7 @@
 > Design: [design.md](design.md)
 > Implementation: [implementation.md](implementation.md)
 > Issue: [#157](https://github.com/serpro69/claude-toolbox/issues/157)
-> Status: in-progress (Tasks 1–2 done; Tasks 3–4 pending)
+> Status: in-progress (Tasks 1–3 done; Task 4 pending)
 > Created: 2026-09-30
 > Not Doing: remote publication/comments, issue implementation/reproduction, invented decisions/criteria, tracker-title editing, mandatory integrations/live certification, separate issue guide/new skill/profile, automatic clarification, bulk rewrites/extra summaries, completed-design edits
 
@@ -55,7 +55,7 @@ against the unchanged 1,297-word ceiling. Task 3 is next.
 
 ## Task 3: Handle incomplete inputs and execution non-triggers
 
-- **Status:** pending
+- **Status:** done
 - **Depends on:** Task 2
 - **Size:** M
 - **Can run in parallel with:** —
@@ -63,10 +63,20 @@ against the unchanged 1,297-word ceiling. Task 3 is next.
 
 ### Subtasks
 
-- [ ] 3.1 Author `issue-pasted-missing-destination`, `issue-unavailable-source`, and `issue-unavailable-body` evals, IDs 20–22 → verify: respectively ask before writing, produce a qualified draft, and request missing body text without fabricated output.
-- [ ] 3.2 Apply the preflight candidate's remaining entry-point/shared gap-handling rules, refining them where the cases reveal omissions → verify: accessible context is investigated first; input captures and unrelated files remain unchanged; unresolved claims retain next steps and known/unknown ownership.
-- [ ] 3.3 Author separate `issue-implement-non-trigger` and `issue-fix-non-trigger` evals, IDs 23/24, with ordinary execution requests and small source fixtures; expose only the skill description for selection → verify: normal fixture handling does not load editorial instructions, edit issue text, or create an editorial draft; do not prime the agent with classification-only prompts.
-- [ ] 3.4 Regenerate and run instruction-size/structure/graph checks and applicable existing missing-context/non-trigger regressions → verify: all assertions pass with complete traces and the complete procedure fits the recorded ceiling; repeat the full preflight before any ceiling increase.
+- [x] 3.1 Author `issue-pasted-missing-destination`, `issue-unavailable-source`, and `issue-unavailable-body` evals, IDs 20–22 → verify: respectively ask before writing, produce a qualified draft, and request missing body text without fabricated output.
+- [x] 3.2 Apply the preflight candidate's remaining entry-point/shared gap-handling rules, refining them where the cases reveal omissions → verify: accessible context is investigated first; input captures and unrelated files remain unchanged; unresolved claims retain next steps and known/unknown ownership.
+- [x] 3.3 Author separate `issue-implement-non-trigger` and `issue-fix-non-trigger` evals, IDs 23/24, with ordinary execution requests and small source fixtures; expose only the skill description for selection → verify: normal fixture handling does not load editorial instructions, edit issue text, or create an editorial draft; do not prime the agent with classification-only prompts.
+- [x] 3.4 Regenerate and run instruction-size/structure/graph checks and applicable existing missing-context/non-trigger regressions → verify: all assertions pass with complete traces and the complete procedure fits the recorded ceiling; repeat the full preflight before any ceiling increase.
+
+Completed 2026-10-01. [Verification and evidence](verification.md#task-3--incomplete-inputs-and-execution-non-triggers):
+36 final assertions pass across five new scenarios and four regressions. The
+operative procedure equals the complete 1,297-word candidate; the ceiling and entry
+point are unchanged. Generation/parity/idempotence, graph validation, all nine shell
+suites and all Go tests pass, including the previously skipped network cases.
+Independent source review approves; PAL's file-coverage limitation is recorded.
+The baseline inline-draft failure and first routing PARTIALs remain preserved;
+clean-shell retries pass without changing fixtures, assertions or skill instructions.
+Task 4 is next.
 
 ## Task 4: Document and verify the complete extension
 

@@ -1,0 +1,27 @@
+{
+  "grader": "../../final-grader/verdicts.json",
+  "name": "code-non-trigger",
+  "verdict": "PASS",
+  "assertions": [
+    {
+      "id": "9.1",
+      "verdict": "PASS",
+      "evidence": "The only tool actions are rg --files and cat prep.py, both with login:false. No clarify-docs invocation or editorial-instruction read appears."
+    },
+    {
+      "id": "9.2",
+      "verdict": "PASS",
+      "evidence": "The brief final answer correctly states that a None override returns restaurant[\"prep_minutes\"], and that create_order wraps this value in the result. The inspected source supports both statements. prep.py remains byte-identical, with SHA-256 85cadce9673511a138860dd7e7ce34e067f88e2f01e9323ac9f10758e55a0ff2; no files were added."
+    },
+    {
+      "id": "9.3",
+      "verdict": "PASS",
+      "evidence": "The actual request asks for a code explanation. No editorial output or before/after reader comparison was attempted; reader comparison is N/A."
+    }
+  ],
+  "trace_and_isolation": {
+    "trace_verdict": "PASS",
+    "isolation_verdict": "PASS",
+    "evidence": "Two native calls and two matching results, complete start/completion markers, and a final message matching final.md. All explicit accesses remain within the staged workspace; no mutations, network actions, or startup errors appear."
+  }
+}
