@@ -1,0 +1,1 @@
+Saved [issue-draft.md](/tmp/clarify-issue-task2/issues/linear-issue-feature/revised/issue-draft.md), clarifying the accepted outcome and proposed mechanism while preserving the title and acceptance criterion. Mira’s expiry decision remains pending before implementation.

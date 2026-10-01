@@ -1,0 +1,1 @@
+Updated [pr-draft.md](/tmp/clarify-issue-task2/regressions/destination-visibility-retry/editor-workspace/pr-draft.md): removed unauthorized disclosures, preserved accessible references, and clarified the supplied validation result. Runtime and deployment evidence remain unavailable.

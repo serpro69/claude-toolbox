@@ -3,12 +3,15 @@
 > Design: [design.md](design.md)
 > Tasks: [tasks.md](tasks.md)
 > Issue: [#157](https://github.com/serpro69/claude-toolbox/issues/157)
-> Status: Task 1 done; Tasks 2–4 pending (2026-10-01)
+> Status: Tasks 1–2 done; Tasks 3–4 pending (2026-10-01)
 > Created: 2026-09-30
 
-Task 1 progress and executed evidence are recorded in [verification.md](verification.md).
+Tasks 1–2 progress and executed evidence are recorded in [verification.md](verification.md).
 The complete candidate and its measured 1,297-word ceiling are recorded in the
-[budget decision](verification/budget/decision.md). Tasks 2–4 remain pending.
+[budget decision](verification/budget/decision.md). Task 2 applies the prepared
+proposal guidance, verifies scenarios 18/19 and PR regressions 11/13, and clarifies
+the existing PR validation-outcome rule after a preserved regression failure.
+All 25 final assertions pass; Tasks 3–4 remain pending.
 
 ## Repository map
 
@@ -241,6 +244,11 @@ protocol, extending its README for issue setup rather than adding automation.
   and per-assertion PASS/FAIL/PARTIAL with evidence. Shared filesystem access is
   not isolation: audit reads against manifests and invalidate leaks or incomplete
   traces. Do not reconstruct unavailable prompt evidence after the run.
+- When native dispatch payloads are encrypted, retain the exact pre-dispatch
+  plaintext, its hash, the dispatch receipt and linkage to the resulting run.
+  Audit complete tool/message records against the manifests. Opaque transport
+  alone is a recorded limitation, not proof of missing evidence; absent,
+  reconstructed or mismatched required records still invalidate the run.
 - Create `verification.md` in this feature directory when runs begin, indexing
   evidence under `verification/<run-id>/<scenario>/`. Mark unrun cases explicitly.
   Record authored/executed status separately and retain failed attempts.

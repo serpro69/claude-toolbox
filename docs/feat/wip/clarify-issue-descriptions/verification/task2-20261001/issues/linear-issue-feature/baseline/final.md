@@ -1,0 +1,1 @@
+Saved [issue-draft.md](/tmp/clarify-issue-task2/issues/linear-issue-feature/baseline/issue-draft.md), preserving the title and acceptance criterion. The revision distinguishes accepted intent from the proposed mechanism and keeps Mira’s expiry decision open.

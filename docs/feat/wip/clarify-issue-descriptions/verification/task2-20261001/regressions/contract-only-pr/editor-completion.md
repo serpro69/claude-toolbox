@@ -1,0 +1,1 @@
+Updated [pr-draft.md](/tmp/clarify-issue-task2/regressions/contract-only-pr/editor-workspace/pr-draft.md) to clarify the contract-only change, null-versus-zero example, deferred runtime integration, and validation limits.

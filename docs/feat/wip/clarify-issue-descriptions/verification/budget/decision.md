@@ -8,7 +8,7 @@ words**, with no mandatory instruction dependencies. Set the ceiling to **1,297*
 an increase of **97** over 1,200. The separate entry point is **616 words**.
 Counts use `wc -w`; they include headings, list markers and code spans.
 
-| Candidate | SHA256 |
+| Initial candidate | SHA256 at Task 1 preflight |
 | --- | --- |
 | [Shared procedure](document-clarity-candidate.md) | `07395ff2f6d05afcf20e0d522f56a1e67fb74a354e784c85a881d2daf41b2b45` |
 | [Entry point](clarify-docs-entry-candidate.md) | `1d63b6ed88d7a96257c6ab6471d6763d9df7f33da29b49f50fa26f642584a189` |
@@ -59,6 +59,29 @@ feature/other-type and gap details and execute their dedicated scenarios. Shared
 audience wording is kept coherent when applying the default; Task 2 still owns
 different-audience and Linear behavioral verification. No later task is marked
 complete by this preflight.
+
+Task 2 application (2026-10-01): after both new baseline editors completed, apply
+the prepared feature/other-type paragraph exactly. The operative procedure is now
+**1,248 words**, SHA256
+`cb06c670408be43198453ae324471661be22dfb325e862c6b25300c5ef894ecd`.
+The complete candidate and entry point keep the counts and hashes recorded above;
+no ceiling increase is needed. Only the 49-word issue-gap paragraph remains
+unapplied for Task 3. Existing audience rules needed no additional wording; Task 2
+owns their Linear/different-audience behavioral verification.
+
+Task 2 PR regression correction (2026-10-01), recorded before operative editing:
+the first destination-visibility draft names JSON parsing but omits the supplied
+successful outcome required by unchanged assertion 13.8. Clarify the PR sentence
+to require supplied outcomes in the draft itself. This preserves focused review
+pointers, passed/failed/unavailable states, limits, and the prohibition on
+substituting check names or completion reports. Both old and new sentences are
+21 words; no other candidate rule changes. The entire refreshed candidate remains
+**1,297 words**, SHA256
+`519f3fa45ae1954154aa292eff8e14abdcfadfb6b2e924214c2092b03a66d681`.
+The ceiling stays **1,297** and the entry candidate is unchanged. Retain the first
+behavioral attempts, then rerun affected PR cases 11/13 on the corrected operative
+revision. Issue behavior is unchanged, but final issue runs will also use the final
+instruction snapshot. This is a preservation preflight, not a behavioral pass.
 
 ## Provider description check
 

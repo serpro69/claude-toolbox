@@ -1,0 +1,1 @@
+Updated [issue-draft.md](/tmp/clarify-issue-task2/issues/issue-destination-visibility/baseline/issue-draft.md) for external partners. Removed unauthorized facts and references while preserving shared sources, proposed behavior, exclusions, and Jo’s pending rollout decision.
