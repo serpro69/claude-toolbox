@@ -1,0 +1,53 @@
+{
+  "artifact_protocol": "A separate grader checks the final artifacts and trace against the questions, protected claims and eval assertions. No paired reader comparison or human-comprehension claim.",
+  "acceptance": "All eval assertions and protected document requirements must pass. PARTIAL is not pass. Only the requested drafting or refinement is permitted; clarification remains an unexecuted optional recommendation, omitted when nothing changes.",
+  "baseline": "No pre-existing drafts. Inspect the three completed outputs against accepted.md as source evidence.",
+  "artifact_manifest": [
+    "docs/feat/wip/archive-label/design.md",
+    "docs/feat/wip/archive-label/implementation.md",
+    "docs/feat/wip/archive-label/tasks.md"
+  ],
+  "questions": [
+    {
+      "question": "Why does this work exist?",
+      "expected": "Let contributors recognize archived catalog entries without opening each entry.",
+      "source": "design.md introduction; after-drafting accepted.md first paragraph"
+    },
+    {
+      "question": "What should a reader see for an archived entry and for an active entry?",
+      "expected": "Archived entries display Archived and retain their existing title and clickable destination; active entries are unchanged.",
+      "source": "design.md#label-contract; after-drafting accepted.md first and third paragraphs"
+    },
+    {
+      "question": "What work is included now, and what is its implementation status?",
+      "expected": "The documents plan manual Archived text edits in catalog.md; nothing is implemented in this workspace and no runtime app exists. Before implementation verify that authors consistently mark archive state.",
+      "source": "design.md#label-contract and #assumptions; tasks.md statuses; after-drafting accepted.md"
+    },
+    {
+      "question": "What is outside the selected work?",
+      "expected": "Filtering, automatic archival, color changes, new dependencies and catalog-generation automation are excluded wherever applicable to the accepted source.",
+      "source": "design.md#not-doing; after-drafting accepted.md"
+    },
+    {
+      "question": "What remains to be decided, by whom, and what happens next?",
+      "expected": "Catalog maintainers must choose a color after checking site contrast. Text labels do not depend on that choice.",
+      "source": "design.md#open-decision; after-drafting accepted.md"
+    }
+  ],
+  "protected_claims": [
+    "Archived entries retain titles, destinations, visibility and clickability; active entries have no label.",
+    "Only textual labels are planned; no filtering, automatic archival, dependencies, generation automation or color changes.",
+    "Archive-state consistency is an assumption to verify before implementation.",
+    "Catalog maintainers own the unresolved color choice and must check contrast first.",
+    "Design includes Assumptions, Not Doing, Rejected Alternatives; hiding entries was rejected to preserve links.",
+    "Implementation steps have verification; tasks retain status, dependencies, size, parallel metadata, checkboxes, final verification task, dependency graph and working links."
+  ],
+  "orientation_assertions": [
+    "Purpose and planned/current distinction appear before implementation detail.",
+    "Any terms used to express the label rule are defined at first use or replaced by concrete archived/active behavior.",
+    "Unresolved color and contrast next step are discoverable with owner."
+  ],
+  "baseline_defects": [
+    "No fixed prose exists before drafting. Grade these predeclared orientation/structure/claim requirements against the completed drafts."
+  ]
+}

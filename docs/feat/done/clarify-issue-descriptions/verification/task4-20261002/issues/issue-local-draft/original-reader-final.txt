@@ -1,0 +1,9 @@
+1. Synchronous export reportedly ignores a zero timeout, delaying maintainers checking a ready invoice.
+
+2. On ExportKit 2.3.1, macOS 15 arm64, `exportctl send invoice-17 --timeout-ms 0 --mode sync` reportedly waited 30 seconds in all three attempts with invoice-17 ready. Expected behavior was zero wait.
+
+3. Recording the command and environment is marked complete. The observed delay is reported; confirmation on that build remains pending. Replacing zero with the default is an unverified suspicion. The artifact states that requirements define zero as “don’t wait,” but does not include those requirements.
+
+4. Asynchronous export is explicitly outside scope. The artifact establishes no other exclusions.
+
+5. Mina must confirm the behavior on the reported build. A fix will be chosen afterward; ownership of that decision or implementation is unspecified.

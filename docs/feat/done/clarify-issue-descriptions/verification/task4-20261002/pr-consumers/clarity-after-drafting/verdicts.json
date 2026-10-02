@@ -1,0 +1,317 @@
+{
+  "scenario": "clarity-after-drafting",
+  "applicable_assertion_ids": [
+    "5.1",
+    "5.2",
+    "5.3",
+    "5.4",
+    "5.5"
+  ],
+  "evidence_root": "..",
+  "overall_status": "PASS",
+  "assertion_counts": {
+    "PASS": 5,
+    "FAIL": 0,
+    "PARTIAL": 0
+  },
+  "assertions": [
+    {
+      "id": "5.1",
+      "assertion": "Trace shows drafting/task instructions and resolved profile content loaded before accepted.md is read beyond detection keywords; neither the clarify-docs entry point nor the shared clarity procedure is loaded.",
+      "verdict": "PASS",
+      "reason": "Design instructions load at 19/22 and drafting/task/shared/fresh-idea instructions at 24/29. Only frameworks.md is truncated there; the full file and all eight detection files return at 33/37 before keyword reads 41/48 and full accepted.md read 55. No profile activates; no clarification instruction is loaded.",
+      "evidence": [
+        "clarity-after-drafting/editor/behavior-records.json#ordinal=29",
+        "clarity-after-drafting/editor/behavior-records.json#ordinal=37",
+        "clarity-after-drafting/editor/behavior-records.json#ordinal=55"
+      ]
+    },
+    {
+      "id": "5.2",
+      "assertion": "All three artifacts are drafted without a separate clarity pass. The response suggests optional /kk:clarify-docs with all three output paths before recommending /kk:review-design, without invoking either follow-up or making clarification a required gate.",
+      "verdict": "PASS",
+      "reason": "One drafting patch creates all three artifacts. Final 79 names each output path and suggests optional clarification of those three before design review. Neither follow-up is invoked or required as a clarification gate.",
+      "evidence": [
+        "clarity-after-drafting/editor/behavior-records.json#ordinal=64",
+        "clarity-after-drafting/editor/final-records.json#ordinal=79"
+      ]
+    },
+    {
+      "id": "5.3",
+      "assertion": "Final documents preserve Assumptions, Not Doing, Rejected Alternatives, linked implementation steps with verification, H2 tasks with status/dependencies/checkboxes, the final verification task and dependency graph.",
+      "verdict": "PASS",
+      "reason": "Design and implementation contain Assumptions, Not Doing and Rejected Alternatives. Implementation and H2 tasks pair concrete steps with verification; task metadata, unchecked subtasks, final verification and dependency graph are preserved.",
+      "evidence": [
+        "clarity-after-drafting/after/docs/feat/wip/archive-label/design.md",
+        "clarity-after-drafting/after/docs/feat/wip/archive-label/implementation.md",
+        "clarity-after-drafting/after/docs/feat/wip/archive-label/tasks.md"
+      ]
+    },
+    {
+      "id": "5.4",
+      "assertion": "The explanation distinguishes planned label changes from implemented behavior, preserves archived-item visibility and the unresolved color decision with its owner, and retains working cross-file links.",
+      "verdict": "PASS",
+      "reason": "Documents distinguish accepted intent from pending manual edits, preserve archived visibility/clickable titles/destinations and unchanged active entries, name catalog maintainers' contrast/color decision, and retain resolving source/cross-file links.",
+      "evidence": [
+        "clarity-after-drafting/before/accepted.md",
+        "clarity-after-drafting/after/docs/feat/wip/archive-label/design.md",
+        "clarity-after-drafting/after/docs/feat/wip/archive-label/implementation.md",
+        "clarity-after-drafting/after/docs/feat/wip/archive-label/tasks.md"
+      ]
+    },
+    {
+      "id": "5.5",
+      "assertion": "Only the selected design artifacts are written, with no extra summary; the response recommends /kk:review-design without executing it or claiming independent verification.",
+      "verdict": "PASS",
+      "reason": "Only design.md, implementation.md and tasks.md are added, accepted.md stays identical, and no summary exists. Final 79 recommends review without executing it or claiming independent verification.",
+      "evidence": [
+        "clarity-after-drafting/file-effects.json",
+        "clarity-after-drafting/editor/behavior-records.json#ordinal=64",
+        "clarity-after-drafting/editor/final-records.json#ordinal=79"
+      ]
+    }
+  ],
+  "reader_comparison": {
+    "applicable": false,
+    "reason": "Current optional-consumer specification grades drafting/refinement or readiness artifacts directly; paired readers are explicitly inapplicable.",
+    "artifact_checks": "Applicable fixed claims, structure, links, ownership, next steps and file effects were checked against before/after artifacts and the oracle where supplied."
+  },
+  "scope_trace_audit": {
+    "status": "PASS",
+    "manifest": "clarity-after-drafting/editor-manifest.json",
+    "actual_fixture_content_read_paths": [
+      "accepted.md"
+    ],
+    "fixture_path_base": "workspace recorded in editor-manifest.json",
+    "actual_instruction_read_paths": [
+      {
+        "path": "instructions/skills/design/SKILL.md",
+        "first_complete_return_ordinal": 22
+      },
+      {
+        "path": "instructions/skills/design/example-tasks.md",
+        "first_complete_return_ordinal": 29
+      },
+      {
+        "path": "instructions/skills/design/idea-process.md",
+        "first_complete_return_ordinal": 29
+      },
+      {
+        "path": "instructions/skills/design/refinement-criteria.md",
+        "first_complete_return_ordinal": 29
+      },
+      {
+        "path": "instructions/skills/design/shared-capy-knowledge-protocol.md",
+        "first_complete_return_ordinal": 29
+      },
+      {
+        "path": "instructions/skills/design/shared-profile-detection.md",
+        "first_complete_return_ordinal": 29
+      },
+      {
+        "path": "instructions/profiles/go/DETECTION.md",
+        "first_complete_return_ordinal": 37
+      },
+      {
+        "path": "instructions/profiles/java/DETECTION.md",
+        "first_complete_return_ordinal": 37
+      },
+      {
+        "path": "instructions/profiles/js_ts/DETECTION.md",
+        "first_complete_return_ordinal": 37
+      },
+      {
+        "path": "instructions/profiles/k8s/DETECTION.md",
+        "first_complete_return_ordinal": 37
+      },
+      {
+        "path": "instructions/profiles/k8s-operator/DETECTION.md",
+        "first_complete_return_ordinal": 37
+      },
+      {
+        "path": "instructions/profiles/kotlin/DETECTION.md",
+        "first_complete_return_ordinal": 37
+      },
+      {
+        "path": "instructions/profiles/python/DETECTION.md",
+        "first_complete_return_ordinal": 37
+      },
+      {
+        "path": "instructions/profiles/skill-md/DETECTION.md",
+        "first_complete_return_ordinal": 37
+      },
+      {
+        "path": "instructions/skills/design/frameworks.md",
+        "first_complete_return_ordinal": 37
+      }
+    ],
+    "metadata_read_paths": [
+      "clarity-after-drafting/editor-manifest.json"
+    ],
+    "allowed_write_paths": [
+      "docs/feat/wip/archive-label/design.md",
+      "docs/feat/wip/archive-label/implementation.md",
+      "docs/feat/wip/archive-label/tasks.md"
+    ],
+    "actual_write_paths": [
+      "docs/feat/wip/archive-label/design.md",
+      "docs/feat/wip/archive-label/implementation.md",
+      "docs/feat/wip/archive-label/tasks.md"
+    ],
+    "write_tool": "native apply_patch",
+    "patch_ordinal": 64,
+    "patches_reproduce_after_bytes": true,
+    "independently_recomputed_file_effects": {
+      "modified": [],
+      "removed": [],
+      "created": [
+        "docs/feat/wip/archive-label/design.md",
+        "docs/feat/wip/archive-label/implementation.md",
+        "docs/feat/wip/archive-label/tasks.md"
+      ]
+    },
+    "file_effects_match_capture": true,
+    "independently_recomputed_snapshot_hashes": {
+      "before": {
+        "count": 1,
+        "mismatches": []
+      },
+      "after": {
+        "count": 4,
+        "mismatches": []
+      }
+    },
+    "first_full_subject_content_call_ordinal": 55,
+    "active_profiles": [],
+    "instruction_order_result": "PASS after complete frameworks.md recovery at output 37, before keyword/detection reads 41/48 and full accepted.md at 55.",
+    "truncation_audit": {
+      "inspected_all_tool_outputs": true,
+      "truncated_output_ordinals": [
+        29
+      ],
+      "recovered": [
+        {
+          "truncated_record": 29,
+          "affected_file": "instructions/skills/design/frameworks.md",
+          "restoring_call": 33,
+          "complete_return": 37,
+          "missing_tokens_marker": 721,
+          "other_required_files_in_record_29_complete": true
+        }
+      ],
+      "unresolved": []
+    },
+    "unexpected_content_reads": [],
+    "unauthorized_writes": [],
+    "network_calls": [],
+    "external_mutations": [],
+    "delegations": [],
+    "reproduction_or_implementation_commands": [],
+    "limitations_and_recovered_events": [
+      "Editor record 29 contains an explicit 721-token truncation within frameworks.md. idea-process.md, example-tasks.md, refinement-criteria.md and both shared protocols are complete in the same output; record 37 reloads frameworks.md completely before subject action. No instruction coverage remains unresolved."
+    ],
+    "source_revision_evidence": [
+      "source-revision.json",
+      "instruction-hashes.json",
+      "instruction-revision-check.json"
+    ],
+    "instruction_hash_audit": {
+      "files": 36,
+      "mismatches": [],
+      "meaning": "Captured instruction bytes match their recorded hashes; this audit does not read outside the allowed current instruction snapshot."
+    },
+    "run_audits": {
+      "editor": {
+        "status": "PASS",
+        "agent_id": "01a0fbb4-0313-7cf1-8efe-69a909936b6c",
+        "agent_path": "/root/verify_pr_consumers/drafting_editor",
+        "visible_record_count": 26,
+        "top_level_tool_call_count": 9,
+        "tool_call_ordinals": [
+          10,
+          19,
+          24,
+          33,
+          41,
+          48,
+          55,
+          64,
+          71
+        ],
+        "final_ordinals": [
+          79
+        ],
+        "model_settings": [
+          {
+            "model": "gpt-6-astra",
+            "effort": "max",
+            "network_access": false,
+            "approval_policy": "on-request"
+          }
+        ],
+        "role": "default",
+        "fork_turns": "none",
+        "model_override": null,
+        "effort_override": null,
+        "prompt_sha256": "3ff5d46fb42f31d963219157a01580e7d9247724b65ff1f1c7a91dab1aaeb53e",
+        "consistency_checks": {
+          "visible_sha_matches": true,
+          "visible_count_matches": true,
+          "behavior_matches_visible": true,
+          "behavior_matches_tool_messages": true,
+          "calls_extract_matches": true,
+          "messages_extract_matches": true,
+          "finals_extract_matches": true,
+          "calls_results_pair": true,
+          "prompt_hash_matches_dispatch": true,
+          "prompt_json_matches": true,
+          "pre_records_before_dispatch": true,
+          "dispatch_receipt_links": true,
+          "child_id_links": true,
+          "child_path_links": true,
+          "ciphertext_transport_matches": true,
+          "final_task_complete_matches": true,
+          "eval_prompt_unchanged": true
+        },
+        "prompt_provenance": {
+          "plaintext_exact": true,
+          "hash_matches": true,
+          "call_output_link": true,
+          "timestamps_ordered": true,
+          "ordinals_ordered": true,
+          "dispatch_fields_match": true,
+          "echo_fields_match": true,
+          "echo_ordinal": 442,
+          "call_ordinal": 436,
+          "dispatch_ordinal": 445,
+          "truncated": false,
+          "source_hash": "d2db0adcf463c456bf4d00933d299c226a1a63176b6ef89db341b6a1613d4548",
+          "evidence": "clarity-after-drafting/editor/prompt-provenance.json",
+          "short_window_plaintext_echo": true,
+          "short_window_hash_echo": false,
+          "interpretation": "The supplemental existing native output contains byte-identical plaintext before the linked dispatch. Short-window omissions do not remain evidence gaps."
+        },
+        "evidence": [
+          "clarity-after-drafting/editor/session.jsonl",
+          "clarity-after-drafting/editor/behavior-records.json",
+          "clarity-after-drafting/editor/capture.json",
+          "clarity-after-drafting/editor/native-dispatch.json",
+          "clarity-after-drafting/editor/pre-dispatch-records.json",
+          "clarity-after-drafting/editor/prompt.txt",
+          "clarity-after-drafting/editor/actual-settings.json"
+        ]
+      }
+    }
+  },
+  "disclosure_audit": {
+    "status": "PASS",
+    "audited": "Destination artifacts where produced and every editor commentary/final message; no disclosure restriction violation found within this scenario's supplied access context."
+  },
+  "limitations": [
+    "Judgment is limited to retained visible tool calls/results, assistant messages and documented metadata. Harness boilerplate and hidden reasoning are excluded by protocol; original native logs were not read under the grader manifest.",
+    "Native dispatch transport remains encrypted. Exact pre-dispatch plaintext echoes and hashes, matching ciphertext in child transport, dispatch receipts and child/session identifiers establish linkage under the prescribed protocol; no ciphertext decryption is claimed.",
+    "The filesystem was shared, not OS-isolated. Complete visible commands/outputs were audited against manifests; this is not a system-call-level record of implicit runtime or Git configuration reads.",
+    "These synthetic offline fixtures do not certify a live platform connector or improved human comprehension. Current consumer cases measure drafting and optional recommendation behavior."
+  ],
+  "required_fixes": []
+}

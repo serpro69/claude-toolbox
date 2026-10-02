@@ -1,0 +1,52 @@
+{
+  "artifact_protocol": "A separate grader checks the final artifacts and trace against the questions, protected claims and eval assertions. No paired reader comparison or human-comprehension claim.",
+  "acceptance": "All eval assertions and protected document requirements must pass. PARTIAL is not pass. Only the requested drafting or refinement is permitted; clarification remains an unexecuted optional recommendation, omitted when nothing changes.",
+  "baseline": "Original selected implementation.md; untouched linked design.md and tasks.md are the audience-accessible reading path in both versions.",
+  "artifact_manifest": [
+    "docs/feat/wip/archive-label/implementation.md",
+    "docs/feat/wip/archive-label/design.md",
+    "docs/feat/wip/archive-label/tasks.md"
+  ],
+  "questions": [
+    {
+      "question": "Why does this work exist?",
+      "expected": "Let contributors recognize archived catalog entries without opening each entry.",
+      "source": "design.md introduction"
+    },
+    {
+      "question": "What should a reader see for an archived entry and for an active entry?",
+      "expected": "Archived entries display Archived and retain their existing title and clickable destination; active entries are unchanged.",
+      "source": "design.md#label-contract"
+    },
+    {
+      "question": "What work is included now, and what is its implementation status?",
+      "expected": "Planned manual text edits in catalog.md, with no runtime app. Task 1 inspection is done and Task 2 text edits are pending.",
+      "source": "design.md#label-contract and #assumptions; tasks.md statuses"
+    },
+    {
+      "question": "What is outside the selected work?",
+      "expected": "Filtering, automatic archival and color changes are excluded.",
+      "source": "design.md#not-doing"
+    },
+    {
+      "question": "What remains to be decided, by whom, and what happens next?",
+      "expected": "Catalog maintainers must choose a color after checking site contrast. Text labels do not depend on that choice.",
+      "source": "design.md#open-decision"
+    }
+  ],
+  "protected_claims": [
+    "Only implementation.md is editable; design.md/tasks.md are byte-identical.",
+    "Keep design.md#label-contract link.",
+    "Task 1 remains done; Task 2 and final verification remain pending.",
+    "Name catalog.md, Archived label, unchanged active entries and retained clickable titles/destinations in concrete verified steps.",
+    "Color stays unresolved with catalog maintainers and contrast next step; no runtime evidence invented."
+  ],
+  "orientation_assertions": [
+    "Implementation steps directly name catalog.md and the archived/active behavior instead of relying on undefined state-retention condition, referential invariants or negative classification.",
+    "Each step includes concrete verification.",
+    "Implementation remains planned and the open color decision is explicit."
+  ],
+  "baseline_defects": [
+    "The original implementation uses undefined state-retention condition, referential invariants and negative classification, omits catalog.md and concrete step-verification pairs. Even if linked sources allow all five reader answers, these independently observable defects justify refinement."
+  ]
+}

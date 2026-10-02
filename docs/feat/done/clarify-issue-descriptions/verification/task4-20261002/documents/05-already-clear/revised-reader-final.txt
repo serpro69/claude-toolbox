@@ -1,0 +1,5 @@
+1. Owners need a restaurant preparation default with item overrides, while existing orders retain their original preparation time.
+2. With a 15-minute default, missing/null values resolve to 15 and explicit zero stays 0. Changing the default to 20 affects future lookups; an earlier order keeps 15.
+3. This increment adds current-value lookup through `effective_minutes` and order snapshots through `create_order`, using `prep_minutes` for storage.
+4. Scheduling remains outside this increment.
+5. The product owner must decide inheritance badges for the menu editor.

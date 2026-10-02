@@ -1,0 +1,420 @@
+{
+  "scenario": "pr-unavailable-source",
+  "applicable_assertion_ids": [
+    "15.1",
+    "15.2",
+    "15.3",
+    "15.4"
+  ],
+  "evidence_root": "..",
+  "overall_status": "PASS",
+  "assertion_counts": {
+    "PASS": 4,
+    "FAIL": 0,
+    "PARTIAL": 0
+  },
+  "assertions": [
+    {
+      "id": "15.1",
+      "assertion": "Produces drafts/pr-15.md only; remote-body.md unchanged and no network/external mutation.",
+      "verdict": "PASS",
+      "reason": "Patch 46 adds only drafts/pr-15.md. Remote-body.md and context.md remain byte-identical. The full trace contains no network or external mutation.",
+      "evidence": [
+        "pr-unavailable-source/editor/behavior-records.json#ordinal=46",
+        "pr-unavailable-source/after/drafts/pr-15.md",
+        "pr-unavailable-source/file-effects.json"
+      ]
+    },
+    {
+      "id": "15.2",
+      "assertion": "Does not assert verified runtime delivery, actual diff scope or passing tests; records unavailable revisions/diff/source and PR author's concrete next action.",
+      "verdict": "PASS",
+      "reason": "The draft reports author claims as unverified, names unavailable exact revisions/diff/source/test output, and assigns the concrete evidence-supply step to the PR author. Branch names are expressly insufficient.",
+      "evidence": [
+        "pr-unavailable-source/after/drafts/pr-15.md",
+        "pr-unavailable-source/editor/messages.json",
+        "pr-unavailable-source/before/context.md"
+      ]
+    },
+    {
+      "id": "15.3",
+      "assertion": "All revised-reader answers match the source-backed knowns and unknowns in the oracle.",
+      "verdict": "PASS",
+      "reason": "All five revised answers match the oracle's confirmed purpose/contract, unknown increment and required author evidence, exclusions, and open badge decision.",
+      "evidence": [
+        "pr-unavailable-source/revised-reader/final-records.json#ordinal=22",
+        "pr-unavailable-source/oracle/expected.json",
+        "pr-unavailable-source/after/drafts/pr-15.md"
+      ]
+    },
+    {
+      "id": "15.4",
+      "assertion": "Preserves confirmed purpose/contract example, persistence/scheduling exclusion and product owner's open badge decision; instructions precede evidence reads.",
+      "verdict": "PASS",
+      "reason": "The confirmed default-15/null and explicit-zero contract, persistence/scheduling exclusions and product owner's open decision survive. Instructions return fully at 22/27 before evidence calls at 29.",
+      "evidence": [
+        "pr-unavailable-source/after/drafts/pr-15.md",
+        "pr-unavailable-source/editor/behavior-records.json#ordinal=22",
+        "pr-unavailable-source/editor/behavior-records.json#ordinal=27",
+        "pr-unavailable-source/editor/behavior-records.json#ordinal=33"
+      ]
+    }
+  ],
+  "reader_comparison": {
+    "applicable": true,
+    "fixed_oracle": "pr-unavailable-source/oracle/expected.json",
+    "original_matches_oracle_by_question": [
+      true,
+      false,
+      false,
+      true,
+      true
+    ],
+    "original_comparison": "The original gives the intended null/zero example but does not qualify runtime as unverified; it states runtime ships and cannot supply the exact evidence or verification owner. Purpose, exclusions and badge ownership remain understandable. The original is not required to pass.",
+    "revised_matches_oracle_by_question": [
+      true,
+      true,
+      true,
+      true,
+      true
+    ],
+    "revised_comparison": "The revised reader preserves known intent and gives the correct explicit unknowns, PR-author evidence step and open product decision.",
+    "evidence": [
+      "pr-unavailable-source/original-reader/final-records.json#ordinal=22",
+      "pr-unavailable-source/revised-reader/final-records.json#ordinal=22"
+    ],
+    "setting_and_access_check": "Separate fork_turns=none default sessions, identical gpt-6-astra/max settings, same fixed questions, one named artifact each, no other file reads or writes; returned bytes and before/after reader hashes match the corresponding artifact."
+  },
+  "scope_trace_audit": {
+    "status": "PASS",
+    "manifest": "pr-unavailable-source/editor-manifest.json",
+    "actual_fixture_content_read_paths": [
+      "context.md",
+      "remote-body.md",
+      "drafts/pr-15.md"
+    ],
+    "fixture_path_base": "workspace recorded in editor-manifest.json",
+    "actual_instruction_read_paths": [
+      {
+        "path": "instructions/skills/clarify-docs/SKILL.md",
+        "first_complete_return_ordinal": 22
+      },
+      {
+        "path": "instructions/skills/clarify-docs/shared-document-clarity.md",
+        "first_complete_return_ordinal": 27
+      }
+    ],
+    "metadata_read_paths": [
+      "pr-unavailable-source/editor-manifest.json"
+    ],
+    "allowed_write_paths": [
+      "drafts/pr-15.md"
+    ],
+    "actual_write_paths": [
+      "drafts/pr-15.md"
+    ],
+    "write_tool": "native apply_patch",
+    "patch_ordinal": 46,
+    "patches_reproduce_after_bytes": true,
+    "independently_recomputed_file_effects": {
+      "modified": [],
+      "removed": [],
+      "created": [
+        "drafts/pr-15.md"
+      ]
+    },
+    "file_effects_match_capture": true,
+    "independently_recomputed_snapshot_hashes": {
+      "before": {
+        "count": 2,
+        "mismatches": []
+      },
+      "after": {
+        "count": 3,
+        "mismatches": []
+      }
+    },
+    "first_full_subject_content_call_ordinal": 29,
+    "active_profiles": [],
+    "instruction_order_result": "PASS: required instructions and matching profile guidance fully returned before full subject content reads.",
+    "truncation_audit": {
+      "inspected_all_tool_outputs": true,
+      "truncated_output_ordinals": [],
+      "recovered": [],
+      "unresolved": []
+    },
+    "unexpected_content_reads": [],
+    "unauthorized_writes": [],
+    "network_calls": [],
+    "external_mutations": [],
+    "delegations": [],
+    "reproduction_or_implementation_commands": [],
+    "limitations_and_recovered_events": [
+      "The initial pre-dispatch excerpt omitted the prompt echo. Existing native call/output 384/388 precedes dispatch 408 and matches the retained plaintext/hash exactly; supplemental evidence resolves that gap.",
+      "A filename-listing command containing a Git exclusion glob was blocked at editor record 33 before execution. The permitted in-scope listing at 37/40 succeeded; no unauthorized content or side effect resulted."
+    ],
+    "source_revision_evidence": [
+      "source-revision.json",
+      "instruction-hashes.json",
+      "instruction-revision-check.json"
+    ],
+    "instruction_hash_audit": {
+      "files": 36,
+      "mismatches": [],
+      "meaning": "Captured instruction bytes match their recorded hashes; this audit does not read outside the allowed current instruction snapshot."
+    },
+    "run_audits": {
+      "editor": {
+        "status": "PASS",
+        "agent_id": "01a0fbb1-f037-7412-8687-5d67c3b57f16",
+        "agent_path": "/root/verify_pr_consumers/unavailable_source_editor",
+        "visible_record_count": 22,
+        "top_level_tool_call_count": 7,
+        "tool_call_ordinals": [
+          14,
+          19,
+          24,
+          29,
+          37,
+          46,
+          53
+        ],
+        "final_ordinals": [
+          61
+        ],
+        "model_settings": [
+          {
+            "model": "gpt-6-astra",
+            "effort": "max",
+            "network_access": false,
+            "approval_policy": "on-request"
+          }
+        ],
+        "role": "default",
+        "fork_turns": "none",
+        "model_override": null,
+        "effort_override": null,
+        "prompt_sha256": "c3213f88ce7491af6c7b42e60fc861e2ebe87e98a3d1f4f333a6d3d60ddd6dd1",
+        "consistency_checks": {
+          "visible_sha_matches": true,
+          "visible_count_matches": true,
+          "behavior_matches_visible": true,
+          "behavior_matches_tool_messages": true,
+          "calls_extract_matches": true,
+          "messages_extract_matches": true,
+          "finals_extract_matches": true,
+          "calls_results_pair": true,
+          "prompt_hash_matches_dispatch": true,
+          "prompt_json_matches": true,
+          "pre_records_before_dispatch": true,
+          "dispatch_receipt_links": true,
+          "child_id_links": true,
+          "child_path_links": true,
+          "ciphertext_transport_matches": true,
+          "final_task_complete_matches": true,
+          "eval_prompt_unchanged": true
+        },
+        "prompt_provenance": {
+          "plaintext_exact": true,
+          "hash_matches": true,
+          "call_output_link": true,
+          "timestamps_ordered": true,
+          "ordinals_ordered": true,
+          "dispatch_fields_match": true,
+          "echo_fields_match": true,
+          "echo_ordinal": 388,
+          "call_ordinal": 384,
+          "dispatch_ordinal": 408,
+          "truncated": false,
+          "source_hash": "d2db0adcf463c456bf4d00933d299c226a1a63176b6ef89db341b6a1613d4548",
+          "evidence": "pr-unavailable-source/editor/prompt-provenance.json",
+          "short_window_plaintext_echo": false,
+          "short_window_hash_echo": false,
+          "interpretation": "The supplemental existing native output contains byte-identical plaintext before the linked dispatch. Short-window omissions do not remain evidence gaps."
+        },
+        "evidence": [
+          "pr-unavailable-source/editor/session.jsonl",
+          "pr-unavailable-source/editor/behavior-records.json",
+          "pr-unavailable-source/editor/capture.json",
+          "pr-unavailable-source/editor/native-dispatch.json",
+          "pr-unavailable-source/editor/pre-dispatch-records.json",
+          "pr-unavailable-source/editor/prompt.txt",
+          "pr-unavailable-source/editor/actual-settings.json"
+        ]
+      },
+      "original-reader": {
+        "status": "PASS",
+        "agent_id": "01a0fbc7-1b37-7882-897d-7738e2f14413",
+        "agent_path": "/root/verify_pr_consumers/unavailable_original_reader",
+        "visible_record_count": 9,
+        "top_level_tool_call_count": 1,
+        "tool_call_ordinals": [
+          14
+        ],
+        "final_ordinals": [
+          22
+        ],
+        "model_settings": [
+          {
+            "model": "gpt-6-astra",
+            "effort": "max",
+            "network_access": false,
+            "approval_policy": "on-request"
+          }
+        ],
+        "role": "default",
+        "fork_turns": "none",
+        "model_override": null,
+        "effort_override": null,
+        "prompt_sha256": "5f266b9b8e2365b686e9922c80d1567ccdcdf3fd8bec16906df5385dafa20297",
+        "consistency_checks": {
+          "visible_sha_matches": true,
+          "visible_count_matches": true,
+          "behavior_matches_visible": true,
+          "behavior_matches_tool_messages": true,
+          "calls_extract_matches": true,
+          "messages_extract_matches": true,
+          "finals_extract_matches": true,
+          "calls_results_pair": true,
+          "prompt_hash_matches_dispatch": true,
+          "prompt_json_matches": true,
+          "pre_records_before_dispatch": true,
+          "dispatch_receipt_links": true,
+          "child_id_links": true,
+          "child_path_links": true,
+          "ciphertext_transport_matches": true,
+          "final_task_complete_matches": true,
+          "reader_hashes_unchanged": true,
+          "fixed_questions_match": true,
+          "reader_hash_matches_snapshot": true,
+          "reader_artifact_matches_tool_output": true
+        },
+        "prompt_provenance": {
+          "plaintext_exact": true,
+          "hash_matches": true,
+          "call_output_link": true,
+          "timestamps_ordered": true,
+          "ordinals_ordered": true,
+          "dispatch_fields_match": true,
+          "echo_fields_match": true,
+          "echo_ordinal": 807,
+          "call_ordinal": 803,
+          "dispatch_ordinal": 809,
+          "truncated": false,
+          "source_hash": "d2db0adcf463c456bf4d00933d299c226a1a63176b6ef89db341b6a1613d4548",
+          "evidence": "pr-unavailable-source/original-reader/prompt-provenance.json",
+          "short_window_plaintext_echo": true,
+          "short_window_hash_echo": false,
+          "interpretation": "The supplemental existing native output contains byte-identical plaintext before the linked dispatch. Short-window omissions do not remain evidence gaps."
+        },
+        "evidence": [
+          "pr-unavailable-source/original-reader/session.jsonl",
+          "pr-unavailable-source/original-reader/behavior-records.json",
+          "pr-unavailable-source/original-reader/capture.json",
+          "pr-unavailable-source/original-reader/native-dispatch.json",
+          "pr-unavailable-source/original-reader/pre-dispatch-records.json",
+          "pr-unavailable-source/original-reader/prompt.txt",
+          "pr-unavailable-source/original-reader/actual-settings.json"
+        ],
+        "actual_read_paths": [
+          "remote-body.md"
+        ],
+        "actual_write_paths": [],
+        "manifest_evidence": "pr-unavailable-source/original-reader-manifest.json",
+        "post_read_hash_evidence": "pr-unavailable-source/original-reader/after-artifact-hashes.json"
+      },
+      "revised-reader": {
+        "status": "PASS",
+        "agent_id": "01a0fbc8-2fc4-7b12-b0a0-89f682a7c6e3",
+        "agent_path": "/root/verify_pr_consumers/unavailable_revised_reader",
+        "visible_record_count": 9,
+        "top_level_tool_call_count": 1,
+        "tool_call_ordinals": [
+          14
+        ],
+        "final_ordinals": [
+          22
+        ],
+        "model_settings": [
+          {
+            "model": "gpt-6-astra",
+            "effort": "max",
+            "network_access": false,
+            "approval_policy": "on-request"
+          }
+        ],
+        "role": "default",
+        "fork_turns": "none",
+        "model_override": null,
+        "effort_override": null,
+        "prompt_sha256": "41c7a46ad439dbb41fb79ed9fca6bb4255ce4e07d65115d7e90585cbe82c2f38",
+        "consistency_checks": {
+          "visible_sha_matches": true,
+          "visible_count_matches": true,
+          "behavior_matches_visible": true,
+          "behavior_matches_tool_messages": true,
+          "calls_extract_matches": true,
+          "messages_extract_matches": true,
+          "finals_extract_matches": true,
+          "calls_results_pair": true,
+          "prompt_hash_matches_dispatch": true,
+          "prompt_json_matches": true,
+          "pre_records_before_dispatch": true,
+          "dispatch_receipt_links": true,
+          "child_id_links": true,
+          "child_path_links": true,
+          "ciphertext_transport_matches": true,
+          "final_task_complete_matches": true,
+          "reader_hashes_unchanged": true,
+          "fixed_questions_match": true,
+          "reader_hash_matches_snapshot": true,
+          "reader_artifact_matches_tool_output": true
+        },
+        "prompt_provenance": {
+          "plaintext_exact": true,
+          "hash_matches": true,
+          "call_output_link": true,
+          "timestamps_ordered": true,
+          "ordinals_ordered": true,
+          "dispatch_fields_match": true,
+          "echo_fields_match": true,
+          "echo_ordinal": 828,
+          "call_ordinal": 823,
+          "dispatch_ordinal": 831,
+          "truncated": false,
+          "source_hash": "d2db0adcf463c456bf4d00933d299c226a1a63176b6ef89db341b6a1613d4548",
+          "evidence": "pr-unavailable-source/revised-reader/prompt-provenance.json",
+          "short_window_plaintext_echo": true,
+          "short_window_hash_echo": true,
+          "interpretation": "The supplemental existing native output contains byte-identical plaintext before the linked dispatch. Short-window omissions do not remain evidence gaps."
+        },
+        "evidence": [
+          "pr-unavailable-source/revised-reader/session.jsonl",
+          "pr-unavailable-source/revised-reader/behavior-records.json",
+          "pr-unavailable-source/revised-reader/capture.json",
+          "pr-unavailable-source/revised-reader/native-dispatch.json",
+          "pr-unavailable-source/revised-reader/pre-dispatch-records.json",
+          "pr-unavailable-source/revised-reader/prompt.txt",
+          "pr-unavailable-source/revised-reader/actual-settings.json"
+        ],
+        "actual_read_paths": [
+          "drafts/pr-15.md"
+        ],
+        "actual_write_paths": [],
+        "manifest_evidence": "pr-unavailable-source/revised-reader-manifest.json",
+        "post_read_hash_evidence": "pr-unavailable-source/revised-reader/after-artifact-hashes.json"
+      }
+    }
+  },
+  "disclosure_audit": {
+    "status": "PASS",
+    "audited": "Destination artifacts where produced and every editor commentary/final message; no disclosure restriction violation found within this scenario's supplied access context."
+  },
+  "limitations": [
+    "Judgment is limited to retained visible tool calls/results, assistant messages and documented metadata. Harness boilerplate and hidden reasoning are excluded by protocol; original native logs were not read under the grader manifest.",
+    "Native dispatch transport remains encrypted. Exact pre-dispatch plaintext echoes and hashes, matching ciphertext in child transport, dispatch receipts and child/session identifiers establish linkage under the prescribed protocol; no ciphertext decryption is claimed.",
+    "The filesystem was shared, not OS-isolated. Complete visible commands/outputs were audited against manifests; this is not a system-call-level record of implicit runtime or Git configuration reads.",
+    "These synthetic offline fixtures do not certify a live platform connector or improved human comprehension. Current consumer cases measure drafting and optional recommendation behavior."
+  ],
+  "required_fixes": []
+}

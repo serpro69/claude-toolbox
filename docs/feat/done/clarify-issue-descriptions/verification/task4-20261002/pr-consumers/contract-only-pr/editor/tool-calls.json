@@ -1,0 +1,121 @@
+[
+  {
+    "timestamp": "2026-10-02T08:10:01.195Z",
+    "ordinal": 14,
+    "type": "response_item",
+    "payload": {
+      "type": "custom_tool_call",
+      "id": "ctc_0b2bd69cc3accff7016abf66d64d9087d2846bee7af5f4fd4e",
+      "status": "completed",
+      "call_id": "call_G4a8fUfOVLJmIDC0azTx2NHm",
+      "name": "exec",
+      "input": "const r = await tools.exec_command({cmd:\"cat /private/tmp/t4-prc-20261002/contract-only-pr/editor-manifest.json\", workdir:\"/private/tmp/t4-prc-20261002/contract-only-pr/workspace\", login:false, max_output_tokens:8000}); text(r.output);\n",
+      "internal_chat_message_metadata_passthrough": {
+        "turn_id": "01a0fba9-918b-7db1-9f55-1ae3f6f3b36a",
+        "create_time": 1790928591.219959
+      }
+    }
+  },
+  {
+    "timestamp": "2026-10-02T08:10:08.142Z",
+    "ordinal": 19,
+    "type": "response_item",
+    "payload": {
+      "type": "custom_tool_call",
+      "id": "ctc_0b2bd69cc3accff7016abf66dc275087d2860a9b32f5beefd4",
+      "status": "completed",
+      "call_id": "call_7GwvoRe8CgG9QLFApaZoy9Du",
+      "name": "exec",
+      "input": "const r = await tools.exec_command({cmd:\"cat /private/tmp/t4-prc-20261002/instructions/skills/clarify-docs/SKILL.md\",workdir:\"/private/tmp/t4-prc-20261002/contract-only-pr/workspace\",login:false,max_output_tokens:12000}); text(r.output);\n",
+      "internal_chat_message_metadata_passthrough": {
+        "turn_id": "01a0fba9-918b-7db1-9f55-1ae3f6f3b36a",
+        "create_time": 1790928602.173863
+      }
+    }
+  },
+  {
+    "timestamp": "2026-10-02T08:10:13.541Z",
+    "ordinal": 24,
+    "type": "response_item",
+    "payload": {
+      "type": "custom_tool_call",
+      "id": "ctc_0b2bd69cc3accff7016abf66e292d887d2a1951d0b575cbe46",
+      "status": "completed",
+      "call_id": "call_hT5LtRBwKbGuFwS7mRjbirlY",
+      "name": "exec",
+      "input": "const r = await tools.exec_command({cmd:\"cat /private/tmp/t4-prc-20261002/instructions/skills/clarify-docs/shared-document-clarity.md\",workdir:\"/private/tmp/t4-prc-20261002/contract-only-pr/workspace\",login:false,max_output_tokens:24000}); text(r.output);\n",
+      "internal_chat_message_metadata_passthrough": {
+        "turn_id": "01a0fba9-918b-7db1-9f55-1ae3f6f3b36a",
+        "create_time": 1790928609.174157
+      }
+    }
+  },
+  {
+    "timestamp": "2026-10-02T08:10:21.573Z",
+    "ordinal": 29,
+    "type": "response_item",
+    "payload": {
+      "type": "custom_tool_call",
+      "id": "ctc_0b2bd69cc3accff7016abf66e7e37087d28b448033ac73894d",
+      "status": "completed",
+      "call_id": "call_xhmhvMw8U0WyTQH06zdzQnE6",
+      "name": "exec",
+      "input": "const results = await Promise.allSettled([\ntools.exec_command({cmd:\"cat context.md pr-draft.md\",workdir:\"/private/tmp/t4-prc-20261002/contract-only-pr/workspace\",login:false,max_output_tokens:18000}),\ntools.exec_command({cmd:\"git -C checkout --no-optional-locks status --short && git -C checkout --no-optional-locks show-ref\",workdir:\"/private/tmp/t4-prc-20261002/contract-only-pr/workspace\",login:false,max_output_tokens:6000})\n]); for (let i=0;i<results.length;i++) text({i,result:results[i]});\n",
+      "internal_chat_message_metadata_passthrough": {
+        "turn_id": "01a0fba9-918b-7db1-9f55-1ae3f6f3b36a",
+        "create_time": 1790928614.522148
+      }
+    }
+  },
+  {
+    "timestamp": "2026-10-02T08:10:35.379Z",
+    "ordinal": 35,
+    "type": "response_item",
+    "payload": {
+      "type": "custom_tool_call",
+      "id": "ctc_0b2bd69cc3accff7016abf66f09a9c87d293846cd5de747e81",
+      "status": "completed",
+      "call_id": "call_L0gFNjTvbY17ffPB49NlrK6A",
+      "name": "exec",
+      "input": "const results = await Promise.allSettled([\ntools.exec_command({cmd:\"git --no-optional-locks diff --no-ext-diff review-base review-head -- contract.json requirements.md resolve.py\",workdir:\"/private/tmp/t4-prc-20261002/contract-only-pr/workspace/checkout\",login:false,max_output_tokens:12000}),\ntools.exec_command({cmd:\"git --no-optional-locks ls-tree -r --name-only review-head && git --no-optional-locks show review-head:requirements.md && git --no-optional-locks show review-head:contract.json && git --no-optional-locks show review-head:resolve.py\",workdir:\"/private/tmp/t4-prc-20261002/contract-only-pr/workspace/checkout\",login:false,max_output_tokens:16000}),\ntools.exec_command({cmd:\"git --no-optional-locks ls-tree -r --name-only review-base && git --no-optional-locks show review-base:resolve.py && git --no-optional-locks show review-base:requirements.md\",workdir:\"/private/tmp/t4-prc-20261002/contract-only-pr/workspace/checkout\",login:false,max_output_tokens:10000})\n]); for (let i=0;i<results.length;i++) text({i,result:results[i]});\n",
+      "internal_chat_message_metadata_passthrough": {
+        "turn_id": "01a0fba9-918b-7db1-9f55-1ae3f6f3b36a",
+        "create_time": 1790928622.670997
+      }
+    }
+  },
+  {
+    "timestamp": "2026-10-02T08:11:21.347Z",
+    "ordinal": 46,
+    "type": "response_item",
+    "payload": {
+      "type": "custom_tool_call",
+      "id": "ctc_0b2bd69cc3accff7016abf6718317887d29a7cad43cfe0b90e",
+      "status": "completed",
+      "call_id": "call_0hDZ75Jt50W4mHkdOex8tSJH",
+      "name": "exec",
+      "input": "text(await tools.apply_patch(\"*** Begin Patch\\n*** Update File: /private/tmp/t4-prc-20261002/contract-only-pr/workspace/pr-draft.md\\n@@\\n-# Runtime-complete stack\\n-\\n-The nullable/integer union with bounds is settled by the schema as part of the\\n-runtime-complete stack, so defaults now resolve for orders. The 0 discriminator\\n-is operative while null propagates the restaurant value. Review everything in the\\n-stack and the field matrix. Persistence, scheduling and UI are later, including\\n-the product owner's inheritance-badge decision. The payload is JSON-valid.\\n+# Preparation-time override contract\\n+\\n+This PR records the accepted preparation-time contract in `contract.json`.\\n+Restaurant defaults avoid repeating the same preparation time on every item;\\n+an item can specify its own value or inherit the restaurant default.\\n+\\n+The contract defines `prep_minutes` as an integer from 0 through 90, inclusive,\\n+or `null`. With a restaurant default of 15 minutes, the specified results are:\\n+\\n+- `null`: inherit the default, giving 15 minutes.\\n+- `0`: use an explicit override of 0 minutes.\\n+\\n+These are contract examples; runtime resolution remains future work.\\n+\\n+Only `contract.json` changes in this PR. The accepted requirements in\\n+`requirements.md` and the resolver stub in `resolve.py` are unchanged. The stub\\n+still raises `NotImplementedError`, so this PR does not enable order-time\\n+resolution. Review the contract's allowed values and its distinction between\\n+inheritance and an explicit zero against the requirements.\\n+\\n+Persistence, scheduling and the user interface are separate work. The product\\n+owner still needs to decide whether inherited values should display a badge.\\n+\\n+Recorded validation: the contract JSON parsed successfully. This diff adds no\\n+tests; no runtime tests or deployment were performed.\\n*** End Patch\"));\n",
+      "internal_chat_message_metadata_passthrough": {
+        "turn_id": "01a0fba9-918b-7db1-9f55-1ae3f6f3b36a",
+        "create_time": 1790928637.130214
+      }
+    }
+  },
+  {
+    "timestamp": "2026-10-02T08:11:33.149Z",
+    "ordinal": 53,
+    "type": "response_item",
+    "payload": {
+      "type": "custom_tool_call",
+      "id": "ctc_0b2bd69cc3accff7016abf6733e78c87d2a80df49ef662f3c3",
+      "status": "completed",
+      "call_id": "call_fcyJC9qwJyxCtu6ubAvhm6C5",
+      "name": "exec",
+      "input": "const r = await tools.exec_command({cmd:\"cat pr-draft.md\",workdir:\"/private/tmp/t4-prc-20261002/contract-only-pr/workspace\",login:false,max_output_tokens:5000}); text(r.output);\n",
+      "internal_chat_message_metadata_passthrough": {
+        "turn_id": "01a0fba9-918b-7db1-9f55-1ae3f6f3b36a",
+        "create_time": 1790928682.518617
+      }
+    }
+  }
+]

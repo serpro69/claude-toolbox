@@ -1,0 +1,56 @@
+{
+  "prompt_sha256": "5e0f2c58d122e2b1d35afd1f11e29be097ba08d90c761c33b6024a12f17b442e",
+  "coordinator_native_source": "/Users/sergio/.codex/sessions/2026/10/02/rollout-2026-10-02T10-01-03-01a0fba1-8a8e-72c3-8c4e-79a097f7323a.jsonl",
+  "coordinator_source_sha256_at_export": "1f7350ea8c34b63f74d37903ce5e33933378021288ab841e26d7d35e3e88b215",
+  "dispatch_ordinal": 191,
+  "dispatch_timestamp": "2026-10-02T08:09:49.119Z",
+  "pre_dispatch_exact_plaintext_echo_found": true,
+  "echo_ordinal": 189,
+  "echo_timestamp": "2026-10-02T08:09:33.237Z",
+  "existing_native_call": {
+    "timestamp": "2026-10-02T08:09:32.749Z",
+    "ordinal": 186,
+    "type": "response_item",
+    "payload": {
+      "type": "custom_tool_call",
+      "id": "ctc_0aeda1bb7c079e61016abf66ba155887d283ef4ae88e56bd44",
+      "status": "completed",
+      "call_id": "call_DSHMhl1iduPpka8lWseWetIf",
+      "name": "exec",
+      "input": "const r=await tools.exec_command({cmd:\"cat docs/feat/wip/clarify-issue-descriptions/verification/task4-20261002/pr-consumers/contract-only-pr/editor/prompt.txt\",login:false,max_output_tokens:1500});store(\"dispatch\",r.output);text(JSON.stringify(r.output));\n",
+      "internal_chat_message_metadata_passthrough": {
+        "turn_id": "01a0fba1-8ad8-77a2-9ddb-0c9d4339c979",
+        "create_time": 1790928564.427922
+      }
+    }
+  },
+  "existing_native_output": {
+    "timestamp": "2026-10-02T08:09:33.237Z",
+    "ordinal": 189,
+    "type": "response_item",
+    "payload": {
+      "type": "custom_tool_call_output",
+      "id": "ctco_01a0fba9-5335-7f71-8283-c6d1c9037818",
+      "call_id": "call_DSHMhl1iduPpka8lWseWetIf",
+      "output": [
+        {
+          "type": "input_text",
+          "text": "Script completed\nWall time 0.5 seconds\nOutput:\n"
+        },
+        {
+          "type": "input_text",
+          "text": "\"You are a fresh editor in an offline behavioral verification run. Work only in /private/tmp/t4-prc-20261002/contract-only-pr/workspace. You are not alone in the shared filesystem; do not revert others' work or access unrelated files.\\n\\nUse the current canonical instruction package at /private/tmp/t4-prc-20261002/instructions, starting with skills/clarify-docs/SKILL.md and its required instructions. Do not use older installed copies. Resolve plugin-root paths against this package. The exact allowed read/write manifest is /private/tmp/t4-prc-20261002/contract-only-pr/editor-manifest.json; read it first. Fixture paths in it are relative to the workspace, instruction paths to the instruction root. File listings for this scope are allowed. No reads of eval specifications, oracles, repository files outside the staged instruction package, evidence exports, other scenarios, session logs or hidden answers. The manifest itself is permitted metadata. Git checkout metadata and content listed in the manifest may be read; no Git writes. No network, external services, knowledge search, deployment or reproduction commands. External knowledge tools are unavailable for this offline run. Do not delegate. Use login:false for shell calls. Use native apply_patch for authored edits. Do not create an extra report, ledger or summary file. Finish with the normal user-facing response.\\n\\n## User request\\n/kk:clarify-docs pr-draft.md for this repository's reviewers. Use context.md and checkout/ as evidence; edit only pr-draft.md.\\n\""
+        }
+      ],
+      "internal_chat_message_metadata_passthrough": {
+        "turn_id": "01a0fba1-8ad8-77a2-9ddb-0c9d4339c979",
+        "create_time": 1790928573.237338
+      }
+    },
+    "metadata": {
+      "client_authored": false,
+      "fallback_token_limit_override": 12000
+    }
+  },
+  "provenance": "Lossless extraction of existing pre-dispatch visible call/output records; plaintext was not reconstructed."
+}

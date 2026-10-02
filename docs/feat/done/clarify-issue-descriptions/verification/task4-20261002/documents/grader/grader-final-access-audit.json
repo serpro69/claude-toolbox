@@ -1,0 +1,27 @@
+{
+  "auditor": "coordinator /root/verify_documents",
+  "verdict": "PASS",
+  "source": "grader-final-native.jsonl",
+  "visible_records": 69,
+  "read_access": "All filesystem reads target entries in grader-final-manifest.json. Commands use the evidence root or explicit manifest iteration; the integrity reader asserts membership before each file read. No original sessions, temporary workspaces or interrupted-grader artifacts were read.",
+  "write_access": "The sole filesystem mutation is native apply_patch at ordinal 233, creating the authorized grader/verdicts.json. Final validation at ordinal 240 reads the permitted result, evals, oracles and manifest.",
+  "shell_login": false,
+  "network_calls": 0,
+  "external_writes": 0,
+  "unexpected_reads": [],
+  "unexpected_writes": [],
+  "truncation": {
+    "actual_output_ordinal": 17,
+    "affected_content": "Initial absolute-path manifest rendering.",
+    "recovery": "Ordinal 21 enumerates every relative manifest entry and remaining fields; ordinals 129 and 143 read all 371 input files with explicit manifest membership assertions.",
+    "uncovered_required_content": 0,
+    "other_marker_candidates": "Ordinals 53, 77, 84 and 132 quote protocol or metadata containing truncation terminology; they are not additional truncation events."
+  },
+  "preserved_tool_issues": [
+    "Read command ordinal 111 was rejected by the target/ path-pattern hook; ordinal 122 reads the same authorized files through manifest iteration.",
+    "Audit path-regex diagnostic was corrected; a follow-up syntax error at output ordinal 139 was repaired, with zero mismatches at ordinal 146.",
+    "The grader records a recovered in-memory display-helper error; its stored verdict object and saved result were subsequently validated."
+  ],
+  "integrity": "Complete visible-source coverage, source hash, prompt timing/hash, exact pre-dispatch envelope and ciphertext receipt linkage are recorded in grader-final-native-integrity.json.",
+  "result_validation": "The saved report contains exactly the unchanged 40 assertion IDs with 40 PASS verdicts, all 60 reader-question judgments, and 141 participant records."
+}

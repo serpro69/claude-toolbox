@@ -1,0 +1,9 @@
+1. The issue records a reported violation of the synchronous export timeout contract: `0` should mean “do not wait,” but maintainers reportedly wait 30 seconds.
+
+2. On ExportKit 2.3.1, macOS 15 arm64, exporting ready `invoice-17` with `--timeout-ms 0 --mode sync` reportedly waited 30 seconds in all three attempts. Zero wait was expected.
+
+3. The supplied source uses `timeout_ms or 30000`, which replaces numeric zero with 30000. The reproduction is reported; the runtime cause remains unverified because no execution evidence accompanies the snapshot.
+
+4. Asynchronous export is explicitly outside scope. Missing or null timeouts should continue to use the 30000-millisecond default.
+
+5. Command and environment recording is complete. Mina must confirm the behavior on the reported build, then a fix can be chosen. The artifact does not name an owner for choosing or implementing that fix.

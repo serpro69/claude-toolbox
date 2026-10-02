@@ -1,0 +1,20 @@
+{
+  "scenario_id": 3,
+  "auditor": "coordinator /root/verify_documents",
+  "access_verdict": "PASS",
+  "details": "Editor loads both instruction files, reads guide.md and requirements.md, and attempts the expressly allowed missing retention.md before patching only guide.md. Each reader reads only its allowed guide. The expected missing-file result is evidence of inspection, not an out-of-manifest read.",
+  "network_calls": 0,
+  "external_writes": 0,
+  "unexpected_reads": [],
+  "unexpected_writes": [],
+  "reader_oracle_leakage": false,
+  "instruction_order": "Full entry point/shared procedure before subject-matter reads.",
+  "evidence": [
+    "editor-access-ledger.json",
+    "editor-tool-messages.jsonl",
+    "original-reader-access-ledger.json",
+    "revised-reader-access-ledger.json",
+    "file-effects.json"
+  ],
+  "limits": "Shared filesystem, enforced by prompt and audited traces rather than OS isolation. Native encrypted dispatch plaintext cannot be decrypted; exact pre-dispatch plaintext and ciphertext linkage are retained."
+}

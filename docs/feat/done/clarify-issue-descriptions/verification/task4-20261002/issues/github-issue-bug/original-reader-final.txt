@@ -1,0 +1,9 @@
+1. The issue exists because replay reportedly produced duplicate receipts, leaving operators unsure whether a completed job was handled twice. The artifact states that requirements call for one receipt per completed job.
+
+2. On QueueKit 1.4.2, Linux x86_64, the reporter seeded completed `job-42`, ran `queuectl replay job-42 --retry 1 --timeout-ms 250`, and let the first receipt time out at 250 ms. They observed two receipts in 2 of 5 attempts; they expected one.
+
+3. Environment capture is marked complete. Duplicate receipts are reported, with no independent reproduction established. The retry loop is a guessed cause; `seen_receipts` is also tentatively mentioned. Whether the job was actually handled twice remains unknown. Version 1.5.0 was not tested.
+
+4. UI work is explicitly outside scope. This is a report, not a delivered fix; the artifact establishes no further exclusions.
+
+5. Bea owns the pending next step: repeat the test on 1.4.2 with receipt logging. No deadline, fix owner, or later action is established.

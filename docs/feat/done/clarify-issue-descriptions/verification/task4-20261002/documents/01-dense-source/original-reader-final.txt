@@ -1,0 +1,5 @@
+1. Owners need a restaurant-wide preparation-time default with item-specific exceptions.
+2. With a default of 15, a null item inherits 15; an explicit zero stays zero. `create_order` copies the resolved value into the order. Changing the default to 20 updates inherited item reads but leaves existing orders unchanged.
+3. This increment adds item-value resolution through `effective_minutes` and order-time copying through `create_order`, using `prep_minutes` on restaurants, items, and orders.
+4. Scheduling is excluded.
+5. The product owner must decide whether the menu editor shows inheritance badges.

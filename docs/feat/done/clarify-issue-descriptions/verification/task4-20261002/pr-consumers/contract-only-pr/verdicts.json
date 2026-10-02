@@ -1,0 +1,480 @@
+{
+  "scenario": "contract-only-pr",
+  "applicable_assertion_ids": [
+    "11.1",
+    "11.2",
+    "11.3",
+    "11.4",
+    "11.5"
+  ],
+  "evidence_root": "..",
+  "overall_status": "PASS",
+  "assertion_counts": {
+    "PASS": 5,
+    "FAIL": 0,
+    "PARTIAL": 0
+  },
+  "assertions": [
+    {
+      "id": "11.1",
+      "assertion": "All five revised-reader answers match the oracle through the draft alone.",
+      "verdict": "PASS",
+      "reason": "The revised reader gives all five oracle answers from pr-draft.md: shared defaults, 15/null and explicit zero, contract-only scope with the unchanged stub, future integration, and product-owner badges.",
+      "evidence": [
+        "contract-only-pr/revised-reader/final-records.json#ordinal=22",
+        "contract-only-pr/after/pr-draft.md",
+        "contract-only-pr/oracle/expected.json"
+      ]
+    },
+    {
+      "id": "11.2",
+      "assertion": "Fidelity: contract-only increment, 0–90 bounds, null inheritance, explicit zero, future runtime, persistence/scheduling/UI exclusion, badge decision and validation limits survive.",
+      "verdict": "PASS",
+      "reason": "The draft preserves 0–90 inclusive, null inheritance, explicit zero, the unimplemented runtime stub, persistence/scheduling/UI exclusions, product ownership, and successful JSON parsing with no runtime tests or deployment.",
+      "evidence": [
+        "contract-only-pr/after/pr-draft.md",
+        "contract-only-pr/source-snapshots/head/requirements.md",
+        "contract-only-pr/source-snapshots/head/resolve.py",
+        "contract-only-pr/editor/behavior-records.json#ordinal=56"
+      ]
+    },
+    {
+      "id": "11.3",
+      "assertion": "Trace establishes actual review-base/review-head and reads their diff plus requirements and runtime stub before editing; the stack label does not determine the increment.",
+      "verdict": "PASS",
+      "reason": "Read-only show-ref establishes base 48aee21… and head 0658ef5… at 29/33; 35/40 reads the diff and both revisions' requirements/stub before patch 46. Independently decoded Git objects match the snapshots and show only contract.json changes.",
+      "evidence": [
+        "contract-only-pr/editor/behavior-records.json#ordinal=33",
+        "contract-only-pr/editor/behavior-records.json#ordinal=40",
+        "contract-only-pr/git-evidence.json",
+        "contract-only-pr/before/checkout/git-metadata-export.json"
+      ]
+    },
+    {
+      "id": "11.4",
+      "assertion": "Orientation: purpose precedes schema detail; proposed default 15/null→15 and zero→0 are labeled contract examples, not running behavior; focused review path names contract.json and distinguishes unchanged resolve.py.",
+      "verdict": "PASS",
+      "reason": "Purpose appears before schema details; 15/null and zero examples are explicitly contract examples with runtime future. The review points to contract.json and distinguishes unchanged requirements.md/resolve.py.",
+      "evidence": [
+        "contract-only-pr/after/pr-draft.md",
+        "contract-only-pr/editor/behavior-records.json#ordinal=56"
+      ]
+    },
+    {
+      "id": "11.5",
+      "assertion": "Only pr-draft.md changes; full instructions precede source reads and no external mutation occurs.",
+      "verdict": "PASS",
+      "reason": "The complete entry point and shared procedure return at 22/27 before content reads at 29. Patch 46 changes only pr-draft.md; decoded before/after hashes confirm checkout and Git metadata unchanged. No network or external write appears.",
+      "evidence": [
+        "contract-only-pr/editor/behavior-records.json#ordinal=22",
+        "contract-only-pr/editor/behavior-records.json#ordinal=27",
+        "contract-only-pr/editor/behavior-records.json#ordinal=46",
+        "contract-only-pr/file-effects.json"
+      ]
+    }
+  ],
+  "reader_comparison": {
+    "applicable": true,
+    "fixed_oracle": "contract-only-pr/oracle/expected.json",
+    "original_matches_oracle_by_question": [
+      false,
+      false,
+      false,
+      false,
+      true
+    ],
+    "original_comparison": "The original reader cannot recover the underlying purpose, 15/null and explicit-zero example, contract-only increment, or runtime exclusion. It does retain persistence/scheduling/UI and badge ownership. These are baseline defects, not requirements that the original pass.",
+    "revised_matches_oracle_by_question": [
+      true,
+      true,
+      true,
+      true,
+      true
+    ],
+    "revised_comparison": "All five oracle answers are available from the revised artifact alone, including unchanged NotImplementedError runtime and contract-only validation.",
+    "evidence": [
+      "contract-only-pr/original-reader/final-records.json#ordinal=18",
+      "contract-only-pr/revised-reader/final-records.json#ordinal=22"
+    ],
+    "setting_and_access_check": "Separate fork_turns=none default sessions, identical gpt-6-astra/max settings, same fixed questions, one named artifact each, no other file reads or writes; returned bytes and before/after reader hashes match the corresponding artifact."
+  },
+  "scope_trace_audit": {
+    "status": "PASS",
+    "manifest": "contract-only-pr/editor-manifest.json",
+    "actual_fixture_content_read_paths": [
+      "context.md",
+      "pr-draft.md",
+      "checkout/requirements.md",
+      "checkout/contract.json",
+      "checkout/resolve.py"
+    ],
+    "fixture_path_base": "workspace recorded in editor-manifest.json",
+    "actual_instruction_read_paths": [
+      {
+        "path": "instructions/skills/clarify-docs/SKILL.md",
+        "first_complete_return_ordinal": 22
+      },
+      {
+        "path": "instructions/skills/clarify-docs/shared-document-clarity.md",
+        "first_complete_return_ordinal": 27
+      }
+    ],
+    "metadata_read_paths": [
+      "contract-only-pr/editor-manifest.json"
+    ],
+    "allowed_write_paths": [
+      "pr-draft.md"
+    ],
+    "actual_write_paths": [
+      "pr-draft.md"
+    ],
+    "write_tool": "native apply_patch",
+    "patch_ordinal": 46,
+    "patches_reproduce_after_bytes": true,
+    "independently_recomputed_file_effects": {
+      "modified": [
+        "pr-draft.md"
+      ],
+      "removed": [],
+      "created": []
+    },
+    "file_effects_match_capture": true,
+    "independently_recomputed_snapshot_hashes": {
+      "before": {
+        "count": 24,
+        "mismatches": []
+      },
+      "after": {
+        "count": 24,
+        "mismatches": []
+      }
+    },
+    "first_full_subject_content_call_ordinal": 29,
+    "active_profiles": [],
+    "instruction_order_result": "PASS: required instructions and matching profile guidance fully returned before full subject content reads.",
+    "truncation_audit": {
+      "inspected_all_tool_outputs": true,
+      "truncated_output_ordinals": [],
+      "recovered": [],
+      "unresolved": []
+    },
+    "unexpected_content_reads": [],
+    "unauthorized_writes": [],
+    "network_calls": [],
+    "external_mutations": [],
+    "delegations": [],
+    "reproduction_or_implementation_commands": [],
+    "limitations_and_recovered_events": [
+      "The excluded capture-attempt-1 is not acceptance evidence. Its saved prompt has two trailing LF bytes while the native plaintext echo has one; the accepted editor is the fresh retry. The invalid attempt remains preserved.",
+      "The original-reader short pre-dispatch excerpt omitted its prompt echo. Supplemental existing native call/output 648/653 precedes dispatch 669 and matches saved prompt bytes/hash exactly, resolving the gap."
+    ],
+    "git_evidence_audit": {
+      "object_count": 8,
+      "base": "48aee21e5e5c88f68be79942f0d22cbd4d4c5537",
+      "head": "0658ef55fb822fac4fcbce80f7eeae8220359f0b",
+      "head_parent_matches_base": true,
+      "changed_paths": [
+        "contract.json"
+      ],
+      "source_snapshots_match_git_objects": true,
+      "head_files": [
+        "contract.json",
+        "requirements.md",
+        "resolve.py"
+      ],
+      "verification": "Decoded exported metadata base64, recomputed SHA-256, decompressed each loose object, recomputed Git SHA-1 and object sizes, followed base/head commit trees, and compared every blob with readable source snapshots and head checkout. Before/after Git metadata bytes are identical.",
+      "actual_query_scope": "Read-only status/refs/tree/diff/blob queries scoped to the staged checkout; source paths are the head/base paths recorded here. Individual implicit operating-system file reads are not separately logged.",
+      "declared_metadata_paths": [
+        "checkout/.git/COMMIT_EDITMSG",
+        "checkout/.git/HEAD",
+        "checkout/.git/MERGE_RR",
+        "checkout/.git/config",
+        "checkout/.git/hooks/post-checkout",
+        "checkout/.git/index",
+        "checkout/.git/logs/HEAD",
+        "checkout/.git/logs/refs/heads/master",
+        "checkout/.git/objects/06/58ef55fb822fac4fcbce80f7eeae8220359f0b",
+        "checkout/.git/objects/09/67ef424bce6791893e9a57bb952f80fd536e93",
+        "checkout/.git/objects/2f/0f50558a0de8ec3b01251ee68e045d04493df2",
+        "checkout/.git/objects/34/196cc634c9dc81bdf7cdd383262ac7f0186cfb",
+        "checkout/.git/objects/48/aee21e5e5c88f68be79942f0d22cbd4d4c5537",
+        "checkout/.git/objects/5e/5a1b13c810da6bb0d5f9c555d9e2db9e8b8a53",
+        "checkout/.git/objects/a4/cebdfc4ddfa5bc325ab33ec72ed1dcd3ed8230",
+        "checkout/.git/objects/b0/e3a2a6c68f7eab55ec8d150e6254dcbba81290",
+        "checkout/.git/refs/heads/master",
+        "checkout/.git/refs/tags/review-base",
+        "checkout/.git/refs/tags/review-head"
+      ],
+      "evidence": [
+        "contract-only-pr/git-evidence.json",
+        "contract-only-pr/before/checkout/git-metadata-export.json",
+        "contract-only-pr/after/checkout/git-metadata-export.json",
+        "source-snapshot-hashes.json",
+        "git-metadata-portability.json"
+      ]
+    },
+    "source_revision_evidence": [
+      "source-revision.json",
+      "instruction-hashes.json",
+      "instruction-revision-check.json"
+    ],
+    "instruction_hash_audit": {
+      "files": 36,
+      "mismatches": [],
+      "meaning": "Captured instruction bytes match their recorded hashes; this audit does not read outside the allowed current instruction snapshot."
+    },
+    "run_audits": {
+      "editor": {
+        "status": "PASS",
+        "agent_id": "01a0fba9-914d-7941-9f04-58065eeaf31b",
+        "agent_path": "/root/verify_pr_consumers/contract_editor_retry",
+        "visible_record_count": 22,
+        "top_level_tool_call_count": 7,
+        "tool_call_ordinals": [
+          14,
+          19,
+          24,
+          29,
+          35,
+          46,
+          53
+        ],
+        "final_ordinals": [
+          59
+        ],
+        "model_settings": [
+          {
+            "model": "gpt-6-astra",
+            "effort": "max",
+            "network_access": false,
+            "approval_policy": "on-request"
+          }
+        ],
+        "role": "default",
+        "fork_turns": "none",
+        "model_override": null,
+        "effort_override": null,
+        "prompt_sha256": "5e0f2c58d122e2b1d35afd1f11e29be097ba08d90c761c33b6024a12f17b442e",
+        "consistency_checks": {
+          "visible_sha_matches": true,
+          "visible_count_matches": true,
+          "behavior_matches_visible": true,
+          "behavior_matches_tool_messages": true,
+          "calls_extract_matches": true,
+          "messages_extract_matches": true,
+          "finals_extract_matches": true,
+          "calls_results_pair": true,
+          "prompt_hash_matches_dispatch": true,
+          "prompt_json_matches": "not supplied",
+          "pre_records_before_dispatch": true,
+          "dispatch_receipt_links": true,
+          "child_id_links": true,
+          "child_path_links": true,
+          "ciphertext_transport_matches": true,
+          "final_task_complete_matches": true,
+          "eval_prompt_unchanged": true
+        },
+        "prompt_provenance": {
+          "plaintext_exact": true,
+          "hash_matches": true,
+          "call_output_link": true,
+          "timestamps_ordered": true,
+          "ordinals_ordered": true,
+          "dispatch_fields_match": true,
+          "echo_fields_match": true,
+          "echo_ordinal": 189,
+          "call_ordinal": 186,
+          "dispatch_ordinal": 191,
+          "truncated": false,
+          "source_hash": "d2db0adcf463c456bf4d00933d299c226a1a63176b6ef89db341b6a1613d4548",
+          "evidence": "contract-only-pr/editor/prompt-provenance.json",
+          "short_window_plaintext_echo": true,
+          "short_window_hash_echo": true,
+          "interpretation": "The supplemental existing native output contains byte-identical plaintext before the linked dispatch. Short-window omissions do not remain evidence gaps."
+        },
+        "evidence": [
+          "contract-only-pr/editor/session.jsonl",
+          "contract-only-pr/editor/behavior-records.json",
+          "contract-only-pr/editor/capture.json",
+          "contract-only-pr/editor/native-dispatch.json",
+          "contract-only-pr/editor/pre-dispatch-records.json",
+          "contract-only-pr/editor/prompt.txt",
+          "contract-only-pr/editor/actual-settings.json"
+        ]
+      },
+      "original-reader": {
+        "status": "PASS",
+        "agent_id": "01a0fbc0-ea75-7582-8633-a5588a3a1b0c",
+        "agent_path": "/root/verify_pr_consumers/contract_original_reader",
+        "visible_record_count": 8,
+        "top_level_tool_call_count": 1,
+        "tool_call_ordinals": [
+          10
+        ],
+        "final_ordinals": [
+          18
+        ],
+        "model_settings": [
+          {
+            "model": "gpt-6-astra",
+            "effort": "max",
+            "network_access": false,
+            "approval_policy": "on-request"
+          }
+        ],
+        "role": "default",
+        "fork_turns": "none",
+        "model_override": null,
+        "effort_override": null,
+        "prompt_sha256": "a4d7b3ab7dd689f9860beb55da21c2d8ec28b29a9e3609f2ff47f4940e4f3e80",
+        "consistency_checks": {
+          "visible_sha_matches": true,
+          "visible_count_matches": true,
+          "behavior_matches_visible": true,
+          "behavior_matches_tool_messages": true,
+          "calls_extract_matches": true,
+          "messages_extract_matches": true,
+          "finals_extract_matches": true,
+          "calls_results_pair": true,
+          "prompt_hash_matches_dispatch": true,
+          "prompt_json_matches": true,
+          "pre_records_before_dispatch": true,
+          "dispatch_receipt_links": true,
+          "child_id_links": true,
+          "child_path_links": true,
+          "ciphertext_transport_matches": true,
+          "final_task_complete_matches": true,
+          "reader_hashes_unchanged": true,
+          "fixed_questions_match": true,
+          "reader_hash_matches_snapshot": true,
+          "reader_artifact_matches_tool_output": true
+        },
+        "prompt_provenance": {
+          "plaintext_exact": true,
+          "hash_matches": true,
+          "call_output_link": true,
+          "timestamps_ordered": true,
+          "ordinals_ordered": true,
+          "dispatch_fields_match": true,
+          "echo_fields_match": true,
+          "echo_ordinal": 653,
+          "call_ordinal": 648,
+          "dispatch_ordinal": 669,
+          "truncated": false,
+          "source_hash": "d2db0adcf463c456bf4d00933d299c226a1a63176b6ef89db341b6a1613d4548",
+          "evidence": "contract-only-pr/original-reader/prompt-provenance.json",
+          "short_window_plaintext_echo": false,
+          "short_window_hash_echo": false,
+          "interpretation": "The supplemental existing native output contains byte-identical plaintext before the linked dispatch. Short-window omissions do not remain evidence gaps."
+        },
+        "evidence": [
+          "contract-only-pr/original-reader/session.jsonl",
+          "contract-only-pr/original-reader/behavior-records.json",
+          "contract-only-pr/original-reader/capture.json",
+          "contract-only-pr/original-reader/native-dispatch.json",
+          "contract-only-pr/original-reader/pre-dispatch-records.json",
+          "contract-only-pr/original-reader/prompt.txt",
+          "contract-only-pr/original-reader/actual-settings.json"
+        ],
+        "actual_read_paths": [
+          "pr-draft.md"
+        ],
+        "actual_write_paths": [],
+        "manifest_evidence": "contract-only-pr/original-reader-manifest.json",
+        "post_read_hash_evidence": "contract-only-pr/original-reader/after-artifact-hashes.json"
+      },
+      "revised-reader": {
+        "status": "PASS",
+        "agent_id": "01a0fbc1-b06a-7eb1-8471-ce1c71b172b0",
+        "agent_path": "/root/verify_pr_consumers/contract_revised_reader",
+        "visible_record_count": 9,
+        "top_level_tool_call_count": 1,
+        "tool_call_ordinals": [
+          14
+        ],
+        "final_ordinals": [
+          22
+        ],
+        "model_settings": [
+          {
+            "model": "gpt-6-astra",
+            "effort": "max",
+            "network_access": false,
+            "approval_policy": "on-request"
+          }
+        ],
+        "role": "default",
+        "fork_turns": "none",
+        "model_override": null,
+        "effort_override": null,
+        "prompt_sha256": "3d0864116f4080bc7c911da9e318331a1c0d6a4c43097e58967650ef3f5516d7",
+        "consistency_checks": {
+          "visible_sha_matches": true,
+          "visible_count_matches": true,
+          "behavior_matches_visible": true,
+          "behavior_matches_tool_messages": true,
+          "calls_extract_matches": true,
+          "messages_extract_matches": true,
+          "finals_extract_matches": true,
+          "calls_results_pair": true,
+          "prompt_hash_matches_dispatch": true,
+          "prompt_json_matches": true,
+          "pre_records_before_dispatch": true,
+          "dispatch_receipt_links": true,
+          "child_id_links": true,
+          "child_path_links": true,
+          "ciphertext_transport_matches": true,
+          "final_task_complete_matches": true,
+          "reader_hashes_unchanged": true,
+          "fixed_questions_match": true,
+          "reader_hash_matches_snapshot": true,
+          "reader_artifact_matches_tool_output": true
+        },
+        "prompt_provenance": {
+          "plaintext_exact": true,
+          "hash_matches": true,
+          "call_output_link": true,
+          "timestamps_ordered": true,
+          "ordinals_ordered": true,
+          "dispatch_fields_match": true,
+          "echo_fields_match": true,
+          "echo_ordinal": 686,
+          "call_ordinal": 681,
+          "dispatch_ordinal": 688,
+          "truncated": false,
+          "source_hash": "d2db0adcf463c456bf4d00933d299c226a1a63176b6ef89db341b6a1613d4548",
+          "evidence": "contract-only-pr/revised-reader/prompt-provenance.json",
+          "short_window_plaintext_echo": true,
+          "short_window_hash_echo": true,
+          "interpretation": "The supplemental existing native output contains byte-identical plaintext before the linked dispatch. Short-window omissions do not remain evidence gaps."
+        },
+        "evidence": [
+          "contract-only-pr/revised-reader/session.jsonl",
+          "contract-only-pr/revised-reader/behavior-records.json",
+          "contract-only-pr/revised-reader/capture.json",
+          "contract-only-pr/revised-reader/native-dispatch.json",
+          "contract-only-pr/revised-reader/pre-dispatch-records.json",
+          "contract-only-pr/revised-reader/prompt.txt",
+          "contract-only-pr/revised-reader/actual-settings.json"
+        ],
+        "actual_read_paths": [
+          "pr-draft.md"
+        ],
+        "actual_write_paths": [],
+        "manifest_evidence": "contract-only-pr/revised-reader-manifest.json",
+        "post_read_hash_evidence": "contract-only-pr/revised-reader/after-artifact-hashes.json"
+      }
+    }
+  },
+  "disclosure_audit": {
+    "status": "PASS",
+    "audited": "Destination artifacts where produced and every editor commentary/final message; no disclosure restriction violation found within this scenario's supplied access context."
+  },
+  "limitations": [
+    "Judgment is limited to retained visible tool calls/results, assistant messages and documented metadata. Harness boilerplate and hidden reasoning are excluded by protocol; original native logs were not read under the grader manifest.",
+    "Native dispatch transport remains encrypted. Exact pre-dispatch plaintext echoes and hashes, matching ciphertext in child transport, dispatch receipts and child/session identifiers establish linkage under the prescribed protocol; no ciphertext decryption is claimed.",
+    "The filesystem was shared, not OS-isolated. Complete visible commands/outputs were audited against manifests; this is not a system-call-level record of implicit runtime or Git configuration reads.",
+    "These synthetic offline fixtures do not certify a live platform connector or improved human comprehension. Current consumer cases measure drafting and optional recommendation behavior."
+  ],
+  "required_fixes": []
+}

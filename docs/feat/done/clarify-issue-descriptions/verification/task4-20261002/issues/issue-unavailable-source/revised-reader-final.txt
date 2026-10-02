@@ -1,0 +1,9 @@
+1. The issue exists because a zero timeout reportedly causes a 30-second wait during synchronous export, delaying the invoice check.
+
+2. On ExportKit 2.1 / Ubuntu 24.04, `exportctl send invoice-21 --timeout-ms 0 --mode sync` reportedly waited 30 seconds in 2 of 3 attempts. Immediate return was expected.
+
+3. The command and environment are recorded, but runtime behavior is not independently verified. The reporter suspects zero is replaced with a default timeout; the cause remains unknown. Source access was denied, and no source, tests or logs are accessible for verification.
+
+4. Async export is outside this issue.
+
+5. Mina must obtain an accessible v2.1 source snapshot. A reproduction and cause-confirmation owner still needs assignment. Once source is available, reproduce on the reported version and compare timeout handling before choosing a fix. No fix is agreed.

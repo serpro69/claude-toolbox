@@ -1,0 +1,20 @@
+{
+  "scenario_id": 6,
+  "auditor": "coordinator /root/verify_documents",
+  "access_verdict": "PASS",
+  "details": "Editor loads both instruction files before guide.md, requirements.md and prep.py, changes only the maximum-default line in guide.md from 60 to 90, and rereads guide.md. Each reader reads only its one allowed guide.",
+  "network_calls": 0,
+  "external_writes": 0,
+  "unexpected_reads": [],
+  "unexpected_writes": [],
+  "reader_oracle_leakage": false,
+  "instruction_order": "Full entry point/shared procedure before subject-matter reads.",
+  "evidence": [
+    "editor-access-ledger.json",
+    "editor-tool-messages.jsonl",
+    "original-reader-access-ledger.json",
+    "revised-reader-access-ledger.json",
+    "file-effects.json"
+  ],
+  "limits": "Shared filesystem, enforced by prompt and audited traces rather than OS isolation. Native encrypted dispatch plaintext cannot be decrypted; exact pre-dispatch plaintext and ciphertext linkage are retained."
+}
