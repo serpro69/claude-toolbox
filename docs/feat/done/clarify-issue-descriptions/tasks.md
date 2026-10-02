@@ -3,7 +3,7 @@
 > Design: [design.md](design.md)
 > Implementation: [implementation.md](implementation.md)
 > Issue: [#157](https://github.com/serpro69/claude-toolbox/issues/157)
-> Status: in-progress (Tasks 1–3 done; Task 4 pending)
+> Status: done (all four tasks complete, 2026-10-02)
 > Created: 2026-09-30
 > Not Doing: remote publication/comments, issue implementation/reproduction, invented decisions/criteria, tracker-title editing, mandatory integrations/live certification, separate issue guide/new skill/profile, automatic clarification, bulk rewrites/extra summaries, completed-design edits
 
@@ -80,7 +80,7 @@ Task 4 is next.
 
 ## Task 4: Document and verify the complete extension
 
-- **Status:** pending
+- **Status:** done
 - **Depends on:** Task 1, Task 2, Task 3
 - **Size:** M
 - **Can run in parallel with:** —
@@ -88,12 +88,20 @@ Task 4 is next.
 
 ### Subtasks
 
-- [ ] 4.1 Run `/kk:document` to update `README.md`, `docs/getting-started/overview.md`, and `docs/user-guide/skills.md` → verify: documented issue examples, local output, gaps, disclosure, and implementation boundaries match the design and preserve optional clarification.
-- [ ] 4.2 Execute all nine new scenarios, all fifteen current standalone scenarios, and the five current design/document consumer scenarios listed in the implementation plan → verify: every applicable assertion passes on the final instructions, with fresh-reader comparison where applicable and no leaked or incomplete traces.
-- [ ] 4.3 Maintain this feature's `verification.md` and `verification/<run-id>/` evidence as runs occur → verify: exact prompts/settings, hashes/manifests, traces, reader answers, failures and per-assertion verdicts are linked; authored-but-unrun cases remain explicitly incomplete.
-- [ ] 4.4 Run `/kk:test` over all shell suites, generation, graph validation, and Go tests → verify: each outcome is recorded, generation is idempotent, and intended generated changes are distinguished from drift.
-- [ ] 4.5 Run `/kk:review-code` for Markdown skill instructions, JSON eval specifications, and generated Codex content → verify: resolve findings or record remaining work durably with owner and next action; do not relax acceptance to close the task.
-- [ ] 4.6 Run `/kk:review-spec` against all three design artifacts → verify: implementation, docs, generated output, and executed evidence cover every issue acceptance criterion before marking the feature complete.
+- [x] 4.1 Run `/kk:document` to update `README.md`, `docs/getting-started/overview.md`, and `docs/user-guide/skills.md` → verify: documented issue examples, local output, gaps, disclosure, and implementation boundaries match the design and preserve optional clarification.
+- [x] 4.2 Execute all nine new scenarios, all fifteen current standalone scenarios, and the five current design/document consumer scenarios listed in the implementation plan → verify: every applicable assertion passes on the final instructions, with fresh-reader comparison where applicable and no leaked or incomplete traces.
+- [x] 4.3 Maintain this feature's `verification.md` and `verification/<run-id>/` evidence as runs occur → verify: exact prompts/settings, hashes/manifests, traces, reader answers, failures and per-assertion verdicts are linked; authored-but-unrun cases remain explicitly incomplete.
+- [x] 4.4 Run `/kk:test` over all shell suites, generation, graph validation, and Go tests → verify: each outcome is recorded, generation is idempotent, and intended generated changes are distinguished from drift.
+- [x] 4.5 Run `/kk:review-code` for Markdown skill instructions, JSON eval specifications, and generated Codex content → verify: resolve findings or record remaining work durably with owner and next action; do not relax acceptance to close the task.
+- [x] 4.6 Run `/kk:review-spec` against all three design artifacts → verify: implementation, docs, generated output, and executed evidence cover every issue acceptance criterion before marking the feature complete.
+
+Completed 2026-10-02. [Final verification](verification.md#task-4--complete-extension-verification):
+all 29 scenarios and 133 fixed assertions pass, with 29 fresh editors, 30 readers
+and independent grading. All nine shell suites (604 assertions), all Go tests,
+generation/freshness/idempotence and graph validation pass. Source review approves
+all 114 files; final spec review is conformant with no findings or unverified
+acceptance items. Usage documentation is updated and optional clarification is
+preserved. No operative instructions, fixtures or assertions changed in Task 4.
 
 ## Dependency Graph
 

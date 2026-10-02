@@ -25,7 +25,7 @@ Tools like Claude Code and Codex are powerful on their own, but LLMs don't know 
 
 ## Features at a Glance
 
-- **14 workflow and utility skills** — a complete development pipeline invoked as `/kk:<skill-name>`, plus utilities such as `/kk:clarify-docs` for existing documentation and PR drafts
+- **14 workflow and utility skills** — a complete development pipeline invoked as `/kk:<skill-name>`, plus utilities such as `/kk:clarify-docs` for existing documentation, PR drafts and issue descriptions
 - **Multi-language support** — precise and distinct instructions from design, to implementation, to testing, to review for: Go, Java, JS/TS, Kotlin, Kubernetes, and Python
 - **Multi-model code review** — independent reviewers using sub-agents and external models (Gemini, etc.)
 - **Persistent knowledge base** — findings, decisions, and conventions that survive across sessions via Capy
@@ -39,6 +39,12 @@ Tools like Claude Code and Codex are powerful on their own, but LLMs don't know 
 The **kk** plugin contains all development workflow functionality — 14 skills, 5 commands, and hooks — distributed via the Claude Code plugin system (see [kodex-plugin](https://github.com/serpro69/claude-toolbox/tree/master/kodex-plugin) for the Codex variant). Skills are invoked as `/kk:skill-name`, commands as `/kk:dir:command`.
 
 Alongside `skills/`, `commands/`, `agents/`, and `hooks/`, the plugin ships a top-level `profiles/` directory. Each profile (e.g., `go`, `python`, `k8s`) bundles per-domain content — detection rules, review checklists, design prompts, test validators, doc rubrics — that the workflow skills consult when the code under work matches the profile. Profiles are the extension point for new languages and IaC DSLs.
+
+For an existing bug report or feature request, optionally use `/kk:clarify-docs`
+with a local draft, pasted description or issue URL. It saves local edits, preserves
+uncertainty and respects the readers' access to supporting evidence. Implementing
+an issue uses `/kk:implement`. See [issue-description examples](../user-guide/skills.md#clarify-an-issue-description)
+for destinations, missing context and sharing boundaries.
 
 ### Configuration
 

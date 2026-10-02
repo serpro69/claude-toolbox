@@ -1,6 +1,73 @@
 # Verification
 
-Status: Tasks 1–3 complete, 2026-10-01; Task 4 pending.
+Status: complete; Tasks 1–3 finished 2026-10-01 and Task 4 finished 2026-10-02.
+
+## Task 4 — complete extension verification
+
+The maintained discovery and usage docs now cover issue inputs, local destinations,
+evidence limits, audience restrictions and the implementation boundary. The
+optional clarification workflow remains unchanged.
+
+Final behavioral result: **133/133 assertions PASS**, with no FAIL, PARTIAL or
+unrun cases. All 24 standalone scenarios and five current design/document consumer
+scenarios have fresh editor runs, plus all 30 applicable original/revised readers.
+Three independent fixture-capable graders audited the fixed assertions, artifacts,
+prompts, manifests and complete visible traces. The
+[aggregate verdicts](verification/task4-20261002/aggregate-verdicts.json) verify
+every assertion ID exactly once within its skill/scenario and confirm that the
+canonical eval and oracle hashes remain unchanged.
+
+| Cohort | Scenarios | Assertions | Evidence |
+| --- | ---: | ---: | --- |
+| Existing local documents and routing, IDs 1–10 | 10 | 40 PASS | [Index and reader results](verification/task4-20261002/documents/README.md) |
+| Existing PRs, IDs 11–15, plus current optional consumers | 10 | 46 PASS | [Index and independent grading](verification/task4-20261002/pr-consumers/README.md) |
+| New issue cases, IDs 16–24 | 9 | 47 PASS | [Index and independent grading](verification/task4-20261002/issues/README.md) |
+
+The [root evidence audit](verification/task4-20261002/checks/evidence-audit.json)
+parsed 704 JSON files and 1,735 JSONL records across the completed packages,
+rechecked all 12 verdict-file hashes, and found no malformed records, privileged
+context records or ignored evidence files. The issue cohort's separate seal also
+matches all 310 recorded file hashes and sizes. Each cohort links its own full
+participant/grader access audit and source/fixture checks.
+
+[Repository checks](verification/task4-20261002/checks.md) pass:
+all nine shell suites, all Go tests, generation/freshness/idempotence and graph
+validation. The network-dependent cases ran without skips. The initial sandbox
+generation failure and approved successful rerun are preserved. The independent
+source review [approves all 114 files](verification/task4-20261002/review.md)
+without actionable findings; PAL's file-coverage limitation and conditional link
+comment are retained with source-grounded context. The final
+[spec review](verification/task4-20261002/reviews/spec-reviewer.md) is **CONFORMANT**,
+with no findings, ambiguities or unverified acceptance items across all four tasks.
+No systemic findings or intentional deviations require indexing.
+
+The run starts at revision `9a501e1108b9083b83adbc6b550a18d0ff7b2b40` with the
+operative 1,297-word procedure unchanged from Task 3. Evaluation coordinators own
+separate `issues/`, `documents/` and `pr-consumers/` evidence trees. Exact prompts
+are saved before dispatch; editors/readers receive only declared fixtures and
+instruction files, with oracle access reserved for independent graders.
+
+Invalid prompt-newline attempts and an interrupted first document grader are
+preserved and excluded from acceptance. Instruction/metadata display truncations
+were recovered by complete reads; earlier native prompt records closed short-window
+capture gaps without reconstructing prompts. Repository exports retain visible
+tool/message evidence and native provenance hashes while excluding harness
+boilerplate and hidden reasoning. Git metadata is preserved losslessly in trackable
+exports. No assertions, fixtures or operative instructions were changed to obtain
+these results.
+
+These are offline synthetic scenarios with model readers and audited manifests on
+shared storage. They establish the stated scenario contracts, not OS isolation,
+live tracker certification or general human-comprehension gains. Encrypted transport
+remains opaque; exact pre-dispatch plaintext, hashes and receipts supply the
+provenance required by the plan.
+
+Task 4 is complete and the feature is archived under `docs/feat/done/`.
+The final task needed no operative instruction, fixture or assertion changes.
+Most verification effort went into exact prompt capture and portable, complete
+evidence: newline mismatches, truncated displays and short capture windows needed
+explicit recovery or fresh runs. These reinforced the existing evidence protocol;
+they did not establish a new project convention or change the selected design.
 
 ## Task 3 — incomplete inputs and execution non-triggers
 

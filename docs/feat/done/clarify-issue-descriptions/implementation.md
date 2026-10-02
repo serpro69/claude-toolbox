@@ -3,7 +3,7 @@
 > Design: [design.md](design.md)
 > Tasks: [tasks.md](tasks.md)
 > Issue: [#157](https://github.com/serpro69/claude-toolbox/issues/157)
-> Status: Tasks 1–3 done; Task 4 pending (2026-10-01)
+> Status: done; all four tasks complete (2026-10-02)
 > Created: 2026-09-30
 
 Tasks 1–3 progress and executed evidence are recorded in [verification.md](verification.md).
@@ -15,7 +15,9 @@ Task 2's 25 final assertions pass. Task 3 applies the remaining 49-word gap
 paragraph, bringing the operative procedure to the complete 1,297-word candidate,
 and verifies scenarios 20–24 plus regressions 9/10/14/15: all 36 final assertions
 pass. The entry point and ceiling are unchanged; baseline failures and qualified
-first attempts remain in the evidence. Task 4 remains pending.
+first attempts remain in the evidence. Task 4 updates maintained usage docs and
+completes the full 29-scenario matrix: 133 assertions pass. Repository checks pass,
+source review approves, and final spec review finds no unverified acceptance items.
 
 ## Repository map
 
@@ -302,8 +304,10 @@ Apply the [assumptions](design.md#assumptions), [Not Doing](design.md#not-doing)
 dependency, generator behavior, profile registration, skill count, or historical
 document change is planned.
 
-No required issue behavior is deferred. The instruction budget and behavior remain
-unverified until implementation. Budget overflow retains A and follows the
+No required issue behavior is deferred. The instruction budget, per-slice behavior
+and complete final matrix are verified; [verification.md](verification.md) records
+the executed evidence and its limits.
+Budget overflow retains A and follows the
 [preflight procedure](#budget-preflight): record the full candidate, exact revised
 ceiling, and justification before operative edits, then execute affected evals.
 Do not switch to a separate guide or weaken preservation rules to fit the budget.

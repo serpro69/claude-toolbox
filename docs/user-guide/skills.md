@@ -31,7 +31,7 @@ The kk plugin ships 14 workflow and utility skills, including a complete develop
 | **/kk:dependency-handling** | Fires before calling a library/SDK/API or adding a dependency. Forces a capy/context7 lookup instead of guessing signatures or behavior. |
 | **/kk:diff-skill** | Compares two versions of a skill's markdown instructions to detect degradations and complexity increases. Asymmetric — only regressions count. |
 | **/kk:merge-docs** | Merges two competing design docs for the same feature into one unified document, resolving conflicts and preserving the best of both. |
-| **/kk:clarify-docs** | Improves selected documentation and PR drafts after understanding requirements and source. Produces local edits, preserves meaning and respects the intended audience's access. |
+| **/kk:clarify-docs** | Improves selected documentation, PR drafts and issue descriptions after understanding requirements and source. Produces local edits, preserves meaning and respects the intended audience's access. |
 | **/kk:chain-of-verification** | Makes Claude fact-check its own answers. Standard mode (prompt-based) or isolated mode (independent sub-agents). For high-stakes accuracy. |
 
 ## Commands
@@ -77,8 +77,8 @@ additional summary file is produced, and a document that already meets the
 requirements stays unchanged. Clear prose can still receive a source-backed factual
 correction.
 
-This utility improves existing documentation and PR-description drafts, saving results
-locally. It does not change code or configuration, publish externally, or edit
+This utility improves existing documentation, PR drafts and issue descriptions,
+saving results locally. It does not change code or configuration, publish externally, or edit
 agent/skill instructions. An explicit `AGENTS.md`, `CLAUDE.md` or `SKILL.md` target receives a suggestion to use
 `/kk:implement`, with no edit or automatic handoff. Generic requests for shorter
 chat answers do not activate it.
@@ -139,3 +139,52 @@ Destination drafts, shared reports and gap notes exclude absolute workspace path
 and private source pointers. A completion message visible only to you may use an
 absolute link to the selected local output so you can open it. That exception does
 not authorize sharing private source paths or facts.
+
+### Clarify an issue description
+
+Use `/kk:clarify-docs` to explain an existing bug report, feature request or other
+issue for its intended readers. Select the description and any known audience,
+requirements or source references:
+
+- Local draft: `/kk:clarify-docs issue-draft.md; preserve the reported reproduction details`.
+- Issue URL: `/kk:clarify-docs <GitHub or Linear issue URL>; save to docs/feat/wip/import/issue-draft.md`.
+- Pasted description: `/kk:clarify-docs the issue description pasted below; save to drafts/import-issue.md`, followed by the body.
+
+The selected local draft is edited in place. Remote and pasted bodies become one
+local draft at your destination, or an unused path within a clearly established
+feature directory. Without either, the skill inspects available context and asks
+where to save before writing. A captured body is input, not permission to overwrite
+that file; unrelated existing drafts are protected. GitHub and Linear are examples:
+the skill uses available read-only tools or supplied text and requires no particular
+tracker integration. It sends no issue updates, comments or messages.
+
+Bug reports retain reproduction steps, commands, environment/version details and
+expected versus observed results. Reported behavior stays distinct from verified
+behavior, including differences between the reported version and inspected source.
+Feature requests preserve accepted intent, proposals, existing acceptance criteria
+and open decisions. Future implementation and a PR diff are not prerequisites.
+Missing decisions or criteria remain unknown with a next step and a known or
+explicitly unknown owner where relevant. The skill neither invents criteria nor
+executes reproduction commands. Tracker titles and types are read-only context;
+supplied titles stay unchanged, with no replacement-title suggestions.
+
+If the body is inaccessible, the skill requests its text or an accessible source
+without writing a purported revision. If only supporting evidence is unavailable,
+it can still clarify the supplied body while preserving verification limits.
+Conflicting requirements and source remain explicit with a next action.
+
+For a GitHub issue in repository R, the default readers are R's issue audience
+unless you specify another audience. Files tracked in R at the inspected revision
+are presumed accessible to those readers, including in a private repository;
+the default branch supplies the revision when none is established. This does not
+verify behavior in an older reported version. Explicit restrictions override that
+presumption, even for tracked files. Another audience, repository or tracker needs
+evidence of sharing; a Linear link or the editor's credentials alone does not prove
+access. Restricted facts and pointers stay out of both the draft and shared report,
+including uncited paraphrases. The caller-only output-link exception described
+above applies only to the selected local draft.
+
+Requests to implement, fix or work on an issue use `/kk:implement`; an issue URL
+alone does not request description editing. Clarification remains a separate,
+optional action after drafting, with the same in-session fidelity check and normal
+project review described above.

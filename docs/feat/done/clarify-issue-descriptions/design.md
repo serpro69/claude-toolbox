@@ -1,9 +1,9 @@
 # Design: clarify issue descriptions
 
 > Issue: [#157](https://github.com/serpro69/claude-toolbox/issues/157)
-> Status: pending design review; approach A and behavior walkthrough accepted
+> Status: done; all acceptance criteria verified (2026-10-02)
 > Created: 2026-09-30
-> Related: [Implementation](implementation.md), [tasks](tasks.md)
+> Related: [Implementation](implementation.md), [tasks](tasks.md), [executed verification](verification.md)
 > Repository baseline: `3e430b4`
 
 ## Problem and outcome
@@ -24,7 +24,7 @@ This is a separate extension of `/kk:clarify-docs`, not a rewrite of the
 remains in force: writing workflows may suggest clarification but do not run it
 automatically.
 
-## Current behavior
+## Behavior at the design baseline
 
 The [entry point](../../../../klaude-plugin/skills/clarify-docs/SKILL.md) explicitly
 accepts documentation and PR drafts, including PR URLs and pasted bodies. It
