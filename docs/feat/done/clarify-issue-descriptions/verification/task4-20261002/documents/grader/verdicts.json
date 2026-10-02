@@ -1,0 +1,2109 @@
+{
+  "schema_version": 1,
+  "graded_on": "2026-10-02",
+  "grader": "/root/verify_documents/doc00_grader_final",
+  "grading_status": "COMPLETE",
+  "overall_verdict": "PASS",
+  "scope": "Fresh independent fixture-capable final grading of frozen document/routing scenarios 1–10. This grader did not author the edits, answers or coordinator audits, and did not read the interrupted grader's conclusions.",
+  "instructions_and_method": {
+    "preload_order": [
+      "grader/grader-final-manifest.json",
+      "protocol/evals-README.md",
+      "protocol/implementation.md:227 (Execution and evidence protocol)",
+      "capture-format.md",
+      "instructions/SKILL.md",
+      "instructions/shared-document-clarity.md",
+      "Every scenario's eval.json and available oracle.json, then subject artifacts and participant evidence."
+    ],
+    "assertion_policy": "All 40 assertions retain their original text and receive an independent PASS/FAIL/PARTIAL with concrete evidence. Baseline reader deficiencies are reported separately; they are not failed final-editor assertions.",
+    "verification": "Inspected all permitted inputs and all 141 visible participant records; compared complete outputs with frozen files; recomputed snapshot, instruction, prompt and export hashes; checked manifests, exact natural requests, reader controls, dispatch linkage and tool/result pairing; replayed every editor patch in memory; independently checked task state and links.",
+    "evidence_scope": "The three JSONL exports per participant are intentionally equivalent. They are treated as portable visible source records, without requiring excluded privileged harness or reasoning records. Coordinator conclusions are independently checked where the published evidence permits.",
+    "frozen_source_revision": "9a501e1108b9083b83adbc6b550a18d0ff7b2b40",
+    "verified_frozen_instruction_sha256": {
+      "instructions/SKILL.md": "1d63b6ed88d7a96257c6ab6471d6763d9df7f33da29b49f50fa26f642584a189",
+      "instructions/shared-document-clarity.md": "519f3fa45ae1954154aa292eff8e14abdcfadfb6b2e924214c2092b03a66d681"
+    }
+  },
+  "scenario_results": [
+    {
+      "id": 1,
+      "name": "dense-source",
+      "assertions": [
+        {
+          "id": "1.1",
+          "assertion": "All five reader answers in oracle/expected.json are supported by the revised guide alone.",
+          "dimension": "comprehension",
+          "verdict": "PASS",
+          "evidence": "01-dense-source/after/guide.md:3 gives the purpose; :16 works through the example; :4 and :28 identify lookup/order copying; :23 excludes scheduling; :23 names the badge decision and owner. 01-dense-source/revised-reader-final.txt:1 records all five matching answers."
+        },
+        {
+          "id": "1.2",
+          "assertion": "Fidelity: retain null/missing inheritance, explicit zero, live inherited lookup, immutable order snapshot, identifiers, scheduling exclusion and the product owner's open badge decision; add no unsupported behavior.",
+          "dimension": "fidelity",
+          "verdict": "PASS",
+          "evidence": "01-dense-source/after/guide.md:7 retains missing/null inheritance and live lookup, :10 explicit zero, :12 immutable saved order times, :27 all three identifiers, and :23 scheduling exclusion plus the product-owned badge decision. These agree with 01-dense-source/before/requirements.md:2 and 01-dense-source/before/prep.py:1."
+        },
+        {
+          "id": "1.3",
+          "assertion": "The editor trace shows full shared instructions loaded before guide/source reads and inspection of both requirements.md and prep.py before editing.",
+          "dimension": "source inspection",
+          "verdict": "PASS",
+          "evidence": "01-dense-source/editor-native.jsonl ordinals 14/18 load both complete frozen instructions; ordinals 20/25 then read guide.md, requirements.md and prep.py in full; the first edit is ordinal 29. Captured instruction/source outputs match the frozen files byte-for-byte."
+        },
+        {
+          "id": "1.4",
+          "assertion": "Orientation: explain the restaurant-owner purpose before storage identifiers, define snapshot/materialization at first use, and explicitly work through inherited item, zero override and existing order across a 15-to-20 default change.",
+          "dimension": "orientation",
+          "verdict": "PASS",
+          "evidence": "01-dense-source/after/guide.md:3 leads with the restaurant-owner purpose before identifiers at :27. The opaque materialization term is removed; :12 explains its meaning directly as keeping a copy. The explicit :16 example covers inherited 15 then 20, zero remaining 0, and the earlier order retaining 15."
+        },
+        {
+          "id": "1.5",
+          "assertion": "Only guide.md changes; no additional ledger or summary artifact is created.",
+          "dimension": "file effects",
+          "verdict": "PASS",
+          "evidence": "01-dense-source/editor-native.jsonl ordinal 29 updates only guide.md. Replaying that patch produces 01-dense-source/after/guide.md exactly; 01-dense-source/before/after hashes independently confirm prep.py and requirements.md unchanged and 01-dense-source/file-effects.json:2 lists only guide.md, with no additions/deletions."
+        }
+      ],
+      "reader_comparison": {
+        "applicable": true,
+        "comparison_basis": "Same five oracle questions and reader settings. Judgments compare the semantic answer set with the fixed oracle; an explicit qualification in another numbered answer is credited and cited. PARTIAL marks omitted required context; FAIL marks an incorrect claim. Baseline deficiencies are diagnostic, separate from final assertion totals.",
+        "questions": [
+          {
+            "number": 1,
+            "question": "Why does this work exist?",
+            "expected_answer": "One restaurant default with item exceptions.",
+            "original": {
+              "verdict": "PASS",
+              "evidence": "01-dense-source/original-reader-final.txt:1 identifies the restaurant-wide default and item exceptions; 01-dense-source/before/guide.md:6 supplies that purpose."
+            },
+            "revised": {
+              "verdict": "PASS",
+              "evidence": "01-dense-source/revised-reader-final.txt:1 identifies one default, exceptions, and preserving order times; 01-dense-source/after/guide.md:3 leads with the purpose."
+            }
+          },
+          {
+            "number": 2,
+            "question": "What happens in a representative case?",
+            "expected_answer": "At default 15 the inherited item resolves 15 and zero stays 0; after default becomes 20 the inherited lookup returns 20, zero stays 0, and an earlier order keeps 15.",
+            "original": {
+              "verdict": "PASS",
+              "evidence": "01-dense-source/original-reader-final.txt:2 derives inherited 15, explicit zero, later inherited 20 and unchanged prior order from 01-dense-source/before/guide.md:2 and :8. Successful inference does not repair the baseline's late definition or missing explicit worked results."
+            },
+            "revised": {
+              "verdict": "PASS",
+              "evidence": "01-dense-source/revised-reader-final.txt:2 gives 15-to-20 inheritance and earlier order 15, with zero explicit. 01-dense-source/after/guide.md:16 explicitly supplies every scenario result, including zero remaining 0."
+            }
+          },
+          {
+            "number": 3,
+            "question": "What changes in the current increment?",
+            "expected_answer": "Resolution and order-time snapshot.",
+            "original": {
+              "verdict": "PASS",
+              "evidence": "01-dense-source/original-reader-final.txt:3 identifies item resolution and order-time copying with the correct identifiers, supported by 01-dense-source/before/guide.md:6 and :12."
+            },
+            "revised": {
+              "verdict": "PASS",
+              "evidence": "01-dense-source/revised-reader-final.txt:3 correctly identifies resolving time and saving it in each new order, supported by 01-dense-source/after/guide.md:4 and :27."
+            }
+          },
+          {
+            "number": 4,
+            "question": "What remains outside it?",
+            "expected_answer": "Scheduling.",
+            "original": {
+              "verdict": "PASS",
+              "evidence": "01-dense-source/original-reader-final.txt:4 correctly excludes scheduling, as 01-dense-source/before/guide.md:10 does."
+            },
+            "revised": {
+              "verdict": "PASS",
+              "evidence": "01-dense-source/revised-reader-final.txt:4 and 01-dense-source/after/guide.md:23 exclude scheduling."
+            }
+          },
+          {
+            "number": 5,
+            "question": "What still needs a decision?",
+            "expected_answer": "The product owner must decide inheritance badges.",
+            "original": {
+              "verdict": "PASS",
+              "evidence": "01-dense-source/original-reader-final.txt:5 identifies the product owner's inheritance-badge decision, supported by 01-dense-source/before/guide.md:11."
+            },
+            "revised": {
+              "verdict": "PASS",
+              "evidence": "01-dense-source/revised-reader-final.txt:5 and 01-dense-source/after/guide.md:23 retain the product-owned badge decision."
+            }
+          }
+        ]
+      },
+      "separate_checks": {
+        "fidelity": {
+          "verdict": "PASS",
+          "evidence": "01-dense-source/after/guide.md:7 preserves inheritance/zero, :12 order copies, :23 scope/open decision, :27 identifiers; all agree with both supplied sources."
+        },
+        "source_inspection": {
+          "verdict": "PASS",
+          "evidence": "01-dense-source/editor-native.jsonl ordinals 18, 25 and 29 establish full instruction loading, source reads, then editing."
+        },
+        "orientation": {
+          "original": "FAIL",
+          "revised": "PASS",
+          "evidence": "01-dense-source/before/guide.md:2 leads with storage, uses materialization before defining it at :8, and omits explicit scenario outcomes. 01-dense-source/after/guide.md:3 leads with purpose and :16 works through every outcome."
+        },
+        "correctness": {
+          "original": "PASS",
+          "revised": "PASS",
+          "evidence": "The dense baseline is accurate against 01-dense-source/before/requirements.md:2 and 01-dense-source/before/prep.py:1. The repair improves the declared orientation defects; five successful baseline reader answers do not negate them."
+        }
+      },
+      "access_evidence_integrity": {
+        "verdict": "PASS",
+        "access_verdict": "PASS",
+        "evidence_integrity_verdict": "PASS",
+        "basis": "Independent inspection of the portable visible records and artifacts, with the transport/provenance limitations stated below; coordinator PASS summaries were not treated as proof.",
+        "access_evidence": "01-dense-source/editor-native.jsonl: Both instructions are fully returned at editor ordinal 18 before subject reads at 20/25; the only patch is guide.md at 29. Original/revised readers each read only their manifest's guide at ordinal 10.",
+        "audited_participants": [
+          "editor",
+          "original-reader",
+          "revised-reader"
+        ],
+        "observed_out_of_manifest_reads": [],
+        "observed_out_of_manifest_writes": [],
+        "network_calls": 0,
+        "leakage_detected": false,
+        "instruction_order": "PASS: full instruction contents precede subject matter.",
+        "natural_request": {
+          "verdict": "PASS",
+          "evidence": "01-dense-source/editor-prompt.txt preserves eval.json's complete natural request verbatim, plus exactly one terminal newline. Its read list matches editor-manifest.json."
+        },
+        "selection": {
+          "verdict": "PASS",
+          "evidence": "The editor receives only the selected fixture files and canonical skill catalog, with writes limited to the naturally selected document(s). The oracle and evaluation are absent from participant read manifests."
+        },
+        "capture_evidence": [
+          "01-dense-source/<role>-capture-metadata.json and <role>-native-integrity.json match independently computed prompt/export hashes and retained ordinals for every audited participant.",
+          "01-dense-source/<role>-dispatch-receipts.json pairs each dispatch/result and matches its child inbound ciphertext and recipient; saved prompt timestamps precede dispatch.",
+          "01-dense-source/<role>-native.jsonl, <role>-trace.jsonl and <role>-tool-messages.jsonl are byte-identical; each visible call has its complete result and the final answer equals <role>-final.txt.",
+          "01-dense-source/before-sha256.json and after-sha256.json match all frozen bytes; replayed editor patches exactly produce the after artifacts and reported file effects."
+        ],
+        "reader_controls": {
+          "verdict": "PASS",
+          "evidence": "Original/revised prompts have exactly the oracle's five questions and differ only in artifact-view paths; actual model, effort and collaboration mode are identical. Every reader result contains the exact corresponding frozen artifact, and each reader's manifest agrees with the oracle."
+        }
+      }
+    },
+    {
+      "id": 2,
+      "name": "source-disagreement",
+      "assertions": [
+        {
+          "id": "2.1",
+          "assertion": "Comprehension: distinguish accepted next-day intent from current immediate lookup behavior in the 15-to-20 case; all other reader answers match the oracle.",
+          "dimension": "comprehension",
+          "verdict": "PASS",
+          "evidence": "02-source-disagreement/after/guide.md:12 distinguishes accepted next-day intent from immediate current lookup, including 15-to-20 and the old order at :14. 02-source-disagreement/revised-reader-final.txt:2 explains the conflict, and :5 identifies both owners; all five fixed answers are supported."
+        },
+        {
+          "id": "2.2",
+          "assertion": "Fidelity: keep the next-day requirement mandatory and describe the inspected immediate implementation without silently deciding which should win.",
+          "dimension": "fidelity",
+          "verdict": "PASS",
+          "evidence": "02-source-disagreement/after/guide.md:16 retains mandatory next-day behavior, while :18 states that current code returns 20 immediately. :21 keeps reconciliation open. Zero at :5 and unchanged snapshots at :9 agree with 02-source-disagreement/before/requirements.md:2 and 02-source-disagreement/before/prep.py:1; neither side is silently rewritten as the other."
+        },
+        {
+          "id": "2.3",
+          "assertion": "The trace shows requirements and implementation inspection before revising claims.",
+          "dimension": "source inspection",
+          "verdict": "PASS",
+          "evidence": "02-source-disagreement/editor-native.jsonl ordinals 24/29 read all three subject files after the shared procedure at ordinal 22 and before the patch at ordinal 35. The captured requirements and implementation contents exactly match their frozen before artifacts."
+        },
+        {
+          "id": "2.4",
+          "assertion": "The guide records the discrepancy, feature maintainer as owner and a concrete reconciliation next step; it does not claim that code or requirements were fixed.",
+          "dimension": "discrepancy handling",
+          "verdict": "PASS",
+          "evidence": "02-source-disagreement/after/guide.md:21 names the feature maintainer, and :22 specifies reconciling next-day activation with scheduling excluded. The resolution is explicitly open at :24. 02-source-disagreement/before/after source and requirements are byte-identical; the guide and 02-source-disagreement/editor-final.txt:1 do not claim either was fixed."
+        },
+        {
+          "id": "2.5",
+          "assertion": "Only guide.md changes.",
+          "dimension": "file effects",
+          "verdict": "PASS",
+          "evidence": "02-source-disagreement/editor-native.jsonl ordinal 35 is the only mutation and updates guide.md. Patch replay equals 02-source-disagreement/after/guide.md; independently recomputed 02-source-disagreement/before/after hashes agree with 02-source-disagreement/file-effects.json:2 and show only guide.md changed."
+        }
+      ],
+      "reader_comparison": {
+        "applicable": true,
+        "comparison_basis": "Same five oracle questions and reader settings. Judgments compare the semantic answer set with the fixed oracle; an explicit qualification in another numbered answer is credited and cited. PARTIAL marks omitted required context; FAIL marks an incorrect claim. Baseline deficiencies are diagnostic, separate from final assertion totals.",
+        "questions": [
+          {
+            "number": 1,
+            "question": "Why does this work exist?",
+            "expected_answer": "Defaults with item exceptions.",
+            "original": {
+              "verdict": "PASS",
+              "evidence": "02-source-disagreement/original-reader-final.txt:1 correctly identifies defaults with item exceptions, supported by 02-source-disagreement/before/guide.md:2."
+            },
+            "revised": {
+              "verdict": "PASS",
+              "evidence": "02-source-disagreement/revised-reader-final.txt:1 identifies shared defaults and explicit item overrides, supported by 02-source-disagreement/after/guide.md:3."
+            }
+          },
+          {
+            "number": 2,
+            "question": "When a restaurant default changes from 15 to 20, what happens to new inherited lookups and existing orders?",
+            "expected_answer": "Requirement says next day; current lookup returns 20 immediately after default changes from 15; old order remains 15.",
+            "original": {
+              "verdict": "FAIL",
+              "evidence": "02-source-disagreement/original-reader-final.txt:2 presents next-day activation as current behavior. It does not distinguish the accepted requirement from immediate code behavior; 02-source-disagreement/before/prep.py:14 and :23 establish new lookup 20 immediately while the old order stays 15."
+            },
+            "revised": {
+              "verdict": "PASS",
+              "evidence": "02-source-disagreement/revised-reader-final.txt:2 explicitly separates required next-day 15 from current immediate 20 and keeps old order 15; 02-source-disagreement/after/guide.md:12 supplies all distinctions."
+            }
+          },
+          {
+            "number": 3,
+            "question": "What changes in the current increment?",
+            "expected_answer": "Lookup and order snapshots, with a timing mismatch.",
+            "original": {
+              "verdict": "PARTIAL",
+              "evidence": "02-source-disagreement/original-reader-final.txt:3 correctly names lookup and snapshots, but the response omits the oracle's timing mismatch and instead asserts next-day current behavior in answer 2."
+            },
+            "revised": {
+              "verdict": "PASS",
+              "evidence": "02-source-disagreement/revised-reader-final.txt:3 identifies lookup and order snapshots; its answer 2 supplies the timing-mismatch qualification required by the oracle. 02-source-disagreement/after/guide.md:7 and :12 support both."
+            }
+          },
+          {
+            "number": 4,
+            "question": "What remains outside it?",
+            "expected_answer": "Scheduling.",
+            "original": {
+              "verdict": "PASS",
+              "evidence": "02-source-disagreement/original-reader-final.txt:4 correctly excludes scheduling, matching 02-source-disagreement/before/guide.md:3 and 02-source-disagreement/before/requirements.md:5."
+            },
+            "revised": {
+              "verdict": "PASS",
+              "evidence": "02-source-disagreement/revised-reader-final.txt:4 correctly excludes scheduling; 02-source-disagreement/after/guide.md:7 does likewise."
+            }
+          },
+          {
+            "number": 5,
+            "question": "What still needs a decision?",
+            "expected_answer": "Badge decision belongs to product; maintainer must reconcile update timing with accepted requirements.",
+            "original": {
+              "verdict": "PARTIAL",
+              "evidence": "02-source-disagreement/original-reader-final.txt:5 identifies the badge decision but omits maintainer-owned timing reconciliation, which the baseline guide never exposed. 02-source-disagreement/before/requirements.md:6 names that owner."
+            },
+            "revised": {
+              "verdict": "PASS",
+              "evidence": "02-source-disagreement/revised-reader-final.txt:5 identifies both the feature maintainer's next-day reconciliation and Product's badge decision, supported by 02-source-disagreement/after/guide.md:21 and :26."
+            }
+          }
+        ]
+      },
+      "separate_checks": {
+        "fidelity": {
+          "verdict": "PASS",
+          "evidence": "02-source-disagreement/after/guide.md:12 keeps accepted mandatory intent distinct from implemented behavior, with ownership and reconciliation left open at :21."
+        },
+        "source_inspection": {
+          "verdict": "PASS",
+          "evidence": "02-source-disagreement/editor-native.jsonl ordinal 29 contains complete requirements and code before patch ordinal 35."
+        },
+        "orientation": {
+          "applicable": false,
+          "reason": "No separate orientation defect is declared; the primary defect is conflating intended and current timing."
+        },
+        "correctness": {
+          "original": "FAIL",
+          "revised": "PASS",
+          "evidence": "02-source-disagreement/before/guide.md:4 presents next-day activation as current. 02-source-disagreement/after/guide.md:16 distinguishes this requirement from immediate lookup at :18, matching the code without erasing intent."
+        }
+      },
+      "access_evidence_integrity": {
+        "verdict": "PASS",
+        "access_verdict": "PASS",
+        "evidence_integrity_verdict": "PASS",
+        "basis": "Independent inspection of the portable visible records and artifacts, with the transport/provenance limitations stated below; coordinator PASS summaries were not treated as proof.",
+        "access_evidence": "02-source-disagreement/editor-native.jsonl: Entry-point output 17 and shared output 22 precede subject reads 24/29 and patch 35. Only guide.md is written; original/revised reader calls 14 and 10 read their own guides.",
+        "audited_participants": [
+          "editor",
+          "original-reader",
+          "revised-reader"
+        ],
+        "observed_out_of_manifest_reads": [],
+        "observed_out_of_manifest_writes": [],
+        "network_calls": 0,
+        "leakage_detected": false,
+        "instruction_order": "PASS: full instruction contents precede subject matter.",
+        "natural_request": {
+          "verdict": "PASS",
+          "evidence": "02-source-disagreement/editor-prompt.txt preserves eval.json's complete natural request verbatim, plus exactly one terminal newline. Its read list matches editor-manifest.json."
+        },
+        "selection": {
+          "verdict": "PASS",
+          "evidence": "The editor receives only the selected fixture files and canonical skill catalog, with writes limited to the naturally selected document(s). The oracle and evaluation are absent from participant read manifests."
+        },
+        "capture_evidence": [
+          "02-source-disagreement/<role>-capture-metadata.json and <role>-native-integrity.json match independently computed prompt/export hashes and retained ordinals for every audited participant.",
+          "02-source-disagreement/<role>-dispatch-receipts.json pairs each dispatch/result and matches its child inbound ciphertext and recipient; saved prompt timestamps precede dispatch.",
+          "02-source-disagreement/<role>-native.jsonl, <role>-trace.jsonl and <role>-tool-messages.jsonl are byte-identical; each visible call has its complete result and the final answer equals <role>-final.txt.",
+          "02-source-disagreement/before-sha256.json and after-sha256.json match all frozen bytes; replayed editor patches exactly produce the after artifacts and reported file effects."
+        ],
+        "reader_controls": {
+          "verdict": "PASS",
+          "evidence": "Original/revised prompts have exactly the oracle's five questions and differ only in artifact-view paths; actual model, effort and collaboration mode are identical. Every reader result contains the exact corresponding frozen artifact, and each reader's manifest agrees with the oracle."
+        }
+      }
+    },
+    {
+      "id": 3,
+      "name": "missing-context",
+      "assertions": [
+        {
+          "id": "3.1",
+          "assertion": "All five reader answers preserve the accepted CSV contract, planned status, scheduling exclusion and unknown retention decision.",
+          "dimension": "comprehension",
+          "verdict": "PASS",
+          "evidence": "03-missing-context/after/guide.md:3 explains the owner purpose and accepted one-request/one-CSV/link contract; :7 explicitly withholds runtime verification; :5 excludes scheduling; :10 retains unknown retention and the data steward's next action. 03-missing-context/revised-reader-final.txt:1 supplies all five fixed answers."
+        },
+        {
+          "id": "3.2",
+          "assertion": "The trace shows investigation of requirements.md and the missing retention.md before a focused question or documented limitation.",
+          "dimension": "source inspection",
+          "verdict": "PASS",
+          "evidence": "03-missing-context/editor-native.jsonl ordinals 20/25 read guide.md and requirements.md and attempt the expressly allowed retention.md; its result is exit 1, 'No such file or directory'. This precedes the documented limitation in the patch at ordinal 29."
+        },
+        {
+          "id": "3.3",
+          "assertion": "No retention duration, implementation verification or settled cleanup behavior is invented.",
+          "dimension": "fidelity and correctness",
+          "verdict": "PASS",
+          "evidence": "03-missing-context/after/guide.md:7 says implementation is not supplied and running behavior is unverified. :10 says retention duration and cleanup timing cannot yet be documented. No duration, passing test, verified implementation, or settled cleanup behavior appears in the artifact or 03-missing-context/editor-final.txt:1."
+        },
+        {
+          "id": "3.4",
+          "assertion": "The guide retains the limitation, identifies the data steward, and says to obtain the retention decision before documenting cleanup timing.",
+          "dimension": "gap handling",
+          "verdict": "PASS",
+          "evidence": "03-missing-context/after/guide.md:10 identifies the unavailable retention decision, names the data steward at :11, and requires obtaining that decision before documenting cleanup behavior at :12, matching 03-missing-context/before/requirements.md:3."
+        },
+        {
+          "id": "3.5",
+          "assertion": "Only guide.md changes, with no extra summary or fabricated retention.md.",
+          "dimension": "file effects",
+          "verdict": "PASS",
+          "evidence": "03-missing-context/editor-native.jsonl ordinal 29 changes only guide.md. The requirements bytes are unchanged; no tool writes retention.md or another file. Independently recomputed snapshot differences match 03-missing-context/file-effects.json:2: guide.md changed, no additions/deletions."
+        }
+      ],
+      "reader_comparison": {
+        "applicable": true,
+        "comparison_basis": "Same five oracle questions and reader settings. Judgments compare the semantic answer set with the fixed oracle; an explicit qualification in another numbered answer is credited and cited. PARTIAL marks omitted required context; FAIL marks an incorrect claim. Baseline deficiencies are diagnostic, separate from final assertion totals.",
+        "questions": [
+          {
+            "number": 1,
+            "question": "Why does this work exist?",
+            "expected_answer": "Give owners an export of completed orders.",
+            "original": {
+              "verdict": "PASS",
+              "evidence": "03-missing-context/original-reader-final.txt:1 correctly identifies owners' downloadable completed-order record, supported by 03-missing-context/before/guide.md:2."
+            },
+            "revised": {
+              "verdict": "PASS",
+              "evidence": "03-missing-context/revised-reader-final.txt:1 and 03-missing-context/after/guide.md:3 identify completed-order exports for service owners."
+            }
+          },
+          {
+            "number": 2,
+            "question": "What happens in a representative case?",
+            "expected_answer": "Accepted contract: one requested export creates a CSV and returns a link; runtime implementation is unverified.",
+            "original": {
+              "verdict": "PARTIAL",
+              "evidence": "03-missing-context/original-reader-final.txt:2 describes one requested CSV and returned link, but supplies no accepted-contract/unverified-runtime qualification. 03-missing-context/before/requirements.md:5 explicitly requires it and 03-missing-context/before/guide.md omits it."
+            },
+            "revised": {
+              "verdict": "PASS",
+              "evidence": "03-missing-context/revised-reader-final.txt:2 explicitly identifies the accepted one-request/one-CSV/link contract and unverified running behavior; 03-missing-context/after/guide.md:4 and :7 support both."
+            }
+          },
+          {
+            "number": 3,
+            "question": "What changes in the current increment?",
+            "expected_answer": "On-demand CSV export contract.",
+            "original": {
+              "verdict": "PARTIAL",
+              "evidence": "03-missing-context/original-reader-final.txt:3 identifies one CSV per request, but never identifies the increment as an accepted contract with implementation unavailable; 03-missing-context/before/requirements.md:5 supplies that distinction."
+            },
+            "revised": {
+              "verdict": "PASS",
+              "evidence": "03-missing-context/revised-reader-final.txt:3 identifies request-based CSV export and unavailable implementation, read together with the accepted-contract status in answer 2; 03-missing-context/after/guide.md:3 and :7 support it."
+            }
+          },
+          {
+            "number": 4,
+            "question": "What remains outside it?",
+            "expected_answer": "Scheduled exports; implementation evidence is unavailable.",
+            "original": {
+              "verdict": "PARTIAL",
+              "evidence": "03-missing-context/original-reader-final.txt:4 correctly excludes scheduling but the response omits unavailable implementation evidence, the second element in the oracle's fourth answer."
+            },
+            "revised": {
+              "verdict": "PASS",
+              "evidence": "03-missing-context/revised-reader-final.txt:4 excludes scheduled exports, while answers 2 and 3 explicitly supply unavailable implementation evidence. 03-missing-context/after/guide.md:5 and :7 support the complete oracle answer."
+            }
+          },
+          {
+            "number": 5,
+            "question": "What still needs a decision?",
+            "expected_answer": "Data steward must provide the missing retention decision before cleanup timing is documented.",
+            "original": {
+              "verdict": "PARTIAL",
+              "evidence": "03-missing-context/original-reader-final.txt:5 recognizes that retention is unspecified while repeating the guide's 'no decisions remain' claim. It lacks the data steward's required retrieval step before cleanup documentation, absent from 03-missing-context/before/guide.md but explicit in 03-missing-context/before/requirements.md:4."
+            },
+            "revised": {
+              "verdict": "PASS",
+              "evidence": "03-missing-context/revised-reader-final.txt:5 identifies missing retention, the data steward, and obtaining the decision before documenting duration or cleanup timing; 03-missing-context/after/guide.md:10 states these."
+            }
+          }
+        ]
+      },
+      "separate_checks": {
+        "fidelity": {
+          "verdict": "PASS",
+          "evidence": "03-missing-context/after/guide.md:3 retains one requested CSV/link and scheduling exclusion while :7 and :10 preserve unverified runtime and unknown retention."
+        },
+        "source_inspection": {
+          "verdict": "PASS",
+          "evidence": "03-missing-context/editor-native.jsonl ordinal 25 contains the accessible requirement and actual failed retention.md read before patch ordinal 29."
+        },
+        "orientation": {
+          "applicable": false,
+          "reason": "No separate orientation defect is declared; accepted-contract status and the unresolved evidence gap are graded separately."
+        },
+        "correctness": {
+          "original": "FAIL",
+          "revised": "PASS",
+          "evidence": "03-missing-context/before/guide.md:5 incorrectly declares no remaining decisions and lacks the source's runtime qualification. 03-missing-context/after/guide.md:7 and :10 correct both without inventing implementation or retention."
+        }
+      },
+      "access_evidence_integrity": {
+        "verdict": "PASS",
+        "access_verdict": "PASS",
+        "evidence_integrity_verdict": "PASS",
+        "basis": "Independent inspection of the portable visible records and artifacts, with the transport/provenance limitations stated below; coordinator PASS summaries were not treated as proof.",
+        "access_evidence": "03-missing-context/editor-native.jsonl: Instruction output 18 precedes subject reads 20/25. The missing retention.md read was expressly allowed and returned ENOENT before guide-only patch 29. Each reader reads only its guide.",
+        "audited_participants": [
+          "editor",
+          "original-reader",
+          "revised-reader"
+        ],
+        "observed_out_of_manifest_reads": [],
+        "observed_out_of_manifest_writes": [],
+        "network_calls": 0,
+        "leakage_detected": false,
+        "instruction_order": "PASS: full instruction contents precede subject matter.",
+        "natural_request": {
+          "verdict": "PASS",
+          "evidence": "03-missing-context/editor-prompt.txt preserves eval.json's complete natural request verbatim, plus exactly one terminal newline. Its read list matches editor-manifest.json."
+        },
+        "selection": {
+          "verdict": "PASS",
+          "evidence": "The editor receives only the selected fixture files and canonical skill catalog, with writes limited to the naturally selected document(s). The oracle and evaluation are absent from participant read manifests."
+        },
+        "capture_evidence": [
+          "03-missing-context/<role>-capture-metadata.json and <role>-native-integrity.json match independently computed prompt/export hashes and retained ordinals for every audited participant.",
+          "03-missing-context/<role>-dispatch-receipts.json pairs each dispatch/result and matches its child inbound ciphertext and recipient; saved prompt timestamps precede dispatch.",
+          "03-missing-context/<role>-native.jsonl, <role>-trace.jsonl and <role>-tool-messages.jsonl are byte-identical; each visible call has its complete result and the final answer equals <role>-final.txt.",
+          "03-missing-context/before-sha256.json and after-sha256.json match all frozen bytes; replayed editor patches exactly produce the after artifacts and reported file effects."
+        ],
+        "reader_controls": {
+          "verdict": "PASS",
+          "evidence": "Original/revised prompts have exactly the oracle's five questions and differ only in artifact-view paths; actual model, effort and collaboration mode are identical. Every reader result contains the exact corresponding frozen artifact, and each reader's manifest agrees with the oracle."
+        }
+      }
+    },
+    {
+      "id": 4,
+      "name": "cross-file-preservation",
+      "assertions": [
+        {
+          "id": "4.1",
+          "assertion": "All five reader answers are supported through design.md and tasks.md and retain planned versus implemented status.",
+          "dimension": "comprehension",
+          "verdict": "PASS",
+          "evidence": "04-cross-file-preservation/after/design.md:5 explains the purpose and planned three-row example; :10 excludes apply; :28 and 04-cross-file-preservation/after/tasks.md:11 distinguish completed parsing from pending counts; 04-cross-file-preservation/after/design.md:19 and :24 preserve the product decision and support gate. 04-cross-file-preservation/revised-reader-final.txt:1 answers all five questions with explicit planned/unverified status."
+        },
+        {
+          "id": "4.2",
+          "assertion": "Fidelity: retain required sections, MUST columns id,name, MAY diagnostics, Mira's acceptance date, support approval gate and product-owned duplicate policy.",
+          "dimension": "fidelity",
+          "verdict": "PASS",
+          "evidence": "04-cross-file-preservation/after/design.md preserves Context (:3), Decision (:13), Deployment gate (:22), and Consequences (:26). :15 retains Mira's 2026-09-01 acceptance and MUST id,name; :16 retains MAY diagnostics and their lack of apply authority; :19 retains Product's duplicate decision; :24 retains support approval. All match 04-cross-file-preservation/before/requirements.md:4."
+        },
+        {
+          "id": "4.3",
+          "assertion": "Preserve every task status, checkbox and dependency exactly.",
+          "dimension": "task state",
+          "verdict": "PASS",
+          "evidence": "04-cross-file-preservation/before/tasks.md:3 and 04-cross-file-preservation/after/tasks.md:8 contain exactly the same seven status, dependency and checkbox lines: Task 1 in-progress/no dependency; parsing checked/counts unchecked; Task 2 pending/depends on Task 1; duplicate policy unchecked. Independent line comparison and 04-cross-file-preservation/editor-native.jsonl ordinal 51 agree."
+        },
+        {
+          "id": "4.4",
+          "assertion": "Both existing inbound links from entry.md and both cross-file links still resolve; entry.md and requirements.md are unchanged.",
+          "dimension": "links and file effects",
+          "verdict": "PASS",
+          "evidence": "Both entry.md links still resolve to tasks.md#task-1-preview and design.md#deployment-gate. Both original cross-file links remain, plus the new tasks.md#task-2-apply link. Independent anchor checks resolve all five; entry.md and requirements.md 04-cross-file-preservation/before/after hashes are identical. See 04-cross-file-preservation/after/entry.md:2, 04-cross-file-preservation/after/design.md:20 and :28, 04-cross-file-preservation/after/tasks.md:17."
+        },
+        {
+          "id": "4.5",
+          "assertion": "Orientation: explain preview before the admission-observation terminology; show the three-row case without implying count implementation is complete.",
+          "dimension": "orientation",
+          "verdict": "PASS",
+          "evidence": "04-cross-file-preservation/after/design.md:5 starts with CSV preview and its operator purpose, eliminating unexplained admission-observation terminology. :6 explicitly labels the two-valid/one-invalid/zero-written example as planned; :28 and 04-cross-file-preservation/after/tasks.md:12 keep count implementation pending."
+        }
+      ],
+      "reader_comparison": {
+        "applicable": true,
+        "comparison_basis": "Same five oracle questions and reader settings. Judgments compare the semantic answer set with the fixed oracle; an explicit qualification in another numbered answer is credited and cited. PARTIAL marks omitted required context; FAIL marks an incorrect claim. Baseline deficiencies are diagnostic, separate from final assertion totals.",
+        "questions": [
+          {
+            "number": 1,
+            "question": "Why does this work exist?",
+            "expected_answer": "Let operators catch CSV errors before applying.",
+            "original": {
+              "verdict": "PASS",
+              "evidence": "04-cross-file-preservation/original-reader-final.txt:1 identifies catching CSV mistakes before writing rows; 04-cross-file-preservation/before/design.md:3 supplies that purpose despite its poor orientation."
+            },
+            "revised": {
+              "verdict": "PASS",
+              "evidence": "04-cross-file-preservation/revised-reader-final.txt:1 and 04-cross-file-preservation/after/design.md:5 lead with operators catching import mistakes."
+            }
+          },
+          {
+            "number": 2,
+            "question": "What happens in a representative case?",
+            "expected_answer": "Planned preview reports two valid and one invalid for three rows and writes zero rows.",
+            "original": {
+              "verdict": "PASS",
+              "evidence": "04-cross-file-preservation/original-reader-final.txt:5 explicitly says counts remain unfinished, qualifying the three-row/two-valid/one-invalid/zero-written example in answer 2 as planned. 04-cross-file-preservation/before/tasks.md:6 confirms counts are pending."
+            },
+            "revised": {
+              "verdict": "PASS",
+              "evidence": "04-cross-file-preservation/revised-reader-final.txt:3 explicitly labels the three-row/two-valid/one-invalid/zero-written example as planned, matching 04-cross-file-preservation/after/design.md:6."
+            }
+          },
+          {
+            "number": 3,
+            "question": "What changes in the current increment?",
+            "expected_answer": "Preview-only delivery; parsing done, counts pending.",
+            "original": {
+              "verdict": "PASS",
+              "evidence": "04-cross-file-preservation/original-reader-final.txt:5 correctly identifies preview-only delivery, completed parsing and pending counts; 04-cross-file-preservation/before/tasks.md:3 and 04-cross-file-preservation/before/design.md:6 support it."
+            },
+            "revised": {
+              "verdict": "PASS",
+              "evidence": "04-cross-file-preservation/revised-reader-final.txt:5 identifies pending valid/invalid counts and recorded completed parsing, with no implementation source to verify progress; 04-cross-file-preservation/after/design.md:28 and 04-cross-file-preservation/after/tasks.md:3 support it."
+            }
+          },
+          {
+            "number": 4,
+            "question": "What remains outside it?",
+            "expected_answer": "Apply.",
+            "original": {
+              "verdict": "PASS",
+              "evidence": "04-cross-file-preservation/original-reader-final.txt:7 correctly keeps apply disabled and future, matching 04-cross-file-preservation/before/design.md:6 and :14."
+            },
+            "revised": {
+              "verdict": "PASS",
+              "evidence": "04-cross-file-preservation/revised-reader-final.txt:7 and 04-cross-file-preservation/after/design.md:10 keep apply future and disabled; diagnostics do not authorize it."
+            }
+          },
+          {
+            "number": 5,
+            "question": "What still needs a decision?",
+            "expected_answer": "Product must decide duplicate policy; support must approve walkthrough before enabling.",
+            "original": {
+              "verdict": "PASS",
+              "evidence": "04-cross-file-preservation/original-reader-final.txt:9 identifies Product's duplicate policy; its answer 3 at :5 also explicitly retains the support-owner approval gate. Both elements of the fixed oracle answer are present, supported by 04-cross-file-preservation/before/design.md:7 and :12."
+            },
+            "revised": {
+              "verdict": "PASS",
+              "evidence": "04-cross-file-preservation/revised-reader-final.txt:9 separately identifies Product's duplicate policy and the support owner's approval gate, matching 04-cross-file-preservation/after/design.md:19 and :24."
+            }
+          }
+        ]
+      },
+      "separate_checks": {
+        "fidelity": {
+          "verdict": "PASS",
+          "evidence": "04-cross-file-preservation/after/design.md:13 retains decision provenance and MUST/MAY distinctions; :22 retains the deployment gate. Exact task-state lines and every original link survive."
+        },
+        "source_inspection": {
+          "verdict": "PASS",
+          "evidence": "04-cross-file-preservation/editor-native.jsonl ordinal 22 completes instructions, ordinal 30 reads both selected docs plus requirements and inbound references, and ordinal 34 starts editing."
+        },
+        "orientation": {
+          "original": "FAIL",
+          "revised": "PASS",
+          "evidence": "04-cross-file-preservation/before/design.md:3 begins with unexplained admission observation. 04-cross-file-preservation/after/design.md:5 explains preview first and explicitly makes the three-row case planned."
+        },
+        "correctness": {
+          "original": "PASS",
+          "revised": "PASS",
+          "evidence": "The baseline plan and 04-cross-file-preservation/before/tasks.md:6 already leave counts pending. 04-cross-file-preservation/after/design.md:10 and 04-cross-file-preservation/after/tasks.md:3 make the absence of implementation evidence explicit while retaining that state."
+        }
+      },
+      "access_evidence_integrity": {
+        "verdict": "PASS",
+        "access_verdict": "PASS",
+        "evidence_integrity_verdict": "PASS",
+        "basis": "Independent inspection of the portable visible records and artifacts, with the transport/provenance limitations stated below; coordinator PASS summaries were not treated as proof.",
+        "access_evidence": "04-cross-file-preservation/editor-native.jsonl: Instruction outputs 17/22 precede source output 30. Patches 34 and 43 touch only design.md/tasks.md. Check 48 reads exactly the four allowed files and writes nothing. Each reader reads only design.md, tasks.md and entry.md from its own view.",
+        "audited_participants": [
+          "editor",
+          "original-reader",
+          "revised-reader"
+        ],
+        "observed_out_of_manifest_reads": [],
+        "observed_out_of_manifest_writes": [],
+        "network_calls": 0,
+        "leakage_detected": false,
+        "instruction_order": "PASS: full instruction contents precede subject matter.",
+        "natural_request": {
+          "verdict": "PASS",
+          "evidence": "04-cross-file-preservation/editor-prompt.txt preserves eval.json's complete natural request verbatim, plus exactly one terminal newline. Its read list matches editor-manifest.json."
+        },
+        "selection": {
+          "verdict": "PASS",
+          "evidence": "The editor receives only the selected fixture files and canonical skill catalog, with writes limited to the naturally selected document(s). The oracle and evaluation are absent from participant read manifests."
+        },
+        "capture_evidence": [
+          "04-cross-file-preservation/<role>-capture-metadata.json and <role>-native-integrity.json match independently computed prompt/export hashes and retained ordinals for every audited participant.",
+          "04-cross-file-preservation/<role>-dispatch-receipts.json pairs each dispatch/result and matches its child inbound ciphertext and recipient; saved prompt timestamps precede dispatch.",
+          "04-cross-file-preservation/<role>-native.jsonl, <role>-trace.jsonl and <role>-tool-messages.jsonl are byte-identical; each visible call has its complete result and the final answer equals <role>-final.txt.",
+          "04-cross-file-preservation/before-sha256.json and after-sha256.json match all frozen bytes; replayed editor patches exactly produce the after artifacts and reported file effects."
+        ],
+        "reader_controls": {
+          "verdict": "PASS",
+          "evidence": "Original/revised prompts have exactly the oracle's five questions and differ only in artifact-view paths; actual model, effort and collaboration mode are identical. Every reader result contains the exact corresponding frozen artifact, and each reader's manifest agrees with the oracle."
+        }
+      }
+    },
+    {
+      "id": 5,
+      "name": "already-clear",
+      "assertions": [
+        {
+          "id": "5.1",
+          "assertion": "All five reader answers pass on both the original and final guide.",
+          "dimension": "comprehension",
+          "verdict": "PASS",
+          "evidence": "05-already-clear/original-reader-final.txt:1 and 05-already-clear/revised-reader-final.txt:1 each provide all five oracle answers: default/exceptions, 15-to-20 with zero and old snapshot preserved, lookup/snapshot increment, scheduling exclusion, and product-owned badges. 05-already-clear/before/guide.md:2 and the identical after artifact support them."
+        },
+        {
+          "id": "5.2",
+          "assertion": "guide.md is byte-for-byte unchanged because comprehension, factual correctness, fidelity, visibility, structure and orientation already pass.",
+          "dimension": "unchanged baseline",
+          "verdict": "PASS",
+          "evidence": "05-already-clear/before/guide.md and 05-already-clear/after/guide.md have identical bytes and SHA-256. The guide already leads with purpose (:2), explains snapshots on first use (:3), gives the complete example (:6), retains identifiers (:10), and states exclusion/open decision (:11). Requirements and code agree; no declared visibility or structural defect exists."
+        },
+        {
+          "id": "5.3",
+          "assertion": "The editor still inspects requirements/source and verifies applicability before choosing no-op.",
+          "dimension": "source inspection",
+          "verdict": "PASS",
+          "evidence": "05-already-clear/editor-native.jsonl ordinals 14/18 load both complete instructions; ordinals 20/25 read guide.md, requirements.md and prep.py. The final no-op at ordinal 30 explicitly says the guide matches both sources and preserves scope and the pending decision."
+        },
+        {
+          "id": "5.4",
+          "assertion": "No file is added or changed and the response explicitly reports that no edit was needed.",
+          "dimension": "file effects and reporting",
+          "verdict": "PASS",
+          "evidence": "No mutation call exists in 05-already-clear/editor-native.jsonl. Every 05-already-clear/before/after byte sequence and hash matches, with no added/deleted files in 05-already-clear/file-effects.json:1. 05-already-clear/editor-final.txt:1 explicitly reports leaving the guide unchanged and explains why it already meets the request."
+        }
+      ],
+      "reader_comparison": {
+        "applicable": true,
+        "comparison_basis": "Same five oracle questions and reader settings. Judgments compare the semantic answer set with the fixed oracle; an explicit qualification in another numbered answer is credited and cited. PARTIAL marks omitted required context; FAIL marks an incorrect claim. Baseline deficiencies are diagnostic, separate from final assertion totals.",
+        "questions": [
+          {
+            "number": 1,
+            "question": "Why does this work exist?",
+            "expected_answer": "One default plus item exceptions.",
+            "original": {
+              "verdict": "PASS",
+              "evidence": "05-already-clear/original-reader-final.txt:1 gives a restaurant default, item exceptions and stable orders; 05-already-clear/before/guide.md:2 supports it."
+            },
+            "revised": {
+              "verdict": "PASS",
+              "evidence": "05-already-clear/revised-reader-final.txt:1 gives the same purpose, supported by unchanged 05-already-clear/after/guide.md:2."
+            }
+          },
+          {
+            "number": 2,
+            "question": "What happens in a representative case?",
+            "expected_answer": "15 inherited, zero explicit; after default20 inherited20, zero0, old order15.",
+            "original": {
+              "verdict": "PASS",
+              "evidence": "05-already-clear/original-reader-final.txt:2 gives inherited 15, explicit 0, later inherited 20 and earlier order 15, supported by 05-already-clear/before/guide.md:6."
+            },
+            "revised": {
+              "verdict": "PASS",
+              "evidence": "05-already-clear/revised-reader-final.txt:2 preserves inherited 15, explicit 0, later default 20 and earlier order 15; 05-already-clear/after/guide.md:6 supplies all results."
+            }
+          },
+          {
+            "number": 3,
+            "question": "What changes in the current increment?",
+            "expected_answer": "Lookup and order snapshot.",
+            "original": {
+              "verdict": "PASS",
+              "evidence": "05-already-clear/original-reader-final.txt:3 gives effective_minutes lookup and create_order snapshot, supported by 05-already-clear/before/guide.md:3 and :10."
+            },
+            "revised": {
+              "verdict": "PASS",
+              "evidence": "05-already-clear/revised-reader-final.txt:3 preserves lookup and snapshots with correct identifiers, supported by 05-already-clear/after/guide.md:3 and :10."
+            }
+          },
+          {
+            "number": 4,
+            "question": "What remains outside it?",
+            "expected_answer": "Scheduling.",
+            "original": {
+              "verdict": "PASS",
+              "evidence": "05-already-clear/original-reader-final.txt:4 and 05-already-clear/before/guide.md:11 exclude scheduling."
+            },
+            "revised": {
+              "verdict": "PASS",
+              "evidence": "05-already-clear/revised-reader-final.txt:4 and 05-already-clear/after/guide.md:11 exclude scheduling."
+            }
+          },
+          {
+            "number": 5,
+            "question": "What still needs a decision?",
+            "expected_answer": "Product owner decides badges.",
+            "original": {
+              "verdict": "PASS",
+              "evidence": "05-already-clear/original-reader-final.txt:5 and 05-already-clear/before/guide.md:12 identify the product-owned badge decision."
+            },
+            "revised": {
+              "verdict": "PASS",
+              "evidence": "05-already-clear/revised-reader-final.txt:5 and 05-already-clear/after/guide.md:12 retain the product-owned badge decision."
+            }
+          }
+        ]
+      },
+      "separate_checks": {
+        "fidelity": {
+          "verdict": "PASS",
+          "evidence": "05-already-clear/before/guide.md and 05-already-clear/after/guide.md are byte-identical and consistent with both supplied sources."
+        },
+        "source_inspection": {
+          "verdict": "PASS",
+          "evidence": "05-already-clear/editor-native.jsonl ordinal 25 contains all three source/target files before the no-op report at ordinal 30."
+        },
+        "orientation": {
+          "original": "PASS",
+          "revised": "PASS",
+          "evidence": "05-already-clear/before/guide.md:2 gives purpose before storage, :3 defines snapshot immediately, and :6 explicitly gives all example results; none is rewritten."
+        },
+        "correctness": {
+          "original": "PASS",
+          "revised": "PASS",
+          "evidence": "05-already-clear/before/requirements.md:2 and 05-already-clear/before/prep.py:1 agree with every behavioral claim; no declared factual, visibility or structural defect warrants an edit."
+        }
+      },
+      "access_evidence_integrity": {
+        "verdict": "PASS",
+        "access_verdict": "PASS",
+        "evidence_integrity_verdict": "PASS",
+        "basis": "Independent inspection of the portable visible records and artifacts, with the transport/provenance limitations stated below; coordinator PASS summaries were not treated as proof.",
+        "access_evidence": "05-already-clear/editor-native.jsonl: Instruction output 18 precedes full subject output 25, followed by final 30 without mutation. Each reader reads only its guide; all snapshots are unchanged.",
+        "audited_participants": [
+          "editor",
+          "original-reader",
+          "revised-reader"
+        ],
+        "observed_out_of_manifest_reads": [],
+        "observed_out_of_manifest_writes": [],
+        "network_calls": 0,
+        "leakage_detected": false,
+        "instruction_order": "PASS: full instruction contents precede subject matter.",
+        "natural_request": {
+          "verdict": "PASS",
+          "evidence": "05-already-clear/editor-prompt.txt preserves eval.json's complete natural request verbatim, plus exactly one terminal newline. Its read list matches editor-manifest.json."
+        },
+        "selection": {
+          "verdict": "PASS",
+          "evidence": "The editor receives only the selected fixture files and canonical skill catalog, with writes limited to the naturally selected document(s). The oracle and evaluation are absent from participant read manifests."
+        },
+        "capture_evidence": [
+          "05-already-clear/<role>-capture-metadata.json and <role>-native-integrity.json match independently computed prompt/export hashes and retained ordinals for every audited participant.",
+          "05-already-clear/<role>-dispatch-receipts.json pairs each dispatch/result and matches its child inbound ciphertext and recipient; saved prompt timestamps precede dispatch.",
+          "05-already-clear/<role>-native.jsonl, <role>-trace.jsonl and <role>-tool-messages.jsonl are byte-identical; each visible call has its complete result and the final answer equals <role>-final.txt.",
+          "05-already-clear/before-sha256.json and after-sha256.json match all frozen bytes; replayed editor patches exactly produce the after artifacts and reported file effects."
+        ],
+        "reader_controls": {
+          "verdict": "PASS",
+          "evidence": "Original/revised prompts have exactly the oracle's five questions and differ only in artifact-view paths; actual model, effort and collaboration mode are identical. Every reader result contains the exact corresponding frozen artifact, and each reader's manifest agrees with the oracle."
+        }
+      }
+    },
+    {
+      "id": 6,
+      "name": "clear-factual-error",
+      "assertions": [
+        {
+          "id": "6.1",
+          "assertion": "All five reader answers remain accurate; baseline reader answers alone do not justify a no-op.",
+          "dimension": "comprehension",
+          "verdict": "PASS",
+          "evidence": "Both 06-clear-factual-error/original-reader-final.txt:1 and 06-clear-factual-error/revised-reader-final.txt:1 contain five accurate oracle answers, supported by the unchanged orientation and example in 06-clear-factual-error/after/guide.md:2. The editor nevertheless repairs the separate reference defect; passing baseline comprehension did not produce a no-op."
+        },
+        {
+          "id": "6.2",
+          "assertion": "Correct the reference maximum from 60 to 90 based on agreement between requirements.md and prep.py.",
+          "dimension": "factual correction",
+          "verdict": "PASS",
+          "evidence": "06-clear-factual-error/after/guide.md:15 changes the maximum to 90 minutes, agreeing with 06-clear-factual-error/before/requirements.md:9 and 06-clear-factual-error/before/prep.py:9 (MAX_DEFAULT_MINUTES = 90). 06-clear-factual-error/before/guide.md:15 was 60; 06-clear-factual-error/editor-native.jsonl ordinal 29 records the exact correction."
+        },
+        {
+          "id": "6.3",
+          "assertion": "Preserve all other protected meaning and avoid gratuitous rewrites of already-clear orientation.",
+          "dimension": "fidelity and restraint",
+          "verdict": "PASS",
+          "evidence": "Byte comparison and patch replay show the only guide change is '60' to '90' at line 15. Purpose, snapshot explanation, full example, identifiers, scheduling exclusion, and product-owned badge decision are otherwise byte-identical."
+        },
+        {
+          "id": "6.4",
+          "assertion": "The trace shows source inspection; only guide.md changes.",
+          "dimension": "source inspection and file effects",
+          "verdict": "PASS",
+          "evidence": "06-clear-factual-error/editor-native.jsonl ordinals 20/25 inspect both requirements and prep.py after full instructions at ordinal 18, before patch ordinal 29. That patch touches only guide.md; all remaining 06-clear-factual-error/before/after source hashes match and 06-clear-factual-error/file-effects.json:2 lists only guide.md."
+        }
+      ],
+      "reader_comparison": {
+        "applicable": true,
+        "comparison_basis": "Same five oracle questions and reader settings. Judgments compare the semantic answer set with the fixed oracle; an explicit qualification in another numbered answer is credited and cited. PARTIAL marks omitted required context; FAIL marks an incorrect claim. Baseline deficiencies are diagnostic, separate from final assertion totals.",
+        "questions": [
+          {
+            "number": 1,
+            "question": "Why does this work exist?",
+            "expected_answer": "One default plus item exceptions.",
+            "original": {
+              "verdict": "PASS",
+              "evidence": "06-clear-factual-error/original-reader-final.txt:1 correctly identifies defaults/exceptions and preserving order times; 06-clear-factual-error/before/guide.md:2 supports it. The wrong maximum is outside this question."
+            },
+            "revised": {
+              "verdict": "PASS",
+              "evidence": "06-clear-factual-error/revised-reader-final.txt:1 preserves the purpose, supported by 06-clear-factual-error/after/guide.md:2."
+            }
+          },
+          {
+            "number": 2,
+            "question": "What happens in a representative case?",
+            "expected_answer": "15 inherited, zero explicit; after default20 inherited20, zero0, old order15.",
+            "original": {
+              "verdict": "PASS",
+              "evidence": "06-clear-factual-error/original-reader-final.txt:2 accurately gives the 15-to-20/zero/old-order example in 06-clear-factual-error/before/guide.md:6."
+            },
+            "revised": {
+              "verdict": "PASS",
+              "evidence": "06-clear-factual-error/revised-reader-final.txt:2 preserves the complete inheritance/zero/snapshot example, supported by 06-clear-factual-error/after/guide.md:6."
+            }
+          },
+          {
+            "number": 3,
+            "question": "What changes in the current increment?",
+            "expected_answer": "Lookup and order snapshot.",
+            "original": {
+              "verdict": "PASS",
+              "evidence": "06-clear-factual-error/original-reader-final.txt:3 accurately identifies lookup and order copying from 06-clear-factual-error/before/guide.md:3 and :10."
+            },
+            "revised": {
+              "verdict": "PASS",
+              "evidence": "06-clear-factual-error/revised-reader-final.txt:3 preserves lookup and order snapshot with correct identifiers; 06-clear-factual-error/after/guide.md:3 and :10 support it."
+            }
+          },
+          {
+            "number": 4,
+            "question": "What remains outside it?",
+            "expected_answer": "Scheduling.",
+            "original": {
+              "verdict": "PASS",
+              "evidence": "06-clear-factual-error/original-reader-final.txt:4 and 06-clear-factual-error/before/guide.md:11 exclude scheduling."
+            },
+            "revised": {
+              "verdict": "PASS",
+              "evidence": "06-clear-factual-error/revised-reader-final.txt:4 and 06-clear-factual-error/after/guide.md:11 exclude scheduling."
+            }
+          },
+          {
+            "number": 5,
+            "question": "What still needs a decision?",
+            "expected_answer": "Product owner decides badges.",
+            "original": {
+              "verdict": "PASS",
+              "evidence": "06-clear-factual-error/original-reader-final.txt:5 and 06-clear-factual-error/before/guide.md:12 retain Product's badge decision. None of the five questions tests the erroneous reference maximum at :15."
+            },
+            "revised": {
+              "verdict": "PASS",
+              "evidence": "06-clear-factual-error/revised-reader-final.txt:5 and 06-clear-factual-error/after/guide.md:12 retain the product-owned badge decision."
+            }
+          }
+        ]
+      },
+      "separate_checks": {
+        "fidelity": {
+          "verdict": "PASS",
+          "evidence": "06-clear-factual-error/editor-native.jsonl ordinal 29 and independent patch replay show one reference-number correction, preserving every other byte."
+        },
+        "source_inspection": {
+          "verdict": "PASS",
+          "evidence": "06-clear-factual-error/editor-native.jsonl ordinal 25 includes both agreeing 90-minute sources before the edit at ordinal 29."
+        },
+        "orientation": {
+          "original": "PASS",
+          "revised": "PASS",
+          "evidence": "06-clear-factual-error/before/guide.md:2 already leads with purpose and defines snapshot; this explanation is byte-identical in 06-clear-factual-error/after/guide.md."
+        },
+        "correctness": {
+          "original": "FAIL",
+          "revised": "PASS",
+          "evidence": "06-clear-factual-error/before/guide.md:15 says 60, while 06-clear-factual-error/before/requirements.md:9 and 06-clear-factual-error/before/prep.py:9 say 90. 06-clear-factual-error/after/guide.md:15 repairs this factual defect despite five passing baseline reader answers."
+        }
+      },
+      "access_evidence_integrity": {
+        "verdict": "PASS",
+        "access_verdict": "PASS",
+        "evidence_integrity_verdict": "PASS",
+        "basis": "Independent inspection of the portable visible records and artifacts, with the transport/provenance limitations stated below; coordinator PASS summaries were not treated as proof.",
+        "access_evidence": "06-clear-factual-error/editor-native.jsonl: Instruction output 18 precedes full subject output 25 and the sole guide.md patch 29. Both readers read only their own guide; no source is executed or changed.",
+        "audited_participants": [
+          "editor",
+          "original-reader",
+          "revised-reader"
+        ],
+        "observed_out_of_manifest_reads": [],
+        "observed_out_of_manifest_writes": [],
+        "network_calls": 0,
+        "leakage_detected": false,
+        "instruction_order": "PASS: full instruction contents precede subject matter.",
+        "natural_request": {
+          "verdict": "PASS",
+          "evidence": "06-clear-factual-error/editor-prompt.txt preserves eval.json's complete natural request verbatim, plus exactly one terminal newline. Its read list matches editor-manifest.json."
+        },
+        "selection": {
+          "verdict": "PASS",
+          "evidence": "The editor receives only the selected fixture files and canonical skill catalog, with writes limited to the naturally selected document(s). The oracle and evaluation are absent from participant read manifests."
+        },
+        "capture_evidence": [
+          "06-clear-factual-error/<role>-capture-metadata.json and <role>-native-integrity.json match independently computed prompt/export hashes and retained ordinals for every audited participant.",
+          "06-clear-factual-error/<role>-dispatch-receipts.json pairs each dispatch/result and matches its child inbound ciphertext and recipient; saved prompt timestamps precede dispatch.",
+          "06-clear-factual-error/<role>-native.jsonl, <role>-trace.jsonl and <role>-tool-messages.jsonl are byte-identical; each visible call has its complete result and the final answer equals <role>-final.txt.",
+          "06-clear-factual-error/before-sha256.json and after-sha256.json match all frozen bytes; replayed editor patches exactly produce the after artifacts and reported file effects."
+        ],
+        "reader_controls": {
+          "verdict": "PASS",
+          "evidence": "Original/revised prompts have exactly the oracle's five questions and differ only in artifact-view paths; actual model, effort and collaboration mode are identical. Every reader result contains the exact corresponding frozen artifact, and each reader's manifest agrees with the oracle."
+        }
+      }
+    },
+    {
+      "id": 7,
+      "name": "skill-instruction-target",
+      "assertions": [
+        {
+          "id": "7.1",
+          "assertion": "Explain that skill instructions are outside editorial scope and explicitly suggest /kk:implement.",
+          "dimension": "routing",
+          "verdict": "PASS",
+          "evidence": "07-skill-instruction-target/editor-final.txt:1 states that skill instructions are outside /kk:clarify-docs scope; :3 explicitly suggests /kk:implement SKILL.md so the agent understands it more easily."
+        },
+        {
+          "id": "7.2",
+          "assertion": "Do not edit SKILL.md or invoke /kk:implement automatically.",
+          "dimension": "routing and file effects",
+          "verdict": "PASS",
+          "evidence": "07-skill-instruction-target/editor-native.jsonl has only the instruction-read tool call at ordinal 14/result 18 and the final at 23. No implementation invocation, handoff or write occurs. 07-skill-instruction-target/before/SKILL.md and 07-skill-instruction-target/after/SKILL.md are byte-identical."
+        },
+        {
+          "id": "7.3",
+          "assertion": "Create no artifact; comprehension reader comparison is not applicable.",
+          "dimension": "file effects and applicability",
+          "verdict": "PASS",
+          "evidence": "The complete five-record editor export has no mutation and 07-skill-instruction-target/file-effects.json:1 records no changed/added/deleted file. No reader was dispatched. Reader comparison is N/A because this case tests the explicit instruction-target boundary."
+        }
+      ],
+      "reader_comparison": {
+        "applicable": false,
+        "verdict": "N/A",
+        "reason": "Routing and file effects are the declared subject; no original or revised reader is required or present."
+      },
+      "access_evidence_integrity": {
+        "verdict": "PASS",
+        "access_verdict": "PASS",
+        "evidence_integrity_verdict": "PASS",
+        "basis": "Independent inspection of the portable visible records and artifacts, with the transport/provenance limitations stated below; coordinator PASS summaries were not treated as proof.",
+        "access_evidence": "07-skill-instruction-target/editor-native.jsonl: The only call, ordinal 14, loads both instruction files; output 18 matches the frozen instructions. Target SKILL.md is neither read nor edited, and no implementation handoff occurs.",
+        "audited_participants": [
+          "editor"
+        ],
+        "observed_out_of_manifest_reads": [],
+        "observed_out_of_manifest_writes": [],
+        "network_calls": 0,
+        "leakage_detected": false,
+        "instruction_order": "PASS: complete instructions loaded; no subject-matter action.",
+        "natural_request": {
+          "verdict": "PASS",
+          "evidence": "07-skill-instruction-target/editor-prompt.txt preserves eval.json's complete natural request verbatim, plus exactly one terminal newline. Its read list matches editor-manifest.json."
+        },
+        "selection": {
+          "verdict": "PASS",
+          "evidence": "07-skill-instruction-target/editor-manifest.json permits the target and workspace-local additions; the boundary response and no-write behavior arise from instruction routing, not a harness write prohibition."
+        },
+        "capture_evidence": [
+          "07-skill-instruction-target/<role>-capture-metadata.json and <role>-native-integrity.json match independently computed prompt/export hashes and retained ordinals for every audited participant.",
+          "07-skill-instruction-target/<role>-dispatch-receipts.json pairs each dispatch/result and matches its child inbound ciphertext and recipient; saved prompt timestamps precede dispatch.",
+          "07-skill-instruction-target/<role>-native.jsonl, <role>-trace.jsonl and <role>-tool-messages.jsonl are byte-identical; each visible call has its complete result and the final answer equals <role>-final.txt.",
+          "07-skill-instruction-target/before-sha256.json and after-sha256.json match all frozen bytes; replayed editor patches exactly produce the after artifacts and reported file effects."
+        ],
+        "reader_controls": {
+          "verdict": "N/A",
+          "reason": "No readers in routing-only cases."
+        }
+      }
+    },
+    {
+      "id": 8,
+      "name": "agent-instruction-target",
+      "assertions": [
+        {
+          "id": "8.1",
+          "assertion": "Explain that agent instructions are outside editorial scope and explicitly suggest /kk:implement.",
+          "dimension": "routing",
+          "verdict": "PASS",
+          "evidence": "08-agent-instruction-target/editor-final.txt:1 explains the agent-instruction exclusion and :3 explicitly suggests /kk:implement AGENTS.md for clarity."
+        },
+        {
+          "id": "8.2",
+          "assertion": "AGENTS.md remains unchanged and no automatic handoff occurs.",
+          "dimension": "routing and file effects",
+          "verdict": "PASS",
+          "evidence": "08-agent-instruction-target/editor-native.jsonl ordinals 14/18 load only the two instruction files and ordinal 23 reports the boundary. There is no target edit, implementation call or handoff; 08-agent-instruction-target/before/AGENTS.md and 08-agent-instruction-target/after/AGENTS.md have identical bytes and hashes."
+        },
+        {
+          "id": "8.3",
+          "assertion": "Create no artifact; comprehension reader comparison is not applicable.",
+          "dimension": "file effects and applicability",
+          "verdict": "PASS",
+          "evidence": "The five-record editor export contains no mutation and 08-agent-instruction-target/file-effects.json:1 shows no added, deleted or changed artifact. Reader comparison is N/A for this routing-only instruction-target case; no reader was dispatched."
+        }
+      ],
+      "reader_comparison": {
+        "applicable": false,
+        "verdict": "N/A",
+        "reason": "Routing and file effects are the declared subject; no original or revised reader is required or present."
+      },
+      "access_evidence_integrity": {
+        "verdict": "PASS",
+        "access_verdict": "PASS",
+        "evidence_integrity_verdict": "PASS",
+        "basis": "Independent inspection of the portable visible records and artifacts, with the transport/provenance limitations stated below; coordinator PASS summaries were not treated as proof.",
+        "access_evidence": "08-agent-instruction-target/editor-native.jsonl: The only call, ordinal 14, loads both instruction files; output 18 matches the frozen instructions. AGENTS.md is neither read nor edited, and no implementation handoff occurs.",
+        "audited_participants": [
+          "editor"
+        ],
+        "observed_out_of_manifest_reads": [],
+        "observed_out_of_manifest_writes": [],
+        "network_calls": 0,
+        "leakage_detected": false,
+        "instruction_order": "PASS: complete instructions loaded; no subject-matter action.",
+        "natural_request": {
+          "verdict": "PASS",
+          "evidence": "08-agent-instruction-target/editor-prompt.txt preserves eval.json's complete natural request verbatim, plus exactly one terminal newline. Its read list matches editor-manifest.json."
+        },
+        "selection": {
+          "verdict": "PASS",
+          "evidence": "08-agent-instruction-target/editor-manifest.json permits the target and workspace-local additions; the boundary response and no-write behavior arise from instruction routing, not a harness write prohibition."
+        },
+        "capture_evidence": [
+          "08-agent-instruction-target/<role>-capture-metadata.json and <role>-native-integrity.json match independently computed prompt/export hashes and retained ordinals for every audited participant.",
+          "08-agent-instruction-target/<role>-dispatch-receipts.json pairs each dispatch/result and matches its child inbound ciphertext and recipient; saved prompt timestamps precede dispatch.",
+          "08-agent-instruction-target/<role>-native.jsonl, <role>-trace.jsonl and <role>-tool-messages.jsonl are byte-identical; each visible call has its complete result and the final answer equals <role>-final.txt.",
+          "08-agent-instruction-target/before-sha256.json and after-sha256.json match all frozen bytes; replayed editor patches exactly produce the after artifacts and reported file effects."
+        ],
+        "reader_controls": {
+          "verdict": "N/A",
+          "reason": "No readers in routing-only cases."
+        }
+      }
+    },
+    {
+      "id": 9,
+      "name": "code-non-trigger",
+      "assertions": [
+        {
+          "id": "9.1",
+          "assertion": "Do not invoke /kk:clarify-docs or load its shared editorial procedure for the ordinary code question.",
+          "dimension": "non-activation",
+          "verdict": "PASS",
+          "evidence": "09-code-non-trigger/editor-prompt.txt:10 exposes only the exact canonical catalog description and normal loading paths; :14 preserves the ordinary natural code question. 09-code-non-trigger/editor-native.jsonl ordinals 14/17 read only prep.py. No skill body, shared procedure or editorial invocation occurs."
+        },
+        {
+          "id": "9.2",
+          "assertion": "Answer that null inherits the restaurant default without rewriting any file.",
+          "dimension": "answer and file effects",
+          "verdict": "PASS",
+          "evidence": "09-code-non-trigger/editor-final.txt:1 correctly says None falls back to restaurant[\"prep_minutes\"], matching 09-code-non-trigger/before/prep.py:2. The only tool reads prep.py; no mutation occurs and 09-code-non-trigger/before/after prep.py bytes and hashes match."
+        },
+        {
+          "id": "9.3",
+          "assertion": "Comprehension/fidelity before-after readers are not applicable because no editorial task was requested.",
+          "dimension": "applicability",
+          "verdict": "PASS",
+          "evidence": "The exact request in 09-code-non-trigger/editor-prompt.txt:14 asks for a brief code explanation, with no document edit. There is one editor and no 09-code-non-trigger/before/after readers; comprehension/fidelity reader comparison is N/A. The non-trigger was not replaced with a classification request."
+        }
+      ],
+      "reader_comparison": {
+        "applicable": false,
+        "verdict": "N/A",
+        "reason": "Routing and file effects are the declared subject; no original or revised reader is required or present."
+      },
+      "access_evidence_integrity": {
+        "verdict": "PASS",
+        "access_verdict": "PASS",
+        "evidence_integrity_verdict": "PASS",
+        "basis": "Independent inspection of the portable visible records and artifacts, with the transport/provenance limitations stated below; coordinator PASS summaries were not treated as proof.",
+        "access_evidence": "09-code-non-trigger/editor-native.jsonl: The only tool call, ordinal 14, reads prep.py; output 17 matches the source snapshot. Neither available instruction file is loaded, and no write occurs.",
+        "audited_participants": [
+          "editor"
+        ],
+        "observed_out_of_manifest_reads": [],
+        "observed_out_of_manifest_writes": [],
+        "network_calls": 0,
+        "leakage_detected": false,
+        "instruction_order": "N/A: skill not selected; no editorial instructions loaded.",
+        "natural_request": {
+          "verdict": "PASS",
+          "evidence": "09-code-non-trigger/editor-prompt.txt preserves eval.json's complete natural request verbatim, plus exactly one terminal newline. Its read list matches editor-manifest.json."
+        },
+        "selection": {
+          "verdict": "PASS",
+          "evidence": "09-code-non-trigger/editor-prompt.txt:10 contains only the unchanged canonical catalog description and normal instruction-loading paths; neither body preloading nor added rejection/classification priming occurs. The workspace permits writes/new artifacts, so unchanged files were not forced by a separate no-write rule."
+        },
+        "capture_evidence": [
+          "09-code-non-trigger/<role>-capture-metadata.json and <role>-native-integrity.json match independently computed prompt/export hashes and retained ordinals for every audited participant.",
+          "09-code-non-trigger/<role>-dispatch-receipts.json pairs each dispatch/result and matches its child inbound ciphertext and recipient; saved prompt timestamps precede dispatch.",
+          "09-code-non-trigger/<role>-native.jsonl, <role>-trace.jsonl and <role>-tool-messages.jsonl are byte-identical; each visible call has its complete result and the final answer equals <role>-final.txt.",
+          "09-code-non-trigger/before-sha256.json and after-sha256.json match all frozen bytes; replayed editor patches exactly produce the after artifacts and reported file effects."
+        ],
+        "reader_controls": {
+          "verdict": "N/A",
+          "reason": "No readers in routing-only cases."
+        }
+      }
+    },
+    {
+      "id": 10,
+      "name": "brevity-non-trigger",
+      "assertions": [
+        {
+          "id": "10.1",
+          "assertion": "Do not invoke /kk:clarify-docs or load its shared procedure.",
+          "dimension": "non-activation",
+          "verdict": "PASS",
+          "evidence": "10-brevity-non-trigger/editor-prompt.txt:10 supplies description-only selection with instruction files available, and :14 preserves the one-sentence definition request. 10-brevity-non-trigger/editor-native.jsonl contains only inbound ordinal 9 and final ordinal 13: zero tools, skill invocations, or shared-procedure loads."
+        },
+        {
+          "id": "10.2",
+          "assertion": "Respond briefly without changing notes.md or creating another artifact.",
+          "dimension": "answer and file effects",
+          "verdict": "PASS",
+          "evidence": "10-brevity-non-trigger/editor-final.txt:1 is one sentence defining a default value. There are no tool calls or writes, 10-brevity-non-trigger/before/notes.md equals 10-brevity-non-trigger/after/notes.md byte-for-byte, and 10-brevity-non-trigger/file-effects.json:1 shows no added, changed or deleted artifact."
+        },
+        {
+          "id": "10.3",
+          "assertion": "Comprehension/fidelity before-after readers are not applicable because no editorial task was requested.",
+          "dimension": "applicability",
+          "verdict": "PASS",
+          "evidence": "10-brevity-non-trigger/editor-prompt.txt:14 is a chat response-length preference and definition question. No editorial task or reader comparison was requested or introduced; only the editor ran, so 10-brevity-non-trigger/before/after comprehension/fidelity readers are N/A."
+        }
+      ],
+      "reader_comparison": {
+        "applicable": false,
+        "verdict": "N/A",
+        "reason": "Routing and file effects are the declared subject; no original or revised reader is required or present."
+      },
+      "access_evidence_integrity": {
+        "verdict": "PASS",
+        "access_verdict": "PASS",
+        "evidence_integrity_verdict": "PASS",
+        "basis": "Independent inspection of the portable visible records and artifacts, with the transport/provenance limitations stated below; coordinator PASS summaries were not treated as proof.",
+        "access_evidence": "10-brevity-non-trigger/editor-native.jsonl: The complete participant export contains inbound ordinal 9 and final ordinal 13 only: no tool, file read, write, skill load or handoff.",
+        "audited_participants": [
+          "editor"
+        ],
+        "observed_out_of_manifest_reads": [],
+        "observed_out_of_manifest_writes": [],
+        "network_calls": 0,
+        "leakage_detected": false,
+        "instruction_order": "N/A: skill not selected; no editorial instructions loaded.",
+        "natural_request": {
+          "verdict": "PASS",
+          "evidence": "10-brevity-non-trigger/editor-prompt.txt preserves eval.json's complete natural request verbatim, plus exactly one terminal newline. Its read list matches editor-manifest.json."
+        },
+        "selection": {
+          "verdict": "PASS",
+          "evidence": "10-brevity-non-trigger/editor-prompt.txt:10 contains only the unchanged canonical catalog description and normal instruction-loading paths; neither body preloading nor added rejection/classification priming occurs. The workspace permits writes/new artifacts, so unchanged files were not forced by a separate no-write rule."
+        },
+        "capture_evidence": [
+          "10-brevity-non-trigger/<role>-capture-metadata.json and <role>-native-integrity.json match independently computed prompt/export hashes and retained ordinals for every audited participant.",
+          "10-brevity-non-trigger/<role>-dispatch-receipts.json pairs each dispatch/result and matches its child inbound ciphertext and recipient; saved prompt timestamps precede dispatch.",
+          "10-brevity-non-trigger/<role>-native.jsonl, <role>-trace.jsonl and <role>-tool-messages.jsonl are byte-identical; each visible call has its complete result and the final answer equals <role>-final.txt.",
+          "10-brevity-non-trigger/before-sha256.json and after-sha256.json match all frozen bytes; replayed editor patches exactly produce the after artifacts and reported file effects."
+        ],
+        "reader_controls": {
+          "verdict": "N/A",
+          "reason": "No readers in routing-only cases."
+        }
+      }
+    }
+  ],
+  "totals": {
+    "scenarios": 10,
+    "assertions": 40,
+    "assertion_verdicts": {
+      "PASS": 40,
+      "FAIL": 0,
+      "PARTIAL": 0
+    },
+    "scenario_final_behavior": {
+      "PASS": 10,
+      "FAIL": 0,
+      "PARTIAL": 0
+    },
+    "access_verdicts": {
+      "PASS": 10,
+      "FAIL": 0,
+      "PARTIAL": 0
+    },
+    "evidence_integrity_verdicts": {
+      "PASS": 10,
+      "FAIL": 0,
+      "PARTIAL": 0
+    },
+    "reader_questions_original": {
+      "PASS": 23,
+      "FAIL": 1,
+      "PARTIAL": 6
+    },
+    "reader_questions_revised": {
+      "PASS": 30,
+      "FAIL": 0,
+      "PARTIAL": 0
+    },
+    "reader_question_judgments": 60,
+    "reader_comparison_not_applicable_cases": [
+      7,
+      8,
+      9,
+      10
+    ],
+    "participants": 22,
+    "unique_visible_participant_records": 141,
+    "tool_calls": 40,
+    "tool_results": 40,
+    "missing_or_unpaired_visible_records": 0,
+    "participant_output_truncations": 0,
+    "invalidated_runs": 0
+  },
+  "limitations": [
+    {
+      "kind": "Encrypted dispatch transport",
+      "detail": "Dispatch ciphertext cannot independently establish plaintext bytes. All 22 exact plaintext files predate dispatch, match their recorded hashes, and link through dispatch receipts to the child ciphertext and recipient. The first seven participants have pre-dispatch plaintext files; the later 15 additionally have exact JSON message envelopes with identical terminal-newline bytes. No prompt is missing or reconstructed in the published package. This is the allowed transport limitation in protocol/implementation.md:251, not grounds to invalidate these runs."
+    },
+    {
+      "kind": "Original-source provenance",
+      "detail": "Original session files and temporary workspaces are outside this grader's allowed reads. Their hashes, unchanged-source declarations and deterministic-filter coverage are recorded consistently, but this grader cannot independently rehash those original files or rerun the filter over excluded privileged records. It did independently hash all portable exports, verify their retained ordinals/counts and visible call/result continuity, and compare every captured subject/instruction result with frozen artifacts. Likewise, source-identity.json's repository revision and live-canonical correspondence are recorded provenance rather than a fresh repository audit."
+    },
+    {
+      "kind": "Isolation",
+      "detail": "Participants shared a filesystem; access boundaries were prompt/manifests plus trace audit, not OS-enforced isolation. The complete visible records show no out-of-manifest source reads, oracle access, unexpected writes, network use or automatic handoff. These findings concern recorded agent actions."
+    },
+    {
+      "kind": "Interpretation of comprehension",
+      "detail": "Readers are fresh model sessions, all using gpt-6-astra with max effort in default collaboration mode. Their answers and the grader's inspection establish these scenarios' stated contract, not improved human comprehension or a comparative statistical result. Cases 1 and 4 repair declared orientation defects even though their baseline five-question answers can be derived; case 6 repairs a factual defect outside those questions. Case 5 correctly remains unchanged."
+    }
+  ],
+  "unresolved_issues": [],
+  "inspected_coverage": {
+    "manifest": "grader/grader-final-manifest.json",
+    "manifest_sha256": "317fb2a0fd490a995ec1598774b3b56a7c1282d3ff89e80f867432b76e36e8a9",
+    "permitted_entries": 372,
+    "inspected_input_files": 371,
+    "coverage_rule": "Every file in the manifest read list was read except grader/verdicts.json, which was reserved for this fresh output and not consulted as input. No original session, temporary workspace, unlisted file, or interrupted grader file was read.",
+    "input_files_by_case": [
+      {
+        "id": 1,
+        "directory": "01-dense-source",
+        "count": 45
+      },
+      {
+        "id": 2,
+        "directory": "02-source-disagreement",
+        "count": 45
+      },
+      {
+        "id": 3,
+        "directory": "03-missing-context",
+        "count": 45
+      },
+      {
+        "id": 4,
+        "directory": "04-cross-file-preservation",
+        "count": 50
+      },
+      {
+        "id": 5,
+        "directory": "05-already-clear",
+        "count": 48
+      },
+      {
+        "id": 6,
+        "directory": "06-clear-factual-error",
+        "count": 48
+      },
+      {
+        "id": 7,
+        "directory": "07-skill-instruction-target",
+        "count": 19
+      },
+      {
+        "id": 8,
+        "directory": "08-agent-instruction-target",
+        "count": 19
+      },
+      {
+        "id": 9,
+        "directory": "09-code-non-trigger",
+        "count": 19
+      },
+      {
+        "id": 10,
+        "directory": "10-brevity-non-trigger",
+        "count": 19
+      }
+    ],
+    "non_case_input_files": [
+      "README.md",
+      "capture-format.md",
+      "cohort-integrity.json",
+      "filter-correction.json",
+      "filtered-integrity-summary.json",
+      "instructions/SKILL.md",
+      "instructions/shared-document-clarity.md",
+      "protocol/coordinator-hook-rejection.json",
+      "protocol/evals-README.md",
+      "protocol/implementation.md",
+      "source-identity.json",
+      "grader/grader-final-manifest.json",
+      "grader/grader-final-prompt.txt",
+      "grader/grader-final-submission.json"
+    ],
+    "snapshot_files_read_and_hashed": 44,
+    "eval_files": 10,
+    "oracle_files": 6,
+    "participant_prompt_files": 22,
+    "participant_manifests": 22,
+    "participant_settings_files": 22,
+    "participant_final_answers": 22,
+    "participant_metadata_files": 22,
+    "participant_integrity_files": 22,
+    "participant_access_ledgers": 22,
+    "participant_dispatch_receipt_files": 22,
+    "participant_dispatch_receipt_records": 44,
+    "participant_submission_envelopes": 15,
+    "equivalent_visible_export_files": 66,
+    "physical_visible_export_records": 423,
+    "unique_visible_records": 141,
+    "participant_records": [
+      {
+        "scenario": 1,
+        "role": "editor",
+        "native_export": "01-dense-source/editor-native.jsonl",
+        "inspected_records": 11,
+        "retained_native_ordinals": [
+          9,
+          13,
+          14,
+          18,
+          20,
+          25,
+          29,
+          32,
+          36,
+          39,
+          44
+        ],
+        "tool_call_ordinals": [
+          14,
+          20,
+          29,
+          36
+        ],
+        "tool_result_ordinals": [
+          18,
+          25,
+          32,
+          39
+        ],
+        "three_exports_byte_identical": true,
+        "recorded_export_hash_recomputed": true,
+        "ledger_matches_all_calls": true,
+        "final_matches_visible_message": true,
+        "prompt_hash_and_pre_dispatch_time_verified": true,
+        "dispatch_receipt_and_inbound_ciphertext_link_verified": true
+      },
+      {
+        "scenario": 1,
+        "role": "original-reader",
+        "native_export": "01-dense-source/original-reader-native.jsonl",
+        "inspected_records": 4,
+        "retained_native_ordinals": [
+          9,
+          10,
+          13,
+          18
+        ],
+        "tool_call_ordinals": [
+          10
+        ],
+        "tool_result_ordinals": [
+          13
+        ],
+        "three_exports_byte_identical": true,
+        "recorded_export_hash_recomputed": true,
+        "ledger_matches_all_calls": true,
+        "final_matches_visible_message": true,
+        "prompt_hash_and_pre_dispatch_time_verified": true,
+        "dispatch_receipt_and_inbound_ciphertext_link_verified": true
+      },
+      {
+        "scenario": 1,
+        "role": "revised-reader",
+        "native_export": "01-dense-source/revised-reader-native.jsonl",
+        "inspected_records": 4,
+        "retained_native_ordinals": [
+          9,
+          10,
+          13,
+          18
+        ],
+        "tool_call_ordinals": [
+          10
+        ],
+        "tool_result_ordinals": [
+          13
+        ],
+        "three_exports_byte_identical": true,
+        "recorded_export_hash_recomputed": true,
+        "ledger_matches_all_calls": true,
+        "final_matches_visible_message": true,
+        "prompt_hash_and_pre_dispatch_time_verified": true,
+        "dispatch_receipt_and_inbound_ciphertext_link_verified": true
+      },
+      {
+        "scenario": 2,
+        "role": "editor",
+        "native_export": "02-source-disagreement/editor-native.jsonl",
+        "inspected_records": 14,
+        "retained_native_ordinals": [
+          9,
+          13,
+          14,
+          17,
+          19,
+          22,
+          24,
+          29,
+          34,
+          35,
+          38,
+          42,
+          45,
+          48
+        ],
+        "tool_call_ordinals": [
+          14,
+          19,
+          24,
+          35,
+          42
+        ],
+        "tool_result_ordinals": [
+          17,
+          22,
+          29,
+          38,
+          45
+        ],
+        "three_exports_byte_identical": true,
+        "recorded_export_hash_recomputed": true,
+        "ledger_matches_all_calls": true,
+        "final_matches_visible_message": true,
+        "prompt_hash_and_pre_dispatch_time_verified": true,
+        "dispatch_receipt_and_inbound_ciphertext_link_verified": true
+      },
+      {
+        "scenario": 2,
+        "role": "original-reader",
+        "native_export": "02-source-disagreement/original-reader-native.jsonl",
+        "inspected_records": 5,
+        "retained_native_ordinals": [
+          9,
+          13,
+          14,
+          17,
+          22
+        ],
+        "tool_call_ordinals": [
+          14
+        ],
+        "tool_result_ordinals": [
+          17
+        ],
+        "three_exports_byte_identical": true,
+        "recorded_export_hash_recomputed": true,
+        "ledger_matches_all_calls": true,
+        "final_matches_visible_message": true,
+        "prompt_hash_and_pre_dispatch_time_verified": true,
+        "dispatch_receipt_and_inbound_ciphertext_link_verified": true
+      },
+      {
+        "scenario": 2,
+        "role": "revised-reader",
+        "native_export": "02-source-disagreement/revised-reader-native.jsonl",
+        "inspected_records": 4,
+        "retained_native_ordinals": [
+          9,
+          10,
+          13,
+          18
+        ],
+        "tool_call_ordinals": [
+          10
+        ],
+        "tool_result_ordinals": [
+          13
+        ],
+        "three_exports_byte_identical": true,
+        "recorded_export_hash_recomputed": true,
+        "ledger_matches_all_calls": true,
+        "final_matches_visible_message": true,
+        "prompt_hash_and_pre_dispatch_time_verified": true,
+        "dispatch_receipt_and_inbound_ciphertext_link_verified": true
+      },
+      {
+        "scenario": 3,
+        "role": "editor",
+        "native_export": "03-missing-context/editor-native.jsonl",
+        "inspected_records": 11,
+        "retained_native_ordinals": [
+          9,
+          13,
+          14,
+          18,
+          20,
+          25,
+          29,
+          32,
+          34,
+          37,
+          42
+        ],
+        "tool_call_ordinals": [
+          14,
+          20,
+          29,
+          34
+        ],
+        "tool_result_ordinals": [
+          18,
+          25,
+          32,
+          37
+        ],
+        "three_exports_byte_identical": true,
+        "recorded_export_hash_recomputed": true,
+        "ledger_matches_all_calls": true,
+        "final_matches_visible_message": true,
+        "prompt_hash_and_pre_dispatch_time_verified": true,
+        "dispatch_receipt_and_inbound_ciphertext_link_verified": true
+      },
+      {
+        "scenario": 3,
+        "role": "original-reader",
+        "native_export": "03-missing-context/original-reader-native.jsonl",
+        "inspected_records": 5,
+        "retained_native_ordinals": [
+          9,
+          13,
+          14,
+          17,
+          22
+        ],
+        "tool_call_ordinals": [
+          14
+        ],
+        "tool_result_ordinals": [
+          17
+        ],
+        "three_exports_byte_identical": true,
+        "recorded_export_hash_recomputed": true,
+        "ledger_matches_all_calls": true,
+        "final_matches_visible_message": true,
+        "prompt_hash_and_pre_dispatch_time_verified": true,
+        "dispatch_receipt_and_inbound_ciphertext_link_verified": true
+      },
+      {
+        "scenario": 3,
+        "role": "revised-reader",
+        "native_export": "03-missing-context/revised-reader-native.jsonl",
+        "inspected_records": 4,
+        "retained_native_ordinals": [
+          9,
+          10,
+          13,
+          18
+        ],
+        "tool_call_ordinals": [
+          10
+        ],
+        "tool_result_ordinals": [
+          13
+        ],
+        "three_exports_byte_identical": true,
+        "recorded_export_hash_recomputed": true,
+        "ledger_matches_all_calls": true,
+        "final_matches_visible_message": true,
+        "prompt_hash_and_pre_dispatch_time_verified": true,
+        "dispatch_receipt_and_inbound_ciphertext_link_verified": true
+      },
+      {
+        "scenario": 4,
+        "role": "editor",
+        "native_export": "04-cross-file-preservation/editor-native.jsonl",
+        "inspected_records": 16,
+        "retained_native_ordinals": [
+          9,
+          13,
+          14,
+          17,
+          19,
+          22,
+          24,
+          30,
+          34,
+          37,
+          42,
+          43,
+          46,
+          48,
+          51,
+          56
+        ],
+        "tool_call_ordinals": [
+          14,
+          19,
+          24,
+          34,
+          43,
+          48
+        ],
+        "tool_result_ordinals": [
+          17,
+          22,
+          30,
+          37,
+          46,
+          51
+        ],
+        "three_exports_byte_identical": true,
+        "recorded_export_hash_recomputed": true,
+        "ledger_matches_all_calls": true,
+        "final_matches_visible_message": true,
+        "prompt_hash_and_pre_dispatch_time_verified": true,
+        "dispatch_receipt_and_inbound_ciphertext_link_verified": true
+      },
+      {
+        "scenario": 4,
+        "role": "original-reader",
+        "native_export": "04-cross-file-preservation/original-reader-native.jsonl",
+        "inspected_records": 5,
+        "retained_native_ordinals": [
+          9,
+          13,
+          14,
+          19,
+          24
+        ],
+        "tool_call_ordinals": [
+          14
+        ],
+        "tool_result_ordinals": [
+          19
+        ],
+        "three_exports_byte_identical": true,
+        "recorded_export_hash_recomputed": true,
+        "ledger_matches_all_calls": true,
+        "final_matches_visible_message": true,
+        "prompt_hash_and_pre_dispatch_time_verified": true,
+        "dispatch_receipt_and_inbound_ciphertext_link_verified": true
+      },
+      {
+        "scenario": 4,
+        "role": "revised-reader",
+        "native_export": "04-cross-file-preservation/revised-reader-native.jsonl",
+        "inspected_records": 5,
+        "retained_native_ordinals": [
+          9,
+          13,
+          14,
+          19,
+          24
+        ],
+        "tool_call_ordinals": [
+          14
+        ],
+        "tool_result_ordinals": [
+          19
+        ],
+        "three_exports_byte_identical": true,
+        "recorded_export_hash_recomputed": true,
+        "ledger_matches_all_calls": true,
+        "final_matches_visible_message": true,
+        "prompt_hash_and_pre_dispatch_time_verified": true,
+        "dispatch_receipt_and_inbound_ciphertext_link_verified": true
+      },
+      {
+        "scenario": 5,
+        "role": "editor",
+        "native_export": "05-already-clear/editor-native.jsonl",
+        "inspected_records": 7,
+        "retained_native_ordinals": [
+          9,
+          13,
+          14,
+          18,
+          20,
+          25,
+          30
+        ],
+        "tool_call_ordinals": [
+          14,
+          20
+        ],
+        "tool_result_ordinals": [
+          18,
+          25
+        ],
+        "three_exports_byte_identical": true,
+        "recorded_export_hash_recomputed": true,
+        "ledger_matches_all_calls": true,
+        "final_matches_visible_message": true,
+        "prompt_hash_and_pre_dispatch_time_verified": true,
+        "dispatch_receipt_and_inbound_ciphertext_link_verified": true
+      },
+      {
+        "scenario": 5,
+        "role": "original-reader",
+        "native_export": "05-already-clear/original-reader-native.jsonl",
+        "inspected_records": 4,
+        "retained_native_ordinals": [
+          9,
+          10,
+          13,
+          18
+        ],
+        "tool_call_ordinals": [
+          10
+        ],
+        "tool_result_ordinals": [
+          13
+        ],
+        "three_exports_byte_identical": true,
+        "recorded_export_hash_recomputed": true,
+        "ledger_matches_all_calls": true,
+        "final_matches_visible_message": true,
+        "prompt_hash_and_pre_dispatch_time_verified": true,
+        "dispatch_receipt_and_inbound_ciphertext_link_verified": true
+      },
+      {
+        "scenario": 5,
+        "role": "revised-reader",
+        "native_export": "05-already-clear/revised-reader-native.jsonl",
+        "inspected_records": 5,
+        "retained_native_ordinals": [
+          9,
+          11,
+          12,
+          15,
+          20
+        ],
+        "tool_call_ordinals": [
+          12
+        ],
+        "tool_result_ordinals": [
+          15
+        ],
+        "three_exports_byte_identical": true,
+        "recorded_export_hash_recomputed": true,
+        "ledger_matches_all_calls": true,
+        "final_matches_visible_message": true,
+        "prompt_hash_and_pre_dispatch_time_verified": true,
+        "dispatch_receipt_and_inbound_ciphertext_link_verified": true
+      },
+      {
+        "scenario": 6,
+        "role": "editor",
+        "native_export": "06-clear-factual-error/editor-native.jsonl",
+        "inspected_records": 11,
+        "retained_native_ordinals": [
+          9,
+          13,
+          14,
+          18,
+          20,
+          25,
+          29,
+          32,
+          34,
+          37,
+          40
+        ],
+        "tool_call_ordinals": [
+          14,
+          20,
+          29,
+          34
+        ],
+        "tool_result_ordinals": [
+          18,
+          25,
+          32,
+          37
+        ],
+        "three_exports_byte_identical": true,
+        "recorded_export_hash_recomputed": true,
+        "ledger_matches_all_calls": true,
+        "final_matches_visible_message": true,
+        "prompt_hash_and_pre_dispatch_time_verified": true,
+        "dispatch_receipt_and_inbound_ciphertext_link_verified": true
+      },
+      {
+        "scenario": 6,
+        "role": "original-reader",
+        "native_export": "06-clear-factual-error/original-reader-native.jsonl",
+        "inspected_records": 5,
+        "retained_native_ordinals": [
+          9,
+          11,
+          12,
+          15,
+          20
+        ],
+        "tool_call_ordinals": [
+          12
+        ],
+        "tool_result_ordinals": [
+          15
+        ],
+        "three_exports_byte_identical": true,
+        "recorded_export_hash_recomputed": true,
+        "ledger_matches_all_calls": true,
+        "final_matches_visible_message": true,
+        "prompt_hash_and_pre_dispatch_time_verified": true,
+        "dispatch_receipt_and_inbound_ciphertext_link_verified": true
+      },
+      {
+        "scenario": 6,
+        "role": "revised-reader",
+        "native_export": "06-clear-factual-error/revised-reader-native.jsonl",
+        "inspected_records": 4,
+        "retained_native_ordinals": [
+          9,
+          10,
+          13,
+          18
+        ],
+        "tool_call_ordinals": [
+          10
+        ],
+        "tool_result_ordinals": [
+          13
+        ],
+        "three_exports_byte_identical": true,
+        "recorded_export_hash_recomputed": true,
+        "ledger_matches_all_calls": true,
+        "final_matches_visible_message": true,
+        "prompt_hash_and_pre_dispatch_time_verified": true,
+        "dispatch_receipt_and_inbound_ciphertext_link_verified": true
+      },
+      {
+        "scenario": 7,
+        "role": "editor",
+        "native_export": "07-skill-instruction-target/editor-native.jsonl",
+        "inspected_records": 5,
+        "retained_native_ordinals": [
+          9,
+          13,
+          14,
+          18,
+          23
+        ],
+        "tool_call_ordinals": [
+          14
+        ],
+        "tool_result_ordinals": [
+          18
+        ],
+        "three_exports_byte_identical": true,
+        "recorded_export_hash_recomputed": true,
+        "ledger_matches_all_calls": true,
+        "final_matches_visible_message": true,
+        "prompt_hash_and_pre_dispatch_time_verified": true,
+        "dispatch_receipt_and_inbound_ciphertext_link_verified": true
+      },
+      {
+        "scenario": 8,
+        "role": "editor",
+        "native_export": "08-agent-instruction-target/editor-native.jsonl",
+        "inspected_records": 5,
+        "retained_native_ordinals": [
+          9,
+          13,
+          14,
+          18,
+          23
+        ],
+        "tool_call_ordinals": [
+          14
+        ],
+        "tool_result_ordinals": [
+          18
+        ],
+        "three_exports_byte_identical": true,
+        "recorded_export_hash_recomputed": true,
+        "ledger_matches_all_calls": true,
+        "final_matches_visible_message": true,
+        "prompt_hash_and_pre_dispatch_time_verified": true,
+        "dispatch_receipt_and_inbound_ciphertext_link_verified": true
+      },
+      {
+        "scenario": 9,
+        "role": "editor",
+        "native_export": "09-code-non-trigger/editor-native.jsonl",
+        "inspected_records": 5,
+        "retained_native_ordinals": [
+          9,
+          13,
+          14,
+          17,
+          20
+        ],
+        "tool_call_ordinals": [
+          14
+        ],
+        "tool_result_ordinals": [
+          17
+        ],
+        "three_exports_byte_identical": true,
+        "recorded_export_hash_recomputed": true,
+        "ledger_matches_all_calls": true,
+        "final_matches_visible_message": true,
+        "prompt_hash_and_pre_dispatch_time_verified": true,
+        "dispatch_receipt_and_inbound_ciphertext_link_verified": true
+      },
+      {
+        "scenario": 10,
+        "role": "editor",
+        "native_export": "10-brevity-non-trigger/editor-native.jsonl",
+        "inspected_records": 2,
+        "retained_native_ordinals": [
+          9,
+          13
+        ],
+        "tool_call_ordinals": [],
+        "tool_result_ordinals": [],
+        "three_exports_byte_identical": true,
+        "recorded_export_hash_recomputed": true,
+        "ledger_matches_all_calls": true,
+        "final_matches_visible_message": true,
+        "prompt_hash_and_pre_dispatch_time_verified": true,
+        "dispatch_receipt_and_inbound_ciphertext_link_verified": true
+      }
+    ],
+    "reader_controls": {
+      "pairs": 6,
+      "questions_match_each_oracle": true,
+      "normalized_prompts_identical_within_pair": true,
+      "actual_settings_equal_within_pair": true,
+      "settings": {
+        "model": "gpt-6-astra",
+        "effort": "max",
+        "collaboration_mode": "default"
+      },
+      "reader_output_files_match_frozen_view": true,
+      "oracle_manifests_match_participant_manifests": true,
+      "no_reader_fixture_leakage_observed": true
+    },
+    "mutation_verification": {
+      "patch_calls_replayed_in_memory": 6,
+      "updated_file_occurrences": 7,
+      "all_replays_exactly_match_after": true,
+      "snapshot_hashes_and_file_effects_match": true,
+      "only_changed_files": {
+        "01-dense-source": [
+          "guide.md"
+        ],
+        "02-source-disagreement": [
+          "guide.md"
+        ],
+        "03-missing-context": [
+          "guide.md"
+        ],
+        "04-cross-file-preservation": [
+          "design.md",
+          "tasks.md"
+        ],
+        "05-already-clear": [],
+        "06-clear-factual-error": [
+          "guide.md"
+        ],
+        "07-skill-instruction-target": [],
+        "08-agent-instruction-target": [],
+        "09-code-non-trigger": [],
+        "10-brevity-non-trigger": []
+      },
+      "additions": 0,
+      "deletions": 0,
+      "case4_task_state_lines_exactly_preserved": 7,
+      "case4_links_independently_resolved": 5
+    },
+    "truncation_and_recovery": {
+      "participant_output_truncation_found": false,
+      "initial_grader_manifest_output_truncated": true,
+      "recovery": "The initial oversized absolute-path manifest rendering was superseded by a complete compact enumeration of all 372 relative entries and its remaining fields. Every listed input was subsequently read. Preliminary shortened schema previews were superseded by complete inspection of all 141 visible records; repeated instruction/artifact/final contents were only abbreviated after exact byte comparison with fully read files. No material remains omitted.",
+      "remaining_unread_material_required_for_grading": 0
+    },
+    "grader_tool_issues": {
+      "path_hook_rejection": "One grader-only read command containing literal case 7/8 directory strings hit the generic PreToolUse target/ path rule. The same permitted files were subsequently read by iterating the allowed manifest. This is separate from the recorded coordinator-only rejection in protocol/coordinator-hook-rejection.json; neither occurred in an editor/reader session.",
+      "audit_script_corrections": "An initial diagnostic mistakenly included the /kk: catalog bullet when extracting absolute file paths; the extraction was corrected and all 22 prompt lists match their manifests. One follow-up command had a syntax error before execution; the corrected full audit completed with zero participant or top-level mismatches. An unavailable in-memory output-length helper caused a display-only error after the verdict object was stored; the recovered object was checked against every unchanged assertion and oracle question before saving.",
+      "participant_impact": "None.",
+      "final_coverage": "Complete within the allowed portable package."
+    }
+  }
+}

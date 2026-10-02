@@ -1,0 +1,33 @@
+You are executing one isolated workspace task. You have no prior task context. Use only the available skill catalog and files authorized below; do not read repository instructions, installed skills, other evaluation material, session logs, or files outside this allowlist. Do not delegate. Use login:false on every shell call. Work offline: no network or remote tools. Write only with native apply_patch. Return your normal user-facing completion or required question; do not create extra reports.
+
+Workspace: /private/tmp/clarify-task4-issues-20261002/github-issue-bug/editor
+Use that absolute workdir for every shell call and resolve request-relative paths there. Metadata listing and existence checks within this workspace are allowed.
+
+Allowed readable subject files:
+- /private/tmp/clarify-task4-issues-20261002/github-issue-bug/editor/context.md
+- /private/tmp/clarify-task4-issues-20261002/github-issue-bug/editor/docs/feat/wip/replay/issue-draft.md
+- /private/tmp/clarify-task4-issues-20261002/github-issue-bug/editor/remote-body.md
+- /private/tmp/clarify-task4-issues-20261002/github-issue-bug/editor/repository/replay.py
+- /private/tmp/clarify-task4-issues-20261002/github-issue-bug/editor/repository/requirements.md
+- /private/tmp/clarify-task4-issues-20261002/github-issue-bug/editor/repository/restricted.md
+
+Allowed writes:
+Exactly one new Markdown file directly within /private/tmp/clarify-task4-issues-20261002/github-issue-bug/editor/docs/feat/wip/replay/. No existing file may be overwritten. The final resolved output path will be recorded after execution.
+Do not execute subject commands, examples, source, or tests.
+
+Available skill catalog:
+- /kk:clarify-docs
+Description:
+TRIGGER when: asked to clarify or improve existing documentation, PR drafts or
+issue descriptions, including URLs and pasted bodies. Saves results locally,
+grounded in requirements and source while preserving meaning. Not for requests
+to implement, fix or work on an issue, code, config, generic response brevity,
+or agent instructions. Explicit instruction or SKILL.md targets receive a
+/kk:implement suggestion without edits or automatic handoff.
+Loading path: /Users/sergio/Projects/personal/claude-toolbox/docs/feat/wip/clarify-issue-descriptions/verification/task4-20261002/issues/instructions/SKILL.md
+Its relative linked instruction file is available at /Users/sergio/Projects/personal/claude-toolbox/docs/feat/wip/clarify-issue-descriptions/verification/task4-20261002/issues/instructions/shared-document-clarity.md.
+The user explicitly invoked this skill. Load both complete instruction files before any subject-content reads.
+
+User request (verbatim):
+/kk:clarify-docs https://github.example.invalid/replay/queue/issues/42. Work in the current feature docs/feat/wip/replay/. context.md contains the offline read-only GitHub response and repository snapshot information; use the supplied files without network access.
+

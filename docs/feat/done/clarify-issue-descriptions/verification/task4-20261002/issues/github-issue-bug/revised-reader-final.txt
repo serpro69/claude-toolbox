@@ -1,0 +1,9 @@
+1. The issue tracks reported duplicate receipts that violate the requirement for one receipt per completed job, even when delivery is retried. Operators could not tell whether the job had been handled twice.
+
+2. On QueueKit 1.4.2, Linux x86_64, the reporter replayed completed `job-42` with `--retry 1 --timeout-ms 250` and let the first receipt time out. Two receipts appeared in 2 of 5 attempts; one receipt was expected.
+
+3. The environment and reporter’s observations are documented, but no independent reproduction is available. The artifact describes a duplicate guard in 1.5.0 source at revision `5c814d7`; this does not establish 1.4.2’s behavior or demonstrate a fix. Neither the retry loop nor `seen_receipts` handling is an established cause. There is no 1.4.2 source, reporter testing of 1.5.0, or runtime verification of 1.5.0.
+
+4. The status UI is outside scope. No implementation choice or new acceptance threshold has been accepted, and this issue does not establish a delivered fix.
+
+5. Bea owns the next step: repeat the reproduction on 1.4.2 with receipt logging to help establish the cause. The artifact establishes no subsequent owner or deadline.

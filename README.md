@@ -54,7 +54,7 @@ Tools like Claude Code and Codex are powerful on their own, but LLMs don't know 
 
 Out of the box you get:
 
-- **14 workflow and utility skills** — a complete development pipeline invoked as `/kk:<skill-name>`, plus utilities such as `/kk:clarify-docs` for improving existing documentation and PR drafts.
+- **14 workflow and utility skills** — a complete development pipeline invoked as `/kk:<skill-name>`, plus utilities such as `/kk:clarify-docs` for improving existing documentation, PR drafts and issue descriptions.
 - **Multi-language support** — precise and distinct instructions from design, to implementation, to testing, to review for: go, java, js/ts, kotlin, kubernetes, and python
 - **Multi-model code review** — independent reviewers using sub-agents and external models (Gemini, etc.)
 - **Persistent knowledge base** — findings, decisions, and conventions that survive across sessions via Capy
@@ -85,6 +85,12 @@ After setup, try the core workflow:
 4. **Review the code.** `/kk:review-code` checks for SOLID violations, security risks, and quality issues. Use `/kk:review-code:isolated` for independent sub-agent reviewers with zero authorship bias.
 
 This is the core loop. See the [Skills documentation](https://serpro69.github.io/claude-toolbox/latest/user-guide/skills/) for all available skills and the full workflow pipeline.
+
+To clarify a bug report or feature request, use `/kk:clarify-docs issue-draft.md`
+or supply an issue URL or pasted description with a local destination. The skill
+preserves evidence limits and produces a local draft; it does not publish or
+implement the issue. See [issue-description examples](docs/user-guide/skills.md#clarify-an-issue-description)
+for output selection and audience rules. Clarification remains optional.
 
 ## Examples
 

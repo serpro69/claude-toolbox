@@ -1,0 +1,64 @@
+{
+  "prompt_sha256": "2defa68ef2bceef1bc233e1f75ae3adc49ef253645dace1706a17697eaa328a4",
+  "coordinator_native_source": "/Users/sergio/.codex/sessions/2026/10/02/rollout-2026-10-02T10-01-03-01a0fba1-8a8e-72c3-8c4e-79a097f7323a.jsonl",
+  "coordinator_source_sha256_at_export": "1f7350ea8c34b63f74d37903ce5e33933378021288ab841e26d7d35e3e88b215",
+  "dispatch_ordinal": 368,
+  "dispatch_timestamp": "2026-10-02T08:17:36.475Z",
+  "pre_dispatch_exact_plaintext_echo_found": true,
+  "echo_ordinal": 366,
+  "echo_timestamp": "2026-10-02T08:17:19.809Z",
+  "existing_native_call": {
+    "timestamp": "2026-10-02T08:17:18.271Z",
+    "ordinal": 361,
+    "type": "response_item",
+    "payload": {
+      "type": "custom_tool_call",
+      "id": "ctc_0aeda1bb7c079e61016abf6888156087d2a49d21025e5047cd",
+      "status": "completed",
+      "call_id": "call_020aRevSEtMOVj3FAaTPbww9",
+      "name": "exec",
+      "input": "text(await tools.exec_command({cmd:\"python3 /private/tmp/t4_prc_evidence.py session destination-visibility editor /root/verify_pr_consumers/visibility_editor\",login:false,max_output_tokens:1000}));\ntext(await tools.exec_command({cmd:\"python3 /private/tmp/t4_prc_evidence.py after destination-visibility\",login:false,max_output_tokens:1000}));\ntext(await tools.exec_command({cmd:\"cat docs/feat/wip/clarify-issue-descriptions/verification/task4-20261002/pr-consumers/pr-missing-context/editor/prompt.json\",login:false,max_output_tokens:1800}));\n",
+      "internal_chat_message_metadata_passthrough": {
+        "turn_id": "01a0fba1-8ad8-77a2-9ddb-0c9d4339c979",
+        "create_time": 1790929030.409707
+      }
+    }
+  },
+  "existing_native_output": {
+    "timestamp": "2026-10-02T08:17:19.809Z",
+    "ordinal": 366,
+    "type": "response_item",
+    "payload": {
+      "type": "custom_tool_call_output",
+      "id": "ctco_01a0fbb0-71c1-7313-96e3-c97a0fc5ebcd",
+      "call_id": "call_020aRevSEtMOVj3FAaTPbww9",
+      "output": [
+        {
+          "type": "input_text",
+          "text": "Script completed\nWall time 1.5 seconds\nOutput:\n"
+        },
+        {
+          "type": "input_text",
+          "text": "{\"chunk_id\":\"e2331b\",\"wall_time_seconds\":0.082496083,\"exit_code\":0,\"original_token_count\":24,\"output\":\"{\\\"agent\\\": \\\"01a0fbae-847c-79d3-9ab5-3319d70be1b5\\\", \\\"records\\\": 68, \\\"bytes\\\": 266371, \\\"finals\\\": 1}\\n\"}"
+        },
+        {
+          "type": "input_text",
+          "text": "{\"chunk_id\":\"50e9b8\",\"wall_time_seconds\":0.119172333,\"exit_code\":0,\"original_token_count\":0,\"output\":\"\"}"
+        },
+        {
+          "type": "input_text",
+          "text": "{\"chunk_id\":\"d16a15\",\"wall_time_seconds\":0.04674125,\"exit_code\":0,\"original_token_count\":386,\"output\":\"{\\\"message\\\":\\\"You are a fresh editor in an offline behavioral verification run. Work only in /private/tmp/t4-prc-20261002/pr-missing-context/workspace. You are not alone in the shared filesystem; do not revert others' work or access unrelated files.\\\\n\\\\nUse the current canonical instruction package at /private/tmp/t4-prc-20261002/instructions, starting with skills/clarify-docs/SKILL.md and its required instructions. Do not use older installed copies. Resolve plugin-root paths against this package. The exact allowed read/write manifest is /private/tmp/t4-prc-20261002/pr-missing-context/editor-manifest.json; read it first. Fixture paths in it are relative to the workspace, instruction paths to the instruction root. File listings for this scope are allowed. No reads of eval specifications, oracles, repository files outside the staged instruction package, evidence exports, other scenarios, session logs or hidden answers. The manifest itself is permitted metadata. Git checkout metadata and content listed in the manifest may be read; no Git writes. No network, external services, knowledge search, deployment or reproduction commands. External knowledge tools are unavailable for this offline run. Do not delegate. Use login:false for shell calls. Use native apply_patch for authored edits. Do not create an extra report, ledger or summary file. Finish with the normal user-facing response.\\\\n\\\\n## User request\\\\n/kk:clarify-docs the pasted PR body in pasted-body.md for repository reviewers. See context.md for the available context.\\\\n\\\"}\\n\"}"
+        }
+      ],
+      "internal_chat_message_metadata_passthrough": {
+        "turn_id": "01a0fba1-8ad8-77a2-9ddb-0c9d4339c979",
+        "create_time": 1790929039.809279
+      }
+    },
+    "metadata": {
+      "client_authored": false,
+      "fallback_token_limit_override": 12000
+    }
+  },
+  "provenance": "Lossless extraction of existing pre-dispatch visible call/output records; plaintext was not reconstructed."
+}

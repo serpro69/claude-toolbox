@@ -1,0 +1,6 @@
+{
+  "base": "7c54cf1f13060f5ff3ce4f4858c6b740b1c6a80a",
+  "head": "761325c5859454bb259892abb9daae0611ec7972",
+  "diff": "diff --git a/resolve.py b/resolve.py\nindex 2f0f505..83e110b 100644\n--- a/resolve.py\n+++ b/resolve.py\n@@ -1,2 +1,2 @@\n def effective_minutes(default, override):\n-    raise NotImplementedError(\"runtime integration is future work\")\n+    return default if override is None else override\ndiff --git a/test_resolve.py b/test_resolve.py\nnew file mode 100644\nindex 0000000..f0fda3d\n--- /dev/null\n+++ b/test_resolve.py\n@@ -0,0 +1,5 @@\n+from resolve import effective_minutes\n+\n+assert effective_minutes(15, None) == 15\n+assert effective_minutes(15, 0) == 0\n+assert effective_minutes(15, 7) == 7",
+  "status": ""
+}

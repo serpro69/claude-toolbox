@@ -1,0 +1,253 @@
+{
+  "scenario": "clarity-unchanged-document",
+  "applicable_assertion_ids": [
+    "3.1",
+    "3.2",
+    "3.3"
+  ],
+  "evidence_root": "..",
+  "overall_status": "PASS",
+  "assertion_counts": {
+    "PASS": 3,
+    "FAIL": 0,
+    "PARTIAL": 0
+  },
+  "assertions": [
+    {
+      "id": "3.1",
+      "assertion": "The guide and requirements are inspected after the document skill's required instruction loading and profile detection; neither clarify-docs nor the shared clarity procedure is loaded.",
+      "verdict": "PASS",
+      "reason": "Document entry/shared instructions return at 20/26, filename listing at 31 and complete detection at 43 precede full guide/requirements reads at 50. No profile activates or clarification instruction loads.",
+      "evidence": [
+        "clarity-unchanged-document/editor/behavior-records.json#ordinal=20",
+        "clarity-unchanged-document/editor/behavior-records.json#ordinal=26",
+        "clarity-unchanged-document/editor/behavior-records.json#ordinal=43",
+        "clarity-unchanged-document/editor/behavior-records.json#ordinal=54"
+      ]
+    },
+    {
+      "id": "3.2",
+      "assertion": "Both fixture files remain byte-identical and no new output, summary or separate clarity pass is introduced.",
+      "verdict": "PASS",
+      "reason": "Both fixture byte hashes remain identical. The complete trace has only read calls and no output, summary or editorial pass.",
+      "evidence": [
+        "clarity-unchanged-document/before-hashes.json",
+        "clarity-unchanged-document/after-hashes.json",
+        "clarity-unchanged-document/file-effects.json",
+        "clarity-unchanged-document/editor/tool-calls.json"
+      ]
+    },
+    {
+      "id": "3.3",
+      "assertion": "The response says no documentation update was needed and does not suggest clarification, invoke another writing skill, or claim independent review.",
+      "verdict": "PASS",
+      "reason": "Final 59 explicitly says the guide matches the accepted requirements and no substantive correction was needed. It leaves the guide unchanged, suggests no clarification and makes no independent-review claim.",
+      "evidence": [
+        "clarity-unchanged-document/editor/final-records.json#ordinal=59"
+      ]
+    }
+  ],
+  "reader_comparison": {
+    "applicable": false,
+    "reason": "Current optional-consumer specification grades drafting/refinement or readiness artifacts directly; paired readers are explicitly inapplicable.",
+    "artifact_checks": "Applicable fixed claims, structure, links, ownership, next steps and file effects were checked against before/after artifacts and the oracle where supplied."
+  },
+  "scope_trace_audit": {
+    "status": "PASS",
+    "manifest": "clarity-unchanged-document/editor-manifest.json",
+    "actual_fixture_content_read_paths": [
+      "feature/requirements.md",
+      "docs/archive-guide.md"
+    ],
+    "fixture_path_base": "workspace recorded in editor-manifest.json",
+    "actual_instruction_read_paths": [
+      {
+        "path": "instructions/skills/document/SKILL.md",
+        "first_complete_return_ordinal": 20
+      },
+      {
+        "path": "instructions/skills/document/shared-capy-knowledge-protocol.md",
+        "first_complete_return_ordinal": 26
+      },
+      {
+        "path": "instructions/skills/document/shared-profile-detection.md",
+        "first_complete_return_ordinal": 26
+      },
+      {
+        "path": "instructions/profiles/go/DETECTION.md",
+        "first_complete_return_ordinal": 43
+      },
+      {
+        "path": "instructions/profiles/java/DETECTION.md",
+        "first_complete_return_ordinal": 43
+      },
+      {
+        "path": "instructions/profiles/js_ts/DETECTION.md",
+        "first_complete_return_ordinal": 43
+      },
+      {
+        "path": "instructions/profiles/k8s/DETECTION.md",
+        "first_complete_return_ordinal": 43
+      },
+      {
+        "path": "instructions/profiles/k8s-operator/DETECTION.md",
+        "first_complete_return_ordinal": 43
+      },
+      {
+        "path": "instructions/profiles/kotlin/DETECTION.md",
+        "first_complete_return_ordinal": 43
+      },
+      {
+        "path": "instructions/profiles/python/DETECTION.md",
+        "first_complete_return_ordinal": 43
+      },
+      {
+        "path": "instructions/profiles/skill-md/DETECTION.md",
+        "first_complete_return_ordinal": 43
+      }
+    ],
+    "metadata_read_paths": [
+      "clarity-unchanged-document/editor-manifest.json"
+    ],
+    "allowed_write_paths": [
+      "docs/archive-guide.md"
+    ],
+    "actual_write_paths": [],
+    "write_tool": "none",
+    "patch_ordinal": null,
+    "patches_reproduce_after_bytes": true,
+    "independently_recomputed_file_effects": {
+      "modified": [],
+      "removed": [],
+      "created": []
+    },
+    "file_effects_match_capture": true,
+    "independently_recomputed_snapshot_hashes": {
+      "before": {
+        "count": 2,
+        "mismatches": []
+      },
+      "after": {
+        "count": 2,
+        "mismatches": []
+      }
+    },
+    "first_full_subject_content_call_ordinal": 50,
+    "active_profiles": [],
+    "instruction_order_result": "PASS: required instructions and matching profile guidance fully returned before full subject content reads.",
+    "truncation_audit": {
+      "inspected_all_tool_outputs": true,
+      "truncated_output_ordinals": [],
+      "recovered": [],
+      "unresolved": []
+    },
+    "unexpected_content_reads": [],
+    "unauthorized_writes": [],
+    "network_calls": [],
+    "external_mutations": [],
+    "delegations": [],
+    "reproduction_or_implementation_commands": [],
+    "limitations_and_recovered_events": [],
+    "source_revision_evidence": [
+      "source-revision.json",
+      "instruction-hashes.json",
+      "instruction-revision-check.json"
+    ],
+    "instruction_hash_audit": {
+      "files": 36,
+      "mismatches": [],
+      "meaning": "Captured instruction bytes match their recorded hashes; this audit does not read outside the allowed current instruction snapshot."
+    },
+    "run_audits": {
+      "editor": {
+        "status": "PASS",
+        "agent_id": "01a0fbbf-81f3-7f30-b071-8115759aef58",
+        "agent_path": "/root/verify_pr_consumers/unchanged_document_editor",
+        "visible_record_count": 21,
+        "top_level_tool_call_count": 7,
+        "tool_call_ordinals": [
+          12,
+          17,
+          22,
+          28,
+          33,
+          45,
+          50
+        ],
+        "final_ordinals": [
+          59
+        ],
+        "model_settings": [
+          {
+            "model": "gpt-6-astra",
+            "effort": "max",
+            "network_access": false,
+            "approval_policy": "on-request"
+          }
+        ],
+        "role": "default",
+        "fork_turns": "none",
+        "model_override": null,
+        "effort_override": null,
+        "prompt_sha256": "9ea090c4aaf43d962deaf4d1e67c3dfbbec15be5cdb48e27962a6a018c10bd19",
+        "consistency_checks": {
+          "visible_sha_matches": true,
+          "visible_count_matches": true,
+          "behavior_matches_visible": true,
+          "behavior_matches_tool_messages": true,
+          "calls_extract_matches": true,
+          "messages_extract_matches": true,
+          "finals_extract_matches": true,
+          "calls_results_pair": true,
+          "prompt_hash_matches_dispatch": true,
+          "prompt_json_matches": true,
+          "pre_records_before_dispatch": true,
+          "dispatch_receipt_links": true,
+          "child_id_links": true,
+          "child_path_links": true,
+          "ciphertext_transport_matches": true,
+          "final_task_complete_matches": true,
+          "eval_prompt_unchanged": true
+        },
+        "prompt_provenance": {
+          "plaintext_exact": true,
+          "hash_matches": true,
+          "call_output_link": true,
+          "timestamps_ordered": true,
+          "ordinals_ordered": true,
+          "dispatch_fields_match": true,
+          "echo_fields_match": true,
+          "echo_ordinal": 636,
+          "call_ordinal": 631,
+          "dispatch_ordinal": 638,
+          "truncated": false,
+          "source_hash": "d2db0adcf463c456bf4d00933d299c226a1a63176b6ef89db341b6a1613d4548",
+          "evidence": "clarity-unchanged-document/editor/prompt-provenance.json",
+          "short_window_plaintext_echo": true,
+          "short_window_hash_echo": false,
+          "interpretation": "The supplemental existing native output contains byte-identical plaintext before the linked dispatch. Short-window omissions do not remain evidence gaps."
+        },
+        "evidence": [
+          "clarity-unchanged-document/editor/session.jsonl",
+          "clarity-unchanged-document/editor/behavior-records.json",
+          "clarity-unchanged-document/editor/capture.json",
+          "clarity-unchanged-document/editor/native-dispatch.json",
+          "clarity-unchanged-document/editor/pre-dispatch-records.json",
+          "clarity-unchanged-document/editor/prompt.txt",
+          "clarity-unchanged-document/editor/actual-settings.json"
+        ]
+      }
+    }
+  },
+  "disclosure_audit": {
+    "status": "PASS",
+    "audited": "Destination artifacts where produced and every editor commentary/final message; no disclosure restriction violation found within this scenario's supplied access context."
+  },
+  "limitations": [
+    "Judgment is limited to retained visible tool calls/results, assistant messages and documented metadata. Harness boilerplate and hidden reasoning are excluded by protocol; original native logs were not read under the grader manifest.",
+    "Native dispatch transport remains encrypted. Exact pre-dispatch plaintext echoes and hashes, matching ciphertext in child transport, dispatch receipts and child/session identifiers establish linkage under the prescribed protocol; no ciphertext decryption is claimed.",
+    "The filesystem was shared, not OS-isolated. Complete visible commands/outputs were audited against manifests; this is not a system-call-level record of implicit runtime or Git configuration reads.",
+    "These synthetic offline fixtures do not certify a live platform connector or improved human comprehension. Current consumer cases measure drafting and optional recommendation behavior."
+  ],
+  "required_fixes": []
+}

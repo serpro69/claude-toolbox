@@ -1,0 +1,64 @@
+{
+  "prompt_sha256": "a4d7b3ab7dd689f9860beb55da21c2d8ec28b29a9e3609f2ff47f4940e4f3e80",
+  "coordinator_native_source": "/Users/sergio/.codex/sessions/2026/10/02/rollout-2026-10-02T10-01-03-01a0fba1-8a8e-72c3-8c4e-79a097f7323a.jsonl",
+  "coordinator_source_sha256_at_export": "1f7350ea8c34b63f74d37903ce5e33933378021288ab841e26d7d35e3e88b215",
+  "dispatch_ordinal": 669,
+  "dispatch_timestamp": "2026-10-02T08:35:19.272Z",
+  "pre_dispatch_exact_plaintext_echo_found": true,
+  "echo_ordinal": 653,
+  "echo_timestamp": "2026-10-02T08:34:38.671Z",
+  "existing_native_call": {
+    "timestamp": "2026-10-02T08:34:37.560Z",
+    "ordinal": 648,
+    "type": "response_item",
+    "payload": {
+      "type": "custom_tool_call",
+      "id": "ctc_0aeda1bb7c079e61016abf6c84bbc487d29eb11cb27bf5daf1",
+      "status": "completed",
+      "call_id": "call_kb5aPL34E4C9GIKpgtDukOsa",
+      "name": "exec",
+      "input": "text(await tools.apply_patch(\"*** Begin Patch\\n*** Update File: /private/tmp/t4_prc_evidence.py\\n@@\\n def portable():\\n@@\\n     print(json.dumps(exported,indent=2))\\n+\\n+def integrity():\\n+    results = {}\\n+    for name in CASES:\\n+        case = OUT / name\\n+        results[name] = {}\\n+        for phase in ('before','after'):\\n+            root = case / phase\\n+            if not root.exists():\\n+                continue\\n+            recovered = {}\\n+            codec_errors = []\\n+            for p in sorted(root.rglob('*')):\\n+                if not p.is_file():\\n+                    continue\\n+                if p.name != 'git-metadata-export.json':\\n+                    recovered[str(p.relative_to(root))] = sha(p)\\n+                    continue\\n+                data = json.loads(p.read_text())\\n+                for rel, entry in data['files'].items():\\n+                    value = hashlib.sha256(base64.b64decode(entry['base64'])).hexdigest()\\n+                    recovered[str((p.parent / '.git' / rel).relative_to(root))] = value\\n+                    if value != entry['sha256']:\\n+                        codec_errors.append(rel)\\n+            expected = json.loads((case / (phase + '-hashes.json')).read_text())\\n+            results[name][phase] = {'files':len(expected),'recovered_files':len(recovered),'changed_or_missing':[rel for rel,h in expected.items() if recovered.get(rel)!=h],'extra':sorted(set(recovered)-set(expected)),'codec_errors':codec_errors}\\n+    export_json(OUT / 'snapshot-integrity.json',results)\\n+    print(json.dumps(results,indent=2))\\n@@\\n-parser.add_argument('action', choices=['stage','after','reader','session','audit','portable'])\\n+parser.add_argument('action', choices=['stage','after','reader','session','audit','portable','integrity'])\\n@@\\n-{'stage': stage, 'after': after, 'reader': reader, 'session': session,'audit':audit,'portable':portable}[args.action](*args.args)\\n+{'stage': stage, 'after': after, 'reader': reader, 'session': session,'audit':audit,'portable':portable,'integrity':integrity}[args.action](*args.args)\\n*** End Patch\"));\ntext(await tools.exec_command({cmd:\"python3 /private/tmp/t4_prc_evidence.py integrity\",login:false,max_output_tokens:2200}));\ntext(await tools.exec_command({cmd:\"cat docs/feat/wip/clarify-issue-descriptions/verification/task4-20261002/pr-consumers/contract-only-pr/original-reader/prompt.json\",login:false,max_output_tokens:1000}));\n",
+      "internal_chat_message_metadata_passthrough": {
+        "turn_id": "01a0fba1-8ad8-77a2-9ddb-0c9d4339c979",
+        "create_time": 1790930027.953719
+      }
+    }
+  },
+  "existing_native_output": {
+    "timestamp": "2026-10-02T08:34:38.671Z",
+    "ordinal": 653,
+    "type": "response_item",
+    "payload": {
+      "type": "custom_tool_call_output",
+      "id": "ctco_01a0fbc0-4bcf-71d0-bb67-69b335d0a171",
+      "call_id": "call_kb5aPL34E4C9GIKpgtDukOsa",
+      "output": [
+        {
+          "type": "input_text",
+          "text": "Script completed\nWall time 1.1 seconds\nOutput:\n"
+        },
+        {
+          "type": "input_text",
+          "text": "{}"
+        },
+        {
+          "type": "input_text",
+          "text": "{\"chunk_id\":\"90c7fa\",\"wall_time_seconds\":0.114480875,\"exit_code\":0,\"original_token_count\":774,\"output\":\"{\\n  \\\"contract-only-pr\\\": {\\n    \\\"before\\\": {\\n      \\\"files\\\": 24,\\n      \\\"recovered_files\\\": 24,\\n      \\\"changed_or_missing\\\": [],\\n      \\\"extra\\\": [],\\n      \\\"codec_errors\\\": []\\n    },\\n    \\\"after\\\": {\\n      \\\"files\\\": 24,\\n      \\\"recovered_files\\\": 24,\\n      \\\"changed_or_missing\\\": [],\\n      \\\"extra\\\": [],\\n      \\\"codec_errors\\\": []\\n    }\\n  },\\n  \\\"runtime-pr\\\": {\\n    \\\"before\\\": {\\n      \\\"files\\\": 27,\\n      \\\"recovered_files\\\": 27,\\n      \\\"changed_or_missing\\\": [],\\n      \\\"extra\\\": [],\\n      \\\"codec_errors\\\": []\\n    },\\n    \\\"after\\\": {\\n      \\\"files\\\": 28,\\n      \\\"recovered_files\\\": 28,\\n      \\\"changed_or_missing\\\": [],\\n      \\\"extra\\\": [],\\n      \\\"codec_errors\\\": []\\n    }\\n  },\\n  \\\"destination-visibility\\\": {\\n    \\\"before\\\": {\\n      \\\"files\\\": 30,\\n      \\\"recovered_files\\\": 30,\\n      \\\"changed_or_missing\\\": [],\\n      \\\"extra\\\": [],\\n      \\\"codec_errors\\\": []\\n    },\\n    \\\"after\\\": {\\n      \\\"files\\\": 30,\\n      \\\"recovered_files\\\": 30,\\n      \\\"changed_or_missing\\\": [],\\n      \\\"extra\\\": [],\\n      \\\"codec_errors\\\": []\\n    }\\n  },\\n  \\\"pr-missing-context\\\": {\\n    \\\"before\\\": {\\n      \\\"files\\\": 2,\\n      \\\"recovered_files\\\": 2,\\n      \\\"changed_or_missing\\\": [],\\n      \\\"extra\\\": [],\\n      \\\"codec_errors\\\": []\\n    },\\n    \\\"after\\\": {\\n      \\\"files\\\": 2,\\n      \\\"recovered_files\\\": 2,\\n      \\\"changed_or_missing\\\": [],\\n      \\\"extra\\\": [],\\n      \\\"codec_errors\\\": []\\n    }\\n  },\\n  \\\"pr-unavailable-source\\\": {\\n    \\\"before\\\": {\\n      \\\"files\\\": 2,\\n      \\\"recovered_files\\\": 2,\\n      \\\"changed_or_missing\\\": [],\\n      \\\"extra\\\": [],\\n      \\\"codec_errors\\\": []\\n    },\\n    \\\"after\\\": {\\n      \\\"files\\\": 3,\\n      \\\"recovered_files\\\": 3,\\n      \\\"changed_or_missing\\\": [],\\n      \\\"extra\\\": [],\\n      \\\"codec_errors\\\": []\\n    }\\n  },\\n  \\\"clarity-after-drafting\\\": {\\n    \\\"before\\\": {\\n      \\\"files\\\": 1,\\n      \\\"recovered_files\\\": 1,\\n      \\\"changed_or_missing\\\": [],\\n      \\\"extra\\\": [],\\n      \\\"codec_errors\\\": []\\n    },\\n    \\\"after\\\": {\\n      \\\"files\\\": 4,\\n      \\\"recovered_files\\\": 4,\\n      \\\"changed_or_missing\\\": [],\\n      \\\"extra\\\": [],\\n      \\\"codec_errors\\\": []\\n    }\\n  },\\n  \\\"clarity-refined-documents-only\\\": {\\n    \\\"before\\\": {\\n      \\\"files\\\": 3,\\n      \\\"recovered_files\\\": 3,\\n      \\\"changed_or_missing\\\": [],\\n      \\\"extra\\\": [],\\n      \\\"codec_errors\\\": []\\n    },\\n    \\\"after\\\": {\\n      \\\"files\\\": 3,\\n      \\\"recovered_files\\\": 3,\\n      \\\"changed_or_missing\\\": [],\\n      \\\"extra\\\": [],\\n      \\\"codec_errors\\\": []\\n    }\\n  },\\n  \\\"clarity-unchanged-resume\\\": {\\n    \\\"before\\\": {\\n      \\\"files\\\": 3,\\n      \\\"recovered_files\\\": 3,\\n      \\\"changed_or_missing\\\": [],\\n      \\\"extra\\\": [],\\n      \\\"codec_errors\\\": []\\n    },\\n    \\\"after\\\": {\\n      \\\"files\\\": 3,\\n      \\\"recovered_files\\\": 3,\\n      \\\"changed_or_missing\\\": [],\\n      \\\"extra\\\": [],\\n      \\\"codec_errors\\\": []\\n    }\\n  },\\n  \\\"clarity-preserves-profile\\\": {\\n    \\\"before\\\": {\\n      \\\"files\\\": 5,\\n      \\\"recovered_files\\\": 5,\\n      \\\"changed_or_missing\\\": [],\\n      \\\"extra\\\": [],\\n      \\\"codec_errors\\\": []\\n    },\\n    \\\"after\\\": {\\n      \\\"files\\\": 5,\\n      \\\"recovered_files\\\": 5,\\n      \\\"changed_or_missing\\\": [],\\n      \\\"extra\\\": [],\\n      \\\"codec_errors\\\": []\\n    }\\n  },\\n  \\\"clarity-unchanged-document\\\": {\\n    \\\"before\\\": {\\n      \\\"files\\\": 2,\\n      \\\"recovered_files\\\": 2,\\n      \\\"changed_or_missing\\\": [],\\n      \\\"extra\\\": [],\\n      \\\"codec_errors\\\": []\\n    }\\n  }\\n}\\n\"}"
+        },
+        {
+          "type": "input_text",
+          "text": "{\"chunk_id\":\"242ddf\",\"wall_time_seconds\":0.071898708,\"exit_code\":0,\"original_token_count\":182,\"output\":\"{\\\"message\\\":\\\"You are a fresh comprehension reader. Read only /private/tmp/t4-prc-20261002/contract-only-pr/original-reader/pr-draft.md. You may not read any other file, instructions, sources, manifests, eval specifications, oracles, session logs or related drafts. No network, writes or delegation. Use login:false for shell reads. Answer the five questions below using only the named artifact; state unknown when the artifact does not establish an answer. Do not edit or grade the artifact. Return numbered answers with short textual evidence.\\\\n\\\\n1. Why does this work exist?\\\\n2. What happens in a representative case?\\\\n3. What changes in the current increment?\\\\n4. What remains outside it?\\\\n5. What still needs a decision?\\\\n\\\"}\\n\"}"
+        }
+      ],
+      "internal_chat_message_metadata_passthrough": {
+        "turn_id": "01a0fba1-8ad8-77a2-9ddb-0c9d4339c979",
+        "create_time": 1790930078.671209
+      }
+    },
+    "metadata": {
+      "client_authored": false,
+      "fallback_token_limit_override": 12000
+    }
+  },
+  "provenance": "Lossless extraction of existing pre-dispatch visible call/output records; plaintext was not reconstructed."
+}

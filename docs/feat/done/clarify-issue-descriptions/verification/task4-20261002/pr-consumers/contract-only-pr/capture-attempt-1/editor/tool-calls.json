@@ -1,0 +1,138 @@
+[
+  {
+    "timestamp": "2026-10-02T08:06:59.445Z",
+    "ordinal": 14,
+    "type": "response_item",
+    "payload": {
+      "type": "custom_tool_call",
+      "id": "ctc_0aa184dd57fc233f016abf66210d8c87d28f2e49dc03146e4d",
+      "status": "completed",
+      "call_id": "call_ieZbhjoF6AJaq84kkVRObMzn",
+      "name": "exec",
+      "input": "text(await tools.exec_command({cmd:\"cat /private/tmp/t4-prc-20261002/contract-only-pr/editor-manifest.json\",workdir:\"/private/tmp/t4-prc-20261002/contract-only-pr/workspace\",login:false,max_output_tokens:12000}));\n",
+      "internal_chat_message_metadata_passthrough": {
+        "turn_id": "01a0fba6-d4aa-7651-90e1-2d777b6c800e",
+        "create_time": 1790928411.744296
+      }
+    }
+  },
+  {
+    "timestamp": "2026-10-02T08:07:07.098Z",
+    "ordinal": 19,
+    "type": "response_item",
+    "payload": {
+      "type": "custom_tool_call",
+      "id": "ctc_0aa184dd57fc233f016abf66273f7487d2be9328b573b70e6c",
+      "status": "completed",
+      "call_id": "call_fLYtrlXr7bKrcRAPD7c5iLuB",
+      "name": "exec",
+      "input": "text(await tools.exec_command({cmd:\"cat /private/tmp/t4-prc-20261002/instructions/skills/clarify-docs/SKILL.md\",workdir:\"/private/tmp/t4-prc-20261002/contract-only-pr/workspace\",login:false,max_output_tokens:16000}));\n",
+      "internal_chat_message_metadata_passthrough": {
+        "turn_id": "01a0fba6-d4aa-7651-90e1-2d777b6c800e",
+        "create_time": 1790928420.959996
+      }
+    }
+  },
+  {
+    "timestamp": "2026-10-02T08:07:14.546Z",
+    "ordinal": 24,
+    "type": "response_item",
+    "payload": {
+      "type": "custom_tool_call",
+      "id": "ctc_0aa184dd57fc233f016abf662fd78c87d2b77ada3283f0ca1e",
+      "status": "completed",
+      "call_id": "call_OzWIM2SnqT11w6T3U2ulEd95",
+      "name": "exec",
+      "input": "text(await tools.exec_command({cmd:\"cat /private/tmp/t4-prc-20261002/instructions/skills/clarify-docs/shared-document-clarity.md\",workdir:\"/private/tmp/t4-prc-20261002/contract-only-pr/workspace\",login:false,max_output_tokens:24000}));\n",
+      "internal_chat_message_metadata_passthrough": {
+        "turn_id": "01a0fba6-d4aa-7651-90e1-2d777b6c800e",
+        "create_time": 1790928429.075009
+      }
+    }
+  },
+  {
+    "timestamp": "2026-10-02T08:07:25.821Z",
+    "ordinal": 31,
+    "type": "response_item",
+    "payload": {
+      "type": "custom_tool_call",
+      "id": "ctc_0aa184dd57fc233f016abf6638c3f887d28ce86925ed94b4da",
+      "status": "completed",
+      "call_id": "call_ii280TBK7XfbBe11lvGguzpY",
+      "name": "exec",
+      "input": "const results = await Promise.allSettled([\n  tools.exec_command({cmd:\"cat context.md\",workdir:\"/private/tmp/t4-prc-20261002/contract-only-pr/workspace\",login:false,max_output_tokens:12000}),\n  tools.exec_command({cmd:\"cat pr-draft.md\",workdir:\"/private/tmp/t4-prc-20261002/contract-only-pr/workspace\",login:false,max_output_tokens:12000})\n]);\nresults.forEach((result, i) => text({source:i === 0 ? \"context.md\" : \"pr-draft.md\", ...result}));\n",
+      "internal_chat_message_metadata_passthrough": {
+        "turn_id": "01a0fba6-d4aa-7651-90e1-2d777b6c800e",
+        "create_time": 1790928436.490242
+      }
+    }
+  },
+  {
+    "timestamp": "2026-10-02T08:07:45.401Z",
+    "ordinal": 37,
+    "type": "response_item",
+    "payload": {
+      "type": "custom_tool_call",
+      "id": "ctc_0aa184dd57fc233f016abf6641e39487d2a58045349b7ec80e",
+      "status": "completed",
+      "call_id": "call_kZUZr3ejs7BdaIpx2fH7zSKr",
+      "name": "exec",
+      "input": "const results = await Promise.allSettled([\n  tools.exec_command({cmd:\"git rev-parse review-base review-head HEAD\",workdir:\"/private/tmp/t4-prc-20261002/contract-only-pr/workspace/checkout\",login:false,max_output_tokens:12000}),\n  tools.exec_command({cmd:\"git diff review-base review-head -- contract.json requirements.md resolve.py\",workdir:\"/private/tmp/t4-prc-20261002/contract-only-pr/workspace/checkout\",login:false,max_output_tokens:18000}),\n  tools.exec_command({cmd:\"git show review-base:requirements.md\",workdir:\"/private/tmp/t4-prc-20261002/contract-only-pr/workspace/checkout\",login:false,max_output_tokens:12000}),\n  tools.exec_command({cmd:\"git show review-head:requirements.md\",workdir:\"/private/tmp/t4-prc-20261002/contract-only-pr/workspace/checkout\",login:false,max_output_tokens:12000}),\n  tools.exec_command({cmd:\"git show review-base:resolve.py\",workdir:\"/private/tmp/t4-prc-20261002/contract-only-pr/workspace/checkout\",login:false,max_output_tokens:12000}),\n  tools.exec_command({cmd:\"git show review-head:resolve.py\",workdir:\"/private/tmp/t4-prc-20261002/contract-only-pr/workspace/checkout\",login:false,max_output_tokens:12000}),\n  tools.exec_command({cmd:\"git show review-head:contract.json\",workdir:\"/private/tmp/t4-prc-20261002/contract-only-pr/workspace/checkout\",login:false,max_output_tokens:12000})\n]);\nresults.forEach((result, i) => text({source:[\"revisions\",\"review diff\",\"base requirements\",\"head requirements\",\"base resolver\",\"head resolver\",\"head contract\"][i], ...result}));\n",
+      "internal_chat_message_metadata_passthrough": {
+        "turn_id": "01a0fba6-d4aa-7651-90e1-2d777b6c800e",
+        "create_time": 1790928446.886526
+      }
+    }
+  },
+  {
+    "timestamp": "2026-10-02T08:08:21.032Z",
+    "ordinal": 52,
+    "type": "response_item",
+    "payload": {
+      "type": "custom_tool_call",
+      "id": "ctc_0aa184dd57fc233f016abf666adf0087d298aab190d6990fbc",
+      "status": "completed",
+      "call_id": "call_w6uekWABFKZDWpqeJm65lqyq",
+      "name": "exec",
+      "input": "const results = await Promise.allSettled([\n  tools.exec_command({cmd:\"git diff --name-status review-base review-head\",workdir:\"/private/tmp/t4-prc-20261002/contract-only-pr/workspace/checkout\",login:false,max_output_tokens:12000}),\n  tools.exec_command({cmd:\"git ls-tree -r --name-only review-head\",workdir:\"/private/tmp/t4-prc-20261002/contract-only-pr/workspace/checkout\",login:false,max_output_tokens:12000})\n]);\nresults.forEach((result, i) => text({source:i === 0 ? \"changed files\" : \"tracked head files\", ...result}));\n",
+      "internal_chat_message_metadata_passthrough": {
+        "turn_id": "01a0fba6-d4aa-7651-90e1-2d777b6c800e",
+        "create_time": 1790928466.717231
+      }
+    }
+  },
+  {
+    "timestamp": "2026-10-02T08:08:43.191Z",
+    "ordinal": 58,
+    "type": "response_item",
+    "payload": {
+      "type": "custom_tool_call",
+      "id": "ctc_0aa184dd57fc233f016abf66790c3c87d2bdb31e3cb401cea9",
+      "status": "completed",
+      "call_id": "call_9v07IGqEZZVxZ2SaiWiiW17T",
+      "name": "exec",
+      "input": "text(await tools.apply_patch(\"*** Begin Patch\\n*** Update File: /private/tmp/t4-prc-20261002/contract-only-pr/workspace/pr-draft.md\\n@@\\n-# Runtime-complete stack\\n-\\n-The nullable/integer union with bounds is settled by the schema as part of the\\n-runtime-complete stack, so defaults now resolve for orders. The 0 discriminator\\n-is operative while null propagates the restaurant value. Review everything in the\\n-stack and the field matrix. Persistence, scheduling and UI are later, including\\n-the product owner's inheritance-badge decision. The payload is JSON-valid.\\n+# Preparation-time override contract\\n+\\n+Restaurant defaults avoid duplicating preparation times on every item. This PR\\n+records the accepted contract for an item's `prep_minutes` override: `null`\\n+inherits the restaurant default; an integer from 0 through 90 supplies an explicit\\n+value, including zero.\\n+\\n+With a restaurant default of 15 minutes, the contract specifies 15 minutes for\\n+`null` and 0 minutes for an explicit zero. These are specified results; runtime\\n+integration remains future work. Orders do not gain default resolution in this PR.\\n+\\n+The diff from `review-base` (`48aee21`) to `review-head` (`0658ef5`) changes only\\n+`contract.json`, replacing an empty object with the field's type, bounds and\\n+inheritance rules. The accepted requirements already exist in `requirements.md`.\\n+The resolver in `resolve.py` is unchanged and still raises `NotImplementedError`.\\n+Review `contract.json` against those requirements, especially the distinction\\n+between `null` and zero and the inclusive 0\u201390 range.\\n+\\n+Persistence, scheduling and the user interface remain separate work alongside\\n+runtime integration. The product owner still needs to decide whether the UI\\n+displays a badge for inherited values.\\n+\\n+Validation: the contract JSON parsed successfully. No tests were added, and no\\n+runtime tests or deployment were performed. Parsing confirms JSON syntax; it does\\n+not verify runtime behavior.\\n*** End Patch\"));\n",
+      "internal_chat_message_metadata_passthrough": {
+        "turn_id": "01a0fba6-d4aa-7651-90e1-2d777b6c800e",
+        "create_time": 1790928502.560082
+      }
+    }
+  },
+  {
+    "timestamp": "2026-10-02T08:08:49.801Z",
+    "ordinal": 65,
+    "type": "response_item",
+    "payload": {
+      "type": "custom_tool_call",
+      "id": "ctc_0aa184dd57fc233f016abf6690dce887d288ba8b46cf07118b",
+      "status": "completed",
+      "call_id": "call_A1tnMzIFQVoeGv3vlw8rqigZ",
+      "name": "exec",
+      "input": "text(await tools.exec_command({cmd:\"cat pr-draft.md\",workdir:\"/private/tmp/t4-prc-20261002/contract-only-pr/workspace\",login:false,max_output_tokens:12000}));\n",
+      "internal_chat_message_metadata_passthrough": {
+        "turn_id": "01a0fba6-d4aa-7651-90e1-2d777b6c800e",
+        "create_time": 1790928524.246947
+      }
+    }
+  }
+]

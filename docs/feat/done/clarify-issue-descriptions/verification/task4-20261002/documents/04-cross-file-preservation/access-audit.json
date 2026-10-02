@@ -1,0 +1,20 @@
+{
+  "scenario_id": 4,
+  "auditor": "coordinator /root/verify_documents",
+  "access_verdict": "PASS",
+  "details": "Editor loads SKILL.md and the full shared procedure before reading design.md, tasks.md, requirements.md and entry.md. Both patch calls modify only design.md/tasks.md. The final Python check reads exactly those same four project files and validates required headings, task state, checkboxes and all local/inbound links without writing files. Each reader reads only its respective design.md, tasks.md and entry.md.",
+  "network_calls": 0,
+  "external_writes": 0,
+  "unexpected_reads": [],
+  "unexpected_writes": [],
+  "reader_oracle_leakage": false,
+  "instruction_order": "Full entry point/shared procedure before subject-matter reads.",
+  "evidence": [
+    "editor-access-ledger.json",
+    "editor-tool-messages.jsonl",
+    "original-reader-access-ledger.json",
+    "revised-reader-access-ledger.json",
+    "file-effects.json"
+  ],
+  "limits": "Shared filesystem, enforced by prompt and audited traces rather than OS isolation. Native encrypted dispatch plaintext cannot be decrypted; exact pre-dispatch plaintext and ciphertext linkage are retained."
+}

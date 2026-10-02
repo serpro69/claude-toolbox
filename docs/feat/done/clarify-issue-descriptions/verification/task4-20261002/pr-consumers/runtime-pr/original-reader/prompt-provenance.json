@@ -1,0 +1,68 @@
+{
+  "prompt_sha256": "4208422d5af7def05cf3be0fb0962dcf9ded3d79a62f1601a975396fcd150aac",
+  "coordinator_native_source": "/Users/sergio/.codex/sessions/2026/10/02/rollout-2026-10-02T10-01-03-01a0fba1-8a8e-72c3-8c4e-79a097f7323a.jsonl",
+  "coordinator_source_sha256_at_export": "1f7350ea8c34b63f74d37903ce5e33933378021288ab841e26d7d35e3e88b215",
+  "dispatch_ordinal": 721,
+  "dispatch_timestamp": "2026-10-02T08:38:16.018Z",
+  "pre_dispatch_exact_plaintext_echo_found": true,
+  "echo_ordinal": 717,
+  "echo_timestamp": "2026-10-02T08:38:03.256Z",
+  "existing_native_call": {
+    "timestamp": "2026-10-02T08:38:01.150Z",
+    "ordinal": 711,
+    "type": "response_item",
+    "payload": {
+      "type": "custom_tool_call",
+      "id": "ctc_0aeda1bb7c079e61016abf6d36416887d2a8fb98421a2f944c",
+      "status": "completed",
+      "call_id": "call_yszyPMf4gDSqAkAPwo0Reive",
+      "name": "exec",
+      "input": "text(await tools.apply_patch(\"*** Begin Patch\\n*** Update File: /private/tmp/t4_prc_evidence.py\\n@@\\n def command(args, cwd):\\n     return subprocess.check_output(args, cwd=cwd, text=True).strip()\\n+\\n+def visible_records(records, metadata=False):\\n+    visible = []\\n+    for record in records:\\n+        kind, payload = record.get('type'), record.get('payload',{})\\n+        item_kind = payload.get('type')\\n+        if kind == 'response_item' and (item_kind in ('function_call','custom_tool_call','function_call_output','custom_tool_call_output','agent_message') or (item_kind == 'message' and payload.get('role') == 'assistant' and payload.get('phase') in ('commentary','final_answer'))):\\n+            visible.append(record)\\n+        elif kind == 'event_msg' and item_kind in ('task_started','task_complete'):\\n+            visible.append(record)\\n+        elif metadata and kind in ('session_meta','turn_context'):\\n+            keys = ('id','parent_thread_id','timestamp','cwd','originator','cli_version','agent_role','agent_path','model_provider','model','effort','reasoning_effort','approval_policy','sandbox_policy')\\n+            visible.append({**record,'payload':{k:v for k,v in payload.items() if k in keys}})\\n+    return visible\\n@@\\n-    shutil.copyfile(matches[0], target / 'session.jsonl')\\n     records = [json.loads(line) for line in matches[0].read_text().splitlines()]\\n     meta = records[0]['payload']\\n     agent = meta['id']\\n-    readable = [r for r in records if r.get('type') in ('response_item','event_msg')]\\n+    safe = visible_records(records,metadata=True)\\n+    (target / 'session.jsonl').write_text(''.join(json.dumps(r) + '\\\\n' for r in safe))\\n+    readable = visible_records(records)\\n     export_json(target / 'tool-message-records.json', readable)\\n@@\\n-    export_json(target / 'messages.json', [r for r in records if r.get('type') == 'response_item' and r.get('payload',{}).get('type') == 'message'])\\n-    behavior = [r for r in records if (r.get('type') == 'response_item' and (r.get('payload',{}).get('type') in ('function_call','custom_tool_call','function_call_output','custom_tool_call_output','agent_message') or (r.get('payload',{}).get('type') == 'message' and r['payload'].get('role') == 'assistant'))) or (r.get('type') == 'event_msg' and r.get('payload',{}).get('type') == 'task_complete')]\\n-    export_json(target / 'behavior-records.json', behavior)\\n-    export_json(target / 'session-settings.json', [r for r in records if r.get('type') in ('session_meta','turn_context')])\\n+    export_json(target / 'messages.json', [r for r in readable if r.get('type') == 'response_item' and r.get('payload',{}).get('type') == 'message'])\\n+    export_json(target / 'behavior-records.json', readable)\\n+    export_json(target / 'session-settings.json', [r for r in safe if r.get('type') in ('session_meta','turn_context')])\\n@@\\n-    export_json(target / 'capture.json', {'agent_id':agent,'source':str(matches[0]),'trace_sha256':sha(target / 'session.jsonl'),'records':len(records),'role':role,'fork_turns':'none','model_override':None,'effort_override':None})\\n+    export_json(target / 'capture.json', {'agent_id':agent,'source':str(matches[0]),'source_native_sha256':sha(matches[0]),'visible_trace_sha256':sha(target / 'session.jsonl'),'source_records':len(records),'visible_records':len(safe),'role':role,'fork_turns':'none','model_override':None,'effort_override':None,'export_boundary':'All visible tool calls/results and assistant commentary/final messages, minimal metadata, submitted task transport. System/developer harness and hidden reasoning excluded; original native log untouched.'})\\n@@\\n-        export_json(target / 'pre-dispatch-records.json', parent_records[max(0,dispatch_index-12):dispatch_index])\\n+        export_json(target / 'pre-dispatch-records.json', visible_records(parent_records[max(0,dispatch_index-12):dispatch_index]))\\n*** End Patch\"));\ntext(await tools.exec_command({cmd:\"python3 -c 'from pathlib import Path; import json,subprocess; base=Path(\\\"docs/feat/wip/clarify-issue-descriptions/verification/task4-20261002/pr-consumers\\\"); captures=list(base.rglob(\\\"capture.json\\\"));\\nfor p in captures:\\n d=json.loads(p.read_text()); rel=p.parent.relative_to(base); subprocess.run([\\\"python3\\\",\\\"/private/tmp/t4_prc_evidence.py\\\",\\\"session\\\",str(rel.parent),rel.name,d[\\\"agent_id\\\"]],check=True)'\",login:false,max_output_tokens:2200}));\ntext(await tools.exec_command({cmd:\"python3 /private/tmp/t4_prc_evidence.py session contract-only-pr revised-reader /root/verify_pr_consumers/contract_revised_reader\",login:false,max_output_tokens:1000}));\ntext(await tools.exec_command({cmd:\"cat docs/feat/wip/clarify-issue-descriptions/verification/task4-20261002/pr-consumers/runtime-pr/original-reader/prompt.json\",login:false,max_output_tokens:1000}));\n",
+      "internal_chat_message_metadata_passthrough": {
+        "turn_id": "01a0fba1-8ad8-77a2-9ddb-0c9d4339c979",
+        "create_time": 1790930225.79583
+      }
+    }
+  },
+  "existing_native_output": {
+    "timestamp": "2026-10-02T08:38:03.256Z",
+    "ordinal": 717,
+    "type": "response_item",
+    "payload": {
+      "type": "custom_tool_call_output",
+      "id": "ctco_01a0fbc3-6af8-7b83-9a77-cb0c433103b3",
+      "call_id": "call_yszyPMf4gDSqAkAPwo0Reive",
+      "output": [
+        {
+          "type": "input_text",
+          "text": "Script completed\nWall time 2.1 seconds\nOutput:\n"
+        },
+        {
+          "type": "input_text",
+          "text": "{}"
+        },
+        {
+          "type": "input_text",
+          "text": "{\"chunk_id\":\"9f00c1\",\"wall_time_seconds\":0.656591125,\"exit_code\":0,\"original_token_count\":285,\"output\":\"{\\\"agent\\\": \\\"01a0fbb4-0313-7cf1-8efe-69a909936b6c\\\", \\\"records\\\": 83, \\\"bytes\\\": 489234, \\\"finals\\\": 1}\\n{\\\"agent\\\": \\\"01a0fbb7-7bdc-77c1-a1d0-335542eba50d\\\", \\\"records\\\": 90, \\\"bytes\\\": 432251, \\\"finals\\\": 1}\\n{\\\"agent\\\": \\\"01a0fbb0-b2de-7d41-9264-b0f044f489d6\\\", \\\"records\\\": 41, \\\"bytes\\\": 214021, \\\"finals\\\": 1}\\n{\\\"agent\\\": \\\"01a0fbab-c491-7cd2-b4f4-c2fedcdff848\\\", \\\"records\\\": 77, \\\"bytes\\\": 279573, \\\"finals\\\": 1}\\n{\\\"agent\\\": \\\"01a0fbbc-e8f4-79f0-a2a8-0ddd8633574c\\\", \\\"records\\\": 98, \\\"bytes\\\": 413900, \\\"finals\\\": 1}\\n{\\\"agent\\\": \\\"01a0fbba-6280-73b1-a335-0cd8f3aedf9d\\\", \\\"records\\\": 80, \\\"bytes\\\": 412242, \\\"finals\\\": 1}\\n{\\\"agent\\\": \\\"01a0fbc0-ea75-7582-8633-a5588a3a1b0c\\\", \\\"records\\\": 22, \\\"bytes\\\": 131089, \\\"finals\\\": 1}\\n{\\\"agent\\\": \\\"01a0fba9-914d-7941-9f04-58065eeaf31b\\\", \\\"records\\\": 63, \\\"bytes\\\": 258979, \\\"finals\\\": 1}\\n{\\\"agent\\\": \\\"01a0fba6-d45c-7741-be82-934a2fcba5ec\\\", \\\"records\\\": 77, \\\"bytes\\\": 273071, \\\"finals\\\": 1}\\n{\\\"agent\\\": \\\"01a0fbb1-f037-7412-8687-5d67c3b57f16\\\", \\\"records\\\": 65, \\\"bytes\\\": 244932, \\\"finals\\\": 1}\\n{\\\"agent\\\": \\\"01a0fbbf-81f3-7f30-b071-8115759aef58\\\", \\\"records\\\": 63, \\\"bytes\\\": 292527, \\\"finals\\\": 1}\\n{\\\"agent\\\": \\\"01a0fbae-847c-79d3-9ab5-3319d70be1b5\\\", \\\"records\\\": 68, \\\"bytes\\\": 266371, \\\"finals\\\": 1}\\n\"}"
+        },
+        {
+          "type": "input_text",
+          "text": "{\"chunk_id\":\"ddd8d1\",\"wall_time_seconds\":0.120733417,\"exit_code\":0,\"original_token_count\":24,\"output\":\"{\\\"agent\\\": \\\"01a0fbc1-b06a-7eb1-8471-ce1c71b172b0\\\", \\\"records\\\": 26, \\\"bytes\\\": 138425, \\\"finals\\\": 1}\\n\"}"
+        },
+        {
+          "type": "input_text",
+          "text": "{\"chunk_id\":\"4636f8\",\"wall_time_seconds\":0.045077375,\"exit_code\":0,\"original_token_count\":182,\"output\":\"{\\\"message\\\":\\\"You are a fresh comprehension reader. Read only /private/tmp/t4-prc-20261002/runtime-pr/original-reader/remote-body.md. You may not read any other file, instructions, sources, manifests, eval specifications, oracles, session logs or related drafts. No network, writes or delegation. Use login:false for shell reads. Answer the five questions below using only the named artifact; state unknown when the artifact does not establish an answer. Do not edit or grade the artifact. Return numbered answers with short textual evidence.\\\\n\\\\n1. Why does this work exist?\\\\n2. What happens in a representative case?\\\\n3. What changes in the current increment?\\\\n4. What remains outside it?\\\\n5. What still needs a decision?\\\\n\\\"}\\n\"}"
+        }
+      ],
+      "internal_chat_message_metadata_passthrough": {
+        "turn_id": "01a0fba1-8ad8-77a2-9ddb-0c9d4339c979",
+        "create_time": 1790930283.256758
+      }
+    },
+    "metadata": {
+      "client_authored": false,
+      "fallback_token_limit_override": 12000
+    }
+  },
+  "provenance": "Lossless extraction of existing pre-dispatch visible call/output records; plaintext was not reconstructed."
+}
