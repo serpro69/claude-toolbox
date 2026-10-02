@@ -68,7 +68,8 @@ may be used for early scope selection.
    and repository instructions. Reuse known answers; investigate accessible context
    in the shared procedure before asking about consequential gaps.
 3. Apply the shared procedure in order: understand the relevant work, establish
-   protected meaning, edit for the reader, then verify comprehension and fidelity.
+   protected meaning, edit the full reading path for the reader, then verify
+   comprehension through representative reader tasks and check fidelity separately.
 4. Report changed paths and material unresolved gaps briefly. If no edit was needed,
    say so. Produce no additional summary or claim-ledger file.
 

@@ -102,12 +102,16 @@ answer, where relevant to the artifact:
 5. What still needs a decision?
 
 Use an evidence-backed scenario when it resolves confusion. Explain unfamiliar terms
-at first use. Explain causes and consequences
-before storage fields or verification history; place technical reference detail
-after orientation. Remove duplication while retaining the detail needed for the
-reader's task. Preserve the project's organization and document-type requirements;
-do not force every artifact into one template or invent answers to irrelevant
-questions. An explicit unknown can be the correct answer.
+at first use and causes and consequences before storage fields or verification history.
+Organize the full reading path around the reader's tasks, beyond the introduction.
+Keep the behavior, instructions and qualifications needed for a task together.
+Place supporting implementation detail and test evidence where they can be consulted
+without interrupting that task, using reference sections or links within the selected
+scope. Remove repetition and obsolete review history only when they carry no unique
+protected meaning. Retain consequential rationale, decision provenance, verification
+limits and unresolved disagreements when consolidating or moving detail.
+Preserve the project's organization and document-type requirements; do not force a
+template or invent answers to irrelevant questions. An explicit unknown can be correct.
 
 PR drafts explain purpose, behavior and increment, including new tests.
 Give focused review pointers. In the draft, state supplied validation outcomes
@@ -142,7 +146,12 @@ reduction target or a new summary artifact.
 Compare the revision with the original, requirements and inspected source evidence.
 Check comprehension first: can the intended reader answer the applicable questions
 through the artifact's intended reading path, without relying on the editor's hidden
-context? Check the specific confusion motivating the edit, not just sentence length.
+context? Walk through representative reader tasks across the document, using only the
+revision and its intended reading path: for an integration guide, construct a request,
+handle a rejection and identify release prerequisites. Adapt these checks to the
+artifact; inspect whether relevant conditions are discoverable together without
+reconstructing scattered review history. Check the specific confusion motivating the
+edit; a clearer opening or a lower word count alone does not establish success.
 
 Then check fidelity independently against the protected-meaning inventory. No
 qualification may disappear and no unsupported claim may appear. Recheck headings,

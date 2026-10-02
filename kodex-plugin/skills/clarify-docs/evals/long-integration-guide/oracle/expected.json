@@ -1,0 +1,54 @@
+{
+  "reader_manifest": ["guide.md"],
+  "questions": [
+    "Another admin changes a SKU's reserve rule while I edit its label. What should my save contain, and what should the editor do after success or failure?",
+    "How do I restore warehouse inheritance rather than explicitly remove the minimum-stock restriction? What do I write, what is stored, and what does a later read show?",
+    "An admin selects 51 SKUs for one rule change. What should the client do? For a valid-size action containing a missing SKU, what is the result and what changes?",
+    "The warehouse minimum is 10. SKU A has 8 units and no override; SKU B has 8 units and an explicit none rule. Both are enabled. What does preview mean for these selections, and what happens when both are confirmed? Can I rely on the preview after stock changes?",
+    "A backend error contains data. How should the proxy and client interpret it? How does a failed preview differ from a successful preview with no allowed SKUs?",
+    "Typed defaults are staged and the model checks look correct. What else is needed before enablement, who owns it, and what recovery and UI decisions remain?"
+  ],
+  "answers": [
+    "PATCH /skus/{id} contains the changed label and omits reserveRule. Echoing an old rule is an explicit replacement and can overwrite the other edit. Refetch after success; retain unsaved input on failure. Latest committed explicit edit wins, without editor-version tokens.",
+    "Send reserveRule:null to remove the SKU field and restore inheritance. Send {kind:none} to retain an explicit override without the minimum-stock restriction. Storage absence inherits; stored null is invalid. An inherited read returns reserveRule:null, the current effectiveReserveRule and ruleSource:warehouse. Explicit none has ruleSource:sku and still requires an enabled SKU and stock for one unit.",
+    "Limit one action to 1–50 distinct nonempty SKU IDs. Do not split 51 into independently committed chunks; have the admin choose at most 50. A missing ID returns 404 SKU_NOT_FOUND with only missing submitted IDs in data.affectedSkus; none of the selected rows changes. Retain selection/input after failure and refetch after success. Mina's 2026-02-10 decision preserves one-action atomicity.",
+    "One reservation uses one unit per selected SKU. A would leave 7, below 10, so it is rejected with LOW_STOCK. B is allowed because none removes the minimum but still requires stock. Preview returns 200 PREVIEW_EVALUATED with allowed/rejected arrays and creates no reservation. Confirming both returns 409 RESERVATION_REJECTED and changes no stock. Confirm always rechecks current rows/rules; a preview is not a reservation.",
+    "Branch on HTTP status, preserve the full code/message/data envelope, and tolerate missing data on older errors. Data presence does not mean success. An empty allowed array in 200 means evaluation succeeded; a failed request means availability is unknown. Keep the user's selections and show rejected reasons or the request failure.",
+    "Mina's release work requires every warehouse default validated, every serving writer compatible, actual proxy/status/error and persistence/isolation checks, and final verification protected against intervening writes before global enablement. Staged data alone is inactive. backend.py models outcomes but proves neither HTTP behavior nor database isolation; no deployment approval or passing end-to-end run is recorded. Recovery keeps enforcement or explicitly reviews all active rules before disabling it. Lea must decide whether to add a bulk-confirmation dialog; that proposal is not required behavior."
+  ],
+  "protected_claims": [
+    "Exactly one reserveRule kind: none or minimum with integer units from 1 through 1000; booleans and extra rule fields are invalid.",
+    "An omitted SKU rule inherits dynamically; an override fully replaces the warehouse rule; none remains an override.",
+    "PATCH omission preserves, object replaces, null removes; unrelated edits omit reserveRule; latest explicit edit wins without version tokens.",
+    "Stored absence inherits and stored null is invalid; inherited read has reserveRule:null, effectiveReserveRule and ruleSource:warehouse; explicit override has ruleSource:sku.",
+    "Ordinary typed writes are rejected with 409 CONFIGURATION_INACTIVE before activation; clients cannot write enabled or mode.",
+    "Bulk requests contain skuIds and reserveRule; 1–50 distinct nonempty IDs, no automatic chunking, missing IDs produce 404 with only affected submitted IDs and zero writes.",
+    "Mina's 2026-02-10 decision rejects automatic chunking because one user action must have one all-or-nothing result.",
+    "Refetch after individual, bulk and warehouse-default saves; preserve selection and unsaved input on failures.",
+    "Preview evaluates zero to 50 distinct selected IDs for one unit each; HTTP 200 means evaluation succeeded, including an empty allowed array; rejected selected IDs and reasons survive.",
+    "None does not bypass enabled/stock checks; missing SKUs are identified without inventing labels.",
+    "Confirmation rechecks current data and rejects the complete selection with 409 and no stock changes if any SKU fails; preview makes no reservation.",
+    "Proxies preserve HTTP status and the complete envelope; older errors may omit data; failed preview means unknown availability, not an empty successful result.",
+    "Read DTOs omit audit state and use label rather than raw stored records; compiler-only/model checks do not establish wire behavior.",
+    "Global activation requires all defaults, compatible serving writers/proxies, protected final verification and release-owner evidence; typed field presence is not activation.",
+    "Keep enforcement during recovery; disabling it requires reviewing all active rules. Mina owns release readiness and rollout evidence.",
+    "Lea owns the undecided proposed bulk-confirmation dialog; no dialog requirement or implementation is invented.",
+    "backend.py is a sequential behavioral model, not a live HTTP service or database concurrency proof; real proxy and persistence verification remain pending.",
+    "The existing explicit edit-safety, bulk-safety and rollout anchors remain usable."
+  ],
+  "baseline_defects": [
+    "The opening already explains purpose, scope, an example and the open decision; another introduction does not address the problem.",
+    "The patch recipe, concurrent-write warning and refetch/failure behavior live in separate sections.",
+    "The no-chunking qualification and its decision provenance are buried in review evidence away from the bulk request.",
+    "The error-envelope rule repeats in several places beside obsolete fixture/type-alias history.",
+    "Preview and confirmation implications are interrupted by implementation notes before the actionable recovery behavior.",
+    "Activation prerequisites, owner, evidence limits and recovery rules are scattered."
+  ],
+  "grading_notes": [
+    "Original readers may eventually answer correctly. Grade better discovery and removal of interruptions separately from answer correctness.",
+    "Use section pointers to assess whether each recipe and its important qualifications are together or directly cross-linked; do not require a particular outline.",
+    "Obsolete history may be deleted or moved out of the primary task path. Unique decision rationale, provenance, open questions and verification limits remain protected.",
+    "There is no word-count threshold. A shorter document with a lost protected claim fails fidelity; a longer document can pass if its reading paths improve.",
+    "These fixtures are synthetic and shareable. Do not copy production source, issue identifiers or workspace paths into the scenario."
+  ]
+}

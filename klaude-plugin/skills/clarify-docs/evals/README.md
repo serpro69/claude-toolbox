@@ -114,3 +114,28 @@ to classify intent. Make the normal skill-loading path available so mistaken
 activation is observable in the trace. Permit normal source edits and local checks
 within the staged fixture. Grade editorial non-activation and unchanged issue text,
 not source implementation correctness. No original/revised readers are needed.
+
+## Long integration-guide scenario
+
+Case 25 starts with a clear purpose and worked example. Its later sections mix
+consumer instructions, implementation evidence and obsolete review history, with
+related qualifications scattered across the document. Adding another introduction
+does not address the declared defect. The warehouse service and its history are
+synthetic; no production repository or external service is needed.
+
+Stage only `test-files/` as a separate workspace, with `guide.md` as the sole writable
+artifact. The Python file is a small behavioral model, not an HTTP service or proof
+of database isolation. The editor reads it as evidence, without executing it.
+Give fresh original/revised readers only their respective `guide.md` and the same
+practical questions from `oracle/expected.json`. Require answers with section
+pointers; do not give readers requirements, source, defect labels or expected answers.
+The grader receives those sources plus both guides, reader answers and editor trace.
+Grade task discoverability and fidelity separately: merely answering the opening
+orientation questions is insufficient, and shorter output cannot offset a lost
+qualification. Record word counts as context only, never as a pass threshold.
+
+Run the existing `already-clear`, `source-disagreement` and `cross-file-preservation`
+scenarios alongside this case when evaluating changed instructions. They guard
+against unnecessary rewrites, removal of unresolved requirements and broken links.
+As with the earlier cases, record actual model runs separately from fixture checks;
+valid JSON and executable source do not establish improved reader comprehension.
