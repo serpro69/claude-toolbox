@@ -1,0 +1,26 @@
+1. Send `PATCH /skus/{id}` with the edited label and **omit `reserveRule`**. Omission preserves the stored rule, including another admin’s intervening change; resending your earlier rule would explicitly replace it. After success, refetch public reads to display current effective rules and intervening edits. After failure, preserve unsaved input and selection. There are no editor-version tokens or conflict dialogs.  
+   **Sections:** “Saving editor changes” and “Update one SKU.”
+
+2. Send `"reserveRule": null` to remove the override and restore inheritance. For bulk removal, provide `skuIds` and that explicit null. Storage removes the `reserveRule` key; it does **not** store null. A later public read shows `reserveRule: null`, `ruleSource: "warehouse"`, and the current warehouse default as `effectiveReserveRule`. By contrast, `{"kind":"none"}` stores an explicit override with no minimum-stock restriction.  
+   **Sections:** “Displaying rules,” “Update one SKU,” and “Bulk request and examples.”
+
+3. Have the admin reduce the selection to at most 50; **do not automatically split 51 IDs into separate commits**. For a valid-size request containing a missing SKU while active, return 404 `SKU_NOT_FOUND`, with only missing submitted IDs in `data.affectedSkus`. No selected row changes, including existing SKUs. A valid typed write while inactive instead returns 409 `CONFIGURATION_INACTIVE`, also without changes.  
+   **Section:** “Bulk request and examples.”
+
+4. Preview allows B and rejects A for `LOW_STOCK`: reserving A would leave 7, below its inherited minimum of 10. B’s explicit none removes that minimum restriction. Preview changes no stock, and a successful evaluation can contain both allowed and rejected items. Confirming both returns 409 `RESERVATION_REJECTED`; neither loses a unit. Keep the selections and display rejection reasons. Preview cannot guarantee later success: confirmation must reload current rows and rules and evaluate again before changing stock.  
+   **Sections:** “Displaying rules,” “Previewing selected SKUs,” and “Confirming a reservation.”
+
+5. The proxy must preserve the original HTTP status and complete JSON envelope, including any `data`. The client determines success from the status and contract, never from whether `data` exists. Status remains HTTP metadata, not a JSON field. A failed preview leaves availability **unknown**. A 200 `PREVIEW_EVALUATED` response with an empty `allowed` array is a successful evaluation with no allowed SKUs. Do not convert the former into the latter.  
+   **Sections:** “Handling responses” and “Previewing selected SKUs.”
+
+6. **Mina owns release readiness and rollout evidence.** Before enabling the global server-controlled switch:
+
+   - Validate a default for every warehouse, including those whose SKUs have overrides.
+   - Ensure every serving writer supports the new contract.
+   - Verify actual proxy/status/error handling and database persistence/isolation.
+   - Protect the final readiness check and switch write against intervening configuration changes using a transaction or controlled write pause.
+
+   Staged defaults and sequential model checks do not establish readiness. The model does not establish deployed behavior, actual serialization, database guarantees, retries, network-failure outcomes, authorization, or real service reloads. No deployment approval or passing end-to-end result is recorded.
+
+   Recovery must retain enforcement; disabling requires Mina’s explicit review of every active rule. **Lea must decide the proposed bulk-confirmation dialog’s presentation before UI work closes.** The dialog is not yet required or implemented, but bulk atomicity remains mandatory.  
+   **Sections:** “Deployment notes,” “Review evidence and remaining notes,” and “Bulk request and examples.”

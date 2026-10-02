@@ -133,6 +133,11 @@ The grader receives those sources plus both guides, reader answers and editor tr
 Grade task discoverability and fidelity separately: merely answering the opening
 orientation questions is insufficient, and shorter output cannot offset a lost
 qualification. Record word counts as context only, never as a pass threshold.
+Use the oracle's concrete consolidation checks to distinguish a full repeated policy
+from a useful local reminder. Moving the same obsolete narrative into an appendix
+does not pass. Grade the resulting document independently of the editor's checklist;
+for instruction versions with the checklist, also inspect its recorded locations and
+results. Keep the same output-quality rubric for baseline and revised runs.
 
 Run the existing `already-clear`, `source-disagreement` and `cross-file-preservation`
 scenarios alongside this case when evaluating changed instructions. They guard

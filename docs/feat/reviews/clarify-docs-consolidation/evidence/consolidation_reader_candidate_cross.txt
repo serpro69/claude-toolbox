@@ -1,0 +1,9 @@
+1. **Why it exists:** Import preview helps operators catch CSV errors before applying an import. It reports valid and invalid row counts without writing durable rows. *(design.md, Context)*
+
+2. **Representative case:** A three-row CSV containing one invalid row should report two valid rows, one invalid row, and zero rows written. This is planned behavior; no implementation source was supplied to verify it. *(design.md, Context; Consequences)*
+
+3. **Current increment:** Preview-only delivery, accepted by Mira on 2026-09-01. CSV columns MUST remain `id,name`; operators MAY download diagnostics. Task 1 is in progress: column acceptance is marked complete, while counts without writes remain unchecked. Resume there, then satisfy the deployment gate: support-owner approval of the sample-file walkthrough before enabling preview. *(design.md, Decision; Deployment gate; tasks.md, Task 1: Preview; entry.md, Resume)*
+
+4. **Outside the increment:** Applying imports remains future work and disabled. Downloaded diagnostics do not authorize applying rows. Task 2, Apply, is pending and depends on Task 1. *(design.md, Decision; Consequences; tasks.md, Task 2: Apply)*
+
+5. **Decision still needed:** Product owns the duplicate-row policy decision, which must be settled before implementing apply. Support-owner walkthrough approval is also required before enabling preview. *(design.md, Consequences; Deployment gate; tasks.md, Task 2: Apply)*

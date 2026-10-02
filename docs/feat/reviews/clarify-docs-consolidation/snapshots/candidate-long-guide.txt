@@ -1,0 +1,207 @@
+# Warehouse reservation integration
+
+This guide is for engineers building the warehouse editor and reservation client.
+Warehouse owners need a default minimum remaining stock and exceptions for individual
+SKUs. A SKU identifies a stock item. This increment adds typed rules, rule editing,
+a preview and a current-data check when reserving. Each reservation requests one unit
+of every selected SKU; quantities and restocking are outside scope.
+
+For example, a warehouse requires 10 units to remain. Two enabled SKUs each have 8
+units: A inherits the default and B explicitly has no minimum. Reserving A would
+leave 7, so A fails; B can be reserved. Preview reports both outcomes without changing
+stock. Trying to reserve both together rejects the complete selection.
+
+[requirements.md](requirements.md) defines the accepted behavior of this candidate
+contract. [backend.py](backend.py) is its sequential, in-memory model, not a deployed
+HTTP service. Release verification remains pending; see [Deployment notes](#deployment-notes)
+for activation requirements and [Review evidence and remaining notes](#review-evidence-and-remaining-notes)
+for the model's evidence limits. Normal integration review still applies.
+
+## Rules and editor operations
+
+Each configured scope has exactly one rule:
+
+| Rule | Meaning |
+| --- | --- |
+| `{"kind":"none"}` | No minimum remaining stock. The SKU must still be enabled and have stock for the requested unit. |
+| `{"kind":"minimum","units":10}` | At least the specified number of units must remain after reserving one unit. |
+
+Minimum units must be integers from 1 through 1000. Use explicit none for a zero
+minimum. Boolean units, extra members and combined modes are invalid. A SKU override
+replaces the warehouse rule completely; the two rules are never combined.
+
+A SKU inherits the current warehouse default when its stored `reserveRule` key is
+absent. Stored null is invalid. Public reads represent inheritance with
+`reserveRule: null`, include the resolved `effectiveReserveRule`, and report
+`ruleSource: "warehouse"`. An explicit override, including none, reports source
+`"sku"`. The effective value is calculated at read time: changing the warehouse
+default changes inherited effective rules without writing those SKU rows. An
+inherited none and an explicit none can therefore respond differently to a later
+default change. The complete public field list is in
+[Public data and implementation notes](#public-data-and-implementation-notes).
+
+`PATCH /skus/{id}` accepts label edits and a `reserveRule` instruction:
+
+| Submitted `reserveRule` | Effect |
+| --- | --- |
+| Omitted | Preserve the stored rule. |
+| Valid rule object | Replace the entire stored override. |
+| `null` | Remove the stored key and resume inheritance. |
+
+An inherited read's null and a save's null have different roles: the first describes
+absence; the second instructs the server to remove the override. Neither stores null.
+Successful individual saves return 200 `SKU_UPDATED` with `data.updatedSkus`.
+Typed rule writes require active server configuration; valid requests while inactive
+return 409 `CONFIGURATION_INACTIVE`. Clients cannot set the server-controlled `enabled`
+or `mode` fields; either produces 400 `READ_ONLY_FIELD`. The bulk endpoint applies
+the same rule instructions to a selection, as described below.
+
+<a id="edit-safety"></a>
+
+When saving an unrelated label edit, omit `reserveRule`. Resending an earlier read
+is an explicit replacement and can overwrite another admin's newer choice. The
+latest committed explicit rule edit wins; there are no editor-version tokens or
+conflict dialogs.
+
+After individual, bulk and warehouse-default saves, refetch public reads to display
+current effective rules and other admins' intervening edits. An acknowledgement
+describes a completed change, not a guarantee that no later edit occurred. On
+failure, preserve unsaved input and selection. These rules apply regardless of
+where the editor displays the rule's source. Use the shared
+[response-handling contract](#public-data-and-implementation-notes) for all saves.
+
+## Bulk request and examples
+
+`PUT /skus/reserve-rule` requires `skuIds` containing 1–50 distinct, nonempty IDs
+and an explicit `reserveRule` instruction. A rule object replaces each selected
+SKU's override; null removes it. For example:
+
+```json
+{"skuIds":["A","B"],"reserveRule":{"kind":"minimum","units":10}}
+```
+
+The operation is all-or-nothing. Success returns 200 `RULES_UPDATED` and
+`data.updatedSkus`. If B does not exist, the response is 404 `SKU_NOT_FOUND`, with
+`data.affectedSkus: ["B"]`; neither selected row changes. The affected list contains
+only offending submitted IDs, not every unchanged row. Invalid input returns 400.
+A valid typed write while inactive returns 409 `CONFIGURATION_INACTIVE`. The
+[save rules above](#edit-safety) cover refetching after success and preserving input
+after failure.
+
+<a id="bulk-safety"></a>
+
+Mina decided on **2026-02-10** that one user action must have one all-or-nothing
+result. Do not automatically split 51 or more selected SKUs into separately committed
+chunks; have the admin choose at most 50. A first chunk could commit and a second
+fail, breaking the promised single result. This restriction applies even if a
+database provider supports larger technical batches.
+
+Lea has not decided whether bulk edits should show a confirmation dialog. It is a
+proposal, not a required or implemented step. Lea must decide its presentation before
+the UI work closes. The decision does not change the atomic-write requirement.
+
+## Previewing selected SKUs
+
+`POST /reservations/preview` takes `skuIds` containing zero through 50 distinct,
+nonempty IDs. Each ID requests one unit; an empty selection is valid before the user
+chooses items. Preview evaluates current rows and the warehouse default without
+changing stock. A 200 `PREVIEW_EVALUATED` response contains:
+
+- `data.allowed`: IDs that can be reserved under the evaluated data.
+- `data.rejected`: entries with the submitted `id` and a `reasons` array, which can
+  include `LOW_STOCK`, `SKU_DISABLED` and `SKU_NOT_FOUND`.
+
+For the opening example, `allowed` contains B and `rejected` contains A with
+`LOW_STOCK`. A successful evaluation can allow only some selected SKUs, or none.
+An empty `allowed` array with a 200 response is an evaluated result. A failed request
+instead leaves availability unknown; apply the
+[response-handling contract](#public-data-and-implementation-notes), preserving the
+HTTP status and body through the proxy.
+
+Keep rejected selections visible with their IDs and reasons until the user removes
+them. A missing SKU has no guaranteed label; do not invent metadata. Preview never
+reserves stock, locks a rule or guarantees that a later confirmation will succeed.
+
+## Confirming a reservation
+
+`POST /reservations` takes `skuIds` containing one through 50 distinct, nonempty IDs.
+The eventual service must reload the applicable rows and rules and evaluate them
+again immediately before reserving. A stock or rule change since preview can change
+the result.
+
+All selected SKUs must pass. If any fails, return 409 `RESERVATION_REJECTED` with the
+evaluated `data.allowed` and `data.rejected`, and change no stock. For example,
+confirming A and B from the opening scenario rejects the whole reservation:
+neither loses a unit. Selecting only B can succeed while it remains enabled and
+stocked. There is no partial order or automatic removal of rejected entries; retain
+the user's selection on failure and show the rejection reasons as in
+[Previewing selected SKUs](#previewing-selected-skus).
+
+Success returns 200 `RESERVED`, with the selected IDs in `data.reservedSkus`, after
+reserving one unit of every selected SKU. Handle success and failure using the same
+[response-handling contract](#public-data-and-implementation-notes) as other endpoints.
+
+## Public data and implementation notes
+
+`read_sku` constructs the public view with exactly `id`, `label`, `reserveRule`,
+`effectiveReserveRule` and `ruleSource`. Stored audit state is excluded. Consume
+these public fields rather than spreading an arbitrary storage row into the client
+view model. Inheritance and source meanings are defined in
+[Rules and editor operations](#rules-and-editor-operations).
+
+HTTP status is metadata, separate from the JSON envelope containing `code`, `message`
+and optional `data`. Proxies must preserve the original status and complete body for
+every endpoint. Structured data can appear in validation or compatibility errors;
+its presence never establishes success. Older errors may omit it. In particular,
+do not convert a preview error into a successful empty preview or treat a populated
+error body as success.
+
+The model returns a status/body pair for convenience; the pair is not the JSON body.
+A client's transport helper may represent that pair differently, but must preserve
+both parts. Type assertions and compiler acceptance do not establish which fields
+actually reach the browser. Verify the public projection and complete envelopes in
+actual response JSON, including any proxy mapping or flattening.
+
+## Deployment notes
+
+The global switch is server controlled. Staging typed defaults is preparation and
+does not activate typed rule writes. The model's `active` argument comes from trusted
+server configuration, never from a browser-editable request field.
+
+<a id="rollout"></a>
+
+Mina owns release readiness and rollout evidence. Before activation, require:
+
+- Validated defaults for every warehouse, including those whose SKUs have overrides.
+- Support for the new contract in every serving writer. Otherwise a request can reach
+  software that does not enforce the configured rules.
+- Actual proxy/status/error tests and database persistence/isolation verification.
+- A final readiness check and switch write protected against intervening configuration
+  changes by a transaction or controlled write pause. An earlier successful staging
+  run does not prove the configuration is still ready.
+
+Recovery must retain enforcement. Disabling requires an explicit review of every
+active rule, owned by Mina; retaining typed fields in storage does not make disabled
+enforcement safe. No passing end-to-end result or deployment approval is recorded.
+
+## Review evidence and remaining notes
+
+The sequential model provides source evidence for validation and outcomes:
+
+- `updated_row` copies a row, removes its override key for null, or copies a validated
+  replacement. `patch_sku` applies the resulting row only after validation succeeds.
+- `bulk_patch` validates the request and selected IDs, prepares pending rows, then
+  applies them together. A rejected sequential call changes none of the selected rows.
+- `confirm` calls `preview` on the supplied current inputs and rejects failures before
+  the stock-update loop. This establishes zero stock changes on a sequential rejection.
+
+These examples do not establish database isolation or persistence, transaction retry
+behavior, authentication or authorization, HTTP serialization, proxy propagation,
+responses after network failure, or deployed behavior. Those require separate release
+verification. A mixed preview example is not a browser integration test, and the
+model does not implement the eventual service's data reload.
+
+The remaining work is the release verification owned by Mina under
+[Deployment notes](#rollout) and Lea's presentation decision under
+[Bulk request and examples](#bulk-request-and-examples). The model establishes neither
+completion nor approval to enable the feature.

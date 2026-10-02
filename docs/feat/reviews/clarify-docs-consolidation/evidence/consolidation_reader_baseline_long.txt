@@ -1,0 +1,25 @@
+1. Save only the label edit; omit `reserveRule` to preserve the other admin’s change. Sending the previously read rule would explicitly replace it. After success, refetch public reads to show current effective rules and intervening edits; the acknowledgement does not guarantee the latest state. After failure, preserve unsaved input and selection. Explicit edits use latest-committed-wins behavior, without version tokens or conflict dialogs.  
+   **Pointer:** “Rules and editor operations,” especially `#edit-safety`.
+
+2. Write `"reserveRule": null` to restore inheritance. The server removes the stored key; storing null is invalid. A subsequent public read shows `reserveRule: null`, `effectiveReserveRule` equal to the current warehouse default, and `ruleSource: "warehouse"`. Writing `{"kind":"none"}` instead creates an explicit SKU override with no minimum restriction, which persists across warehouse-default changes.  
+   **Pointers:** “Rules and editor operations”; “Public data and implementation notes.”
+
+3. Require the admin to reduce the selection to at most 50. Do not automatically split 51 SKUs into separate commits: one action must have one all-or-nothing result. For an otherwise valid request containing a missing SKU, return HTTP 404 `SKU_NOT_FOUND`, with only the missing submitted IDs in `data.affectedSkus`. No selected row changes; preserve selection and unsaved input.  
+   **Pointer:** “Bulk request and examples,” especially `#bulk-safety`.
+
+4. Each selection requests one unit. A would fall from 8 to 7, below the inherited minimum of 10, so preview rejects A with `LOW_STOCK`. B’s explicit none rule allows it while enabled and stocked. Preview returns HTTP 200 `PREVIEW_EVALUATED`, with B in `data.allowed` and A in `data.rejected`, without changing stock. Confirming both returns HTTP 409 `RESERVATION_REJECTED` with the evaluated allowed/rejected results; neither SKU loses stock. Keep both selected and display rejection reasons until the user removes entries. Preview cannot be relied on after stock or rule changes: it reserves nothing, locks nothing, and confirmation must reload and recheck current data.  
+   **Pointers:** Introduction; “Previewing selected SKUs”; “Confirming a reservation.”
+
+5. The proxy must preserve the original HTTP status and complete JSON envelope (`code`, `message`, optional `data`). The client must use status and outcome to distinguish success from failure; structured `data` can appear in errors, and older errors may omit it. Neither data presence nor an empty array proves success. A failed preview leaves availability unknown and must not become an apparently successful empty result. A successful HTTP 200 `PREVIEW_EVALUATED` with an empty `allowed` array is a completed evaluation that currently allows none. Preserve input and selections on failures.  
+   **Pointers:** “Handling responses”; “Previewing selected SKUs.”
+
+6. **Mina owns release readiness and rollout evidence.** Before activation, require:
+   - A validated default for every warehouse, including those mostly using overrides.
+   - Compatible serving writers throughout deployment.
+   - Actual proxy/status/error tests and database persistence/isolation verification.
+   - A final readiness check and switch write protected from intervening configuration writes by a transaction or controlled write pause.
+
+   Staging success and sequential model checks do not prove current production readiness. The guide records neither passing end-to-end verification nor deployment approval. Model inspection also does not establish retries, authorization/authentication, HTTP serialization, proxy propagation, or behavior after network failure; release work must verify the serving components and persistence.
+
+   Recovery must retain enforcement. Disabling requires Mina’s explicit review of every active rule; retaining typed storage fields alone is insufficient. **Lea must decide the bulk confirmation-dialog presentation before UI work closes.** The dialog is a proposal, neither required nor implemented; atomic writes remain mandatory.  
+   **Pointers:** “Deployment notes” (`#rollout`); “Review evidence and remaining notes”; “Bulk request and examples” (`#bulk-safety`).

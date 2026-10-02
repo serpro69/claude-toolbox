@@ -1,0 +1,29 @@
+# Design: import preview
+
+## Context
+
+Import preview helps operators catch CSV errors before applying an import. The
+planned preview reports valid and invalid row counts without writing durable rows.
+For example, a three-row CSV with one invalid row will report two valid rows and
+one invalid row, with zero rows written.
+
+## Decision
+
+Mira accepted preview-only delivery on 2026-09-01. This increment covers preview;
+apply remains future work.
+
+CSV columns MUST remain `id,name`. Operators MAY download diagnostics, but
+diagnostics do not authorize applying rows.
+
+## Deployment gate
+
+Enable preview only after the support owner approves the sample-file walkthrough.
+
+## Consequences
+
+Apply remains disabled. Product owns the open duplicate-row policy decision,
+tracked in [Task 2: Apply](tasks.md#task-2-apply).
+
+Resume implementation from [Task 1: Preview](tasks.md#task-1-preview). No
+implementation source was supplied; this design describes planned behavior, and
+the recorded task status does not verify runtime behavior.

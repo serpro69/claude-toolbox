@@ -1,0 +1,21 @@
+# Preparation updates
+
+Owners need restaurant defaults with item exceptions. The current increment covers
+lookup and order snapshots; scheduling is excluded.
+
+An item's null or missing `prep_minutes` inherits the restaurant default. An explicit
+value, including zero, overrides it. When an order is created, it stores the resolved
+value as its snapshot. Existing order snapshots must stay unchanged.
+
+The accepted requirement says a changed restaurant default **must wait until the
+next day** before affecting new inherited lookups. The current `prep.py` applies the
+change immediately. For example, changing the default from 15 to 20 makes a new
+inherited lookup return 20; the requirement calls for 15 until the next day. An order
+created before the change retains 15, consistent with the snapshot requirement.
+
+The feature maintainer owns reconciling the required delay with the implementation
+and the current exclusion of scheduling. The product owner still needs to decide
+whether to show inheritance badges.
+
+This description is based on inspection of `requirements.md` and `prep.py`; the
+source example and its assertions were not executed.
