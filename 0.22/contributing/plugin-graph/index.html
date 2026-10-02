@@ -42,6 +42,7 @@
     profiles_twelve_factor_design_["profiles/twelve-factor/design/"]
     skills__shared_capy_knowledge_protocol_md["skills/_shared/capy-knowledge-protocol.md"]
     skills__shared_contact_ratio_guard_md["skills/_shared/contact-ratio-guard.md"]
+    skills__shared_document_clarity_md["skills/_shared/document-clarity.md"]
     skills__shared_fact_flip_propagation_md["skills/_shared/fact-flip-propagation.md"]
     skills__shared_open_question_pass_md["skills/_shared/open-question-pass.md"]
     skills__shared_pal_codereview_invocation_md["skills/_shared/pal-codereview-invocation.md"]
@@ -49,6 +50,7 @@
     skills__shared_requirements_harvesting_md["skills/_shared/requirements-harvesting.md"]
     skills__shared_review_scope_protocol_md["skills/_shared/review-scope-protocol.md"]
     skills_chain_of_verification_["skills/chain-of-verification/"]
+    skills_clarify_docs_["skills/clarify-docs/"]
     skills_dependency_handling_["skills/dependency-handling/"]
     skills_design_["skills/design/"]
     skills_diff_skill_["skills/diff-skill/"]
@@ -61,6 +63,7 @@
     skills_review_design_["skills/review-design/"]
     skills_review_spec_["skills/review-spec/"]
     skills_test_["skills/test/"]
+    README_md --&gt;|skill-invocation| skills_clarify_docs_
     README_md --&gt;|skill-invocation| skills_design_
     README_md --&gt;|skill-invocation| skills_document_
     README_md --&gt;|skill-invocation| skills_implement_
@@ -122,11 +125,14 @@
     skills__shared_review_scope_protocol_md --&gt;|skill-invocation| skills_implement_
     skills_chain_of_verification_ --&gt;|skill-invocation| commands_chain_of_verification_
     skills_chain_of_verification_ --&gt;|symlink| skills__shared_capy_knowledge_protocol_md
+    skills_clarify_docs_ --&gt;|symlink| skills__shared_document_clarity_md
+    skills_clarify_docs_ --&gt;|skill-invocation| skills_implement_
     skills_dependency_handling_ --&gt;|symlink| skills__shared_capy_knowledge_protocol_md
     skills_design_ --&gt;|skill-invocation| commands_chain_of_verification_
     skills_design_ --&gt;|symlink| skills__shared_capy_knowledge_protocol_md
     skills_design_ --&gt;|symlink| skills__shared_profile_detection_md
     skills_design_ --&gt;|skill-invocation| skills_chain_of_verification_
+    skills_design_ --&gt;|skill-invocation| skills_clarify_docs_
     skills_design_ --&gt;|skill-invocation| skills_dependency_handling_
     skills_design_ --&gt;|skill-invocation| skills_document_
     skills_design_ --&gt;|skill-invocation| skills_implement_
@@ -137,6 +143,7 @@
     skills_diff_skill_ --&gt;|symlink| skills__shared_capy_knowledge_protocol_md
     skills_document_ --&gt;|symlink| skills__shared_capy_knowledge_protocol_md
     skills_document_ --&gt;|symlink| skills__shared_profile_detection_md
+    skills_document_ --&gt;|skill-invocation| skills_clarify_docs_
     skills_implement_ --&gt;|skill-invocation| commands_review_code_
     skills_implement_ --&gt;|symlink| skills__shared_capy_knowledge_protocol_md
     skills_implement_ --&gt;|symlink| skills__shared_profile_detection_md
@@ -178,9 +185,9 @@
     skills_test_ --&gt;|symlink| skills__shared_capy_knowledge_protocol_md
     skills_test_ --&gt;|symlink| skills__shared_profile_detection_md
     classDef skill fill:#a6cee3,color:#1a1a1a;
-    class skills_chain_of_verification_,skills_dependency_handling_,skills_design_,skills_diff_skill_,skills_document_,skills_implement_,skills_merge_docs_,skills_model_,skills_review_architecture_,skills_review_code_,skills_review_design_,skills_review_spec_,skills_test_ skill;
+    class skills_chain_of_verification_,skills_clarify_docs_,skills_dependency_handling_,skills_design_,skills_diff_skill_,skills_document_,skills_implement_,skills_merge_docs_,skills_model_,skills_review_architecture_,skills_review_code_,skills_review_design_,skills_review_spec_,skills_test_ skill;
     classDef shared fill:#ffff99,color:#1a1a1a;
-    class skills__shared_capy_knowledge_protocol_md,skills__shared_contact_ratio_guard_md,skills__shared_fact_flip_propagation_md,skills__shared_open_question_pass_md,skills__shared_pal_codereview_invocation_md,skills__shared_profile_detection_md,skills__shared_requirements_harvesting_md,skills__shared_review_scope_protocol_md shared;
+    class skills__shared_capy_knowledge_protocol_md,skills__shared_contact_ratio_guard_md,skills__shared_document_clarity_md,skills__shared_fact_flip_propagation_md,skills__shared_open_question_pass_md,skills__shared_pal_codereview_invocation_md,skills__shared_profile_detection_md,skills__shared_requirements_harvesting_md,skills__shared_review_scope_protocol_md shared;
     classDef agent fill:#b2df8a,color:#1a1a1a;
     class agents_architecture_reviewer_md,agents_code_reviewer_md,agents_design_reviewer_md,agents_eval_grader_md,agents_profile_resolver_md,agents_spec_reviewer_md agent;
     classDef profile fill:#fb9a99,color:#1a1a1a;
