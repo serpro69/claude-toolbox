@@ -144,22 +144,42 @@ reduction target or a new summary artifact.
 ## Verify separately
 
 Compare the revision with the original, requirements and inspected source evidence.
-Check comprehension first: can the intended reader answer the applicable questions
-through the artifact's intended reading path, without relying on the editor's hidden
-context? Walk through representative reader tasks across the document, using only the
-revision and its intended reading path: for an integration guide, construct a request,
-handle a rejection and identify release prerequisites. Adapt these checks to the
-artifact; inspect whether relevant conditions are discoverable together without
-reconstructing scattered review history. Check the specific confusion motivating the
-edit; a clearer opening or a lower word count alone does not establish success.
+Complete this checklist in order. Briefly record all five results in the conversation
+as `check — result; evidence: document locations`, including the two fidelity checks.
+A location names an exact heading, anchor or line reference; "rules and examples
+preserved" describes a result, not a location.
+A check without a supporting location is incomplete; use N/A only with a reason.
+No extra review or ledger file is needed.
 
-Then check fidelity independently against the protected-meaning inventory. No
-qualification may disappear and no unsupported claim may appear. Recheck headings,
-anchors, links, task state, required topics and executable examples affected by the
-edit. For issues, also check reproduction details, qualifications, existing criteria
-and decision status. Correct editorial regressions; keep unresolved source disagreements visible
-with their next step. Fluent prose cannot compensate for lost meaning.
-Recheck destination visibility, including facts paraphrased from restricted sources.
+- [ ] **Reader tasks:** use the revision's intended reading path to answer the
+  applicable reader questions and work through practical tasks, such as constructing
+  a request, handling a rejection or finding release prerequisites. Needed conditions
+  and consequences must be discoverable together, without the editor's hidden context.
+- [ ] **Repeated explanations:** find policies and evidence summaries explained in
+  multiple sections. Consolidate each full explanation in an appropriate location;
+  use links or brief local reminders where they help the task. Retain differences
+  between cases and any required self-contained sections. Do not remove repetition
+  merely to reduce word count.
+- [ ] **History and evidence:** replace obsolete review/test chronology with the
+  current rule and necessary limitation, retaining consequential rationale and decision
+  provenance. For example, a retired response fixture may need only the current wire
+  fields and a warning that types do not prove actual JSON. Moving unchanged historical
+  discussion into a reference section alone does not complete this check. Keep history
+  when it explains a live decision or is itself the reader's task.
+
+Then verify fidelity independently; fluent prose cannot compensate for lost meaning:
+
+- [ ] **Protected meaning:** compare against the essential-claim inventory and sources.
+  Preserve requirements, exceptions, thresholds, uncertainty, decision status and
+  verification limits; add no unsupported claim. For issues, also retain reproduction
+  details and existing acceptance criteria. Keep source disagreements explicit with
+  an owner and a concrete next action; "reconcile the conflict" alone is not actionable.
+- [ ] **Structure and visibility:** recheck affected headings, anchors, links, task
+  state, required topics and executable examples. Recheck destination visibility,
+  including facts paraphrased from restricted sources and the verification notes.
+
+Correct editorial regressions before completion. A clearer opening or shorter document
+alone does not establish success; retain material unresolved gaps for the report below.
 
 Report changed paths, whether the result was unchanged, and material evidence gaps
 or wider edits needed. This is an in-session comparison, not independent fidelity
