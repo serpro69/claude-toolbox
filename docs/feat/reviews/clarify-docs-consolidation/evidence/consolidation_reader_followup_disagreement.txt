@@ -1,0 +1,9 @@
+1. Restaurant owners need preparation-time defaults with exceptions for individual items. (§ Preparation updates)
+
+2. New inherited lookups immediately return 20 in the current implementation; existing orders created at 15 retain their snapshot of 15. However, the accepted requirement calls for new inherited lookups to wait until the next day, so the immediate update is a known discrepancy. (§ Current lookup and snapshots; § Required timing and open decisions)
+
+3. The current increment delivers preparation-time lookup and order snapshots. Null or missing item values inherit the restaurant default; any non-null value, including zero, overrides it. Order creation stores the resolved value. (§ Preparation updates; § Current lookup and snapshots)
+
+4. Scheduling is explicitly excluded. (§ Preparation updates)
+
+5. The feature maintainer must review the required delay and scheduling exclusion with Product, then record an implementation plan or an explicitly approved requirement or scope change. The next-day requirement remains accepted meanwhile. Product must also decide whether and how inherited values receive a badge. (§ Required timing and open decisions)

@@ -2,16 +2,19 @@
 
 Reviewed 2026-10-02 through standalone `/kk:implement`.
 
+This records the first refinement. The subsequent checklist change and executed
+behavioral trials are recorded in [the consolidation results](clarify-docs-consolidation/results.md).
+
 ## Change
 
-The [shared clarity procedure](../../klaude-plugin/skills/_shared/document-clarity.md)
+The [shared clarity procedure](../../../klaude-plugin/skills/_shared/document-clarity.md)
 now addresses the full reading path: group practical instructions and their
 qualifications, keep supporting evidence accessible, and remove obsolete history
 only when it carries no unique protected meaning. Verification walks representative
 reader tasks before the separate fidelity check. Scope, visibility, no-op behavior
 and the absence of a word-count target remain unchanged.
 
-[Case 25](../../klaude-plugin/skills/clarify-docs/evals/long-integration-guide/eval.json)
+[Case 25](../../../klaude-plugin/skills/clarify-docs/evals/long-integration-guide/eval.json)
 provides a 2,062-word synthetic integration guide with a clear opening and fragmented
 later instructions. Its grader-only oracle separates task discoverability from
 fidelity, including decision provenance, open decisions and evidence limits.
@@ -42,11 +45,11 @@ new project conventions required indexing.
   offline cache access. Temporary Git fixture signing was disabled per process;
   no global Git configuration changed.
 
-The new behavioral evaluation has **not** been model-run. The repository supplies
+At this review, the new behavioral evaluation had **not** been model-run. The repository supplies
 manual scenarios rather than an automated runner; fixture checks and review do not
 establish measured comprehension improvement. The skill maintainer's next behavioral
 validation is to stage case 25 with baseline/revised instructions and fresh readers,
 alongside `already-clear`, `source-disagreement` and `cross-file-preservation`, using
-the [evaluation protocol](../../klaude-plugin/skills/clarify-docs/evals/README.md#long-integration-guide-scenario).
+the [evaluation protocol](../../../klaude-plugin/skills/clarify-docs/evals/README.md#long-integration-guide-scenario).
 Record manifests, instruction hashes, traces, reader answers and separate
 discoverability/fidelity verdicts before claiming a behavioral pass.

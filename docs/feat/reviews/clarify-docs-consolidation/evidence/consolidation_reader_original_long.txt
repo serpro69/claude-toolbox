@@ -1,0 +1,17 @@
+1. Save the label and **omit `reserveRule`**. Resending the previously read rule explicitly replaces it and could overwrite the other admin’s change. After success, refetch public reads to display current rules and intervening edits. After failure, preserve selections and unsaved input. Explicit rule edits use latest committed write wins, without version tokens or conflict dialogs.  
+   *Sections: “Rules and editor operations”; “Review evidence and remaining notes,” `edit-safety`.*
+
+2. Send `"reserveRule": null` through the individual or bulk edit route. This removes the stored override key; **stored null is invalid**. A subsequent read returns `reserveRule: null`, the current warehouse rule in `effectiveReserveRule`, and `ruleSource: "warehouse"`. Sending `{"kind":"none"}` instead creates an explicit SKU rule, reported with source `"sku"`.  
+   *Sections: “Rules and editor operations”; “Review evidence and remaining notes,” `edit-safety`.*
+
+3. Ask the admin to select at most 50 SKUs. **Do not automatically split 51 into chunks**, because chunks could commit independently. For an otherwise valid batch containing a missing SKU, return 404 `SKU_NOT_FOUND`, with `data.affectedSkus` containing only offending submitted IDs; no SKU changes.  
+   *Sections: “Bulk request and examples”; “Review evidence and remaining notes,” `bulk-safety`.*
+
+4. Preview evaluates eligibility without changing stock. A is rejected for `LOW_STOCK`: reserving one would leave 7, below the inherited minimum of 10. B is allowed because explicit none removes that minimum and B remains enabled and stocked. Confirming both returns 409 `RESERVATION_REJECTED`; neither loses stock. Preview reserves or locks nothing, so confirmation must reload and reevaluate current data after stock or rule changes.  
+   *Sections: introduction; “Previewing selected SKUs”; “Confirming a reservation.”*
+
+5. The proxy must preserve the original HTTP status and complete envelope. The client must not treat the presence of `data` as success; errors may contain structured data, while older errors may omit it. A failed preview leaves availability **unknown**. A 200 preview with an empty `allowed` array successfully evaluated the selection and found no allowed SKUs. Preserve selections on failure; rejected selections also remain selected until removed.  
+   *Sections: “Public data and implementation notes”; “Previewing selected SKUs”; “Confirming a reservation.”*
+
+6. Before enablement, every warehouse needs a valid default, all serving writers must support the contract, and release evidence must include actual proxy/status/error tests plus database persistence/isolation verification. Protect the final readiness check and switch write against intervening configuration changes with a transaction or controlled write pause. **Mina owns release readiness, rollout evidence, and recovery review.** Recovery keeps enforcement active; disabling requires explicit review of every active rule, and retaining typed storage fields is insufficient. **Lea owns the unresolved bulk-confirmation dialog presentation**, which must be decided before UI work closes. The dialog is neither required nor implemented yet; atomic writes remain required. No passing end-to-end result or deployment approval is recorded.  
+   *Sections: “Deployment notes”; “Review evidence and remaining notes,” `rollout`.*

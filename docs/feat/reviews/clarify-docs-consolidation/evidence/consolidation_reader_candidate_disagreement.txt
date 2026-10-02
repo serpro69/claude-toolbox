@@ -1,0 +1,9 @@
+1. Owners need restaurant preparation defaults with item exceptions. (§ “Preparation updates,” opening paragraph)
+
+2. The requirement says new inherited lookups should remain **15 until the next day**, then use **20**. The inspected implementation instead returns **20 immediately**. Existing orders retain their stored snapshot, such as **15**. (§ “Preparation updates,” inheritance and default-change paragraphs)
+
+3. The current increment covers lookup resolution and order snapshots: null or missing item values inherit the default; explicit values, including zero, override it; orders store the resolved value when created. (§ “Preparation updates,” first two paragraphs)
+
+4. Scheduling is excluded. (§ “Preparation updates,” opening paragraph)
+
+5. The feature maintainer must reconcile the required delay with the immediate implementation and scheduling exclusion. The product owner must decide whether to show inheritance badges. (§ “Preparation updates,” ownership paragraph)

@@ -1,0 +1,5 @@
+1. **Purpose:** Let restaurant owners set a preparation default and item overrides while preserving each order’s preparation time when defaults later change. (§ Preparation defaults, paragraph 1)
+2. **Representative case:** With a 15-minute default, missing or null `prep_minutes` inherits 15; explicit zero stays 0. Changing the default to 20 changes the inherited item’s next lookup to 20, while zero remains 0 and an earlier order retains 15. (§ Preparation defaults, paragraph 2)
+3. **Current increment:** Add current-value lookup through `effective_minutes` and snapshot the resolved minutes when `create_order` creates an order. (§ Preparation defaults, paragraphs 1 and 3)
+4. **Outside scope:** Scheduling. (§ Preparation defaults, paragraph 3)
+5. **Pending decision:** The product owner must decide inheritance badges for the menu editor. (§ Preparation defaults, paragraph 3)

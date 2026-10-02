@@ -1,0 +1,19 @@
+1. **Save only the label change; omit `reserveRule`.** Resending the earlier rule explicitly replaces the stored override and could overwrite the other admin’s change. After success, refetch public reads to show current effective rules and intervening edits. After failure, preserve unsaved input and selection. There are no editor-version tokens or conflict dialogs.  
+   **Source:** “Rules and editor operations,” especially `edit-safety`.
+
+2. **Submit `reserveRule: null` to restore inheritance.** The server removes the stored `reserveRule` key; it never stores null. Later public reads show `reserveRule: null`, the current warehouse rule as `effectiveReserveRule`, and `ruleSource: "warehouse"`. Writing `{"kind":"none"}` instead stores an explicit SKU override that removes the minimum restriction.  
+   **Source:** “Rules and editor operations.”
+
+3. **Require the admin to reduce the selection to at most 50; do not split it automatically.** For a valid-size bulk action containing a missing SKU, return 404 `SKU_NOT_FOUND`, with only offending submitted IDs in `data.affectedSkus`. No selected row changes. Preserve input and selection after failure.  
+   **Source:** “Bulk request and examples”; “Rules and editor operations,” `edit-safety`.
+
+4. **Preview allows B and rejects A with `LOW_STOCK`.** Reserving A would leave 7, below its inherited minimum of 10; B’s explicit none permits reservation while enabled and stocked. Preview changes no stock. Confirming both returns 409 `RESERVATION_REJECTED`; neither loses a unit. Preview provides no lasting guarantee: confirmation must reload current rows and rules and evaluate them again immediately before reserving.  
+   **Source:** “Previewing selected SKUs”; “Confirming a reservation.”
+
+5. **Preserve the original HTTP status and complete response body through the proxy.** The client must not infer success from the presence of `data`; errors can contain structured data or omit it. A failed preview leaves availability unknown and must not become a successful empty preview. A 200 `PREVIEW_EVALUATED` response with empty `allowed` is a successful evaluation allowing no selected SKUs.  
+   **Source:** “Public data and implementation notes”; “Previewing selected SKUs.”
+
+6. **Mina owns release readiness and rollout evidence.** Before activation, require validated defaults for every warehouse, support in every serving writer, actual proxy/status/error tests, database persistence/isolation verification, and a final readiness check plus switch write protected against intervening configuration changes by a transaction or controlled write pause. Typed staging alone does not activate writes. Verify actual response JSON, including proxy mappings.
+
+   Recovery must retain enforcement; disabling requires Mina’s explicit review of every active rule. Lea must still decide the bulk confirmation dialog’s presentation before UI work closes; it remains a proposal. Model checks establish sequential outcomes, not deployed readiness, and no passing end-to-end result or deployment approval is recorded.  
+   **Source:** “Deployment notes”; “Public data and implementation notes”; “Review evidence and remaining notes”; “Bulk request and examples.”
