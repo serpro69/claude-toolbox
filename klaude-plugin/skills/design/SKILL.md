@@ -1,8 +1,8 @@
 ---
 name: design
 description: |
-  Use in pre-implementation (idea-to-design) stages to understand spec/requirements and create a correct implementation plan before writing actual code.
-  Turns ideas into a fully-formed PRD/design/specification and implementation-plan. Creates design docs and task lists in docs/feat/wip/.
+  TRIGGER when: asked to write or refine a technical design, PRD, specification, implementation plan, or task list, or resume an existing docs/feat/wip feature.
+  Turns ideas and requirements into written design documents, implementation plans, and tasks in docs/feat/wip/ before coding. For conversational exploration without written planning, use /kk:brainstorm.
 ---
 
 # Task Analysis Process
@@ -14,7 +14,7 @@ description: |
 - **Read capy knowledge base conventions** at [shared-capy-knowledge-protocol.md](shared-capy-knowledge-protocol.md).
 - **Read profile detection** at [shared-profile-detection.md](shared-profile-detection.md). When an active profile contributes a `design/` subdirectory (e.g., `${TOOLBOX_PLUGIN_ROOT}/profiles/k8s/design/`), its `questions.md` feeds the idea-refinement question pool and its `sections.md` lists required sections the design document must cover. Both the idea-to-design and continue-WIP flows consult the shared procedure; see each flow's workflow file for the specific integration points.
 
-For fresh ideas, two reference files provide methodology and evaluation rubric: [frameworks.md](./frameworks.md) (ideation lenses for the diverge phase) and [refinement-criteria.md](./refinement-criteria.md) (evaluation dimensions and MVP scoping for the converge phase). These are loaded during the instruction-load step and consumed by idea-process.md Step 3 sub-phases.
+For fresh ideas, two reference files provide methodology and evaluation rubric: [shared-ideation-frameworks.md](shared-ideation-frameworks.md) (ideation lenses for the diverge phase) and [shared-idea-refinement-criteria.md](shared-idea-refinement-criteria.md) (evaluation dimensions and MVP scoping for the converge phase). These are loaded during the instruction-load step and consumed by idea-process.md Step 3 sub-phases.
 
 ## Workflow
 
@@ -25,7 +25,7 @@ The `/kk:design` skill has two entry points; each has its own process file with 
 1. **Keyword scan only.** The idea prose (or WIP feature directory) is scanned at the keyword/filename level — enough to drive profile detection, not enough to engage with the content.
 2. **Load instructions.** Read the relevant process file ([idea-process.md](./idea-process.md) or [existing-task-process.md](./existing-task-process.md)), the shared protocols above and [example-tasks.md](./example-tasks.md) (task format), even on an unchanged resume.
   - For WIP, also load the drafting guidelines in idea-process.md for potential refinement, without running its fresh-idea sub-phases.
-  - For fresh ideas, also read [frameworks.md](./frameworks.md) (ideation lenses) and [refinement-criteria.md](./refinement-criteria.md) (evaluation rubric).
+  - For fresh ideas, also read [shared-ideation-frameworks.md](shared-ideation-frameworks.md) (ideation lenses) and [shared-idea-refinement-criteria.md](shared-idea-refinement-criteria.md) (evaluation rubric).
 3. **Detect active profiles.** Delegate to [shared-profile-detection.md](shared-profile-detection.md). For fresh ideas, this uses the design interaction pattern (token matching against idea prose). For WIP features, this uses file-based detection with design-pattern fallback.
 4. **Load profile content.** For each active profile contributing a `design/` subdirectory, read its `index.md` and all always-load and matching conditional entries. These feed the refinement question pool and required design sections.
 5. **Engage with subject matter.** Follow the selected process file's content-reading, refinement and drafting steps.
@@ -35,9 +35,9 @@ Clarification is a separate user-selected editing workflow: this skill neither l
 
 ## Ideas and Prototypes
 
-_Use this for ideas that are not fully thought out and do not have a fully-formed design/specification and/or implementation-plan._
+_Use this to develop an idea into a written design/specification and implementation plan._
 
-**For example:** I've got an idea I want to talk through with you before we proceed with the implementation.
+**For example:** Help me turn this idea into a written design, implementation plan, and task list before we start coding.
 
 **Your job:** Help me turn it into a fully formed design, spec, implementation plan, and task list.
 
