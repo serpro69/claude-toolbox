@@ -51,7 +51,9 @@ Note: [shared-ideation-frameworks.md](shared-ideation-frameworks.md) and [shared
 2. **What does success look like** — a measurable outcome, not a feature name. "Users can log in" → "Login p99 latency under 500ms with zero-downtime deployment."
 3. **Technical/system constraints** — what existing systems, APIs, data stores, infrastructure, or conventions must be respected. What is off-limits to change.
 
-Do not advance to 3c until all three are confirmed.
+Use the progress checklist to distinguish known requirements from confirmed choices. Project files can supply candidate foundation answers; confirm each unless a relevant user answer or explicit approval already establishes it. Accepting the HMW framing confirms only that framing and the specific facts the user supplies, not the remaining checkpoints. A request to write documents does not approve unpresented choices. Reuse prior user answers and explicit approvals, including a request that states refinement and design presentation are already approved; do not reopen them.
+
+Do not advance to 3c until all three foundations are confirmed. If a confirmation is missing, ask one concise question using the known facts and end the response to wait for the user's answer.
 
 **3c. Explore alternatives.** Select frameworks from the already-loaded [shared-ideation-frameworks.md](shared-ideation-frameworks.md) that fit the idea — pick by "Best for" guidance, never run every framework.
 
@@ -62,7 +64,9 @@ Classify the idea before generating alternatives. **Non-trivial** if it involves
 - **For non-trivial ideas:**
   > "This has multiple valid approaches with real trade-offs — I'll explore 2-3 alternative directions using [selected frameworks] and summarize their trade-offs. Sound right, or should I narrow the focus?"
 
-Two paths:
+Unless the user has already approved the classification and exploration scope, end the response after this question and wait for their answer. Do not present concrete alternatives or recommend a direction in that response: doing so would bypass the choice of how broadly to explore.
+
+After confirmation, take the selected path:
 
 - **Non-trivial ideas** (multiple valid approaches, significant unknowns, architectural choices): generate 2-3 alternative directions using selected lenses. Present each with a one-sentence trade-off summary. After presenting alternatives, stop and ask which alternatives to carry into evaluation — or whether to add a missed constraint and loop back. Do not evaluate or recommend a direction in the same message that first presents alternatives unless the user explicitly asks you to continue.
 - **Simple ideas** (single-concern, low-uncertainty, obvious path): propose the direct implementation path plus briefly mention one alternative optimized for a different constraint (e.g., "We could also do X if extensibility matters more than simplicity"). Ask which to proceed with.

@@ -1,0 +1,58 @@
+{
+  "run_id": "cdw",
+  "variant": "canonical",
+  "scenario": "wip-feature-no-subphases",
+  "termination": "complete",
+  "invalid_reason": null,
+  "assistant_turns": 1,
+  "consumed_replies": [],
+  "provider": "openai",
+  "model_settings": [
+    {
+      "model": "gpt-6-astra",
+      "effort": "xhigh"
+    }
+  ],
+  "session_id": "01a102bc-b26e-7953-9270-32f844870b9f",
+  "trace_sha256": "c4bbba8d74c97afbdf22acb0982d6cf8f98fed08610b674b70235a9704ea1725",
+  "final_workspace_state": [
+    {
+      "path": "docs/feat/wip/auth-refactor/design.md",
+      "sha256": "3b19d37a212fbfd38a2df5b573e69a2007c9b05a97b558a986770a384b95482b"
+    },
+    {
+      "path": "docs/feat/wip/auth-refactor/tasks.md",
+      "sha256": "f39be0a3a868f63bb0cd5f2c4961c80cd4c1e9604f6031015122da7248f105d6"
+    }
+  ],
+  "overall": "PARTIAL",
+  "assertions": [
+    {
+      "id": "4.1",
+      "verdict": "PASS",
+      "evidence": "Trace loads existing-task-process.md and mapped WIP docs; response recognizes Task 1 done and Task 2.2 remaining. Assistant responses: trace.jsonl lines 16. See complete calls/results and final-workspace/."
+    },
+    {
+      "id": "4.2",
+      "verdict": "PASS",
+      "evidence": "No HMW framing occurs. Assistant responses: trace.jsonl lines 16. See complete calls/results and final-workspace/."
+    },
+    {
+      "id": "4.3",
+      "verdict": "PASS",
+      "evidence": "No fresh persona/success/constraints foundation interview occurs. Assistant responses: trace.jsonl lines 16. See complete calls/results and final-workspace/."
+    },
+    {
+      "id": "4.4",
+      "verdict": "PASS",
+      "evidence": "No divergent alternatives are generated. Assistant responses: trace.jsonl lines 16. See complete calls/results and final-workspace/."
+    },
+    {
+      "id": "4.5",
+      "verdict": "PARTIAL",
+      "evidence": "The agent reads existing docs and identifies remaining work but stops for missing implementation context and unresolved contradictions; no implementation or substantive refinement is observed. Assistant responses: trace.jsonl lines 16. See complete calls/results and final-workspace/."
+    }
+  ],
+  "current": false,
+  "superseded_by": "cdwr2"
+}

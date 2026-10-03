@@ -1,0 +1,64 @@
+{
+  "run_id": "cdwr2",
+  "variant": "canonical",
+  "scenario": "wip-feature-no-subphases",
+  "termination": "complete",
+  "invalid_reason": null,
+  "assistant_turns": 2,
+  "consumed_replies": [
+    "W2"
+  ],
+  "provider": "openai",
+  "model_settings": [
+    {
+      "model": "gpt-6-astra",
+      "effort": "xhigh"
+    }
+  ],
+  "session_id": "01a102d2-7220-7ea2-b4ed-84d762c698a5",
+  "trace_sha256": "cee2f64b69d98f52483a8748caf39f07d23fcc44aad730c0513e5dbfb06cc8d2",
+  "final_workspace_state": [
+    {
+      "path": "docs/feat/wip/auth-refactor/design.md",
+      "sha256": "2bd110ef71ef505e4c203df5a8aa27e11cec7ded4a4991b9af2fa59aea162e8b"
+    },
+    {
+      "path": "docs/feat/wip/auth-refactor/implementation.md",
+      "sha256": "a4386c79ab811f107717da0d75f7b3f431e470d1c8ca0b67e0f2675ea827c8a3"
+    },
+    {
+      "path": "docs/feat/wip/auth-refactor/tasks.md",
+      "sha256": "d95c3d9d4e1a6c61d54c67234793ee082017508fcdef6c16c76c589505a0e352"
+    }
+  ],
+  "overall": "PASS",
+  "assertions": [
+    {
+      "id": "4.1",
+      "verdict": "PASS",
+      "evidence": "Trace loads existing-task-process.md and mapped WIP docs; response recognizes Task 1 done and Task 2.2 remaining. Assistant responses: trace.jsonl lines 26, 37. See complete calls/results and final-workspace/."
+    },
+    {
+      "id": "4.2",
+      "verdict": "PASS",
+      "evidence": "No HMW framing occurs. Assistant responses: trace.jsonl lines 26, 37. See complete calls/results and final-workspace/."
+    },
+    {
+      "id": "4.3",
+      "verdict": "PASS",
+      "evidence": "No fresh persona/success/constraints foundation interview occurs. Assistant responses: trace.jsonl lines 26, 37. See complete calls/results and final-workspace/."
+    },
+    {
+      "id": "4.4",
+      "verdict": "PASS",
+      "evidence": "No divergent alternatives are generated. Assistant responses: trace.jsonl lines 26, 37. See complete calls/results and final-workspace/."
+    },
+    {
+      "id": "4.5",
+      "verdict": "PASS",
+      "evidence": "After scripted clarification, the agent substantively refines design/tasks, drafts the missing implementation plan, preserves completed work, identifies Task 2.2, and stops at implementation handoff. See final-workspace/docs/feat/wip/auth-refactor/ and the write trace. Assistant responses: trace.jsonl lines 26, 37. See complete calls/results and final-workspace/."
+    }
+  ],
+  "current": false,
+  "superseded_by": "cdwr3"
+}

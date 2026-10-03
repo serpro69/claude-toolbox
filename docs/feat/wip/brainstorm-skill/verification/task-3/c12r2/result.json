@@ -1,0 +1,66 @@
+{
+  "run_id": "c12r2",
+  "variant": "canonical",
+  "scenario": "domain-kit-request",
+  "termination": "complete",
+  "invalid_reason": null,
+  "assistant_turns": 2,
+  "consumed_replies": [
+    "M1"
+  ],
+  "provider": "openai",
+  "model_settings": [
+    {
+      "model": "gpt-6-astra",
+      "effort": "xhigh"
+    }
+  ],
+  "session_id": "01a102b8-d0fa-7b42-aa47-7d4947036f7c",
+  "trace_sha256": "5f7bbe74f59752b20c833fc3ecc899a4cc7493334ba74dc9486bc29ba606ba0e",
+  "final_workspace_state": [
+    {
+      "path": "docs/architecture/equipment-lending-traps.md",
+      "sha256": "aa3d447994567c04200cce344540a2fbfa09573f6889f31c03cb95922a3761cb"
+    },
+    {
+      "path": "docs/architecture/equipment-lending.md",
+      "sha256": "80c7c4d9e183c990837cc2d874bb97608cb26507b24fb4aa06e2437a4af44055"
+    },
+    {
+      "path": "docs/architecture/index.md",
+      "sha256": "cce5178fa6f5eb3beadd0b42215d7faf1b2f46340b3adf112765b1069cfeb5b9"
+    },
+    {
+      "path": "records.json",
+      "sha256": "9a2486cc1cc4f839ed8fce90e893d2d7c65b83e30a72ab6e8434b1fe27df01d6"
+    },
+    {
+      "path": "requirements.md",
+      "sha256": "1e0cd1ea7429b0c3116f665b921acc5d3500c60b344bbc2b34f1c1de0a8680ab"
+    }
+  ],
+  "overall": "PASS",
+  "assertions": [
+    {
+      "id": "12.1",
+      "verdict": "PASS",
+      "evidence": "Trace selects model/SKILL.md and its process/contracts/guards; no brainstorm load. Assistant responses: trace.jsonl lines 16, 29. See complete calls/results and final-workspace/."
+    },
+    {
+      "id": "12.2",
+      "verdict": "PASS",
+      "evidence": "First substantive response proposes docs/architecture/ and waits; M1 confirms before writes. Assistant responses: trace.jsonl lines 16, 29. See complete calls/results and final-workspace/."
+    },
+    {
+      "id": "12.3",
+      "verdict": "PASS",
+      "evidence": "final-workspace/docs/architecture/ contains both equipment-lending pages and index, with requirements.md and records.json source bindings. Assistant responses: trace.jsonl lines 16, 29. See complete calls/results and final-workspace/."
+    },
+    {
+      "id": "12.4",
+      "verdict": "PASS",
+      "evidence": "Pages and final queue distinguish two stored active loans from undecided policy and unknown enforcement, and route the decision to the operations owner. No runtime edits. Assistant responses: trace.jsonl lines 16, 29. See complete calls/results and final-workspace/."
+    }
+  ],
+  "current": true
+}

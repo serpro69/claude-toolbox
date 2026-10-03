@@ -1,0 +1,66 @@
+{
+  "run_id": "gdcr2",
+  "variant": "generated",
+  "scenario": "clarity-after-drafting",
+  "termination": "complete",
+  "invalid_reason": null,
+  "assistant_turns": 1,
+  "consumed_replies": [],
+  "provider": "openai",
+  "model_settings": [
+    {
+      "model": "gpt-6-astra",
+      "effort": "xhigh"
+    }
+  ],
+  "session_id": "01a102c1-4045-7bb2-8267-d42fcc9bb4df",
+  "trace_sha256": "3a9392e3ef97c5a304a95762d948e2455c55eced3df501945d5a275a8785d1c8",
+  "final_workspace_state": [
+    {
+      "path": "accepted.md",
+      "sha256": "f8bd9fd6a7632ab4f2bb21c5b8f15855ceadf709557a2fc826d4708837ab634b"
+    },
+    {
+      "path": "docs/feat/wip/archive-label/design.md",
+      "sha256": "29b9d4e8961303a7c38f021c5e92fecd12f118405b1e6e74e80c1e10cad8fb41"
+    },
+    {
+      "path": "docs/feat/wip/archive-label/implementation.md",
+      "sha256": "e5a99f8c021ad2451cce8dbe27b2b684ff77d9c6229d1e92338aacbcd22a8418"
+    },
+    {
+      "path": "docs/feat/wip/archive-label/tasks.md",
+      "sha256": "7153e6a9c6b20c532260336d8ace202122d0f707bba4c86be3b27d03c032a5fa"
+    }
+  ],
+  "overall": "PASS",
+  "assertions": [
+    {
+      "id": "5.1",
+      "verdict": "PASS",
+      "evidence": "Entry point, drafting/task instructions and profile detection load before the substantive accepted.md read. Neither clarify-docs nor shared clarity procedure loads. Assistant responses: trace.jsonl lines 29. See complete calls/results and final-workspace/."
+    },
+    {
+      "id": "5.2",
+      "verdict": "PASS",
+      "evidence": "All three artifacts exist before the final optional clarification suggestion and subsequent review recommendation; neither is invoked. Assistant responses: trace.jsonl lines 29. See complete calls/results and final-workspace/."
+    },
+    {
+      "id": "5.3",
+      "verdict": "PASS",
+      "evidence": "Final design/implementation/tasks preserve scope/rationale sections, per-step verification, task metadata/dependencies/checkboxes, final verification and graph. Assistant responses: trace.jsonl lines 29. See complete calls/results and final-workspace/."
+    },
+    {
+      "id": "5.4",
+      "verdict": "PASS",
+      "evidence": "Documents preserve visible clickable archived items, planned rather than implemented status, and color as a future catalog-maintainer decision. Local links resolve. Assistant responses: trace.jsonl lines 29. See complete calls/results and final-workspace/."
+    },
+    {
+      "id": "5.5",
+      "verdict": "PASS",
+      "evidence": "Only the three selected planning files are created; final response states no implementation/review ran. Assistant responses: trace.jsonl lines 29. See complete calls/results and final-workspace/."
+    }
+  ],
+  "current": false,
+  "superseded_by": "gdcr3"
+}

@@ -48,19 +48,21 @@ Size M is bounded to four evidence/revision behaviors and their manual verificat
 
 ## Task 3: Verify competing-skill selection and design compatibility
 
-- **Status:** pending
+- **Status:** done
 - **Depends on:** Task 1, Task 2
 - **Size:** M
 - **Can run in parallel with:** —
 - **Docs:** [Entry and instruction loading](design.md#entry-and-instruction-loading), [Behavioral evaluations](implementation.md#behavioral-evaluations)
+- **Verification:** [Task 3 evidence](verification/task-3/README.md) — all 18 current pairs and 74 assertions pass after the approved confirmation-enforcement fix. Forty-four attempts are retained, including the original failure. Structural checks pass and [independent review approved](verification/task-3/enforcement-review.md).
 
 ### Subtasks
 
-- [ ] 3.1 Author scenarios 8–12 with `brainstorm`, `design`, `model`, and `implement` available: direct implementation, implicit written planning, nontechnical non-trigger, explicit design invocation, and implicit domain-kit creation. → verify: ordinary routing prompts name no skill; scenario 11 alone covers explicit invocation; bodies are not preloaded in routing tests.
-- [ ] 3.2 Run those five scenarios in both variants, supplying the scripted confirmations needed to reach the requested producer outputs. → verify: record ten runs with observed skill loading and actual artifact/conversation boundaries; no classification-only substitute counts as routing evidence.
-- [ ] 3.3 Resolve routing collisions through the scoped discovery wording in `/kk:brainstorm`, `/kk:design`, and, when demonstrated, `/kk:model`; regenerate after changes. → verify: rerun scenario 1 and all affected routing cases in both variants; preserve neighboring workflow gates and output contracts.
-- [ ] 3.4 Prepare evaluator-only `oracle/runbook.md` files for the existing `/kk:design` scenarios `hard-gate-enforcement`, `proportional-diverge-routing`, `wip-feature-no-subphases`, and `clarity-after-drafting`. Apply the shared runbook contract and cover these legacy runs in `brainstorm/evals/README.md`. Specify explicit design selection, canonical/generated handling, fixture-to-workspace mappings, permitted writes, bounded replies, and termination. → verify: each regression has usable setup and confirmation scripts without changing its original prompts, assertions, or fixture contents.
-- [ ] 3.5 Execute those four existing regressions against canonical and generated instructions using their prepared runbooks. → verify: record eight regression runs without improvising missing replies or weakening assertions.
+- [x] 3.1 Author scenarios 8–12 with `brainstorm`, `design`, `model`, and `implement` available: direct implementation, implicit written planning, nontechnical non-trigger, explicit design invocation, and implicit domain-kit creation. → verified: ordinary routing prompts name no skill; scenario 11 alone covers explicit invocation; bodies are not preloaded in routing tests.
+- [x] 3.2 Run those five scenarios in both variants, supplying the scripted confirmations needed to reach the requested producer outputs. → verified: all ten current runs pass actual selection, output boundaries and confirmations. The canonical scenario 9 failure is preserved and resolved by the approved fix and fresh executions in 3.6.
+- [x] 3.3 Resolve routing collisions through the scoped discovery wording in `/kk:brainstorm`, `/kk:design`, and, when demonstrated, `/kk:model`; regenerate after changes. → verified: no selection collisions or discovery edits occurred. Scenario 1 and earlier brainstorm inputs remain unchanged. The separately approved operative enforcement fix is covered by 3.6 and its affected design reruns.
+- [x] 3.4 Prepare evaluator-only `oracle/runbook.md` files for the existing `/kk:design` scenarios `hard-gate-enforcement`, `proportional-diverge-routing`, `wip-feature-no-subphases`, and `clarity-after-drafting`. Apply the shared runbook contract and cover these legacy runs in `brainstorm/evals/README.md`. Specify explicit design selection, canonical/generated handling, fixture-to-workspace mappings, permitted writes, bounded replies, and termination. → verified: runbooks prepared and original prompts, assertions, and fixture contents unchanged.
+- [x] 3.5 Execute those four existing regressions against canonical and generated instructions using their prepared runbooks. → verified: eight current runs pass. Review found a WIP runbook coverage gap; bounded policy replies and an explicit refinement/handoff stopping condition resolved it in fresh runs. The original partial attempts remain recorded, and original prompts, assertions and fixtures remain unchanged.
+- [x] 3.6 Approved scope extension: enforce existing `/kk:design` foundation and classification confirmations while preserving prior approvals and WIP routing. → verified: all twelve affected reruns and their 56 assertions pass; original failure retained; full shell suite, generation stability and graph validation pass; independent enforcement review approved with no findings.
 
 Size M covers five routing scenarios plus bounded runbook preparation and execution for four existing regressions; the existing regression fixtures and assertions are reused. The manual preparation/execution workload is explicit, not a mechanical fixture update. Tasks are sequenced because fixes may touch the same entry points.
 
