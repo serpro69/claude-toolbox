@@ -31,17 +31,18 @@ Size M covers the core workflow and three baseline scenarios. Moves, symlinks, a
 
 ## Task 2: Verify evidence gathering and revised decisions
 
-- **Status:** pending
+- **Status:** done
 - **Depends on:** Task 1
 - **Size:** M
 - **Can run in parallel with:** —
 - **Docs:** [Scenario matrix](implementation.md#scenario-matrix), [Research facts](design.md#research-facts), [Interview and challenge](design.md#interview-and-challenge)
+- **Verification:** [Task 2 evidence](verification/task-2/README.md) — eight accepted runs, 44 passing assertions, stable generation, and independent source/evidence review approved; no operative instruction changes or Task 1 reruns needed.
 
 ### Subtasks
 
-- [ ] 2.1 Author scenarios 2, 3, 4, and 6 with their fixtures and fixed-format runbooks: architecture audience, discoverable project fact, changed premise, and unavailable evidence. → verify: each assertion observes a concrete decision, read, revision, or uncertainty rather than merely restating instructions.
-- [ ] 2.2 Execute all four scenarios against canonical and generated instructions; fix any research or interview defects in `brainstorm/SKILL.md` and regenerate. → verify: record eight runs, including preservation of unrelated settled decisions, honest unavailable evidence, and the absence of writes or knowledge-store searches.
-- [ ] 2.3 Rerun affected Task 1 cases after instruction changes and retain all original traces. → verify: the accepted core conversation and closure still pass; off-script, invalid, or unavailable runs are not counted as successes.
+- [x] 2.1 Author scenarios 2, 3, 4, and 6 with their fixtures and fixed-format runbooks: architecture audience, discoverable project fact, changed premise, and unavailable evidence. → verify: each assertion observes a concrete decision, read, revision, or uncertainty rather than merely restating instructions.
+- [x] 2.2 Execute all four scenarios against canonical and generated instructions; fix any research or interview defects in `brainstorm/SKILL.md` and regenerate. → verify: record eight runs, including preservation of unrelated settled decisions, honest unavailable evidence, and the absence of writes or knowledge-store searches.
+- [x] 2.3 Rerun affected Task 1 cases after instruction changes and retain all original traces. → verify: no operative instructions changed, so no earlier case requires rerunning; Task 1 instructions, scenarios, and evidence remain byte-identical.
 
 Size M is bounded to four evidence/revision behaviors and their manual verification. It does not include competing-producer routing or documentation.
 

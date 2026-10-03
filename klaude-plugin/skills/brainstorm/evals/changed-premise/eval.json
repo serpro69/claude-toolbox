@@ -1,0 +1,37 @@
+{
+  "id": 4,
+  "name": "changed-premise",
+  "description": "A later confidentiality constraint invalidates disk caching while unrelated manual execution and local processing decisions remain settled.",
+  "skills": [
+    "brainstorm"
+  ],
+  "prompt": "Help me think through a local cache for our command-line report tool. Reports take 20 seconds to compute. I initially believe the reports contain only public data, so a disk cache across runs seems reasonable. Two decisions are already settled: report generation stays manually invoked, and processing stays on the local machine with no remote service. I want to decide whether cross-run caching is worth pursuing.",
+  "trap": "The agent anchors on disk caching after the premise changes, treats encryption as permission to retain forbidden data, or unnecessarily reopens manual invocation and local-only processing.",
+  "files": [],
+  "assertions": [
+    {
+      "id": "4.1",
+      "text": "The entry point and both references load before engaging with the caching decision."
+    },
+    {
+      "id": "4.2",
+      "text": "The first substantive response considers cross-run disk caching provisionally under the supplied public-data premise, while recognizing manual invocation and local processing as settled."
+    },
+    {
+      "id": "4.3",
+      "text": "After C1 changes the data-retention premise, the agent explicitly reopens the disk-cache direction and does not recommend persistent report retention, even encrypted, as compatible with the new rule."
+    },
+    {
+      "id": "4.4",
+      "text": "The revised discussion and final recap preserve manual invocation and local-only processing without asking the user to choose them again."
+    },
+    {
+      "id": "4.5",
+      "text": "The closing recap reflects the user's choice to abandon cross-run caching and investigate computation cost, preserving uncertainty about whether optimization will help."
+    },
+    {
+      "id": "4.6",
+      "text": "The whole exchange stays in chat with no deliberate writes, knowledge-store/session-vault searches, indexing, implementation, or automatic handoff; workspace state is unchanged."
+    }
+  ]
+}

@@ -1,0 +1,33 @@
+{
+  "id": 2,
+  "name": "architecture-audience",
+  "description": "An infrastructure architect compares recovery approaches without being forced into product or implementation planning.",
+  "skills": [
+    "brainstorm"
+  ],
+  "prompt": "I am an infrastructure architect deciding whether our internal artifact registry needs active-active operation in two approved regions or a simpler standby. Our recovery target is 30 minutes, publishing happens once a day, and we have two operators on call. Help me pressure-test the operational trade-offs; I only need to choose the next investigation.",
+  "trap": "The agent applies the shared product rubric mechanically, asks for a developer persona or market differentiation, or prescribes an implementation before weighing recovery needs and operator burden.",
+  "files": [],
+  "assertions": [
+    {
+      "id": "2.1",
+      "text": "The selected skill and both reasoning references load before substantive architecture discussion."
+    },
+    {
+      "id": "2.2",
+      "text": "The conversation compares active-active with standby using the supplied recovery target, publishing cadence, and operator capacity, explaining a relevant operational trade-off instead of inventing measured recovery performance."
+    },
+    {
+      "id": "2.3",
+      "text": "The interview asks one question at a time at architecture decision depth, without requiring a developer persona, market differentiation, adoption campaign, or implementation-ready specification."
+    },
+    {
+      "id": "2.4",
+      "text": "The closing recap preserves standby as a candidate to investigate, a timed recovery exercise as the next decision input, and unproven recovery time as an uncertainty rather than an established result."
+    },
+    {
+      "id": "2.5",
+      "text": "The complete trace contains only allowed instruction reads and conversation: no writes, knowledge-store/session-vault searches, indexing, implementation, or automatic handoff; workspace state is unchanged."
+    }
+  ]
+}

@@ -41,6 +41,6 @@ Inspect the entire conversation for adaptive questions, challenged assumptions, 
 
 ## Coverage and design regressions
 
-The complete acceptance matrix is twelve brainstorm scenarios plus four existing `/kk:design` regressions, each in two variants: 32 baseline runs before reruns. This directory initially supplies scenarios 1 (`loose-technical-idea`), 5 (`no-repository`), and 7 (`early-stop`); absent scenarios and unexecuted pairs are not passes.
+The complete acceptance matrix is twelve brainstorm scenarios plus four existing `/kk:design` regressions, each in two variants: 32 baseline runs before reruns. This directory supplies scenarios 1–7: `loose-technical-idea`, `architecture-audience`, `discoverable-project-fact`, `changed-premise`, `no-repository`, `unavailable-evidence`, and `early-stop`. Scenarios 8–12 and the design regression runbooks remain to be authored; absent scenarios and unexecuted pairs are not passes.
 
 The existing design regressions are `hard-gate-enforcement`, `proportional-diverge-routing`, `wip-feature-no-subphases`, and `clarity-after-drafting` under `design/evals/`. Before executing them, prepare each evaluator-only runbook with the same five sections, explicit design selection, variant handling, original fixture-to-workspace mappings, permitted writes, bounded confirmations, and termination. Preserve their original prompts, assertions, and fixture contents. Use an empty reply table for single-turn cases. Keep existing oracles hidden. These behavior regressions do not count as implicit routing coverage.
