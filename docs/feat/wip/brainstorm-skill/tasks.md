@@ -2,49 +2,84 @@
 
 > Design: [design.md](design.md)
 > Implementation: [implementation.md](implementation.md)
+> Review resolutions: [review-findings.md](review-findings.md)
 > Status: pending
 > Created: 2026-10-03
-> Not Doing: persistent state, output artifacts, implementation or automatic handoff, nontechnical topics, shared interview procedure, design behavior changes, automatic profiles, mandatory subagents, batching modes, new eval runner
+> Not Doing: persistent state, output artifacts, implementation or automatic handoff, nontechnical topics, shared interview procedure, changes to neighboring workflow gates/outputs, knowledge-store/session-vault search, automatic profiles, mandatory subagents, batching modes, new eval runner
 
-## Task 1: Deliver the conversation-only technical interview
+## Task 1: Deliver the core conversation and closing recap
 
 - **Status:** pending
 - **Depends on:** —
 - **Size:** M
 - **Can run in parallel with:** —
-- **Docs:** [Complete conversational path](implementation.md#complete-conversational-path), [Behavioral evaluations](implementation.md#behavioral-evaluations), [Interaction contract](design.md#interaction-contract)
+- **Docs:** [Complete conversational path](implementation.md#complete-conversational-path), [Manual runbook contract](implementation.md#manual-runbook-contract), [Interaction contract](design.md#interaction-contract)
 
 ### Subtasks
 
 - [ ] 1.1 Relocate `design/frameworks.md` and `design/refinement-criteria.md` to `_shared/ideation-frameworks.md` and `_shared/idea-refinement-criteria.md`, preserving exact content and attribution. → verify: no editorial differences from their pre-change contents.
-- [ ] 1.2 Add `shared-ideation-frameworks.md` and `shared-idea-refinement-criteria.md` symlinks to both `skills/design/` and `skills/brainstorm/`; update `design/SKILL.md` and `design/idea-process.md` references and anchors. → verify: correct relative targets, resolving links, and no stale operative references or changes to design behavior.
-- [ ] 1.3 Create `klaude-plugin/skills/brainstorm/SKILL.md` with a trigger-first description and the complete ordered workflow. Cover adaptive depth, a technical audience, one question at a time, useful challenge, targeted research, and chat closure. Keep ordinary user overrides implicit. → verify: current description-budget guidance checked; instructions load before subject matter; content-reading instructions appear once.
-- [ ] 1.4 Include the conversation-only boundary and optional user-directed transition to `/kk:design`, without persistence, automatic handoffs, profile setup, or required delegation. Include the pinned inspiration attribution. → verify: the skill's reachable instructions do not import an artifact-writing or memory-indexing procedure.
-- [ ] 1.5 Register `brainstorm` in `test/test-plugin-structure.sh` and assert the new shared-reference symlinks for both consumers. Leave command and profile-consumer lists unchanged. → verify: plugin structure checks pass after generation.
-- [ ] 1.6 Add the ten scenarios specified in [Behavioral evaluations](implementation.md#behavioral-evaluations), with concrete assertions, local fixtures where needed, and evaluator-only multi-turn reply scripts outside `test-files/`. → verify: fixture references resolve, oracles are not staged, and positive and negative routing cases are distinct.
-- [ ] 1.7 Run `make generate-kodex`; inspect new skill output, shared references, updated design links, and removed obsolete generated paths. → verify: `bash test/test-plugin-structure.sh`, `bash test/test-codex-structure.sh`, and `make plugin-graph` pass; a second generation is stable.
-- [ ] 1.8 Execute the brainstorm scenarios and the four named `/kk:design` regressions against canonical instructions and representative generated output. → verify: record assertion-level transcript/tool evidence, including research, revised decisions, no deliberate writes, and unchanged design behavior. Record unavailable runs explicitly rather than marking them passed.
+- [ ] 1.2 Add the two shared-reference symlinks to `skills/design/` and `skills/brainstorm/`; update `design/SKILL.md` and `design/idea-process.md` links and anchors. → verify: relative targets resolve, stale operative references are absent, and the existing design procedure is unchanged.
+- [ ] 1.3 Create `klaude-plugin/skills/brainstorm/SKILL.md` with its trigger-first description and complete ordered workflow: adaptive depth, technical audience, one question at a time, targeted file/web research, challenge, revision, and chat closure. Keep ordinary user overrides implicit. Exclude knowledge-store/session-vault searches and persistence. → verify: description budget checked, instructions load before subject matter, and content-read instructions occur once.
+- [ ] 1.4 Sharpen `/kk:design`'s description and Ideas and Prototypes example around written planning. If scenario 1 demonstrates a collision with `/kk:model`, allow a minimal discovery-description change there too. Preserve all neighboring procedures and gates. → verify: scenario 1 selects brainstorming from the competing catalog; record any discovery edits with the relevant routing evidence.
+- [ ] 1.5 Make the closing recap distinguish settled decisions, rationale, and open assumptions. Retain optional user-directed transition to `/kk:design` without waiving its confirmations. Include the pinned inspiration attribution. → verify: completion and early-stop transcripts remain truthful and do not initiate another workflow.
+- [ ] 1.6 Register `brainstorm` in `test/test-plugin-structure.sh`, assert the two consumers' shared-reference symlinks, and generate Codex output. Leave command/profile-consumer lists unchanged. → verify: plugin/Codex structure checks, `make plugin-graph`, and generation stability pass.
+- [ ] 1.7 Add `brainstorm/evals/README.md` and scenarios 1, 5, and 7 with evaluator-only `oracle/runbook.md` files using the fixed contract. → verify: fixture links, reply IDs/conditions, turn limits, stop rules, and assertion mappings are complete; no oracle is staged.
+- [ ] 1.8 Execute those three scenarios against canonical and generated instructions. → verify: record six runs with exact prompts/replies, catalog and instruction hashes, traces, file state, and assertion verdicts; missing executions remain pending.
 
-The size reflects one new workflow. Reference moves, symlinks, registrations, generated copies, and test fixtures are mechanical consequences rather than separate architectural changes.
+Size M covers the core workflow and three baseline scenarios. Moves, symlinks, and generated copies are mechanical; designing and executing the scenarios is substantive work included in this task's size.
 
-## Task 2: Final documentation and verification
+## Task 2: Verify evidence gathering and revised decisions
 
 - **Status:** pending
 - **Depends on:** Task 1
+- **Size:** M
+- **Can run in parallel with:** —
+- **Docs:** [Scenario matrix](implementation.md#scenario-matrix), [Research facts](design.md#research-facts), [Interview and challenge](design.md#interview-and-challenge)
+
+### Subtasks
+
+- [ ] 2.1 Author scenarios 2, 3, 4, and 6 with their fixtures and fixed-format runbooks: architecture audience, discoverable project fact, changed premise, and unavailable evidence. → verify: each assertion observes a concrete decision, read, revision, or uncertainty rather than merely restating instructions.
+- [ ] 2.2 Execute all four scenarios against canonical and generated instructions; fix any research or interview defects in `brainstorm/SKILL.md` and regenerate. → verify: record eight runs, including preservation of unrelated settled decisions, honest unavailable evidence, and the absence of writes or knowledge-store searches.
+- [ ] 2.3 Rerun affected Task 1 cases after instruction changes and retain all original traces. → verify: the accepted core conversation and closure still pass; off-script, invalid, or unavailable runs are not counted as successes.
+
+Size M is bounded to four evidence/revision behaviors and their manual verification. It does not include competing-producer routing or documentation.
+
+## Task 3: Verify competing-skill selection and design compatibility
+
+- **Status:** pending
+- **Depends on:** Task 1, Task 2
+- **Size:** M
+- **Can run in parallel with:** —
+- **Docs:** [Entry and instruction loading](design.md#entry-and-instruction-loading), [Behavioral evaluations](implementation.md#behavioral-evaluations)
+
+### Subtasks
+
+- [ ] 3.1 Author scenarios 8–12 with `brainstorm`, `design`, `model`, and `implement` available: direct implementation, implicit written planning, nontechnical non-trigger, explicit design invocation, and implicit domain-kit creation. → verify: ordinary routing prompts name no skill; scenario 11 alone covers explicit invocation; bodies are not preloaded in routing tests.
+- [ ] 3.2 Run those five scenarios in both variants, supplying the scripted confirmations needed to reach the requested producer outputs. → verify: record ten runs with observed skill loading and actual artifact/conversation boundaries; no classification-only substitute counts as routing evidence.
+- [ ] 3.3 Resolve routing collisions through the scoped discovery wording in `/kk:brainstorm`, `/kk:design`, and, when demonstrated, `/kk:model`; regenerate after changes. → verify: rerun scenario 1 and all affected routing cases in both variants; preserve neighboring workflow gates and output contracts.
+- [ ] 3.4 Prepare evaluator-only `oracle/runbook.md` files for the existing `/kk:design` scenarios `hard-gate-enforcement`, `proportional-diverge-routing`, `wip-feature-no-subphases`, and `clarity-after-drafting`. Apply the shared runbook contract and cover these legacy runs in `brainstorm/evals/README.md`. Specify explicit design selection, canonical/generated handling, fixture-to-workspace mappings, permitted writes, bounded replies, and termination. → verify: each regression has usable setup and confirmation scripts without changing its original prompts, assertions, or fixture contents.
+- [ ] 3.5 Execute those four existing regressions against canonical and generated instructions using their prepared runbooks. → verify: record eight regression runs without improvising missing replies or weakening assertions.
+
+Size M covers five routing scenarios plus bounded runbook preparation and execution for four existing regressions; the existing regression fixtures and assertions are reused. The manual preparation/execution workload is explicit, not a mechanical fixture update. Tasks are sequenced because fixes may touch the same entry points.
+
+## Task 4: Final documentation and verification
+
+- **Status:** pending
+- **Depends on:** Task 1, Task 2, Task 3
 - **Size:** M
 - **Can run in parallel with:** —
 - **Docs:** [Documentation and final verification](implementation.md#documentation-and-final-verification), [Evaluation and acceptance](design.md#evaluation-and-acceptance)
 
 ### Subtasks
 
-- [ ] 2.1 Use `/kk:document` to update `docs/user-guide/skills.md`, the two READMEs, and `docs/getting-started/quickstart.md` with the new skill and the conversation-versus-written-design distinction. → verify: brainstorming is optional and its output is clearly chat-only.
-- [ ] 2.2 Update the live skill counts listed in the implementation plan from 14 to 15. → verify: counts agree with `EXPECTED_SKILLS`; frozen history and unrelated pages remain untouched.
-- [ ] 2.3 Use `/kk:test` for the full shell suite, generator checks, plugin-graph validation, and the recorded behavioral evaluation evidence. Reuse valid Task 1 results where the inputs have not changed. → verify: all required results are recorded, with missing runs or failures explicit.
-- [ ] 2.4 Use `/kk:review-code` for the Markdown skill instructions and shell structure changes. → verify: findings are fixed or durably recorded with a concrete next step.
-- [ ] 2.5 Use `/kk:review-spec` against this feature's design, implementation plan, and full implementation. → verify: accepted behavior, scope boundaries, and implementation agree; do not mark the feature complete while required work remains.
+- [ ] 4.1 Use `/kk:document` to update `docs/user-guide/skills.md`, `README.md`, `klaude-plugin/README.md`, the hand-authored `kodex-plugin/README.md`, and `docs/getting-started/quickstart.md`. → verify: brainstorming is optional, output is chat-only, and the Codex README uses its invocation spelling.
+- [ ] 4.2 Reconcile all live skill counts listed in the implementation plan to 15 after the skill exists, including the Codex README's stale count of 10. → verify: counts agree with canonical/generated catalogs and `EXPECTED_SKILLS`; generation preserves the README edit; frozen history remains untouched.
+- [ ] 4.3 Use `/kk:test` for the full shell suite, generator checks, plugin-graph validation, and the recorded behavioral evidence. Reuse valid earlier results where inputs have not changed. → verify: the baseline 32 scenario/variant runs and any required reruns are accounted for; missing or invalid runs remain explicit and prevent completion of their verification tasks.
+- [ ] 4.4 Use `/kk:review-code` for the Markdown skill instructions and shell structure changes. → verify: findings are fixed or durably recorded with a concrete next step.
+- [ ] 4.5 Use `/kk:review-spec` against this feature's design, implementation plan, and full implementation. → verify: accepted behavior, scope boundaries, and implementation agree; required pending work is not marked complete.
 
 ## Dependency Graph
 
 ```text
-Task 1: complete interview path ──→ Task 2: documentation and final verification
+Task 1 (core) -> Task 2 (evidence) -> Task 3 (routing) -> Task 4 (final checks)
 ```
