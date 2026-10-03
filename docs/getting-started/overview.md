@@ -17,7 +17,7 @@ Tools like Claude Code and Codex are powerful on their own, but LLMs don't know 
 
 **A minimal, opinionated configuration** — sensible permission baselines, a rich statusline, MCP server wiring, and sync infrastructure to keep it all up to date across your projects. Think of it as a dotfiles repo for Claude Code and Codex.
 
-**A structured development pipeline** — 14 workflow and utility skills with explicit multi-language support that take you from idea through design, implementation, code review, testing, to documentation, with persistent knowledge that carries across sessions.
+**A structured development pipeline** — 15 workflow and utility skills with explicit multi-language support that take you from idea through design, implementation, code review, testing, to documentation, with persistent knowledge that carries across sessions.
 
 ```
 /kk:design → /kk:review-design → /kk:implement → /kk:review-code → /kk:test → /kk:document
@@ -25,7 +25,7 @@ Tools like Claude Code and Codex are powerful on their own, but LLMs don't know 
 
 ## Features at a Glance
 
-- **14 workflow and utility skills** — a complete development pipeline invoked as `/kk:<skill-name>`, plus utilities such as `/kk:clarify-docs` for existing documentation, PR drafts and issue descriptions
+- **15 workflow and utility skills** — a complete development pipeline invoked as `/kk:<skill-name>`, plus utilities such as `/kk:clarify-docs` for existing documentation, PR drafts and issue descriptions
 - **Multi-language support** — precise and distinct instructions from design, to implementation, to testing, to review for: Go, Java, JS/TS, Kotlin, Kubernetes, and Python
 - **Multi-model code review** — independent reviewers using sub-agents and external models (Gemini, etc.)
 - **Persistent knowledge base** — findings, decisions, and conventions that survive across sessions via Capy
@@ -36,7 +36,7 @@ Tools like Claude Code and Codex are powerful on their own, but LLMs don't know 
 
 ### kk Plugin
 
-The **kk** plugin contains all development workflow functionality — 14 skills, 5 commands, and hooks — distributed via the Claude Code plugin system (see [kodex-plugin](https://github.com/serpro69/claude-toolbox/tree/master/kodex-plugin) for the Codex variant). Skills are invoked as `/kk:skill-name`, commands as `/kk:dir:command`.
+The **kk** plugin contains all development workflow functionality — 15 skills, 5 commands, and hooks — distributed via the Claude Code plugin system (see [kodex-plugin](https://github.com/serpro69/claude-toolbox/tree/master/kodex-plugin) for the Codex variant). Skills are invoked as `/kk:skill-name`, commands as `/kk:dir:command`.
 
 Alongside `skills/`, `commands/`, `agents/`, and `hooks/`, the plugin ships a top-level `profiles/` directory. Each profile (e.g., `go`, `python`, `k8s`) bundles per-domain content — detection rules, review checklists, design prompts, test validators, doc rubrics — that the workflow skills consult when the code under work matches the profile. Profiles are the extension point for new languages and IaC DSLs.
 

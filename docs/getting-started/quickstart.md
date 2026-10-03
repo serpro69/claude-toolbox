@@ -2,7 +2,9 @@
 
 After setup, try the core workflow:
 
-1. **Start with an idea.** Type `/kk:design` and describe a feature you want to build. Claude will ask you refinement questions one at a time, then produce design docs and a task list in `docs/feat/wip/`.
+For an optional conversation first, use `/kk:brainstorm` to explore a technical idea or decision. The interview adapts to what you need to decide and ends with a chat-only recap of decisions, rationale, and open assumptions. It creates no files and does not start another workflow automatically. Request `/kk:design` when you want written planning.
+
+1. **Write a plan.** Type `/kk:design` and describe a feature you want to build. Claude will ask refinement questions and confirm decisions, then produce design docs, an implementation plan, and a task list in `docs/feat/wip/`.
 
 2. **Review the design.** Run `/kk:review-design your-feature` to catch gaps before writing code.
 
@@ -14,11 +16,12 @@ This is the core loop. See the [kk plugin README](https://github.com/serpro69/cl
 
 ## What Just Happened?
 
-Each skill produced artifacts the next one consumed:
+The planning and implementation loop passes artifacts between skills. Optional brainstorming supplies conversation context:
 
 | Skill | Input | Output |
 |-------|-------|--------|
-| `/kk:design` | Your idea | `design.md`, `tasks.md` |
+| `/kk:brainstorm` (optional) | A technical idea or decision | Chat recap; no files |
+| `/kk:design` | Your idea, optionally with a brainstorm recap | `design.md`, `implementation.md`, `tasks.md` |
 | `/kk:review-design` | Design docs | Review findings, gap analysis |
 | `/kk:implement` | Task list | Code changes, review checkpoints |
 | `/kk:review-code` | Git diff | Findings, fix suggestions |

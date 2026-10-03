@@ -3,7 +3,7 @@
 > Design: [design.md](design.md)
 > Implementation: [implementation.md](implementation.md)
 > Review resolutions: [review-findings.md](review-findings.md)
-> Status: in-progress
+> Status: done
 > Created: 2026-10-03
 > Not Doing: persistent state, output artifacts, implementation or automatic handoff, nontechnical topics, shared interview procedure, changes to neighboring workflow gates/outputs, knowledge-store/session-vault search, automatic profiles, mandatory subagents, batching modes, new eval runner
 
@@ -68,19 +68,20 @@ Size M covers five routing scenarios plus bounded runbook preparation and execut
 
 ## Task 4: Final documentation and verification
 
-- **Status:** pending
+- **Status:** done
 - **Depends on:** Task 1, Task 2, Task 3
 - **Size:** M
 - **Can run in parallel with:** —
 - **Docs:** [Documentation and final verification](implementation.md#documentation-and-final-verification), [Evaluation and acceptance](design.md#evaluation-and-acceptance)
+- **Verification:** [Final evidence](verification/task-4/README.md) — nine documentation pages updated; 15-skill counts reconciled; 32 accepted pairs and 146 passing assertions remain applicable; full shell suite, generation stability and graph validation pass; independent code/spec reviews approved without findings.
 
 ### Subtasks
 
-- [ ] 4.1 Use `/kk:document` to update `docs/user-guide/skills.md`, `README.md`, `klaude-plugin/README.md`, the hand-authored `kodex-plugin/README.md`, and `docs/getting-started/quickstart.md`. → verify: brainstorming is optional, output is chat-only, and the Codex README uses its invocation spelling.
-- [ ] 4.2 Reconcile all live skill counts listed in the implementation plan to 15 after the skill exists, including the Codex README's stale count of 10. → verify: counts agree with canonical/generated catalogs and `EXPECTED_SKILLS`; generation preserves the README edit; frozen history remains untouched.
-- [ ] 4.3 Use `/kk:test` for the full shell suite, generator checks, plugin-graph validation, and the recorded behavioral evidence. Reuse valid earlier results where inputs have not changed. → verify: the baseline 32 scenario/variant runs and any required reruns are accounted for; missing or invalid runs remain explicit and prevent completion of their verification tasks.
-- [ ] 4.4 Use `/kk:review-code` for the Markdown skill instructions and shell structure changes. → verify: findings are fixed or durably recorded with a concrete next step.
-- [ ] 4.5 Use `/kk:review-spec` against this feature's design, implementation plan, and full implementation. → verify: accepted behavior, scope boundaries, and implementation agree; required pending work is not marked complete.
+- [x] 4.1 Use `/kk:document` to update `docs/user-guide/skills.md`, `README.md`, `klaude-plugin/README.md`, the hand-authored `kodex-plugin/README.md`, and `docs/getting-started/quickstart.md`. → verify: brainstorming is optional, output is chat-only, and the Codex README uses its invocation spelling.
+- [x] 4.2 Reconcile all live skill counts listed in the implementation plan to 15 after the skill exists, including the Codex README's stale count of 10. → verify: counts agree with canonical/generated catalogs and `EXPECTED_SKILLS`; generation preserves the README edit; frozen history remains untouched.
+- [x] 4.3 Use `/kk:test` for the full shell suite, generator checks, plugin-graph validation, and the recorded behavioral evidence. Reuse valid earlier results where inputs have not changed. → verify: the baseline 32 scenario/variant runs and any required reruns are accounted for; missing or invalid runs remain explicit and prevent completion of their verification tasks.
+- [x] 4.4 Use `/kk:review-code` for the Markdown skill instructions and shell structure changes. → verify: findings are fixed or durably recorded with a concrete next step.
+- [x] 4.5 Use `/kk:review-spec` against this feature's design, implementation plan, and full implementation. → verify: accepted behavior, scope boundaries, and implementation agree; required pending work is not marked complete.
 
 ## Dependency Graph
 

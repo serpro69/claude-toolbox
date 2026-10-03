@@ -1,6 +1,6 @@
 # Brainstorm skill
 
-> Status: design agreed; Tasks 1–3 implemented; Task 4 pending
+> Status: done — all four tasks implemented and verified
 > Created: 2026-10-03
 > Implementation: [implementation.md](implementation.md)
 > Tasks: [tasks.md](tasks.md)

@@ -46,7 +46,7 @@ Tools like Claude Code and Codex are powerful on their own, but LLMs don't know 
 
 **A minimal, opinionated Claude Code and Codex configuration** — sensible permission baselines, a rich statusline, MCP server wiring, and sync infrastructure to keep it all up to date across your projects. Think of it as a dotfiles repo for Claude Code and Codex.
 
-**A structured development pipeline** — 14 workflow and utility skills with explicit multi-language support that take you from idea through design, implementation, code review, testing, to documentation, with persistent knowledge that carries across sessions.
+**A structured development pipeline** — 15 workflow and utility skills with explicit multi-language support that take you from idea through design, implementation, code review, testing, to documentation, with persistent knowledge that carries across sessions.
 
 ```
 /kk:design → /kk:review-design → /kk:implement → /kk:review-code → /kk:test → /kk:document
@@ -54,7 +54,7 @@ Tools like Claude Code and Codex are powerful on their own, but LLMs don't know 
 
 Out of the box you get:
 
-- **14 workflow and utility skills** — a complete development pipeline invoked as `/kk:<skill-name>`, plus utilities such as `/kk:clarify-docs` for improving existing documentation, PR drafts and issue descriptions.
+- **15 workflow and utility skills** — a complete development pipeline invoked as `/kk:<skill-name>`, plus utilities such as `/kk:clarify-docs` for improving existing documentation, PR drafts and issue descriptions.
 - **Multi-language support** — precise and distinct instructions from design, to implementation, to testing, to review for: go, java, js/ts, kotlin, kubernetes, and python
 - **Multi-model code review** — independent reviewers using sub-agents and external models (Gemini, etc.)
 - **Persistent knowledge base** — findings, decisions, and conventions that survive across sessions via Capy
@@ -76,7 +76,9 @@ Out of the box you get:
 
 After setup, try the core workflow:
 
-1. **Start with an idea.** Type `/kk:design` and describe a feature you want to build. Claude will ask you refinement questions one at a time, then produce design docs and a task list in `docs/feat/wip/`.
+For an optional conversation first, use `/kk:brainstorm` to think through a technical idea. It adapts the interview to your next decision and ends with a chat recap of decisions, rationale, and open assumptions. It creates no files or automatic handoff; request `/kk:design` when you want written planning.
+
+1. **Write a plan.** Type `/kk:design` and describe a feature you want to build. Claude will ask refinement questions and confirm decisions, then produce design docs, an implementation plan, and a task list in `docs/feat/wip/`.
 
 2. **Review the design.** Run `/kk:review-design your-feature` to catch gaps before writing code.
 

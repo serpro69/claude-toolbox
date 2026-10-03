@@ -1,8 +1,10 @@
 # Skills
 
-The kk plugin ships 14 workflow and utility skills, including a complete development pipeline.
+The kk plugin ships 15 workflow and utility skills, including a complete development pipeline.
 
 ## The Pipeline
+
+Use `/kk:brainstorm` when you want to think through a technical idea in conversation. It is optional: start with `/kk:design` whenever you want written planning.
 
 ```
 /kk:design → /kk:review-design → /kk:implement → /kk:review-code → /kk:test → /kk:document
@@ -19,6 +21,7 @@ The kk plugin ships 14 workflow and utility skills, including a complete develop
 
 | Skill | What it does |
 |-------|-------------|
+| **/kk:brainstorm** | Interviews anyone exploring a technical idea or decision, adapting depth to the next decision. Asks one question at a time and closes with decisions, rationale, and open assumptions in chat; creates no files. |
 | **/kk:design** | Turns an idea into design docs, an implementation plan, and a task list in `docs/feat/wip/`. Asks refinement questions, then documents everything a developer needs to start coding. |
 | **/kk:implement** | Executes a task list from `docs/feat/wip/` with batched steps and code review checkpoints between batches. Updates task status as it goes. |
 | **/kk:test** | Generates tests following project conventions: table-driven, integration, mocking, property-based. Runs the full suite and reports coverage. |
@@ -48,6 +51,18 @@ Commands are skill variants invoked with explicit mode selection:
 | Template Sync | `/kk:template:sync [--version vX.Y.Z] [--dry-run]` | Sync repo with upstream template |
 
 ## Utility Skills
+
+### Explore a technical idea
+
+Use `/kk:brainstorm Help me think through whether a local cache is worth adding to our developer tool` to explore alternatives, challenge assumptions, and decide whether to pursue, discard, narrow, or investigate an idea. The audience includes developers, architects, and anyone considering technical products, infrastructure, tools, operations, or engineering workflows.
+
+The interview asks one question at a time and adapts its depth to your next decision. It reads relevant project files or web sources when evidence could change the advice, so a repository is optional. When a premise changes, it revisits affected decisions while preserving unrelated ones. Missing evidence stays explicit.
+
+The result is a chat recap of settled decisions and their rationale, open assumptions, details that can wait, and the next decision or investigation. If you stop early, it recaps the partial discussion without claiming the idea is validated. The skill creates no files or saved interview state and performs no knowledge-store or session-vault searches, indexing, or implementation.
+
+When written planning would help, the skill may suggest `/kk:design`. You choose whether to invoke it; the recap supplies context for its existing confirmations. Brainstorming does not invoke another workflow automatically and is not required before design. For a durable domain glossary and traps pages, use `/kk:model`; for a build or fix, use `/kk:implement`. Nontechnical brainstorming is outside this skill's scope.
+
+### Other utilities
 
 **/kk:dependency-handling** is pulled in automatically during implementation whenever you touch an external library, SDK, or API — it routes through capy/context7 instead of guessing.
 
