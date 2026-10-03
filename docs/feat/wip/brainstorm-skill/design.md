@@ -4,6 +4,7 @@
 > Created: 2026-10-03
 > Implementation: [implementation.md](implementation.md)
 > Tasks: [tasks.md](tasks.md)
+> Review resolutions: [review-findings.md](review-findings.md)
 
 ## Problem and outcome
 
@@ -22,10 +23,10 @@ This feature adds a skill. The documents in this directory describe how to build
 | Audience | Anyone discussing a technical idea or decision; not restricted to developers |
 | Depth | Adapt to the user's next decision |
 | Rhythm | Ask one question at a time |
-| Research | Read relevant project material and look up technical facts when useful |
+| Research | Read relevant project files and web sources; no knowledge-store or session-vault search in this version |
 | Persistence | Keep working context and output in the conversation |
 | Reuse | Separate interview workflow; share ideation and evaluation references with `/kk:design` |
-| Existing design behavior | Preserve `/kk:design`'s process, gates, outputs, and handoffs |
+| Neighboring skills | Preserve existing processes, gates, outputs, and handoffs; allow narrowly scoped discovery-wording changes to distinguish requested outputs |
 
 The skill needs no special batching mode or rules about when the user may override its rhythm. Ordinary user instructions already provide that flexibility.
 
@@ -52,6 +53,10 @@ The new interview instructions will be written for this workflow, with a brief a
 
 The description should lead with technical brainstorming and interviewing triggers. Requests to think through, explore, or pressure-test a technical idea should select the skill. Direct requests to implement, fix, or write a design document should continue to select the appropriate existing workflow. Unrelated nontechnical brainstorming is outside the skill's advertised scope.
 
+Selection must work with neighboring skills available, not just when `/kk:brainstorm` is the sole candidate. Conversational exploration belongs here; requests for a written specification and task list belong to `/kk:design`; requests for a durable domain glossary or reference kit belong to `/kk:model`. If the requested output is genuinely ambiguous, clarify that output rather than assuming permission to create artifacts. Explicit skill invocations remain a separate regression boundary.
+
+Sharpening `/kk:design`'s description and its Ideas and Prototypes entry example is in scope so they advertise written planning rather than claiming every conversation about an idea. Minimal changes to `/kk:model`'s discovery description are also allowed if the competing-catalog scenarios show that its wording captures conversational requests. Neither permission extends to changing the neighboring skills' procedures or confirmation gates. Record any such wording change with its routing evidence.
+
 The entry point states the purpose, conversation-only boundary, required reference reads, and complete interview workflow. Keep the procedure in `SKILL.md`; this small workflow does not need a second process file that restates the same steps.
 
 Follow the repository's mandatory ordering: load `SKILL.md` and both shared reasoning references before researching project content or refining the idea. Put the instruction-before-action directive at the top of the Workflow section. Include the content-reading step once, after instruction loading. This skill does not invoke the profile-detection procedure or introduce a `brainstorm/` profile phase.
@@ -76,7 +81,9 @@ Read relevant files, documentation, and external sources when evidence could cha
 
 Do not ask the user to supply a fact that available material can answer. Distinguish evidence, assumptions, recommendations, and user decisions. If evidence cannot be obtained, identify the uncertainty and explain whether it affects the current decision. Other useful questions can continue when they do not depend on that evidence.
 
-The contract is read-only research. The skill creates no project files, saved notes, temporary interview artifacts, task records, knowledge-store entries, or external resource changes. It adds no memory or indexing integration. This describes the skill's intentional actions; it does not promise to disable the host application's transcript storage or tool infrastructure.
+The contract is read-only research through project files and web sources. Knowledge-store and session-vault searches, including Capy searches of `kk:arch-decisions`, are outside this version's research scope. Existing decisions can still be read from project documents such as ADRs. Do not add the Capy protocol or a search integration to this skill. This is a scope choice, not a claim that read-only knowledge search would violate statelessness.
+
+The skill creates no project files, saved notes, temporary interview artifacts, task records, knowledge-store entries, or external resource changes. It adds no memory or indexing integration. This describes the skill's intentional actions; it does not promise to disable the host application's transcript storage or tool infrastructure.
 
 ### Converge and close
 
@@ -84,11 +91,11 @@ Wrap up when the idea, rationale, meaningful trade-offs, material uncertainties,
 
 Give a concise recap in chat at a useful stopping point. Preserve unresolved assumptions and distinguish details that can wait from uncertainties that might change the direction. If the user stops early, reflect the actual state of the discussion without declaring an unfinished idea validated.
 
-The skill may suggest `/kk:design` when written planning would help. It does not invoke that skill or begin implementation automatically. A later user request to write or build is a new workflow using the conversation as input. Do not reopen settled decisions merely because the workflow changes.
+The skill may suggest `/kk:design` when written planning would help. It does not invoke that skill or begin implementation automatically. A later user request to write or build is a new workflow using the conversation as input. Make the recap useful to that workflow by distinguishing settled decisions from open assumptions and supplying their rationale. This gives `/kk:design` context for its own confirmations; it does not waive its gates or promise that decisions will never be revisited.
 
 ## Structure and reuse
 
-The canonical implementation belongs in `klaude-plugin/`. `kodex-plugin/` remains generated.
+The canonical skill implementation belongs in `klaude-plugin/`. Codex skills are generated; the top-level `kodex-plugin/README.md` is hand-authored and must be maintained separately.
 
 | Path | Planned responsibility |
 | --- | --- |
@@ -97,8 +104,9 @@ The canonical implementation belongs in `klaude-plugin/`. `kodex-plugin/` remain
 | `klaude-plugin/skills/_shared/idea-refinement-criteria.md` | Existing contents of `design/refinement-criteria.md`, relocated without editorial changes |
 | `skills/{design,brainstorm}/shared-ideation-frameworks.md` | Per-skill symlink to `../_shared/ideation-frameworks.md` |
 | `skills/{design,brainstorm}/shared-idea-refinement-criteria.md` | Per-skill symlink to `../_shared/idea-refinement-criteria.md` |
-| `klaude-plugin/skills/design/{SKILL.md,idea-process.md}` | Update reference names and links, including heading anchors |
-| `klaude-plugin/skills/brainstorm/evals/` | Behavioral and trigger-boundary scenarios |
+| `klaude-plugin/skills/design/{SKILL.md,idea-process.md}` | Update reference names and links; sharpen discovery wording in `SKILL.md` without changing the procedure |
+| `klaude-plugin/skills/model/SKILL.md` | Discovery-description changes only if competing-catalog evaluation demonstrates a collision |
+| `klaude-plugin/skills/brainstorm/evals/` | Behavioral scenarios, a shared evaluator README, and evaluator-only `oracle/runbook.md` files |
 
 The two `skills/` rows are relative to `klaude-plugin/`. Shared files keep the existing guidance; the caller selects relevant lenses and owns workflow order. Sharing references does not make `/kk:design` adaptive or introduce its artifact-writing procedure into `/kk:brainstorm`.
 
@@ -110,17 +118,18 @@ Structure checks establish packaging correctness. Staged, multi-turn scenarios e
 
 | Scenario | Evidence required |
 | --- | --- |
-| Loose technical idea | Instructions load first; the first question addresses a material uncertainty; subsequent questions respond to answers; one question per turn |
+| Loose technical idea | A natural-language prompt selects `/kk:brainstorm` with `/kk:design` and `/kk:model` also available; instructions load before refinement; the interview ends with a chat-only recap |
 | Technical audience beyond developers | An architect's infrastructure decision receives relevant trade-off analysis without a developer-persona or product-market questionnaire |
 | Discoverable project fact | The agent reads the supplied fixture to establish the fact, then asks for the user's decision instead of asking them to repeat the fact |
 | Changed premise | A later answer changes an earlier constraint; affected conclusions are reopened while unrelated settled decisions remain intact |
 | No repository | A self-contained technical idea progresses without requiring files or project setup |
 | Unavailable evidence | The uncertainty remains explicit; dependent recommendations are qualified and unrelated discussion can proceed |
 | Natural completion and early stop | The recap matches the agreed depth and actual state, including material unknowns; no automatic handoff or writes occur |
-| Trigger boundaries | Direct implementation, explicit design-document, and unrelated nontechnical requests do not get diverted into this interview |
+| Implicit written planning | A natural-language request for a written design and task list selects `/kk:design` from the competing catalog and reaches its artifact-producing workflow |
+| Other trigger boundaries | Direct implementation, durable domain-kit, and unrelated nontechnical requests do not get diverted into brainstorming; explicit `/kk:design` invocation remains a separate regression |
 | `/kk:design` regression | Existing fresh-idea gates and WIP routing still behave as specified after the reference relocation |
 
-Inspect tool traces as well as responses for the absence of deliberate writes and memory indexing. For complete scenarios, inspect the whole exchange rather than grading only the first answer. Evaluation definitions and staging details are specified in the implementation plan.
+Inspect tool traces as well as responses for the absence of deliberate writes, knowledge-store searches, and memory indexing during brainstorming. For complete scenarios, inspect the whole exchange rather than grading only the first answer. Routing evaluations expose competing descriptions without preloading the expected skill body or naming the expected selection to the tested agent. Grade both the observed workflow selection and its conversation/artifact boundary. Evaluation definitions, the manual runbook contract, and canonical/generated execution requirements are specified in the implementation plan.
 
 ## Assumptions
 
@@ -133,7 +142,8 @@ Inspect tool traces as well as responses for the absence of deliberate writes an
 - **Persistent interview state or output artifacts:** the skill's result is a conversation and recap.
 - **Implementation or automatic workflow handoff:** deciding to write or build belongs to a subsequent user instruction.
 - **General nontechnical brainstorming:** the toolbox's topic boundary remains technical.
-- **A shared interview procedure or changes to `/kk:design`'s behavior:** the two skills have different completion contracts.
+- **A shared interview procedure or changes to neighboring workflow gates and outputs:** discovery-wording changes are allowed to distinguish the different completion contracts.
+- **Knowledge-store and session-vault search:** keep the initial research scope to project files and web sources, without a memory-tool integration.
 - **Automatic profile activation:** the first version uses shared reasoning lenses and targeted research without profile setup prompts.
 - **Mandatory subagents:** fact-finding does not require delegation infrastructure.
 - **Special batching modes or override rules:** one-question guidance is sufficient; ordinary user steering needs no additional protocol.
