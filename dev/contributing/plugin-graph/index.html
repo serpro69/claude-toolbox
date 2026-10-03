@@ -36,7 +36,9 @@
     profiles_kotlin_["profiles/kotlin/"]
     profiles_kotlin_review_code_["profiles/kotlin/review-code/"]
     profiles_python_["profiles/python/"]
+    profiles_python_implement_["profiles/python/implement/"]
     profiles_python_review_code_["profiles/python/review-code/"]
+    profiles_python_test_["profiles/python/test/"]
     profiles_skill_md_["profiles/skill-md/"]
     profiles_skill_md_implement_["profiles/skill-md/implement/"]
     profiles_skill_md_review_code_["profiles/skill-md/review-code/"]
@@ -109,9 +111,16 @@
     profiles_kotlin_ --&gt;|skill-invocation| skills_dependency_handling_
     profiles_kotlin_ --&gt;|skill-invocation| skills_review_code_
     profiles_kotlin_review_code_ --&gt;|skill-invocation| skills_review_code_
+    profiles_python_ --&gt;|markdown-link| profiles_python_implement_
+    profiles_python_ --&gt;|markdown-link| profiles_python_test_
     profiles_python_ --&gt;|skill-invocation| skills_dependency_handling_
+    profiles_python_ --&gt;|skill-invocation| skills_implement_
     profiles_python_ --&gt;|skill-invocation| skills_review_code_
+    profiles_python_ --&gt;|skill-invocation| skills_test_
+    profiles_python_implement_ --&gt;|skill-invocation| skills_dependency_handling_
+    profiles_python_implement_ --&gt;|skill-invocation| skills_implement_
     profiles_python_review_code_ --&gt;|skill-invocation| skills_review_code_
+    profiles_python_test_ --&gt;|skill-invocation| skills_test_
     profiles_skill_md_ --&gt;|skill-invocation| skills_dependency_handling_
     profiles_skill_md_implement_ --&gt;|skill-invocation| commands_chain_of_verification_
     profiles_skill_md_implement_ --&gt;|skill-invocation| skills_chain_of_verification_
@@ -203,7 +212,7 @@
     classDef profile fill:#fb9a99,color:#1a1a1a;
     class profiles_go_,profiles_java_,profiles_js_ts_,profiles_k8s_operator_,profiles_k8s_,profiles_kotlin_,profiles_python_,profiles_skill_md_,profiles_twelve_factor_ profile;
     classDef profile_phase fill:#fdbf6f,color:#1a1a1a;
-    class profiles_go_design_,profiles_go_document_,profiles_go_implement_,profiles_go_review_code_,profiles_go_test_,profiles_java_review_code_,profiles_js_ts_implement_,profiles_js_ts_review_code_,profiles_js_ts_test_,profiles_k8s_operator_design_,profiles_k8s_design_,profiles_k8s_document_,profiles_k8s_implement_,profiles_k8s_review_code_,profiles_k8s_review_spec_,profiles_k8s_test_,profiles_kotlin_review_code_,profiles_python_review_code_,profiles_skill_md_implement_,profiles_skill_md_review_code_,profiles_twelve_factor_design_ profile_phase;
+    class profiles_go_design_,profiles_go_document_,profiles_go_implement_,profiles_go_review_code_,profiles_go_test_,profiles_java_review_code_,profiles_js_ts_implement_,profiles_js_ts_review_code_,profiles_js_ts_test_,profiles_k8s_operator_design_,profiles_k8s_design_,profiles_k8s_document_,profiles_k8s_implement_,profiles_k8s_review_code_,profiles_k8s_review_spec_,profiles_k8s_test_,profiles_kotlin_review_code_,profiles_python_implement_,profiles_python_review_code_,profiles_python_test_,profiles_skill_md_implement_,profiles_skill_md_review_code_,profiles_twelve_factor_design_ profile_phase;
     classDef content fill:#ffffff,color:#1a1a1a;
     class README_md content;
     classDef command fill:#cab2d6,color:#1a1a1a;
