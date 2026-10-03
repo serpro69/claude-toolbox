@@ -1,0 +1,34 @@
+{
+  "id": 9,
+  "name": "written-design-request",
+  "description": "Implicit written-planning request loads design and reaches its three artifacts through scripted confirmations. Stage test-files as an isolated workspace, never in place under the hosting skill.",
+  "skills": [
+    "brainstorm",
+    "design",
+    "model",
+    "implement"
+  ],
+  "prompt": "Write a design document, implementation plan, and task list for adding an archive command to the note tool described in README.md.",
+  "trap": "Conversation-only brainstorming captures a request for written planning.",
+  "files": [
+    "test-files/README.md"
+  ],
+  "assertions": [
+    {
+      "id": "9.1",
+      "text": "The competing-catalog trace loads /kk:design without loading /kk:brainstorm."
+    },
+    {
+      "id": "9.2",
+      "text": "The conversation obtains HMW, persona, success, constraints, classification, direction, and design-presentation confirmations before drafting."
+    },
+    {
+      "id": "9.3",
+      "text": "The run writes design.md, implementation.md, and tasks.md under docs/feat/wip/archive-command/, with linked plans and pending tasks."
+    },
+    {
+      "id": "9.4",
+      "text": "The artifacts preserve visible archived items and unchanged content/links; the response reports planning rather than implemented behavior."
+    }
+  ]
+}

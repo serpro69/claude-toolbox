@@ -1,6 +1,6 @@
 # Brainstorm skill
 
-> Status: design agreed; Tasks 1–2 implemented; Tasks 3–4 pending
+> Status: design agreed; Tasks 1–3 implemented; Task 4 pending
 > Created: 2026-10-03
 > Implementation: [implementation.md](implementation.md)
 > Tasks: [tasks.md](tasks.md)
@@ -56,6 +56,8 @@ The description should lead with technical brainstorming and interviewing trigge
 Selection must work with neighboring skills available, not just when `/kk:brainstorm` is the sole candidate. Conversational exploration belongs here; requests for a written specification and task list belong to `/kk:design`; requests for a durable domain glossary or reference kit belong to `/kk:model`. If the requested output is genuinely ambiguous, clarify that output rather than assuming permission to create artifacts. Explicit skill invocations remain a separate regression boundary.
 
 Sharpening `/kk:design`'s description and its Ideas and Prototypes entry example is in scope so they advertise written planning rather than claiming every conversation about an idea. Minimal changes to `/kk:model`'s discovery description are also allowed if the competing-catalog scenarios show that its wording captures conversational requests. Neither permission extends to changing the neighboring skills' procedures or confirmation gates. Record any such wording change with its routing evidence.
+
+**Task 3 scope extension, approved 2026-10-03:** the canonical written-planning run exposed skipped confirmations despite complete instruction loading. The user authorized fixing `/kk:design`'s confirmation enforcement. Clarify how existing foundation and classification gates are satisfied and where the response must stop; preserve the gates themselves, prior approvals, WIP routing and artifact contracts. Rerun all affected design scenarios in both instruction variants and retain the original failure.
 
 The entry point states the purpose, conversation-only boundary, required reference reads, and complete interview workflow. Keep the procedure in `SKILL.md`; this small workflow does not need a second process file that restates the same steps.
 

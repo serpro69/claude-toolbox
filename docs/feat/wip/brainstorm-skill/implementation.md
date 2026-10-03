@@ -2,7 +2,7 @@
 
 > Design: [design.md](design.md)
 > Tasks: [tasks.md](tasks.md)
-> Status: Tasks 1–2 implemented; Tasks 3–4 pending
+> Status: Tasks 1–3 implemented; Task 4 pending
 > Review resolutions: [review-findings.md](review-findings.md)
 
 ## Repository context
@@ -10,6 +10,8 @@
 Author skill instructions in `klaude-plugin/`, the source of truth. `make generate-kodex` regenerates Codex skills, profiles, plugin metadata, and `.codex/agents/`; do not hand-edit those outputs. The top-level `kodex-plugin/README.md` is hand-authored and is not rewritten by the generator. Follow the supplied `AGENTS.md` and [plugin authoring conventions](../../../contributing/plugin-development.md). Plugin instructions must be self-contained and must not link back to these feature documents.
 
 This is a Markdown workflow change with shell-based structure checks. It needs no runtime dependency, new agent, command variant, profile, or generator change. Four tasks separate the core interview, evidence and revision behavior, competing-skill routing, and final documentation. Eval design and manual execution are substantive work, not mechanical consequences of registration or generation.
+
+Task 3's approved scope extension permits a focused confirmation-enforcement fix in `design/idea-process.md` after the recorded canonical scenario 9 failure. It must distinguish documented requirements from user-confirmed choices, wait for classification approval before alternatives, and preserve existing approvals and WIP behavior. Rerun scenarios 9 and 11 plus all four design regressions in canonical and generated variants; keep prior results intact. This does not authorize changing `/kk:model` or redesigning neighboring workflows.
 
 ## Complete conversational path
 
