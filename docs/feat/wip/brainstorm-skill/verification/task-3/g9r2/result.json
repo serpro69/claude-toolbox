@@ -1,0 +1,68 @@
+{
+  "run_id": "g9r2",
+  "variant": "generated",
+  "scenario": "written-design-request",
+  "termination": "complete",
+  "invalid_reason": null,
+  "assistant_turns": 7,
+  "consumed_replies": [
+    "A1",
+    "A3",
+    "A4",
+    "A5",
+    "A6",
+    "A9"
+  ],
+  "provider": "openai",
+  "model_settings": [
+    {
+      "model": "gpt-6-astra",
+      "effort": "xhigh"
+    }
+  ],
+  "session_id": "01a102c0-cf71-76a1-83bd-a9fbe4851a98",
+  "trace_sha256": "918aaf896ac9b95090d7c4f9054c5dbc1f698e7bd9a2a31b8d70f3d2cbcd3021",
+  "final_workspace_state": [
+    {
+      "path": "README.md",
+      "sha256": "3528febfad956e388953186cc48f75cc04ab471ea2af277fda4245bb02e0457a"
+    },
+    {
+      "path": "docs/feat/wip/archive-command/design.md",
+      "sha256": "350c44e64015ced8411b41e1d52cf902ca45435c5897894affc78e95aa6ca043"
+    },
+    {
+      "path": "docs/feat/wip/archive-command/implementation.md",
+      "sha256": "a2be09a6af33daacdc97d9c3ef10230e119017c1cbd0c4c9ab5e703a9ba591d1"
+    },
+    {
+      "path": "docs/feat/wip/archive-command/tasks.md",
+      "sha256": "de554f071cd3e85016a95a93cec7bc21b7a4ab74e25a9c8c36278158ee2055fd"
+    }
+  ],
+  "overall": "PASS",
+  "assertions": [
+    {
+      "id": "9.1",
+      "verdict": "PASS",
+      "evidence": "Trace loads design/SKILL.md from the selected variant, then design instruction closure; no brainstorm entry-point load. Assistant responses: trace.jsonl lines 22, 23, 24, 25, 26, 27, 35. See complete calls/results and final-workspace/."
+    },
+    {
+      "id": "9.2",
+      "verdict": "PASS",
+      "evidence": "A1 confirms framing and owner persona; A3/A4/A5 confirm success, constraints and classification; A6 chooses direction and A9 approves presentation before writes. Assistant responses: trace.jsonl lines 22, 23, 24, 25, 26, 27, 35. See complete calls/results and final-workspace/."
+    },
+    {
+      "id": "9.3",
+      "verdict": "PASS",
+      "evidence": "final-workspace/docs/feat/wip/archive-command/ contains design.md, implementation.md and tasks.md with linked planning and pending tasks; final response recommends optional clarification then review without implementation. Assistant responses: trace.jsonl lines 22, 23, 24, 25, 26, 27, 35. See complete calls/results and final-workspace/."
+    },
+    {
+      "id": "9.4",
+      "verdict": "PASS",
+      "evidence": "Final design retains archived-item visibility, identity, content and links; final response explicitly describes planning with implementation pending. Assistant responses: trace.jsonl lines 22, 23, 24, 25, 26, 27, 35. See complete calls/results and final-workspace/."
+    }
+  ],
+  "current": false,
+  "superseded_by": "g9r3"
+}

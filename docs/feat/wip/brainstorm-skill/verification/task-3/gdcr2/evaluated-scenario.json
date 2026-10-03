@@ -1,0 +1,16 @@
+{
+  "id": 5,
+  "name": "clarity-after-drafting",
+  "description": "A fresh design suggests optional clarification after all three artifacts exist, without loading or running it. Stage test-files as a workspace root outside any SKILL.md ancestor; capture final artifacts and the tool trace.",
+  "skills": ["design"],
+  "prompt": "Use /kk:design to document the accepted archive-label idea in docs/feat/wip/archive-label/. The accepted decisions are in accepted.md; all refinement choices and the design presentation are approved, so proceed with drafting without reopening them. This is for the next contributor. Do not implement or run the recommended review.",
+  "trap": "The agent retains automatic clarity loading or execution, makes clarification a required gate, or omits normal drafting requirements after removing the editorial pass.",
+  "files": ["test-files/accepted.md"],
+  "assertions": [
+    { "id": "5.1", "text": "Trace shows drafting/task instructions and resolved profile content loaded before accepted.md is read beyond detection keywords; neither the clarify-docs entry point nor the shared clarity procedure is loaded." },
+    { "id": "5.2", "text": "All three artifacts are drafted without a separate clarity pass. The response suggests optional /kk:clarify-docs with all three output paths before recommending /kk:review-design, without invoking either follow-up or making clarification a required gate." },
+    { "id": "5.3", "text": "Final documents preserve Assumptions, Not Doing, Rejected Alternatives, linked implementation steps with verification, H2 tasks with status/dependencies/checkboxes, the final verification task and dependency graph." },
+    { "id": "5.4", "text": "The explanation distinguishes planned label changes from implemented behavior, preserves archived-item visibility and the unresolved color decision with its owner, and retains working cross-file links." },
+    { "id": "5.5", "text": "Only the selected design artifacts are written, with no extra summary; the response recommends /kk:review-design without executing it or claiming independent verification." }
+  ]
+}

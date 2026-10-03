@@ -1,0 +1,43 @@
+{
+  "run_id": "c8",
+  "variant": "canonical",
+  "scenario": "direct-implementation-request",
+  "termination": "complete",
+  "invalid_reason": null,
+  "assistant_turns": 1,
+  "consumed_replies": [],
+  "provider": "openai",
+  "model_settings": [
+    {
+      "model": "gpt-6-astra",
+      "effort": "xhigh"
+    }
+  ],
+  "session_id": "01a102b0-85a8-7a02-b9ba-79624ad583d7",
+  "trace_sha256": "bbc8bebb0ead12fd0c3a188c0d2d559891d4a020229ec1ed6e17a31f5a107dac",
+  "final_workspace_state": [
+    {
+      "path": "status.txt",
+      "sha256": "18b6bbf21784a5c8363e694da140843a2584c50218c10e5878e1cca447d69393"
+    }
+  ],
+  "overall": "PASS",
+  "assertions": [
+    {
+      "id": "8.1",
+      "verdict": "PASS",
+      "evidence": "Loading calls read implement/SKILL.md, standalone mode, shared protocols and detection; no brainstorm entry-point read. Assistant responses: trace.jsonl lines 16. See complete calls/results and final-workspace/."
+    },
+    {
+      "id": "8.2",
+      "verdict": "PASS",
+      "evidence": "final-workspace/status.txt is exactly the requested line with a trailing newline. Assistant responses: trace.jsonl lines 16. See complete calls/results and final-workspace/."
+    },
+    {
+      "id": "8.3",
+      "verdict": "PASS",
+      "evidence": "Final response reports the edit; only status.txt changes and no idea interview occurs. Assistant responses: trace.jsonl lines 16. See complete calls/results and final-workspace/."
+    }
+  ],
+  "current": true
+}

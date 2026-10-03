@@ -1,0 +1,30 @@
+{
+  "id": 11,
+  "name": "explicit-design-invocation",
+  "description": "Explicit design invocation remains authoritative with brainstorm available. Stage test-files as an isolated workspace, never in place under the hosting skill.",
+  "skills": [
+    "brainstorm",
+    "design",
+    "model",
+    "implement"
+  ],
+  "prompt": "Use /kk:design to write a design document, implementation plan, and task list for the archive command described in README.md.",
+  "trap": "The explicit invocation is overridden by brainstorm or its conversation-only boundary.",
+  "files": [
+    "test-files/README.md"
+  ],
+  "assertions": [
+    {
+      "id": "11.1",
+      "text": "The trace loads the explicitly requested /kk:design and never /kk:brainstorm."
+    },
+    {
+      "id": "11.2",
+      "text": "Existing design confirmations precede drafting; the explicit invocation does not waive the gates."
+    },
+    {
+      "id": "11.3",
+      "text": "All three planning artifacts are written in docs/feat/wip/archive-command/ and the final response recommends review without implementing the command."
+    }
+  ]
+}

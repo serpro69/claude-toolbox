@@ -1,0 +1,65 @@
+{
+  "run_id": "c9r2",
+  "variant": "canonical",
+  "scenario": "written-design-request",
+  "termination": "complete",
+  "invalid_reason": null,
+  "assistant_turns": 4,
+  "consumed_replies": [
+    "A1",
+    "A6",
+    "A9"
+  ],
+  "provider": "openai",
+  "model_settings": [
+    {
+      "model": "gpt-6-astra",
+      "effort": "xhigh"
+    }
+  ],
+  "session_id": "01a102c0-b7e1-7780-9a54-9d6b4ca6fc52",
+  "trace_sha256": "ebbc843b89f94b5572252bbadec83f9100bfe7f548bf7447f2f406f9dfea2457",
+  "final_workspace_state": [
+    {
+      "path": "README.md",
+      "sha256": "3528febfad956e388953186cc48f75cc04ab471ea2af277fda4245bb02e0457a"
+    },
+    {
+      "path": "docs/feat/wip/archive-command/design.md",
+      "sha256": "a1528715ba5f553d09c1029eae5466992924e047cf278ac86e6cd60def7f0126"
+    },
+    {
+      "path": "docs/feat/wip/archive-command/implementation.md",
+      "sha256": "8d11f743778535f6ea1c910d2a740b05cfdb0f65ee41113b1c1b07fe343a073a"
+    },
+    {
+      "path": "docs/feat/wip/archive-command/tasks.md",
+      "sha256": "88094a5d4b8a6360c0347815dea9811751c0f1d3ac3a8bf143c23507540c8d3f"
+    }
+  ],
+  "overall": "FAIL",
+  "assertions": [
+    {
+      "id": "9.1",
+      "verdict": "PASS",
+      "evidence": "Trace loads design/SKILL.md from the selected variant, then design instruction closure; no brainstorm entry-point load. Assistant responses: trace.jsonl lines 22, 23, 24, 30. See complete calls/results and final-workspace/."
+    },
+    {
+      "id": "9.2",
+      "verdict": "FAIL",
+      "evidence": "After A1, response 2 presents alternatives and recommends the existing flag before A3/A4/A5. There is no success, constraints or classification confirmation before that advance. A6 selects a direction and A9 later approves drafting, which does not retroactively satisfy the missing gates. Assistant responses: trace.jsonl lines 22, 23, 24, 30. See complete calls/results and final-workspace/."
+    },
+    {
+      "id": "9.3",
+      "verdict": "PASS",
+      "evidence": "final-workspace/docs/feat/wip/archive-command/ contains design.md, implementation.md and tasks.md with linked planning and pending tasks; final response recommends optional clarification then review without implementation. Assistant responses: trace.jsonl lines 22, 23, 24, 30. See complete calls/results and final-workspace/."
+    },
+    {
+      "id": "9.4",
+      "verdict": "PASS",
+      "evidence": "Final design retains archived-item visibility, identity, content and links; final response explicitly describes planning with implementation pending. Assistant responses: trace.jsonl lines 22, 23, 24, 30. See complete calls/results and final-workspace/."
+    }
+  ],
+  "current": false,
+  "superseded_by": "c9r3"
+}
