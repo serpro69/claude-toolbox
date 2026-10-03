@@ -2,7 +2,7 @@
 
 > Design: [design.md](design.md)
 > Tasks: [tasks.md](tasks.md)
-> Status: planned; no skill implementation has been made
+> Status: Task 1 implemented; Tasks 2–4 pending
 > Review resolutions: [review-findings.md](review-findings.md)
 
 ## Repository context

@@ -1,0 +1,85 @@
+{
+  "variant": "generated",
+  "scenario": "early-stop",
+  "model_settings": [
+    {
+      "model": "gpt-6-astra",
+      "effort": "max"
+    }
+  ],
+  "session": {
+    "id": "01a10235-d1c4-7c33-bb45-13d19f8818a7",
+    "agent_path": "/root/eval_g7",
+    "model_provider": "openai",
+    "cli_version": "0.160.0"
+  },
+  "instruction_reads": [
+    {
+      "path": "/tmp/brainstorm-task1-evals/instructions/generated/skills/brainstorm/SKILL.md",
+      "resolved_path": "/tmp/brainstorm-task1-evals/instructions/generated/skills/brainstorm/SKILL.md",
+      "sha256": "ecac2df21d3e51288ee8d63dc36b0b02cba9cac6370c6f8550738e1ac0291750"
+    },
+    {
+      "path": "/tmp/brainstorm-task1-evals/instructions/generated/skills/brainstorm/shared-ideation-frameworks.md",
+      "resolved_path": "/tmp/brainstorm-task1-evals/instructions/generated/skills/brainstorm/shared-ideation-frameworks.md",
+      "sha256": "9b49fcb0dd3b92af39318907d2d5342b478d4495a1f50ae31a0f13aa1ccbc08c"
+    },
+    {
+      "path": "/tmp/brainstorm-task1-evals/instructions/generated/skills/brainstorm/shared-idea-refinement-criteria.md",
+      "resolved_path": "/tmp/brainstorm-task1-evals/instructions/generated/skills/brainstorm/shared-idea-refinement-criteria.md",
+      "sha256": "b5d3e31b454a668490dc00c08f74c1d4e82f2abf83375ac162b557974e344fbd"
+    }
+  ],
+  "instruction_inventory": "../generated-inputs.sha256",
+  "instruction_inventory_sha256": "a9834a08f43d48d47f49ed6da4c8965578936ee96d08cdb06dee0ee0a19c1444",
+  "catalog_skills": [
+    "brainstorm"
+  ],
+  "catalog_text_sha256": "ab55381b7763cadbc05ae4d9b975f2170a1b1d323c6329ef3c6ac4cc421dfda1",
+  "exact_submission_sha256": "5f103b667643660eca607e253ba4c415509c5a4ab8ed0550be81f811a68cc7df",
+  "submission_file_sha256": "d29c100f4cca1d41370ee1fc0d815f70fbb5e7abd0dd9a0cb9584e1ef82835f7",
+  "scenario_sha256": "0818ba481d4214d5b85541da8189a7283da644b8cfa26ee67f308630c09cf609",
+  "runbook_sha256": "14306e19f4271908318d270d9eff94d92391b19a5b741eda1f1066e37b292785",
+  "trace_sha256": "5941baaf5148eb2b22c61d05735a94c0752b35dd53b5d313105851714f452d0c",
+  "trace_lines": 7,
+  "tool_calls": 2,
+  "tool_outputs": 2,
+  "fixture_manifest": [],
+  "initial_workspace_state": [],
+  "final_workspace_state": [],
+  "assistant_turns": 2,
+  "raw_instruction_contents_match_snapshot": true,
+  "acceptance_valid": true,
+  "termination": "early-stop",
+  "max_assistant_turns": 2,
+  "consumed_replies": [
+    "E1"
+  ],
+  "permitted_writes": [],
+  "synthetic_source_responses": [],
+  "web_tools": "unavailable",
+  "fork_turns": "none",
+  "hash_capture_note": "Inventory hashes derived after execution from the unchanged staged snapshot; all three exact runtime read outputs were compared byte-for-byte with that snapshot. This scenario's runbook does not require pre-start hashing.",
+  "assertions": [
+    {
+      "id": "7.1",
+      "verdict": "PASS",
+      "evidence": "trace.jsonl lines 2–5 load both references before line 6 discusses partial side effects and unknown repeat safety."
+    },
+    {
+      "id": "7.2",
+      "verdict": "PASS",
+      "evidence": "submission-02.json delivers E1 after the first safety question; trace.jsonl line 7 closes with a partial recap and no question."
+    },
+    {
+      "id": "7.3",
+      "verdict": "PASS",
+      "evidence": "trace.jsonl line 7 preserves reduced operator work as the goal, unknown duplicate effects/repeat safety, and no rollout approval."
+    },
+    {
+      "id": "7.4",
+      "verdict": "PASS",
+      "evidence": "trace.jsonl contains only three permitted instruction reads in two tool calls and two substantive responses. Both workspace manifests are empty."
+    }
+  ]
+}

@@ -1,0 +1,95 @@
+{
+  "variant": "generated",
+  "scenario": "loose-technical-idea",
+  "model_settings": [
+    {
+      "model": "gpt-6-astra",
+      "effort": "max"
+    }
+  ],
+  "session": {
+    "id": "01a10235-591a-7ff3-bdb8-2493e5cd65eb",
+    "agent_path": "/root/eval_g1",
+    "model_provider": "openai",
+    "cli_version": "0.160.0"
+  },
+  "instruction_reads": [
+    {
+      "path": "/tmp/brainstorm-task1-evals/instructions/generated/skills/brainstorm/SKILL.md",
+      "resolved_path": "/tmp/brainstorm-task1-evals/instructions/generated/skills/brainstorm/SKILL.md",
+      "sha256": "ecac2df21d3e51288ee8d63dc36b0b02cba9cac6370c6f8550738e1ac0291750"
+    },
+    {
+      "path": "/tmp/brainstorm-task1-evals/instructions/generated/skills/brainstorm/shared-ideation-frameworks.md",
+      "resolved_path": "/tmp/brainstorm-task1-evals/instructions/generated/skills/brainstorm/shared-ideation-frameworks.md",
+      "sha256": "9b49fcb0dd3b92af39318907d2d5342b478d4495a1f50ae31a0f13aa1ccbc08c"
+    },
+    {
+      "path": "/tmp/brainstorm-task1-evals/instructions/generated/skills/brainstorm/shared-idea-refinement-criteria.md",
+      "resolved_path": "/tmp/brainstorm-task1-evals/instructions/generated/skills/brainstorm/shared-idea-refinement-criteria.md",
+      "sha256": "b5d3e31b454a668490dc00c08f74c1d4e82f2abf83375ac162b557974e344fbd"
+    }
+  ],
+  "instruction_inventory": "../generated-inputs.sha256",
+  "instruction_inventory_sha256": "a9834a08f43d48d47f49ed6da4c8965578936ee96d08cdb06dee0ee0a19c1444",
+  "catalog_skills": [
+    "brainstorm",
+    "design",
+    "model",
+    "implement"
+  ],
+  "catalog_text_sha256": "1ce0e22562940f4e084d14622e3fe55fae651fe55953ffefefd43b1bc4f94ed3",
+  "exact_submission_sha256": "b25de018d5173a3a498f30b609ec51b2d7361283ad3631faa2a9cc5ab5aca905",
+  "submission_file_sha256": "222495f139dee38015e34a552c162c545be6653311c45c05daf6e8724b89a70c",
+  "scenario_sha256": "49f9fd09fe4c85018ea14e3e928829632d39bdc890df57de996929d864f8e61c",
+  "runbook_sha256": "f082856337cf347d805b6965620a6f39ed4b3ccf7c5b4330a8c37c239e1ca748",
+  "trace_sha256": "e5e920edcce171cf80336c0cdf0075591b3c768278ed47b31f7a30bc9cba94af",
+  "trace_lines": 9,
+  "tool_calls": 2,
+  "tool_outputs": 2,
+  "fixture_manifest": [],
+  "initial_workspace_state": [],
+  "final_workspace_state": [],
+  "assistant_turns": 4,
+  "raw_instruction_contents_match_snapshot": true,
+  "acceptance_valid": false,
+  "termination": "invalid",
+  "max_assistant_turns": 5,
+  "consumed_replies": [
+    "L1",
+    "L2",
+    "L3"
+  ],
+  "permitted_writes": [],
+  "synthetic_source_responses": [],
+  "web_tools": "unavailable",
+  "fork_turns": "none",
+  "hash_capture_note": "The runbook required hashes before starting; inventory was captured afterward. Preserved but excluded from acceptance; replaced by g1r2.",
+  "assertions": [
+    {
+      "id": "1.1",
+      "verdict": "PARTIAL",
+      "evidence": "Behavior observed below, but this run is invalid for acceptance due to pre-start hash omission. submission-01.txt supplies all four descriptions without a body or named expected selection; trace.jsonl lines 2–5 load only brainstorm and its two references."
+    },
+    {
+      "id": "1.2",
+      "verdict": "PARTIAL",
+      "evidence": "Behavior observed below, but this run is invalid for acceptance due to pre-start hash omission. trace.jsonl lines 2–5 load all required instructions before the first substantive response at line 6."
+    },
+    {
+      "id": "1.3",
+      "verdict": "PARTIAL",
+      "evidence": "Behavior observed below, but this run is invalid for acceptance due to pre-start hash omission. trace.jsonl lines 6–8 ask about current work and reuse separately, use L1/L2, and weigh measured transfer savings against retention policy and storage/maintenance."
+    },
+    {
+      "id": "1.4",
+      "verdict": "PARTIAL",
+      "evidence": "Behavior observed below, but this run is invalid for acceptance due to pre-start hash omission. trace.jsonl line 9 recaps the user-selected policy investigation, repeats the measured rationale, preserves same-machine reuse/retention uncertainty, and postpones build decisions."
+    },
+    {
+      "id": "1.5",
+      "verdict": "PARTIAL",
+      "evidence": "Behavior observed below, but this run is invalid for acceptance due to pre-start hash omission. trace.jsonl contains exactly two tool calls/outputs covering three permitted cat reads, followed only by chat responses. Initial and final workspace manifests are empty."
+    }
+  ]
+}
