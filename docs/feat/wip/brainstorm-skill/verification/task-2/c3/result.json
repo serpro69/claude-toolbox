@@ -1,0 +1,103 @@
+{
+  "run_id": "c3",
+  "variant": "canonical",
+  "scenario": "discoverable-project-fact",
+  "scenario_id": 3,
+  "captured_at": "2026-10-03T16:08:16.298732+00:00",
+  "workspace": "/tmp/brainstorm-task2-evals/workspaces/c3",
+  "instruction_reads": [
+    {
+      "path": "/tmp/brainstorm-task2-evals/instructions/canonical/skills/brainstorm/SKILL.md",
+      "resolved_path": "/tmp/brainstorm-task2-evals/instructions/canonical/skills/brainstorm/SKILL.md",
+      "sha256": "8e614e51be04f7e6f1ef7c9d25b02d7da1cf8dc5c93e9da601f4839971b51f7b"
+    },
+    {
+      "path": "/tmp/brainstorm-task2-evals/instructions/canonical/skills/brainstorm/shared-ideation-frameworks.md",
+      "resolved_path": "/tmp/brainstorm-task2-evals/instructions/canonical/skills/_shared/ideation-frameworks.md",
+      "sha256": "9b49fcb0dd3b92af39318907d2d5342b478d4495a1f50ae31a0f13aa1ccbc08c"
+    },
+    {
+      "path": "/tmp/brainstorm-task2-evals/instructions/canonical/skills/brainstorm/shared-idea-refinement-criteria.md",
+      "resolved_path": "/tmp/brainstorm-task2-evals/instructions/canonical/skills/_shared/idea-refinement-criteria.md",
+      "sha256": "b5d3e31b454a668490dc00c08f74c1d4e82f2abf83375ac162b557974e344fbd"
+    }
+  ],
+  "initial_workspace_state": [
+    {
+      "path": "ops/release-queue.md",
+      "sha256": "ba71709ad98abe5b44593e23eadf6b66ac4f4358f5eb2915e09778969683c6fc"
+    }
+  ],
+  "fixture_manifest": [
+    {
+      "path": "ops/release-queue.md",
+      "sha256": "ba71709ad98abe5b44593e23eadf6b66ac4f4358f5eb2915e09778969683c6fc"
+    }
+  ],
+  "allowed_absent_paths": [],
+  "scenario_sha256": "525fc03e2857444c789948b91d55885fb27176861a54dbaeed85513c7d10afee",
+  "runbook_sha256": "46101d2c9d585399a9182d7ee24a76b28fa1c675b8a7f5428157402207f89224",
+  "exact_submission_sha256": "f881a83faf4d5733527cf933db95f4c1d11835640f39ddc8107353f30dc77a36",
+  "catalog_text_sha256": "4950555df33ab7f3d04a9c4c7a97e8a2356e94db59cb4da2eb8e58a9223c1a34",
+  "catalog_skills": [
+    "brainstorm"
+  ],
+  "fork_turns": "none",
+  "web_tools": "unavailable",
+  "permitted_writes": [],
+  "synthetic_source_responses": [],
+  "tool_outputs": 3,
+  "final_workspace_state": [
+    {
+      "path": "ops/release-queue.md",
+      "sha256": "ba71709ad98abe5b44593e23eadf6b66ac4f4358f5eb2915e09778969683c6fc"
+    }
+  ],
+  "workspace_unchanged": true,
+  "model_settings": [
+    {
+      "model": "gpt-6-astra",
+      "effort": "xhigh"
+    }
+  ],
+  "session_id": "01a10286-e485-7931-8caa-9e24f1750a23",
+  "provider": "openai",
+  "cli_version": "0.160.0",
+  "trace_sha256": "d0c33b7aa6644e502b0d4b429437d2d15300bb4372c911d1f17d7c28965928ae",
+  "trace_lines": 9,
+  "assistant_turns": 2,
+  "consumed_replies": [
+    "F1"
+  ],
+  "acceptance_valid": true,
+  "termination": "complete",
+  "max_assistant_turns": 3,
+  "raw_instruction_contents_match_snapshot": true,
+  "assertions": [
+    {
+      "id": "3.1",
+      "verdict": "PASS",
+      "evidence": "trace.jsonl lines 2\u20135 load instructions; lines 6\u20137 then read the fixture; discussion starts at line 8."
+    },
+    {
+      "id": "3.2",
+      "verdict": "PASS",
+      "evidence": "trace.jsonl lines 6\u20138 show the actual ops/release-queue.md contents and identify one concurrent deployment plus the shared staging migration lock; the question asks impact of waits rather than repeating those facts."
+    },
+    {
+      "id": "3.3",
+      "verdict": "PASS",
+      "evidence": "trace.jsonl line 8 distinguishes documented lock/limit and unproven parallel safety from the user choice about acceptable delay."
+    },
+    {
+      "id": "3.4",
+      "verdict": "PASS",
+      "evidence": "trace.jsonl line 9 after F1 retains limit one, acceptable ten-minute wait, and measuring lock occupancy before pursuing safe overlap."
+    },
+    {
+      "id": "3.5",
+      "verdict": "PASS",
+      "evidence": "trace.jsonl lines 1\u20139: only entry point, both references, and the declared project fixture were read. No mutation/search/index/handoff tools or attempts; before/after file hashes match."
+    }
+  ]
+}

@@ -1,0 +1,1370 @@
+
+=== Section 1: File Existence ===
+[1;33m[TEST][0m CLAUDE.extra.md exists
+[0;32m[PASS][0m CLAUDE.extra.md should exist
+[1;33m[TEST][0m CLAUDE.extra.md contains behavioral instructions
+[0;32m[PASS][0m Contains behavioral instructions section
+[1;33m[TEST][0m CLAUDE.extra.md contains task tracking
+[0;32m[PASS][0m Contains task tracking section
+[1;33m[TEST][0m CLAUDE.extra.md contains exploration phase
+[0;32m[PASS][0m Contains exploration phase section
+
+=== Section 2: CLAUDE.md @import reference ===
+[1;33m[TEST][0m CLAUDE.md contains @import reference for CLAUDE.extra.md
+[0;32m[PASS][0m CLAUDE.md contains @import reference
+[1;33m[TEST][0m CLAUDE.md does not contain migrated behavioral instructions
+[0;32m[PASS][0m Behavioral instructions correctly removed from CLAUDE.md
+[1;33m[TEST][0m CLAUDE.md imports project instructions from AGENTS.md
+[0;32m[PASS][0m CLAUDE.md imports AGENTS.md
+[1;33m[TEST][0m AGENTS.md retains project-specific sections
+[0;32m[PASS][0m AGENTS.md retains project-specific sections
+
+=== Section 3: compare_files Detects CLAUDE.extra.md ===
+[1;33m[TEST][0m compare_files detects CLAUDE.extra.md as added when project doesn't have it
+[0;36m>>>[0m Comparing files with current project
+[0;32m✓[0m Comparison complete: 1 added, 0 modified, 0 deleted, 1 unchanged, 0 excluded
+[0;32m[PASS][0m CLAUDE.extra.md detected as added
+[1;33m[TEST][0m compare_files detects CLAUDE.extra.md as unchanged when identical
+[0;36m>>>[0m Comparing files with current project
+[0;32m✓[0m Comparison complete: 0 added, 0 modified, 0 deleted, 1 unchanged, 0 excluded
+[0;32m[PASS][0m CLAUDE.extra.md detected as unchanged when identical
+[1;33m[TEST][0m compare_files detects CLAUDE.extra.md as modified when content differs
+[0;36m>>>[0m Comparing files with current project
+[0;32m✓[0m Comparison complete: 0 added, 1 modified, 0 deleted, 0 unchanged, 0 excluded
+[0;32m[PASS][0m CLAUDE.extra.md detected as modified when content differs
+[1;33m[TEST][0m compare_files respects exclusion for CLAUDE.extra.md
+[0;36m>>>[0m Comparing files with current project
+[0;32m✓[0m Comparison complete: 0 added, 0 modified, 0 deleted, 0 unchanged, 1 excluded
+[0;32m[PASS][0m CLAUDE.extra.md excluded when in sync_exclusions
+
+=== Section 4: Auto-Import Append Logic ===
+[1;33m[TEST][0m Import line is appended to CLAUDE.md when CLAUDE.extra.md is staged and no import exists
+[0;32m[PASS][0m Import line appended to CLAUDE.md
+[1;33m[TEST][0m Import line is NOT duplicated when already present
+[0;32m[PASS][0m Import line not duplicated when already present
+[1;33m[TEST][0m Import not appended when CLAUDE.md doesn't exist
+[0;32m[PASS][0m Import not appended when CLAUDE.md doesn't exist
+[1;33m[TEST][0m Import not appended when CLAUDE.extra.md not in staging
+[0;32m[PASS][0m Import not appended when CLAUDE.extra.md not in staging
+
+=== Section 5: Bootstrap Script ===
+[1;33m[TEST][0m bootstrap.sh contains import append logic
+[0;32m[PASS][0m bootstrap.sh references CLAUDE.extra.md import
+[1;33m[TEST][0m bootstrap.sh does not contain old behavioral instructions append
+[0;32m[PASS][0m Old behavioral instructions removed from bootstrap.sh
+[1;33m[TEST][0m bootstrap.sh has idempotent import (grep guard)
+[0;32m[PASS][0m bootstrap.sh checks for existing import before appending
+
+=== Section 6: Sync Script Auto-Import ===
+[1;33m[TEST][0m template-sync.sh contains auto-import logic
+[0;32m[PASS][0m Sync script contains CLAUDE.extra.md auto-import logic
+[1;33m[TEST][0m template-sync.sh has idempotent import check
+[0;32m[PASS][0m Sync script checks for existing import before appending
+
+=== Test Summary ===
+Test cases:        21
+Assertions passed: [0;32m21[0m
+Assertions failed: [0;31m0[0m
+
+[0;32mAll tests passed![0m
+
+=== Section 1: Codex marketplace ===
+[1;33m[TEST][0m .agents/plugins/marketplace.json exists and is valid JSON
+[0;32m[PASS][0m Codex marketplace exists
+[0;32m[PASS][0m Codex marketplace is valid JSON
+[1;33m[TEST][0m marketplace.json has kk plugin pointing at kodex-plugin
+[0;32m[PASS][0m Codex marketplace plugin path
+
+=== Section 2: Codex config ===
+[1;33m[TEST][0m config.toml exists
+[0;32m[PASS][0m config.toml exists
+[1;33m[TEST][0m config.toml is valid TOML
+[0;32m[PASS][0m config.toml parses as valid TOML
+
+=== Section 3: Codex hooks ===
+[1;33m[TEST][0m hooks.json exists and is valid JSON
+[0;32m[PASS][0m hooks.json exists
+[0;32m[PASS][0m hooks.json is valid JSON
+[1;33m[TEST][0m hooks.json has SessionStart and PreToolUse entries
+[0;32m[PASS][0m hooks.json has SessionStart
+[0;32m[PASS][0m hooks.json has PreToolUse
+
+=== Section 4: Codex agents ===
+[1;33m[TEST][0m All six agent TOML files exist
+[0;32m[PASS][0m Agent architecture-reviewer.toml exists
+[0;32m[PASS][0m Agent code-reviewer.toml exists
+[0;32m[PASS][0m Agent design-reviewer.toml exists
+[0;32m[PASS][0m Agent eval-grader.toml exists
+[0;32m[PASS][0m Agent profile-resolver.toml exists
+[0;32m[PASS][0m Agent spec-reviewer.toml exists
+[1;33m[TEST][0m Agent TOML files parse cleanly
+[0;32m[PASS][0m Agent architecture-reviewer.toml parses as valid TOML
+[0;32m[PASS][0m Agent code-reviewer.toml parses as valid TOML
+[0;32m[PASS][0m Agent design-reviewer.toml parses as valid TOML
+[0;32m[PASS][0m Agent eval-grader.toml parses as valid TOML
+[0;32m[PASS][0m Agent profile-resolver.toml parses as valid TOML
+[0;32m[PASS][0m Agent spec-reviewer.toml parses as valid TOML
+[1;33m[TEST][0m No ${CLAUDE_PLUGIN_ROOT} literals in agent files
+[0;32m[PASS][0m No CLAUDE_PLUGIN_ROOT literals in agent files
+
+=== Section 5: Codex rules ===
+[1;33m[TEST][0m default.rules exists
+[0;32m[PASS][0m default.rules exists
+
+=== Section 6: Codex scripts ===
+[1;33m[TEST][0m session-start.sh exists
+[0;32m[PASS][0m session-start.sh exists
+[1;33m[TEST][0m pretooluse-bash.sh exists
+[0;32m[PASS][0m pretooluse-bash.sh exists
+[1;33m[TEST][0m session-start.sh produces valid JSON
+[0;32m[PASS][0m session-start.sh output is valid JSON
+[1;33m[TEST][0m session-start.sh aggregates all .claude/CLAUDE.*.md files
+[0;32m[PASS][0m all .claude/CLAUDE.*.md files appear in session context
+[1;33m[TEST][0m session-start.sh excludes .claude/toolbox/CLAUDE.md
+[0;32m[PASS][0m .claude/toolbox/CLAUDE.md not injected into Codex context
+
+=== Section 7: Root-level files ===
+[1;33m[TEST][0m AGENTS.md exists at repo root
+[0;32m[PASS][0m AGENTS.md exists
+
+=== Test Summary ===
+Test cases:        16
+Assertions passed: [0;32m29[0m
+Assertions failed: [0;31m0[0m
+
+[0;32mAll tests passed![0m
+
+=== Section 1: Exact Matching ===
+[1;33m[TEST][0m Exact match on plugin name
+[0;32m[PASS][0m kk resolves to kk@claude-toolbox
+[1;33m[TEST][0m Exact match is case-insensitive
+[0;32m[PASS][0m KK matches kk
+[1;33m[TEST][0m Exact match on different plugin
+[0;32m[PASS][0m cortex resolves correctly
+[1;33m[TEST][0m No substring false positive: 'kk' does not match 'kk-utils'
+[0;32m[PASS][0m kk is not kk-utils
+[1;33m[TEST][0m kk-utils matches its own entry
+[0;32m[PASS][0m kk-utils resolves to kk-utils@other-repo
+
+=== Section 2: Project Resolution Cascade ===
+[1;33m[TEST][0m Project-bound install wins when projectPath matches (proj-a)
+[0;32m[PASS][0m proj-a resolves to its own install, not the newer proj-b
+[1;33m[TEST][0m Project-bound install wins when projectPath matches (proj-b)
+[0;32m[PASS][0m proj-b resolves to its own install
+[1;33m[TEST][0m A nested cwd matches its project root
+[0;32m[PASS][0m subdirectory of proj-a resolves to proj-a
+[1;33m[TEST][0m Falls back to the user-scope (global) entry when no project matches
+[0;32m[PASS][0m unrelated project gets the global install
+[1;33m[TEST][0m No project match and no user scope: falls back to last installed
+[0;32m[PASS][0m most-recently-installed cross-project entry wins as last resort
+
+=== Section 3: Fuzzy Matching ===
+[1;33m[TEST][0m Fuzzy match on close name
+Warning: no exact match for 'corte'; using closest fuzzy match: /tmp/cpr-test.MqbVo5/cache/cortex-ai/cortex/0.3.0
+[0;32m[PASS][0m corte fuzzy-matches cortex
+[1;33m[TEST][0m Fuzzy match warns on stderr (fail loud — may be the wrong plugin)
+[0;32m[PASS][0m fuzzy match emits a warning on stderr
+[1;33m[TEST][0m Exact match is silent on stderr
+[0;32m[PASS][0m exact match emits no warning
+[1;33m[TEST][0m No match for completely unrelated name
+[0;32m[PASS][0m zzzzz should not match anything
+
+=== Section 4: Error Handling ===
+[1;33m[TEST][0m No arguments exits non-zero
+[0;32m[PASS][0m No arguments should fail
+[1;33m[TEST][0m Usage message on no arguments
+[0;32m[PASS][0m Shows usage on no args
+[1;33m[TEST][0m Missing plugins file exits non-zero
+[0;32m[PASS][0m Missing plugins file should fail
+[1;33m[TEST][0m Malformed JSON exits non-zero
+[0;32m[PASS][0m Malformed JSON should fail
+[1;33m[TEST][0m Plugin not found shows error on stderr
+[0;32m[PASS][0m Shows error for unknown plugin
+
+=== Section 5: Install Path Validation ===
+[1;33m[TEST][0m Entry with non-existent installPath is skipped
+[0;32m[PASS][0m Non-existent installPath should not be returned
+[1;33m[TEST][0m Missing project-bound installPath falls through to a valid lower tier
+[0;32m[PASS][0m missing tier-1 path falls through to the user-scope install
+
+=== Section 6: set-plugin-root.sh ===
+[1;33m[TEST][0m Writes export line resolved via cpr.py
+[0;32m[PASS][0m cpr.py-resolved path is exported
+[1;33m[TEST][0m Passes $CLAUDE_PROJECT_DIR through to cpr.py
+[0;32m[PASS][0m CLAUDE_PROJECT_DIR selects the project-bound install
+[1;33m[TEST][0m Falls back to $1 when cpr.py cannot resolve
+[0;32m[PASS][0m argument fallback is exported
+[1;33m[TEST][0m Unset CLAUDE_ENV_FILE exits cleanly without error
+[0;32m[PASS][0m no ambiguous-redirect error when CLAUDE_ENV_FILE is unset
+[1;33m[TEST][0m Neither cpr.py nor $1 resolves: nothing written
+[0;32m[PASS][0m no export line when no valid root found
+[1;33m[TEST][0m Exits cleanly when the env file append fails (unwritable target)
+[0;32m[PASS][0m append failure does not produce a non-zero hook exit
+
+=== Test Summary ===
+Test cases:        27
+Assertions passed: [0;32m27[0m
+Assertions failed: [0;31m0[0m
+
+[0;32mAll tests passed![0m
+
+=== Section 1: validate-bash.sh — Allow cases ===
+[1;33m[TEST][0m Allow: safe command exits 0 with no stdout
+[0;32m[PASS][0m Exit code is 0
+[0;32m[PASS][0m No stdout for allowed command
+[1;33m[TEST][0m Allow: empty command exits 0 with no stdout
+[0;32m[PASS][0m Exit code is 0 for empty command
+[0;32m[PASS][0m No stdout for empty command
+[1;33m[TEST][0m Allow: missing tool_input exits 0 with no stdout
+[0;32m[PASS][0m Exit code is 0 for missing tool_input
+[0;32m[PASS][0m No stdout for missing tool_input
+[1;33m[TEST][0m Allow: cat node_modules/foo exits 0 with no stdout
+[0;32m[PASS][0m Exit code is 0 for cat node_modules/foo
+[0;32m[PASS][0m No stdout for cat node_modules/foo
+[1;33m[TEST][0m Allow: cat app.log exits 0 with no stdout
+[0;32m[PASS][0m Exit code is 0 for cat app.log
+[0;32m[PASS][0m No stdout for cat app.log
+
+=== Section 2: validate-bash.sh — Deny cases ===
+[1;33m[TEST][0m Deny: .env pattern produces structured JSON
+[0;32m[PASS][0m Exit code is 0 even when denying
+[0;32m[PASS][0m Deny output is valid JSON
+[0;32m[PASS][0m hookEventName is PreToolUse
+[0;32m[PASS][0m permissionDecision is deny
+[1;33m[TEST][0m Deny: reason contains the matched pattern
+[0;32m[PASS][0m Reason mentions .env pattern
+[1;33m[TEST][0m Deny: no output on stderr
+[0;32m[PASS][0m No stderr output when denying
+
+=== Section 3: validate-bash.sh — All forbidden patterns ===
+[1;33m[TEST][0m Each forbidden pattern triggers deny with structured JSON
+[0;32m[PASS][0m Pattern '.env' correctly denied
+[0;32m[PASS][0m Pattern '.ansible/' correctly denied
+[0;32m[PASS][0m Pattern '.terraform/' correctly denied
+[0;32m[PASS][0m Pattern 'build/' correctly denied
+[0;32m[PASS][0m Pattern 'dist/' correctly denied
+[0;32m[PASS][0m Pattern '__pycache__' correctly denied
+[0;32m[PASS][0m Pattern '.git/' correctly denied
+[0;32m[PASS][0m Pattern 'venv/' correctly denied
+[0;32m[PASS][0m Pattern '.pyc' correctly denied
+[0;32m[PASS][0m Pattern '.csv' correctly denied
+
+=== Section 4: capy.sh — Graceful degradation ===
+[1;33m[TEST][0m capy.sh exits 0 when capy binary is not found
+[0;32m[PASS][0m Exit code is 0 when capy not found
+
+=== Test Summary ===
+Test cases:        10
+Assertions passed: [0;32m27[0m
+Assertions failed: [0;31m0[0m
+
+[0;32mAll tests passed![0m
+
+=== Section 1: Basic JSON Validation ===
+[1;33m[TEST][0m Example manifest is valid JSON
+[0;32m[PASS][0m Valid JSON syntax
+
+=== Section 2: Field Extraction Patterns ===
+[1;33m[TEST][0m Extract schema_version
+[0;32m[PASS][0m schema_version = 1
+[1;33m[TEST][0m Extract upstream_repo
+[0;32m[PASS][0m upstream_repo = serpro69/claude-toolbox
+[1;33m[TEST][0m Extract template_version
+[0;32m[PASS][0m template_version = v1.0.0
+[1;33m[TEST][0m Extract synced_at
+[0;32m[PASS][0m synced_at = 2025-01-27T10:00:00Z
+[1;33m[TEST][0m Extract PROJECT_NAME
+[0;32m[PASS][0m PROJECT_NAME = my-project
+[1;33m[TEST][0m Extract all variable keys
+[0;32m[PASS][0m All 9 variable keys present
+
+=== Section 3: Manifest Generation Pattern ===
+[1;33m[TEST][0m Generate manifest with jq -n
+[0;32m[PASS][0m Generated manifest matches example
+
+=== Section 4: Special Character Handling ===
+[1;33m[TEST][0m Handle quotes in string values
+[0;32m[PASS][0m Quotes preserved correctly
+[1;33m[TEST][0m Handle backslashes in string values
+[0;32m[PASS][0m Backslashes preserved correctly
+[1;33m[TEST][0m Handle newlines in string values
+[0;32m[PASS][0m Newlines preserved correctly
+[1;33m[TEST][0m Handle project names with hyphens and underscores
+[0;32m[PASS][0m Special characters in project name preserved
+[1;33m[TEST][0m Handle empty strings correctly
+[0;32m[PASS][0m Empty strings handled correctly
+
+=== Section 5: Round-Trip Test ===
+[1;33m[TEST][0m Generate -> Parse -> Verify round-trip
+[0;32m[PASS][0m Round-trip preserves all values
+
+=== Section 6: Schema Validation ===
+[1;33m[TEST][0m Validate example manifest against JSON Schema
+ok -- validation done
+[0;32m[PASS][0m Example manifest passes schema validation
+
+=== Section 7: Test Fixtures Validation ===
+[1;33m[TEST][0m Valid fixture is valid JSON
+[0;32m[PASS][0m valid-manifest.json is valid JSON
+[1;33m[TEST][0m Invalid JSON fixture is actually invalid
+[0;32m[PASS][0m invalid-json.txt is correctly invalid JSON
+
+=== Test Summary ===
+Test cases:        17
+Assertions passed: [0;32m17[0m
+Assertions failed: [0;31m0[0m
+
+[0;32mAll tests passed![0m
+
+=== Section 1: Plugin Manifest ===
+[1;33m[TEST][0m plugin.json exists
+[0;32m[PASS][0m Plugin manifest exists
+[1;33m[TEST][0m plugin.json is valid JSON
+[0;32m[PASS][0m Plugin manifest is valid JSON
+[1;33m[TEST][0m plugin.json has correct name
+[0;32m[PASS][0m Plugin name is kk
+[1;33m[TEST][0m plugin.json has required metadata fields
+[0;32m[PASS][0m Author is serpro69
+[0;32m[PASS][0m plugin.json has description
+[0;32m[PASS][0m plugin.json has version
+[0;32m[PASS][0m plugin.json has homepage
+[0;32m[PASS][0m plugin.json has repository
+[0;32m[PASS][0m plugin.json has license
+
+=== Section 2: Marketplace Manifest ===
+[1;33m[TEST][0m marketplace.json exists
+[0;32m[PASS][0m Marketplace manifest exists
+[1;33m[TEST][0m marketplace.json is valid JSON
+[0;32m[PASS][0m Marketplace manifest is valid JSON
+[1;33m[TEST][0m marketplace.json has correct name
+[0;32m[PASS][0m Marketplace name is claude-toolbox
+[1;33m[TEST][0m marketplace.json plugin source is relative path to klaude-plugin
+[0;32m[PASS][0m Plugin source is ./klaude-plugin
+[1;33m[TEST][0m marketplace.json plugin name matches plugin.json
+[0;32m[PASS][0m Marketplace plugin name matches plugin name
+
+=== Section 3: Skills ===
+[1;33m[TEST][0m All 15 skill directories exist
+[0;32m[PASS][0m Skill exists: brainstorm
+[0;32m[PASS][0m Skill exists: design
+[0;32m[PASS][0m Skill exists: clarify-docs
+[0;32m[PASS][0m Skill exists: chain-of-verification
+[0;32m[PASS][0m Skill exists: dependency-handling
+[0;32m[PASS][0m Skill exists: diff-skill
+[0;32m[PASS][0m Skill exists: document
+[0;32m[PASS][0m Skill exists: implement
+[0;32m[PASS][0m Skill exists: review-design
+[0;32m[PASS][0m Skill exists: review-spec
+[0;32m[PASS][0m Skill exists: merge-docs
+[0;32m[PASS][0m Skill exists: model
+[0;32m[PASS][0m Skill exists: review-code
+[0;32m[PASS][0m Skill exists: review-architecture
+[0;32m[PASS][0m Skill exists: test
+[1;33m[TEST][0m Each skill has a SKILL.md
+[0;32m[PASS][0m SKILL.md for brainstorm
+[0;32m[PASS][0m SKILL.md for design
+[0;32m[PASS][0m SKILL.md for clarify-docs
+[0;32m[PASS][0m SKILL.md for chain-of-verification
+[0;32m[PASS][0m SKILL.md for dependency-handling
+[0;32m[PASS][0m SKILL.md for diff-skill
+[0;32m[PASS][0m SKILL.md for document
+[0;32m[PASS][0m SKILL.md for implement
+[0;32m[PASS][0m SKILL.md for review-design
+[0;32m[PASS][0m SKILL.md for review-spec
+[0;32m[PASS][0m SKILL.md for merge-docs
+[0;32m[PASS][0m SKILL.md for model
+[0;32m[PASS][0m SKILL.md for review-code
+[0;32m[PASS][0m SKILL.md for review-architecture
+[0;32m[PASS][0m SKILL.md for test
+[1;33m[TEST][0m Brainstorm and design share the ideation references
+[0;32m[PASS][0m Shared source exists: ideation-frameworks
+[0;32m[PASS][0m Shared reference target for brainstorm/ideation-frameworks
+[0;32m[PASS][0m Shared reference resolves for brainstorm/ideation-frameworks
+[0;32m[PASS][0m Shared source exists: idea-refinement-criteria
+[0;32m[PASS][0m Shared reference target for brainstorm/idea-refinement-criteria
+[0;32m[PASS][0m Shared reference resolves for brainstorm/idea-refinement-criteria
+[0;32m[PASS][0m Shared source exists: ideation-frameworks
+[0;32m[PASS][0m Shared reference target for design/ideation-frameworks
+[0;32m[PASS][0m Shared reference resolves for design/ideation-frameworks
+[0;32m[PASS][0m Shared source exists: idea-refinement-criteria
+[0;32m[PASS][0m Shared reference target for design/idea-refinement-criteria
+[0;32m[PASS][0m Shared reference resolves for design/idea-refinement-criteria
+[1;33m[TEST][0m Eval oracles stay out of test-files/ (grader-only oracle/ convention)
+[0;32m[PASS][0m No oracle files inside any eval's test-files/
+
+=== Section 4: Commands ===
+[1;33m[TEST][0m All 5 command directories exist
+[0;32m[PASS][0m Command exists: chain-of-verification
+[0;32m[PASS][0m Command exists: review-code
+[0;32m[PASS][0m Command exists: review-spec
+[0;32m[PASS][0m Command exists: migrate-from-taskmaster
+[0;32m[PASS][0m Command exists: template
+
+=== Section 5: Hooks and Scripts ===
+[1;33m[TEST][0m hooks.json exists and is valid JSON
+[0;32m[PASS][0m hooks.json exists
+[0;32m[PASS][0m hooks.json is valid JSON
+[1;33m[TEST][0m hooks.json references CLAUDE_PLUGIN_ROOT
+[0;32m[PASS][0m hooks.json uses CLAUDE_PLUGIN_ROOT path
+[1;33m[TEST][0m validate-bash.sh exists and is executable
+[0;32m[PASS][0m validate-bash.sh exists
+[0;32m[PASS][0m validate-bash.sh is executable
+
+=== Section 6: Config Slimmed Down ===
+[1;33m[TEST][0m .claude/ does not have skills directory
+[0;32m[PASS][0m skills/ not in .claude/
+[1;33m[TEST][0m .claude/ does not have commands directory
+[0;32m[PASS][0m commands/ not in .claude/
+[1;33m[TEST][0m .claude/ does not have validate-bash.sh
+[0;32m[PASS][0m validate-bash.sh not in .claude/
+[1;33m[TEST][0m settings.json has no hooks section
+[0;32m[PASS][0m hooks section removed from settings.json
+[1;33m[TEST][0m settings.json has marketplace config
+[0;32m[PASS][0m settings.json has extraKnownMarketplaces
+[1;33m[TEST][0m settings.json has enabledPlugins
+[0;32m[PASS][0m settings.json has kk@claude-toolbox enabled
+
+=== Section 7: Cross-references ===
+[1;33m[TEST][0m Skill references do NOT have kk: prefix (skills are unprefixed)
+[0;32m[PASS][0m Skill references correctly unprefixed
+[1;33m[TEST][0m Command references use /kk: prefix
+[0;32m[PASS][0m Command references use /kk: prefix
+
+=== Section 8: Profiles ===
+[1;33m[TEST][0m All profile directories exist
+[0;32m[PASS][0m Profile exists: go
+[0;32m[PASS][0m Profile exists: java
+[0;32m[PASS][0m Profile exists: js_ts
+[0;32m[PASS][0m Profile exists: k8s
+[0;32m[PASS][0m Profile exists: k8s-operator
+[0;32m[PASS][0m Profile exists: kotlin
+[0;32m[PASS][0m Profile exists: python
+[0;32m[PASS][0m Profile exists: skill-md
+[1;33m[TEST][0m Each profile has DETECTION.md and overview.md
+[0;32m[PASS][0m DETECTION.md for go
+[0;32m[PASS][0m overview.md for go
+[0;32m[PASS][0m DETECTION.md for java
+[0;32m[PASS][0m overview.md for java
+[0;32m[PASS][0m DETECTION.md for js_ts
+[0;32m[PASS][0m overview.md for js_ts
+[0;32m[PASS][0m DETECTION.md for k8s
+[0;32m[PASS][0m overview.md for k8s
+[0;32m[PASS][0m DETECTION.md for k8s-operator
+[0;32m[PASS][0m overview.md for k8s-operator
+[0;32m[PASS][0m DETECTION.md for kotlin
+[0;32m[PASS][0m overview.md for kotlin
+[0;32m[PASS][0m DETECTION.md for python
+[0;32m[PASS][0m overview.md for python
+[0;32m[PASS][0m DETECTION.md for skill-md
+[0;32m[PASS][0m overview.md for skill-md
+[1;33m[TEST][0m Each DETECTION.md has the three required section headings
+[0;32m[PASS][0m DETECTION.md (go) has heading: ## Path signals
+[0;32m[PASS][0m DETECTION.md (go) has heading: ## Filename signals
+[0;32m[PASS][0m DETECTION.md (go) has heading: ## Content signals
+[0;32m[PASS][0m DETECTION.md (java) has heading: ## Path signals
+[0;32m[PASS][0m DETECTION.md (java) has heading: ## Filename signals
+[0;32m[PASS][0m DETECTION.md (java) has heading: ## Content signals
+[0;32m[PASS][0m DETECTION.md (js_ts) has heading: ## Path signals
+[0;32m[PASS][0m DETECTION.md (js_ts) has heading: ## Filename signals
+[0;32m[PASS][0m DETECTION.md (js_ts) has heading: ## Content signals
+[0;32m[PASS][0m DETECTION.md (k8s) has heading: ## Path signals
+[0;32m[PASS][0m DETECTION.md (k8s) has heading: ## Filename signals
+[0;32m[PASS][0m DETECTION.md (k8s) has heading: ## Content signals
+[0;32m[PASS][0m DETECTION.md (k8s-operator) has heading: ## Path signals
+[0;32m[PASS][0m DETECTION.md (k8s-operator) has heading: ## Filename signals
+[0;32m[PASS][0m DETECTION.md (k8s-operator) has heading: ## Content signals
+[0;32m[PASS][0m DETECTION.md (kotlin) has heading: ## Path signals
+[0;32m[PASS][0m DETECTION.md (kotlin) has heading: ## Filename signals
+[0;32m[PASS][0m DETECTION.md (kotlin) has heading: ## Content signals
+[0;32m[PASS][0m DETECTION.md (python) has heading: ## Path signals
+[0;32m[PASS][0m DETECTION.md (python) has heading: ## Filename signals
+[0;32m[PASS][0m DETECTION.md (python) has heading: ## Content signals
+[0;32m[PASS][0m DETECTION.md (skill-md) has heading: ## Path signals
+[0;32m[PASS][0m DETECTION.md (skill-md) has heading: ## Filename signals
+[0;32m[PASS][0m DETECTION.md (skill-md) has heading: ## Content signals
+[1;33m[TEST][0m Presence-conditional: each existing phase subdirectory has index.md
+[0;32m[PASS][0m index.md for go/review-code
+[0;32m[PASS][0m index.md for go/design
+[0;32m[PASS][0m index.md for go/test
+[0;32m[PASS][0m index.md for go/implement
+[0;32m[PASS][0m index.md for go/document
+[0;32m[PASS][0m index.md for java/review-code
+[0;32m[PASS][0m index.md for js_ts/review-code
+[0;32m[PASS][0m index.md for js_ts/test
+[0;32m[PASS][0m index.md for js_ts/implement
+[0;32m[PASS][0m index.md for k8s/review-code
+[0;32m[PASS][0m index.md for k8s/design
+[0;32m[PASS][0m index.md for k8s/test
+[0;32m[PASS][0m index.md for k8s/implement
+[0;32m[PASS][0m index.md for k8s/document
+[0;32m[PASS][0m index.md for k8s/review-spec
+[0;32m[PASS][0m index.md for k8s-operator/design
+[0;32m[PASS][0m index.md for kotlin/review-code
+[0;32m[PASS][0m index.md for python/review-code
+[0;32m[PASS][0m index.md for python/test
+[0;32m[PASS][0m index.md for python/implement
+[0;32m[PASS][0m index.md for skill-md/review-code
+[0;32m[PASS][0m index.md for skill-md/implement
+[1;33m[TEST][0m Bidirectional index invariant: forward (all index references resolve)
+[0;32m[PASS][0m Forward invariant: go/review-code/index.md references all resolve
+[0;32m[PASS][0m Forward invariant: go/design/index.md references all resolve
+[0;32m[PASS][0m Forward invariant: go/test/index.md references all resolve
+[0;32m[PASS][0m Forward invariant: go/implement/index.md references all resolve
+[0;32m[PASS][0m Forward invariant: go/document/index.md references all resolve
+[0;32m[PASS][0m Forward invariant: java/review-code/index.md references all resolve
+[0;32m[PASS][0m Forward invariant: js_ts/review-code/index.md references all resolve
+[0;32m[PASS][0m Forward invariant: js_ts/test/index.md references all resolve
+[0;32m[PASS][0m Forward invariant: js_ts/implement/index.md references all resolve
+[0;32m[PASS][0m Forward invariant: k8s/review-code/index.md references all resolve
+[0;32m[PASS][0m Forward invariant: k8s/design/index.md references all resolve
+[0;32m[PASS][0m Forward invariant: k8s/test/index.md references all resolve
+[0;32m[PASS][0m Forward invariant: k8s/implement/index.md references all resolve
+[0;32m[PASS][0m Forward invariant: k8s/document/index.md references all resolve
+[0;32m[PASS][0m Forward invariant: k8s/review-spec/index.md references all resolve
+[0;32m[PASS][0m Forward invariant: k8s-operator/design/index.md references all resolve
+[0;32m[PASS][0m Forward invariant: kotlin/review-code/index.md references all resolve
+[0;32m[PASS][0m Forward invariant: python/review-code/index.md references all resolve
+[0;32m[PASS][0m Forward invariant: python/test/index.md references all resolve
+[0;32m[PASS][0m Forward invariant: python/implement/index.md references all resolve
+[0;32m[PASS][0m Forward invariant: skill-md/review-code/index.md references all resolve
+[0;32m[PASS][0m Forward invariant: skill-md/implement/index.md references all resolve
+[1;33m[TEST][0m Bidirectional index invariant: reverse (no orphan .md files)
+[0;32m[PASS][0m Reverse invariant: go/review-code/ has no orphan .md files
+[0;32m[PASS][0m Reverse invariant: go/design/ has no orphan .md files
+[0;32m[PASS][0m Reverse invariant: go/test/ has no orphan .md files
+[0;32m[PASS][0m Reverse invariant: go/implement/ has no orphan .md files
+[0;32m[PASS][0m Reverse invariant: go/document/ has no orphan .md files
+[0;32m[PASS][0m Reverse invariant: java/review-code/ has no orphan .md files
+[0;32m[PASS][0m Reverse invariant: js_ts/review-code/ has no orphan .md files
+[0;32m[PASS][0m Reverse invariant: js_ts/test/ has no orphan .md files
+[0;32m[PASS][0m Reverse invariant: js_ts/implement/ has no orphan .md files
+[0;32m[PASS][0m Reverse invariant: k8s/review-code/ has no orphan .md files
+[0;32m[PASS][0m Reverse invariant: k8s/design/ has no orphan .md files
+[0;32m[PASS][0m Reverse invariant: k8s/test/ has no orphan .md files
+[0;32m[PASS][0m Reverse invariant: k8s/implement/ has no orphan .md files
+[0;32m[PASS][0m Reverse invariant: k8s/document/ has no orphan .md files
+[0;32m[PASS][0m Reverse invariant: k8s/review-spec/ has no orphan .md files
+[0;32m[PASS][0m Reverse invariant: k8s-operator/design/ has no orphan .md files
+[0;32m[PASS][0m Reverse invariant: kotlin/review-code/ has no orphan .md files
+[0;32m[PASS][0m Reverse invariant: python/review-code/ has no orphan .md files
+[0;32m[PASS][0m Reverse invariant: python/test/ has no orphan .md files
+[0;32m[PASS][0m Reverse invariant: python/implement/ has no orphan .md files
+[0;32m[PASS][0m Reverse invariant: skill-md/review-code/ has no orphan .md files
+[0;32m[PASS][0m Reverse invariant: skill-md/implement/ has no orphan .md files
+
+=== Section 9: Profile-detection shared file and consumer symlinks ===
+[1;33m[TEST][0m Shared profile-detection.md exists
+[0;32m[PASS][0m _shared/profile-detection.md exists
+[1;33m[TEST][0m Each consumer skill has a shared-profile-detection.md symlink
+[0;32m[PASS][0m Symlink target correct for review-code: ../_shared/profile-detection.md
+[0;32m[PASS][0m Symlink resolves to existing file for review-code
+[0;32m[PASS][0m Symlink target correct for review-spec: ../_shared/profile-detection.md
+[0;32m[PASS][0m Symlink resolves to existing file for review-spec
+[0;32m[PASS][0m Symlink target correct for design: ../_shared/profile-detection.md
+[0;32m[PASS][0m Symlink resolves to existing file for design
+[0;32m[PASS][0m Symlink target correct for implement: ../_shared/profile-detection.md
+[0;32m[PASS][0m Symlink resolves to existing file for implement
+[0;32m[PASS][0m Symlink target correct for test: ../_shared/profile-detection.md
+[0;32m[PASS][0m Symlink resolves to existing file for test
+[0;32m[PASS][0m Symlink target correct for document: ../_shared/profile-detection.md
+[0;32m[PASS][0m Symlink resolves to existing file for document
+
+=== Section 10: Skill description length ===
+[1;33m[TEST][0m dependency-handling description fits within 1,536-character per-entry cap
+[0;32m[PASS][0m dependency-handling description length (221 chars) ≤ 1,536
+
+=== Section 11: Kodex plugin (generated output) ===
+[1;33m[TEST][0m kodex-plugin/.codex-plugin/plugin.json exists and is valid JSON
+[0;32m[PASS][0m kodex-plugin plugin.json exists
+[0;32m[PASS][0m kodex plugin.json is valid JSON
+[1;33m[TEST][0m kodex-plugin skills match klaude-plugin skills (generation completeness)
+[0;32m[PASS][0m Skill count matches: 15 in both plugins
+[1;33m[TEST][0m No ${CLAUDE_PLUGIN_ROOT} literals in generated kodex-plugin skills
+[0;32m[PASS][0m No CLAUDE_PLUGIN_ROOT literals in generated skills
+[1;33m[TEST][0m No dangling symlinks in kodex-plugin
+[0;32m[PASS][0m No dangling symlinks in kodex-plugin
+[1;33m[TEST][0m No ${TOOLBOX_PLUGIN_ROOT} brace literals in generated kodex-plugin skills
+[0;32m[PASS][0m No ${TOOLBOX_PLUGIN_ROOT} brace literals in generated skills
+[1;33m[TEST][0m Plugin-root brace path refs only at codex-resolvable depth
+[0;32m[PASS][0m All brace plugin-root path refs are at skills/<name>/ or skills/_shared/ depth
+
+=== Test Summary ===
+Test cases:        40
+Assertions passed: [0;32m210[0m
+Assertions failed: [0;31m0[0m
+
+[0;32mAll tests passed![0m
+
+=== Section 1: Core Version Comparison ===
+[1;33m[TEST][0m Major version difference
+[0;32m[PASS][0m 1.0.0 < 2.0.0
+[0;32m[PASS][0m 2.0.0 > 1.0.0
+[1;33m[TEST][0m Minor version difference
+[0;32m[PASS][0m 1.0.0 < 1.1.0
+[0;32m[PASS][0m 1.2.0 > 1.1.0
+[1;33m[TEST][0m Patch version difference
+[0;32m[PASS][0m 1.0.0 < 1.0.1
+[0;32m[PASS][0m 1.0.2 > 1.0.1
+[1;33m[TEST][0m Equal versions
+[0;32m[PASS][0m 1.0.0 == 1.0.0
+[0;32m[PASS][0m 0.0.0 == 0.0.0
+[1;33m[TEST][0m Multi-digit version numbers
+[0;32m[PASS][0m 0.9.0 < 0.10.0 (numeric, not lexical)
+[0;32m[PASS][0m 1.0.99 < 1.0.100
+
+=== Section 2: Pre-release Precedence ===
+[1;33m[TEST][0m Pre-release has lower precedence than release (§11.3)
+[0;32m[PASS][0m 1.0.0-alpha < 1.0.0
+[0;32m[PASS][0m 1.0.0 > 1.0.0-alpha
+[0;32m[PASS][0m 0.10.0-rc.6 < 0.10.0 (reported bug)
+[1;33m[TEST][0m Numeric pre-release identifiers compared as integers (§11.4.1)
+[0;32m[PASS][0m 1.0.0-1 < 1.0.0-2
+[0;32m[PASS][0m 1.0.0-2 < 1.0.0-11 (numeric, not lexical)
+[1;33m[TEST][0m Alphanumeric pre-release identifiers compared lexically (§11.4.2)
+[0;32m[PASS][0m 1.0.0-alpha < 1.0.0-beta
+[0;32m[PASS][0m 1.0.0-beta > 1.0.0-alpha
+[1;33m[TEST][0m Numeric identifier has lower precedence than alphanumeric (§11.4.3)
+[0;32m[PASS][0m 1.0.0-1 < 1.0.0-alpha
+[0;32m[PASS][0m 1.0.0-alpha > 1.0.0-1
+[1;33m[TEST][0m Fewer pre-release fields has lower precedence (§11.4.4)
+[0;32m[PASS][0m 1.0.0-alpha < 1.0.0-alpha.1
+[0;32m[PASS][0m 1.0.0-alpha.1 > 1.0.0-alpha
+[1;33m[TEST][0m Equal pre-release versions
+[0;32m[PASS][0m 1.0.0-rc.1 == 1.0.0-rc.1
+[0;32m[PASS][0m multi-field pre-release equal
+
+=== Section 3: Build Metadata Ignored ===
+[1;33m[TEST][0m Build metadata ignored for precedence
+[0;32m[PASS][0m 1.0.0+build1 == 1.0.0+build2
+[0;32m[PASS][0m 1.0.0+build == 1.0.0
+[0;32m[PASS][0m rc.1+alpha.5 == rc.1 (reported bug)
+[1;33m[TEST][0m Build metadata on both sides ignored
+[0;32m[PASS][0m rc.1+b1 < rc.2+b2 (compare pre-release, ignore build)
+[0;32m[PASS][0m date build metadata ignored
+
+=== Section 4: Spec Example Ordering ===
+[1;33m[TEST][0m Full semver.org precedence chain
+[0;32m[PASS][0m alpha < alpha.1
+[0;32m[PASS][0m alpha.1 < alpha.beta
+[0;32m[PASS][0m alpha.beta < beta
+[0;32m[PASS][0m beta < beta.2
+[0;32m[PASS][0m beta.2 < beta.11
+[0;32m[PASS][0m beta.11 < rc.1
+[0;32m[PASS][0m rc.1 < 1.0.0
+
+=== Section 5: Workflow Scenarios ===
+[1;33m[TEST][0m Release: RC to release is a valid upgrade
+[0;32m[PASS][0m 0.10.0-rc.6 -> 0.10.0 should pass
+[1;33m[TEST][0m Release: cannot downgrade
+[0;32m[PASS][0m 1.0.0 -> 0.9.0 should fail
+[1;33m[TEST][0m Pre-release: RC bump
+[0;32m[PASS][0m rc.1 -> rc.2 should pass
+[0;32m[PASS][0m rc.9 -> rc.10 numeric comparison
+[1;33m[TEST][0m Pre-release: build metadata does not block same-precedence release
+[0;32m[PASS][0m rc.1+alpha.5 == rc.1
+[0;32m[PASS][0m rc.1+alpha.5 < rc.2
+
+=== Section 6: Edge Cases ===
+[1;33m[TEST][0m Zero versions
+[0;32m[PASS][0m 0.0.0 < 0.0.1
+[0;32m[PASS][0m 0.0.0-alpha < 0.0.0
+[1;33m[TEST][0m Leading zeros in pre-release numeric identifiers
+[0;32m[PASS][0m 01 is alphanumeric (leading zero), 1 is numeric; alpha > numeric
+[1;33m[TEST][0m Mixed numeric and alphanumeric pre-release fields
+[0;32m[PASS][0m all-numeric dot-separated fields
+[0;32m[PASS][0m mixed alpha+numeric fields
+[1;33m[TEST][0m Usage error exits non-zero
+[0;32m[PASS][0m Single argument should fail
+[0;32m[PASS][0m No arguments should fail
+
+=== Test Summary ===
+Test cases:        22
+Assertions passed: [0;32m48[0m
+Assertions failed: [0;31m0[0m
+
+[0;32mAll tests passed![0m
+
+=== Section 1: Basic Manifest Generation ===
+[1;33m[TEST][0m generate_manifest creates .github/template-state.json
+[0;32m[PASS][0m Manifest file created
+[1;33m[TEST][0m Generated manifest is valid JSON
+[0;32m[PASS][0m Generated manifest is valid JSON
+
+=== Section 2: Required Fields ===
+[1;33m[TEST][0m Manifest contains schema_version = 1
+[0;32m[PASS][0m schema_version is 1
+[1;33m[TEST][0m Manifest contains upstream_repo with default value
+[0;32m[PASS][0m upstream_repo has default value
+[1;33m[TEST][0m Manifest uses custom UPSTREAM_REPO when set
+[0;32m[PASS][0m upstream_repo uses custom value
+[1;33m[TEST][0m Manifest contains synced_at in ISO 8601 format
+[0;32m[PASS][0m synced_at is in ISO 8601 format: 2026-10-03T16:11:10Z
+
+=== Section 3: Variable Capture ===
+[1;33m[TEST][0m Manifest captures PROJECT_NAME
+[0;32m[PASS][0m PROJECT_NAME captured correctly
+[1;33m[TEST][0m Manifest captures all 6 variables
+[0;32m[PASS][0m PROJECT_NAME
+[0;32m[PASS][0m LANGUAGES
+[0;32m[PASS][0m CC_MODEL
+[0;32m[PASS][0m CC_EFFORT_LEVEL
+[0;32m[PASS][0m CC_PERMISSION_MODE
+[0;32m[PASS][0m CC_STATUSLINE
+[1;33m[TEST][0m Manifest handles empty string values for optional fields
+[0;32m[PASS][0m Empty CC_MODEL captured as empty string
+[0;32m[PASS][0m LANGUAGES has required value
+
+=== Section 4: Special Characters ===
+[1;33m[TEST][0m Manifest handles hyphens and underscores in project name
+[0;32m[PASS][0m Hyphens and underscores preserved
+
+=== Section 5: Template Version Detection (from upstream) ===
+[1;33m[TEST][0m Manifest fetches version from upstream repo (default)
+[0;32m[PASS][0m template_version is from upstream, not local repo: v0.22.3
+[1;33m[TEST][0m Manifest uses custom UPSTREAM_REPO when set
+[0;32m[PASS][0m upstream_repo uses custom value
+[0;32m[PASS][0m template_version fetched from custom upstream: v0.22.3
+
+=== Section 6: Schema Validation ===
+[1;33m[TEST][0m Generated manifest passes JSON Schema validation
+ok -- validation done
+[0;32m[PASS][0m Generated manifest passes JSON Schema validation
+
+=== Section 7: Edge Cases ===
+[1;33m[TEST][0m generate_manifest creates .github directory if missing
+[0;32m[PASS][0m .github directory created
+[0;32m[PASS][0m Manifest created in new directory
+[1;33m[TEST][0m generate_manifest overwrites existing manifest
+[0;32m[PASS][0m Existing manifest overwritten with new content
+
+=== Test Summary ===
+Test cases:        15
+Assertions passed: [0;32m23[0m
+Assertions failed: [0;31m0[0m
+
+[0;32mAll tests passed![0m
+
+=== Section 1: Argument Parsing ===
+[1;33m[TEST][0m parse_arguments with --version flag
+[0;32m[PASS][0m --version sets TARGET_VERSION
+[1;33m[TEST][0m parse_arguments with --dry-run flag
+[0;32m[PASS][0m --dry-run sets DRY_RUN=true
+[1;33m[TEST][0m parse_arguments with --ci flag
+[0;32m[PASS][0m --ci sets CI_MODE=true
+[1;33m[TEST][0m parse_arguments with --output-dir flag
+[0;32m[PASS][0m --output-dir sets STAGING_DIR
+[1;33m[TEST][0m parse_arguments with multiple flags
+[0;32m[PASS][0m Multiple flags: TARGET_VERSION
+[0;32m[PASS][0m Multiple flags: DRY_RUN
+[0;32m[PASS][0m Multiple flags: CI_MODE
+[0;32m[PASS][0m Multiple flags: STAGING_DIR
+[1;33m[TEST][0m parse_arguments with no flags uses defaults
+[0;32m[PASS][0m Default TARGET_VERSION is 'latest'
+[0;32m[PASS][0m Default DRY_RUN is false
+[0;32m[PASS][0m Default CI_MODE is false
+[1;33m[TEST][0m parse_arguments --version without value exits with code 2
+[0;32m[PASS][0m --version without value exits with code 2
+[1;33m[TEST][0m parse_arguments --output-dir without value exits with code 2
+[0;32m[PASS][0m --output-dir without value exits with code 2
+[1;33m[TEST][0m parse_arguments with unknown option exits with code 2
+[0;32m[PASS][0m Unknown option exits with code 2
+
+=== Section 2: Manifest Reading ===
+[1;33m[TEST][0m read_manifest fails when file is missing
+[0;32m[PASS][0m read_manifest exits non-zero for missing file
+[1;33m[TEST][0m read_manifest fails for invalid JSON
+[0;32m[PASS][0m read_manifest exits non-zero for invalid JSON
+[1;33m[TEST][0m read_manifest succeeds for valid manifest
+[0;32m[PASS][0m read_manifest succeeds for valid manifest
+[1;33m[TEST][0m read_manifest fails when schema_version is missing
+[0;32m[PASS][0m read_manifest fails for missing schema_version
+[1;33m[TEST][0m read_manifest fails when variables object is missing
+[0;32m[PASS][0m read_manifest fails for missing variables
+
+=== Section 3: Manifest Validation ===
+[1;33m[TEST][0m validate_manifest fails for unsupported schema version
+[0;32m[INFO][0m Manifest loaded: /home/sergio/Projects/personal/claude-toolbox/test/fixtures/manifests/unsupported-schema.json
+[0;32m[PASS][0m validate_manifest fails for schema version 2
+[1;33m[TEST][0m validate_manifest fails for invalid upstream_repo format
+[0;32m[INFO][0m Manifest loaded: /home/sergio/Projects/personal/claude-toolbox/test/fixtures/manifests/invalid-upstream-repo.json
+[0;32m[PASS][0m validate_manifest fails for invalid upstream_repo format
+[1;33m[TEST][0m validate_manifest succeeds for valid manifest
+[0;32m[INFO][0m Manifest loaded: /home/sergio/Projects/personal/claude-toolbox/test/fixtures/manifests/valid-manifest.json
+[0;32m[PASS][0m validate_manifest succeeds for valid manifest
+
+=== Section 3b: Manifest Variable Backfill ===
+[1;33m[TEST][0m backfill_manifest_variables adds CC_STATUSLINE when missing
+[0;32m[INFO][0m Backfilled missing manifest variables: CC_STATUSLINE=enhanced CC_EFFORT_LEVEL=high CC_PERMISSION_MODE=default CODEX_MODEL=gpt-6-astra CODEX_APPROVAL_POLICY=on-request SKIP_CAPY=false
+[0;32m[INFO][0m Manifest loaded: /tmp/backfill-statusline.ctWrWj/manifest.json
+[0;32m[PASS][0m CC_STATUSLINE backfilled with default 'enhanced'
+[1;33m[TEST][0m backfill_manifest_variables adds CC_EFFORT_LEVEL when missing
+[0;32m[INFO][0m Backfilled missing manifest variables: CC_STATUSLINE=enhanced CC_EFFORT_LEVEL=high CC_PERMISSION_MODE=default CODEX_MODEL=gpt-6-astra CODEX_APPROVAL_POLICY=on-request SKIP_CAPY=false
+[0;32m[INFO][0m Manifest loaded: /tmp/backfill-effort.RiAQjr/manifest.json
+[0;32m[PASS][0m CC_EFFORT_LEVEL backfilled with default 'high'
+[1;33m[TEST][0m backfill_manifest_variables adds all missing variables at once
+[0;32m[INFO][0m Backfilled missing manifest variables: CC_STATUSLINE=enhanced CC_EFFORT_LEVEL=high CC_PERMISSION_MODE=default CODEX_MODEL=gpt-6-astra CODEX_APPROVAL_POLICY=on-request SKIP_CAPY=false
+[0;32m[INFO][0m Manifest loaded: /tmp/backfill-all.9BAM6q/manifest.json
+[0;32m[PASS][0m CC_STATUSLINE backfilled
+[0;32m[PASS][0m CC_EFFORT_LEVEL backfilled
+[0;32m[PASS][0m CC_PERMISSION_MODE backfilled
+[0;32m[PASS][0m SKIP_CAPY backfilled
+[1;33m[TEST][0m backfill_manifest_variables does not overwrite existing values
+[0;32m[INFO][0m Backfilled missing manifest variables: CODEX_MODEL=gpt-6-astra CODEX_APPROVAL_POLICY=on-request SKIP_CAPY=false
+[0;32m[INFO][0m Manifest loaded: /tmp/backfill-noop.yyRfoA/manifest.json
+[0;32m[PASS][0m Existing CC_EFFORT_LEVEL preserved
+[0;32m[PASS][0m Existing CC_PERMISSION_MODE preserved
+[0;32m[PASS][0m Existing CC_STATUSLINE preserved
+[1;33m[TEST][0m backfill_manifest_variables does not overwrite existing SKIP_CAPY=true
+[0;32m[INFO][0m Backfilled missing manifest variables: CC_STATUSLINE=enhanced CC_EFFORT_LEVEL=high CC_PERMISSION_MODE=default CODEX_MODEL=gpt-6-astra CODEX_APPROVAL_POLICY=on-request
+[0;32m[INFO][0m Manifest loaded: /tmp/backfill-skip-capy-noop.gT6q2o/manifest.json
+[0;32m[PASS][0m Existing SKIP_CAPY=true preserved
+
+=== Section 4: Substitution Application ===
+[1;33m[TEST][0m apply_substitutions handles CC_MODEL=default (removes model line)
+[0;36m>>>[0m Applying substitutions from manifest
+[0;32m[INFO][0m Applied Claude Code settings
+[0;32m✓[0m Substitutions applied to /tmp/subst-model-test.x2hwBt/output
+[0;32m[PASS][0m CC_MODEL=default removes model key from settings
+[1;33m[TEST][0m apply_substitutions substitutes non-default CC_MODEL
+[0;36m>>>[0m Applying substitutions from manifest
+[0;32m[INFO][0m Applied Claude Code settings
+[0;32m✓[0m Substitutions applied to /tmp/subst-model-value-test.vuw9az/output
+[0;32m[PASS][0m CC_MODEL value substituted
+[1;33m[TEST][0m apply_substitutions substitutes CC_EFFORT_LEVEL
+[0;36m>>>[0m Applying substitutions from manifest
+[0;32m[INFO][0m Applied Claude Code settings
+[0;32m✓[0m Substitutions applied to /tmp/subst-effort-level-test.kx6R0r/output
+[0;32m[PASS][0m CC_EFFORT_LEVEL value substituted
+[1;33m[TEST][0m apply_substitutions removes effortLevel key when CC_EFFORT_LEVEL=default
+[0;36m>>>[0m Applying substitutions from manifest
+[0;32m[INFO][0m Applied Claude Code settings
+[0;32m✓[0m Substitutions applied to /tmp/subst-effort-level-default-test.MIVnvr/output
+[0;32m[PASS][0m CC_EFFORT_LEVEL=default removes effortLevel key from settings
+[1;33m[TEST][0m apply_substitutions defaults CC_EFFORT_LEVEL to high when missing from manifest
+[0;36m>>>[0m Applying substitutions from manifest
+[0;32m[INFO][0m Applied Claude Code settings
+[0;32m✓[0m Substitutions applied to /tmp/subst-effort-level-fallback-test.pishAE/output
+[0;32m[PASS][0m CC_EFFORT_LEVEL defaults to high when missing
+[1;33m[TEST][0m apply_substitutions substitutes CC_PERMISSION_MODE
+[0;36m>>>[0m Applying substitutions from manifest
+[0;32m[INFO][0m Applied Claude Code settings
+[0;32m✓[0m Substitutions applied to /tmp/subst-permission-mode-test.2K2bME/output
+[0;32m[PASS][0m CC_PERMISSION_MODE value substituted
+[1;33m[TEST][0m apply_substitutions defaults CC_PERMISSION_MODE to default when missing from manifest
+[0;36m>>>[0m Applying substitutions from manifest
+[0;32m[INFO][0m Applied Claude Code settings
+[0;32m✓[0m Substitutions applied to /tmp/subst-permission-mode-fallback-test.TW7lro/output
+[0;32m[PASS][0m CC_PERMISSION_MODE defaults to default when missing
+[1;33m[TEST][0m apply_substitutions strips [mcp_servers.capy] when SKIP_CAPY=true
+[0;36m>>>[0m Applying substitutions from manifest
+[0;32m[INFO][0m Stripped capy MCP server config (SKIP_CAPY=true)
+[0;32m[INFO][0m Applied Codex config.toml settings
+[0;32m✓[0m Substitutions applied to /tmp/subst-skip-capy-true.seibum/output
+[0;32m[PASS][0m [mcp_servers.capy] stripped when SKIP_CAPY=true
+[0;32m[PASS][0m Non-capy sections preserved after stripping
+[1;33m[TEST][0m apply_substitutions preserves [mcp_servers.capy] when SKIP_CAPY=false
+[0;36m>>>[0m Applying substitutions from manifest
+[0;32m[INFO][0m Applied Codex config.toml settings
+[0;32m✓[0m Substitutions applied to /tmp/subst-skip-capy-false.xbBBXa/output
+[0;32m[PASS][0m [mcp_servers.capy] preserved when SKIP_CAPY=false
+[1;33m[TEST][0m apply_substitutions preserves [mcp_servers.capy] when SKIP_CAPY is missing (default)
+[0;36m>>>[0m Applying substitutions from manifest
+[0;32m[INFO][0m Applied Codex config.toml settings
+[0;32m✓[0m Substitutions applied to /tmp/subst-skip-capy-default.rbICCE/output
+[0;32m[PASS][0m [mcp_servers.capy] preserved when SKIP_CAPY not in manifest
+
+=== Section 5: Smart Merge (settings.json) ===
+[1;33m[TEST][0m smart merge: downstream scalar wins over upstream
+[0;36m>>>[0m Applying substitutions from manifest
+[0;32m[INFO][0m Applied Claude Code settings
+[0;32m✓[0m Substitutions applied to /tmp/merge-scalar-wins.EZ89Kc/output
+[0;32m[PASS][0m effortLevel set by manifest default after merge
+[1;33m[TEST][0m smart merge: new key from upstream added to downstream
+[0;36m>>>[0m Applying substitutions from manifest
+[0;32m[INFO][0m Applied Claude Code settings
+[0;32m✓[0m Substitutions applied to /tmp/merge-new-key.epwlbQ/output
+[0;32m[PASS][0m enabledPlugins added from upstream
+[1;33m[TEST][0m smart merge: arrays concat and deduplicate
+[0;36m>>>[0m Applying substitutions from manifest
+[0;32m[INFO][0m Applied Claude Code settings
+[0;32m✓[0m Substitutions applied to /tmp/merge-array-concat.4DgcPa/output
+[0;32m[PASS][0m Allow list has 3 entries (deduped concat)
+[0;32m[PASS][0m First entry from downstream preserved
+[0;32m[PASS][0m Second entry from downstream preserved
+[0;32m[PASS][0m Upstream-only entry appended
+[1;33m[TEST][0m smart merge: deny list propagation from upstream
+[0;36m>>>[0m Applying substitutions from manifest
+[0;32m[INFO][0m Applied Claude Code settings
+[0;32m✓[0m Substitutions applied to /tmp/merge-deny-propagation.6U1R6e/output
+[0;32m[PASS][0m Deny list has 4 entries (downstream 2 + upstream 2 new)
+[0;32m[PASS][0m Downstream deny entry preserved
+[0;32m[PASS][0m Upstream deny entry added
+[1;33m[TEST][0m smart merge: nested object merge (env)
+[0;36m>>>[0m Applying substitutions from manifest
+[0;32m[INFO][0m Applied Claude Code settings
+[0;32m✓[0m Substitutions applied to /tmp/merge-nested-object.IzL0Ma/output
+[0;32m[PASS][0m Downstream env.B preserved
+[0;32m[PASS][0m Downstream env.C preserved
+[0;32m[PASS][0m Upstream env.A added
+[1;33m[TEST][0m smart merge: manifest substitution overrides merge result
+[0;36m>>>[0m Applying substitutions from manifest
+[0;32m[INFO][0m Applied Claude Code settings
+[0;32m✓[0m Substitutions applied to /tmp/merge-manifest-override.4djaoB/output
+[0;32m[PASS][0m Manifest CC_MODEL overrides merge result (downstream had sonnet)
+[1;33m[TEST][0m smart merge: first-time sync uses upstream as-is
+[0;36m>>>[0m Applying substitutions from manifest
+[0;32m[INFO][0m Applied Claude Code settings
+[0;32m✓[0m Substitutions applied to /tmp/merge-first-time.qu0voe/output
+[0;32m[PASS][0m Model set from manifest on first-time sync
+[0;32m[PASS][0m enabledPlugins present from upstream template
+[1;33m[TEST][0m smart merge: empty upstream array does not duplicate downstream entries
+[0;36m>>>[0m Applying substitutions from manifest
+[0;32m[INFO][0m Applied Claude Code settings
+[0;32m✓[0m Substitutions applied to /tmp/merge-empty-array.sLTUQH/output
+[0;32m[PASS][0m Empty upstream array does not add entries
+[0;32m[PASS][0m Downstream entry preserved
+[1;33m[TEST][0m smart merge: type mismatch preserves downstream value
+[0;36m>>>[0m Applying substitutions from manifest
+[0;32m[INFO][0m Applied Claude Code settings
+[0;32m✓[0m Substitutions applied to /tmp/merge-type-mismatch.kqo6nU/output
+[0;32m[PASS][0m Downstream string preserved when upstream has object
+[0;32m[PASS][0m Downstream string preserved when upstream has array
+[1;33m[TEST][0m smart merge: statusLine old path migrated to new path
+[0;36m>>>[0m Applying substitutions from manifest
+[0;32m[INFO][0m Applied Claude Code settings
+[0;32m✓[0m Substitutions applied to /tmp/merge-statusline-path.3ddQIL/output
+[0;32m[PASS][0m statusLine command uses new toolbox path
+[0;32m[PASS][0m statusLine command no longer uses old path
+
+=== Section 6: File Comparison ===
+[1;33m[TEST][0m compare_files detects added files
+[0;36m>>>[0m Comparing files with current project
+[0;32m✓[0m Comparison complete: 1 added, 0 modified, 0 deleted, 0 unchanged, 0 excluded
+[0;32m[PASS][0m One file detected as added
+[1;33m[TEST][0m compare_files detects modified files
+[0;36m>>>[0m Comparing files with current project
+[0;32m✓[0m Comparison complete: 0 added, 1 modified, 0 deleted, 0 unchanged, 0 excluded
+[0;32m[PASS][0m One file detected as modified
+[1;33m[TEST][0m compare_files detects deleted files
+[0;36m>>>[0m Comparing files with current project
+[0;32m✓[0m Comparison complete: 0 added, 0 modified, 1 deleted, 0 unchanged, 0 excluded
+[0;32m[PASS][0m One file detected as deleted
+[1;33m[TEST][0m compare_files detects unchanged files
+[0;36m>>>[0m Comparing files with current project
+[0;32m✓[0m Comparison complete: 0 added, 0 modified, 0 deleted, 1 unchanged, 0 excluded
+[0;32m[PASS][0m One file detected as unchanged
+[1;33m[TEST][0m compare_files does NOT flag workflow files as deleted (sync infrastructure exclusion)
+[0;36m>>>[0m Comparing files with current project
+[0;32m✓[0m Comparison complete: 0 added, 0 modified, 0 deleted, 1 unchanged, 0 excluded
+[0;32m[PASS][0m No files should be flagged as deleted in workflows dir
+[0;32m[PASS][0m Only the sync workflow file should be compared
+
+=== Section 7: Diff Report Generation ===
+[1;33m[TEST][0m generate_diff_report shows version transition
+[0;32m[PASS][0m Report shows current version
+[0;32m[PASS][0m Report shows target version
+[1;33m[TEST][0m generate_diff_report shows 'up to date' when no changes
+[0;32m[PASS][0m Report shows 'up to date' message
+[1;33m[TEST][0m generate_diff_report shows counts when changes exist
+[0;32m[PASS][0m Report shows added count
+[0;32m[PASS][0m Report shows modified count
+[1;33m[TEST][0m generate_diff_report CI mode outputs GitHub Actions format
+[0;32m[PASS][0m CI mode outputs has_changes
+[0;32m[PASS][0m CI mode outputs added_count
+
+=== Section 8: Sync Infrastructure Copying ===
+[1;33m[TEST][0m copy_sync_files copies workflow when present
+[0;36m>>>[0m Copying sync infrastructure files
+[0;32m[INFO][0m Copied template-sync.yml
+[0;32m✓[0m Copied 1 sync infrastructure file(s)
+[0;32m[PASS][0m Workflow copied to staging
+[1;33m[TEST][0m copy_sync_files handles missing workflow gracefully
+[0;36m>>>[0m Copying sync infrastructure files
+[0;32m[INFO][0m No sync infrastructure files found in upstream
+[0;32m[PASS][0m copy_sync_files succeeds even when workflow is missing
+
+=== Section 9: Version Resolution ===
+[1;33m[TEST][0m resolve_version returns specific tag as-is
+[0;32m[PASS][0m Specific tag returned as-is
+[1;33m[TEST][0m resolve_version resolves 'master' to SHA
+[0;32m[PASS][0m master resolved to SHA: 9825150301b0...
+[1;33m[TEST][0m resolve_version resolves 'HEAD' to SHA
+[0;32m[PASS][0m HEAD resolved to SHA: 9825150301b0...
+[1;33m[TEST][0m resolve_version resolves 'latest' to most recent stable tag
+[0;32m[PASS][0m latest resolved to tag: v0.22.3
+[0;32m[PASS][0m latest resolved to stable release (no pre-release suffix)
+[1;33m[TEST][0m resolve_version returns arbitrary values as-is (validation happens during fetch)
+[0;32m[PASS][0m Arbitrary value returned as-is
+
+=== Section 10: Sync Exclusion - is_excluded() ===
+[1;33m[TEST][0m is_excluded returns 1 when no exclusions configured
+[0;32m[PASS][0m No exclusions means not excluded
+[1;33m[TEST][0m is_excluded returns 0 for exact path match
+[0;32m[PASS][0m Exact path match is excluded
+[1;33m[TEST][0m is_excluded returns 0 for glob pattern with trailing wildcard
+[0;32m[PASS][0m Glob wildcard matches file in directory
+[1;33m[TEST][0m is_excluded returns 1 for non-matching path
+[0;32m[PASS][0m Non-matching path is not excluded
+[1;33m[TEST][0m is_excluded matches across directory separators (bash case * crosses /)
+[0;32m[PASS][0m Glob * matches across directory separators
+[1;33m[TEST][0m is_excluded handles multiple patterns (second pattern matches)
+[0;32m[PASS][0m Second pattern in list matches
+
+=== Section 11: Manifest sync_exclusions Loading and Validation ===
+[1;33m[TEST][0m read_manifest loads sync_exclusions from manifest
+[0;32m[INFO][0m Manifest loaded: /home/sergio/Projects/personal/claude-toolbox/test/fixtures/manifests/valid-manifest-with-exclusions.json
+[0;32m[INFO][0m Loaded 2 sync exclusion pattern(s)
+[0;32m[PASS][0m SYNC_EXCLUSIONS has 2 patterns
+[0;32m[PASS][0m First exclusion pattern correct
+[0;32m[PASS][0m Second exclusion pattern correct
+[1;33m[TEST][0m read_manifest handles missing sync_exclusions (optional field)
+[0;32m[INFO][0m Manifest loaded: /home/sergio/Projects/personal/claude-toolbox/test/fixtures/manifests/valid-manifest.json
+[0;32m[PASS][0m SYNC_EXCLUSIONS is empty when field absent
+[1;33m[TEST][0m validate_manifest accepts valid sync_exclusions array
+[0;32m[INFO][0m Manifest loaded: /home/sergio/Projects/personal/claude-toolbox/test/fixtures/manifests/valid-manifest-with-exclusions.json
+[0;32m[INFO][0m Loaded 2 sync exclusion pattern(s)
+[0;32m[PASS][0m validate_manifest passes with valid sync_exclusions
+[1;33m[TEST][0m validate_manifest accepts manifest without sync_exclusions
+[0;32m[INFO][0m Manifest loaded: /home/sergio/Projects/personal/claude-toolbox/test/fixtures/manifests/valid-manifest.json
+[0;32m[PASS][0m validate_manifest passes without sync_exclusions
+[1;33m[TEST][0m validate_manifest rejects sync_exclusions that is not an array
+[0;32m[INFO][0m Manifest loaded: /home/sergio/Projects/personal/claude-toolbox/test/fixtures/manifests/exclusions-not-array.json
+[0;32m[PASS][0m validate_manifest fails when sync_exclusions is a string
+[1;33m[TEST][0m validate_manifest rejects sync_exclusions with non-string elements
+[0;32m[INFO][0m Manifest loaded: /home/sergio/Projects/personal/claude-toolbox/test/fixtures/manifests/exclusions-non-string-elements.json
+[0;32m[INFO][0m Loaded 3 sync exclusion pattern(s)
+[0;32m[PASS][0m validate_manifest fails when sync_exclusions contains non-strings
+
+=== Section 12: compare_files() Exclusion Integration ===
+[1;33m[TEST][0m compare_files excludes matching files from ADDED
+[0;36m>>>[0m Comparing files with current project
+[0;32m✓[0m Comparison complete: 0 added, 0 modified, 0 deleted, 0 unchanged, 1 excluded
+[0;32m[PASS][0m Excluded file not in ADDED_FILES
+[0;32m[PASS][0m Excluded file tracked in EXCLUDED_FILES
+[1;33m[TEST][0m compare_files excludes matching files from MODIFIED
+[0;36m>>>[0m Comparing files with current project
+[0;32m✓[0m Comparison complete: 0 added, 0 modified, 0 deleted, 0 unchanged, 1 excluded
+[0;32m[PASS][0m Excluded file not in MODIFIED_FILES
+[0;32m[PASS][0m Excluded file tracked in EXCLUDED_FILES
+[1;33m[TEST][0m compare_files skips excluded files in deletion detection
+[0;36m>>>[0m Comparing files with current project
+[0;32m✓[0m Comparison complete: 0 added, 0 modified, 0 deleted, 0 unchanged, 0 excluded
+[0;32m[PASS][0m Excluded file not in DELETED_FILES
+[1;33m[TEST][0m compare_files categorizes non-excluded files normally alongside exclusions
+[0;36m>>>[0m Comparing files with current project
+[0;32m✓[0m Comparison complete: 1 added, 0 modified, 0 deleted, 0 unchanged, 1 excluded
+[0;32m[PASS][0m Non-excluded file still categorized as added
+[0;32m[PASS][0m Excluded file tracked
+[0;32m[PASS][0m No modified files
+[1;33m[TEST][0m compare_files does NOT flag per-repo built-in excluded files as deleted
+[0;36m>>>[0m Comparing files with current project
+[0;32m✓[0m Comparison complete: 0 added, 0 modified, 0 deleted, 0 unchanged, 0 excluded
+[0;32m[PASS][0m Built-in excluded files not flagged as deleted
+[1;33m[TEST][0m compare_files handles multiple exclusion patterns
+[0;36m>>>[0m Comparing files with current project
+[0;32m✓[0m Comparison complete: 1 added, 0 modified, 0 deleted, 0 unchanged, 2 excluded
+[0;32m[PASS][0m Non-excluded file categorized as added
+[0;32m[PASS][0m Both excluded files tracked
+[1;33m[TEST][0m compare_files does not double-count files in EXCLUDED_FILES
+[0;36m>>>[0m Comparing files with current project
+[0;32m✓[0m Comparison complete: 0 added, 0 modified, 0 deleted, 0 unchanged, 1 excluded
+[0;32m[PASS][0m Excluded file counted only once (not double-counted)
+[0;32m[PASS][0m Excluded file not in UNCHANGED_FILES
+
+=== Section 13: Reporting Functions - Excluded Files Display ===
+[1;33m[TEST][0m generate_diff_report shows excluded count in summary
+[0;32m[PASS][0m Report shows 'Excluded:' line in summary
+[1;33m[TEST][0m generate_diff_report lists excluded files with marker
+[0;32m[PASS][0m Report shows excluded files header
+[0;32m[PASS][0m Report lists first excluded file
+[0;32m[PASS][0m Report lists second excluded file
+[1;33m[TEST][0m generate_diff_report CI mode includes excluded_count
+[0;32m[PASS][0m CI mode outputs excluded_count=2
+[1;33m[TEST][0m excluded_count does NOT affect has_changes
+[0;32m[PASS][0m has_changes is false when only excluded files present
+[0;32m[PASS][0m excluded_count still reported
+[1;33m[TEST][0m generate_markdown_summary includes excluded files section
+[0;32m[PASS][0m Markdown table contains Excluded row
+[0;32m[PASS][0m Markdown contains Excluded Files heading
+[0;32m[PASS][0m Markdown contains explanatory text about sync_exclusions
+[0;32m[PASS][0m Markdown lists first excluded file
+[0;32m[PASS][0m Markdown lists second excluded file
+[1;33m[TEST][0m generate_diff_report does not show excluded section when no exclusions
+[0;32m[PASS][0m Report correctly omits excluded files section when no exclusions
+[1;33m[TEST][0m generate_markdown_summary omits excluded section when no exclusions
+[0;32m[PASS][0m Markdown table shows Excluded count 0
+[0;32m[PASS][0m Markdown correctly omits Excluded Files section when no exclusions
+
+=== Section 14: Manifest Migration ===
+[1;33m[TEST][0m migrate_manifest rewrites old upstream_repo to new value
+[0;32m[INFO][0m Manifest loaded: /tmp/tmp.l1esKH4CxA/manifest.json
+[0;32m✓[0m Manifest validation passed
+[0;32m[INFO][0m Migrating upstream_repo from serpro69/claude-starter-kit to serpro69/claude-toolbox
+[0;32m[INFO][0m Manifest loaded: /tmp/tmp.l1esKH4CxA/manifest.json
+[0;32m[PASS][0m upstream_repo rewritten to serpro69/claude-toolbox
+[1;33m[TEST][0m migrate_manifest does not modify manifest with current upstream_repo
+[0;32m[INFO][0m Manifest loaded: /tmp/tmp.8d3lWrmDNr/manifest.json
+[0;32m✓[0m Manifest validation passed
+[0;32m[PASS][0m manifest not modified when upstream_repo is already current
+[1;33m[TEST][0m migrate_manifest emits log message when migration triggers
+[0;32m[INFO][0m Manifest loaded: /tmp/tmp.ZUO3nvZRlW/manifest.json
+[0;32m✓[0m Manifest validation passed
+[0;32m[PASS][0m migration emits log message
+
+=== Plugin Migration Detection ===
+[1;33m[TEST][0m needs_plugin_migration returns true when upstream has plugin and not yet migrated
+[0;32m[PASS][0m Migration needed when upstream has plugin and no flag set
+[1;33m[TEST][0m needs_plugin_migration returns false when already migrated
+[0;32m[PASS][0m No migration needed when plugin_migrated flag is set
+[1;33m[TEST][0m needs_plugin_migration returns false when upstream has no plugin
+[0;32m[PASS][0m No migration needed when upstream lacks plugin manifest
+
+=== Plugin Migration Execution ===
+[1;33m[TEST][0m run_plugin_migration removes skills, commands, and validate-bash.sh
+[0;32m[PASS][0m skills/ directory removed
+[0;32m[PASS][0m commands/ directory removed
+[0;32m[PASS][0m validate-bash.sh removed
+[0;32m[PASS][0m statusline.sh preserved
+[1;33m[TEST][0m run_plugin_migration updates settings.json
+[0;32m[PASS][0m hooks removed from settings.json
+[0;32m[PASS][0m extraKnownMarketplaces added to settings.json
+[0;32m[PASS][0m enabledPlugins not set in migrated settings.json
+[0;32m[PASS][0m model preserved in settings.json
+[1;33m[TEST][0m run_plugin_migration sets plugin_migrated flag in manifest
+[0;32m[PASS][0m plugin_migrated flag set in manifest
+[1;33m[TEST][0m run_plugin_migration tracks deleted files
+[0;32m[PASS][0m DELETED_FILES populated (5 entries)
+
+=== Serena Removal Migration ===
+[1;33m[TEST][0m needs_serena_removal returns true when SERENA_INITIAL_PROMPT in manifest
+[0;32m[INFO][0m Manifest loaded: /tmp/serena-needs-remove.lt6YOd/manifest.json
+[0;32m[PASS][0m needs_serena_removal detected SERENA_INITIAL_PROMPT in manifest
+[1;33m[TEST][0m needs_serena_removal returns false when no serena artifacts exist
+[0;32m[INFO][0m Manifest loaded: /tmp/serena-already-clean.4kGA3K/manifest.json
+[0;32m[PASS][0m needs_serena_removal correctly skips clean repos
+[1;33m[TEST][0m run_serena_removal deletes .serena/ and cleans manifest
+[0;32m[INFO][0m Manifest loaded: /tmp/serena-run-remove.DCwAqs/manifest.json
+[0;36m>>>[0m Removing Serena artifacts (no longer in upstream defaults)
+[0;32m[INFO][0m Removed .serena/
+[0;32m[INFO][0m Manifest loaded: /tmp/serena-run-remove.DCwAqs/manifest.json
+[0;32m[INFO][0m Removed SERENA_INITIAL_PROMPT from manifest
+[0;32m✓[0m Serena removal complete
+[0;32m[PASS][0m .serena/ directory removed
+[0;32m[PASS][0m SERENA_INITIAL_PROMPT removed from manifest
+[1;33m[TEST][0m run_serena_removal respects sync_exclusions for .serena/
+[0;32m[INFO][0m Manifest loaded: /tmp/serena-excluded.CTQdTP/manifest.json
+[0;32m[INFO][0m Loaded 1 sync exclusion pattern(s)
+[0;36m>>>[0m Removing Serena artifacts (no longer in upstream defaults)
+[0;32m[INFO][0m Skipping .serena/ removal (matched sync_exclusions)
+[0;32m[INFO][0m Manifest loaded: /tmp/serena-excluded.CTQdTP/manifest.json
+[0;32m[INFO][0m Loaded 1 sync exclusion pattern(s)
+[0;32m[INFO][0m Removed SERENA_INITIAL_PROMPT from manifest
+[0;32m✓[0m Serena removal complete
+[0;32m[PASS][0m .serena/ preserved when in sync_exclusions
+[0;32m[PASS][0m SERENA_INITIAL_PROMPT removed from manifest even when dir excluded
+
+=== json_update helper ===
+[1;33m[TEST][0m json_update modifies file atomically
+[0;32m[PASS][0m json_update sets value
+[1;33m[TEST][0m json_update with --arg passes jq arguments
+[0;32m[PASS][0m json_update passes --arg to jq
+[1;33m[TEST][0m json_update returns 1 on invalid expression
+[0;32m[PASS][0m json_update returns 1 on failure
+[0;32m[PASS][0m file unchanged after failed json_update
+
+=== apply_changes ===
+[1;33m[TEST][0m apply_changes copies staged files to working tree
+[0;32m[INFO][0m Manifest loaded: /tmp/apply-copy.1PfWMo/.github/template-state.json
+[0;36m>>>[0m Applying staged changes
+[0;32m[INFO][0m Applied changes to .claude/
+[0;36m>>>[0m Migrating to kk plugin system
+[0;32m[INFO][0m Set plugin_migrated flag in manifest
+[0;32m✓[0m Plugin migration complete
+[0;32m[INFO][0m Backfilled missing manifest variables: CC_STATUSLINE=enhanced CC_EFFORT_LEVEL=high CC_PERMISSION_MODE=default CODEX_MODEL=gpt-6-astra CODEX_APPROVAL_POLICY=on-request SKIP_CAPY=false
+[0;32m[INFO][0m Manifest loaded: /tmp/apply-copy.1PfWMo/.github/template-state.json
+[0;32m[INFO][0m Updated manifest to version v2.0.0
+[0;32m✓[0m All changes applied
+[0;32m[PASS][0m staged file copied to .claude/
+[0;32m[PASS][0m manifest version updated
+[0;32m[PASS][0m synced_at timestamp updated
+[1;33m[TEST][0m apply_changes auto-imports CLAUDE.extra.md
+[0;32m[INFO][0m Manifest loaded: /tmp/apply-import.BCVFOg/.github/template-state.json
+[0;36m>>>[0m Applying staged changes
+[0;32m[INFO][0m Applied changes to .claude/
+[0;32m[INFO][0m Added @import reference for .claude/CLAUDE.extra.md to CLAUDE.md
+[0;32m[INFO][0m Backfilled missing manifest variables: CC_STATUSLINE=enhanced CC_EFFORT_LEVEL=high CC_PERMISSION_MODE=default CODEX_MODEL=gpt-6-astra CODEX_APPROVAL_POLICY=on-request SKIP_CAPY=false
+[0;32m[INFO][0m Manifest loaded: /tmp/apply-import.BCVFOg/.github/template-state.json
+[0;32m[INFO][0m Updated manifest to version v2.0.0
+[0;32m✓[0m All changes applied
+[0;32m[PASS][0m CLAUDE.extra.md @import added to CLAUDE.md
+[1;33m[TEST][0m apply_changes skips CLAUDE.extra.md import when already present
+[0;32m[INFO][0m Manifest loaded: /tmp/apply-import-skip.lTzXnr/.github/template-state.json
+[0;36m>>>[0m Applying staged changes
+[0;32m[INFO][0m Applied changes to .claude/
+[0;32m[INFO][0m Backfilled missing manifest variables: CC_STATUSLINE=enhanced CC_EFFORT_LEVEL=high CC_PERMISSION_MODE=default CODEX_MODEL=gpt-6-astra CODEX_APPROVAL_POLICY=on-request SKIP_CAPY=false
+[0;32m[INFO][0m Manifest loaded: /tmp/apply-import-skip.lTzXnr/.github/template-state.json
+[0;32m[INFO][0m Updated manifest to version v2.0.0
+[0;32m✓[0m All changes applied
+[0;32m[PASS][0m @import not duplicated when already present
+[1;33m[TEST][0m apply_changes auto-imports .claude/toolbox/CLAUDE.md
+[0;32m[INFO][0m Manifest loaded: /tmp/apply-import-toolbox.DTVW2x/.github/template-state.json
+[0;36m>>>[0m Applying staged changes
+[0;32m[INFO][0m Applied changes to .claude/
+[0;32m[INFO][0m Added @import reference for .claude/toolbox/CLAUDE.md to CLAUDE.md
+[0;32m[INFO][0m Backfilled missing manifest variables: CC_STATUSLINE=enhanced CC_EFFORT_LEVEL=high CC_PERMISSION_MODE=default CODEX_MODEL=gpt-6-astra CODEX_APPROVAL_POLICY=on-request SKIP_CAPY=false
+[0;32m[INFO][0m Manifest loaded: /tmp/apply-import-toolbox.DTVW2x/.github/template-state.json
+[0;32m[INFO][0m Updated manifest to version v2.0.0
+[0;32m✓[0m All changes applied
+[0;32m[PASS][0m toolbox CLAUDE.md @import added to CLAUDE.md
+[1;33m[TEST][0m apply_changes places toolbox import next to CLAUDE.extra.md import
+[0;32m[INFO][0m Manifest loaded: /tmp/apply-import-toolbox-adjacent.tJ8Tv3/.github/template-state.json
+[0;36m>>>[0m Applying staged changes
+[0;32m[INFO][0m Applied changes to .claude/
+[0;32m[INFO][0m Added @import reference for .claude/toolbox/CLAUDE.md to CLAUDE.md
+[0;32m[INFO][0m Backfilled missing manifest variables: CC_STATUSLINE=enhanced CC_EFFORT_LEVEL=high CC_PERMISSION_MODE=default CODEX_MODEL=gpt-6-astra CODEX_APPROVAL_POLICY=on-request SKIP_CAPY=false
+[0;32m[INFO][0m Manifest loaded: /tmp/apply-import-toolbox-adjacent.tJ8Tv3/.github/template-state.json
+[0;32m[INFO][0m Updated manifest to version v2.0.0
+[0;32m✓[0m All changes applied
+[0;32m[PASS][0m toolbox @import inserted directly after CLAUDE.extra.md import
+[1;33m[TEST][0m apply_changes skips toolbox CLAUDE.md import when already present
+[0;32m[INFO][0m Manifest loaded: /tmp/apply-import-toolbox-skip.6l2aHC/.github/template-state.json
+[0;36m>>>[0m Applying staged changes
+[0;32m[INFO][0m Applied changes to .claude/
+[0;32m[INFO][0m Backfilled missing manifest variables: CC_STATUSLINE=enhanced CC_EFFORT_LEVEL=high CC_PERMISSION_MODE=default CODEX_MODEL=gpt-6-astra CODEX_APPROVAL_POLICY=on-request SKIP_CAPY=false
+[0;32m[INFO][0m Manifest loaded: /tmp/apply-import-toolbox-skip.6l2aHC/.github/template-state.json
+[0;32m[INFO][0m Updated manifest to version v2.0.0
+[0;32m✓[0m All changes applied
+[0;32m[PASS][0m toolbox @import not duplicated when already present
+[1;33m[TEST][0m apply_wiring adds toolbox @import without apply_changes (0-change re-run)
+[0;32m[INFO][0m Added @import reference for .claude/toolbox/CLAUDE.md to CLAUDE.md
+[0;32m[PASS][0m apply_wiring added toolbox @import on its own
+[0;32m[PASS][0m apply_wiring places toolbox @import next to CLAUDE.extra.md import
+[1;33m[TEST][0m apply_changes backfills manifest variables
+[0;32m[INFO][0m Manifest loaded: /tmp/apply-backfill.W7n7sp/.github/template-state.json
+[0;36m>>>[0m Applying staged changes
+[0;32m[INFO][0m Backfilled missing manifest variables: CC_STATUSLINE=enhanced CC_EFFORT_LEVEL=high CC_PERMISSION_MODE=default CODEX_MODEL=gpt-6-astra CODEX_APPROVAL_POLICY=on-request SKIP_CAPY=false
+[0;32m[INFO][0m Manifest loaded: /tmp/apply-backfill.W7n7sp/.github/template-state.json
+[0;32m[INFO][0m Updated manifest to version v2.0.0
+[0;32m✓[0m All changes applied
+[0;32m[PASS][0m CC_STATUSLINE backfilled
+[0;32m[PASS][0m SKIP_CAPY backfilled
+
+=== --apply argument parsing ===
+[1;33m[TEST][0m parse_arguments with --apply flag
+[0;32m[PASS][0m --apply sets APPLY_MODE=true
+[1;33m[TEST][0m parse_arguments without --apply keeps APPLY_MODE=false
+[0;32m[PASS][0m APPLY_MODE defaults to false
+[1;33m[TEST][0m parse_arguments with --apply and --version
+[0;32m[PASS][0m --apply with other flags: APPLY_MODE
+[0;32m[PASS][0m --apply with other flags: TARGET_VERSION
+[0;32m[PASS][0m --apply with other flags: STAGING_DIR
+
+=== --local argument parsing ===
+[1;33m[TEST][0m parse_arguments with --local flag
+[0;32m[PASS][0m --local sets LOCAL_MODE=true
+[1;33m[TEST][0m parse_arguments with --local and --version
+[0;32m[PASS][0m --local with --version: LOCAL_MODE
+[0;32m[PASS][0m --local with --version: TARGET_VERSION
+[1;33m[TEST][0m --local and --apply are independent
+[0;32m[PASS][0m --local does not set APPLY_MODE
+
+=== detect-only mode ===
+[1;33m[TEST][0m run_plugin_migration in detect mode populates DELETED_FILES without mutations
+[0;32m[PASS][0m DELETED_FILES populated in detect mode (2 entries)
+[0;32m[PASS][0m skill file preserved in detect mode
+[0;32m[PASS][0m validate-bash.sh preserved in detect mode
+[1;33m[TEST][0m run_serena_removal in detect mode populates arrays without mutations
+[0;32m[INFO][0m Manifest loaded: /tmp/detect-serena.d3BrPo/manifest.json
+[0;36m>>>[0m Removing Serena artifacts (no longer in upstream defaults)
+[0;32m[INFO][0m Would remove .serena/
+[0;32m[INFO][0m Would remove SERENA_INITIAL_PROMPT from manifest
+[0;32m✓[0m Serena removal complete
+[0;32m[PASS][0m DELETED_FILES populated in detect mode
+[0;32m[PASS][0m .serena/ preserved in detect mode
+[0;32m[PASS][0m SERENA_INITIAL_PROMPT preserved in manifest (detect mode)
+
+=== Script Consolidation Migration ===
+[1;33m[TEST][0m needs_script_consolidation returns true when old-location scripts exist
+[0;32m[PASS][0m needs_script_consolidation returns 0 when old scripts exist
+[1;33m[TEST][0m needs_script_consolidation returns false when no old-location scripts exist
+[0;32m[PASS][0m needs_script_consolidation returns non-zero when no old scripts
+[1;33m[TEST][0m run_script_consolidation in detect mode populates DELETED_FILES without mutations
+[0;32m[PASS][0m DELETED_FILES has 4 entries in detect mode
+[0;32m[PASS][0m template-sync.sh preserved in detect mode
+[0;32m[PASS][0m statusline.sh preserved in detect mode
+[0;32m[PASS][0m update.sh preserved in detect mode
+[1;33m[TEST][0m run_script_consolidation in apply mode removes old files
+[0;32m[PASS][0m DELETED_FILES has 3 entries in apply mode
+[0;32m[PASS][0m template-sync.sh removed in apply mode
+[0;32m[PASS][0m semver-compare.sh removed in apply mode
+[0;32m[PASS][0m update.sh removed in apply mode
+
+=== Feature-docs relocation migration ===
+[1;33m[TEST][0m needs_docs_feat_migration returns true when legacy docs dirs exist
+[0;32m[PASS][0m needs_docs_feat_migration returns 0 when docs/wip exists
+[1;33m[TEST][0m needs_docs_feat_migration returns false when only docs/feat exists
+[0;32m[PASS][0m needs_docs_feat_migration returns non-zero when no legacy dirs
+[1;33m[TEST][0m run_docs_feat_migration in detect mode tracks moves without mutating
+[0;32m[PASS][0m DELETED_FILES has 3 entries in detect mode
+[0;32m[PASS][0m ADDED_FILES has 3 entries in detect mode
+[0;32m[PASS][0m docs/wip preserved in detect mode
+[0;32m[PASS][0m docs/feat/wip not created in detect mode
+[1;33m[TEST][0m run_docs_feat_migration in apply mode relocates legacy dirs
+[0;32m[PASS][0m DELETED_FILES has 2 entries in apply mode
+[0;32m[PASS][0m docs/wip removed in apply mode
+[0;32m[PASS][0m docs/feat/wip created in apply mode
+[0;32m[PASS][0m docs/feat/done created in apply mode
+[1;33m[TEST][0m run_docs_feat_migration skips a pair when the target already exists
+[0;32m[PASS][0m no deletions tracked when target collides
+[0;32m[PASS][0m legacy docs/wip left in place on collision
+
+=== Pre-compare deletion preservation ===
+[1;33m[TEST][0m compare_files preserves pre-compare deletions from script consolidation
+[0;36m>>>[0m Comparing files with current project
+[0;32m✓[0m Comparison complete: 2 added, 0 modified, 0 deleted, 0 unchanged, 0 excluded
+[0;32m[PASS][0m .github/scripts/template-sync.sh preserved in DELETED_FILES after compare
+[0;32m[PASS][0m docs/update.sh preserved in DELETED_FILES after compare
+[1;33m[TEST][0m compare_files deduplicates overlapping deletions from .claude/scripts/
+[0;36m>>>[0m Comparing files with current project
+[0;32m✓[0m Comparison complete: 1 added, 0 modified, 1 deleted, 0 unchanged, 0 excluded
+[0;32m[PASS][0m .claude/scripts/statusline.sh appears exactly once (deduplicated)
+
+=== handoff_to_upstream_script ===
+[1;33m[TEST][0m handoff is a no-op when sourced (not the entry point)
+[0;32m[PASS][0m returns 0 without exec when IS_ENTRYPOINT=false
+[0;32m[PASS][0m no bin/ copy staged when not entry point
+[1;33m[TEST][0m handoff is a no-op when TEMPLATE_SYNC_NO_HANDOFF is set
+[0;32m[PASS][0m returns 0 without exec when disabled via env
+[0;32m[PASS][0m no bin/ copy staged when disabled
+[1;33m[TEST][0m handoff is a no-op when upstream script is byte-identical
+[0;32m[PASS][0m returns 0 without exec when scripts match
+[0;32m[PASS][0m no bin/ copy staged when scripts match
+[1;33m[TEST][0m handoff is a no-op when upstream has no sync script
+[0;32m[PASS][0m returns 0 when target version ships no template-sync.sh
+[1;33m[TEST][0m handoff execs the upstream script with original args (fetch mode)
+[0;32m[PASS][0m handoff exec()'d the upstream script (parent code not reached)
+[0;32m[PASS][0m original CLI arguments passed through verbatim
+[0;32m[PASS][0m child receives TEMPLATE_SYNC_NO_HANDOFF=1 (loop guard)
+[0;32m[PASS][0m child receives parent TEMP_DIR via TEMPLATE_SYNC_HANDOFF_CLEANUP
+[0;32m[PASS][0m upstream script runs from stable $STAGING_DIR/bin copy
+[0;32m[PASS][0m semver-compare.sh copied next to the script
+[0;32m[PASS][0m fetched/ cleared so child can re-fetch
+[0;32m[PASS][0m upstream/ and substituted/ cleared in fetch mode
+[1;33m[TEST][0m handoff preserves staged tree in --apply mode
+[0;32m[PASS][0m apply-mode arguments passed through verbatim
+[0;32m[PASS][0m no cleanup delegation when staging dir is user-provided (TEMP_DIR empty)
+[0;32m[PASS][0m substituted/ kept for the child to apply
+[0;32m[PASS][0m upstream/ kept in apply mode
+[1;33m[TEST][0m cleanup_on_exit removes the parent temp dir delegated via handoff
+[0;32m[PASS][0m delegated template-sync.* temp dir removed
+[0;32m[PASS][0m paths outside the mktemp naming pattern are left alone
+[1;33m[TEST][0m entry point exits cleanly after main (self-overwrite guard)
+[0;32m[PASS][0m script executed directly exits 0 via the entry-point guard
+[0;32m[PASS][0m trailing exit prevents reading the overwritten script (rc=0, no stray output)
+
+=== Test Summary ===
+Test cases:        136
+Assertions passed: [0;32m228[0m
+Assertions failed: [0;31m0[0m
+
+[0;32mAll tests passed![0m

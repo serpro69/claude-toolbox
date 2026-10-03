@@ -1,0 +1,94 @@
+{
+  "run_id": "g4",
+  "variant": "generated",
+  "scenario": "changed-premise",
+  "scenario_id": 4,
+  "captured_at": "2026-10-03T16:08:16.300147+00:00",
+  "workspace": "/tmp/brainstorm-task2-evals/workspaces/g4",
+  "instruction_reads": [
+    {
+      "path": "/tmp/brainstorm-task2-evals/instructions/generated/skills/brainstorm/SKILL.md",
+      "resolved_path": "/tmp/brainstorm-task2-evals/instructions/generated/skills/brainstorm/SKILL.md",
+      "sha256": "ecac2df21d3e51288ee8d63dc36b0b02cba9cac6370c6f8550738e1ac0291750"
+    },
+    {
+      "path": "/tmp/brainstorm-task2-evals/instructions/generated/skills/brainstorm/shared-ideation-frameworks.md",
+      "resolved_path": "/tmp/brainstorm-task2-evals/instructions/generated/skills/brainstorm/shared-ideation-frameworks.md",
+      "sha256": "9b49fcb0dd3b92af39318907d2d5342b478d4495a1f50ae31a0f13aa1ccbc08c"
+    },
+    {
+      "path": "/tmp/brainstorm-task2-evals/instructions/generated/skills/brainstorm/shared-idea-refinement-criteria.md",
+      "resolved_path": "/tmp/brainstorm-task2-evals/instructions/generated/skills/brainstorm/shared-idea-refinement-criteria.md",
+      "sha256": "b5d3e31b454a668490dc00c08f74c1d4e82f2abf83375ac162b557974e344fbd"
+    }
+  ],
+  "initial_workspace_state": [],
+  "fixture_manifest": [],
+  "allowed_absent_paths": [],
+  "scenario_sha256": "3c2f755fe9d79c31c303473caf495cf4ed416f36a725b806a508968a7699e375",
+  "runbook_sha256": "69fb44f9c96720c9411292c0350231d7271733bf0e3ffb07ce117b8efa7b23ef",
+  "exact_submission_sha256": "adc870e6f14623e379c2499ba38137307ef4c54349333a2691ff4280d6a3d359",
+  "catalog_text_sha256": "631e7444f1f19020a7a030982a504f5ff2a77d6f59c55ee848ade0d028bdaaf3",
+  "catalog_skills": [
+    "brainstorm"
+  ],
+  "fork_turns": "none",
+  "web_tools": "unavailable",
+  "permitted_writes": [],
+  "synthetic_source_responses": [],
+  "tool_outputs": 2,
+  "final_workspace_state": [],
+  "workspace_unchanged": true,
+  "model_settings": [
+    {
+      "model": "gpt-6-astra",
+      "effort": "xhigh"
+    }
+  ],
+  "session_id": "01a10289-3c40-7062-9d49-48b5c496384f",
+  "provider": "openai",
+  "cli_version": "0.160.0",
+  "trace_sha256": "c3ea8f3052fe68f6ec212d5e8f672cdf11a7fa7f5d2f6e6d4271da62a192d136",
+  "trace_lines": 8,
+  "assistant_turns": 3,
+  "consumed_replies": [
+    "C1",
+    "C2"
+  ],
+  "acceptance_valid": true,
+  "termination": "complete",
+  "max_assistant_turns": 4,
+  "raw_instruction_contents_match_snapshot": true,
+  "assertions": [
+    {
+      "id": "4.1",
+      "verdict": "PASS",
+      "evidence": "trace.jsonl lines 2\u20135 load entry point and both references before cache discussion at line 6."
+    },
+    {
+      "id": "4.2",
+      "verdict": "PASS",
+      "evidence": "trace.jsonl line 6 treats public data as an assumption and cross-run caching as provisional; manual invocation and local processing stay settled."
+    },
+    {
+      "id": "4.3",
+      "verdict": "PASS",
+      "evidence": "trace.jsonl line 7 after C1 rejects retained report data including encryption, explicitly reversing the premise for cross-run caching."
+    },
+    {
+      "id": "4.4",
+      "verdict": "PASS",
+      "evidence": "trace.jsonl lines 7\u20138 explicitly preserve manual invocation and local-only processing without asking the user to choose them again."
+    },
+    {
+      "id": "4.5",
+      "verdict": "PASS",
+      "evidence": "trace.jsonl line 8 after C2 drops cross-run caching, selects investigating computation time, and leaves optimization benefit unestablished."
+    },
+    {
+      "id": "4.6",
+      "verdict": "PASS",
+      "evidence": "trace.jsonl lines 1\u20138: only entry point, both references were read. No mutation/search/index/handoff tools or attempts; before/after file hashes match."
+    }
+  ]
+}
