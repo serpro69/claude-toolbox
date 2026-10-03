@@ -14,9 +14,11 @@ Why `kk`? I have `jj` and `kk` mappings in nvim to go back to normal mode, and i
 
 All skills appear as `/skill-name` in the slash command menu (annotated with `(kk)`). No additional configuration needed.
 
+Use `/kk:brainstorm` for an optional conversation about a technical idea or decision. It asks one question at a time, adapts to the clarity you need, and ends with a chat-only recap of decisions, rationale, and open assumptions. Request `/kk:design` when you want written design documents, an implementation plan, and tasks; brainstorming creates no files and does not start that workflow automatically.
+
 ## What's Included
 
-- **14 workflow and utility skills** — `/kk:design` → `/kk:review-design` → `/kk:implement` → `/kk:review-code` → `/kk:test` → `/kk:document`, plus utilities including `/kk:clarify-docs` for existing documentation and PR drafts
+- **15 workflow and utility skills** — `/kk:design` → `/kk:review-design` → `/kk:implement` → `/kk:review-code` → `/kk:test` → `/kk:document`, plus utilities including `/kk:clarify-docs` for existing documentation and PR drafts
 - **Commands** — isolated variants for code review, CoVe, spec review, design review
 - **Hooks** — Bash validation (blocks commands touching sensitive paths)
 - **Profiles** — per-domain content (Go, Java, JS/TS, Kotlin, K8s, Python) with review checklists, implementation gotchas, design prompts, test validators, and doc rubrics

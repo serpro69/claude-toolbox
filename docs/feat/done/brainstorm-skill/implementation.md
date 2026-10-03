@@ -2,7 +2,7 @@
 
 > Design: [design.md](design.md)
 > Tasks: [tasks.md](tasks.md)
-> Status: Tasks 1–3 implemented; Task 4 pending
+> Status: done — all four tasks implemented and verified
 > Review resolutions: [review-findings.md](review-findings.md)
 
 ## Repository context
