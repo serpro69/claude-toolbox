@@ -1,0 +1,35 @@
+{
+  "id": 3,
+  "name": "discoverable-project-fact",
+  "description": "A local operating note establishes deployment concurrency before the agent asks the user for the policy decision.",
+  "skills": [
+    "brainstorm"
+  ],
+  "prompt": "Help me think through whether our internal release queue should start a second deployment while one is still running. The current concurrency and reason for it are in ops/release-queue.md. I need to decide whether to investigate parallelism or keep the existing limit.",
+  "trap": "The agent asks the user to repeat the documented concurrency or rationale, assumes parallelism is safe, or confuses an observed constraint with the user's preference.",
+  "files": [
+    "test-files/ops/release-queue.md"
+  ],
+  "assertions": [
+    {
+      "id": "3.1",
+      "text": "The skill and both reasoning references load before reading the project fixture or discussing its content."
+    },
+    {
+      "id": "3.2",
+      "text": "The agent actually reads ops/release-queue.md and identifies max concurrent deployments as one and the shared staging database migration lock as its documented reason, without asking the user to repeat those facts."
+    },
+    {
+      "id": "3.3",
+      "text": "The agent separates the observed current limit and lock constraint from the user decision about latency and investigation; it does not claim two concurrent deployments are already safe."
+    },
+    {
+      "id": "3.4",
+      "text": "After the scripted user choice, the recap keeps the limit at one and selects measuring lock occupancy first, explaining why queue pressure alone does not justify raising concurrency."
+    },
+    {
+      "id": "3.5",
+      "text": "Only allowed instruction and fixture reads occur; there are no deliberate writes, knowledge-store/session-vault searches, indexing, implementation, or automatic handoff, and the fixture remains byte-identical."
+    }
+  ]
+}
