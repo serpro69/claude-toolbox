@@ -3,28 +3,29 @@
 > Design: [design.md](design.md)
 > Implementation: [implementation.md](implementation.md)
 > Review resolutions: [review-findings.md](review-findings.md)
-> Status: pending
+> Status: in-progress
 > Created: 2026-10-03
 > Not Doing: persistent state, output artifacts, implementation or automatic handoff, nontechnical topics, shared interview procedure, changes to neighboring workflow gates/outputs, knowledge-store/session-vault search, automatic profiles, mandatory subagents, batching modes, new eval runner
 
 ## Task 1: Deliver the core conversation and closing recap
 
-- **Status:** pending
+- **Status:** done
 - **Depends on:** —
 - **Size:** M
 - **Can run in parallel with:** —
 - **Docs:** [Complete conversational path](implementation.md#complete-conversational-path), [Manual runbook contract](implementation.md#manual-runbook-contract), [Interaction contract](design.md#interaction-contract)
+- **Verification:** [Task 1 evidence](verification/task-1/README.md) — six accepted runs; two invalid originals retained; source review and final evidence audit approved.
 
 ### Subtasks
 
-- [ ] 1.1 Relocate `design/frameworks.md` and `design/refinement-criteria.md` to `_shared/ideation-frameworks.md` and `_shared/idea-refinement-criteria.md`, preserving exact content and attribution. → verify: no editorial differences from their pre-change contents.
-- [ ] 1.2 Add the two shared-reference symlinks to `skills/design/` and `skills/brainstorm/`; update `design/SKILL.md` and `design/idea-process.md` links and anchors. → verify: relative targets resolve, stale operative references are absent, and the existing design procedure is unchanged.
-- [ ] 1.3 Create `klaude-plugin/skills/brainstorm/SKILL.md` with its trigger-first description and complete ordered workflow: adaptive depth, technical audience, one question at a time, targeted file/web research, challenge, revision, and chat closure. Keep ordinary user overrides implicit. Exclude knowledge-store/session-vault searches and persistence. → verify: description budget checked, instructions load before subject matter, and content-read instructions occur once.
-- [ ] 1.4 Sharpen `/kk:design`'s description and Ideas and Prototypes example around written planning. If scenario 1 demonstrates a collision with `/kk:model`, allow a minimal discovery-description change there too. Preserve all neighboring procedures and gates. → verify: scenario 1 selects brainstorming from the competing catalog; record any discovery edits with the relevant routing evidence.
-- [ ] 1.5 Make the closing recap distinguish settled decisions, rationale, and open assumptions. Retain optional user-directed transition to `/kk:design` without waiving its confirmations. Include the pinned inspiration attribution. → verify: completion and early-stop transcripts remain truthful and do not initiate another workflow.
-- [ ] 1.6 Register `brainstorm` in `test/test-plugin-structure.sh`, assert the two consumers' shared-reference symlinks, and generate Codex output. Leave command/profile-consumer lists unchanged. → verify: plugin/Codex structure checks, `make plugin-graph`, and generation stability pass.
-- [ ] 1.7 Add `brainstorm/evals/README.md` and scenarios 1, 5, and 7 with evaluator-only `oracle/runbook.md` files using the fixed contract. → verify: fixture links, reply IDs/conditions, turn limits, stop rules, and assertion mappings are complete; no oracle is staged.
-- [ ] 1.8 Execute those three scenarios against canonical and generated instructions. → verify: record six runs with exact prompts/replies, catalog and instruction hashes, traces, file state, and assertion verdicts; missing executions remain pending.
+- [x] 1.1 Relocate `design/frameworks.md` and `design/refinement-criteria.md` to `_shared/ideation-frameworks.md` and `_shared/idea-refinement-criteria.md`, preserving exact content and attribution. → verify: no editorial differences from their pre-change contents.
+- [x] 1.2 Add the two shared-reference symlinks to `skills/design/` and `skills/brainstorm/`; update `design/SKILL.md` and `design/idea-process.md` links and anchors. → verify: relative targets resolve, stale operative references are absent, and the existing design procedure is unchanged.
+- [x] 1.3 Create `klaude-plugin/skills/brainstorm/SKILL.md` with its trigger-first description and complete ordered workflow: adaptive depth, technical audience, one question at a time, targeted file/web research, challenge, revision, and chat closure. Keep ordinary user overrides implicit. Exclude knowledge-store/session-vault searches and persistence. → verify: description budget checked, instructions load before subject matter, and content-read instructions occur once.
+- [x] 1.4 Sharpen `/kk:design`'s description and Ideas and Prototypes example around written planning. If scenario 1 demonstrates a collision with `/kk:model`, allow a minimal discovery-description change there too. Preserve all neighboring procedures and gates. → verify: scenario 1 selects brainstorming from the competing catalog; record any discovery edits with the relevant routing evidence.
+- [x] 1.5 Make the closing recap distinguish settled decisions, rationale, and open assumptions. Retain optional user-directed transition to `/kk:design` without waiving its confirmations. Include the pinned inspiration attribution. → verify: completion and early-stop transcripts remain truthful and do not initiate another workflow.
+- [x] 1.6 Register `brainstorm` in `test/test-plugin-structure.sh`, assert the two consumers' shared-reference symlinks, and generate Codex output. Leave command/profile-consumer lists unchanged. → verify: plugin/Codex structure checks, `make plugin-graph`, and generation stability pass.
+- [x] 1.7 Add `brainstorm/evals/README.md` and scenarios 1, 5, and 7 with evaluator-only `oracle/runbook.md` files using the fixed contract. → verify: fixture links, reply IDs/conditions, turn limits, stop rules, and assertion mappings are complete; no oracle is staged.
+- [x] 1.8 Execute those three scenarios against canonical and generated instructions. → verify: record six runs with exact prompts/replies, catalog and instruction hashes, traces, file state, and assertion verdicts; missing executions remain pending.
 
 Size M covers the core workflow and three baseline scenarios. Moves, symlinks, and generated copies are mechanical; designing and executing the scenarios is substantive work included in this task's size.
 

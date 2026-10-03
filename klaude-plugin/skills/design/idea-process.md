@@ -29,7 +29,7 @@ In order to gain a better understanding of the project, **check the contributing
 
 Use the profiles resolved during entry; their loaded questions seed the refinement question pool. Integrate those questions into the sub-phases below — one question per message, as always.
 
-Note: [frameworks.md](frameworks.md) and [refinement-criteria.md](refinement-criteria.md) are already loaded during the mandatory instruction-load phase (SKILL.md step 2). Do not reload them here.
+Note: [shared-ideation-frameworks.md](shared-ideation-frameworks.md) and [shared-idea-refinement-criteria.md](shared-idea-refinement-criteria.md) are already loaded during the mandatory instruction-load phase (SKILL.md step 2). Do not reload them here.
 
 **Interaction style throughout:** one question per message, multiple choice preferred. Open-ended questions are OK too. The sub-phases below add structure to _what_ is asked, not _how_.
 
@@ -43,7 +43,7 @@ Note: [frameworks.md](frameworks.md) and [refinement-criteria.md](refinement-cri
 - [ ] 3d direction chosen
 - [ ] 3e assumptions, Not Doing, and Rejected Alternatives presented
 
-**3a. Frame the problem.** Restate the idea as a rough "How Might We" problem statement — a directional anchor, not a fully specified template. Use [frameworks.md §HMW](frameworks.md#how-might-we-hmw) for format quality guidance (good vs bad HMW qualities), but do not attempt to fill every slot (specific user, key constraint) yet — those come from 3b. Present the framing to the user for confirmation or correction before proceeding. This anchors all subsequent questions on the problem, not a solution.
+**3a. Frame the problem.** Restate the idea as a rough "How Might We" problem statement — a directional anchor, not a fully specified template. Use [shared-ideation-frameworks.md §HMW](shared-ideation-frameworks.md#how-might-we-hmw) for format quality guidance (good vs bad HMW qualities), but do not attempt to fill every slot (specific user, key constraint) yet — those come from 3b. Present the framing to the user for confirmation or correction before proceeding. This anchors all subsequent questions on the problem, not a solution.
 
 **3b. Establish foundations.** Three things must be explicitly answered before advancing to alternatives. Ask one at a time, multiple choice preferred:
 
@@ -53,7 +53,7 @@ Note: [frameworks.md](frameworks.md) and [refinement-criteria.md](refinement-cri
 
 Do not advance to 3c until all three are confirmed.
 
-**3c. Explore alternatives.** Select frameworks from the already-loaded [frameworks.md](frameworks.md) that fit the idea — pick by "Best for" guidance, never run every framework.
+**3c. Explore alternatives.** Select frameworks from the already-loaded [shared-ideation-frameworks.md](shared-ideation-frameworks.md) that fit the idea — pick by "Best for" guidance, never run every framework.
 
 Classify the idea before generating alternatives. **Non-trivial** if it involves architectural choices, multiple valid implementation approaches, or significant unknowns. **Simple** if the implementation path is singular and the main decisions are parameter-level. State which classification and why, then confirm with the user:
 
@@ -69,7 +69,7 @@ Two paths:
 
 Never skip this step silently — the user always sees at least two options. If the user rejects all alternatives, ask what constraint or dimension was missed, then loop back to 3c with that input as an additional lens.
 
-**3d. Converge.** Evaluate each direction against the already-loaded [refinement-criteria.md](refinement-criteria.md) (User Value, Feasibility, Differentiation) via criteria-based analysis. Present a pros/cons matrix and recommend one direction with a one-line rationale per rejected alternative.
+**3d. Converge.** Evaluate each direction against the already-loaded [shared-idea-refinement-criteria.md](shared-idea-refinement-criteria.md) (User Value, Feasibility, Differentiation) via criteria-based analysis. Present a pros/cons matrix and recommend one direction with a one-line rationale per rejected alternative.
 
 If alternatives make specific factual claims about APIs, libraries, or existing code, offer the user an explicit choice: "Some of these alternatives make specific technical claims I can fact-check. Want me to run `/kk:chain-of-verification:isolated` to verify them, or should I proceed with the analysis as-is?" Let the user decide — do not auto-invoke or auto-skip CoVe.
 

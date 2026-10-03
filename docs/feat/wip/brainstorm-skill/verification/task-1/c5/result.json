@@ -1,0 +1,91 @@
+{
+  "variant": "canonical",
+  "scenario": "no-repository",
+  "model_settings": [
+    {
+      "model": "gpt-6-astra",
+      "effort": "max"
+    }
+  ],
+  "session": {
+    "id": "01a10234-97c1-7f91-8dd2-8b6abb0fa145",
+    "agent_path": "/root/eval_c5",
+    "model_provider": "openai",
+    "cli_version": "0.160.0"
+  },
+  "instruction_reads": [
+    {
+      "path": "/tmp/brainstorm-task1-evals/instructions/canonical/skills/brainstorm/SKILL.md",
+      "resolved_path": "/tmp/brainstorm-task1-evals/instructions/canonical/skills/brainstorm/SKILL.md",
+      "sha256": "8e614e51be04f7e6f1ef7c9d25b02d7da1cf8dc5c93e9da601f4839971b51f7b"
+    },
+    {
+      "path": "/tmp/brainstorm-task1-evals/instructions/canonical/skills/brainstorm/shared-ideation-frameworks.md",
+      "resolved_path": "/tmp/brainstorm-task1-evals/instructions/canonical/skills/_shared/ideation-frameworks.md",
+      "sha256": "9b49fcb0dd3b92af39318907d2d5342b478d4495a1f50ae31a0f13aa1ccbc08c"
+    },
+    {
+      "path": "/tmp/brainstorm-task1-evals/instructions/canonical/skills/brainstorm/shared-idea-refinement-criteria.md",
+      "resolved_path": "/tmp/brainstorm-task1-evals/instructions/canonical/skills/_shared/idea-refinement-criteria.md",
+      "sha256": "b5d3e31b454a668490dc00c08f74c1d4e82f2abf83375ac162b557974e344fbd"
+    }
+  ],
+  "instruction_inventory": "../canonical-inputs.sha256",
+  "instruction_inventory_sha256": "383405cdb56525c0e26b3cc2a8a37775832fa686805b85c8ec0a120932d4b444",
+  "catalog_skills": [
+    "brainstorm"
+  ],
+  "catalog_text_sha256": "2e29be37e086702fba4c73a9b99411940ec845a102f9dbff7803211e07c01d64",
+  "exact_submission_sha256": "0cf974ce148462547c95e72c699b3910a8c84b6c1b5291edcc38b8e14a7ee1cc",
+  "submission_file_sha256": "1503e8a8fb0a02f2c81dbc6467feac7bb7295f6eefcbf0814f4ee3d2371ad233",
+  "scenario_sha256": "2c5aefd549b7ee9bf21211dbd569a1970b77351a731b1eddfc335d27952c22fe",
+  "runbook_sha256": "c500ac02e3894d90efe82a5e04e38c7b1481e2deadc91b571e3f5c3da9934a39",
+  "trace_sha256": "bce91b2c64afeefd5f85b6dc36e1a615c450c0a331980a72c037be25f9e9a7e8",
+  "trace_lines": 8,
+  "tool_calls": 2,
+  "tool_outputs": 2,
+  "fixture_manifest": [],
+  "initial_workspace_state": [],
+  "final_workspace_state": [],
+  "assistant_turns": 3,
+  "raw_instruction_contents_match_snapshot": true,
+  "acceptance_valid": true,
+  "termination": "complete",
+  "max_assistant_turns": 4,
+  "consumed_replies": [
+    "N1",
+    "N2"
+  ],
+  "permitted_writes": [],
+  "synthetic_source_responses": [],
+  "web_tools": "unavailable",
+  "fork_turns": "none",
+  "hash_capture_note": "Inventory hashes derived after execution from the unchanged staged snapshot; all three exact runtime read outputs were compared byte-for-byte with that snapshot. This scenario's runbook does not require pre-start hashing.",
+  "assertions": [
+    {
+      "id": "5.1",
+      "verdict": "PASS",
+      "evidence": "trace.jsonl lines 2–5 load brainstorm and both references before the first substantive response at line 6."
+    },
+    {
+      "id": "5.2",
+      "verdict": "PASS",
+      "evidence": "trace.jsonl lines 6–8 progress from forgotten messages to a trial without project reads, broad filesystem searches, or setup requests."
+    },
+    {
+      "id": "5.3",
+      "verdict": "PASS",
+      "evidence": "trace.jsonl lines 6–7 ask one question per response about missed reminders/check ownership or response reliability; no developer, market, or stack questionnaire."
+    },
+    {
+      "id": "5.4",
+      "verdict": "PASS",
+      "evidence": "trace.jsonl line 8 recaps a one-week trial in the existing chat channel, missed manual messages as rationale, and uncertain sustained operator response."
+    },
+    {
+      "id": "5.5",
+      "verdict": "PASS",
+      "evidence": "trace.jsonl records only the three permitted instruction reads in two tool calls and chat replies. Both workspace manifests are empty."
+    }
+  ]
+}

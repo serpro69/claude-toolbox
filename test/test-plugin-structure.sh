@@ -66,6 +66,7 @@ assert_equals "kk" "$mp_plugin_name" "Marketplace plugin name matches plugin nam
 log_section "Section 3: Skills"
 
 EXPECTED_SKILLS=(
+  brainstorm
   design
   clarify-docs
   chain-of-verification
@@ -94,6 +95,21 @@ done
 log_test "Each skill has a SKILL.md"
 for skill in "${EXPECTED_SKILLS[@]}"; do
   assert_file_exists "$REPO_ROOT/klaude-plugin/skills/$skill/SKILL.md" "SKILL.md for $skill"
+done
+
+log_test "Brainstorm and design share the ideation references"
+for skill in brainstorm design; do
+  for reference in ideation-frameworks idea-refinement-criteria; do
+    reference_path="$REPO_ROOT/klaude-plugin/skills/$skill/shared-$reference.md"
+    assert_file_exists "$REPO_ROOT/klaude-plugin/skills/_shared/$reference.md" \
+      "Shared source exists: $reference"
+    if [[ -L "$reference_path" ]]; then
+      assert_equals "../_shared/$reference.md" "$(readlink "$reference_path")" "Shared reference target for $skill/$reference"
+      assert_file_exists "$reference_path" "Shared reference resolves for $skill/$reference"
+    else
+      log_fail "Not a symlink: $reference_path"
+    fi
+  done
 done
 
 # Eval oracle-staging invariant (CLAUDE.md §Skill evaluations): grader-only
