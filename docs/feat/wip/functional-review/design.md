@@ -1,7 +1,9 @@
 # Functional and operational review
 
 > Issue: [#166](https://github.com/serpro69/claude-toolbox/issues/166)
-> Status: draft; problem, scope and shared-context direction approved on 2026-10-07; detailed design awaiting review
+> Status: revised after two independent design reviews on 2026-10-07; implementation pending
+> Review disposition: [Consolidated assessment](reviews/design-review-consolidation.md)
+> Evaluation contract: [evaluation.md](evaluation.md)
 > Implementation: [implementation.md](implementation.md)
 > Tasks: [tasks.md](tasks.md)
 > Source baseline: c2d28c9e
@@ -35,7 +37,7 @@ After this change:
 4. Missing documents or production access narrow the conclusions; they do not disable functional review or create an automatic access/approval ceremony.
 5. Evidence-based findings explain a trigger, affected path and consequence. A clean review identifies inspected paths and important limits.
 
-Acceptance uses the scenarios in [Evaluation](#evaluation): required behavioral assertions pass in the applicable real workflow, including negative controls. Record baseline and candidate outcomes under the same fixture, model and invocation conditions. There is no promise of zero missed bugs, no target finding count, and no claim that static structure tests establish behavioral quality.
+Acceptance uses the scenarios in [Evaluation](#evaluation) and the binding/grading rules in [evaluation.md](evaluation.md). Every assertions[] entry in a new full-workflow eval is required; optional observations live outside that array. Predeclare model, modes and fixture revisions, then run two independent fresh sessions per baseline/candidate case and mode. All required candidate assertions must pass in both runs; a missing trace is not a pass. Retain failures and report observed results without claiming statistical reliability. There is no promise of zero missed bugs, no target finding count, and no claim that static structure tests establish behavioral quality.
 
 ## Scope and ownership
 
@@ -75,6 +77,8 @@ Add klaude-plugin/skills/_shared/change-context.md, consumed through local symli
 
 Scale the record to the change. A small pure helper fix may need a few sentences; a cross-service mutation may need a compact scenario table. Empty boilerplate fields are not useful. Irrelevant operational dimensions receive a short reason. The reviewer may discover additional affected paths.
 
+Keep change-context.md at most 800 whitespace-delimited words and functional-review.md at most 1,200, counted over each complete canonical file. These are authoring budgets, not runtime truncation. Deduplicate first and move optional examples to eval/operator documentation if a draft exceeds its budget. Preserve all normative rules; if they still cannot fit, record a justified design-budget revision before implementation acceptance instead of hiding excess content in another always-loaded file. The structure test checks both budgets and each source/symlink pair.
+
 ### Evidence and source rules
 
 User decisions and applicable repository instructions establish requirements. Use current design/task contracts where available; inspect linked issues when relevant without assuming that issue text is newer or more authoritative. Explain conflicts that change the assessment. Existing code proves current behavior, not intended product requirements; tests can encode the same mistaken assumption as the implementation.
@@ -83,7 +87,13 @@ The producer provides factual context with file/symbol or revision references. I
 
 Never equate the review base, local main, a stable tag and the deployed revision. A compatibility statement names the baseline it actually uses. If only source at a tag was inspected, describe source-level compatibility with that tag; do not claim the deployed environment was verified.
 
-Refresh affected fields after scope changes, a revised requirement or review fixes. On resume, inspect current repository state instead of trusting an old handoff. In plan mode, keep enduring constraints and unresolved actions in the existing implementation/task documents. Standalone work uses conversational context by default; a deferred issue must be recorded in an existing appropriate tracking location or a concise repository-local review note with a next action.
+Refresh affected fields after scope changes, a revised requirement or review fixes. On resume, inspect current repository state instead of trusting an old handoff. In plan mode, record execution observations and unresolved actions in a labeled Execution context subsection of the current task in tasks.md. Distinguish observations, proposals and explicitly accepted requirement changes; an observation does not amend the specification. Standalone work uses conversational context by default; a deferred issue must be recorded in an existing appropriate tracking location or a concise repository-local review note with a next action.
+
+### Readable historical evidence
+
+The parent workflow owns preparation of historical source whenever a compatibility comparison requires code absent from candidate files or diff hunks. Obtain the relevant local Git blob or bounded source excerpt and materialize it in a read-only evidence bundle outside the worktree under review. Label each item with repository identity, full revision, original path, blob/content hash, original line span, and any omitted/redacted extent. Include actual source, not the parent's summary, in both independent-review payloads; distinguish historical files from candidate files and methodology.
+
+The code-reviewer requests further evidence by naming repository, revision, path or symbol, and the comparison it needs. The parent obtains locally available source, resumes or re-invokes that reviewer with the original context and new evidence, and supplies the same relevant addition through PAL's continuation. Retain provisional findings and evidence-request provenance. No new reviewer shell permissions are needed. If the source is unavailable or bounded investigation cannot settle the question, state the specific gap and keep the conclusion Unknown; do not substitute the author's interpretation. Evidence collection does not authorize network access or production access that the task otherwise lacks.
 
 ## Functional review procedure
 
@@ -117,7 +127,17 @@ Use these evidence-qualified conclusions for applicable compatibility rows:
 - Unknown: material baseline, environment, consumer or data evidence is missing.
 - Not applicable: the change has no consequence for that dimension, with a reason.
 
-These conclusions do not replace P0–P3 severity or the existing code-review verdict. Supported is not a guarantee about production. Missing information is not itself an invented code defect. Continue useful review, identify what would settle the unknown, and avoid an unconditional release-safe statement.
+These conclusions complement P0–P3 severity and the code-review verdict:
+
+| Evidence | Code-review verdict | Release assessment |
+| --- | --- | --- |
+| Demonstrated in-scope incompatibility caused or worsened by the change | Emit one severity-rated finding based on actual impact, not an automatic P0/P1. REQUEST_CHANGES for P0/P1 or a violated hard acceptance/delivery requirement; otherwise COMMENT for an actionable nonblocking issue. | Blocked for the affected required combination. |
+| Known external rollout prerequisite, with no demonstrated code defect | Assess the code on its merits; APPROVE can be explicitly scoped to code. | Blocked until the prerequisite is met; document the dependency. |
+| Unknown evidence essential to task acceptance or an explicitly requested release conclusion | COMMENT if there is no demonstrated defect warranting REQUEST_CHANGES. Do not issue an unconditional approval of the unverified requirement. | Unknown with the missing evidence and next action. |
+| Unknown operational detail outside the requested/required assessment | It does not automatically downgrade a supported, explicitly scoped code verdict. | Unknown for that unassessed environment. |
+| Supported or Not applicable | Apply existing findings/severity rules; neither status overrides another defect. | Preserve the named baseline and limits. |
+
+Supported is not a production guarantee; missing information is not an invented code defect. A report can approve code while withholding release readiness, but cannot use that distinction to bypass an explicit independently-releasable-main requirement.
 
 ## /kk:implement workflow
 
@@ -125,7 +145,7 @@ These conclusions do not replace P0–P3 severity or the existing code-review ve
 
 Load the mode procedure, shared protocols, resolved profile guidance and applicable dependency instructions first. Plan mode uses existing feature documents; standalone mode establishes the request and candidate filenames before source investigation. Move detailed standalone source investigation into the common post-instruction phase. Re-detect and load guidance when exploration adds a target covered by a new profile.
 
-Then inspect affected behavior and assemble the change context before the first implementation edit. In plan mode, record newly established enduring delivery constraints near the implementation plan's existing constraints and in the current task's verification. Respect existing formats; do not create a parallel task system.
+Then inspect affected behavior and assemble the change context before the first implementation edit. In plan mode, append newly observed delivery constraints and verification evidence to the current task's Execution context subsection. Correct or supersede earlier observations with a dated note, preserving their provenance. Do not silently rewrite design.md, implementation.md or acceptance criteria to fit the code. A genuine requirement change follows explicit user authorization and is recorded as such, with its source and rationale. Respect existing formats; do not create a parallel task system.
 
 Check that the proposed approach can satisfy the requirement and the applicable delivery policy. Resolve consequential ambiguity or a proposed exception before dependent implementation. Reuse prior user authorization and decisions; routine choices do not create new approval gates. If a requirement is incompatible with the proposed mechanism, explain the concrete flow, trade-off and smallest alternatives before building it.
 
@@ -147,7 +167,7 @@ Replace the "code quality alone" fallback in both isolated prompts. Missing spec
 
 Select PAL context files by the required behavior trace: entry points, relevant dependencies, consumers, state contracts and delivery configuration. The current ten-surrounding-file cap becomes an initial selection budget, not proof that the trace is complete. Keep the first request focused; use the existing continuation capability for specific missing context or report the uncovered boundary. Do not send whole repositories by default.
 
-Update the shared PAL protocol only within its code-review branch; /kk:review-design must remain valid with document inputs. Maintain native external findings, reviewer attribution, independent judgments and the annotation policy. Agreement between reviewers is not a substitute for evidence. A response that reports no embedded/read source or otherwise incomplete coverage cannot support a broad clean-review claim.
+Introduce explicit code-review and document-review branches in the currently flat shared PAL protocol; then add the new behavior and historical-evidence requirements to the code-review branch. /kk:review-design must remain valid with document inputs. Maintain native external findings, reviewer attribution, independent judgments and the annotation policy. Agreement between reviewers is not a substitute for evidence. A response that reports no embedded/read source or otherwise incomplete coverage cannot support a broad clean-review claim.
 
 Both final report modes include:
 
@@ -162,7 +182,9 @@ One issue spanning several lenses is one finding. Keep confidence reasoning and 
 
 Keep one post-instruction entry point for content-level investigation in each workflow. The standard summary, detailed procedure, isolated wrapper, agent and implement mode files must agree. Subsequent targeted verification uses evidence gathered under that phase; the wording must not prohibit re-reading evidence to substantiate a finding.
 
-Bounded inspection necessary to resolve declared profile or conditional-load predicates remains permitted before full investigation. Load every resulting checklist before analysis. This replaces standard review's current deferred-checklist sequence and isolated review's diff-first preparation locally, without redesigning the shared detection algorithm.
+Before operative workflow changes, amend [ADR 0004](../../../adr/0004-skill-workflow-ordering.md) and the ordering section of [AGENTS.md](../../../../AGENTS.md) to state a narrow routing exception. Current absolute wording conflicts with existing content-based detection and with this proposal; do not describe the new ordering as already fully authorized by those documents.
+
+After basic process instructions load, bounded inspection solely to resolve a declared detection or conditional-load predicate may precede profile loading. Inspect at most approximately 16 KiB per candidate file, limited to the predicate; log the predicate/path and load every matching instruction before analyzing behavior. If bounded inspection cannot decide a conditional, conservatively load that instruction. The exception permits no findings, full-diff investigation, edits or tests. This locally replaces standard review's deferred-checklist sequence and isolated review's diff-first preparation without redesigning shared detection.
 
 The shared task-scope clarification also reaches /kk:review-spec; preserve its existing pending-task behavior and add no new mandatory change-context payload to that skill. Plugin files explain the rules in full and never link back to these toolbox design documents.
 
@@ -170,13 +192,13 @@ Canonical edits remain under klaude-plugin/. Generate kodex-plugin/ and .codex/a
 
 ## Evaluation
 
-Build small synthetic fixtures, independently reproducible without private repositories, cloud access or service credentials. Stage them outside any ancestor containing SKILL.md. Assertions and expected answers are grader-only; oracles remain outside test-files/. Prompts request ordinary review or implementation and do not hint at the hidden defect.
+Build small synthetic fixtures, independently reproducible without private repositories, cloud access or service credentials. Stage them outside any ancestor containing SKILL.md. Assertions and expected answers are grader-only; oracles remain outside test-files/ and are also excluded from the actor's plugin bundle/cache. Retain operative instruction bytes through a recorded filtering manifest. Every run starts with fresh fixture and Capy state, with identical empty or explicitly seeded knowledge inputs and no real session-vault history. [Evaluation isolation](evaluation.md#per-run-state-isolation) defines the controls. Prompts request ordinary review or implementation and do not hint at the hidden defect.
 
 | Case | Required observation |
 | --- | --- |
 | R1: changed cleanup, unchanged consumer | Trace setup A failure, setup B success, cleanup A; identify corruption of B's association. |
 | R2: partial-operation retry | Detect success with discarded edited inputs and completed recovery records matching a later operation. |
-| R3: disabled feature, incompatible consumer | Identify a new provider requirement reached while disabled; pending provider work does not waive present breakage. |
+| R3: disabled feature, incompatible consumer | Identify a new provider requirement reached while disabled. The decisive released-provider implementation exists only in local Git history, outside candidate files and PR diff hunks; both independent reviewers must receive and cite historical source. Pending provider work does not waive present breakage. |
 | R4: persistence compatibility | Detect a new assumption about unmigrated/partly migrated records using fixture data; no production access required. |
 | R5: clean partial feature | Accept a compatible increment with unreachable unfinished paths; do not demand pending features or an elaborate release mechanism. |
 | R6: pre-existing conditional defect | Attribute the old defect correctly, distinguish supported reachability from hypotheticals, and avoid an unsupported current-PR blocker. |
@@ -188,9 +210,11 @@ Build small synthetic fixtures, independently reproducible without private repos
 | I3: trivial non-runtime change | Perform required instruction/profile steps; keep functional assessment proportionate and avoid irrelevant deployment gates or duplicated tests. |
 | I4: completion and resume | Refresh a stale handoff, distinguish tests from release evidence, keep a violated hard requirement open, and durably record a permitted external prerequisite. |
 
-Run R1–R7 and both R9 variants through standard review and actual isolated orchestration, not only a directly prompted reviewer. Exercise R8 with a controlled degraded PAL response. Inspect the assembled independent-agent and PAL payloads for parity. Run I1/I4 through plan mode and I2/I3 through standalone mode. Existing profile-routing and pre-write-ordering evals remain regression controls.
+Run R1–R7 and both R9 variants through standard review and actual isolated orchestration, not only a directly prompted reviewer. R8 is a deliberately narrower report-phase replay with controller-supplied synthetic PAL outcomes, including success with zero source coverage and tool failure; it does not certify live MCP transport. A separate real PAL smoke run checks integration. Inspect actual agent/PAL dispatches and historical evidence for parity. Run I1/I4 through plan mode and I2/I3 through standalone mode. Existing profile-routing and pre-write-ordering evals remain regression controls.
 
-The current review eval staging script treats every fixture file as newly added; extend it narrowly for real before/after snapshots so reviewers must discover unchanged callers and historical attribution. Full staging and grading rules are in [implementation.md](implementation.md#evaluation-staging-and-execution).
+Extend the existing eval-grader with an explicit workflow mode that accepts a sealed evidence manifest, ordered tool events, captured dispatches and resulting-file snapshots. Its default component mode remains unchanged. Ordering and handoff assertions are graded from execution evidence, not claims in the final response. Details, required negative grading controls and the baseline/candidate loading mechanisms are in [evaluation.md](evaluation.md).
+
+The current review eval staging script treats every fixture file as newly added; extend it narrowly for real before/after snapshots so reviewers must discover unchanged callers and historical attribution. Full staging and grading rules are in [evaluation.md](evaluation.md#fixture-lifecycle-and-staging).
 
 ## Rejected alternatives and trade-offs
 
@@ -211,4 +235,4 @@ The method increases review effort when a change crosses contracts or persistent
 - The existing PAL tool can receive criteria and the required evidence within a focused invocation/continuation. Verify actual coverage; its failure does not disable the local independent reviewer.
 - No design-phase files exist in the installed skill-md profile. The user confirmed that profile; implementation and review must resolve its applicable phase guidance when operative skills are changed.
 
-No product-scope decision remains open. Detailed behavior is a proposal awaiting /kk:review-design. Any failed or unrun acceptance scenario stays explicitly open in tasks.md with its reason and next action; it is not silently treated as passed.
+No product-scope decision remains open. The two supplied reviews have been assessed in [the consolidated disposition](reviews/design-review-consolidation.md); these revised mechanics still need implementation and verification. Any failed or unrun acceptance scenario stays explicitly open in tasks.md with its reason and next action; it is not silently treated as passed.
