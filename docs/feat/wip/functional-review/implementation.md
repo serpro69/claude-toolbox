@@ -1,112 +1,119 @@
 # Implement functional and operational review
 
 > Design: [design.md](design.md)
+> Evaluation: [evaluation.md](evaluation.md)
 > Tasks: [tasks.md](tasks.md)
+> Review disposition: [consolidated assessment](reviews/design-review-consolidation.md)
 > Status: planned; no operative skill changes implemented
 
 ## Starting points
 
-The canonical source is klaude-plugin/. Relevant current files:
+Canonical changes belong under klaude-plugin/. Current entry points are review-code/SKILL.md, review-process.md and review-isolated.md; agents/code-reviewer.md; implement/SKILL.md, plan-mode.md and standalone-mode.md. Shared review-scope-protocol.md also serves /kk:review-spec; pal-codereview-invocation.md also serves /kk:review-design. Preserve those consumers.
 
-- skills/review-code/SKILL.md and review-process.md: standard review and report contract.
-- skills/review-code/review-isolated.md and commands/review-code/isolated.md: isolated preparation, delegation and report.
-- agents/code-reviewer.md: independent review method and output.
-- skills/_shared/review-scope-protocol.md: task-scope semantics, also consumed by /kk:review-spec.
-- skills/_shared/pal-codereview-invocation.md: external invocation shared with /kk:review-design.
-- skills/implement/SKILL.md, plan-mode.md and standalone-mode.md: entry, shared execution and completion.
-- skills/review-code/evals/_harness/{setup.sh,HARNESS.md}: existing fixture staging and independent grading playbook.
-
-The source baseline for the design is c2d28c9e. Re-read current files at kickoff; preserve concurrent changes. Existing installed skill caches are not implementation targets. Preserve a reproducible baseline instruction revision before Task 1 so later-authored scenarios can still compare the old and new workflows.
+The immutable actor baseline is c2d28c9e (v0.23.0), resolved to a full commit when runs are prepared. All seed workflow baselines are captured before operative changes. The installed cache and an intermediate Task 4 working tree are not valid substitutes. [Evaluation binding](evaluation.md#bind-the-actual-instructions) specifies entry-point, runtime-root and agent loading.
 
 ## Delivery and verification rules
 
-Each slice must leave its changed invocation path usable, retain existing profile behavior and preserve consumer compatibility of shared instructions. Use source-relative links and per-skill shared symlinks. Agents resolve instruction paths from their injected absolute plugin root. Do not introduce toolbox-doc links into distributed plugin instructions.
+Each operative slice leaves its invocation usable and includes regenerated kodex-plugin/ and .codex/agents/ output from make generate-kodex. Do not hand-edit generated files. For freshness, compare a second generation with the first generated snapshot or check unstaged drift after staging intended generated changes; expected differences against HEAD are not staleness.
 
-After every canonical skill/agent slice, run make generate-kodex and include its actual generated changes with that slice. Do not hand-edit generated files. Run the plugin/codex structure suites and make plugin-graph to verify the new references and generated topology. For freshness after regeneration, compare a second generation against a saved generated snapshot, or stage intended generated changes and check for unstaged drift; do not mistake the expected implementation diff against HEAD for stale output.
+Run the plugin/codex structure suites and make plugin-graph after relevant canonical changes. Behavioral evidence comes from actual invocations and sealed traces, not string-presence checks. The new word budgets and symlink assertions guard instruction packaging only.
 
-Use behavioral dry-runs for the acceptance cases. A grep assertion that a paragraph exists is not evidence the agent performed the reasoning. Record tool failures and skipped checks accurately. No application deployment or private production access is needed for this feature.
+Use source-relative links and local shared symlinks. Distributed instructions explain their own rules and never link back to toolbox design documents. Preserve unrelated work and intentionally broken eval/template links.
+
+## Baseline preparation
+
+Task 1 establishes the revision-bound launch probes and run contract. It builds filtered actor bundles, scans bundles/cache copies for evaluator material, and proves per-run Capy/fixture isolation before any measured run. Operative files retain their original bytes; normal plugin distribution is unchanged. Task 2 owns the final seed fixtures R1/R3/I1/I2. It creates their complete eval.json, paired snapshot layout where applicable, and separate oracle directories before capturing standard, isolated, plan and standalone runs. The source/fixture identity and provider-specific launch probes are defined in [evaluation.md](evaluation.md#comparison-identity-and-acceptance).
+
+Capture raw execution evidence now; the workflow grader introduced later grades the preserved package. The grading procedure/rubric is pinned with the run contract; pin the concrete grader implementation before grading either side. A rubric change requires regrading both sides, and recapturing both if the changed assertion needs evidence absent from the saved traces.
+
+Later fixture tasks extend the same directories and author only the remaining cases. Use the manual staging contract until the paired-snapshot helper exists, creating a fresh workspace and knowledge state for every run. Baseline and candidate must use identical fixture revisions and initial knowledge seeds; never relabel an intermediate candidate run as the unchanged baseline. Record the intentional unavailable-vault policy separately from knowledge search/index availability.
+
+## Routing-convention slice
+
+Task 3 updates docs/adr/0004-skill-workflow-ordering.md and AGENTS.md before changing workflow order. Explain that bounded predicate routing is the sole early-content exception after basic process instructions load: approximately 16 KiB per candidate file, only declared predicates, no behavioral findings or edits. If a conditional is undecidable within that bound, load it conservatively.
+
+Preserve the rest of the instruction-before-action invariant. Verify the ADR and AGENTS.md agree and distinguish routing from full source investigation. This resolves existing contradictory wording without retroactively claiming that the deferred standard-review sequence already obeyed the proposed procedure.
 
 ## Standard review slice
 
-Targets: review-code/SKILL.md, review-process.md, new functional-review.md; new _shared/change-context.md; _shared/review-scope-protocol.md. Add review-code/shared-change-context.md pointing to ../_shared/change-context.md.
+Task 4 targets review-code/SKILL.md, review-process.md, new functional-review.md, new _shared/change-context.md and _shared/review-scope-protocol.md. Add review-code/shared-change-context.md pointing to ../_shared/change-context.md.
 
-1. Define the shared fields, provenance, evidence-qualified compatibility conclusions and producer/consumer duties from the design → verify: an ad-hoc diff and a planned task can both supply the record without requiring production access or new infrastructure.
-2. Implement the common behavior investigation and findings/coverage requirements in functional-review.md → verify: the R1 fixture requires following an unchanged caller and reports a supported sequence and consequence.
-3. Link and load both instructions from the standard entry point, then integrate investigation and reporting into review-process.md → verify: a normal /kk:review-code prompt performs the work, including with no spec and no active profile.
-4. Align mandatory ordering: resolve conditional profile content through bounded predicate inspection, load it before full evidence analysis, and remove the conflicting deferred-load sequence → verify: captured tool ordering shows instructions before full diff/source investigation; targeted later evidence checks remain possible.
-5. Clarify shared task-scope semantics for current breakage versus incomplete future functionality → verify: R3 flags current incompatibility; R5 does not flag intentionally pending features. Review /kk:review-spec's existing caller contract for compatibility.
+1. Define the shared record, provenance, historical-evidence responsibility and verdict mapping → verify: a standalone diff works without a formal spec or live production access.
+2. Add the common functional method within the 1,200-word ceiling; keep shared context within 800 words → verify: complete-file whitespace word counts and normative coverage both pass.
+3. Integrate method loading, bounded routing, affected-path reasoning and coverage into standard review → verify: R1 is found through an ordinary prompt and tool events show methodology before investigation.
+4. Clarify current incompatibility versus pending features in the shared scope protocol → verify: R3 and R5 produce different outcomes without changing /kk:review-spec's payload requirements.
+5. Add test/test-plugin-structure.sh checks for the shared source and current review-code symlink, including exact relative target and successful resolution → verify: a broken or regular-file replacement is caught; add the implement consumer only when Task 6 creates it.
 
-Replace the SOLID-only title and overview with a description of the complete review responsibility while retaining SOLID/security/profile coverage. If editing the frontmatter description, verify the current documented description limits before writing it; keep trigger-first wording and the repository's portability budget.
+Retain SOLID/security/profile coverage and existing finding labels. Broaden the title/overview and, if needed, the trigger-first description; verify current published description limits before changing frontmatter. Apply the design's explicit compatibility/verdict mapping; a missing deployment baseline is neither a fictitious defect nor grounds to certify a required unknown.
 
 ## Isolated review slice
 
-Targets: review-isolated.md, agents/code-reviewer.md, _shared/pal-codereview-invocation.md and commands/review-code/isolated.md.
+Task 5 targets review-isolated.md, agents/code-reviewer.md, _shared/pal-codereview-invocation.md and commands/review-code/isolated.md. It completes isolated consumers before Task 6 integrates the producer.
 
-1. Reorder isolated preparation so methodology/profile loading precedes diff analysis; gather change context after that gate → verify: the real isolated invocation loads instructions before evidence, rather than relying on prompt delivery order.
-2. Include shared context, method paths, task scope and evidence references in the agent payload and PAL framing/file manifest → verify: both receive required facts; absent spec retains functional review; neither receives implementation-session history.
-3. Teach the agent to load common methodology before evidence, independently verify relevant claims, and emit coverage/compatibility beside existing findings → verify: R1/R3 survive isolated review and source-only review does not claim executed tests.
-4. Select external files by affected behavior, with the current surrounding-file count used as an initial budget and explicit missing-context handling → verify: an unchanged consumer essential to R3 reaches the external request; truncation/failure is reported.
-5. Preserve native PAL findings, annotation and failure behavior; add report coverage and constrained conclusions → verify: R8 cannot become an unconditional clean or release-safe review.
-6. Qualify shared PAL instructions by review type and update the command summary → verify: /kk:review-design still accepts document-only inputs and does not acquire code compatibility fields.
+1. Load shared methodology and resolved profiles before full diff analysis, then construct change context → verify: actual isolated invocation obeys the ordering gate.
+2. Materialize decisive historical blobs/excerpts outside the reviewed worktree with repository/revision/path/hash/line provenance → verify: both agent and PAL payloads contain R3's released-provider source even though it is absent from candidate files and diff hunks.
+3. Define evidence requests in the reviewer output and a parent-mediated resume/reinvoke path; send equivalent relevant additions through PAL continuation → verify: available local history is supplied; a truly missing baseline remains Unknown in R7 without expanded reviewer permissions.
+4. Update the agent's instruction-loading and reporting contract and remove quality-only fallbacks → verify: it challenges author claims and does not claim test execution from its source-only access.
+5. Introduce explicit code-review/document-review sections in the currently flat PAL protocol, then add behavior-selected and historical files to the code-review section → verify: /kk:review-design still accepts document-only inputs.
+6. Preserve native external output, annotation and failure semantics while applying bounded coverage/verdict rules → verify: R8 replay preserves useful local findings without unsupported corroboration or release approval.
 
-The shared record and method are authoritative; do not copy whole procedures into each prompt. The spawning workflow resolves absolute paths; the independent reviewer reads them through its existing tools.
+Treat the current surrounding-file cap as an initial selection budget. Follow identified contract questions beyond it through focused additional evidence or report the specific uncovered boundary. Do not ship a new unbounded whole-repository scan.
 
 ## Implementation slice
 
-Targets: implement/SKILL.md, plan-mode.md and standalone-mode.md. Add implement/shared-change-context.md pointing to ../_shared/change-context.md.
+Task 6 depends on completed standard and isolated consumers. Targets: implement/SKILL.md, plan-mode.md, standalone-mode.md and its mechanical shared-change-context.md symlink.
 
-1. Load the shared context instructions alongside current mandatory instructions → verify: plan and standalone invocations load the contract even without active profile content.
-2. Reconcile entry/core ordering: use request/doc context and candidate filenames first; move detailed standalone source investigation after profile/instruction loading. Set task in-progress only after the instruction gate → verify: existing pre-write evals still pass and there is one authoritative source-investigation entry.
-3. Before implementation edits, inspect affected behavior, establish intent and applicable delivery constraints, and add specific verification cases → verify: I1 identifies its incompatible approach before editing and I2 proceeds with grounded context without a new feature-plan requirement.
-4. Preserve user decisions and surface only material conflicts/unknowns; choose the simplest mechanism consistent with the constraints → verify: I3 does not create an irrelevant release gate or ask ceremonial confirmations.
-5. Refresh context after implementation/fixes and pass it into the existing independent review → verify: both review paths receive the actual scope and baseline, and I4 rejects stale handoff evidence.
-6. Separate task completion from deployment/activation readiness and durably own deferred work → verify: I4 cannot mark a violated hard requirement done or turn an unknown environment into a supported release.
+1. Load shared context and profile guidance before detailed source investigation and implementation edits; reconcile standalone entry with the core → verify: existing pre-write-order controls and I2 pass.
+2. Establish intent, required preserved behavior and applicable delivery constraints before editing → verify: I1 identifies the incompatible approach before making dependent edits; I3 stays proportionate.
+3. Store observations in the task's labeled Execution context subsection, with status/source/date and proposed versus accepted decisions → verify: I4 cannot silently change design.md, implementation.md or acceptance criteria to match its code.
+4. Refresh evidence after fixes/resume and pass actual scope/baselines to both existing review paths → verify: integrated handoff is tested against the completed Task 5 consumers.
+5. Separate code completion from release/activation conditions and durably record allowed follow-up → verify: a violated hard requirement remains open; a legitimate external prerequisite remains explicitly conditional.
+6. Extend the structure-test shared-file assertions to implement's new symlink → verify: both exact targets/resolution and both instruction budgets pass after regeneration.
 
-No new global rule requires all projects to use independent deployment or feature flags. The skill discovers applicable policy and states the assumptions behind the chosen approach.
+Requirement changes still follow explicit user authorization. This feature does not impose independent deployment or feature flags on every repository.
 
-## Evaluation staging and execution
+## Evaluation staging slice
 
-### Fixture format
+Task 7 extends review-code/evals/_harness/setup.sh and adds test/test-review-eval-staging.sh. Follow [fixture lifecycle and staging](evaluation.md#fixture-lifecycle-and-staging), including legacy flat inputs, before/after snapshots, R3's history manifest and tagged released snapshot.
 
-Retain existing eval.json fields and per-eval layout. For the new before/after cases only, use a paired test-files/before/ and test-files/after/ convention. Each directory is a complete synthetic repository snapshot; unchanged context appears in both. The before snapshot becomes a base commit; the after snapshot is the staged candidate. Top-level scenario documents within each snapshot contain only information legitimately available to the acting user/reviewer, such as requirements, release policy or a recorded baseline.
+Verify offline: additions, modifications, deletions, unchanged files, hidden files, historical blobs/tags, missing halves, escaping links, embedded .git, invalid history refs and refusal to overwrite destinations. Keep staging wrappers/oracles out of the actor workspace. Preserve the seed directories created in Task 2.
 
-Extend setup.sh to recognize the pair, reject a missing half, initialize the base from before/, replace the working tree with after/ while preserving .git, and stage additions/modifications/deletions. Preserve the existing all-added path for legacy fixtures. Snapshot roots must not contain .git or links escaping the fixture tree; validate before copying. Stage into a fresh owned directory and fail if a destination already exists; do not recursively delete a caller-supplied directory. Neither eval.json, oracle/ nor the before/after wrapper directories enters the candidate workspace.
+## Workflow-grading slice
 
-Add test/test-review-eval-staging.sh, using existing shell test helpers, to exercise additions, modifications, deletions, unchanged callers, hidden files, malformed pairs, unsafe fixture paths and destination refusal. Keep the tests offline. This is limited fixture plumbing, not a general evaluation platform.
+Task 8 extends agents/eval-grader.md with explicit workflow mode while preserving the default component contract and Read-only access. Update review-code/evals/_harness/HARNESS.md and add implement/evals/README.md to carry the [execution-evidence contract](evaluation.md#execution-evidence-contract).
 
-The new review case IDs must not collide with the existing registry. Allocate subsequent numeric IDs when authoring, preserving existing values. Use R1–R9 only as design traceability labels in scenario descriptions/reporting; give the two R9 variants separate eval directories and IDs. Apply the same policy independently to implement I1–I4. Every fixture file is declared in files[]; grader answers remain in sibling oracle/ and are never staged.
+The controller assembles ordered tool events, real dispatches and resulting-file snapshots with hashes. The grader may read only manifest-listed evidence, its instructions and supplied rubric. Add calibration records under the harness's grading-fixtures directory: early edit plus false final claim fails, missing events are partial, and a complete ordered trace passes. Legacy component grading remains unchanged.
 
-Before Task 4 adds automated snapshot support, stage the small Task 1/2 fixtures manually using exactly the same before-commit/after-staged contract in fresh temporary repositories. Do not run the legacy all-added helper on a paired fixture. Once extended, the helper stages both old and new cases correctly.
+R8 uses the concrete report-phase replay defined in [evaluation.md](evaluation.md#r8-controlled-report-phase-replay). No MCP proxy, tool interception API or new server dependency is introduced. A real PAL smoke run has separate evidence and cannot be replaced by the replay.
 
-### Workflow coverage
+## Fixture-authoring slices
 
-Update HARNESS.md to distinguish the existing profile-resolver/reviewer component tests from full skill tests. Existing component tests remain useful but cannot validate orchestration, standard mode, implement preparation or the PAL handoff.
+Tasks 9–11 author bounded groups in the final eval directories:
 
-For each new full skill run, stage a fresh fixture and give a fresh acting session only the natural eval prompt, staged workspace and target plugin instructions. The acting session may invoke the skill's normal isolated reviewers. The orchestrator/independent grader retain assertions and oracle evidence separately. Never seed the acting session with the expected conclusion, special "production safety" reminders, or preselected surrounding files that it is supposed to discover.
+- Task 9: R2 retry/lifecycle, R4 persisted-data compatibility and both R9 intent/complexity variants.
+- Task 10: R5 clean partial feature, R6 inherited defect, R7 absent evidence, and R8's two report-phase variants. Reuse R1/R3.
+- Task 11: I3 proportionality and I4 resume/completion/spec-integrity; reuse I1/I2.
 
-R1–R7 and both R9 variants run in standard and isolated modes. Use mode-appropriate normal prompts; capture source reads, payloads, findings and coverage. R8 uses a clearly labeled controlled PAL response to test failure/coverage handling; also perform an available real PAL smoke run, recording exactly what was read. A stubbed result does not establish real tool coverage.
+Each scenario has a natural prompt, complete declared file list, specific assertions and grader-only outcomes. All new assertions are required. New numeric IDs exceed existing maxima; use composite result keys to tolerate the documented pre-existing implement ID collision without unrelated renumbering.
 
-For implement, stage the I1/I4 task documents and I2/I3 standalone requests in disposable workspaces. Capture pre-edit ordering, edits, review handoff, verification and task/report state. Document this procedure in implement/evals/README.md; that playbook is operator guidance, not automatically loaded by /kk:implement.
+Fixture authoring does not count as a matrix run. Do not include private source or records, hint at the hidden failure in the prompt, or stage expected answers.
 
-For each slice's initial fixtures, record the unchanged baseline run before its operative edit. Later-authored cases run against the preserved baseline instruction revision and the candidate; reuse the same fixtures and model configuration for comparison. Explicitly bind each acting session to the intended baseline or candidate plugin root, including that revision's generated Codex agents where applicable, rather than silently using an installed cache. If a run fails, retain its result and reason; a rerun after a correction does not erase it. Final evidence records model/provider, instruction revision, fixture revision, mode, available tools, pass/fail/partial/unrun per assertion, false positives and relevant scope/latency observations. No specific model winner or absolute latency SLO is asserted.
+## Matrix execution
 
-### Acceptance record
+Task 12 waits for producer, isolated consumers, staging, grading and all scenarios. Run the declared primary-provider matrix and secondary representative coverage with the predeclared two-run threshold. Preserve raw traces and per-assertion results, including failed attempts and unknown tool coverage.
 
-Store sanitized run summaries under this feature's verification/ directory during implementation. Keep all R/I cases and existing regression controls visible. Required assertions must pass before declaring implementation verified. Tool unavailability is an explicit unrun gate with a next action; do not report those paths as verified or silently waive them. Source/plugin structure checks and behavioral results are separate sections of the record.
+Review R3's historical-source handoff, R3/R7's verdict mapping, I4's resulting document state, and the grader calibration controls explicitly. Compare every candidate against the immutable actor baseline using the same fixture and grading revisions. An unavailable runtime or source capture yields an unrun gate with an owner/next action; it does not waive acceptance.
 
 ## Documentation and final verification
 
-Update README.md and docs/user-guide/skills.md to describe ordinary functional review, implement preparation, evidence limits and the distinction between code completion and release readiness. Update docs/contributing/testing.md for the new staging test and before/after fixture convention. Preserve the existing skill names and user invocation syntax.
+Task 13 updates README.md and docs/user-guide/skills.md through /kk:document, and docs/contributing/testing.md for staging and grading. Then:
 
-Final verification runs:
+- Run /kk:test with every test/test-*.sh suite, including staging.
+- Run make generate-kodex and a second-generation freshness check.
+- Run make plugin-graph and go test ./....
+- Reconcile all behavioral assertions and existing routing/pre-write controls with the run contract.
+- Verify /kk:review-spec task-scope and /kk:review-design PAL input compatibility.
+- Run /kk:review-code with the actual detected profiles and /kk:review-spec against this complete design package.
+- Resolve findings or record permitted follow-up; do not mark required unrun/failed acceptance items complete.
 
-- /kk:test with all repository test/test-*.sh suites; include the new staging suite.
-- make generate-kodex and a second-generation freshness check, including .codex/agents/.
-- make plugin-graph for Go tests and broken-link/orphan validation.
-- go test ./... for the repository Go tools.
-- The full applicable behavioral matrix and the existing review profile-routing/implement pre-write controls.
-- /kk:document, /kk:review-code using resolved skill-md and any actual shell/fixture profiles, and /kk:review-spec against these design documents.
-
-Verify shared consumers explicitly: /kk:review-spec retains pending-task filtering and /kk:review-design retains its PAL document contract. Do not "repair" intentionally broken eval/template links.
-
-This design-writing task itself requires only document consistency and link checks. No implementation test pass, behavioral improvement or independent review is claimed by creating these documents.
+This design-revision task changes documentation only. Launch probes, grader changes, ADR/AGENTS amendments and operative skill changes above remain explicitly planned work.
