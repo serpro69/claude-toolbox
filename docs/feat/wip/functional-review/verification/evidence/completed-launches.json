@@ -1,0 +1,73 @@
+{
+  "kind": "Actual completed probe launch configuration; not a measured-run tool policy",
+  "date": "2026-10-08",
+  "codex": {
+    "argv_prefix": [
+      "codex",
+      "--no-daemon",
+      "exec",
+      "--json",
+      "-m",
+      "gpt-6-astra",
+      "-c",
+      "model_reasoning_effort=xhigh"
+    ],
+    "prompt": "This is an instruction-binding probe, not a review. Use the registered $kk:review-code skill to load its entry point and shared-profile-detection.md from the selected plugin. Use run-local Capy to index the sentence The binding orchard contains ambercapybara under source probe-binding. Spawn the registered code-reviewer role, not a default agent, with Plugin Root equal to the selected filtered kk installation; profiles empty; no diff or subject analysis requested. Tell the child to read skills/review-code/shared-profile-detection.md under that root and search Capy for binding orchard, then report the marker and stop. Await the child. Do not edit files or read other projects. Report the selected plugin and child result.",
+    "prompt_provenance": "Verbatim command argument retained from the controller's launch tool calls.",
+    "cwds": [
+      "/private/tmp/functional-review-actors-Mp4My8ao/codex-persist-baseline",
+      "/private/tmp/functional-review-actors-Mp4My8ao/codex-persist-candidate"
+    ],
+    "state_capture": "Persisted parent and child rollouts; only observable events and the exact public configured role excerpt exported.",
+    "capy_environment": "Run-local MCP command explicitly removes CAPY_VAULT_KEY and CAPY_DB_KEY, then sets the synthetic DB key, private vault path and XDG_CONFIG_HOME; see completed-run-configs.json."
+  },
+  "claude": {
+    "argv_prefix": [
+      "claude",
+      "-p",
+      "--model",
+      "claude-opus-4-8[1m]",
+      "--effort",
+      "high",
+      "--plugin-dir",
+      "./plugins/kk",
+      "--setting-sources",
+      "project,local",
+      "--settings",
+      ".runner/settings.json",
+      "--mcp-config",
+      ".runner/mcp.json",
+      "--strict-mcp-config",
+      "--no-session-persistence",
+      "--permission-mode",
+      "dontAsk",
+      "--allowedTools",
+      "Read,Glob,Grep,Task,Bash(printenv TOOLBOX_PLUGIN_ROOT),Skill,mcp__capy__capy_index,mcp__capy__capy_search",
+      "--output-format",
+      "stream-json",
+      "--verbose",
+      "--include-hook-events",
+      "--forward-subagent-text"
+    ],
+    "prompt_source": ".runner/probe-prompt.txt, verbatim text retained in each claude-refreshed evidence artifact.",
+    "environment_unset": [
+      "CAPY_VAULT_KEY",
+      "CAPY_DB_KEY",
+      "CLAUDECODE"
+    ],
+    "environment_set": {
+      "CAPY_DB_KEY": "synthetic-functional-review-probe-key-20261008",
+      "CAPY_VAULT_PATH": "<cwd>/.runner/vault",
+      "XDG_CONFIG_HOME": "<cwd>/.runner/xdg",
+      "CPR_PLUGINS_FILE": "<cwd>/.runner/registry.json"
+    },
+    "cwds": [
+      "/private/tmp/functional-review-actors-Mp4My8ao/claude-refreshed-baseline",
+      "/private/tmp/functional-review-actors-Mp4My8ao/claude-refreshed-candidate"
+    ],
+    "debug_paths": [
+      "/private/tmp/functional-review-controller-pQrivtyX/claude-refreshed-baseline.debug",
+      "/private/tmp/functional-review-controller-pQrivtyX/claude-refreshed-candidate.debug"
+    ]
+  }
+}
