@@ -108,6 +108,65 @@ probe evidence. Codex's dispatch message field is encrypted: future assertions
 about exact handoff content require plaintext capture at submission, independently
 of the binding proof supplied by runtime role bytes and child tool events.
 
-Final fixture hashes/prompts, exact measured-run tool configuration, rubric hash
-and candidate identity remain pending until their respective batches. Task 1
-probes do not count toward the two-run behavioral acceptance threshold.
+The Task 2 declaration below now pins fixture hashes/prompts, measured-run tool
+configuration and rubric identity. Candidate identity and the concrete Task 8
+grader remain pending. Task 1 probes do not count toward behavioral acceptance.
+
+## Task 2 seed capture declaration — before measured runs
+
+The four final seeds and every metadata/oracle byte are frozen in
+[task2-frozen.json](task2-frozen.json), along with exact provider/mode prompts and
+the hash of [the grading procedure](task2-rubric.md). Review IDs are 6 and 7;
+implementation IDs are 8 and 9. The concrete workflow grader remains Task 8 work.
+No behavioral verdict will be assigned using the legacy component grader.
+
+Capture 12 Claude baselines (R1/R3 standard and isolated, I1 plan, I2 standalone,
+twice each), and eight Codex baselines (R1 standard, R3 isolated, I1 plan,
+I2 standalone, twice each). Use unchanged c2d28c9e operative bytes. No candidate
+has been implemented. I1 receives no requirement-changing response from the
+controller; its request for resolution and resulting task state are the endpoint.
+
+Runtime recheck: Claude 2.1.278, Codex 0.161.0 and Python 3.14.8 are unchanged;
+Capy is now 0.16.8. This change is declared before measured results. Fresh state
+probes passed indexing/search, foreign-marker absence and unavailable vault.
+Use 0.16.8 consistently in paired runs or recapture under a revised contract.
+
+The Task 2 controller stages fixed seeds manually, including R3's historical
+release commit/tag, then the PR base and staged candidate. It does not use or
+replace the future general staging helper. Each launch records initial files,
+base/release identities, bundle verification, absent knowledge database and the
+actual prompt. Each process retains normal hooks and Capy/PAL services. PAL uses
+the existing configured credential via the launcher environment; credential
+values are excluded from artifacts. Models and acceptance thresholds above hold.
+
+Claude enables Read/Glob/Grep/Skill/Agent/Edit/Write/TodoWrite, bounded command
+families for local Git/Python/search/file inspection/review temporary files, and
+Capy search/index/vault plus PAL listmodels/codereview; all other permissions
+remain denied through dontAsk. Exact arguments are saved before launch. No
+deployment or production operation is authorized. Codex retains workspace-write
+and never approvals, project agents and a verified revision-specific cache;
+actual app-server launch/configuration is recorded before its first capture.
+These are tool permissions, not an OS-wide read allowlist; audit observable reads
+for evaluator-material access and invalidate a contaminated run.
+
+Capture tool calls/results, public pre-edit statements, actual agent/PAL
+dispatches and final reports. Omit thinking blocks at capture; retain original
+sequence positions and parent edges. Snapshot referenced actor payloads at
+dispatch where available and record absent artifacts as incomplete coverage.
+Codex must first demonstrate plaintext handoff capture on a separate loading
+probe; encrypted persisted messages alone cannot satisfy handoff assertions.
+
+## Task 2 observed disposition
+
+[The capture record](task2/README.md) retains 12 Claude and four Codex baseline
+workflows, three failed controller attempts and two Codex capture-surface probes.
+Codex R1 standard/I1 plan proceeded because their assertions do not require exact
+reviewer handoffs. R3 isolated/I2 standalone remain unrun (four sessions): both
+public app-server items and supported tool hooks failed to expose plaintext
+submitted reviewer messages. This does not waive the four remaining runs or
+lower any assertion. Task 2 remains in progress; operative changes wait.
+
+The primary-provider permission policy remained fixed. Denied compound commands
+and subsequent recovery events are retained for grading; no denial-free coverage
+claim is made. Controller parser/sanitizer fixes are identified by actual command
+hashes and retained failed attempts, without changing frozen fixture/rubric bytes.
