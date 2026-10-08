@@ -5,17 +5,17 @@
 > Evaluation: [evaluation.md](evaluation.md)
 > Review disposition: [consolidated assessment](reviews/design-review-consolidation.md)
 > Issue: [#166](https://github.com/serpro69/claude-toolbox/issues/166)
-> Status: pending
+> Status: in-progress
 > Created: 2026-10-07
 > Revised: 2026-10-07 after two design reviews
 > Not Doing: new review skill, whole-system audits, mandatory production access, deployments, generic release engine, new models/dependencies, profile redesign
 > Delivery: preserve existing invocations/shared consumers; regenerate Codex artifacts with every operative slice.
 
-Scope and direction are approved; the reviews have been assessed and the detailed plan revised. All implementation tasks remain pending. Earlier six-task numbering is superseded by this sequence; no completed work was renumbered. Size includes authored reasoning complexity; mechanical copies/symlinks/generated files are excluded. Parallel markers permit compatible work only and do not authorize delegation. Serialize generation if tasks run concurrently.
+Scope and direction are approved; the reviews have been assessed and the detailed plan revised. Task 1 is done; later tasks remain pending. Earlier six-task numbering is superseded by this sequence; no completed work was renumbered. Size includes authored reasoning complexity; mechanical copies/symlinks/generated files are excluded. Parallel markers permit compatible work only and do not authorize delegation. Serialize generation if tasks run concurrently.
 
 ## Task 1: Prove revision-bound evaluation loading
 
-- **Status:** pending
+- **Status:** done
 - **Depends on:** —
 - **Size:** M
 - **Strategy:** Risk-First
@@ -24,12 +24,22 @@ Scope and direction are approved; the reviews have been assessed and the detaile
 
 ### Subtasks
 
-- [ ] 1.1 Preserve c2d28c9e as the unchanged actor baseline and prepare a separate candidate loading location; write the initial verification/run-contract.md → verify: baseline identity, primary provider, modes, models and two-run threshold are fixed before measured results; candidate hashes are frozen before each later candidate batch.
-- [ ] 1.2 Build filtered Claude/Codex actor bundles with source, exclusion and retained-file manifests → verify: operative bytes are unchanged and bundles/cache copies contain no eval metadata, oracles, grading fixtures, results or links into an unfiltered checkout.
-- [ ] 1.3 Prepare fresh probe workspaces and run-local Capy servers/stores with the declared unavailable-vault policy → verify: knowledge indexing works, a marker from probe A is absent from probe B, and no real store, history or prior fixture mutation is inherited.
-- [ ] 1.4 Probe Claude loading through --plugin-dir plus the existing CPR_PLUGINS_FILE override → verify: entry points, agents, hook-exported root and instruction reads all resolve to the selected filtered bundle.
-- [ ] 1.5 Probe Codex through separate local marketplaces, refreshed filtered-cache hashes and project-scoped generated agents → verify: loaded skill and role bytes match the chosen bundle; runtime unavailability is an explicit blocker to that provider's runs.
-- [ ] 1.6 Record actual launch configuration, bundle scan and state-isolation evidence → verify: a root-only override, mixed installed cache, evaluator-material leak or reused knowledge state cannot count as a full-skill comparison.
+- [x] 1.1 Preserve c2d28c9e as the unchanged actor baseline and prepare a separate candidate loading location; write the initial verification/run-contract.md → verify: baseline identity, primary provider, modes, models and two-run threshold are fixed before measured results; candidate hashes are frozen before each later candidate batch.
+- [x] 1.2 Build filtered Claude/Codex actor bundles with source, exclusion and retained-file manifests → verify: operative bytes are unchanged and bundles/cache copies contain no eval metadata, oracles, grading fixtures, results or links into an unfiltered checkout.
+- [x] 1.3 Prepare fresh probe workspaces and run-local Capy servers/stores with the declared unavailable-vault policy → verify: knowledge indexing works, a marker from probe A is absent from probe B, and no real store, history or prior fixture mutation is inherited.
+- [x] 1.4 Probe Claude loading through --plugin-dir plus the existing CPR_PLUGINS_FILE override → verify: entry points, agents, hook-exported root and instruction reads all resolve to the selected filtered bundle.
+- [x] 1.5 Probe Codex through separate local marketplaces, refreshed filtered-cache hashes and project-scoped generated agents → verify: loaded skill and role bytes match the chosen bundle; runtime unavailability is an explicit blocker to that provider's runs.
+- [x] 1.6 Record actual launch configuration, bundle scan and state-isolation evidence → verify: a root-only override, mixed installed cache, evaluator-material leak or reused knowledge state cannot count as a full-skill comparison.
+
+### Execution context — 2026-10-08
+
+Observed evidence: [verification record](verification/README.md), [run contract](verification/run-contract.md), and [independent controller review](verification/review.md). Baseline source identity is the full c2d28c9e commit; 435 operative files retained, 836 evaluator files excluded. Fresh Capy stores passed actual search/index and unavailable-vault probes. Eight controller tests and nine existing shell suites passed (three existing skips). Controller review findings were fixed and independently re-reviewed; no operative skill changes or measured behavioral runs occurred.
+
+Initial authenticated Claude loading failed because OAuth expired; the user refreshed login. Fresh baseline and candidate-location probes then passed registered entry-point reads, hook-root binding, named reviewer dispatch, child instruction reads and run-local Capy marker retrieval. Earlier failed attempts remain retained, not counted as passes.
+
+Codex's two filtered installed caches, generated role-file bytes, isolated trusted catalogs and registered skill reads passed. The first ephemeral CLI stream omitted child evidence. Fresh persisted runs resolved this: actual parent dispatch, child linkage/model, exact emitted public role-body bytes, child reads and Capy results are retained for both locations. Independent review verified those relationships. Temporary Codex trust and evaluation plugin/marketplace registrations were approved, used, and removed; normal configuration remains.
+
+Task 1 is complete. These are loading probes only, with unchanged baseline bytes in the candidate loading location. Task 2 remains pending; fixture/grader/candidate hashes must be frozen before their measured batches. No acceptance threshold or provider selection changed.
 
 ## Task 2: Create final seed fixtures and capture every workflow baseline
 
@@ -45,6 +55,8 @@ Scope and direction are approved; the reviews have been assessed and the detaile
 - [ ] 2.2 Stage seed snapshots manually in disposable repositories; create R3's released-provider history/tag → verify: the decisive old source is absent from candidate files and PR hunks but present in local Git.
 - [ ] 2.3 Capture standard, isolated, plan and standalone baseline runs before operative changes, using the immutable actor revision and fresh workspace/knowledge state per run → verify: ordered tool traces, actual dispatches, initial/final relevant files, bundle identity and initial state are retained.
 - [ ] 2.4 Freeze fixture hashes and the grader procedure/rubric with the captures → verify: subsequent paired runs use identical fixture bytes and any changed fixture requires both sides to rerun.
+
+**Capture note from Task 1 — owner: implementing agent.** Codex CLI JSON omits some child events; persisted parent/child runtime records expose them. The parent dispatch's message field is encrypted. Before any later exact-handoff assertion is captured, retain plaintext at submission or use another supported trace surface alongside the encrypted record. Task 1's role bytes/read results prove loading, not exact plaintext handoff content; ciphertext alone cannot pass that later assertion. See [completed probe evidence and limits](verification/README.md#completed-probes-after-login-refresh).
 
 ## Task 3: Align the instruction-routing convention
 
