@@ -1,5 +1,8 @@
 # Task 1 loading verification
 
+This page records Task 1. For the subsequent frozen fixtures, captured baselines
+and remaining Codex handoff gate, see [Task 2 verification](task2/README.md).
+
 Task 1 loading checks are **complete**. Both providers loaded the selected
 filtered baseline in separate baseline/candidate-probe locations. Named reviewer
 children read the selected instructions and retrieved their run-local Capy marker.
