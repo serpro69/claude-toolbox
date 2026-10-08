@@ -11,7 +11,7 @@
 > Not Doing: new review skill, whole-system audits, mandatory production access, deployments, generic release engine, new models/dependencies, profile redesign
 > Delivery: preserve existing invocations/shared consumers; regenerate Codex artifacts with every operative slice.
 
-Scope and direction are approved; the reviews have been assessed and the detailed plan revised. Task 1 is done; later tasks remain pending. Earlier six-task numbering is superseded by this sequence; no completed work was renumbered. Size includes authored reasoning complexity; mechanical copies/symlinks/generated files are excluded. Parallel markers permit compatible work only and do not authorize delegation. Serialize generation if tasks run concurrently.
+Scope and direction are approved; the reviews have been assessed and the detailed plan revised. Task 1 is done; Task 2 is in progress; later tasks remain pending. Earlier six-task numbering is superseded by this sequence; no completed work was renumbered. Size includes authored reasoning complexity; mechanical copies/symlinks/generated files are excluded. Parallel markers permit compatible work only and do not authorize delegation. Serialize generation if tasks run concurrently.
 
 ## Task 1: Prove revision-bound evaluation loading
 
@@ -43,7 +43,7 @@ Task 1 is complete. These are loading probes only, with unchanged baseline bytes
 
 ## Task 2: Create final seed fixtures and capture every workflow baseline
 
-- **Status:** pending
+- **Status:** in-progress
 - **Depends on:** Task 1
 - **Size:** M
 - **Can run in parallel with:** —
@@ -51,10 +51,18 @@ Task 1 is complete. These are loading probes only, with unchanged baseline bytes
 
 ### Subtasks
 
-- [ ] 2.1 Create complete final R1/R3 eval directories under review-code/evals/ and I1/I2 under implement/evals/, including eval.json and grader-only oracles → verify: later tasks reuse these exact directories and all new IDs avoid existing IDs.
-- [ ] 2.2 Stage seed snapshots manually in disposable repositories; create R3's released-provider history/tag → verify: the decisive old source is absent from candidate files and PR hunks but present in local Git.
+- [x] 2.1 Create complete final R1/R3 eval directories under review-code/evals/ and I1/I2 under implement/evals/, including eval.json and grader-only oracles → verify: later tasks reuse these exact directories and all new IDs avoid existing IDs.
+- [x] 2.2 Stage seed snapshots manually in disposable repositories; create R3's released-provider history/tag → verify: the decisive old source is absent from candidate files and PR hunks but present in local Git.
 - [ ] 2.3 Capture standard, isolated, plan and standalone baseline runs before operative changes, using the immutable actor revision and fresh workspace/knowledge state per run → verify: ordered tool traces, actual dispatches, initial/final relevant files, bundle identity and initial state are retained.
-- [ ] 2.4 Freeze fixture hashes and the grader procedure/rubric with the captures → verify: subsequent paired runs use identical fixture bytes and any changed fixture requires both sides to rerun.
+- [x] 2.4 Freeze fixture hashes and the grader procedure/rubric with the captures → verify: subsequent paired runs use identical fixture bytes and any changed fixture requires both sides to rerun.
+
+### Execution context — 2026-10-08
+
+Observed evidence: [Task 2 verification](verification/task2/README.md), [frozen inputs](verification/task2-frozen.json), [grading procedure](verification/task2-rubric.md), and [independent review](verification/task2/review.md). Final seeds use review IDs 6/7 and implement IDs 8/9; no fixture or rubric changed after freeze. Real before/after reproductions and local R3 release history match the declared oracle. Codex copies regenerated without drift; no operative instructions changed.
+
+Captured 12 Claude baseline workflows (all six seed/mode pairs twice) and four Codex baselines (R1 standard/I1 plan twice), all against immutable c2d28c9e in fresh workspaces with empty run-local knowledge. Capy 0.16.8 was declared before capture and passed fresh isolation probes. Traces retain permission denials, actual dispatches/results, payload artifacts and initial/final files; capture completion is not behavioral acceptance. Three failed controller attempts remain retained. Fifteen controller tests, all nine shell suites and plugin graph checks passed; corrected capture code passed independent review.
+
+**Open capture gate — owner: implementing agent.** Codex R3 isolated and I2 standalone remain **UNRUN**, two repetitions each. Public app-server history and separately trusted observation hooks both omit/encrypt submitted reviewer messages; a final claim cannot satisfy exact-handoff evidence. Establish a supported plaintext-at-submission surface in a separate probe, then capture four fresh baselines with the frozen inputs. If runtime changes, revise the contract and recapture affected comparisons. No requirement waiver, provider switch or Task 2 completion is authorized by these observations. Temporary Codex trust/hook/plugin registrations were removed. Task 3 remains pending until this gate closes.
 
 **Capture note from Task 1 — owner: implementing agent.** Codex CLI JSON omits some child events; persisted parent/child runtime records expose them. The parent dispatch's message field is encrypted. Before any later exact-handoff assertion is captured, retain plaintext at submission or use another supported trace surface alongside the encrypted record. Task 1's role bytes/read results prove loading, not exact plaintext handoff content; ciphertext alone cannot pass that later assertion. See [completed probe evidence and limits](verification/README.md#completed-probes-after-login-refresh).
 
