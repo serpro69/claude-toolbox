@@ -2,6 +2,7 @@
 
 - **Status:** Accepted
 - **Date:** 2026-04-19
+- **Amended:** 2026-10-09 — bounded instruction-routing inspection
 - **Originated in:** [docs/feat/wip/kubernetes-support/tasks.md — Task 7 dry-run findings](https://github.com/serpro69/claude-toolbox/blob/master/docs/feat/done/kubernetes-support/tasks.md)
 - **Related:** [ADR 0002](0002-profile-content-organization.md), [ADR 0003](0003-plugin-root-referenced-content.md)
 
@@ -23,19 +24,27 @@ This is a workflow-ordering bug, not an agent-discipline bug. "Tell the model to
 
 ## Decision
 
-**Every plugin skill MUST fully load its instructions before taking any action on its subject matter.**
+**Every plugin skill MUST fully load its instructions before taking any action on its subject matter, except for the bounded routing inspection defined below.**
 
-"Instructions" means: `SKILL.md`, every process/rubric/protocol file it links to, every per-skill symlinked shared instruction, and — for skills that run profile detection — every profile file the detection procedure resolves (index + always-load content + matching conditional content). "Action on subject matter" means: reading diff content, re-reading changed files, writing or editing code, engaging with idea prose beyond the minimum needed to drive profile detection, running tests, emitting documentation, producing findings. Filename-level or metadata-level scope sufficient to drive profile detection is permitted early; content-level reading is not.
+"Instructions" means: `SKILL.md`, every process/rubric/protocol file it links to, every per-skill symlinked shared instruction, and — for skills that run profile detection — every profile file the detection procedure resolves (index + always-load content + matching or conservatively selected conditional content). "Action on subject matter" means: reading diff content, re-reading changed files, writing or editing code, engaging with idea prose beyond the minimum needed to drive profile detection, running tests, emitting documentation, producing findings. Filename-level or metadata-level scope sufficient to drive profile detection is permitted early. The only early-content exception is bounded routing inspection after basic process instructions load.
+
+### Bounded routing exception — 2026-10-09 amendment
+
+Content-based detection and conditional profile loading sometimes require inspecting a file to determine which instructions apply. An absolute prohibition on early content reads makes that routing impossible; deferring applicable checklists until after full source investigation reintroduces the original shortcut. Predicate inspection selects instructions and does not assess the subject's behavior.
+
+After loading `SKILL.md`, referenced process/rubric files and shared protocols, an agent may inspect at most approximately **16 KiB per candidate file**, solely to resolve a **declared detection or conditional-load predicate**. Log the predicate and path. If a conditional cannot be decided within that bound, conservatively load its instruction. Load every matching or conservatively selected instruction before subject-matter investigation.
+
+This is the sole early-content exception. It permits no behavioral analysis, findings, full-diff investigation, edits or tests. It does not authorize broader exploration to settle a routing question or redesign the shared detection procedure.
 
 Concretely, every skill's workflow follows this shape:
 
 1. **Instructions load first.** `SKILL.md` is already in context when the skill is invoked. The skill's first workflow steps read every process/rubric file referenced by `SKILL.md` and every shared protocol it links.
-2. **Minimal scope for profile detection.** If the skill runs profile detection, it gathers the filename-level or metadata-level input required (`git diff --stat`, feature-directory listing, idea-prose keyword scan) — enough to identify active profiles, not enough to pattern-match subject-matter findings.
-3. **Profile content loads before action.** Every `(profile, <phase>/<content>)` pair the detection procedure resolves is read via the `Read` tool. Index entries alone are not enough — the actual content must be in context so the skill acts *through* it, not *alongside* it.
-4. **Only then** does the skill read content, modify code, emit findings, or produce artifacts.
-5. **Content-level read instructions appear exactly once** in the workflow, after steps 1–3. Restating them earlier — even as a "Preflight" step — re-creates the failure mode.
+2. **Minimal scope and bounded routing.** If the skill runs profile detection, it gathers the filename-level or metadata-level input required (`git diff --stat`, feature-directory listing, idea-prose keyword scan limited to declared detection tokens). Where declared predicates need file content, use only the bounded routing exception above.
+3. **Profile content loads before action.** Every `(profile, <phase>/<content>)` pair the detection procedure resolves, including conservative conditional loads, is read via the `Read` tool. Index entries alone are not enough — the actual content must be in context so the skill acts *through* it, not *alongside* it.
+4. **Only then** does the skill investigate subject-matter content, modify code, emit findings, or produce artifacts.
+5. **The entry point for content-level investigation appears exactly once** in the workflow, after steps 1–3. Keep routing distinct from that entry point; restating full content reads earlier — even as a "Preflight" step — re-creates the failure mode. Later targeted re-reads to substantiate findings remain permitted.
 
-Every skill's `SKILL.md` MUST carry an explicit **mandatory-order directive** at the top of its Workflow section, naming the rule by intent: *the flow is strictly sequential; do not begin acting on the subject matter until all instructions (SKILL.md, referenced process files, resolved profile content) are loaded; this ordering is load-bearing, not stylistic.* The process file(s) that SKILL.md references must match the directive — no late "Preflight" step pulling subject-matter reading back to the front.
+Every skill's `SKILL.md` MUST carry an explicit **mandatory-order directive** at the top of its Workflow section, naming the rule by intent: *the flow is strictly sequential; do not begin acting on the subject matter until all instructions (SKILL.md, referenced process files, resolved profile content) are loaded, with only the bounded routing exception above; this ordering is load-bearing, not stylistic.* The process file(s) that SKILL.md references must match the directive — no late "Preflight" step pulling subject-matter investigation back to the front.
 
 The subject matter varies per skill:
 
@@ -52,7 +61,7 @@ The subject matter varies per skill:
 | `/kk:dependency-handling` | the lookup target | the call being written — name + signature, not full implementation |
 | `/kk:chain-of-verification` | the response being verified | the response text (already in context) |
 
-The specialization — "profile checklists/gotchas/rubrics are part of instructions and must load before subject-matter content" — continues to apply for every skill that runs profile detection.
+The specialization — "profile checklists/gotchas/rubrics are part of instructions and must load before subject-matter investigation" — continues to apply for every skill that runs profile detection. The table's minimal scope may be supplemented only by the bounded routing exception.
 
 ### Scope boundary — what this ADR does not decide
 
@@ -69,7 +78,7 @@ The specialization — "profile checklists/gotchas/rubrics are part of instructi
 
 ### Negative
 
-- **Slightly higher up-front latency.** One extra filename-only pass before the agent can start reading content. In practice this is a single `git diff --stat` call plus reading ~1–7 small checklist files (~2–6 KB each).
+- **Slightly higher up-front latency.** A filename-level scope pass, any necessary bounded predicate inspection, and instruction loading precede investigation. Undecidable conditionals may load guidance that ultimately proves irrelevant; this is preferable to silently omitting applicable instructions.
 - **Authoring discipline required.** Skill authors must resist the ergonomic temptation to put "read the diff" as Step 1 because that's what a human reviewer does first. The skill author is writing a protocol for an LLM, not a human; the orderings differ.
 - **Enforcement is convention, not mechanism.** The plugin has no runtime guardrail preventing a skill from listing steps in the wrong order. Enforcement relies on:
   - The mandatory-order directive at the top of each applicable SKILL.md (human-reviewed at PR time),
@@ -82,6 +91,8 @@ The specialization — "profile checklists/gotchas/rubrics are part of instructi
 
 ## Verification
 
+### Original adoption — 2026-04-19
+
 The ordering change was applied to `/kk:review-code` concurrently with the acceptance of this ADR:
 
 - `klaude-plugin/skills/review-code/SKILL.md` — added the mandatory-order directive at the top of the Workflow section.
@@ -91,3 +102,7 @@ The ordering change was applied to `/kk:review-code` concurrently with the accep
 A follow-up dry-run (three consecutive invocations on the same diff, mirroring the Context section's experiment) confirms whether the failure mode reproduces. The result is recorded in `docs/feat/wip/kubernetes-support/tasks.md` Task 7.
 
 Applying the mandatory-order directive to the remaining nine skills (`/kk:review-spec`, `/kk:review-design`, `/kk:test`, `/kk:implement`, `/kk:design`, `/kk:document`, `/kk:merge-docs`, `/kk:dependency-handling`, `/kk:chain-of-verification`) is tracked as amendment A2 in `docs/feat/wip/kubernetes-support/design.md §Amendments`. The per-skill sweep needs tailored wording since each skill's subject matter and minimal early scope differ; it is deliberately staged as its own review pass rather than bundled into this commit.
+
+### Routing amendment — 2026-10-09
+
+The routing exception and [AGENTS.md](../../AGENTS.md) ordering convention are aligned by [functional-review Task 3](../feat/wip/functional-review/tasks.md#task-3-align-the-instruction-routing-convention), following the [design's instruction-ordering contract](../feat/wip/functional-review/design.md#instruction-ordering-and-integration). This amendment changes the convention only. Standard review's deferred conditional-checklist loading and isolated review's diff-first preparation still require the operative changes in Tasks 4–5; this record does not claim those workflows already follow the amended sequence. Their execution evidence remains part of the feature's later verification.

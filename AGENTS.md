@@ -118,20 +118,21 @@ When touching a skill description in the future, re-check the docs page linked a
 
 Applies to every plugin skill. The canonical failure example surfaced in `/kk:review-code`, but the rule is universal. See [ADR 0004](docs/adr/0004-skill-workflow-ordering.md) for the full rationale and the failure transcripts.
 
-Core rule: a skill MUST fully load its instructions before taking any action on its subject matter.
+Core rule: a skill MUST fully load its instructions before taking any action on its subject matter, except for the bounded routing inspection defined below.
 
 - **Instructions** = `SKILL.md` + every process/rubric/protocol file it links + every per-skill symlinked shared instruction + (for profile-driven skills) every profile file the detection procedure resolves.
 - **Action on subject matter** = reading diff/file content, editing code, engaging with idea prose beyond detection keywords, running tests, emitting documentation, producing findings.
-- **Minimal early scope is permitted** — enough to drive profile detection. Examples: `git diff --stat` for filenames, a feature-directory listing, a keyword scan of idea prose. Content-level reading is blocked until instructions are fully loaded.
-- **Content-level read instructions appear exactly once** in the workflow, after the instruction-load steps. Restating them earlier — even as a "Preflight" step — re-creates the failure mode.
+- **Minimal early scope is permitted** — enough to drive profile detection. Examples: `git diff --stat` for filenames, a feature-directory listing, a keyword scan of idea prose limited to declared detection tokens.
+- **Bounded routing inspection is the sole early-content exception.** After basic process instructions (`SKILL.md`, referenced process/rubric files and shared protocols) load, inspect at most approximately 16 KiB per candidate file solely to resolve a declared detection or conditional-load predicate. Log the predicate and path. If a conditional cannot be decided within that bound, conservatively load its instruction. This permits no behavioral analysis, findings, full-diff investigation, edits or tests. Load every matching or conservatively selected instruction before proceeding to subject-matter investigation.
+- **The entry point for content-level investigation appears exactly once** in the workflow, after the instruction-load steps. Keep routing inspection distinct from that entry point; restating full content reads earlier — even as a "Preflight" step — re-creates the failure mode. Later targeted re-reads to substantiate findings remain permitted.
 
-Profile-driven skills have an additional specialization: profile content (resolved checklists, gotchas, rubrics, validator lists) is part of "instructions". Every `(profile, <phase>/<content>)` pair the detection procedure resolves is read via the `Read` tool before content-level subject-matter reading — index entries alone are not enough.
+Profile-driven skills have an additional specialization: profile content (resolved checklists, gotchas, rubrics, validator lists) is part of "instructions". Every `(profile, <phase>/<content>)` pair the detection procedure resolves, including conservative conditional loads, is read via the `Read` tool before subject-matter investigation — index entries alone are not enough. Bounded routing determines which instructions to load; it does not apply them to assess behavior.
 
 Authoring requirements for every skill:
 
-1. **Mandatory-order directive** at the top of SKILL.md's Workflow section, explicitly stating that the flow is strictly sequential and subject-matter action is blocked until instructions are loaded. Name the rule by intent, not by step numbers — step numbers drift; intent does not.
+1. **Mandatory-order directive** at the top of SKILL.md's Workflow section, explicitly stating that the flow is strictly sequential and subject-matter action is blocked until instructions are loaded, with only the bounded routing exception above. Name the rule by intent, not by step numbers — step numbers drift; intent does not.
 2. **Workflow phase summary in SKILL.md matches the detailed process file.** A reader who skims SKILL.md must not see a different ordering than the process file prescribes.
-3. **Dedup pass.** After drafting, grep the skill directory for repeated content-read instructions — if the same `git diff` / `Read` step appears twice, collapse to one instance at the post-instruction position.
+3. **Dedup pass.** After drafting, grep the skill directory for repeated investigation-entry instructions — collapse duplicated full `git diff` / source-read steps to one post-instruction entry point, without removing bounded routing or later targeted verification reads.
 
 Sub-agents delegated by skills (in `klaude-plugin/agents/`) inherit the same rule. Payload delivery order (the spawning skill passing instructions and subject matter in the same prompt) is not sufficient — the sub-agent's own workflow must read instructions before acting, or the LLM will re-create the shortcut on its side.
 

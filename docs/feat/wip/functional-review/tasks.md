@@ -11,7 +11,7 @@
 > Not Doing: new review skill, whole-system audits, mandatory production access, deployments, generic release engine, new models/dependencies, profile redesign
 > Delivery: preserve existing invocations/shared consumers; regenerate Codex artifacts with every operative slice.
 
-Scope and direction are approved; the reviews have been assessed and the detailed plan revised. Task 1 is done. Task 2 remains in progress: its implementation-readiness gate (2A) is done; its capture-completion gate (2B) remains open. Task 3 is ready to start; Tasks 3–11 follow their existing sequence without waiting for 2B. Task 12 and feature completion still depend on 2B. The [2026-10-09 run-contract amendment](verification/run-contract-2026-10-09.md) records the authorization and evidence limits. Earlier six-task numbering is superseded by this sequence; no completed work was renumbered. Size includes authored reasoning complexity; mechanical copies/symlinks/generated files are excluded. Parallel markers permit compatible work only and do not authorize delegation. Serialize generation if tasks run concurrently.
+Scope and direction are approved; the reviews have been assessed and the detailed plan revised. Tasks 1 and 3 are done. Task 2 remains in progress: its implementation-readiness gate (2A) is done; its capture-completion gate (2B) remains open. Task 4 is ready to start; Tasks 4–11 follow their existing sequence without waiting for 2B. Task 12 and feature completion still depend on 2B. The [2026-10-09 run-contract amendment](verification/run-contract-2026-10-09.md) records the authorization and evidence limits. Earlier six-task numbering is superseded by this sequence; no completed work was renumbered. Size includes authored reasoning complexity; mechanical copies/symlinks/generated files are excluded. Parallel markers permit compatible work only and do not authorize delegation. Serialize generation if tasks run concurrently.
 
 ## Task 1: Prove revision-bound evaluation loading
 
@@ -78,7 +78,7 @@ Subtasks 2.5–2.6 own the deferred capture work because the tested Codex surfac
 
 ## Task 3: Align the instruction-routing convention
 
-- **Status:** pending
+- **Status:** done
 - **Depends on:** Task 2 gate 2A (done); does not wait for gate 2B
 - **Size:** S
 - **Can run in parallel with:** —
@@ -86,8 +86,16 @@ Subtasks 2.5–2.6 own the deferred capture work because the tested Codex surfac
 
 ### Subtasks
 
-- [ ] 3.1 Amend docs/adr/0004-skill-workflow-ordering.md with the narrowly bounded routing exception and its rationale → verify: predicate inspection is distinct from behavioral analysis and preserves instruction-before-action.
-- [ ] 3.2 Update AGENTS.md ordering wording consistently → verify: approximately 16 KiB bounds, declared predicates, conservative loading when undecidable, and the prohibition on early findings/edits/tests agree with the ADR.
+- [x] 3.1 Amend docs/adr/0004-skill-workflow-ordering.md with the narrowly bounded routing exception and its rationale → verify: predicate inspection is distinct from behavioral analysis and preserves instruction-before-action.
+- [x] 3.2 Update AGENTS.md ordering wording consistently → verify: approximately 16 KiB bounds, declared predicates, conservative loading when undecidable, and the prohibition on early findings/edits/tests agree with the ADR.
+
+### Execution context — 2026-10-09
+
+Implemented the accepted [routing-convention slice](implementation.md#routing-convention-slice) in [ADR 0004](../../../adr/0004-skill-workflow-ordering.md) and [AGENTS.md](../../../../AGENTS.md). Both require basic instructions before predicate-only inspection, approximately 16 KiB per candidate file, predicate/path logging, conservative conditional loading, and all selected guidance before investigation. The single investigation entry point permits later targeted verification reads. The ADR distinguishes this convention amendment from pending operative adoption in Tasks 4–5; no behavioral acceptance is claimed.
+
+Verification: profile detection returned no active profiles for these three repository documentation files. All nine `test/test-*.sh` suites passed with 630 assertions and no skips; `git diff --check` and new ADR link-target checks passed. Initial schema-validation attempts were blocked by sandbox access to the `uv` cache; approved access resolved them. Template fixture runs used per-command `commit.gpgsign=false` to avoid inheriting personal signing requirements. No persistent Git settings changed. Canonical plugin files were unchanged, so regeneration was not required.
+
+Review: /kk:review-code:isolated's independent code-reviewer inspected the diff and source documents against Task 3 and returned APPROVE with no findings. PAL (`gemini-3.1-pro-preview`) also returned no findings, but reported zero embedded files; its source coverage is unverified and does not establish corroboration. No systemic P0/P1 findings required indexing. Task 3 is complete without changing requirements; Task 2 gate 2B and all later implementation/acceptance work remain open.
 
 ## Task 4: Standard review assesses behavior and compatibility
 
