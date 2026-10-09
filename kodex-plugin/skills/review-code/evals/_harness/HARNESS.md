@@ -31,7 +31,11 @@ This harness uses three sub-agents per eval, each with a narrowly scoped input, 
 klaude-plugin/skills/review-code/evals/_harness/setup.sh
 ```
 
-Prints the absolute path of the stage dir on stdout. Capture it as `STAGE_DIR`. Under `STAGE_DIR` there is one git worktree per eval (`STAGE_DIR/<eval-name>/`) with the fixture files staged (`git diff --cached` shows them as added) on an empty base commit.
+Requires Git and Python 3 (standard library only). Prints the absolute path of a fresh stage directory on stdout. Capture it as `STAGE_DIR`. An optional destination argument must not exist, even as an empty directory or symlink, and must be outside any `SKILL.md`-rooted directory. The helper never reuses or deletes caller-owned trees.
+
+Under `STAGE_DIR`, each eval has an independent Git repository (`STAGE_DIR/<eval-name>/`). Legacy flat `test-files/` trees are staged as added against an empty base. Paired fixtures use complete `test-files/before/` and `test-files/after/` trees: `HEAD` and tag `eval-base` identify the committed before snapshot, and `git diff --cached` shows the after snapshot's additions, modifications and deletions. Unchanged and hidden context remains available.
+
+Paired fixtures may include `test-files/history.json` with `{"snapshots": [{"path": "history/released", "tag": "eval-release"}]}`. Each path names a complete tree inside `test-files/history/`; entries are committed and tagged in order before the PR base. Historical source remains available through local Git, without adding history wrappers to the candidate. Invalid pairs, paths, conflicting/reserved tags, embedded `.git` entries and escaping links are rejected before creating a destination. Eval metadata and `oracle/` stay outside actor repositories. Staging is offline plumbing; it does not execute or grade a reviewer workflow.
 
 ### 2. Capture the staged diff per eval
 
@@ -150,6 +154,6 @@ With this harness, caveats 1–3 from the prior session notes are resolved struc
 
 When adding a new eval under `klaude-plugin/skills/review-code/evals/`:
 
-- The `test-files/` tree must be self-contained — `setup.sh` copies it verbatim into a fresh git repo, so any cross-reference (relative imports, file adjacency) must hold within `test-files/`.
+- Each flat fixture or individual before/after/history snapshot must be self-contained — relative imports, adjacency and symlinks must resolve within that repository tree. Keep `eval.json` and `oracle/` outside the snapshots. Do not stage fixtures in place beneath the host skill's `SKILL.md`, which would alter profile detection.
 - Keep `eval.prompt` natural — it reaches the reviewer only as framing context. Do not leak assertion language into it.
 - Author assertions to be graded from captured output text (resolver or reviewer), not from fixture re-inspection.

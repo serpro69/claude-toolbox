@@ -11,7 +11,7 @@
 > Not Doing: new review skill, whole-system audits, mandatory production access, deployments, generic release engine, new models/dependencies, profile redesign
 > Delivery: preserve existing invocations/shared consumers; regenerate Codex artifacts with every operative slice.
 
-Scope and direction are approved; the reviews have been assessed and the detailed plan revised. Tasks 1, 3, 4, 5 and 6 are done. Task 2 remains in progress: its implementation-readiness gate (2A) is done; its capture-completion gate (2B) remains open. Task 7 is ready to start; Tasks 7–11 follow their existing sequence without waiting for 2B. Task 12 and feature completion still depend on 2B. The [2026-10-09 run-contract amendment](verification/run-contract-2026-10-09.md) records the authorization and evidence limits. Earlier six-task numbering is superseded by this sequence; no completed work was renumbered. Size includes authored reasoning complexity; mechanical copies/symlinks/generated files are excluded. Parallel markers permit compatible work only and do not authorize delegation. Serialize generation if tasks run concurrently.
+Scope and direction are approved; the reviews have been assessed and the detailed plan revised. Tasks 1, 3, 4, 5, 6 and 7 are done. Task 2 remains in progress: its implementation-readiness gate (2A) is done; its capture-completion gate (2B) remains open. Task 8 is ready to start; Tasks 8–11 follow their existing sequence without waiting for 2B. Task 12 and feature completion still depend on 2B. The [2026-10-09 run-contract amendment](verification/run-contract-2026-10-09.md) records the authorization and evidence limits. Earlier six-task numbering is superseded by this sequence; no completed work was renumbered. Size includes authored reasoning complexity; mechanical copies/symlinks/generated files are excluded. Parallel markers permit compatible work only and do not authorize delegation. Serialize generation if tasks run concurrently.
 
 ## Task 1: Prove revision-bound evaluation loading
 
@@ -192,7 +192,7 @@ The ordinary-prompt R3 isolated run loaded all eight detection rules and applica
 
 ## Task 7: Stage before/after and historical fixtures reliably
 
-- **Status:** pending
+- **Status:** done
 - **Depends on:** Task 6
 - **Size:** M
 - **Can run in parallel with:** —
@@ -200,9 +200,25 @@ The ordinary-prompt R3 isolated run loaded all eight detection rules and applica
 
 ### Subtasks
 
-- [ ] 7.1 Extend review-code/evals/_harness/setup.sh for paired snapshots and optional history.json while preserving flat fixtures → verify: base/candidate diff and local release history match the fixture contract.
-- [ ] 7.2 Add test/test-review-eval-staging.sh → verify: offline tests cover added/changed/deleted/unchanged and hidden files, tagged historical source, malformed pairs/history, escaping links, .git entries and destination refusal.
-- [ ] 7.3 Stage the existing seed directories through the helper → verify: wrappers, eval metadata and oracle answers stay outside the actor workspace; fixture hashes remain comparable.
+- [x] 7.1 Extend review-code/evals/_harness/setup.sh for paired snapshots and optional history.json while preserving flat fixtures → verify: base/candidate diff and local release history match the fixture contract.
+- [x] 7.2 Add test/test-review-eval-staging.sh → verify: offline tests cover added/changed/deleted/unchanged and hidden files, tagged historical source, malformed pairs/history, escaping links, .git entries and destination refusal.
+- [x] 7.3 Stage the existing seed directories through the helper → verify: wrappers, eval metadata and oracle answers stay outside the actor workspace; fixture hashes remain comparable.
+
+### Execution context — 2026-10-09
+
+**Accepted scope:** the user requested Task 7. Task 6 is complete; the accepted sequencing decision leaves Task 2 gate 2B and Tasks 8–13 open. Requirements come from this task and [fixture lifecycle and staging](evaluation.md#fixture-lifecycle-and-staging).
+
+**Observed before edits:** the helper copies every fixture as added against an empty commit, reuses caller destinations and deletes existing eval subdirectories. Preserve flat staging, stdout's absolute stage path and complete hidden/unchanged context; add paired snapshots, ordered tagged history and refusal of existing destinations. R3's frozen manifest uses `snapshots` entries with `path` and `tag`. Repository-local offline checks establish staging behavior, not actor review quality or deployment readiness.
+
+**Instruction loading:** all eight installed detection rules loaded. `skill-md` activates for the harness through its nearest `review-code/SKILL.md`; universal, Claude Code and kk-plugin implement guidance loaded (provider directories and canonical paths satisfy both conditional predicates). No test-phase guidance exists for this profile. Use existing Git and Python 3 standard-library tooling, without adding packages or changing fixture bytes. Verification and isolated review are pending.
+
+**Superseding completion — 2026-10-09:** the helper now stages complete before/after trees, optional ordered historical commits/tags and legacy flat fixtures in fresh owned destinations. It preserves hidden/unchanged context, stages deletions, isolates Git configuration and rejects unsafe snapshot paths, links, metadata and refs before staging. `HEAD` and `eval-base` identify the review base. The harness playbook and generated Codex copies reflect the staging contract.
+
+[Verification](verification/task7/README.md): all ten shell suites passed (644 helper assertions, no skips), including 20 staging integration tests. Actual R1/R3 and all five legacy review fixtures stage correctly; R3's released source is reachable through its tag and absent from base/candidate files and the PR diff. All 51 frozen R1/R3/I1/I2 file hashes remain unchanged. Go tests, graph validation, shell syntax, structure checks and [685-file regeneration freshness](verification/task7/freshness.json) passed. Environment-limited and mistaken-path attempts are retained with their successful corrections.
+
+[Independent review](verification/task7/review.md) returned **APPROVE scoped to Task 7** after fixing a reserved `eval-base/` tag-namespace conflict. A focused reproduction and regression verify rejection before any Git operation. PAL returned no actionable findings, but zero embedded/examined files leave its coverage unverified; it is not corroboration. No systemic P0/P1 findings or new project conventions require indexing.
+
+**Evidence limits:** these are offline staging checks, not actor behavioral acceptance. Task 2 gate 2B and Tasks 8–13 retain their existing owners, next actions and verification requirements. Task 8 is next; the feature remains in progress. No requirement, fixture, model, capture contract or acceptance threshold changed.
 
 ## Task 8: Grade workflow behavior from execution evidence
 
