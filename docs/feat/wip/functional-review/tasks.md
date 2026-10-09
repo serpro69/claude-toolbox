@@ -7,11 +7,11 @@
 > Issue: [#166](https://github.com/serpro69/claude-toolbox/issues/166)
 > Status: in-progress
 > Created: 2026-10-07
-> Revised: 2026-10-07 after two design reviews
+> Revised: 2026-10-09 with user-approved separation of implementation readiness from capture completion
 > Not Doing: new review skill, whole-system audits, mandatory production access, deployments, generic release engine, new models/dependencies, profile redesign
 > Delivery: preserve existing invocations/shared consumers; regenerate Codex artifacts with every operative slice.
 
-Scope and direction are approved; the reviews have been assessed and the detailed plan revised. Task 1 is done; Task 2 is in progress; later tasks remain pending. Earlier six-task numbering is superseded by this sequence; no completed work was renumbered. Size includes authored reasoning complexity; mechanical copies/symlinks/generated files are excluded. Parallel markers permit compatible work only and do not authorize delegation. Serialize generation if tasks run concurrently.
+Scope and direction are approved; the reviews have been assessed and the detailed plan revised. Task 1 is done. Task 2 remains in progress: its implementation-readiness gate (2A) is done; its capture-completion gate (2B) remains open. Task 3 is ready to start; Tasks 3–11 follow their existing sequence without waiting for 2B. Task 12 and feature completion still depend on 2B. The [2026-10-09 run-contract amendment](verification/run-contract-2026-10-09.md) records the authorization and evidence limits. Earlier six-task numbering is superseded by this sequence; no completed work was renumbered. Size includes authored reasoning complexity; mechanical copies/symlinks/generated files are excluded. Parallel markers permit compatible work only and do not authorize delegation. Serialize generation if tasks run concurrently.
 
 ## Task 1: Prove revision-bound evaluation loading
 
@@ -46,15 +46,19 @@ Task 1 is complete. These are loading probes only, with unchanged baseline bytes
 - **Status:** in-progress
 - **Depends on:** Task 1
 - **Size:** M
-- **Can run in parallel with:** —
-- **Docs:** [Baseline preparation](implementation.md#baseline-preparation), [fixture lifecycle](evaluation.md#fixture-lifecycle-and-staging)
+- **Can run in parallel with:** Tasks 3–11 (gate 2B only, after 2A)
+- **Docs:** [Baseline preparation](implementation.md#baseline-preparation), [capture resolution](evaluation.md#codex-handoff-capture-resolution), [run-contract amendment](verification/run-contract-2026-10-09.md)
+- **Gate 2A — implementation readiness:** done; final fixtures, frozen inputs and 16 baseline captures retained. Satisfies Task 3's prerequisite without asserting behavioral acceptance.
+- **Gate 2B — capture completion:** open; four Codex baselines remain UNRUN. Owner: implementing agent. Required before Task 12 and feature completion.
 
 ### Subtasks
 
 - [x] 2.1 Create complete final R1/R3 eval directories under review-code/evals/ and I1/I2 under implement/evals/, including eval.json and grader-only oracles → verify: later tasks reuse these exact directories and all new IDs avoid existing IDs.
 - [x] 2.2 Stage seed snapshots manually in disposable repositories; create R3's released-provider history/tag → verify: the decisive old source is absent from candidate files and PR hunks but present in local Git.
-- [ ] 2.3 Capture standard, isolated, plan and standalone baseline runs before operative changes, using the immutable actor revision and fresh workspace/knowledge state per run → verify: ordered tool traces, actual dispatches, initial/final relevant files, bundle identity and initial state are retained.
+- [ ] 2.3 Complete baseline captures under the evidence contract selected by 2.5–2.6, using immutable c2d28c9e and fresh workspace/knowledge state per run → verify: retain the existing 16 captures and four fresh Codex R3-isolated/I2-standalone runs (two each), plus any required baseline recaptures, with ordered events, reviewer evidence, initial/final files and bundle/state identity. Capture completion does not require baseline behavioral PASS; candidate counterparts remain Task 12 work.
 - [x] 2.4 Freeze fixture hashes and the grader procedure/rubric with the captures → verify: subsequent paired runs use identical fixture bytes and any changed fixture requires both sides to rerun.
+- [ ] 2.5 Conduct one bounded capture investigation under [the resolution procedure](evaluation.md#codex-handoff-capture-resolution) → verify: record a supported alternative and at most one fresh marker probe, or document that no viable alternative exists; retain the outcome and stop repeating unchanged capture paths.
+- [ ] 2.6 Record the selected evidence contract before further handoff-dependent captures → verify: a successful probe retains exact-handoff assertions; otherwise version the rubric/assertion mapping for observable reviewer receipt and use, preserving the original freeze and disclosing that exact prompt content is unverified. Record regrading/recapture obligations for Tasks 8/12 and baseline recaptures for 2.3. Close 2B only after 2.3, 2.5 and 2.6 are complete.
 
 ### Execution context — 2026-10-08
 
@@ -62,14 +66,20 @@ Observed evidence: [Task 2 verification](verification/task2/README.md), [frozen 
 
 Captured 12 Claude baseline workflows (all six seed/mode pairs twice) and four Codex baselines (R1 standard/I1 plan twice), all against immutable c2d28c9e in fresh workspaces with empty run-local knowledge. Capy 0.16.8 was declared before capture and passed fresh isolation probes. Traces retain permission denials, actual dispatches/results, payload artifacts and initial/final files; capture completion is not behavioral acceptance. Three failed controller attempts remain retained. Fifteen controller tests, all nine shell suites and plugin graph checks passed; corrected capture code passed independent review.
 
-**Open capture gate — owner: implementing agent.** Codex R3 isolated and I2 standalone remain **UNRUN**, two repetitions each. Public app-server history and separately trusted observation hooks both omit/encrypt submitted reviewer messages; a final claim cannot satisfy exact-handoff evidence. Establish a supported plaintext-at-submission surface in a separate probe, then capture four fresh baselines with the frozen inputs. If runtime changes, revise the contract and recapture affected comparisons. No requirement waiver, provider switch or Task 2 completion is authorized by these observations. Temporary Codex trust/hook/plugin registrations were removed. Task 3 remains pending until this gate closes.
+**Capture disposition at 2026-10-08 — superseded for sequencing by the decision below.** Codex R3 isolated and I2 standalone remained **UNRUN**, two repetitions each. Public app-server history and separately trusted observation hooks omitted/encrypted submitted reviewer messages; a final claim could not satisfy exact-handoff evidence. The original contract held Task 3 until plaintext capture was established. Temporary Codex trust/hook/plugin registrations were removed. These observations did not establish behavioral acceptance.
 
 **Capture note from Task 1 — owner: implementing agent.** Codex CLI JSON omits some child events; persisted parent/child runtime records expose them. The parent dispatch's message field is encrypted. Before any later exact-handoff assertion is captured, retain plaintext at submission or use another supported trace surface alongside the encrypted record. Task 1's role bytes/read results prove loading, not exact plaintext handoff content; ciphertext alone cannot pass that later assertion. See [completed probe evidence and limits](verification/README.md#completed-probes-after-login-refresh).
+
+### Accepted sequencing decision — 2026-10-09
+
+The user approved separating implementation readiness from full verification, one bounded capture investigation, and a conditional fallback to observable reviewer receipt/use if plaintext remains unavailable. Gate 2A is satisfied by the frozen fixtures and retained captures; Task 3 may start. Gate 2B remains owned by the implementing agent and blocks Task 12 and feature completion, not Tasks 3–11. The immutable baseline can be launched after candidate development without using candidate instructions.
+
+Subtasks 2.5–2.6 own the deferred capture work because the tested Codex surfaces cannot expose the required messages. Follow the [run-contract amendment](verification/run-contract-2026-10-09.md) and record the bounded investigation's outcome before choosing the evidence path. No new probe, rubric revision, capture or behavioral grade is claimed by this documentation update. Existing captures, manifests, frozen rubric and assertions remain unchanged; a fallback requires a separately versioned contract applied to both sides. Provider coverage and the two-run candidate threshold remain required.
 
 ## Task 3: Align the instruction-routing convention
 
 - **Status:** pending
-- **Depends on:** Task 2
+- **Depends on:** Task 2 gate 2A (done); does not wait for gate 2B
 - **Size:** S
 - **Can run in parallel with:** —
 - **Docs:** [Routing-convention slice](implementation.md#routing-convention-slice)
@@ -154,7 +164,7 @@ Captured 12 Claude baseline workflows (all six seed/mode pairs twice) and four C
 - [ ] 8.1 Extend agents/eval-grader.md with explicit workflow mode and manifest-limited Read access → verify: the omitted/default mode preserves the legacy component contract.
 - [ ] 8.2 Update review-code/evals/_harness/HARNESS.md and add implement/evals/README.md for capture, dispatch evidence, resulting-file snapshots and mode selection → verify: acting sessions never receive grading material.
 - [ ] 8.3 Add and grade calibration records → verify: an early edit despite a reassuring final response is FAIL, missing events are PARTIAL, and complete correct ordering is PASS; legacy component grades stay compatible.
-- [ ] 8.4 Pin the grader implementation and regrade retained baseline traces under the same contract used for candidate traces → verify: no self-attested ordering or payload claim substitutes for actual execution evidence.
+- [ ] 8.4 Pin the grader implementation and grade available baseline traces under the same versioned contract used for candidate traces → verify: no self-attested ordering or payload claim substitutes for execution evidence; regrade affected traces if 2.6 later selects the fallback, and leave missing captures for 2B/Task 12 rather than blocking grader implementation.
 - [ ] 8.5 Regenerate the grader/playbook output and run structure/graph checks → verify: both distributions preserve the explicit mode boundary.
 
 ## Task 9: Author state, retry and intent scenarios
@@ -202,7 +212,7 @@ Captured 12 Claude baseline workflows (all six seed/mode pairs twice) and four C
 ## Task 12: Execute and assess the full comparison matrix
 
 - **Status:** pending
-- **Depends on:** Task 9, Task 10, Task 11
+- **Depends on:** Task 2 gate 2B, Task 9, Task 10, Task 11
 - **Size:** M
 - **Can run in parallel with:** —
 - **Docs:** [Matrix execution](implementation.md#matrix-execution), [acceptance](evaluation.md#comparison-identity-and-acceptance)
@@ -211,7 +221,7 @@ Captured 12 Claude baseline workflows (all six seed/mode pairs twice) and four C
 
 - [ ] 12.1 Run all declared primary-provider case/mode pairs and secondary representative checks using two fresh baseline and candidate sessions per pair → verify: identical fixtures/rubric/model configuration, filtered revision-bound actor bundles, fresh writable state and identical initial knowledge seeds with the declared unavailable-vault policy.
 - [ ] 12.2 Run R8 phase replays, real PAL integration smoke and legacy routing/pre-write controls → verify: replay success is not reported as transport coverage and missing integration remains explicit.
-- [ ] 12.3 Grade sealed execution packages, including R3 history, R3/R7 verdicts and I4 resulting task/spec state → verify: every required candidate assertion passes twice; contrary or missing evidence cannot pass.
+- [ ] 12.3 Grade sealed execution packages, including R3 history, R3/R7 verdicts and I4 resulting task/spec state → verify: every required candidate assertion passes twice under the selected versioned contract; contrary or missing evidence cannot pass, and any receipt/use fallback explicitly leaves exact prompt content unverified.
 - [ ] 12.4 Retain failures, fixes and unrun gates with owner/reason/next action → verify: baseline comparisons are not cherry-picked and no statistical reliability or untested-provider parity is claimed.
 
 ## Task 13: Document and verify the complete feature
@@ -233,11 +243,14 @@ Captured 12 Claude baseline workflows (all six seed/mode pairs twice) and four C
 
 ## Dependency Graph
 
+Revised with the user-approved sequencing decision on 2026-10-09. Gates 2A and 2B are parts of Task 2, not renumbered tasks.
+
 ~~~
-Task 1 -> Task 2 -> Task 3 -> Task 4 -> Task 5 -> Task 6 -> Task 7 -> Task 8
-Task 8 -> Task 9  --+
-Task 8 -> Task 10 --+-> Task 12 -> Task 13
-Task 8 -> Task 11 --+
+Task 1 -> Task 2 gate 2A -> Task 3 -> Task 4 -> Task 5 -> Task 6 -> Task 7 -> Task 8
+Task 2 gate 2A -> Task 2 gate 2B --+
+Task 8 -> Task 9 ----------------+
+Task 8 -> Task 10 ---------------+-> Task 12 -> Task 13
+Task 8 -> Task 11 ---------------+
 ~~~
 
 ## Design-stage disposition
