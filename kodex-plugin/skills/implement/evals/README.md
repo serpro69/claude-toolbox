@@ -1,0 +1,13 @@
+# Implementation evals
+
+These scenarios are controller inputs. Stage only the declared subject files in a fresh repository outside any ancestor containing `SKILL.md`. Keep `eval.json`, assertions, traps, `oracle/`, grading controls and results outside actor workspaces and filtered instruction bundles/caches. Do not run an actor against this directory in place.
+
+For full plan/standalone invocations, follow the [workflow capture and grading procedure](../../review-code/evals/_harness/HARNESS.md#workflow-procedure). Load that procedure and the selected grader instructions before acting. Use the ordinary eval prompt with the selected revision's registered `$kk:implement`; do not substitute a direct reviewer prompt or a pasted implementation summary. Before/after/history staging is described in the same playbook; the review helper enumerates review evals only, so implementation controllers must stage their own declared inputs using that contract.
+
+Freeze the actor/fixture/rubric identities, models, tool policy and repetition threshold before measurement. Use fresh writable/knowledge state per run and verify actual instruction binding. Capture completed instruction reads, bounded routing, source reads, edits, attributed user decisions, actual independent-agent/PAL dispatches and immutable payloads. Preserve actor order and dispatch edges; no final claim substitutes for these events.
+
+Retain initial and final source, tests, task/design/implementation documents and durable follow-up notes. This permits grading stale-handoff refresh, specification integrity, unmet hard requirements and permitted external prerequisites from resulting files. Do not supply an invented user waiver to make a conflicting plan continue.
+
+After capture, seal/hash the relevant evidence outside actor inputs. Explicitly select **Grading mode: workflow** with the pinned independent grader, supplied rubric, assertion-to-evidence mapping and manifest-limited Read access. Missing/truncated evidence is PARTIAL; observed contrary behavior or an omitted required action in a complete trace is FAIL. Failed or partial assertions never pass acceptance. Any receipt/use fallback requires a versioned contract, calibration and regrading of both sides; exact prompt content remains unverified.
+
+Legacy output-only component grading still accepts reviewer/resolver text plus assertions with omitted mode or **Grading mode: component**; it establishes no execution-order claim. Aggregate by `(skill, eval directory, assertion ID)` plus provider/mode/repetition and grader/rubric version, since historical numeric IDs are not globally unique. Preserve missing captures and failed attempts, with deferred work assigned a reason, owner, next step and verification condition.
