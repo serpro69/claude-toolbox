@@ -1,0 +1,303 @@
+{
+  "purpose": "Controller event inventory, not formal workflow grading",
+  "case": "r1-standard-2",
+  "catalogs": [
+    {
+      "sequence": 3,
+      "model": "claude-opus-4-8[1m]",
+      "plugins": [
+        {
+          "name": "kk",
+          "path": "/private/tmp/functional-review-task4-actors-_xy7589w/r1-standard-2/plugins/kk",
+          "source": "kk@inline",
+          "version": "0.23.0"
+        },
+        {
+          "name": "agents-md",
+          "path": "builtin",
+          "source": "agents-md@builtin"
+        }
+      ]
+    }
+  ],
+  "tool_events": [
+    {
+      "id": "toolu_01FGMWid61sEpjxrCGBZEFvR",
+      "sequence": 6,
+      "name": "Skill",
+      "input": {
+        "skill": "kk:review-code"
+      },
+      "result_sequence": 7,
+      "is_error": false
+    },
+    {
+      "id": "toolu_011PQDVYaRWKmZx7mSNc86ki",
+      "sequence": 12,
+      "name": "Read",
+      "input": {
+        "file_path": "/private/tmp/functional-review-task4-actors-_xy7589w/r1-standard-2/plugins/kk/skills/review-code/review-process.md"
+      },
+      "result_sequence": 13,
+      "is_error": false
+    },
+    {
+      "id": "toolu_01DnreR8x8d3FK4PmRJosUJe",
+      "sequence": 14,
+      "name": "Read",
+      "input": {
+        "file_path": "/private/tmp/functional-review-task4-actors-_xy7589w/r1-standard-2/plugins/kk/skills/review-code/shared-change-context.md"
+      },
+      "result_sequence": 15,
+      "is_error": false
+    },
+    {
+      "id": "toolu_01MegRF8mawuPjR3wZT7Hugi",
+      "sequence": 16,
+      "name": "Read",
+      "input": {
+        "file_path": "/private/tmp/functional-review-task4-actors-_xy7589w/r1-standard-2/plugins/kk/skills/review-code/functional-review.md"
+      },
+      "result_sequence": 17,
+      "is_error": false
+    },
+    {
+      "id": "toolu_01HYJzPEmi8pG335gVBqqmr9",
+      "sequence": 18,
+      "name": "Read",
+      "input": {
+        "file_path": "/private/tmp/functional-review-task4-actors-_xy7589w/r1-standard-2/plugins/kk/skills/review-code/shared-review-scope-protocol.md"
+      },
+      "result_sequence": 19,
+      "is_error": false
+    },
+    {
+      "id": "toolu_01PNme45NxWRQdTwMCN8QDXg",
+      "sequence": 20,
+      "name": "Read",
+      "input": {
+        "file_path": "/private/tmp/functional-review-task4-actors-_xy7589w/r1-standard-2/plugins/kk/skills/review-code/shared-profile-detection.md"
+      },
+      "result_sequence": 21,
+      "is_error": false
+    },
+    {
+      "id": "toolu_016cqtqofF7PdGBo17rupJyb",
+      "sequence": 22,
+      "name": "Read",
+      "input": {
+        "file_path": "/private/tmp/functional-review-task4-actors-_xy7589w/r1-standard-2/plugins/kk/skills/review-code/shared-capy-knowledge-protocol.md"
+      },
+      "result_sequence": 23,
+      "is_error": false
+    },
+    {
+      "id": "toolu_016WmPyvmVhUZgTStdHwrzxa",
+      "sequence": 28,
+      "name": "Bash",
+      "input": {
+        "command": "git status -sb && echo \"---STAGED STAT---\" && git diff --cached --stat && echo \"---UNSTAGED STAT---\" && git diff --stat",
+        "description": "Check git status and diff stats"
+      },
+      "result_sequence": 31,
+      "is_error": false
+    },
+    {
+      "id": "toolu_015V4Q6Ud9x5NhPRcJRC6M3H",
+      "sequence": 37,
+      "name": "Read",
+      "input": {
+        "file_path": "/private/tmp/functional-review-task4-actors-_xy7589w/r1-standard-2/plugins/kk/profiles/python/DETECTION.md"
+      },
+      "result_sequence": 38,
+      "is_error": false
+    },
+    {
+      "id": "toolu_01AUVSxJRfzSEnddUvqDdoPQ",
+      "sequence": 39,
+      "name": "Read",
+      "input": {
+        "file_path": "/private/tmp/functional-review-task4-actors-_xy7589w/r1-standard-2/plugins/kk/profiles/python/review-code/index.md"
+      },
+      "result_sequence": 40,
+      "is_error": false
+    },
+    {
+      "id": "toolu_01JqUUhPDsP7FYjmbDNa8Wx9",
+      "sequence": 45,
+      "name": "Read",
+      "input": {
+        "file_path": "/private/tmp/functional-review-task4-actors-_xy7589w/r1-standard-2/plugins/kk/profiles/python/review-code/security-checklist.md"
+      },
+      "result_sequence": 46,
+      "is_error": false
+    },
+    {
+      "id": "toolu_01D8VrrkkZSaAcSZBCPkdhB4",
+      "sequence": 47,
+      "name": "Read",
+      "input": {
+        "file_path": "/private/tmp/functional-review-task4-actors-_xy7589w/r1-standard-2/plugins/kk/profiles/python/review-code/solid-checklist.md"
+      },
+      "result_sequence": 48,
+      "is_error": false
+    },
+    {
+      "id": "toolu_01LcPNbuYNzapSdwDHqj2j1j",
+      "sequence": 49,
+      "name": "Read",
+      "input": {
+        "file_path": "/private/tmp/functional-review-task4-actors-_xy7589w/r1-standard-2/plugins/kk/profiles/python/review-code/code-quality-checklist.md"
+      },
+      "result_sequence": 50,
+      "is_error": false
+    },
+    {
+      "id": "toolu_019LFtmoKRsxs7EQF69dRnmN",
+      "sequence": 51,
+      "name": "Read",
+      "input": {
+        "file_path": "/private/tmp/functional-review-task4-actors-_xy7589w/r1-standard-2/plugins/kk/profiles/python/review-code/removal-plan.md"
+      },
+      "result_sequence": 52,
+      "is_error": false
+    },
+    {
+      "id": "toolu_01KqMNrDxbsLyakJfevvsUqT",
+      "sequence": 58,
+      "name": "Bash",
+      "input": {
+        "command": "echo \"===STAGED DIFF===\" && git diff --cached cleanup.py && echo \"\" && echo \"===FULL STAGED FILE (index blob)===\" && git show :cleanup.py",
+        "description": "Show staged diff and full staged file content"
+      },
+      "result_sequence": 61,
+      "is_error": false
+    },
+    {
+      "id": "toolu_01WBiEYygA2KKk5v4cTizEfu",
+      "sequence": 81,
+      "name": "Bash",
+      "input": {
+        "command": "echo \"===repo files===\" && git ls-files && echo \"\" && echo \"===log for cleanup.py===\" && git log --oneline -5 -- cleanup.py",
+        "description": "List repo files and cleanup.py history"
+      },
+      "result_sequence": 84,
+      "is_error": false
+    },
+    {
+      "id": "toolu_012JGKunGTfixqpvaDjtyKYm",
+      "sequence": 85,
+      "name": "Grep",
+      "input": {
+        "pattern": "cleanup_setup|\\.active|setup_id|\\.pending",
+        "output_mode": "content",
+        "-n": true
+      },
+      "result_sequence": 86,
+      "is_error": false
+    },
+    {
+      "id": "toolu_01Pa12f6fpUUJzByYqpSLhjF",
+      "sequence": 88,
+      "name": "Read",
+      "input": {
+        "file_path": "/private/tmp/functional-review-task4-actors-_xy7589w/r1-standard-2/setup.py"
+      },
+      "result_sequence": 89,
+      "is_error": false
+    },
+    {
+      "id": "toolu_01CXuU1fMiQ5CTQdMAwSi34Q",
+      "sequence": 90,
+      "name": "Read",
+      "input": {
+        "file_path": "/private/tmp/functional-review-task4-actors-_xy7589w/r1-standard-2/store.py"
+      },
+      "result_sequence": 91,
+      "is_error": false
+    },
+    {
+      "id": "toolu_01SVcJ7RzpkxoXJKnicNct2u",
+      "sequence": 92,
+      "name": "Read",
+      "input": {
+        "file_path": "/private/tmp/functional-review-task4-actors-_xy7589w/r1-standard-2/tests/test_setup.py"
+      },
+      "result_sequence": 93,
+      "is_error": false
+    },
+    {
+      "id": "toolu_0173GUkJMuAJSFibUvMmyxuH",
+      "sequence": 94,
+      "name": "Read",
+      "input": {
+        "file_path": "/private/tmp/functional-review-task4-actors-_xy7589w/r1-standard-2/README.md"
+      },
+      "result_sequence": 95,
+      "is_error": false
+    },
+    {
+      "id": "toolu_01WSyNSLMB4HzYYizNZiRyuY",
+      "sequence": 111,
+      "name": "Bash",
+      "input": {
+        "command": "echo \"===with staged simplification (current working tree == staged)===\" && python3 -B -m unittest discover -s tests 2>&1 | tail -6\necho \"\"\necho \"===reproduce the documented out-of-order scenario against staged code===\" && python3 -B -c \"\nimport sys; sys.path.insert(0,'.')\nfrom store import Store\nfrom setup import begin_setup, complete_setup, active_connection\nfrom cleanup import cleanup_setup\ns=Store()\nbegin_setup(s,'w','one')          # setup one starts, then fails (cleanup queued)\ncomplete_setup(s,'w','two','connection-two')  # setup two completes first\ncleanup_setup(s,'w','one')        # late cleanup of failed setup one\nprint('active_connection after late cleanup:', active_connection(s,'w'))\nprint('EXPECTED per README: connection-two')\n\"",
+        "description": "Run tests and reproduce the out-of-order cleanup scenario"
+      },
+      "result_sequence": 114,
+      "is_error": false
+    },
+    {
+      "id": "toolu_01R5LrxFWS9Skkk7ph9BqtvM",
+      "sequence": 121,
+      "name": "ToolSearch",
+      "input": {
+        "query": "select:mcp__capy__capy_search",
+        "max_results": 3
+      },
+      "result_sequence": 122,
+      "is_error": false
+    },
+    {
+      "id": "toolu_01MZd2GsJW2CQWHUGGifnRPF",
+      "sequence": 124,
+      "name": "mcp__capy__capy_search",
+      "input": {
+        "queries": [
+          "conditional delete ownership guard removed",
+          "unconditional pop active association cleanup",
+          "out-of-order cleanup stale setup eviction"
+        ],
+        "source": "kk:review-findings",
+        "limit": 3
+      },
+      "result_sequence": 125,
+      "is_error": true
+    },
+    {
+      "id": "toolu_0172kHewxWCaigSmpfs8K2yy",
+      "sequence": 135,
+      "name": "ToolSearch",
+      "input": {
+        "query": "select:mcp__capy__capy_index",
+        "max_results": 3
+      },
+      "result_sequence": 136,
+      "is_error": false
+    },
+    {
+      "id": "toolu_01CAY39H1EvNiH1xJqNGQjJe",
+      "sequence": 137,
+      "name": "mcp__capy__capy_index",
+      "input": {
+        "source": "kk:review-findings",
+        "content": "Pattern: \"Simplifying\" a conditional compare-and-delete into an unconditional delete removes an ownership guard and causes stale-eviction. Example: cleanup_setup popped store.active[workspace_id] only when the active association's setup_id matched the setup being cleaned up (`if association and association[\"setup_id\"] == setup_id`). Collapsing it to an unconditional `store.active.pop(workspace_id, None)` lets a late/out-of-order cleanup of a failed setup evict a DIFFERENT, newer setup that already completed for the same key \u2014 silently destroying its live association. Deterministic even in serialized (non-threaded) code when operations are queued/reordered. Red flag: a guarded pop/delete keyed by an identity/owner field being reduced to an unconditional one during a \"simplification\" or \"cleanup\" diff. Check-then-act guards keyed on an owner id are usually intentional (last-writer-wins protection); verify against the documented lifecycle before removing. Existing tests may still pass because they only cover the self-owned path, not the superseded-owner path."
+      },
+      "result_sequence": 138,
+      "is_error": false
+    }
+  ],
+  "initial_final_subject_equal": true,
+  "sealed_capture_hashes_verified": 39,
+  "candidate": "d0ab5f0122724c050c2ecbd4563bb6e6fce2b68c"
+}

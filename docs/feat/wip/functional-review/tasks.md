@@ -11,7 +11,7 @@
 > Not Doing: new review skill, whole-system audits, mandatory production access, deployments, generic release engine, new models/dependencies, profile redesign
 > Delivery: preserve existing invocations/shared consumers; regenerate Codex artifacts with every operative slice.
 
-Scope and direction are approved; the reviews have been assessed and the detailed plan revised. Tasks 1 and 3 are done. Task 2 remains in progress: its implementation-readiness gate (2A) is done; its capture-completion gate (2B) remains open. Task 4 is ready to start; Tasks 4–11 follow their existing sequence without waiting for 2B. Task 12 and feature completion still depend on 2B. The [2026-10-09 run-contract amendment](verification/run-contract-2026-10-09.md) records the authorization and evidence limits. Earlier six-task numbering is superseded by this sequence; no completed work was renumbered. Size includes authored reasoning complexity; mechanical copies/symlinks/generated files are excluded. Parallel markers permit compatible work only and do not authorize delegation. Serialize generation if tasks run concurrently.
+Scope and direction are approved; the reviews have been assessed and the detailed plan revised. Tasks 1, 3 and 4 are done. Task 2 remains in progress: its implementation-readiness gate (2A) is done; its capture-completion gate (2B) remains open. Task 5 is ready to start; Tasks 5–11 follow their existing sequence without waiting for 2B. Task 12 and feature completion still depend on 2B. The [2026-10-09 run-contract amendment](verification/run-contract-2026-10-09.md) records the authorization and evidence limits. Earlier six-task numbering is superseded by this sequence; no completed work was renumbered. Size includes authored reasoning complexity; mechanical copies/symlinks/generated files are excluded. Parallel markers permit compatible work only and do not authorize delegation. Serialize generation if tasks run concurrently.
 
 ## Task 1: Prove revision-bound evaluation loading
 
@@ -99,7 +99,7 @@ Review: /kk:review-code:isolated's independent code-reviewer inspected the diff 
 
 ## Task 4: Standard review assesses behavior and compatibility
 
-- **Status:** pending
+- **Status:** done
 - **Depends on:** Task 3
 - **Size:** M
 - **Can run in parallel with:** —
@@ -107,11 +107,23 @@ Review: /kk:review-code:isolated's independent code-reviewer inspected the diff 
 
 ### Subtasks
 
-- [ ] 4.1 Add _shared/change-context.md, review-code/functional-review.md and the review-code/shared-change-context.md symlink → verify: all required semantics fit the 800/1,200-word ceilings and links resolve.
-- [ ] 4.2 Update review-code/SKILL.md and review-process.md for instruction loading, behavior tracing, historical evidence, coverage and verdict mapping → verify: R1 is detected through an ordinary prompt and material Unknown evidence is qualified.
-- [ ] 4.3 Clarify _shared/review-scope-protocol.md → verify: current incompatibility remains reportable while genuinely pending work is excluded; /kk:review-spec's existing payload remains valid.
-- [ ] 4.4 Add shared-source/symlink and word-budget assertions to test/test-plugin-structure.sh → verify: exact targets, resolution, regular-file substitution and excess wording are checked; do not register the implement link before it exists.
-- [ ] 4.5 Regenerate Codex output and run structure/graph checks plus the seed standard dry-run → verify: canonical/generated parity and evidence-backed reporting; preserve actual results for later paired grading.
+- [x] 4.1 Add _shared/change-context.md, review-code/functional-review.md and the review-code/shared-change-context.md symlink → verify: all required semantics fit the 800/1,200-word ceilings and links resolve.
+- [x] 4.2 Update review-code/SKILL.md and review-process.md for instruction loading, behavior tracing, historical evidence, coverage and verdict mapping → verify: R1 is detected through an ordinary prompt and material Unknown evidence is qualified.
+- [x] 4.3 Clarify _shared/review-scope-protocol.md → verify: current incompatibility remains reportable while genuinely pending work is excluded; /kk:review-spec's existing payload remains valid.
+- [x] 4.4 Add shared-source/symlink and word-budget assertions to test/test-plugin-structure.sh → verify: exact targets, resolution, regular-file substitution and excess wording are checked; do not register the implement link before it exists.
+- [x] 4.5 Regenerate Codex output and run structure/graph checks plus the seed standard dry-run → verify: canonical/generated parity and evidence-backed reporting; preserve actual results for later paired grading.
+
+### Execution context — 2026-10-09
+
+Implemented the shared change context (573 words), common functional method (877 words), standard instruction/routing/investigation sequence, historical-evidence and verdict guidance, and shared task-scope clarification. The canonical review-code link has the required relative target; generated consumer copies, including review-spec's existing scope protocol, are refreshed. No skill description or dependency changed. Profile detection activated `skill-md`; all three applicable implement/review checklists were loaded, with the accepted Task 3 routing exception taking precedence over older absolute checklist wording.
+
+[Local verification](verification/task4/checks.json): all nine shell suites passed (640 assertions, no skips); five disposable mutation checks rejected regular-file replacement, wrong/broken targets and either word-budget overflow. `make generate-kodex`, a second-generation hash comparison across 684 files, `make plugin-graph`, Bash syntax and whitespace checks passed. The graph's cycle warning is retained in its log. Independent code review found no substantiated defects, while the required R1/ordering behavioral evidence remains Unknown.
+
+**Verification completed after user approval.** The user authorized the prepared Claude/PAL checks. The [run contract](verification/task4/run-contract.md) and [verification record](verification/task4/README.md) retain the original approval rejection, an incomplete binding attempt, its successful fresh retry, and candidate1's failed ordering trace. Candidate1 read the diff before Python checklists. The correction adds a returned-content loading ledger/checkpoint and explicit profile enumeration. Final candidate `d0ab5f0122724c050c2ecbd4563bb6e6fce2b68c` passed binding; its fresh ordinary-prompt R1 run loaded the common method and all applicable Python checklists before investigation, inspected the unchanged consumers and README, ran the two passing existing tests, and reproduced failed-A cleanup deleting successful B's association. It recommended the ownership check and returned REQUEST_CHANGES. Final generation, graph and 684-file freshness checks passed; capture and source-manifest hashes verified. Fixtures, rubric, model, permission policy and baseline were unchanged.
+
+Independent source review and execution-evidence audit approved the Task 4 slice with no actionable source findings. PAL returned two native LOW wording suggestions; its zero embedded-file count and retained earlier review context leave coverage/isolation unverified, so it is not corroboration. Details and author context are in [review.md](verification/task4/review.md). No systemic P0/P1 implementation finding required indexing.
+
+**Deferred verification — owner: implementing agent, Task 12.** Candidate2 skipped the full known-profile detection enumeration and `kk:lang-idioms` lookup; these remain failed procedural observations. Its P0 severity is not validated by this audit and differs from the fixture's suggested P1/justified P2. Re-run the existing routing controls, check the omitted procedure steps and grade severity against supported impact under the pinned Task 8 grader before final acceptance; fix and recapture affected cases if required. One intermediate dry-run is not a paired matrix pass. Task 2 gate 2B, Task 12's two-run threshold and feature completion remain open; Task 4 completion waives none of them.
 
 ## Task 5: Isolated reviewers independently compare current and historical behavior
 

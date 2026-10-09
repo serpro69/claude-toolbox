@@ -6,22 +6,25 @@ description: |
 ---
 <!-- codex: tool-name mapping applied. See .codex/scripts/session-start.sh -->
 
-# SOLID Code Review
+# Code Review
 
 ## Overview
 
-Perform a structured review of the current git changes with focus on SOLID, architecture, removal candidates, and security risks. Default to review-only output unless the user asks to implement changes.
+Review whether the current changes achieve their intended behavior, preserve affected contracts and meet applicable delivery constraints. Apply SOLID, architecture, security, quality and removal guidance alongside that reasoning. Default to review-only output unless the user asks to implement changes.
 
 ## Conventions
 
 - **Read capy knowledge base conventions** at [shared-capy-knowledge-protocol.md](shared-capy-knowledge-protocol.md).
-- **Read profile detection** — the set of reference checklists loaded for a given diff — at [shared-profile-detection.md](shared-profile-detection.md). The workflow below invokes it in Step 2 and uses the resulting `(profile, checklist)` list to drive Steps 3–4.
+- **Always read change context** at [shared-change-context.md](shared-change-context.md) and the common method at [functional-review.md](functional-review.md), even when no profile matches.
+- **Read task scope** at [shared-review-scope-protocol.md](shared-review-scope-protocol.md); pending work does not excuse regressions in current flows.
+- **Read profile detection** at [shared-profile-detection.md](shared-profile-detection.md). Use its records to select and load domain guidance before investigation.
 
 ## Required Outputs
 
 Before declaring the review complete, verify all outputs are delivered:
 
 - [ ] Review report presented to user
+- [ ] Intent, scope/baselines, inspected behavior, applicable compatibility conclusions and evidence limits reported
 - [ ] P0/P1 systemic findings indexed as `kk:review-findings` (skip if no qualifying findings)
 - [ ] Next steps confirmation from user
 
@@ -57,22 +60,23 @@ See [review-isolated.md](./review-isolated.md) for the isolated workflow.
 
 ### Mandatory ordering — methodology before evidence
 
-The workflow below is strictly sequential. **Do not read the diff's contents, re-read changed files, run `capy_search`, or begin forming findings until you have completed profile detection and loaded every resolved checklist file.** Until then, your only contact with the changes is `git diff --stat` (filenames only) — enough to drive profile detection, but not enough to pattern-match findings.
+The standard workflow below is strictly sequential. **Load the process, shared protocols, common functional method and every resolved profile checklist before source investigation, `capy_search`, findings, edits or tests.** After basic process instructions load, the sole early-content exception is bounded inspection to resolve declared detection/conditional-load predicates: at most approximately 16 KiB per candidate file; log predicate/path, and conservatively load an instruction when its conditional is undecidable within the bound. No behavioral analysis or full-diff investigation is permitted during routing.
 
 This ordering is load-bearing, not stylistic. Reviewing from a diff before loading profile checklists is the known failure mode this skill is designed to prevent: the LLM has enough from the diff to produce plausible findings, and optimizes away the methodology if the workflow permits.
 
-**Phases** (summary — the detailed procedure in [review-process.md](./review-process.md) breaks presentation into three distinct numbered steps: present results, next-steps confirmation, verify outputs):
+**Phases** (same order as [review-process.md](./review-process.md)):
 
-1. Scope — `git diff --stat` for filenames only (no content reads)
-2. Detect active profiles — delegate to `shared-profile-detection.md`; produce the list of `(profile, checklist)` records
-3. Load profile review indexes — for each active profile, resolve its `review-code/index.md`; collect always-load + filename-evaluable conditionals now; defer content-evaluable conditionals to Step 6
-4. Read resolved checklists — read every `(profile, checklist)` file collected in Step 3 into context
-5. Read the diff and re-read changed files — now, with methodology loaded; also run `capy_search` for `kk:review-findings` and `kk:lang-idioms`
-6. Resolve content-evaluable conditional entries — for each deferred entry from Step 3, evaluate the predicate against the file content read in Step 5; load any newly-matching checklists into context
-7. Apply checklists — iterate the full resolved list (Steps 3 + 6); emit findings grouped by `(profile, checklist)`
-8. Self-check and confidence assessment
-9. Index findings — capy index systemic P0/P1 patterns as `kk:review-findings`
-10. Present results with next steps
+1. Load basic instructions — process, shared protocols and common functional method
+2. Scope — resolve diff selection from status/filenames only
+3. Detect profiles and route checklists — filename/metadata signals, then bounded declared predicates; no deferred conditionals
+4. Read every resolved checklist — always-load, matching and conservatively selected content; confirm returned instruction files in a compact loading checkpoint before proceeding
+5. Investigate — read selected diff/current files, establish change context/task scope, trace behavior and historical compatibility, and search relevant knowledge
+6. Apply profile and general checklists to that behavior
+7. Self-check findings and confidence through targeted verification
+8. Index systemic P0/P1 findings as `kk:review-findings`
+9. Present findings, coverage and evidence-qualified verdict
+10. Confirm next steps
+11. Verify required outputs
 
 See [review-process.md](./review-process.md) for the detailed step-by-step process.
 

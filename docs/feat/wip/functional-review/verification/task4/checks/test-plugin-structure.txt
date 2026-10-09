@@ -1,0 +1,292 @@
+
+=== Section 1: Plugin Manifest ===
+[TEST] plugin.json exists
+[PASS] Plugin manifest exists
+[TEST] plugin.json is valid JSON
+[PASS] Plugin manifest is valid JSON
+[TEST] plugin.json has correct name
+[PASS] Plugin name is kk
+[TEST] plugin.json has required metadata fields
+[PASS] Author is serpro69
+[PASS] plugin.json has description
+[PASS] plugin.json has version
+[PASS] plugin.json has homepage
+[PASS] plugin.json has repository
+[PASS] plugin.json has license
+
+=== Section 2: Marketplace Manifest ===
+[TEST] marketplace.json exists
+[PASS] Marketplace manifest exists
+[TEST] marketplace.json is valid JSON
+[PASS] Marketplace manifest is valid JSON
+[TEST] marketplace.json has correct name
+[PASS] Marketplace name is claude-toolbox
+[TEST] marketplace.json plugin source is relative path to klaude-plugin
+[PASS] Plugin source is ./klaude-plugin
+[TEST] marketplace.json plugin name matches plugin.json
+[PASS] Marketplace plugin name matches plugin name
+
+=== Section 3: Skills ===
+[TEST] All 15 skill directories exist
+[PASS] Skill exists: brainstorm
+[PASS] Skill exists: design
+[PASS] Skill exists: clarify-docs
+[PASS] Skill exists: chain-of-verification
+[PASS] Skill exists: dependency-handling
+[PASS] Skill exists: diff-skill
+[PASS] Skill exists: document
+[PASS] Skill exists: implement
+[PASS] Skill exists: review-design
+[PASS] Skill exists: review-spec
+[PASS] Skill exists: merge-docs
+[PASS] Skill exists: model
+[PASS] Skill exists: review-code
+[PASS] Skill exists: review-architecture
+[PASS] Skill exists: test
+[TEST] Each skill has a SKILL.md
+[PASS] SKILL.md for brainstorm
+[PASS] SKILL.md for design
+[PASS] SKILL.md for clarify-docs
+[PASS] SKILL.md for chain-of-verification
+[PASS] SKILL.md for dependency-handling
+[PASS] SKILL.md for diff-skill
+[PASS] SKILL.md for document
+[PASS] SKILL.md for implement
+[PASS] SKILL.md for review-design
+[PASS] SKILL.md for review-spec
+[PASS] SKILL.md for merge-docs
+[PASS] SKILL.md for model
+[PASS] SKILL.md for review-code
+[PASS] SKILL.md for review-architecture
+[PASS] SKILL.md for test
+[TEST] Brainstorm and design share the ideation references
+[PASS] Shared source exists: ideation-frameworks
+[PASS] Shared reference target for brainstorm/ideation-frameworks
+[PASS] Shared reference resolves for brainstorm/ideation-frameworks
+[PASS] Shared source exists: idea-refinement-criteria
+[PASS] Shared reference target for brainstorm/idea-refinement-criteria
+[PASS] Shared reference resolves for brainstorm/idea-refinement-criteria
+[PASS] Shared source exists: ideation-frameworks
+[PASS] Shared reference target for design/ideation-frameworks
+[PASS] Shared reference resolves for design/ideation-frameworks
+[PASS] Shared source exists: idea-refinement-criteria
+[PASS] Shared reference target for design/idea-refinement-criteria
+[PASS] Shared reference resolves for design/idea-refinement-criteria
+[TEST] Functional-review shared source and consumer links are valid
+[PASS] Shared change-context source exists
+[PASS] Change-context target for review-code
+[PASS] Change-context link resolves for review-code
+[TEST] Functional-review instructions fit complete-file word budgets
+[PASS] Instruction exists: _shared/change-context.md
+[PASS] _shared/change-context.md: 573 words within 800-word budget
+[PASS] Instruction exists: review-code/functional-review.md
+[PASS] review-code/functional-review.md: 877 words within 1200-word budget
+[TEST] Eval oracles stay out of test-files/ (grader-only oracle/ convention)
+[PASS] No oracle files inside any eval's test-files/
+
+=== Section 4: Commands ===
+[TEST] All 5 command directories exist
+[PASS] Command exists: chain-of-verification
+[PASS] Command exists: review-code
+[PASS] Command exists: review-spec
+[PASS] Command exists: migrate-from-taskmaster
+[PASS] Command exists: template
+
+=== Section 5: Hooks and Scripts ===
+[TEST] hooks.json exists and is valid JSON
+[PASS] hooks.json exists
+[PASS] hooks.json is valid JSON
+[TEST] hooks.json references CLAUDE_PLUGIN_ROOT
+[PASS] hooks.json uses CLAUDE_PLUGIN_ROOT path
+[TEST] validate-bash.sh exists and is executable
+[PASS] validate-bash.sh exists
+[PASS] validate-bash.sh is executable
+
+=== Section 6: Config Slimmed Down ===
+[TEST] .claude/ does not have skills directory
+[PASS] skills/ not in .claude/
+[TEST] .claude/ does not have commands directory
+[PASS] commands/ not in .claude/
+[TEST] .claude/ does not have validate-bash.sh
+[PASS] validate-bash.sh not in .claude/
+[TEST] settings.json has no hooks section
+[PASS] hooks section removed from settings.json
+[TEST] settings.json has marketplace config
+[PASS] settings.json has extraKnownMarketplaces
+[TEST] settings.json has enabledPlugins
+[PASS] settings.json has kk@claude-toolbox enabled
+
+=== Section 7: Cross-references ===
+[TEST] Skill references do NOT have kk: prefix (skills are unprefixed)
+[PASS] Skill references correctly unprefixed
+[TEST] Command references use /kk: prefix
+[PASS] Command references use /kk: prefix
+
+=== Section 8: Profiles ===
+[TEST] All profile directories exist
+[PASS] Profile exists: go
+[PASS] Profile exists: java
+[PASS] Profile exists: js_ts
+[PASS] Profile exists: k8s
+[PASS] Profile exists: k8s-operator
+[PASS] Profile exists: kotlin
+[PASS] Profile exists: python
+[PASS] Profile exists: skill-md
+[TEST] Each profile has DETECTION.md and overview.md
+[PASS] DETECTION.md for go
+[PASS] overview.md for go
+[PASS] DETECTION.md for java
+[PASS] overview.md for java
+[PASS] DETECTION.md for js_ts
+[PASS] overview.md for js_ts
+[PASS] DETECTION.md for k8s
+[PASS] overview.md for k8s
+[PASS] DETECTION.md for k8s-operator
+[PASS] overview.md for k8s-operator
+[PASS] DETECTION.md for kotlin
+[PASS] overview.md for kotlin
+[PASS] DETECTION.md for python
+[PASS] overview.md for python
+[PASS] DETECTION.md for skill-md
+[PASS] overview.md for skill-md
+[TEST] Each DETECTION.md has the three required section headings
+[PASS] DETECTION.md (go) has heading: ## Path signals
+[PASS] DETECTION.md (go) has heading: ## Filename signals
+[PASS] DETECTION.md (go) has heading: ## Content signals
+[PASS] DETECTION.md (java) has heading: ## Path signals
+[PASS] DETECTION.md (java) has heading: ## Filename signals
+[PASS] DETECTION.md (java) has heading: ## Content signals
+[PASS] DETECTION.md (js_ts) has heading: ## Path signals
+[PASS] DETECTION.md (js_ts) has heading: ## Filename signals
+[PASS] DETECTION.md (js_ts) has heading: ## Content signals
+[PASS] DETECTION.md (k8s) has heading: ## Path signals
+[PASS] DETECTION.md (k8s) has heading: ## Filename signals
+[PASS] DETECTION.md (k8s) has heading: ## Content signals
+[PASS] DETECTION.md (k8s-operator) has heading: ## Path signals
+[PASS] DETECTION.md (k8s-operator) has heading: ## Filename signals
+[PASS] DETECTION.md (k8s-operator) has heading: ## Content signals
+[PASS] DETECTION.md (kotlin) has heading: ## Path signals
+[PASS] DETECTION.md (kotlin) has heading: ## Filename signals
+[PASS] DETECTION.md (kotlin) has heading: ## Content signals
+[PASS] DETECTION.md (python) has heading: ## Path signals
+[PASS] DETECTION.md (python) has heading: ## Filename signals
+[PASS] DETECTION.md (python) has heading: ## Content signals
+[PASS] DETECTION.md (skill-md) has heading: ## Path signals
+[PASS] DETECTION.md (skill-md) has heading: ## Filename signals
+[PASS] DETECTION.md (skill-md) has heading: ## Content signals
+[TEST] Presence-conditional: each existing phase subdirectory has index.md
+[PASS] index.md for go/review-code
+[PASS] index.md for go/design
+[PASS] index.md for go/test
+[PASS] index.md for go/implement
+[PASS] index.md for go/document
+[PASS] index.md for java/review-code
+[PASS] index.md for js_ts/review-code
+[PASS] index.md for js_ts/test
+[PASS] index.md for js_ts/implement
+[PASS] index.md for k8s/review-code
+[PASS] index.md for k8s/design
+[PASS] index.md for k8s/test
+[PASS] index.md for k8s/implement
+[PASS] index.md for k8s/document
+[PASS] index.md for k8s/review-spec
+[PASS] index.md for k8s-operator/design
+[PASS] index.md for kotlin/review-code
+[PASS] index.md for python/review-code
+[PASS] index.md for python/test
+[PASS] index.md for python/implement
+[PASS] index.md for skill-md/review-code
+[PASS] index.md for skill-md/implement
+[TEST] Bidirectional index invariant: forward (all index references resolve)
+[PASS] Forward invariant: go/review-code/index.md references all resolve
+[PASS] Forward invariant: go/design/index.md references all resolve
+[PASS] Forward invariant: go/test/index.md references all resolve
+[PASS] Forward invariant: go/implement/index.md references all resolve
+[PASS] Forward invariant: go/document/index.md references all resolve
+[PASS] Forward invariant: java/review-code/index.md references all resolve
+[PASS] Forward invariant: js_ts/review-code/index.md references all resolve
+[PASS] Forward invariant: js_ts/test/index.md references all resolve
+[PASS] Forward invariant: js_ts/implement/index.md references all resolve
+[PASS] Forward invariant: k8s/review-code/index.md references all resolve
+[PASS] Forward invariant: k8s/design/index.md references all resolve
+[PASS] Forward invariant: k8s/test/index.md references all resolve
+[PASS] Forward invariant: k8s/implement/index.md references all resolve
+[PASS] Forward invariant: k8s/document/index.md references all resolve
+[PASS] Forward invariant: k8s/review-spec/index.md references all resolve
+[PASS] Forward invariant: k8s-operator/design/index.md references all resolve
+[PASS] Forward invariant: kotlin/review-code/index.md references all resolve
+[PASS] Forward invariant: python/review-code/index.md references all resolve
+[PASS] Forward invariant: python/test/index.md references all resolve
+[PASS] Forward invariant: python/implement/index.md references all resolve
+[PASS] Forward invariant: skill-md/review-code/index.md references all resolve
+[PASS] Forward invariant: skill-md/implement/index.md references all resolve
+[TEST] Bidirectional index invariant: reverse (no orphan .md files)
+[PASS] Reverse invariant: go/review-code/ has no orphan .md files
+[PASS] Reverse invariant: go/design/ has no orphan .md files
+[PASS] Reverse invariant: go/test/ has no orphan .md files
+[PASS] Reverse invariant: go/implement/ has no orphan .md files
+[PASS] Reverse invariant: go/document/ has no orphan .md files
+[PASS] Reverse invariant: java/review-code/ has no orphan .md files
+[PASS] Reverse invariant: js_ts/review-code/ has no orphan .md files
+[PASS] Reverse invariant: js_ts/test/ has no orphan .md files
+[PASS] Reverse invariant: js_ts/implement/ has no orphan .md files
+[PASS] Reverse invariant: k8s/review-code/ has no orphan .md files
+[PASS] Reverse invariant: k8s/design/ has no orphan .md files
+[PASS] Reverse invariant: k8s/test/ has no orphan .md files
+[PASS] Reverse invariant: k8s/implement/ has no orphan .md files
+[PASS] Reverse invariant: k8s/document/ has no orphan .md files
+[PASS] Reverse invariant: k8s/review-spec/ has no orphan .md files
+[PASS] Reverse invariant: k8s-operator/design/ has no orphan .md files
+[PASS] Reverse invariant: kotlin/review-code/ has no orphan .md files
+[PASS] Reverse invariant: python/review-code/ has no orphan .md files
+[PASS] Reverse invariant: python/test/ has no orphan .md files
+[PASS] Reverse invariant: python/implement/ has no orphan .md files
+[PASS] Reverse invariant: skill-md/review-code/ has no orphan .md files
+[PASS] Reverse invariant: skill-md/implement/ has no orphan .md files
+
+=== Section 9: Profile-detection shared file and consumer symlinks ===
+[TEST] Shared profile-detection.md exists
+[PASS] _shared/profile-detection.md exists
+[TEST] Each consumer skill has a shared-profile-detection.md symlink
+[PASS] Symlink target correct for review-code: ../_shared/profile-detection.md
+[PASS] Symlink resolves to existing file for review-code
+[PASS] Symlink target correct for review-spec: ../_shared/profile-detection.md
+[PASS] Symlink resolves to existing file for review-spec
+[PASS] Symlink target correct for design: ../_shared/profile-detection.md
+[PASS] Symlink resolves to existing file for design
+[PASS] Symlink target correct for implement: ../_shared/profile-detection.md
+[PASS] Symlink resolves to existing file for implement
+[PASS] Symlink target correct for test: ../_shared/profile-detection.md
+[PASS] Symlink resolves to existing file for test
+[PASS] Symlink target correct for document: ../_shared/profile-detection.md
+[PASS] Symlink resolves to existing file for document
+
+=== Section 10: Skill description length ===
+[TEST] dependency-handling description fits within 1,536-character per-entry cap
+[PASS] dependency-handling description length (221 chars) ≤ 1,536
+
+=== Section 11: Kodex plugin (generated output) ===
+[TEST] kodex-plugin/.codex-plugin/plugin.json exists and is valid JSON
+[PASS] kodex-plugin plugin.json exists
+[PASS] kodex plugin.json is valid JSON
+[TEST] kodex-plugin skills match klaude-plugin skills (generation completeness)
+[PASS] Skill count matches: 15 in both plugins
+[TEST] No ${CLAUDE_PLUGIN_ROOT} literals in generated kodex-plugin skills
+[PASS] No CLAUDE_PLUGIN_ROOT literals in generated skills
+[TEST] No dangling symlinks in kodex-plugin
+[PASS] No dangling symlinks in kodex-plugin
+[TEST] Generated change-context consumers match the generated shared source
+[PASS] Generated change-context source exists
+[PASS] Generated functional-review method exists
+[PASS] Generated change-context copy matches for review-code
+[TEST] No ${TOOLBOX_PLUGIN_ROOT} brace literals in generated kodex-plugin skills
+[PASS] No ${TOOLBOX_PLUGIN_ROOT} brace literals in generated skills
+[TEST] Plugin-root brace path refs only at codex-resolvable depth
+[PASS] All brace plugin-root path refs are at skills/<name>/ or skills/_shared/ depth
+
+=== Test Summary ===
+Test cases:        43
+Assertions passed: 220
+Assertions failed: 0
+
+All tests passed!
