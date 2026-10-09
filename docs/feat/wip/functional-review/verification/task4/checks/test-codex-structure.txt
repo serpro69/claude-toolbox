@@ -1,0 +1,66 @@
+
+=== Section 1: Codex marketplace ===
+[TEST] .agents/plugins/marketplace.json exists and is valid JSON
+[PASS] Codex marketplace exists
+[PASS] Codex marketplace is valid JSON
+[TEST] marketplace.json has kk plugin pointing at kodex-plugin
+[PASS] Codex marketplace plugin path
+
+=== Section 2: Codex config ===
+[TEST] config.toml exists
+[PASS] config.toml exists
+[TEST] config.toml is valid TOML
+[PASS] config.toml parses as valid TOML
+
+=== Section 3: Codex hooks ===
+[TEST] hooks.json exists and is valid JSON
+[PASS] hooks.json exists
+[PASS] hooks.json is valid JSON
+[TEST] hooks.json has SessionStart and PreToolUse entries
+[PASS] hooks.json has SessionStart
+[PASS] hooks.json has PreToolUse
+
+=== Section 4: Codex agents ===
+[TEST] All six agent TOML files exist
+[PASS] Agent architecture-reviewer.toml exists
+[PASS] Agent code-reviewer.toml exists
+[PASS] Agent design-reviewer.toml exists
+[PASS] Agent eval-grader.toml exists
+[PASS] Agent profile-resolver.toml exists
+[PASS] Agent spec-reviewer.toml exists
+[TEST] Agent TOML files parse cleanly
+[PASS] Agent architecture-reviewer.toml parses as valid TOML
+[PASS] Agent code-reviewer.toml parses as valid TOML
+[PASS] Agent design-reviewer.toml parses as valid TOML
+[PASS] Agent eval-grader.toml parses as valid TOML
+[PASS] Agent profile-resolver.toml parses as valid TOML
+[PASS] Agent spec-reviewer.toml parses as valid TOML
+[TEST] No ${CLAUDE_PLUGIN_ROOT} literals in agent files
+[PASS] No CLAUDE_PLUGIN_ROOT literals in agent files
+
+=== Section 5: Codex rules ===
+[TEST] default.rules exists
+[PASS] default.rules exists
+
+=== Section 6: Codex scripts ===
+[TEST] session-start.sh exists
+[PASS] session-start.sh exists
+[TEST] pretooluse-bash.sh exists
+[PASS] pretooluse-bash.sh exists
+[TEST] session-start.sh produces valid JSON
+[PASS] session-start.sh output is valid JSON
+[TEST] session-start.sh aggregates all .claude/CLAUDE.*.md files
+[PASS] all .claude/CLAUDE.*.md files appear in session context
+[TEST] session-start.sh excludes .claude/toolbox/CLAUDE.md
+[PASS] .claude/toolbox/CLAUDE.md not injected into Codex context
+
+=== Section 7: Root-level files ===
+[TEST] AGENTS.md exists at repo root
+[PASS] AGENTS.md exists
+
+=== Test Summary ===
+Test cases:        16
+Assertions passed: 29
+Assertions failed: 0
+
+All tests passed!
