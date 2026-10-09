@@ -1,0 +1,245 @@
+diff --git a/docs/feat/wip/functional-review/tasks.md b/docs/feat/wip/functional-review/tasks.md
+index 0b3a9b99..dcf75ae1 100644
+--- a/docs/feat/wip/functional-review/tasks.md
++++ b/docs/feat/wip/functional-review/tasks.md
+@@ -155,7 +155,7 @@ The ordinary-prompt R3 isolated run loaded all eight detection rules and applica
+ 
+ ## Task 6: Implementation establishes constraints and hands off verified context
+ 
+-- **Status:** pending
++- **Status:** in-progress
+ - **Depends on:** Task 5
+ - **Size:** M
+ - **Can run in parallel with:** —
+@@ -169,6 +169,14 @@ The ordinary-prompt R3 isolated run loaded all eight detection rules and applica
+ - [ ] 6.4 Refresh evidence for independent review and separate task completion from deployment conditions → verify: real handoff uses finished Task 5 consumers, stale evidence is rejected and a hard unmet requirement stays open.
+ - [ ] 6.5 Extend shared-link structure assertions for implement, regenerate output and verify both modes → verify: exact link targets and budgets pass; I2 remains usable without a full feature plan.
+ 
++### Execution context — 2026-10-09
++
++**Accepted scope:** the user's request to implement the next task selects Task 6 after completed Task 5. The accepted 2026-10-09 sequencing decision leaves Task 2 gate 2B and full matrix acceptance open; this task does not waive them. Sources: this task, [implementation slice](implementation.md#implementation-slice), and [implement contract](design.md#kkimplement-workflow).
++
++**Observed before edits:** repository base `61093fc7d610f44d3eba7f861bc4058a8f3c384b` with a clean worktree. The standalone entry currently reads source before profile loading; plan entry and the shared execution core duplicate ordering/completion rules. The Task 5 review consumers already accept the shared factual context and own both independent reviewer handoffs. Preserve those invocations, the standard-review override, profile/dependency/test steps and accurate task scope. This instruction-only slice has no deployment operation; compatibility concerns are instruction ordering, shared consumers and generated Codex output.
++
++**Instruction loading:** all eight installed detection rules were read. `skill-md` activates through implement/SKILL.md and sibling adjacency; its universal, Claude Code and kk-plugin implement guidance loaded. Provider guidance is selected by the plugin's hooks/commands/agents directories; kk guidance by canonical klaude-plugin paths. No dependency change. Verification and review are pending; no behavioral acceptance is claimed.
++
+ ## Task 7: Stage before/after and historical fixtures reliably
+ 
+ - **Status:** pending
+diff --git a/klaude-plugin/skills/implement/SKILL.md b/klaude-plugin/skills/implement/SKILL.md
+index 474e1229..a64a55c6 100644
+--- a/klaude-plugin/skills/implement/SKILL.md
++++ b/klaude-plugin/skills/implement/SKILL.md
+@@ -12,6 +12,7 @@ description: |
+ ## Conventions
+ 
+ - **Read capy knowledge base conventions** at [shared-capy-knowledge-protocol.md](shared-capy-knowledge-protocol.md).
++- **Always read change context** at [shared-change-context.md](shared-change-context.md), including when no profile matches. It defines the factual record used before editing and refreshed for independent review.
+ - **Read profile detection** at [shared-profile-detection.md](shared-profile-detection.md). When the sub-task's target files activate a profile that contributes an `implement/` subdirectory (e.g., `${TOOLBOX_PLUGIN_ROOT}/profiles/k8s/implement/`), its `index.md` lists per-task gotchas the skill must consult BEFORE writing. See Step 2.
+ 
+ ## Modes
+@@ -21,15 +22,17 @@ Two modes, determined automatically: **plan mode** when the user references a do
+ - **Plan mode:** Read [plan-mode.md](plan-mode.md) for entry, iteration, and completion procedures.
+ - **Standalone mode:** Read [standalone-mode.md](standalone-mode.md) for entry procedure.
+ 
+-Both modes share the same execution core (Step 2 onward) — profile detection, dependency handling, verification, review.
++Both modes share the same execution core (Step 2 onward) — instruction loading, investigation and change context, implementation, verification, review.
+ 
+ ## Required Outputs
+ 
+ After each execution + review cycle, verify all outputs:
+ 
+-- [ ] Implementation addresses the requirement (plan mode: matches plan)
+-- [ ] Verification/tests pass
++- [ ] Implementation addresses intended outcomes, preserved contracts and hard task/delivery requirements
++- [ ] Verification/tests pass for the claimed scope; unverified conditions are explicit
+ - [ ] Code review completed (via `/kk:review-code` — which owns indexing its own `kk:review-findings`)
++- [ ] Refreshed context and evidence supplied to review; findings resolved or permitted follow-up recorded durably
++- [ ] Code completion distinguished from release/migration/activation conditions
+ - [ ] New project conventions indexed as `kk:project-conventions` (skip if none established)
+ - [ ] (Plan mode only) `tasks.md` updated to `done`
+ 
+@@ -37,53 +40,47 @@ After each execution + review cycle, verify all outputs:
+ 
+ ### Review Mode
+ 
+-By default, review checkpoints use **isolated mode** (`kk:review-code:isolated`, `kk:review-spec:isolated`). This is mandatory because the implementing session has authorship bias — the same model that wrote the code produces weaker reviews of it. Isolated mode spawns an independent sub-agent with no prior exposure to the implementation.
++By default, review checkpoints use **isolated mode** (`/kk:review-code:isolated`, `/kk:review-spec:isolated`). This is mandatory because the implementing session has authorship bias — the same model that wrote the code produces weaker reviews of it. Isolated mode spawns an independent sub-agent with no prior exposure to the implementation.
+ 
+ The user can override at any checkpoint ("use standard review for this one") to fall back to in-session `/kk:review-code`.
+ 
+ ## Workflow
+ 
+-**Mandatory order — understand before executing.** The flow below is strictly sequential. Do not read source files to modify, write code, edit files, run tests, or otherwise act on any task until you have loaded full context (design, implementation plan, task list in **plan mode**, or full problem understanding in **standalone**) and completed profile detection and loaded all resolved profile content. The only early contact with the codebase is the task's target filenames — enough to drive profile detection, not enough to pattern-match implementation.
++**Mandatory order — instructions before action.** The flow below is strictly sequential. Load this skill, the selected mode procedure, shared protocols and every resolved profile instruction before source/requirement investigation, edits (including task-status edits), tests or implementation decisions. Entry procedures collect minimal task/file metadata solely to select scope and profile guidance; they do not analyze requirement prose. After basic instructions load, the sole early-content exception is routing for a declared detection or conditional-load predicate: inspect at most approximately 16 KiB per candidate file, log the predicate/path, and conservatively load an instruction when its conditional is undecidable within that bound. Routing permits no behavioral analysis, full-diff read, findings, edits or tests.
++
++**Phases:** load basic instructions and scope metadata → detect profiles and load their content → investigate requirements/source and establish change context → implement and verify → refresh evidence and review → assess completion. Detailed investigation has one entry point in Step 2; mode entry procedures do not duplicate it.
+ 
+ ## The Process
+ 
+-### Step 1: Load Context
++### Step 1: Load Instructions and Mode Context
+ 
+-Determine mode (see §Modes), then read the appropriate mode file and follow its entry procedure:
++Read the shared protocols in Conventions, determine mode (see §Modes), then read the appropriate mode file and follow its entry procedure:
+ 
+-- **Plan mode:** Read [plan-mode.md](plan-mode.md) — loads tasks.md, design.md, implementation.md, identifies next task.
+-- **Standalone mode:** Read [standalone-mode.md](standalone-mode.md) — parses the problem, explores relevant code, forms an approach.
++- **Plan mode:** Read [plan-mode.md](plan-mode.md) — locates the feature documents and selects task/target metadata for routing.
++- **Standalone mode:** Read [standalone-mode.md](standalone-mode.md) — selects request/target metadata without investigation.
+ 
+ After completing the mode's entry procedure, continue with Step 2.
+ 
+ ### Step 2: Execute
+ 
+-**Mandatory order — instructions before action.** Steps 1–3 load instructions; step 4 is the first step that touches subject matter. Do not write code, edit files, or otherwise act until steps 1–3 have been performed in order. If a later step reveals that an instruction was missed, return to step 1.
++1. **Detect and load profiles.** Run `shared-profile-detection.md` against candidate target filenames and any diff-so-far, however small the task. Read every Known profiles detection rule; reconcile expected versus returned rules. For each active profile, read `${TOOLBOX_PLUGIN_ROOT}/profiles/<name>/implement/index.md`; ENOENT means no implement guidance for that profile. Read every always-load, matching and conservatively selected instruction. An index or requested read alone is not a loaded checklist. Before proceeding, record a compact checkpoint of returned instruction paths and resolved conditionals; an empty profile set skips content loading, never detection.
++2. **Load applicable dependency instructions.** For an introduced/changed dependency — import, version, unfamiliar call, Kubernetes API, CRD, Helm chart/dependency or container image — apply `/kk:dependency-handling` before writing the call. Use its lookup cascade and the active profile's `overview.md`; do not guess signatures or configuration. Revisit this gate if investigation discovers a dependency change.
++3. **Investigate and establish change context.** This is the common investigation entry point for both modes. First load full requirement context: in plan mode read the entire `tasks.md`, `design.md` and `implementation.md`; in standalone mode examine the request and any referenced issue (`gh issue view`). Search the mode's declared Capy sources for relevant context, even for trivial work. Then read relevant source/current diff, trace affected entry points and unchanged callers through state and response contracts, and reproduce the problem where useful. Apply the shared change-context contract: establish intended outcomes and their authority, preserved behavior, actual scope/baselines and applicable delivery constraints before implementation edits. On resume, compare current repository state with earlier context and supersede stale evidence. If requirement loading or source exploration adds a target or reveals a new profile/conditional, pause that investigation to re-detect and load its guidance before proceeding.
+ 
+-1. (Plan mode only) Update `tasks.md`: set the task's status to `in-progress`.
+-2. **Profile-aware per-task gotchas (pre-write).** Run the `shared-profile-detection.md` procedure against the target files (and any diff-so-far). Detection itself always runs, however small or "just markdown" the task looks — that judgment is unreliable (a one-paragraph edit to a `SKILL.md` activates the `skill-md` profile), and whether detection fires is unknowable until it has run. For each active profile, load `${TOOLBOX_PLUGIN_ROOT}/profiles/<name>/implement/index.md`; if the read fails with ENOENT, that profile contributes no implement guidance — move on. Otherwise read the always-load + any matching conditional content. Apply those gotchas to the upcoming edits — they exist to prevent mistakes the post-write reviewer would otherwise catch. When no active profile contributes `implement/`, only the content load is skipped — never the detection.
+-3. **Dependency-handling (pre-write).** Whenever the task introduces or changes a dependency — new import, version bump, unfamiliar call, **and per the widened trigger also: a Kubernetes API version, a CRD, a Helm chart or chart dependency, or a container image tag/digest** — apply the `/kk:dependency-handling` skill BEFORE writing the call. Do not guess signatures, API versions, or configuration; look them up via capy/context7 per that skill's rules. Per-profile lookup cascades live in each profile's `overview.md` (e.g., `${TOOLBOX_PLUGIN_ROOT}/profiles/k8s/overview.md` §Looking up Kubernetes dependencies).
+-4. Make the changes. (Plan mode: follow the plan exactly.)
+-5. (Plan mode only) Check off subtasks (`- [x]`) in `tasks.md` as you complete them.
+-6. Run verifications; run `/kk:test` skill.
++   Check whether the proposed approach satisfies the requirement and delivery policy. A concrete conflict requires the affected flow, trade-off and smallest viable alternatives before dependent edits; pending future work is no excuse for breaking a current flow. Reuse accepted decisions and existing authorization. Resolve only consequential ambiguity or a requirement exception with the user; routine choices create no new approval gate. State a brief approach for non-trivial work. Keep trivial changes proportionate, without irrelevant release gates or duplicate tests.
++
++   In plan mode, set the task to `in-progress` and record observations under its labeled **Execution context**, following [plan-mode.md](plan-mode.md). Standalone context remains conversational unless material work must be deferred.
++4. **Implement.** Follow the established requirements and plan, if present. An observation or passing test does not authorize rewriting a requirement. Keep task/subtask progress accurate as work completes.
++5. **Verify outcomes.** Run `/kk:test` and relevant focused checks for intended behavior, preserved contracts and applicable compatibility cases. Record commands, actual results, baselines and limits. Green tests support only the scenarios exercised; they do not prove deployment readiness.
+ 
+ ### Step 3: Report and Review
+ 
+-- Show what was implemented
+-- Show verification output
+-- Load `kk:review-code:isolated` skill — this handles both sub-agent and pal codereview internally with independent reviewers. Do NOT run a separate `pal` codereview call, as it is already included in the isolated workflow.
+-- Based on user and code-review feedback: apply changes if needed and finalize
+-- (Plan mode only) Update `tasks.md`: set the task's status to `done`
++1. **Refresh the handoff.** Reconcile current diff scope, candidate state, requirements, baseline identities and verification references against the repository after edits, fixes or resume. Replace stale claims with dated evidence. Include task scope (done/current/pending tasks in plan mode), factual change context, affected paths, attributed test results and explicit unknowns. Do not pass implementation-session history, author conclusions as certification, or a preselected verdict.
++2. **Review.** Load `/kk:review-code:isolated`; it owns both independent-agent and PAL paths, so do not issue a duplicate PAL review. Supply the refreshed context and evidence to that workflow, which prepares the same relevant source/historical evidence for both reviewers and handles further evidence requests. If the user selected standard review, supply the same factual record to `/kk:review-code`. Missing specification or deployment evidence narrows conclusions; it does not reduce review to code quality alone.
++3. **Resolve and reverify.** Apply required corrections, refresh affected context and tests, and obtain review of the changed evidence before finalizing. Index new non-obvious project conventions if any; review skills own their findings indexing.
++4. **Assess completion.** Report requirement coverage, verification and review outcomes, with code completion separate from release, migration or activation conditions. A known unmet hard task/delivery requirement prevents `done` unless explicit user authorization changes it or accepts an exception; record the source, rationale and prerequisites. Unknown evidence essential to acceptance remains open. An external deployment prerequisite may outlive code completion only when consistent with the agreed contract; describe release readiness as conditional or unknown.
+ 
+-**After finalizing**, verify all items in the **Required Outputs** section above:
+-
+-- [ ] Implementation addresses the requirement (plan mode: implementation matches plan)
+-- [ ] Verification/tests pass, `/kk:test` completed
+-- [ ] Code review completed (Explicitly via `/kk:review-code:isolated` skill — which owns indexing its own `kk:review-findings`)
+-- [ ] New project conventions indexed as `kk:project-conventions` (skip if none established)
+-- [ ] (Plan mode only) `tasks.md` updated to `done`
+-
+-If any item is unchecked, go back and complete it. Do NOT proceed to the next task with incomplete outputs.
++   Record every deferred material action durably with owner (or explicitly unassigned), reason, concrete next action and verification condition: the current task's Execution context in plan mode; existing tracking or a concise repository-local review note in standalone mode. A final-chat caveat alone is insufficient. Only then mark the plan task `done` if the contract and all **Required Outputs** are satisfied; otherwise keep required work open. Do not continue with incomplete outputs.
+ 
+ ### Step 4: Continue (plan mode only)
+ 
+@@ -97,12 +94,12 @@ Follow the completion procedure in [plan-mode.md](plan-mode.md) — final valida
+ 
+ **STOP executing immediately when:**
+ 
+-- Hit a blocker (missing dependency, test fails, instruction unclear)
++- An external blocker cannot be resolved within the authorized scope
+ - (Plan mode) Plan has critical gaps preventing starting
+ - You don't understand a requirement or instruction is ambiguous
+ - Verification fails repeatedly
+ 
+-**IMPORTANT! Always ask for clarification rather than guessing.**
++Ask for the missing decision or capability rather than inventing a requirement. Continue independent authorized work while dependent work waits; ordinary fixable test failures should be corrected and reverified.
+ 
+ ## When to Revisit Earlier Steps
+ 
+@@ -116,7 +113,7 @@ Follow the completion procedure in [plan-mode.md](plan-mode.md) — final valida
+ ## Remember
+ 
+ - Review plan critically first
+-- Follow plan steps exactly
++- Follow the agreed plan; record explicit authorization for any requirement change
+ - Don't skip verifications
+ - Use skills when applicable (`/kk:dependency-handling`, `/kk:test`, `/kk:review-code:isolated`) (Plan mode: also when the plan says to do so)
+ - Between batches: just report and wait
+diff --git a/klaude-plugin/skills/implement/plan-mode.md b/klaude-plugin/skills/implement/plan-mode.md
+index 7594b6f2..35beff74 100644
+--- a/klaude-plugin/skills/implement/plan-mode.md
++++ b/klaude-plugin/skills/implement/plan-mode.md
+@@ -4,27 +4,33 @@ Applies when the user references a docs/feat/wip feature or task number.
+ 
+ ## Entry Procedure
+ 
+-1. Read the feature's `tasks.md` file to get the task list and current progress
+-2. Read the entire `design.md` and `implementation.md` files to **understand the full feature context**
+-3. Identify the next pending task (one whose dependencies are all done)
+-4. **Capy search:** Search `kk:arch-decisions`, `kk:project-conventions`, `kk:lang-idioms`, and `kk:review-findings` for context relevant to the identified task. Run it for every task, however small — whether the knowledge base holds something relevant is unknowable until searched, and an empty result costs nothing
+-5. Review critically — identify any questions or concerns about the plan
+-6. If concerns: Raise them with your human partner before starting
++After the basic instructions in SKILL.md load, collect only minimal task/file metadata to drive profile detection. Full document reading, knowledge search and requirement/source analysis belong to the common investigation phase.
++
++1. Locate the feature's `tasks.md`, `design.md` and `implementation.md` through file listings.
++2. Extract only task headings, status/dependency fields and candidate target filenames to select the requested/next ready task and its profile inputs; include diff filenames when resuming. Do not open full documents or analyze requirement prose here. If target metadata is insufficient, start with a conservative candidate file list from the affected directories, then refine it after instruction loading.
++
++**Knowledge sources for the common investigation phase:** `kk:arch-decisions`, `kk:project-conventions`, `kk:lang-idioms`, and `kk:review-findings`. Search for each task, however small; an empty result is normal. The common phase reads the complete feature documents before implementation, including intended outcomes, preserved behavior, delivery requirements and prior accepted decisions.
+ 
+ After completing the entry procedure, return to SKILL.md Step 2 (Execute).
+ 
++## Execution context and specification integrity
++
++The common investigation phase records observations in a labeled **Execution context** subsection of the current task in `tasks.md`. Each material observation or action includes its date, status (observed, inferred, unresolved, proposed or explicitly accepted), source location/revision and relevant evidence limits. Record verification, review outcomes and permitted follow-up there as they occur; each deferred action needs an owner (or unassigned), reason, next action and verification condition.
++
++On resume or after fixes, refresh against current state. Correct or supersede an old observation with a dated source-backed note, preserving its provenance. Do not silently rewrite `design.md`, `implementation.md` or acceptance criteria to fit the code. An observation is not an accepted decision. A requirement change or exception needs explicit user authorization, recorded with its source, rationale and prerequisites before dependent work proceeds. Use the existing document format; do not create a parallel task system.
++
+ ## Iteration
+ 
+ After each execution + review cycle (SKILL.md Steps 2–3):
+ 
+ - Verify the completed task's **Required Outputs** are all checked
+-- Move to the next pending task in `tasks.md`
++- Move to the next ready task in `tasks.md` only within the user's requested scope; a request for one task ends after its execution/review cycle
+ - Return to the Entry Procedure above to load context for the new task
+ - Repeat until all tasks are completed
+ 
+ ## Completion
+ 
+-After all tasks are complete and verified:
++After all required feature tasks and acceptance gates are complete and verified (not merely the current requested task):
+ 
+ - Use `/kk:test` skill to verify and validate functionality
+ - Use `/kk:document` skill to create or update any relevant docs
+diff --git a/klaude-plugin/skills/implement/standalone-mode.md b/klaude-plugin/skills/implement/standalone-mode.md
+index e7bab5db..8aa315c9 100644
+--- a/klaude-plugin/skills/implement/standalone-mode.md
++++ b/klaude-plugin/skills/implement/standalone-mode.md
+@@ -4,12 +4,13 @@ Applies for bug fixes, GitHub issues, one-off tasks, and any work without docs/f
+ 
+ ## Entry Procedure
+ 
+-1. Parse the user's request — what is the problem or requirement?
+-2. If the user references a GitHub issue, fetch it (`gh issue view`)
+-3. **Capy search:** Search `kk:arch-decisions`, `kk:project-conventions`, `kk:lang-idioms`, `kk:review-findings`, and `kk:debug-context` for relevant prior context
+-4. Identify questions or ambiguities — ask before assuming
+-5. Investigate the relevant code — read files, trace call paths, reproduce the bug if applicable
+-6. Identify the set of files that will need changes
+-7. State the approach briefly if the fix is non-trivial (more than a few lines across 1–2 files). For trivial fixes, skip the approach statement only — "trivial" never exempts a fix from SKILL.md Step 2's pre-write steps (profile detection, dependency handling), which run for every fix however small.
++After the basic instructions in SKILL.md load, collect request/target metadata only. Do not investigate issue bodies or source, trace behavior or reproduce the bug here; the common execution phase owns requirement and source investigation after profile loading.
++
++1. Identify the requested scope and any issue reference from the user's prompt.
++2. Collect candidate target filenames from the request, file listings and diff metadata. This initial set drives profile detection; when the request supplies no paths, use a conservative candidate list from the affected directories. The common investigation phase may refine it and load additional guidance.
++
++**Knowledge sources for the common investigation phase:** `kk:arch-decisions`, `kk:project-conventions`, `kk:lang-idioms`, `kk:review-findings`, and `kk:debug-context`. That phase establishes explicit outcomes, constraints and consequential ambiguities from the request, referenced issue and repository instructions. Keep inferred intent provisional; do not invent product requirements or require a full feature plan.
+ 
+ After completing the entry procedure, return to SKILL.md Step 2 (Execute).
++
++Keep change context conversational and proportionate. Trivial fixes skip only the approach statement, never instruction/profile loading or applicable dependency handling. Material deferred work belongs in existing tracking or a concise repository-local review note with owner (or unassigned), reason, next action and verification condition. Completion uses the same hard-requirement and evidence gates as plan mode.
+diff --git a/test/test-plugin-structure.sh b/test/test-plugin-structure.sh
+index c60e64d5..37840ee5 100755
+--- a/test/test-plugin-structure.sh
++++ b/test/test-plugin-structure.sh
+@@ -113,8 +113,7 @@ for skill in brainstorm design; do
+ done
+ 
+ # Functional-review packaging: only register consumers that already exist.
+-# Implement joins this list when its change-context integration ships.
+-CHANGE_CONTEXT_CONSUMERS=(review-code)
++CHANGE_CONTEXT_CONSUMERS=(review-code implement)
+ 
+ log_test "Functional-review shared source and consumer links are valid"
+ assert_file_exists "$REPO_ROOT/klaude-plugin/skills/_shared/change-context.md" \

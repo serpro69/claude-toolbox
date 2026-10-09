@@ -1,0 +1,21 @@
+# Tasks: settings-receipts
+
+> Status: planned
+
+## Task 1: Client acknowledgement
+- **Status:** done
+- **Depends on:** —
+- [x] Send require_receipt in client.py and require applied=true on success.
+- [x] Verify client receipt handling and complete independent review.
+
+### Execution context
+- 2026-10-09 (observed): Current `provider.py` `update_settings` returns `{"ok": True}` with **no** `applied` field and reads only `request["settings"]` — unknown request keys are ignored, so sending `require_receipt` is safe against it. Task 2 adds the provider receipt.
+- 2026-10-09 (observed): Existing `tests/test_client.py::test_ordinary_save` wires the client directly to the current provider and must keep passing (asserts `result["saved"]`).
+- 2026-10-09 (conflict, resolved by authority): `implementation.md` literal "require applied=true on success" conflicts with `design.md`'s **hard acceptance requirement** that the client support the current provider (which never sends `applied`) and that ordinary saves keep returning success. `design.md` is the stated hard requirement and explicitly overrides ("pending future work is no excuse for breaking a current flow").
+- 2026-10-09 (accepted decision): Enforce the receipt only when present — client sends `require_receipt: True`; on a transport-successful response it rejects only when `applied` is present and not truthy, and accepts when `applied` is absent (backward-compatible with the current provider). Preserves `save_settings` signature and `{"saved":..., "enhanced":...}` return contract.
+- 2026-10-09 (scope): Task 1 edits `client.py` and adds focused client tests only; `provider.py` unchanged. Enhanced-settings UI toggle is not present in these files (nothing to disable here).
+
+## Task 2: Provider acknowledgement
+- **Status:** pending
+- **Depends on:** Task 1
+- [ ] Add applied receipts to provider.py.
