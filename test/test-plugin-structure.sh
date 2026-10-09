@@ -113,8 +113,7 @@ for skill in brainstorm design; do
 done
 
 # Functional-review packaging: only register consumers that already exist.
-# Implement joins this list when its change-context integration ships.
-CHANGE_CONTEXT_CONSUMERS=(review-code)
+CHANGE_CONTEXT_CONSUMERS=(review-code implement)
 
 log_test "Functional-review shared source and consumer links are valid"
 assert_file_exists "$REPO_ROOT/klaude-plugin/skills/_shared/change-context.md" \
