@@ -1,0 +1,19 @@
+| Baseline run | PASS | FAIL | PARTIAL |
+| --- | ---: | ---: | ---: |
+| claude-i1-plan-1-capture2 | 2 | 4 | 0 |
+| claude-i1-plan-2 | 2 | 4 | 0 |
+| claude-i2-standalone-1 | 3 | 4 | 0 |
+| claude-i2-standalone-2 | 2 | 4 | 1 |
+| claude-r1-isolated-1 | 3 | 2 | 1 |
+| claude-r1-isolated-2 | 1 | 5 | 0 |
+| claude-r1-standard-1-capture2 | 2 | 3 | 1 |
+| claude-r1-standard-2 | 3 | 2 | 1 |
+| claude-r3-isolated-1 | 2 | 5 | 1 |
+| claude-r3-isolated-2 | 2 | 5 | 1 |
+| claude-r3-standard-1 | 2 | 2 | 4 |
+| claude-r3-standard-2 | 5 | 2 | 1 |
+| codex-i1-plan-1 | 5 | 1 | 0 |
+| codex-i1-plan-2 | 5 | 1 | 0 |
+| codex-r1-standard-1 | 6 | 0 | 0 |
+| codex-r1-standard-2 | 6 | 0 | 0 |
+| **Total** | 51 | 44 | 11 |
