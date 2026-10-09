@@ -3,20 +3,32 @@
 > Design: [design.md](design.md)
 > Implementation: [implementation.md](implementation.md)
 > Tasks: [tasks.md](tasks.md)
-> Status: specified; launch probes, fixtures and behavioral runs remain implementation work
+> Status: loading verified, seeds frozen and 16 baselines captured; four Codex captures and behavioral acceptance remain open
+> Revised: 2026-10-09; [run-contract amendment](verification/run-contract-2026-10-09.md)
 > Reviewed claims: [consolidated disposition](reviews/design-review-consolidation.md)
 
 ## Comparison identity and acceptance
 
 Use one immutable pre-feature actor baseline: c2d28c9e (v0.23.0), resolved to its full commit ID when preparing runs. The current design-only commit does not change operative skills. Every later baseline run uses this same actor revision, never the working tree after an earlier feature task.
 
-Before the first operative edit, Task 2 creates the final R1, R3, I1 and I2 fixture directories and captures standard, isolated, plan and standalone baseline traces. Later cases can run against the preserved revision after their fixtures exist. Capture baseline and candidate on identical fixture bytes; a substantive fixture correction invalidates the comparison and requires both sides to rerun. The grading procedure/rubric is pinned before capture. Pin the concrete grader implementation before grading either side and hold it constant across the comparison; baseline traces can be captured before that implementation exists.
+Task 2 gate 2A preserves the final R1, R3, I1 and I2 fixture directories, frozen inputs and 16 captured baselines before operative edits. It is complete. Gate 2B owns the remaining four Codex baselines and may finish after development starts, using the preserved actor revision. Tasks 3–11 may proceed in sequence; Task 12 and feature completion still require 2B. Later cases likewise run against the preserved revision after their fixtures exist. Capture baseline and candidate on identical fixture bytes; a substantive fixture correction invalidates the comparison and requires both sides to rerun. The grading procedure/rubric is pinned before capture. Pin the concrete grader implementation before grading either side and hold it constant across the comparison; baseline traces can be captured before that implementation exists.
 
 Write a run-contract.md under verification/ before the first measured baseline run. Record the full baseline revision and hashes, fixture hashes, exact runtime version, all main/reviewer/PAL model identifiers and reasoning settings, tools, permission policy, prompt, declared modes, grading procedure, repetition count and acceptance threshold. The candidate revision is pending until code exists; freeze and record its source/generated hashes before each candidate batch. A later fix creates a new identified candidate, never a mutable alias for earlier results. Launch probes may use a second baseline copy to validate the candidate loading location, but that is not a behavioral candidate result. The primary provider runs the complete matrix; the other distributed provider runs binding and representative R1 standard, R3 isolated, I1 plan and I2 standalone checks. Select and record the primary provider before observing results. Report full-matrix and representative coverage separately; do not claim full behavioral parity from generated-file checks or selected cases.
 
 All assertions[] entries in new full-workflow evals are required; no schema extension or required flag is needed. Put optional cost/latency observations in the run summary, outside assertions[]. Run two independent fresh sessions on each side for every required case/mode in its declared coverage. Candidate acceptance requires PASS on every assertion in both sessions. FAIL, PARTIAL and unavailable evidence never count as PASS. This is a conservative observed-twice gate, not an estimate of model reliability. Retain all attempts; after a fix, rerun the affected pair using the new candidate revision. If the baseline already passes, report that fact without inventing an improvement.
 
 Do not lower the threshold, switch the primary provider or replace a fixture after seeing failures without recording a revised run contract and repeating the affected baseline/candidate comparison.
+
+### Codex handoff capture resolution
+
+**Authority and owner.** On 2026-10-09 the user approved the sequencing change and conditional fallback below. The implementing agent owns gate 2B: Codex R3 isolated and I2 standalone, two baseline repetitions each. Original captures, assertions and the frozen revision-1 rubric remain unchanged until a successor contract is explicitly recorded; ciphertext never satisfies an exact-prompt assertion.
+
+1. **Bound the investigation.** Identify a supported capture surface or runtime alternative that differs materially from the two failed probes. Record why it could expose submitted messages, then run at most one additional fresh synthetic-marker probe. Success requires the actual readable submitted message, its parent/call/receiving-child linkage and observable child reads of the referenced immutable evidence. A schema field, child echo or final actor confirmation alone is insufficient. Record failure or the absence of a viable alternative and stop; do not repeat unchanged probes, decrypt protected content or build an open-ended tracing system.
+2. **Choose the evidence path.** If that probe succeeds, retain the exact-handoff assertions and capture the missing baselines. Otherwise activate the authorized receipt/use fallback through a successor rubric and assertion mapping before measured runs. It requires actual named-reviewer and PAL invocation identities, independently observable reads or embedded-source evidence tied to immutable content hashes/provenance, and each reviewer's result demonstrating use of the material context. R3 still requires both reviewers to use the historical provider source in the compatibility comparison. I2 still requires both to receive and use the finished diff, requested semantics, unchanged callers and attributed verification evidence. Parent summaries, mere file availability, hashes without receipt evidence and a correct final answer alone cannot pass. Missing external source coverage remains explicit and cannot satisfy a required evidence assertion.
+3. **Version before measuring.** Record the probe outcome and selected path in a new run-contract amendment. If falling back, preserve the original assertion/oracle bytes at a recorded immutable revision or archive, create `verification/task2-rubric-v2.md` and `verification/task2-frozen-v2.json`, and update the final R3/I2 eval definitions and generated copies with a precise old-to-new assertion mapping. Keep subject fixtures and ordinary prompts unchanged. Both providers and both comparison sides use the same revised behavioral assertions; retain raw dispatch evidence wherever available. Do not overwrite the original freeze, rubric, capture manifests or grades. Apply the selected rubric to both sides; regrade retained evidence where sufficient and recapture both affected sides where it is not. Runtime, model, permission-policy or material capture-configuration changes require a revised declaration and fresh affected baseline/candidate comparisons under matching conditions.
+4. **Close capture, then grade.** Complete the four missing baseline runs and any required baseline recaptures with sufficient evidence to grade the selected assertions; candidate counterparts remain Task 12 work. Observed baseline failures are data and do not prevent capture completion. Gate 2B closes when its investigation, contract selection and baseline captures are recorded; Task 12 still requires every candidate assertion to pass twice. The fallback supports reviewer receipt/use, with exact submitted prompt content explicitly unverified. It does not certify byte-for-byte prompt parity or private inherited context. If receipt/use evidence is also unavailable, 2B remains open with the concrete missing capability; do not waive the runs or mark the feature complete.
+
+The [dated run-contract amendment](verification/run-contract-2026-10-09.md) supersedes the original stop-development instruction. It changes no captured result and starts no probe. The capture failure is deferred from implementation readiness because the immutable baseline can still be launched later, not because incomplete evidence counts as acceptance.
 
 ## Bind the actual instructions
 
@@ -48,7 +60,7 @@ A local marketplace can load an installed cache copy. After installation/refresh
 
 Keep runner-owned .agents/plugin metadata, .codex configuration and mounted plugin bytes outside the evaluated diff using the staging repository's local exclude metadata. They must not contain assertions, oracles or expected findings. They are identical infrastructure on each side except for selected actor revision. Invoke the registered kk skill normally; do not substitute a pasted SKILL.md or only inject a root into a default agent.
 
-Record any client-specific installation steps in the run contract. No local Codex CLI was available on PATH during this design revision, so runtime loading has not been demonstrated here. Task 1 must pass the actual loading probe before accepting a Codex run; unavailable or incompatible clients produce an unrun result, not a mixed-version fallback.
+Record any client-specific installation steps in the run contract. Task 1's [completed probes](verification/README.md#completed-probes-after-login-refresh) established revision-bound Codex loading; exact reviewer handoff capture remains unresolved. Loading must still be verified for the runtime/bundle used by each batch; unavailable or incompatible clients produce an unrun result, not a mixed-version fallback.
 
 ## Per-run state isolation
 
@@ -87,7 +99,7 @@ The evaluation controller, never the acting model, seals a per-run evidence pack
 - Assertion records, their evidence-source mapping and relevant grader-only expected outcomes.
 - A manifest naming run identity, actor/fixture/grader revisions, evidence-file hashes, completeness and redaction notes.
 - Ordered observable tool events: actor/session ID, parent/dispatch ID, event sequence, tool name, arguments, result status, relevant returned content and artifact references.
-- Actual independent-agent dispatches and PAL calls/results, with the filenames/content hashes of any file-based payload.
+- Actual independent-agent dispatches and PAL calls/results, with the filenames/content hashes of any file-based payload. If the versioned receipt/use fallback is selected, include the linked reviewer read/receipt evidence and mark unavailable prompt fields explicitly.
 - Initial/final snapshots or diffs of the task/report files needed to grade completion and durable follow-up.
 - The final user-facing report.
 
@@ -98,7 +110,7 @@ Preserve each actor's event order and parent-child dispatch/completion edges. Do
 | Assertion class | Authoritative evidence |
 | --- | --- |
 | Instructions before source/edit | Completed instruction-read events, bounded-routing events and first subject/read/write event for the same actor; check the applicable routing exception. |
-| Handoff parity and historical source | Actual dispatch arguments plus the referenced immutable files and provenance manifest. |
+| Handoff parity and historical source | Revision 1 requires actual dispatch arguments plus referenced immutable files and provenance. Only after the [versioned fallback](#codex-handoff-capture-resolution) is selected may linked independent reviewer receipt/use evidence establish the narrower behavioral assertion; exact prompt parity remains unverified. |
 | Stale-handoff refresh | Initial stale artifact, subsequent baseline/source evidence and updated dispatch/report. |
 | Completion, scope and durable follow-up | Resulting tasks/doc snapshots and explicit requirement/decision input, not a final "done" claim. |
 | Findings and report clarity | Final report against the expected supported trigger, consequence and uncertainty; do not re-infer from a live fixture. |
@@ -106,6 +118,8 @@ Preserve each actor's event order and parent-child dispatch/completion edges. Do
 Observed contrary behavior is FAIL. Evidence missing or truncated such that the assertion cannot be established is PARTIAL with the missing event/artifact named. Neither passes acceptance. Treat a missing assertion or omitted required action visible in a complete trace as FAIL. The grader must cite event IDs or artifact locations rather than an unsupported claim from the actor.
 
 Add grader calibration fixtures under review-code/evals/_harness/grading-fixtures/: one with an early edit followed by a falsely reassuring final report (FAIL), one lacking read events (PARTIAL), and one correctly ordered and complete run (PASS). Keep these controller/grader fixtures outside every actor test-files tree. Re-run representative legacy component grading to ensure the mode extension changes no legacy input requirement.
+
+If the receipt/use fallback is activated, extend calibration before using it: a correct finding or parent handoff claim without linked reviewer receipt evidence cannot pass; a complete linked receipt/use trace can satisfy only the revised behavioral assertion. Keep exact prompt content marked unverified. Task 8 may proceed before gate 2B closes; any later rubric selection requires the corresponding calibration and regrading before Task 12 acceptance.
 
 ## R8: controlled report-phase replay
 

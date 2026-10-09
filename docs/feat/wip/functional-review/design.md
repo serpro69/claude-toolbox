@@ -1,7 +1,8 @@
 # Functional and operational review
 
 > Issue: [#166](https://github.com/serpro69/claude-toolbox/issues/166)
-> Status: revised after two independent design reviews on 2026-10-07; implementation pending
+> Status: evaluation preparation in progress; operative implementation pending
+> Revised: 2026-10-09 with user-approved evaluation sequencing and conditional evidence fallback
 > Review disposition: [Consolidated assessment](reviews/design-review-consolidation.md)
 > Evaluation contract: [evaluation.md](evaluation.md)
 > Implementation: [implementation.md](implementation.md)
@@ -38,6 +39,8 @@ After this change:
 5. Evidence-based findings explain a trigger, affected path and consequence. A clean review identifies inspected paths and important limits.
 
 Acceptance uses the scenarios in [Evaluation](#evaluation) and the binding/grading rules in [evaluation.md](evaluation.md). Every assertions[] entry in a new full-workflow eval is required; optional observations live outside that array. Predeclare model, modes and fixture revisions, then run two independent fresh sessions per baseline/candidate case and mode. All required candidate assertions must pass in both runs; a missing trace is not a pass. Retain failures and report observed results without claiming statistical reliability. There is no promise of zero missed bugs, no target finding count, and no claim that static structure tests establish behavioral quality.
+
+The user-approved [2026-10-09 amendment](verification/run-contract-2026-10-09.md) separates implementation readiness from final verification. Task 2 gate 2A is complete; Tasks 3–11 may proceed while gate 2B retains the four missing Codex baseline captures as a prerequisite for Task 12 and feature completion. The baseline remains immutable. One bounded capture investigation precedes any versioned fallback to observable reviewer receipt/use; that fallback must disclose that exact submitted prompt content remains unverified. Neither the existing captures nor this sequencing decision establishes behavioral acceptance.
 
 ## Scope and ownership
 
@@ -210,7 +213,7 @@ Build small synthetic fixtures, independently reproducible without private repos
 | I3: trivial non-runtime change | Perform required instruction/profile steps; keep functional assessment proportionate and avoid irrelevant deployment gates or duplicated tests. |
 | I4: completion and resume | Refresh a stale handoff, distinguish tests from release evidence, keep a violated hard requirement open, and durably record a permitted external prerequisite. |
 
-Run R1–R7 and both R9 variants through standard review and actual isolated orchestration, not only a directly prompted reviewer. R8 is a deliberately narrower report-phase replay with controller-supplied synthetic PAL outcomes, including success with zero source coverage and tool failure; it does not certify live MCP transport. A separate real PAL smoke run checks integration. Inspect actual agent/PAL dispatches and historical evidence for parity. Run I1/I4 through plan mode and I2/I3 through standalone mode. Existing profile-routing and pre-write-ordering evals remain regression controls.
+Run R1–R7 and both R9 variants through standard review and actual isolated orchestration, not only a directly prompted reviewer. R8 is a deliberately narrower report-phase replay with controller-supplied synthetic PAL outcomes, including success with zero source coverage and tool failure; it does not certify live MCP transport. A separate real PAL smoke run checks integration. Inspect actual agent/PAL invocations and historical evidence for required context coverage under the selected [evidence contract](evaluation.md#execution-evidence-contract); the conditional receipt/use fallback leaves exact prompt parity unverified. Run I1/I4 through plan mode and I2/I3 through standalone mode. Existing profile-routing and pre-write-ordering evals remain regression controls.
 
 Extend the existing eval-grader with an explicit workflow mode that accepts a sealed evidence manifest, ordered tool events, captured dispatches and resulting-file snapshots. Its default component mode remains unchanged. Ordering and handoff assertions are graded from execution evidence, not claims in the final response. Details, required negative grading controls and the baseline/candidate loading mechanisms are in [evaluation.md](evaluation.md).
 
@@ -224,6 +227,7 @@ The current review eval staging script treats every fixture file as newly added;
 | Separate opt-in functional/release review | Easy to isolate additional effort | Rejected: preserves the need for the user's additional prompt. |
 | Shared context plus mandatory behavior reasoning in existing workflows | Addresses preparation, investigation and claims at their current boundaries | Selected: adds context work, controlled by relevance and evidence limits. |
 | Mandatory whole-system/live-environment audit | Broader possible coverage | Rejected: unavailable access and disproportionate scope would make ordinary reviews impractical. |
+| Hold all implementation for Codex plaintext handoff capture | Completes seed capture before any operative edit | Rejected on 2026-10-09: the immutable baseline remains runnable later. Keep the capture work as an acceptance gate and bound further investigation; use the versioned receipt/use fallback if plaintext remains unavailable. |
 
 The method increases review effort when a change crosses contracts or persistent state. Small changes remain small. Additional prose can become ceremony; the evals must grade demonstrated reasoning and outcomes, not whether a report repeats section names.
 
