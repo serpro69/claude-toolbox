@@ -5,12 +5,13 @@
 > Tasks: [tasks.md](tasks.md)
 > Review disposition: [consolidated assessment](reviews/design-review-consolidation.md)
 > Status: planned; no operative skill changes implemented
+> Revised: 2026-10-09; implementation may proceed after Task 2 gate 2A
 
 ## Starting points
 
 Canonical changes belong under klaude-plugin/. Current entry points are review-code/SKILL.md, review-process.md and review-isolated.md; agents/code-reviewer.md; implement/SKILL.md, plan-mode.md and standalone-mode.md. Shared review-scope-protocol.md also serves /kk:review-spec; pal-codereview-invocation.md also serves /kk:review-design. Preserve those consumers.
 
-The immutable actor baseline is c2d28c9e (v0.23.0), resolved to a full commit when runs are prepared. All seed workflow baselines are captured before operative changes. The installed cache and an intermediate Task 4 working tree are not valid substitutes. [Evaluation binding](evaluation.md#bind-the-actual-instructions) specifies entry-point, runtime-root and agent loading.
+The immutable actor baseline is c2d28c9e (v0.23.0), resolved to a full commit when runs are prepared. Task 2 gate 2A preserves the final seed fixtures, frozen inputs and 16 existing baseline captures before operative changes. The four missing Codex baselines belong to gate 2B and may run against the preserved baseline after development starts. The installed cache and an intermediate Task 4 working tree are not valid substitutes. [Evaluation binding](evaluation.md#bind-the-actual-instructions) specifies entry-point, runtime-root and agent loading.
 
 ## Delivery and verification rules
 
@@ -24,7 +25,11 @@ Use source-relative links and local shared symlinks. Distributed instructions ex
 
 Task 1 establishes the revision-bound launch probes and run contract. It builds filtered actor bundles, scans bundles/cache copies for evaluator material, and proves per-run Capy/fixture isolation before any measured run. Operative files retain their original bytes; normal plugin distribution is unchanged. Task 2 owns the final seed fixtures R1/R3/I1/I2. It creates their complete eval.json, paired snapshot layout where applicable, and separate oracle directories before capturing standard, isolated, plan and standalone runs. The source/fixture identity and provider-specific launch probes are defined in [evaluation.md](evaluation.md#comparison-identity-and-acceptance).
 
-Capture raw execution evidence now; the workflow grader introduced later grades the preserved package. The grading procedure/rubric is pinned with the run contract; pin the concrete grader implementation before grading either side. A rubric change requires regrading both sides, and recapturing both if the changed assertion needs evidence absent from the saved traces.
+The user-approved [2026-10-09 amendment](verification/run-contract-2026-10-09.md) separates implementation readiness (2A, done) from capture completion (2B, open). Tasks 3–11 may proceed in their existing order. Task 12 and feature completion still wait for 2B. Keep Task 2 in progress; do not relabel its missing runs as passes.
+
+The implementing agent owns one bounded investigation of a supported capture alternative and, if it cannot expose plaintext, a versioned fallback based on independently observable reviewer receipt and use. Follow [the resolution procedure](evaluation.md#codex-handoff-capture-resolution) before launching the four missing Codex baselines. The fallback narrows the claim about prompt content; it retains both reviewers, all required behavior and the two-run candidate threshold. Record the selected evidence path, assertion mapping and configuration before its batch.
+
+Capture raw execution evidence; the workflow grader introduced later grades the preserved package. Preserve the original rubric, freeze and sealed records. Pin any successor rubric and the concrete grader implementation before grading either side. A rubric change requires regrading both sides, and recapturing both if saved evidence is insufficient. A runtime/model/tool-policy change requires a revised run contract and fresh affected baseline/candidate comparisons under the same configuration; developing the candidate does not change the identity of the preserved baseline.
 
 Later fixture tasks extend the same directories and author only the remaining cases. Use the manual staging contract until the paired-snapshot helper exists, creating a fresh workspace and knowledge state for every run. Baseline and candidate must use identical fixture revisions and initial knowledge seeds; never relabel an intermediate candidate run as the unchanged baseline. Record the intentional unavailable-vault policy separately from knowledge search/index availability.
 
@@ -82,7 +87,7 @@ Verify offline: additions, modifications, deletions, unchanged files, hidden fil
 
 Task 8 extends agents/eval-grader.md with explicit workflow mode while preserving the default component contract and Read-only access. Update review-code/evals/_harness/HARNESS.md and add implement/evals/README.md to carry the [execution-evidence contract](evaluation.md#execution-evidence-contract).
 
-The controller assembles ordered tool events, real dispatches and resulting-file snapshots with hashes. The grader may read only manifest-listed evidence, its instructions and supplied rubric. Add calibration records under the harness's grading-fixtures directory: early edit plus false final claim fails, missing events are partial, and a complete ordered trace passes. Legacy component grading remains unchanged.
+The controller assembles ordered tool events, real dispatches and resulting-file snapshots with hashes. The grader may read only manifest-listed evidence, its instructions and supplied rubric. Add calibration records under the harness's grading-fixtures directory: early edit plus false final claim fails, missing events are partial, and a complete ordered trace passes. Legacy component grading remains unchanged. Task 8 can implement and calibrate the grader while gate 2B is open; if the fallback is selected later, update its evidence mapping and regrade affected retained traces before acceptance.
 
 R8 uses the concrete report-phase replay defined in [evaluation.md](evaluation.md#r8-controlled-report-phase-replay). No MCP proxy, tool interception API or new server dependency is introduced. A real PAL smoke run has separate evidence and cannot be replaced by the replay.
 
@@ -100,7 +105,7 @@ Fixture authoring does not count as a matrix run. Do not include private source 
 
 ## Matrix execution
 
-Task 12 waits for producer, isolated consumers, staging, grading and all scenarios. Run the declared primary-provider matrix and secondary representative coverage with the predeclared two-run threshold. Preserve raw traces and per-assertion results, including failed attempts and unknown tool coverage.
+Task 12 waits for Task 2 gate 2B, producer, isolated consumers, staging, grading and all scenarios. Run the declared primary-provider matrix and secondary representative coverage with the predeclared two-run threshold and selected versioned evidence contract. Preserve raw traces and per-assertion results, including failed attempts and unknown tool coverage. If the receipt/use fallback was selected, report that narrower observation and leave exact submitted prompt content explicitly unverified.
 
 Review R3's historical-source handoff, R3/R7's verdict mapping, I4's resulting document state, and the grader calibration controls explicitly. Compare every candidate against the immutable actor baseline using the same fixture and grading revisions. An unavailable runtime or source capture yields an unrun gate with an owner/next action; it does not waive acceptance.
 
