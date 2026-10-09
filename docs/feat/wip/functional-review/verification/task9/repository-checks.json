@@ -1,0 +1,64 @@
+{
+  "date": "2026-10-09",
+  "base": "c554f92d4bde6b1dbf98335fa1d450a57c935372",
+  "scope": "Task 9 only",
+  "commands": [
+    {
+      "command": "python3 -B docs/feat/wip/functional-review/verification/task9/verify.py",
+      "exit_code": 0,
+      "evidence": "checks.json",
+      "python": "3.10.12",
+      "snapshot_suites": 8,
+      "tests": 18,
+      "probe_runs": 8,
+      "frozen_seed_files_unchanged": 51
+    },
+    {
+      "command": "for suite in test/test-*.sh; do bash \"$suite\"; done",
+      "exit_code": 0,
+      "environment": {
+        "PATH_prefix": "/home/sergio/.local/share/uv/python/cpython-3.12.11-linux-x86_64-gnu/bin",
+        "GIT_CONFIG_COUNT": "1",
+        "GIT_CONFIG_KEY_0": "commit.gpgsign",
+        "GIT_CONFIG_VALUE_0": "false"
+      },
+      "suites": 10,
+      "helper_assertions": 644,
+      "staging_integration_tests": 20,
+      "evidence": "logs/test-*.log"
+    },
+    {
+      "command": "GOCACHE=/tmp/functional-review-task9-go-cache make generate-kodex",
+      "exit_code": 0,
+      "python": "3.12.11 via PATH",
+      "evidence": "logs/generate-corrected.log; logs/generate-corrected-repeat.log"
+    },
+    {
+      "command": "GOCACHE=/tmp/functional-review-task9-go-cache make plugin-graph",
+      "exit_code": 0,
+      "evidence": "logs/graph.log",
+      "warning": "Existing graph cycle warning retained; no broken edges or orphans."
+    },
+    {
+      "command": "GOCACHE=/tmp/functional-review-task9-go-cache go test ./...",
+      "exit_code": 0,
+      "evidence": "logs/go.log"
+    },
+    {
+      "command": "git diff --check",
+      "exit_code": 0
+    }
+  ],
+  "freshness": {
+    "files": 785,
+    "comparison": "sha256sum of sorted regular files under kodex-plugin and .codex/agents before and after repeat generation; cmp exit 0",
+    "before_manifest_sha256": "472b1e57bb31b58798b25cb8145b6815c2fe6b063607224fcf1917932b96eadc",
+    "after_manifest_sha256": "472b1e57bb31b58798b25cb8145b6815c2fe6b063607224fcf1917932b96eadc",
+    "initial_pre_review_manifest_sha256": "e8b84dc59d36a17a3d004ff8ccf03c019eec6eaa66f9f28b2bb8bfad7010c413"
+  },
+  "limits": [
+    "No full workflow actor runs or candidate acceptance grades.",
+    "Python 3.9 is the fixture syntax floor; local runtime evidence covers 3.10.12 only for these fixtures, not a version matrix.",
+    "Logs have ANSI color sequences removed."
+  ]
+}
