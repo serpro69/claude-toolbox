@@ -1,0 +1,54 @@
+diff --git a/settings.py b/settings.py
+index 17eee18..04ccefd 100644
+--- a/settings.py
++++ b/settings.py
+@@ -1,5 +1,5 @@
+ def patch_settings(current, patch):
+     result = dict(current)
+     for key, value in patch.items():
+-        result[key] = value or current.get(key)
++        result[key] = value
+     return result
+diff --git a/tests/test_settings.py b/tests/test_settings.py
+index 87a59f4..5ab19c0 100644
+--- a/tests/test_settings.py
++++ b/tests/test_settings.py
+@@ -1,5 +1,7 @@
+ import unittest
+ from api import update_preferences
++from cli import clear_note
++from settings import patch_settings
+ 
+ 
+ class SettingsTests(unittest.TestCase):
+@@ -8,3 +10,30 @@ class SettingsTests(unittest.TestCase):
+         result = update_preferences(original, {"note": "after"})
+         self.assertEqual(result, {"note": "after", "enabled": True})
+         self.assertEqual(original["note"], "before")
++
++    def test_omitted_keys_keep_current_values(self):
++        current = {"note": "keep", "enabled": True}
++        result = patch_settings(current, {})
++        self.assertEqual(result, {"note": "keep", "enabled": True})
++
++    def test_falsey_values_replace_current(self):
++        current = {"note": "before", "enabled": True}
++        for key, value in (("note", None), ("note", ""), ("enabled", False)):
++            with self.subTest(key=key, value=value):
++                result = patch_settings(current, {key: value})
++                self.assertEqual(result[key], value)
++
++    def test_does_not_mutate_caller_inputs(self):
++        current = {"note": "before", "enabled": True}
++        patch = {"note": None}
++        patch_settings(current, patch)
++        self.assertEqual(current, {"note": "before", "enabled": True})
++        self.assertEqual(patch, {"note": None})
++
++    def test_clear_note_sets_none(self):
++        result = clear_note({"note": "before", "enabled": True})
++        self.assertEqual(result, {"note": None, "enabled": True})
++
++    def test_update_preferences_disables_flag(self):
++        result = update_preferences({"note": "keep", "enabled": True}, {"enabled": False})
++        self.assertEqual(result, {"note": "keep", "enabled": False})

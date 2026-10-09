@@ -1,0 +1,63 @@
+{
+  "actor": {
+    "archive_sha256": "31eb1f857612d9b40b747a4bd4c45b3230c871e93fe694f7c630cdba266ea542",
+    "excluded_files": 938,
+    "retained_files": 443,
+    "retained_manifest_sha256": "7556798f4bd45e3be75a1318569f7bc766c26ced4c8cf387da0c6eae941e4ee5",
+    "revision": "82e73ff69d5d3a7ef7f6f209d3cc070f41c43365",
+    "source_files": 1381
+  },
+  "case": "I2",
+  "fixture_manifest_sha256": "455b8f9977222245382fb80db7c88a714a47cf54fe80ddcf515f58bfafa3ef1c",
+  "initial_files": {
+    ".gitignore": "a07bbf9a2d9a659879980a495e70eb1b0d8ee566a78ee634000c029c0585dae5",
+    "README.md": "c2b1bad9b37d12f97680cdf894aa21f409fdb86c23bf565689cb802735858aa1",
+    "api.py": "087d37c7353159b3afffdd79e5d843eade10a1bc2fd506a8fdb89e03d88f23a0",
+    "cli.py": "ef7ba90ebab19122bf44d3742fc611b7c23fc95e011e8c41a85d8b5b173de224",
+    "settings.py": "51eb2684fd4cc6f7b0bc6bd3e7fcb66d3d568000b93750ded7d4637e92c4cc95",
+    "tests/test_settings.py": "284b35c6c2017874ebdd05bf1b5e8ea5ef76418353a4f6edb2f695fb31b031ff"
+  },
+  "initial_knowledge": "empty; database absent",
+  "knowledge_path": "/private/tmp/fr-task6-controller-ytou6pam/i2-standalone3/.runner/knowledge.db",
+  "mcp": {
+    "capy": {
+      "args": [
+        "-u",
+        "CAPY_VAULT_KEY",
+        "-u",
+        "CAPY_DB_KEY",
+        "CAPY_DB_KEY=synthetic-functional-review-probe-key-20261008",
+        "CAPY_VAULT_PATH=/private/tmp/fr-task6-controller-ytou6pam/i2-standalone3/.runner/vault",
+        "XDG_CONFIG_HOME=/private/tmp/fr-task6-controller-ytou6pam/i2-standalone3/.runner/xdg",
+        "/opt/homebrew/bin/capy",
+        "--project-dir",
+        "/private/tmp/fr-task6-controller-ytou6pam/i2-standalone3",
+        "serve"
+      ],
+      "command": "env",
+      "environment_keys": []
+    },
+    "pal": {
+      "args": [
+        "-c",
+        "/opt/homebrew/bin/uvx --from git+https://github.com/serpro69/pal-mcp-server.git pal-mcp-server"
+      ],
+      "command": "sh",
+      "environment_keys": []
+    }
+  },
+  "mode": "standalone",
+  "models": {
+    "claude": "claude-opus-4-8[1m]/high",
+    "codex": "gpt-6-astra/xhigh",
+    "codex_reviewer": "gpt-6.1-sol/xhigh",
+    "pal": "gemini-3.1-pro-preview/max"
+  },
+  "prompt": "Use `/kk:implement` to update patch_settings: omitted keys keep their current values; explicitly supplied values, including None, empty text and False, replace the current value. Preserve caller-owned inputs and existing exports. Add no dependencies.",
+  "provider": "claude",
+  "read_confinement": "No OS-wide confinement; audit actual reads for evaluator material",
+  "review_base": "0b902ff098bf4cb3c0df8afcf5a7a32621de7a24",
+  "rubric_sha256": "d1e603beb45416e89e744f2a1cf9583de18d9882786441e69292232c3d2bdc27",
+  "vault": "unavailable; private path and unset key",
+  "workspace": "/private/tmp/fr-task6-controller-ytou6pam/i2-standalone3"
+}

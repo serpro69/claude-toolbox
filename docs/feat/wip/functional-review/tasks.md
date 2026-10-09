@@ -11,7 +11,7 @@
 > Not Doing: new review skill, whole-system audits, mandatory production access, deployments, generic release engine, new models/dependencies, profile redesign
 > Delivery: preserve existing invocations/shared consumers; regenerate Codex artifacts with every operative slice.
 
-Scope and direction are approved; the reviews have been assessed and the detailed plan revised. Tasks 1, 3, 4 and 5 are done. Task 2 remains in progress: its implementation-readiness gate (2A) is done; its capture-completion gate (2B) remains open. Task 6 is ready to start; Tasks 6–11 follow their existing sequence without waiting for 2B. Task 12 and feature completion still depend on 2B. The [2026-10-09 run-contract amendment](verification/run-contract-2026-10-09.md) records the authorization and evidence limits. Earlier six-task numbering is superseded by this sequence; no completed work was renumbered. Size includes authored reasoning complexity; mechanical copies/symlinks/generated files are excluded. Parallel markers permit compatible work only and do not authorize delegation. Serialize generation if tasks run concurrently.
+Scope and direction are approved; the reviews have been assessed and the detailed plan revised. Tasks 1, 3, 4, 5 and 6 are done. Task 2 remains in progress: its implementation-readiness gate (2A) is done; its capture-completion gate (2B) remains open. Task 7 is ready to start; Tasks 7–11 follow their existing sequence without waiting for 2B. Task 12 and feature completion still depend on 2B. The [2026-10-09 run-contract amendment](verification/run-contract-2026-10-09.md) records the authorization and evidence limits. Earlier six-task numbering is superseded by this sequence; no completed work was renumbered. Size includes authored reasoning complexity; mechanical copies/symlinks/generated files are excluded. Parallel markers permit compatible work only and do not authorize delegation. Serialize generation if tasks run concurrently.
 
 ## Task 1: Prove revision-bound evaluation loading
 
@@ -155,7 +155,7 @@ The ordinary-prompt R3 isolated run loaded all eight detection rules and applica
 
 ## Task 6: Implementation establishes constraints and hands off verified context
 
-- **Status:** pending
+- **Status:** done
 - **Depends on:** Task 5
 - **Size:** M
 - **Can run in parallel with:** —
@@ -163,11 +163,32 @@ The ordinary-prompt R3 isolated run loaded all eight detection rules and applica
 
 ### Subtasks
 
-- [ ] 6.1 Add implement/shared-change-context.md and integrate it in implement/SKILL.md → verify: both modes load the shared contract and profiles before source investigation/edits.
-- [ ] 6.2 Align plan-mode.md and standalone-mode.md with the execution core → verify: one authoritative post-instruction investigation phase; existing pre-write controls remain valid.
-- [ ] 6.3 Establish intended outcomes, affected contracts and delivery constraints; record observations in the current task's labeled Execution context → verify: I1 detects its conflict and observations cannot silently amend specifications.
-- [ ] 6.4 Refresh evidence for independent review and separate task completion from deployment conditions → verify: real handoff uses finished Task 5 consumers, stale evidence is rejected and a hard unmet requirement stays open.
-- [ ] 6.5 Extend shared-link structure assertions for implement, regenerate output and verify both modes → verify: exact link targets and budgets pass; I2 remains usable without a full feature plan.
+- [x] 6.1 Add implement/shared-change-context.md and integrate it in implement/SKILL.md → verify: both modes load the shared contract and profiles before source investigation/edits.
+- [x] 6.2 Align plan-mode.md and standalone-mode.md with the execution core → verify: one authoritative post-instruction investigation phase; existing pre-write controls remain valid.
+- [x] 6.3 Establish intended outcomes, affected contracts and delivery constraints; record observations in the current task's labeled Execution context → verify: I1 detects its conflict and observations cannot silently amend specifications.
+- [x] 6.4 Refresh evidence for independent review and separate task completion from deployment conditions → verify: real handoff uses finished Task 5 consumers, stale evidence is rejected and a hard unmet requirement stays open.
+- [x] 6.5 Extend shared-link structure assertions for implement, regenerate output and verify both modes → verify: exact link targets and budgets pass; I2 remains usable without a full feature plan.
+
+### Execution context — 2026-10-09
+
+**Accepted scope:** the user's request to implement the next task selects Task 6 after completed Task 5. The accepted 2026-10-09 sequencing decision leaves Task 2 gate 2B and full matrix acceptance open; this task does not waive them. Sources: this task, [implementation slice](implementation.md#implementation-slice), and [implement contract](design.md#kkimplement-workflow).
+
+**Observed before edits:** repository base `61093fc7d610f44d3eba7f861bc4058a8f3c384b` with a clean worktree. The standalone entry currently reads source before profile loading; plan entry and the shared execution core duplicate ordering/completion rules. The Task 5 review consumers already accept the shared factual context and own both independent reviewer handoffs. Preserve those invocations, the standard-review override, profile/dependency/test steps and accurate task scope. This instruction-only slice has no deployment operation; compatibility concerns are instruction ordering, shared consumers and generated Codex output.
+
+**Instruction loading:** all eight installed detection rules were read. `skill-md` activates through implement/SKILL.md and sibling adjacency; its universal, Claude Code and kk-plugin implement guidance loaded. Provider guidance is selected by the plugin's hooks/commands/agents directories; kk guidance by canonical klaude-plugin paths. No dependency change. Verification and review are pending; no behavioral acceptance is claimed.
+
+**Initial verification and source review:** [643 shell assertions](verification/task6/check-summary.json) pass with no skips; Go tests, plugin graph and [685-file regeneration freshness](verification/task6/freshness.json) pass. Initial environment-limited attempts are retained. The independent review identified a pre-profile requirement-read exemption; the corrected candidate moves full requirements/knowledge lookup after profiles and has no remaining source findings. PAL also found no source defects, with actual file embedding recorded. See [review](verification/task6/review.md).
+
+**Earlier slice gate — subsequently completed below:** complete the frozen I1/I2 mode dry-runs and independent execution-evidence audit under [the Task 6 run contract](verification/task6/run-contract.md), then verify subtask outcomes before marking done. Automatic approval review initially rejected the external launch; the user explicitly approved these Claude/PAL runs. The first binding probe did not observe the shell root; a fresh retry uses the directly allowed command. Full matrix acceptance and Task 2 gate 2B remain open.
+
+
+**Superseding completion — 2026-10-09:** final candidate `10463ff31d654520b5712f1dc053407fccf48e9b` implements the shared context, metadata-first mode entry, one common investigation phase, explicit requirement-decision boundary, refreshed actual review evidence and accurate completion/follow-up gates. [Final verification](verification/task6/README.md) records the approved Claude/PAL runs, failed attempts, frozen identities and [candidate6 freshness](verification/task6/freshness-candidate6.json). All 643 shell assertions, Go tests, structure and graph checks pass; 685 generated files remain unchanged on second generation and 1,381 source entries match the final candidate.
+
+**Observed integration and independent review:** I1 records the contradictory outcomes and proposals, requests a real decision and changes only task observations; client/provider/tests/design/implementation remain unchanged. I2 inspects callers before editing, passes six focused tests, rejects stale scratch evidence before review and sends current source plus all eight criteria to both independent reviewers. Its PAL payload contains no child conclusions and precedes the child final report. The [independent source/evidence audit](verification/task6/review.md#final-disposition) returns **APPROVE scoped to Task 6**, with no remaining hard slice blocker. Native PAL source results remain attributed opinions, not runtime guarantees. No systemic P0/P1 implementation findings or new project conventions require indexing.
+
+**Deferred acceptance — owner: implementing agent, Tasks 8/12:** formal per-assertion grading, fresh repeated comparisons, existing routing/pre-write controls and I3/I4 remain open. The final I2 run is bounded integration evidence, not a pristine matrix run: it saw a previous scratch patch before rejecting/replacing it. Also retain metadata overfetch, broad/late or omitted knowledge lookup and copied-diff context-space loss. Next actions: ensure fresh run-owned scratch evidence and exact diff materialization, tighten metadata/knowledge procedure execution, then grade/recapture affected cases under the pinned contract. Verification condition: every required assertion passes twice with fresh inputs and actual handoff evidence; failed/unknown observations never count as PASS. Task 2 gate 2B still blocks Task 12 and feature completion.
+
+**Reflection:** static source review was insufficient to establish execution behavior. Actual traces exposed early reads, workflow bypass, self-authorized requirement relaxation and contaminated external review. The final instructions make the loading checkpoint, conflicting-outcome comparison and review handoff explicit. Plan requirements and acceptance were preserved; no fixture, model, tool policy or threshold changed. Task 6 is complete as an implementation/integration slice; Task 7 is next.
 
 ## Task 7: Stage before/after and historical fixtures reliably
 
