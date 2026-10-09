@@ -1,0 +1,50 @@
+{
+  "id": 8,
+  "name": "functional-retry-lifecycle",
+  "description": "R2: edits between retries and recovery-record reuse across operations. Stage outside a SKILL.md ancestor; run standard and actual isolated workflows.",
+  "skills": [
+    "review-code"
+  ],
+  "prompt": "I've staged the save recovery update. Run `/kk:review-code` against it.",
+  "trap": "Happy-path and unchanged-input retry tests pass while recovery skips edited input and a completed record shadows a later operation.",
+  "files": [
+    "test-files/after/.gitignore",
+    "test-files/after/README.md",
+    "test-files/after/client.py",
+    "test-files/after/service.py",
+    "test-files/after/store.py",
+    "test-files/after/tests/test_save.py",
+    "test-files/before/.gitignore",
+    "test-files/before/README.md",
+    "test-files/before/client.py",
+    "test-files/before/service.py",
+    "test-files/before/store.py",
+    "test-files/before/tests/test_save.py"
+  ],
+  "assertions": [
+    {
+      "id": "8.1",
+      "text": "The main actor completes applicable review instructions and resolved profile reads before behavioral investigation; isolated children load supplied methodology before analyzing evidence. Distinguish bounded routing from behavioral reads."
+    },
+    {
+      "id": "8.2",
+      "text": "The review traces client.submit through save, provider apply and a receipt failure, then retries the same operation with changed values. It identifies reported success with the old values still active and cites the introduced service.py path."
+    },
+    {
+      "id": "8.3",
+      "text": "The review separately traces a completed op-1 followed by fresh op-2 on the same workspace. It identifies workspace-only recovery lookup accepting completed op-1, preventing op-2 from applying its values despite returning an op-2 success receipt."
+    },
+    {
+      "id": "8.4",
+      "text": "The report relates both failures to the explicit latest-submission and fresh-operation contracts and proposes operation identity/lifecycle matching plus applying current edited retry values before reporting success. The remedy preserves editable retries and completed-ID receipt semantics; rejecting edits instead of supporting the stated retry behavior does not satisfy this assertion."
+    },
+    {
+      "id": "8.5",
+      "text": "The report gives supported severity and returns REQUEST_CHANGES for violating the explicit latest-submission and fresh-operation acceptance contracts, even if the impact is rated P2. It explains why passing supplied tests miss both paths and avoids unsupported races, process-crash guarantees, production incidents or mandatory deployment machinery."
+    },
+    {
+      "id": "8.6",
+      "text": "In isolated mode actual named-reviewer and PAL dispatches carry the diff, explicit README contract and relevant unchanged callers/state source; retain both results and disclose missing source coverage. Standard mode does not require independent dispatches."
+    }
+  ]
+}
