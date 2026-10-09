@@ -1,0 +1,57 @@
+
+=== Section 1: Basic JSON Validation ===
+[TEST] Example manifest is valid JSON
+[PASS] Valid JSON syntax
+
+=== Section 2: Field Extraction Patterns ===
+[TEST] Extract schema_version
+[PASS] schema_version = 1
+[TEST] Extract upstream_repo
+[PASS] upstream_repo = serpro69/claude-toolbox
+[TEST] Extract template_version
+[PASS] template_version = v1.0.0
+[TEST] Extract synced_at
+[PASS] synced_at = 2025-01-27T10:00:00Z
+[TEST] Extract PROJECT_NAME
+[PASS] PROJECT_NAME = my-project
+[TEST] Extract all variable keys
+[PASS] All 9 variable keys present
+
+=== Section 3: Manifest Generation Pattern ===
+[TEST] Generate manifest with jq -n
+[PASS] Generated manifest matches example
+
+=== Section 4: Special Character Handling ===
+[TEST] Handle quotes in string values
+[PASS] Quotes preserved correctly
+[TEST] Handle backslashes in string values
+[PASS] Backslashes preserved correctly
+[TEST] Handle newlines in string values
+[PASS] Newlines preserved correctly
+[TEST] Handle project names with hyphens and underscores
+[PASS] Special characters in project name preserved
+[TEST] Handle empty strings correctly
+[PASS] Empty strings handled correctly
+
+=== Section 5: Round-Trip Test ===
+[TEST] Generate -> Parse -> Verify round-trip
+[PASS] Round-trip preserves all values
+
+=== Section 6: Schema Validation ===
+[TEST] Validate example manifest against JSON Schema
+Installed 15 packages in 3ms
+ok -- validation done
+[PASS] Example manifest passes schema validation
+
+=== Section 7: Test Fixtures Validation ===
+[TEST] Valid fixture is valid JSON
+[PASS] valid-manifest.json is valid JSON
+[TEST] Invalid JSON fixture is actually invalid
+[PASS] invalid-json.txt is correctly invalid JSON
+
+=== Test Summary ===
+Test cases:        17
+Assertions passed: 17
+Assertions failed: 0
+
+All tests passed!

@@ -11,7 +11,7 @@
 > Not Doing: new review skill, whole-system audits, mandatory production access, deployments, generic release engine, new models/dependencies, profile redesign
 > Delivery: preserve existing invocations/shared consumers; regenerate Codex artifacts with every operative slice.
 
-Scope and direction are approved; the reviews have been assessed and the detailed plan revised. Tasks 1, 3, 4, 5, 6, 7 and 8 are done. Task 2 remains in progress: its implementation-readiness gate (2A) is done; its capture-completion gate (2B) remains open. Task 9 is next; Tasks 9–11 may proceed without waiting for 2B. Task 12 and feature completion still depend on 2B. The [2026-10-09 run-contract amendment](verification/run-contract-2026-10-09.md) records the authorization and evidence limits. Earlier six-task numbering is superseded by this sequence; no completed work was renumbered. Size includes authored reasoning complexity; mechanical copies/symlinks/generated files are excluded. Parallel markers permit compatible work only and do not authorize delegation. Serialize generation if tasks run concurrently.
+Scope and direction are approved; the reviews have been assessed and the detailed plan revised. Tasks 1, 3, 4, 5, 6, 7, 8 and 9 are done. Task 2 remains in progress: its implementation-readiness gate (2A) is done; its capture-completion gate (2B) remains open. Task 10 is next; Tasks 10–11 may proceed without waiting for 2B. Task 12 and feature completion still depend on 2B. The [2026-10-09 run-contract amendment](verification/run-contract-2026-10-09.md) records the authorization and evidence limits. Earlier six-task numbering is superseded by this sequence; no completed work was renumbered. Size includes authored reasoning complexity; mechanical copies/symlinks/generated files are excluded. Parallel markers permit compatible work only and do not authorize delegation. Serialize generation if tasks run concurrently.
 
 ## Task 1: Prove revision-bound evaluation loading
 
@@ -252,7 +252,7 @@ The ordinary-prompt R3 isolated run loaded all eight detection rules and applica
 
 ## Task 9: Author state, retry and intent scenarios
 
-- **Status:** pending
+- **Status:** done
 - **Depends on:** Task 8
 - **Size:** M
 - **Can run in parallel with:** Task 10, Task 11
@@ -260,9 +260,23 @@ The ordinary-prompt R3 isolated run loaded all eight detection rules and applica
 
 ### Subtasks
 
-- [ ] 9.1 Add R2 retry/lifecycle and R4 stored-data compatibility scenarios in final review-code/evals directories → verify: each failure has a supported synthetic path and precise required assertions.
-- [ ] 9.2 Add separate R9 mismatch and justified-complexity companion directories → verify: green implementation-shaped tests do not excuse a requirement mismatch, and necessary recovery behavior is preserved.
-- [ ] 9.3 Validate files[], numeric IDs and oracle placement; regenerate fixture output → verify: no prompt leaks an expected finding and no duplicate minimal fixture is created.
+- [x] 9.1 Add R2 retry/lifecycle and R4 stored-data compatibility scenarios in final review-code/evals directories → verify: each failure has a supported synthetic path and precise required assertions.
+- [x] 9.2 Add separate R9 mismatch and justified-complexity companion directories → verify: green implementation-shaped tests do not excuse a requirement mismatch, and necessary recovery behavior is preserved.
+- [x] 9.3 Validate files[], numeric IDs and oracle placement; regenerate fixture output → verify: no prompt leaks an expected finding and no duplicate minimal fixture is created.
+
+### Execution context — 2026-10-09
+
+**Accepted scope:** the request for the next task selects Task 9 after completed Task 8. Author final R2, R4 and both R9 fixtures only; Task 2 gate 2B and Tasks 10–13 remain open. Sources: this task, the design's evaluation table and the implementation's fixture-authoring slice. No requirement or capture contract changes.
+
+**Observed before edits:** clean base `c554f92d4bde6b1dbf98335fa1d450a57c935372`; review eval IDs currently end at 7. Existing seeds use complete paired snapshots, ordinary prompts, required assertions and sibling grader-only oracles. Preserve these seeds and the staging/grading contracts. Use Python standard-library fixtures with synthetic state, persisted JSON and deterministic retry outcomes; no service, deployment or dependency installation is needed.
+
+**Instruction loading:** all eight installed detection rules loaded. Planned `.py` files activate `python`; fixture adjacency to `review-code/SKILL.md` activates `skill-md`. Loaded Python core idiom/type/error guidance (no async constructs planned) and universal/provider/kk implement guidance (provider directories and canonical paths satisfy both conditionals). The repository's bounded-routing convention takes precedence over older absolute wording. Test guidance includes Python testing and validator protocols; `skill-md` has no test-phase index. Verification and isolated review remain pending.
+
+**Superseding completion — 2026-10-09:** four final scenario directories (review IDs 8–11) now provide R2, R4 and both R9 variants, with 24 required assertions, complete paired snapshots and separate oracles. [Verification](verification/task9/README.md) records eight passing snapshot suites (18 tests), eight deterministic reproduction groups, exact staged diffs and 51 unchanged frozen seed files. All ten shell suites pass (644 helper assertions), Go/graph checks pass, and 785 generated files remain stable after repeated generation. Corrected attempts and final logs are retained; no fixture actor run or behavioral acceptance is claimed.
+
+**Review:** [independent source review](verification/task9/review.md) approved Task 9 after tightening R2's verdict/remedy assertions and verifier path/encoding handling. The initial P2 finding is resolved. Native PAL feedback and zero/one-file embedding limits remain disclosed; they do not establish corroboration. No systemic P0/P1 findings or new project conventions require indexing.
+
+**Deferred acceptance — owner: implementing agent, Task 12:** after Task 2 gate 2B and Tasks 10–11, freeze these new fixture/rubric hashes and run both standard and actual isolated baseline/candidate comparisons with fresh inputs, twice per required pair. Grade sealed traces under the selected evidence contract; every required candidate assertion must pass twice. Authoring, staging and source review do not waive missing captures or failed/partial grades. Task 10 is next; the feature remains in progress.
 
 ## Task 10: Author compatibility, uncertainty and degraded-report controls
 

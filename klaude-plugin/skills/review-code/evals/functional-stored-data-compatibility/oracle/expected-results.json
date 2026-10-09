@@ -1,0 +1,24 @@
+{
+  "case": "R4",
+  "finding": {
+    "path": "reader.py:2",
+    "trigger": [
+      "Read supplied mixed records directly.",
+      "Independently reload records, migrate_batch(records, 1), then list_destinations(records)."
+    ],
+    "before": "All three addresses returned in both states.",
+    "after": "KeyError('destination') on legacy-a initially and legacy-c after the first batch.",
+    "control": "After migrating all remaining legacy rows, both readers return the same three addresses.",
+    "severity": "P1 or justified P2; hard compatibility contract requires REQUEST_CHANGES",
+    "compatibility": "Blocked against supplied mixed/partial data, not a production observation"
+  },
+  "evidence": {
+    "ordering": "completed methodology/profile reads before investigation",
+    "behavior": "captured fixture/data/migration sources and final report; optional real probe output",
+    "handoff": "actual named-reviewer/PAL arguments and captured referenced source"
+  },
+  "negative_controls": [
+    "The row data is valid for the documented contract.",
+    "No rollback, concurrent writer or production access requirement is introduced."
+  ]
+}
