@@ -11,7 +11,7 @@
 > Not Doing: new review skill, whole-system audits, mandatory production access, deployments, generic release engine, new models/dependencies, profile redesign
 > Delivery: preserve existing invocations/shared consumers; regenerate Codex artifacts with every operative slice.
 
-Scope and direction are approved; the reviews have been assessed and the detailed plan revised. Tasks 1, 3, 4, 5, 6 and 7 are done. Task 2 remains in progress: its implementation-readiness gate (2A) is done; its capture-completion gate (2B) remains open. Task 8 is ready to start; Tasks 8–11 follow their existing sequence without waiting for 2B. Task 12 and feature completion still depend on 2B. The [2026-10-09 run-contract amendment](verification/run-contract-2026-10-09.md) records the authorization and evidence limits. Earlier six-task numbering is superseded by this sequence; no completed work was renumbered. Size includes authored reasoning complexity; mechanical copies/symlinks/generated files are excluded. Parallel markers permit compatible work only and do not authorize delegation. Serialize generation if tasks run concurrently.
+Scope and direction are approved; the reviews have been assessed and the detailed plan revised. Tasks 1, 3, 4, 5, 6, 7 and 8 are done. Task 2 remains in progress: its implementation-readiness gate (2A) is done; its capture-completion gate (2B) remains open. Task 9 is next; Tasks 9–11 may proceed without waiting for 2B. Task 12 and feature completion still depend on 2B. The [2026-10-09 run-contract amendment](verification/run-contract-2026-10-09.md) records the authorization and evidence limits. Earlier six-task numbering is superseded by this sequence; no completed work was renumbered. Size includes authored reasoning complexity; mechanical copies/symlinks/generated files are excluded. Parallel markers permit compatible work only and do not authorize delegation. Serialize generation if tasks run concurrently.
 
 ## Task 1: Prove revision-bound evaluation loading
 
@@ -222,7 +222,7 @@ The ordinary-prompt R3 isolated run loaded all eight detection rules and applica
 
 ## Task 8: Grade workflow behavior from execution evidence
 
-- **Status:** pending
+- **Status:** done
 - **Depends on:** Task 7
 - **Size:** M
 - **Can run in parallel with:** —
@@ -230,11 +230,25 @@ The ordinary-prompt R3 isolated run loaded all eight detection rules and applica
 
 ### Subtasks
 
-- [ ] 8.1 Extend agents/eval-grader.md with explicit workflow mode and manifest-limited Read access → verify: the omitted/default mode preserves the legacy component contract.
-- [ ] 8.2 Update review-code/evals/_harness/HARNESS.md and add implement/evals/README.md for capture, dispatch evidence, resulting-file snapshots and mode selection → verify: acting sessions never receive grading material.
-- [ ] 8.3 Add and grade calibration records → verify: an early edit despite a reassuring final response is FAIL, missing events are PARTIAL, and complete correct ordering is PASS; legacy component grades stay compatible.
-- [ ] 8.4 Pin the grader implementation and grade available baseline traces under the same versioned contract used for candidate traces → verify: no self-attested ordering or payload claim substitutes for execution evidence; regrade affected traces if 2.6 later selects the fallback, and leave missing captures for 2B/Task 12 rather than blocking grader implementation.
-- [ ] 8.5 Regenerate the grader/playbook output and run structure/graph checks → verify: both distributions preserve the explicit mode boundary.
+- [x] 8.1 Extend agents/eval-grader.md with explicit workflow mode and manifest-limited Read access → verify: the omitted/default mode preserves the legacy component contract.
+- [x] 8.2 Update review-code/evals/_harness/HARNESS.md and add implement/evals/README.md for capture, dispatch evidence, resulting-file snapshots and mode selection → verify: acting sessions never receive grading material.
+- [x] 8.3 Add and grade calibration records → verify: an early edit despite a reassuring final response is FAIL, missing events are PARTIAL, and complete correct ordering is PASS; legacy component grades stay compatible.
+- [x] 8.4 Pin the grader implementation and grade available baseline traces under the same versioned contract used for candidate traces → verify: no self-attested ordering or payload claim substitutes for execution evidence; regrade affected traces if 2.6 later selects the fallback, and leave missing captures for 2B/Task 12 rather than blocking grader implementation.
+- [x] 8.5 Regenerate the grader/playbook output and run structure/graph checks → verify: both distributions preserve the explicit mode boundary.
+
+### Execution context — 2026-10-09
+
+**Accepted scope:** the user requested Task 8. Task 7 is complete. Grade the 16 retained baseline captures under the frozen revision-1 rubric; Task 2 gate 2B retains the four missing captures and any later fallback/regrading obligations. No candidate acceptance or capture-contract change is implied.
+
+**Observed before edits:** the grader currently judges output text only and exempts itself from instruction loading. The harness has only the component path; there is no implementation-eval playbook. Preserve omitted-mode component inputs/output and Read-only tools while adding an explicit, sealed-evidence workflow path. Capture evidence already includes returned tool content, payload artifacts and initial/final files; completeness must be assessed per assertion, not inferred from a successful runtime exit.
+
+**Instruction loading:** all eight installed detection rules loaded. `skill-md` activates through harness/implementation-eval adjacency to their skill roots; universal, Claude Code and kk-plugin implement guidance loaded. Provider directories and canonical paths satisfy both conditional predicates. The accepted bounded-routing convention takes precedence over older absolute wording. No new dependency or live deployment action is needed. Verification, calibration and isolated review are pending.
+
+**Superseding completion — 2026-10-09:** explicit workflow grading now uses sealed manifests, completed instruction reads, actual dispatches and resulting files; omitted mode preserves component text grading. Both harness playbooks document actor/grader isolation and versioned evidence contracts. [Verification](verification/task8/README.md) retains seven accepted calibration controls, two superseded component input-shape attempts and all 16 baseline grades under the [pinned grader/revision-1 rubric](verification/task8/inputs/pin.json): **51 PASS / 44 FAIL / 11 PARTIAL across 106 assertions**. Both Codex R1 standard baselines pass every assertion; no candidate comparison or model-reliability claim follows.
+
+**Checks and review:** all ten shell suites pass (644 helper assertions), eight evidence-adapter tests pass, Go/graph checks pass and second generation preserves 725 files. Frozen seed/rubric bytes remain unchanged. [Independent review](verification/task8/review.md) returns **APPROVE scoped to Task 8** after restricting event/oracle imports to original seals and correcting trusted-root alias handling. The corrected adapter reproduces all 611 graded evidence files unchanged; original preparation source and failed attempts remain retained. Native PAL findings and zero-file coverage are disclosed; they do not establish corroboration. No new project convention or systemic P0/P1 implementation finding requires indexing.
+
+**Deferred acceptance — owner: implementing agent, Tasks 2 gate 2B and 12:** four Codex captures remain UNRUN; candidate comparisons and intermediate Task 4–6 recapture/grade obligations remain open. Follow the bounded capture investigation and record any fallback before measurement; if selected, add receipt/use calibration and regrade affected baseline/candidate evidence, recapturing both sides where insufficient. Every required candidate assertion must pass twice. The grader runtime used fresh default agents loading pinned bytes, with a read-only command adapter; exact service-model identity and OS confinement are not claimed. Future comparisons must use a consistent declared grading runtime or regrade both sides under a new pin. Task 9 is next; feature completion remains open.
 
 ## Task 9: Author state, retry and intent scenarios
 

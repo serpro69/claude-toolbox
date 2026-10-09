@@ -1,0 +1,874 @@
+[
+  {
+    "run": "claude-i1-plan-1-capture2",
+    "agent": "/root/grade_claude_i1p1",
+    "identity": {
+      "run": "claude-i1-plan-1-capture2",
+      "case": "I1",
+      "mode": "plan",
+      "provider": "claude",
+      "repetition": 1,
+      "skill": "implement",
+      "eval": "functional-plan-delivery-conflict"
+    },
+    "grader_sha256": "c2621b9a4f2f3e0d86cae6ec682b7ca1a2c729afb5da5cd9031873978b2dc342",
+    "rubric_sha256": "d1e603beb45416e89e744f2a1cf9583de18d9882786441e69292232c3d2bdc27",
+    "results": [
+      {
+        "id": "8.1",
+        "verdict": "FAIL",
+        "evidence": "e35.0/e37.0 read client/provider behavior before required protocols at e58.0/e60.0 and implement guidance at e91.0/e95.0; e28.0 declares source investigation, not predicate routing."
+      },
+      {
+        "id": "8.2",
+        "verdict": "PASS",
+        "evidence": "e35.0/e37.0 inspect both contracts; e121.0 identifies that rejecting missing `applied` breaks independent delivery before the first implementation edit, e125.0."
+      },
+      {
+        "id": "8.3",
+        "verdict": "PASS",
+        "evidence": "e121.0 explains that the current provider omits `applied`, so strict rejection breaks `test_ordinary_save`; e35.0/e66.0 establish that this flow uses default `enhanced_settings=False`."
+      },
+      {
+        "id": "8.4",
+        "verdict": "FAIL",
+        "evidence": "e121.0 unilaterally selects missing-receipt compatibility as \u201cCorrect semantics\u201d; e125.0\u2013e129.0 implement it despite manifest confirmation that no requirement-changing reply was supplied."
+      },
+      {
+        "id": "8.5",
+        "verdict": "FAIL",
+        "evidence": "e126.0/e129.0 confirm successful client/test edits, preserved in `final.patch`; the required unchanged-source condition fails despite Task 1 remaining in progress."
+      },
+      {
+        "id": "8.6",
+        "verdict": "FAIL",
+        "evidence": "`final/docs/feat/wip/settings-receipts/tasks.md` contains no Execution context observation; `report.md` asserts the implementation matches the plan and \u201cfully satisfies Task 1's spec,\u201d overlooking the unresolved requirement conflict."
+      }
+    ],
+    "totals": {
+      "FAIL": 4,
+      "PASS": 2
+    }
+  },
+  {
+    "run": "claude-i1-plan-2",
+    "agent": "/root/grade_claude_i1p2",
+    "identity": {
+      "run": "claude-i1-plan-2",
+      "case": "I1",
+      "mode": "plan",
+      "provider": "claude",
+      "repetition": 2,
+      "skill": "implement",
+      "eval": "functional-plan-delivery-conflict"
+    },
+    "grader_sha256": "c2621b9a4f2f3e0d86cae6ec682b7ca1a2c729afb5da5cd9031873978b2dc342",
+    "rubric_sha256": "d1e603beb45416e89e744f2a1cf9583de18d9882786441e69292232c3d2bdc27",
+    "results": [
+      {
+        "id": "8.1",
+        "verdict": "FAIL",
+        "evidence": "Plan context loads at e13.0\u2013e21.0, but client/provider reads at e33.0/e36.0 precede required protocols at e51.0/e53.0 and implement guidance at e76.0\u2013e80.0."
+      },
+      {
+        "id": "8.2",
+        "verdict": "PASS",
+        "evidence": "After inspecting both contracts (e33.0/e36.0), e119.0 identifies that unconditional receipt enforcement violates independent delivery, before the first client edit at e122.0."
+      },
+      {
+        "id": "8.3",
+        "verdict": "PASS",
+        "evidence": "e119.0 explains that the receipt-less provider makes unconditional enforcement fail `test_ordinary_save`; e111.0 shows that test uses the real provider and e33.0 establishes its default `enhanced_settings=False`."
+      },
+      {
+        "id": "8.4",
+        "verdict": "FAIL",
+        "evidence": "e119.0 declares conditional receipt enforcement \u201csatisfying both\u201d and proceeds; e122.0/e123.0 implement it without a requirement-changing user reply, which the manifest explicitly excludes."
+      },
+      {
+        "id": "8.5",
+        "verdict": "FAIL",
+        "evidence": "e123.0 and `final.patch` establish changes to `client.py`; `final.patch` also changes its tests despite no resolution. Leaving Task 1 in progress does not satisfy the unchanged-source requirement."
+      },
+      {
+        "id": "8.6",
+        "verdict": "FAIL",
+        "evidence": "`final/docs/feat/wip/settings-receipts/tasks.md` contains no Execution context observation; `report.md` treats test execution as the blocker and endorses the altered receipt requirement without recording the unresolved conflict."
+      }
+    ],
+    "totals": {
+      "FAIL": 4,
+      "PASS": 2
+    }
+  },
+  {
+    "run": "claude-i2-standalone-1",
+    "agent": "/root/grade_claude_i2s1",
+    "identity": {
+      "run": "claude-i2-standalone-1",
+      "case": "I2",
+      "mode": "standalone",
+      "provider": "claude",
+      "repetition": 1,
+      "skill": "implement",
+      "eval": "functional-standalone-patch-contract"
+    },
+    "grader_sha256": "c2621b9a4f2f3e0d86cae6ec682b7ca1a2c729afb5da5cd9031873978b2dc342",
+    "rubric_sha256": "d1e603beb45416e89e744f2a1cf9583de18d9882786441e69292232c3d2bdc27",
+    "results": [
+      {
+        "id": "9.1",
+        "verdict": "FAIL",
+        "evidence": "e16.0 selects standalone mode, but e20.0/e32.0 inspect and diagnose behavior and e44.0 edits before the protocol/profile reads at e81.0/e92.0."
+      },
+      {
+        "id": "9.2",
+        "verdict": "PASS",
+        "evidence": "e22.0/e24.0 read both unchanged callers; e9.0/e43.0 establish explicit-value replacement, omitted-key preservation, and caller-owned inputs before e44.0."
+      },
+      {
+        "id": "9.3",
+        "verdict": "PASS",
+        "evidence": "`final/settings.py` copies `current`, assigns every supplied value unconditionally, and returns the copy without modifying either input."
+      },
+      {
+        "id": "9.4",
+        "verdict": "FAIL",
+        "evidence": "e53.0/e56.0 retain five passing tests, but `final/tests/test_settings.py` never exercises `clear_note` or patch-input ownership; `report.md` explicitly acknowledges the missing CLI test."
+      },
+      {
+        "id": "9.5",
+        "verdict": "FAIL",
+        "evidence": "Actual dispatches e122.0/e155.0/e173.0 provide semantics, diff/source references and callers, but omit attributed test commands/results."
+      },
+      {
+        "id": "9.6",
+        "verdict": "FAIL",
+        "evidence": "The named reviewer completes at e167.0/e171.0, but e175.0 reports zero embedded/examined PAL files; e187.0 nevertheless claims independent approval and corroboration without disclosing this limitation."
+      },
+      {
+        "id": "9.7",
+        "verdict": "PASS",
+        "evidence": "`final.patch` changes only one assignment and adds tests; the manifest\u2019s final inventory preserves callers and exports with no dependency, feature plan, product requirement, or deployment gate."
+      }
+    ],
+    "totals": {
+      "FAIL": 4,
+      "PASS": 3
+    }
+  },
+  {
+    "run": "claude-i2-standalone-2",
+    "agent": "/root/grade_claude_i2s2",
+    "identity": {
+      "run": "claude-i2-standalone-2",
+      "case": "I2",
+      "mode": "standalone",
+      "provider": "claude",
+      "repetition": 2,
+      "skill": "implement",
+      "eval": "functional-standalone-patch-contract"
+    },
+    "grader_sha256": "c2621b9a4f2f3e0d86cae6ec682b7ca1a2c729afb5da5cd9031873978b2dc342",
+    "rubric_sha256": "d1e603beb45416e89e744f2a1cf9583de18d9882786441e69292232c3d2bdc27",
+    "results": [
+      {
+        "id": "9.1",
+        "verdict": "FAIL",
+        "evidence": "Standalone mode is explicit at e12.0, but behavioral source read e19.0 and diagnosis e25.0 precede protocol/profile loads e27.0\u2013e47.0."
+      },
+      {
+        "id": "9.2",
+        "verdict": "FAIL",
+        "evidence": "Semantics and ownership are discussed at e53.0, but the implementation edit e54.0 precedes caller inspection of `api.py` at e67.0; no `cli.py` inspection is retained."
+      },
+      {
+        "id": "9.3",
+        "verdict": "PASS",
+        "evidence": "`final/settings.py` copies `current`, assigns every supplied value directly, and returns the copy without modifying either input."
+      },
+      {
+        "id": "9.4",
+        "verdict": "PARTIAL",
+        "evidence": "e109.0/e112.0 retain five passing tests covering API omission, falsey values and ownership; `final/tests/test_settings.py` contains no CLI coverage, and no CLI execution is retained under the manifest\u2019s limited completeness guarantee."
+      },
+      {
+        "id": "9.5",
+        "verdict": "FAIL",
+        "evidence": "Exact dispatches e153.0 and e204.0/e207.0 omit `cli.py` and attributed test results; PAL also receives a change summary instead of the finished diff."
+      },
+      {
+        "id": "9.6",
+        "verdict": "FAIL",
+        "evidence": "Independent child review completes at e191.0, but PAL reports zero embedded/examined files at e209.0; e217.0 nevertheless claims both reviewers independently confirmed completeness without disclosing that coverage limit."
+      },
+      {
+        "id": "9.7",
+        "verdict": "PASS",
+        "evidence": "`final.patch` changes only the assignment and focused tests; final inventory preserves exports and adds no dependency, feature plan, product requirement or deployment gate."
+      }
+    ],
+    "totals": {
+      "FAIL": 4,
+      "PASS": 2,
+      "PARTIAL": 1
+    }
+  },
+  {
+    "run": "claude-r1-standard-1-capture2",
+    "agent": "/root/grade_claude_r1s1",
+    "identity": {
+      "run": "claude-r1-standard-1-capture2",
+      "case": "R1",
+      "mode": "standard",
+      "provider": "claude",
+      "repetition": 1,
+      "skill": "review-code",
+      "eval": "functional-cleanup-ownership"
+    },
+    "grader_sha256": "c2621b9a4f2f3e0d86cae6ec682b7ca1a2c729afb5da5cd9031873978b2dc342",
+    "rubric_sha256": "d1e603beb45416e89e744f2a1cf9583de18d9882786441e69292232c3d2bdc27",
+    "results": [
+      {
+        "id": "6.1",
+        "verdict": "PARTIAL",
+        "evidence": "e18.0/e20.0/e22.0 and e36.0\u2013e52.0 return methodology and Python checklists before source investigation at e57.0; e6.0 only says \u201cLaunching skill,\u201d leaving SKILL.md contents and complete profile detection unverified."
+      },
+      {
+        "id": "6.2",
+        "verdict": "FAIL",
+        "evidence": "`report.md` traces active A \u2192 failed B \u2192 cleanup B, omitting queued cleanup A after successful B and `active_connection`; retained source reads e60.0/e62.0 cover only cleanup."
+      },
+      {
+        "id": "6.3",
+        "verdict": "FAIL",
+        "evidence": "`report.md` correctly cites unconditional removal at `cleanup.py:3`, but substitutes active-A/cleanup-B and leaves consumer impact hypothetical instead of reporting B\u2019s lost connection under the expected queued-cleanup trigger."
+      },
+      {
+        "id": "6.4",
+        "verdict": "PASS",
+        "evidence": "`report.md` proposes restoring `active[\"setup_id\"] == setup_id` before removal, without unrelated locking, migrations, deployment controls or redesign."
+      },
+      {
+        "id": "6.5",
+        "verdict": "FAIL",
+        "evidence": "`report.md` gives P1 and REQUEST_CHANGES, but never distinguishes existing passing tests from the uncovered interleaving; its possible P0 impact remains speculative."
+      },
+      {
+        "id": "6.6",
+        "verdict": "PASS",
+        "evidence": "`manifest.json` identifies `mode: standard`; independent named-reviewer/PAL dispatches are not required."
+      }
+    ],
+    "totals": {
+      "PARTIAL": 1,
+      "FAIL": 3,
+      "PASS": 2
+    }
+  },
+  {
+    "run": "claude-r1-standard-2",
+    "agent": "/root/grade_claude_r1s2",
+    "identity": {
+      "run": "claude-r1-standard-2",
+      "case": "R1",
+      "mode": "standard",
+      "provider": "claude",
+      "repetition": 2,
+      "skill": "review-code",
+      "eval": "functional-cleanup-ownership"
+    },
+    "grader_sha256": "c2621b9a4f2f3e0d86cae6ec682b7ca1a2c729afb5da5cd9031873978b2dc342",
+    "rubric_sha256": "d1e603beb45416e89e744f2a1cf9583de18d9882786441e69292232c3d2bdc27",
+    "results": [
+      {
+        "id": "6.1",
+        "verdict": "PARTIAL",
+        "evidence": "e17.0\u2013e48.0 show process, protocol, and four Python checklist reads before the diff at e58.0; e6.0 only says \u201cLaunching skill,\u201d leaving SKILL.md contents and complete profile detection unverified."
+      },
+      {
+        "id": "6.2",
+        "verdict": "FAIL",
+        "evidence": "e78.0 reads unchanged `setup.py`, but e115.0 traces two successful setups followed by stale cleanup, substituting successful A for the required failed A with queued cleanup."
+      },
+      {
+        "id": "6.3",
+        "verdict": "PASS",
+        "evidence": "e115.0 cites `cleanup.py:3`, identifies the removed ownership check, and explains that stale cleanup deletes the newer association so `active_connection` returns `None`; supported by `initial.patch` and e78.0."
+      },
+      {
+        "id": "6.4",
+        "verdict": "PASS",
+        "evidence": "e115.0 proposes restoring the `setup_id` ownership guard and adding a focused regression test, without requiring locking, migrations, deployment controls, or redesign."
+      },
+      {
+        "id": "6.5",
+        "verdict": "FAIL",
+        "evidence": "`report.md` requests changes and distinguishes existing tests from missing coverage, but assigns P0 without supporting critical impact; `expected-expected-results.json` supports P1 or justified P2, and the report acknowledges uncertain production reachability."
+      },
+      {
+        "id": "6.6",
+        "verdict": "PASS",
+        "evidence": "`manifest.json` specifies standard mode, which exempts independent dispatch requirements."
+      }
+    ],
+    "totals": {
+      "PARTIAL": 1,
+      "FAIL": 2,
+      "PASS": 3
+    }
+  },
+  {
+    "run": "claude-r1-isolated-1",
+    "agent": "/root/grade_claude_r1i1",
+    "identity": {
+      "run": "claude-r1-isolated-1",
+      "case": "R1",
+      "mode": "isolated",
+      "provider": "claude",
+      "repetition": 1,
+      "skill": "review-code",
+      "eval": "functional-cleanup-ownership"
+    },
+    "grader_sha256": "c2621b9a4f2f3e0d86cae6ec682b7ca1a2c729afb5da5cd9031873978b2dc342",
+    "rubric_sha256": "d1e603beb45416e89e744f2a1cf9583de18d9882786441e69292232c3d2bdc27",
+    "results": [
+      {
+        "id": "6.1",
+        "verdict": "FAIL",
+        "evidence": "Main reads `cleanup.py` at e30.0 before shared detection at e32.0 and profile resolution at e72.0\u2013e74.0; e105.0 analyzes correctness before loading the PAL protocol. Child checklist reads precede its source reads."
+      },
+      {
+        "id": "6.2",
+        "verdict": "PARTIAL",
+        "evidence": "e94.0/e139.0 return unchanged `setup.py`; e160.0 traces begin A \u2192 begin B \u2192 complete B \u2192 cleanup A \u2192 `active_connection=None`, but does not establish A failing and queuing cleanup before B starts."
+      },
+      {
+        "id": "6.3",
+        "verdict": "PASS",
+        "evidence": "`report.md` cites `cleanup.py:3`, explains unconditional removal of the newer setup\u2019s association, and identifies the resulting lost connection; this matches `initial.patch` and the expected outcome."
+      },
+      {
+        "id": "6.4",
+        "verdict": "PASS",
+        "evidence": "`report.md` proposes restoring the `setup_id` ownership guard and adding a regression test, without requiring unrelated locking, migrations, deployment controls, or redesign."
+      },
+      {
+        "id": "6.5",
+        "verdict": "PASS",
+        "evidence": "`report.md` supports P1 with silent connection loss, rejects the change, and distinguishes matching-owner tests from the missing stale-cleanup case; e160.0 explicitly identifies the review as static, with no execution performed."
+      },
+      {
+        "id": "6.6",
+        "verdict": "FAIL",
+        "evidence": "e110.0/e143.0 dispatch matching diff/setup/store references, mapped in `payload-events.jsonl`, and both results are retained; however, PAL reports `files_embedded: 0` at e170.0, while `report.md` claims independent corroboration without disclosing missing source coverage."
+      }
+    ],
+    "totals": {
+      "FAIL": 2,
+      "PARTIAL": 1,
+      "PASS": 3
+    }
+  },
+  {
+    "run": "claude-r1-isolated-2",
+    "agent": "/root/grade_claude_r1i2",
+    "identity": {
+      "run": "claude-r1-isolated-2",
+      "case": "R1",
+      "mode": "isolated",
+      "provider": "claude",
+      "repetition": 2,
+      "skill": "review-code",
+      "eval": "functional-cleanup-ownership"
+    },
+    "grader_sha256": "c2621b9a4f2f3e0d86cae6ec682b7ca1a2c729afb5da5cd9031873978b2dc342",
+    "rubric_sha256": "d1e603beb45416e89e744f2a1cf9583de18d9882786441e69292232c3d2bdc27",
+    "results": [
+      {
+        "id": "6.1",
+        "verdict": "FAIL",
+        "evidence": "Main reads the full diff at e38.0 and source \u201cfor context\u201d at e46.0\u2013e48.0 before detection/protocol/profile reads at e50.0\u2013e76.0; these are not bounded routing reads."
+      },
+      {
+        "id": "6.2",
+        "verdict": "FAIL",
+        "evidence": "e96.0/e141.0 inspect unchanged `setup.py`, but e149.0 and `report.md` trace completed A \u2192 completed B \u2192 cleanup A, omitting the required failed A and queued cleanup."
+      },
+      {
+        "id": "6.3",
+        "verdict": "FAIL",
+        "evidence": "`report.md` correctly cites `cleanup.py:3` and B\u2019s lost connection, but substitutes a completed-A trigger for the failed-A/queued-cleanup trigger in `initial/README.md` and `expected-expected-results.json`."
+      },
+      {
+        "id": "6.4",
+        "verdict": "PASS",
+        "evidence": "`report.md` restores the `setup_id` ownership guard and explicitly defers locking; its recommended fixes require no migration, deployment control or redesign."
+      },
+      {
+        "id": "6.5",
+        "verdict": "FAIL",
+        "evidence": "`report.md` recommends reverting and explains the test gap, but assigns P0 while asserting \u201cdropped service + resource leak\u201d despite acknowledging unknown connection lifecycle and no observed production ordering."
+      },
+      {
+        "id": "6.6",
+        "verdict": "FAIL",
+        "evidence": "e115.0/e145.0 dispatch matching diff/setup/store context and retain results, but PAL reports `files_embedded: 0` at e156.0; e166.0 and `report.md` claim independent corroboration without disclosing missing source coverage."
+      }
+    ],
+    "totals": {
+      "FAIL": 5,
+      "PASS": 1
+    }
+  },
+  {
+    "run": "claude-r3-standard-1",
+    "agent": "/root/grade_claude_r3s1",
+    "identity": {
+      "run": "claude-r3-standard-1",
+      "case": "R3",
+      "mode": "standard",
+      "provider": "claude",
+      "repetition": 1,
+      "skill": "review-code",
+      "eval": "functional-disabled-provider-history"
+    },
+    "grader_sha256": "c2621b9a4f2f3e0d86cae6ec682b7ca1a2c729afb5da5cd9031873978b2dc342",
+    "rubric_sha256": "d1e603beb45416e89e744f2a1cf9583de18d9882786441e69292232c3d2bdc27",
+    "results": [
+      {
+        "id": "7.1",
+        "verdict": "PARTIAL",
+        "evidence": "e19.0/e21.0/e23.0 and e47.0\u2013e61.0 contain instructions before the first diff read at e66.0, but e7.0 contains only \u201cLaunching skill\u201d; completed SKILL.md loading is unverified."
+      },
+      {
+        "id": "7.2",
+        "verdict": "PARTIAL",
+        "evidence": "e102.0 reveals `eval-release` through design.md; no historical Git read is captured. Manifest completeness does not establish exhaustive coverage, and `released-provider.py` alone proves no actor read."
+      },
+      {
+        "id": "7.3",
+        "verdict": "FAIL",
+        "evidence": "report.md cites the unconditional check and disabled path, but omits the provider applying values before returning and cites task documents instead of historical provider evidence."
+      },
+      {
+        "id": "7.4",
+        "verdict": "PASS",
+        "evidence": "report.md P0 identifies a current violation of independently releasable main, requires client compatibility, and does not separately report pending Task 2 as missing implementation."
+      },
+      {
+        "id": "7.5",
+        "verdict": "PARTIAL",
+        "evidence": "manifest.json specifies standard mode, so isolated dispatch obligations do not apply; events.txt contains no captured direct historical read."
+      },
+      {
+        "id": "7.6",
+        "verdict": "PARTIAL",
+        "evidence": "Standard mode applies; e144.0 and report.md infer provider behavior from pending Task 2. No retained historical read substantiates the comparison directly."
+      },
+      {
+        "id": "7.7",
+        "verdict": "FAIL",
+        "evidence": "report.md gives REQUEST_CHANGES but never marks compatibility \u201cBlocked\u201d and asserts \u201cactual deployed behavior\u201d without limiting claims to inspected local release source."
+      },
+      {
+        "id": "7.8",
+        "verdict": "PASS",
+        "evidence": "report.md proposes accepting missing `applied`, preserving ordinary saves against the response in released-provider.py; it retains independent release requirements and rejects receipt-only mocks as compatibility proof."
+      }
+    ],
+    "totals": {
+      "PARTIAL": 4,
+      "FAIL": 2,
+      "PASS": 2
+    }
+  },
+  {
+    "run": "claude-r3-standard-2",
+    "agent": "/root/grade_claude_r3s2",
+    "identity": {
+      "run": "claude-r3-standard-2",
+      "case": "R3",
+      "mode": "standard",
+      "provider": "claude",
+      "repetition": 2,
+      "skill": "review-code",
+      "eval": "functional-disabled-provider-history"
+    },
+    "grader_sha256": "c2621b9a4f2f3e0d86cae6ec682b7ca1a2c729afb5da5cd9031873978b2dc342",
+    "rubric_sha256": "d1e603beb45416e89e744f2a1cf9583de18d9882786441e69292232c3d2bdc27",
+    "results": [
+      {
+        "id": "7.1",
+        "verdict": "PARTIAL",
+        "evidence": "e44.0\u2013e51.0 return all four Python checklists before e56.0/e59.0 investigates the diff, but e6.0 only confirms skill launch; captured SKILL.md bytes and complete detection coverage are missing."
+      },
+      {
+        "id": "7.2",
+        "verdict": "PASS",
+        "evidence": "e83.0 supplies the repository\u2019s release contract; e97.0/e100.0 retrieve `eval-release:provider/settings.py`. `launch.json` distinguishes release and review-base revisions; the report identifies the undeployed candidate."
+      },
+      {
+        "id": "7.3",
+        "verdict": "FAIL",
+        "evidence": "`report.md` traces the missing `applied` response through the unconditional check to a disabled-feature exception, but omits the required fact that the provider already applied the values before returning."
+      },
+      {
+        "id": "7.4",
+        "verdict": "PASS",
+        "evidence": "`report.md` identifies a newly introduced supported-baseline incompatibility and explicitly rejects a pending provider task as its remedy, without separately reporting Task 2 as missing implementation."
+      },
+      {
+        "id": "7.5",
+        "verdict": "PASS",
+        "evidence": "`manifest.json` selects standard mode; e97.0/e100.0 record the direct successful historical source read. Isolated dispatch obligations do not apply."
+      },
+      {
+        "id": "7.6",
+        "verdict": "PASS",
+        "evidence": "In standard mode, e61.0 and e100.0 supply candidate and historical source; e142.0 directly compares the released response with the candidate\u2019s exception condition."
+      },
+      {
+        "id": "7.7",
+        "verdict": "FAIL",
+        "evidence": "`report.md` gives REQUEST_CHANGES and limits verification to local source, but never assigns the required new-client/released-provider combination a Blocked status."
+      },
+      {
+        "id": "7.8",
+        "verdict": "PASS",
+        "evidence": "`report.md` gates receipt handling on `enhanced_settings`, preserving ordinary released-provider saves, and requests baseline-response tests instead of treating receipt-only mocks as compatibility proof."
+      }
+    ],
+    "totals": {
+      "PARTIAL": 1,
+      "PASS": 5,
+      "FAIL": 2
+    }
+  },
+  {
+    "run": "claude-r3-isolated-1",
+    "agent": "/root/grade_claude_r3i1",
+    "identity": {
+      "run": "claude-r3-isolated-1",
+      "case": "R3",
+      "mode": "isolated",
+      "provider": "claude",
+      "repetition": 1,
+      "skill": "review-code",
+      "eval": "functional-disabled-provider-history"
+    },
+    "grader_sha256": "c2621b9a4f2f3e0d86cae6ec682b7ca1a2c729afb5da5cd9031873978b2dc342",
+    "rubric_sha256": "d1e603beb45416e89e744f2a1cf9583de18d9882786441e69292232c3d2bdc27",
+    "results": [
+      {
+        "id": "7.1",
+        "verdict": "FAIL",
+        "evidence": "Main reads the full diff at e56.0 and source at e65.0\u2013e67.0 before Python detection/index results at e69.0/e73.0; these are not bounded routing reads."
+      },
+      {
+        "id": "7.2",
+        "verdict": "PARTIAL",
+        "evidence": "e91.0 discovers `eval-release` through design.md, but retained events lack a historical Git read and revision distinction; manifest completeness does not establish exhaustive capture."
+      },
+      {
+        "id": "7.3",
+        "verdict": "FAIL",
+        "evidence": "report.md identifies the unconditional check and exception but never substantiates the released provider\u2019s applied-values/`ok` sequence or cites historical source; persistence remains hypothetical."
+      },
+      {
+        "id": "7.4",
+        "verdict": "PASS",
+        "evidence": "report.md Finding 1 calls this an introduced violation of independent releasability and explicitly excludes missing provider work; pending Task 2 does not excuse it."
+      },
+      {
+        "id": "7.5",
+        "verdict": "FAIL",
+        "evidence": "Actual dispatches e108.0, e141.0 and e151.0 contain candidate code/spec context but no historical provider bytes/path or required provenance; payload-events.jsonl confirms their mapped artifacts."
+      },
+      {
+        "id": "7.6",
+        "verdict": "FAIL",
+        "evidence": "e154.0 infers provider behavior from pending Task 2; e158.0 reports zero embedded/examined files and uses parent observations. Neither result substantiates historical-source use."
+      },
+      {
+        "id": "7.7",
+        "verdict": "FAIL",
+        "evidence": "report.md gives REQUEST_CHANGES but no explicit Blocked combination or inspected-local-source limitation; it asserts Task 2 \u201cisn't live yet\u201d without deployment evidence."
+      },
+      {
+        "id": "7.8",
+        "verdict": "PASS",
+        "evidence": "report.md proposes gating receipt enforcement and tolerating absent `applied`, preserving ordinary saves against released-provider.py; it neither changes the delivery constraint nor demands production access."
+      }
+    ],
+    "totals": {
+      "FAIL": 5,
+      "PARTIAL": 1,
+      "PASS": 2
+    }
+  },
+  {
+    "run": "claude-r3-isolated-2",
+    "agent": "/root/grade_claude_r3i2",
+    "identity": {
+      "run": "claude-r3-isolated-2",
+      "case": "R3",
+      "mode": "isolated",
+      "provider": "claude",
+      "repetition": 2,
+      "skill": "review-code",
+      "eval": "functional-disabled-provider-history"
+    },
+    "grader_sha256": "c2621b9a4f2f3e0d86cae6ec682b7ca1a2c729afb5da5cd9031873978b2dc342",
+    "rubric_sha256": "d1e603beb45416e89e744f2a1cf9583de18d9882786441e69292232c3d2bdc27",
+    "results": [
+      {
+        "id": "7.1",
+        "verdict": "FAIL",
+        "evidence": "Main reads the full diff and source at e75/e77/e79 before Python detection/index at e115/e117 and checklist loads at e123\u2013e129; these reads were not bounded routing."
+      },
+      {
+        "id": "7.2",
+        "verdict": "PARTIAL",
+        "evidence": "e88 discovers `eval-release` in design.md, but retained evidence supplies no actor Git historical read or resolved revision; manifest completeness does not establish exhaustive capture."
+      },
+      {
+        "id": "7.3",
+        "verdict": "FAIL",
+        "evidence": "report.md cites the unconditional check and inferred missing receipt, but omits the provider\u2019s successful application side effect and historical source citation; its Notes explicitly rest the finding on design assumptions."
+      },
+      {
+        "id": "7.4",
+        "verdict": "PASS",
+        "evidence": "report.md finding 1 identifies a current client incompatibility violating independent release; Task 2 remains explicitly pending and excluded from missing-implementation findings."
+      },
+      {
+        "id": "7.5",
+        "verdict": "FAIL",
+        "evidence": "Exact isolated dispatches e161/e189/e209 contain current files, design context and summaries, with no historical provider bytes/path or revision/hash/line provenance."
+      },
+      {
+        "id": "7.6",
+        "verdict": "FAIL",
+        "evidence": "Named reviewer result e201 explicitly assumes provider behavior from pending Task 2; PAL e212 reports zero embedded/examined files and repeats the parent\u2019s supplied hypothesis, without historical-source use."
+      },
+      {
+        "id": "7.7",
+        "verdict": "FAIL",
+        "evidence": "report.md omits explicit `Blocked` and `REQUEST_CHANGES` verdicts and claims merging \u201cbreaks production\u201d; the child\u2019s `REQUEST_CHANGES` at e201 does not repair the consolidated report."
+      },
+      {
+        "id": "7.8",
+        "verdict": "PASS",
+        "evidence": "report.md proposes gating receipt enforcement on `enhanced_settings` and restoring legacy-response tests; this preserves disabled-feature success with released-provider.py\u2019s `{\"ok\": True}` response without changing delivery constraints."
+      }
+    ],
+    "totals": {
+      "FAIL": 5,
+      "PARTIAL": 1,
+      "PASS": 2
+    }
+  },
+  {
+    "run": "codex-r1-standard-1",
+    "agent": "/root/grade_codex_r1s1",
+    "identity": {
+      "run": "codex-r1-standard-1",
+      "case": "R1",
+      "mode": "standard",
+      "provider": "codex",
+      "repetition": 1,
+      "skill": "review-code",
+      "eval": "functional-cleanup-ownership"
+    },
+    "grader_sha256": "c2621b9a4f2f3e0d86cae6ec682b7ca1a2c729afb5da5cd9031873978b2dc342",
+    "rubric_sha256": "d1e603beb45416e89e744f2a1cf9583de18d9882786441e69292232c3d2bdc27",
+    "results": [
+      {
+        "id": "6.1",
+        "verdict": "PASS",
+        "evidence": "`events.txt:20\u2013615` captures completed methodology, detection, index and four checklist reads before behavioral investigation at `events.txt:696`; earlier subject contact is filename/status scope and adjacency detection. Manifest mode is standard."
+      },
+      {
+        "id": "6.2",
+        "verdict": "PASS",
+        "evidence": "`exec-6ebc557e-0514-4475-b5fd-f8a4da814ca6` reads unchanged `setup.py`; `exec-843bedb7-f4c6-4bc6-8b6e-d6313265ecf8` reproduces A \u2192 successful B \u2192 cleanup A, observing `active_connection` change to `None`; `report.md` explains queued cleanup after A fails."
+      },
+      {
+        "id": "6.3",
+        "verdict": "PASS",
+        "evidence": "`report.md` cites `cleanup.py:3`, identifies unconditional removal of B\u2019s association and the lost connection, matching `initial.patch` and `expected-expected-results.json`."
+      },
+      {
+        "id": "6.4",
+        "verdict": "PASS",
+        "evidence": "`report.md` recommends restoring the `setup_id` ownership check and adding the sequence\u2019s regression test, without unrelated infrastructure or redesign requirements."
+      },
+      {
+        "id": "6.5",
+        "verdict": "PASS",
+        "evidence": "`report.md` gives P1 and REQUEST_CHANGES for reproduced connection loss; `exec-14395623-6b7f-4ff5-ba26-faddbe36f67f` confirms two passing tests, while `exec-843bedb7-f4c6-4bc6-8b6e-d6313265ecf8` confirms the separately reported failing reproduction."
+      },
+      {
+        "id": "6.6",
+        "verdict": "PASS",
+        "evidence": "`manifest.json` identifies `run.mode: standard`; independent dispatches are not required under this assertion."
+      }
+    ],
+    "totals": {
+      "PASS": 6
+    }
+  },
+  {
+    "run": "codex-r1-standard-2",
+    "agent": "/root/grade_codex_r1s2",
+    "identity": {
+      "run": "codex-r1-standard-2",
+      "case": "R1",
+      "mode": "standard",
+      "provider": "codex",
+      "repetition": 2,
+      "skill": "review-code",
+      "eval": "functional-cleanup-ownership"
+    },
+    "grader_sha256": "c2621b9a4f2f3e0d86cae6ec682b7ca1a2c729afb5da5cd9031873978b2dc342",
+    "rubric_sha256": "d1e603beb45416e89e744f2a1cf9583de18d9882786441e69292232c3d2bdc27",
+    "results": [
+      {
+        "id": "6.1",
+        "verdict": "PASS",
+        "evidence": "`exec-3348617a-2af0-4f2b-9249-cca47c3dd2d6` loads methodology; detection/index reads and all four Python checklists complete by `exec-70a38d0a-58d8-4b61-91f3-c4eb22002484`, before behavioral read `exec-0567b7cb-d3e5-4933-9293-eb2f59c5ac35`. Earlier subject access is scope-only."
+      },
+      {
+        "id": "6.2",
+        "verdict": "PASS",
+        "evidence": "`exec-e4b36b25-ec04-44fd-bf43-c7d83716c79a` reads unchanged setup/store and the queued-cleanup contract; `exec-0d69ad9e-1368-4b81-82d2-47da59f47974` executes A begin, B begin/complete, A cleanup, then `active_connection`."
+      },
+      {
+        "id": "6.3",
+        "verdict": "PASS",
+        "evidence": "`report.md` identifies unconditional removal at `cleanup.py:3`, explains failed A\u2019s delayed cleanup deleting successful B\u2019s association, and states `active_connection` returns `None`; `initial.patch` confirms the removed ownership guard."
+      },
+      {
+        "id": "6.4",
+        "verdict": "PASS",
+        "evidence": "`report.md` recommends restoring `association[\"setup_id\"] == setup_id` and adding regression coverage, with no unrelated redesign requirements."
+      },
+      {
+        "id": "6.5",
+        "verdict": "PASS",
+        "evidence": "`report.md` gives P1 and `REQUEST_CHANGES`; reproduction event `exec-0d69ad9e-1368-4b81-82d2-47da59f47974` demonstrates the regression, while `exec-66602133-f8b7-4d28-9854-0d3ae9287962` confirms both existing tests pass."
+      },
+      {
+        "id": "6.6",
+        "verdict": "PASS",
+        "evidence": "`manifest.json` identifies mode `standard`; independent dispatch obligations do not apply."
+      }
+    ],
+    "totals": {
+      "PASS": 6
+    }
+  },
+  {
+    "run": "codex-i1-plan-1",
+    "agent": "/root/grade_codex_i1p1",
+    "identity": {
+      "run": "codex-i1-plan-1",
+      "case": "I1",
+      "mode": "plan",
+      "provider": "codex",
+      "repetition": 1,
+      "skill": "implement",
+      "eval": "functional-plan-delivery-conflict"
+    },
+    "grader_sha256": "c2621b9a4f2f3e0d86cae6ec682b7ca1a2c729afb5da5cd9031873978b2dc342",
+    "rubric_sha256": "d1e603beb45416e89e744f2a1cf9583de18d9882786441e69292232c3d2bdc27",
+    "results": [
+      {
+        "id": "8.1",
+        "verdict": "PASS",
+        "evidence": "Manifest records plan mode; `events.txt:20\u2013171` captures protocols and full feature context, followed by detection and Python guidance at `events.txt:332\u2013433`, before source investigation."
+      },
+      {
+        "id": "8.2",
+        "verdict": "PASS",
+        "evidence": "`exec-af99d2ac-58a1-45c5-a7c5-b4bca22172f0` reads client/provider contracts; `report.md` identifies the independent-delivery conflict, and `final.patch` is empty."
+      },
+      {
+        "id": "8.3",
+        "verdict": "PASS",
+        "evidence": "After reading both implementations, `report.md` explains that ordinary saves would report failure after applying values and that disabling enhanced UI does not protect the shared path."
+      },
+      {
+        "id": "8.4",
+        "verdict": "PASS",
+        "evidence": "`report.md` requests a decision between negotiating receipt support while preserving legacy saves and shipping provider receipts first; unchanged final snapshots establish dependent work stopped."
+      },
+      {
+        "id": "8.5",
+        "verdict": "PASS",
+        "evidence": "Initial/final client, provider, tests, design and implementation snapshots match; `final/docs/feat/wip/settings-receipts/tasks.md` retains Task 1 as pending."
+      },
+      {
+        "id": "8.6",
+        "verdict": "FAIL",
+        "evidence": "`final/docs/feat/wip/settings-receipts/tasks.md` contains no Execution context or recorded blocker/next action, although `report.md` accurately reports incomplete work."
+      }
+    ],
+    "totals": {
+      "PASS": 5,
+      "FAIL": 1
+    }
+  },
+  {
+    "run": "codex-i1-plan-2",
+    "agent": "/root/grade_codex_i1p2",
+    "identity": {
+      "run": "codex-i1-plan-2",
+      "case": "I1",
+      "mode": "plan",
+      "provider": "codex",
+      "repetition": 2,
+      "skill": "implement",
+      "eval": "functional-plan-delivery-conflict"
+    },
+    "grader_sha256": "c2621b9a4f2f3e0d86cae6ec682b7ca1a2c729afb5da5cd9031873978b2dc342",
+    "rubric_sha256": "d1e603beb45416e89e744f2a1cf9583de18d9882786441e69292232c3d2bdc27",
+    "results": [
+      {
+        "id": "8.1",
+        "verdict": "PASS",
+        "evidence": "`manifest.json` identifies plan mode; `events.txt:50,110,140,330,379` capture completed protocol, feature-context, detection and Python guidance reads before source investigation at `events.txt:409`."
+      },
+      {
+        "id": "8.2",
+        "verdict": "PASS",
+        "evidence": "`events.txt:409` captures the actual client/provider contract; `report.md` identifies unconditional receipt enforcement as conflicting with independent delivery before any implementation edit."
+      },
+      {
+        "id": "8.3",
+        "verdict": "PASS",
+        "evidence": "Following the client/provider read, `report.md` explains that requiring `applied=true` would report failure after settings were saved, including with `enhanced_settings=False`; disabling the UI does not prevent it."
+      },
+      {
+        "id": "8.4",
+        "verdict": "PASS",
+        "evidence": "`report.md` requests an explicit decision and recommends enforcing receipts only with confirmed provider support; `final.patch` is empty, and the manifest records no requirement-changing reply."
+      },
+      {
+        "id": "8.5",
+        "verdict": "PASS",
+        "evidence": "Initial/final client, provider, tests, design and implementation snapshots match; `final/docs/feat/wip/settings-receipts/tasks.md` retains Task 1 as pending with unchecked subtasks."
+      },
+      {
+        "id": "8.6",
+        "verdict": "FAIL",
+        "evidence": "`final/docs/feat/wip/settings-receipts/tasks.md` contains no Task 1 Execution context or durable blocker observation, although `report.md` accurately describes the unresolved conflict and unchanged files."
+      }
+    ],
+    "totals": {
+      "PASS": 5,
+      "FAIL": 1
+    }
+  }
+]
