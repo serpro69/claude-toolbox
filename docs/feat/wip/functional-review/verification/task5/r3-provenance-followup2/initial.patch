@@ -1,0 +1,25 @@
+diff --git a/client.py b/client.py
+index d6ddf4b..910e877 100644
+--- a/client.py
++++ b/client.py
+@@ -1,5 +1,7 @@
+ def save_settings(send, workspace_id, values, enhanced_settings=False):
+-    response = send(workspace_id, {"settings": values})
++    response = send(workspace_id, {"settings": values, "require_receipt": True})
+     if not response.get("ok"):
+         raise RuntimeError("Settings save failed")
++    if response.get("applied") is not True:
++        raise RuntimeError("Provider did not acknowledge applied settings")
+     return {"saved": True, "enhanced": enhanced_settings}
+diff --git a/tests/test_client.py b/tests/test_client.py
+index 39ea461..f1dfc4f 100644
+--- a/tests/test_client.py
++++ b/tests/test_client.py
+@@ -5,6 +5,6 @@ from client import save_settings
+ class SettingsTests(unittest.TestCase):
+     def test_successful_save(self):
+         def send(workspace, request):
+-            return {"ok": True}
++            return {"ok": True, "applied": True}
+         self.assertEqual(save_settings(send, "w", {"label": "blue"}),
+                          {"saved": True, "enhanced": False})

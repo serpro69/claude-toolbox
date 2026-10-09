@@ -11,7 +11,7 @@
 > Not Doing: new review skill, whole-system audits, mandatory production access, deployments, generic release engine, new models/dependencies, profile redesign
 > Delivery: preserve existing invocations/shared consumers; regenerate Codex artifacts with every operative slice.
 
-Scope and direction are approved; the reviews have been assessed and the detailed plan revised. Tasks 1, 3 and 4 are done. Task 2 remains in progress: its implementation-readiness gate (2A) is done; its capture-completion gate (2B) remains open. Task 5 is ready to start; Tasks 5–11 follow their existing sequence without waiting for 2B. Task 12 and feature completion still depend on 2B. The [2026-10-09 run-contract amendment](verification/run-contract-2026-10-09.md) records the authorization and evidence limits. Earlier six-task numbering is superseded by this sequence; no completed work was renumbered. Size includes authored reasoning complexity; mechanical copies/symlinks/generated files are excluded. Parallel markers permit compatible work only and do not authorize delegation. Serialize generation if tasks run concurrently.
+Scope and direction are approved; the reviews have been assessed and the detailed plan revised. Tasks 1, 3, 4 and 5 are done. Task 2 remains in progress: its implementation-readiness gate (2A) is done; its capture-completion gate (2B) remains open. Task 6 is ready to start; Tasks 6–11 follow their existing sequence without waiting for 2B. Task 12 and feature completion still depend on 2B. The [2026-10-09 run-contract amendment](verification/run-contract-2026-10-09.md) records the authorization and evidence limits. Earlier six-task numbering is superseded by this sequence; no completed work was renumbered. Size includes authored reasoning complexity; mechanical copies/symlinks/generated files are excluded. Parallel markers permit compatible work only and do not authorize delegation. Serialize generation if tasks run concurrently.
 
 ## Task 1: Prove revision-bound evaluation loading
 
@@ -127,7 +127,7 @@ Independent source review and execution-evidence audit approved the Task 4 slice
 
 ## Task 5: Isolated reviewers independently compare current and historical behavior
 
-- **Status:** pending
+- **Status:** done
 - **Depends on:** Task 4
 - **Size:** M
 - **Can run in parallel with:** —
@@ -135,11 +135,23 @@ Independent source review and execution-evidence audit approved the Task 4 slice
 
 ### Subtasks
 
-- [ ] 5.1 Update review-code/review-isolated.md to prepare change context and bounded historical-source bundles after instruction loading → verify: R3's old-provider blob and provenance reach both reviewers.
-- [ ] 5.2 Update agents/code-reviewer.md with common-method loading and explicit additional-evidence requests → verify: the parent can supply requested local history through resume/reinvoke; unavailable evidence remains Unknown without adding shell access.
-- [ ] 5.3 Introduce code-review/document-review branches in _shared/pal-codereview-invocation.md and align commands/review-code/isolated.md → verify: PAL receives the same material facts; /kk:review-design remains compatible.
-- [ ] 5.4 Apply evidence-qualified reporting while preserving native findings and author annotations → verify: no quality-only fallback, unsupported corroboration or broad approval from incomplete external coverage.
-- [ ] 5.5 Regenerate output, run structure/graph checks and the R3 isolated dry-run → verify: actual dispatches/read artifacts prove the historical comparison, not the parent's summary.
+- [x] 5.1 Update review-code/review-isolated.md to prepare change context and bounded historical-source bundles after instruction loading → verify: R3's old-provider blob and provenance reach both reviewers.
+- [x] 5.2 Update agents/code-reviewer.md with common-method loading and explicit additional-evidence requests → verify: the parent can supply requested local history through resume/reinvoke; unavailable evidence remains Unknown without adding shell access.
+- [x] 5.3 Introduce code-review/document-review branches in _shared/pal-codereview-invocation.md and align commands/review-code/isolated.md → verify: PAL receives the same material facts; /kk:review-design remains compatible.
+- [x] 5.4 Apply evidence-qualified reporting while preserving native findings and author annotations → verify: no quality-only fallback, unsupported corroboration or broad approval from incomplete external coverage.
+- [x] 5.5 Regenerate output, run structure/graph checks and the R3 isolated dry-run → verify: actual dispatches/read artifacts prove the historical comparison, not the parent's summary.
+
+### Execution context — 2026-10-09
+
+Implemented the approved isolated-review slice in the workflow, code-reviewer agent, shared PAL protocol and command wrapper. Both reviewers receive the common method, factual context, all resolved criteria and historical source with provenance. The parent resolves named local baselines before declaring them unavailable, handles additional-evidence requests through continuation/reinvocation, and checks criteria/receipt before qualified reporting. The document-review PAL branch preserves its existing caller. No dependency, model, tool permission or requirement changed.
+
+[Verification](verification/task5/README.md): all nine shell suites passed (640 assertions, no skips after environment-limited retries). Generation, plugin/Codex structure tests, plugin graph validation and second-generation comparison across 684 generated files passed. Current canonical/generated/agent contents match frozen candidate `33ba4a2697cdfcb5f48a701f39e45bf347e08c53` across 1,379 source entries. Original seed/rubric hashes remain unchanged. Initial generator wording failures, sandbox-limited checks and all failed actor attempts are retained rather than relabeled.
+
+The ordinary-prompt R3 isolated run loaded all eight detection rules and applicable common/Python criteria before investigation, resolved the released provider from local Git, delivered the actual source and all eight criteria to both reviewers, and identified the flag-off incompatibility with REQUEST_CHANGES. Its provenance manifest still contained a command placeholder for the blob hash. The [declared supplemental review](verification/task5/run-contract.md) exercised the additional-evidence path: actual Git lookup/hash results matched, a corrected manifest preserved the original, and both reviewers received and used the correction. The expired PAL continuation was explicitly replaced by a fresh two-step review carrying only PAL's own prior findings. The first supplement's command denial is retained; its retry used directly permitted Git commands without changing policy. All completed captures retain ordered public events and hashes; subject files and actor bundles stayed unchanged.
+
+[Independent review and evidence audit](verification/task5/review.md): source findings were corrected and re-reviewed. The final audit returned APPROVE scoped to Task 5, with no remaining hard slice blocker or systemic P0/P1 implementation finding to index. The initial run's missing provenance is not retroactively a pass; the supplement is not a fresh matrix repetition. This took more iteration than source checks suggested: actual traces exposed early diff reads, incomplete criteria manifests and unsupported absence/receipt assumptions. Explicit loading/manifest checks and named-baseline lookups address those observed paths.
+
+**Deferred acceptance — owner: implementing agent, Tasks 8/12.** Pin and apply the workflow grader, run all required fresh baseline/candidate pairs and routing/reporting controls, and calibrate severity against supported impact. Every required assertion must pass twice under the selected contract; the preserved failed attempts and supplemental repair do not waive that threshold or establish model reliability. Task 2 gate 2B remains open. Task 5 is complete as an implementation/integration slice; Task 6 is next and the feature remains in progress.
 
 ## Task 6: Implementation establishes constraints and hands off verified context
 
