@@ -1,0 +1,1047 @@
+diff --git a/docs/feat/wip/functional-review/tasks.md b/docs/feat/wip/functional-review/tasks.md
+index b214037c..8be374b1 100644
+--- a/docs/feat/wip/functional-review/tasks.md
++++ b/docs/feat/wip/functional-review/tasks.md
+@@ -11,7 +11,7 @@
+ > Not Doing: new review skill, whole-system audits, mandatory production access, deployments, generic release engine, new models/dependencies, profile redesign
+ > Delivery: preserve existing invocations/shared consumers; regenerate Codex artifacts with every operative slice.
+ 
+-Scope and direction are approved; the reviews have been assessed and the detailed plan revised. Tasks 1 and 3 are done. Task 2 remains in progress: its implementation-readiness gate (2A) is done; its capture-completion gate (2B) remains open. Task 4 is ready to start; Tasks 4–11 follow their existing sequence without waiting for 2B. Task 12 and feature completion still depend on 2B. The [2026-10-09 run-contract amendment](verification/run-contract-2026-10-09.md) records the authorization and evidence limits. Earlier six-task numbering is superseded by this sequence; no completed work was renumbered. Size includes authored reasoning complexity; mechanical copies/symlinks/generated files are excluded. Parallel markers permit compatible work only and do not authorize delegation. Serialize generation if tasks run concurrently.
++Scope and direction are approved; the reviews have been assessed and the detailed plan revised. Tasks 1 and 3 are done. Task 2 remains in progress: its implementation-readiness gate (2A) is done; its capture-completion gate (2B) remains open. Task 4 is in progress, with implementation and local checks complete but external verification awaiting approval; Tasks 4–11 follow their existing sequence without waiting for 2B. Task 12 and feature completion still depend on 2B. The [2026-10-09 run-contract amendment](verification/run-contract-2026-10-09.md) records the authorization and evidence limits. Earlier six-task numbering is superseded by this sequence; no completed work was renumbered. Size includes authored reasoning complexity; mechanical copies/symlinks/generated files are excluded. Parallel markers permit compatible work only and do not authorize delegation. Serialize generation if tasks run concurrently.
+ 
+ ## Task 1: Prove revision-bound evaluation loading
+ 
+@@ -99,7 +99,7 @@ Review: /kk:review-code:isolated's independent code-reviewer inspected the diff
+ 
+ ## Task 4: Standard review assesses behavior and compatibility
+ 
+-- **Status:** pending
++- **Status:** in-progress
+ - **Depends on:** Task 3
+ - **Size:** M
+ - **Can run in parallel with:** —
+@@ -107,12 +107,20 @@ Review: /kk:review-code:isolated's independent code-reviewer inspected the diff
+ 
+ ### Subtasks
+ 
+-- [ ] 4.1 Add _shared/change-context.md, review-code/functional-review.md and the review-code/shared-change-context.md symlink → verify: all required semantics fit the 800/1,200-word ceilings and links resolve.
++- [x] 4.1 Add _shared/change-context.md, review-code/functional-review.md and the review-code/shared-change-context.md symlink → verify: all required semantics fit the 800/1,200-word ceilings and links resolve.
+ - [ ] 4.2 Update review-code/SKILL.md and review-process.md for instruction loading, behavior tracing, historical evidence, coverage and verdict mapping → verify: R1 is detected through an ordinary prompt and material Unknown evidence is qualified.
+-- [ ] 4.3 Clarify _shared/review-scope-protocol.md → verify: current incompatibility remains reportable while genuinely pending work is excluded; /kk:review-spec's existing payload remains valid.
+-- [ ] 4.4 Add shared-source/symlink and word-budget assertions to test/test-plugin-structure.sh → verify: exact targets, resolution, regular-file substitution and excess wording are checked; do not register the implement link before it exists.
++- [x] 4.3 Clarify _shared/review-scope-protocol.md → verify: current incompatibility remains reportable while genuinely pending work is excluded; /kk:review-spec's existing payload remains valid.
++- [x] 4.4 Add shared-source/symlink and word-budget assertions to test/test-plugin-structure.sh → verify: exact targets, resolution, regular-file substitution and excess wording are checked; do not register the implement link before it exists.
+ - [ ] 4.5 Regenerate Codex output and run structure/graph checks plus the seed standard dry-run → verify: canonical/generated parity and evidence-backed reporting; preserve actual results for later paired grading.
+ 
++### Execution context — 2026-10-09
++
++Implemented the shared change context (573 words), common functional method (877 words), standard instruction/routing/investigation sequence, historical-evidence and verdict guidance, and shared task-scope clarification. The canonical review-code link has the required relative target; generated consumer copies, including review-spec's existing scope protocol, are refreshed. No skill description or dependency changed. Profile detection activated `skill-md`; all three applicable implement/review checklists were loaded, with the accepted Task 3 routing exception taking precedence over older absolute checklist wording.
++
++[Local verification](verification/task4/checks.json): all nine shell suites passed (640 assertions, no skips); five disposable mutation checks rejected regular-file replacement, wrong/broken targets and either word-budget overflow. `make generate-kodex`, a second-generation hash comparison across 684 files, `make plugin-graph`, Bash syntax and whitespace checks passed. The graph's cycle warning is retained in its log. Independent code review found no substantiated defects, while the required R1/ordering behavioral evidence remains Unknown.
++
++**Open verification — owner: implementing agent.** The [Task 4 run contract](verification/task4/run-contract.md) freezes candidate `6df37055f91dd2581fbb048baef4f3c72a9bc6e9`, unchanged seed/rubric inputs and fresh workspaces. Capy state-isolation probes passed. Automatic approval review rejected the external Claude launch before execution because exporting repository/plugin inputs was not specifically authorized. Explicit approval for Task 4 Claude/PAL verification has been requested; PAL has not been launched. Next action: after approval, run the prepared binding probe, R1 standard dry-run and external review, audit actual reads/results, and resolve findings. Until evidence supports 4.2/4.5 and review completion, Task 4 stays in progress. This does not waive Task 2 gate 2B or Task 12's paired acceptance requirements.
++
+ ## Task 5: Isolated reviewers independently compare current and historical behavior
+ 
+ - **Status:** pending
+diff --git a/klaude-plugin/skills/_shared/review-scope-protocol.md b/klaude-plugin/skills/_shared/review-scope-protocol.md
+index 59c44f8d..575ffb67 100644
+--- a/klaude-plugin/skills/_shared/review-scope-protocol.md
++++ b/klaude-plugin/skills/_shared/review-scope-protocol.md
+@@ -1,6 +1,6 @@
+ ## Review scope protocol
+ 
+-Isolated reviewers see the diff and the design docs but have zero visibility into which tasks are done versus pending. Without scope, they flag code-that-isn't-written-yet as `MISSING_IMPL` (spec review) or as missing functionality (code review). This protocol defines a scope artifact both skills inject into their sub-agent and external-reviewer prompts.
++Reviewers need task status alongside the diff and design docs. Without scope, they flag code-that-isn't-written-yet as `MISSING_IMPL` (spec review) or as missing functionality (code review). Standard review uses this scope locally; isolated review injects the same artifact into sub-agent and external-reviewer prompts. The existing /kk:review-spec payload remains sufficient; no additional change-context record is required by this protocol.
+ 
+ ### Input shapes
+ 
+@@ -27,7 +27,7 @@ Out of scope (pending — DO NOT flag as missing):
+ - Task {id}: {title} — status: {pending|in-progress}
+ - [...more pending tasks]
+ 
+-The feature's design docs describe the full end state. Pending tasks are expected gaps in the current diff — treat their absence from the code as intentional, not as a finding. You may still flag issues within the in-scope tasks even if they reference pending tasks (e.g., a broken interface contract).
++The feature's design docs describe the full end state. Pending tasks are expected gaps in the current diff — treat their absence from the code as intentional, not as a finding. You may still flag issues within the in-scope tasks even if they reference pending tasks (e.g., a broken interface contract). Pending work does not excuse current regressions or incompatibility: assess whether the reviewed increment preserves existing flows and meets applicable delivery requirements. Genuinely unreachable unfinished paths need not be implemented merely because they are planned.
+ ```
+ 
+ When shape 3 applies, use:
+@@ -51,4 +51,6 @@ The reviewer prompt must also carry this instruction (agent definitions should s
+ 
+ - Do **not** report missing-implementation findings for items covered only by out-of-scope tasks.
+ - Do still report real issues *within* the in-scope tasks, including ones that affect future pending work (e.g., a public API the pending task will depend on is shaped wrongly).
++- A current consumer that already requires a pending provider change remains reviewable, including when the larger feature is disabled. Distinguish deployment from activation and check the actual affected paths; a flag or a future task alone proves neither reachability nor safety.
++- Attribute introduced/worsened behavior separately from inherited defects. Do not invent a current regression or require pending work when the increment remains compatible under its actual delivery contract.
+ - If a finding would be valid *only* after pending work lands, mention it under "Areas Not Covered" instead of the P0–P3 sections.
+diff --git a/klaude-plugin/skills/review-code/SKILL.md b/klaude-plugin/skills/review-code/SKILL.md
+index 1cd6f20c..8c2e09b8 100644
+--- a/klaude-plugin/skills/review-code/SKILL.md
++++ b/klaude-plugin/skills/review-code/SKILL.md
+@@ -5,22 +5,25 @@ description: |
+   Use when performing code reviews.
+ ---
+ 
+-# SOLID Code Review
++# Code Review
+ 
+ ## Overview
+ 
+-Perform a structured review of the current git changes with focus on SOLID, architecture, removal candidates, and security risks. Default to review-only output unless the user asks to implement changes.
++Review whether the current changes achieve their intended behavior, preserve affected contracts and meet applicable delivery constraints. Apply SOLID, architecture, security, quality and removal guidance alongside that reasoning. Default to review-only output unless the user asks to implement changes.
+ 
+ ## Conventions
+ 
+ - **Read capy knowledge base conventions** at [shared-capy-knowledge-protocol.md](shared-capy-knowledge-protocol.md).
+-- **Read profile detection** — the set of reference checklists loaded for a given diff — at [shared-profile-detection.md](shared-profile-detection.md). The workflow below invokes it in Step 2 and uses the resulting `(profile, checklist)` list to drive Steps 3–4.
++- **Always read change context** at [shared-change-context.md](shared-change-context.md) and the common method at [functional-review.md](functional-review.md), even when no profile matches.
++- **Read task scope** at [shared-review-scope-protocol.md](shared-review-scope-protocol.md); pending work does not excuse regressions in current flows.
++- **Read profile detection** at [shared-profile-detection.md](shared-profile-detection.md). Use its records to select and load domain guidance before investigation.
+ 
+ ## Required Outputs
+ 
+ Before declaring the review complete, verify all outputs are delivered:
+ 
+ - [ ] Review report presented to user
++- [ ] Intent, scope/baselines, inspected behavior, applicable compatibility conclusions and evidence limits reported
+ - [ ] P0/P1 systemic findings indexed as `kk:review-findings` (skip if no qualifying findings)
+ - [ ] Next steps confirmation from user
+ 
+@@ -56,22 +59,23 @@ See [review-isolated.md](./review-isolated.md) for the isolated workflow.
+ 
+ ### Mandatory ordering — methodology before evidence
+ 
+-The workflow below is strictly sequential. **Do not read the diff's contents, re-read changed files, run `capy_search`, or begin forming findings until you have completed profile detection and loaded every resolved checklist file.** Until then, your only contact with the changes is `git diff --stat` (filenames only) — enough to drive profile detection, but not enough to pattern-match findings.
++The standard workflow below is strictly sequential. **Load the process, shared protocols, common functional method and every resolved profile checklist before source investigation, `capy_search`, findings, edits or tests.** After basic process instructions load, the sole early-content exception is bounded inspection to resolve declared detection/conditional-load predicates: at most approximately 16 KiB per candidate file; log predicate/path, and conservatively load an instruction when its conditional is undecidable within the bound. No behavioral analysis or full-diff investigation is permitted during routing.
+ 
+ This ordering is load-bearing, not stylistic. Reviewing from a diff before loading profile checklists is the known failure mode this skill is designed to prevent: the LLM has enough from the diff to produce plausible findings, and optimizes away the methodology if the workflow permits.
+ 
+-**Phases** (summary — the detailed procedure in [review-process.md](./review-process.md) breaks presentation into three distinct numbered steps: present results, next-steps confirmation, verify outputs):
++**Phases** (same order as [review-process.md](./review-process.md)):
+ 
+-1. Scope — `git diff --stat` for filenames only (no content reads)
+-2. Detect active profiles — delegate to `shared-profile-detection.md`; produce the list of `(profile, checklist)` records
+-3. Load profile review indexes — for each active profile, resolve its `review-code/index.md`; collect always-load + filename-evaluable conditionals now; defer content-evaluable conditionals to Step 6
+-4. Read resolved checklists — read every `(profile, checklist)` file collected in Step 3 into context
+-5. Read the diff and re-read changed files — now, with methodology loaded; also run `capy_search` for `kk:review-findings` and `kk:lang-idioms`
+-6. Resolve content-evaluable conditional entries — for each deferred entry from Step 3, evaluate the predicate against the file content read in Step 5; load any newly-matching checklists into context
+-7. Apply checklists — iterate the full resolved list (Steps 3 + 6); emit findings grouped by `(profile, checklist)`
+-8. Self-check and confidence assessment
+-9. Index findings — capy index systemic P0/P1 patterns as `kk:review-findings`
+-10. Present results with next steps
++1. Load basic instructions — process, shared protocols and common functional method
++2. Scope — resolve diff selection from status/filenames only
++3. Detect profiles and route checklists — filename/metadata signals, then bounded declared predicates; no deferred conditionals
++4. Read every resolved checklist — always-load, matching and conservatively selected content; confirm returned instruction files in a compact loading checkpoint before proceeding
++5. Investigate — read selected diff/current files, establish change context/task scope, trace behavior and historical compatibility, and search relevant knowledge
++6. Apply profile and general checklists to that behavior
++7. Self-check findings and confidence through targeted verification
++8. Index systemic P0/P1 findings as `kk:review-findings`
++9. Present findings, coverage and evidence-qualified verdict
++10. Confirm next steps
++11. Verify required outputs
+ 
+ See [review-process.md](./review-process.md) for the detailed step-by-step process.
+ 
+diff --git a/klaude-plugin/skills/review-code/review-process.md b/klaude-plugin/skills/review-code/review-process.md
+index 20db2af2..512f6615 100644
+--- a/klaude-plugin/skills/review-code/review-process.md
++++ b/klaude-plugin/skills/review-code/review-process.md
+@@ -1,99 +1,62 @@
+ ### Workflow
+ 
+-**Read [SKILL.md §Mandatory ordering — methodology before evidence](./SKILL.md#mandatory-ordering--methodology-before-evidence) before executing this file.** The steps below are strictly sequential. Do not read diff content, re-read changed files, or run `capy_search` before Step 5. Until then, `git diff --stat` (filenames only) is the only contact you have with the changes.
++**Mandatory ordering — methodology before evidence.** Follow [SKILL.md](SKILL.md)'s standard workflow strictly in sequence. Load all applicable instructions before investigation or action. The bounded routing exception below selects instructions only; it permits no behavioral analysis, findings, full-diff investigation, edits or tests.
+ 
+-Copy this checklist and check off items as you complete them:
++Copy and complete this checklist:
+ 
+ ```
+ Code Review Progress:
+-- [ ] Step 1: Scope (filenames only)
+-- [ ] Step 2: Detect active profiles
+-- [ ] Step 3: Load profile review indexes (filename-evaluable entries)
+-- [ ] Step 4: Read resolved checklists
+-- [ ] Step 5: Read diff + re-read changed files + capy search
+-- [ ] Step 6: Resolve content-evaluable conditional entries
+-- [ ] Step 7: Apply checklists
+-- [ ] Step 8: Self-check and confidence assessment
+-- [ ] Step 9: Index findings
+-- [ ] Step 10: Present results
+-- [ ] Step 11: Next steps confirmation
+-- [ ] Step 12: Verify outputs
++- [ ] Step 1: Load basic instructions
++- [ ] Step 2: Resolve scope from filenames/metadata
++- [ ] Step 3: Detect profiles and route all checklists
++- [ ] Step 4: Read every resolved checklist
++- [ ] Step 5: Investigate behavior and compatibility
++- [ ] Step 6: Apply profile and general checklists
++- [ ] Step 7: Self-check and confidence assessment
++- [ ] Step 8: Index findings
++- [ ] Step 9: Present findings, coverage and verdict
++- [ ] Step 10: Confirm next steps
++- [ ] Step 11: Verify outputs
+ ```
+ 
+----
++### 1) Load basic instructions
+ 
+-### 1) Scope (filenames only)
++Read this entire process and [shared-capy-knowledge-protocol.md](shared-capy-knowledge-protocol.md), [shared-profile-detection.md](shared-profile-detection.md), [shared-review-scope-protocol.md](shared-review-scope-protocol.md), [shared-change-context.md](shared-change-context.md), and [functional-review.md](functional-review.md) before routing. Already loaded, unchanged instructions need not be read twice. The common context and functional method apply even without active profiles or specification documents.
+ 
+-Run `git status -sb` and `git diff --stat` to get the list of touched files. **Do not run `git diff` yet** — the full diff enters context in Step 5, after methodology is loaded.
++### 2) Resolve scope from filenames/metadata
+ 
+-**Edge cases:**
++Use `git status -sb` and diff statistics/filenames only. Honor an explicit user-selected scope/range; otherwise select unstaged changes, falling back to staged changes when none are unstaged. If neither exists, report no changes and request a range. Record the chosen selector and keep it for investigation. Do not silently combine staged and unstaged scopes.
+ 
+-- **No changes**: If `git diff --stat` is empty, inform user and ask if they want to review staged changes or a specific commit range.
+-- **Large diff (>500 lines)**: Proceed through Steps 2–4 normally; Step 5 covers batching.
+-- **Mixed concerns**: Note the spread for Step 9 output; grouping happens at findings-emit time.
++A large diff (>500 lines) needs focused batching, not an early content dump. A feature-directory listing may locate task documents; their detailed reading belongs to investigation.
+ 
+-### 2) Detect active profiles
++### 3) Detect profiles and route all checklists
+ 
+-Delegate to [shared-profile-detection.md](shared-profile-detection.md). Input: the filename list from Step 1. The shared procedure iterates its own §Known profiles list and reads each profile's `DETECTION.md` via the `Read` tool — no filesystem enumeration, no `Glob`.
++Invoke [shared-profile-detection.md](shared-profile-detection.md) with the scoped filenames. Read each known profile's `DETECTION.md` and evaluate its authoritative signals; do not stop enumerating after an obvious extension match. Path matches alone do not activate a profile. Multiple profiles may apply. Resolve the plugin root from this skill's loaded location (parent of `skills/`) and construct absolute profile paths; do not forward unresolved root tokens into tools.
+ 
+-The shared procedure returns a list of records:
++For every active profile, read its `profiles/<profile>/review-code/index.md`. Collect **Always load** entries. Evaluate filename/metadata **Load if:** predicates first. For declared content predicates in detection or conditional loading, inspect at most approximately 16 KiB per candidate file, solely to resolve the predicate; log predicate/path. Apply the detection protocol's YAML document rules where relevant. If a conditional cannot be decided within the bound, conservatively select its instruction. Do not defer any conditional until after full source investigation.
+ 
+-```
+-[{ profile: "<name>", triggered_by: [...], files: [...] }, ...]
+-```
+-
+-Hold this list for Step 3. There is no single "primary language"; any number of profiles can be active on the same diff (e.g., `go` + `k8s` when a Go service ships a Helm chart).
+-
+-If the list is empty (no profile matched), skip Steps 3–4's profile-specific loading and proceed to Step 5 with general guidance only.
+-
+-### 3) Load profile review indexes
+-
+-For each active profile record from Step 2:
+-
+-1. Read `${TOOLBOX_PLUGIN_ROOT}/profiles/<profile>/review-code/index.md`.
+-2. Collect every entry under **Always load**.
+-3. For every conditional entry (**Load if:** predicate), classify the predicate:
+-   - **Filename-evaluable** — the predicate is satisfied by filenames, extensions, or directory names alone (e.g., "diff contains `Chart.yaml`", "file under `bases/` or `overlays/`"). Evaluate now against the filename list from Step 1. If it matches, collect the entry into the `(profile, checklist)` list.
+-   - **Content-evaluable** — the predicate requires inspecting file bytes (e.g., YAML `kind:` field values, `apiVersion:` keys, specific string anchors). Do **not** read file content here. Instead, append the entry to a **deferred list** keyed by `(profile, checklist, predicate)` — Step 6 resolves this list after Step 5 reads content.
+-4. Append the collected filename-evaluable entries to the flat `(profile, checklist)` list.
+-
+-Do NOT hardcode checklist names — the index is authoritative, and new profiles or new conditional entries take effect without edits to this file.
+-
+-### 4) Read resolved checklists
+-
+-For each `(profile, checklist)` record from Step 3, use the `Read` tool on `${TOOLBOX_PLUGIN_ROOT}/profiles/<profile>/review-code/<checklist>`. Every checklist file enters context now, before any diff content does. The review that follows in Step 6 reads *through* these checklists; if they are not loaded, the review cannot happen.
+-
+-This is the single load-bearing gate of the workflow. If a checklist read fails (file missing, path unresolved), stop and surface the error — do not proceed with partial methodology.
+-
+-### 5) Read the diff, re-read changed files, run capy search
+-
+-Now, with every checklist in context, read the content:
+-
+-- Run `git diff` (full output) to capture the changes.
+-- **Re-read every changed file** using the Read tool. Do NOT rely on file contents read earlier in the conversation — code may have changed since (e.g., fixes applied between reviews in the same session).
+-- If needed, use `rg` or `grep` to find related modules, usages, and contracts.
+-- Identify entry points, ownership boundaries, and critical paths (auth, payments, data writes, network).
+-- **Capy search:** Search `kk:review-findings` for prior findings in the same files/modules. For each programming-language profile active (from Step 2), search `kk:lang-idioms` for best practices. If `kk:lang-idioms` returns no results for a language, optionally use `capy_fetch_and_index` to fetch a canonical idioms resource (e.g., Effective Go for `go`) and label it `kk:lang-idioms`. Skip the lookup for non-language profiles (e.g., `k8s`) — `kk:lang-idioms` is a programming-language idiom store.
++Collect `(profile, checklist, triggered_by)` records for all matching/conservatively selected entries, carrying detection provenance and noting conservative selections. Indexes are authoritative; never hardcode checklist names. No profile means an empty list, not omission of the common method.
+ 
+-This is the only step that reads artifact content. It appears once, by design. Do not repeat `git diff` or file re-reads in later steps.
++### 4) Read every resolved checklist
+ 
+-### 6) Resolve content-evaluable conditional entries
++Read each selected `profiles/<profile>/review-code/<checklist>` using the resolved absolute plugin root. An index read is routing, not checklist loading: every selected link requires its own returned file content, even for a tiny diff. Keep the resolved paths as a loading ledger and mark them loaded only when their read results arrive. Do not batch investigation commands with these reads.
+ 
+-For every `(profile, checklist, predicate)` record on the deferred list from Step 3:
++Before proceeding, emit a compact loading checkpoint naming the completed common-instruction reads and the loaded checklist paths (or explicitly no active profiles). Any selected path without returned content keeps the gate closed; surface unreadable instructions and stop. This checkpoint records evidence already obtained, not a promise to load guidance later. It catches accidental index-to-diff shortcuts without creating a separate artifact or replacing the actual read events.
+ 
+-1. Evaluate the predicate against the file content now available from Step 5. Apply the same bounded-inspection rules as the shared profile-detection procedure — ~16 KB per file; multi-document YAML inspected per `---`-separated block.
+-2. If the predicate matches, use the `Read` tool on `${TOOLBOX_PLUGIN_ROOT}/profiles/<profile>/review-code/<checklist>` to load the checklist into context, then append `(profile, checklist)` to the flat list that Step 7 iterates.
+-3. If the predicate does not match, drop the entry silently — no checklist is loaded for it.
++### 5) Investigate behavior and compatibility
+ 
+-If the deferred list is empty (no profile contributed a content-evaluable conditional), this step is a no-op. Proceed to Step 7.
++This is the single entry point for subject-matter investigation. With methodology loaded:
+ 
+-The deferred list exists so Step 3 can remain a filenames-only step (per the mandatory ordering in SKILL.md) while conditionals that genuinely require content — e.g., loading `reliability-checklist.md` on diffs that contain a `kind: Deployment` YAML document — still reach Step 7. Content-evaluable conditionals that bypass this step will be silently dropped.
++- Read the full diff using the selector from scope and re-read every changed file at the reviewed revision, accounting for deletions. Do not rely on an earlier conversation's contents. Use index blobs for staged review and the selected candidate revision for a commit range; do not silently substitute unrelated worktree contents.
++- Read relevant requirements and task documents; build task scope with the shared protocol. Establish the shared change context, distinguishing review base/candidate from any release baseline.
++- Apply the common functional method: trace changed behavior through relevant dependencies and unchanged consumers, exercise concrete scenarios, and assess relevant delivery combinations. Obtain actual historical source when needed; label provenance and unavailable evidence using the shared context rules.
++- Search `kk:review-findings` for relevant patterns and, for active programming-language profiles, `kk:lang-idioms`. With no language results, optionally index a canonical idioms source under that label. Skip language lookup for non-language profiles.
+ 
+-### 7) Apply checklists
++If investigation adds targets covered by new profiles or newly applicable conditionals, pause analysis of those targets and return to routing/loading before continuing. Subsequent focused re-reads, reproductions and verification substantiate findings within this investigation; they do not create another full-diff preflight. Keep claims within actual access and evidence.
+ 
+-Iterate the flat `(profile, checklist, triggered_by)` list — the union of Step 3's filename-evaluable entries (whose checklists were read in Step 4) and Step 6's content-evaluable entries (whose checklists were read in Step 6 itself). For each record, apply the checklist (already in context) to the diff (in context from Step 5). A checklist may cover SOLID/architecture, security, quality, removal, or a profile-specific concern (e.g., Helm template correctness, RBAC least privilege) — the checklist itself states what to look for.
++### 6) Apply profile and general checklists
+ 
+-Tag each finding with its `(profile, checklist)` origin and the `triggered_by` signal from Step 2's detection output. These materialize as per-finding sub-labels inside the severity-major template in Step 10 — not as separate profile-grouped sections. For generic findings (SOLID, security, code quality, removal) not sourced from a profile checklist, use `Profile: generic · Checklist: —` and `Triggered by: —`.
++Apply every loaded `(profile, checklist, triggered_by)` record to the affected behavior and diff. Domain checklists supplement the common method. Tag findings with their profile/checklist origin and detection signal; use `Profile: generic · Checklist: —` and `Triggered by: —` for common reasoning. Keep severity-major output and merge duplicate issues across lenses.
+ 
+ General guidance that applies regardless of profile — apply these categories on every diff, whether or not a profile-specific checklist covered them:
+ 
+@@ -102,9 +65,9 @@ General guidance that applies regardless of profile — apply these categories o
+ - **Code quality:** error handling (swallowed exceptions, overly broad catch, missing handling, async errors); performance (N+1 queries, CPU-intensive ops in hot paths, missing cache, unbounded memory); boundary conditions (null/undefined, empty collections, numeric boundaries, off-by-one). Flag issues that may cause silent failures or production incidents.
+ - **Removal candidates:** unused, redundant, or feature-flagged-off code. Distinguish **safe delete now** vs **defer with plan**; provide concrete follow-up steps with checkpoints (tests/metrics).
+ 
+-### 8) Self-check and confidence assessment
++### 7) Self-check and confidence assessment
+ 
+-For **each finding** from Step 7:
++For **each finding** from Steps 5–6:
+ 
+ 1. Re-read the relevant code and surrounding context independently.
+ 2. Ask: **"Could I be misreading the code?"** — trace execution paths, check for runtime behavior, configuration, or framework conventions that might make this correct.
+@@ -116,14 +79,14 @@ For **each finding** from Step 7:
+    - What uncertainty remains
+ 6. Downgrade or **remove** findings that don't survive the self-check.
+ 
+-### 9) Index findings
++### 8) Index findings
+ 
+ Index any P0/P1 findings that suggest a systemic or structural pattern (not isolated typos or one-off mistakes) as `kk:review-findings`. Index on first encounter — recurrence detection happens on the search side in future reviews.
+ 
+ - If no P0/P1 systemic findings exist, explicitly note "No findings to index" and move on.
+ - This step is mandatory — do not skip it even if the review found no issues.
+ 
+-### 10) Present results
++### 9) Present results
+ 
+ #### Output format
+ 
+@@ -134,6 +97,15 @@ Structure your review as follows:
+ 
+ **Files reviewed**: X files, Y lines changed
+ **Overall assessment**: [APPROVE / REQUEST_CHANGES / COMMENT]
++**Intent and scope**: requirement source, current task/request, selected diff and candidate state
++**Baselines**: review base/candidate; separate release baseline if applicable
++
++## Behavior and Compatibility
++
++Inspected paths/scenarios, observed results and evidence limits. Include applicable
++Supported / Blocked / Unknown / Not applicable conclusions with named baselines.
++Attribute author-supplied results and inherited issues. Record outstanding evidence
++or release prerequisites, next actions and durable tracking locations when deferred.
+ 
+ ---
+ 
+@@ -148,14 +120,14 @@ Structure your review as follows:
+ - **[file:line]** Brief title
+   - Profile: {profile_name} · Checklist: {checklist_filename}
+   - Triggered by: {signal_type} — {signal_description}
+-  - Description of issue
++  - Trigger/path, expected vs actual result and consequence
+   - Confidence: 90% - reasoning behind the confidence level
+   - Suggested fix
+ 
+ - **[another_file:line]** Brief title
+   - Profile: generic · Checklist: —
+   - Triggered by: —
+-  - Description of issue
++  - Trigger/path, expected vs actual result and consequence
+   - Confidence: 60% - reasoning behind the confidence level
+   - Suggested fix
+ 
+@@ -186,13 +158,15 @@ Description of the issue and suggested fix.
+ ::
+ ```
+ 
+-**Clean review**: If no issues found, explicitly state:
++Apply [functional-review.md](functional-review.md)'s verdict mapping: a hard acceptance/delivery violation cannot be approved; material Unknown evidence receives COMMENT absent a demonstrated blocker. Out-of-scope operational unknowns do not automatically downgrade an explicitly scoped code verdict. Preserve P0–P3 impact severity and distinguish code correctness from release readiness.
++
++**Every review** reports coverage and limits, even with findings. When no issues are found, explicitly state:
+ 
+ - What was checked
+ - Any areas not covered (e.g., "Did not verify database migrations")
+ - Residual risks or recommended follow-up tests
+ 
+-### 11) Next steps confirmation
++### 10) Next steps confirmation
+ 
+ After presenting findings, ask user how to proceed:
+ 
+@@ -225,11 +199,12 @@ Please choose an option or provide specific instructions.
+ 
+ **Important**: Do NOT implement any changes until user explicitly confirms. This is a review-first workflow.
+ 
+-### 12) Verify outputs
++### 11) Verify outputs
+ 
+ Before declaring the review complete, check each item in the **Required Outputs** section of SKILL.md:
+ 
+ - [ ] Review report presented to user
++- [ ] Intent, scope/baselines, inspected behavior, applicable compatibility conclusions and evidence limits reported
+ - [ ] P0/P1 systemic findings indexed as `kk:review-findings` (or explicitly noted "No findings to index")
+ - [ ] Next steps confirmation from user
+ 
+diff --git a/kodex-plugin/skills/_shared/review-scope-protocol.md b/kodex-plugin/skills/_shared/review-scope-protocol.md
+index 333ce3bb..6cdc8696 100644
+--- a/kodex-plugin/skills/_shared/review-scope-protocol.md
++++ b/kodex-plugin/skills/_shared/review-scope-protocol.md
+@@ -1,6 +1,6 @@
+ ## Review scope protocol
+ 
+-Isolated reviewers see the diff and the design docs but have zero visibility into which tasks are done versus pending. Without scope, they flag code-that-isn't-written-yet as `MISSING_IMPL` (spec review) or as missing functionality (code review). This protocol defines a scope artifact both skills inject into their sub-agent and external-reviewer prompts.
++Reviewers need task status alongside the diff and design docs. Without scope, they flag code-that-isn't-written-yet as `MISSING_IMPL` (spec review) or as missing functionality (code review). Standard review uses this scope locally; isolated review injects the same artifact into sub-agent and external-reviewer prompts. The existing $kk:review-spec payload remains sufficient; no additional change-context record is required by this protocol.
+ 
+ ### Input shapes
+ 
+@@ -27,7 +27,7 @@ Out of scope (pending — DO NOT flag as missing):
+ - Task {id}: {title} — status: {pending|in-progress}
+ - [...more pending tasks]
+ 
+-The feature's design docs describe the full end state. Pending tasks are expected gaps in the current diff — treat their absence from the code as intentional, not as a finding. You may still flag issues within the in-scope tasks even if they reference pending tasks (e.g., a broken interface contract).
++The feature's design docs describe the full end state. Pending tasks are expected gaps in the current diff — treat their absence from the code as intentional, not as a finding. You may still flag issues within the in-scope tasks even if they reference pending tasks (e.g., a broken interface contract). Pending work does not excuse current regressions or incompatibility: assess whether the reviewed increment preserves existing flows and meets applicable delivery requirements. Genuinely unreachable unfinished paths need not be implemented merely because they are planned.
+ ```
+ 
+ When shape 3 applies, use:
+@@ -51,4 +51,6 @@ The reviewer prompt must also carry this instruction (agent definitions should s
+ 
+ - Do **not** report missing-implementation findings for items covered only by out-of-scope tasks.
+ - Do still report real issues *within* the in-scope tasks, including ones that affect future pending work (e.g., a public API the pending task will depend on is shaped wrongly).
++- A current consumer that already requires a pending provider change remains reviewable, including when the larger feature is disabled. Distinguish deployment from activation and check the actual affected paths; a flag or a future task alone proves neither reachability nor safety.
++- Attribute introduced/worsened behavior separately from inherited defects. Do not invent a current regression or require pending work when the increment remains compatible under its actual delivery contract.
+ - If a finding would be valid *only* after pending work lands, mention it under "Areas Not Covered" instead of the P0–P3 sections.
+diff --git a/kodex-plugin/skills/review-code/SKILL.md b/kodex-plugin/skills/review-code/SKILL.md
+index 5d128812..cafd97cc 100644
+--- a/kodex-plugin/skills/review-code/SKILL.md
++++ b/kodex-plugin/skills/review-code/SKILL.md
+@@ -6,22 +6,25 @@ description: |
+ ---
+ <!-- codex: tool-name mapping applied. See .codex/scripts/session-start.sh -->
+ 
+-# SOLID Code Review
++# Code Review
+ 
+ ## Overview
+ 
+-Perform a structured review of the current git changes with focus on SOLID, architecture, removal candidates, and security risks. Default to review-only output unless the user asks to implement changes.
++Review whether the current changes achieve their intended behavior, preserve affected contracts and meet applicable delivery constraints. Apply SOLID, architecture, security, quality and removal guidance alongside that reasoning. Default to review-only output unless the user asks to implement changes.
+ 
+ ## Conventions
+ 
+ - **Read capy knowledge base conventions** at [shared-capy-knowledge-protocol.md](shared-capy-knowledge-protocol.md).
+-- **Read profile detection** — the set of reference checklists loaded for a given diff — at [shared-profile-detection.md](shared-profile-detection.md). The workflow below invokes it in Step 2 and uses the resulting `(profile, checklist)` list to drive Steps 3–4.
++- **Always read change context** at [shared-change-context.md](shared-change-context.md) and the common method at [functional-review.md](functional-review.md), even when no profile matches.
++- **Read task scope** at [shared-review-scope-protocol.md](shared-review-scope-protocol.md); pending work does not excuse regressions in current flows.
++- **Read profile detection** at [shared-profile-detection.md](shared-profile-detection.md). Use its records to select and load domain guidance before investigation.
+ 
+ ## Required Outputs
+ 
+ Before declaring the review complete, verify all outputs are delivered:
+ 
+ - [ ] Review report presented to user
++- [ ] Intent, scope/baselines, inspected behavior, applicable compatibility conclusions and evidence limits reported
+ - [ ] P0/P1 systemic findings indexed as `kk:review-findings` (skip if no qualifying findings)
+ - [ ] Next steps confirmation from user
+ 
+@@ -57,22 +60,23 @@ See [review-isolated.md](./review-isolated.md) for the isolated workflow.
+ 
+ ### Mandatory ordering — methodology before evidence
+ 
+-The workflow below is strictly sequential. **Do not read the diff's contents, re-read changed files, run `capy_search`, or begin forming findings until you have completed profile detection and loaded every resolved checklist file.** Until then, your only contact with the changes is `git diff --stat` (filenames only) — enough to drive profile detection, but not enough to pattern-match findings.
++The standard workflow below is strictly sequential. **Load the process, shared protocols, common functional method and every resolved profile checklist before source investigation, `capy_search`, findings, edits or tests.** After basic process instructions load, the sole early-content exception is bounded inspection to resolve declared detection/conditional-load predicates: at most approximately 16 KiB per candidate file; log predicate/path, and conservatively load an instruction when its conditional is undecidable within the bound. No behavioral analysis or full-diff investigation is permitted during routing.
+ 
+ This ordering is load-bearing, not stylistic. Reviewing from a diff before loading profile checklists is the known failure mode this skill is designed to prevent: the LLM has enough from the diff to produce plausible findings, and optimizes away the methodology if the workflow permits.
+ 
+-**Phases** (summary — the detailed procedure in [review-process.md](./review-process.md) breaks presentation into three distinct numbered steps: present results, next-steps confirmation, verify outputs):
++**Phases** (same order as [review-process.md](./review-process.md)):
+ 
+-1. Scope — `git diff --stat` for filenames only (no content reads)
+-2. Detect active profiles — delegate to `shared-profile-detection.md`; produce the list of `(profile, checklist)` records
+-3. Load profile review indexes — for each active profile, resolve its `review-code/index.md`; collect always-load + filename-evaluable conditionals now; defer content-evaluable conditionals to Step 6
+-4. Read resolved checklists — read every `(profile, checklist)` file collected in Step 3 into context
+-5. Read the diff and re-read changed files — now, with methodology loaded; also run `capy_search` for `kk:review-findings` and `kk:lang-idioms`
+-6. Resolve content-evaluable conditional entries — for each deferred entry from Step 3, evaluate the predicate against the file content read in Step 5; load any newly-matching checklists into context
+-7. Apply checklists — iterate the full resolved list (Steps 3 + 6); emit findings grouped by `(profile, checklist)`
+-8. Self-check and confidence assessment
+-9. Index findings — capy index systemic P0/P1 patterns as `kk:review-findings`
+-10. Present results with next steps
++1. Load basic instructions — process, shared protocols and common functional method
++2. Scope — resolve diff selection from status/filenames only
++3. Detect profiles and route checklists — filename/metadata signals, then bounded declared predicates; no deferred conditionals
++4. Read every resolved checklist — always-load, matching and conservatively selected content; confirm returned instruction files in a compact loading checkpoint before proceeding
++5. Investigate — read selected diff/current files, establish change context/task scope, trace behavior and historical compatibility, and search relevant knowledge
++6. Apply profile and general checklists to that behavior
++7. Self-check findings and confidence through targeted verification
++8. Index systemic P0/P1 findings as `kk:review-findings`
++9. Present findings, coverage and evidence-qualified verdict
++10. Confirm next steps
++11. Verify required outputs
+ 
+ See [review-process.md](./review-process.md) for the detailed step-by-step process.
+ 
+diff --git a/kodex-plugin/skills/review-code/review-process.md b/kodex-plugin/skills/review-code/review-process.md
+index e2e913ce..512f6615 100644
+--- a/kodex-plugin/skills/review-code/review-process.md
++++ b/kodex-plugin/skills/review-code/review-process.md
+@@ -1,99 +1,62 @@
+ ### Workflow
+ 
+-**Read [SKILL.md §Mandatory ordering — methodology before evidence](./SKILL.md#mandatory-ordering--methodology-before-evidence) before executing this file.** The steps below are strictly sequential. Do not read diff content, re-read changed files, or run `capy_search` before Step 5. Until then, `git diff --stat` (filenames only) is the only contact you have with the changes.
++**Mandatory ordering — methodology before evidence.** Follow [SKILL.md](SKILL.md)'s standard workflow strictly in sequence. Load all applicable instructions before investigation or action. The bounded routing exception below selects instructions only; it permits no behavioral analysis, findings, full-diff investigation, edits or tests.
+ 
+-Copy this checklist and check off items as you complete them:
++Copy and complete this checklist:
+ 
+ ```
+ Code Review Progress:
+-- [ ] Step 1: Scope (filenames only)
+-- [ ] Step 2: Detect active profiles
+-- [ ] Step 3: Load profile review indexes (filename-evaluable entries)
+-- [ ] Step 4: Read resolved checklists
+-- [ ] Step 5: Read diff + re-read changed files + capy search
+-- [ ] Step 6: Resolve content-evaluable conditional entries
+-- [ ] Step 7: Apply checklists
+-- [ ] Step 8: Self-check and confidence assessment
+-- [ ] Step 9: Index findings
+-- [ ] Step 10: Present results
+-- [ ] Step 11: Next steps confirmation
+-- [ ] Step 12: Verify outputs
++- [ ] Step 1: Load basic instructions
++- [ ] Step 2: Resolve scope from filenames/metadata
++- [ ] Step 3: Detect profiles and route all checklists
++- [ ] Step 4: Read every resolved checklist
++- [ ] Step 5: Investigate behavior and compatibility
++- [ ] Step 6: Apply profile and general checklists
++- [ ] Step 7: Self-check and confidence assessment
++- [ ] Step 8: Index findings
++- [ ] Step 9: Present findings, coverage and verdict
++- [ ] Step 10: Confirm next steps
++- [ ] Step 11: Verify outputs
+ ```
+ 
+----
++### 1) Load basic instructions
+ 
+-### 1) Scope (filenames only)
++Read this entire process and [shared-capy-knowledge-protocol.md](shared-capy-knowledge-protocol.md), [shared-profile-detection.md](shared-profile-detection.md), [shared-review-scope-protocol.md](shared-review-scope-protocol.md), [shared-change-context.md](shared-change-context.md), and [functional-review.md](functional-review.md) before routing. Already loaded, unchanged instructions need not be read twice. The common context and functional method apply even without active profiles or specification documents.
+ 
+-Run `git status -sb` and `git diff --stat` to get the list of touched files. **Do not run `git diff` yet** — the full diff enters context in Step 5, after methodology is loaded.
++### 2) Resolve scope from filenames/metadata
+ 
+-**Edge cases:**
++Use `git status -sb` and diff statistics/filenames only. Honor an explicit user-selected scope/range; otherwise select unstaged changes, falling back to staged changes when none are unstaged. If neither exists, report no changes and request a range. Record the chosen selector and keep it for investigation. Do not silently combine staged and unstaged scopes.
+ 
+-- **No changes**: If `git diff --stat` is empty, inform user and ask if they want to review staged changes or a specific commit range.
+-- **Large diff (>500 lines)**: Proceed through Steps 2–4 normally; Step 5 covers batching.
+-- **Mixed concerns**: Note the spread for Step 9 output; grouping happens at findings-emit time.
++A large diff (>500 lines) needs focused batching, not an early content dump. A feature-directory listing may locate task documents; their detailed reading belongs to investigation.
+ 
+-### 2) Detect active profiles
++### 3) Detect profiles and route all checklists
+ 
+-Delegate to [shared-profile-detection.md](shared-profile-detection.md). Input: the filename list from Step 1. The shared procedure iterates its own §Known profiles list and reads each profile's `DETECTION.md` via the `Read` tool — no filesystem enumeration, no `Glob`.
++Invoke [shared-profile-detection.md](shared-profile-detection.md) with the scoped filenames. Read each known profile's `DETECTION.md` and evaluate its authoritative signals; do not stop enumerating after an obvious extension match. Path matches alone do not activate a profile. Multiple profiles may apply. Resolve the plugin root from this skill's loaded location (parent of `skills/`) and construct absolute profile paths; do not forward unresolved root tokens into tools.
+ 
+-The shared procedure returns a list of records:
++For every active profile, read its `profiles/<profile>/review-code/index.md`. Collect **Always load** entries. Evaluate filename/metadata **Load if:** predicates first. For declared content predicates in detection or conditional loading, inspect at most approximately 16 KiB per candidate file, solely to resolve the predicate; log predicate/path. Apply the detection protocol's YAML document rules where relevant. If a conditional cannot be decided within the bound, conservatively select its instruction. Do not defer any conditional until after full source investigation.
+ 
+-```
+-[{ profile: "<name>", triggered_by: [...], files: [...] }, ...]
+-```
+-
+-Hold this list for Step 3. There is no single "primary language"; any number of profiles can be active on the same diff (e.g., `go` + `k8s` when a Go service ships a Helm chart).
+-
+-If the list is empty (no profile matched), skip Steps 3–4's profile-specific loading and proceed to Step 5 with general guidance only.
+-
+-### 3) Load profile review indexes
+-
+-For each active profile record from Step 2:
+-
+-1. Read `../../profiles/<profile>/review-code/index.md`.
+-2. Collect every entry under **Always load**.
+-3. For every conditional entry (**Load if:** predicate), classify the predicate:
+-   - **Filename-evaluable** — the predicate is satisfied by filenames, extensions, or directory names alone (e.g., "diff contains `Chart.yaml`", "file under `bases/` or `overlays/`"). Evaluate now against the filename list from Step 1. If it matches, collect the entry into the `(profile, checklist)` list.
+-   - **Content-evaluable** — the predicate requires inspecting file bytes (e.g., YAML `kind:` field values, `apiVersion:` keys, specific string anchors). Do **not** read file content here. Instead, append the entry to a **deferred list** keyed by `(profile, checklist, predicate)` — Step 6 resolves this list after Step 5 reads content.
+-4. Append the collected filename-evaluable entries to the flat `(profile, checklist)` list.
+-
+-Do NOT hardcode checklist names — the index is authoritative, and new profiles or new conditional entries take effect without edits to this file.
+-
+-### 4) Read resolved checklists
+-
+-For each `(profile, checklist)` record from Step 3, use the `Read` tool on `../../profiles/<profile>/review-code/<checklist>`. Every checklist file enters context now, before any diff content does. The review that follows in Step 6 reads *through* these checklists; if they are not loaded, the review cannot happen.
+-
+-This is the single load-bearing gate of the workflow. If a checklist read fails (file missing, path unresolved), stop and surface the error — do not proceed with partial methodology.
+-
+-### 5) Read the diff, re-read changed files, run capy search
+-
+-Now, with every checklist in context, read the content:
+-
+-- Run `git diff` (full output) to capture the changes.
+-- **Re-read every changed file** using the Read tool. Do NOT rely on file contents read earlier in the conversation — code may have changed since (e.g., fixes applied between reviews in the same session).
+-- If needed, use `rg` or `grep` to find related modules, usages, and contracts.
+-- Identify entry points, ownership boundaries, and critical paths (auth, payments, data writes, network).
+-- **Capy search:** Search `kk:review-findings` for prior findings in the same files/modules. For each programming-language profile active (from Step 2), search `kk:lang-idioms` for best practices. If `kk:lang-idioms` returns no results for a language, optionally use `capy_fetch_and_index` to fetch a canonical idioms resource (e.g., Effective Go for `go`) and label it `kk:lang-idioms`. Skip the lookup for non-language profiles (e.g., `k8s`) — `kk:lang-idioms` is a programming-language idiom store.
++Collect `(profile, checklist, triggered_by)` records for all matching/conservatively selected entries, carrying detection provenance and noting conservative selections. Indexes are authoritative; never hardcode checklist names. No profile means an empty list, not omission of the common method.
+ 
+-This is the only step that reads artifact content. It appears once, by design. Do not repeat `git diff` or file re-reads in later steps.
++### 4) Read every resolved checklist
+ 
+-### 6) Resolve content-evaluable conditional entries
++Read each selected `profiles/<profile>/review-code/<checklist>` using the resolved absolute plugin root. An index read is routing, not checklist loading: every selected link requires its own returned file content, even for a tiny diff. Keep the resolved paths as a loading ledger and mark them loaded only when their read results arrive. Do not batch investigation commands with these reads.
+ 
+-For every `(profile, checklist, predicate)` record on the deferred list from Step 3:
++Before proceeding, emit a compact loading checkpoint naming the completed common-instruction reads and the loaded checklist paths (or explicitly no active profiles). Any selected path without returned content keeps the gate closed; surface unreadable instructions and stop. This checkpoint records evidence already obtained, not a promise to load guidance later. It catches accidental index-to-diff shortcuts without creating a separate artifact or replacing the actual read events.
+ 
+-1. Evaluate the predicate against the file content now available from Step 5. Apply the same bounded-inspection rules as the shared profile-detection procedure — ~16 KB per file; multi-document YAML inspected per `---`-separated block.
+-2. If the predicate matches, use the `Read` tool on `../../profiles/<profile>/review-code/<checklist>` to load the checklist into context, then append `(profile, checklist)` to the flat list that Step 7 iterates.
+-3. If the predicate does not match, drop the entry silently — no checklist is loaded for it.
++### 5) Investigate behavior and compatibility
+ 
+-If the deferred list is empty (no profile contributed a content-evaluable conditional), this step is a no-op. Proceed to Step 7.
++This is the single entry point for subject-matter investigation. With methodology loaded:
+ 
+-The deferred list exists so Step 3 can remain a filenames-only step (per the mandatory ordering in SKILL.md) while conditionals that genuinely require content — e.g., loading `reliability-checklist.md` on diffs that contain a `kind: Deployment` YAML document — still reach Step 7. Content-evaluable conditionals that bypass this step will be silently dropped.
++- Read the full diff using the selector from scope and re-read every changed file at the reviewed revision, accounting for deletions. Do not rely on an earlier conversation's contents. Use index blobs for staged review and the selected candidate revision for a commit range; do not silently substitute unrelated worktree contents.
++- Read relevant requirements and task documents; build task scope with the shared protocol. Establish the shared change context, distinguishing review base/candidate from any release baseline.
++- Apply the common functional method: trace changed behavior through relevant dependencies and unchanged consumers, exercise concrete scenarios, and assess relevant delivery combinations. Obtain actual historical source when needed; label provenance and unavailable evidence using the shared context rules.
++- Search `kk:review-findings` for relevant patterns and, for active programming-language profiles, `kk:lang-idioms`. With no language results, optionally index a canonical idioms source under that label. Skip language lookup for non-language profiles.
+ 
+-### 7) Apply checklists
++If investigation adds targets covered by new profiles or newly applicable conditionals, pause analysis of those targets and return to routing/loading before continuing. Subsequent focused re-reads, reproductions and verification substantiate findings within this investigation; they do not create another full-diff preflight. Keep claims within actual access and evidence.
+ 
+-Iterate the flat `(profile, checklist, triggered_by)` list — the union of Step 3's filename-evaluable entries (whose checklists were read in Step 4) and Step 6's content-evaluable entries (whose checklists were read in Step 6 itself). For each record, apply the checklist (already in context) to the diff (in context from Step 5). A checklist may cover SOLID/architecture, security, quality, removal, or a profile-specific concern (e.g., Helm template correctness, RBAC least privilege) — the checklist itself states what to look for.
++### 6) Apply profile and general checklists
+ 
+-Tag each finding with its `(profile, checklist)` origin and the `triggered_by` signal from Step 2's detection output. These materialize as per-finding sub-labels inside the severity-major template in Step 10 — not as separate profile-grouped sections. For generic findings (SOLID, security, code quality, removal) not sourced from a profile checklist, use `Profile: generic · Checklist: —` and `Triggered by: —`.
++Apply every loaded `(profile, checklist, triggered_by)` record to the affected behavior and diff. Domain checklists supplement the common method. Tag findings with their profile/checklist origin and detection signal; use `Profile: generic · Checklist: —` and `Triggered by: —` for common reasoning. Keep severity-major output and merge duplicate issues across lenses.
+ 
+ General guidance that applies regardless of profile — apply these categories on every diff, whether or not a profile-specific checklist covered them:
+ 
+@@ -102,9 +65,9 @@ General guidance that applies regardless of profile — apply these categories o
+ - **Code quality:** error handling (swallowed exceptions, overly broad catch, missing handling, async errors); performance (N+1 queries, CPU-intensive ops in hot paths, missing cache, unbounded memory); boundary conditions (null/undefined, empty collections, numeric boundaries, off-by-one). Flag issues that may cause silent failures or production incidents.
+ - **Removal candidates:** unused, redundant, or feature-flagged-off code. Distinguish **safe delete now** vs **defer with plan**; provide concrete follow-up steps with checkpoints (tests/metrics).
+ 
+-### 8) Self-check and confidence assessment
++### 7) Self-check and confidence assessment
+ 
+-For **each finding** from Step 7:
++For **each finding** from Steps 5–6:
+ 
+ 1. Re-read the relevant code and surrounding context independently.
+ 2. Ask: **"Could I be misreading the code?"** — trace execution paths, check for runtime behavior, configuration, or framework conventions that might make this correct.
+@@ -116,14 +79,14 @@ For **each finding** from Step 7:
+    - What uncertainty remains
+ 6. Downgrade or **remove** findings that don't survive the self-check.
+ 
+-### 9) Index findings
++### 8) Index findings
+ 
+ Index any P0/P1 findings that suggest a systemic or structural pattern (not isolated typos or one-off mistakes) as `kk:review-findings`. Index on first encounter — recurrence detection happens on the search side in future reviews.
+ 
+ - If no P0/P1 systemic findings exist, explicitly note "No findings to index" and move on.
+ - This step is mandatory — do not skip it even if the review found no issues.
+ 
+-### 10) Present results
++### 9) Present results
+ 
+ #### Output format
+ 
+@@ -134,6 +97,15 @@ Structure your review as follows:
+ 
+ **Files reviewed**: X files, Y lines changed
+ **Overall assessment**: [APPROVE / REQUEST_CHANGES / COMMENT]
++**Intent and scope**: requirement source, current task/request, selected diff and candidate state
++**Baselines**: review base/candidate; separate release baseline if applicable
++
++## Behavior and Compatibility
++
++Inspected paths/scenarios, observed results and evidence limits. Include applicable
++Supported / Blocked / Unknown / Not applicable conclusions with named baselines.
++Attribute author-supplied results and inherited issues. Record outstanding evidence
++or release prerequisites, next actions and durable tracking locations when deferred.
+ 
+ ---
+ 
+@@ -148,14 +120,14 @@ Structure your review as follows:
+ - **[file:line]** Brief title
+   - Profile: {profile_name} · Checklist: {checklist_filename}
+   - Triggered by: {signal_type} — {signal_description}
+-  - Description of issue
++  - Trigger/path, expected vs actual result and consequence
+   - Confidence: 90% - reasoning behind the confidence level
+   - Suggested fix
+ 
+ - **[another_file:line]** Brief title
+   - Profile: generic · Checklist: —
+   - Triggered by: —
+-  - Description of issue
++  - Trigger/path, expected vs actual result and consequence
+   - Confidence: 60% - reasoning behind the confidence level
+   - Suggested fix
+ 
+@@ -186,13 +158,15 @@ Description of the issue and suggested fix.
+ ::
+ ```
+ 
+-**Clean review**: If no issues found, explicitly state:
++Apply [functional-review.md](functional-review.md)'s verdict mapping: a hard acceptance/delivery violation cannot be approved; material Unknown evidence receives COMMENT absent a demonstrated blocker. Out-of-scope operational unknowns do not automatically downgrade an explicitly scoped code verdict. Preserve P0–P3 impact severity and distinguish code correctness from release readiness.
++
++**Every review** reports coverage and limits, even with findings. When no issues are found, explicitly state:
+ 
+ - What was checked
+ - Any areas not covered (e.g., "Did not verify database migrations")
+ - Residual risks or recommended follow-up tests
+ 
+-### 11) Next steps confirmation
++### 10) Next steps confirmation
+ 
+ After presenting findings, ask user how to proceed:
+ 
+@@ -225,11 +199,12 @@ Please choose an option or provide specific instructions.
+ 
+ **Important**: Do NOT implement any changes until user explicitly confirms. This is a review-first workflow.
+ 
+-### 12) Verify outputs
++### 11) Verify outputs
+ 
+ Before declaring the review complete, check each item in the **Required Outputs** section of SKILL.md:
+ 
+ - [ ] Review report presented to user
++- [ ] Intent, scope/baselines, inspected behavior, applicable compatibility conclusions and evidence limits reported
+ - [ ] P0/P1 systemic findings indexed as `kk:review-findings` (or explicitly noted "No findings to index")
+ - [ ] Next steps confirmation from user
+ 
+diff --git a/kodex-plugin/skills/review-code/shared-review-scope-protocol.md b/kodex-plugin/skills/review-code/shared-review-scope-protocol.md
+index 333ce3bb..6cdc8696 100644
+--- a/kodex-plugin/skills/review-code/shared-review-scope-protocol.md
++++ b/kodex-plugin/skills/review-code/shared-review-scope-protocol.md
+@@ -1,6 +1,6 @@
+ ## Review scope protocol
+ 
+-Isolated reviewers see the diff and the design docs but have zero visibility into which tasks are done versus pending. Without scope, they flag code-that-isn't-written-yet as `MISSING_IMPL` (spec review) or as missing functionality (code review). This protocol defines a scope artifact both skills inject into their sub-agent and external-reviewer prompts.
++Reviewers need task status alongside the diff and design docs. Without scope, they flag code-that-isn't-written-yet as `MISSING_IMPL` (spec review) or as missing functionality (code review). Standard review uses this scope locally; isolated review injects the same artifact into sub-agent and external-reviewer prompts. The existing $kk:review-spec payload remains sufficient; no additional change-context record is required by this protocol.
+ 
+ ### Input shapes
+ 
+@@ -27,7 +27,7 @@ Out of scope (pending — DO NOT flag as missing):
+ - Task {id}: {title} — status: {pending|in-progress}
+ - [...more pending tasks]
+ 
+-The feature's design docs describe the full end state. Pending tasks are expected gaps in the current diff — treat their absence from the code as intentional, not as a finding. You may still flag issues within the in-scope tasks even if they reference pending tasks (e.g., a broken interface contract).
++The feature's design docs describe the full end state. Pending tasks are expected gaps in the current diff — treat their absence from the code as intentional, not as a finding. You may still flag issues within the in-scope tasks even if they reference pending tasks (e.g., a broken interface contract). Pending work does not excuse current regressions or incompatibility: assess whether the reviewed increment preserves existing flows and meets applicable delivery requirements. Genuinely unreachable unfinished paths need not be implemented merely because they are planned.
+ ```
+ 
+ When shape 3 applies, use:
+@@ -51,4 +51,6 @@ The reviewer prompt must also carry this instruction (agent definitions should s
+ 
+ - Do **not** report missing-implementation findings for items covered only by out-of-scope tasks.
+ - Do still report real issues *within* the in-scope tasks, including ones that affect future pending work (e.g., a public API the pending task will depend on is shaped wrongly).
++- A current consumer that already requires a pending provider change remains reviewable, including when the larger feature is disabled. Distinguish deployment from activation and check the actual affected paths; a flag or a future task alone proves neither reachability nor safety.
++- Attribute introduced/worsened behavior separately from inherited defects. Do not invent a current regression or require pending work when the increment remains compatible under its actual delivery contract.
+ - If a finding would be valid *only* after pending work lands, mention it under "Areas Not Covered" instead of the P0–P3 sections.
+diff --git a/kodex-plugin/skills/review-spec/shared-review-scope-protocol.md b/kodex-plugin/skills/review-spec/shared-review-scope-protocol.md
+index 333ce3bb..6cdc8696 100644
+--- a/kodex-plugin/skills/review-spec/shared-review-scope-protocol.md
++++ b/kodex-plugin/skills/review-spec/shared-review-scope-protocol.md
+@@ -1,6 +1,6 @@
+ ## Review scope protocol
+ 
+-Isolated reviewers see the diff and the design docs but have zero visibility into which tasks are done versus pending. Without scope, they flag code-that-isn't-written-yet as `MISSING_IMPL` (spec review) or as missing functionality (code review). This protocol defines a scope artifact both skills inject into their sub-agent and external-reviewer prompts.
++Reviewers need task status alongside the diff and design docs. Without scope, they flag code-that-isn't-written-yet as `MISSING_IMPL` (spec review) or as missing functionality (code review). Standard review uses this scope locally; isolated review injects the same artifact into sub-agent and external-reviewer prompts. The existing $kk:review-spec payload remains sufficient; no additional change-context record is required by this protocol.
+ 
+ ### Input shapes
+ 
+@@ -27,7 +27,7 @@ Out of scope (pending — DO NOT flag as missing):
+ - Task {id}: {title} — status: {pending|in-progress}
+ - [...more pending tasks]
+ 
+-The feature's design docs describe the full end state. Pending tasks are expected gaps in the current diff — treat their absence from the code as intentional, not as a finding. You may still flag issues within the in-scope tasks even if they reference pending tasks (e.g., a broken interface contract).
++The feature's design docs describe the full end state. Pending tasks are expected gaps in the current diff — treat their absence from the code as intentional, not as a finding. You may still flag issues within the in-scope tasks even if they reference pending tasks (e.g., a broken interface contract). Pending work does not excuse current regressions or incompatibility: assess whether the reviewed increment preserves existing flows and meets applicable delivery requirements. Genuinely unreachable unfinished paths need not be implemented merely because they are planned.
+ ```
+ 
+ When shape 3 applies, use:
+@@ -51,4 +51,6 @@ The reviewer prompt must also carry this instruction (agent definitions should s
+ 
+ - Do **not** report missing-implementation findings for items covered only by out-of-scope tasks.
+ - Do still report real issues *within* the in-scope tasks, including ones that affect future pending work (e.g., a public API the pending task will depend on is shaped wrongly).
++- A current consumer that already requires a pending provider change remains reviewable, including when the larger feature is disabled. Distinguish deployment from activation and check the actual affected paths; a flag or a future task alone proves neither reachability nor safety.
++- Attribute introduced/worsened behavior separately from inherited defects. Do not invent a current regression or require pending work when the increment remains compatible under its actual delivery contract.
+ - If a finding would be valid *only* after pending work lands, mention it under "Areas Not Covered" instead of the P0–P3 sections.
+diff --git a/test/test-plugin-structure.sh b/test/test-plugin-structure.sh
+index 387888a4..c60e64d5 100755
+--- a/test/test-plugin-structure.sh
++++ b/test/test-plugin-structure.sh
+@@ -112,6 +112,37 @@ for skill in brainstorm design; do
+   done
+ done
+ 
++# Functional-review packaging: only register consumers that already exist.
++# Implement joins this list when its change-context integration ships.
++CHANGE_CONTEXT_CONSUMERS=(review-code)
++
++log_test "Functional-review shared source and consumer links are valid"
++assert_file_exists "$REPO_ROOT/klaude-plugin/skills/_shared/change-context.md" \
++  "Shared change-context source exists"
++for skill in "${CHANGE_CONTEXT_CONSUMERS[@]}"; do
++  context_link="$REPO_ROOT/klaude-plugin/skills/$skill/shared-change-context.md"
++  if [[ -L "$context_link" ]]; then
++    assert_equals "../_shared/change-context.md" "$(readlink "$context_link")" \
++      "Change-context target for $skill"
++    assert_file_exists "$context_link" "Change-context link resolves for $skill"
++  else
++    log_fail "Not a symlink: $context_link"
++  fi
++done
++
++log_test "Functional-review instructions fit complete-file word budgets"
++for entry in "_shared/change-context.md:800" "review-code/functional-review.md:1200"; do
++  instruction_path="$REPO_ROOT/klaude-plugin/skills/${entry%:*}"
++  word_budget="${entry##*:}"
++  assert_file_exists "$instruction_path" "Instruction exists: ${entry%:*}"
++  word_count=$(LC_ALL=C wc -w < "$instruction_path")
++  if (( word_count > 0 && word_count <= word_budget )); then
++    log_pass "${entry%:*}: $word_count words within $word_budget-word budget"
++  else
++    log_fail "${entry%:*}: $word_count words outside 1–$word_budget budget"
++  fi
++done
++
+ # Eval oracle-staging invariant (CLAUDE.md §Skill evaluations): grader-only
+ # oracles live in a sibling oracle/ dir, never inside test-files/ — a harness
+ # that stages the whole test-files/ directory must not leak graded answers to
+@@ -443,6 +474,20 @@ else
+   log_fail "Dangling symlinks found: $dangling"
+ fi
+ 
++log_test "Generated change-context consumers match the generated shared source"
++assert_file_exists "$REPO_ROOT/kodex-plugin/skills/_shared/change-context.md" \
++  "Generated change-context source exists"
++assert_file_exists "$REPO_ROOT/kodex-plugin/skills/review-code/functional-review.md" \
++  "Generated functional-review method exists"
++for skill in "${CHANGE_CONTEXT_CONSUMERS[@]}"; do
++  if cmp -s "$REPO_ROOT/kodex-plugin/skills/_shared/change-context.md" \
++    "$REPO_ROOT/kodex-plugin/skills/$skill/shared-change-context.md"; then
++    log_pass "Generated change-context copy matches for $skill"
++  else
++    log_fail "Generated change-context copy missing or different for $skill"
++  fi
++done
++
+ log_test "No \${TOOLBOX_PLUGIN_ROOT} brace literals in generated kodex-plugin skills"
+ # The codex generator resolves the brace form to a relative path. Bare
+ # \$TOOLBOX_PLUGIN_ROOT (variable-name mentions) is allowed and intentional.
+diff --git a/klaude-plugin/skills/_shared/change-context.md b/klaude-plugin/skills/_shared/change-context.md
+new file mode 100644
+index 00000000..b381ab74
+--- /dev/null
++++ b/klaude-plugin/skills/_shared/change-context.md
+@@ -0,0 +1,30 @@
++# Change context
++
++Establish this context before implementation edits or review findings. It is a shared reasoning and handoff contract, not a mandatory new document. Scale it to the change: a few sentences for a helper fix, a compact scenario table for a cross-component mutation. Omit empty boilerplate; explain briefly why an operational dimension is irrelevant.
++
++## Minimum useful record
++
++| Field | Content |
++| --- | --- |
++| Intent and authority | Intended outcomes and constraints; source locations; explicit, inferred or unresolved status. |
++| Change boundary | Current task/request, resolved diff scope, candidate revision/worktree state, affected components and deliberately pending functionality. |
++| Existing behavior | Entry points, unchanged callers/consumers, state/data contracts and invariants to preserve. |
++| Delivery constraints | Applicable repository policy, independent/ordered deployment expectations, flags, migrations, prerequisites and accepted exceptions. |
++| Baselines | Review base and candidate; separately, relevant released/deployed revisions, configurations and data shapes; explicit unknowns. |
++| Scenarios and evidence | Success, boundaries, failure/retry and lifecycle cases that apply; source/test bindings, observed results and unverified conditions. |
++
++User decisions and applicable repository instructions establish requirements. Consult current design/task contracts and relevant linked issues without assuming an issue is newer or more authoritative. Explain consequential conflicts. Existing code establishes behavior, not product intent; tests can repeat an implementation's mistaken assumption. Without a specification, infer a provisional purpose from the request and inspected evidence and label it. Ask only when materially different interpretations prevent a useful judgment; continue independent investigation.
++
++Never equate the review base, local main, a stable tag and a deployed revision. Name the baseline actually inspected. Source compatibility with a tag does not verify a deployed environment. Missing documents or production access narrow conclusions; they neither disable functional reasoning nor create automatic access or approval requirements.
++
++## Producer and reviewer responsibilities
++
++The producer supplies facts with file/symbol or revision references, separating assumptions, accepted decisions and unavailable evidence. Author explanations and claimed test results remain attributed inputs, not independent verification. Reviewers challenge inferences and request specific missing evidence.
++
++Refresh affected fields after scope/requirement changes or review fixes. On resume, inspect current repository state rather than trusting a stale handoff. In plan mode, record dated observations, sources, proposals, accepted decisions and unresolved actions in the current task's labeled **Execution context** subsection in `tasks.md`. Observations do not amend specifications; requirement changes need explicit user authorization with source and rationale. Standalone context stays conversational unless material work is deferred: use existing tracking or a concise repository-local review note naming owner (or unassigned), reason, next action and verification condition.
++
++## Historical evidence
++
++When compatibility depends on source absent from candidate files or diff hunks, the parent workflow obtains the relevant local Git blob or bounded excerpt. For independent reviewers, materialize actual source in a read-only evidence bundle outside the reviewed worktree. Label repository identity, full revision, original path, blob/content hash, original line span and omitted/redacted extent. Distinguish historical source from candidate files and methodology; give both reviewers the same relevant evidence, not merely the author's summary.
++
++A reviewer requests further evidence by naming repository, revision, path/symbol and the comparison needed. The parent supplies available local source through resume/reinvoke with original context and provisional findings, and supplies equivalent relevant additions through PAL continuation. Retain request provenance. This does not require reviewer shell permissions or authorize otherwise unapproved network/production access. Unavailable source or an inconclusive bounded investigation leaves the specific conclusion **Unknown**, with the missing evidence and next action.
+diff --git a/klaude-plugin/skills/review-code/functional-review.md b/klaude-plugin/skills/review-code/functional-review.md
+new file mode 100644
+index 00000000..6174c801
+--- /dev/null
++++ b/klaude-plugin/skills/review-code/functional-review.md
+@@ -0,0 +1,48 @@
++# Functional and operational review
++
++Apply this common method after loading all instructions and resolved profile guidance. It complements SOLID, security and domain checklists on every change, including libraries, CLIs, infrastructure and agent instructions. Operational assessment applies where deployment, activation, persistence, startup, configuration or inter-component contracts are affected.
++
++## Trace the affected behavior
++
++1. Establish or reconstruct the record in [shared-change-context.md](shared-change-context.md). Determine intent, authority, task boundary, existing contracts and applicable delivery constraints before judging the approach. Use [shared-review-scope-protocol.md](shared-review-scope-protocol.md) to distinguish current work from genuinely pending functionality.
++2. Describe relevant behavior before and after the change. Trace changed entry points/callers through meaningful dependencies to responses, side effects or durable state. Include unchanged consumers whose expectations may now fail. Read adjacent source to answer an identified contract/impact question; stop expanding once its contract and consequence are established, or name the uncovered boundary. A file-count cap must not silently cut off a necessary trace.
++3. Exercise that model with concrete success and boundary scenarios. Where applicable, include partial failure, retries, edits between attempts, cleanup and later reuse. Check which tests actually exercise the claimed contract and failure path. Green implementation-shaped tests or successful transport/status responses do not prove a successful business operation. Distinguish inspected source, executed tests and unverified assumptions; do not claim execution from source-only access.
++4. Compare the approach with requirements and existing conventions. Challenge complexity by naming its cost and a simpler alternative preserving required behavior. Retain necessary retry/recovery guarantees. More abstraction is not inherently better; a hypothetical race is not automatically a new requirement.
++5. Assess relevant compatibility combinations below, then apply profile expertise and substantiate findings. One issue spanning several lenses remains one finding.
++
++These steps guide reasoning, not exhaustive category enumeration. Small changes remain small. For instruction changes, consumers may be another skill, an agent payload, a generator or a parser.
++
++## Compatibility and delivery
++
++Identify combinations required by the actual delivery policy: for example, new consumer/old provider, old consumer/new provider, partly migrated data, disabled configuration, mixed versions or rollback. Select relevant combinations rather than an indiscriminate Cartesian product. Apply the shared context's historical-evidence rules when the decisive source is absent locally from the candidate.
++
++Deployment, activation and migration are distinct operations. A flag supports safety only after checking all affected startup, read, write and consumer paths obey it. Pending tasks cannot excuse a broken current flow. Conversely, unreachable unfinished paths need not be implemented for an otherwise compatible increment to ship. A documented prerequisite does not satisfy an explicit independently-releasable-main requirement.
++
++Assess the reviewed increment first. Expand to a production-to-candidate comparison only when a requested release assessment or relevant inherited change requires it and the baseline is available. Attribute inherited defects separately; distinguish introduced or worsened failures from pre-existing ones and supported reachability from hypothetical incidents. Bound any release conclusion when the full candidate cannot be assessed.
++
++For each applicable dimension, state:
++
++- **Supported:** named scenarios and a named baseline support compatibility within stated evidence limits.
++- **Blocked:** demonstrated incompatibility or a known unmet delivery requirement prevents the stated release.
++- **Unknown:** material baseline, environment, consumer or data evidence is missing; name it and the next action.
++- **Not applicable:** no consequence for that dimension, with a reason.
++
++Supported is not a production guarantee. Missing evidence is not an invented code defect. Preserve existing P0–P3 severity according to actual impact; do not create a separate severity taxonomy.
++
++## Verdict mapping
++
++| Evidence | Code-review verdict | Release assessment |
++| --- | --- | --- |
++| In-scope incompatibility caused or worsened by the change | One impact-rated finding. REQUEST_CHANGES for P0/P1 or a violated hard acceptance/delivery requirement; otherwise COMMENT for an actionable nonblocking issue. | Blocked for the affected required combination. |
++| Known external rollout prerequisite, no demonstrated code defect | Assess code on its merits; APPROVE may be scoped explicitly to code. | Blocked until the prerequisite is met; document the dependency. |
++| Unknown evidence essential to task acceptance or an explicitly requested release conclusion | COMMENT absent a defect warranting REQUEST_CHANGES. Never unconditionally approve the unverified requirement. | Unknown; name missing evidence and next action. |
++| Unknown operational detail outside the requested/required assessment | Does not automatically downgrade a supported, explicitly scoped code verdict. | Unknown for that unassessed environment. |
++| Supported or Not applicable | Apply existing severity/finding rules; neither overrides another defect. | Retain named baseline and limits. |
++
++Code approval with conditional release readiness cannot bypass a hard independent-delivery requirement. An unmet hard requirement stays open unless the user explicitly changes it or accepts an exception, recorded with rationale and prerequisites.
++
++## Evidence-qualified reporting
++
++Every report, including one with findings, identifies intent, actual scope/base/candidate, inspected paths and important evidence limits. Include a compact behavior/compatibility assessment with applicable conclusions. For each behavioral finding provide trigger, affected path, expected/actual result, consequence and correction; preserve confidence reasoning, severity and profile/checklist labels. Separate inherited findings and author-attributed inputs.
++
++Record outstanding evidence or release/migration/activation prerequisites and next actions; name their durable tracking location when deferred. Preserve disagreement and uncertainty. Reviewer agreement never replaces source evidence. In isolated reporting, retain native external findings and annotations, disclose failures or zero/incomplete source coverage, and do not claim corroboration or broad safety from an underfed external result. Useful available findings remain reportable.
+diff --git a/klaude-plugin/skills/review-code/shared-change-context.md b/klaude-plugin/skills/review-code/shared-change-context.md
+new file mode 120000
+index 00000000..29b0b8a9
+--- /dev/null
++++ b/klaude-plugin/skills/review-code/shared-change-context.md
+@@ -0,0 +1 @@
++../_shared/change-context.md
+\ No newline at end of file
+diff --git a/kodex-plugin/skills/_shared/change-context.md b/kodex-plugin/skills/_shared/change-context.md
+new file mode 100644
+index 00000000..b381ab74
+--- /dev/null
++++ b/kodex-plugin/skills/_shared/change-context.md
+@@ -0,0 +1,30 @@
++# Change context
++
++Establish this context before implementation edits or review findings. It is a shared reasoning and handoff contract, not a mandatory new document. Scale it to the change: a few sentences for a helper fix, a compact scenario table for a cross-component mutation. Omit empty boilerplate; explain briefly why an operational dimension is irrelevant.
++
++## Minimum useful record
++
++| Field | Content |
++| --- | --- |
++| Intent and authority | Intended outcomes and constraints; source locations; explicit, inferred or unresolved status. |
++| Change boundary | Current task/request, resolved diff scope, candidate revision/worktree state, affected components and deliberately pending functionality. |
++| Existing behavior | Entry points, unchanged callers/consumers, state/data contracts and invariants to preserve. |
++| Delivery constraints | Applicable repository policy, independent/ordered deployment expectations, flags, migrations, prerequisites and accepted exceptions. |
++| Baselines | Review base and candidate; separately, relevant released/deployed revisions, configurations and data shapes; explicit unknowns. |
++| Scenarios and evidence | Success, boundaries, failure/retry and lifecycle cases that apply; source/test bindings, observed results and unverified conditions. |
++
++User decisions and applicable repository instructions establish requirements. Consult current design/task contracts and relevant linked issues without assuming an issue is newer or more authoritative. Explain consequential conflicts. Existing code establishes behavior, not product intent; tests can repeat an implementation's mistaken assumption. Without a specification, infer a provisional purpose from the request and inspected evidence and label it. Ask only when materially different interpretations prevent a useful judgment; continue independent investigation.
++
++Never equate the review base, local main, a stable tag and a deployed revision. Name the baseline actually inspected. Source compatibility with a tag does not verify a deployed environment. Missing documents or production access narrow conclusions; they neither disable functional reasoning nor create automatic access or approval requirements.
++
++## Producer and reviewer responsibilities
++
++The producer supplies facts with file/symbol or revision references, separating assumptions, accepted decisions and unavailable evidence. Author explanations and claimed test results remain attributed inputs, not independent verification. Reviewers challenge inferences and request specific missing evidence.
++
++Refresh affected fields after scope/requirement changes or review fixes. On resume, inspect current repository state rather than trusting a stale handoff. In plan mode, record dated observations, sources, proposals, accepted decisions and unresolved actions in the current task's labeled **Execution context** subsection in `tasks.md`. Observations do not amend specifications; requirement changes need explicit user authorization with source and rationale. Standalone context stays conversational unless material work is deferred: use existing tracking or a concise repository-local review note naming owner (or unassigned), reason, next action and verification condition.
++
++## Historical evidence
++
++When compatibility depends on source absent from candidate files or diff hunks, the parent workflow obtains the relevant local Git blob or bounded excerpt. For independent reviewers, materialize actual source in a read-only evidence bundle outside the reviewed worktree. Label repository identity, full revision, original path, blob/content hash, original line span and omitted/redacted extent. Distinguish historical source from candidate files and methodology; give both reviewers the same relevant evidence, not merely the author's summary.
++
++A reviewer requests further evidence by naming repository, revision, path/symbol and the comparison needed. The parent supplies available local source through resume/reinvoke with original context and provisional findings, and supplies equivalent relevant additions through PAL continuation. Retain request provenance. This does not require reviewer shell permissions or authorize otherwise unapproved network/production access. Unavailable source or an inconclusive bounded investigation leaves the specific conclusion **Unknown**, with the missing evidence and next action.
+diff --git a/kodex-plugin/skills/review-code/functional-review.md b/kodex-plugin/skills/review-code/functional-review.md
+new file mode 100644
+index 00000000..6174c801
+--- /dev/null
++++ b/kodex-plugin/skills/review-code/functional-review.md
+@@ -0,0 +1,48 @@
++# Functional and operational review
++
++Apply this common method after loading all instructions and resolved profile guidance. It complements SOLID, security and domain checklists on every change, including libraries, CLIs, infrastructure and agent instructions. Operational assessment applies where deployment, activation, persistence, startup, configuration or inter-component contracts are affected.
++
++## Trace the affected behavior
++
++1. Establish or reconstruct the record in [shared-change-context.md](shared-change-context.md). Determine intent, authority, task boundary, existing contracts and applicable delivery constraints before judging the approach. Use [shared-review-scope-protocol.md](shared-review-scope-protocol.md) to distinguish current work from genuinely pending functionality.
++2. Describe relevant behavior before and after the change. Trace changed entry points/callers through meaningful dependencies to responses, side effects or durable state. Include unchanged consumers whose expectations may now fail. Read adjacent source to answer an identified contract/impact question; stop expanding once its contract and consequence are established, or name the uncovered boundary. A file-count cap must not silently cut off a necessary trace.
++3. Exercise that model with concrete success and boundary scenarios. Where applicable, include partial failure, retries, edits between attempts, cleanup and later reuse. Check which tests actually exercise the claimed contract and failure path. Green implementation-shaped tests or successful transport/status responses do not prove a successful business operation. Distinguish inspected source, executed tests and unverified assumptions; do not claim execution from source-only access.
++4. Compare the approach with requirements and existing conventions. Challenge complexity by naming its cost and a simpler alternative preserving required behavior. Retain necessary retry/recovery guarantees. More abstraction is not inherently better; a hypothetical race is not automatically a new requirement.
++5. Assess relevant compatibility combinations below, then apply profile expertise and substantiate findings. One issue spanning several lenses remains one finding.
++
++These steps guide reasoning, not exhaustive category enumeration. Small changes remain small. For instruction changes, consumers may be another skill, an agent payload, a generator or a parser.
++
++## Compatibility and delivery
++
++Identify combinations required by the actual delivery policy: for example, new consumer/old provider, old consumer/new provider, partly migrated data, disabled configuration, mixed versions or rollback. Select relevant combinations rather than an indiscriminate Cartesian product. Apply the shared context's historical-evidence rules when the decisive source is absent locally from the candidate.
++
++Deployment, activation and migration are distinct operations. A flag supports safety only after checking all affected startup, read, write and consumer paths obey it. Pending tasks cannot excuse a broken current flow. Conversely, unreachable unfinished paths need not be implemented for an otherwise compatible increment to ship. A documented prerequisite does not satisfy an explicit independently-releasable-main requirement.
++
++Assess the reviewed increment first. Expand to a production-to-candidate comparison only when a requested release assessment or relevant inherited change requires it and the baseline is available. Attribute inherited defects separately; distinguish introduced or worsened failures from pre-existing ones and supported reachability from hypothetical incidents. Bound any release conclusion when the full candidate cannot be assessed.
++
++For each applicable dimension, state:
++
++- **Supported:** named scenarios and a named baseline support compatibility within stated evidence limits.
++- **Blocked:** demonstrated incompatibility or a known unmet delivery requirement prevents the stated release.
++- **Unknown:** material baseline, environment, consumer or data evidence is missing; name it and the next action.
++- **Not applicable:** no consequence for that dimension, with a reason.
++
++Supported is not a production guarantee. Missing evidence is not an invented code defect. Preserve existing P0–P3 severity according to actual impact; do not create a separate severity taxonomy.
++
++## Verdict mapping
++
++| Evidence | Code-review verdict | Release assessment |
++| --- | --- | --- |
++| In-scope incompatibility caused or worsened by the change | One impact-rated finding. REQUEST_CHANGES for P0/P1 or a violated hard acceptance/delivery requirement; otherwise COMMENT for an actionable nonblocking issue. | Blocked for the affected required combination. |
++| Known external rollout prerequisite, no demonstrated code defect | Assess code on its merits; APPROVE may be scoped explicitly to code. | Blocked until the prerequisite is met; document the dependency. |
++| Unknown evidence essential to task acceptance or an explicitly requested release conclusion | COMMENT absent a defect warranting REQUEST_CHANGES. Never unconditionally approve the unverified requirement. | Unknown; name missing evidence and next action. |
++| Unknown operational detail outside the requested/required assessment | Does not automatically downgrade a supported, explicitly scoped code verdict. | Unknown for that unassessed environment. |
++| Supported or Not applicable | Apply existing severity/finding rules; neither overrides another defect. | Retain named baseline and limits. |
++
++Code approval with conditional release readiness cannot bypass a hard independent-delivery requirement. An unmet hard requirement stays open unless the user explicitly changes it or accepts an exception, recorded with rationale and prerequisites.
++
++## Evidence-qualified reporting
++
++Every report, including one with findings, identifies intent, actual scope/base/candidate, inspected paths and important evidence limits. Include a compact behavior/compatibility assessment with applicable conclusions. For each behavioral finding provide trigger, affected path, expected/actual result, consequence and correction; preserve confidence reasoning, severity and profile/checklist labels. Separate inherited findings and author-attributed inputs.
++
++Record outstanding evidence or release/migration/activation prerequisites and next actions; name their durable tracking location when deferred. Preserve disagreement and uncertainty. Reviewer agreement never replaces source evidence. In isolated reporting, retain native external findings and annotations, disclose failures or zero/incomplete source coverage, and do not claim corroboration or broad safety from an underfed external result. Useful available findings remain reportable.
+diff --git a/kodex-plugin/skills/review-code/shared-change-context.md b/kodex-plugin/skills/review-code/shared-change-context.md
+new file mode 100644
+index 00000000..b381ab74
+--- /dev/null
++++ b/kodex-plugin/skills/review-code/shared-change-context.md
+@@ -0,0 +1,30 @@
++# Change context
++
++Establish this context before implementation edits or review findings. It is a shared reasoning and handoff contract, not a mandatory new document. Scale it to the change: a few sentences for a helper fix, a compact scenario table for a cross-component mutation. Omit empty boilerplate; explain briefly why an operational dimension is irrelevant.
++
++## Minimum useful record
++
++| Field | Content |
++| --- | --- |
++| Intent and authority | Intended outcomes and constraints; source locations; explicit, inferred or unresolved status. |
++| Change boundary | Current task/request, resolved diff scope, candidate revision/worktree state, affected components and deliberately pending functionality. |
++| Existing behavior | Entry points, unchanged callers/consumers, state/data contracts and invariants to preserve. |
++| Delivery constraints | Applicable repository policy, independent/ordered deployment expectations, flags, migrations, prerequisites and accepted exceptions. |
++| Baselines | Review base and candidate; separately, relevant released/deployed revisions, configurations and data shapes; explicit unknowns. |
++| Scenarios and evidence | Success, boundaries, failure/retry and lifecycle cases that apply; source/test bindings, observed results and unverified conditions. |
++
++User decisions and applicable repository instructions establish requirements. Consult current design/task contracts and relevant linked issues without assuming an issue is newer or more authoritative. Explain consequential conflicts. Existing code establishes behavior, not product intent; tests can repeat an implementation's mistaken assumption. Without a specification, infer a provisional purpose from the request and inspected evidence and label it. Ask only when materially different interpretations prevent a useful judgment; continue independent investigation.
++
++Never equate the review base, local main, a stable tag and a deployed revision. Name the baseline actually inspected. Source compatibility with a tag does not verify a deployed environment. Missing documents or production access narrow conclusions; they neither disable functional reasoning nor create automatic access or approval requirements.
++
++## Producer and reviewer responsibilities
++
++The producer supplies facts with file/symbol or revision references, separating assumptions, accepted decisions and unavailable evidence. Author explanations and claimed test results remain attributed inputs, not independent verification. Reviewers challenge inferences and request specific missing evidence.
++
++Refresh affected fields after scope/requirement changes or review fixes. On resume, inspect current repository state rather than trusting a stale handoff. In plan mode, record dated observations, sources, proposals, accepted decisions and unresolved actions in the current task's labeled **Execution context** subsection in `tasks.md`. Observations do not amend specifications; requirement changes need explicit user authorization with source and rationale. Standalone context stays conversational unless material work is deferred: use existing tracking or a concise repository-local review note naming owner (or unassigned), reason, next action and verification condition.
++
++## Historical evidence
++
++When compatibility depends on source absent from candidate files or diff hunks, the parent workflow obtains the relevant local Git blob or bounded excerpt. For independent reviewers, materialize actual source in a read-only evidence bundle outside the reviewed worktree. Label repository identity, full revision, original path, blob/content hash, original line span and omitted/redacted extent. Distinguish historical source from candidate files and methodology; give both reviewers the same relevant evidence, not merely the author's summary.
++
++A reviewer requests further evidence by naming repository, revision, path/symbol and the comparison needed. The parent supplies available local source through resume/reinvoke with original context and provisional findings, and supplies equivalent relevant additions through PAL continuation. Retain request provenance. This does not require reviewer shell permissions or authorize otherwise unapproved network/production access. Unavailable source or an inconclusive bounded investigation leaves the specific conclusion **Unknown**, with the missing evidence and next action.
