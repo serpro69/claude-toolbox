@@ -1,0 +1,28 @@
+{
+  "actor": "items-01a125ce-52c3-7473-92f5-293bac28ca2f",
+  "completedAtMs": 1791635741352,
+  "id": "exec-bcea9477-6c88-4507-acb9-6454431b12c5",
+  "item": {
+    "aggregatedOutput": "Client raised: Provider did not acknowledge applied settings\nProvider storage: {'w': {'label': 'blue'}}\nSent requests: [{'settings': {'label': 'blue'}, 'require_receipt': True}]\n",
+    "command": "/usr/bin/zsh -lc \"python3 -B - <<'PY'\nimport subprocess\nfrom client import save_settings\n\nprovider = {}\nexec(compile(subprocess.check_output(['git', 'show', 'eval-release:provider/settings.py'], text=True), 'eval-release:provider/settings.py', 'exec'), provider)\nstore = {}\nrequests = []\ndef send(workspace_id, request):\n    requests.append(request)\n    return provider['update_settings'](store, workspace_id, request)\n\ntry:\n    result = save_settings(send, 'w', {'label': 'blue'})\n    print('Client result:', result)\nexcept RuntimeError as error:\n    print('Client raised:', error)\nprint('Provider storage:', store)\nprint('Sent requests:', requests)\nPY\"",
+    "commandActions": [
+      {
+        "command": "python3 -B - <<'PY'\nimport subprocess\nfrom client import save_settings\n\nprovider = {}\nexec(compile(subprocess.check_output(['git', 'show', 'eval-release:provider/settings.py'], text=True), 'eval-release:provider/settings.py', 'exec'), provider)\nstore = {}\nrequests = []\ndef send(workspace_id, request):\n    requests.append(request)\n    return provider['update_settings'](store, workspace_id, request)\n\ntry:\n    result = save_settings(send, 'w', {'label': 'blue'})\n    print('Client result:', result)\nexcept RuntimeError as error:\n    print('Client raised:', error)\nprint('Provider storage:', store)\nprint('Sent requests:', requests)\nPY",
+        "type": "unknown"
+      }
+    ],
+    "cwd": "/tmp/functional-review-2b-r3-1-20261010",
+    "durationMs": 66,
+    "exitCode": 0,
+    "id": "exec-bcea9477-6c88-4507-acb9-6454431b12c5",
+    "pluginId": null,
+    "processId": "40883",
+    "scriptPath": null,
+    "source": "unifiedExecStartup",
+    "status": "completed",
+    "type": "commandExecution"
+  },
+  "source_file": "items-01a125ce-52c3-7473-92f5-293bac28ca2f.json",
+  "startedAtMs": 1791635741285,
+  "turnId": "01a125ce-52f2-71c1-806a-98f9b170edec"
+}

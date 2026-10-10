@@ -1,0 +1,28 @@
+{
+  "actor": "items-01a125d3-808b-7793-ab95-52fe40107cad",
+  "completedAtMs": 1791636030983,
+  "id": "exec-9f5bdbb6-abdd-41cc-afdf-8d06108128db",
+  "item": {
+    "aggregatedOutput": "diff --git a/client.py b/client.py\nindex d6ddf4b..910e877 100644\n--- a/client.py\n+++ b/client.py\n@@ -1,5 +1,7 @@\n def save_settings(send, workspace_id, values, enhanced_settings=False):\n-    response = send(workspace_id, {\"settings\": values})\n+    response = send(workspace_id, {\"settings\": values, \"require_receipt\": True})\n     if not response.get(\"ok\"):\n         raise RuntimeError(\"Settings save failed\")\n+    if response.get(\"applied\") is not True:\n+        raise RuntimeError(\"Provider did not acknowledge applied settings\")\n     return {\"saved\": True, \"enhanced\": enhanced_settings}\ndiff --git a/tests/test_client.py b/tests/test_client.py\nindex 39ea461..f1dfc4f 100644\n--- a/tests/test_client.py\n+++ b/tests/test_client.py\n@@ -5,6 +5,6 @@ from client import save_settings\n class SettingsTests(unittest.TestCase):\n     def test_successful_save(self):\n         def send(workspace, request):\n-            return {\"ok\": True}\n+            return {\"ok\": True, \"applied\": True}\n         self.assertEqual(save_settings(send, \"w\", {\"label\": \"blue\"}),\n                          {\"saved\": True, \"enhanced\": False})\ndef save_settings(send, workspace_id, values, enhanced_settings=False):\n    response = send(workspace_id, {\"settings\": values, \"require_receipt\": True})\n    if not response.get(\"ok\"):\n        raise RuntimeError(\"Settings save failed\")\n    if response.get(\"applied\") is not True:\n        raise RuntimeError(\"Provider did not acknowledge applied settings\")\n    return {\"saved\": True, \"enhanced\": enhanced_settings}\nimport unittest\nfrom client import save_settings\n\n\nclass SettingsTests(unittest.TestCase):\n    def test_successful_save(self):\n        def send(workspace, request):\n            return {\"ok\": True, \"applied\": True}\n        self.assertEqual(save_settings(send, \"w\", {\"label\": \"blue\"}),\n                         {\"saved\": True, \"enhanced\": False})\n# Settings client\n\nPython 3.9+, standard library only. Tests: `python3 -B -m unittest discover -s tests`.\nThe client and provider ship independently. Every merged client increment must\nsupport the released provider at Git tag `eval-release`, including ordinary\nsettings saves while enhanced_settings is false. `provider/settings.py` at that\ntag is the supported provider source. Provider sources moved out of this\ncheckout after that release; local Git retains the release snapshot.\nA successful settings save means values were applied and the caller sees success.\nThe candidate provider is not deployed and a pending provider task cannot change\nthe supported baseline. No live environment is available or required here.\n# Enhanced settings\n\nOrdinary saves must continue to work with the supported provider at eval-release.\nThe enhanced UI is disabled by default. Add an application receipt to the protocol\nin client and provider increments while preserving independently releasable main.\n# Implementation\n\nTask 1 adds client-side receipt handling and its unit test. Task 2 will add\nprovider receipts in the separate provider repository. Review only the current\nclient increment; the shared delivery contract still applies.\n# Tasks\n\n## Task 1: Client receipt handling\n- **Status:** done\n- client.py and tests/test_client.py\n\n## Task 2: Provider receipts\n- **Status:** pending\n- Separate provider repository; not part of this diff.\ntests/test_client.py\nclient.py\n## master\nM  client.py\nM  tests/test_client.py\n",
+    "command": "/usr/bin/zsh -lc \"git diff --cached; cat client.py tests/test_client.py README.md docs/feat/wip/enhanced-settings/design.md docs/feat/wip/enhanced-settings/implementation.md docs/feat/wip/enhanced-settings/tasks.md; rg --files -g '*.py' -g 'AGENTS.md' -g '\"'!plugins/**'\"'; git status -sb\"",
+    "commandActions": [
+      {
+        "command": "git diff --cached; cat client.py tests/test_client.py README.md docs/feat/wip/enhanced-settings/design.md docs/feat/wip/enhanced-settings/implementation.md docs/feat/wip/enhanced-settings/tasks.md; rg --files -g '*.py' -g 'AGENTS.md' -g '!plugins/**'; git status -sb",
+        "type": "unknown"
+      }
+    ],
+    "cwd": "/tmp/functional-review-2b-r3-2-20261010",
+    "durationMs": 143,
+    "exitCode": 0,
+    "id": "exec-9f5bdbb6-abdd-41cc-afdf-8d06108128db",
+    "pluginId": null,
+    "processId": "18277",
+    "scriptPath": null,
+    "source": "unifiedExecStartup",
+    "status": "completed",
+    "type": "commandExecution"
+  },
+  "source_file": "items-01a125d3-808b-7793-ab95-52fe40107cad.json",
+  "startedAtMs": 1791636030839,
+  "turnId": "01a125d3-80bf-7f41-9e7d-2b1a7dbbdd42"
+}

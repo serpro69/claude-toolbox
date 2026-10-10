@@ -1,8 +1,8 @@
 # Functional and operational review
 
 > Issue: [#166](https://github.com/serpro69/claude-toolbox/issues/166)
-> Status: evaluation preparation in progress; operative implementation pending
-> Revised: 2026-10-09 with user-approved evaluation sequencing and conditional evidence fallback
+> Status: implementation slices and baseline capture complete; candidate acceptance and final verification pending
+> Revised: 2026-10-10 with gate 2B closed under the selected receipt/use contract
 > Review disposition: [Consolidated assessment](reviews/design-review-consolidation.md)
 > Evaluation contract: [evaluation.md](evaluation.md)
 > Implementation: [implementation.md](implementation.md)
@@ -13,7 +13,7 @@
 
 The user repeatedly needed to ask whether completed implementation met requirements and whether an intermediate release would break production. Subsequent reviews found valid defects despite earlier checks passing. The desired outcome is for /kk:review-code and /kk:implement to perform that reasoning without those additional prompts.
 
-The current workflow contains correctness, reliability and surrounding-code guidance, but its organizing activity is applying profile checklists. Standard review makes caller and contract investigation conditional on "if needed". Isolated review explicitly falls back to "code quality alone" without specification context. Its external-review preparation selects nearby files rather than the complete affected behavior. /kk:implement requires a completed code review but supplies no common record of intended behavior, compatibility constraints or evidence limits.
+At the c2d28c9e baseline, the workflow contains correctness, reliability and surrounding-code guidance, but its organizing activity is applying profile checklists. Standard review makes caller and contract investigation conditional on "if needed". Isolated review explicitly falls back to "code quality alone" without specification context. Its external-review preparation selects nearby files rather than the complete affected behavior. /kk:implement requires a completed code review but supplies no common record of intended behavior, compatibility constraints or evidence limits.
 
 The task-scope protocol correctly prevents reports of unfinished future work as missing implementation. It needs an explicit distinction between those expected gaps and a current increment that breaks an existing flow while awaiting future work.
 
@@ -40,7 +40,7 @@ After this change:
 
 Acceptance uses the scenarios in [Evaluation](#evaluation) and the binding/grading rules in [evaluation.md](evaluation.md). Every assertions[] entry in a new full-workflow eval is required; optional observations live outside that array. Predeclare model, modes and fixture revisions, then run two independent fresh sessions per baseline/candidate case and mode. All required candidate assertions must pass in both runs; a missing trace is not a pass. Retain failures and report observed results without claiming statistical reliability. There is no promise of zero missed bugs, no target finding count, and no claim that static structure tests establish behavioral quality.
 
-The user-approved [2026-10-09 amendment](verification/run-contract-2026-10-09.md) separates implementation readiness from final verification. Task 2 gate 2A is complete; Tasks 3–11 may proceed while gate 2B retains the four missing Codex baseline captures as a prerequisite for Task 12 and feature completion. The baseline remains immutable. One bounded capture investigation precedes any versioned fallback to observable reviewer receipt/use; that fallback must disclose that exact submitted prompt content remains unverified. Neither the existing captures nor this sequencing decision establishes behavioral acceptance.
+The user-approved [2026-10-09 amendment](verification/run-contract-2026-10-09.md) separates implementation readiness from final verification. Both Task 2 gates are now complete: the [2026-10-10 gate 2B record](verification/task2b/README.md) preserves the bounded investigation, selected revision-2 receipt/use contract and four new Codex baselines against the immutable actor revision. Exact submitted prompt content remains unverified. Tasks 1–11 are complete; Task 12's candidate comparison matrix and Task 13's final verification remain pending. Baseline capture completion does not establish behavioral acceptance.
 
 ## Scope and ownership
 

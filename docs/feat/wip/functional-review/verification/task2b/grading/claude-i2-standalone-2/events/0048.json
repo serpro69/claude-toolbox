@@ -1,0 +1,12 @@
+{
+  "actor": "main",
+  "block": {
+    "content": "1\t# Python \u2014 test guidance\n2\t\n3\tConsumed by `/kk:test` when `.py` or `.pyi` files activate the Python profile. Load both core files and any matching conditional guidance before running checks. The validator protocol selects the project's existing tools and checks their availability in the chosen environment.\n4\t\n5\tResolve the conditional using planned tests and bounded signal inspection of in-scope Python files and their relevant tests. Include unchanged enclosing declarations. Comments, docstrings, string literals, an installed package alone, and unrelated files do not satisfy code signals.\n6\t\n7\t## Always load\n8\t\n9\t- [testing.md](testing.md) \u2014 Behavioral coverage, isolation, fixtures, mocks, and meaningful assertions.\n10\t- [validators.md](validators.md) \u2014 Project-aware runner selection, environment checks, configured validators, and accurate result reporting.\n11\t\n12\t## Conditional\n13\t\n14\t- [async.md](async.md) \u2014 Async test execution, fixture lifetimes, cancellation, and cleanup assertions. **Load if:** in-scope `.py` or `.pyi` files or their relevant tests contain, or the planned tests introduce, `async def`, `await`, `async for`, or `async with`; imports of `asyncio`, `anyio`, `trio`, or `pytest_asyncio` via `import` or `from` (including submodules and aliases); or `IsolatedAsyncioTestCase` or `AsyncMock` imports/usages. Also load when the applicable pytest configuration explicitly sets `asyncio_mode` or `anyio_mode`, or relevant tests use `pytest.mark.asyncio`, `pytest.mark.anyio`, or `pytest.mark.trio` (including imported aliases).\n15\t",
+    "tool_use_id": "toolu_019AgdDbsShxQznXS4KH3zU6",
+    "type": "tool_result"
+  },
+  "id": "e88.0",
+  "parent_tool_use_id": null,
+  "session_id": "5160257a-e96d-4ed7-b3a2-e699343e4f9a",
+  "source_sequence": 88
+}

@@ -1,0 +1,28 @@
+{
+  "actor": "items-01a125ce-6445-7cf0-ba86-a744775bbbbc",
+  "completedAtMs": 1791635770832,
+  "id": "exec-a7ece95c-ffb3-4b7e-a881-5be5ee98283a",
+  "item": {
+    "aggregatedOutput": "def patch_settings(current, patch):\n    result = dict(current)\n    for key, value in patch.items():\n        result[key] = value\n    return result\nfrom settings import patch_settings\n\n\ndef update_preferences(current, payload):\n    patch = {key: payload[key] for key in (\"note\", \"enabled\") if key in payload}\n    return patch_settings(current, patch)\nfrom settings import patch_settings\n\n\ndef clear_note(current):\n    return patch_settings(current, {\"note\": None})\nimport unittest\nfrom api import update_preferences\nfrom cli import clear_note\nfrom settings import patch_settings\n\n\nclass SettingsTests(unittest.TestCase):\n    def test_updates_note(self):\n        original = {\"note\": \"before\", \"enabled\": True}\n        result = update_preferences(original, {\"note\": \"after\"})\n        self.assertEqual(result, {\"note\": \"after\", \"enabled\": True})\n        self.assertEqual(original[\"note\"], \"before\")\n\n    def test_explicit_values_replace_current_values(self):\n        for value in (None, \"\", False, 0, [], {}, \"after\"):\n            with self.subTest(value=value):\n                original = {\"note\": \"before\", \"enabled\": True}\n                patch = {\"note\": value}\n\n                result = patch_settings(original, patch)\n\n                self.assertEqual(result, {\"note\": value, \"enabled\": True})\n                self.assertIs(result[\"note\"], value)\n                self.assertEqual(original, {\"note\": \"before\", \"enabled\": True})\n                self.assertEqual(patch, {\"note\": value})\n                self.assertIsNot(result, original)\n                self.assertIsNot(result, patch)\n\n    def test_empty_patch_preserves_all_current_values(self):\n        original = {\"note\": None, \"enabled\": False, \"label\": \"\"}\n        patch = {}\n\n        result = patch_settings(original, patch)\n\n        self.assertEqual(result, {\"note\": None, \"enabled\": False, \"label\": \"\"})\n        self.assertIsNot(result, original)\n        self.assertEqual(patch, {})\n\n    def test_patch_adds_new_keys_with_falsey_values(self):\n        original = {}\n        patch = {\"note\": None, \"enabled\": False, \"label\": \"\"}\n\n        result = patch_settings(original, patch)\n\n        self.assertEqual(result, {\"note\": None, \"enabled\": False, \"label\": \"\"})\n        self.assertEqual(original, {})\n        self.assertEqual(patch, {\"note\": None, \"enabled\": False, \"label\": \"\"})\n\n    def test_api_accepts_explicit_empty_values(self):\n        cases = (\n            ({\"note\": None}, {\"note\": None, \"enabled\": True}),\n            ({\"note\": \"\"}, {\"note\": \"\", \"enabled\": True}),\n            ({\"enabled\": False}, {\"note\": \"before\", \"enabled\": False}),\n        )\n        for payload, expected in cases:\n            with self.subTest(payload=payload):\n                original = {\"note\": \"before\", \"enabled\": True}\n                payload_before = dict(payload)\n\n                result = update_preferences(original, payload)\n\n                self.assertEqual(result, expected)\n                self.assertEqual(original, {\"note\": \"before\", \"enabled\": True})\n                self.assertEqual(payload, payload_before)\n\n    def test_cli_clears_note(self):\n        original = {\"note\": \"before\", \"enabled\": True}\n\n        result = clear_note(original)\n\n        self.assertEqual(result, {\"note\": None, \"enabled\": True})\n        self.assertEqual(original, {\"note\": \"before\", \"enabled\": True})\n# Workspace preferences\n\nPython 3.9+, standard library only. Run `python3 -B -m unittest discover -s tests`.\nThe HTTP patch handler and command-line note action share settings.patch_settings.\nCallers own their input dictionaries. A patch contains only explicitly supplied\nkeys. The optional note accepts text or None; the enabled flag is boolean.\n\n`patch_settings` returns a new dictionary without modifying either input.\nOmitted keys keep their current values; supplied values replace them, including\n`None`, empty text (`\"\"`), and `False`.\n M README.md\n M settings.py\n M tests/test_settings.py\n",
+    "command": "/usr/bin/zsh -lc 'cat settings.py api.py cli.py tests/test_settings.py README.md\ngit status --short'",
+    "commandActions": [
+      {
+        "command": "cat settings.py api.py cli.py tests/test_settings.py README.md\ngit status --short",
+        "type": "unknown"
+      }
+    ],
+    "cwd": "/tmp/functional-review-2b-i2-1-20261010",
+    "durationMs": 46,
+    "exitCode": 0,
+    "id": "exec-a7ece95c-ffb3-4b7e-a881-5be5ee98283a",
+    "pluginId": null,
+    "processId": "18978",
+    "scriptPath": null,
+    "source": "unifiedExecStartup",
+    "status": "completed",
+    "type": "commandExecution"
+  },
+  "source_file": "items-01a125ce-6445-7cf0-ba86-a744775bbbbc.json",
+  "startedAtMs": 1791635770784,
+  "turnId": "01a125ce-6476-7973-85f5-1d80c9f7a83c"
+}

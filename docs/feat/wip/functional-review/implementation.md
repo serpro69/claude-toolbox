@@ -4,14 +4,14 @@
 > Evaluation: [evaluation.md](evaluation.md)
 > Tasks: [tasks.md](tasks.md)
 > Review disposition: [consolidated assessment](reviews/design-review-consolidation.md)
-> Status: planned; no operative skill changes implemented
-> Revised: 2026-10-09; implementation may proceed after Task 2 gate 2A
+> Status: Tasks 1–11 complete; candidate comparisons and final verification pending
+> Revised: 2026-10-10; Task 2 gate 2B closed under the selected receipt/use contract
 
 ## Starting points
 
 Canonical changes belong under klaude-plugin/. Current entry points are review-code/SKILL.md, review-process.md and review-isolated.md; agents/code-reviewer.md; implement/SKILL.md, plan-mode.md and standalone-mode.md. Shared review-scope-protocol.md also serves /kk:review-spec; pal-codereview-invocation.md also serves /kk:review-design. Preserve those consumers.
 
-The immutable actor baseline is c2d28c9e (v0.23.0), resolved to a full commit when runs are prepared. Task 2 gate 2A preserves the final seed fixtures, frozen inputs and 16 existing baseline captures before operative changes. The four missing Codex baselines belong to gate 2B and may run against the preserved baseline after development starts. The installed cache and an intermediate Task 4 working tree are not valid substitutes. [Evaluation binding](evaluation.md#bind-the-actual-instructions) specifies entry-point, runtime-root and agent loading.
+The immutable actor baseline is c2d28c9e (v0.23.0), resolved to a full commit when runs are prepared. Task 2 gate 2A preserves the final seed fixtures, frozen inputs and 16 baseline captures from before operative changes. Gate 2B adds four fresh Codex baselines against that same preserved actor revision under the selected revision-2 contract. The installed normal cache and an intermediate Task 4 working tree are not valid substitutes. [Evaluation binding](evaluation.md#bind-the-actual-instructions) specifies entry-point, runtime-root and agent loading.
 
 ## Delivery and verification rules
 
@@ -25,9 +25,9 @@ Use source-relative links and local shared symlinks. Distributed instructions ex
 
 Task 1 establishes the revision-bound launch probes and run contract. It builds filtered actor bundles, scans bundles/cache copies for evaluator material, and proves per-run Capy/fixture isolation before any measured run. Operative files retain their original bytes; normal plugin distribution is unchanged. Task 2 owns the final seed fixtures R1/R3/I1/I2. It creates their complete eval.json, paired snapshot layout where applicable, and separate oracle directories before capturing standard, isolated, plan and standalone runs. The source/fixture identity and provider-specific launch probes are defined in [evaluation.md](evaluation.md#comparison-identity-and-acceptance).
 
-The user-approved [2026-10-09 amendment](verification/run-contract-2026-10-09.md) separates implementation readiness (2A, done) from capture completion (2B, open). Tasks 3–11 may proceed in their existing order. Task 12 and feature completion still wait for 2B. Keep Task 2 in progress; do not relabel its missing runs as passes.
+The user-approved [2026-10-09 amendment](verification/run-contract-2026-10-09.md) separates implementation readiness from capture completion. Both gates are now done. The [gate 2B completion record](verification/task2b/README.md) retains four new Codex captures, independent grades and the revised evidence contract. Task 12 is next; observed baseline failures are data, not candidate passes.
 
-The implementing agent owns one bounded investigation of a supported capture alternative and, if it cannot expose plaintext, a versioned fallback based on independently observable reviewer receipt and use. Follow [the resolution procedure](evaluation.md#codex-handoff-capture-resolution) before launching the four missing Codex baselines. The fallback narrows the claim about prompt content; it retains both reviewers, all required behavior and the two-run candidate threshold. Record the selected evidence path, assertion mapping and configuration before its batch.
+The implementing agent completed [the resolution procedure](evaluation.md#codex-handoff-capture-resolution): no viable supported plaintext alternative was found, so revision 2 selected observable reviewer receipt/use before measurement. The fallback narrows the claim about prompt content; it retains both reviewers, all required behavior and the two-run candidate threshold. [The run contract](verification/task2b/run-contract.md) records the selected path, assertion mapping and configuration. Future comparisons must match that declaration or recapture affected pairs under a new one.
 
 Capture raw execution evidence; the workflow grader introduced later grades the preserved package. Preserve the original rubric, freeze and sealed records. Pin any successor rubric and the concrete grader implementation before grading either side. A rubric change requires regrading both sides, and recapturing both if saved evidence is insufficient. A runtime/model/tool-policy change requires a revised run contract and fresh affected baseline/candidate comparisons under the same configuration; developing the candidate does not change the identity of the preserved baseline.
 
