@@ -1,0 +1,19 @@
+{
+  "actor": "main",
+  "block": {
+    "caller": {
+      "type": "direct"
+    },
+    "id": "toolu_01M5Nfc7KbaJLLv4qgxcpz3D",
+    "input": {
+      "content": "Pattern: idempotency/recovery key silently narrowed. In an idempotent save-with-recovery function, the dedup lookup was changed from a keyed get on the idempotency key (operation_id, the dict key) to a linear scan matching a coarser attribute (workspace). Consequences to watch for whenever a lookup key changes: (1) Lost update \u2014 once ANY record exists for the coarser key, subsequent calls take the \"found\" branch and apply the stored record's values, silently dropping the caller's freshly-passed values while still returning success. (2) Response/state inconsistency \u2014 the function returns the caller's operation_id but the persisted record carries a different operation_id and is never stored under the new key. (3) O(1) keyed lookup degrades to O(n) scan over an unbounded dict. Review rule: when an idempotency/dedup key is broadened or an apply becomes conditional (e.g. `if status == \"pending\"`), trace what happens to a NEW request that matches an EXISTING record \u2014 confirm the new inputs are not silently discarded.",
+      "source": "kk:review-findings"
+    },
+    "name": "mcp__capy__capy_index",
+    "type": "tool_use"
+  },
+  "id": "e114.0",
+  "parent_tool_use_id": null,
+  "session_id": "b5ddeb26-b56d-43f9-82ff-ca9ed266872c",
+  "source_sequence": 114
+}

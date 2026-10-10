@@ -1,0 +1,50 @@
+2026-10-10 16:14:13,990 - root - INFO - Logging to: /home/sergio/.cache/uv/archive-v0/tA__Bny_AWlVfU9_18s9G/lib/python3.12/site-packages/logs/mcp_server.log
+2026-10-10 16:14:13,991 - root - INFO - Process PID: 1419580
+2026-10-10 16:14:13,991 - server - DEBUG - PAL_MCP_FORCE_ENV_OVERRIDE disabled - system environment variables take precedence
+2026-10-10 16:14:13,991 - mcp.server.lowlevel.server - DEBUG - Initializing server 'pal-server'
+2026-10-10 16:14:13,991 - clink.registry - DEBUG - Loaded CLI configuration for 'claude' from /home/sergio/.cache/uv/archive-v0/tA__Bny_AWlVfU9_18s9G/lib/python3.12/site-packages/conf/cli_clients/claude.json
+2026-10-10 16:14:13,992 - clink.registry - DEBUG - Loaded CLI configuration for 'codex' from /home/sergio/.cache/uv/archive-v0/tA__Bny_AWlVfU9_18s9G/lib/python3.12/site-packages/conf/cli_clients/codex.json
+2026-10-10 16:14:13,992 - clink.registry - DEBUG - Loaded CLI configuration for 'gemini' from /home/sergio/.cache/uv/archive-v0/tA__Bny_AWlVfU9_18s9G/lib/python3.12/site-packages/conf/cli_clients/gemini.json
+2026-10-10 16:14:13,992 - clink.registry - DEBUG - Configuration path does not exist: /home/sergio/.pal/cli_clients
+2026-10-10 16:14:13,992 - server - INFO - All tools enabled (DISABLED_TOOLS not set)
+2026-10-10 16:14:13,992 - mcp.server.lowlevel.server - DEBUG - Registering handler for ListToolsRequest
+2026-10-10 16:14:13,992 - mcp.server.lowlevel.server - DEBUG - Registering handler for CallToolRequest
+2026-10-10 16:14:13,992 - mcp.server.lowlevel.server - DEBUG - Registering handler for PromptListRequest
+2026-10-10 16:14:13,992 - mcp.server.lowlevel.server - DEBUG - Registering handler for GetPromptRequest
+2026-10-10 16:14:13,993 - asyncio - DEBUG - Using selector: EpollSelector
+2026-10-10 16:14:13,993 - server - DEBUG - Checking environment variables for API keys...
+2026-10-10 16:14:13,993 - server - DEBUG -   OPENAI_API_KEY: [MISSING]
+2026-10-10 16:14:13,993 - server - DEBUG -   OPENROUTER_API_KEY: [MISSING]
+2026-10-10 16:14:13,993 - server - DEBUG -   GEMINI_API_KEY: [MISSING]
+2026-10-10 16:14:13,993 - server - DEBUG -   XAI_API_KEY: [MISSING]
+2026-10-10 16:14:13,993 - server - DEBUG -   CUSTOM_API_URL: [MISSING]
+2026-10-10 16:14:13,994 - server - DEBUG - OpenAI key check: key=[MISSING]
+2026-10-10 16:14:13,994 - server - DEBUG - OpenAI API key not found in environment
+2026-10-10 16:14:13,994 - server - DEBUG - OpenRouter key check: key=[MISSING]
+2026-10-10 16:14:13,994 - server - DEBUG - OpenRouter API key not found in environment
+Traceback (most recent call last):
+  File "/home/sergio/.cache/uv/archive-v0/tA__Bny_AWlVfU9_18s9G/bin/pal-mcp-server", line 12, in <module>
+    sys.exit(run())
+             ^^^^^
+  File "/home/sergio/.cache/uv/archive-v0/tA__Bny_AWlVfU9_18s9G/lib/python3.12/site-packages/server.py", line 1519, in run
+    asyncio.run(main())
+  File "/home/sergio/.local/share/uv/python/cpython-3.12.11-linux-x86_64-gnu/lib/python3.12/asyncio/runners.py", line 195, in run
+    return runner.run(main)
+           ^^^^^^^^^^^^^^^^
+  File "/home/sergio/.local/share/uv/python/cpython-3.12.11-linux-x86_64-gnu/lib/python3.12/asyncio/runners.py", line 118, in run
+    return self._loop.run_until_complete(task)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/sergio/.local/share/uv/python/cpython-3.12.11-linux-x86_64-gnu/lib/python3.12/asyncio/base_events.py", line 691, in run_until_complete
+    return future.result()
+           ^^^^^^^^^^^^^^^
+  File "/home/sergio/.cache/uv/archive-v0/tA__Bny_AWlVfU9_18s9G/lib/python3.12/site-packages/server.py", line 1461, in main
+    configure_providers()
+  File "/home/sergio/.cache/uv/archive-v0/tA__Bny_AWlVfU9_18s9G/lib/python3.12/site-packages/server.py", line 545, in configure_providers
+    raise ValueError(
+ValueError: At least one API configuration is required. Please set either:
+- GEMINI_API_KEY for Gemini models
+- OPENAI_API_KEY for OpenAI models
+- XAI_API_KEY for X.AI GROK models
+- DIAL_API_KEY for DIAL models
+- OPENROUTER_API_KEY for OpenRouter (multiple models)
+- CUSTOM_API_URL for local models (Ollama, vLLM, etc.)

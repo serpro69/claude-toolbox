@@ -1,0 +1,12 @@
+{
+  "actor": "main",
+  "block": {
+    "content": "cleanup.py:1:def cleanup_setup(store, workspace_id, setup_id):\ncleanup.py:2:    store.pending.pop(setup_id, None)\ncleanup.py:3:    store.active.pop(workspace_id, None)\ntests/test_setup.py:4:from cleanup import cleanup_setup\ntests/test_setup.py:18:        cleanup_setup(store, \"w\", \"one\")\ntests/test_setup.py:20:        self.assertNotIn(\"one\", store.pending)\nstore.py:3:        self.pending = {}\nstore.py:4:        self.active = {}\nsetup.py:1:def begin_setup(store, workspace_id, setup_id):\nsetup.py:2:    store.pending[setup_id] = {\"workspace_id\": workspace_id}\nsetup.py:5:def complete_setup(store, workspace_id, setup_id, connection):\nsetup.py:6:    store.active[workspace_id] = {\"setup_id\": setup_id, \"connection\": connection}\nsetup.py:7:    store.pending.pop(setup_id, None)\nsetup.py:10:def active_connection(store, workspace_id):\nsetup.py:11:    association = store.active.get(workspace_id)",
+    "tool_use_id": "toolu_01MhqafXf9jPXqmWwTu6NCDs",
+    "type": "tool_result"
+  },
+  "id": "e70.0",
+  "parent_tool_use_id": null,
+  "session_id": "1b417db3-0880-40b1-80bb-a723431f7794",
+  "source_sequence": 70
+}

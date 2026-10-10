@@ -1,0 +1,13 @@
+{
+  "actor": "main",
+  "block": {
+    "content": "=== tree @ 2214073 ===\nREADME.md\nprovider/settings.py\n=== tree @ HEAD ===\n.gitignore\nREADME.md\nclient.py\ndocs/feat/wip/enhanced-settings/design.md\ndocs/feat/wip/enhanced-settings/implementation.md\ndocs/feat/wip/enhanced-settings/tasks.md\ntests/test_client.py\n=== diff 2214073..HEAD ===\ndiff --git a/client.py b/client.py\nnew file mode 100644\nindex 0000000..d6ddf4b\n--- /dev/null\n+++ b/client.py\n@@ -0,0 +1,5 @@\n+def save_settings(send, workspace_id, values, enhanced_settings=False):\n+    response = send(workspace_id, {\"settings\": values})\n+    if not response.get(\"ok\"):\n+        raise RuntimeError(\"Settings save failed\")\n+    return {\"saved\": True, \"enhanced\": enhanced_settings}",
+    "is_error": false,
+    "tool_use_id": "toolu_0142Ti2iaDHQry91i9cvonoS",
+    "type": "tool_result"
+  },
+  "id": "e132.0",
+  "parent_tool_use_id": null,
+  "session_id": "6518bb6e-26cc-4241-b586-75dc7818bc36",
+  "source_sequence": 132
+}

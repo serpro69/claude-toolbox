@@ -11,7 +11,7 @@
 > Not Doing: new review skill, whole-system audits, mandatory production access, deployments, generic release engine, new models/dependencies, profile redesign
 > Delivery: preserve existing invocations/shared consumers; regenerate Codex artifacts with every operative slice.
 
-Scope and direction are approved; the reviews have been assessed and the detailed plan revised. Tasks 1–11 are done, including Task 2 gates 2A and 2B. Task 12's comparison matrix is next; Task 13 retains final feature documentation and verification. The [gate 2B completion record](verification/task2b/README.md) documents the selected receipt/use contract, four new baselines and evidence limits. Exact submitted prompts remain unverified, and baseline capture completion is not candidate acceptance. Earlier six-task numbering is superseded by this sequence; no completed work was renumbered. Size includes authored reasoning complexity; mechanical copies/symlinks/generated files are excluded. Parallel markers permit compatible work only and do not authorize delegation. Serialize generation if tasks run concurrently.
+Scope and direction are approved; the reviews have been assessed and the detailed plan revised. Tasks 1–11 are done, including Task 2 gates 2A and 2B. Task 12's comparison matrix is in progress; Task 13 retains final feature documentation and verification. The [gate 2B completion record](verification/task2b/README.md) documents the selected receipt/use contract, four new baselines and evidence limits. Exact submitted prompts remain unverified, and baseline capture completion is not candidate acceptance. Earlier six-task numbering is superseded by this sequence; no completed work was renumbered. Size includes authored reasoning complexity; mechanical copies/symlinks/generated files are excluded. Parallel markers permit compatible work only and do not authorize delegation. Serialize generation if tasks run concurrently.
 
 ## Task 1: Prove revision-bound evaluation loading
 
@@ -344,7 +344,7 @@ The ordinary-prompt R3 isolated run loaded all eight detection rules and applica
 
 ## Task 12: Execute and assess the full comparison matrix
 
-- **Status:** pending
+- **Status:** in-progress
 - **Depends on:** Task 2 gate 2B, Task 9, Task 10, Task 11 (all complete)
 - **Size:** M
 - **Can run in parallel with:** —
@@ -355,7 +355,19 @@ The ordinary-prompt R3 isolated run loaded all eight detection rules and applica
 - [ ] 12.1 Run all declared primary-provider case/mode pairs and secondary representative checks using two fresh baseline and candidate sessions per pair → verify: identical fixtures/rubric/model configuration, filtered revision-bound actor bundles, fresh writable state and identical initial knowledge seeds with the declared unavailable-vault policy.
 - [ ] 12.2 Run R8 phase replays, real PAL integration smoke and legacy routing/pre-write controls → verify: replay success is not reported as transport coverage and missing integration remains explicit.
 - [ ] 12.3 Grade sealed execution packages, including R3 history, R3/R7 verdicts and I4 resulting task/spec state → verify: every required candidate assertion passes twice under the selected versioned contract; contrary or missing evidence cannot pass, and any receipt/use fallback explicitly leaves exact prompt content unverified.
-- [ ] 12.4 Retain failures, fixes and unrun gates with owner/reason/next action → verify: baseline comparisons are not cherry-picked and no statistical reliability or untested-provider parity is claimed.
+- [x] 12.4 Retain failures, fixes and unrun gates with owner/reason/next action → verify: baseline comparisons are not cherry-picked and no statistical reliability or untested-provider parity is claimed. See [the current stop record](verification/task12/README.md); retained observations do not complete the other gates.
+
+### Execution context — 2026-10-10
+
+**Authority:** the user requested the next task through /kk:implement after gate 2B closed. Task 12 is selected; Task 13 remains pending. Preserve baseline `c2d28c9e3064a0a71a0e5ac3748a9616c794eb61`, all earlier evidence and the revision-2 receipt/use limits. Candidate 1 is committed source `4fb1941779f6b24dbed4440c288f1d901f0c4609`.
+
+**Before execution:** installed Claude 2.1.272, Codex 0.162.1, Capy 0.16.8, controller Python 3.12.11 and actor-test Python 3.10.12 differ from the original macOS batch. Declare fresh matching pairs in [the Task 12 run contract](verification/task12/run-contract.md); do not pool historical runs with this configuration. Python controller paths activate `python`; core guidance is loaded, with async guidance conservatively loaded before controller inspection. Any operative skill correction also requires `skill-md` guidance, which is loaded. No new dependency or actor model substitution is planned. New artifacts remain controller-only. Required runtime binding, measurement, grading and review are pending.
+
+**Accepted temporary exception:** after the standalone PAL launcher failed with missing API configuration, the user instructed “ignore pal-based verification for now.” Defer PAL-dependent receipt/use, corroboration and live-integration verification; continue other verification. Owner: implementing agent when PAL verification resumes. Next action: restore the declared launcher's API configuration, validate startup, then rerun affected baseline/candidate pairs and grade the deferred components. Verification condition: actual PAL receipt/use and integration evidence under matching configuration. Preserve original assertion results; this exception does not turn missing PAL evidence into PASS or claim full two-reviewer acceptance. The named independent reviewer and all other behavioral obligations remain in scope.
+
+**Execution result:** 42 measured Claude captures and their isolated grades are retained in [the Task 12 record](verification/task12/README.md). The latest candidate's R1–R6 standard runs have 57 PASS / 19 FAIL; no case passes every required assertion twice. Mandatory ordering, lifecycle coverage and proportionate recommendations still fail. Earlier candidate results remain visible; two candidate-1 isolated runs are invalid for acceptance because they shared temporary evidence paths. The user exception also defers R8 PAL-report replays. No Task 12 Codex, legacy actor-control or full latest-source isolated/implementation matrix is claimed.
+
+**Stopped on repeated verification failure:** /kk:implement requires stopping when “Verification fails repeatedly.” No further actors were launched after candidate 4. A workflow redesign or explicit continuation decision is pending. Source amendments and generated counterparts remain an unaccepted draft. Static checks pass (ten shell suites, Go tests, graph validation, generation freshness and twelve controller tests), while the final independent controller review retains three open subprocess/finalization findings. Owner: implementing agent. Before resuming, resolve the behavioral approach and runner findings, freeze any successor source, then rerun affected comparisons and complete material-access audits. Task 12 remains in-progress and Task 13 pending; no acceptance threshold is waived.
 
 ## Task 13: Document and verify the complete feature
 

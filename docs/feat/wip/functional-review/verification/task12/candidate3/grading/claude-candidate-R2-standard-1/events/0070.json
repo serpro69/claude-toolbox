@@ -1,0 +1,19 @@
+{
+  "actor": "main",
+  "block": {
+    "caller": {
+      "type": "direct"
+    },
+    "id": "toolu_015FxJmFKKpFGe23GzctbSSR",
+    "input": {
+      "content": "Apply-guarded-by-terminal-status breaks failed-write retry (P1). When a save applies values then sets status=\"applied\" BEFORE a receipt/commit step that can fail, guarding the apply with `if status == \"pending\"` means a retry (status already \"applied\") never re-applies. Combined with reading stored record[\"values\"] captured at record creation instead of the freshly-submitted values, an edited-values retry silently keeps the old values \u2014 violating \"retry with edited values; latest submitted values become active\". Tests using identical retry values pass and hide this; add an edited-values retry test. Fix: on retry, re-apply the newly submitted values (provider is idempotent) rather than gating on a terminal status.",
+      "source": "kk:review-findings"
+    },
+    "name": "mcp__capy__capy_index",
+    "type": "tool_use"
+  },
+  "id": "e188.0",
+  "parent_tool_use_id": null,
+  "session_id": "f6c3c5cc-4d72-4d22-a81a-7894168b2213",
+  "source_sequence": 188
+}
