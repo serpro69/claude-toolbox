@@ -1,0 +1,69 @@
+{
+  "date": "2026-10-10",
+  "base": "4bd5c532",
+  "scope": "Task 11 only",
+  "commands": [
+    {
+      "command": "python3 -B docs/feat/wip/functional-review/verification/task11/verify.py",
+      "exit_code": 0,
+      "evidence": "checks.json",
+      "python": "3.10.12",
+      "snapshot_suites": 2,
+      "tests": 3,
+      "scenario_probes": 2,
+      "clean_implementation_worktrees": 12,
+      "implement_composite_identities": 73,
+      "cross_skill_composite_identities": 175,
+      "frozen_seed_files_unchanged": 51
+    },
+    {
+      "command": "bash each test/test-*.sh",
+      "exit_code": 0,
+      "suites": 10,
+      "helper_assertions": 644,
+      "staging_integration_tests": 20,
+      "environment": {
+        "PATH_prefix": "/home/sergio/.local/share/uv/python/cpython-3.12.11-linux-x86_64-gnu/bin",
+        "GIT_CONFIG_COUNT": "1",
+        "GIT_CONFIG_KEY_0": "commit.gpgsign",
+        "GIT_CONFIG_VALUE_0": "false"
+      },
+      "evidence": "logs/test-*.txt",
+      "permission": "Approved access to existing uv cache for schema validation; no persistent configuration changes."
+    },
+    {
+      "command": "GOCACHE=/tmp/functional-review-task10-go-cache make generate-kodex",
+      "exit_code": 0,
+      "python": "3.12.11 via PATH",
+      "evidence": "logs/generate.log; logs/generate-repeat.log",
+      "permission": "Approved access to protected .codex/agents output; reused session-local Go cache."
+    },
+    {
+      "command": "GOCACHE=/tmp/functional-review-task10-go-cache make plugin-graph",
+      "exit_code": 0,
+      "evidence": "logs/graph.txt",
+      "warning": "Existing graph cycle warning; no broken edges or orphans."
+    },
+    {
+      "command": "GOCACHE=/tmp/functional-review-task10-go-cache go test ./...",
+      "exit_code": 0,
+      "evidence": "logs/go.txt"
+    },
+    {
+      "command": "git diff --check; documentation link and JSON record validation",
+      "exit_code": 0
+    }
+  ],
+  "freshness": {
+    "files": 871,
+    "comparison": "sha256sum sorted regular files under kodex-plugin/ and .codex/agents/; cmp exit 0",
+    "before": "generated-before.txt",
+    "after": "generated-after.txt",
+    "manifest_sha256": "89f11b5ee63d16e8685c948f480d4ffc0d47fcee2d6c90d60edf203b53a525de"
+  },
+  "limits": [
+    "Offline specimen verification, not actor workflow acceptance or grading.",
+    "Python 3.9 syntax floor; local fixture runtime 3.10.12 only, not a version matrix.",
+    "Logs retain native ANSI output."
+  ]
+}

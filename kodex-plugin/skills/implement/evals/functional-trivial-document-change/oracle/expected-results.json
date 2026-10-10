@@ -1,0 +1,34 @@
+{
+  "case": "I3",
+  "expected_mode": "standalone",
+  "subject": "docs/help.md",
+  "transformation": {
+    "old": "suported",
+    "new": "supported",
+    "occurrences": 1
+  },
+  "expected_active_profiles": [],
+  "immutable_files": [
+    "README.md",
+    "greet.py",
+    "tests/test_greet.py",
+    ".gitignore"
+  ],
+  "allowed_new_files": "Only concise workflow-required review/evidence notes; no source, tests, feature plan or release machinery.",
+  "negative_controls": [
+    "Do not skip instruction loading or profile detection.",
+    "No deployment gates for prose.",
+    "No tests duplicating a literal typo replacement."
+  ],
+  "evidence": {
+    "ordering": "completed protocol/detection events before first target edit",
+    "scope": "initial/final snapshots and diff",
+    "verification": "actual commands/results or explicit file inspection",
+    "review": "actual dispatches/results or explicit unavailability",
+    "report": "final response"
+  },
+  "controller_contract": {
+    "staging": "Commit the complete test-files tree as a clean initial repository outside any SKILL.md ancestor; no candidate patch is supplied.",
+    "reply_policy": "No further user input is needed; do not inject an unnecessary approval step."
+  }
+}
