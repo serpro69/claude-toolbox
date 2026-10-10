@@ -11,7 +11,7 @@
 > Not Doing: new review skill, whole-system audits, mandatory production access, deployments, generic release engine, new models/dependencies, profile redesign
 > Delivery: preserve existing invocations/shared consumers; regenerate Codex artifacts with every operative slice.
 
-Scope and direction are approved; the reviews have been assessed and the detailed plan revised. Tasks 1, 3, 4, 5, 6, 7, 8 and 9 are done. Task 2 remains in progress: its implementation-readiness gate (2A) is done; its capture-completion gate (2B) remains open. Task 10 is next; Tasks 10–11 may proceed without waiting for 2B. Task 12 and feature completion still depend on 2B. The [2026-10-09 run-contract amendment](verification/run-contract-2026-10-09.md) records the authorization and evidence limits. Earlier six-task numbering is superseded by this sequence; no completed work was renumbered. Size includes authored reasoning complexity; mechanical copies/symlinks/generated files are excluded. Parallel markers permit compatible work only and do not authorize delegation. Serialize generation if tasks run concurrently.
+Scope and direction are approved; the reviews have been assessed and the detailed plan revised. Tasks 1, 3, 4, 5, 6, 7, 8, 9 and 10 are done. Task 2 remains in progress: its implementation-readiness gate (2A) is done; its capture-completion gate (2B) remains open. Task 11 is next and may proceed without waiting for 2B. Task 12 and feature completion still depend on 2B. The [2026-10-09 run-contract amendment](verification/run-contract-2026-10-09.md) records the authorization and evidence limits. Earlier six-task numbering is superseded by this sequence; no completed work was renumbered. Size includes authored reasoning complexity; mechanical copies/symlinks/generated files are excluded. Parallel markers permit compatible work only and do not authorize delegation. Serialize generation if tasks run concurrently.
 
 ## Task 1: Prove revision-bound evaluation loading
 
@@ -280,7 +280,7 @@ The ordinary-prompt R3 isolated run loaded all eight detection rules and applica
 
 ## Task 10: Author compatibility, uncertainty and degraded-report controls
 
-- **Status:** pending
+- **Status:** done
 - **Depends on:** Task 8
 - **Size:** M
 - **Can run in parallel with:** Task 9, Task 11
@@ -288,9 +288,21 @@ The ordinary-prompt R3 isolated run loaded all eight detection rules and applica
 
 ### Subtasks
 
-- [ ] 10.1 Add R5 clean partial feature, R6 inherited defect and R7 missing evidence controls → verify: no invented blockers; verdict assertions distinguish material from out-of-scope Unknown evidence.
-- [ ] 10.2 Add two R8 report-phase checkpoint variants with labeled synthetic PAL outcomes → verify: zero-source success and external failure both retain independent findings and expose limits without claiming live MCP validation.
-- [ ] 10.3 Reuse final R1/R3 seed directories and validate all review fixtures → verify: R3 history is discoverable only through the intended baseline trace; no re-authored seed invalidates the baseline silently.
+- [x] 10.1 Add R5 clean partial feature, R6 inherited defect and R7 missing evidence controls → verify: no invented blockers; verdict assertions distinguish material from out-of-scope Unknown evidence.
+- [x] 10.2 Add two R8 report-phase checkpoint variants with labeled synthetic PAL outcomes → verify: zero-source success and external failure both retain independent findings and expose limits without claiming live MCP validation.
+- [x] 10.3 Reuse final R1/R3 seed directories and validate all review fixtures → verify: R3 history is discoverable only through the intended baseline trace; no re-authored seed invalidates the baseline silently.
+
+### Execution context — 2026-10-10
+
+**Accepted scope:** the user's request for the next task selects Task 10 only. Add R5/R6/R7 and two R8 report-phase replay directories; preserve all frozen seeds. Task 2 gate 2B and Tasks 11–13 remain open. The replay inputs are explicitly synthetic reporting checkpoints, not live reviewer/transport evidence.
+
+**Before edits:** clean base `4c91bc9e`; review eval IDs end at 11. All eight installed profile detection rules were read. Planned Python fixtures/verifier activate `python`; eval adjacency to `review-code/SKILL.md` activates `skill-md`. Python core implement/test guidance and universal/provider/kk implement guidance are loaded. Provider directories and canonical paths satisfy the skill conditionals; no async constructs are planned. The repository's bounded-routing convention takes precedence over older absolute wording. Knowledge searches found the existing staging-isolation convention; no new dependencies are planned. Verification and independent review are pending.
+
+**Superseding completion — 2026-10-10:** five final scenario directories (IDs 12–16) provide R5/R6/R7 and both R8 variants with **29 required assertions** and sibling grader-only oracles. [Verification](verification/task10/README.md) records six passing snapshot suites (18 tests), eight reproduction groups, all 16 review worktrees validated, R3's historical-only provider and 51 unchanged frozen seed files. R8 inputs differ only in the synthetic PAL result; patch applicability and the fixed independent finding are checked. All ten shell suites pass (644 helper assertions), Go/graph checks pass, and 851 generated files remain stable across repeated generation. Failed attempts and corrected checks are retained. No actor run or behavioral acceptance is claimed.
+
+**Review:** [independent source review](verification/task10/review.md) returned APPROVE after correcting the summary count from 27 to 29; no fixture assertion changed. PAL returned no actionable findings but reported zero embedded files, so its source coverage remains unverified and is not corroboration. No systemic P0/P1 findings or new project conventions require indexing.
+
+**Deferred acceptance — owner: implementing agent, Task 12:** after gate 2B and Task 11, freeze these fixtures/rubric and run the required fresh baseline/candidate comparisons twice, including both R8 report-phase replays and separate actual PAL smoke coverage. Grade sealed evidence; every required candidate assertion must pass twice. Preserve earlier recapture obligations and failures/partial results. Task 11 is next; the feature remains in progress and Task 13 retains final documentation/verification.
 
 ## Task 11: Author implementation completion and proportionality controls
 
