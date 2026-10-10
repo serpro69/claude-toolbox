@@ -1,0 +1,19 @@
+{
+  "actor": "main",
+  "block": {
+    "caller": {
+      "type": "direct"
+    },
+    "id": "toolu_012Sck6Mawasa6Jq2VDbQ7oC",
+    "input": {
+      "content": "Pattern: \"simplifying\" a cleanup/teardown function by dropping an ownership/identity guard before an unconditional delete. Symptom: a cleanup_setup(store, workspace_id, setup_id) replaced `if active[workspace_id].setup_id == setup_id: pop` with an unconditional `active.pop(workspace_id)`. The guard was load-bearing: when a stale/failed entity's queued cleanup runs AFTER a newer entity has already taken the same slot, the unconditional delete wipes the newer entity's live record (cross-entity data loss). Review rule: when a diff removes a check-then-delete guard keyed on an identity/version field, treat the guard as load-bearing until proven otherwise \u2014 reconstruct the interleaving where the deleted record is owned by a DIFFERENT id than the one being cleaned up. Existing tests that only exercise the same-id path pass and hide the regression. Confirm against the documented contract (\"removes any association IT OWNS\"). Severity P1: scoped, recoverable data loss, violates documented invariant.",
+      "source": "kk:review-findings"
+    },
+    "name": "mcp__capy__capy_index",
+    "type": "tool_use"
+  },
+  "id": "e146.0",
+  "parent_tool_use_id": null,
+  "session_id": "1507f259-3c21-4c08-96df-b9b097dad32b",
+  "source_sequence": 146
+}

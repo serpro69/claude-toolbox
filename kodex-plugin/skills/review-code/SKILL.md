@@ -14,6 +14,10 @@ Review whether the current changes achieve their intended behavior, preserve aff
 
 ## Conventions
 
+Load these through [packet-preparation.md](packet-preparation.md)'s preparation
+sequence. It supplies complete original instruction text in fewer Read calls;
+the direct-read fallback uses the same sources.
+
 - **Read capy knowledge base conventions** at [shared-capy-knowledge-protocol.md](shared-capy-knowledge-protocol.md).
 - **Always read change context** at [shared-change-context.md](shared-change-context.md) and the common method at [functional-review.md](functional-review.md), even when no profile matches.
 - **Read task scope** at [shared-review-scope-protocol.md](shared-review-scope-protocol.md); pending work does not excuse regressions in current flows.
@@ -66,10 +70,10 @@ This ordering is load-bearing, not stylistic. Reviewing from a diff before loadi
 
 **Phases** (same order as [review-process.md](./review-process.md)):
 
-1. Load basic instructions — process, shared protocols and common functional method
+1. Prepare instruction packets — read [packet-preparation.md](packet-preparation.md), run the helper below for `bootstrap`, and Read every returned part; this loads process, shared protocols, common method and all known detection rules
 2. Scope — resolve diff selection from status/filenames only
 3. Detect profiles and route checklists — read and reconcile every known detection rule; filename/metadata signals, then bounded declared predicates; no deferred conditionals
-4. Read every resolved checklist — always-load, matching and conservatively selected content; confirm returned instruction files in a compact loading checkpoint before proceeding
+4. Read every resolved checklist — build and Read the selected checklist packet; its manifest rejects missing index decisions and skipped always-load files. Confirm actual complete Read results before proceeding
 5. Investigate — read available component contracts and establish context/task scope, then selected diff/current files; trace behavior and historical compatibility, and search relevant knowledge
 6. Apply profile and general checklists to that behavior
 7. Self-check findings and confidence through targeted verification
@@ -79,6 +83,13 @@ This ordering is load-bearing, not stylistic. Reviewing from a diff before loadi
 11. Verify required outputs
 
 See [review-process.md](./review-process.md) for the detailed step-by-step process.
+
+**Preparation helper:** execute [scripts/prepare_instructions.py](scripts/prepare_instructions.py)
+with Python 3 using its resolved path. The installed path is
+`../../skills/review-code/scripts/prepare_instructions.py`.
+The helper reads instructions only and prints packet paths. Creating a packet
+does not load it: use Read on every part, including continuations, before source
+investigation. If execution is unavailable, use the direct-read fallback.
 
 ## Invocation
 

@@ -183,6 +183,43 @@ One issue spanning several lenses is one finding. Keep confidence reasoning and 
 
 ## Instruction ordering and integration
 
+### Focused Task 12 rework — accepted continuation
+
+After candidate 4 repeatedly failed ordering and scenario coverage, the user
+accepted focused rework followed by a small R1/R3/R5 checkpoint. Preserve the
+existing requirements, original grades and two-run threshold. PAL verification
+remains temporarily deferred. This supersedes the earlier stop for this bounded
+rework; it does not authorize silently weakening a failed assertion.
+
+Use a local instruction-packet helper to reduce navigation during preparation.
+It reads only the selected plugin's instructions, never subject code, Git state,
+or evaluation material. A bootstrap packet contains the common methodology and
+every detection rule named by the shared procedure. After ordinary detection and
+conditional routing, a checklist packet contains the selected original profile
+files with their source paths and hashes. The actor reads complete packet files
+before investigation; unread/truncated packets do not open the checkpoint.
+Direct source reads remain the fallback when the helper is unavailable and the
+path for read-only isolated agents. No detection predicate is reimplemented.
+
+Packet completeness and source identity are mechanically testable. They do not
+prove the actor consumed the returned content or prevent arbitrary early reads;
+actual ordered tool events remain authoritative. Cross-provider hook enforcement
+is outside this bounded experiment: current integrations lack one shared
+instruction-receipt barrier, and adding a session policy engine would exceed the
+scope. The hypothesis being tested is that fewer instruction-navigation steps,
+followed by one visible completion checkpoint, improve compliance.
+
+Replace competing generic suggestions with one evidence-backed recommendation
+rule. Build a compact scenario record from actual contracts: starting state,
+operation/transition, expected result, candidate result and evidence. Use it for
+the final coverage assessment; this connects the stated requirement to the
+demonstrated path without adding fixture-specific hints or exhaustive categories.
+
+Classify evaluation failures as procedure, behavioral correctness, or report
+precision/recommendation quality for diagnosis. Keep all existing assertions
+required. Classification does not alter their PASS/FAIL/PARTIAL semantics, so
+the pinned rubric and both sides' prior grades remain valid.
+
 Keep one post-instruction entry point for content-level investigation in each workflow. The standard summary, detailed procedure, isolated wrapper, agent and implement mode files must agree. Subsequent targeted verification uses evidence gathered under that phase; the wording must not prohibit re-reading evidence to substantiate a finding.
 
 Before operative workflow changes, amend [ADR 0004](../../../adr/0004-skill-workflow-ordering.md) and the ordering section of [AGENTS.md](../../../../AGENTS.md) to state a narrow routing exception. Current absolute wording conflicts with existing content-based detection and with this proposal; do not describe the new ordering as already fully authorized by those documents.

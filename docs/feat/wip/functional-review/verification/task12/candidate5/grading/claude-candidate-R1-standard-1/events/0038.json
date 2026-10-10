@@ -1,0 +1,13 @@
+{
+  "actor": "main",
+  "block": {
+    "content": "===REPO TREE===\n.gitignore\nREADME.md\ncleanup.py\nsetup.py\nstore.py\ntests/test_setup.py\n===CALLERS/REFS===\ncleanup.py:1:def cleanup_setup(store, workspace_id, setup_id):\ncleanup.py:2:    store.pending.pop(setup_id, None)\ncleanup.py:3:    store.active.pop(workspace_id, None)\nsetup.py:1:def begin_setup(store, workspace_id, setup_id):\nsetup.py:2:    store.pending[setup_id] = {\"workspace_id\": workspace_id}\nsetup.py:5:def complete_setup(store, workspace_id, setup_id, connection):\nsetup.py:6:    store.active[workspace_id] = {\"setup_id\": setup_id, \"connection\": connection}\nsetup.py:7:    store.pending.pop(setup_id, None)\nsetup.py:11:    association = store.active.get(workspace_id)\nstore.py:3:        self.pending = {}\nstore.py:4:        self.active = {}\ntests/test_setup.py:4:from cleanup import cleanup_setup\ntests/test_setup.py:18:        cleanup_setup(store, \"w\", \"one\")\ntests/test_setup.py:20:        self.assertNotIn(\"one\", store.pending)",
+    "is_error": false,
+    "tool_use_id": "toolu_0175g4xNPvvCwUKi6iMMbS1Q",
+    "type": "tool_result"
+  },
+  "id": "e80.0",
+  "parent_tool_use_id": null,
+  "session_id": "1507f259-3c21-4c08-96df-b9b097dad32b",
+  "source_sequence": 80
+}

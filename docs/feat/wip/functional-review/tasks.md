@@ -369,6 +369,60 @@ The ordinary-prompt R3 isolated run loaded all eight detection rules and applica
 
 **Stopped on repeated verification failure:** /kk:implement requires stopping when “Verification fails repeatedly.” No further actors were launched after candidate 4. A workflow redesign or explicit continuation decision is pending. Source amendments and generated counterparts remain an unaccepted draft. Static checks pass (ten shell suites, Go tests, graph validation, generation freshness and twelve controller tests), while the final independent controller review retains three open subprocess/finalization findings. Owner: implementing agent. Before resuming, resolve the behavioral approach and runner findings, freeze any successor source, then rerun affected comparisons and complete material-access audits. Task 12 remains in-progress and Task 13 pending; no acceptance threshold is waived.
 
+### Accepted focused rework — continuation after commit 87a26bb7
+
+The user accepted the recommendation to fix the runner, structurally simplify
+instruction preparation, preserve substantive requirements, classify failure
+types, then validate R1/R3/R5 before expanding. PAL remains deferred. This
+explicit continuation supersedes the stop above for the bounded work below.
+
+- [x] 12.5 Add successor owned-capture and probe-finalization helpers, preserving
+  frozen controllers → verify offline preparation/runtime/interruption/cleanup
+  failures and obtain independent review before model launches.
+- [x] 12.6 Implement consolidated instruction preparation and contract-driven
+  scenario reporting; remove conflicting speculative-suggestion cues → verify
+  packet integrity/path boundaries, source review and generated parity.
+- [ ] 12.7 Freeze a twelve-run diagnostic R1/R3/R5 standard comparison, including
+  fresh baseline pairs under the successor capture configuration → verify each
+  candidate assertion twice using the unchanged rubric, classify failures, and
+  expand only after this checkpoint passes.
+
+All eight installed profile rules were read before investigation. Python and
+skill-md activate; their core implement/test guidance and both provider/plugin
+conditionals are loaded, with Python async guidance conservatively included.
+Neither profile contributes design guidance. No package dependency or model
+change is planned. New runtime helpers use Python 3.12's existing standard
+library; signal/subprocess semantics were checked against versioned docs.
+
+**Source/runner checkpoint:** [the rework record](verification/task12/rework/README.md)
+retains approved independent helper/driver and packet-source reviews. All eleven
+shell suites, Go/graph checks, twelve historical controller tests, nine packet
+tests and eighteen successor/evidence tests pass; 902 generated files remain
+stable. Candidate `be1a283cf872ec97fe569c9fd481bbe623cc8214` and its final successor
+capture freeze are declared before binding in [candidate 5](verification/task12/candidate5/run-contract.md).
+The earlier unmeasured preflight freeze/source remain retained. Both binding
+probes now pass: candidate packet Reads return all six parts and fifteen source
+bodies exactly; parent/child model and bundle identity match. The reported alias
+discrepancy is an expected symlink, verified against actual bytes.
+
+**Diagnostic completed; gate failed:** [candidate-5 results](verification/task12/candidate5/results.md)
+retain all twelve fresh captures and eighty independent assertion grades.
+Candidate: **37 PASS / 3 FAIL**; baseline: **20 PASS / 18 FAIL / 2 PARTIAL**.
+R1 and R3 pass every assertion twice. R5 repetition 1 reads task requirements
+before checklist completion (12.1); both R5 repetitions propose an unnecessary
+flag-import change while acknowledging current correctness (12.4). No assertion
+or threshold changed. All source/packet hashes and file-tool paths were checked,
+all 67 shell requests inspected, and nineteen proven-owned packet directories
+removed with sealed contents retained. No evaluator access or PAL call was observed.
+
+**Continuation checkpoint:** 12.7's captures, grading and audits are complete,
+but its acceptance condition remains unmet. No wider matrix or further candidate
+iteration was started. Owner: implementing agent, Task 12. A next bounded
+follow-up must address early requirements reading and clean-review Next Steps
+offering unsupported work, then rerun affected comparisons under a new source
+identity. Preserve the current improvements and failed observations. Task 12
+remains in-progress, Task 13 pending, and PAL remains user-deferred.
+
 ## Task 13: Document and verify the complete feature
 
 - **Status:** pending

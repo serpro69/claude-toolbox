@@ -1,9 +1,10 @@
 # Task 12: comparison execution — acceptance failed, work remains
 
-Task 12 remains **in-progress**. Forty-two measured Claude captures have sealed
-evidence and independent grades. The latest candidate passes 57 of 76 assertion
-checks across R1–R6 standard mode, but **no case passes every required assertion
-in both repetitions**. The full matrix, Task 13 and feature acceptance are open.
+Task 12 remains **in-progress**. Fifty-four measured Claude captures have sealed
+evidence and independent grades. The latest [focused candidate-5 diagnostic](candidate5/results.md)
+passes **37 of 40 assertions**: R1 and R3 pass completely twice, while R5 fails
+one instruction-order check and both unnecessary-recommendation checks. The
+diagnostic gate, full matrix, Task 13 and feature acceptance remain open.
 The user directed that PAL-based verification be ignored for now; this exception
 does not waive other behavioral requirements.
 
@@ -21,18 +22,21 @@ both legacy component-mode checks.
 | 2 | `174cbb3ff5fb5b0647082705b9bba7ef07986bee` | 0; binding only | [Declaration](candidate2/run-contract.md) |
 | 3 | `f7bbcc81c4760167d38622d9b698c2b2da54e5d9` | 20, both sides of R1/R2/R4/R5/R6-standard | [Results and evidence references](candidate3/results.md) |
 | 4 | `cde36b8239de1fc1e10e589e969e6613668aa26c` | 14: twelve candidates plus two R3-standard baselines | [Results and evidence references](candidate4/results.md) |
+| 5 | `be1a283cf872ec97fe569c9fd481bbe623cc8214` | 12 fresh baseline/candidate R1/R3/R5-standard captures | [Focused diagnostic results](candidate5/results.md) |
 
 Candidate 4 reuses both matching baseline repetitions from candidate 3 for five
 cases, as declared before measurement. Those ten reused runs are not counted
-again in the 42 unique captures. These are iterative development observations,
-not 42 accepted cells of the full matrix or a reliability estimate. All failures
+again in the 42 original captures. Candidate 5 adds twelve fresh captures under
+the reviewed successor runner, without reusing earlier baselines. These are
+iterative development observations, not accepted cells of the full matrix or a
+reliability estimate. All failures
 and partials remain; earlier candidate successes cannot satisfy latest-source
 acceptance. Candidate 1's two isolated candidate runs are invalid for acceptance
 because they shared temporary evidence paths.
 
 Baseline remains `c2d28c9e3064a0a71a0e5ac3748a9616c794eb61`. Exact source archives
 and identity/filtering manifests are retained in `baseline-bundle/`,
-`candidate1-bundle/`, and each later candidate's `bundle/`. Candidate 2–4 commit
+`candidate1-bundle/`, and each later candidate's `bundle/`. Candidate 2–5 commit
 identities belong to temporary source repositories; they do not identify commits
 in the main repository. Frozen controllers and previous evidence have not been
 rewritten.
@@ -44,16 +48,22 @@ contracts before diff analysis, traces initial/intermediate/final states, checks
 fixes against existing invariants, calibrates severity to demonstrated impact,
 avoids redundant or hypothetical recommendations, and grounds coverage claims
 in successful tool results. Canonical instructions and generated Codex output
-match. The common method is 1,096 words against the 1,200-word budget.
+match. The common method is now 1,147 words against the 1,200-word budget.
+Candidate 5 additionally consolidates instruction preparation into complete
+source packets and uses a compact contract/scenario record. These changes have
+scoped source approval; the R5 failures remain visible.
 
 [Independent source review](review.md) approved the instruction changes and
-earlier preparation-integrity fixes. The final controller review is
+earlier preparation-integrity fixes. The original controller review is
 **REQUEST_CHANGES**, with three open findings: abandoned background captures on
 preparation failure, lost actor-runtime exit status, and PAL-probe cleanup that
 can skip sealing. No new capture should use these runners before the first two
 are repaired. PAL-probe correction can be tested offline and is required before
 that deferred probe is used again. Source approval and static checks do not
-override the behavioral failures or these open findings.
+override the behavioral failures or these open findings. The subsequently
+approved [successor runner](rework/README.md) fixes those execution paths while
+preserving old controller bytes. It was used for candidate 5; the original
+runners remain historical artifacts and should not launch new captures.
 
 ## Verification and evidence limits
 
@@ -65,7 +75,9 @@ match before/after regeneration. The instruction/task diff passes
 `git diff --check`. Checking all staged evidence also flags space indentation
 under the configured `indent-with-non-tab` rule and captured formatting;
 sealed evidence is preserved byte-for-byte. These checks do not cover the
-newly reported subprocess/finalization defects.
+originally reported subprocess/finalization defects. [Successor checks](rework/checks/)
+add eighteen capture/evidence tests, nine packet tests, eleven passing shell
+suites, Go/graph checks and stable regeneration across 902 generated files.
 
 The [final integrity audit](integrity-audit.json) verifies 1,924 capture-file
 hashes, 5,252 grading-file hashes, all 42 capture-to-grading manifest links, and
@@ -81,6 +93,10 @@ Nine files proven to belong to the isolated actors were archived in
 `retained-scratch/` and removed from their shared temporary paths; no unrelated
 files were removed. Captures, actor workspaces and immutable source snapshots
 remain for audit. This task made no Codex marketplace/trust registrations.
+Candidate 5 has its own [integrity](candidate5/integrity-audit.json) and
+[access](candidate5/access-audit.json) audits, covering all twelve new captures,
+their packet receipts and all 67 shell requests. Nineteen uniquely owned packet
+directories (79 files) were verified and removed; sealed copies remain.
 
 ## Stop and continuation
 
@@ -89,16 +105,19 @@ The loaded /kk:implement skill says “STOP executing immediately when”
 stop. No further model actors were launched; final grading, integrity checks and
 durable reporting were completed. The user was asked whether to rework the
 workflow design or leave the failed gate recorded. No redesign or threshold
-change is assumed from silence.
+change is assumed from silence. The user then explicitly accepted focused rework.
+[Candidate 5](candidate5/results.md) completes that twelve-run diagnostic with
+R1/R3 passing twice and R5 still failing. No broader matrix or further candidate
+iteration was launched after the failed diagnostic gate.
 
 Owner for all remaining work: implementing agent, Task 12.
 
 | Remaining work | Reason | Next action and verification condition |
 | --- | --- | --- |
-| Workflow approach and R1–R6 standard | Candidate 4 still fails mandatory ordering, supported scenarios and scoped recommendations. | Resolve continuation direction, implement a separately frozen successor, and obtain two full candidate PASSes per required case. |
-| Capture-runner defects | Final independent review requests changes. | Preserve old identities; implement new identified boundaries, cover failure/interruption paths offline and obtain re-review before launching. |
+| R5 preparation and recommendation scope | Candidate 5 still reads requirements early once and proposes unnecessary future refactors twice. | Resolve the next bounded follow-up, freeze any successor and obtain two full R5 PASSes before expansion. |
+| Remaining R2/R4/R6 standard and other matrix coverage | Candidate 5 only measures R1/R3/R5 standard. | After the diagnostic gate passes, complete the required fresh comparisons without pooling obsolete candidate results. |
 | Latest-source isolated and implementation cases, R7/R9 | Full required matrix has not run. | Use fresh disjoint state, retain all attempts and satisfy each case/mode twice. |
 | Codex representative checks and legacy routing/pre-write actor controls | No Task 12 captures for these gates. | Run matching declared baseline/candidate pairs and independently grade under the pinned contract. |
-| Material-access, scratch and handoff audits | Integrity checks and token scan alone are insufficient. | Audit actual tool events and source receipt/use; invalidate contaminated runs and recapture. |
-| R8 PAL-report replays, PAL receipt/corroboration and live integration | Temporarily user-deferred after missing API configuration. | When resumed, restore the declared runtime, fix probe finalization, verify startup and actual receipt/use; preserve currently missing evidence as missing. |
+| Material-access, scratch and handoff audits for remaining runs | Candidate 5 is audited; the full matrix is incomplete. | Audit actual tool events and source receipt/use for each remaining run; invalidate contaminated runs and recapture. |
+| R8 PAL-report replays, PAL receipt/corroboration and live integration | Temporarily user-deferred after missing API configuration. | When resumed, use the reviewed successor probe, restore the declared runtime, verify startup and actual receipt/use; preserve currently missing evidence as missing. |
 | Task 13 documentation/final acceptance | Depends on Task 12. | Start only after required gates pass or their scope is explicitly revised. |

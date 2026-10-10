@@ -111,6 +111,40 @@ Review R3's historical-source handoff, R3/R7's verdict mapping, I4's resulting d
 
 ## Documentation and final verification
 
+### Task 12 focused rework checkpoint
+
+The user approved focused rework after candidate 4. Execute these bounded slices
+before expanding the matrix:
+
+1. Add successor capture helpers under `verification/task12/rework/`, preserving
+   historical controller bytes. Prepare the whole batch before launch and run
+   captures serially in the owning process. Record SIGINT/SIGTERM without raising
+   during acquisition; stop the owned Linux process group before reaping its
+   leader, then seal evidence. Ignore repeated termination during cleanup.
+   Check the sealed actor exit status and missing completion explicitly.
+   Make probe evidence finalization independent of teardown success while
+   preserving the primary failure. → Verify: offline subprocess tests for
+   preparation failure, runtime failure, interruption and teardown failure; no
+   model or live PAL calls in these tests. Independent review precedes capture.
+2. Add a plugin-local instruction-packet helper and integrate it into standard
+   review preparation. Preserve original instruction bytes, source paths,
+   bounded reads and the direct-read fallback; include all known detection rules
+   and validate selected profile paths against their indexes. Resolve profile
+   predicates in the existing procedure, not in Python. Remove conflicting
+   speculative-suggestion cues and use the contract-driven scenario record.
+   → Verify: offline packet completeness/path-boundary/truncation controls,
+   canonical/generated parity, source review and a separate binding probe.
+3. Freeze candidate 5 and a diagnostic declaration for R1/R3/R5 standard, twice
+   per side with fresh state. Report failure classes separately while preserving
+   the pinned assertions/rubric and all old results. Runtime/capture changes get
+   fresh matching baseline runs. → Verify: independently grade all twelve sealed
+   captures; expand only if every candidate assertion passes in both runs.
+
+Optional `/kk:clarify-docs` can refine the amended design, implementation and
+task documents; `/kk:review-design functional-review` remains available for an
+independent design assessment. These optional passes do not delay the already
+authorized rework.
+
 Task 13 updates README.md and docs/user-guide/skills.md through /kk:document, and docs/contributing/testing.md for staging and grading. Then:
 
 - Run /kk:test with every test/test-*.sh suite, including staging.
