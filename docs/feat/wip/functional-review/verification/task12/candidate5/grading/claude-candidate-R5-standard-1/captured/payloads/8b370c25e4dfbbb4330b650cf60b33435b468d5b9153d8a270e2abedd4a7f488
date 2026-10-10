@@ -1,0 +1,249 @@
+Instruction packet bootstrap: part 2/6
+
+- **Code quality:** error handling (swallowed exceptions, overly broad catch, missing handling, async errors); performance (N+1 queries, CPU-intensive ops in hot paths, missing cache, unbounded memory); boundary conditions (null/undefined, empty collections, numeric boundaries, off-by-one). Flag issues that may cause silent failures or production incidents.
+- **Removal candidates:** propose deletion only when a demonstrated current cost or defect justifies it and required behavior is preserved. A pending task's unreachable scaffold or disabled feature is not, by itself, a removal candidate. Distinguish **safe delete now** vs **defer with plan** when removal is warranted.
+
+### 7) Self-check and confidence assessment
+
+For **each finding** from Steps 5–6:
+
+1. Re-read the relevant code and surrounding context independently.
+2. Ask: **"Could I be misreading the code?"** — trace execution paths, check for runtime behavior, configuration, or framework conventions that might make this correct.
+3. Ask: **"Is this a real issue or a style preference?"** — distinguish between bugs/risks and subjective choices that don't affect correctness or security.
+4. Ask: **"What's the actual impact?"** — verify that the severity matches the real-world consequence, not just the theoretical violation.
+5. Assign final confidence score (1–100%) with **explicit reasoning** documenting:
+   - What was verified
+   - What evidence supports the finding
+   - What uncertainty remains
+6. Downgrade or **remove** findings that don't survive the self-check.
+
+### 8) Index findings
+
+Index any P0/P1 findings that suggest a systemic or structural pattern (not isolated typos or one-off mistakes) as `kk:review-findings`. Index on first encounter — recurrence detection happens on the search side in future reviews.
+
+- If no P0/P1 systemic findings exist, explicitly note "No findings to index" and move on.
+- This step is mandatory — do not skip it even if the review found no issues.
+
+### 9) Present results
+
+#### Output format
+
+Structure your review as follows:
+
+```markdown
+## Code Review Summary
+
+**Files reviewed**: X files, Y lines changed
+**Overall assessment**: [APPROVE / REQUEST_CHANGES / COMMENT]
+**Intent and scope**: requirement source, current task/request, selected diff and candidate state
+**Baselines**: review base/candidate; separate release baseline if applicable
+
+## Behavior and Compatibility
+
+Inspected paths/scenarios, observed results and evidence limits. Include applicable
+Supported / Blocked / Unknown / Not applicable conclusions with named baselines.
+Attribute author-supplied results and inherited issues. Record outstanding evidence
+or release prerequisites, next actions and durable tracking locations when deferred.
+
+---
+
+## Findings
+
+### P0 - Critical
+
+(none or list)
+
+### P1 - High
+
+- **[file:line]** Brief title
+  - Profile: {profile_name} · Checklist: {checklist_filename}
+  - Triggered by: {signal_type} — {signal_description}
+  - Trigger/path, expected vs actual result and consequence
+  - Confidence: 90% - reasoning behind the confidence level
+  - Suggested fix
+
+- **[another_file:line]** Brief title
+  - Profile: generic · Checklist: —
+  - Triggered by: —
+  - Trigger/path, expected vs actual result and consequence
+  - Confidence: 60% - reasoning behind the confidence level
+  - Suggested fix
+
+### P2 - Medium
+
+...
+
+### P3 - Low
+
+...
+
+---
+
+## Removal/Iteration Plan
+
+(if applicable)
+
+Only include recommendations tied to a demonstrated issue or an identified,
+currently required verification gap. A clean scoped review needs no extra work.
+```
+
+**Inline comments**: Use this format for file-specific findings:
+
+```
+::code-comment{file="path/to/file" line="42" severity="P1"}
+Description of the issue and suggested fix.
+::
+```
+
+Apply [functional-review.md](functional-review.md)'s verdict mapping: a hard acceptance/delivery violation cannot be approved; material Unknown evidence receives COMMENT absent a demonstrated blocker. Out-of-scope operational unknowns do not automatically downgrade an explicitly scoped code verdict. Preserve P0–P3 impact severity and distinguish code correctness from release readiness.
+
+**Every review** reports coverage and limits, even with findings. When no issues are found, explicitly state:
+
+- What was checked
+- Any areas not covered (e.g., "Did not verify database migrations")
+- Specific residual risks or required verification gaps, when supported
+
+### 10) Next steps confirmation
+
+After presenting findings, ask user how to proceed:
+
+```markdown
+---
+
+## Next Steps
+
+I found X issues (P0: ..., P1: ..., P2: ..., P3: ...).
+
+The actionable items I recommend fixing:
+1. P1 ...
+2. P2 ...
+3. P3 ...
+
+Items I recommend keeping as is:
+- ...: the finding is a false-positive because ...
+- ...: correct behavior because ...
+- ...: mirrors production behavior of ...
+
+**How would you like to proceed?**
+
+1. **Fix all** - I'll implement all suggested fixes
+2. **Fix P0/P1 only** - Address critical and high priority issues
+3. **Fix specific items** - Tell me which issues to fix
+4. **No changes** - Review complete, no implementation needed
+
+Please choose an option or provide specific instructions.
+```
+
+**Important**: Do NOT implement any changes until user explicitly confirms. This is a review-first workflow.
+
+### 11) Verify outputs
+
+Before declaring the review complete, check each item in the **Required Outputs** section of SKILL.md:
+
+- [ ] Review report presented to user
+- [ ] Intent, scope/baselines, inspected behavior, applicable compatibility conclusions and evidence limits reported
+- [ ] P0/P1 systemic findings indexed as `kk:review-findings` (or explicitly noted "No findings to index")
+- [ ] Next steps confirmation from user
+
+If any item is unchecked, go back and complete it before proceeding.
+
+END SOURCE
+
+BEGIN SOURCE /tmp/fr-task12-c5-diagnostic-20261010/claude-candidate-R5-standard-1/plugins/kk/skills/review-code/shared-capy-knowledge-protocol.md
+SHA256 67c086d5e0ec13579e3ae64bc0a1309bec27627ce91a455716070633789fc3b9
+Resolve links relative to this original source path.
+
+# Capy Knowledge Base Protocol
+
+If `capy` MCP tools are not available in this session, skip all search and index steps below and proceed normally.
+
+## Source Label Taxonomy
+
+All plugin-managed labels use the `kk:` namespace prefix.
+
+| Label                    | Contents                                                              |
+| ------------------------ | --------------------------------------------------------------------- |
+| `kk:arch-decisions`      | Architecture decisions, design rationale, trade-offs                  |
+| `kk:review-findings`     | Code review patterns, recurring issues, anti-patterns                 |
+| `kk:lang-idioms`         | Language best practices, idiomatic patterns from external sources     |
+| `kk:project-conventions` | Discovered project patterns, naming conventions, structural decisions |
+| `kk:test-patterns`       | Testing approaches, edge cases, test infrastructure decisions         |
+| `kk:debug-context`       | Root causes, tricky bugs and their fixes, environment gotchas         |
+
+## Search Conventions
+
+- Use 2-4 specific terms per query — not vague keywords
+- Always scope with `source` filter to relevant `kk:*` labels
+- Use `source: "kk:"` only for broad cross-domain searches (e.g., CoVe verification)
+- Default `limit: 3` per query unless more context is needed
+- **Cold-start fallback:** If no results, proceed with standard guidelines — empty results are normal for new projects
+
+## Index Conventions
+
+- Only index non-obvious learnings not derivable from reading the code or git history
+- Keep content concise — summarize the insight, don't dump raw output
+- Always use a `kk:` prefixed label from the taxonomy above
+- One concept per `capy_index` call — don't bundle unrelated learnings
+- Skip indexing if the insight is already captured in design docs or CLAUDE.md
+
+END SOURCE
+
+BEGIN SOURCE /tmp/fr-task12-c5-diagnostic-20261010/claude-candidate-R5-standard-1/plugins/kk/skills/review-code/shared-profile-detection.md
+SHA256 637f1cea572bad934b0ae08f777289a093e9810c77376c53d62c298f9444a3de
+Resolve links relative to this original source path.
+
+## Profile detection procedure
+
+Single source of truth for computing the set of profiles active in the current context.
+Consumed by six skills: `/kk:review-code`, `/kk:review-spec`, `/kk:design`, `/kk:implement`, `/kk:test`, and `/kk:document`.
+
+Every profile under `klaude-plugin/profiles/<name>/` declares its own trigger rule in `DETECTION.md` using the mandatory three-section schema (`## Path signals`, `## Filename signals`, `## Content signals`).
+The shared procedure below applies the same algorithm against every profile's declared values.
+
+### Inputs per consuming skill
+
+Not every consumer has a diff available. Use the input listed for your skill:
+
+- **`/kk:review-code`** — git diff (staged, or an explicit commit range). Scope is
+  the set of files the diff touches.
+- **`/kk:review-spec`** — git diff when invoked standalone; the feature directory's
+  full file list when invoked by `/kk:implement` (spec review runs over the whole
+  feature, not just the current task's diff).
+- **`/kk:test`** — git diff mid-feature, OR the feature directory's file list
+  post-implementation.
+- **`/kk:implement`** — the current sub-task's target file list, augmented by the
+  diff accumulated so far in the feature.
+- **`/kk:design`** — **no file list available** (implementation does not yet exist).
+  Detection uses a user-declared or keyword-inferred signal instead; see
+  [The `/kk:design` interaction pattern](#the-design-interaction-pattern) below.
+- **`/kk:document`** — feature directory's current file list; diff optional.
+
+### The `/kk:design` interaction pattern
+
+The design phase runs before any code exists, so file-based detection is impossible. Detection uses idea-prose keyword matching against tokens declared in each profile's `DETECTION.md`.
+
+**Algorithm:**
+
+1. **Collect tokens.** Iterate §Known profiles. For each `<name>`, `Read` `${TOOLBOX_PLUGIN_ROOT}/profiles/<name>/DETECTION.md`. If the file has no `## Design signals` section, skip — that profile does not participate in design-phase detection. Otherwise, parse `display_name` and `tokens` from the section.
+2. **Build union.** Collect all declared tokens into a single set, each tagged by its source profile name and `display_name`.
+3. **Match.** Check the idea prose against the union. Matching is case-insensitive, whole-word (so `pod` in "podcast" does not fire).
+4. **Confirm.** On match, surface a confirmation prompt per matched profile:
+   *"This appears to be a {display_name} feature. Activate the {profile_name} profile?"* — let the user confirm yes/no. When multiple profiles match, confirm each independently.
+5. **Fallback.** If no token matches but the idea is **ambiguous** — names infrastructure, deployment, runtime, or platform concerns without naming a specific technology (e.g., _"add a caching layer for the service"_, _"build a CI pipeline"_, _"deploy to production"_); or includes overloaded tokens that collide across domains — build the fallback prompt dynamically from all profiles that declare `## Design signals`:
+   *"Does this feature involve {display_name_1, display_name_2, ...}? If yes, which?"*
+
+Confirmation is required — the /kk:design skill never auto-activates a profile silently. The narrow per-profile token sets avoid noisy false positives from tokens that overload across domains.
+
+Once activated, subsequent design-phase steps treat the profile as active in the same record shape produced by file-based detection (see §Output shape).
+
+### Known profiles
+
+This is the authoritative enumeration of profile `<name>`s — do NOT try discover profiles via any other means.
+An explicit list is boring, deterministic, and unambiguous; runtime filesystem enumeration against the plugin tree has proven unreliable.
+
+- `go`
+- `python`
+- `java`
+- `js_ts`
+
+END PACKET PART 2/6

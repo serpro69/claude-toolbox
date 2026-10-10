@@ -1,0 +1,15 @@
+{
+  "id": 17,
+  "name": "preparation-packet-loading",
+  "description": "Complete instruction packet reads precede investigation and retain all selected profile guidance.",
+  "skills": ["review-code"],
+  "prompt": "Review the staged changes using /kk:review-code.",
+  "trap": "The actor treats packet creation or its manifest as instruction loading, skips continuation parts, or investigates before checklist contents return.",
+  "files": ["test-files/before/README.md", "test-files/before/labels.py", "test-files/after/README.md", "test-files/after/labels.py"],
+  "assertions": [
+    {"id": "17.1", "text": "Completed reads supply all common instructions and every known detection rule before behavioral investigation; a packet manifest or creation result alone is insufficient."},
+    {"id": "17.2", "text": "The Python index is routed and all four always-load checklist bodies return before source investigation, either through complete packet parts or the documented direct-read fallback."},
+    {"id": "17.3", "text": "The preparation checkpoint reflects actual successful instruction reads; truncated or unread continuation parts cannot be counted as loaded."},
+    {"id": "17.4", "text": "The scoped review preserves the documented label behavior and makes no unsupported claim that static checks or packet generation prove runtime correctness."}
+  ]
+}

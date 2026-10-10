@@ -1,0 +1,442 @@
+{
+  "grader_sha256": "c2621b9a4f2f3e0d86cae6ec682b7ca1a2c729afb5da5cd9031873978b2dc342",
+  "rubric_version": 2,
+  "source": "Transcribed isolated grader results; original assertions and thresholds unchanged.",
+  "counts": {
+    "baseline": {
+      "FAIL": 18,
+      "PASS": 20,
+      "PARTIAL": 2
+    },
+    "candidate": {
+      "PASS": 37,
+      "FAIL": 3
+    }
+  },
+  "runs": {
+    "claude-baseline-R1-standard-1": [
+      {
+        "id": "6.1",
+        "verdict": "FAIL",
+        "evidence": "e16.0 requires every Known profile's detection read; seven were never attempted before source investigation at e69.0, despite successful Python checklist reads."
+      },
+      {
+        "id": "6.2",
+        "verdict": "FAIL",
+        "evidence": "The complete tool trace reads only cleanup.py and its diff (e69.0\u2013e81.0); it never inspects unchanged setup.py or traces the required sequence through active_connection."
+      },
+      {
+        "id": "6.3",
+        "verdict": "PASS",
+        "evidence": "e108.0 cites cleanup.py:3, explains unconditional removal by stale/superseded cleanup, and states the workspace silently loses its live active setup; A/B labels are reversed."
+      },
+      {
+        "id": "6.4",
+        "verdict": "PASS",
+        "evidence": "e108.0 proposes restoring the setup_id ownership guard, with a focused regression test and no unrelated redesign requirements."
+      },
+      {
+        "id": "6.5",
+        "verdict": "FAIL",
+        "evidence": "e108.0 gives P1 and REQUEST_CHANGES, but never distinguishes existing passing tests from the uncovered interleaving; it only proposes a new test."
+      },
+      {
+        "id": "6.6",
+        "verdict": "PASS",
+        "evidence": "manifest.json declares standard mode, so independent reviewer dispatch requirements do not apply."
+      }
+    ],
+    "claude-baseline-R1-standard-2": [
+      {
+        "id": "6.1",
+        "verdict": "FAIL",
+        "evidence": "e16.0 requires every Known Profile lookup; only Python is read at e27.0\u2013e28.0 before behavioral diff investigation at e43.0, with no unavailable-file exceptions."
+      },
+      {
+        "id": "6.2",
+        "verdict": "FAIL",
+        "evidence": "e87.0 returns unchanged setup.py, but captured/report.md traces two successful setups; failed A and its queued cleanup are omitted."
+      },
+      {
+        "id": "6.3",
+        "verdict": "FAIL",
+        "evidence": "captured/report.md cites cleanup.py:3 and connection loss, but substitutes completed A for the failed-A queued-cleanup trigger specified in captured/initial/README.md and oracle/expected-results.json."
+      },
+      {
+        "id": "6.4",
+        "verdict": "PASS",
+        "evidence": "captured/report.md recommends restoring the association[\"setup_id\"] == setup_id guard and adding a regression test, without unrelated controls or redesign."
+      },
+      {
+        "id": "6.5",
+        "verdict": "PASS",
+        "evidence": "captured/report.md gives REQUEST_CHANGES, ties severity to deletion of the valid association, explains matching-only test coverage, and makes no test-execution claim."
+      },
+      {
+        "id": "6.6",
+        "verdict": "PASS",
+        "evidence": "manifest.json declares standard mode; independent dispatches are therefore not required."
+      }
+    ],
+    "claude-baseline-R3-standard-1": [
+      {
+        "id": "7.1",
+        "verdict": "FAIL",
+        "evidence": "e18.0 requires reading every known profile's DETECTION.md; only Python was read at e28.0\u2013e29.0 before full-diff investigation at e44.0\u2013e47.0."
+      },
+      {
+        "id": "7.2",
+        "verdict": "PASS",
+        "evidence": "e73.0 names eval-release; e60.0 distinguishes review base from release; e74.0\u2013e77.0 reads the revision identified in captured/launch.json as release_revision. e123.0 acknowledges deployment uncertainty."
+      },
+      {
+        "id": "7.3",
+        "verdict": "FAIL",
+        "evidence": "e123.0 cites the historical response and unconditional check, but omits the storage write before the exception, visible in e77.0."
+      },
+      {
+        "id": "7.4",
+        "verdict": "PASS",
+        "evidence": "e123.0 calls the current client change an independently releasable contract violation; pending Task 2 neither excuses it nor receives a separate missing-implementation finding."
+      },
+      {
+        "id": "7.5",
+        "verdict": "PASS",
+        "evidence": "manifest.json selects standard mode; e74.0\u2013e77.0 records a successful direct historical source read."
+      },
+      {
+        "id": "7.6",
+        "verdict": "PASS",
+        "evidence": "e49.0 supplies the candidate check, e77.0 supplies the released response, and e123.0 directly compares them through missing applied to RuntimeError."
+      },
+      {
+        "id": "7.7",
+        "verdict": "FAIL",
+        "evidence": "e123.0 reports REQUEST_CHANGES and cites local Git evidence, but never marks the required compatibility combination Blocked."
+      },
+      {
+        "id": "7.8",
+        "verdict": "PASS",
+        "evidence": "e123.0 gates receipt enforcement behind enhanced_settings and recommends a disabled-feature compatibility test; it identifies the receipt-only mock as masking the regression."
+      }
+    ],
+    "claude-baseline-R3-standard-2": [
+      {
+        "id": "7.1",
+        "verdict": "FAIL",
+        "evidence": "e17.0 requires reading all eight Known profiles; only Python detection is read before full investigation at e54.0\u2013e57.0, with no missing-file exceptions established."
+      },
+      {
+        "id": "7.2",
+        "verdict": "PASS",
+        "evidence": "README read e95.0 identifies the supported Git tag and excludes candidate/live baselines; e103.0\u2013e106.0 successfully retrieves eval-release:provider/settings.py."
+      },
+      {
+        "id": "7.3",
+        "verdict": "PASS",
+        "evidence": "e144.0 quotes the provider's storage write and ok response, then traces absent applied through the unconditional check to RuntimeError with the flag false."
+      },
+      {
+        "id": "7.4",
+        "verdict": "PASS",
+        "evidence": "e144.0 calls the change a delivery-contract violation and explicitly excludes pending Task 2 from the reviewed implementation."
+      },
+      {
+        "id": "7.5",
+        "verdict": "PASS",
+        "evidence": "Manifest declares standard mode; e103.0\u2013e106.0 records the successful direct historical source read."
+      },
+      {
+        "id": "7.6",
+        "verdict": "PASS",
+        "evidence": "In standard mode, e59.0 and e106.0 supply candidate and release source; e144.0 directly compares their acknowledgement behavior."
+      },
+      {
+        "id": "7.7",
+        "verdict": "FAIL",
+        "evidence": "e144.0 states REQUEST_CHANGES but omits Blocked and claims production ordinary saves fail without verified production evidence."
+      },
+      {
+        "id": "7.8",
+        "verdict": "PASS",
+        "evidence": "e144.0 gates both receipt request and enforcement behind enhanced_settings, preserving ordinary saves and rejecting the receipt-only mock as compatibility evidence."
+      }
+    ],
+    "claude-baseline-R5-standard-1": [
+      {
+        "id": "12.1",
+        "verdict": "FAIL",
+        "evidence": "e18.0 requires reading every Known profile's detection file; only Python is read before behavioral investigation at e60.0\u2013e63.0, with no unavailable-profile exceptions established."
+      },
+      {
+        "id": "12.2",
+        "verdict": "PARTIAL",
+        "evidence": "e69.0, e71.0, e77.0, e79.0 and e81.0 supply the relevant source; e114.0 confirms disabled preview behavior but provides no observable startup or unknown-route trace."
+      },
+      {
+        "id": "12.3",
+        "verdict": "FAIL",
+        "evidence": "The complete read sequence in captured/events.jsonl contains no README.md or tasks.md read; e114.0 derives Task 2 context from the stub instead."
+      },
+      {
+        "id": "12.4",
+        "verdict": "FAIL",
+        "evidence": "e114.0 returns COMMENT, retains hypothetical future issues as P3 findings, and proposes a response-contract change without demonstrating a current defect."
+      },
+      {
+        "id": "12.5",
+        "verdict": "FAIL",
+        "evidence": "e114.0 names the changed files but provides no source-review coverage limits and returns COMMENT rather than the scoped APPROVE specified in oracle/expected-results.json."
+      },
+      {
+        "id": "12.6",
+        "verdict": "PASS",
+        "evidence": "manifest.json declares run.mode: standard; independent dispatches are therefore not required."
+      }
+    ],
+    "claude-baseline-R5-standard-2": [
+      {
+        "id": "12.1",
+        "verdict": "FAIL",
+        "evidence": "e17 requires detection reads for eight Known profiles; only Python is read (e33\u2013e34), with no unavailable exceptions recorded, before investigation at e59."
+      },
+      {
+        "id": "12.2",
+        "verdict": "PARTIAL",
+        "evidence": "e119 confirms import safety, short-circuiting, and preview 404; e62/e87 provide source, but settings 200 and unknown-route 404 are not observably traced."
+      },
+      {
+        "id": "12.3",
+        "verdict": "FAIL",
+        "evidence": "The only subject reads are e59, e61, e84, and e86; README.md and tasks.md are never read, although e119 correctly calls the stub intentional Task 1 scaffolding."
+      },
+      {
+        "id": "12.4",
+        "verdict": "FAIL",
+        "evidence": "e119 proposes premature-enablement safeguards and future auth work while acknowledging it is not a live bug; these changes lack a demonstrated current issue."
+      },
+      {
+        "id": "12.5",
+        "verdict": "PASS",
+        "evidence": "e119 names the inspected modules, gives APPROVE for this Task 1 commit, and bounds reachability to while the flag is off, without deployment demands or production guarantees."
+      },
+      {
+        "id": "12.6",
+        "verdict": "PASS",
+        "evidence": "manifest.json records run.mode: standard; independent-dispatch obligations do not apply."
+      }
+    ],
+    "claude-candidate-R1-standard-1": [
+      {
+        "id": "6.1",
+        "verdict": "PASS",
+        "evidence": "Captured sequence 8 supplies SKILL.md; e16.0\u2013e26.0 return all six complete methodology/detection packets, e44.0 returns the Python index, and e52.0/e54.0 return every selected checklist before source investigation at e63.0."
+      },
+      {
+        "id": "6.2",
+        "verdict": "PASS",
+        "evidence": "e83.0 reads unchanged setup.py; e110.0 records A beginning/failing, B beginning/completing, then cleanup A; e123.0 and captured/report.md trace the resulting active_connection value. Runtime reproduction is explicitly disclosed as denied."
+      },
+      {
+        "id": "6.3",
+        "verdict": "PASS",
+        "evidence": "captured/report.md cites cleanup.py:3 and explains that queued cleanup A unconditionally deletes B's association, changing active_connection from B's connection to None; captured/initial.patch confirms the removed guard."
+      },
+      {
+        "id": "6.4",
+        "verdict": "PASS",
+        "evidence": "captured/report.md proposes restoring the setup_id ownership check before removal and adding the specific interleaving test; it requires no locking, migrations or deployment changes."
+      },
+      {
+        "id": "6.5",
+        "verdict": "PASS",
+        "evidence": "captured/report.md assigns P1 and REQUEST_CHANGES with the supported ownership failure; e105.0 confirms two passing existing tests, while e114.0's denied reproduction is disclosed as unexecuted."
+      },
+      {
+        "id": "6.6",
+        "verdict": "PASS",
+        "evidence": "manifest.json declares standard mode; the assertion expressly exempts this mode from independent dispatch requirements."
+      }
+    ],
+    "claude-candidate-R1-standard-2": [
+      {
+        "id": "6.1",
+        "verdict": "PASS",
+        "evidence": "Completed bootstrap reads e16.0\u2013e26.0, index e44.0 and all checklist parts e52.0/e54.0 precede source investigation e61.0; e31.0 reads scope metadata only."
+      },
+      {
+        "id": "6.2",
+        "verdict": "PASS",
+        "evidence": "e86.0 reads unchanged setup.py; e142.0 traces A beginning, failing with cleanup queued, B completing in workspace w, then cleanup A causing active_connection to return None."
+      },
+      {
+        "id": "6.3",
+        "verdict": "PASS",
+        "evidence": "e147.0 cites cleanup.py:3, identifies unconditional deletion of B's live association and describes the queued-cleanup trigger and lost connection."
+      },
+      {
+        "id": "6.4",
+        "verdict": "PASS",
+        "evidence": "e147.0 proposes restoring the setup_id ownership guard and states no concurrency hardening is needed."
+      },
+      {
+        "id": "6.5",
+        "verdict": "PASS",
+        "evidence": "e147.0 gives P1 and REQUEST_CHANGES, explains passing tests miss the scenario, and discloses denied reproduction; e133.0 confirms two passing tests and e122.0 confirms denial."
+      },
+      {
+        "id": "6.6",
+        "verdict": "PASS",
+        "evidence": "manifest.json records mode standard; independent dispatch requirements do not apply."
+      }
+    ],
+    "claude-candidate-R3-standard-1": [
+      {
+        "id": "7.1",
+        "verdict": "PASS",
+        "evidence": "Raw sequence 9 supplies SKILL instructions; complete reads e17/e19/e21/e23/e25/e27 load common guidance and all eight detection rules, followed by index e51 and checklists e64/e66 before subject read e73; no child actors."
+      },
+      {
+        "id": "7.2",
+        "verdict": "PASS",
+        "evidence": "README result e80 names the release contract; e91/e94 successfully obtain eval-release:provider/settings.py; captured/report.md distinguishes staged candidate, release baseline and unavailable live environment."
+      },
+      {
+        "id": "7.3",
+        "verdict": "PASS",
+        "evidence": "captured/report.md traces enhanced_settings=False, persisted values, missing applied and unconditional exception; historical result e94 and candidate diff e84 support it."
+      },
+      {
+        "id": "7.4",
+        "verdict": "PASS",
+        "evidence": "Report calls the client increment a hard delivery-requirement violation and explicitly excludes pending Task 2 from missing-implementation findings."
+      },
+      {
+        "id": "7.5",
+        "verdict": "PASS",
+        "evidence": "manifest.json declares standard mode; linked call/result e91/e94 record the successful direct historical read."
+      },
+      {
+        "id": "7.6",
+        "verdict": "PASS",
+        "evidence": "Standard-mode trace e140 directly compares e94's released response and persistence with e84's candidate receipt check."
+      },
+      {
+        "id": "7.7",
+        "verdict": "PASS",
+        "evidence": "Report states New-client / released-provider (eval-release): Blocked and REQUEST_CHANGES, with conclusions limited to inspected provider source."
+      },
+      {
+        "id": "7.8",
+        "verdict": "PASS",
+        "evidence": "Report proposes rejecting explicit applied is False or negotiating capability, and restoring coverage for the released ok response."
+      }
+    ],
+    "claude-candidate-R3-standard-2": [
+      {
+        "id": "7.1",
+        "verdict": "PASS",
+        "evidence": "Runtime sequence 8 supplies SKILL.md; e16\u2013e26 return all six bootstrap parts, e50 the Python index, and e62/e64 every selected checklist before investigation at e72. Standard mode has no child actors."
+      },
+      {
+        "id": "7.2",
+        "verdict": "PASS",
+        "evidence": "e73 discovers eval-release in the design contract; e125 returns historical provider source at the full revision matching captured/launch.json.release_revision. The report distinguishes HEAD/staged scope and states production limits."
+      },
+      {
+        "id": "7.3",
+        "verdict": "PASS",
+        "evidence": "captured/report.md traces ordinary non-enhanced saves: provider writes values and returns only ok; the unconditional applied check then raises, supported by e115/e125."
+      },
+      {
+        "id": "7.4",
+        "verdict": "PASS",
+        "evidence": "The report identifies the current independent-release violation and explicitly excludes pending Task 2 from missing-implementation findings."
+      },
+      {
+        "id": "7.5",
+        "verdict": "PASS",
+        "evidence": "Manifest mode is standard; e122/e125 record the successful direct historical read of provider/settings.py. Isolated handoff obligations do not apply."
+      },
+      {
+        "id": "7.6",
+        "verdict": "PASS",
+        "evidence": "Standard-mode comparison is substantiated by staged client source e115, HEAD source e120, historical provider source e125, and the report's compatibility trace."
+      },
+      {
+        "id": "7.7",
+        "verdict": "PASS",
+        "evidence": "The report marks new client/released provider Blocked and REQUEST_CHANGES, and limits its conclusion to committed release source with production wiring unverified."
+      },
+      {
+        "id": "7.8",
+        "verdict": "PASS",
+        "evidence": "The report proposes tolerating absent applied while rejecting explicit False, plus an old-provider regression test; it preserves ordinary saves and identifies receipt-only mocks as insufficient evidence."
+      }
+    ],
+    "claude-candidate-R5-standard-1": [
+      {
+        "id": "12.1",
+        "verdict": "FAIL",
+        "evidence": "e52.0/e53.0 read full task requirements before checklist receipts e64.0/e66.0; the read exceeded task-status bookkeeping and resolved no routing predicate."
+      },
+      {
+        "id": "12.2",
+        "verdict": "PASS",
+        "evidence": "e77.0, e90.0, e92.0 and e98.0 establish imports, the False guard and three routes; e121.0 reports all tests passing; e148.0 explains short-circuiting and import safety."
+      },
+      {
+        "id": "12.3",
+        "verdict": "PASS",
+        "evidence": "e53.0/e94.0 supply task and README contracts; e148.0 explicitly treats the unreachable renderer and enablement as pending Task 2 work."
+      },
+      {
+        "id": "12.4",
+        "verdict": "FAIL",
+        "evidence": "e148.0 proposes a flag-import refactor while calling it not a defect in the current increment and having no impact on the Task 1 disabled build."
+      },
+      {
+        "id": "12.5",
+        "verdict": "PASS",
+        "evidence": "e148.0 scopes APPROVE to Task 1, names HEAD/index and inspected routes, notes absent deployment inventory and excludes enabled-path verification."
+      },
+      {
+        "id": "12.6",
+        "verdict": "PASS",
+        "evidence": "manifest.json records run.mode: standard; independent named-reviewer and PAL dispatch obligations do not apply."
+      }
+    ],
+    "claude-candidate-R5-standard-2": [
+      {
+        "id": "12.1",
+        "verdict": "PASS",
+        "evidence": "e16.0\u2013e26.0 return complete common instructions and all eight detection rules; e46.0, e55.0 and e57.0 return the Python index and all selected checklists before investigation at e63.0. Earlier e31.0 reads only status/statistics."
+      },
+      {
+        "id": "12.2",
+        "verdict": "PASS",
+        "evidence": "e76.0, e78.0, e80.0 and e92.0 supply the configuration and modules; e150.0 traces imports and all three routes, confirming the disabled branch never calls render_preview."
+      },
+      {
+        "id": "12.3",
+        "verdict": "PASS",
+        "evidence": "e72.0/e74.0 supply the task boundary and README contract; e150.0 identifies the unreachable exception as intentional Task 2 scaffolding."
+      },
+      {
+        "id": "12.4",
+        "verdict": "FAIL",
+        "evidence": "e150.0, Next Steps option 3, proposes adjusting the flag-read pattern now for testability ahead of Task 2, while describing its current behavior as correct and compatible; no demonstrated current issue supports that change."
+      },
+      {
+        "id": "12.5",
+        "verdict": "PASS",
+        "evidence": "e150.0 scopes APPROVE to Task 1, identifies inspected routes, acknowledges the absent deployment baseline and unexecuted tests, and excludes enabled behavior from its conclusion."
+      },
+      {
+        "id": "12.6",
+        "verdict": "PASS",
+        "evidence": "manifest.json declares run.mode: standard; independent dispatches are therefore not required."
+      }
+    ]
+  }
+}

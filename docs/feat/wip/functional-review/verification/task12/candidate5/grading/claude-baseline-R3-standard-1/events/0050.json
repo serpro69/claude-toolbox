@@ -1,0 +1,19 @@
+{
+  "actor": "main",
+  "block": {
+    "caller": {
+      "type": "direct"
+    },
+    "id": "toolu_01XrVy2EKgrSh9ykLMnckUB1",
+    "input": {
+      "content": "Pattern: client/provider rollout coupling. In save_settings (client.py), the enhanced-settings increment began sending {\"require_receipt\": True} and hard-raising RuntimeError when response.get(\"applied\") is not True \u2014 but the released provider returns only {\"ok\": True} and the provider-side receipt work (Task 2) ships in a separate repo and was still pending. Result: every ordinary save breaks against the supported provider, violating the design's \"ordinary saves must continue to work at eval-release\" / \"independently releasable\" constraints. Root cause: the new protocol was wired unconditionally instead of being gated behind the existing enhanced_settings feature flag (disabled by default). Lesson for review: when a client increment depends on a NEW provider capability, verify the provider side has shipped, and gate the new behavior behind the feature flag that already exists for it. Also: a test updated to return the new field (applied:True) masks the regression \u2014 require a backward-compat test exercising the old provider shape.",
+      "source": "kk:review-findings"
+    },
+    "name": "mcp__capy__capy_index",
+    "type": "tool_use"
+  },
+  "id": "e120.0",
+  "parent_tool_use_id": null,
+  "session_id": "151b1299-b06a-4c91-90a2-c0e78b1bcc73",
+  "source_sequence": 120
+}

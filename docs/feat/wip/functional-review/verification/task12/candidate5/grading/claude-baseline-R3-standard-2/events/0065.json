@@ -1,0 +1,19 @@
+{
+  "actor": "main",
+  "block": {
+    "caller": {
+      "type": "direct"
+    },
+    "id": "toolu_01HBQxGKSWM8pRM5KGgx5bMa",
+    "input": {
+      "content": "Pattern: enforcing a new protocol field unconditionally breaks backward compatibility with an independently-released counterpart. In save_settings (enhanced-settings task 1), the client began requiring response[\"applied\"] is True and sending require_receipt:True on EVERY save, but the supported provider at git tag eval-release returns only {\"ok\": True}. Because the receipt behavior was not gated behind the existing enhanced_settings flag (default False), ordinary saves against the supported provider always raise RuntimeError, violating the stated requirement that ordinary saves keep working while enhanced_settings is false. Review signal: when a client and provider release independently and a feature flag exists, new protocol requirements (new required response fields, new request flags) MUST be gated behind that flag; verify against the actual released counterpart source, not against a test stub. Secondary signal: the unit test was updated to return the new field (applied:True), which masks the regression because the stub no longer matches the real provider contract \u2014 assert new negative/raise paths and keep stubs faithful to the released contract.",
+      "source": "kk:review-findings"
+    },
+    "name": "mcp__capy__capy_index",
+    "type": "tool_use"
+  },
+  "id": "e141.0",
+  "parent_tool_use_id": null,
+  "session_id": "cd56572d-8153-42eb-af68-48168002472b",
+  "source_sequence": 141
+}

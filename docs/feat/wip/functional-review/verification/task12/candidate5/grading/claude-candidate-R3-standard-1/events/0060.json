@@ -1,0 +1,11 @@
+{
+  "actor": "main",
+  "block": {
+    "text": "Cold-start (empty KB) \u2014 proceeding with standard guidance; no prior findings to correlate. My trace is confirmed:\n\n**Scenario trace** (contract: README + design.md \u2192 supported provider `provider/settings.py @ eval-release`):\n- `save_settings(send, \"w\", {...}, enhanced_settings=False)` \u2192 client sends `{\"settings\": values, \"require_receipt\": True}`.\n- Released provider `update_settings` writes `storage[w] = dict(request[\"settings\"])`, **ignores** `require_receipt`, returns `{\"ok\": True}`.\n- Client: `response.get(\"ok\")` \u2192 True (no raise); `response.get(\"applied\")` \u2192 `None`; `None is not True` \u2192 **raises `RuntimeError(\"Provider did not acknowledge applied settings\")`**.\n- Result: every ordinary save against the supported provider now throws \u2014 even though the provider *did* persist the values. Caller sees failure; the design's \"ordinary saves must continue to work while enhanced_settings is false\" and README's \"successful save = values applied and caller sees success\" are both violated.\n\nThis P1 is a systemic version-skew pattern worth indexing. Let me record it.",
+    "type": "text"
+  },
+  "id": "e140.0",
+  "parent_tool_use_id": null,
+  "session_id": "5b5127c5-8766-495d-b012-31309a02b937",
+  "source_sequence": 140
+}

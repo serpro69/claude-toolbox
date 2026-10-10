@@ -1,0 +1,12 @@
+{
+  "actor": "main",
+  "block": {
+    "content": "tests/test_setup.py:3:from setup import begin_setup, complete_setup, active_connection\ntests/test_setup.py:4:from cleanup import cleanup_setup\ntests/test_setup.py:12:        self.assertEqual(active_connection(store, \"w\"), \"connection-one\")\ntests/test_setup.py:18:        cleanup_setup(store, \"w\", \"one\")\ntests/test_setup.py:19:        self.assertIsNone(active_connection(store, \"w\"))\ntests/test_setup.py:20:        self.assertNotIn(\"one\", store.pending)\ncleanup.py:1:def cleanup_setup(store, workspace_id, setup_id):\ncleanup.py:2:    store.pending.pop(setup_id, None)\ncleanup.py:3:    store.active.pop(workspace_id, None)\nstore.py:3:        self.pending = {}\nstore.py:4:        self.active = {}\nsetup.py:1:def begin_setup(store, workspace_id, setup_id):\nsetup.py:2:    store.pending[setup_id] = {\"workspace_id\": workspace_id}\nsetup.py:5:def complete_setup(store, workspace_id, setup_id, connection):\nsetup.py:6:    store.active[workspace_id] = {\"setup_id\": setup_id, \"connection\": connection}\nsetup.py:7:    store.pending.pop(setup_id, None)\nsetup.py:10:def active_connection(store, workspace_id):\nsetup.py:11:    association = store.active.get(workspace_id)\nREADME.md:4:A workspace has one active setup association. Setup jobs can fail after creating\nREADME.md:5:a pending record. Another setup can complete before the failed job's queued\nREADME.md:6:cleanup runs. Completed associations are consumed by `active_connection`.\nREADME.md:7:Cleanup removes the failed setup's pending record and any association it owns.",
+    "tool_use_id": "toolu_01KHyZr6JzmjFmLGwDkYi8bZ",
+    "type": "tool_result"
+  },
+  "id": "e80.0",
+  "parent_tool_use_id": null,
+  "session_id": "bd5aa95c-71b9-47e3-aca0-e12c6d254ab8",
+  "source_sequence": 80
+}
