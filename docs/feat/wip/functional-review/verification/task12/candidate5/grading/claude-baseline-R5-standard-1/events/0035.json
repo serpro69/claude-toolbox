@@ -1,0 +1,13 @@
+{
+  "actor": "main",
+  "block": {
+    "content": "diff --git a/preview.py b/preview.py\nnew file mode 100644\nindex 0000000..14b3c75\n--- /dev/null\n+++ b/preview.py\n@@ -0,0 +1,2 @@\n+def render_preview():\n+    raise NotImplementedError(\"Export preview is scheduled for Task 2\")\ndiff --git a/routes.py b/routes.py\nindex 39ec034..fa60e31 100644\n--- a/routes.py\n+++ b/routes.py\n@@ -1,7 +1,11 @@\n+from config import EXPORT_PREVIEW_ENABLED\n+from preview import render_preview\n from settings import current_settings\n \n \n def get(path):\n     if path == \"/settings\":\n         return 200, current_settings()\n+    if EXPORT_PREVIEW_ENABLED and path == \"/export-preview\":\n+        return 200, render_preview()\n     return 404, None",
+    "is_error": false,
+    "tool_use_id": "toolu_017moEGZQe6KzfCpFSa9ZKdk",
+    "type": "tool_result"
+  },
+  "id": "e63.0",
+  "parent_tool_use_id": null,
+  "session_id": "ef51d9b0-ffb2-4751-a0a2-19e3582b5012",
+  "source_sequence": 63
+}

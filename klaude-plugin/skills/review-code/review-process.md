@@ -21,7 +21,7 @@ Code Review Progress:
 
 ### 1) Load basic instructions
 
-Read this entire process and [shared-capy-knowledge-protocol.md](shared-capy-knowledge-protocol.md), [shared-profile-detection.md](shared-profile-detection.md), [shared-review-scope-protocol.md](shared-review-scope-protocol.md), [shared-change-context.md](shared-change-context.md), and [functional-review.md](functional-review.md) before routing. Already loaded, unchanged instructions need not be read twice. The common context and functional method apply even without active profiles or specification documents.
+Read this entire process and [shared-capy-knowledge-protocol.md](shared-capy-knowledge-protocol.md), [shared-profile-detection.md](shared-profile-detection.md), [shared-review-scope-protocol.md](shared-review-scope-protocol.md), [shared-change-context.md](shared-change-context.md), and [functional-review.md](functional-review.md) before routing. [Packet preparation](packet-preparation.md) supplies these original contents and every Known-profile detection rule together; Read all parts completely, or use its direct-read fallback. Already loaded, unchanged instructions need not be read twice. The common context and functional method apply even without active profiles or specification documents.
 
 ### 2) Resolve scope from filenames/metadata
 
@@ -31,7 +31,7 @@ A large diff (>500 lines) needs focused batching, not an early content dump. A f
 
 ### 3) Detect profiles and route all checklists
 
-Invoke [shared-profile-detection.md](shared-profile-detection.md) with the scoped filenames. Read each known profile's `DETECTION.md` and evaluate its authoritative signals; do not stop enumerating after an obvious extension match. Path matches alone do not activate a profile. Multiple profiles may apply. Resolve the plugin root from this skill's loaded location (parent of `skills/`) and construct absolute profile paths; do not forward unresolved root tokens into tools.
+Invoke [shared-profile-detection.md](shared-profile-detection.md) with the scoped filenames. Read each known profile's `DETECTION.md` (directly or as complete original contents in the bootstrap packet) and evaluate its authoritative signals; do not stop enumerating after an obvious extension match. Path matches alone do not activate a profile. Multiple profiles may apply. Resolve the plugin root from this skill's loaded location (parent of `skills/`) and construct absolute profile paths; do not forward unresolved root tokens into tools.
 
 Batch the Known-profile reads together when supported, then reconcile expected paths with completed lookups. Record each rule's match/non-match or the shared procedure's explicit unavailable-file outcome; apply that procedure's ENOENT and root-resolution fallbacks. A skipped lookup leaves routing incomplete even when a file extension suggests an obvious profile. This prevents an assumed negative from hiding an additional applicable profile.
 
@@ -41,7 +41,7 @@ Collect `(profile, checklist, triggered_by)` records for all matching/conservati
 
 ### 4) Read every resolved checklist
 
-Read each selected `profiles/<profile>/review-code/<checklist>` using the resolved absolute plugin root. An index read is routing, not checklist loading: every selected link requires its own returned file content, even for a tiny diff. Keep the resolved paths as a loading ledger and mark them loaded only when their read results arrive. Do not batch investigation commands with these reads.
+Read each selected `profiles/<profile>/review-code/<checklist>` using the resolved absolute plugin root, or Read the complete selected-checklist packet from [packet preparation](packet-preparation.md). An index read is routing, not checklist loading: every selected link requires its returned original content, even for a tiny diff. Keep the source paths as a loading ledger and mark them loaded only when complete read results arrive. Do not batch investigation commands with these reads.
 
 Before proceeding, emit a compact loading checkpoint naming the completed common-instruction reads, every known profile's detection-lookup outcome, and the loaded checklist paths (or explicitly no active profiles). Any selected path without returned content keeps the gate closed; surface unreadable instructions and stop, except for detection fallbacks explicitly defined by the shared procedure. This checkpoint records evidence already obtained, not a promise to load guidance later. It catches accidental index-to-diff shortcuts without creating a separate artifact or replacing the actual read events.
 
@@ -65,7 +65,7 @@ General guidance that applies regardless of profile — apply these categories o
 - **SOLID / architecture:** SRP violations (overloaded modules with unrelated responsibilities), OCP (frequent edits to add behavior instead of extension points), LSP (subclasses that break expectations or require type checks), ISP (wide interfaces with unused methods), DIP (high-level logic tied to low-level implementations). When you propose a refactor, explain _why_ it improves cohesion/coupling and outline a minimal, safe split. If refactor is non-trivial, propose an incremental plan instead of a large rewrite.
 - **Security / reliability:** XSS, injection (SQL/NoSQL/command), SSRF, path traversal; AuthZ/AuthN gaps, missing tenancy checks; secret leakage or API keys in logs/env/files; rate limits, unbounded loops, CPU/memory hotspots; unsafe deserialization, weak crypto, insecure defaults; race conditions, check-then-act, TOCTOU, missing locks. Call out both **exploitability** and **impact**.
 - **Code quality:** error handling (swallowed exceptions, overly broad catch, missing handling, async errors); performance (N+1 queries, CPU-intensive ops in hot paths, missing cache, unbounded memory); boundary conditions (null/undefined, empty collections, numeric boundaries, off-by-one). Flag issues that may cause silent failures or production incidents.
-- **Removal candidates:** unused, redundant, or feature-flagged-off code. Distinguish **safe delete now** vs **defer with plan**; provide concrete follow-up steps with checkpoints (tests/metrics).
+- **Removal candidates:** propose deletion only when a demonstrated current cost or defect justifies it and required behavior is preserved. A pending task's unreachable scaffold or disabled feature is not, by itself, a removal candidate. Distinguish **safe delete now** vs **defer with plan** when removal is warranted.
 
 ### 7) Self-check and confidence assessment
 
@@ -147,9 +147,8 @@ or release prerequisites, next actions and durable tracking locations when defer
 
 (if applicable)
 
-## Additional Suggestions
-
-(optional improvements, not blocking)
+Only include recommendations tied to a demonstrated issue or an identified,
+currently required verification gap. A clean scoped review needs no extra work.
 ```
 
 **Inline comments**: Use this format for file-specific findings:
@@ -166,7 +165,7 @@ Apply [functional-review.md](functional-review.md)'s verdict mapping: a hard acc
 
 - What was checked
 - Any areas not covered (e.g., "Did not verify database migrations")
-- Residual risks or recommended follow-up tests
+- Specific residual risks or required verification gaps, when supported
 
 ### 10) Next steps confirmation
 

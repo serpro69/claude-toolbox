@@ -1,0 +1,19 @@
+{
+  "actor": "main",
+  "block": {
+    "caller": {
+      "type": "direct"
+    },
+    "id": "toolu_01KHcRMcCBKVvuDDkdjXditk",
+    "input": {
+      "content": "Pattern: client/consumer increment hard-requires a NEW response field that the currently-released provider does not yet emit, breaking an \"independently releasable main\" delivery contract. Example (enhanced-settings task 1): client.save_settings sends require_receipt:True and then `if response.get(\"applied\") is not True: raise RuntimeError`. The released provider (provider/settings.py) returns only {\"ok\": True} and never sends `applied`, so every save \u2014 including ordinary non-enhanced saves the design says must keep working \u2014 raises against the deployed provider, even though the provider already persisted the data (client reports failure for a succeeded write). The accompanying unit test was edited to inject applied:True, which models the FUTURE provider and hides the backward-incompatibility (green test, broken prod). Fix: tolerate missing field for backward compat (only raise on explicit `applied is False`) or negotiate capability; add a test for the old-provider contract {\"ok\": True} with no `applied`. Review signal: when a diff adds a required check on a response/protocol field, verify the CURRENT released counterpart emits it, and that a test exercises the old-counterpart combination.",
+      "source": "kk:review-findings"
+    },
+    "name": "mcp__capy__capy_index",
+    "type": "tool_use"
+  },
+  "id": "e168.0",
+  "parent_tool_use_id": null,
+  "session_id": "9361fa3a-2389-42e0-a250-d4dfbc0610d2",
+  "source_sequence": 168
+}

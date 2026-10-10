@@ -1,0 +1,114 @@
+"""Successor Claude transport with owned shutdown; actor arguments stay fixed."""
+import json
+from pathlib import Path
+import re
+import sys
+import tomllib
+
+sys.path.append(str(Path(__file__).resolve().parents[1]))
+import controller
+from runtime import capture_signals, capture_stream, completion_status
+
+seed = controller.seed
+
+
+def snapshot_instruction_packet(arguments, evidence, sequence):
+    """Retain requested packet bytes; actual Read results establish receipt."""
+    requested = arguments.get("file_path")
+    if not isinstance(requested, str):
+        return
+    try:
+        path = Path(requested).resolve(strict=True)
+    except (OSError, ValueError):
+        return
+    if (path.parent.parent not in {Path("/tmp"), Path("/private/tmp")}
+            or not path.parent.name.startswith("kk-review-instructions-")
+            or not re.fullmatch(r"part-\d+\.md", path.name) or not path.is_file()):
+        return
+    with path.open("rb") as source:
+        content = source.read(13001)
+    if len(content) > 13000:
+        raise ValueError("Instruction packet exceeds declared part bound")
+    digest = seed.sha(content)
+    target = evidence / "payloads" / digest
+    target.parent.mkdir(exist_ok=True)
+    if not target.exists():
+        target.write_bytes(content)
+    with (evidence / "payload-events.jsonl").open("a") as stream:
+        stream.write(json.dumps({"event_sequence": sequence, "files": [{
+            "path": requested, "sha256": digest, "artifact": str(target.relative_to(evidence)),
+            "temporary_ownership": "instruction packet; requires creation/read event audit",
+            "receipt": "unverified; use actual successful Read result"}]}) + "\n")
+
+
+def command_for(prompt):
+    # Keep the original Task 12 actor/tool policy on both comparison sides.
+    allowed = ["Read", "Glob", "Grep", "Skill", "Agent", "Edit", "Write", "TodoWrite",
+        "Bash(git *)", "Bash(python3 *)", "Bash(rg *)", "Bash(ls *)", "Bash(cat *)", "Bash(sed *)",
+        "Bash(pwd)", "Bash(wc *)", "Bash(mktemp *)", "Bash(rm /tmp/kk-review-*)",
+        "Bash(command -v *)", "Bash(capy *)", "Bash(printenv TOOLBOX_PLUGIN_ROOT)",
+        "mcp__capy__capy_search", "mcp__capy__capy_index", "mcp__capy__capy_vault_search",
+        "mcp__pal__listmodels", "mcp__pal__codereview"]
+    return ["claude", "-p", "--model", "claude-opus-4-8[1m]", "--effort", "high",
+        "--plugin-dir", "./plugins/kk", "--setting-sources", "project,local",
+        "--settings", ".runner/settings.json", "--mcp-config", ".runner/mcp.json", "--strict-mcp-config",
+        "--no-session-persistence", "--permission-mode", "dontAsk", "--output-format", "stream-json",
+        "--verbose", "--include-hook-events", "--forward-subagent-text", "--allowedTools", *allowed,
+        "--", prompt]
+
+
+def run_claude(evidence, interruption=None):
+    if interruption is None:
+        with capture_signals() as request:
+            run_claude(evidence, request)
+            return 128 + request[0] if request[0] else completion_status(evidence)
+    if any((evidence / name).exists() for name in ("command.json", "events.jsonl", "manifest.json")):
+        raise FileExistsError("Refuse to overwrite a run")
+    meta = json.loads((evidence / "launch.json").read_text())
+    workspace = Path(meta["workspace"])
+    environment = seed.run_environment(workspace)
+    environment.pop("CLAUDECODE", None)
+    environment["CPR_PLUGINS_FILE"] = str(workspace / ".runner/registry.json")
+    pal_env = tomllib.loads((Path.home() / ".codex/config.toml").read_text())["mcp_servers"]["pal"].get("env", {})
+    environment.update({key: value for key, value in pal_env.items() if key != "PATH"})
+    credentials = [value for key, value in pal_env.items()
+                   if any(part in key for part in ("KEY", "TOKEN", "SECRET")) and value]
+    command = command_for(meta["prompt"])
+    seed.write_new_json(evidence / "command.json", {"argv": command,
+        "controller_sha256": seed.sha(Path(__file__).read_bytes()),
+        "policy": "explicit tools; normal hooks; no requirement-changing replies"})
+
+    def consume(sequence, line, stream):
+        event = json.loads(line)
+        message = event.get("message", {})
+        content = message.get("content", []) if isinstance(message, dict) else []
+        for block in content if isinstance(content, list) else []:
+            if isinstance(block, dict) and block.get("type") == "tool_use":
+                seed.capture_payloads(block.get("input", {}), workspace, evidence, sequence)
+                if block.get("name") == "Read":
+                    snapshot_instruction_packet(block.get("input", {}), evidence, sequence)
+        retained = seed.sanitize_claude(event)
+        if retained:
+            serialized = json.dumps({"sequence": sequence, "event": retained})
+            for value in credentials:
+                serialized = serialized.replace(value, "[credential redacted]")
+            stream.write(serialized + "\n")
+            stream.flush()
+        if event.get("type") == "result":
+            (evidence / "report.md").write_text(event.get("result", "") + "\n")
+
+    try:
+        with (evidence / "stderr.txt").open("x") as errors, (evidence / "events.jsonl").open("x") as events:
+            result = capture_stream(command, workspace, environment, events, errors, consume, interruption)
+        final = seed.subject_snapshot(workspace, evidence / "final")
+        (evidence / "final.patch").write_bytes(seed.git(workspace, "diff", "HEAD", "--binary"))
+        result.update(final_files=final, grading="not graded; concrete workflow grader pending",
+                      private_reasoning="omitted at capture")
+        seed.write_json(evidence / "completion.json", result)
+    except BaseException as exc:
+        seed.write_json(evidence / "capture-error.json", {"error": type(exc).__name__,
+            "message": str(exc), "coverage": "incomplete; cannot count as a complete workflow capture"})
+        raise
+    finally:
+        seed.seal(evidence, credentials)
+    return completion_status(evidence)

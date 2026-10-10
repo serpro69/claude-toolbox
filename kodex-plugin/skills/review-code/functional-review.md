@@ -10,7 +10,7 @@ Apply this common method after loading all instructions and resolved profile gui
 4. Compare the approach with requirements and existing conventions. Challenge complexity by naming its cost and a simpler alternative preserving required behavior. Trace the proposed correction against documented invariants, including completed-operation/idempotent paths; retain necessary retry/recovery guarantees. Recommend work only for a demonstrated issue or specific uncovered requirement; do not duplicate existing test coverage. More abstraction is not inherently better; a hypothetical race is not automatically a new requirement.
 5. Assess relevant compatibility combinations below, then apply profile expertise and substantiate findings. One issue spanning several lenses remains one finding.
 
-These steps guide reasoning, not exhaustive category enumeration. Small changes remain small. For instruction changes, consumers may be another skill, an agent payload, a generator or a parser.
+Keep a compact scenario record as you trace: **contract/source → initial state → operation or transition → expected result → candidate result → evidence/limit**. Populate it from the actual requirements before deciding which paths are covered; a finding does not complete unrelated required rows. Carry the relevant rows into the report, including supported controls and intermediate states. Small changes may use one sentence. For instruction changes, consumers may be another skill, an agent payload, a generator or a parser.
 
 ## Compatibility and delivery
 
