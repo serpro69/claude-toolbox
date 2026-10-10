@@ -1,0 +1,19 @@
+{
+  "actor": "main",
+  "block": {
+    "caller": {
+      "type": "direct"
+    },
+    "id": "toolu_01XoWL5hLtvFaBGyFzRJECYT",
+    "input": {
+      "content": "Idempotency/recovery lookup keyed by the wrong field (P0 data-loss pattern). An operation keyed by a caller-supplied operation_id must be looked up by that id. Changing the lookup to scan by a coarser attribute (e.g., workspace) collapses all operations on that attribute onto the first record: a fresh operation_id finds a prior completed/applied record, skips create and apply, never records itself, and returns a hardcoded {\"ok\": True, \"operation_id\": <passed id>} \u2014 silent data loss plus false success. Symptom in review: `next((r for r in store.values() if r[\"attr\"] == x), None)` replacing `store.get(id)`. Check contract: \"a fresh ID must perform a fresh save even for the same <attr>\".",
+      "source": "kk:review-findings"
+    },
+    "name": "mcp__capy__capy_index",
+    "type": "tool_use"
+  },
+  "id": "e186.0",
+  "parent_tool_use_id": null,
+  "session_id": "f6c3c5cc-4d72-4d22-a81a-7894168b2213",
+  "source_sequence": 186
+}

@@ -33,6 +33,8 @@ A large diff (>500 lines) needs focused batching, not an early content dump. A f
 
 Invoke [shared-profile-detection.md](shared-profile-detection.md) with the scoped filenames. Read each known profile's `DETECTION.md` and evaluate its authoritative signals; do not stop enumerating after an obvious extension match. Path matches alone do not activate a profile. Multiple profiles may apply. Resolve the plugin root from this skill's loaded location (parent of `skills/`) and construct absolute profile paths; do not forward unresolved root tokens into tools.
 
+Batch the Known-profile reads together when supported, then reconcile expected paths with completed lookups. Record each rule's match/non-match or the shared procedure's explicit unavailable-file outcome; apply that procedure's ENOENT and root-resolution fallbacks. A skipped lookup leaves routing incomplete even when a file extension suggests an obvious profile. This prevents an assumed negative from hiding an additional applicable profile.
+
 For every active profile, read its `profiles/<profile>/review-code/index.md`. Collect **Always load** entries. Evaluate filename/metadata **Load if:** predicates first. For declared content predicates in detection or conditional loading, inspect at most approximately 16 KiB per candidate file, solely to resolve the predicate; log predicate/path. Apply the detection protocol's YAML document rules where relevant. If a conditional cannot be decided within the bound, conservatively select its instruction. Do not defer any conditional until after full source investigation.
 
 Collect `(profile, checklist, triggered_by)` records for all matching/conservatively selected entries, carrying detection provenance and noting conservative selections. Indexes are authoritative; never hardcode checklist names. No profile means an empty list, not omission of the common method.
@@ -41,14 +43,14 @@ Collect `(profile, checklist, triggered_by)` records for all matching/conservati
 
 Read each selected `profiles/<profile>/review-code/<checklist>` using the resolved absolute plugin root. An index read is routing, not checklist loading: every selected link requires its own returned file content, even for a tiny diff. Keep the resolved paths as a loading ledger and mark them loaded only when their read results arrive. Do not batch investigation commands with these reads.
 
-Before proceeding, emit a compact loading checkpoint naming the completed common-instruction reads and the loaded checklist paths (or explicitly no active profiles). Any selected path without returned content keeps the gate closed; surface unreadable instructions and stop. This checkpoint records evidence already obtained, not a promise to load guidance later. It catches accidental index-to-diff shortcuts without creating a separate artifact or replacing the actual read events.
+Before proceeding, emit a compact loading checkpoint naming the completed common-instruction reads, every known profile's detection-lookup outcome, and the loaded checklist paths (or explicitly no active profiles). Any selected path without returned content keeps the gate closed; surface unreadable instructions and stop, except for detection fallbacks explicitly defined by the shared procedure. This checkpoint records evidence already obtained, not a promise to load guidance later. It catches accidental index-to-diff shortcuts without creating a separate artifact or replacing the actual read events.
 
 ### 5) Investigate behavior and compatibility
 
 This is the single entry point for subject-matter investigation. With methodology loaded:
 
-- Read the full diff using the selector from scope and re-read every changed file at the reviewed revision, accounting for deletions. Do not rely on an earlier conversation's contents. Use index blobs for staged review and the selected candidate revision for a commit range; do not silently substitute unrelated worktree contents.
-- Read relevant requirements and task documents; build task scope with the shared protocol. Establish the shared change context, distinguishing review base/candidate from any release baseline.
+- Locate and read available component README/contract documentation and relevant requirements/task documents first; build task scope with the shared protocol and establish explicit intent and preserved invariants. Label inference where no contract exists. Distinguish review base/candidate from any release baseline.
+- Then read the full diff using the selector from scope and re-read every changed file at the reviewed revision, accounting for deletions. Do not rely on an earlier conversation's contents. Use index blobs for staged review and the selected candidate revision for a commit range; do not silently substitute unrelated worktree contents.
 - Apply the common functional method: trace changed behavior through relevant dependencies and unchanged consumers, exercise concrete scenarios, and assess relevant delivery combinations. Obtain actual historical source when needed; label provenance and unavailable evidence using the shared context rules.
 - Search `kk:review-findings` for relevant patterns and, for active programming-language profiles, `kk:lang-idioms`. With no language results, optionally index a canonical idioms source under that label. Skip language lookup for non-language profiles.
 

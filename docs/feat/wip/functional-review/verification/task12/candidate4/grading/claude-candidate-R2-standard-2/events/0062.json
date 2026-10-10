@@ -1,0 +1,12 @@
+{
+  "actor": "main",
+  "block": {
+    "content": "1\tclass ReceiptUnavailable(Exception):\n2\t    pass\n3\t\n4\t\n5\tclass Store:\n6\t    def __init__(self):\n7\t        self.preferences = {}\n8\t        self.recovery = {}\n9\t        self.fail_receipt_once = False\n10\t\n11\t    def apply(self, workspace, values):\n12\t        self.preferences[workspace] = dict(values)\n13\t\n14\t    def receipt(self, record):\n15\t        if self.fail_receipt_once:\n16\t            self.fail_receipt_once = False\n17\t            raise ReceiptUnavailable(\"receipt store unavailable\")\n18\t        record[\"status\"] = \"completed\"\n19\t        return {\"ok\": True, \"operation_id\": record[\"operation_id\"]}\n20\t",
+    "tool_use_id": "toolu_01YCt37dyjAejoKDXBEXz4VW",
+    "type": "tool_result"
+  },
+  "id": "e132.0",
+  "parent_tool_use_id": null,
+  "session_id": "4589b102-e532-431d-aec8-321ad765443b",
+  "source_sequence": 132
+}

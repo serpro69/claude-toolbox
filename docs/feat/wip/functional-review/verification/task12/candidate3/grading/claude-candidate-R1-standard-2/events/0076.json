@@ -1,0 +1,19 @@
+{
+  "actor": "main",
+  "block": {
+    "caller": {
+      "type": "direct"
+    },
+    "id": "toolu_012ZtCxuZfuDoG1tbzfPMSyt",
+    "input": {
+      "content": "Pattern: \"simplification\" that drops an ownership guard before a destructive dict/state removal. In cleanup_setup(store, workspace_id, setup_id), the guard `association and association[\"setup_id\"] == setup_id` was removed, leaving an unconditional `store.active.pop(workspace_id, None)`. This makes a queued cleanup for a FAILED/old setup delete the active association owned by a DIFFERENT, later setup that completed in the interim \u2014 silently losing a valid connection (active_connection returns None). Lesson: a conditional guard keyed on an identity/ownership field (setup_id/version/owner) before pop/delete is usually load-bearing for last-writer/interleaving correctness; \"redundant if\" simplifications must be checked against documented interleavings. Existing happy-path test (cleanup of own association) stays green and does not cover the cross-setup interleaving \u2014 green implementation-shaped tests do not prove the ownership contract.",
+      "source": "kk:review-findings"
+    },
+    "name": "mcp__capy__capy_index",
+    "type": "tool_use"
+  },
+  "id": "e137.0",
+  "parent_tool_use_id": null,
+  "session_id": "161c0827-c8dc-4a48-811c-7e3e8d662360",
+  "source_sequence": 137
+}

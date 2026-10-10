@@ -1,0 +1,248 @@
+diff --git a/.codex/agents/code-reviewer.toml b/.codex/agents/code-reviewer.toml
+index d1a6952c..bacf18d6 100644
+--- a/.codex/agents/code-reviewer.toml
++++ b/.codex/agents/code-reviewer.toml
+@@ -77,7 +77,7 @@ If the profile list is empty, continue with the common functional method plus ge
+ 
+ This is the single entry point for subject-matter investigation. With all instructions loaded:
+ 
+-- Read the selected diff, supplied candidate sources and applicable specifications. Respect the reviewed revision/index snapshots; do not substitute unrelated worktree bytes. Establish or challenge the factual change context. Without specifications, label inferred intent and continue functional reasoning.
++- Read available component/specification contracts first, establishing or challenging the stated intent and preserved invariants. Then read the selected diff and supplied candidate sources. Respect the reviewed revision/index snapshots; do not substitute unrelated worktree bytes. Without contracts, label inferred intent and continue functional reasoning.
+ - Apply the common method: trace before/after behavior through dependencies and unchanged consumers to results or durable state; reason through relevant success, boundary, failure/retry and lifecycle scenarios. Check whether tests actually exercise the claimed contract. Challenge complexity only with an alternative preserving required behavior.
+ - Inspect supplied historical source and provenance for required compatibility comparisons. Cite repository/revision/original path/line spans, not just the parent's summary. Distinguish review base from released/deployed baseline, and introduced/worsened defects from inherited ones. Check affected paths even when a larger feature is disabled.
+ - **Capy search:** Search `kk:review-findings` for prior findings in the same files/modules. For any programming-language profile in the input payload (`go`, `python`, `js_ts`, `kotlin`, `java`), search `kk:lang-idioms` for best practices in that language. Skip the lookup for non-language profiles (e.g., `k8s`) — `kk:lang-idioms` is a programming-language idiom store.
+diff --git a/klaude-plugin/agents/code-reviewer.md b/klaude-plugin/agents/code-reviewer.md
+index 50724d5f..d8c42637 100644
+--- a/klaude-plugin/agents/code-reviewer.md
++++ b/klaude-plugin/agents/code-reviewer.md
+@@ -68,7 +68,7 @@ If the profile list is empty, continue with the common functional method plus ge
+ 
+ This is the single entry point for subject-matter investigation. With all instructions loaded:
+ 
+-- Read the selected diff, supplied candidate sources and applicable specifications. Respect the reviewed revision/index snapshots; do not substitute unrelated worktree bytes. Establish or challenge the factual change context. Without specifications, label inferred intent and continue functional reasoning.
++- Read available component/specification contracts first, establishing or challenging the stated intent and preserved invariants. Then read the selected diff and supplied candidate sources. Respect the reviewed revision/index snapshots; do not substitute unrelated worktree bytes. Without contracts, label inferred intent and continue functional reasoning.
+ - Apply the common method: trace before/after behavior through dependencies and unchanged consumers to results or durable state; reason through relevant success, boundary, failure/retry and lifecycle scenarios. Check whether tests actually exercise the claimed contract. Challenge complexity only with an alternative preserving required behavior.
+ - Inspect supplied historical source and provenance for required compatibility comparisons. Cite repository/revision/original path/line spans, not just the parent's summary. Distinguish review base from released/deployed baseline, and introduced/worsened defects from inherited ones. Check affected paths even when a larger feature is disabled.
+ - **Capy search:** Search `kk:review-findings` for prior findings in the same files/modules. For any programming-language profile in the input payload (`go`, `python`, `js_ts`, `kotlin`, `java`), search `kk:lang-idioms` for best practices in that language. Skip the lookup for non-language profiles (e.g., `k8s`) — `kk:lang-idioms` is a programming-language idiom store.
+diff --git a/klaude-plugin/skills/review-code/SKILL.md b/klaude-plugin/skills/review-code/SKILL.md
+index 8c2e09b8..1217cacf 100644
+--- a/klaude-plugin/skills/review-code/SKILL.md
++++ b/klaude-plugin/skills/review-code/SKILL.md
+@@ -50,7 +50,7 @@ See [review-isolated.md](./review-isolated.md) for the isolated workflow.
+ 
+ | Level  | Name     | Description                                                      | Action                             |
+ | ------ | -------- | ---------------------------------------------------------------- | ---------------------------------- |
+-| **P0** | Critical | Security vulnerability, data loss risk, correctness bug          | Must block merge                   |
++| **P0** | Critical | Demonstrated critical security, integrity or availability impact needing immediate mitigation | Must block merge                   |
+ | **P1** | High     | Logic error, significant SOLID violation, performance regression | Should fix before merge            |
+ | **P2** | Medium   | Code smell, maintainability concern, minor SOLID violation       | Fix in this PR or create follow-up |
+ | **P3** | Low      | Style, naming, minor suggestion                                  | Optional improvement               |
+@@ -67,9 +67,9 @@ This ordering is load-bearing, not stylistic. Reviewing from a diff before loadi
+ 
+ 1. Load basic instructions — process, shared protocols and common functional method
+ 2. Scope — resolve diff selection from status/filenames only
+-3. Detect profiles and route checklists — filename/metadata signals, then bounded declared predicates; no deferred conditionals
++3. Detect profiles and route checklists — read and reconcile every known detection rule; filename/metadata signals, then bounded declared predicates; no deferred conditionals
+ 4. Read every resolved checklist — always-load, matching and conservatively selected content; confirm returned instruction files in a compact loading checkpoint before proceeding
+-5. Investigate — read selected diff/current files, establish change context/task scope, trace behavior and historical compatibility, and search relevant knowledge
++5. Investigate — read available component contracts and establish context/task scope, then selected diff/current files; trace behavior and historical compatibility, and search relevant knowledge
+ 6. Apply profile and general checklists to that behavior
+ 7. Self-check findings and confidence through targeted verification
+ 8. Index systemic P0/P1 findings as `kk:review-findings`
+diff --git a/klaude-plugin/skills/review-code/functional-review.md b/klaude-plugin/skills/review-code/functional-review.md
+index 6174c801..551de0e4 100644
+--- a/klaude-plugin/skills/review-code/functional-review.md
++++ b/klaude-plugin/skills/review-code/functional-review.md
+@@ -4,10 +4,10 @@ Apply this common method after loading all instructions and resolved profile gui
+ 
+ ## Trace the affected behavior
+ 
+-1. Establish or reconstruct the record in [shared-change-context.md](shared-change-context.md). Determine intent, authority, task boundary, existing contracts and applicable delivery constraints before judging the approach. Use [shared-review-scope-protocol.md](shared-review-scope-protocol.md) to distinguish current work from genuinely pending functionality.
+-2. Describe relevant behavior before and after the change. Trace changed entry points/callers through meaningful dependencies to responses, side effects or durable state. Include unchanged consumers whose expectations may now fail. Read adjacent source to answer an identified contract/impact question; stop expanding once its contract and consequence are established, or name the uncovered boundary. A file-count cap must not silently cut off a necessary trace.
+-3. Exercise that model with concrete success and boundary scenarios. Where applicable, include partial failure, retries, edits between attempts, cleanup and later reuse. Check which tests actually exercise the claimed contract and failure path. Green implementation-shaped tests or successful transport/status responses do not prove a successful business operation. Distinguish inspected source, executed tests and unverified assumptions; do not claim execution from source-only access.
+-4. Compare the approach with requirements and existing conventions. Challenge complexity by naming its cost and a simpler alternative preserving required behavior. Retain necessary retry/recovery guarantees. More abstraction is not inherently better; a hypothetical race is not automatically a new requirement.
++1. Establish or reconstruct the record in [shared-change-context.md](shared-change-context.md). Locate and read the affected component's README or contract documentation before tracing behavior, when available. Record explicit outcomes, preserved invariants and delivery constraints with source locations; do not replace documented requirements with test expectations or invite a product decision already settled there. Label inferred intent when no contract exists. Use [shared-review-scope-protocol.md](shared-review-scope-protocol.md) to distinguish current work from genuinely pending functionality.
++2. Describe relevant behavior before and after the change. Trace changed entry points/callers through meaningful dependencies to responses, side effects or durable state. Include unchanged consumers whose expectations may now fail. Read adjacent source to answer an identified contract/impact question; stop expanding once its contract and consequence are established, or name the uncovered boundary. A failed compound command does not establish source unavailability: retry permitted individual reads, while honoring explicit access denials; an isolated reviewer can request those reads through its parent. A file-count cap must not silently cut off a necessary trace.
++3. Exercise that model with concrete success and boundary scenarios. Where applicable, include partial failure, retries, edits between attempts, cleanup and later reuse. Trace the documented scenario's actual state transitions through the unchanged consumer; a similar hypothetical sequence does not establish the documented failure/recovery path. For required transitions, cover the initial, relevant intermediate and final states against available fixtures; finding a failure in one state does not verify the others. Check which tests actually exercise the claimed contract and failure path. Green implementation-shaped tests or successful transport/status responses do not prove a successful business operation. Distinguish inspected source, executed tests and unverified assumptions; do not claim execution from source-only access.
++4. Compare the approach with requirements and existing conventions. Challenge complexity by naming its cost and a simpler alternative preserving required behavior. Trace the proposed correction against documented invariants, including completed-operation/idempotent paths; retain necessary retry/recovery guarantees. Recommend work only for a demonstrated issue or specific uncovered requirement; do not duplicate existing test coverage. More abstraction is not inherently better; a hypothetical race is not automatically a new requirement.
+ 5. Assess relevant compatibility combinations below, then apply profile expertise and substantiate findings. One issue spanning several lenses remains one finding.
+ 
+ These steps guide reasoning, not exhaustive category enumeration. Small changes remain small. For instruction changes, consumers may be another skill, an agent payload, a generator or a parser.
+@@ -29,6 +29,8 @@ For each applicable dimension, state:
+ 
+ Supported is not a production guarantee. Missing evidence is not an invented code defect. Preserve existing P0–P3 severity according to actual impact; do not create a separate severity taxonomy.
+ 
++Reserve P0 for demonstrated critical consequences needing immediate mitigation. A scoped regression or recoverable wrong value does not establish catastrophic or irreversible loss. Hard acceptance violations still require changes when their impact merits P1 or P2.
++
+ ## Verdict mapping
+ 
+ | Evidence | Code-review verdict | Release assessment |
+@@ -45,4 +47,6 @@ Code approval with conditional release readiness cannot bypass a hard independen
+ 
+ Every report, including one with findings, identifies intent, actual scope/base/candidate, inspected paths and important evidence limits. Include a compact behavior/compatibility assessment with applicable conclusions. For each behavioral finding provide trigger, affected path, expected/actual result, consequence and correction; preserve confidence reasoning, severity and profile/checklist labels. Separate inherited findings and author-attributed inputs.
+ 
++Before presenting, reconcile every claimed inspection or execution with successful returned tool results. Denied reads, unread source and truncated results belong under missing coverage. A supported finding does not establish that the full diff was inspected or tests ran; remove unsupported coverage claims, including copied template wording.
++
+ Record outstanding evidence or release/migration/activation prerequisites and next actions; name their durable tracking location when deferred. Preserve disagreement and uncertainty. Reviewer agreement never replaces source evidence. In isolated reporting, retain native external findings and annotations, disclose failures or zero/incomplete source coverage, and do not claim corroboration or broad safety from an underfed external result. Useful available findings remain reportable.
+diff --git a/klaude-plugin/skills/review-code/review-isolated.md b/klaude-plugin/skills/review-code/review-isolated.md
+index 88ddb5bc..42bc700b 100644
+--- a/klaude-plugin/skills/review-code/review-isolated.md
++++ b/klaude-plugin/skills/review-code/review-isolated.md
+@@ -40,13 +40,13 @@ Read every selected file: an index or requested path is not returned instruction
+ 
+ ## Step 5: Investigate and Prepare Evidence
+ 
+-This is the single entry point for subject-matter investigation. Read the selected full diff and changed files at the reviewed candidate, accounting for deletions. For staged review use index blobs; for a commit range use the selected candidate revision. Materialize those candidate sources outside the worktree when its current files differ; never pass unrelated worktree bytes as reviewed source. Large diffs (>500 lines) may be batched by module; report any context limit.
++This is the single entry point for subject-matter investigation. Locate and read available component README/contract documentation and relevant design/task contracts first; establish explicit intent and preserved invariants, labeling inference when no contract exists. Then read the selected full diff and changed files at the reviewed candidate, accounting for deletions. For staged review use index blobs; for a commit range use the selected candidate revision. Materialize those candidate sources outside the worktree when its current files differ; never pass unrelated worktree bytes as reviewed source. Large diffs (>500 lines) may be batched by module; report any context limit.
+ 
+ Write the selected diff to a temporary file outside the reviewed worktree, using `mktemp` and the same selector. Keep evidence until both reviewers and any follow-ups finish.
+ 
+ ### Context and affected paths
+ 
+-- Read relevant design/task contracts when available. Build the Task Scope block with the shared scope protocol, including the invoking implementation task even if still in progress. Without a related feature, use its no-task-scope variant.
++- Build the Task Scope block from those contracts with the shared scope protocol, including the invoking implementation task even if still in progress. Without a related feature, use its no-task-scope variant.
+ - Establish or refresh the shared change context: intent/authority, task boundary, preserved behavior, delivery constraints, review base/candidate, separate compatibility baselines, scenarios and attributed verification results. Without a spec, infer provisional purpose from the request, diff, callers and tests; label it. Functional reasoning remains required.
+ - Trace affected behavior using the common method, including unchanged consumers and required compatibility combinations. Select source by the contract question it answers, not directory proximity. Search `kk:review-findings` and, for active programming-language profiles, `kk:lang-idioms`.
+ - Include concrete rejected-approach facts if useful, with their source; omit implementation-session narrative. Author explanations and test claims remain attributed evidence that reviewers may challenge.
+diff --git a/klaude-plugin/skills/review-code/review-process.md b/klaude-plugin/skills/review-code/review-process.md
+index 512f6615..7e81c061 100644
+--- a/klaude-plugin/skills/review-code/review-process.md
++++ b/klaude-plugin/skills/review-code/review-process.md
+@@ -33,6 +33,8 @@ A large diff (>500 lines) needs focused batching, not an early content dump. A f
+ 
+ Invoke [shared-profile-detection.md](shared-profile-detection.md) with the scoped filenames. Read each known profile's `DETECTION.md` and evaluate its authoritative signals; do not stop enumerating after an obvious extension match. Path matches alone do not activate a profile. Multiple profiles may apply. Resolve the plugin root from this skill's loaded location (parent of `skills/`) and construct absolute profile paths; do not forward unresolved root tokens into tools.
+ 
++Batch the Known-profile reads together when supported, then reconcile expected paths with completed lookups. Record each rule's match/non-match or the shared procedure's explicit unavailable-file outcome; apply that procedure's ENOENT and root-resolution fallbacks. A skipped lookup leaves routing incomplete even when a file extension suggests an obvious profile. This prevents an assumed negative from hiding an additional applicable profile.
++
+ For every active profile, read its `profiles/<profile>/review-code/index.md`. Collect **Always load** entries. Evaluate filename/metadata **Load if:** predicates first. For declared content predicates in detection or conditional loading, inspect at most approximately 16 KiB per candidate file, solely to resolve the predicate; log predicate/path. Apply the detection protocol's YAML document rules where relevant. If a conditional cannot be decided within the bound, conservatively select its instruction. Do not defer any conditional until after full source investigation.
+ 
+ Collect `(profile, checklist, triggered_by)` records for all matching/conservatively selected entries, carrying detection provenance and noting conservative selections. Indexes are authoritative; never hardcode checklist names. No profile means an empty list, not omission of the common method.
+@@ -41,14 +43,14 @@ Collect `(profile, checklist, triggered_by)` records for all matching/conservati
+ 
+ Read each selected `profiles/<profile>/review-code/<checklist>` using the resolved absolute plugin root. An index read is routing, not checklist loading: every selected link requires its own returned file content, even for a tiny diff. Keep the resolved paths as a loading ledger and mark them loaded only when their read results arrive. Do not batch investigation commands with these reads.
+ 
+-Before proceeding, emit a compact loading checkpoint naming the completed common-instruction reads and the loaded checklist paths (or explicitly no active profiles). Any selected path without returned content keeps the gate closed; surface unreadable instructions and stop. This checkpoint records evidence already obtained, not a promise to load guidance later. It catches accidental index-to-diff shortcuts without creating a separate artifact or replacing the actual read events.
++Before proceeding, emit a compact loading checkpoint naming the completed common-instruction reads, every known profile's detection-lookup outcome, and the loaded checklist paths (or explicitly no active profiles). Any selected path without returned content keeps the gate closed; surface unreadable instructions and stop, except for detection fallbacks explicitly defined by the shared procedure. This checkpoint records evidence already obtained, not a promise to load guidance later. It catches accidental index-to-diff shortcuts without creating a separate artifact or replacing the actual read events.
+ 
+ ### 5) Investigate behavior and compatibility
+ 
+ This is the single entry point for subject-matter investigation. With methodology loaded:
+ 
+-- Read the full diff using the selector from scope and re-read every changed file at the reviewed revision, accounting for deletions. Do not rely on an earlier conversation's contents. Use index blobs for staged review and the selected candidate revision for a commit range; do not silently substitute unrelated worktree contents.
+-- Read relevant requirements and task documents; build task scope with the shared protocol. Establish the shared change context, distinguishing review base/candidate from any release baseline.
++- Locate and read available component README/contract documentation and relevant requirements/task documents first; build task scope with the shared protocol and establish explicit intent and preserved invariants. Label inference where no contract exists. Distinguish review base/candidate from any release baseline.
++- Then read the full diff using the selector from scope and re-read every changed file at the reviewed revision, accounting for deletions. Do not rely on an earlier conversation's contents. Use index blobs for staged review and the selected candidate revision for a commit range; do not silently substitute unrelated worktree contents.
+ - Apply the common functional method: trace changed behavior through relevant dependencies and unchanged consumers, exercise concrete scenarios, and assess relevant delivery combinations. Obtain actual historical source when needed; label provenance and unavailable evidence using the shared context rules.
+ - Search `kk:review-findings` for relevant patterns and, for active programming-language profiles, `kk:lang-idioms`. With no language results, optionally index a canonical idioms source under that label. Skip language lookup for non-language profiles.
+ 
+diff --git a/kodex-plugin/skills/review-code/SKILL.md b/kodex-plugin/skills/review-code/SKILL.md
+index cafd97cc..2d0b2d30 100644
+--- a/kodex-plugin/skills/review-code/SKILL.md
++++ b/kodex-plugin/skills/review-code/SKILL.md
+@@ -51,7 +51,7 @@ See [review-isolated.md](./review-isolated.md) for the isolated workflow.
+ 
+ | Level  | Name     | Description                                                      | Action                             |
+ | ------ | -------- | ---------------------------------------------------------------- | ---------------------------------- |
+-| **P0** | Critical | Security vulnerability, data loss risk, correctness bug          | Must block merge                   |
++| **P0** | Critical | Demonstrated critical security, integrity or availability impact needing immediate mitigation | Must block merge                   |
+ | **P1** | High     | Logic error, significant SOLID violation, performance regression | Should fix before merge            |
+ | **P2** | Medium   | Code smell, maintainability concern, minor SOLID violation       | Fix in this PR or create follow-up |
+ | **P3** | Low      | Style, naming, minor suggestion                                  | Optional improvement               |
+@@ -68,9 +68,9 @@ This ordering is load-bearing, not stylistic. Reviewing from a diff before loadi
+ 
+ 1. Load basic instructions — process, shared protocols and common functional method
+ 2. Scope — resolve diff selection from status/filenames only
+-3. Detect profiles and route checklists — filename/metadata signals, then bounded declared predicates; no deferred conditionals
++3. Detect profiles and route checklists — read and reconcile every known detection rule; filename/metadata signals, then bounded declared predicates; no deferred conditionals
+ 4. Read every resolved checklist — always-load, matching and conservatively selected content; confirm returned instruction files in a compact loading checkpoint before proceeding
+-5. Investigate — read selected diff/current files, establish change context/task scope, trace behavior and historical compatibility, and search relevant knowledge
++5. Investigate — read available component contracts and establish context/task scope, then selected diff/current files; trace behavior and historical compatibility, and search relevant knowledge
+ 6. Apply profile and general checklists to that behavior
+ 7. Self-check findings and confidence through targeted verification
+ 8. Index systemic P0/P1 findings as `kk:review-findings`
+diff --git a/kodex-plugin/skills/review-code/functional-review.md b/kodex-plugin/skills/review-code/functional-review.md
+index 6174c801..551de0e4 100644
+--- a/kodex-plugin/skills/review-code/functional-review.md
++++ b/kodex-plugin/skills/review-code/functional-review.md
+@@ -4,10 +4,10 @@ Apply this common method after loading all instructions and resolved profile gui
+ 
+ ## Trace the affected behavior
+ 
+-1. Establish or reconstruct the record in [shared-change-context.md](shared-change-context.md). Determine intent, authority, task boundary, existing contracts and applicable delivery constraints before judging the approach. Use [shared-review-scope-protocol.md](shared-review-scope-protocol.md) to distinguish current work from genuinely pending functionality.
+-2. Describe relevant behavior before and after the change. Trace changed entry points/callers through meaningful dependencies to responses, side effects or durable state. Include unchanged consumers whose expectations may now fail. Read adjacent source to answer an identified contract/impact question; stop expanding once its contract and consequence are established, or name the uncovered boundary. A file-count cap must not silently cut off a necessary trace.
+-3. Exercise that model with concrete success and boundary scenarios. Where applicable, include partial failure, retries, edits between attempts, cleanup and later reuse. Check which tests actually exercise the claimed contract and failure path. Green implementation-shaped tests or successful transport/status responses do not prove a successful business operation. Distinguish inspected source, executed tests and unverified assumptions; do not claim execution from source-only access.
+-4. Compare the approach with requirements and existing conventions. Challenge complexity by naming its cost and a simpler alternative preserving required behavior. Retain necessary retry/recovery guarantees. More abstraction is not inherently better; a hypothetical race is not automatically a new requirement.
++1. Establish or reconstruct the record in [shared-change-context.md](shared-change-context.md). Locate and read the affected component's README or contract documentation before tracing behavior, when available. Record explicit outcomes, preserved invariants and delivery constraints with source locations; do not replace documented requirements with test expectations or invite a product decision already settled there. Label inferred intent when no contract exists. Use [shared-review-scope-protocol.md](shared-review-scope-protocol.md) to distinguish current work from genuinely pending functionality.
++2. Describe relevant behavior before and after the change. Trace changed entry points/callers through meaningful dependencies to responses, side effects or durable state. Include unchanged consumers whose expectations may now fail. Read adjacent source to answer an identified contract/impact question; stop expanding once its contract and consequence are established, or name the uncovered boundary. A failed compound command does not establish source unavailability: retry permitted individual reads, while honoring explicit access denials; an isolated reviewer can request those reads through its parent. A file-count cap must not silently cut off a necessary trace.
++3. Exercise that model with concrete success and boundary scenarios. Where applicable, include partial failure, retries, edits between attempts, cleanup and later reuse. Trace the documented scenario's actual state transitions through the unchanged consumer; a similar hypothetical sequence does not establish the documented failure/recovery path. For required transitions, cover the initial, relevant intermediate and final states against available fixtures; finding a failure in one state does not verify the others. Check which tests actually exercise the claimed contract and failure path. Green implementation-shaped tests or successful transport/status responses do not prove a successful business operation. Distinguish inspected source, executed tests and unverified assumptions; do not claim execution from source-only access.
++4. Compare the approach with requirements and existing conventions. Challenge complexity by naming its cost and a simpler alternative preserving required behavior. Trace the proposed correction against documented invariants, including completed-operation/idempotent paths; retain necessary retry/recovery guarantees. Recommend work only for a demonstrated issue or specific uncovered requirement; do not duplicate existing test coverage. More abstraction is not inherently better; a hypothetical race is not automatically a new requirement.
+ 5. Assess relevant compatibility combinations below, then apply profile expertise and substantiate findings. One issue spanning several lenses remains one finding.
+ 
+ These steps guide reasoning, not exhaustive category enumeration. Small changes remain small. For instruction changes, consumers may be another skill, an agent payload, a generator or a parser.
+@@ -29,6 +29,8 @@ For each applicable dimension, state:
+ 
+ Supported is not a production guarantee. Missing evidence is not an invented code defect. Preserve existing P0–P3 severity according to actual impact; do not create a separate severity taxonomy.
+ 
++Reserve P0 for demonstrated critical consequences needing immediate mitigation. A scoped regression or recoverable wrong value does not establish catastrophic or irreversible loss. Hard acceptance violations still require changes when their impact merits P1 or P2.
++
+ ## Verdict mapping
+ 
+ | Evidence | Code-review verdict | Release assessment |
+@@ -45,4 +47,6 @@ Code approval with conditional release readiness cannot bypass a hard independen
+ 
+ Every report, including one with findings, identifies intent, actual scope/base/candidate, inspected paths and important evidence limits. Include a compact behavior/compatibility assessment with applicable conclusions. For each behavioral finding provide trigger, affected path, expected/actual result, consequence and correction; preserve confidence reasoning, severity and profile/checklist labels. Separate inherited findings and author-attributed inputs.
+ 
++Before presenting, reconcile every claimed inspection or execution with successful returned tool results. Denied reads, unread source and truncated results belong under missing coverage. A supported finding does not establish that the full diff was inspected or tests ran; remove unsupported coverage claims, including copied template wording.
++
+ Record outstanding evidence or release/migration/activation prerequisites and next actions; name their durable tracking location when deferred. Preserve disagreement and uncertainty. Reviewer agreement never replaces source evidence. In isolated reporting, retain native external findings and annotations, disclose failures or zero/incomplete source coverage, and do not claim corroboration or broad safety from an underfed external result. Useful available findings remain reportable.
+diff --git a/kodex-plugin/skills/review-code/review-isolated.md b/kodex-plugin/skills/review-code/review-isolated.md
+index 88ddb5bc..42bc700b 100644
+--- a/kodex-plugin/skills/review-code/review-isolated.md
++++ b/kodex-plugin/skills/review-code/review-isolated.md
+@@ -40,13 +40,13 @@ Read every selected file: an index or requested path is not returned instruction
+ 
+ ## Step 5: Investigate and Prepare Evidence
+ 
+-This is the single entry point for subject-matter investigation. Read the selected full diff and changed files at the reviewed candidate, accounting for deletions. For staged review use index blobs; for a commit range use the selected candidate revision. Materialize those candidate sources outside the worktree when its current files differ; never pass unrelated worktree bytes as reviewed source. Large diffs (>500 lines) may be batched by module; report any context limit.
++This is the single entry point for subject-matter investigation. Locate and read available component README/contract documentation and relevant design/task contracts first; establish explicit intent and preserved invariants, labeling inference when no contract exists. Then read the selected full diff and changed files at the reviewed candidate, accounting for deletions. For staged review use index blobs; for a commit range use the selected candidate revision. Materialize those candidate sources outside the worktree when its current files differ; never pass unrelated worktree bytes as reviewed source. Large diffs (>500 lines) may be batched by module; report any context limit.
+ 
+ Write the selected diff to a temporary file outside the reviewed worktree, using `mktemp` and the same selector. Keep evidence until both reviewers and any follow-ups finish.
+ 
+ ### Context and affected paths
+ 
+-- Read relevant design/task contracts when available. Build the Task Scope block with the shared scope protocol, including the invoking implementation task even if still in progress. Without a related feature, use its no-task-scope variant.
++- Build the Task Scope block from those contracts with the shared scope protocol, including the invoking implementation task even if still in progress. Without a related feature, use its no-task-scope variant.
+ - Establish or refresh the shared change context: intent/authority, task boundary, preserved behavior, delivery constraints, review base/candidate, separate compatibility baselines, scenarios and attributed verification results. Without a spec, infer provisional purpose from the request, diff, callers and tests; label it. Functional reasoning remains required.
+ - Trace affected behavior using the common method, including unchanged consumers and required compatibility combinations. Select source by the contract question it answers, not directory proximity. Search `kk:review-findings` and, for active programming-language profiles, `kk:lang-idioms`.
+ - Include concrete rejected-approach facts if useful, with their source; omit implementation-session narrative. Author explanations and test claims remain attributed evidence that reviewers may challenge.
+diff --git a/kodex-plugin/skills/review-code/review-process.md b/kodex-plugin/skills/review-code/review-process.md
+index 512f6615..7e81c061 100644
+--- a/kodex-plugin/skills/review-code/review-process.md
++++ b/kodex-plugin/skills/review-code/review-process.md
+@@ -33,6 +33,8 @@ A large diff (>500 lines) needs focused batching, not an early content dump. A f
+ 
+ Invoke [shared-profile-detection.md](shared-profile-detection.md) with the scoped filenames. Read each known profile's `DETECTION.md` and evaluate its authoritative signals; do not stop enumerating after an obvious extension match. Path matches alone do not activate a profile. Multiple profiles may apply. Resolve the plugin root from this skill's loaded location (parent of `skills/`) and construct absolute profile paths; do not forward unresolved root tokens into tools.
+ 
++Batch the Known-profile reads together when supported, then reconcile expected paths with completed lookups. Record each rule's match/non-match or the shared procedure's explicit unavailable-file outcome; apply that procedure's ENOENT and root-resolution fallbacks. A skipped lookup leaves routing incomplete even when a file extension suggests an obvious profile. This prevents an assumed negative from hiding an additional applicable profile.
++
+ For every active profile, read its `profiles/<profile>/review-code/index.md`. Collect **Always load** entries. Evaluate filename/metadata **Load if:** predicates first. For declared content predicates in detection or conditional loading, inspect at most approximately 16 KiB per candidate file, solely to resolve the predicate; log predicate/path. Apply the detection protocol's YAML document rules where relevant. If a conditional cannot be decided within the bound, conservatively select its instruction. Do not defer any conditional until after full source investigation.
+ 
+ Collect `(profile, checklist, triggered_by)` records for all matching/conservatively selected entries, carrying detection provenance and noting conservative selections. Indexes are authoritative; never hardcode checklist names. No profile means an empty list, not omission of the common method.
+@@ -41,14 +43,14 @@ Collect `(profile, checklist, triggered_by)` records for all matching/conservati
+ 
+ Read each selected `profiles/<profile>/review-code/<checklist>` using the resolved absolute plugin root. An index read is routing, not checklist loading: every selected link requires its own returned file content, even for a tiny diff. Keep the resolved paths as a loading ledger and mark them loaded only when their read results arrive. Do not batch investigation commands with these reads.
+ 
+-Before proceeding, emit a compact loading checkpoint naming the completed common-instruction reads and the loaded checklist paths (or explicitly no active profiles). Any selected path without returned content keeps the gate closed; surface unreadable instructions and stop. This checkpoint records evidence already obtained, not a promise to load guidance later. It catches accidental index-to-diff shortcuts without creating a separate artifact or replacing the actual read events.
++Before proceeding, emit a compact loading checkpoint naming the completed common-instruction reads, every known profile's detection-lookup outcome, and the loaded checklist paths (or explicitly no active profiles). Any selected path without returned content keeps the gate closed; surface unreadable instructions and stop, except for detection fallbacks explicitly defined by the shared procedure. This checkpoint records evidence already obtained, not a promise to load guidance later. It catches accidental index-to-diff shortcuts without creating a separate artifact or replacing the actual read events.
+ 
+ ### 5) Investigate behavior and compatibility
+ 
+ This is the single entry point for subject-matter investigation. With methodology loaded:
+ 
+-- Read the full diff using the selector from scope and re-read every changed file at the reviewed revision, accounting for deletions. Do not rely on an earlier conversation's contents. Use index blobs for staged review and the selected candidate revision for a commit range; do not silently substitute unrelated worktree contents.
+-- Read relevant requirements and task documents; build task scope with the shared protocol. Establish the shared change context, distinguishing review base/candidate from any release baseline.
++- Locate and read available component README/contract documentation and relevant requirements/task documents first; build task scope with the shared protocol and establish explicit intent and preserved invariants. Label inference where no contract exists. Distinguish review base/candidate from any release baseline.
++- Then read the full diff using the selector from scope and re-read every changed file at the reviewed revision, accounting for deletions. Do not rely on an earlier conversation's contents. Use index blobs for staged review and the selected candidate revision for a commit range; do not silently substitute unrelated worktree contents.
+ - Apply the common functional method: trace changed behavior through relevant dependencies and unchanged consumers, exercise concrete scenarios, and assess relevant delivery combinations. Obtain actual historical source when needed; label provenance and unavailable evidence using the shared context rules.
+ - Search `kk:review-findings` for relevant patterns and, for active programming-language profiles, `kk:lang-idioms`. With no language results, optionally index a canonical idioms source under that label. Skip language lookup for non-language profiles.
+ 

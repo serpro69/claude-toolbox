@@ -1,0 +1,67 @@
+{
+  "actor": {
+    "archive_sha256": "95fafde4633392ad1558d1432d0b604cb2b66479631e9e16aa2e0f20e93e005c",
+    "excluded_files": 1352,
+    "retained_files": 443,
+    "retained_manifest_sha256": "dc69e460bb3eeb6d9f54f2257de2450dafe52e6b76ad33249d4302a584b55ae7",
+    "revision": "f7bbcc81c4760167d38622d9b698c2b2da54e5d9",
+    "source_files": 1795
+  },
+  "case": "R4",
+  "fixture_manifest_sha256": "6f9a92a09acbcab99075e3c1b6df281db2516615309b332f6debafb6bbdb29ca",
+  "initial_files": {
+    ".gitignore": "862263fa1f46c20f0d1e4dac5ffcc75abd55c08211b2c3864c5f8764b9d87793",
+    "README.md": "7270be55f11d5eae5baa9eeadf305639e6b0e734efb823d22163e2e004fa1835",
+    "api.py": "65132a757bfa9b8f60a93262025f2a7b1fd59df9648678db04ca89a180e89c41",
+    "data/records.json": "2c9f6fcef68ad4cc3191f316b76f3ac350e1fca595b3eaad70deafb121e8d5f5",
+    "migration.py": "e1795122efe7027d56d9143c9c88ab40ec7f1075e2c87820587b46ada33d9bad",
+    "reader.py": "eafdee331233eee997cf354012312156d7cd340a6052a0fc3afc00fa055bdea4",
+    "tests/test_destinations.py": "28bb7d12ae5bfdaf98d35d3ef3bcd6f0ffe60cae9ea130156c829bc1c8adee10",
+    "writer.py": "eba2918b469952a2859f73f7dd17f8e80a21eaad7cfd628fb0695c764153051c"
+  },
+  "initial_knowledge": "empty; database absent",
+  "knowledge_path": "/tmp/fr-task12-c3-claude-candidate-R4-standard-1/.runner/knowledge.db",
+  "mcp": {
+    "capy": {
+      "args": [
+        "-u",
+        "CAPY_VAULT_KEY",
+        "-u",
+        "CAPY_DB_KEY",
+        "CAPY_DB_KEY=synthetic-functional-review-probe-key-20261008",
+        "CAPY_VAULT_PATH=/tmp/fr-task12-c3-claude-candidate-R4-standard-1/.runner/vault",
+        "XDG_CONFIG_HOME=/tmp/fr-task12-c3-claude-candidate-R4-standard-1/.runner/xdg",
+        "/home/sergio/.local/bin/capy",
+        "--project-dir",
+        "/tmp/fr-task12-c3-claude-candidate-R4-standard-1",
+        "serve"
+      ],
+      "command": "env",
+      "environment_keys": []
+    },
+    "pal": {
+      "args": [
+        "-c",
+        "$HOME/.local/bin/uvx --from git+https://github.com/serpro69/pal-mcp-server.git pal-mcp-server"
+      ],
+      "command": "sh",
+      "environment_keys": []
+    }
+  },
+  "mode": "standard",
+  "models": {
+    "claude": "claude-opus-4-8[1m]/high",
+    "codex": "gpt-6-astra/xhigh",
+    "codex_reviewer": "gpt-6.1-sol/xhigh",
+    "pal": "gemini-3.1-pro-preview/max"
+  },
+  "prompt": "I've staged the destination reader cleanup. Run `/kk:review-code` against it.",
+  "provider": "claude",
+  "purpose": "measured workflow",
+  "read_confinement": "No OS-wide confinement; audit actual reads for evaluator material",
+  "review_base": "b299f57e270af63447fb90814bf9fd5cfe45c6cc",
+  "rubric_sha256": "d2a8b209c109b6f07beaf677d00709dec476288ecb6bbb46103661ab1590cae6",
+  "side": "candidate",
+  "vault": "unavailable; private path and unset key",
+  "workspace": "/tmp/fr-task12-c3-claude-candidate-R4-standard-1"
+}

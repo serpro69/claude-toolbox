@@ -1,0 +1,19 @@
+{
+  "actor": "main",
+  "block": {
+    "caller": {
+      "type": "direct"
+    },
+    "id": "toolu_01DphGEQr4s4dYkYgfLBJx6T",
+    "input": {
+      "content": "Anti-pattern: removing a reader's backward-compatibility fallback branch while a data migration is still in progress. In the \"Saved destinations\" project, reader.address_of() handled both legacy flat rows ({\"address\": ...}) and current nested rows ({\"destination\": {\"address\": ...}}). A \"cleanup\" diff deleted the legacy branch, leaving only row[\"destination\"][\"address\"]. This raises KeyError on any un-migrated row. Because api.list_destinations() maps the reader over ALL records in a list comprehension, a single legacy row breaks the entire read. The README documents a hard contract: \"a deployment must read both shapes until migration finishes,\" \"there is no startup migration gate,\" and data/records.json is a supported MIXED snapshot (legacy + nested rows coexist). migrate_batch() converts only up to `limit` rows per call, so mixed state is the designed, expected state. Lesson for reviewers: a compatibility/fallback branch is removable only AFTER migration is provably complete (telemetry/verification that zero legacy rows remain); until then it is an active-consumer code path, not dead code. Green tests masked this because the only tests used writer.new_destination (nested shape) and never exercised the legacy path.",
+      "source": "kk:review-findings"
+    },
+    "name": "mcp__capy__capy_index",
+    "type": "tool_use"
+  },
+  "id": "e184.0",
+  "parent_tool_use_id": null,
+  "session_id": "1597602b-d065-419a-85b9-0bbff2eaae7a",
+  "source_sequence": 184
+}

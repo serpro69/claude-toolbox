@@ -1,0 +1,12 @@
+{
+  "actor": "main",
+  "block": {
+    "content": "1\timport unittest\n2\t\n3\tfrom api import list_destinations\n4\tfrom writer import new_destination\n5\t\n6\t\n7\tclass DestinationTests(unittest.TestCase):\n8\t    def test_new_write_can_be_listed(self):\n9\t        row = new_destination(\"new\", \"new@example.test\")\n10\t        self.assertEqual(list_destinations([row]),\n11\t                         [{\"id\": \"new\", \"address\": \"new@example.test\"}])\n12\t\n13\t    def test_empty_list(self):\n14\t        self.assertEqual(list_destinations([]), [])\n15\t",
+    "tool_use_id": "toolu_01NCrsvDYbjsyCJwdU3QmBqo",
+    "type": "tool_result"
+  },
+  "id": "e93.0",
+  "parent_tool_use_id": null,
+  "session_id": "0275ffea-1793-453d-abf3-3acc79d69f8b",
+  "source_sequence": 93
+}

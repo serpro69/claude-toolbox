@@ -1,0 +1,19 @@
+{
+  "actor": "main",
+  "block": {
+    "caller": {
+      "type": "direct"
+    },
+    "id": "toolu_014b1m1gth5YFqfd4akR3Dr6",
+    "input": {
+      "content": "Pattern: new-consumer / old-provider receipt-ack backward-compat break. A client increment starts requiring a response field the provider only emits in a *later, separate, pending* increment (e.g. `if response.get(\"applied\") is not True: raise`). Against the current/supported provider \u2014 which does not yet return the field \u2014 `.get()` yields None and every call raises, breaking the default flow (even when a feature flag like `enhanced_settings` is off, because enforcement isn't gated on it). Violates \"independently releasable main\" and \"ordinary saves keep working with the supported provider.\" Tell-tale: accompanying unit test is edited to add the new field to its stub fixture (making the test pass) instead of adding a legacy-provider test case \u2014 masking the regression. Fix: capability-negotiate or treat an absent receipt field as a legacy provider (success), only failing on an explicit negative (`applied is False`); add a test that stubs the old provider response shape.",
+      "source": "kk:review-findings"
+    },
+    "name": "mcp__capy__capy_index",
+    "type": "tool_use"
+  },
+  "id": "e170.0",
+  "parent_tool_use_id": null,
+  "session_id": "a14dbff2-abb9-4747-b89b-1526a05046b1",
+  "source_sequence": 170
+}

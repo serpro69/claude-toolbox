@@ -1,0 +1,19 @@
+{
+  "actor": "main",
+  "block": {
+    "caller": {
+      "type": "direct"
+    },
+    "id": "toolu_013xPx7nmAQ1usnWCeszKtXC",
+    "input": {
+      "content": "Idempotency/recovery key mismatch (P0 pattern): In a recovery-record store keyed by operation_id (store.recovery[operation_id] = record), the save() lookup was changed to scan records by a NON-KEY field (workspace): next(r for r in store.recovery.values() if r[\"workspace\"]==workspace). Effect: once any record exists for a workspace, later saves with a DIFFERENT operation_id/values match the stale record, hit the `status != \"pending\"` guard, skip store.apply(), and return {\"ok\": True} \u2014 silently dropping every operation after the first per workspace (data loss + false success). Smell signature: store written under key K but read by scanning .values() on a different field. Fix: look up by the same key used to write (store.recovery.get(operation_id)). Keep the legitimate recovery reorder (persist values before apply; pending-guard prevents double-apply on retry).",
+      "source": "kk:review-findings"
+    },
+    "name": "mcp__capy__capy_index",
+    "type": "tool_use"
+  },
+  "id": "e166.0",
+  "parent_tool_use_id": null,
+  "session_id": "3c89c3f5-5d56-4f97-89e8-71acb0a007c4",
+  "source_sequence": 166
+}

@@ -51,7 +51,7 @@ See [review-isolated.md](./review-isolated.md) for the isolated workflow.
 
 | Level  | Name     | Description                                                      | Action                             |
 | ------ | -------- | ---------------------------------------------------------------- | ---------------------------------- |
-| **P0** | Critical | Security vulnerability, data loss risk, correctness bug          | Must block merge                   |
+| **P0** | Critical | Demonstrated critical security, integrity or availability impact needing immediate mitigation | Must block merge                   |
 | **P1** | High     | Logic error, significant SOLID violation, performance regression | Should fix before merge            |
 | **P2** | Medium   | Code smell, maintainability concern, minor SOLID violation       | Fix in this PR or create follow-up |
 | **P3** | Low      | Style, naming, minor suggestion                                  | Optional improvement               |
@@ -68,9 +68,9 @@ This ordering is load-bearing, not stylistic. Reviewing from a diff before loadi
 
 1. Load basic instructions — process, shared protocols and common functional method
 2. Scope — resolve diff selection from status/filenames only
-3. Detect profiles and route checklists — filename/metadata signals, then bounded declared predicates; no deferred conditionals
+3. Detect profiles and route checklists — read and reconcile every known detection rule; filename/metadata signals, then bounded declared predicates; no deferred conditionals
 4. Read every resolved checklist — always-load, matching and conservatively selected content; confirm returned instruction files in a compact loading checkpoint before proceeding
-5. Investigate — read selected diff/current files, establish change context/task scope, trace behavior and historical compatibility, and search relevant knowledge
+5. Investigate — read available component contracts and establish context/task scope, then selected diff/current files; trace behavior and historical compatibility, and search relevant knowledge
 6. Apply profile and general checklists to that behavior
 7. Self-check findings and confidence through targeted verification
 8. Index systemic P0/P1 findings as `kk:review-findings`

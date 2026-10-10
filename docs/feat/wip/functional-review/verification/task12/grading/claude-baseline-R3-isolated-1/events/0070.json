@@ -1,0 +1,19 @@
+{
+  "actor": "main",
+  "block": {
+    "caller": {
+      "type": "direct"
+    },
+    "id": "toolu_01Ks5eTfd9wMuHP8g2Vi9cXu",
+    "input": {
+      "content": "Pattern: Backward-incompatible protocol tightening in a multi-increment rollout. When a feature splits a protocol change across a client increment and a separate provider increment (released independently), the client must NOT hard-require a new response field the currently-released provider does not yet emit. Anti-pattern seen: `if response.get(\"applied\") is not True: raise RuntimeError(...)` \u2014 treats a *missing* field (legacy provider) identically to an explicit negative, so every ordinary save breaks until the provider increment ships. This violates \"independently releasable main\" / \"ordinary saves must keep working with the supported provider.\" Fix: tolerate absent receipts (reject only explicit negatives, e.g. `response.get(\"applied\") is False`) and/or gate the new enforcement behind the feature flag. Severity P0 \u2014 bricks the save path when shipped alone.",
+      "source": "kk:review-findings"
+    },
+    "name": "mcp__capy__capy_index",
+    "type": "tool_use"
+  },
+  "id": "e155.0",
+  "parent_tool_use_id": null,
+  "session_id": "9d803381-6914-4c03-ba7d-14cc8d71df86",
+  "source_sequence": 155
+}

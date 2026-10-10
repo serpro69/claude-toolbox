@@ -1,0 +1,19 @@
+{
+  "actor": "main",
+  "block": {
+    "caller": {
+      "type": "direct"
+    },
+    "id": "toolu_018Bczg6Szpir5H7ujPV8qJx",
+    "input": {
+      "content": "Pattern: idempotent-apply gated on a one-shot status flag drops edited values on retry. Code applied values only when record[\"status\"]==\"pending\" and flipped it to \"applied\" before the receipt/commit step. When the commit fails after apply (documented recovery boundary), the record stays \"applied\"; a retry with EDITED values then skips apply entirely, so the latest submitted values never take effect even though the contract promises \"retry with the same ID and edited values; success means the latest submitted values are active.\" Also: values were stored only at record creation (dict(values) in the initial record) and re-apply used record[\"values\"], so the function ignores the `values` argument on every call after the first for that key. Rule: when the contract says the latest submitted values win on retry, re-apply the freshly-supplied values on each attempt until the operation is COMPLETED (not merely \"applied\"); don't gate re-apply on an intermediate pre-commit status.",
+      "source": "kk:review-findings"
+    },
+    "name": "mcp__capy__capy_index",
+    "type": "tool_use"
+  },
+  "id": "e179.0",
+  "parent_tool_use_id": null,
+  "session_id": "760ce92e-2b2d-4b7c-bbc6-00658b6a7425",
+  "source_sequence": 179
+}

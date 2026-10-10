@@ -1,0 +1,12 @@
+{
+  "actor": "main",
+  "block": {
+    "content": "1\t# Capy Knowledge Base Protocol\n2\t\n3\tIf `capy` MCP tools are not available in this session, skip all search and index steps below and proceed normally.\n4\t\n5\t## Source Label Taxonomy\n6\t\n7\tAll plugin-managed labels use the `kk:` namespace prefix.\n8\t\n9\t| Label                    | Contents                                                              |\n10\t| ------------------------ | --------------------------------------------------------------------- |\n11\t| `kk:arch-decisions`      | Architecture decisions, design rationale, trade-offs                  |\n12\t| `kk:review-findings`     | Code review patterns, recurring issues, anti-patterns                 |\n13\t| `kk:lang-idioms`         | Language best practices, idiomatic patterns from external sources     |\n14\t| `kk:project-conventions` | Discovered project patterns, naming conventions, structural decisions |\n15\t| `kk:test-patterns`       | Testing approaches, edge cases, test infrastructure decisions         |\n16\t| `kk:debug-context`       | Root causes, tricky bugs and their fixes, environment gotchas         |\n17\t\n18\t## Search Conventions\n19\t\n20\t- Use 2-4 specific terms per query \u2014 not vague keywords\n21\t- Always scope with `source` filter to relevant `kk:*` labels\n22\t- Use `source: \"kk:\"` only for broad cross-domain searches (e.g., CoVe verification)\n23\t- Default `limit: 3` per query unless more context is needed\n24\t- **Cold-start fallback:** If no results, proceed with standard guidelines \u2014 empty results are normal for new projects\n25\t\n26\t## Index Conventions\n27\t\n28\t- Only index non-obvious learnings not derivable from reading the code or git history\n29\t- Keep content concise \u2014 summarize the insight, don't dump raw output\n30\t- Always use a `kk:` prefixed label from the taxonomy above\n31\t- One concept per `capy_index` call \u2014 don't bundle unrelated learnings\n32\t- Skip indexing if the insight is already captured in design docs or CLAUDE.md\n33\t",
+    "tool_use_id": "toolu_01N12zNDU21YehvRB6kGsoNG",
+    "type": "tool_result"
+  },
+  "id": "e14.0",
+  "parent_tool_use_id": null,
+  "session_id": "e5a0d13b-273d-44d7-b506-c66598aabb8a",
+  "source_sequence": 14
+}
