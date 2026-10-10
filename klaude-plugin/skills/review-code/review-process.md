@@ -7,7 +7,7 @@ Copy and complete this checklist:
 ```
 Code Review Progress:
 - [ ] Step 1: Load basic instructions
-- [ ] Step 2: Resolve scope from filenames/metadata
+- [ ] Step 2: Select the diff from filenames/metadata
 - [ ] Step 3: Detect profiles and route all checklists
 - [ ] Step 4: Read every resolved checklist
 - [ ] Step 5: Investigate behavior and compatibility
@@ -15,7 +15,7 @@ Code Review Progress:
 - [ ] Step 7: Self-check and confidence assessment
 - [ ] Step 8: Index findings
 - [ ] Step 9: Present findings, coverage and verdict
-- [ ] Step 10: Confirm next steps
+- [ ] Step 10: Close the review or handle required next steps
 - [ ] Step 11: Verify outputs
 ```
 
@@ -23,11 +23,14 @@ Code Review Progress:
 
 Read this entire process and [shared-capy-knowledge-protocol.md](shared-capy-knowledge-protocol.md), [shared-profile-detection.md](shared-profile-detection.md), [shared-review-scope-protocol.md](shared-review-scope-protocol.md), [shared-change-context.md](shared-change-context.md), and [functional-review.md](functional-review.md) before routing. [Packet preparation](packet-preparation.md) supplies these original contents and every Known-profile detection rule together; Read all parts completely, or use its direct-read fallback. Already loaded, unchanged instructions need not be read twice. The common context and functional method apply even without active profiles or specification documents.
 
-### 2) Resolve scope from filenames/metadata
+### 2) Select the diff from filenames/metadata
 
 Use `git status -sb` and diff statistics/filenames only. Honor an explicit user-selected scope/range; otherwise select unstaged changes, falling back to staged changes when none are unstaged. If neither exists, report no changes and request a range. Record the chosen selector and keep it for investigation. Do not silently combine staged and unstaged scopes.
 
-A large diff (>500 lines) needs focused batching, not an early content dump. A feature-directory listing may locate task documents; their detailed reading belongs to investigation.
+A large diff (>500 lines) needs focused batching, not an early content dump.
+This phase selects the Git diff only. Locating feature documents and determining
+task scope belong to investigation after checklist loading. Finding a task file
+in a status/listing result does not make its requirements part of preparation.
 
 ### 3) Detect profiles and route all checklists
 
@@ -167,38 +170,23 @@ Apply [functional-review.md](functional-review.md)'s verdict mapping: a hard acc
 - Any areas not covered (e.g., "Did not verify database migrations")
 - Specific residual risks or required verification gaps, when supported
 
-### 10) Next steps confirmation
+### 10) Close the review or handle required next steps
 
-After presenting findings, ask user how to proceed:
+When there are no actionable findings and no outstanding evidence/prerequisite
+required by the reviewed task, end with the scoped verdict and coverage. State
+that no changes are recommended. Omit a Next Steps menu, remediation choices and
+invitations to start pending work. A clean review is a complete result.
 
-```markdown
----
+When action is needed, list only substantiated findings and specific required
+evidence or prerequisites. Ask which actions to take only when the current request
+has not already authorized them; an invoking implementation request may already
+cover fixes. Review-only work still does not authorize edits.
 
-## Next Steps
-
-I found X issues (P0: ..., P1: ..., P2: ..., P3: ...).
-
-The actionable items I recommend fixing:
-1. P1 ...
-2. P2 ...
-3. P3 ...
-
-Items I recommend keeping as is:
-- ...: the finding is a false-positive because ...
-- ...: correct behavior because ...
-- ...: mirrors production behavior of ...
-
-**How would you like to proceed?**
-
-1. **Fix all** - I'll implement all suggested fixes
-2. **Fix P0/P1 only** - Address critical and high priority issues
-3. **Fix specific items** - Tell me which issues to fix
-4. **No changes** - Review complete, no implementation needed
-
-Please choose an option or provide specific instructions.
-```
-
-**Important**: Do NOT implement any changes until user explicitly confirms. This is a review-first workflow.
+Apply the same evidence threshold to every suggestion, including optional notes
+and proposed menu choices. A rejected hypothetical concern does not become valid
+by moving it out of Findings or offering it as future preparation. Retain material
+unknowns and the common method's conditional verdicts; this closing branch does
+not waive unverified requirements.
 
 ### 11) Verify outputs
 
@@ -207,6 +195,6 @@ Before declaring the review complete, check each item in the **Required Outputs*
 - [ ] Review report presented to user
 - [ ] Intent, scope/baselines, inspected behavior, applicable compatibility conclusions and evidence limits reported
 - [ ] P0/P1 systemic findings indexed as `kk:review-findings` (or explicitly noted "No findings to index")
-- [ ] Next steps confirmation from user
+- [ ] Required next steps handled, or clean review closed without proposing new work
 
 If any item is unchecked, go back and complete it before proceeding.

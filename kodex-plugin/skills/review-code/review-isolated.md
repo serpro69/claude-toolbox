@@ -188,13 +188,20 @@ tracking location when deferred; separate them from demonstrated code defects}
 
 Omit empty finding sections, but always report behavior/compatibility coverage and limits, even with defects. Preserve useful findings during external failure or undercoverage without claiming corroboration or release safety from that external response.
 
-For review-only work, ask whether to fix all, fix high-severity/corroborated findings, fix selected items, or make no changes. Do not edit without authorization. When the invoking implementation request already authorizes fixes, follow that scope without asking again.
+When neither actionable findings nor outstanding evidence/prerequisites required
+by the reviewed task remain,
+finish with the scoped verdict and coverage; state that no changes are recommended.
+Do not append a remediation menu or offer hypothetical future work. Otherwise,
+offer only supported actions. For review-only work, obtain authorization before
+editing; when the invoking implementation request already authorizes fixes,
+follow that scope without asking again. Unverified hard requirements still follow
+the common method's conditional verdict rules.
 
 ## Step 10: Verify Outputs
 
 - [ ] Findings, actual scope/baselines, behavior/compatibility and evidence limits presented
 - [ ] Both reviewer outcomes and coverage disclosed; additional evidence supplied or gaps named
 - [ ] Systemic findings indexed, or “No findings to index” noted
-- [ ] Next steps agreed or covered by existing implementation authorization
+- [ ] Required next steps agreed/authorized, or clean review closed without new work
 
 Retain evidence needed for unresolved requests or a durable deferred review record. Once follow-ups and any required retention are complete, remove only temporary files/bundles created for this review.
