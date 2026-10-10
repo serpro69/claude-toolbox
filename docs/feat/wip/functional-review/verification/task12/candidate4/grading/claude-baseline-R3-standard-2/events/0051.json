@@ -1,0 +1,19 @@
+{
+  "actor": "main",
+  "block": {
+    "caller": {
+      "type": "direct"
+    },
+    "id": "toolu_01PnD8fcbkJwr7FCxZyGq2GP",
+    "input": {
+      "command": "python3 -B -m unittest discover -s tests 2>&1; echo \"=== Simulate released provider ===\"; python3 -B -c '\nfrom client import save_settings\nstorage={}\ndef released_provider_send(ws, request):\n    # mirrors provider/settings.py @ eval-release\n    storage[ws]=dict(request[\"settings\"])\n    return {\"ok\": True}\ntry:\n    print(save_settings(released_provider_send, \"w\", {\"label\":\"blue\"}))\nexcept Exception as e:\n    print(\"RAISED:\", type(e).__name__, e)\nprint(\"storage after:\", storage)\n'",
+      "description": "Run tests and simulate released provider"
+    },
+    "name": "Bash",
+    "type": "tool_use"
+  },
+  "id": "e101.0",
+  "parent_tool_use_id": null,
+  "session_id": "7eaf83f1-b7f0-42de-89b2-42b2085febfa",
+  "source_sequence": 101
+}

@@ -1,110 +1,78 @@
 ### Workflow
 
-**Read [SKILL.md §Mandatory ordering — methodology before evidence](./SKILL.md#mandatory-ordering--methodology-before-evidence) before executing this file.** The steps below are strictly sequential. Do not read diff content, re-read changed files, or run `capy_search` before Step 5. Until then, `git diff --stat` (filenames only) is the only contact you have with the changes.
+**Mandatory ordering — methodology before evidence.** Follow [SKILL.md](SKILL.md)'s standard workflow strictly in sequence. Load all applicable instructions before investigation or action. The bounded routing exception below selects instructions only; it permits no behavioral analysis, findings, full-diff investigation, edits or tests.
 
-Copy this checklist and check off items as you complete them:
+Copy and complete this checklist:
 
 ```
 Code Review Progress:
-- [ ] Step 1: Scope (filenames only)
-- [ ] Step 2: Detect active profiles
-- [ ] Step 3: Load profile review indexes (filename-evaluable entries)
-- [ ] Step 4: Read resolved checklists
-- [ ] Step 5: Read diff + re-read changed files + capy search
-- [ ] Step 6: Resolve content-evaluable conditional entries
-- [ ] Step 7: Apply checklists
-- [ ] Step 8: Self-check and confidence assessment
-- [ ] Step 9: Index findings
-- [ ] Step 10: Present results
-- [ ] Step 11: Next steps confirmation
-- [ ] Step 12: Verify outputs
+- [ ] Step 1: Load basic instructions
+- [ ] Step 2: Select the diff from filenames/metadata
+- [ ] Step 3: Detect profiles and route all checklists
+- [ ] Step 4: Read every resolved checklist
+- [ ] Step 5: Investigate behavior and compatibility
+- [ ] Step 6: Apply profile and general checklists
+- [ ] Step 7: Self-check and confidence assessment
+- [ ] Step 8: Index findings
+- [ ] Step 9: Present findings, coverage and verdict
+- [ ] Step 10: Close the review or handle required next steps
+- [ ] Step 11: Verify outputs
 ```
 
----
+### 1) Load basic instructions
 
-### 1) Scope (filenames only)
+Read this entire process and [shared-capy-knowledge-protocol.md](shared-capy-knowledge-protocol.md), [shared-profile-detection.md](shared-profile-detection.md), [shared-review-scope-protocol.md](shared-review-scope-protocol.md), [shared-change-context.md](shared-change-context.md), and [functional-review.md](functional-review.md) before routing. [Packet preparation](packet-preparation.md) supplies these original contents and every Known-profile detection rule together; Read all parts completely, or use its direct-read fallback. Already loaded, unchanged instructions need not be read twice. The common context and functional method apply even without active profiles or specification documents.
 
-Run `git status -sb` and `git diff --stat` to get the list of touched files. **Do not run `git diff` yet** — the full diff enters context in Step 5, after methodology is loaded.
+### 2) Select the diff from filenames/metadata
 
-**Edge cases:**
+Use `git status -sb` and diff statistics/filenames only. Honor an explicit user-selected scope/range; otherwise select unstaged changes, falling back to staged changes when none are unstaged. If neither exists, report no changes and request a range. Record the chosen selector and keep it for investigation. Do not silently combine staged and unstaged scopes.
 
-- **No changes**: If `git diff --stat` is empty, inform user and ask if they want to review staged changes or a specific commit range.
-- **Large diff (>500 lines)**: Proceed through Steps 2–4 normally; Step 5 covers batching.
-- **Mixed concerns**: Note the spread for Step 9 output; grouping happens at findings-emit time.
+A large diff (>500 lines) needs focused batching, not an early content dump.
+This phase selects the Git diff only. Locating feature documents and determining
+task scope belong to investigation after checklist loading. Finding a task file
+in a status/listing result does not make its requirements part of preparation.
 
-### 2) Detect active profiles
+### 3) Detect profiles and route all checklists
 
-Delegate to [shared-profile-detection.md](shared-profile-detection.md). Input: the filename list from Step 1. The shared procedure iterates its own §Known profiles list and reads each profile's `DETECTION.md` via the `Read` tool — no filesystem enumeration, no `Glob`.
+Invoke [shared-profile-detection.md](shared-profile-detection.md) with the scoped filenames. Read each known profile's `DETECTION.md` (directly or as complete original contents in the bootstrap packet) and evaluate its authoritative signals; do not stop enumerating after an obvious extension match. Path matches alone do not activate a profile. Multiple profiles may apply. Resolve the plugin root from this skill's loaded location (parent of `skills/`) and construct absolute profile paths; do not forward unresolved root tokens into tools.
 
-The shared procedure returns a list of records:
+Batch the Known-profile reads together when supported, then reconcile expected paths with completed lookups. Record each rule's match/non-match or the shared procedure's explicit unavailable-file outcome; apply that procedure's ENOENT and root-resolution fallbacks. A skipped lookup leaves routing incomplete even when a file extension suggests an obvious profile. This prevents an assumed negative from hiding an additional applicable profile.
 
-```
-[{ profile: "<name>", triggered_by: [...], files: [...] }, ...]
-```
+For every active profile, read its `profiles/<profile>/review-code/index.md`. Collect **Always load** entries. Evaluate filename/metadata **Load if:** predicates first. For declared content predicates in detection or conditional loading, inspect at most approximately 16 KiB per candidate file, solely to resolve the predicate; log predicate/path. Apply the detection protocol's YAML document rules where relevant. If a conditional cannot be decided within the bound, conservatively select its instruction. Do not defer any conditional until after full source investigation.
 
-Hold this list for Step 3. There is no single "primary language"; any number of profiles can be active on the same diff (e.g., `go` + `k8s` when a Go service ships a Helm chart).
+Collect `(profile, checklist, triggered_by)` records for all matching/conservatively selected entries, carrying detection provenance and noting conservative selections. Indexes are authoritative; never hardcode checklist names. No profile means an empty list, not omission of the common method.
 
-If the list is empty (no profile matched), skip Steps 3–4's profile-specific loading and proceed to Step 5 with general guidance only.
+### 4) Read every resolved checklist
 
-### 3) Load profile review indexes
+Read each selected `profiles/<profile>/review-code/<checklist>` using the resolved absolute plugin root, or Read the complete selected-checklist packet from [packet preparation](packet-preparation.md). An index read is routing, not checklist loading: every selected link requires its returned original content, even for a tiny diff. Keep the source paths as a loading ledger and mark them loaded only when complete read results arrive. Do not batch investigation commands with these reads.
 
-For each active profile record from Step 2:
+Before proceeding, emit a compact loading checkpoint naming the completed common-instruction reads, every known profile's detection-lookup outcome, and the loaded checklist paths (or explicitly no active profiles). Any selected path without returned content keeps the gate closed; surface unreadable instructions and stop, except for detection fallbacks explicitly defined by the shared procedure. This checkpoint records evidence already obtained, not a promise to load guidance later. It catches accidental index-to-diff shortcuts without creating a separate artifact or replacing the actual read events.
 
-1. Read `${TOOLBOX_PLUGIN_ROOT}/profiles/<profile>/review-code/index.md`.
-2. Collect every entry under **Always load**.
-3. For every conditional entry (**Load if:** predicate), classify the predicate:
-   - **Filename-evaluable** — the predicate is satisfied by filenames, extensions, or directory names alone (e.g., "diff contains `Chart.yaml`", "file under `bases/` or `overlays/`"). Evaluate now against the filename list from Step 1. If it matches, collect the entry into the `(profile, checklist)` list.
-   - **Content-evaluable** — the predicate requires inspecting file bytes (e.g., YAML `kind:` field values, `apiVersion:` keys, specific string anchors). Do **not** read file content here. Instead, append the entry to a **deferred list** keyed by `(profile, checklist, predicate)` — Step 6 resolves this list after Step 5 reads content.
-4. Append the collected filename-evaluable entries to the flat `(profile, checklist)` list.
+### 5) Investigate behavior and compatibility
 
-Do NOT hardcode checklist names — the index is authoritative, and new profiles or new conditional entries take effect without edits to this file.
+This is the single entry point for subject-matter investigation. With methodology loaded:
 
-### 4) Read resolved checklists
+- Locate and read available component README/contract documentation and relevant requirements/task documents first; build task scope with the shared protocol and establish explicit intent and preserved invariants. Label inference where no contract exists. Distinguish review base/candidate from any release baseline.
+- Then read the full diff using the selector from scope and re-read every changed file at the reviewed revision, accounting for deletions. Do not rely on an earlier conversation's contents. Use index blobs for staged review and the selected candidate revision for a commit range; do not silently substitute unrelated worktree contents.
+- Apply the common functional method: trace changed behavior through relevant dependencies and unchanged consumers, exercise concrete scenarios, and assess relevant delivery combinations. Obtain actual historical source when needed; label provenance and unavailable evidence using the shared context rules.
+- Search `kk:review-findings` for relevant patterns and, for active programming-language profiles, `kk:lang-idioms`. With no language results, optionally index a canonical idioms source under that label. Skip language lookup for non-language profiles.
 
-For each `(profile, checklist)` record from Step 3, use the `Read` tool on `${TOOLBOX_PLUGIN_ROOT}/profiles/<profile>/review-code/<checklist>`. Every checklist file enters context now, before any diff content does. The review that follows in Step 6 reads *through* these checklists; if they are not loaded, the review cannot happen.
+If investigation adds targets covered by new profiles or newly applicable conditionals, pause analysis of those targets and return to routing/loading before continuing. Subsequent focused re-reads, reproductions and verification substantiate findings within this investigation; they do not create another full-diff preflight. Keep claims within actual access and evidence.
 
-This is the single load-bearing gate of the workflow. If a checklist read fails (file missing, path unresolved), stop and surface the error — do not proceed with partial methodology.
+### 6) Apply profile and general checklists
 
-### 5) Read the diff, re-read changed files, run capy search
-
-Now, with every checklist in context, read the content:
-
-- Run `git diff` (full output) to capture the changes.
-- **Re-read every changed file** using the Read tool. Do NOT rely on file contents read earlier in the conversation — code may have changed since (e.g., fixes applied between reviews in the same session).
-- If needed, use `rg` or `grep` to find related modules, usages, and contracts.
-- Identify entry points, ownership boundaries, and critical paths (auth, payments, data writes, network).
-- **Capy search:** Search `kk:review-findings` for prior findings in the same files/modules. For each programming-language profile active (from Step 2), search `kk:lang-idioms` for best practices. If `kk:lang-idioms` returns no results for a language, optionally use `capy_fetch_and_index` to fetch a canonical idioms resource (e.g., Effective Go for `go`) and label it `kk:lang-idioms`. Skip the lookup for non-language profiles (e.g., `k8s`) — `kk:lang-idioms` is a programming-language idiom store.
-
-This is the only step that reads artifact content. It appears once, by design. Do not repeat `git diff` or file re-reads in later steps.
-
-### 6) Resolve content-evaluable conditional entries
-
-For every `(profile, checklist, predicate)` record on the deferred list from Step 3:
-
-1. Evaluate the predicate against the file content now available from Step 5. Apply the same bounded-inspection rules as the shared profile-detection procedure — ~16 KB per file; multi-document YAML inspected per `---`-separated block.
-2. If the predicate matches, use the `Read` tool on `${TOOLBOX_PLUGIN_ROOT}/profiles/<profile>/review-code/<checklist>` to load the checklist into context, then append `(profile, checklist)` to the flat list that Step 7 iterates.
-3. If the predicate does not match, drop the entry silently — no checklist is loaded for it.
-
-If the deferred list is empty (no profile contributed a content-evaluable conditional), this step is a no-op. Proceed to Step 7.
-
-The deferred list exists so Step 3 can remain a filenames-only step (per the mandatory ordering in SKILL.md) while conditionals that genuinely require content — e.g., loading `reliability-checklist.md` on diffs that contain a `kind: Deployment` YAML document — still reach Step 7. Content-evaluable conditionals that bypass this step will be silently dropped.
-
-### 7) Apply checklists
-
-Iterate the flat `(profile, checklist, triggered_by)` list — the union of Step 3's filename-evaluable entries (whose checklists were read in Step 4) and Step 6's content-evaluable entries (whose checklists were read in Step 6 itself). For each record, apply the checklist (already in context) to the diff (in context from Step 5). A checklist may cover SOLID/architecture, security, quality, removal, or a profile-specific concern (e.g., Helm template correctness, RBAC least privilege) — the checklist itself states what to look for.
-
-Tag each finding with its `(profile, checklist)` origin and the `triggered_by` signal from Step 2's detection output. These materialize as per-finding sub-labels inside the severity-major template in Step 10 — not as separate profile-grouped sections. For generic findings (SOLID, security, code quality, removal) not sourced from a profile checklist, use `Profile: generic · Checklist: —` and `Triggered by: —`.
+Apply every loaded `(profile, checklist, triggered_by)` record to the affected behavior and diff. Domain checklists supplement the common method. Tag findings with their profile/checklist origin and detection signal; use `Profile: generic · Checklist: —` and `Triggered by: —` for common reasoning. Keep severity-major output and merge duplicate issues across lenses.
 
 General guidance that applies regardless of profile — apply these categories on every diff, whether or not a profile-specific checklist covered them:
 
 - **SOLID / architecture:** SRP violations (overloaded modules with unrelated responsibilities), OCP (frequent edits to add behavior instead of extension points), LSP (subclasses that break expectations or require type checks), ISP (wide interfaces with unused methods), DIP (high-level logic tied to low-level implementations). When you propose a refactor, explain _why_ it improves cohesion/coupling and outline a minimal, safe split. If refactor is non-trivial, propose an incremental plan instead of a large rewrite.
 - **Security / reliability:** XSS, injection (SQL/NoSQL/command), SSRF, path traversal; AuthZ/AuthN gaps, missing tenancy checks; secret leakage or API keys in logs/env/files; rate limits, unbounded loops, CPU/memory hotspots; unsafe deserialization, weak crypto, insecure defaults; race conditions, check-then-act, TOCTOU, missing locks. Call out both **exploitability** and **impact**.
 - **Code quality:** error handling (swallowed exceptions, overly broad catch, missing handling, async errors); performance (N+1 queries, CPU-intensive ops in hot paths, missing cache, unbounded memory); boundary conditions (null/undefined, empty collections, numeric boundaries, off-by-one). Flag issues that may cause silent failures or production incidents.
-- **Removal candidates:** unused, redundant, or feature-flagged-off code. Distinguish **safe delete now** vs **defer with plan**; provide concrete follow-up steps with checkpoints (tests/metrics).
+- **Removal candidates:** propose deletion only when a demonstrated current cost or defect justifies it and required behavior is preserved. A pending task's unreachable scaffold or disabled feature is not, by itself, a removal candidate. Distinguish **safe delete now** vs **defer with plan** when removal is warranted.
 
-### 8) Self-check and confidence assessment
+### 7) Self-check and confidence assessment
 
-For **each finding** from Step 7:
+For **each finding** from Steps 5–6:
 
 1. Re-read the relevant code and surrounding context independently.
 2. Ask: **"Could I be misreading the code?"** — trace execution paths, check for runtime behavior, configuration, or framework conventions that might make this correct.
@@ -116,14 +84,14 @@ For **each finding** from Step 7:
    - What uncertainty remains
 6. Downgrade or **remove** findings that don't survive the self-check.
 
-### 9) Index findings
+### 8) Index findings
 
 Index any P0/P1 findings that suggest a systemic or structural pattern (not isolated typos or one-off mistakes) as `kk:review-findings`. Index on first encounter — recurrence detection happens on the search side in future reviews.
 
 - If no P0/P1 systemic findings exist, explicitly note "No findings to index" and move on.
 - This step is mandatory — do not skip it even if the review found no issues.
 
-### 10) Present results
+### 9) Present results
 
 #### Output format
 
@@ -134,6 +102,15 @@ Structure your review as follows:
 
 **Files reviewed**: X files, Y lines changed
 **Overall assessment**: [APPROVE / REQUEST_CHANGES / COMMENT]
+**Intent and scope**: requirement source, current task/request, selected diff and candidate state
+**Baselines**: review base/candidate; separate release baseline if applicable
+
+## Behavior and Compatibility
+
+Inspected paths/scenarios, observed results and evidence limits. Include applicable
+Supported / Blocked / Unknown / Not applicable conclusions with named baselines.
+Attribute author-supplied results and inherited issues. Record outstanding evidence
+or release prerequisites, next actions and durable tracking locations when deferred.
 
 ---
 
@@ -148,14 +125,14 @@ Structure your review as follows:
 - **[file:line]** Brief title
   - Profile: {profile_name} · Checklist: {checklist_filename}
   - Triggered by: {signal_type} — {signal_description}
-  - Description of issue
+  - Trigger/path, expected vs actual result and consequence
   - Confidence: 90% - reasoning behind the confidence level
   - Suggested fix
 
 - **[another_file:line]** Brief title
   - Profile: generic · Checklist: —
   - Triggered by: —
-  - Description of issue
+  - Trigger/path, expected vs actual result and consequence
   - Confidence: 60% - reasoning behind the confidence level
   - Suggested fix
 
@@ -173,9 +150,8 @@ Structure your review as follows:
 
 (if applicable)
 
-## Additional Suggestions
-
-(optional improvements, not blocking)
+Only include recommendations tied to a demonstrated issue or an identified,
+currently required verification gap. A clean scoped review needs no extra work.
 ```
 
 **Inline comments**: Use this format for file-specific findings:
@@ -186,51 +162,39 @@ Description of the issue and suggested fix.
 ::
 ```
 
-**Clean review**: If no issues found, explicitly state:
+Apply [functional-review.md](functional-review.md)'s verdict mapping: a hard acceptance/delivery violation cannot be approved; material Unknown evidence receives COMMENT absent a demonstrated blocker. Out-of-scope operational unknowns do not automatically downgrade an explicitly scoped code verdict. Preserve P0–P3 impact severity and distinguish code correctness from release readiness.
+
+**Every review** reports coverage and limits, even with findings. When no issues are found, explicitly state:
 
 - What was checked
 - Any areas not covered (e.g., "Did not verify database migrations")
-- Residual risks or recommended follow-up tests
+- Specific residual risks or required verification gaps, when supported
 
-### 11) Next steps confirmation
+### 10) Close the review or handle required next steps
 
-After presenting findings, ask user how to proceed:
+When there are no actionable findings and no outstanding evidence/prerequisite
+required by the reviewed task, end with the scoped verdict and coverage. State
+that no changes are recommended. Omit a Next Steps menu, remediation choices and
+invitations to start pending work. A clean review is a complete result.
 
-```markdown
----
+When action is needed, list only substantiated findings and specific required
+evidence or prerequisites. Ask which actions to take only when the current request
+has not already authorized them; an invoking implementation request may already
+cover fixes. Review-only work still does not authorize edits.
 
-## Next Steps
+Apply the same evidence threshold to every suggestion, including optional notes
+and proposed menu choices. A rejected hypothetical concern does not become valid
+by moving it out of Findings or offering it as future preparation. Retain material
+unknowns and the common method's conditional verdicts; this closing branch does
+not waive unverified requirements.
 
-I found X issues (P0: ..., P1: ..., P2: ..., P3: ...).
-
-The actionable items I recommend fixing:
-1. P1 ...
-2. P2 ...
-3. P3 ...
-
-Items I recommend keeping as is:
-- ...: the finding is a false-positive because ...
-- ...: correct behavior because ...
-- ...: mirrors production behavior of ...
-
-**How would you like to proceed?**
-
-1. **Fix all** - I'll implement all suggested fixes
-2. **Fix P0/P1 only** - Address critical and high priority issues
-3. **Fix specific items** - Tell me which issues to fix
-4. **No changes** - Review complete, no implementation needed
-
-Please choose an option or provide specific instructions.
-```
-
-**Important**: Do NOT implement any changes until user explicitly confirms. This is a review-first workflow.
-
-### 12) Verify outputs
+### 11) Verify outputs
 
 Before declaring the review complete, check each item in the **Required Outputs** section of SKILL.md:
 
 - [ ] Review report presented to user
+- [ ] Intent, scope/baselines, inspected behavior, applicable compatibility conclusions and evidence limits reported
 - [ ] P0/P1 systemic findings indexed as `kk:review-findings` (or explicitly noted "No findings to index")
-- [ ] Next steps confirmation from user
+- [ ] Required next steps handled, or clean review closed without proposing new work
 
 If any item is unchecked, go back and complete it before proceeding.

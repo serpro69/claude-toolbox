@@ -1,0 +1,19 @@
+{
+  "actor": "main",
+  "block": {
+    "caller": {
+      "type": "direct"
+    },
+    "id": "toolu_01WELVmovPGhNP6uWittPu5A",
+    "input": {
+      "content": "Pattern: Backward-incompatible protocol enforcement in a split client/provider rollout. A client increment unconditionally requires a new response field (e.g. `response.get(\"applied\") is not True` -> raise) and/or sends a new request flag, but the counterpart that emits that field ships in a separate, not-yet-released increment (separate repo/task). Against the currently-deployed counterpart the field is absent, so every ordinary request fails. This breaks the \"independently releasable main\" and \"ordinary operations keep working\" constraints.\n\nDetection: a diff adds a hard check on a response key whose producer is an out-of-scope/pending task; look for enforcement that is NOT gated by the feature flag that is supposed to control the rollout (here `enhanced_settings`, which defaults False / \"UI disabled by default\"). Telltale companion smell: the existing happy-path test is MUTATED to add the new field (making the suite green) instead of adding new cases \u2014 this masks the regression rather than catching it.\n\nFix shape: gate both the outgoing flag and the response-receipt enforcement behind the rollout flag / negotiated capability; treat an absent field as the legacy path (succeed), only reject an explicit negative ack. Keep a test that asserts the legacy response still succeeds.\n",
+      "source": "kk:review-findings"
+    },
+    "name": "mcp__capy__capy_index",
+    "type": "tool_use"
+  },
+  "id": "e227.0",
+  "parent_tool_use_id": null,
+  "session_id": "7677cb06-2546-4fdc-b480-482303df514b",
+  "source_sequence": 227
+}

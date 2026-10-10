@@ -1,0 +1,42 @@
+{
+  "id": 16,
+  "name": "functional-report-external-failure",
+  "description": "R8 external-failure: synthetic isolated-report checkpoint only, not end-to-end skill or live transport coverage. Stage outside a SKILL.md ancestor; replay the reporting phase using the selected actor revision.",
+  "skills": [
+    "review-code"
+  ],
+  "prompt": "Use `$kk:review-code:isolated` to resume the supplied checkpoint.md and present the review.",
+  "trap": "External reviewer failure can cause the report to discard the available independent finding or fabricate corroboration.",
+  "files": [
+    "test-files/change.patch",
+    "test-files/checkpoint.md",
+    "test-files/independent-review.md",
+    "test-files/pal-result.json",
+    "test-files/scope.json",
+    "test-files/source/base/settings.py",
+    "test-files/source/candidate/settings.py",
+    "test-files/source/provider.py"
+  ],
+  "assertions": [
+    {
+      "id": "16.1",
+      "text": "The actor loads the selected isolated review reporting instructions before annotation/reporting; the trace identifies this as a synthetic checkpoint replay, not an actual full skill investigation or live PAL integration."
+    },
+    {
+      "id": "16.2",
+      "text": "The report retains the independent reviewer's P1 finding with its trigger, source location and consequence: a provider rejects application while returning ok:true, so candidate save falsely reports success and leaves values unchanged. It attributes the finding to the independent result and does not claim new test execution."
+    },
+    {
+      "id": "16.3",
+      "text": "The report explicitly discloses the external review failure/unavailability and preserves the available independent finding; it does not fabricate PAL findings, agreement or successful coverage."
+    },
+    {
+      "id": "16.4",
+      "text": "The final assessment retains REQUEST_CHANGES for the demonstrated acceptance violation and withholds unsupported release-safe conclusions; neither the external outcome nor missing deployment evidence cancels the substantiated issue."
+    },
+    {
+      "id": "16.5",
+      "text": "The report distinguishes supplied synthetic reviewer evidence from real executions and describes the remaining coverage limit and concrete next action without claiming this replay validates live MCP transport."
+    }
+  ]
+}

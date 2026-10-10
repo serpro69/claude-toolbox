@@ -1,0 +1,66 @@
+
+=== Section 1: Codex marketplace ===
+[1;33m[TEST][0m .agents/plugins/marketplace.json exists and is valid JSON
+[0;32m[PASS][0m Codex marketplace exists
+[0;32m[PASS][0m Codex marketplace is valid JSON
+[1;33m[TEST][0m marketplace.json has kk plugin pointing at kodex-plugin
+[0;32m[PASS][0m Codex marketplace plugin path
+
+=== Section 2: Codex config ===
+[1;33m[TEST][0m config.toml exists
+[0;32m[PASS][0m config.toml exists
+[1;33m[TEST][0m config.toml is valid TOML
+[0;32m[PASS][0m config.toml parses as valid TOML
+
+=== Section 3: Codex hooks ===
+[1;33m[TEST][0m hooks.json exists and is valid JSON
+[0;32m[PASS][0m hooks.json exists
+[0;32m[PASS][0m hooks.json is valid JSON
+[1;33m[TEST][0m hooks.json has SessionStart and PreToolUse entries
+[0;32m[PASS][0m hooks.json has SessionStart
+[0;32m[PASS][0m hooks.json has PreToolUse
+
+=== Section 4: Codex agents ===
+[1;33m[TEST][0m All six agent TOML files exist
+[0;32m[PASS][0m Agent architecture-reviewer.toml exists
+[0;32m[PASS][0m Agent code-reviewer.toml exists
+[0;32m[PASS][0m Agent design-reviewer.toml exists
+[0;32m[PASS][0m Agent eval-grader.toml exists
+[0;32m[PASS][0m Agent profile-resolver.toml exists
+[0;32m[PASS][0m Agent spec-reviewer.toml exists
+[1;33m[TEST][0m Agent TOML files parse cleanly
+[0;32m[PASS][0m Agent architecture-reviewer.toml parses as valid TOML
+[0;32m[PASS][0m Agent code-reviewer.toml parses as valid TOML
+[0;32m[PASS][0m Agent design-reviewer.toml parses as valid TOML
+[0;32m[PASS][0m Agent eval-grader.toml parses as valid TOML
+[0;32m[PASS][0m Agent profile-resolver.toml parses as valid TOML
+[0;32m[PASS][0m Agent spec-reviewer.toml parses as valid TOML
+[1;33m[TEST][0m No ${CLAUDE_PLUGIN_ROOT} literals in agent files
+[0;32m[PASS][0m No CLAUDE_PLUGIN_ROOT literals in agent files
+
+=== Section 5: Codex rules ===
+[1;33m[TEST][0m default.rules exists
+[0;32m[PASS][0m default.rules exists
+
+=== Section 6: Codex scripts ===
+[1;33m[TEST][0m session-start.sh exists
+[0;32m[PASS][0m session-start.sh exists
+[1;33m[TEST][0m pretooluse-bash.sh exists
+[0;32m[PASS][0m pretooluse-bash.sh exists
+[1;33m[TEST][0m session-start.sh produces valid JSON
+[0;32m[PASS][0m session-start.sh output is valid JSON
+[1;33m[TEST][0m session-start.sh aggregates all .claude/CLAUDE.*.md files
+[0;32m[PASS][0m all .claude/CLAUDE.*.md files appear in session context
+[1;33m[TEST][0m session-start.sh excludes .claude/toolbox/CLAUDE.md
+[0;32m[PASS][0m .claude/toolbox/CLAUDE.md not injected into Codex context
+
+=== Section 7: Root-level files ===
+[1;33m[TEST][0m AGENTS.md exists at repo root
+[0;32m[PASS][0m AGENTS.md exists
+
+=== Test Summary ===
+Test cases:        16
+Assertions passed: [0;32m29[0m
+Assertions failed: [0;31m0[0m
+
+[0;32mAll tests passed![0m

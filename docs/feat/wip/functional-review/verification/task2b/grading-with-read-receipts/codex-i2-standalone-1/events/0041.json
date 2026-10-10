@@ -1,0 +1,30 @@
+{
+  "actor": "items-01a125d0-0f1e-70e3-a02b-dfc7eeb7dd56",
+  "completedAtMs": 1791635764644,
+  "id": "exec-13775b3c-359d-4d98-bb5a-33697797ac2d",
+  "item": {
+    "aggregatedOutput": "# SOLID Smell Prompts\n\n## SRP (Single Responsibility)\n\n- File owns unrelated concerns (e.g., HTTP + DB + domain rules in one file)\n- Large class/module with low cohesion or multiple reasons to change\n- Functions that orchestrate many unrelated steps\n- God objects that know too much about the system\n- Circular imports between modules (signals tangled responsibilities \u2014 causes `ImportError`/`AttributeError` at runtime)\n- **Ask**: \"What is the single reason this module would change?\"\n\n## OCP (Open/Closed)\n\n- Adding a new behavior requires editing many `if/elif` chains (or `match/case` blocks)\n- Feature growth requires modifying core logic rather than extending\n- No plugin/strategy/hook points for variation\n- **Ask**: \"Can I add a new variant without touching existing code?\"\n\n## LSP (Liskov Substitution)\n\n- Subclass checks for concrete type via `isinstance` or raises for base method\n- Overridden methods weaken preconditions or strengthen postconditions\n- Subclass ignores or no-ops parent behavior\n- **Ask**: \"Can I substitute any subclass without the caller knowing?\"\n\n## ISP (Interface Segregation)\n\n- ABCs/Protocols with many methods, most unused by implementers\n- Callers depend on broad interfaces for narrow needs\n- `NotImplementedError` stubs in subclasses\n- **Ask**: \"Do all implementers use all methods?\"\n\n## DIP (Dependency Inversion)\n\n- High-level logic depends on concrete IO, storage, or network types\n- Hard-coded implementations instead of abstractions or injection\n- Import chains that couple business logic to infrastructure\n- **Ask**: \"Can I swap the implementation without changing business logic?\"\n\n---\n\n## Common Code Smells (Beyond SOLID)\n\n| Smell | Signs |\n|-------|-------|\n| **Long method** | Function > 30 lines, multiple levels of nesting |\n| **Feature envy** | Method uses more data from another class than its own |\n| **Data clumps** | Same group of parameters passed together repeatedly |\n| **Primitive obsession** | Using strings/numbers instead of domain types |\n| **Shotgun surgery** | One change requires edits across many files |\n| **Divergent change** | One file changes for many unrelated reasons |\n| **Dead code** | Unreachable or never-called code |\n| **Speculative generality** | Abstractions for hypothetical future needs |\n| **Magic numbers/strings** | Hardcoded values without named constants |\n| **Expensive `@property`** | Property getter performs I/O, DB queries, or heavy computation \u2014 callers expect attribute access to be cheap |\n\n---\n\n## Refactor Heuristics\n\n1. **Split by responsibility, not by size** - A small file can still violate SRP\n2. **Introduce abstraction only when needed** - Wait for the second use case\n3. **Keep refactors incremental** - Isolate behavior before moving\n4. **Preserve behavior first** - Add tests before restructuring\n5. **Name things by intent** - If naming is hard, the abstraction might be wrong\n6. **Prefer composition over inheritance** - Multiple inheritance creates MRO complexity and tight coupling\n7. **Make illegal states unrepresentable** - Use types to enforce invariants\n",
+    "command": "/usr/bin/zsh -lc \"cat '/home/sergio/.codex/plugins/cache/fr-c2d28c9e-2b-20261010/kk/0.23.0/profiles/python/review-code/solid-checklist.md'\"",
+    "commandActions": [
+      {
+        "command": "cat /home/sergio/.codex/plugins/cache/fr-c2d28c9e-2b-20261010/kk/0.23.0/profiles/python/review-code/solid-checklist.md",
+        "name": "solid-checklist.md",
+        "path": "/home/sergio/.codex/plugins/cache/fr-c2d28c9e-2b-20261010/kk/0.23.0/profiles/python/review-code/solid-checklist.md",
+        "type": "read"
+      }
+    ],
+    "cwd": "/tmp/functional-review-2b-i2-1-20261010",
+    "durationMs": 64,
+    "exitCode": 0,
+    "id": "exec-13775b3c-359d-4d98-bb5a-33697797ac2d",
+    "pluginId": null,
+    "processId": "70282",
+    "scriptPath": null,
+    "source": "unifiedExecStartup",
+    "status": "completed",
+    "type": "commandExecution"
+  },
+  "source_file": "items-01a125d0-0f1e-70e3-a02b-dfc7eeb7dd56.json",
+  "startedAtMs": 1791635764580,
+  "turnId": "01a125d0-0f3d-7ca0-ada5-9df43e58f4e4"
+}

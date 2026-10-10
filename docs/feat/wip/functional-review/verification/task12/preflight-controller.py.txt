@@ -1,0 +1,166 @@
+"""Task 12 immutable input freeze and Claude capture adapter (Python 3.11+).
+
+Reuse retained capture code; do not alter prior experiments. This controller is
+never an actor input. Run binding probes before any measured capture.
+"""
+import argparse
+import importlib.util
+import json
+from pathlib import Path
+import subprocess
+import sys
+
+HERE = Path(__file__).resolve().parent
+VERIFICATION = HERE.parent
+ROOT = VERIFICATION.parents[4]
+sys.path.insert(0, str(VERIFICATION))
+spec = importlib.util.spec_from_file_location("matrix_seed", VERIFICATION / "capture-seeds.py")
+seed = importlib.util.module_from_spec(spec)
+spec.loader.exec_module(seed)
+
+BASELINE = seed.BASELINE
+CANDIDATE = "4fb1941779f6b24dbed4440c288f1d901f0c4609"
+CASES = {
+    **seed.SEEDS,
+    "R2": ("review-code", "functional-retry-lifecycle", ("standard", "isolated")),
+    "R4": ("review-code", "functional-stored-data-compatibility", ("standard", "isolated")),
+    "R5": ("review-code", "functional-clean-partial-feature", ("standard", "isolated")),
+    "R6": ("review-code", "functional-inherited-conditional-defect", ("standard", "isolated")),
+    "R7": ("review-code", "functional-missing-baseline", ("standard", "isolated")),
+    "R8-zero": ("review-code", "functional-report-zero-coverage", ("replay",)),
+    "R8-failure": ("review-code", "functional-report-external-failure", ("replay",)),
+    "R9-mismatch": ("review-code", "functional-intent-mismatch", ("standard", "isolated")),
+    "R9-recovery": ("review-code", "functional-justified-recovery", ("standard", "isolated")),
+    "I3": ("implement", "functional-trivial-document-change", ("standalone",)),
+    "I4": ("implement", "functional-resume-completion-integrity", ("plan",)),
+}
+seed.SEEDS = CASES
+RUBRIC = VERIFICATION / "task2-rubric-v2.md"
+GRADER = VERIFICATION / "task2b/grader.md"
+DEPENDENCIES = [Path(__file__), VERIFICATION / "capture-seeds.py",
+                VERIFICATION / "prepare-bundles.py", VERIFICATION / "probe_state.py",
+                VERIFICATION / "task2b/controller.py", VERIFICATION / "capture-codex.py"]
+
+
+def freeze(destination):
+    """Create once, before capture; prompts and assertions share one identity."""
+    data = {
+        "baseline": BASELINE, "candidate": CANDIDATE,
+        "fixtures": {case: seed.files(seed.fixture(case)) for case in CASES},
+        "prompts": {f"{provider}/{case}/{mode}": seed.prompt_for(case, mode, provider)
+                    for case, (_, _, modes) in CASES.items() for mode in modes
+                    for provider in ("claude", "codex")},
+        "rubric_sha256": seed.sha(RUBRIC.read_bytes()),
+        "grader_sha256": seed.sha(GRADER.read_bytes()),
+        "contract_sha256": seed.sha((HERE / "run-contract.md").read_bytes()),
+        "controllers": {str(p.relative_to(VERIFICATION)): seed.sha(p.read_bytes()) for p in DEPENDENCIES},
+        "runtimes": {name: subprocess.check_output([name, "--version"], text=True).strip()
+                     for name in ("claude", "codex", "capy", "python3")},
+        "controller_python": sys.version,
+    }
+    destination.parent.mkdir(parents=True, exist_ok=True)
+    seed.write_new_json(destination, data)
+
+
+def verify_frozen(path):
+    data = json.loads(path.read_bytes())
+    if data["baseline"] != BASELINE or data["candidate"] != CANDIDATE:
+        raise ValueError("Actor identity changed after freeze")
+    for case in CASES:
+        if data["fixtures"][case] != seed.files(seed.fixture(case)):
+            raise ValueError("Fixture changed after freeze: " + case)
+    for key, source in (("rubric_sha256", RUBRIC), ("grader_sha256", GRADER),
+                        ("contract_sha256", HERE / "run-contract.md")):
+        if data[key] != seed.sha(source.read_bytes()):
+            raise ValueError("Changed frozen input: " + str(source))
+    for relative, digest in data["controllers"].items():
+        if seed.sha((VERIFICATION / relative).read_bytes()) != digest:
+            raise ValueError("Controller changed after freeze: " + relative)
+    for case, (_, _, modes) in CASES.items():
+        for mode in modes:
+            for provider in ("claude", "codex"):
+                if data["prompts"][f"{provider}/{case}/{mode}"] != seed.prompt_for(case, mode, provider):
+                    raise ValueError("Prompt changed after freeze")
+    return data
+
+
+def prepare(args):
+    verify_frozen(args.frozen)
+    seed.BASELINE = BASELINE if args.side == "baseline" else CANDIDATE
+    seed.verify_frozen = verify_frozen
+    seed.prepare(args)
+    meta_path = args.evidence / "launch.json"
+    meta = json.loads(meta_path.read_bytes())
+    meta["side"] = args.side
+    meta["purpose"] = "binding probe" if args.binding else "measured workflow"
+    if args.binding:
+        meta["prompt"] = (
+            "This is an instruction-loading probe only. Do not review or modify subject files. "
+            "Invoke /kk:review-code to load its instructions, then stop before investigation. "
+            "Read the entry point and its required shared/methodology instructions. "
+            "Run exactly `printenv TOOLBOX_PLUGIN_ROOT` to check the SessionStart root. "
+            "Use the named kk:code-reviewer agent only to read its required methodology "
+            "and the plugin's review-code/SKILL.md, without reviewing subject files. "
+            "Have it identify those instruction paths in its response. "
+            "Do not access anything outside this workspace or the selected plugin."
+        )
+        (args.evidence / "prompt.txt").write_text(meta["prompt"] + "\n")
+    seed.write_json(meta_path, meta)
+    registry = args.workspace / ".runner/registry.json"
+    data = json.loads(registry.read_bytes())
+    entries = next(iter(data["plugins"].values()))
+    data["plugins"] = {"kk@fr-matrix-" + seed.BASELINE[:8]: entries}
+    seed.write_json(registry, data)
+
+
+def run(evidence, frozen):
+    inputs = verify_frozen(frozen)
+    for name, expected in inputs["runtimes"].items():
+        actual = subprocess.check_output([name, "--version"], text=True).strip()
+        if actual != expected:
+            raise ValueError("Runtime changed after freeze: " + name)
+    if inputs["controller_python"] != sys.version:
+        raise ValueError("Controller interpreter changed after freeze")
+    meta = json.loads((evidence / "launch.json").read_bytes())
+    if meta["fixture_manifest_sha256"] != seed.sha(frozen.read_bytes()):
+        raise ValueError("Launch belongs to another freeze")
+    # Gate 2B's payload capture covers Linux /tmp as well as macOS /private/tmp.
+    # Preserve original sequence IDs and do not infer receipt from file presence.
+    receipt_spec = importlib.util.spec_from_file_location("matrix_receipts", VERIFICATION / "task2b/controller.py")
+    receipt = importlib.util.module_from_spec(receipt_spec)
+    receipt_spec.loader.exec_module(receipt)
+    seed.capture_payloads = receipt.snapshot_payloads
+    seed.run_claude(evidence)
+
+
+def main():
+    parser = argparse.ArgumentParser(description=__doc__)
+    sub = parser.add_subparsers(dest="operation", required=True)
+    f = sub.add_parser("freeze")
+    f.add_argument("destination", type=Path)
+    p = sub.add_parser("prepare")
+    p.add_argument("side", choices=("baseline", "candidate"))
+    p.add_argument("case", choices=CASES)
+    p.add_argument("mode")
+    p.add_argument("snapshot", type=Path)
+    p.add_argument("workspace", type=Path)
+    p.add_argument("evidence", type=Path)
+    p.add_argument("frozen", type=Path)
+    p.add_argument("--binding", action="store_true")
+    p.set_defaults(provider="claude")
+    r = sub.add_parser("run")
+    r.add_argument("evidence", type=Path)
+    r.add_argument("frozen", type=Path)
+    args = parser.parse_args()
+    if args.operation == "freeze":
+        freeze(args.destination)
+    elif args.operation == "prepare":
+        args.workspace = args.workspace.resolve()
+        args.evidence = args.evidence.resolve()
+        prepare(args)
+    else:
+        run(args.evidence.resolve(), args.frozen.resolve())
+
+
+if __name__ == "__main__":
+    main()

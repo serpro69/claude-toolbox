@@ -1,0 +1,558 @@
+[
+  {
+    "run": "claude-i1-plan-1",
+    "case": "I1",
+    "mode": "plan",
+    "provider": "claude",
+    "repetition": 1,
+    "evidence": "claude-i1-plan-1",
+    "source_revision": "c2d28c9e3064a0a71a0e5ac3748a9616c794eb61",
+    "fixture_manifest_sha256": "455b8f9977222245382fb80db7c88a714a47cf54fe80ddcf515f58bfafa3ef1c",
+    "grading": "pending concrete Task 8 workflow grader",
+    "acceptance": "cannot count as completed baseline",
+    "capture_status": "incomplete",
+    "observed_error": "Controller AttributeError on a string runtime notice; tool trace incomplete",
+    "source": "controller execution errors observed during Task 2"
+  },
+  {
+    "run": "claude-i1-plan-1-capture2",
+    "case": "I1",
+    "mode": "plan",
+    "provider": "claude",
+    "repetition": 1,
+    "evidence": "claude-i1-plan-1-capture2",
+    "source_revision": "c2d28c9e3064a0a71a0e5ac3748a9616c794eb61",
+    "fixture_manifest_sha256": "455b8f9977222245382fb80db7c88a714a47cf54fe80ddcf515f58bfafa3ef1c",
+    "grading": "pending concrete Task 8 workflow grader",
+    "capture_status": "captured",
+    "runtime_result": "success",
+    "permission_denials": [
+      {
+        "tool_name": "Bash",
+        "tool_use_id": "toolu_01B2SLSKz7e93V7kcYcDktUH",
+        "tool_input": {
+          "command": "echo \"TOOLBOX_PLUGIN_ROOT=$TOOLBOX_PLUGIN_ROOT\" && ls plugins/kk/profiles/ 2>/dev/null && ls && python3 --version && (python3 -m pytest --version 2>/dev/null || echo \"no pytest\")"
+        }
+      }
+    ],
+    "named_agent_dispatches": 1,
+    "pal_calls": 2,
+    "actual_models": [
+      "claude-opus-4-8"
+    ]
+  },
+  {
+    "run": "claude-i1-plan-2",
+    "case": "I1",
+    "mode": "plan",
+    "provider": "claude",
+    "repetition": 2,
+    "evidence": "claude-i1-plan-2",
+    "source_revision": "c2d28c9e3064a0a71a0e5ac3748a9616c794eb61",
+    "fixture_manifest_sha256": "455b8f9977222245382fb80db7c88a714a47cf54fe80ddcf515f58bfafa3ef1c",
+    "grading": "pending concrete Task 8 workflow grader",
+    "capture_status": "captured",
+    "runtime_result": "success",
+    "permission_denials": [
+      {
+        "tool_name": "Bash",
+        "tool_use_id": "toolu_01U93s9hRb3kf9yX8EW8ueno",
+        "tool_input": {
+          "command": "echo \"TOOLBOX_PLUGIN_ROOT=$TOOLBOX_PLUGIN_ROOT\"; ls /private/tmp/fr-task2-actors-g_0_vwqs/claude-i1-plan-2/plugins/kk/profiles/python/implement/ 2>&1",
+          "description": "Check plugin root and python implement dir"
+        }
+      },
+      {
+        "tool_name": "Bash",
+        "tool_use_id": "toolu_01K9pJLveXUsxgkcEdLrP3ES",
+        "tool_input": {
+          "command": "python -m unittest discover -s tests -t . -v",
+          "description": "Run unittest suite"
+        }
+      }
+    ],
+    "named_agent_dispatches": 1,
+    "pal_calls": 2,
+    "actual_models": [
+      "claude-opus-4-8"
+    ]
+  },
+  {
+    "run": "claude-i2-standalone-1",
+    "case": "I2",
+    "mode": "standalone",
+    "provider": "claude",
+    "repetition": 1,
+    "evidence": "claude-i2-standalone-1",
+    "source_revision": "c2d28c9e3064a0a71a0e5ac3748a9616c794eb61",
+    "fixture_manifest_sha256": "455b8f9977222245382fb80db7c88a714a47cf54fe80ddcf515f58bfafa3ef1c",
+    "grading": "pending concrete Task 8 workflow grader",
+    "capture_status": "captured",
+    "runtime_result": "success",
+    "permission_denials": [
+      {
+        "tool_name": "Bash",
+        "tool_use_id": "toolu_0171j9uejMwbcLkPerTT89a1",
+        "tool_input": {
+          "command": "diff_file=$(mktemp /tmp/kk-review-code-XXXXXXXX.patch) && git diff > \"$diff_file\" && echo \"DIFF_FILE=$diff_file\" && echo \"---\" && cat \"$diff_file\" && echo \"---PROFILES---\" && ls plugins/kk/profiles/ 2>/dev/null && echo \"---PLUGIN_ROOT---\" && ls plugins/kk/",
+          "description": "Capture diff and list profiles"
+        }
+      },
+      {
+        "tool_name": "Bash",
+        "tool_use_id": "toolu_01V4ZG6gsfFDZU6h7da45JQL",
+        "tool_input": {
+          "command": "rm -f /tmp/kk-review-code-patchsettings.patch",
+          "description": "Remove temp patch file"
+        }
+      }
+    ],
+    "named_agent_dispatches": 1,
+    "pal_calls": 2,
+    "actual_models": [
+      "claude-opus-4-8"
+    ]
+  },
+  {
+    "run": "claude-i2-standalone-2",
+    "case": "I2",
+    "mode": "standalone",
+    "provider": "claude",
+    "repetition": 2,
+    "evidence": "claude-i2-standalone-2",
+    "source_revision": "c2d28c9e3064a0a71a0e5ac3748a9616c794eb61",
+    "fixture_manifest_sha256": "455b8f9977222245382fb80db7c88a714a47cf54fe80ddcf515f58bfafa3ef1c",
+    "grading": "pending concrete Task 8 workflow grader",
+    "capture_status": "captured",
+    "runtime_result": "success",
+    "permission_denials": [
+      {
+        "tool_name": "Bash",
+        "tool_use_id": "toolu_01TXnVGnhXcRZ5ZXAaGKVicQ",
+        "tool_input": {
+          "command": "ls /private/tmp/fr-task2-actors-g_0_vwqs/claude-i2-standalone-2/plugins/kk/profiles/ 2>/dev/null; echo \"---TOOLBOX---\"; echo \"$TOOLBOX_PLUGIN_ROOT\"",
+          "description": "List available profiles"
+        }
+      },
+      {
+        "tool_name": "Bash",
+        "tool_use_id": "toolu_011bKJZQvekUbibQkimfB1Wj",
+        "tool_input": {
+          "command": "git diff --stat && echo \"===DIFF===\" && diff_file=$(mktemp /tmp/kk-review-code-XXXXXXXX.patch) && git diff > \"$diff_file\" && echo \"$diff_file\" && wc -l \"$diff_file\" && echo \"===FULL===\" && git diff",
+          "description": "Capture git diff for review"
+        }
+      }
+    ],
+    "named_agent_dispatches": 1,
+    "pal_calls": 2,
+    "actual_models": [
+      "claude-opus-4-8"
+    ]
+  },
+  {
+    "run": "claude-r1-isolated-1",
+    "case": "R1",
+    "mode": "isolated",
+    "provider": "claude",
+    "repetition": 1,
+    "evidence": "claude-r1-isolated-1",
+    "source_revision": "c2d28c9e3064a0a71a0e5ac3748a9616c794eb61",
+    "fixture_manifest_sha256": "455b8f9977222245382fb80db7c88a714a47cf54fe80ddcf515f58bfafa3ef1c",
+    "grading": "pending concrete Task 8 workflow grader",
+    "capture_status": "captured",
+    "runtime_result": "success",
+    "permission_denials": [
+      {
+        "tool_name": "Bash",
+        "tool_use_id": "toolu_01BwFKv2L8SnzFGt9NYyv1X2",
+        "tool_input": {
+          "command": "diff_file=$(mktemp /tmp/kk-review-code-XXXXXXXX.patch) && git diff --cached > \"$diff_file\" && echo \"DIFF_FILE=$diff_file\" && wc -l \"$diff_file\" && echo \"=== DIFF ===\" && cat \"$diff_file\"",
+          "description": "Capture staged diff to temp file"
+        }
+      },
+      {
+        "tool_name": "Bash",
+        "tool_use_id": "toolu_011N3DsxqSjuVBy8LG7s8bAW",
+        "tool_input": {
+          "command": "git diff --cached > /tmp/kk-review-cleanup.patch && wc -l /tmp/kk-review-cleanup.patch",
+          "description": "Write staged diff to patch file"
+        }
+      }
+    ],
+    "named_agent_dispatches": 1,
+    "pal_calls": 2,
+    "actual_models": [
+      "claude-opus-4-8"
+    ]
+  },
+  {
+    "run": "claude-r1-isolated-2",
+    "case": "R1",
+    "mode": "isolated",
+    "provider": "claude",
+    "repetition": 2,
+    "evidence": "claude-r1-isolated-2",
+    "source_revision": "c2d28c9e3064a0a71a0e5ac3748a9616c794eb61",
+    "fixture_manifest_sha256": "455b8f9977222245382fb80db7c88a714a47cf54fe80ddcf515f58bfafa3ef1c",
+    "grading": "pending concrete Task 8 workflow grader",
+    "capture_status": "captured",
+    "runtime_result": "success",
+    "permission_denials": [
+      {
+        "tool_name": "Bash",
+        "tool_use_id": "toolu_01DqMj43kG63gv2A4hMy4kCG",
+        "tool_input": {
+          "command": "diff_file=$(mktemp /tmp/kk-review-code-XXXXXXXX.patch) && git diff --cached > \"$diff_file\" && echo \"$diff_file\" && wc -l \"$diff_file\"",
+          "description": "Write staged diff to temp file"
+        }
+      },
+      {
+        "tool_name": "Bash",
+        "tool_use_id": "toolu_01Vq4kYRtr6y1GJeRAiNoMpC",
+        "tool_input": {
+          "command": "rm -f /tmp/kk-review-code-cleanup.patch && echo done",
+          "description": "Remove temp patch file"
+        }
+      }
+    ],
+    "named_agent_dispatches": 1,
+    "pal_calls": 2,
+    "actual_models": [
+      "claude-opus-4-8"
+    ]
+  },
+  {
+    "run": "claude-r1-standard-1",
+    "case": "R1",
+    "mode": "standard",
+    "provider": "claude",
+    "repetition": 1,
+    "evidence": "claude-r1-standard-1",
+    "source_revision": "c2d28c9e3064a0a71a0e5ac3748a9616c794eb61",
+    "fixture_manifest_sha256": "455b8f9977222245382fb80db7c88a714a47cf54fe80ddcf515f58bfafa3ef1c",
+    "grading": "pending concrete Task 8 workflow grader",
+    "acceptance": "cannot count as completed baseline",
+    "capture_status": "incomplete",
+    "observed_error": "Launcher FileNotFoundError before actor startup: PAL PATH override",
+    "source": "controller execution errors observed during Task 2"
+  },
+  {
+    "run": "claude-r1-standard-1-capture2",
+    "case": "R1",
+    "mode": "standard",
+    "provider": "claude",
+    "repetition": 1,
+    "evidence": "claude-r1-standard-1-capture2",
+    "source_revision": "c2d28c9e3064a0a71a0e5ac3748a9616c794eb61",
+    "fixture_manifest_sha256": "455b8f9977222245382fb80db7c88a714a47cf54fe80ddcf515f58bfafa3ef1c",
+    "grading": "pending concrete Task 8 workflow grader",
+    "capture_status": "captured",
+    "runtime_result": "success",
+    "permission_denials": [
+      {
+        "tool_name": "Bash",
+        "tool_use_id": "toolu_01S3AfLx8ksGPEBTBtGkqcmF",
+        "tool_input": {
+          "command": "echo \"TOOLBOX_PLUGIN_ROOT=$TOOLBOX_PLUGIN_ROOT\" && ls plugins/kk/profiles/ 2>/dev/null && echo \"---python detection---\" && ls plugins/kk/profiles/python/",
+          "description": "Locate profiles directory"
+        }
+      }
+    ],
+    "named_agent_dispatches": 0,
+    "pal_calls": 0,
+    "actual_models": [
+      "claude-opus-4-8"
+    ]
+  },
+  {
+    "run": "claude-r1-standard-1-retry",
+    "case": "R1",
+    "mode": "standard",
+    "provider": "claude",
+    "repetition": 1,
+    "evidence": "claude-r1-standard-1-retry",
+    "source_revision": "c2d28c9e3064a0a71a0e5ac3748a9616c794eb61",
+    "fixture_manifest_sha256": "455b8f9977222245382fb80db7c88a714a47cf54fe80ddcf515f58bfafa3ef1c",
+    "grading": "pending concrete Task 8 workflow grader",
+    "acceptance": "cannot count as completed baseline",
+    "capture_status": "incomplete",
+    "observed_error": "Controller AttributeError on a string runtime notice; tool trace incomplete",
+    "source": "controller execution errors observed during Task 2"
+  },
+  {
+    "run": "claude-r1-standard-2",
+    "case": "R1",
+    "mode": "standard",
+    "provider": "claude",
+    "repetition": 2,
+    "evidence": "claude-r1-standard-2",
+    "source_revision": "c2d28c9e3064a0a71a0e5ac3748a9616c794eb61",
+    "fixture_manifest_sha256": "455b8f9977222245382fb80db7c88a714a47cf54fe80ddcf515f58bfafa3ef1c",
+    "grading": "pending concrete Task 8 workflow grader",
+    "capture_status": "captured",
+    "runtime_result": "success",
+    "permission_denials": [
+      {
+        "tool_name": "Bash",
+        "tool_use_id": "toolu_015ogHEFJ3Sj48nbr228rFLG",
+        "tool_input": {
+          "command": "echo \"TOOLBOX_PLUGIN_ROOT=$TOOLBOX_PLUGIN_ROOT\" && ls plugins/kk/profiles/ 2>/dev/null && echo \"---python detection---\" && ls plugins/kk/profiles/python/review-code/ 2>/dev/null",
+          "description": "Locate plugin root and python profile"
+        }
+      }
+    ],
+    "named_agent_dispatches": 0,
+    "pal_calls": 0,
+    "actual_models": [
+      "claude-opus-4-8"
+    ]
+  },
+  {
+    "run": "claude-r3-isolated-1",
+    "case": "R3",
+    "mode": "isolated",
+    "provider": "claude",
+    "repetition": 1,
+    "evidence": "claude-r3-isolated-1",
+    "source_revision": "c2d28c9e3064a0a71a0e5ac3748a9616c794eb61",
+    "fixture_manifest_sha256": "455b8f9977222245382fb80db7c88a714a47cf54fe80ddcf515f58bfafa3ef1c",
+    "grading": "pending concrete Task 8 workflow grader",
+    "capture_status": "captured",
+    "runtime_result": "success",
+    "permission_denials": [
+      {
+        "tool_name": "Bash",
+        "tool_use_id": "toolu_014edAqMgYUPKWaWrWqsb3NJ",
+        "tool_input": {
+          "command": "diff_file=$(mktemp /tmp/kk-review-code-XXXXXXXX.patch) && git diff --cached > \"$diff_file\" && wc -l \"$diff_file\" && echo \"DIFF_FILE=$diff_file\" && echo \"=====STAGED DIFF=====\" && git diff --cached",
+          "description": "Write staged diff to temp file and display"
+        }
+      }
+    ],
+    "named_agent_dispatches": 1,
+    "pal_calls": 2,
+    "actual_models": [
+      "claude-opus-4-8"
+    ]
+  },
+  {
+    "run": "claude-r3-isolated-2",
+    "case": "R3",
+    "mode": "isolated",
+    "provider": "claude",
+    "repetition": 2,
+    "evidence": "claude-r3-isolated-2",
+    "source_revision": "c2d28c9e3064a0a71a0e5ac3748a9616c794eb61",
+    "fixture_manifest_sha256": "455b8f9977222245382fb80db7c88a714a47cf54fe80ddcf515f58bfafa3ef1c",
+    "grading": "pending concrete Task 8 workflow grader",
+    "capture_status": "captured",
+    "runtime_result": "success",
+    "permission_denials": [
+      {
+        "tool_name": "Bash",
+        "tool_use_id": "toolu_019gdmVDNNFrLaZqrXJq2LkL",
+        "tool_input": {
+          "command": "diff_file=$(mktemp /tmp/kk-review-code-XXXXXXXX.patch) && git diff --cached > \"$diff_file\" && echo \"DIFF_FILE=$diff_file\" && wc -l \"$diff_file\" && echo \"===DIFF===\" && cat \"$diff_file\"",
+          "description": "Capture staged diff to temp file"
+        }
+      },
+      {
+        "tool_name": "Bash",
+        "tool_use_id": "toolu_01RqmgrcgLt5QCMFom92LVM6",
+        "tool_input": {
+          "command": "echo \"===PLUGIN ROOT===\" && echo \"$TOOLBOX_PLUGIN_ROOT\" && echo \"===FEAT DIRS===\" && ls -d docs/feat/wip/*/ 2>/dev/null; echo \"===enhanced-settings===\" && ls docs/feat/wip/enhanced-settings/ 2>/dev/null; echo \"===repo files===\" && ls",
+          "description": "Resolve plugin root and locate feature docs"
+        }
+      }
+    ],
+    "named_agent_dispatches": 1,
+    "pal_calls": 2,
+    "actual_models": [
+      "claude-opus-4-8"
+    ]
+  },
+  {
+    "run": "claude-r3-standard-1",
+    "case": "R3",
+    "mode": "standard",
+    "provider": "claude",
+    "repetition": 1,
+    "evidence": "claude-r3-standard-1",
+    "source_revision": "c2d28c9e3064a0a71a0e5ac3748a9616c794eb61",
+    "fixture_manifest_sha256": "455b8f9977222245382fb80db7c88a714a47cf54fe80ddcf515f58bfafa3ef1c",
+    "grading": "pending concrete Task 8 workflow grader",
+    "capture_status": "captured",
+    "runtime_result": "success",
+    "permission_denials": [
+      {
+        "tool_name": "Bash",
+        "tool_use_id": "toolu_01Dm9hrHwBhVrSjGqghJgewP",
+        "tool_input": {
+          "command": "echo \"TOOLBOX_PLUGIN_ROOT=$TOOLBOX_PLUGIN_ROOT\" && ls plugins/kk/profiles/ 2>/dev/null",
+          "description": "Resolve plugin root and list profiles"
+        }
+      }
+    ],
+    "named_agent_dispatches": 0,
+    "pal_calls": 0,
+    "actual_models": [
+      "claude-opus-4-8"
+    ]
+  },
+  {
+    "run": "claude-r3-standard-2",
+    "case": "R3",
+    "mode": "standard",
+    "provider": "claude",
+    "repetition": 2,
+    "evidence": "claude-r3-standard-2",
+    "source_revision": "c2d28c9e3064a0a71a0e5ac3748a9616c794eb61",
+    "fixture_manifest_sha256": "455b8f9977222245382fb80db7c88a714a47cf54fe80ddcf515f58bfafa3ef1c",
+    "grading": "pending concrete Task 8 workflow grader",
+    "capture_status": "captured",
+    "runtime_result": "success",
+    "permission_denials": [
+      {
+        "tool_name": "Bash",
+        "tool_use_id": "toolu_01XYyhjJFGSTFUrM9mWaL6TB",
+        "tool_input": {
+          "command": "echo \"TOOLBOX_PLUGIN_ROOT=$TOOLBOX_PLUGIN_ROOT\" && ls plugins/kk/profiles/",
+          "description": "Resolve plugin root and list profiles"
+        }
+      },
+      {
+        "tool_name": "Bash",
+        "tool_use_id": "toolu_014Lv7xnoYfMWVGf4vnL3Qar",
+        "tool_input": {
+          "command": "echo \"=== existing tests ===\" && python3 -B -m unittest discover -s tests 2>&1 | tail -5 && echo \"=== released-provider scenario (what eval-release returns) ===\" && python3 -B -c '\nfrom client import save_settings\n# Emulate released provider at eval-release: update_settings returns {\"ok\": True}\ndef released_send(workspace_id, request):\n    return {\"ok\": True}\ntry:\n    print(save_settings(released_send, \"w\", {\"label\": \"blue\"}, enhanced_settings=False))\nexcept Exception as e:\n    print(type(e).__name__, e)\n'",
+          "description": "Run tests and simulate released provider save"
+        }
+      }
+    ],
+    "named_agent_dispatches": 0,
+    "pal_calls": 0,
+    "actual_models": [
+      "claude-opus-4-8"
+    ]
+  },
+  {
+    "run": "codex-i1-plan-1",
+    "case": "I1",
+    "mode": "plan",
+    "provider": "codex",
+    "repetition": 1,
+    "evidence": "codex-i1-plan-1",
+    "source_revision": "c2d28c9e3064a0a71a0e5ac3748a9616c794eb61",
+    "fixture_manifest_sha256": "455b8f9977222245382fb80db7c88a714a47cf54fe80ddcf515f58bfafa3ef1c",
+    "grading": "pending concrete Task 8 workflow grader",
+    "capture_status": "captured",
+    "runtime_result": "completed",
+    "actual_model": "gpt-6-astra",
+    "reasoning_effort": "xhigh"
+  },
+  {
+    "run": "codex-i1-plan-2",
+    "case": "I1",
+    "mode": "plan",
+    "provider": "codex",
+    "repetition": 2,
+    "evidence": "codex-i1-plan-2",
+    "source_revision": "c2d28c9e3064a0a71a0e5ac3748a9616c794eb61",
+    "fixture_manifest_sha256": "455b8f9977222245382fb80db7c88a714a47cf54fe80ddcf515f58bfafa3ef1c",
+    "grading": "pending concrete Task 8 workflow grader",
+    "capture_status": "captured",
+    "runtime_result": "completed",
+    "actual_model": "gpt-6-astra",
+    "reasoning_effort": "xhigh"
+  },
+  {
+    "run": "codex-i2-standalone-1",
+    "case": "I2",
+    "mode": "standalone",
+    "provider": "codex",
+    "repetition": 1,
+    "evidence": "codex-i2-standalone-1",
+    "source_revision": "c2d28c9e3064a0a71a0e5ac3748a9616c794eb61",
+    "fixture_manifest_sha256": "455b8f9977222245382fb80db7c88a714a47cf54fe80ddcf515f58bfafa3ef1c",
+    "grading": "pending concrete Task 8 workflow grader",
+    "capture_status": "unrun",
+    "next_action": "Establish a supported plaintext-at-submission surface in a separate probe, then capture both fresh baseline repetitions before operative changes. Preserve fixture/rubric hashes; recheck runtime identity.",
+    "owner": "implementing agent",
+    "reason": "Supported app-server and Pre/PostToolUse probes did not expose plaintext reviewer handoffs; exact-handoff capture gate not met."
+  },
+  {
+    "run": "codex-i2-standalone-2",
+    "case": "I2",
+    "mode": "standalone",
+    "provider": "codex",
+    "repetition": 2,
+    "evidence": "codex-i2-standalone-2",
+    "source_revision": "c2d28c9e3064a0a71a0e5ac3748a9616c794eb61",
+    "fixture_manifest_sha256": "455b8f9977222245382fb80db7c88a714a47cf54fe80ddcf515f58bfafa3ef1c",
+    "grading": "pending concrete Task 8 workflow grader",
+    "capture_status": "unrun",
+    "next_action": "Establish a supported plaintext-at-submission surface in a separate probe, then capture both fresh baseline repetitions before operative changes. Preserve fixture/rubric hashes; recheck runtime identity.",
+    "owner": "implementing agent",
+    "reason": "Supported app-server and Pre/PostToolUse probes did not expose plaintext reviewer handoffs; exact-handoff capture gate not met."
+  },
+  {
+    "run": "codex-r1-standard-1",
+    "case": "R1",
+    "mode": "standard",
+    "provider": "codex",
+    "repetition": 1,
+    "evidence": "codex-r1-standard-1",
+    "source_revision": "c2d28c9e3064a0a71a0e5ac3748a9616c794eb61",
+    "fixture_manifest_sha256": "455b8f9977222245382fb80db7c88a714a47cf54fe80ddcf515f58bfafa3ef1c",
+    "grading": "pending concrete Task 8 workflow grader",
+    "capture_status": "captured",
+    "runtime_result": "completed",
+    "actual_model": "gpt-6-astra",
+    "reasoning_effort": "xhigh"
+  },
+  {
+    "run": "codex-r1-standard-2",
+    "case": "R1",
+    "mode": "standard",
+    "provider": "codex",
+    "repetition": 2,
+    "evidence": "codex-r1-standard-2",
+    "source_revision": "c2d28c9e3064a0a71a0e5ac3748a9616c794eb61",
+    "fixture_manifest_sha256": "455b8f9977222245382fb80db7c88a714a47cf54fe80ddcf515f58bfafa3ef1c",
+    "grading": "pending concrete Task 8 workflow grader",
+    "capture_status": "captured",
+    "runtime_result": "completed",
+    "actual_model": "gpt-6-astra",
+    "reasoning_effort": "xhigh"
+  },
+  {
+    "run": "codex-r3-isolated-1",
+    "case": "R3",
+    "mode": "isolated",
+    "provider": "codex",
+    "repetition": 1,
+    "evidence": "codex-r3-isolated-1",
+    "source_revision": "c2d28c9e3064a0a71a0e5ac3748a9616c794eb61",
+    "fixture_manifest_sha256": "455b8f9977222245382fb80db7c88a714a47cf54fe80ddcf515f58bfafa3ef1c",
+    "grading": "pending concrete Task 8 workflow grader",
+    "capture_status": "unrun",
+    "next_action": "Establish a supported plaintext-at-submission surface in a separate probe, then capture both fresh baseline repetitions before operative changes. Preserve fixture/rubric hashes; recheck runtime identity.",
+    "owner": "implementing agent",
+    "reason": "Supported app-server and Pre/PostToolUse probes did not expose plaintext reviewer handoffs; exact-handoff capture gate not met."
+  },
+  {
+    "run": "codex-r3-isolated-2",
+    "case": "R3",
+    "mode": "isolated",
+    "provider": "codex",
+    "repetition": 2,
+    "evidence": "codex-r3-isolated-2",
+    "source_revision": "c2d28c9e3064a0a71a0e5ac3748a9616c794eb61",
+    "fixture_manifest_sha256": "455b8f9977222245382fb80db7c88a714a47cf54fe80ddcf515f58bfafa3ef1c",
+    "grading": "pending concrete Task 8 workflow grader",
+    "capture_status": "unrun",
+    "next_action": "Establish a supported plaintext-at-submission surface in a separate probe, then capture both fresh baseline repetitions before operative changes. Preserve fixture/rubric hashes; recheck runtime identity.",
+    "owner": "implementing agent",
+    "reason": "Supported app-server and Pre/PostToolUse probes did not expose plaintext reviewer handoffs; exact-handoff capture gate not met."
+  }
+]

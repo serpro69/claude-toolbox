@@ -1,0 +1,19 @@
+{
+  "actor": "main",
+  "block": {
+    "caller": {
+      "type": "direct"
+    },
+    "id": "toolu_01QXcFud9Q6WBQQxLfEUNXjY",
+    "input": {
+      "content": "Pattern: ownership-guard removal before a mutating pop in cleanup code. In cleanup_setup(store, workspace_id, setup_id), a guard `association = store.active.get(workspace_id); if association and association[\"setup_id\"] == setup_id: store.active.pop(...)` was replaced by an unconditional `store.active.pop(workspace_id, None)` under the guise of \"simplification\". The guard enforced that only the setup that OWNS the current active association may evict it. Removing it causes a stale/superseded cleanup (e.g. cleaning up an old or never-activated setup B) to evict the active association belonging to a DIFFERENT setup A for the same workspace. Symptom: a live workspace silently loses its active setup. Lesson: a dict.pop(k, None) being null-safe does not make removing an identity/ownership check safe \u2014 the check guarded WHICH value may be removed, not WHETHER the key exists. Review heuristic: when a cleanup/delete simplification drops a `== id` / ownership comparison, treat it as a behavior change (wrong-entity deletion), not a refactor.",
+      "source": "kk:review-findings"
+    },
+    "name": "mcp__capy__capy_index",
+    "type": "tool_use"
+  },
+  "id": "e105.0",
+  "parent_tool_use_id": null,
+  "session_id": "2d0622ab-fb00-4128-add6-e3ceef792a4c",
+  "source_sequence": 105
+}

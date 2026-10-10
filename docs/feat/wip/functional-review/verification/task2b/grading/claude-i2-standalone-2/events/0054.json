@@ -1,0 +1,21 @@
+{
+  "actor": "main",
+  "block": {
+    "caller": {
+      "type": "direct"
+    },
+    "id": "toolu_019CBacG2WfiaXxuzUSsswuc",
+    "input": {
+      "file_path": "/private/tmp/fr-task2-actors-g_0_vwqs/claude-i2-standalone-2/tests/test_settings.py",
+      "new_string": "import unittest\nfrom api import update_preferences\nfrom settings import patch_settings\n\n\nclass SettingsTests(unittest.TestCase):\n    def test_updates_note(self):\n        original = {\"note\": \"before\", \"enabled\": True}\n        result = update_preferences(original, {\"note\": \"after\"})\n        self.assertEqual(result, {\"note\": \"after\", \"enabled\": True})\n        self.assertEqual(original[\"note\"], \"before\")\n\n\nclass PatchSettingsTests(unittest.TestCase):\n    def test_omitted_keys_keep_current_values(self):\n        current = {\"note\": \"keep\", \"enabled\": True}\n        result = patch_settings(current, {\"enabled\": False})\n        self.assertEqual(result, {\"note\": \"keep\", \"enabled\": False})\n\n    def test_falsey_values_replace_current(self):\n        current = {\"note\": \"before\", \"count\": 5, \"enabled\": True, \"label\": \"x\"}\n        for key, value in (\n            (\"note\", None),\n            (\"label\", \"\"),\n            (\"enabled\", False),\n            (\"count\", 0),\n        ):\n            with self.subTest(key=key, value=value):\n                result = patch_settings(current, {key: value})\n                self.assertEqual(result[key], value)\n\n    def test_adds_new_key(self):\n        result = patch_settings({\"a\": 1}, {\"b\": 2})\n        self.assertEqual(result, {\"a\": 1, \"b\": 2})\n\n    def test_does_not_mutate_caller_inputs(self):\n        current = {\"note\": \"before\"}\n        patch = {\"note\": None}\n        patch_settings(current, patch)\n        self.assertEqual(current, {\"note\": \"before\"})\n        self.assertEqual(patch, {\"note\": None})",
+      "old_string": "import unittest\nfrom api import update_preferences\n\n\nclass SettingsTests(unittest.TestCase):\n    def test_updates_note(self):\n        original = {\"note\": \"before\", \"enabled\": True}\n        result = update_preferences(original, {\"note\": \"after\"})\n        self.assertEqual(result, {\"note\": \"after\", \"enabled\": True})\n        self.assertEqual(original[\"note\"], \"before\")",
+      "replace_all": false
+    },
+    "name": "Edit",
+    "type": "tool_use"
+  },
+  "id": "e98.0",
+  "parent_tool_use_id": null,
+  "session_id": "5160257a-e96d-4ed7-b3a2-e699343e4f9a",
+  "source_sequence": 98
+}

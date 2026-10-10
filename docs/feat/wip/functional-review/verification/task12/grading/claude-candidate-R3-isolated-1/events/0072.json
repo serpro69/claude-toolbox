@@ -1,0 +1,19 @@
+{
+  "actor": "main",
+  "block": {
+    "caller": {
+      "type": "direct"
+    },
+    "id": "toolu_01N2msSAkazc9J84aPjjhWQG",
+    "input": {
+      "command": "set -e\nBUNDLE=$(mktemp -d /tmp/kk-evidence-XXXXXX)\nDIFF=$(mktemp /tmp/kk-review-code-XXXXXX.patch)\ncd /tmp/fr-task12-claude-candidate-R3-isolated-1\ngit diff --cached > \"$DIFF\"\n# Materialize candidate sources (staged/index blobs) outside the worktree\ngit cat-file -p :client.py > \"$BUNDLE/client.py.candidate\"\ngit cat-file -p :tests/test_client.py > \"$BUNDLE/test_client.py.candidate\"\n# Materialize historical released-provider source\ngit show eval-release:provider/settings.py > \"$BUNDLE/provider_settings.eval-release.py\"\n# Provenance manifest\ncat > \"$BUNDLE/manifest.json\" <<EOF\n{\n  \"historical_source\": {\n    \"repository\": \"local checkout (settings client)\",\n    \"ref\": \"eval-release\",\n    \"resolved_revision\": \"22140737b2bc5792b535f3f8ce16f7fa162101db\",\n    \"original_path\": \"provider/settings.py\",\n    \"blob_hash\": \"a6aeedb05fcf8c2c11b68cf16b560bf5f245eada\",\n    \"line_span\": \"1-3 (complete file)\",\n    \"omitted\": \"none\",\n    \"note\": \"Supported provider baseline per README; provider source removed from checkout after release, snapshot retained in local git.\"\n  },\n  \"candidate\": {\n    \"selector\": \"staged (git index)\",\n    \"files\": [\"client.py\", \"tests/test_client.py\"]\n  }\n}\nEOF\nchmod -R a-w \"$BUNDLE\"\necho \"BUNDLE=$BUNDLE\"\necho \"DIFF=$DIFF\"\nls -la \"$BUNDLE\"",
+      "description": "Create read-only evidence bundle and diff temp file"
+    },
+    "name": "Bash",
+    "type": "tool_use"
+  },
+  "id": "e141.0",
+  "parent_tool_use_id": null,
+  "session_id": "66fd830c-a590-42bc-a43a-380147edc512",
+  "source_sequence": 141
+}

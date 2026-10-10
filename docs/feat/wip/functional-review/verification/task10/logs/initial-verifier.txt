@@ -1,0 +1,8 @@
+Initial command: python3 -B docs/feat/wip/functional-review/verification/task10/verify.py
+Exit: 1
+Failure: assertion expecting git apply --numstat to return 1<TAB>1<TAB>settings.py.
+Cause: running within a fixture subdirectory of the toolbox repository caused Git
+to filter the patch by that directory prefix. The output was empty.
+Correction: validate patch statistics and applicability inside each independently
+staged replay repository. Keep the expected statistic and add git apply --check.
+No fixture assertion or acceptance threshold was relaxed.

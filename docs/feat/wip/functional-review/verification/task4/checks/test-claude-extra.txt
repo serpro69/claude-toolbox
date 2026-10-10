@@ -1,0 +1,69 @@
+
+=== Section 1: File Existence ===
+[TEST] CLAUDE.extra.md exists
+[PASS] CLAUDE.extra.md should exist
+[TEST] CLAUDE.extra.md contains behavioral instructions
+[PASS] Contains behavioral instructions section
+[TEST] CLAUDE.extra.md contains task tracking
+[PASS] Contains task tracking section
+[TEST] CLAUDE.extra.md contains exploration phase
+[PASS] Contains exploration phase section
+
+=== Section 2: CLAUDE.md @import reference ===
+[TEST] CLAUDE.md contains @import reference for CLAUDE.extra.md
+[PASS] CLAUDE.md contains @import reference
+[TEST] CLAUDE.md does not contain migrated behavioral instructions
+[PASS] Behavioral instructions correctly removed from CLAUDE.md
+[TEST] CLAUDE.md imports project instructions from AGENTS.md
+[PASS] CLAUDE.md imports AGENTS.md
+[TEST] AGENTS.md retains project-specific sections
+[PASS] AGENTS.md retains project-specific sections
+
+=== Section 3: compare_files Detects CLAUDE.extra.md ===
+[TEST] compare_files detects CLAUDE.extra.md as added when project doesn't have it
+>>> Comparing files with current project
+✓ Comparison complete: 1 added, 0 modified, 0 deleted, 1 unchanged, 0 excluded
+[PASS] CLAUDE.extra.md detected as added
+[TEST] compare_files detects CLAUDE.extra.md as unchanged when identical
+>>> Comparing files with current project
+✓ Comparison complete: 0 added, 0 modified, 0 deleted, 1 unchanged, 0 excluded
+[PASS] CLAUDE.extra.md detected as unchanged when identical
+[TEST] compare_files detects CLAUDE.extra.md as modified when content differs
+>>> Comparing files with current project
+✓ Comparison complete: 0 added, 1 modified, 0 deleted, 0 unchanged, 0 excluded
+[PASS] CLAUDE.extra.md detected as modified when content differs
+[TEST] compare_files respects exclusion for CLAUDE.extra.md
+>>> Comparing files with current project
+✓ Comparison complete: 0 added, 0 modified, 0 deleted, 0 unchanged, 1 excluded
+[PASS] CLAUDE.extra.md excluded when in sync_exclusions
+
+=== Section 4: Auto-Import Append Logic ===
+[TEST] Import line is appended to CLAUDE.md when CLAUDE.extra.md is staged and no import exists
+[PASS] Import line appended to CLAUDE.md
+[TEST] Import line is NOT duplicated when already present
+[PASS] Import line not duplicated when already present
+[TEST] Import not appended when CLAUDE.md doesn't exist
+[PASS] Import not appended when CLAUDE.md doesn't exist
+[TEST] Import not appended when CLAUDE.extra.md not in staging
+[PASS] Import not appended when CLAUDE.extra.md not in staging
+
+=== Section 5: Bootstrap Script ===
+[TEST] bootstrap.sh contains import append logic
+[PASS] bootstrap.sh references CLAUDE.extra.md import
+[TEST] bootstrap.sh does not contain old behavioral instructions append
+[PASS] Old behavioral instructions removed from bootstrap.sh
+[TEST] bootstrap.sh has idempotent import (grep guard)
+[PASS] bootstrap.sh checks for existing import before appending
+
+=== Section 6: Sync Script Auto-Import ===
+[TEST] template-sync.sh contains auto-import logic
+[PASS] Sync script contains CLAUDE.extra.md auto-import logic
+[TEST] template-sync.sh has idempotent import check
+[PASS] Sync script checks for existing import before appending
+
+=== Test Summary ===
+Test cases:        21
+Assertions passed: 21
+Assertions failed: 0
+
+All tests passed!

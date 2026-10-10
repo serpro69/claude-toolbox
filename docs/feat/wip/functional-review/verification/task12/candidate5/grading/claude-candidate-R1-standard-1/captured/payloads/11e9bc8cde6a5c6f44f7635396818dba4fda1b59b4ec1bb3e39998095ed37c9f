@@ -1,0 +1,186 @@
+Instruction packet bootstrap: part 3/6
+
+- `kotlin`
+- `k8s`
+- `k8s-operator`
+- `skill-md`
+
+### Algorithm
+
+This procedure reads files under the plugin root. The main agent resolves the plugin root from its shell variable `$TOOLBOX_PLUGIN_ROOT`; a Read-only sub-agent uses the absolute plugin-root path injected into its prompt under `## Plugin Root` (see its agent definition). Substitute that resolved path for the plugin-root prefix in every `…/profiles/…` read below.
+
+1. **Iterate profiles.** For each §Known profiles `<name>`:
+   1. Use the `Read` tool on `${TOOLBOX_PLUGIN_ROOT}/profiles/<name>/DETECTION.md`.
+   2. If `Read` fails with ENOENT (profile name in list but directory missing — a stale list entry), skip silently and move on.
+   3. If `Read` succeeds, parse the declared `## Path signals`, `## Filename signals`, and `## Content signals` sections.
+
+2. **Evaluate in cost order.** For each input file, check signals in this order: path → filename → content. Cheapest first.
+3. **Apply the authority rule.** A file activates the profile only if a **filename signal** OR **content signal** matches.
+   A path-only match does NOT activate. Paths are a pre-filter that promotes files to "candidates"; authoritative activation requires filename or content confirmation.
+   A file that matches NO path signal is still evaluated against filename and content signals — path pre-filtering is a cost hint, not a gate.
+   (Otherwise a `Chart.yaml` at a non-standard path would be missed.)
+4. **Bound content inspection.** Read at most ~16 KB per file when evaluating content signals.
+   Multi-document YAML is inspected per `---`-separated block — a file may have five blocks, and only the third need match for the file to activate the profile.
+5. **Collect records.** Accumulate one record per matched profile with the triggering files and the signal descriptions that fired.
+
+### Tool choice
+
+A consumer may consolidate instruction reads into bounded packets containing
+the complete, unmodified source bodies, original paths and hashes. Read every
+packet part completely before applying those instructions; the original paths
+still determine link resolution and detection provenance. A manifest, checksum,
+requested read or truncated packet alone does not establish loading. This
+changes packaging only: evaluate every Known-profile rule and each index
+conditional exactly as below. Direct file reads remain the default fallback.
+
+- Single file at `${TOOLBOX_PLUGIN_ROOT}/…` → `Read`. This is what the algorithm uses.
+- Enumeration across profiles → iterate the §Known profiles list, `Read` each. Never `Glob` (cwd-scoped, misses outside-cwd paths).
+
+### Two dimensions: cost vs authority
+
+Signals live on two axes that point in different directions. Keep them separate in your mental model:
+
+- **Evaluation cost** (cheapest first): path < filename < content.
+  Path globs touch only the path string;
+  filename matches are exact string compares;
+  content inspection opens the file.
+- **Authority** (most authoritative first): filename ≈ content > path.
+  A filename or content match activates the profile; a path-only match does not.
+  Filename and content are equally authoritative, but filename resolves first at runtime — a filename match short-circuits content inspection for that file.
+
+Evaluating cheapest-first optimizes work. Applying authority correctly prevents false positives from incidental path matches — a stray `manifests/` directory in a Go project does not make the project Kubernetes.
+
+### Plugin-root resolution failure
+
+If every `Read` attempt in Algorithm step 1 fails — i.e., the plugin root could not be resolved (the variable is unset for the main agent, or no `## Plugin Root` path was provided to a sub-agent) or the paths do not exist — the procedure cannot continue.
+
+On that failure:
+
+1. Emit an actionable error pointing to `CLAUDE.md` §Profile Conventions.
+2. Return an empty result set so the calling skill falls back to generic guidance rather than panicking.
+3. Do not retry; do not silently guess a path.
+
+Consumers inherit this check by invoking the shared procedure — no skill re-implements it.
+
+### Output shape
+
+A list of records, one per matched profile:
+
+```
+[
+  {
+    profile: "<name>",                     // directory name under profiles/
+    triggered_by: [
+      "filename: Chart.yaml",              // signal type + matched value
+      "content: apiVersion+kind in block 2"
+    ],
+    files: [
+      "path/to/file1.yaml",
+      "path/to/file2.yaml"
+    ]
+  },
+  ...
+]
+```
+
+Field semantics:
+
+- `profile` — the directory name under `profiles/` (e.g., `go`, `python`, `k8s`).
+  Used downstream to resolve `profiles/<profile>/<phase>/index.md`,
+  where `<phase>` is the profile phase subdirectory named identically to the calling skill:
+  `review-code/`, `review-spec/`, `design/`, `implement/`, `test/`, or `document/`.
+- `triggered_by` — which signal type fired and the specific value that matched.
+  For debugging and for explaining detection to the user; never used as the key for profile lookup.
+- `files` — the subset of input files that activated this profile.
+  Skills use this to scope behavior (e.g., `helm lint` runs only on files triggered under Helm filename signals, not on every YAML in the diff).
+
+When no profile matches, return the empty list `[]`. The caller falls back to generic guidance, identical to today's "no language detected" path.
+
+END SOURCE
+
+BEGIN SOURCE /tmp/fr-task12-c5-diagnostic-20261010/claude-candidate-R1-standard-1/plugins/kk/skills/review-code/shared-review-scope-protocol.md
+SHA256 71c3ffdce72804f6688abf37a8b50663e95caa08a353789711797422d535d333
+Resolve links relative to this original source path.
+
+## Review scope protocol
+
+Reviewers need task status alongside the diff and design docs. Without scope, they flag code-that-isn't-written-yet as `MISSING_IMPL` (spec review) or as missing functionality (code review). Standard review uses this scope locally; isolated review injects the same artifact into sub-agent and external-reviewer prompts. The existing /kk:review-spec payload remains sufficient; no additional change-context record is required by this protocol.
+
+### Input shapes
+
+The review workflow must handle three invocation shapes:
+
+1. **Invoked from `/kk:implement`** — `/docs/feat/wip/[feature]/` exists with `design.md`, `implementation.md`, `tasks.md`. The current task id is known (the one just finished). Use full scope filtering.
+2. **Invoked directly inside a feature** — `/docs/feat/wip/[feature]/` exists but no current task is explicitly supplied. Derive scope from `tasks.md` status fields (`done` = in scope, `pending`/`in-progress` = out of scope).
+3. **Invoked on an arbitrary diff** — no `/docs/feat/wip/` directory relates to the diff. Skip the scope artifact entirely and note "No task scope available" in the reviewer prompt.
+
+### Scope artifact format
+
+When shape 1 or 2 applies, build this block and inject it into every reviewer prompt (sub-agent prompt template and the external-reviewer `step` framing):
+
+```
+## Task Scope
+
+Review mode: {mid-implementation | post-implementation}
+
+In scope (review these):
+- Task {id}: {title} — status: done
+- [...more done tasks if applicable]
+
+Out of scope (pending — DO NOT flag as missing):
+- Task {id}: {title} — status: {pending|in-progress}
+- [...more pending tasks]
+
+The feature's design docs describe the full end state. Pending tasks are expected gaps in the current diff — treat their absence from the code as intentional, not as a finding. You may still flag issues within the in-scope tasks even if they reference pending tasks (e.g., a broken interface contract). Pending work does not excuse current regressions or incompatibility: assess whether the reviewed increment preserves existing flows and meets applicable delivery requirements. Genuinely unreachable unfinished paths need not be implemented merely because they are planned.
+```
+
+When shape 3 applies, use:
+
+```
+## Task Scope
+
+No task scope available — review the diff on its own merits without assuming any feature-level design doc.
+```
+
+### Determining mode
+
+- **mid-implementation** — at least one task in `tasks.md` has status `pending` or `in-progress`.
+- **post-implementation** — all tasks are `done`.
+
+In shape 1, the invoking workflow (`/kk:implement`) may pass the current task id directly; that task is automatically in scope even if `tasks.md` hasn't been updated yet.
+
+### Interpretation guidance for reviewers
+
+The reviewer prompt must also carry this instruction (agent definitions should state it; the workflow relays it implicitly via the scope block):
+
+- Do **not** report missing-implementation findings for items covered only by out-of-scope tasks.
+- Do still report real issues *within* the in-scope tasks, including ones that affect future pending work (e.g., a public API the pending task will depend on is shaped wrongly).
+- A current consumer that already requires a pending provider change remains reviewable, including when the larger feature is disabled. Distinguish deployment from activation and check the actual affected paths; a flag or a future task alone proves neither reachability nor safety.
+- Attribute introduced/worsened behavior separately from inherited defects. Do not invent a current regression or require pending work when the increment remains compatible under its actual delivery contract.
+- If a finding would be valid *only* after pending work lands, mention it under "Areas Not Covered" instead of the P0–P3 sections.
+
+END SOURCE
+
+BEGIN SOURCE /tmp/fr-task12-c5-diagnostic-20261010/claude-candidate-R1-standard-1/plugins/kk/skills/review-code/shared-change-context.md
+SHA256 5932984705b14bc62e73e7789c28442aa83ad6effc8bbb5435352ba9c6ea2f65
+Resolve links relative to this original source path.
+
+# Change context
+
+Establish this context before implementation edits or review findings. It is a shared reasoning and handoff contract, not a mandatory new document. Scale it to the change: a few sentences for a helper fix, a compact scenario table for a cross-component mutation. Omit empty boilerplate; explain briefly why an operational dimension is irrelevant.
+
+## Minimum useful record
+
+| Field | Content |
+| --- | --- |
+| Intent and authority | Intended outcomes and constraints; source locations; explicit, inferred or unresolved status. |
+| Change boundary | Current task/request, resolved diff scope, candidate revision/worktree state, affected components and deliberately pending functionality. |
+| Existing behavior | Entry points, unchanged callers/consumers, state/data contracts and invariants to preserve. |
+| Delivery constraints | Applicable repository policy, independent/ordered deployment expectations, flags, migrations, prerequisites and accepted exceptions. |
+| Baselines | Review base and candidate; separately, relevant released/deployed revisions, configurations and data shapes; explicit unknowns. |
+| Scenarios and evidence | Success, boundaries, failure/retry and lifecycle cases that apply; source/test bindings, observed results and unverified conditions. |
+
+User decisions and applicable repository instructions establish requirements. Consult current design/task contracts and relevant linked issues without assuming an issue is newer or more authoritative. Explain consequential conflicts. Existing code establishes behavior, not product intent; tests can repeat an implementation's mistaken assumption. Without a specification, infer a provisional purpose from the request and inspected evidence and label it. Ask only when materially different interpretations prevent a useful judgment; continue independent investigation.
+
+
+END PACKET PART 3/6

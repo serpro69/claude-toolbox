@@ -1,337 +1,207 @@
 ### Workflow
 
-Copy this checklist and check off items as you complete them:
+**Mandatory ordering — methodology before evidence.** Follow this workflow strictly in sequence. Load basic instructions and every resolved profile checklist before investigating source, searching knowledge, forming findings or preparing evidence. The sole early-content exception is bounded routing for declared detection/conditional-load predicates: approximately 16 KiB per candidate file, predicate/path logged, conservative loading when undecidable. Routing permits no behavioral analysis, full-diff investigation, edits or tests.
 
 ```
 Isolated Code Review Progress:
-- [ ] Step 1: Prepare artifacts (1a–1g)
-- [ ] Step 2: Spawn reviewers (parallel)
-- [ ] Step 3: Annotate findings
-- [ ] Step 4: Index findings
-- [ ] Step 5: Present report
-- [ ] Step 6: Verify outputs
+- [ ] Step 1: Load basic instructions
+- [ ] Step 2: Resolve scope from filenames/metadata only
+- [ ] Step 3: Detect profiles and route all checklists
+- [ ] Step 4: Read every checklist and confirm the loading gate
+- [ ] Step 5: Investigate and prepare equivalent evidence for both reviewers
+- [ ] Step 6: Spawn independent reviewers and resolve evidence requests
+- [ ] Step 7: Annotate findings without overriding reviewers
+- [ ] Step 8: Index systemic findings
+- [ ] Step 9: Present findings, coverage and qualified verdict; confirm next steps
+- [ ] Step 10: Verify outputs and clean up temporary evidence
 ```
 
-## Contents
+## Step 1: Load Basic Instructions
 
-- **Step 1: Prepare Artifacts** — 1a) Capture diff, 1b) Locate spec context, 1c) Detect active profiles and resolve checklists, 1d) Resolve pal model, 1e) Curate rejected approaches, 1f) Determine task scope, 1g) Collect context files for pal
-- **Step 2: Spawn Reviewers** — Reviewer A (code-reviewer sub-agent), Reviewer B (pal codereview), error handling
-- **Step 3: Annotate Findings** — 3a) Duplicate merging, 3b) Author context, 3c) Author-sourced findings, 3d) pal follow-up
-- **Step 4: Index Findings**
-- **Step 5: Present Report** — Report template, next steps
-- **Step 6: Verify Outputs**
+Read [SKILL.md](SKILL.md), this workflow, [shared-capy-knowledge-protocol.md](shared-capy-knowledge-protocol.md), [shared-profile-detection.md](shared-profile-detection.md), [shared-review-scope-protocol.md](shared-review-scope-protocol.md), [shared-change-context.md](shared-change-context.md), [functional-review.md](functional-review.md), and [shared-pal-codereview-invocation.md](shared-pal-codereview-invocation.md). Already loaded, unchanged instructions need not be read twice. The common method applies even without profiles or specification documents.
 
----
+## Step 2: Resolve Scope from Filenames/Metadata
 
-## Step 1: Prepare Artifacts
+Use status, diff statistics and filenames only to resolve scope. Honor an explicit range/file selection; otherwise choose unstaged changes, falling back to staged when none are unstaged. Keep that selector throughout preparation; do not silently combine scopes. If neither has changes, report that and request a range. A feature-directory listing may locate specifications; reading them belongs to investigation. Metadata scope does not open the investigation gate: the next actions are detection-rule reads, profile indexes and their checklists, never the diff or feature documents.
 
-Gather the artifacts that will be passed to the sub-agents.
+## Step 3: Detect Profiles and Route All Checklists
 
-### 1a) Capture the diff
+Run the shared detection procedure on scoped filenames. Read each entry in its **Known profiles** list and record the returned rule paths; do not discover names by listing directories or infer unread rules from profile names. An obvious extension match does not end enumeration. Resolve the plugin root from the loaded skill location (parent of `skills/`); construct absolute instruction paths rather than forwarding unresolved root tokens. For every active profile, read `profiles/<profile>/review-code/index.md` and select always-load, matching conditional and conservatively selected entries. Evaluate metadata predicates first; use only the bounded routing exception for content predicates. Do not defer conditionals until investigation.
 
-Run `git diff --stat` and `git diff` to capture the changes under review. If there are no unstaged changes, check for staged changes with `git diff --cached`. If the user specified a commit range, use that instead.
+Batch the Known-profile reads together when supported, then reconcile expected versus returned rule paths before resolving profiles. An unread rule keeps routing incomplete; do not substitute a remembered extension rule for its returned contents.
 
-Write the diff to a temp file for pal consumption:
+The size bound alone does not authorize a read. Before any routing content read, name the unresolved predicate from an already returned detection rule/index and the candidate path it applies to. Extension/filename-only decisions require no source bytes. **Never run a full `git diff` for routing, even for a tiny diff:** inspect only a bounded candidate-file view needed by that declared predicate. With no unresolved content predicate, proceed directly to checklist loading.
 
-```bash
-diff_file=$(mktemp /tmp/kk-review-code-XXXXXXXX.patch)
-git diff > "$diff_file" && wc -l "$diff_file"
-```
+Collect `(profile, checklist, triggered_by)` records with absolute checklist paths and conservative-load notes.
 
-Adjust the `git diff` command to match the actual scope (staged, unstaged, or commit range). The temp file is passed to pal via `relevant_files` in Step 2 and should be cleaned up after the review completes (`rm "$diff_file"`).
+## Step 4: Read Every Checklist and Confirm Loading
 
-**Edge cases:**
+Read every selected file: an index or requested path is not returned instruction content. Do not batch these reads with investigation. Emit a compact loading checkpoint naming completed common-instruction reads and loaded checklists (or no active profiles). A failed or omitted instruction read keeps the gate closed; surface unreadable paths. Explicitly reconcile every resolved path with returned contents before proceeding. Loading the common files alone does not satisfy this gate. Do not read the diff, source or specifications in the same call as detection, index or checklist reads.
 
-- **No changes**: Inform the user and stop.
-- **Large diff (>500 lines)**: Proceed — the sub-agent handles batching internally. If the diff exceeds the sub-agent's context window, note the limitation and suggest the user scope the review to specific files or tasks.
+## Step 5: Investigate and Prepare Evidence
 
-### 1b) Locate spec context
+This is the single entry point for subject-matter investigation. Locate and read available component README/contract documentation and relevant design/task contracts first; establish explicit intent and preserved invariants, labeling inference when no contract exists. Then read the selected full diff and changed files at the reviewed candidate, accounting for deletions. For staged review use index blobs; for a commit range use the selected candidate revision. Materialize those candidate sources outside the worktree when its current files differ; never pass unrelated worktree bytes as reviewed source. Large diffs (>500 lines) may be batched by module; report any context limit.
 
-Spec context is optional but improves review quality:
+Write the selected diff to a temporary file outside the reviewed worktree, using `mktemp` and the same selector. Keep evidence until both reviewers and any follow-ups finish.
 
-1. If this review is happening within `/kk:implement`, locate the relevant `design.md` section and task description from `tasks.md` in the feature's `/docs/feat/wip/[feature]/` directory.
-2. If standalone, check if the user provided context or if design docs exist in `/docs/feat/wip/` that relate to the changed files.
-3. If no spec context is found, that's fine — the sub-agent works without it.
+### Context and affected paths
 
-Capture the relevant spec excerpt (design rationale, task description, documented decisions) as text to inject into the sub-agent prompt.
+- Build the Task Scope block from those contracts with the shared scope protocol, including the invoking implementation task even if still in progress. Without a related feature, use its no-task-scope variant.
+- Establish or refresh the shared change context: intent/authority, task boundary, preserved behavior, delivery constraints, review base/candidate, separate compatibility baselines, scenarios and attributed verification results. Without a spec, infer provisional purpose from the request, diff, callers and tests; label it. Functional reasoning remains required.
+- Trace affected behavior using the common method, including unchanged consumers and required compatibility combinations. Select source by the contract question it answers, not directory proximity. Search `kk:review-findings` and, for active programming-language profiles, `kk:lang-idioms`.
+- Include concrete rejected-approach facts if useful, with their source; omit implementation-session narrative. Author explanations and test claims remain attributed evidence that reviewers may challenge.
+- If exploration adds a target with another profile or conditional, pause its analysis and return to routing/loading before proceeding.
 
-### 1c) Detect active profiles and resolve checklists
+### Historical source and evidence manifest
 
-Delegate to [shared-profile-detection.md](shared-profile-detection.md) with the diff from Step 1a as input. The procedure returns a list of records — one per matched profile — each naming the trigger signal and the files that activated it.
+When a comparison depends on source absent from candidate files or diff hunks, obtain the actual local Git blob or bounded excerpt. Materialize it in a read-only evidence bundle outside the reviewed worktree. For each item record repository identity, full revision, original path, blob/content hash, original line span and omitted/redacted extent. Distinguish source-level tag comparisons from verified deployment state. A missing source stays explicitly Unknown; a parent summary cannot replace it.
 
-For each active profile, resolve the checklists to apply:
+Before declaring a named baseline unavailable, inspect relevant repository documentation for its location and attempt to resolve the stated local ref/tag and source path in Git. If only a symbol/component is named, use a bounded history/tree lookup to locate it. Record the attempted ref/path and result. A separate-repository description or absence from the checkout does not prove absence from local history. Review-base mocks establish test assumptions, not the named provider's implementation; do not substitute them for available historical source.
 
-1. Read `${TOOLBOX_PLUGIN_ROOT}/profiles/<profile>/review-code/index.md`.
-2. Collect every entry under **Always load**.
-3. For every **Load if:** conditional entry, evaluate the predicate against the diff; collect the entry when it matches.
+Prepare one categorized manifest for both reviewers, with absolute paths:
 
-Accumulate a flat list of `(profile, checklist, triggered_by)` records — carry the `triggered_by` signal from each detection record through to every checklist resolved for that profile. This list — not any hardcoded category sequence — is what the sub-agent and pal prompts will receive in Step 2. If no profile matched, the list is empty; both reviewers fall back to general guidance.
+1. **Instructions:** shared change context, common functional method, scope/knowledge protocols and all resolved profile checklists. These are criteria, not review targets.
+2. **Review evidence:** selected diff, changed candidate source (mark deletions), unchanged entry points, dependencies, consumers, state contracts and relevant delivery configuration. Ten surrounding files is an initial selection budget only. Follow identified contract questions through focused additions or name the uncovered boundary; do not scan the whole repository.
+3. **Historical evidence:** actual source files plus provenance manifest, distinct from candidate source.
+4. **Intent/context:** applicable specification files, Task Scope and factual change-context record. The record may be inlined into both prompts or placed in a readable file provided to both; a filename alone is insufficient evidence of receipt.
 
-### 1d) Resolve pal model
+Use these same material facts and source artifacts for both reviewers. Resolve the PAL model via `listmodels`, preferring the most capable available model with reasoning support. Follow the shared PAL protocol's **code-review branch** for its file manifest and continuation.
 
-Call `pal` `listmodels` to get available models. Select the most capable model (prefer latest generation with thinking/reasoning support) for the `pal` codereview call in Step 2.
+Before dispatch, compare the manifest's instruction paths with the loading ledger. Every resolved checklist (including always-load templates), common method, shared context, scope and knowledge protocol must appear in both reviewers' instruction sets. Do not drop an always-load file as irrelevant or rebuild a smaller list from memory. Reconcile missing paths now; carry this checked manifest unchanged into the agent payload and PAL's expert continuation, adding focused evidence only when needed.
 
-### 1e) Curate rejected approaches
+The required criteria set has **four common files plus every resolved profile file**: `functional-review.md`, `shared-change-context.md`, `shared-review-scope-protocol.md`, `shared-capy-knowledge-protocol.md`, and the resolved checklist paths. Verify both the count and exact resolved paths, using a set comparison through available tools when possible. The knowledge protocol remains included even when PAL cannot use Capy; that protocol specifies the unavailable-tool fallback. Keep criteria and source paths in the prepared manifest so submission does not depend on reconstructing either list from memory.
 
-Before spawning sub-agents, prepare a brief summary of approaches that were tried and failed during implementation. Keep it to concrete facts ("approach X caused regression Y"), not the full debugging narrative. If no approaches were rejected, skip this.
+## Step 6: Spawn Reviewers and Resolve Evidence Requests
 
-### 1f) Determine task scope
+Launch the independent `code-reviewer` and PAL step 1 in parallel when supported. Neither receives implementation conversation history or the other reviewer's conclusions.
 
-Build the Task Scope artifact following [shared-review-scope-protocol.md](shared-review-scope-protocol.md). This is what prevents reviewers from flagging pending tasks as missing functionality — it is not optional when a feature directory is present.
+### Reviewer A — code-reviewer
 
-- **Invoked from `/kk:implement`**: the feature directory and current task are known. Read `tasks.md`, list the current task (plus any other `done` tasks) as in-scope and any `pending`/`in-progress` tasks as out-of-scope. Use mode `mid-implementation` unless all tasks are `done`.
-- **Invoked directly inside a feature**: locate the relevant `/docs/feat/wip/[feature]/tasks.md`. Classify by status field. Use `post-implementation` only when every task is `done`.
-- **No feature directory relates to the diff**: emit the "No task scope available" variant from the shared protocol and proceed.
-
-The resulting block is inlined into both reviewer prompts in Step 2.
-
-### 1g) Collect context files for pal
-
-Assemble the file list that will be passed to pal codereview via `relevant_files`. All paths must be absolute.
-
-1. **Diff file** — the temp file written in Step 1a.
-2. **Changed source files** — every file touched by the diff (from `git diff --stat`).
-3. **Surrounding code files** — files a reviewer needs to verify cross-file correctness. Collect in priority order, stop at **10 files**:
-   1. Files directly imported by the changed files (type definitions, interfaces, contracts).
-   2. Direct callers of changed public functions/methods (one level up only).
-   3. Adjacent files in the same package/module that share types or conventions with the changed code.
-      Use `grep`/`rg` on import statements and function names to locate these. If more than 10 candidates emerge, keep only categories 1–2. If fewer than 3, that's fine — small diffs legitimately have few dependencies.
-4. **Profile checklist files** — the absolute paths of every resolved `(profile, checklist)` file from Step 1c. These give pal the same domain-specific review criteria as Reviewer A.
-5. **Design/implementation docs** — if spec context was located in Step 1b, include the full `design.md` and `implementation.md` file paths (not excerpts). These enable pal to flag spec deviations.
-
-Store this list for use in Step 2 (Reviewer B).
-
----
-
-## Step 2: Spawn Reviewers (Parallel)
-
-Launch both reviewers in a **single message** so they execute in parallel.
-
-### Reviewer A — `code-reviewer` sub-agent
-
-The `code-reviewer` sub-agent cannot resolve the plugin root on its own (it has no shell). Resolve it yourself — you already read checklist paths under it in Step 1c — and inject the absolute value into the `## Plugin Root` section of the prompt below, so the sub-agent can open the checklist files. Expand plugin-relative checklist paths to absolute paths before passing the prompt to the sub-agent.
-
-Spawn using the Agent tool with:
-
-| Parameter       | Value                     |
-| --------------- | ------------------------- |
-| `subagent_type` | `kk:code-reviewer`        |
-| `description`   | `Isolated code review`    |
-| `prompt`        | See prompt template below |
-
-**Sub-agent prompt template:**
+Use the Agent tool with `subagent_type: kk:code-reviewer`, description `Isolated code review`, and this payload. Expand plugin-relative checklist paths to absolute paths before dispatch; the reviewer requires resolved paths rather than environment variables.
 
 ```
-You are reviewing the following code changes. Apply your full review workflow.
+Review the selected changes using your full workflow. Load instructions before evidence.
 
 ## Plugin Root
+{resolved absolute plugin root}
 
-{the absolute plugin-root path resolved in Step 1c}
-
-## Git Diff
-
-{paste the git diff_file path here}
+## Instructions
+{absolute paths to shared change context, functional method, scope/knowledge protocols}
 
 ## Active Profiles and Resolved Checklists
+{flat (profile, absolute checklist path, triggered_by) records; conservative selections; or empty list}
 
-{list of (profile, checklist, triggered_by) records from Step 1c, formatted as a flat tuple list — one record per line:
-- profile: <name>, checklist: <checklist_filename>, triggered_by: <signal_type> — <signal_description>
-- profile: <name>, checklist: <checklist_filename>, triggered_by: <signal_type> — <signal_description>
-...
-}
+## Change Context and Spec Context
+{factual record with provenance, assumptions, attributed execution results and spec paths;
+or explicitly inferred intent when no spec exists}
 
-For each record, read the checklist at `${TOOLBOX_PLUGIN_ROOT}/profiles/<profile>/review-code/<checklist>` and apply it to the diff. If no profiles are active (empty list), fall back to general review guidance without profile-specific checklists.
+{Task Scope block}
 
-## Spec Context
-
-{spec excerpt from Step 1b, or "No spec context available — review based on code quality alone."}
-
-{Task Scope block from Step 1f — either the populated scope artifact or the "No task scope available" variant}
+## Evidence Manifest
+{selected diff path, candidate/source paths, historical-source paths and provenance manifest;
+review selector and candidate identity; missing evidence}
 
 ## Rejected Approaches
+{concrete attributed facts only, or none}
 
-{curated rejected approaches from Step 1e, or "No rejected approaches to note."}
-
-Produce your findings in the output format specified in your agent definition.
+Independently inspect the evidence and challenge inferences. Request specific missing source
+by repository, revision, path/symbol and comparison needed. Report provisional findings and
+limits in your agent output format; do not claim test execution from source-only access.
 ```
 
-### Reviewer B — `pal` codereview
+### Reviewer B — PAL codereview
 
-Follow the invocation protocol in [shared-pal-codereview-invocation.md](shared-pal-codereview-invocation.md).
+Use the shared protocol's two-step external review with the resolved model. Keep `step` lean: functional/correctness, security, architecture and design-intent framing; the same Task Scope and change-context facts; spec summary (or inferred purpose); categorized absolute file manifest. Identify the common method and profiles as criteria, historical source as baseline evidence and candidate source as the review target. The initial planning call's `relevant_files` contains only the selected diff; the expert continuation must attach the complete source/context/criteria bundle. Pass actual files through `relevant_files`, not pasted contents in `step`.
 
-**`step` parameter (step 1):** Keep lean — framing + scope + spec summary + file manifest:
+After the initial response, complete the continuation; do not mistake the planning response for external findings. Preserve the native output and actual source-coverage evidence. Supplying paths does not prove the external reviewer read them.
 
-1. Framing: "Review the following code changes for correctness, security, architecture, and adherence to design intent. The diff, source files, review checklists, and design docs are provided as files."
-2. Task Scope block from Step 1f.
-3. One-paragraph spec context summary from Step 1b (or "No spec context available — review based on code quality alone.").
-4. File manifest — categorized list of the paths in `relevant_files` so pal knows each file's role (see [shared-pal-codereview-invocation.md](shared-pal-codereview-invocation.md) §`step` content for format).
+Immediately before the expert call, verify its `relevant_files` contains every path in the checked manifest. The diff-only planning payload is not the expert payload. A nonempty set of missing instruction/evidence paths blocks submission until those paths are added.
 
-Do NOT inline the diff or file contents into `step`.
+Before annotation, record each reviewer's outcome and observed source receipt. Inspect PAL's returned file-context/embedding metadata: zero or unspecified coverage without other observable receipt evidence stays unverified. Its final findings, the parent's `files_checked` list and correct-looking citations cannot establish receipt. Carry that limitation into the report before deciding whether any finding is corroborated.
 
-**`relevant_files` parameter:** Use the file list assembled in Step 1g.
+### Additional evidence and continuation
 
-**`model` parameter:** Use the model resolved in Step 1d.
+For either reviewer's evidence request, retain its origin and requested repository/revision/path or symbol and comparison. Obtain available local source using the historical-bundle rules. Resume the requesting code-reviewer with the original scope/context, its provisional findings and new source; if resume is unavailable, re-invoke it with that same package. Send equivalent relevant additions to PAL through its continuation, and to the other reviewer when its assessment depends on them. Include new guidance first if an addition activates a profile/conditional.
 
-### Parallel execution
+Before final reporting, reconcile every request with either supplied source or an actual failed/bounded lookup. Do not merely defer a locally answerable request because an earlier handoff assumed the source was unavailable. A request essential to acceptance that remains unanswered keeps its conclusion Unknown under the common verdict mapping.
 
-Issue the pal step 1 call and the Agent tool call (Reviewer A) in the **same message** so they execute in parallel. When both return, make the pal step 2 continuation call using the `continuation_id` from step 1.
+Do not pass one reviewer's findings to the other as evidence. Track what was supplied and which questions remain unanswered. Stop collecting once the identified comparison is settled or bounded investigation reaches an unavailable boundary. Unavailable source remains Unknown with a specific next action; do not expand reviewer permissions or seek production/network access automatically.
 
-### Error handling
+### Failure and coverage limits
 
-Handle reviewer failures inline as they occur:
+- If PAL is unavailable or a call fails, retain useful available findings and proceed with the independent reviewer; disclose the failure.
+- If the code-reviewer fails, retain PAL's usable findings and suggest standard review as a supplement.
+- If both fail, stop isolated review and suggest standard review. Do not imply a completed review.
+- Attempt best-effort parsing of malformed output; wholly unusable output is a failure.
+- A successful response with zero or unverified source coverage cannot establish corroboration or broad approval. An adequately sourced clean result is not a failure merely because it found no defect.
 
-- **`pal` failure** (listmodels returns no models, or codereview step 1/2 fails): Note the failure, proceed to Step 3 with code-reviewer findings only.
-- **`code-reviewer` sub-agent failure** (timeout or error): Note the failure, proceed to Step 3 with pal findings only. Suggest `/kk:review-code` (standard mode) as supplement.
-- **Both reviewers fail**: Abort isolated mode. Display message suggesting fallback to `/kk:review-code` (standard mode). Do not proceed to Step 3.
-- **Malformed output**: Attempt best-effort parsing. If completely unparseable, treat as a failure and apply the rules above.
+## Step 7: Annotate Findings
 
----
+The parent supplies context, not replacement reviewer judgments. Do not assign dispositions such as Confirmed/Disputed or silently discard findings based on author preference.
 
-## Step 3: Annotate Findings
+- Merge the same logical issue across lenses/reviewers once. Mark it **corroborated** only when both independently support it with relevant evidence. Otherwise preserve separate attribution and the coverage gap. Show differing severities side by side; PAL keeps its native format and severity.
+- Add clearly labeled **Author context** where the implementation rationale helps: “I chose X because Y,” not “This finding is invalid.”
+- Label new parent observations **author-sourced**, distinct from independent findings.
+- Use PAL continuation to clarify ambiguous external findings if needed. Preserve disagreements and provisional findings while awaiting source.
 
-The main agent performs annotation — providing context, not judgment. Do NOT assign dispositions (Confirmed, Disputed, etc.). The user is the final arbiter.
+## Step 8: Index Findings
 
-### 3a) Duplicate merging
+Index systemic P0/P1 patterns as `kk:review-findings` on first encounter, from any attributed source, under the shared knowledge protocol. Do not index one-off mistakes. When none qualify, explicitly state “No findings to index.”
 
-Compare findings from both reviewers by file location and issue description:
+## Step 9: Present Report and Confirm Next Steps
 
-- When both flag the same logical issue: merge into one entry, tag as **"corroborated"** — independent confirmation from different models is high signal.
-- Severity stays as each reviewer assessed it. If they disagree on severity, show both assessments side by side.
-- If only one reviewer flagged an issue, keep it as-is with reviewer attribution.
-
-### 3b) Author context annotations
-
-For each finding, consider whether the implementation session context adds relevant information:
-
-- If yes: add a clearly-labeled **"Author context"** annotation explaining the decision (e.g., "I chose bcrypt cost 10 because benchmarks showed cost 12 added 400ms").
-- If no: leave the finding as-is — not every finding needs an annotation.
-- Annotations are context, not judgments. "I chose X because Y" is correct. "This finding is invalid" is **not**.
-
-### 3c) Author-sourced findings
-
-If the close re-reading during annotation triggers new observations, add them:
-
-- Tag as **"author-sourced"** — clearly distinct from sub-agent findings.
-- The user knows these come from the author and can weight accordingly.
-
-### 3d) pal follow-up (optional)
-
-If a pal finding is ambiguous or unclear, the main agent MAY use pal's follow-up interaction capability to clarify before presenting to the user.
-
----
-
-## Step 4: Index Findings
-
-Index any P0/P1 findings that suggest a systemic or structural pattern (not isolated typos or one-off mistakes) as `kk:review-findings`. Index on first encounter — recurrence detection happens on the search side in future reviews. This applies to findings from any source — corroborated, single-reviewer, or author-sourced.
-
-- If no P0/P1 systemic findings exist, explicitly note "No findings to index" and move on.
-- This step is mandatory — do not skip it even if the review found no issues.
-
----
-
-## Step 5: Present Report
-
-Use this report template, organized by agreement level:
+Apply the common method's verdict mapping; keep code correctness, increment compatibility and release/activation readiness distinct. A hard acceptance/delivery violation cannot receive approval. Material Unknown evidence receives COMMENT absent a demonstrated blocker; an unrelated operational unknown need not downgrade a supported, explicitly scoped code verdict.
 
 ```markdown
 ## Review Summary (Isolated Mode)
 
-**Reviewers**: code-reviewer (Claude sub-agent), pal codereview ([model name])
-**Files reviewed**: X files, Y lines changed
+**Reviewers**: code-reviewer ([actual model]), PAL ([actual model]); failures/coverage limits
+**Files reviewed**: actual inspected coverage, distinct from files supplied
+**Overall assessment**: APPROVE / REQUEST_CHANGES / COMMENT, with scope
+**Intent and scope**: requirement source, task/request, diff selector and candidate state
+**Baselines**: review base/candidate; separate named compatibility baseline
 
----
+### Behavior and Compatibility
+Inspected paths/scenarios, Supported / Blocked / Unknown / Not applicable conclusions,
+source references and limits. Attribute author results and inherited issues.
 
 ### Corroborated Findings
-
-(Both reviewers flagged — highest signal)
-
-- **[file:line]** Brief title ⟨corroborated⟩
-  - Profile: {profile_name} · Checklist: {checklist_filename}
-  - Triggered by: {signal_type} — {signal_description}
-  - code-reviewer: [severity] — [description]
-  - pal: [description in native format]
-  - Author context: [optional annotation]
+- **[file:line]** Title ⟨corroborated⟩
+  - Profile: {profile} · Checklist: {checklist} · Triggered by: {signal}
+  - code-reviewer: [P0–P3, confidence/reasoning, trigger/path, expected/actual, consequence, correction]
+  - PAL: [native finding]
+  - Author context: [optional]
 
 ### Code Reviewer Findings
-
-(code-reviewer sub-agent only — P0-P3 format)
-
-- **[file:line]** Brief title
-  - Profile: {profile_name} · Checklist: {checklist_filename}
-  - Triggered by: {signal_type} — {signal_description}
-  - Severity: P[0-3] | Confidence: [X]%
-  - [description and suggested fix]
-  - Author context: [optional annotation]
+{same evidence fields, code-reviewer attribution}
 
 ### External Review Findings
-
-(pal codereview — native format)
-
-- [pal output presented in its native format]
-  - Profile: {profile_name} · Checklist: {checklist_filename}
-  - Triggered by: {signal_type} — {signal_description}
-  - Author context: [optional annotation]
+{native output with attribution, coverage limits and optional author context}
 
 ### Author-Sourced Findings
+{explicit author-sourced label; generic profile labels when appropriate}
 
-(Main agent observations during annotation — weight accordingly)
-
-- **[file:line]** Brief title ⟨author-sourced⟩
-  - Profile: generic · Checklist: —
-  - Triggered by: —
-  - [description]
+### Outstanding Evidence and Prerequisites
+{missing evidence, release/migration/activation conditions, owner, next action and durable
+tracking location when deferred; separate them from demonstrated code defects}
 ```
 
-**Section rules:**
+Omit empty finding sections, but always report behavior/compatibility coverage and limits, even with defects. Preserve useful findings during external failure or undercoverage without claiming corroboration or release safety from that external response.
 
-- Omit any section that has no findings (e.g., if no corroborated findings, skip that section).
-- If a reviewer failed and only one reviewer's findings are present, note the failure at the top and present the available findings under the appropriate section.
+When neither actionable findings nor outstanding evidence/prerequisites required
+by the reviewed task remain,
+finish with the scoped verdict and coverage; state that no changes are recommended.
+Do not append a remediation menu or offer hypothetical future work. Otherwise,
+offer only supported actions. For review-only work, obtain authorization before
+editing; when the invoking implementation request already authorizes fixes,
+follow that scope without asking again. Unverified hard requirements still follow
+the common method's conditional verdict rules.
 
-### Next steps
+## Step 10: Verify Outputs
 
-After presenting the report, ask the user how to proceed:
+- [ ] Findings, actual scope/baselines, behavior/compatibility and evidence limits presented
+- [ ] Both reviewer outcomes and coverage disclosed; additional evidence supplied or gaps named
+- [ ] Systemic findings indexed, or “No findings to index” noted
+- [ ] Required next steps agreed/authorized, or clean review closed without new work
 
-```markdown
----
-
-## Next Steps
-
-I found X issues (corroborated: ..., code-reviewer: ..., pal: ..., author-sourced: ...).
-
-The actionable items I recommend fixing:
-
-1. P1 (corroborated) ...
-2. P2 (code-reviewer) ...
-3. P2 (pal) ...
-4. P3 (corroborated) ...
-5. P3 (author-sourced) ...
-
-Items I recommend keeping as is:
-
-- ...: the finding is a false-positive because ...
-- ...: correct behavior because ...
-- ...: mirrors production behavior of ...
-
-**How would you like to proceed?**
-
-1. **Fix all** — I'll implement all suggested fixes
-2. **Fix corroborated + high severity** — Address corroborated findings and P0/P1 issues
-3. **Fix specific items** — Tell me which issues to fix
-4. **No changes** — Review complete, no implementation needed
-
-Please choose an option or provide specific instructions.
-```
-
-**Important**: Do NOT implement any changes until the user explicitly confirms. This is a review-first workflow.
-
----
-
-## Step 6: Verify Outputs
-
-Before declaring the review complete, check each item in the **Required Outputs** section of SKILL.md:
-
-- [ ] Review report presented to user
-- [ ] P0/P1 systemic findings indexed as `kk:review-findings` (or explicitly noted "No findings to index")
-- [ ] Next steps confirmation from user
-
-If any item is unchecked, go back and complete it before proceeding.
+Retain evidence needed for unresolved requests or a durable deferred review record. Once follow-ups and any required retention are complete, remove only temporary files/bundles created for this review.

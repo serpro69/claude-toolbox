@@ -1,0 +1,89 @@
+
+=== Section 1: Core Version Comparison ===
+[TEST] Major version difference
+[PASS] 1.0.0 < 2.0.0
+[PASS] 2.0.0 > 1.0.0
+[TEST] Minor version difference
+[PASS] 1.0.0 < 1.1.0
+[PASS] 1.2.0 > 1.1.0
+[TEST] Patch version difference
+[PASS] 1.0.0 < 1.0.1
+[PASS] 1.0.2 > 1.0.1
+[TEST] Equal versions
+[PASS] 1.0.0 == 1.0.0
+[PASS] 0.0.0 == 0.0.0
+[TEST] Multi-digit version numbers
+[PASS] 0.9.0 < 0.10.0 (numeric, not lexical)
+[PASS] 1.0.99 < 1.0.100
+
+=== Section 2: Pre-release Precedence ===
+[TEST] Pre-release has lower precedence than release (§11.3)
+[PASS] 1.0.0-alpha < 1.0.0
+[PASS] 1.0.0 > 1.0.0-alpha
+[PASS] 0.10.0-rc.6 < 0.10.0 (reported bug)
+[TEST] Numeric pre-release identifiers compared as integers (§11.4.1)
+[PASS] 1.0.0-1 < 1.0.0-2
+[PASS] 1.0.0-2 < 1.0.0-11 (numeric, not lexical)
+[TEST] Alphanumeric pre-release identifiers compared lexically (§11.4.2)
+[PASS] 1.0.0-alpha < 1.0.0-beta
+[PASS] 1.0.0-beta > 1.0.0-alpha
+[TEST] Numeric identifier has lower precedence than alphanumeric (§11.4.3)
+[PASS] 1.0.0-1 < 1.0.0-alpha
+[PASS] 1.0.0-alpha > 1.0.0-1
+[TEST] Fewer pre-release fields has lower precedence (§11.4.4)
+[PASS] 1.0.0-alpha < 1.0.0-alpha.1
+[PASS] 1.0.0-alpha.1 > 1.0.0-alpha
+[TEST] Equal pre-release versions
+[PASS] 1.0.0-rc.1 == 1.0.0-rc.1
+[PASS] multi-field pre-release equal
+
+=== Section 3: Build Metadata Ignored ===
+[TEST] Build metadata ignored for precedence
+[PASS] 1.0.0+build1 == 1.0.0+build2
+[PASS] 1.0.0+build == 1.0.0
+[PASS] rc.1+alpha.5 == rc.1 (reported bug)
+[TEST] Build metadata on both sides ignored
+[PASS] rc.1+b1 < rc.2+b2 (compare pre-release, ignore build)
+[PASS] date build metadata ignored
+
+=== Section 4: Spec Example Ordering ===
+[TEST] Full semver.org precedence chain
+[PASS] alpha < alpha.1
+[PASS] alpha.1 < alpha.beta
+[PASS] alpha.beta < beta
+[PASS] beta < beta.2
+[PASS] beta.2 < beta.11
+[PASS] beta.11 < rc.1
+[PASS] rc.1 < 1.0.0
+
+=== Section 5: Workflow Scenarios ===
+[TEST] Release: RC to release is a valid upgrade
+[PASS] 0.10.0-rc.6 -> 0.10.0 should pass
+[TEST] Release: cannot downgrade
+[PASS] 1.0.0 -> 0.9.0 should fail
+[TEST] Pre-release: RC bump
+[PASS] rc.1 -> rc.2 should pass
+[PASS] rc.9 -> rc.10 numeric comparison
+[TEST] Pre-release: build metadata does not block same-precedence release
+[PASS] rc.1+alpha.5 == rc.1
+[PASS] rc.1+alpha.5 < rc.2
+
+=== Section 6: Edge Cases ===
+[TEST] Zero versions
+[PASS] 0.0.0 < 0.0.1
+[PASS] 0.0.0-alpha < 0.0.0
+[TEST] Leading zeros in pre-release numeric identifiers
+[PASS] 01 is alphanumeric (leading zero), 1 is numeric; alpha > numeric
+[TEST] Mixed numeric and alphanumeric pre-release fields
+[PASS] all-numeric dot-separated fields
+[PASS] mixed alpha+numeric fields
+[TEST] Usage error exits non-zero
+[PASS] Single argument should fail
+[PASS] No arguments should fail
+
+=== Test Summary ===
+Test cases:        22
+Assertions passed: 48
+Assertions failed: 0
+
+All tests passed!

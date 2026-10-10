@@ -1,0 +1,52 @@
+835:             if read_files_func is None:
+836:                 from utils.file_utils import read_file_content
+837: 
+838:                 # Process files for embedding
+839:                 file_contents = []
+840:                 total_tokens = 0
+841:                 files_included = 0
+842: 
+843:                 for file_path in files_to_include:
+844:                     try:
+845:                         logger.debug(f"[FILES] Processing file {file_path}")
+846:                         formatted_content, content_tokens = read_file_content(file_path)
+847:                         if formatted_content:
+848:                             file_contents.append(formatted_content)
+849:                             total_tokens += content_tokens
+850:                             files_included += 1
+851:                             logger.debug(
+852:                                 f"File embedded in conversation history: {file_path} ({content_tokens:,} tokens)"
+853:                             )
+854:                         else:
+855:                             logger.debug(f"File skipped (empty content): {file_path}")
+856:                     except Exception as e:
+857:                         # More descriptive error handling for missing files
+858:                         try:
+859:                             if not os.path.exists(file_path):
+860:                                 logger.info(
+861:                                     f"File no longer accessible for conversation history: {file_path} - file was moved/deleted since conversation (marking as excluded)"
+862:                                 )
+863:                             else:
+864:                                 logger.warning(
+865:                                     f"Failed to embed file in conversation history: {file_path} - {type(e).__name__}: {e}"
+866:                                 )
+867:                         except Exception:
+868:                             # Fallback if path translation also fails
+869:                             logger.warning(
+870:                                 f"Failed to embed file in conversation history: {file_path} - {type(e).__name__}: {e}"
+871:                             )
+872:                         continue
+873: 
+874:                 if file_contents:
+875:                     files_content = "".join(file_contents)
+876:                     if files_to_skip:
+877:                         files_content += (
+878:                             f"\n[NOTE: {len(files_to_skip)} additional file(s) were omitted due to size constraints, missing files, or access issues. "
+879:                             f"These were older files from earlier conversation turns.]\n"
+880:                         )
+881:                     history_parts.append(files_content)
+882:                     logger.debug(
+883:                         f"Conversation history file embedding complete: {files_included} files embedded, {len(files_to_skip)} omitted, {total_tokens:,} total tokens"
+884:                     )
+885:                 else:
+886:                     history_parts.append("(No accessible files found)")

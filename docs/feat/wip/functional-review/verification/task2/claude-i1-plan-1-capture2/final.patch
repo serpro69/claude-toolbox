@@ -1,0 +1,71 @@
+diff --git a/client.py b/client.py
+index d6ddf4b..5e92538 100644
+--- a/client.py
++++ b/client.py
+@@ -1,5 +1,11 @@
+ def save_settings(send, workspace_id, values, enhanced_settings=False):
+-    response = send(workspace_id, {"settings": values})
++    response = send(workspace_id, {"settings": values, "require_receipt": True})
+     if not response.get("ok"):
+         raise RuntimeError("Settings save failed")
++    # Enforce the applied receipt only when the provider returns one. The current
++    # provider predates receipts and omits "applied"; per the independent-delivery
++    # guarantee this client must still treat such ordinary saves as successful.
++    # An explicit applied=false is an affirmative "not applied" receipt -> reject.
++    if "applied" in response and not response["applied"]:
++        raise RuntimeError("Settings save was not applied")
+     return {"saved": True, "enhanced": enhanced_settings}
+diff --git a/docs/feat/wip/settings-receipts/tasks.md b/docs/feat/wip/settings-receipts/tasks.md
+index 75f436f..c9b7793 100644
+--- a/docs/feat/wip/settings-receipts/tasks.md
++++ b/docs/feat/wip/settings-receipts/tasks.md
+@@ -3,7 +3,7 @@
+ > Status: planned
+ 
+ ## Task 1: Client acknowledgement
+-- **Status:** pending
++- **Status:** in-progress
+ - **Depends on:** —
+ - [ ] Send require_receipt in client.py and require applied=true on success.
+ - [ ] Verify client receipt handling and complete independent review.
+diff --git a/tests/test_client.py b/tests/test_client.py
+index f61a52e..cd7354d 100644
+--- a/tests/test_client.py
++++ b/tests/test_client.py
+@@ -5,8 +5,36 @@ from provider import update_settings
+ 
+ class SettingsTests(unittest.TestCase):
+     def test_ordinary_save(self):
++        # Backward compatibility: the current provider predates receipts and omits
++        # "applied". The independent-delivery guarantee requires this to still succeed.
+         storage = {}
+         result = save_settings(lambda w, r: update_settings(storage, w, r),
+                                "w", {"label": "blue"})
+         self.assertTrue(result["saved"])
+         self.assertEqual(storage["w"], {"label": "blue"})
++
++    def test_sends_require_receipt(self):
++        captured = {}
++
++        def send(workspace_id, request):
++            captured["request"] = request
++            return {"ok": True}
++
++        save_settings(send, "w", {"label": "blue"})
++        self.assertTrue(captured["request"]["require_receipt"])
++        self.assertEqual(captured["request"]["settings"], {"label": "blue"})
++
++    def test_applied_receipt_succeeds(self):
++        result = save_settings(lambda w, r: {"ok": True, "applied": True},
++                               "w", {"label": "blue"})
++        self.assertTrue(result["saved"])
++
++    def test_not_applied_receipt_rejected(self):
++        with self.assertRaises(RuntimeError):
++            save_settings(lambda w, r: {"ok": True, "applied": False},
++                          "w", {"label": "blue"})
++
++    def test_transport_failure_rejected(self):
++        with self.assertRaises(RuntimeError):
++            save_settings(lambda w, r: {"ok": False},
++                          "w", {"label": "blue"})

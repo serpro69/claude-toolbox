@@ -1,0 +1,19 @@
+{
+  "actor": "main",
+  "block": {
+    "caller": {
+      "type": "direct"
+    },
+    "id": "toolu_01C1nSo1aBLoCQ884XWkPDad",
+    "input": {
+      "content": "Pattern: Premature removal of a backward-compatibility fallback branch while mixed-shape data still exists at runtime causes a hard crash (KeyError/AttributeError) on the un-migrated shape.\n\nContext (reader.py cleanup): a reader resolved two record shapes \u2014 legacy top-level `row[\"address\"]` and current nested `row[\"destination\"][\"address\"]` \u2014 via an `if \"destination\" in row` fallback. A \"cleanup\" deleted the fallback, leaving only the nested access. But migration is incremental (migrate_batch processes up to `limit` rows per call, no startup gate), the README mandates reading BOTH shapes until migration finishes, and data/records.json is a documented supported mixed snapshot. Result: list_destinations() raises KeyError:'destination' on the first legacy row, aborting the whole read.\n\nLesson: A compat fallback may be removed ONLY after (a) migration is proven complete AND (b) no legacy-shaped data can reach the reader. Verify against the documented delivery contract and the actual on-disk/persisted data, not just the happy-path tests. Green tests here passed because they only covered the nested shape and empty list \u2014 no legacy-shape test existed, so the regression slipped through. Reproduce against real persisted fixtures before deleting dual-shape handling.",
+      "source": "kk:review-findings"
+    },
+    "name": "mcp__capy__capy_index",
+    "type": "tool_use"
+  },
+  "id": "e135.0",
+  "parent_tool_use_id": null,
+  "session_id": "d236ea82-815f-4ff1-8820-f9d452c740b3",
+  "source_sequence": 135
+}

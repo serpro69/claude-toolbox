@@ -1,0 +1,1 @@
+DETAILED_REPORT = False

@@ -1,0 +1,25 @@
+{
+  "case": "R1",
+  "finding": {
+    "location": "cleanup.py:3",
+    "trigger": [
+      "begin_setup(w,A)",
+      "A fails; cleanup queued",
+      "begin_setup(w,B)",
+      "complete_setup(w,B,connection-B)",
+      "cleanup_setup(w,A)"
+    ],
+    "before": "active_connection(w) == connection-B",
+    "after": "active_connection(w) is None",
+    "root_cause": "Removal no longer checks setup_id ownership",
+    "suggested_severity": "P1 or justified P2; must report regression"
+  },
+  "negative_controls": [
+    "No threads, lock requirement, production incident or deployment guarantee is implied."
+  ],
+  "evidence": {
+    "ordering": "ordered instruction/source tool events for each actor",
+    "handoff": "actual Agent/spawn and PAL args plus immutable referenced content",
+    "finding": "final report and initial diff/source snapshots"
+  }
+}

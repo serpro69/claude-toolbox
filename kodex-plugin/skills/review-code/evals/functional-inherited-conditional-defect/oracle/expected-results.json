@@ -1,0 +1,20 @@
+{
+  "case": "R6",
+  "expected_verdict": "APPROVE scoped to label change; inherited advisory allowed",
+  "inherited_defect": {
+    "path": "stats.py:summarize",
+    "trigger": "empty values and detailed=True",
+    "consequence": "ZeroDivisionError in both before and after",
+    "current_entry": "app.report reads config.DETAILED_REPORT=False; [] returns the zero-count label"
+  },
+  "negative_controls": [
+    "No introduced-defect attribution.",
+    "No claim of deployed detailed=True or production outage.",
+    "No forced generic redesign."
+  ],
+  "evidence": {
+    "history": "captured git base stats.py and candidate bytes",
+    "behavior": "captured config/callers; local reproduction if actually executed",
+    "handoff": "actual dispatches and immutable context"
+  }
+}

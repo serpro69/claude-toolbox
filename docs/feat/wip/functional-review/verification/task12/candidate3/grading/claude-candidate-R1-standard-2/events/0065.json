@@ -1,0 +1,12 @@
+{
+  "actor": "main",
+  "block": {
+    "content": "1\timport unittest\n2\tfrom store import Store\n3\tfrom setup import begin_setup, complete_setup, active_connection\n4\tfrom cleanup import cleanup_setup\n5\t\n6\t\n7\tclass SetupTests(unittest.TestCase):\n8\t    def test_completed_setup_is_visible(self):\n9\t        store = Store()\n10\t        begin_setup(store, \"w\", \"one\")\n11\t        complete_setup(store, \"w\", \"one\", \"connection-one\")\n12\t        self.assertEqual(active_connection(store, \"w\"), \"connection-one\")\n13\t\n14\t    def test_cleanup_removes_its_own_association(self):\n15\t        store = Store()\n16\t        begin_setup(store, \"w\", \"one\")\n17\t        complete_setup(store, \"w\", \"one\", \"connection-one\")\n18\t        cleanup_setup(store, \"w\", \"one\")\n19\t        self.assertIsNone(active_connection(store, \"w\"))\n20\t        self.assertNotIn(\"one\", store.pending)\n21\t",
+    "tool_use_id": "toolu_01UCkmcvJC6RtTULcinLEiXm",
+    "type": "tool_result"
+  },
+  "id": "e103.0",
+  "parent_tool_use_id": null,
+  "session_id": "161c0827-c8dc-4a48-811c-7e3e8d662360",
+  "source_sequence": 103
+}

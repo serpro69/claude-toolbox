@@ -1,0 +1,19 @@
+{
+  "actor": "main",
+  "block": {
+    "caller": {
+      "type": "direct"
+    },
+    "id": "toolu_01LmmdTDVmTCaPReC82iVyfz",
+    "input": {
+      "content": "Pattern: \"Simplification\" that removes an ownership/identity guard before a delete can clobber a newer record. In cleanup_setup (cleanup.py), the guard `if association and association[\"setup_id\"] == setup_id: store.active.pop(workspace_id)` was collapsed to an unconditional `store.active.pop(workspace_id)`. Because another setup can complete and take over the workspace's single active slot before a failed setup's queued cleanup runs (documented in README), the unconditional pop evicts the live association owned by a DIFFERENT setup_id, so active_connection() returns None for a workspace that actually has a completed setup. Lesson: a guarded/conditional delete keyed on an ownership field is a correctness invariant (\"remove only the association it owns\"), not redundant verbosity \u2014 do not drop it during cleanup/simplification. Existing tests that only clean up a setup's own association pass for both versions and do not catch this; the discriminating test needs a second setup completing before the stale cleanup.",
+      "source": "kk:review-findings"
+    },
+    "name": "mcp__capy__capy_index",
+    "type": "tool_use"
+  },
+  "id": "e145.0",
+  "parent_tool_use_id": null,
+  "session_id": "bd5aa95c-71b9-47e3-aca0-e12c6d254ab8",
+  "source_sequence": 145
+}

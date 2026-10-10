@@ -1,0 +1,11 @@
+{
+  "actor": "main",
+  "block": {
+    "text": "Confirmed \u2014 this is a clear P0 correctness regression. The context is unambiguous:\n\n- **README** (lines 5\u20138): *\"a deployment must read both shapes until migration finishes. Existing addresses must be preserved.\"*\n- **`data/records.json`** right now contains legacy flat records (`legacy-a`, `legacy-c`) alongside nested `current-b` \u2014 explicitly a \"supported mixed snapshot.\"\n- **`migration.py`** migrates in bounded batches with *\"no startup migration gate\"* \u2014 so un-migrated rows exist at read time.\n\nThe removed branch was exactly the legacy-shape reader. Let me index this systemic finding before presenting.",
+    "type": "text"
+  },
+  "id": "e112.0",
+  "parent_tool_use_id": null,
+  "session_id": "0275ffea-1793-453d-abf3-3acc79d69f8b",
+  "source_sequence": 112
+}

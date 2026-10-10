@@ -1,0 +1,73 @@
+{
+  "date": "2026-10-10",
+  "base": "4c91bc9e",
+  "scope": "Task 10 only",
+  "commands": [
+    {
+      "command": "python3 -B docs/feat/wip/functional-review/verification/task10/verify.py",
+      "exit_code": 0,
+      "evidence": "checks.json",
+      "python": "3.10.12",
+      "snapshot_suites": 6,
+      "tests": 18,
+      "probe_runs": 8,
+      "review_worktrees": 16,
+      "frozen_seed_files_unchanged": 51
+    },
+    {
+      "command": "bash each test/test-*.sh",
+      "exit_code": 0,
+      "suites": 10,
+      "helper_assertions": 644,
+      "staging_integration_tests": 20,
+      "environment": {
+        "PATH_prefix": "/home/sergio/.local/share/uv/python/cpython-3.12.11-linux-x86_64-gnu/bin",
+        "GIT_CONFIG_COUNT": "1",
+        "GIT_CONFIG_KEY_0": "commit.gpgsign",
+        "GIT_CONFIG_VALUE_0": "false"
+      },
+      "evidence": "logs/test-*.txt; use *-approved.txt when present",
+      "attempts": "manifest-jq initially failed on protected uv cache; failed log retained and approved rerun passed. Subsequent suites completed with that access."
+    },
+    {
+      "command": "GOCACHE=/tmp/functional-review-task10-go-cache make generate-kodex",
+      "exit_code": 0,
+      "python": "3.12.11 via PATH",
+      "evidence": "logs/generate-approved.log; logs/generate-repeat.log",
+      "attempts": "initial logs/generate.log failed when rewriting protected .codex/agents; approved access resolved it."
+    },
+    {
+      "command": "GOCACHE=/tmp/functional-review-task10-go-cache make plugin-graph",
+      "exit_code": 0,
+      "evidence": "logs/graph.txt",
+      "warning": "Existing graph cycle warning; no broken edges or orphans."
+    },
+    {
+      "command": "GOCACHE=/tmp/functional-review-task10-go-cache go test ./...",
+      "exit_code": 0,
+      "evidence": "logs/go.txt"
+    },
+    {
+      "command": "git diff --check",
+      "exit_code": 0
+    },
+    {
+      "command": "git -c core.whitespace=trailing-space,space-before-tab diff --no-index --check /dev/null each-new-source-file",
+      "exit_code": 0,
+      "notes": "The initial no-index loop treated normal difference exit 1 as failure; corrected to reject codes greater than 1. The inherited personal indent-with-non-tab rule then rejected conventional Python spaces. Per-command whitespace settings check trailing whitespace and space-before-tab while preserving this repository's Python indentation; no persistent configuration changed."
+    }
+  ],
+  "freshness": {
+    "files": 851,
+    "comparison": "sha256sum sorted regular files under kodex-plugin/ and .codex/agents/; cmp exit 0",
+    "before": "generated-before.txt",
+    "after": "generated-after.txt",
+    "manifest_sha256": "7e59673dc1734d5d79291dec2c8477733a8b0695e567847c9f8832a455481bf3"
+  },
+  "limits": [
+    "Offline fixture validation, not full workflow or report-replay actor acceptance.",
+    "Python 3.9 syntax floor; fixtures checked locally on Python 3.10.12, not a version matrix.",
+    "Synthetic PAL fixtures do not prove live MCP transport.",
+    "Logs retain native ANSI output."
+  ]
+}

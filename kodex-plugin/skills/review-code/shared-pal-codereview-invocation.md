@@ -1,82 +1,100 @@
 ## pal codereview invocation
 
-`pal codereview` is a **multi-turn** tool. Step 1 outlines the review strategy; the expert analysis that produces actual findings runs as a follow-up. A single-step call returns zero findings.
+`pal codereview` is a **multi-turn** tool. The initial call prepares review; complete the external continuation before treating it as an expert result. Select the caller branch below before constructing the payload. Common transport, native-output and failure rules apply to both branches.
+
+### Code-review branch
+
+For $kk:review-code, pass the same material scope, change-context facts, criteria and source evidence as the independent code-reviewer. Functional reasoning still applies without specifications; label inferred purpose and unresolved evidence. Do not import implementation-session history or the other reviewer's conclusions.
+
+#### Assembling `relevant_files`
+
+All paths are absolute and readable. Categorize them by role:
+
+1. **Diff:** temporary file containing the selected diff.
+2. **Candidate source:** changed files at the selected worktree/index/revision, accounting for deletions. When current files differ, use materialized candidate snapshots with original-path/revision provenance.
+3. **Affected behavior:** relevant entry points, dependencies, unchanged consumers, state/data contracts and delivery configuration. Ten surrounding files is an initial selection budget, not a correctness boundary. Follow identified contract questions through focused additions/continuations or report the uncovered boundary; do not scan whole repositories.
+4. **Historical source:** actual local Git blobs or bounded excerpts required for compatibility, plus their provenance manifest (repository, full revision, original path, blob/content hash, line span, omitted/redacted extent). Prepare read-only bundles outside the reviewed worktree. A parent summary cannot replace source absent from candidate files/diff hunks.
+5. **Review criteria:** the common functional method, shared change-context and scope/knowledge protocols, plus resolved profile checklists. Resolve paths from the caller's known installation root; identify these as instructions to apply, not source to review.
+6. **Intent/context:** relevant design/implementation/task documents and the factual change-context record if file-based. Inline the same Task Scope block and factual context into `step` when not supplied as files; keep baselines and attributed test results explicit.
+
+For code review, submit only the selected **diff file** in the initial planning call's `relevant_files`. Supply the complete categorized bundle, including historical source and criteria, in the external continuation. This keeps the planning request small and makes newly embedded source coverage observable at the expert step; files carried through conversation history can otherwise be deduplicated from its new-file count. Do not omit the continuation's source bundle or treat a zero count as proof of either receipt or absence without other evidence.
+
+Retain the same relevant source additions for both reviewers. For a missing-evidence request, the parent obtains available local source, then uses continuation with the new files and provenance. Name the comparison still needed; unavailable evidence stays Unknown with a next action. Do not expand access permissions automatically.
+
+### Document-review branch
+
+For $kk:review-design, document inputs remain sufficient. No Git diff, code-review change context, historical bundle or code profile is required.
+
+- **Documents:** every in-scope design, implementation or task document; these are the review targets.
+- **Related source:** existing files the design references, where available, for technical context.
+
+Frame the review around technical soundness, completeness, consistency, edge cases, failure modes, constraints and ambiguity. Preserve the caller's document scope; do not treat planned code as a missing current implementation. Use its own review criteria. The common call sequence below remains identical.
 
 ### Step 1 — initial call
 
-Use these parameters:
-
 | Parameter | Value |
 |---|---|
-| `model` | The most capable model from `pal listmodels` |
-| `step` | Framing instruction + task scope + spec context summary (see §`step` content below). Keep it lean — file contents belong in `relevant_files`, not here |
+| `model` | Most capable available model from `pal listmodels` |
+| `step` | Framing, applicable scope/context summary and categorized file manifest below |
 | `step_number` | `1` |
 | `total_steps` | `2` |
 | `next_step_required` | `true` |
-| `review_validation_type` | `"external"` (enables expert follow-up that produces findings) |
+| `review_validation_type` | `"external"` |
 | `thinking_mode` | `"max"` |
 | `review_type` | `"full"` |
 | `findings` | `"Initial submission for review. No findings yet."` |
-| `relevant_files` | Absolute paths — see §Assembling `relevant_files` below |
+| `relevant_files` | Code review: selected diff file only. Document review: in-scope documents and related source as supplied by the caller |
 | `confidence` | `"exploring"` |
 
 #### `step` content
 
-The `step` field carries the review framing — not the diff or file contents. Structure it as:
+Keep framing lean; file contents belong in `relevant_files`, not pasted into `step`:
 
-1. **Framing instruction** — what kind of review this is and what to focus on.
-2. **Task scope block** — in-scope vs out-of-scope tasks (prevents false positives on pending work).
-3. **Spec context summary** — one-paragraph design intent if available ("No spec context available" otherwise).
-4. **File manifest** — a categorized list of the paths in `relevant_files`, explaining each file's role. Paths only, no contents. Example:
+1. Review purpose and applicable criteria. For code, include intended behavior, preserved contracts and applicable compatibility as well as security/architecture/quality.
+2. Scope and factual context: code's Task Scope/change context/spec summary, or document review's selected documents and purpose.
+3. Categorized absolute-path manifest so the model distinguishes criteria, candidate targets, historical evidence and intent. For code review, identify the initial diff and the full bundle to be attached at continuation; do not label later files as already submitted. The expert continuation's manifest, for example:
 
    ```
    Files provided via relevant_files:
-   - Diff: /tmp/kk-review-code-a1b2c3d4.patch
-   - Changed: src/service.go, src/handler.go
-   - Surrounding: src/types.go, src/middleware.go
-   - Review checklists: .../profiles/go/review-code/solid-checklist.md
-   - Design: docs/feat/wip/auth-refactor/design.md, implementation.md
+   - Diff: /tmp/kk-review-code-a1b2c3.patch
+   - Candidate source: /project/src/client.py
+   - Affected behavior: /project/src/settings.py
+   - Historical source: /tmp/kk-evidence-a1b2c3/provider.py
+   - Historical provenance: /tmp/kk-evidence-a1b2c3/manifest.json
+   - Review criteria: /plugin/skills/review-code/functional-review.md, ...
+   - Intent/context: /project/docs/feat/wip/settings/design.md, ...
    ```
 
-   This tells pal which files are code under review, which are review criteria to apply, and which provide design intent. Without it, pal may treat checklists as code to review rather than guidance to follow.
-
-Do NOT inline file contents into `step`. These are passed via `relevant_files` — pal reads them with proper token budgeting and deduplication.
-
-#### Assembling `relevant_files`
-
-The caller assembles this list from artifacts gathered during preparation. All paths must be absolute. Categories, in order:
-
-1. **Diff file** — the git diff written to a temp file via `mktemp` (e.g., `/tmp/kk-review-code-XXXXXXXX.patch`). The caller writes this file; pal reads it. Clean up after the review completes.
-2. **Changed source files** — every file touched by the diff. These give pal the full file context around each change.
-3. **Surrounding code files** — direct imports, callers (one level up), and adjacent same-package files that share types with the changed code. Capped at 10 files; prioritize imports and callers over adjacency. These enable cross-file reasoning (e.g., verifying a called function's signature, checking convention consistency).
-4. **Profile checklist files** — resolved `(profile, checklist)` file paths from profile detection (e.g., `../../profiles/go/review-code/solid-checklist.md`). These give pal the same domain-specific review criteria as the sub-agent reviewer.
-5. **Design/implementation docs** — `design.md` and `implementation.md` from the feature's `docs/feat/wip/<feature>/` directory, when available. These enable pal to flag spec deviations, not just code smells.
-
-The caller is responsible for collecting these paths during its preparation steps and passing the assembled list here. pal handles file reading, token budgeting, and cross-turn deduplication internally.
+Document callers use **Documents** and **Related source** instead. Paths sent are not proof of source receipt: retain actual embedding/read evidence returned by the tool and distinguish it from requested coverage.
 
 ### Step 2 — continuation call
 
-After step 1 returns, make a follow-up call using the `continuation_id` from the step 1 response:
+Use the initial response's `continuation_id`. Reattach the relevant source/criteria paths so the expert stage has the required inputs; record only genuinely inspected files in `files_checked` if that field is used, distinguishing the caller's checks from external receipt.
 
 | Parameter | Value |
 |---|---|
 | `model` | Same model as step 1 |
 | `continuation_id` | From step 1 response |
-| `step` | `"Produce the expert analysis and final findings based on the review in step 1."` |
+| `step` | Produce expert findings using the selected branch, supplied criteria and evidence; identify inspected coverage and unresolved comparisons |
 | `step_number` | `2` |
 | `total_steps` | `2` |
 | `next_step_required` | `false` |
-| `findings` | Copy `findings` from step 1 response (or summarize if too large) |
-| `confidence` | `"high"` |
+| `review_validation_type` | `"external"` |
+| `relevant_files` | Required branch-specific files, including any new evidence/provenance |
+| `findings` | Copy/summarize step 1's returned findings, with attribution; do not insert the independent reviewer's conclusions |
+| `confidence` | Match actual evidence; do not assert high confidence merely because this is the final step |
+
+For focused later evidence/clarification, continue the same review using its returned continuation identifier, the new files and the outstanding comparison. Preserve request provenance and provisional findings. If continuation is unavailable, disclose it and re-invoke with the original scope/context and the requesting reviewer's own provisional results plus additions; do not silently claim an uninterrupted review.
 
 ### Parallel execution with sub-agents
 
-The step 1 call can be issued in the same message as the sub-agent (Agent tool) call — they execute in parallel. When both return, make the pal step 2 continuation call. The sub-agent typically takes longer than pal step 1, so the continuation call adds minimal wall-clock time.
+Launch step 1 alongside the independent reviewer when supported, then complete PAL's continuation. Supply equivalent relevant evidence additions to both without sharing their conclusions.
 
-### Failure modes
+### Failure modes and coverage
 
-- `listmodels` returns no models → skip pal, proceed with sub-agent findings only
-- Step 1 succeeds but step 2 fails → use any findings from step 1 response
-- Both steps return zero issues → treat as a soft failure (pal produced no signal); note in the report and proceed with sub-agent findings
+- No available model or tool/call failure: disclose it and retain the other reviewer's useful findings.
+- Initial call succeeds but continuation fails: retain any useful returned findings as provisional and label the incomplete external review.
+- Zero findings with demonstrated relevant source coverage may be a clean review; zero findings alone prove neither success nor failure.
+- Zero embedded/read source, unverified receipt or materially incomplete coverage: disclose that limit. Do not claim independent corroboration or broad code/release approval from the underfed response. Retain useful source-backed findings from the available reviewer and qualify unresolved conclusions.
 
-`pal` is an external model with no conversation context — naturally isolated. Its output stays in **native format** — do NOT map it to the skill's finding types or severity levels.
+PAL output remains in **native format**, with attribution. Do not remap its severity or finding types. Agreement does not substitute for source evidence. Keep temporary artifacts through evidence requests and required retention, then clean up only files created for this review.

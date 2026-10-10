@@ -1,0 +1,52 @@
+
+=== Section 1: validate-bash.sh — Allow cases ===
+[TEST] Allow: safe command exits 0 with no stdout
+[PASS] Exit code is 0
+[PASS] No stdout for allowed command
+[TEST] Allow: empty command exits 0 with no stdout
+[PASS] Exit code is 0 for empty command
+[PASS] No stdout for empty command
+[TEST] Allow: missing tool_input exits 0 with no stdout
+[PASS] Exit code is 0 for missing tool_input
+[PASS] No stdout for missing tool_input
+[TEST] Allow: cat node_modules/foo exits 0 with no stdout
+[PASS] Exit code is 0 for cat node_modules/foo
+[PASS] No stdout for cat node_modules/foo
+[TEST] Allow: cat app.log exits 0 with no stdout
+[PASS] Exit code is 0 for cat app.log
+[PASS] No stdout for cat app.log
+
+=== Section 2: validate-bash.sh — Deny cases ===
+[TEST] Deny: .env pattern produces structured JSON
+[PASS] Exit code is 0 even when denying
+[PASS] Deny output is valid JSON
+[PASS] hookEventName is PreToolUse
+[PASS] permissionDecision is deny
+[TEST] Deny: reason contains the matched pattern
+[PASS] Reason mentions .env pattern
+[TEST] Deny: no output on stderr
+[PASS] No stderr output when denying
+
+=== Section 3: validate-bash.sh — All forbidden patterns ===
+[TEST] Each forbidden pattern triggers deny with structured JSON
+[PASS] Pattern '.env' correctly denied
+[PASS] Pattern '.ansible/' correctly denied
+[PASS] Pattern '.terraform/' correctly denied
+[PASS] Pattern 'build/' correctly denied
+[PASS] Pattern 'dist/' correctly denied
+[PASS] Pattern '__pycache__' correctly denied
+[PASS] Pattern '.git/' correctly denied
+[PASS] Pattern 'venv/' correctly denied
+[PASS] Pattern '.pyc' correctly denied
+[PASS] Pattern '.csv' correctly denied
+
+=== Section 4: capy.sh — Graceful degradation ===
+[TEST] capy.sh exits 0 when capy binary is not found
+[PASS] Exit code is 0 when capy not found
+
+=== Test Summary ===
+Test cases:        10
+Assertions passed: 27
+Assertions failed: 0
+
+All tests passed!

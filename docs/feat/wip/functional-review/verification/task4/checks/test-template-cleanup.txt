@@ -1,0 +1,60 @@
+
+=== Section 1: Basic Manifest Generation ===
+[TEST] generate_manifest creates .github/template-state.json
+[PASS] Manifest file created
+[TEST] Generated manifest is valid JSON
+[PASS] Generated manifest is valid JSON
+
+=== Section 2: Required Fields ===
+[TEST] Manifest contains schema_version = 1
+[PASS] schema_version is 1
+[TEST] Manifest contains upstream_repo with default value
+[PASS] upstream_repo has default value
+[TEST] Manifest uses custom UPSTREAM_REPO when set
+[PASS] upstream_repo uses custom value
+[TEST] Manifest contains synced_at in ISO 8601 format
+[PASS] synced_at is in ISO 8601 format: 2026-10-09T06:04:43Z
+
+=== Section 3: Variable Capture ===
+[TEST] Manifest captures PROJECT_NAME
+[PASS] PROJECT_NAME captured correctly
+[TEST] Manifest captures all 6 variables
+[PASS] PROJECT_NAME
+[PASS] LANGUAGES
+[PASS] CC_MODEL
+[PASS] CC_EFFORT_LEVEL
+[PASS] CC_PERMISSION_MODE
+[PASS] CC_STATUSLINE
+[TEST] Manifest handles empty string values for optional fields
+[PASS] Empty CC_MODEL captured as empty string
+[PASS] LANGUAGES has required value
+
+=== Section 4: Special Characters ===
+[TEST] Manifest handles hyphens and underscores in project name
+[PASS] Hyphens and underscores preserved
+
+=== Section 5: Template Version Detection (from upstream) ===
+[TEST] Manifest fetches version from upstream repo (default)
+[PASS] template_version is from upstream, not local repo: v0.23.0
+[TEST] Manifest uses custom UPSTREAM_REPO when set
+[PASS] upstream_repo uses custom value
+[PASS] template_version fetched from custom upstream: v0.23.0
+
+=== Section 6: Schema Validation ===
+[TEST] Generated manifest passes JSON Schema validation
+ok -- validation done
+[PASS] Generated manifest passes JSON Schema validation
+
+=== Section 7: Edge Cases ===
+[TEST] generate_manifest creates .github directory if missing
+[PASS] .github directory created
+[PASS] Manifest created in new directory
+[TEST] generate_manifest overwrites existing manifest
+[PASS] Existing manifest overwritten with new content
+
+=== Test Summary ===
+Test cases:        15
+Assertions passed: 23
+Assertions failed: 0
+
+All tests passed!

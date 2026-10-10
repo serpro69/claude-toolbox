@@ -1,0 +1,49 @@
+{
+  "actor": "main",
+  "block": {
+    "caller": {
+      "type": "direct"
+    },
+    "id": "toolu_01NX5DMxDzMycevWQNmwVJfV",
+    "input": {
+      "confidence": "high",
+      "continuation_id": "fce38dc3-a4da-4f34-a03d-1df319bd10bb",
+      "findings": "Client save_settings now sends require_receipt:True and unconditionally raises RuntimeError unless response.applied is True. Task 2 (provider receipts) is pending/out-of-scope in a separate repo, so providers may not yet emit `applied`. Potential backward-compat break vs design's \"independently releasable main\" and \"ordinary saves must continue to work.\" The enhanced_settings flag (default False, enhanced UI disabled by default) does not gate the new strict check. Test only covers the applied:True success path; missing/false receipt cases untested.",
+      "issues_found": [
+        {
+          "description": "Unconditional applied-receipt check breaks saves against providers that have not yet shipped Task 2, violating independent releasability",
+          "severity": "high"
+        },
+        {
+          "description": "enhanced_settings flag does not gate the new receipt enforcement despite enhanced UI being disabled by default",
+          "severity": "medium"
+        },
+        {
+          "description": "No test coverage for missing or false applied receipt",
+          "severity": "medium"
+        }
+      ],
+      "model": "gemini-3.1-pro-preview",
+      "next_step_required": false,
+      "relevant_context": [
+        "save_settings"
+      ],
+      "relevant_files": [
+        "/tmp/kk-review-code-enhsettings.patch",
+        "/private/tmp/fr-task2-actors-g_0_vwqs/claude-r3-isolated-1/client.py",
+        "/private/tmp/fr-task2-actors-g_0_vwqs/claude-r3-isolated-1/tests/test_client.py",
+        "/private/tmp/fr-task2-actors-g_0_vwqs/claude-r3-isolated-1/docs/feat/wip/enhanced-settings/design.md",
+        "/private/tmp/fr-task2-actors-g_0_vwqs/claude-r3-isolated-1/docs/feat/wip/enhanced-settings/implementation.md"
+      ],
+      "step": "Produce the expert analysis and final findings based on the review in step 1.\n\nInvestigation complete. Files examined: client.py (save_settings), tests/test_client.py, design.md, implementation.md, and the four python review checklists.\n\nKey observations to validate and expand:\n\n1. Backward-compatibility / independent-releasability risk (likely the central issue). design.md requires \"ordinary saves must continue to work with the supported provider at eval-release\" and \"preserving independently releasable main.\" The client now unconditionally requires `response.get(\"applied\") is True`, raising RuntimeError otherwise. But Task 2 (provider-side honoring of require_receipt) is PENDING in a separate repo and not yet shipped. A current provider that does not yet emit `applied` will cause every ordinary save to raise \u2014 so merging this client increment to main breaks saves against the not-yet-upgraded provider, violating independent releasability. The enhanced receipt check appears unconditional even though `enhanced_settings` defaults to False and the enhanced UI is \"disabled by default\" \u2014 the gating flag exists but is not used to gate the new strictness.\n\n2. The `enhanced_settings` parameter is passed through to the return value but does NOT gate the new require_receipt/applied behavior. Consider whether the receipt enforcement should be conditional on enhanced_settings to preserve the default-off contract.\n\n3. Test adequacy: the only test updates the stub to return `applied: True` (success path). There is no test for the receipt-missing case (provider without applied) nor for `applied: False`. The new error branch and the backward-compat path are unverified.\n\n4. Exception hygiene: both failure modes raise bare RuntimeError with string messages; no custom exception type or structured context. Minor.\n\nAssess correctness, backward-compatibility against the shared delivery contract, the gating logic vs enhanced_settings, and test coverage. Report severity per issue.",
+      "step_number": 2,
+      "total_steps": 2
+    },
+    "name": "mcp__pal__codereview",
+    "type": "tool_use"
+  },
+  "id": "e151.0",
+  "parent_tool_use_id": null,
+  "session_id": "86090207-213f-443b-b0bd-506bf08c00d9",
+  "source_sequence": 151
+}

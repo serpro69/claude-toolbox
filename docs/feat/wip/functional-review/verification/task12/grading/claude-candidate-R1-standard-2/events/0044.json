@@ -1,0 +1,12 @@
+{
+  "actor": "main",
+  "block": {
+    "content": "1\tdef begin_setup(store, workspace_id, setup_id):\n2\t    store.pending[setup_id] = {\"workspace_id\": workspace_id}\n3\t\n4\t\n5\tdef complete_setup(store, workspace_id, setup_id, connection):\n6\t    store.active[workspace_id] = {\"setup_id\": setup_id, \"connection\": connection}\n7\t    store.pending.pop(setup_id, None)\n8\t\n9\t\n10\tdef active_connection(store, workspace_id):\n11\t    association = store.active.get(workspace_id)\n12\t    return association[\"connection\"] if association else None\n13\t",
+    "tool_use_id": "toolu_013vQSTeyton91UfzB41tY5u",
+    "type": "tool_result"
+  },
+  "id": "e82.0",
+  "parent_tool_use_id": null,
+  "session_id": "30e60627-c0d3-4790-9a07-1bf05b7f029a",
+  "source_sequence": 82
+}

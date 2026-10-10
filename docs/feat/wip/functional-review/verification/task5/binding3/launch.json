@@ -1,0 +1,64 @@
+{
+  "actor": {
+    "archive_sha256": "f4aa39d49114010b5b77652ff46138f414830c9b52433dc851ee4a25f2d762b2",
+    "excluded_files": 938,
+    "retained_files": 441,
+    "retained_manifest_sha256": "2c87def5b04bbf06b01716bdd9589fb3049981cb0ca500b2f2286ff22185ac11",
+    "revision": "64f6bd2995c2af2dd618699e09c1d1ab8bd65571",
+    "source_files": 1379
+  },
+  "case": "R1",
+  "fixture_manifest_sha256": "455b8f9977222245382fb80db7c88a714a47cf54fe80ddcf515f58bfafa3ef1c",
+  "initial_files": {
+    ".gitignore": "a07bbf9a2d9a659879980a495e70eb1b0d8ee566a78ee634000c029c0585dae5",
+    "README.md": "d4ac815e40106f438ca16747e3a15fc921c937bada7c48dde7ddeae9205bf7c6",
+    "cleanup.py": "5f667c222c3d7bde34627b93dcecc6a16311f1efbc4ae9427440ad55bde95486",
+    "setup.py": "25cd5477f6aaba3ea79544f9df2e4f97b0562b89000d58c0afcb80a772bfd76d",
+    "store.py": "18836af3001fc2cb90533bae5600ffd1c6ed3b76177435bb6e66fe8f19981150",
+    "tests/test_setup.py": "eb089ec031af635ef7f24afb6a083f9e5b8cfec5016267bfa28ed13bb2c28bba"
+  },
+  "initial_knowledge": "empty; database absent",
+  "knowledge_path": "/private/tmp/fr-task5-actors-x3akibin/binding3/.runner/knowledge.db",
+  "mcp": {
+    "capy": {
+      "args": [
+        "-u",
+        "CAPY_VAULT_KEY",
+        "-u",
+        "CAPY_DB_KEY",
+        "CAPY_DB_KEY=synthetic-functional-review-probe-key-20261008",
+        "CAPY_VAULT_PATH=/private/tmp/fr-task5-actors-x3akibin/binding3/.runner/vault",
+        "XDG_CONFIG_HOME=/private/tmp/fr-task5-actors-x3akibin/binding3/.runner/xdg",
+        "/opt/homebrew/bin/capy",
+        "--project-dir",
+        "/private/tmp/fr-task5-actors-x3akibin/binding3",
+        "serve"
+      ],
+      "command": "env",
+      "environment_keys": []
+    },
+    "pal": {
+      "args": [
+        "-c",
+        "/opt/homebrew/bin/uvx --from git+https://github.com/serpro69/pal-mcp-server.git pal-mcp-server"
+      ],
+      "command": "sh",
+      "environment_keys": []
+    }
+  },
+  "mode": "standard",
+  "models": {
+    "claude": "claude-opus-4-8[1m]/high",
+    "codex": "gpt-6-astra/xhigh",
+    "codex_reviewer": "gpt-6.1-sol/xhigh",
+    "pal": "gemini-3.1-pro-preview/max"
+  },
+  "prompt": "Instruction-loading probe only: load the registered /kk:review-code skill and its isolated workflow. Do not inspect repository source or diff or produce review findings. Read the isolated workflow and all its shared/common instructions from the selected plugin. Use the permitted command printenv TOOLBOX_PLUGIN_ROOT to return the actual hook-exported root. Read the code-reviewer agent definition from that root. Report loaded locations and stop without spawning reviewers.",
+  "provider": "claude",
+  "purpose": "Task 5 corrected ordering candidate binding probe",
+  "read_confinement": "No OS-wide confinement; audit actual reads for evaluator material",
+  "review_base": "a7ab15e9fc17243d0f00288ca01907dd06dcdb73",
+  "rubric_sha256": "d1e603beb45416e89e744f2a1cf9583de18d9882786441e69292232c3d2bdc27",
+  "vault": "unavailable; private path and unset key",
+  "workspace": "/private/tmp/fr-task5-actors-x3akibin/binding3"
+}

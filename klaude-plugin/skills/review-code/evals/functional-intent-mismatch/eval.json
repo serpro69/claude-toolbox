@@ -1,0 +1,50 @@
+{
+  "id": 10,
+  "name": "functional-intent-mismatch",
+  "description": "R9 mismatch: green implementation-shaped tests contradict an explicit preserved retry contract. Stage outside a SKILL.md ancestor; run standard and actual isolated workflows.",
+  "skills": [
+    "review-code"
+  ],
+  "prompt": "I've staged the preference ID normalization change. Run `/kk:review-code` against it.",
+  "trap": "The new test blesses single-attempt failure and can distract from the explicit resilient-read requirement.",
+  "files": [
+    "test-files/after/.gitignore",
+    "test-files/after/README.md",
+    "test-files/after/preferences.py",
+    "test-files/after/reader.py",
+    "test-files/after/repository.py",
+    "test-files/after/tests/test_reads.py",
+    "test-files/before/.gitignore",
+    "test-files/before/README.md",
+    "test-files/before/preferences.py",
+    "test-files/before/reader.py",
+    "test-files/before/repository.py",
+    "test-files/before/tests/test_reads.py"
+  ],
+  "assertions": [
+    {
+      "id": "10.1",
+      "text": "The main actor completes applicable review instructions and resolved profile reads before behavioral investigation; isolated children load supplied methodology before analyzing evidence. Distinguish bounded routing from behavioral reads."
+    },
+    {
+      "id": "10.2",
+      "text": "The review traces Preferences.read through the changed reader to Repository and its scripted backend, using the README's explicit normalization and preserved retry requirements as authority."
+    },
+    {
+      "id": "10.3",
+      "text": "The report identifies read_once replacing read_resilient as losing transient recovery: TransientRead followed by success now raises on attempt one. It cites the changed reader and contrasts the before path; it does not infer intent solely from the new tests."
+    },
+    {
+      "id": "10.4",
+      "text": "The review explains that the passing test_transient_error asserts the wrong product behavior and recommends retaining resilient reads while trimming the key, with a meaningful transient-then-success regression test."
+    },
+    {
+      "id": "10.5",
+      "text": "The report returns REQUEST_CHANGES for the explicit acceptance violation with a supported severity; it distinguishes bounded transient retries from permanent errors and exhausted failures, without adding unlimited retries, external access or unrelated delivery gates."
+    },
+    {
+      "id": "10.6",
+      "text": "In isolated mode actual named-reviewer and PAL dispatches carry the diff, explicit README contract and relevant unchanged callers/state source; retain both results and disclose missing source coverage. Standard mode does not require independent dispatches."
+    }
+  ]
+}

@@ -1,0 +1,19 @@
+{
+  "actor": "main",
+  "block": {
+    "caller": {
+      "type": "direct"
+    },
+    "id": "toolu_01Q5J1JaUG9K1QkRiBHXyd3A",
+    "input": {
+      "content": "Anti-pattern: \"simplifying\" an ownership-guarded removal into an unconditional removal on shared keyed state. In cleanup_setup(store, workspace_id, setup_id), the guard `association = store.active.get(workspace_id); if association and association[\"setup_id\"] == setup_id: store.active.pop(workspace_id, None)` was replaced by an unconditional `store.active.pop(workspace_id, None)`. The guard was an identity/ownership check ensuring the active slot is only cleared by the setup that owns it. Removing it causes a late/retried/superseded cleanup for an OLD setup_id to evict the CURRENT active association belonging to a DIFFERENT setup_id (lost-update / wrong-eviction correctness bug). Review heuristic: when a diff removes an `if owner == me` check before mutating shared keyed state (dict.pop, cache delete, map removal), treat the guard as load-bearing unless proven that the key always belongs to the caller at that point.",
+      "source": "kk:review-findings"
+    },
+    "name": "mcp__capy__capy_index",
+    "type": "tool_use"
+  },
+  "id": "e112.0",
+  "parent_tool_use_id": null,
+  "session_id": "970230dc-a6bd-4811-bfe0-d49c5e368e89",
+  "source_sequence": 112
+}

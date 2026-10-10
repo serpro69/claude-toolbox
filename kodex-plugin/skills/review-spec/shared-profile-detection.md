@@ -76,6 +76,14 @@ This procedure reads files under the plugin root. The main agent resolves the pl
 
 ### Tool choice
 
+A consumer may consolidate instruction reads into bounded packets containing
+the complete, unmodified source bodies, original paths and hashes. Read every
+packet part completely before applying those instructions; the original paths
+still determine link resolution and detection provenance. A manifest, checksum,
+requested read or truncated packet alone does not establish loading. This
+changes packaging only: evaluate every Known-profile rule and each index
+conditional exactly as below. Direct file reads remain the default fallback.
+
 - Single file at `../../…` → `Read`. This is what the algorithm uses.
 - Enumeration across profiles → iterate the §Known profiles list, `Read` each. Never `Glob` (cwd-scoped, misses outside-cwd paths).
 

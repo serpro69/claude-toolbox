@@ -1,0 +1,19 @@
+{
+  "actor": "main",
+  "block": {
+    "caller": {
+      "type": "direct"
+    },
+    "id": "toolu_0162BWrVKb8kngetYpua3hpg",
+    "input": {
+      "content": "Pattern: Premature removal of a dual-shape compatibility fallback during an active background migration. In a store that reads both a legacy shape (top-level `address`) and a current nested shape (`destination.address`), a reader fallback branch was deleted as \"cleanup\" while legacy rows still exist (bounded-batch migration, no startup gate, documented mixed snapshot). Result: the read path (`list_destinations`) raises KeyError on any legacy row, breaking the whole call. Lesson: before deleting a compatibility branch, confirm the migration that retires the old shape has fully completed (telemetry/0 legacy rows), not merely that it exists. Green tests covering only the new shape hide the regression. Check README/contract for \"must read both shapes until migration finishes\" style hard requirements.",
+      "source": "kk:review-findings"
+    },
+    "name": "mcp__capy__capy_index",
+    "type": "tool_use"
+  },
+  "id": "e134.0",
+  "parent_tool_use_id": null,
+  "session_id": "311d95ad-6628-4c17-8ed3-ac399d3d7d5c",
+  "source_sequence": 134
+}

@@ -1,0 +1,19 @@
+{
+  "actor": "main",
+  "block": {
+    "caller": {
+      "type": "direct"
+    },
+    "id": "toolu_01QsKmLYnqWqZ5tasjZZRTPm",
+    "input": {
+      "content": "Anti-pattern: premature removal of a backward-compat read fallback during an in-progress data migration. A reader that handled both a legacy shape and a new shape (e.g. `if \"destination\" in row: return row[\"destination\"][\"address\"]; return row[\"address\"]`) was \"cleaned up\" to assume only the new nested shape. This raises KeyError on any un-migrated record. Safe only AFTER migration completes for all records. Signals to check: README/docs stating \"read both shapes until migration finishes\", mixed-shape data fixtures still present, background/batched migration with no startup gate. Tests masked the regression because they only covered the new write shape, never the legacy shape. Lesson: removing a compatibility branch is a deferred-removal item gated on migration completion + telemetry showing zero legacy records, not an immediate cleanup.",
+      "source": "kk:review-findings"
+    },
+    "name": "mcp__capy__capy_index",
+    "type": "tool_use"
+  },
+  "id": "e115.0",
+  "parent_tool_use_id": null,
+  "session_id": "0275ffea-1793-453d-abf3-3acc79d69f8b",
+  "source_sequence": 115
+}

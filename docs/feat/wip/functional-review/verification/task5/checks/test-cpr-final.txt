@@ -1,0 +1,74 @@
+
+=== Section 1: Exact Matching ===
+[1;33m[TEST][0m Exact match on plugin name
+[0;32m[PASS][0m kk resolves to kk@claude-toolbox
+[1;33m[TEST][0m Exact match is case-insensitive
+[0;32m[PASS][0m KK matches kk
+[1;33m[TEST][0m Exact match on different plugin
+[0;32m[PASS][0m cortex resolves correctly
+[1;33m[TEST][0m No substring false positive: 'kk' does not match 'kk-utils'
+[0;32m[PASS][0m kk is not kk-utils
+[1;33m[TEST][0m kk-utils matches its own entry
+[0;32m[PASS][0m kk-utils resolves to kk-utils@other-repo
+
+=== Section 2: Project Resolution Cascade ===
+[1;33m[TEST][0m Project-bound install wins when projectPath matches (proj-a)
+[0;32m[PASS][0m proj-a resolves to its own install, not the newer proj-b
+[1;33m[TEST][0m Project-bound install wins when projectPath matches (proj-b)
+[0;32m[PASS][0m proj-b resolves to its own install
+[1;33m[TEST][0m A nested cwd matches its project root
+[0;32m[PASS][0m subdirectory of proj-a resolves to proj-a
+[1;33m[TEST][0m Falls back to the user-scope (global) entry when no project matches
+[0;32m[PASS][0m unrelated project gets the global install
+[1;33m[TEST][0m No project match and no user scope: falls back to last installed
+[0;32m[PASS][0m most-recently-installed cross-project entry wins as last resort
+
+=== Section 3: Fuzzy Matching ===
+[1;33m[TEST][0m Fuzzy match on close name
+Warning: no exact match for 'corte'; using closest fuzzy match: /var/folders/vv/lnz9c5h95pnbjzsz93qmr0n80000gn/T/cpr-test.bv3xd0/cache/cortex-ai/cortex/0.3.0
+[0;32m[PASS][0m corte fuzzy-matches cortex
+[1;33m[TEST][0m Fuzzy match warns on stderr (fail loud — may be the wrong plugin)
+[0;32m[PASS][0m fuzzy match emits a warning on stderr
+[1;33m[TEST][0m Exact match is silent on stderr
+[0;32m[PASS][0m exact match emits no warning
+[1;33m[TEST][0m No match for completely unrelated name
+[0;32m[PASS][0m zzzzz should not match anything
+
+=== Section 4: Error Handling ===
+[1;33m[TEST][0m No arguments exits non-zero
+[0;32m[PASS][0m No arguments should fail
+[1;33m[TEST][0m Usage message on no arguments
+[0;32m[PASS][0m Shows usage on no args
+[1;33m[TEST][0m Missing plugins file exits non-zero
+[0;32m[PASS][0m Missing plugins file should fail
+[1;33m[TEST][0m Malformed JSON exits non-zero
+[0;32m[PASS][0m Malformed JSON should fail
+[1;33m[TEST][0m Plugin not found shows error on stderr
+[0;32m[PASS][0m Shows error for unknown plugin
+
+=== Section 5: Install Path Validation ===
+[1;33m[TEST][0m Entry with non-existent installPath is skipped
+[0;32m[PASS][0m Non-existent installPath should not be returned
+[1;33m[TEST][0m Missing project-bound installPath falls through to a valid lower tier
+[0;32m[PASS][0m missing tier-1 path falls through to the user-scope install
+
+=== Section 6: set-plugin-root.sh ===
+[1;33m[TEST][0m Writes export line resolved via cpr.py
+[0;32m[PASS][0m cpr.py-resolved path is exported
+[1;33m[TEST][0m Passes $CLAUDE_PROJECT_DIR through to cpr.py
+[0;32m[PASS][0m CLAUDE_PROJECT_DIR selects the project-bound install
+[1;33m[TEST][0m Falls back to $1 when cpr.py cannot resolve
+[0;32m[PASS][0m argument fallback is exported
+[1;33m[TEST][0m Unset CLAUDE_ENV_FILE exits cleanly without error
+[0;32m[PASS][0m no ambiguous-redirect error when CLAUDE_ENV_FILE is unset
+[1;33m[TEST][0m Neither cpr.py nor $1 resolves: nothing written
+[0;32m[PASS][0m no export line when no valid root found
+[1;33m[TEST][0m Exits cleanly when the env file append fails (unwritable target)
+[0;32m[PASS][0m append failure does not produce a non-zero hook exit
+
+=== Test Summary ===
+Test cases:        27
+Assertions passed: [0;32m27[0m
+Assertions failed: [0;31m0[0m
+
+[0;32mAll tests passed![0m

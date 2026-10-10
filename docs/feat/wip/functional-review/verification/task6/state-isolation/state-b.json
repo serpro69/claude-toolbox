@@ -1,0 +1,177 @@
+[
+  {
+    "request": {
+      "jsonrpc": "2.0",
+      "id": 1,
+      "method": "initialize",
+      "params": {
+        "protocolVersion": "2024-11-05",
+        "capabilities": {},
+        "clientInfo": {
+          "name": "functional-review-probe",
+          "version": "1"
+        }
+      }
+    }
+  },
+  {
+    "response": {
+      "jsonrpc": "2.0",
+      "id": 1,
+      "result": {
+        "protocolVersion": "2024-11-05",
+        "capabilities": {
+          "tools": {}
+        },
+        "serverInfo": {
+          "name": "capy",
+          "version": "v0.16.8"
+        }
+      }
+    }
+  },
+  {
+    "request": {
+      "jsonrpc": "2.0",
+      "id": 2,
+      "method": "tools/call",
+      "params": {
+        "name": "capy_search",
+        "arguments": {
+          "queries": [
+            "transport orchard"
+          ],
+          "limit": 3
+        }
+      }
+    }
+  },
+  {
+    "response": {
+      "jsonrpc": "2.0",
+      "id": 2,
+      "result": {
+        "content": [
+          {
+            "type": "text",
+            "text": "The knowledge base is empty \u2014 nothing has been indexed yet.\n\nTo populate it, use:\n  \u2022 capy_batch_execute(commands, queries) \u2014 run commands, auto-index output, and search in one call\n  \u2022 capy_fetch_and_index(url) \u2014 fetch a URL, index it, then search with capy_search\n  \u2022 capy_index(content, source) \u2014 manually index text content\n\nAfter indexing, capy_search becomes available for follow-up queries."
+          }
+        ],
+        "isError": true
+      }
+    }
+  },
+  {
+    "request": {
+      "jsonrpc": "2.0",
+      "id": 3,
+      "method": "tools/call",
+      "params": {
+        "name": "capy_index",
+        "arguments": {
+          "source": "probe-isolation",
+          "content": "# Transport orchard\n\nRetained marker violetheron."
+        }
+      }
+    }
+  },
+  {
+    "response": {
+      "jsonrpc": "2.0",
+      "id": 3,
+      "result": {
+        "content": [
+          {
+            "type": "text",
+            "text": "Indexed 1 sections (0 with code) from: probe-isolation\nUse search(queries: [\"...\"]) to query this content. Use source: \"probe-isolation\" to scope results."
+          }
+        ]
+      }
+    }
+  },
+  {
+    "request": {
+      "jsonrpc": "2.0",
+      "id": 4,
+      "method": "tools/call",
+      "params": {
+        "name": "capy_search",
+        "arguments": {
+          "queries": [
+            "transport orchard"
+          ],
+          "limit": 3
+        }
+      }
+    }
+  },
+  {
+    "response": {
+      "jsonrpc": "2.0",
+      "id": 4,
+      "result": {
+        "content": [
+          {
+            "type": "text",
+            "text": "## transport orchard\n\n--- [probe-isolation] ---\n### Output\n\n# Transport orchard\n\nRetained marker violetheron."
+          }
+        ]
+      }
+    }
+  },
+  {
+    "request": {
+      "jsonrpc": "2.0",
+      "id": 5,
+      "method": "tools/call",
+      "params": {
+        "name": "capy_doctor",
+        "arguments": {}
+      }
+    }
+  },
+  {
+    "response": {
+      "jsonrpc": "2.0",
+      "id": 5,
+      "result": {
+        "content": [
+          {
+            "type": "text",
+            "text": "## capy doctor\n\n- [x] Version: v0.16.8\n- [x] Runtimes: 7/11 (go, javascript, perl, python, ruby, rust, shell)\n- [x] FTS5: available\n- [x] Config: loaded (db path: /private/tmp/fr-task6-isolation/state-b/.runner/knowledge.db)\n- [ ] Hooks: no capy hooks found (run `capy setup`)\n- [ ] MCP: .mcp.json not found (run `capy setup`)\n- [x] Knowledge credential: selected from CAPY_DB_KEY (database authentication checked separately)\n- [x] Knowledge base: 1 sources, 1 chunks\n- [-] Vault: disabled (CAPY_VAULT_KEY not set) \u2014 sessions are not archived; wrappers no longer source .env. Set CAPY_VAULT_KEY in the actual launch environment and restart the host/MCP process\n- [x] Security: 1 policy files, 0 deny patterns\n- [x] Project: /private/tmp/fr-task6-isolation/state-b"
+          }
+        ]
+      }
+    }
+  },
+  {
+    "request": {
+      "jsonrpc": "2.0",
+      "id": 6,
+      "method": "tools/call",
+      "params": {
+        "name": "capy_vault_search",
+        "arguments": {
+          "queries": [
+            "transport orchard"
+          ]
+        }
+      }
+    }
+  },
+  {
+    "response": {
+      "jsonrpc": "2.0",
+      "id": 6,
+      "result": {
+        "content": [
+          {
+            "type": "text",
+            "text": "Vault search is disabled \u2014 set CAPY_VAULT_KEY to archive and search past sessions.\nOnce enabled, run `capy vault reindex` to update already-archived sessions to the current index."
+          }
+        ],
+        "isError": true
+      }
+    }
+  }
+]
