@@ -11,7 +11,9 @@ their parent.
    Request the remaining lines if a Read is truncated. These parts contain the
    full process, shared protocols, common method and every Known-profile
    detection file. Source headers give original paths for relative links.
-2. Resolve scope from filenames/metadata under the loaded process. Apply the
+2. Select the Git diff from filenames/metadata under the loaded process. Task
+   documents and requirements are investigated only after checklist loading;
+   their discovery does not open the preparation gate. Apply the
    loaded detection rules, preserving each match/non-match/ENOENT outcome.
    For active profiles, run `profiles --profile NAME` (repeat `--profile` as
    needed), then Read all returned parts to load their indexes. Resolve their

@@ -2,7 +2,7 @@
 
 > Issue: [#166](https://github.com/serpro69/claude-toolbox/issues/166)
 > Status: implementation slices and baseline capture complete; candidate acceptance and final verification pending
-> Revised: 2026-10-10 with gate 2B closed under the selected receipt/use contract
+> Revised: 2026-10-10 with gate 2B closed and the candidate-6 ordering follow-up scoped
 > Review disposition: [Consolidated assessment](reviews/design-review-consolidation.md)
 > Evaluation contract: [evaluation.md](evaluation.md)
 > Implementation: [implementation.md](implementation.md)
@@ -220,6 +220,24 @@ precision/recommendation quality for diagnosis. Keep all existing assertions
 required. Classification does not alter their PASS/FAIL/PARTIAL semantics, so
 the pinned rubric and both sides' prior grades remain valid.
 
+### Proposed ordering feasibility — after candidate 6
+
+The user approved scoping a separate ordering fix after candidate 6 passed both
+clean-closure checks but still investigated source early in one repetition.
+[The ordering proposal](ordering.md) recommends a bounded, controller-only
+feasibility experiment for a review-scoped tool guard. It defines activation,
+same-actor instruction receipts, pre-execution denial, concurrent-call ordering
+and review lifetime as explicit capability gates on both declared runtimes.
+
+This is a scoped proposal, not implemented enforcement or authorization to
+expand the matrix. The earlier exclusion of cross-provider hook enforcement
+still applies to operative code. Current hook documentation motivates the
+experiment but does not prove support in the pinned runtimes. Preserve the
+existing direct-read path, profile semantics, assertions and two-run threshold;
+integrate a guard only after feasibility and design review. Task 12 remains open.
+
+### Existing integration constraints
+
 Keep one post-instruction entry point for content-level investigation in each workflow. The standard summary, detailed procedure, isolated wrapper, agent and implement mode files must agree. Subsequent targeted verification uses evidence gathered under that phase; the wording must not prohibit re-reading evidence to substantiate a finding.
 
 Before operative workflow changes, amend [ADR 0004](../../../adr/0004-skill-workflow-ordering.md) and the ordering section of [AGENTS.md](../../../../AGENTS.md) to state a narrow routing exception. Current absolute wording conflicts with existing content-based detection and with this proposal; do not describe the new ordering as already fully authorized by those documents.
@@ -276,4 +294,10 @@ The method increases review effort when a change crosses contracts or persistent
 - The existing PAL tool can receive criteria and the required evidence within a focused invocation/continuation. Verify actual coverage; its failure does not disable the local independent reviewer.
 - No design-phase files exist in the installed skill-md profile. The user confirmed that profile; implementation and review must resolve its applicable phase guidance when operative skills are changed.
 
-No product-scope decision remains open. The two supplied reviews have been assessed in [the consolidated disposition](reviews/design-review-consolidation.md); these revised mechanics still need implementation and verification. Any failed or unrun acceptance scenario stays explicitly open in tasks.md with its reason and next action; it is not silently treated as passed.
+The product requirements remain approved. The ordering mechanism in
+[the scoped follow-up](ordering.md) remains a feasibility question; no hard
+cross-provider enforcement guarantee is established. The original two supplied
+reviews were assessed in [the consolidated disposition](reviews/design-review-consolidation.md).
+The new proposal has not received independent design review. Any failed or unrun
+acceptance scenario stays explicitly open in tasks.md with its reason and next
+action; it is not silently treated as passed.

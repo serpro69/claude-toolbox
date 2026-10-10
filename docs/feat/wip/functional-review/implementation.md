@@ -5,7 +5,7 @@
 > Tasks: [tasks.md](tasks.md)
 > Review disposition: [consolidated assessment](reviews/design-review-consolidation.md)
 > Status: Tasks 1–11 complete; candidate comparisons and final verification pending
-> Revised: 2026-10-10; Task 2 gate 2B closed under the selected receipt/use contract
+> Revised: 2026-10-10; Task 2 gate 2B closed; candidate-6 ordering follow-up scoped
 
 ## Starting points
 
@@ -144,6 +144,35 @@ Optional `/kk:clarify-docs` can refine the amended design, implementation and
 task documents; `/kk:review-design functional-review` remains available for an
 independent design assessment. These optional passes do not delay the already
 authorized rework.
+
+### Proposed ordering feasibility slice
+
+After candidate 6, the user approved scoping a separate ordering fix. The
+[ordering proposal](ordering.md) is the source of truth for this prospective
+slice. Preserve the existing uncommitted candidate-6 source and sealed results.
+This scope revision writes documents only; no new probe, hook or candidate is
+implemented or launched.
+
+The next proposed implementation task is **12.10**, a risk-first experiment
+under `verification/task12/ordering-probe/`, using disposable plugin copies.
+Its four steps are capability declaration, offline receipt/state controls,
+at most two top-level runtime sessions per provider, and independent evidence
+review with a GO / NO-GO disposition. Each step's verification is specified in
+[the bounded slice](ordering.md#bounded-feasibility-slice). Declare any actual
+runtime/tool-policy changes before launch and preserve existing evidence.
+
+GO supports designing a later production integration; it is not R5 acceptance.
+NO-GO records the missing capability and ends this experiment. Neither outcome
+changes the pinned assertions or authorizes a generic policy engine, runtime
+upgrade, provider substitution or matrix expansion. A later integrated candidate
+requires fresh matching comparisons as described in
+[conditional validation](ordering.md#conditional-integration-and-validation).
+
+Optional `/kk:clarify-docs` may refine `design.md`, `implementation.md`,
+`ordering.md` and `tasks.md`; `/kk:review-design functional-review` should then
+assess the complete proposal before implementation. The next handoff is
+`/kk:implement task 12.10 of functional-review`, once that probe is selected for
+execution. Task 13 remains dependent on Task 12's actual acceptance.
 
 Task 13 updates README.md and docs/user-guide/skills.md through /kk:document, and docs/contributing/testing.md for staging and grading. Then:
 
