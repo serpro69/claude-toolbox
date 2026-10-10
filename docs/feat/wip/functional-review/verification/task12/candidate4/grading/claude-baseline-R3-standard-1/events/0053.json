@@ -1,0 +1,19 @@
+{
+  "actor": "main",
+  "block": {
+    "caller": {
+      "type": "direct"
+    },
+    "id": "toolu_016G4bCSyueenu9JP7GpAHbV",
+    "input": {
+      "content": "Pattern: new-feature behavior not gated behind its own feature flag (backward-compat break). In client.save_settings, a `enhanced_settings=False` parameter exists but is inert (only echoed into the return value), while the feature's actual new behavior \u2014 sending `require_receipt: True` and raising when `response[\"applied\"] is not True` \u2014 runs unconditionally for every caller. Effect: legacy/non-enhanced callers and providers that return `{\"ok\": True}` without an `applied` receipt now raise RuntimeError. Review heuristic: when a diff adds a feature-named flag parameter, verify the feature's new side effects/enforcement are actually conditioned on that flag; an inert flag + unconditional new behavior signals a gating bug or a redundant parameter.",
+      "source": "kk:review-findings"
+    },
+    "name": "mcp__capy__capy_index",
+    "type": "tool_use"
+  },
+  "id": "e125.0",
+  "parent_tool_use_id": null,
+  "session_id": "2298a1ef-b5aa-498c-84dc-dbba1b7e471b",
+  "source_sequence": 125
+}

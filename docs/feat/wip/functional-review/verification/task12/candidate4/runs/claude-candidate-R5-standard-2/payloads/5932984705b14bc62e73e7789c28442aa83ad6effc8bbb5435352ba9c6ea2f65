@@ -1,0 +1,30 @@
+# Change context
+
+Establish this context before implementation edits or review findings. It is a shared reasoning and handoff contract, not a mandatory new document. Scale it to the change: a few sentences for a helper fix, a compact scenario table for a cross-component mutation. Omit empty boilerplate; explain briefly why an operational dimension is irrelevant.
+
+## Minimum useful record
+
+| Field | Content |
+| --- | --- |
+| Intent and authority | Intended outcomes and constraints; source locations; explicit, inferred or unresolved status. |
+| Change boundary | Current task/request, resolved diff scope, candidate revision/worktree state, affected components and deliberately pending functionality. |
+| Existing behavior | Entry points, unchanged callers/consumers, state/data contracts and invariants to preserve. |
+| Delivery constraints | Applicable repository policy, independent/ordered deployment expectations, flags, migrations, prerequisites and accepted exceptions. |
+| Baselines | Review base and candidate; separately, relevant released/deployed revisions, configurations and data shapes; explicit unknowns. |
+| Scenarios and evidence | Success, boundaries, failure/retry and lifecycle cases that apply; source/test bindings, observed results and unverified conditions. |
+
+User decisions and applicable repository instructions establish requirements. Consult current design/task contracts and relevant linked issues without assuming an issue is newer or more authoritative. Explain consequential conflicts. Existing code establishes behavior, not product intent; tests can repeat an implementation's mistaken assumption. Without a specification, infer a provisional purpose from the request and inspected evidence and label it. Ask only when materially different interpretations prevent a useful judgment; continue independent investigation.
+
+Never equate the review base, local main, a stable tag and a deployed revision. Name the baseline actually inspected. Source compatibility with a tag does not verify a deployed environment. Missing documents or production access narrow conclusions; they neither disable functional reasoning nor create automatic access or approval requirements.
+
+## Producer and reviewer responsibilities
+
+The producer supplies facts with file/symbol or revision references, separating assumptions, accepted decisions and unavailable evidence. Author explanations and claimed test results remain attributed inputs, not independent verification. Reviewers challenge inferences and request specific missing evidence.
+
+Refresh affected fields after scope/requirement changes or review fixes. On resume, inspect current repository state rather than trusting a stale handoff. In plan mode, record dated observations, sources, proposals, accepted decisions and unresolved actions in the current task's labeled **Execution context** subsection in `tasks.md`. Observations do not amend specifications; requirement changes need explicit user authorization with source and rationale. Standalone context stays conversational unless material work is deferred: use existing tracking or a concise repository-local review note naming owner (or unassigned), reason, next action and verification condition.
+
+## Historical evidence
+
+When compatibility depends on source absent from candidate files or diff hunks, the parent workflow obtains the relevant local Git blob or bounded excerpt. For independent reviewers, materialize actual source in a read-only evidence bundle outside the reviewed worktree. Label repository identity, full revision, original path, blob/content hash, original line span and omitted/redacted extent. Distinguish historical source from candidate files and methodology; give both reviewers the same relevant evidence, not merely the author's summary.
+
+A reviewer requests further evidence by naming repository, revision, path/symbol and the comparison needed. The parent supplies available local source through resume/reinvoke with original context and provisional findings, and supplies equivalent relevant additions through PAL continuation. Retain request provenance. This does not require reviewer shell permissions or authorize otherwise unapproved network/production access. Unavailable source or an inconclusive bounded investigation leaves the specific conclusion **Unknown**, with the missing evidence and next action.

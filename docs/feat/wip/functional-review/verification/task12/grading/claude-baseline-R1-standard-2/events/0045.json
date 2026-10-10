@@ -1,0 +1,19 @@
+{
+  "actor": "main",
+  "block": {
+    "caller": {
+      "type": "direct"
+    },
+    "id": "toolu_01P7bv9MLgHaNDqcZqW65Npy",
+    "input": {
+      "content": "Anti-pattern (P0 correctness): \"Simplifying\" a compare-and-delete guard into an unconditional delete causes lost-update / wrong-eviction when the resource can be reassigned. Example: cleanup_setup(store, workspace_id, setup_id) originally popped store.active[workspace_id] only if the active association's setup_id matched the one being cleaned up. Removing the `if association and association[\"setup_id\"] == setup_id` guard and calling store.active.pop(workspace_id, None) unconditionally evicts the CURRENT active setup when a stale/superseded setup is cleaned up after a newer setup took ownership of the same workspace. The stored setup_id in the active record is an ownership token \u2014 a guard that compares it before mutating must be preserved. Pattern to flag: removal of a check-then-act ownership guard before pop/delete/update on shared state keyed by a parent id.",
+      "source": "kk:review-findings"
+    },
+    "name": "mcp__capy__capy_index",
+    "type": "tool_use"
+  },
+  "id": "e102.0",
+  "parent_tool_use_id": null,
+  "session_id": "466ba42b-1491-4004-b9c0-0a067a449595",
+  "source_sequence": 102
+}

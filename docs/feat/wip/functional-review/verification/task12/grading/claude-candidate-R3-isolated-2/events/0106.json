@@ -1,0 +1,12 @@
+{
+  "actor": "child-of:toolu_01V3JXim62RoS2doN4gRKyoS",
+  "block": {
+    "content": "1\tdiff --git a/client.py b/client.py\n2\tindex d6ddf4b..910e877 100644\n3\t--- a/client.py\n4\t+++ b/client.py\n5\t@@ -1,5 +1,7 @@\n6\t def save_settings(send, workspace_id, values, enhanced_settings=False):\n7\t-    response = send(workspace_id, {\"settings\": values})\n8\t+    response = send(workspace_id, {\"settings\": values, \"require_receipt\": True})\n9\t     if not response.get(\"ok\"):\n10\t         raise RuntimeError(\"Settings save failed\")\n11\t+    if response.get(\"applied\") is not True:\n12\t+        raise RuntimeError(\"Provider did not acknowledge applied settings\")\n13\t     return {\"saved\": True, \"enhanced\": enhanced_settings}\n14\tdiff --git a/tests/test_client.py b/tests/test_client.py\n15\tindex 39ea461..f1dfc4f 100644\n16\t--- a/tests/test_client.py\n17\t+++ b/tests/test_client.py\n18\t@@ -5,6 +5,6 @@ from client import save_settings\n19\t class SettingsTests(unittest.TestCase):\n20\t     def test_successful_save(self):\n21\t         def send(workspace, request):\n22\t-            return {\"ok\": True}\n23\t+            return {\"ok\": True, \"applied\": True}\n24\t         self.assertEqual(save_settings(send, \"w\", {\"label\": \"blue\"}),\n25\t                          {\"saved\": True, \"enhanced\": False})\n26\t",
+    "tool_use_id": "toolu_017vpvVPdppXPYp9oxMGivW1",
+    "type": "tool_result"
+  },
+  "id": "e207.0",
+  "parent_tool_use_id": "toolu_01V3JXim62RoS2doN4gRKyoS",
+  "session_id": "21198cb7-2cf8-4170-8a6b-2903937df7f6",
+  "source_sequence": 207
+}

@@ -1,0 +1,19 @@
+{
+  "actor": "main",
+  "block": {
+    "caller": {
+      "type": "direct"
+    },
+    "id": "toolu_014qUJxowZ5xFDpegJBTDQc6",
+    "input": {
+      "content": "Anti-pattern: \"simplifying\" a cleanup/teardown by removing a conditional identity guard before a destructive map eviction. In cleanup_setup(store, workspace_id, setup_id), the original code only popped store.active[workspace_id] when the currently-active association's setup_id matched the one being cleaned up (`if association and association[\"setup_id\"] == setup_id`). Replacing this with an unconditional `store.active.pop(workspace_id, None)` is a correctness regression: when a newer setup has superseded the old one for the same workspace, a delayed/stale cleanup of the OLD setup_id will now evict the NEWER active association. Rule: a guard that compares an owner/identity field (setup_id, version, owner token) before a destructive delete on shared state is load-bearing \u2014 removing it as \"dead code\" during simplification silently changes behavior under supersession/concurrency. Flag any diff that deletes an identity-match check preceding pop/del/remove on shared maps.",
+      "source": "kk:review-findings"
+    },
+    "name": "mcp__capy__capy_index",
+    "type": "tool_use"
+  },
+  "id": "e106.0",
+  "parent_tool_use_id": null,
+  "session_id": "9e9fa88e-f2f4-4275-b897-90ac2a387ed3",
+  "source_sequence": 106
+}

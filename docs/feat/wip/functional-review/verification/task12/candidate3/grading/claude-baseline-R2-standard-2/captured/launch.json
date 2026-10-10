@@ -1,0 +1,65 @@
+{
+  "actor": {
+    "archive_sha256": "645174753421c14bfb525c8060c9d313b0bfa5a6f486413590444930fc937131",
+    "excluded_files": 836,
+    "retained_files": 435,
+    "retained_manifest_sha256": "0dedccb8cdb3825f3531d851b5fd83ac9938538c22a3d9c6e299a67b53edf230",
+    "revision": "c2d28c9e3064a0a71a0e5ac3748a9616c794eb61",
+    "source_files": 1271
+  },
+  "case": "R2",
+  "fixture_manifest_sha256": "6f9a92a09acbcab99075e3c1b6df281db2516615309b332f6debafb6bbdb29ca",
+  "initial_files": {
+    ".gitignore": "862263fa1f46c20f0d1e4dac5ffcc75abd55c08211b2c3864c5f8764b9d87793",
+    "README.md": "3b8dfa09095577ad762ea88eaac5a4c90b82217268a107650b1ac416246d7a24",
+    "client.py": "1e865ea95d7e0d9e046164211b17cff9280ad7e2baf4588a391f9bf1834d95be",
+    "service.py": "3eb9e3f974c98b8d9144850d40217b25622ca93585c60040e878aff896f3a98d",
+    "store.py": "a91dd6c4dc2121f669dcca990c0a1a9b01f27b85b0ceee57d34405002e96cac3",
+    "tests/test_save.py": "093b2811639c38ea458eecb07e3b47aa1550f29a7e02634c2149a32b46bb2420"
+  },
+  "initial_knowledge": "empty; database absent",
+  "knowledge_path": "/tmp/fr-task12-c3-claude-baseline-R2-standard-2/.runner/knowledge.db",
+  "mcp": {
+    "capy": {
+      "args": [
+        "-u",
+        "CAPY_VAULT_KEY",
+        "-u",
+        "CAPY_DB_KEY",
+        "CAPY_DB_KEY=synthetic-functional-review-probe-key-20261008",
+        "CAPY_VAULT_PATH=/tmp/fr-task12-c3-claude-baseline-R2-standard-2/.runner/vault",
+        "XDG_CONFIG_HOME=/tmp/fr-task12-c3-claude-baseline-R2-standard-2/.runner/xdg",
+        "/home/sergio/.local/bin/capy",
+        "--project-dir",
+        "/tmp/fr-task12-c3-claude-baseline-R2-standard-2",
+        "serve"
+      ],
+      "command": "env",
+      "environment_keys": []
+    },
+    "pal": {
+      "args": [
+        "-c",
+        "$HOME/.local/bin/uvx --from git+https://github.com/serpro69/pal-mcp-server.git pal-mcp-server"
+      ],
+      "command": "sh",
+      "environment_keys": []
+    }
+  },
+  "mode": "standard",
+  "models": {
+    "claude": "claude-opus-4-8[1m]/high",
+    "codex": "gpt-6-astra/xhigh",
+    "codex_reviewer": "gpt-6.1-sol/xhigh",
+    "pal": "gemini-3.1-pro-preview/max"
+  },
+  "prompt": "I've staged the save recovery update. Run `/kk:review-code` against it.",
+  "provider": "claude",
+  "purpose": "measured workflow",
+  "read_confinement": "No OS-wide confinement; audit actual reads for evaluator material",
+  "review_base": "feeb199add2b6ae7b800a45b7b6856ab45ad2a67",
+  "rubric_sha256": "d2a8b209c109b6f07beaf677d00709dec476288ecb6bbb46103661ab1590cae6",
+  "side": "baseline",
+  "vault": "unavailable; private path and unset key",
+  "workspace": "/tmp/fr-task12-c3-claude-baseline-R2-standard-2"
+}

@@ -1,0 +1,19 @@
+{
+  "actor": "main",
+  "block": {
+    "caller": {
+      "type": "direct"
+    },
+    "id": "toolu_01QCgjrpAupra6EzPEpn7EVC",
+    "input": {
+      "command": "BUNDLE=$(mktemp -d /tmp/kk-evidence-XXXXXX) && echo \"BUNDLE=$BUNDLE\" && git show eval-release:provider/settings.py > \"$BUNDLE/provider_settings_eval-release.py\" && REV=$(git rev-parse eval-release) && BLOB=$(git rev-parse eval-release:provider/settings.py) && echo \"=== provider/settings.py @ eval-release ===\" && cat \"$BUNDLE/provider_settings_eval-release.py\" && echo \"=== PROVENANCE ===\" && printf 'repo: %s\\nrevision(tag eval-release): %s\\noriginal_path: provider/settings.py\\nblob_sha: %s\\n' \"$(basename $PWD)\" \"$REV\" \"$BLOB\" > \"$BUNDLE/manifest.txt\" && cat \"$BUNDLE/manifest.txt\" && wc -l \"$BUNDLE/provider_settings_eval-release.py\"",
+      "description": "Extract eval-release provider source into evidence bundle"
+    },
+    "name": "Bash",
+    "type": "tool_use"
+  },
+  "id": "e114.0",
+  "parent_tool_use_id": null,
+  "session_id": "21198cb7-2cf8-4170-8a6b-2903937df7f6",
+  "source_sequence": 114
+}

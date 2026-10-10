@@ -1,0 +1,19 @@
+{
+  "actor": "main",
+  "block": {
+    "caller": {
+      "type": "direct"
+    },
+    "id": "toolu_01FEEHJ6QiELtQRPjrzmYMuQ",
+    "input": {
+      "content": "Pattern: \"simplification\" refactors that delete a conditional guard before a mutating call. In cleanup.py cleanup_setup(store, workspace_id, setup_id), the guard `if association and association[\"setup_id\"] == setup_id` before `store.active.pop(workspace_id, None)` was removed. This is NOT dead code \u2014 it enforces that a workspace's active association is only cleared when it belongs to the setup being cleaned up. Removal makes a cleanup of a stale/superseded setup unconditionally clobber the workspace's *currently active* setup. Signal of the asymmetry: `store.pending` is keyed per-setup_id while `store.active` is keyed per-workspace_id, implying multiple setups per workspace can coexist, so cleanup is callable for a non-active setup. Lesson: a guard comparing an identity field before a pop/delete is a correctness invariant; verify no stale-call path exists before deleting it.",
+      "source": "kk:review-findings"
+    },
+    "name": "mcp__capy__capy_index",
+    "type": "tool_use"
+  },
+  "id": "e96.0",
+  "parent_tool_use_id": null,
+  "session_id": "78da4fb7-80cc-4589-854b-125bc98125cb",
+  "source_sequence": 96
+}

@@ -1,0 +1,19 @@
+{
+  "actor": "main",
+  "block": {
+    "caller": {
+      "type": "direct"
+    },
+    "id": "toolu_01RktnKfM7iCgTZaaSCMiiQi",
+    "input": {
+      "content": "Idempotent save/dedup lookup keyed on the wrong field \u2192 silent data loss. In an operation that persists per-key state with retry recovery, changing the existing-record lookup from the idempotency key (operation_id) to a coarser field (workspace) makes any genuinely new operation on an already-seen key resolve to the FIRST stored record. Consequences: (1) new values are never applied (apply() is gated on status==\"pending\" and the found record is already applied/completed), (2) the new operation_id is never inserted into the recovery map, (3) the function still returns {\"ok\": True, operation_id} \u2014 so the caller is told the write succeeded while it was silently dropped. Tests passed because all cases reused the same workspace+operation_id+values; the bug lives in the untested \"second distinct operation on the same workspace\" path. Review check: when reviewing dedup/idempotency code, verify the lookup field matches the map's actual key and that a found record still applies updated inputs; and that re-running the terminal step (e.g. receipt) on an already-completed record can't resurface a transient failure that the completed-state short-circuit previously avoided.",
+      "source": "kk:review-findings"
+    },
+    "name": "mcp__capy__capy_index",
+    "type": "tool_use"
+  },
+  "id": "e193.0",
+  "parent_tool_use_id": null,
+  "session_id": "e658a63f-ca15-431c-a5a7-54dbc835cdc8",
+  "source_sequence": 193
+}

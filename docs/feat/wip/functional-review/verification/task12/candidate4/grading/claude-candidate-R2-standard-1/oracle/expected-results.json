@@ -1,0 +1,31 @@
+{
+  "case": "R2",
+  "findings": [
+    {
+      "path": "service.py",
+      "trigger": "fail_receipt_once=True; submit(w, op-1, blue) raises after apply; submit(w, op-1, green) returns ok",
+      "before": "preferences[w] == green",
+      "after": "preferences[w] == blue",
+      "cause": "applied recovery skips current values",
+      "severity": "P1 or justified P2; REQUEST_CHANGES for explicit acceptance violation"
+    },
+    {
+      "path": "service.py",
+      "trigger": "submit(w, op-1, blue) completes; submit(w, op-2, green) returns op-2 success",
+      "before": "preferences[w] == green; op-2 recovery exists",
+      "after": "preferences[w] == blue; only completed op-1 recovery exists",
+      "cause": "lookup by workspace includes completed unrelated operations",
+      "severity": "P1 or justified P2; REQUEST_CHANGES for explicit acceptance violation"
+    }
+  ],
+  "negative_controls": [
+    "Same-input retry and completed-ID receipt reuse work in both snapshots.",
+    "A remedy must support edited retries; rejecting edits or returning success without applying them does not preserve the explicit contract.",
+    "No concurrency, restart durability or global operation-ID collision behavior is under review."
+  ],
+  "evidence": {
+    "ordering": "completed instruction and source-read events",
+    "behavior": "captured initial snapshots, diff, final findings and any actual reproduction output",
+    "handoff": "actual dispatch arguments and immutable referenced evidence; report unavailable coverage"
+  }
+}

@@ -40,13 +40,13 @@ Read every selected file: an index or requested path is not returned instruction
 
 ## Step 5: Investigate and Prepare Evidence
 
-This is the single entry point for subject-matter investigation. Read the selected full diff and changed files at the reviewed candidate, accounting for deletions. For staged review use index blobs; for a commit range use the selected candidate revision. Materialize those candidate sources outside the worktree when its current files differ; never pass unrelated worktree bytes as reviewed source. Large diffs (>500 lines) may be batched by module; report any context limit.
+This is the single entry point for subject-matter investigation. Locate and read available component README/contract documentation and relevant design/task contracts first; establish explicit intent and preserved invariants, labeling inference when no contract exists. Then read the selected full diff and changed files at the reviewed candidate, accounting for deletions. For staged review use index blobs; for a commit range use the selected candidate revision. Materialize those candidate sources outside the worktree when its current files differ; never pass unrelated worktree bytes as reviewed source. Large diffs (>500 lines) may be batched by module; report any context limit.
 
 Write the selected diff to a temporary file outside the reviewed worktree, using `mktemp` and the same selector. Keep evidence until both reviewers and any follow-ups finish.
 
 ### Context and affected paths
 
-- Read relevant design/task contracts when available. Build the Task Scope block with the shared scope protocol, including the invoking implementation task even if still in progress. Without a related feature, use its no-task-scope variant.
+- Build the Task Scope block from those contracts with the shared scope protocol, including the invoking implementation task even if still in progress. Without a related feature, use its no-task-scope variant.
 - Establish or refresh the shared change context: intent/authority, task boundary, preserved behavior, delivery constraints, review base/candidate, separate compatibility baselines, scenarios and attributed verification results. Without a spec, infer provisional purpose from the request, diff, callers and tests; label it. Functional reasoning remains required.
 - Trace affected behavior using the common method, including unchanged consumers and required compatibility combinations. Select source by the contract question it answers, not directory proximity. Search `kk:review-findings` and, for active programming-language profiles, `kk:lang-idioms`.
 - Include concrete rejected-approach facts if useful, with their source; omit implementation-session narrative. Author explanations and test claims remain attributed evidence that reviewers may challenge.

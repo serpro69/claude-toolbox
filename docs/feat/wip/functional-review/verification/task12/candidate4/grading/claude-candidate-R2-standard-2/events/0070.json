@@ -1,0 +1,19 @@
+{
+  "actor": "main",
+  "block": {
+    "caller": {
+      "type": "direct"
+    },
+    "id": "toolu_01ShP4BmjYG77wW7a95cCFZ2",
+    "input": {
+      "command": "python3 -B -c '\nfrom store import Store\nfrom service import save\n\n# Scenario 1 (README: \"A fresh operation ID must perform a fresh save, even for the same workspace\")\ns = Store()\nprint(\"op-1 blue:\", save(s, \"w\", \"op-1\", {\"color\":\"blue\"}))\nprint(\"op-2 red :\", save(s, \"w\", \"op-2\", {\"color\":\"red\"}))\nprint(\"  preferences[w] =\", s.preferences[\"w\"], \" (README says latest=red should be active)\")\nprint(\"  recovery keys   =\", list(s.recovery.keys()), \" (op-2 record created?)\")\nprint()\n\n# Scenario 2 (README: \"retried with the same ID and edited values; latest submitted values are active\")\ns2 = Store()\ns2.fail_receipt_once = True\ntry:\n    save(s2, \"w\", \"op-1\", {\"color\":\"blue\"})\nexcept Exception as e:\n    print(\"first attempt raised:\", type(e).__name__)\nprint(\"retry op-1 EDITED green:\", save(s2, \"w\", \"op-1\", {\"color\":\"green\"}))\nprint(\"  preferences[w] =\", s2.preferences[\"w\"], \" (README says latest=green should be active)\")\n'",
+      "description": "Reproduce README-specified scenarios against candidate"
+    },
+    "name": "Bash",
+    "type": "tool_use"
+  },
+  "id": "e198.0",
+  "parent_tool_use_id": null,
+  "session_id": "4589b102-e532-431d-aec8-321ad765443b",
+  "source_sequence": 198
+}

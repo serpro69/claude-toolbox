@@ -1,0 +1,19 @@
+{
+  "actor": "main",
+  "block": {
+    "caller": {
+      "type": "direct"
+    },
+    "id": "toolu_01VLfpBkcJN9Ex3RnvagDaF4",
+    "input": {
+      "content": "Anti-pattern (P0, correctness/compat): A client that hard-requires a NEW field in the provider's response (e.g. `if response.get(\"applied\") is not True: raise`) breaks compatibility with any supported provider version that doesn't emit that field. `dict.get()` returns None for absent keys, so a strict `is not True` check turns a genuinely successful operation into a raised error \u2014 the caller sees failure for a save the provider actually applied.\n\nContext where seen: settings client `save_settings` enforced an `applied` acknowledgement, but the supported released provider (git tag `eval-release`, `provider/settings.py`) returns only `{\"ok\": True}` and ignores the client's new `require_receipt` flag. The check fired unconditionally (not gated by the feature's `enhanced_settings` flag), so EVERY ordinary save broke.\n\nRules of thumb:\n- Verify the actual supported provider/API version's response shape before requiring a new field. Don't assume a pending/candidate provider change is deployed.\n- Gate new provider-capability requirements behind a feature flag and/or capability negotiation; treat absent acknowledgement fields as \"unknown\", not \"failed\".\n- Test fakes must mirror the REAL supported contract. A fake that returns the new field (`{\"ok\": True, \"applied\": True}`) while the real provider returns `{\"ok\": True}` masks the regression and gives false green tests.",
+      "source": "kk:review-findings"
+    },
+    "name": "mcp__capy__capy_index",
+    "type": "tool_use"
+  },
+  "id": "e137.0",
+  "parent_tool_use_id": null,
+  "session_id": "7eaf83f1-b7f0-42de-89b2-42b2085febfa",
+  "source_sequence": 137
+}

@@ -1,0 +1,12 @@
+{
+  "actor": "main",
+  "block": {
+    "content": "1\tdef save(store, workspace, operation_id, values):\n2\t    record = next((item for item in store.recovery.values()\n3\t                   if item[\"workspace\"] == workspace), None)\n4\t    if record is None:\n5\t        record = {\"operation_id\": operation_id, \"workspace\": workspace,\n6\t                  \"status\": \"pending\", \"values\": dict(values)}\n7\t        store.recovery[operation_id] = record\n8\t    if record[\"status\"] == \"pending\":\n9\t        store.apply(workspace, record[\"values\"])\n10\t        record[\"status\"] = \"applied\"\n11\t    store.receipt(record)\n12\t    return {\"ok\": True, \"operation_id\": operation_id}\n13\t",
+    "tool_use_id": "toolu_018XSbPSa9EsjmZpa6r7SZq5",
+    "type": "tool_result"
+  },
+  "id": "e85.0",
+  "parent_tool_use_id": null,
+  "session_id": "4589b102-e532-431d-aec8-321ad765443b",
+  "source_sequence": 85
+}

@@ -1,0 +1,102 @@
+diff --git a/klaude-plugin/skills/review-code/SKILL.md b/klaude-plugin/skills/review-code/SKILL.md
+index 8c2e09b8..4ceca462 100644
+--- a/klaude-plugin/skills/review-code/SKILL.md
++++ b/klaude-plugin/skills/review-code/SKILL.md
+@@ -67,7 +67,7 @@ This ordering is load-bearing, not stylistic. Reviewing from a diff before loadi
+ 
+ 1. Load basic instructions — process, shared protocols and common functional method
+ 2. Scope — resolve diff selection from status/filenames only
+-3. Detect profiles and route checklists — filename/metadata signals, then bounded declared predicates; no deferred conditionals
++3. Detect profiles and route checklists — read and reconcile every known detection rule; filename/metadata signals, then bounded declared predicates; no deferred conditionals
+ 4. Read every resolved checklist — always-load, matching and conservatively selected content; confirm returned instruction files in a compact loading checkpoint before proceeding
+ 5. Investigate — read selected diff/current files, establish change context/task scope, trace behavior and historical compatibility, and search relevant knowledge
+ 6. Apply profile and general checklists to that behavior
+diff --git a/klaude-plugin/skills/review-code/functional-review.md b/klaude-plugin/skills/review-code/functional-review.md
+index 6174c801..7ee3dd37 100644
+--- a/klaude-plugin/skills/review-code/functional-review.md
++++ b/klaude-plugin/skills/review-code/functional-review.md
+@@ -4,9 +4,9 @@ Apply this common method after loading all instructions and resolved profile gui
+ 
+ ## Trace the affected behavior
+ 
+-1. Establish or reconstruct the record in [shared-change-context.md](shared-change-context.md). Determine intent, authority, task boundary, existing contracts and applicable delivery constraints before judging the approach. Use [shared-review-scope-protocol.md](shared-review-scope-protocol.md) to distinguish current work from genuinely pending functionality.
++1. Establish or reconstruct the record in [shared-change-context.md](shared-change-context.md). Determine intent, authority, task boundary, existing contracts and applicable delivery constraints before judging the approach. Read the affected component's README or contract documentation when available: lifecycle and failure semantics may be documented there rather than encoded in the changed function or tests. Use [shared-review-scope-protocol.md](shared-review-scope-protocol.md) to distinguish current work from genuinely pending functionality.
+ 2. Describe relevant behavior before and after the change. Trace changed entry points/callers through meaningful dependencies to responses, side effects or durable state. Include unchanged consumers whose expectations may now fail. Read adjacent source to answer an identified contract/impact question; stop expanding once its contract and consequence are established, or name the uncovered boundary. A file-count cap must not silently cut off a necessary trace.
+-3. Exercise that model with concrete success and boundary scenarios. Where applicable, include partial failure, retries, edits between attempts, cleanup and later reuse. Check which tests actually exercise the claimed contract and failure path. Green implementation-shaped tests or successful transport/status responses do not prove a successful business operation. Distinguish inspected source, executed tests and unverified assumptions; do not claim execution from source-only access.
++3. Exercise that model with concrete success and boundary scenarios. Where applicable, include partial failure, retries, edits between attempts, cleanup and later reuse. Trace the documented scenario's actual state transitions through the unchanged consumer; a similar hypothetical sequence does not establish the documented failure/recovery path. Check which tests actually exercise the claimed contract and failure path. Green implementation-shaped tests or successful transport/status responses do not prove a successful business operation. Distinguish inspected source, executed tests and unverified assumptions; do not claim execution from source-only access.
+ 4. Compare the approach with requirements and existing conventions. Challenge complexity by naming its cost and a simpler alternative preserving required behavior. Retain necessary retry/recovery guarantees. More abstraction is not inherently better; a hypothetical race is not automatically a new requirement.
+ 5. Assess relevant compatibility combinations below, then apply profile expertise and substantiate findings. One issue spanning several lenses remains one finding.
+ 
+diff --git a/klaude-plugin/skills/review-code/review-process.md b/klaude-plugin/skills/review-code/review-process.md
+index 512f6615..24a48e29 100644
+--- a/klaude-plugin/skills/review-code/review-process.md
++++ b/klaude-plugin/skills/review-code/review-process.md
+@@ -33,6 +33,8 @@ A large diff (>500 lines) needs focused batching, not an early content dump. A f
+ 
+ Invoke [shared-profile-detection.md](shared-profile-detection.md) with the scoped filenames. Read each known profile's `DETECTION.md` and evaluate its authoritative signals; do not stop enumerating after an obvious extension match. Path matches alone do not activate a profile. Multiple profiles may apply. Resolve the plugin root from this skill's loaded location (parent of `skills/`) and construct absolute profile paths; do not forward unresolved root tokens into tools.
+ 
++Batch the Known-profile reads together when supported, then reconcile expected paths with completed lookups. Record each rule's match/non-match or the shared procedure's explicit unavailable-file outcome; apply that procedure's ENOENT and root-resolution fallbacks. A skipped lookup leaves routing incomplete even when a file extension suggests an obvious profile. This prevents an assumed negative from hiding an additional applicable profile.
++
+ For every active profile, read its `profiles/<profile>/review-code/index.md`. Collect **Always load** entries. Evaluate filename/metadata **Load if:** predicates first. For declared content predicates in detection or conditional loading, inspect at most approximately 16 KiB per candidate file, solely to resolve the predicate; log predicate/path. Apply the detection protocol's YAML document rules where relevant. If a conditional cannot be decided within the bound, conservatively select its instruction. Do not defer any conditional until after full source investigation.
+ 
+ Collect `(profile, checklist, triggered_by)` records for all matching/conservatively selected entries, carrying detection provenance and noting conservative selections. Indexes are authoritative; never hardcode checklist names. No profile means an empty list, not omission of the common method.
+@@ -41,7 +43,7 @@ Collect `(profile, checklist, triggered_by)` records for all matching/conservati
+ 
+ Read each selected `profiles/<profile>/review-code/<checklist>` using the resolved absolute plugin root. An index read is routing, not checklist loading: every selected link requires its own returned file content, even for a tiny diff. Keep the resolved paths as a loading ledger and mark them loaded only when their read results arrive. Do not batch investigation commands with these reads.
+ 
+-Before proceeding, emit a compact loading checkpoint naming the completed common-instruction reads and the loaded checklist paths (or explicitly no active profiles). Any selected path without returned content keeps the gate closed; surface unreadable instructions and stop. This checkpoint records evidence already obtained, not a promise to load guidance later. It catches accidental index-to-diff shortcuts without creating a separate artifact or replacing the actual read events.
++Before proceeding, emit a compact loading checkpoint naming the completed common-instruction reads, every known profile's detection-lookup outcome, and the loaded checklist paths (or explicitly no active profiles). Any selected path without returned content keeps the gate closed; surface unreadable instructions and stop, except for detection fallbacks explicitly defined by the shared procedure. This checkpoint records evidence already obtained, not a promise to load guidance later. It catches accidental index-to-diff shortcuts without creating a separate artifact or replacing the actual read events.
+ 
+ ### 5) Investigate behavior and compatibility
+ 
+diff --git a/kodex-plugin/skills/review-code/SKILL.md b/kodex-plugin/skills/review-code/SKILL.md
+index cafd97cc..6d18b430 100644
+--- a/kodex-plugin/skills/review-code/SKILL.md
++++ b/kodex-plugin/skills/review-code/SKILL.md
+@@ -68,7 +68,7 @@ This ordering is load-bearing, not stylistic. Reviewing from a diff before loadi
+ 
+ 1. Load basic instructions — process, shared protocols and common functional method
+ 2. Scope — resolve diff selection from status/filenames only
+-3. Detect profiles and route checklists — filename/metadata signals, then bounded declared predicates; no deferred conditionals
++3. Detect profiles and route checklists — read and reconcile every known detection rule; filename/metadata signals, then bounded declared predicates; no deferred conditionals
+ 4. Read every resolved checklist — always-load, matching and conservatively selected content; confirm returned instruction files in a compact loading checkpoint before proceeding
+ 5. Investigate — read selected diff/current files, establish change context/task scope, trace behavior and historical compatibility, and search relevant knowledge
+ 6. Apply profile and general checklists to that behavior
+diff --git a/kodex-plugin/skills/review-code/functional-review.md b/kodex-plugin/skills/review-code/functional-review.md
+index 6174c801..7ee3dd37 100644
+--- a/kodex-plugin/skills/review-code/functional-review.md
++++ b/kodex-plugin/skills/review-code/functional-review.md
+@@ -4,9 +4,9 @@ Apply this common method after loading all instructions and resolved profile gui
+ 
+ ## Trace the affected behavior
+ 
+-1. Establish or reconstruct the record in [shared-change-context.md](shared-change-context.md). Determine intent, authority, task boundary, existing contracts and applicable delivery constraints before judging the approach. Use [shared-review-scope-protocol.md](shared-review-scope-protocol.md) to distinguish current work from genuinely pending functionality.
++1. Establish or reconstruct the record in [shared-change-context.md](shared-change-context.md). Determine intent, authority, task boundary, existing contracts and applicable delivery constraints before judging the approach. Read the affected component's README or contract documentation when available: lifecycle and failure semantics may be documented there rather than encoded in the changed function or tests. Use [shared-review-scope-protocol.md](shared-review-scope-protocol.md) to distinguish current work from genuinely pending functionality.
+ 2. Describe relevant behavior before and after the change. Trace changed entry points/callers through meaningful dependencies to responses, side effects or durable state. Include unchanged consumers whose expectations may now fail. Read adjacent source to answer an identified contract/impact question; stop expanding once its contract and consequence are established, or name the uncovered boundary. A file-count cap must not silently cut off a necessary trace.
+-3. Exercise that model with concrete success and boundary scenarios. Where applicable, include partial failure, retries, edits between attempts, cleanup and later reuse. Check which tests actually exercise the claimed contract and failure path. Green implementation-shaped tests or successful transport/status responses do not prove a successful business operation. Distinguish inspected source, executed tests and unverified assumptions; do not claim execution from source-only access.
++3. Exercise that model with concrete success and boundary scenarios. Where applicable, include partial failure, retries, edits between attempts, cleanup and later reuse. Trace the documented scenario's actual state transitions through the unchanged consumer; a similar hypothetical sequence does not establish the documented failure/recovery path. Check which tests actually exercise the claimed contract and failure path. Green implementation-shaped tests or successful transport/status responses do not prove a successful business operation. Distinguish inspected source, executed tests and unverified assumptions; do not claim execution from source-only access.
+ 4. Compare the approach with requirements and existing conventions. Challenge complexity by naming its cost and a simpler alternative preserving required behavior. Retain necessary retry/recovery guarantees. More abstraction is not inherently better; a hypothetical race is not automatically a new requirement.
+ 5. Assess relevant compatibility combinations below, then apply profile expertise and substantiate findings. One issue spanning several lenses remains one finding.
+ 
+diff --git a/kodex-plugin/skills/review-code/review-process.md b/kodex-plugin/skills/review-code/review-process.md
+index 512f6615..24a48e29 100644
+--- a/kodex-plugin/skills/review-code/review-process.md
++++ b/kodex-plugin/skills/review-code/review-process.md
+@@ -33,6 +33,8 @@ A large diff (>500 lines) needs focused batching, not an early content dump. A f
+ 
+ Invoke [shared-profile-detection.md](shared-profile-detection.md) with the scoped filenames. Read each known profile's `DETECTION.md` and evaluate its authoritative signals; do not stop enumerating after an obvious extension match. Path matches alone do not activate a profile. Multiple profiles may apply. Resolve the plugin root from this skill's loaded location (parent of `skills/`) and construct absolute profile paths; do not forward unresolved root tokens into tools.
+ 
++Batch the Known-profile reads together when supported, then reconcile expected paths with completed lookups. Record each rule's match/non-match or the shared procedure's explicit unavailable-file outcome; apply that procedure's ENOENT and root-resolution fallbacks. A skipped lookup leaves routing incomplete even when a file extension suggests an obvious profile. This prevents an assumed negative from hiding an additional applicable profile.
++
+ For every active profile, read its `profiles/<profile>/review-code/index.md`. Collect **Always load** entries. Evaluate filename/metadata **Load if:** predicates first. For declared content predicates in detection or conditional loading, inspect at most approximately 16 KiB per candidate file, solely to resolve the predicate; log predicate/path. Apply the detection protocol's YAML document rules where relevant. If a conditional cannot be decided within the bound, conservatively select its instruction. Do not defer any conditional until after full source investigation.
+ 
+ Collect `(profile, checklist, triggered_by)` records for all matching/conservatively selected entries, carrying detection provenance and noting conservative selections. Indexes are authoritative; never hardcode checklist names. No profile means an empty list, not omission of the common method.
+@@ -41,7 +43,7 @@ Collect `(profile, checklist, triggered_by)` records for all matching/conservati
+ 
+ Read each selected `profiles/<profile>/review-code/<checklist>` using the resolved absolute plugin root. An index read is routing, not checklist loading: every selected link requires its own returned file content, even for a tiny diff. Keep the resolved paths as a loading ledger and mark them loaded only when their read results arrive. Do not batch investigation commands with these reads.
+ 
+-Before proceeding, emit a compact loading checkpoint naming the completed common-instruction reads and the loaded checklist paths (or explicitly no active profiles). Any selected path without returned content keeps the gate closed; surface unreadable instructions and stop. This checkpoint records evidence already obtained, not a promise to load guidance later. It catches accidental index-to-diff shortcuts without creating a separate artifact or replacing the actual read events.
++Before proceeding, emit a compact loading checkpoint naming the completed common-instruction reads, every known profile's detection-lookup outcome, and the loaded checklist paths (or explicitly no active profiles). Any selected path without returned content keeps the gate closed; surface unreadable instructions and stop, except for detection fallbacks explicitly defined by the shared procedure. This checkpoint records evidence already obtained, not a promise to load guidance later. It catches accidental index-to-diff shortcuts without creating a separate artifact or replacing the actual read events.
+ 
+ ### 5) Investigate behavior and compatibility
+ 
