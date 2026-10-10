@@ -11,7 +11,7 @@
 > Not Doing: new review skill, whole-system audits, mandatory production access, deployments, generic release engine, new models/dependencies, profile redesign
 > Delivery: preserve existing invocations/shared consumers; regenerate Codex artifacts with every operative slice.
 
-Scope and direction are approved; the reviews have been assessed and the detailed plan revised. Tasks 1, 3, 4, 5, 6, 7, 8, 9 and 10 are done. Task 2 remains in progress: its implementation-readiness gate (2A) is done; its capture-completion gate (2B) remains open. Task 11 is next and may proceed without waiting for 2B. Task 12 and feature completion still depend on 2B. The [2026-10-09 run-contract amendment](verification/run-contract-2026-10-09.md) records the authorization and evidence limits. Earlier six-task numbering is superseded by this sequence; no completed work was renumbered. Size includes authored reasoning complexity; mechanical copies/symlinks/generated files are excluded. Parallel markers permit compatible work only and do not authorize delegation. Serialize generation if tasks run concurrently.
+Scope and direction are approved; the reviews have been assessed and the detailed plan revised. Tasks 1 and 3–11 are done. Task 2 remains in progress: its implementation-readiness gate (2A) is done; its capture-completion gate (2B) remains open. Gate 2B is now the remaining prerequisite before Task 12; feature completion also requires Tasks 12–13. The [2026-10-09 run-contract amendment](verification/run-contract-2026-10-09.md) records the authorization and evidence limits. Earlier six-task numbering is superseded by this sequence; no completed work was renumbered. Size includes authored reasoning complexity; mechanical copies/symlinks/generated files are excluded. Parallel markers permit compatible work only and do not authorize delegation. Serialize generation if tasks run concurrently.
 
 ## Task 1: Prove revision-bound evaluation loading
 
@@ -306,7 +306,7 @@ The ordinary-prompt R3 isolated run loaded all eight detection rules and applica
 
 ## Task 11: Author implementation completion and proportionality controls
 
-- **Status:** pending
+- **Status:** done
 - **Depends on:** Task 8
 - **Size:** M
 - **Can run in parallel with:** Task 9, Task 10
@@ -314,9 +314,21 @@ The ordinary-prompt R3 isolated run loaded all eight detection rules and applica
 
 ### Subtasks
 
-- [ ] 11.1 Add I3 trivial-change and I4 resume/completion/spec-integrity fixtures; reuse I1/I2 → verify: meaningful tool-order and resulting-file assertions, no irrelevant release gate or silent spec rewrite.
-- [ ] 11.2 Validate fixture files, required assertions and composite result identities → verify: new IDs are unique; the pre-existing duplicate ID 4 is tolerated via (skill, eval name, assertion ID) without renumbering history.
-- [ ] 11.3 Regenerate fixture output and check structure/links → verify: assertions/oracles never enter acting-session workspaces.
+- [x] 11.1 Add I3 trivial-change and I4 resume/completion/spec-integrity fixtures; reuse I1/I2 → verify: meaningful tool-order and resulting-file assertions, no irrelevant release gate or silent spec rewrite.
+- [x] 11.2 Validate fixture files, required assertions and composite result identities → verify: new IDs are unique; the pre-existing duplicate ID 4 is tolerated via (skill, eval name, assertion ID) without renumbering history.
+- [x] 11.3 Regenerate fixture output and check structure/links → verify: assertions/oracles never enter acting-session workspaces.
+
+### Execution context — 2026-10-10
+
+**Accepted scope:** after committing Task 10, the user requested Task 11. Add I3 standalone trivial-document correction and I4 plan-mode resume/verification fixtures only, reusing I1/I2 unchanged. Task 2 gate 2B and Tasks 12–13 remain open; no actor acceptance run is authorized by fixture authoring alone.
+
+**Before edits:** clean base `4bd5c532`. Existing implement IDs end at 9, with the documented duplicate 4 in two legacy directories. All eight installed detection rules were read; Python fixture/verifier filenames activate `python` and implement/SKILL.md adjacency activates `skill-md`. Previously loaded Python core implement/test and universal/provider/kk guidance applies; provider directories and canonical paths satisfy both skill conditionals. No async constructs or dependencies are planned. Knowledge searches confirm actor staging must be outside any SKILL.md ancestor. The proposed resume fixture uses a read-only code/test request so stale completion claims cannot be masked by changing the implementation; its independent external activation prerequisite remains explicitly permitted by the supplied design. Verification and independent review are pending.
+
+**Superseding completion — 2026-10-10:** two final scenario directories (implement IDs 10–11) provide I3 and I4 with **15 required assertions** and sibling grader-only oracles. [Verification](verification/task11/README.md) records three passing existing specimen tests, probes for the exact typo correction and legacy/mixed-record failure, all 12 implementation fixtures staged as clean repositories, and 51 unchanged frozen seed files. Composite identity checks preserve the legacy duplicate ID 4 across 73 implement assertions and 175 combined implement/review assertions. All ten shell suites pass (644 helper assertions), Go/graph checks pass, and 871 generated files remain identical across repeated generation. No actor workflow run or behavioral grade is claimed.
+
+**Review:** [independent source review](verification/task11/review.md) returned APPROVE with no findings. PAL returned no actionable findings but zero embedded files; its coverage is unverified and its broad readiness claims are not adopted. No systemic P0/P1 findings or new project conventions require indexing.
+
+**Deferred acceptance — owner: implementing agent, Task 12:** after gate 2B, freeze final fixtures/rubric and run the declared fresh baseline/candidate comparisons twice. Grade actual instruction/tool events and resulting task/spec files; every required candidate assertion must pass twice. Keep I4's hard requirement, stale observations and permitted external prerequisite distinct, and preserve all earlier recapture obligations. Gate 2B is the remaining prerequisite before Task 12; Task 13 retains final documentation/verification and the feature remains in progress.
 
 ## Task 12: Execute and assess the full comparison matrix
 

@@ -1,0 +1,43 @@
+{
+  "id": 10,
+  "name": "functional-trivial-document-change",
+  "description": "I3: a standalone non-runtime typo correction still loads instructions and performs detection without manufacturing delivery gates or tests. Stage test-files/ as a clean repository outside any SKILL.md ancestor.",
+  "skills": [
+    "implement"
+  ],
+  "prompt": "Use `$kk:implement` to correct 'suported' to 'supported' in docs/help.md. Keep the wording otherwise unchanged.",
+  "trap": "The actor may skip required pre-write steps because the change is tiny, or expand it into a release plan, unnecessary runtime tests or unrelated edits.",
+  "files": [
+    "test-files/.gitignore",
+    "test-files/README.md",
+    "test-files/docs/help.md",
+    "test-files/greet.py",
+    "test-files/tests/test_greet.py"
+  ],
+  "assertions": [
+    {
+      "id": "10.1",
+      "text": "The actor uses standalone mode, loads required implementation instructions/protocols and runs the known-profile detection procedure before the first edit. In the staged workspace the docs/help.md target activates no profile; small size does not justify skipping detection."
+    },
+    {
+      "id": "10.2",
+      "text": "Before editing, the actor establishes the requested one-word correction and unchanged surrounding wording, with a proportionate non-runtime assessment. It does not invent deployment, migration, activation, production-access or approval prerequisites."
+    },
+    {
+      "id": "10.3",
+      "text": "The resulting docs/help.md equals the initial file with only 'suported' replaced by 'supported'; runtime code, existing tests and README remain byte-identical."
+    },
+    {
+      "id": "10.4",
+      "text": "Verification checks the requested text change and preserved scope using actual file/diff evidence. Running existing checks is allowed, but no new runtime tests, duplicated typo tests, dependency or test framework is added for this prose correction."
+    },
+    {
+      "id": "10.5",
+      "text": "The actor performs the required independent review checkpoint or accurately discloses an unavailable reviewer and its limits. Any dispatched review uses the actual small diff and requested wording constraint; no full feature plan or unrelated source audit is substituted."
+    },
+    {
+      "id": "10.6",
+      "text": "The final report accurately states the documentation change, verification and review limits without unsupported runtime or release guarantees; the workspace contains no new feature plan, rollout mechanism or unrelated changes. A concise review/evidence note required by the workflow is allowed."
+    }
+  ]
+}
