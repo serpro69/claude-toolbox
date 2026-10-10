@@ -1,0 +1,28 @@
+{
+  "actor": "items-01a125d3-808b-7793-ab95-52fe40107cad",
+  "completedAtMs": 1791636076303,
+  "id": "exec-bd61409f-348a-4223-a418-274127b110c5",
+  "item": {
+    "aggregatedOutput": "HEAD client: outcome={'saved': True, 'enhanced': False}; storage={'w': {'label': 'blue'}}; requests=[{'settings': {'label': 'blue'}}]\nstaged client: outcome='RuntimeError: Provider did not acknowledge applied settings'; storage={'w': {'label': 'blue'}}; requests=[{'settings': {'label': 'blue'}, 'require_receipt': True}]\n",
+    "command": "/usr/bin/zsh -lc \"python3 -B - <<'PY'\nimport subprocess\nfrom client import save_settings\n\nprovider = {}\nexec(compile(subprocess.check_output(['git', 'show', 'eval-release:provider/settings.py'], text=True), 'eval-release:provider/settings.py', 'exec'), provider)\nprevious_client = {}\nexec(compile(subprocess.check_output(['git', 'show', 'HEAD:client.py'], text=True), 'HEAD:client.py', 'exec'), previous_client)\nfor label, save in [('HEAD client', previous_client['save_settings']), ('staged client', save_settings)]:\n    storage = {}\n    requests = []\n    def send(workspace, request):\n        requests.append(request)\n        return provider['update_settings'](storage, workspace, request)\n    try:\n        outcome = save(send, 'w', {'label': 'blue'}, enhanced_settings=False)\n    except RuntimeError as error:\n        outcome = f'{type(error).__name__}: {error}'\n    print(f'{label}: outcome={outcome\"'!r}; storage={storage!r}; requests={requests!r}'\"')\nPY\"",
+    "commandActions": [
+      {
+        "command": "python3 -B - <<'PY'\nimport subprocess\nfrom client import save_settings\n\nprovider = {}\nexec(compile(subprocess.check_output(['git', 'show', 'eval-release:provider/settings.py'], text=True), 'eval-release:provider/settings.py', 'exec'), provider)\nprevious_client = {}\nexec(compile(subprocess.check_output(['git', 'show', 'HEAD:client.py'], text=True), 'HEAD:client.py', 'exec'), previous_client)\nfor label, save in [('HEAD client', previous_client['save_settings']), ('staged client', save_settings)]:\n    storage = {}\n    requests = []\n    def send(workspace, request):\n        requests.append(request)\n        return provider['update_settings'](storage, workspace, request)\n    try:\n        outcome = save(send, 'w', {'label': 'blue'}, enhanced_settings=False)\n    except RuntimeError as error:\n        outcome = f'{type(error).__name__}: {error}'\n    print(f'{label}: outcome={outcome!r}; storage={storage!r}; requests={requests!r}')\nPY",
+        "type": "unknown"
+      }
+    ],
+    "cwd": "/tmp/functional-review-2b-r3-2-20261010",
+    "durationMs": 71,
+    "exitCode": 0,
+    "id": "exec-bd61409f-348a-4223-a418-274127b110c5",
+    "pluginId": null,
+    "processId": "44578",
+    "scriptPath": null,
+    "source": "unifiedExecStartup",
+    "status": "completed",
+    "type": "commandExecution"
+  },
+  "source_file": "items-01a125d3-808b-7793-ab95-52fe40107cad.json",
+  "startedAtMs": 1791636076232,
+  "turnId": "01a125d3-80bf-7f41-9e7d-2b1a7dbbdd42"
+}

@@ -1,0 +1,19 @@
+{
+  "actor": "main",
+  "block": {
+    "caller": {
+      "type": "direct"
+    },
+    "id": "toolu_01NYQTqYaj8MeoVQG8uKaP5k",
+    "input": {
+      "content": "Pattern: Unconditional enforcement of a new protocol requirement breaks independent releasability (lockstep-deploy anti-pattern).\n\nContext: enhanced-settings feature, client.py `save_settings`. A two-sided protocol change (client + provider in separate repos, shipped as separate tasks) added an \"application receipt\": the client sends `require_receipt: True` and hard-raises `RuntimeError` when `response.get(\"applied\") is not True`.\n\nDefect: the new check was unconditional \u2014 not gated on the `enhanced_settings` feature flag and not tolerant of a provider that predates the receipt protocol. Because the provider increment (Task 2) ships separately/later, a receipt-unaware provider returns no `applied` key \u2192 `None is not True` is truthy \u2192 every ordinary save raises. This forces lockstep client+provider deployment, violating the design's \"independently releasable main\" and \"ordinary saves must continue to work at eval-release.\"\n\nLesson / review heuristic: when a diff adds a client-side assertion about a response field that the counterpart service only produces after a separate, not-yet-shipped increment, flag it as a backward-compatibility / independent-releasability break. Correct shape: gate the new strictness behind the feature flag, and distinguish \"field absent\" (legacy peer \u2192 tolerate) from \"field explicitly False\" (peer reported not-applied \u2192 reject). Corroborated independently by code-reviewer (P0) and pal/gemini (HIGH).",
+      "source": "kk:review-findings"
+    },
+    "name": "mcp__capy__capy_index",
+    "type": "tool_use"
+  },
+  "id": "e180.0",
+  "parent_tool_use_id": null,
+  "session_id": "86090207-213f-443b-b0bd-506bf08c00d9",
+  "source_sequence": 180
+}

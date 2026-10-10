@@ -1,0 +1,30 @@
+{
+  "actor": "items-01a125d4-9c83-70d2-aa0e-34de0aff795d",
+  "completedAtMs": 1791636082391,
+  "id": "exec-d6e41836-3b0c-4855-9fc6-38b9e012fb7d",
+  "item": {
+    "aggregatedOutput": "README.md:4:The client and provider ship independently. Every merged client increment must\nREADME.md:5:support the released provider at Git tag `eval-release`, including ordinary\nREADME.md:9:A successful settings save means values were applied and the caller sees success.\nclient.py:1:def save_settings(send, workspace_id, values, enhanced_settings=False):\nclient.py:2:    response = send(workspace_id, {\"settings\": values, \"require_receipt\": True})\nclient.py:5:    if response.get(\"applied\") is not True:\nclient.py:6:        raise RuntimeError(\"Provider did not acknowledge applied settings\")\ndocs/feat/wip/enhanced-settings/design.md:3:Ordinary saves must continue to work with the supported provider at eval-release.\ndocs/feat/wip/enhanced-settings/design.md:5:in client and provider increments while preserving independently releasable main.\ntests/test_client.py:2:from client import save_settings\ntests/test_client.py:8:            return {\"ok\": True, \"applied\": True}\ntests/test_client.py:9:        self.assertEqual(save_settings(send, \"w\", {\"label\": \"blue\"}),\n",
+    "command": "/usr/bin/zsh -lc \"rg -n 'save_settings|require_receipt|applied|eval-release|independently' client.py tests README.md docs/feat/wip/enhanced-settings\"",
+    "commandActions": [
+      {
+        "command": "rg -n 'save_settings|require_receipt|applied|eval-release|independently' client.py tests README.md docs/feat/wip/enhanced-settings",
+        "path": "client.py",
+        "query": "save_settings|require_receipt|applied|eval-release|independently",
+        "type": "search"
+      }
+    ],
+    "cwd": "/tmp/functional-review-2b-r3-2-20261010",
+    "durationMs": 56,
+    "exitCode": 0,
+    "id": "exec-d6e41836-3b0c-4855-9fc6-38b9e012fb7d",
+    "pluginId": null,
+    "processId": "50431",
+    "scriptPath": null,
+    "source": "unifiedExecStartup",
+    "status": "completed",
+    "type": "commandExecution"
+  },
+  "source_file": "items-01a125d4-9c83-70d2-aa0e-34de0aff795d.json",
+  "startedAtMs": 1791636082335,
+  "turnId": "01a125d4-9ca2-7c23-bb3a-fca390e08b2c"
+}

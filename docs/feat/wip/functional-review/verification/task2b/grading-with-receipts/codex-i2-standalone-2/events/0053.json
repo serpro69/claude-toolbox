@@ -1,0 +1,30 @@
+{
+  "actor": "items-01a125d5-30c6-71c0-8848-d16bfc15fb7c",
+  "completedAtMs": 1791636112066,
+  "id": "exec-bc1e9169-5358-43a3-800e-ad8bffc9a8fb",
+  "item": {
+    "aggregatedOutput": "import unittest\nfrom api import update_preferences\nfrom cli import clear_note\nfrom settings import patch_settings\n\n\nclass SettingsTests(unittest.TestCase):\n    def test_updates_note(self):\n        original = {\"note\": \"before\", \"enabled\": True}\n        result = update_preferences(original, {\"note\": \"after\"})\n        self.assertEqual(result, {\"note\": \"after\", \"enabled\": True})\n        self.assertEqual(original[\"note\"], \"before\")\n\n    def test_patch_applies_every_supplied_value_without_mutating_inputs(self):\n        for value in (None, \"\", False, 0, [], {}, \"after\"):\n            with self.subTest(value=value):\n                original = {\"setting\": \"before\", \"untouched\": \"keep\"}\n                patch = {\"setting\": value, \"added\": value}\n\n                result = patch_settings(original, patch)\n\n                self.assertEqual(\n                    result,\n                    {\"setting\": value, \"added\": value, \"untouched\": \"keep\"},\n                )\n                self.assertEqual(original, {\"setting\": \"before\", \"untouched\": \"keep\"})\n                self.assertEqual(patch, {\"setting\": value, \"added\": value})\n                self.assertIsNot(result, original)\n                self.assertIsNot(result, patch)\n\n    def test_empty_patch_returns_unchanged_copy(self):\n        original = {\"note\": None, \"enabled\": False}\n        patch = {}\n\n        result = patch_settings(original, patch)\n\n        self.assertEqual(result, {\"note\": None, \"enabled\": False})\n        self.assertIsNot(result, original)\n        self.assertEqual(patch, {})\n\n    def test_api_preserves_explicit_values_and_omitted_keys(self):\n        cases = (\n            ({\"note\": None}, {\"note\": None, \"enabled\": True}),\n            ({\"note\": \"\"}, {\"note\": \"\", \"enabled\": True}),\n            ({\"enabled\": False}, {\"note\": \"before\", \"enabled\": False}),\n        )\n        for payload, expected in cases:\n            with self.subTest(payload=payload):\n                original = {\"note\": \"before\", \"enabled\": True}\n                payload_before = dict(payload)\n\n                result = update_preferences(original, payload)\n\n                self.assertEqual(result, expected)\n                self.assertEqual(original, {\"note\": \"before\", \"enabled\": True})\n                self.assertEqual(payload, payload_before)\n\n    def test_cli_clears_note_without_mutating_input(self):\n        original = {\"note\": \"before\", \"enabled\": True}\n\n        result = clear_note(original)\n\n        self.assertEqual(result, {\"note\": None, \"enabled\": True})\n        self.assertEqual(original, {\"note\": \"before\", \"enabled\": True})\n",
+    "command": "/usr/bin/zsh -lc \"cat 'tests/test_settings.py'\"",
+    "commandActions": [
+      {
+        "command": "cat tests/test_settings.py",
+        "name": "test_settings.py",
+        "path": "/tmp/functional-review-2b-i2-2-20261010/tests/test_settings.py",
+        "type": "read"
+      }
+    ],
+    "cwd": "/tmp/functional-review-2b-i2-2-20261010",
+    "durationMs": 64,
+    "exitCode": 0,
+    "id": "exec-bc1e9169-5358-43a3-800e-ad8bffc9a8fb",
+    "pluginId": null,
+    "processId": "24597",
+    "scriptPath": null,
+    "source": "unifiedExecStartup",
+    "status": "completed",
+    "type": "commandExecution"
+  },
+  "source_file": "items-01a125d5-30c6-71c0-8848-d16bfc15fb7c.json",
+  "startedAtMs": 1791636112002,
+  "turnId": "01a125d5-30e4-7853-bfea-7132956f82c8"
+}

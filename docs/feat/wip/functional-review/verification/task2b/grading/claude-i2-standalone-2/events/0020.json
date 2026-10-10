@@ -1,0 +1,12 @@
+{
+  "actor": "main",
+  "block": {
+    "content": "1\t# Python \u2014 implementation guidance\n2\t\n3\tConsumed by `/kk:implement` before writing `.py` or `.pyi` files. Load the core guidance for every Python task, then resolve the conditional entry before editing.\n4\t\n5\tFor conditional loading, use the task's planned constructs and bounded inspection of its target files (including unchanged enclosing declarations), plus any diff so far. A new file can qualify from the task requirements alone. Comments, docstrings, string literals, dependency metadata, and unrelated files do not satisfy code signals.\n6\t\n7\t## Always load\n8\t\n9\t- [idioms.md](idioms.md) \u2014 Project compatibility, module boundaries, mutability, and collection semantics.\n10\t- [typing.md](typing.md) \u2014 Useful type contracts, runtime validation boundaries, and stub consistency.\n11\t- [errors-and-resources.md](errors-and-resources.md) \u2014 Exception propagation, resource ownership, and predictable cleanup.\n12\t\n13\t## Conditional\n14\t\n15\t- [async.md](async.md) \u2014 Event-loop safety, task ownership, cancellation, and bounded concurrency. **Load if:** a target `.py` or `.pyi` file contains, or the planned edits introduce, an `async def`, `await`, `async for`, or `async with` construct, or imports `asyncio`, `anyio`, or `trio` via an `import` or `from` statement (including submodules and aliases).\n16\t",
+    "tool_use_id": "toolu_01RMGbTssQ7rEbgoNaX49jRW",
+    "type": "tool_result"
+  },
+  "id": "e38.0",
+  "parent_tool_use_id": null,
+  "session_id": "5160257a-e96d-4ed7-b3a2-e699343e4f9a",
+  "source_sequence": 38
+}
