@@ -1,0 +1,30 @@
+{
+  "actor": "items-01a125d4-9c83-70d2-aa0e-34de0aff795d",
+  "completedAtMs": 1791636073384,
+  "id": "exec-99151446-edeb-434d-ba7a-9069129fea18",
+  "item": {
+    "aggregatedOutput": "diff --git a/client.py b/client.py\nindex d6ddf4b..910e877 100644\n--- a/client.py\n+++ b/client.py\n@@ -1,5 +1,7 @@\n def save_settings(send, workspace_id, values, enhanced_settings=False):\n-    response = send(workspace_id, {\"settings\": values})\n+    response = send(workspace_id, {\"settings\": values, \"require_receipt\": True})\n     if not response.get(\"ok\"):\n         raise RuntimeError(\"Settings save failed\")\n+    if response.get(\"applied\") is not True:\n+        raise RuntimeError(\"Provider did not acknowledge applied settings\")\n     return {\"saved\": True, \"enhanced\": enhanced_settings}\ndiff --git a/tests/test_client.py b/tests/test_client.py\nindex 39ea461..f1dfc4f 100644\n--- a/tests/test_client.py\n+++ b/tests/test_client.py\n@@ -5,6 +5,6 @@ from client import save_settings\n class SettingsTests(unittest.TestCase):\n     def test_successful_save(self):\n         def send(workspace, request):\n-            return {\"ok\": True}\n+            return {\"ok\": True, \"applied\": True}\n         self.assertEqual(save_settings(send, \"w\", {\"label\": \"blue\"}),\n                          {\"saved\": True, \"enhanced\": False})\n",
+    "command": "/usr/bin/zsh -lc \"cat '/tmp/kk-review-code-AJe5FM6o.patch'\"",
+    "commandActions": [
+      {
+        "command": "cat /tmp/kk-review-code-AJe5FM6o.patch",
+        "name": "kk-review-code-AJe5FM6o.patch",
+        "path": "/tmp/kk-review-code-AJe5FM6o.patch",
+        "type": "read"
+      }
+    ],
+    "cwd": "/tmp/functional-review-2b-r3-2-20261010",
+    "durationMs": 92,
+    "exitCode": 0,
+    "id": "exec-99151446-edeb-434d-ba7a-9069129fea18",
+    "pluginId": null,
+    "processId": "30678",
+    "scriptPath": null,
+    "source": "unifiedExecStartup",
+    "status": "completed",
+    "type": "commandExecution"
+  },
+  "source_file": "items-01a125d4-9c83-70d2-aa0e-34de0aff795d.json",
+  "startedAtMs": 1791636073292,
+  "turnId": "01a125d4-9ca2-7c23-bb3a-fca390e08b2c"
+}

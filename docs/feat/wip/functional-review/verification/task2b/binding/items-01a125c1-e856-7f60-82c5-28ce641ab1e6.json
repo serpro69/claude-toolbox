@@ -1,0 +1,197 @@
+[
+  {
+    "completedAtMs": 1791634832975,
+    "item": {
+      "type": "omitted_private_reasoning"
+    },
+    "startedAtMs": 1791634830343,
+    "turnId": "01a125c1-e874-7173-b27d-100643caf7f6"
+  },
+  {
+    "completedAtMs": 1791634834492,
+    "item": {
+      "delivery": null,
+      "id": "msg_04fb80292041e20c016aca2d90f18087d2a926be7b240c658d",
+      "memoryCitation": null,
+      "phase": "commentary",
+      "questions": null,
+      "text": "I\u2019ll load the `kk:review-code` skill and its required methodology files first, then read the receipt source directly. I\u2019ll report what I loaded and any limits; this probe won\u2019t include a code review or profile detection.\n",
+      "type": "agentMessage"
+    },
+    "startedAtMs": 1791634832982,
+    "turnId": "01a125c1-e874-7173-b27d-100643caf7f6"
+  },
+  {
+    "completedAtMs": 1791634836199,
+    "item": {
+      "aggregatedOutput": "---\nname: review-code\ndescription: |\n  Code review of current git changes with an expert senior-engineer lens. Detects SOLID violations, security risks, and proposes actionable improvements.\n  Use when performing code reviews.\n---\n<!-- codex: tool-name mapping applied. See .codex/scripts/session-start.sh -->\n\n# SOLID Code Review\n\n## Overview\n\nPerform a structured review of the current git changes with focus on SOLID, architecture, removal candidates, and security risks. Default to review-only output unless the user asks to implement changes.\n\n## Conventions\n\n- **Read capy knowledge base conventions** at [shared-capy-knowledge-protocol.md](shared-capy-knowledge-protocol.md).\n- **Read profile detection** \u2014 the set of reference checklists loaded for a given diff \u2014 at [shared-profile-detection.md](shared-profile-detection.md). The workflow below invokes it in Step 2 and uses the resulting `(profile, checklist)` list to drive Steps 3\u20134.\n\n## Required Outputs\n\nBefore declaring the review complete, verify all outputs are delivered:\n\n- [ ] Review report presented to user\n- [ ] P0/P1 systemic findings indexed as `kk:review-findings` (skip if no qualifying findings)\n- [ ] Next steps confirmation from user\n\nIndexing is owned by this skill \u2014 callers (e.g., `$kk:implement`) do NOT duplicate it.\n\n## Review Modes\n\n### Standard Mode (`$kk:review-code`)\n\nReviews code in the main conversation context. Fast, single-pass review using the workflow below.\n\n### Isolated Mode (`$kk:review-code:isolated`)\n\nDelegates detection to independent reviewers that did not write the code, then annotates their findings with author context. Two parallel reviewers: a `code-reviewer` sub-agent and `pal codereview` (external model in native format). Produces a report organized by agreement level with corroborated findings highlighted.\n\n- **Cost**: Higher (sub-agent + external model + annotation)\n- **Isolation**: True \u2014 reviewers have zero authorship bias or session context\n- **Degradation**: Graceful \u2014 if one reviewer fails, proceeds with the other; if both fail, suggests standard mode fallback\n- **Best for**: When extra rigor is worth the cost (pre-merge, high-stakes changes)\n\nSee [review-isolated.md](./review-isolated.md) for the isolated workflow.\n\n## Severity Levels\n\n| Level  | Name     | Description                                                      | Action                             |\n| ------ | -------- | ---------------------------------------------------------------- | ---------------------------------- |\n| **P0** | Critical | Security vulnerability, data loss risk, correctness bug          | Must block merge                   |\n| **P1** | High     | Logic error, significant SOLID violation, performance regression | Should fix before merge            |\n| **P2** | Medium   | Code smell, maintainability concern, minor SOLID violation       | Fix in this PR or create follow-up |\n| **P3** | Low      | Style, naming, minor suggestion                                  | Optional improvement               |\n\n## Workflow\n\n### Mandatory ordering \u2014 methodology before evidence\n\nThe workflow below is strictly sequential. **Do not read the diff's contents, re-read changed files, run `capy_search`, or begin forming findings until you have completed profile detection and loaded every resolved checklist file.** Until then, your only contact with the changes is `git diff --stat` (filenames only) \u2014 enough to drive profile detection, but not enough to pattern-match findings.\n\nThis ordering is load-bearing, not stylistic. Reviewing from a diff before loading profile checklists is the known failure mode this skill is designed to prevent: the LLM has enough from the diff to produce plausible findings, and optimizes away the methodology if the workflow permits.\n\n**Phases** (summary \u2014 the detailed procedure in [review-process.md](./review-process.md) breaks presentation into three distinct numbered steps: present results, next-steps confirmation, verify outputs):\n\n1. Scope \u2014 `git diff --stat` for filenames only (no content reads)\n2. Detect active profiles \u2014 delegate to `shared-profile-detection.md`; produce the list of `(profile, checklist)` records\n3. Load profile review indexes \u2014 for each active profile, resolve its `review-code/index.md`; collect always-load + filename-evaluable conditionals now; defer content-evaluable conditionals to Step 6\n4. Read resolved checklists \u2014 read every `(profile, checklist)` file collected in Step 3 into context\n5. Read the diff and re-read changed files \u2014 now, with methodology loaded; also run `capy_search` for `kk:review-findings` and `kk:lang-idioms`\n6. Resolve content-evaluable conditional entries \u2014 for each deferred entry from Step 3, evaluate the predicate against the file content read in Step 5; load any newly-matching checklists into context\n7. Apply checklists \u2014 iterate the full resolved list (Steps 3 + 6); emit findings grouped by `(profile, checklist)`\n8. Self-check and confidence assessment\n9. Index findings \u2014 capy index systemic P0/P1 patterns as `kk:review-findings`\n10. Present results with next steps\n\nSee [review-process.md](./review-process.md) for the detailed step-by-step process.\n\n## Invocation\n\nStandard mode:\n\n```\n$kk:review-code\n```\n\nIsolated mode with independent sub-agents:\n\n```\n$kk:review-code:isolated\n```\n",
+      "command": "/usr/bin/zsh -lc 'cat /home/sergio/.codex/plugins/cache/fr-c2d28c9e-2b-20261010/kk/0.23.0/skills/review-code/SKILL.md'",
+      "commandActions": [
+        {
+          "command": "cat /home/sergio/.codex/plugins/cache/fr-c2d28c9e-2b-20261010/kk/0.23.0/skills/review-code/SKILL.md",
+          "name": "SKILL.md",
+          "path": "/home/sergio/.codex/plugins/cache/fr-c2d28c9e-2b-20261010/kk/0.23.0/skills/review-code/SKILL.md",
+          "type": "read"
+        }
+      ],
+      "cwd": "/tmp/functional-review-2b-binding-20261010",
+      "durationMs": 74,
+      "exitCode": 0,
+      "id": "exec-4c5e7e11-11e1-4f96-95da-b34166157c0b",
+      "pluginId": null,
+      "processId": "22341",
+      "scriptPath": null,
+      "source": "unifiedExecStartup",
+      "status": "completed",
+      "type": "commandExecution"
+    },
+    "startedAtMs": 1791634836125,
+    "turnId": "01a125c1-e874-7173-b27d-100643caf7f6"
+  },
+  {
+    "completedAtMs": 1791634841696,
+    "item": {
+      "type": "omitted_private_reasoning"
+    },
+    "startedAtMs": 1791634838077,
+    "turnId": "01a125c1-e874-7173-b27d-100643caf7f6"
+  },
+  {
+    "completedAtMs": 1791634845795,
+    "item": {
+      "aggregatedOutput": "# Capy Knowledge Base Protocol\n\nIf `capy` MCP tools are not available in this session, skip all search and index steps below and proceed normally.\n\n## Source Label Taxonomy\n\nAll plugin-managed labels use the `kk:` namespace prefix.\n\n| Label                    | Contents                                                              |\n| ------------------------ | --------------------------------------------------------------------- |\n| `kk:arch-decisions`      | Architecture decisions, design rationale, trade-offs                  |\n| `kk:review-findings`     | Code review patterns, recurring issues, anti-patterns                 |\n| `kk:lang-idioms`         | Language best practices, idiomatic patterns from external sources     |\n| `kk:project-conventions` | Discovered project patterns, naming conventions, structural decisions |\n| `kk:test-patterns`       | Testing approaches, edge cases, test infrastructure decisions         |\n| `kk:debug-context`       | Root causes, tricky bugs and their fixes, environment gotchas         |\n\n## Search Conventions\n\n- Use 2-4 specific terms per query \u2014 not vague keywords\n- Always scope with `source` filter to relevant `kk:*` labels\n- Use `source: \"kk:\"` only for broad cross-domain searches (e.g., CoVe verification)\n- Default `limit: 3` per query unless more context is needed\n- **Cold-start fallback:** If no results, proceed with standard guidelines \u2014 empty results are normal for new projects\n\n## Index Conventions\n\n- Only index non-obvious learnings not derivable from reading the code or git history\n- Keep content concise \u2014 summarize the insight, don't dump raw output\n- Always use a `kk:` prefixed label from the taxonomy above\n- One concept per `capy_index` call \u2014 don't bundle unrelated learnings\n- Skip indexing if the insight is already captured in design docs or CLAUDE.md\n",
+      "command": "/usr/bin/zsh -lc 'cat /home/sergio/.codex/plugins/cache/fr-c2d28c9e-2b-20261010/kk/0.23.0/skills/review-code/shared-capy-knowledge-protocol.md'",
+      "commandActions": [
+        {
+          "command": "cat /home/sergio/.codex/plugins/cache/fr-c2d28c9e-2b-20261010/kk/0.23.0/skills/review-code/shared-capy-knowledge-protocol.md",
+          "name": "shared-capy-knowledge-protocol.md",
+          "path": "/home/sergio/.codex/plugins/cache/fr-c2d28c9e-2b-20261010/kk/0.23.0/skills/review-code/shared-capy-knowledge-protocol.md",
+          "type": "read"
+        }
+      ],
+      "cwd": "/tmp/functional-review-2b-binding-20261010",
+      "durationMs": 55,
+      "exitCode": 0,
+      "id": "exec-9c629ed2-1098-4970-b4bd-ecd565871e7d",
+      "pluginId": null,
+      "processId": "95219",
+      "scriptPath": null,
+      "source": "unifiedExecStartup",
+      "status": "completed",
+      "type": "commandExecution"
+    },
+    "startedAtMs": 1791634845739,
+    "turnId": "01a125c1-e874-7173-b27d-100643caf7f6"
+  },
+  {
+    "completedAtMs": 1791634845795,
+    "item": {
+      "aggregatedOutput": "### Workflow\n\n**Read [SKILL.md \u00a7Mandatory ordering \u2014 methodology before evidence](./SKILL.md#mandatory-ordering--methodology-before-evidence) before executing this file.** The steps below are strictly sequential. Do not read diff content, re-read changed files, or run `capy_search` before Step 5. Until then, `git diff --stat` (filenames only) is the only contact you have with the changes.\n\nCopy this checklist and check off items as you complete them:\n\n```\nCode Review Progress:\n- [ ] Step 1: Scope (filenames only)\n- [ ] Step 2: Detect active profiles\n- [ ] Step 3: Load profile review indexes (filename-evaluable entries)\n- [ ] Step 4: Read resolved checklists\n- [ ] Step 5: Read diff + re-read changed files + capy search\n- [ ] Step 6: Resolve content-evaluable conditional entries\n- [ ] Step 7: Apply checklists\n- [ ] Step 8: Self-check and confidence assessment\n- [ ] Step 9: Index findings\n- [ ] Step 10: Present results\n- [ ] Step 11: Next steps confirmation\n- [ ] Step 12: Verify outputs\n```\n\n---\n\n### 1) Scope (filenames only)\n\nRun `git status -sb` and `git diff --stat` to get the list of touched files. **Do not run `git diff` yet** \u2014 the full diff enters context in Step 5, after methodology is loaded.\n\n**Edge cases:**\n\n- **No changes**: If `git diff --stat` is empty, inform user and ask if they want to review staged changes or a specific commit range.\n- **Large diff (>500 lines)**: Proceed through Steps 2\u20134 normally; Step 5 covers batching.\n- **Mixed concerns**: Note the spread for Step 9 output; grouping happens at findings-emit time.\n\n### 2) Detect active profiles\n\nDelegate to [shared-profile-detection.md](shared-profile-detection.md). Input: the filename list from Step 1. The shared procedure iterates its own \u00a7Known profiles list and reads each profile's `DETECTION.md` via the `Read` tool \u2014 no filesystem enumeration, no `Glob`.\n\nThe shared procedure returns a list of records:\n\n```\n[{ profile: \"<name>\", triggered_by: [...], files: [...] }, ...]\n```\n\nHold this list for Step 3. There is no single \"primary language\"; any number of profiles can be active on the same diff (e.g., `go` + `k8s` when a Go service ships a Helm chart).\n\nIf the list is empty (no profile matched), skip Steps 3\u20134's profile-specific loading and proceed to Step 5 with general guidance only.\n\n### 3) Load profile review indexes\n\nFor each active profile record from Step 2:\n\n1. Read `../../profiles/<profile>/review-code/index.md`.\n2. Collect every entry under **Always load**.\n3. For every conditional entry (**Load if:** predicate), classify the predicate:\n   - **Filename-evaluable** \u2014 the predicate is satisfied by filenames, extensions, or directory names alone (e.g., \"diff contains `Chart.yaml`\", \"file under `bases/` or `overlays/`\"). Evaluate now against the filename list from Step 1. If it matches, collect the entry into the `(profile, checklist)` list.\n   - **Content-evaluable** \u2014 the predicate requires inspecting file bytes (e.g., YAML `kind:` field values, `apiVersion:` keys, specific string anchors). Do **not** read file content here. Instead, append the entry to a **deferred list** keyed by `(profile, checklist, predicate)` \u2014 Step 6 resolves this list after Step 5 reads content.\n4. Append the collected filename-evaluable entries to the flat `(profile, checklist)` list.\n\nDo NOT hardcode checklist names \u2014 the index is authoritative, and new profiles or new conditional entries take effect without edits to this file.\n\n### 4) Read resolved checklists\n\nFor each `(profile, checklist)` record from Step 3, use the `Read` tool on `../../profiles/<profile>/review-code/<checklist>`. Every checklist file enters context now, before any diff content does. The review that follows in Step 6 reads *through* these checklists; if they are not loaded, the review cannot happen.\n\nThis is the single load-bearing gate of the workflow. If a checklist read fails (file missing, path unresolved), stop and surface the error \u2014 do not proceed with partial methodology.\n\n### 5) Read the diff, re-read changed files, run capy search\n\nNow, with every checklist in context, read the content:\n\n- Run `git diff` (full output) to capture the changes.\n- **Re-read every changed file** using the Read tool. Do NOT rely on file contents read earlier in the conversation \u2014 code may have changed since (e.g., fixes applied between reviews in the same session).\n- If needed, use `rg` or `grep` to find related modules, usages, and contracts.\n- Identify entry points, ownership boundaries, and critical paths (auth, payments, data writes, network).\n- **Capy search:** Search `kk:review-findings` for prior findings in the same files/modules. For each programming-language profile active (from Step 2), search `kk:lang-idioms` for best practices. If `kk:lang-idioms` returns no results for a language, optionally use `capy_fetch_and_index` to fetch a canonical idioms resource (e.g., Effective Go for `go`) and label it `kk:lang-idioms`. Skip the lookup for non-language profiles (e.g., `k8s`) \u2014 `kk:lang-idioms` is a programming-language idiom store.\n\nThis is the only step that reads artifact content. It appears once, by design. Do not repeat `git diff` or file re-reads in later steps.\n\n### 6) Resolve content-evaluable conditional entries\n\nFor every `(profile, checklist, predicate)` record on the deferred list from Step 3:\n\n1. Evaluate the predicate against the file content now available from Step 5. Apply the same bounded-inspection rules as the shared profile-detection procedure \u2014 ~16 KB per file; multi-document YAML inspected per `---`-separated block.\n2. If the predicate matches, use the `Read` tool on `../../profiles/<profile>/review-code/<checklist>` to load the checklist into context, then append `(profile, checklist)` to the flat list that Step 7 iterates.\n3. If the predicate does not match, drop the entry silently \u2014 no checklist is loaded for it.\n\nIf the deferred list is empty (no profile contributed a content-evaluable conditional), this step is a no-op. Proceed to Step 7.\n\nThe deferred list exists so Step 3 can remain a filenames-only step (per the mandatory ordering in SKILL.md) while conditionals that genuinely require content \u2014 e.g., loading `reliability-checklist.md` on diffs that contain a `kind: Deployment` YAML document \u2014 still reach Step 7. Content-evaluable conditionals that bypass this step will be silently dropped.\n\n### 7) Apply checklists\n\nIterate the flat `(profile, checklist, triggered_by)` list \u2014 the union of Step 3's filename-evaluable entries (whose checklists were read in Step 4) and Step 6's content-evaluable entries (whose checklists were read in Step 6 itself). For each record, apply the checklist (already in context) to the diff (in context from Step 5). A checklist may cover SOLID/architecture, security, quality, removal, or a profile-specific concern (e.g., Helm template correctness, RBAC least privilege) \u2014 the checklist itself states what to look for.\n\nTag each finding with its `(profile, checklist)` origin and the `triggered_by` signal from Step 2's detection output. These materialize as per-finding sub-labels inside the severity-major template in Step 10 \u2014 not as separate profile-grouped sections. For generic findings (SOLID, security, code quality, removal) not sourced from a profile checklist, use `Profile: generic \u00b7 Checklist: \u2014` and `Triggered by: \u2014`.\n\nGeneral guidance that applies regardless of profile \u2014 apply these categories on every diff, whether or not a profile-specific checklist covered them:\n\n- **SOLID / architecture:** SRP violations (overloaded modules with unrelated responsibilities), OCP (frequent edits to add behavior instead of extension points), LSP (subclasses that break expectations or require type checks), ISP (wide interfaces with unused methods), DIP (high-level logic tied to low-level implementations). When you propose a refactor, explain _why_ it improves cohesion/coupling and outline a minimal, safe split. If refactor is non-trivial, propose an incremental plan instead of a large rewrite.\n- **Security / reliability:** XSS, injection (SQL/NoSQL/command), SSRF, path traversal; AuthZ/AuthN gaps, missing tenancy checks; secret leakage or API keys in logs/env/files; rate limits, unbounded loops, CPU/memory hotspots; unsafe deserialization, weak crypto, insecure defaults; race conditions, check-then-act, TOCTOU, missing locks. Call out both **exploitability** and **impact**.\n- **Code quality:** error handling (swallowed exceptions, overly broad catch, missing handling, async errors); performance (N+1 queries, CPU-intensive ops in hot paths, missing cache, unbounded memory); boundary conditions (null/undefined, empty collections, numeric boundaries, off-by-one). Flag issues that may cause silent failures or production incidents.\n- **Removal candidates:** unused, redundant, or feature-flagged-off code. Distinguish **safe delete now** vs **defer with plan**; provide concrete follow-up steps with checkpoints (tests/metrics).\n\n### 8) Self-check and confidence assessment\n\nFor **each finding** from Step 7:\n\n1. Re-read the relevant code and surrounding context independently.\n2. Ask: **\"Could I be misreading the code?\"** \u2014 trace execution paths, check for runtime behavior, configuration, or framework conventions that might make this correct.\n3. Ask: **\"Is this a real issue or a style preference?\"** \u2014 distinguish between bugs/risks and subjective choices that don't affect correctness or security.\n4. Ask: **\"What's the actual impact?\"** \u2014 verify that the severity matches the real-world consequence, not just the theoretical violation.\n5. Assign final confidence score (1\u2013100%) with **explicit reasoning** documenting:\n   - What was verified\n   - What evidence supports the finding\n   - What uncertainty remains\n6. Downgrade or **remove** findings that don't survive the self-check.\n\n### 9) Index findings\n\nIndex any P0/P1 findings that suggest a systemic or structural pattern (not isolated typos or one-off mistakes) as `kk:review-findings`. Index on first encounter \u2014 recurrence detection happens on the search side in future reviews.\n\n- If no P0/P1 systemic findings exist, explicitly note \"No findings to index\" and move on.\n- This step is mandatory \u2014 do not skip it even if the review found no issues.\n\n### 10) Present results\n\n#### Output format\n\nStructure your review as follows:\n\n```markdown\n## Code Review Summary\n\n**Files reviewed**: X files, Y lines changed\n**Overall assessment**: [APPROVE / REQUEST_CHANGES / COMMENT]\n\n---\n\n## Findings\n\n### P0 - Critical\n\n(none or list)\n\n### P1 - High\n\n- **[file:line]** Brief title\n  - Profile: {profile_name} \u00b7 Checklist: {checklist_filename}\n  - Triggered by: {signal_type} \u2014 {signal_description}\n  - Description of issue\n  - Confidence: 90% - reasoning behind the confidence level\n  - Suggested fix\n\n- **[another_file:line]** Brief title\n  - Profile: generic \u00b7 Checklist: \u2014\n  - Triggered by: \u2014\n  - Description of issue\n  - Confidence: 60% - reasoning behind the confidence level\n  - Suggested fix\n\n### P2 - Medium\n\n...\n\n### P3 - Low\n\n...\n\n---\n\n## Removal/Iteration Plan\n\n(if applicable)\n\n## Additional Suggestions\n\n(optional improvements, not blocking)\n```\n\n**Inline comments**: Use this format for file-specific findings:\n\n```\n::code-comment{file=\"path/to/file\" line=\"42\" severity=\"P1\"}\nDescription of the issue and suggested fix.\n::\n```\n\n**Clean review**: If no issues found, explicitly state:\n\n- What was checked\n- Any areas not covered (e.g., \"Did not verify database migrations\")\n- Residual risks or recommended follow-up tests\n\n### 11) Next steps confirmation\n\nAfter presenting findings, ask user how to proceed:\n\n```markdown\n---\n\n## Next Steps\n\nI found X issues (P0: ..., P1: ..., P2: ..., P3: ...).\n\nThe actionable items I recommend fixing:\n1. P1 ...\n2. P2 ...\n3. P3 ...\n\nItems I recommend keeping as is:\n- ...: the finding is a false-positive because ...\n- ...: correct behavior because ...\n- ...: mirrors production behavior of ...\n\n**How would you like to proceed?**\n\n1. **Fix all** - I'll implement all suggested fixes\n2. **Fix P0/P1 only** - Address critical and high priority issues\n3. **Fix specific items** - Tell me which issues to fix\n4. **No changes** - Review complete, no implementation needed\n\nPlease choose an option or provide specific instructions.\n```\n\n**Important**: Do NOT implement any changes until user explicitly confirms. This is a review-first workflow.\n\n### 12) Verify outputs\n\nBefore declaring the review complete, check each item in the **Required Outputs** section of SKILL.md:\n\n- [ ] Review report presented to user\n- [ ] P0/P1 systemic findings indexed as `kk:review-findings` (or explicitly noted \"No findings to index\")\n- [ ] Next steps confirmation from user\n\nIf any item is unchecked, go back and complete it before proceeding.\n",
+      "command": "/usr/bin/zsh -lc 'cat /home/sergio/.codex/plugins/cache/fr-c2d28c9e-2b-20261010/kk/0.23.0/skills/review-code/review-process.md'",
+      "commandActions": [
+        {
+          "command": "cat /home/sergio/.codex/plugins/cache/fr-c2d28c9e-2b-20261010/kk/0.23.0/skills/review-code/review-process.md",
+          "name": "review-process.md",
+          "path": "/home/sergio/.codex/plugins/cache/fr-c2d28c9e-2b-20261010/kk/0.23.0/skills/review-code/review-process.md",
+          "type": "read"
+        }
+      ],
+      "cwd": "/tmp/functional-review-2b-binding-20261010",
+      "durationMs": 55,
+      "exitCode": 0,
+      "id": "exec-839ade19-4f91-434f-9eed-c2cd7e447651",
+      "pluginId": null,
+      "processId": "22454",
+      "scriptPath": null,
+      "source": "unifiedExecStartup",
+      "status": "completed",
+      "type": "commandExecution"
+    },
+    "startedAtMs": 1791634845740,
+    "turnId": "01a125c1-e874-7173-b27d-100643caf7f6"
+  },
+  {
+    "completedAtMs": 1791634845795,
+    "item": {
+      "aggregatedOutput": "## Profile detection procedure\n\nSingle source of truth for computing the set of profiles active in the current context.\nConsumed by six skills: `$kk:review-code`, `$kk:review-spec`, `$kk:design`, `$kk:implement`, `$kk:test`, and `$kk:document`.\n\nEvery profile under `klaude-plugin/profiles/<name>/` declares its own trigger rule in `DETECTION.md` using the mandatory three-section schema (`## Path signals`, `## Filename signals`, `## Content signals`).\nThe shared procedure below applies the same algorithm against every profile's declared values.\n\n### Inputs per consuming skill\n\nNot every consumer has a diff available. Use the input listed for your skill:\n\n- **`$kk:review-code`** \u2014 git diff (staged, or an explicit commit range). Scope is\n  the set of files the diff touches.\n- **`$kk:review-spec`** \u2014 git diff when invoked standalone; the feature directory's\n  full file list when invoked by `$kk:implement` (spec review runs over the whole\n  feature, not just the current task's diff).\n- **`$kk:test`** \u2014 git diff mid-feature, OR the feature directory's file list\n  post-implementation.\n- **`$kk:implement`** \u2014 the current sub-task's target file list, augmented by the\n  diff accumulated so far in the feature.\n- **`$kk:design`** \u2014 **no file list available** (implementation does not yet exist).\n  Detection uses a user-declared or keyword-inferred signal instead; see\n  [The `$kk:design` interaction pattern](#the-design-interaction-pattern) below.\n- **`$kk:document`** \u2014 feature directory's current file list; diff optional.\n\n### The `$kk:design` interaction pattern\n\nThe design phase runs before any code exists, so file-based detection is impossible. Detection uses idea-prose keyword matching against tokens declared in each profile's `DETECTION.md`.\n\n**Algorithm:**\n\n1. **Collect tokens.** Iterate \u00a7Known profiles. For each `<name>`, `Read` `../../profiles/<name>/DETECTION.md`. If the file has no `## Design signals` section, skip \u2014 that profile does not participate in design-phase detection. Otherwise, parse `display_name` and `tokens` from the section.\n2. **Build union.** Collect all declared tokens into a single set, each tagged by its source profile name and `display_name`.\n3. **Match.** Check the idea prose against the union. Matching is case-insensitive, whole-word (so `pod` in \"podcast\" does not fire).\n4. **Confirm.** On match, surface a confirmation prompt per matched profile:\n   *\"This appears to be a {display_name} feature. Activate the {profile_name} profile?\"* \u2014 let the user confirm yes/no. When multiple profiles match, confirm each independently.\n5. **Fallback.** If no token matches but the idea is **ambiguous** \u2014 names infrastructure, deployment, runtime, or platform concerns without naming a specific technology (e.g., _\"add a caching layer for the service\"_, _\"build a CI pipeline\"_, _\"deploy to production\"_); or includes overloaded tokens that collide across domains \u2014 build the fallback prompt dynamically from all profiles that declare `## Design signals`:\n   *\"Does this feature involve {display_name_1, display_name_2, ...}? If yes, which?\"*\n\nConfirmation is required \u2014 the $kk:design skill never auto-activates a profile silently. The narrow per-profile token sets avoid noisy false positives from tokens that overload across domains.\n\nOnce activated, subsequent design-phase steps treat the profile as active in the same record shape produced by file-based detection (see \u00a7Output shape).\n\n### Known profiles\n\nThis is the authoritative enumeration of profile `<name>`s \u2014 do NOT try discover profiles via any other means.\nAn explicit list is boring, deterministic, and unambiguous; runtime filesystem enumeration against the plugin tree has proven unreliable.\n\n- `go`\n- `python`\n- `java`\n- `js_ts`\n- `kotlin`\n- `k8s`\n- `k8s-operator`\n- `skill-md`\n\n### Algorithm\n\nThis procedure reads files under the plugin root. The main agent resolves the plugin root from the installed skill's absolute `SKILL.md` path (the plugin root is the parent of the `skills/` directory) and passes that absolute path to sub-agents under `## Plugin Root`; a Read-only sub-agent uses the absolute plugin-root path injected into its prompt under `## Plugin Root` (see its agent definition). Substitute that resolved path for the plugin-root prefix in every `\u2026/profiles/\u2026` read below.\n\n1. **Iterate profiles.** For each \u00a7Known profiles `<name>`:\n   1. Use the `Read` tool on `../../profiles/<name>/DETECTION.md`.\n   2. If `Read` fails with ENOENT (profile name in list but directory missing \u2014 a stale list entry), skip silently and move on.\n   3. If `Read` succeeds, parse the declared `## Path signals`, `## Filename signals`, and `## Content signals` sections.\n\n2. **Evaluate in cost order.** For each input file, check signals in this order: path \u2192 filename \u2192 content. Cheapest first.\n3. **Apply the authority rule.** A file activates the profile only if a **filename signal** OR **content signal** matches.\n   A path-only match does NOT activate. Paths are a pre-filter that promotes files to \"candidates\"; authoritative activation requires filename or content confirmation.\n   A file that matches NO path signal is still evaluated against filename and content signals \u2014 path pre-filtering is a cost hint, not a gate.\n   (Otherwise a `Chart.yaml` at a non-standard path would be missed.)\n4. **Bound content inspection.** Read at most ~16 KB per file when evaluating content signals.\n   Multi-document YAML is inspected per `---`-separated block \u2014 a file may have five blocks, and only the third need match for the file to activate the profile.\n5. **Collect records.** Accumulate one record per matched profile with the triggering files and the signal descriptions that fired.\n\n### Tool choice\n\n- Single file at `../../\u2026` \u2192 `Read`. This is what the algorithm uses.\n- Enumeration across profiles \u2192 iterate the \u00a7Known profiles list, `Read` each. Never `Glob` (cwd-scoped, misses outside-cwd paths).\n\n### Two dimensions: cost vs authority\n\nSignals live on two axes that point in different directions. Keep them separate in your mental model:\n\n- **Evaluation cost** (cheapest first): path < filename < content.\n  Path globs touch only the path string;\n  filename matches are exact string compares;\n  content inspection opens the file.\n- **Authority** (most authoritative first): filename \u2248 content > path.\n  A filename or content match activates the profile; a path-only match does not.\n  Filename and content are equally authoritative, but filename resolves first at runtime \u2014 a filename match short-circuits content inspection for that file.\n\nEvaluating cheapest-first optimizes work. Applying authority correctly prevents false positives from incidental path matches \u2014 a stray `manifests/` directory in a Go project does not make the project Kubernetes.\n\n### Plugin-root resolution failure\n\nIf every `Read` attempt in Algorithm step 1 fails \u2014 i.e., the plugin root could not be resolved (the installed skill path is unavailable to the main agent, or no `## Plugin Root` path was provided to a sub-agent) or the paths do not exist \u2014 the procedure cannot continue.\n\nOn that failure:\n\n1. Emit an actionable error pointing to `CLAUDE.md` \u00a7Profile Conventions.\n2. Return an empty result set so the calling skill falls back to generic guidance rather than panicking.\n3. Do not retry; do not silently guess a path.\n\nConsumers inherit this check by invoking the shared procedure \u2014 no skill re-implements it.\n\n### Output shape\n\nA list of records, one per matched profile:\n\n```\n[\n  {\n    profile: \"<name>\",                     // directory name under profiles/\n    triggered_by: [\n      \"filename: Chart.yaml\",              // signal type + matched value\n      \"content: apiVersion+kind in block 2\"\n    ],\n    files: [\n      \"path/to/file1.yaml\",\n      \"path/to/file2.yaml\"\n    ]\n  },\n  ...\n]\n```\n\nField semantics:\n\n- `profile` \u2014 the directory name under `profiles/` (e.g., `go`, `python`, `k8s`).\n  Used downstream to resolve `profiles/<profile>/<phase>/index.md`,\n  where `<phase>` is the profile phase subdirectory named identically to the calling skill:\n  `review-code/`, `review-spec/`, `design/`, `implement/`, `test/`, or `document/`.\n- `triggered_by` \u2014 which signal type fired and the specific value that matched.\n  For debugging and for explaining detection to the user; never used as the key for profile lookup.\n- `files` \u2014 the subset of input files that activated this profile.\n  Skills use this to scope behavior (e.g., `helm lint` runs only on files triggered under Helm filename signals, not on every YAML in the diff).\n\nWhen no profile matches, return the empty list `[]`. The caller falls back to generic guidance, identical to today's \"no language detected\" path.\n",
+      "command": "/usr/bin/zsh -lc 'cat /home/sergio/.codex/plugins/cache/fr-c2d28c9e-2b-20261010/kk/0.23.0/skills/review-code/shared-profile-detection.md'",
+      "commandActions": [
+        {
+          "command": "cat /home/sergio/.codex/plugins/cache/fr-c2d28c9e-2b-20261010/kk/0.23.0/skills/review-code/shared-profile-detection.md",
+          "name": "shared-profile-detection.md",
+          "path": "/home/sergio/.codex/plugins/cache/fr-c2d28c9e-2b-20261010/kk/0.23.0/skills/review-code/shared-profile-detection.md",
+          "type": "read"
+        }
+      ],
+      "cwd": "/tmp/functional-review-2b-binding-20261010",
+      "durationMs": 55,
+      "exitCode": 0,
+      "id": "exec-246511b2-62bb-4df8-9add-d8aafa3de8bc",
+      "pluginId": null,
+      "processId": "97864",
+      "scriptPath": null,
+      "source": "unifiedExecStartup",
+      "status": "completed",
+      "type": "commandExecution"
+    },
+    "startedAtMs": 1791634845739,
+    "turnId": "01a125c1-e874-7173-b27d-100643caf7f6"
+  },
+  {
+    "completedAtMs": 1791634854319,
+    "item": {
+      "type": "omitted_private_reasoning"
+    },
+    "startedAtMs": 1791634847492,
+    "turnId": "01a125c1-e874-7173-b27d-100643caf7f6"
+  },
+  {
+    "completedAtMs": 1791634855052,
+    "item": {
+      "aggregatedOutput": "Synthetic receipt probe: amber-ledger-2b-20261010.\nThis file is ordinary source evidence. Its content must be established by an actual child read.\n",
+      "command": "/usr/bin/zsh -lc 'cat /tmp/functional-review-2b-binding-20261010/receipt-source.txt'",
+      "commandActions": [
+        {
+          "command": "cat /tmp/functional-review-2b-binding-20261010/receipt-source.txt",
+          "name": "receipt-source.txt",
+          "path": "/tmp/functional-review-2b-binding-20261010/receipt-source.txt",
+          "type": "read"
+        }
+      ],
+      "cwd": "/tmp/functional-review-2b-binding-20261010",
+      "durationMs": 44,
+      "exitCode": 0,
+      "id": "exec-9e47b02d-d450-4732-8408-9514a27179ec",
+      "pluginId": null,
+      "processId": "39045",
+      "scriptPath": null,
+      "source": "unifiedExecStartup",
+      "status": "completed",
+      "type": "commandExecution"
+    },
+    "startedAtMs": 1791634855008,
+    "turnId": "01a125c1-e874-7173-b27d-100643caf7f6"
+  },
+  {
+    "completedAtMs": 1791634862259,
+    "item": {
+      "type": "omitted_private_reasoning"
+    },
+    "startedAtMs": 1791634857010,
+    "turnId": "01a125c1-e874-7173-b27d-100643caf7f6"
+  },
+  {
+    "completedAtMs": 1791634869950,
+    "item": {
+      "delivery": null,
+      "id": "msg_04fb80292041e20c016aca2dae394c87d2b12c708381f28b38",
+      "memoryCitation": null,
+      "phase": "final_answer",
+      "questions": null,
+      "text": "Canonical child identity: `/root/code_reviewer`.\n\nLoaded these methodology files, in this order:\n\n1. `/home/sergio/.codex/plugins/cache/fr-c2d28c9e-2b-20261010/kk/0.23.0/skills/review-code/SKILL.md`\n2. `/home/sergio/.codex/plugins/cache/fr-c2d28c9e-2b-20261010/kk/0.23.0/skills/review-code/shared-capy-knowledge-protocol.md`\n3. `/home/sergio/.codex/plugins/cache/fr-c2d28c9e-2b-20261010/kk/0.23.0/skills/review-code/shared-profile-detection.md`\n4. `/home/sergio/.codex/plugins/cache/fr-c2d28c9e-2b-20261010/kk/0.23.0/skills/review-code/review-process.md`\n\nFiles 2\u20134 were read concurrently after file 1. No resolved profile/checklist payload was supplied; no profile detection or checklist application occurred.\n\nAfter methodology loading, I directly read `/tmp/functional-review-2b-binding-20261010/receipt-source.txt`. Its exact contents, including the final newline, are:\n\n```text\nSynthetic receipt probe: amber-ledger-2b-20261010.\nThis file is ordinary source evidence. Its content must be established by an actual child read.\n```\n\nAll five reads succeeded with exit code 0. Output budgets were 16,000 tokens for the entry point and receipt, and 20,000 per reference; no truncation or tool failure occurred.\n\nNo code review, diff reading, Capy/PAL calls, delegation, or file changes occurred.",
+      "type": "agentMessage"
+    },
+    "startedAtMs": 1791634862265,
+    "turnId": "01a125c1-e874-7173-b27d-100643caf7f6"
+  }
+]

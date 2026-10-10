@@ -1,0 +1,200 @@
+{
+  "rubric_version": 2,
+  "baseline_actor": "c2d28c9e3064a0a71a0e5ac3748a9616c794eb61",
+  "grader_sha256": "c2621b9a4f2f3e0d86cae6ec682b7ca1a2c729afb5da5cd9031873978b2dc342",
+  "runs": [
+    {
+      "run": "codex-r3-isolated-1",
+      "grader": "/root/gate2b_codex_r3_1",
+      "manifest_sha256": "7dcdf6beb859911677f6b9237702163037f9b8ae970d213768c63f5bb8128d1f",
+      "rows": [
+        {
+          "id": "7.1",
+          "verdict": "FAIL",
+          "evidence": "events/0008 reads full design/implementation before resolved Python checklists in0011; no routing predicate."
+        },
+        {
+          "id": "7.2",
+          "verdict": "PASS",
+          "evidence": "events/0014 reads release contract;0016 obtains eval-release:provider/settings.py;0019 distinguishes release from candidate and unverified live environment."
+        },
+        {
+          "id": "7.3",
+          "verdict": "PASS",
+          "evidence": "events/0031 traces applied values followed by missing-applied exception with enhanced_settings=False;0016/0020 substantiate it."
+        },
+        {
+          "id": "7.4",
+          "verdict": "PASS",
+          "evidence": "events/0019 and0031 preserve independent-release constraint and exclude pending provider implementation."
+        },
+        {
+          "id": "7.5",
+          "verdict": "FAIL",
+          "evidence": "events/0017 materializes source, but full revision/hash provenance is absent from preparation/PAL inputs; controller hashes do not supply actor-authored provenance."
+        },
+        {
+          "id": "7.6",
+          "verdict": "PASS",
+          "evidence": "Child0037/0048 reads/uses historical source; receipt line5802 links hashed PAL history embedding to exec-8ecc7678-fd4f-48f3-9cbf-88ef2ba6d9df;0026 compares historical ok-only response with client enforcement."
+        },
+        {
+          "id": "7.7",
+          "verdict": "FAIL",
+          "evidence": "Complete0031 report requests changes but never marks the required combination Blocked."
+        },
+        {
+          "id": "7.8",
+          "verdict": "PASS",
+          "evidence": "0031 proposes compatible gating and release coverage;0020 tests actual release behavior."
+        }
+      ],
+      "evidence_root": "grading-with-receipts/codex-r3-isolated-1"
+    },
+    {
+      "run": "codex-r3-isolated-2",
+      "grader": "/root/gate2b_codex_r3_2",
+      "manifest_sha256": "9a560de530a9f89ad60fd70d92cafc36f9b36ffab58432c889034c54e0265ed7",
+      "rows": [
+        {
+          "id": "7.1",
+          "verdict": "PASS",
+          "evidence": "Parent0003–0013 instruction/checklist reads precede0015–0016 investigation; child0035–0038 precede0039–0040."
+        },
+        {
+          "id": "7.2",
+          "verdict": "PASS",
+          "evidence": "0016 reads release contract;0019 obtains historical provider;0023 separately compares HEAD/staged clients."
+        },
+        {
+          "id": "7.3",
+          "verdict": "PASS",
+          "evidence": "Report cites client.py:5 and release response;0023 reproduces applied save then exception while disabled."
+        },
+        {
+          "id": "7.4",
+          "verdict": "PASS",
+          "evidence": "0053 and0029 identify current independent-release incompatibility, not missing future provider implementation."
+        },
+        {
+          "id": "7.5",
+          "verdict": "FAIL",
+          "evidence": "0020 materializes bare source, but0022 and complete preparation omit full revision/hash/line-span provenance."
+        },
+        {
+          "id": "7.6",
+          "verdict": "PASS",
+          "evidence": "0045/0053 establish named reviewer historical read/use; receipt supplement ties PAL history source to0029 comparison."
+        },
+        {
+          "id": "7.7",
+          "verdict": "FAIL",
+          "evidence": "Report requests changes and describes incompatibility without marking the required combination Blocked."
+        },
+        {
+          "id": "7.8",
+          "verdict": "PASS",
+          "evidence": "Report proposes compatible opt-in/capability gating and actual released-provider return/persistence coverage."
+        }
+      ],
+      "evidence_root": "grading-with-receipts/codex-r3-isolated-2"
+    },
+    {
+      "run": "codex-i2-standalone-1",
+      "grader": "/root/gate2b_codex_i2_1",
+      "manifest_sha256": "9384cf12559348f90b8340e6563cc0d3cc5ff77eb187e02c80c11a38ec7569bf",
+      "rows": [
+        {
+          "id": "9.1",
+          "verdict": "FAIL",
+          "evidence": "0015 source read begins before0014 instruction read completes."
+        },
+        {
+          "id": "9.2",
+          "verdict": "PASS",
+          "evidence": "0015 returns both callers;0016 establishes semantics before0018 edit."
+        },
+        {
+          "id": "9.3",
+          "verdict": "PASS",
+          "evidence": "Final helper copies current, assigns explicit values and returns a new dictionary;0024 retains six passing tests."
+        },
+        {
+          "id": "9.4",
+          "verdict": "PASS",
+          "evidence": "Final tests cover omission, CLI clearing, falsey values and ownership;0020/0024 retain failing/passing runs."
+        },
+        {
+          "id": "9.5",
+          "verdict": "FAIL",
+          "evidence": "PAL source receipt is supported, but0036 passes the named reviewer's no-findings judgment into PAL before its expert judgment, violating independence. Unknown child verification-result receipt does not soften the contrary component."
+        },
+        {
+          "id": "9.6",
+          "verdict": "PASS",
+          "evidence": "0051 completes independent review with execution/Capy limits;0037 addresses optional PAL suggestion;0039 reports actual verification. Supplemental receipts remove the initial zero-source inference."
+        },
+        {
+          "id": "9.7",
+          "verdict": "PASS",
+          "evidence": "Final diff only changes helper assignment, tests and README; exports/callers preserved, no dependency/plan/deployment gate."
+        }
+      ],
+      "evidence_root": "grading-with-receipts/codex-i2-standalone-1"
+    },
+    {
+      "run": "codex-i2-standalone-2",
+      "grader": "/root/gate2b_codex_i2_2",
+      "manifest_sha256": "a53371663848f51e4ee93098345268c0523a7cd53d122d5b85bd33bfdd5db16c",
+      "rows": [
+        {
+          "id": "9.1",
+          "verdict": "FAIL",
+          "evidence": "0016 source investigation starts before0015 required test-profile read completes."
+        },
+        {
+          "id": "9.2",
+          "verdict": "PASS",
+          "evidence": "0016 returns both callers;0017 establishes explicit falsey replacement and ownership before0020/0023 edits."
+        },
+        {
+          "id": "9.3",
+          "verdict": "PASS",
+          "evidence": "Final helper copies current and directly assigns supplied values;0026 retains passing contract tests."
+        },
+        {
+          "id": "9.4",
+          "verdict": "PASS",
+          "evidence": "0019/0021/0026 retain interpreter, failed regressions and five passing tests covering API/CLI/falsey/ownership paths."
+        },
+        {
+          "id": "9.5",
+          "verdict": "FAIL",
+          "evidence": "0037 supplies attributed execution results to PAL but its complete result discusses test design without observable use of those results;0055 likewise reports static inspection without attributed execution-result use. Unknown child-prompt receipt remains separate."
+        },
+        {
+          "id": "9.6",
+          "verdict": "PASS",
+          "evidence": "0055 reports static/execution limits;0037 completes PAL;0038/0040 address optional refactor and actual passing checks."
+        },
+        {
+          "id": "9.7",
+          "verdict": "PASS",
+          "evidence": "Final diff only changes helper/tests/README; callers/exports preserved without dependency or unrelated gates."
+        }
+      ],
+      "evidence_root": "grading-with-receipts/codex-i2-standalone-2"
+    }
+  ],
+  "total": {
+    "PASS": 21,
+    "FAIL": 9,
+    "PARTIAL": 0
+  },
+  "limits": [
+    "Baseline data, not candidate acceptance.",
+    "Exact submitted prompt text and private inherited context are unverified.",
+    "Some child verification-result receipt remains unobserved; independently established false conjuncts make the affected assertions FAIL, not a claim that every fact was observed.",
+    "No observed grader-material or foreign-scratch content access; broad unsuccessful /tmp filename probes remain disclosed."
+  ]
+}

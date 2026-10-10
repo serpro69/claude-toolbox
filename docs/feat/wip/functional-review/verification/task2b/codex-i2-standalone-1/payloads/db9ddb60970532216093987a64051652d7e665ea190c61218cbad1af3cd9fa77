@@ -1,0 +1,99 @@
+diff --git a/README.md b/README.md
+index 04a5381..78e4801 100644
+--- a/README.md
++++ b/README.md
+@@ -4,3 +4,7 @@ Python 3.9+, standard library only. Run `python3 -B -m unittest discover -s test
+ The HTTP patch handler and command-line note action share settings.patch_settings.
+ Callers own their input dictionaries. A patch contains only explicitly supplied
+ keys. The optional note accepts text or None; the enabled flag is boolean.
++
++`patch_settings` returns a new dictionary without modifying either input.
++Omitted keys keep their current values; supplied values replace them, including
++`None`, empty text (`""`), and `False`.
+diff --git a/settings.py b/settings.py
+index 17eee18..04ccefd 100644
+--- a/settings.py
++++ b/settings.py
+@@ -1,5 +1,5 @@
+ def patch_settings(current, patch):
+     result = dict(current)
+     for key, value in patch.items():
+-        result[key] = value or current.get(key)
++        result[key] = value
+     return result
+diff --git a/tests/test_settings.py b/tests/test_settings.py
+index 87a59f4..c8be00a 100644
+--- a/tests/test_settings.py
++++ b/tests/test_settings.py
+@@ -1,5 +1,7 @@
+ import unittest
+ from api import update_preferences
++from cli import clear_note
++from settings import patch_settings
+ 
+ 
+ class SettingsTests(unittest.TestCase):
+@@ -8,3 +10,63 @@ class SettingsTests(unittest.TestCase):
+         result = update_preferences(original, {"note": "after"})
+         self.assertEqual(result, {"note": "after", "enabled": True})
+         self.assertEqual(original["note"], "before")
++
++    def test_explicit_values_replace_current_values(self):
++        for value in (None, "", False, 0, [], {}, "after"):
++            with self.subTest(value=value):
++                original = {"note": "before", "enabled": True}
++                patch = {"note": value}
++
++                result = patch_settings(original, patch)
++
++                self.assertEqual(result, {"note": value, "enabled": True})
++                self.assertIs(result["note"], value)
++                self.assertEqual(original, {"note": "before", "enabled": True})
++                self.assertEqual(patch, {"note": value})
++                self.assertIsNot(result, original)
++                self.assertIsNot(result, patch)
++
++    def test_empty_patch_preserves_all_current_values(self):
++        original = {"note": None, "enabled": False, "label": ""}
++        patch = {}
++
++        result = patch_settings(original, patch)
++
++        self.assertEqual(result, {"note": None, "enabled": False, "label": ""})
++        self.assertIsNot(result, original)
++        self.assertEqual(patch, {})
++
++    def test_patch_adds_new_keys_with_falsey_values(self):
++        original = {}
++        patch = {"note": None, "enabled": False, "label": ""}
++
++        result = patch_settings(original, patch)
++
++        self.assertEqual(result, {"note": None, "enabled": False, "label": ""})
++        self.assertEqual(original, {})
++        self.assertEqual(patch, {"note": None, "enabled": False, "label": ""})
++
++    def test_api_accepts_explicit_empty_values(self):
++        cases = (
++            ({"note": None}, {"note": None, "enabled": True}),
++            ({"note": ""}, {"note": "", "enabled": True}),
++            ({"enabled": False}, {"note": "before", "enabled": False}),
++        )
++        for payload, expected in cases:
++            with self.subTest(payload=payload):
++                original = {"note": "before", "enabled": True}
++                payload_before = dict(payload)
++
++                result = update_preferences(original, payload)
++
++                self.assertEqual(result, expected)
++                self.assertEqual(original, {"note": "before", "enabled": True})
++                self.assertEqual(payload, payload_before)
++
++    def test_cli_clears_note(self):
++        original = {"note": "before", "enabled": True}
++
++        result = clear_note(original)
++
++        self.assertEqual(result, {"note": None, "enabled": True})
++        self.assertEqual(original, {"note": "before", "enabled": True})

@@ -1,0 +1,223 @@
+{
+  "data": [
+    {
+      "cwd": "/tmp/functional-review-2b-i2-2-20261010",
+      "errors": [],
+      "skills": [
+        {
+          "description": "TRIGGER when: asked to brainstorm, think through, explore, or pressure-test a technical idea or decision through conversation. Interviews adaptively, asks one question at a time, and closes with a chat recap. For technical products, architecture, infrastructure, tools, operations, and engineering workflows. Written design/specification and task-list requests belong to $kk:design; durable domain glossary/reference kits to $kk:model; implementation and fixes to $kk:implement. Not for nontechnical brainstorming.",
+          "enabled": true,
+          "name": "kk:brainstorm",
+          "path": "/home/sergio/.codex/plugins/cache/fr-c2d28c9e-2b-20261010/kk/0.23.0/skills/brainstorm/SKILL.md",
+          "pluginId": "kk@fr-c2d28c9e-2b-20261010",
+          "scope": "user"
+        },
+        {
+          "description": "Apply Chain-of-Verification (CoVe) prompting to improve response accuracy through self-verification. Use when complex questions require fact-checking, technical accuracy, or multi-step reasoning.",
+          "enabled": true,
+          "name": "kk:chain-of-verification",
+          "path": "/home/sergio/.codex/plugins/cache/fr-c2d28c9e-2b-20261010/kk/0.23.0/skills/chain-of-verification/SKILL.md",
+          "pluginId": "kk@fr-c2d28c9e-2b-20261010",
+          "scope": "user"
+        },
+        {
+          "description": "TRIGGER when: asked to clarify or improve existing documentation, PR drafts or issue descriptions, including URLs and pasted bodies. Saves results locally, grounded in requirements and source while preserving meaning. Not for requests to implement, fix or work on an issue, code, config, generic response brevity, or agent instructions. Explicit instruction or SKILL.md targets receive a $kk:implement suggestion without edits or automatic handoff.",
+          "enabled": true,
+          "name": "kk:clarify-docs",
+          "path": "/home/sergio/.codex/plugins/cache/fr-c2d28c9e-2b-20261010/kk/0.23.0/skills/clarify-docs/SKILL.md",
+          "pluginId": "kk@fr-c2d28c9e-2b-20261010",
+          "scope": "user"
+        },
+        {
+          "description": "TRIGGER when: adding or upgrading any dependency \u2014 library, SDK, framework, API, IaC API version (K8s/Terraform/Helm), CRD, or container image. Use BEFORE writing the call. Forces context7/capy lookup instead of guessing.",
+          "enabled": true,
+          "name": "kk:dependency-handling",
+          "path": "/home/sergio/.codex/plugins/cache/fr-c2d28c9e-2b-20261010/kk/0.23.0/skills/dependency-handling/SKILL.md",
+          "pluginId": "kk@fr-c2d28c9e-2b-20261010",
+          "scope": "user"
+        },
+        {
+          "description": "TRIGGER when: asked to write or refine a technical design, PRD, specification, implementation plan, or task list, or resume an existing docs/feat/wip feature. Turns ideas and requirements into written design documents, implementation plans, and tasks in docs/feat/wip/ before coding. For conversational exploration without written planning, use $kk:brainstorm.",
+          "enabled": true,
+          "name": "kk:design",
+          "path": "/home/sergio/.codex/plugins/cache/fr-c2d28c9e-2b-20261010/kk/0.23.0/skills/design/SKILL.md",
+          "pluginId": "kk@fr-c2d28c9e-2b-20261010",
+          "scope": "user"
+        },
+        {
+          "description": "Compare two versions of a skill's instructions to detect degradations and complexity increases. TRIGGER when: user asks to diff, compare, or review changes to a skill's markdown instructions. Asymmetric check \u2014 only regressions count. Additions, clarifications, and strengthenings are not degradations. Compares HEAD \u2192 working tree by default. Walks the full reachable file set from SKILL.md via markdown links. Produces a report file under docs/reviews/diff-skill/ and an inline summary.",
+          "enabled": true,
+          "name": "kk:diff-skill",
+          "path": "/home/sergio/.codex/plugins/cache/fr-c2d28c9e-2b-20261010/kk/0.23.0/skills/diff-skill/SKILL.md",
+          "pluginId": "kk@fr-c2d28c9e-2b-20261010",
+          "scope": "user"
+        },
+        {
+          "description": "After implementing a new feature or fixing a bug, make sure to document the changes. Use when writing documentation, after finishing the implementation phase for a feature or a bug-fix.",
+          "enabled": true,
+          "name": "kk:document",
+          "path": "/home/sergio/.codex/plugins/cache/fr-c2d28c9e-2b-20261010/kk/0.23.0/skills/document/SKILL.md",
+          "pluginId": "kk@fr-c2d28c9e-2b-20261010",
+          "scope": "user"
+        },
+        {
+          "description": "TRIGGER when: user asks to implement, fix, build, or work on something \u2014 whether from a docs/feat/wip plan OR a standalone task (bug fix, GitHub issue, one-off change). Examples: \"work on task 1\", \"fix this bug\", \"implement feature X from the issue\". Provides structured execution with profile detection, dependency handling, review checkpoints.",
+          "enabled": true,
+          "name": "kk:implement",
+          "path": "/home/sergio/.codex/plugins/cache/fr-c2d28c9e-2b-20261010/kk/0.23.0/skills/implement/SKILL.md",
+          "pluginId": "kk@fr-c2d28c9e-2b-20261010",
+          "scope": "user"
+        },
+        {
+          "description": "Compare and merge two design docs for the same feature into a single source of truth. Use when you have competing or complementary design/implementation docs (e.g. from separate design runs) that need reconciling into one unified document.",
+          "enabled": true,
+          "name": "kk:merge-docs",
+          "path": "/home/sergio/.codex/plugins/cache/fr-c2d28c9e-2b-20261010/kk/0.23.0/skills/merge-docs/SKILL.md",
+          "pluginId": "kk@fr-c2d28c9e-2b-20261010",
+          "scope": "user"
+        },
+        {
+          "description": "Produce or update a domain-reference kit \u2014 the durable glossary + divergences/traps pages for a bounded context. Use for domain modelling, information architecture, building a domain glossary or domain model, mapping domain concepts to code (bindings), or surfacing the decidable questions stakeholders must close before design. Runs upstream of feature $kk:design as the first producer of the architecture flow, and emits artifacts $kk:review-architecture verifies. Triggers: \"model the domain\", \"build a glossary\", \"domain reference\", \"bounded context\", \"what are the concepts here\". NOT for behavioral code review or writing a feature design doc.",
+          "enabled": true,
+          "name": "kk:model",
+          "path": "/home/sergio/.codex/plugins/cache/fr-c2d28c9e-2b-20261010/kk/0.23.0/skills/model/SKILL.md",
+          "pluginId": "kk@fr-c2d28c9e-2b-20261010",
+          "scope": "user"
+        },
+        {
+          "description": "Review a written architecture artifact \u2014 an ADR (docs/adr/), a broader architecture doc, the architecture section of a design doc, or a domain-reference kit (glossary + traps pages, reviewed as one composite artifact) \u2014 against the system it claims to describe. Verifies the EXISTENCE and TOPOLOGY of declared mechanisms (structural boundaries, data ownership, NFR mechanisms, failure isolation, state consistency, evolution/versioning, domain binding) plus decision soundness, reversibility, and provenance (self-certification of reverse-engineered claims). Use after an ADR, architecture doc, domain glossary, or domain kit is written, before or during implementation. NOT for behavioral/runtime correctness (that is $kk:review-code and $kk:review-spec). Security architecture is out of scope \u2014 delegate threat modeling to the PAL secaudit tool (mcp__pal__secaudit).",
+          "enabled": true,
+          "name": "kk:review-architecture",
+          "path": "/home/sergio/.codex/plugins/cache/fr-c2d28c9e-2b-20261010/kk/0.23.0/skills/review-architecture/SKILL.md",
+          "pluginId": "kk@fr-c2d28c9e-2b-20261010",
+          "scope": "user"
+        },
+        {
+          "description": "Code review of current git changes with an expert senior-engineer lens. Detects SOLID violations, security risks, and proposes actionable improvements. Use when performing code reviews.",
+          "enabled": true,
+          "name": "kk:review-code",
+          "path": "/home/sergio/.codex/plugins/cache/fr-c2d28c9e-2b-20261010/kk/0.23.0/skills/review-code/SKILL.md",
+          "pluginId": "kk@fr-c2d28c9e-2b-20261010",
+          "scope": "user"
+        },
+        {
+          "description": "Review design, implementation, and task documents produced by design. Evaluates document quality, internal consistency, and technical soundness. Use after design completes and before starting implement.",
+          "enabled": true,
+          "name": "kk:review-design",
+          "path": "/home/sergio/.codex/plugins/cache/fr-c2d28c9e-2b-20261010/kk/0.23.0/skills/review-design/SKILL.md",
+          "pluginId": "kk@fr-c2d28c9e-2b-20261010",
+          "scope": "user"
+        },
+        {
+          "description": "Use after implementing tasks or mid-feature to verify code matches design docs and ensure they are in sync. Detects spec deviations, missing implementations, doc inconsistencies, and outdated docs in design and implementation documentation.",
+          "enabled": true,
+          "name": "kk:review-spec",
+          "path": "/home/sergio/.codex/plugins/cache/fr-c2d28c9e-2b-20261010/kk/0.23.0/skills/review-spec/SKILL.md",
+          "pluginId": "kk@fr-c2d28c9e-2b-20261010",
+          "scope": "user"
+        },
+        {
+          "description": "Guidelines describing how to test the code. Use whenever writing new or updating existing code, for example after implementing a new feature or fixing a bug.",
+          "enabled": true,
+          "name": "kk:test",
+          "path": "/home/sergio/.codex/plugins/cache/fr-c2d28c9e-2b-20261010/kk/0.23.0/skills/test/SKILL.md",
+          "pluginId": "kk@fr-c2d28c9e-2b-20261010",
+          "scope": "user"
+        },
+        {
+          "description": "Generate or edit raster images when the task benefits from AI-created bitmap visuals such as photos, illustrations, textures, sprites, mockups, or transparent-background cutouts. Use when Codex should create a brand-new image, transform an existing image, or derive visual variants from references, and the output should be a bitmap asset rather than repo-native code or vector. Do not use when the task is better handled by editing existing SVG/vector/code-native assets, extending an established icon or logo system, or building the visual directly in HTML/CSS/canvas.",
+          "enabled": true,
+          "interface": {
+            "brandColor": null,
+            "defaultPrompt": "Use $imagegen to make or edit an image for this project.",
+            "displayName": "Image Gen",
+            "iconLarge": "/home/sergio/.codex/skills/.system/imagegen/assets/imagegen.png",
+            "iconLargeUrl": null,
+            "iconSmall": "/home/sergio/.codex/skills/.system/imagegen/assets/imagegen-small.svg",
+            "iconSmallUrl": null,
+            "shortDescription": "Generate or edit images for websites, games, and more"
+          },
+          "name": "imagegen",
+          "path": "/home/sergio/.codex/skills/.system/imagegen/SKILL.md",
+          "pluginId": null,
+          "scope": "system"
+        },
+        {
+          "description": "Use for Codex models/pricing, scheduled tasks, skills, settings, setup, troubleshooting, customization, automations, and self-knowledge\u2014including 'you,' 'your,' 'this app,' or 'this coding agent' when they refer to Codex\u2014and for OpenAI APIs/products and ChatGPT Work. Also use for model choice/migration, prompting, SDKs, Responses, Realtime, agents, evals, and Chat/Work/Codex comparisons. Do not use for generic app/software tasks that merely mention Codex.",
+          "enabled": true,
+          "interface": {
+            "brandColor": null,
+            "defaultPrompt": "Use OpenAI Docs for official docs lookup, questions about Codex itself or Codex surfaces, model selection, model migration, and prompt-upgrade work.",
+            "displayName": "OpenAI Docs",
+            "iconLarge": "/home/sergio/.codex/skills/.system/openai-docs/assets/openai.png",
+            "iconLargeUrl": null,
+            "iconSmall": "/home/sergio/.codex/skills/.system/openai-docs/assets/openai-small.svg",
+            "iconSmallUrl": null,
+            "shortDescription": "OpenAI and Codex docs for models, skills, tasks, and setup"
+          },
+          "name": "openai-docs",
+          "path": "/home/sergio/.codex/skills/.system/openai-docs/SKILL.md",
+          "pluginId": null,
+          "scope": "system",
+          "shortDescription": "Codex models/pricing, scheduled tasks, skills, settings, setup, troubleshooting, and self-knowledge; OpenAI APIs and ChatGPT Work. 'You'/'this app' means Codex only."
+        },
+        {
+          "description": "Perform a read-only, defect-first review of a specified code change and return every actionable finding. Use when another agent delegates review of uncommitted changes, a base-branch diff, a commit, or custom review instructions.",
+          "enabled": true,
+          "interface": {
+            "brandColor": null,
+            "defaultPrompt": "Use $review-agent to review the requested code changes and return actionable findings.",
+            "displayName": "Review Agent",
+            "iconLarge": null,
+            "iconLargeUrl": null,
+            "iconSmall": null,
+            "iconSmallUrl": null,
+            "shortDescription": "Find actionable bugs in code changes"
+          },
+          "name": "review-agent",
+          "path": "/home/sergio/.codex/skills/.system/review-agent/SKILL.md",
+          "pluginId": null,
+          "scope": "system"
+        },
+        {
+          "description": "Create or update a Codex skill with appropriately scoped instructions and any needed supporting resources.",
+          "enabled": true,
+          "interface": {
+            "brandColor": null,
+            "defaultPrompt": null,
+            "displayName": "Skill Creator",
+            "iconLarge": "/home/sergio/.codex/skills/.system/skill-creator/assets/skill-creator.png",
+            "iconLargeUrl": null,
+            "iconSmall": "/home/sergio/.codex/skills/.system/skill-creator/assets/skill-creator-small.svg",
+            "iconSmallUrl": null,
+            "shortDescription": "Create or update a skill"
+          },
+          "name": "skill-creator",
+          "path": "/home/sergio/.codex/skills/.system/skill-creator/SKILL.md",
+          "pluginId": null,
+          "scope": "system",
+          "shortDescription": "Create or update a skill"
+        },
+        {
+          "description": "Install Codex skills into $CODEX_HOME/skills from a curated list or a GitHub repo path. Use when a user asks to list installable skills, install a curated skill, or install a skill from another repo (including private repos).",
+          "enabled": true,
+          "interface": {
+            "brandColor": null,
+            "defaultPrompt": null,
+            "displayName": "Skill Installer",
+            "iconLarge": "/home/sergio/.codex/skills/.system/skill-installer/assets/skill-installer.png",
+            "iconLargeUrl": null,
+            "iconSmall": "/home/sergio/.codex/skills/.system/skill-installer/assets/skill-installer-small.svg",
+            "iconSmallUrl": null,
+            "shortDescription": "Install curated skills from openai/skills or other repos"
+          },
+          "name": "skill-installer",
+          "path": "/home/sergio/.codex/skills/.system/skill-installer/SKILL.md",
+          "pluginId": null,
+          "scope": "system",
+          "shortDescription": "Install curated skills from openai/skills or other repos"
+        }
+      ]
+    }
+  ]
+}

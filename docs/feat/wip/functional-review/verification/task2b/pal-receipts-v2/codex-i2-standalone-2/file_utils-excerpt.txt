@@ -1,0 +1,100 @@
+421: def read_file_content(
+422:     file_path: str, max_size: int = 1_000_000, *, include_line_numbers: Optional[bool] = None
+423: ) -> tuple[str, int]:
+424:     """
+425:     Read a single file and format it for inclusion in AI prompts.
+426: 
+427:     This function handles various error conditions gracefully and always
+428:     returns formatted content, even for errors. This ensures the AI model
+429:     gets context about what files were attempted but couldn't be read.
+430: 
+431:     Args:
+432:         file_path: Path to file (must be absolute)
+433:         max_size: Maximum file size to read (default 1MB to prevent memory issues)
+434:         include_line_numbers: Whether to add line numbers. If None, auto-detects based on file type
+435: 
+436:     Returns:
+437:         Tuple of (formatted_content, estimated_tokens)
+438:         Content is wrapped with clear delimiters for AI parsing
+439:     """
+440:     logger.debug(f"[FILES] read_file_content called for: {file_path}")
+441:     try:
+442:         # Validate path security before any file operations
+443:         path = resolve_and_validate_path(file_path)
+444:         logger.debug(f"[FILES] Path validated and resolved: {path}")
+445:     except (ValueError, PermissionError) as e:
+446:         # Return error in a format that provides context to the AI
+447:         logger.debug(f"[FILES] Path validation failed for {file_path}: {type(e).__name__}: {e}")
+448:         error_msg = str(e)
+449:         content = f"\n--- ERROR ACCESSING FILE: {file_path} ---\nError: {error_msg}\n--- END FILE ---\n"
+450:         tokens = estimate_tokens(content)
+451:         logger.debug(f"[FILES] Returning error content for {file_path}: {tokens} tokens")
+452:         return content, tokens
+453: 
+454:     try:
+455:         # Validate file existence and type
+456:         if not path.exists():
+457:             logger.debug(f"[FILES] File does not exist: {file_path}")
+458:             content = f"\n--- FILE NOT FOUND: {file_path} ---\nError: File does not exist\n--- END FILE ---\n"
+459:             return content, estimate_tokens(content)
+460: 
+461:         if not path.is_file():
+462:             logger.debug(f"[FILES] Path is not a file: {file_path}")
+463:             content = f"\n--- NOT A FILE: {file_path} ---\nError: Path is not a file\n--- END FILE ---\n"
+464:             return content, estimate_tokens(content)
+465: 
+466:         # Check file size to prevent memory exhaustion
+467:         stat_result = path.stat()
+468:         file_size = stat_result.st_size
+469:         logger.debug(f"[FILES] File size for {file_path}: {file_size:,} bytes")
+470:         if file_size > max_size:
+471:             logger.debug(f"[FILES] File too large: {file_path} ({file_size:,} > {max_size:,} bytes)")
+472:             modified_at = datetime.fromtimestamp(stat_result.st_mtime, tz=timezone.utc).strftime("%Y-%m-%d %H:%M:%S %Z")
+473:             content = (
+474:                 f"\n--- FILE TOO LARGE: {file_path} (Last modified: {modified_at}) ---\n"
+475:                 f"File size: {file_size:,} bytes (max: {max_size:,})\n"
+476:                 "--- END FILE ---\n"
+477:             )
+478:             return content, estimate_tokens(content)
+479: 
+480:         # Determine if we should add line numbers
+481:         add_line_numbers = should_add_line_numbers(file_path, include_line_numbers)
+482:         logger.debug(f"[FILES] Line numbers for {file_path}: {'enabled' if add_line_numbers else 'disabled'}")
+483: 
+484:         # Read the file with UTF-8 encoding, replacing invalid characters
+485:         # This ensures we can handle files with mixed encodings
+486:         logger.debug(f"[FILES] Reading file content for {file_path}")
+487:         with open(path, encoding="utf-8", errors="replace") as f:
+488:             file_content = f.read()
+489: 
+490:         logger.debug(f"[FILES] Successfully read {len(file_content)} characters from {file_path}")
+491: 
+492:         # Add line numbers if requested or auto-detected
+493:         if add_line_numbers:
+494:             file_content = _add_line_numbers(file_content)
+495:             logger.debug(f"[FILES] Added line numbers to {file_path}")
+496:         else:
+497:             # Still normalize line endings for consistency
+498:             file_content = _normalize_line_endings(file_content)
+499: 
+500:         # Format with clear delimiters that help the AI understand file boundaries
+501:         # Using consistent markers makes it easier for the model to parse
+502:         # NOTE: These markers ("--- BEGIN FILE: ... ---") are distinct from git diff markers
+503:         # ("--- BEGIN DIFF: ... ---") to allow AI to distinguish between complete file content
+504:         # vs. partial diff content when files appear in both sections
+505:         modified_at = datetime.fromtimestamp(stat_result.st_mtime, tz=timezone.utc).strftime("%Y-%m-%d %H:%M:%S %Z")
+506:         formatted = (
+507:             f"\n--- BEGIN FILE: {file_path} (Last modified: {modified_at}) ---\n"
+508:             f"{file_content}\n"
+509:             f"--- END FILE: {file_path} ---\n"
+510:         )
+511:         tokens = estimate_tokens(formatted)
+512:         logger.debug(f"[FILES] Formatted content for {file_path}: {len(formatted)} chars, {tokens} tokens")
+513:         return formatted, tokens
+514: 
+515:     except Exception as e:
+516:         logger.debug(f"[FILES] Exception reading file {file_path}: {type(e).__name__}: {e}")
+517:         content = f"\n--- ERROR READING FILE: {file_path} ---\nError: {str(e)}\n--- END FILE ---\n"
+518:         tokens = estimate_tokens(content)
+519:         logger.debug(f"[FILES] Returning error content for {file_path}: {tokens} tokens")
+520:         return content, tokens

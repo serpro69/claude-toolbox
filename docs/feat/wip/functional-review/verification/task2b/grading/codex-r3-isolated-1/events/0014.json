@@ -1,0 +1,28 @@
+{
+  "actor": "items-01a125ce-52c3-7473-92f5-293bac28ca2f",
+  "completedAtMs": 1791635690675,
+  "id": "exec-53e034f3-e038-4338-8a5b-37bbdb8bcd82",
+  "item": {
+    "aggregatedOutput": "diff --git a/client.py b/client.py\nindex d6ddf4b..910e877 100644\n--- a/client.py\n+++ b/client.py\n@@ -1,5 +1,7 @@\n def save_settings(send, workspace_id, values, enhanced_settings=False):\n-    response = send(workspace_id, {\"settings\": values})\n+    response = send(workspace_id, {\"settings\": values, \"require_receipt\": True})\n     if not response.get(\"ok\"):\n         raise RuntimeError(\"Settings save failed\")\n+    if response.get(\"applied\") is not True:\n+        raise RuntimeError(\"Provider did not acknowledge applied settings\")\n     return {\"saved\": True, \"enhanced\": enhanced_settings}\ndiff --git a/tests/test_client.py b/tests/test_client.py\nindex 39ea461..f1dfc4f 100644\n--- a/tests/test_client.py\n+++ b/tests/test_client.py\n@@ -5,6 +5,6 @@ from client import save_settings\n class SettingsTests(unittest.TestCase):\n     def test_successful_save(self):\n         def send(workspace, request):\n-            return {\"ok\": True}\n+            return {\"ok\": True, \"applied\": True}\n         self.assertEqual(save_settings(send, \"w\", {\"label\": \"blue\"}),\n                          {\"saved\": True, \"enhanced\": False})\ndef save_settings(send, workspace_id, values, enhanced_settings=False):\n    response = send(workspace_id, {\"settings\": values, \"require_receipt\": True})\n    if not response.get(\"ok\"):\n        raise RuntimeError(\"Settings save failed\")\n    if response.get(\"applied\") is not True:\n        raise RuntimeError(\"Provider did not acknowledge applied settings\")\n    return {\"saved\": True, \"enhanced\": enhanced_settings}\nimport unittest\nfrom client import save_settings\n\n\nclass SettingsTests(unittest.TestCase):\n    def test_successful_save(self):\n        def send(workspace, request):\n            return {\"ok\": True, \"applied\": True}\n        self.assertEqual(save_settings(send, \"w\", {\"label\": \"blue\"}),\n                         {\"saved\": True, \"enhanced\": False})\n# Settings client\n\nPython 3.9+, standard library only. Tests: `python3 -B -m unittest discover -s tests`.\nThe client and provider ship independently. Every merged client increment must\nsupport the released provider at Git tag `eval-release`, including ordinary\nsettings saves while enhanced_settings is false. `provider/settings.py` at that\ntag is the supported provider source. Provider sources moved out of this\ncheckout after that release; local Git retains the release snapshot.\nA successful settings save means values were applied and the caller sees success.\nThe candidate provider is not deployed and a pending provider task cannot change\nthe supported baseline. No live environment is available or required here.\n/tmp/kk-review-code-ApYCWEJ5.patch\n",
+    "command": "/usr/bin/zsh -lc 'git diff --cached; cat client.py tests/test_client.py README.md; review_diff=$(mktemp /tmp/kk-review-code-XXXXXXXX.patch); git diff --cached > \"$review_diff\"; printf '\"'%s\\\\n' \\\"\"'$review_diff\"'",
+    "commandActions": [
+      {
+        "command": "git diff --cached; cat client.py tests/test_client.py README.md; review_diff=$(mktemp /tmp/kk-review-code-XXXXXXXX.patch); git diff --cached > \"$review_diff\"; printf '%s\\n' \"$review_diff\"",
+        "type": "unknown"
+      }
+    ],
+    "cwd": "/tmp/functional-review-2b-r3-1-20261010",
+    "durationMs": 100,
+    "exitCode": 0,
+    "id": "exec-53e034f3-e038-4338-8a5b-37bbdb8bcd82",
+    "pluginId": null,
+    "processId": "18187",
+    "scriptPath": null,
+    "source": "unifiedExecStartup",
+    "status": "completed",
+    "type": "commandExecution"
+  },
+  "source_file": "items-01a125ce-52c3-7473-92f5-293bac28ca2f.json",
+  "startedAtMs": 1791635690574,
+  "turnId": "01a125ce-52f2-71c1-806a-98f9b170edec"
+}

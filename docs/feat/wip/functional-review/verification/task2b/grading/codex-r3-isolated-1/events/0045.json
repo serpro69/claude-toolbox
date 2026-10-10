@@ -1,0 +1,28 @@
+{
+  "actor": "items-01a125cf-8a0e-72b2-aba9-445e07ca370d",
+  "completedAtMs": 1791635765711,
+  "id": "exec-38acf371-90c2-4182-aa3e-93c85e27f6ab",
+  "item": {
+    "aggregatedOutput": "     1\timport unittest\n     2\tfrom client import save_settings\n     3\t\n     4\t\n     5\tclass SettingsTests(unittest.TestCase):\n     6\t    def test_successful_save(self):\n     7\t        def send(workspace, request):\n     8\t            return {\"ok\": True, \"applied\": True}\n     9\t        self.assertEqual(save_settings(send, \"w\", {\"label\": \"blue\"}),\n    10\t                         {\"saved\": True, \"enhanced\": False})\n    11\t# Settings client\n    12\t\n    13\tPython 3.9+, standard library only. Tests: `python3 -B -m unittest discover -s tests`.\n    14\tThe client and provider ship independently. Every merged client increment must\n    15\tsupport the released provider at Git tag `eval-release`, including ordinary\n    16\tsettings saves while enhanced_settings is false. `provider/settings.py` at that\n    17\ttag is the supported provider source. Provider sources moved out of this\n    18\tcheckout after that release; local Git retains the release snapshot.\n    19\tA successful settings save means values were applied and the caller sees success.\n    20\tThe candidate provider is not deployed and a pending provider task cannot change\n    21\tthe supported baseline. No live environment is available or required here.\n",
+    "command": "/usr/bin/zsh -lc 'cat -n tests/test_client.py README.md'",
+    "commandActions": [
+      {
+        "command": "cat -n tests/test_client.py README.md",
+        "type": "unknown"
+      }
+    ],
+    "cwd": "/tmp/functional-review-2b-r3-1-20261010",
+    "durationMs": 53,
+    "exitCode": 0,
+    "id": "exec-38acf371-90c2-4182-aa3e-93c85e27f6ab",
+    "pluginId": null,
+    "processId": "93865",
+    "scriptPath": null,
+    "source": "unifiedExecStartup",
+    "status": "completed",
+    "type": "commandExecution"
+  },
+  "source_file": "items-01a125cf-8a0e-72b2-aba9-445e07ca370d.json",
+  "startedAtMs": 1791635765658,
+  "turnId": "01a125cf-8a2c-73e3-8538-661b386ca4fb"
+}
