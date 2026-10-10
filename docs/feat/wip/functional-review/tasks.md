@@ -7,7 +7,7 @@
 > Issue: [#166](https://github.com/serpro69/claude-toolbox/issues/166)
 > Status: in-progress
 > Created: 2026-10-07
-> Revised: 2026-10-10 with gate 2B capture completion under the selected receipt/use contract
+> Revised: 2026-10-10 with gate 2B complete and the candidate-6 ordering follow-up scoped
 > Not Doing: new review skill, whole-system audits, mandatory production access, deployments, generic release engine, new models/dependencies, profile redesign
 > Delivery: preserve existing invocations/shared consumers; regenerate Codex artifacts with every operative slice.
 
@@ -422,6 +422,98 @@ follow-up must address early requirements reading and clean-review Next Steps
 offering unsupported work, then rerun affected comparisons under a new source
 identity. Preserve the current improvements and failed observations. Task 12
 remains in-progress, Task 13 pending, and PAL remains user-deferred.
+
+### Accepted R5-only follow-up — after commit 17344213
+
+The user agreed to a narrow R5 follow-up and requested that the preceding work
+be committed first. Commit `17344213` preserves candidate 5 and its failures;
+the follow-up edits begin afterward. This supersedes the prior stop only for
+the bounded R5 work. PAL remains deferred.
+
+- [ ] 12.8 Separate early Git-diff selection from task-scope investigation and
+  close clean reviews without a remediation menu or invented follow-up work
+  → verify: source review, generated parity and two fresh R5-standard candidate
+  PASSes against matching fresh baseline repetitions under the unchanged rubric.
+
+The observed causes are a mandatory Next Steps menu even when no issue exists,
+and an early phase named scope that can be confused with reading task scope.
+The correction makes closure conditional on actual findings/required evidence,
+preserves conditional verdicts for unmet hard requirements, and places task
+document inspection after checklist completion. The shared scope note is
+explicitly code-review-specific; /kk:review-spec retains its payload and scope
+semantics. No fixture, assertion, grader, model or runner changes are planned.
+
+All eight detection rules were evaluated; skill-md activates through SKILL.md
+and sibling adjacency. Its universal/provider/kk guidance is loaded; there are
+no new dependencies. Reuse the complete feature context and reviewed runner,
+freeze a separately identified candidate, and run only R5 in this follow-up.
+
+**Premeasurement verification:** independent source review approves the follow-up
+with no findings. All eleven shell suites, Go/graph checks and generation
+freshness pass (902 generated files). Candidate
+`ab7daa7f2833abefc64dedc08e8e44790ce5a0ee` is frozen under
+[the candidate-6 declaration](verification/task12/candidate6/run-contract.md).
+Its binding probe returned all six complete packets containing fifteen original
+instruction sources, with matching parent/child model and bundle identity.
+The unchanged runner completed all four fresh R5-standard comparisons.
+
+**Follow-up completed; gate failed:** [candidate-6 results](verification/task12/candidate6/results.md)
+retain all four captures and twenty-four independent assertion grades. Candidate:
+**11 PASS / 1 FAIL**; baseline: **4 PASS / 6 FAIL / 2 PARTIAL**. Both candidates
+avoid unnecessary recommendations and approve the scoped increment. Repetition 1
+still reads the full diff/config before checklist completion (12.1); repetition 2
+passes all six assertions. No threshold or assertion changed.
+
+Integrity and access audits pass within the captured evidence: subjects/bundles
+unchanged, complete packet bytes verified, all 22 shell requests inspected, and
+seven proven-owned packet directories removed with sealed evidence retained.
+No evaluator-material access or PAL call was observed. Source/generated parity
+remains intact. The new follow-up remains uncommitted after `17344213`.
+
+**Continuation checkpoint:** 12.8's execution, grading and audits are complete,
+but its two-run acceptance condition remains unmet. Stop here under /kk:implement's
+repeated-verification-failure rule; no broader matrix or further candidate was
+started. Owner: implementing agent, Task 12. Retain the clean-closure improvement
+and define a separate approach to establish instruction completion before source
+access. This follow-up is proposed, not implemented. Task 12 remains in-progress,
+Task 13 pending, and PAL user-deferred.
+
+### Scoped ordering proposal — after candidate 6
+
+The user answered “yes” to scoping a separate ordering fix. This authorizes the
+documentation below; it does not claim a successful guard, amend acceptance,
+or start another candidate batch. [The proposal](ordering.md) retains the
+clean-closure change and recommends a bounded feasibility experiment before any
+production hook integration. Historical 12.7/12.8 results remain unchanged.
+
+- [x] 12.9 Scope a mechanism for instruction completion before source access
+  → verify: [ordering.md](ordering.md) ties the proposal to candidate-6 events,
+  evaluates alternatives, identifies runtime uncertainties, defines a bounded
+  GO / NO-GO experiment and preserves the original acceptance requirements.
+- [ ] 12.10 Prove or reject the proposed guard's runtime feasibility
+  → verify: complete [the bounded slice](ordering.md#bounded-feasibility-slice)
+  with a frozen probe contract, offline receipt/state controls, at most two
+  fresh top-level sessions per provider, sealed actual tool events and an
+  independent evidence review. Missing activation, receipt, denial, ordering or
+  lifetime evidence is NO-GO, not an invitation to weaken the gate.
+
+**12.10 planning metadata:** Status pending; size M; strategy Risk-First;
+depends on 12.9 and design review; cannot run in parallel with another source or
+runtime-policy change. The implementing agent owns it if selected for execution.
+Candidate-6 source/evidence remain uncommitted; no additional commit is made by
+this scope revision.
+
+All eight installed detection rules were consulted. Existing skill artifacts
+activate skill-md; the prospective Python probe/helper activates Python. Neither
+has installed design-phase guidance. Current official hook documentation and
+existing repository hooks establish research targets, not pinned-runtime proof.
+Capy supplied no existing receipt-enforcement decision. No operative code, hook,
+profile, fixture, grader, generated artifact or permission was changed in this
+scoping turn. Independent design review and all probe execution remain pending.
+
+Scoping verification: all 115 local links/anchors across the four documents
+resolve, `git diff --check` passes, and canonical plugin bytes still match the
+frozen candidate-6 source. No behavioral test result is added by these checks.
 
 ## Task 13: Document and verify the complete feature
 

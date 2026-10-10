@@ -30,7 +30,7 @@ Before declaring the review complete, verify all outputs are delivered:
 - [ ] Review report presented to user
 - [ ] Intent, scope/baselines, inspected behavior, applicable compatibility conclusions and evidence limits reported
 - [ ] P0/P1 systemic findings indexed as `kk:review-findings` (skip if no qualifying findings)
-- [ ] Next steps confirmation from user
+- [ ] Required next steps handled, or clean review closed without proposing new work
 
 Indexing is owned by this skill — callers (e.g., `$kk:implement`) do NOT duplicate it.
 
@@ -71,7 +71,7 @@ This ordering is load-bearing, not stylistic. Reviewing from a diff before loadi
 **Phases** (same order as [review-process.md](./review-process.md)):
 
 1. Prepare instruction packets — read [packet-preparation.md](packet-preparation.md), run the helper below for `bootstrap`, and Read every returned part; this loads process, shared protocols, common method and all known detection rules
-2. Scope — resolve diff selection from status/filenames only
+2. Select the diff — use status/filenames only; task scope belongs to investigation
 3. Detect profiles and route checklists — read and reconcile every known detection rule; filename/metadata signals, then bounded declared predicates; no deferred conditionals
 4. Read every resolved checklist — build and Read the selected checklist packet; its manifest rejects missing index decisions and skipped always-load files. Confirm actual complete Read results before proceeding
 5. Investigate — read available component contracts and establish context/task scope, then selected diff/current files; trace behavior and historical compatibility, and search relevant knowledge
@@ -79,7 +79,7 @@ This ordering is load-bearing, not stylistic. Reviewing from a diff before loadi
 7. Self-check findings and confidence through targeted verification
 8. Index systemic P0/P1 findings as `kk:review-findings`
 9. Present findings, coverage and evidence-qualified verdict
-10. Confirm next steps
+10. Close a clean review; confirm only supported next steps needing authorization
 11. Verify required outputs
 
 See [review-process.md](./review-process.md) for the detailed step-by-step process.

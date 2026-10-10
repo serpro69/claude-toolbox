@@ -2,6 +2,13 @@
 
 Reviewers need task status alongside the diff and design docs. Without scope, they flag code-that-isn't-written-yet as `MISSING_IMPL` (spec review) or as missing functionality (code review). Standard review uses this scope locally; isolated review injects the same artifact into sub-agent and external-reviewer prompts. The existing $kk:review-spec payload remains sufficient; no additional change-context record is required by this protocol.
 
+**Code-review timing:** apply this protocol's task-document reads during the
+post-instruction investigation phase, after every resolved checklist is loaded.
+Early diff selection uses filenames and Git metadata; it is distinct from
+determining task scope. Reading this protocol does not authorize early inspection
+of a discovered task file's requirements. The calling workflow still governs
+any bounded inspection needed solely for a declared routing predicate.
+
 ### Input shapes
 
 The review workflow must handle three invocation shapes:
