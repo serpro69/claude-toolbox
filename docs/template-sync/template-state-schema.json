@@ -51,16 +51,16 @@
         },
         "CC_MODEL": {
           "type": "string",
-          "description": "Claude Code model alias. Substituted into .claude/settings.json (model field). SPECIAL: 'default' triggers line REMOVAL instead of substitution (.github/scripts/template-cleanup.sh lines 297-301).",
+          "description": "Claude Code model ID or alias. Substituted into .claude/settings.json (model field). SPECIAL: 'default' removes the model field instead of substituting it.",
           "default": "default",
-          "examples": ["sonnet", "opus", "haiku", "default"]
+          "examples": ["default", "claude-opus-5-5", "sonnet", "opus", "haiku"]
         },
         "CC_EFFORT_LEVEL": {
           "type": "string",
           "description": "Claude Code effort level. Controls reasoning depth. Substituted into .claude/settings.json (effortLevel field). 'default' triggers line REMOVAL (same as CC_MODEL).",
           "default": "high",
-          "enum": ["low", "medium", "high", "default"],
-          "examples": ["high", "medium", "low"]
+          "enum": ["low", "medium", "high", "xhigh", "default"],
+          "examples": ["high", "xhigh", "medium", "low", "default"]
         },
         "CC_PERMISSION_MODE": {
           "type": "string",

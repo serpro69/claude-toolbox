@@ -309,8 +309,8 @@ cd "$test_dir"
 
 PROJECT_NAME="schema-test"
 LANGUAGES="go"
-CC_MODEL="sonnet"
-CC_EFFORT_LEVEL="high"
+CC_MODEL="claude-opus-5-5"
+CC_EFFORT_LEVEL="xhigh"
 CC_PERMISSION_MODE="default"
 CC_STATUSLINE="enhanced"
 

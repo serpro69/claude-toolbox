@@ -98,12 +98,12 @@ Usage:
   ./.github/scripts/template-cleanup.sh -y [options]       # Skip confirmation prompt
 
 Options:
-  --model <model>           Claude Code model alias (default: default)
-                            Options: default, sonnet, sonnet[1m], opus, opus[1m], opusplan, haiku
+  --model <model>           Claude Code model ID or alias (default: default)
+                            Options: default, claude-opus-5-5, sonnet, sonnet[1m], opus, opus[1m], opusplan, haiku
                             (See https://code.claude.com/docs/en/model-config#model-aliases for more details.)
   --effort-level <level>    Claude Code effort level (default: high)
                             Controls reasoning depth for responses.
-                            Options: high, medium, low, default
+                            Options: high, xhigh, medium, low, default
                             'default' removes the setting so Claude Code uses its built-in default.
   --permission-mode <mode>  Claude Code permissions default mode (default: default)
                             Options: default, plan, bypassPermissions
@@ -217,19 +217,20 @@ run_interactive() {
 
   # Model selection
   prompt_select "Select Claude Code model" "default" CC_MODEL \
-    "default" "sonnet" "sonnet[1m]" "opus" "opus[1m]" "opusplan" "haiku"
+    "default" "claude-opus-5-5" "sonnet" "sonnet[1m]" "opus" "opus[1m]" "opusplan" "haiku"
 
   echo ""
 
   # Effort level selection
   echo -e "${YELLOW}Effort Level Options:${NC}"
-  echo -e "  high:    Maximum reasoning depth (recommended)"
+  echo -e "  high:    High reasoning depth (default)"
+  echo -e "  xhigh:   Extra-high reasoning depth"
   echo -e "  medium:  Balanced reasoning depth"
   echo -e "  low:     Minimal reasoning depth"
   echo -e "  default: Use Claude Code's built-in default"
   echo ""
   prompt_select "Select effort level" "high" CC_EFFORT_LEVEL \
-    "high" "medium" "low" "default"
+    "high" "xhigh" "medium" "low" "default"
 
   echo ""
 

@@ -2,7 +2,8 @@
 name: spec-reviewer
 description: |
   Independent spec conformance reviewer with no authorship attachment. Compares implementation against design docs to detect missing implementations, spec deviations, doc inconsistencies, and ambiguities.
-model: claude-opus-4-8[1m]
+model: claude-opus-5-5
+effort: xhigh
 tools:
   - Read
   - Grep

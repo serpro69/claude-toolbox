@@ -2,7 +2,8 @@
 name: eval-grader
 description: |
   Independent skill-eval grader with no review authorship and no fixture access. Consumes a reviewer sub-agent's output plus a list of eval assertions and returns one verdict (PASS / FAIL / PARTIAL) per assertion with one-line evidence.
-model: claude-opus-4-8[1m]
+model: claude-opus-5-5
+effort: xhigh
 tools:
   - Read
 ---

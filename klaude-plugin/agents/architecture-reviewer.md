@@ -2,7 +2,8 @@
 name: architecture-reviewer
 description: |
   Independent architecture reviewer with no authorship attachment. Verifies a written architecture artifact (ADR, architecture doc, design-doc architecture section, or domain-reference kit — glossary + traps pages reviewed as one composite artifact) against the system it claims to describe — checking the existence and topology of declared mechanisms, never their behavioral correctness — and grades decision soundness, reversibility, and provenance consistency against the artifact's own stated context.
-model: claude-opus-4-8[1m]
+model: claude-opus-5-5
+effort: xhigh
 tools:
   - Read
   - Grep
