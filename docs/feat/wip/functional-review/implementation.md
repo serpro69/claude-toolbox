@@ -5,7 +5,7 @@
 > Tasks: [tasks.md](tasks.md)
 > Review disposition: [consolidated assessment](reviews/design-review-consolidation.md)
 > Status: Tasks 1–11 and core matrix capture/grading complete; acceptance and final verification pending
-> Revised: 2026-10-11; severity/cost assessment is next
+> Revised: 2026-10-11; severity/cost assessment selects the isolated entry-path correction
 > Next-session handoff: [follow-up.md](follow-up.md)
 
 ## Starting points
@@ -113,8 +113,8 @@ Review R3's historical-source handoff, R3/R7's verdict mapping, I4's resulting d
 The user subsequently expanded coverage to both providers' complete applicable
 matrix. [All 192 sessions and grades](verification/task12/opus55/README.md) are
 complete. Required acceptance remains unmet; preserve PAL deferral and the
-separate legacy/final gates. The next step is the severity/cost assessment below,
-not another automatic full rerun.
+separate legacy/final gates. The severity/cost assessment below selects a bounded
+entry-path correction; no automatic full rerun follows.
 
 ## Documentation and final verification
 
@@ -175,21 +175,26 @@ upgrade, provider substitution or matrix expansion. A later integrated candidate
 requires fresh matching comparisons as described in
 [conditional validation](ordering.md#conditional-integration-and-validation).
 
-### Next slice: assess severity and instruction cost
+### Severity and instruction-cost disposition
 
-Resume with `/kk:implement task 12.11 of functional-review` and use
-[follow-up.md](follow-up.md) as the current handoff. Assess the remaining grades
-before selecting a fix: distinguish practical behavioral impact, minor report
-omissions, missing evidence and explicit deferrals. Evaluate added context and
-mandatory workflow obligations as well as diff size. Prefer a contained change
-or simplification; defer changes whose cost outweighs their benefit.
+The [dated assessment](follow-up.md#assessment--2026-10-11) and
+[observation ledger](assessment-observations.md) account for every candidate
+FAIL/PARTIAL, separating behavioral impact, report omissions, missing evidence
+and PAL deferral. Existing instruction burden is part of each disposition;
+deferred requirements remain open.
 
-Produce a linked disposition record and at most one bounded next task with
-concrete targets and verification. This assessment does not require operative
-edits or new actor runs. Any later fix needs targeted comparisons and adjacent
-regression controls sufficient to judge its overall effect; it does not waive
-the remaining acceptance gates. The earlier guard task is only one conditional
-option, and its preparation barrier may not address I4's later context ordering.
+Resume with `/kk:implement task 12.12 of functional-review`. Its
+[bounded plan](tasks.md#task-1212-resolve-isolated-review-instructions-at-entry)
+replaces the isolated command's ambiguous instruction location with explicit
+plugin-root paths. It preserves existing workflow steps and limits the added
+word count. Source/loading checks precede a separately frozen R3-isolated
+comparison with R5/R9-recovery controls; fixtures, assertions and PAL deferral
+remain unchanged. No operative change or new actor run is claimed by the
+assessment. Reject the correction if the target evidence remains missing,
+controls regress or instruction cost exceeds the stated bound. Keep implementation
+acquisition, unsupported deployment claims and capture limitations separately
+assigned. The earlier guard remains deferred and may not address I4's later
+context-ordering violation.
 
 Optional `/kk:clarify-docs` may refine the changed `follow-up.md`, `design.md`,
 `implementation.md`, `ordering.md` and `tasks.md`; then
@@ -217,5 +222,5 @@ Feature verification and this release follow-up have separate completion records
 Task 13 stays open until both are done.
 
 This handoff revision changes documentation only. Earlier completed slices and
-sealed evidence retain their status; the remaining assessment, conditional fixes
+sealed evidence retain their status; the selected and deferred follow-ups
 and final verification are tracked in tasks.md.
