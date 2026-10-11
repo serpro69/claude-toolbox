@@ -7,6 +7,20 @@ This continuation supersedes the preceding stop for this bounded experiment.
 
 ## Successor runner
 
+As of 2026-10-11, new captures through `driver.py` explicitly select
+`claude-opus-5-5` with high effort. The command and prepared launch metadata use
+the same model constant in `capture.py`; other launch flags are unchanged.
+Subagents are pinned to the same model through `CLAUDE_CODE_SUBAGENT_MODEL` and
+`CLAUDE_CODE_SUBAGENT_MODEL_FORCE=1`, recorded in `command.json`. This overrides
+older model declarations in frozen baseline agents without changing their bytes.
+The [documented override](https://code.claude.com/docs/en/sub-agents#run-every-subagent-on-one-model)
+requires Claude Code 2.1.257 or later; the declared 2.1.272 runner meets that floor.
+The runner pins its model rather than inheriting the repository setting.
+Historical seed controllers and candidate-5/6 captures still record their actual
+`claude-opus-4-8[1m]` model. Use a new declaration/run contract and freeze for the
+updated runner, with fresh baseline/candidate runs and model binding checks;
+existing freezes intentionally reject changed controller bytes.
+
 Historical controllers and freezes remain unchanged. `driver.py` reuses their
 input preparation and launch guards while binding new transport/runtime bytes
 and the declaration into a successor freeze. Batch preparation finishes before
@@ -49,7 +63,16 @@ record. Conflicting prompts to recommend speculative extra work were removed.
 All existing assertions and the revision-2 rubric remain required and unchanged;
 failure classifications are diagnostic summaries only.
 
+The 2026-10-11 review follow-up restores concrete steps and proportionate
+validation checkpoints for warranted removal recommendations. The evidence
+threshold and protection for pending scaffolding remain in place.
+
 ## Offline verification and independent review
+
+The 2026-10-11 model/removal follow-up passes all eleven shell suites, nineteen
+successor runner/evidence tests, twelve historical-controller tests, generation
+and graph checks. All 902 generated entries match regeneration. No live model
+evaluation was run for this follow-up; the behavioral gates below remain open.
 
 - All eleven `test/test-*.sh` suites, Go tests, plugin graph and twelve historical
   controller tests pass. New packet tests cover nine cases; successor and packet

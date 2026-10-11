@@ -33,6 +33,20 @@ def capture_job(job, interruption):
         controller.seed.run_claude = previous
 
 
+def prepare_job(job):
+    """Bind the successor model without editing the historical seed controller."""
+    controller.prepare(job)
+    launch_path = job.evidence / "launch.json"
+    launch = json.loads(launch_path.read_text())
+    launch["models"]["claude"] = f"{capture.MODEL}/high"
+    launch["models"]["claude_subagent"] = capture.MODEL
+    controller.seed.write_json(launch_path, launch)
+    prepared_path = job.evidence / "prepared.json"
+    prepared = json.loads(prepared_path.read_text())
+    prepared["launch_sha256"] = controller.seed.sha(launch_path.read_bytes())
+    controller.seed.write_json(prepared_path, prepared)
+
+
 def jobs_for(frozen, workspace_root, cases):
     jobs = []
     for case in cases:
@@ -75,12 +89,12 @@ def main():
         if len(cases) != len(set(cases)):
             raise ValueError("Duplicate diagnostic case")
         jobs = jobs_for(frozen, args.workspace_root.resolve(), cases)
-        return run_batch(jobs, controller.prepare, capture_job)
+        return run_batch(jobs, prepare_job, capture_job)
     job = argparse.Namespace(provider="claude", side=args.side, case="R1",
         mode="standard", snapshot=controller.SNAPSHOTS[args.side],
         workspace=args.workspace.resolve(), evidence=args.evidence.resolve(),
         frozen=frozen, binding=True)
-    return run_batch([job], controller.prepare, capture_job)
+    return run_batch([job], prepare_job, capture_job)
 
 
 if __name__ == "__main__":

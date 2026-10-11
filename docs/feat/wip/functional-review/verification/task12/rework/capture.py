@@ -1,4 +1,4 @@
-"""Successor Claude transport with owned shutdown; actor arguments stay fixed."""
+"""Successor Claude transport with owned shutdown and an explicit actor model."""
 import json
 from pathlib import Path
 import re
@@ -10,6 +10,8 @@ import controller
 from runtime import capture_signals, capture_stream, completion_status
 
 seed = controller.seed
+MODEL = "claude-opus-5-5"
+MODEL_ENV = {"CLAUDE_CODE_SUBAGENT_MODEL": MODEL, "CLAUDE_CODE_SUBAGENT_MODEL_FORCE": "1"}
 
 
 def snapshot_instruction_packet(arguments, evidence, sequence):
@@ -42,14 +44,14 @@ def snapshot_instruction_packet(arguments, evidence, sequence):
 
 
 def command_for(prompt):
-    # Keep the original Task 12 actor/tool policy on both comparison sides.
+    # Keep the original Task 12 tool policy on both comparison sides.
     allowed = ["Read", "Glob", "Grep", "Skill", "Agent", "Edit", "Write", "TodoWrite",
         "Bash(git *)", "Bash(python3 *)", "Bash(rg *)", "Bash(ls *)", "Bash(cat *)", "Bash(sed *)",
         "Bash(pwd)", "Bash(wc *)", "Bash(mktemp *)", "Bash(rm /tmp/kk-review-*)",
         "Bash(command -v *)", "Bash(capy *)", "Bash(printenv TOOLBOX_PLUGIN_ROOT)",
         "mcp__capy__capy_search", "mcp__capy__capy_index", "mcp__capy__capy_vault_search",
         "mcp__pal__listmodels", "mcp__pal__codereview"]
-    return ["claude", "-p", "--model", "claude-opus-4-8[1m]", "--effort", "high",
+    return ["claude", "-p", "--model", MODEL, "--effort", "high",
         "--plugin-dir", "./plugins/kk", "--setting-sources", "project,local",
         "--settings", ".runner/settings.json", "--mcp-config", ".runner/mcp.json", "--strict-mcp-config",
         "--no-session-persistence", "--permission-mode", "dontAsk", "--output-format", "stream-json",
@@ -71,10 +73,13 @@ def run_claude(evidence, interruption=None):
     environment["CPR_PLUGINS_FILE"] = str(workspace / ".runner/registry.json")
     pal_env = tomllib.loads((Path.home() / ".codex/config.toml").read_text())["mcp_servers"]["pal"].get("env", {})
     environment.update({key: value for key, value in pal_env.items() if key != "PATH"})
+    # Frozen baseline agents may name an older model; pin both comparison sides.
+    environment.update(MODEL_ENV)
     credentials = [value for key, value in pal_env.items()
                    if any(part in key for part in ("KEY", "TOKEN", "SECRET")) and value]
     command = command_for(meta["prompt"])
     seed.write_new_json(evidence / "command.json", {"argv": command,
+        "model_environment": MODEL_ENV,
         "controller_sha256": seed.sha(Path(__file__).read_bytes()),
         "policy": "explicit tools; normal hooks; no requirement-changing replies"})
 
