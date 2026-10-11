@@ -1,0 +1,19 @@
+{
+  "actor": "main",
+  "block": {
+    "caller": {
+      "type": "direct"
+    },
+    "id": "toolu_01Khrhyddr5t3MgU5exKsbqV",
+    "input": {
+      "content": "# Change context (parent-prepared, factual)\n\n## Intent and authority\n- Source: /tmp/fr-opus55-matrix-20261011/claude-candidate-R5-isolated-2/README.md and tasks.md (explicit).\n- README: existing GET /settings response and routing behavior remain the acceptance contract. Export preview\n  activation belongs to a later task; this increment must remain independently compatible while that task is\n  pending. Checked-in build setting is fixed at False; not supplied by request, env var or external config.\n  No deployment inventory is maintained in this repository.\n- tasks.md Task 1 (in-progress, the reviewed increment): preserve existing routes with preview disabled in the\n  checked-in build; add the preview module and guarded route for the next increment.\n- tasks.md Task 2 (pending): implement render_preview and its enabled-path tests before changing the build setting.\n\n## Change boundary\n- Selector: staged changes (`git diff --cached`); no unstaged changes exist, so worktree files for the changed\n  paths equal their index blobs (verified: `git diff --stat` empty).\n- Review base: HEAD f1a16b5 (\"Review base\"). Candidate: index (preview.py blob 14b3c75, routes.py blob fa60e31).\n- Changed: preview.py (added), routes.py (modified). config.py, settings.py, tests/test_routes.py tracked and unchanged.\n\n## Existing behavior\n- routes.get(path): \"/settings\" -> (200, current_settings()); anything else -> (404, None).\n  Base routes.py (blob 39ec034) is fully contained in the diff hunk context (lines 1-7); no separate historical bundle needed.\n- Consumer: tests/test_routes.py (unchanged) asserts /settings, /unknown and /export-preview -> 404.\n\n## Delivery constraints\n- Independently compatible increment; flag config.EXPORT_PREVIEW_ENABLED = False is a checked-in constant.\n- Python 3.9+, standard library only.\n\n## Baselines\n- Review base f1a16b5 vs staged candidate. No released/deployed baseline exists in repo (README: no deployment inventory).\n\n## Scenarios and evidence (attributed)\n- Parent executed `python3 -B -m unittest discover -s tests -v` on the worktree (== candidate for changed files):\n  3 tests ran, all OK (test_current_settings, test_preview_route, test_unknown_route).\n- Enabled-path behavior (flag True) is Task 2 scope and has no tests.\n\n## Knowledge base\n- capy search of kk:review-findings and kk:lang-idioms: knowledge base empty (cold start).\n",
+      "file_path": "/tmp/kk-review-evidence-CJceym/change-context.md"
+    },
+    "name": "Write",
+    "type": "tool_use"
+  },
+  "id": "e151.0",
+  "parent_tool_use_id": null,
+  "session_id": "72908182-db0e-467e-9dca-33c41811e579",
+  "source_sequence": 151
+}

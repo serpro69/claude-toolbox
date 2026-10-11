@@ -1,0 +1,19 @@
+{
+  "actor": "main",
+  "block": {
+    "caller": {
+      "type": "direct"
+    },
+    "id": "toolu_014q93K76EY5uNxrAyCTPqUC",
+    "input": {
+      "content": "Pattern: premature removal of a dual-read compatibility path while a background data migration is still in progress. A \"cleanup\" that drops the legacy-shape branch from a reader (e.g. address_of only reading row[\"destination\"][\"address\"]) breaks every caller listing unmigrated rows (KeyError, so the whole list request fails) when migration runs in bounded batches with no completion gate. Before approving reader simplification, check: (1) the README/contract says reads must handle both shapes until migration finishes, (2) is there a gate or evidence that migration is done (zero legacy rows in every environment)? (3) do the tests cover a legacy row? Suites that only test new writes pass even though legacy reads are broken. Remove the legacy read only after migration completion has been verified, in its own step.",
+      "source": "kk:review-findings"
+    },
+    "name": "mcp__capy__capy_index",
+    "type": "tool_use"
+  },
+  "id": "e114.0",
+  "parent_tool_use_id": null,
+  "session_id": "c297d00a-c99f-453d-856e-98238aa27dee",
+  "source_sequence": 114
+}

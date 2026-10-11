@@ -1,0 +1,19 @@
+{
+  "actor": "main",
+  "block": {
+    "caller": {
+      "type": "direct"
+    },
+    "id": "toolu_013sYBhkRtRkTfkFXkbFF8FD",
+    "input": {
+      "content": "Pattern: a small input-normalization change (e.g. trimming an ID) was made by rewriting a delegating call. In the process the call moved from the documented resilience owner (`read_resilient`, a bounded retry) to the single-attempt primitive (`read_once`). The tests were rewritten in the same change to assert the new single-attempt behavior (a transient error now expected to raise), so the suite stayed green while the README's \"preserve resilient-read contract\" requirement broke. Review signal: when a diff swaps which method of a policy-owning class a caller uses, check the documented owner. Treat newly added tests that assert failure on a previously recovered path as a possible codified regression. The fix is to normalize the input before delegating to the policy owner, which keeps every retry on the normalized key. (Found in preference-reads repo, reader.py, P1, 2026-10-11.)",
+      "source": "kk:review-findings"
+    },
+    "name": "mcp__capy__capy_index",
+    "type": "tool_use"
+  },
+  "id": "e418.0",
+  "parent_tool_use_id": null,
+  "session_id": "bcb47d65-8609-4412-b2b2-ea3dba438aa6",
+  "source_sequence": 418
+}

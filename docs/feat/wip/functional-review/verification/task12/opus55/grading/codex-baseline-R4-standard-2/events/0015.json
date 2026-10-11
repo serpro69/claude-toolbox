@@ -1,0 +1,28 @@
+{
+  "actor": "items-01a12b32-4cbd-7153-aaac-544367ab3853",
+  "completedAtMs": 1791726121304,
+  "id": "exec-dc9141ed-484d-4bef-af85-6afbabb5dd13",
+  "item": {
+    "aggregatedOutput": "./tests/test_destinations.py:3:from api import list_destinations\n./tests/test_destinations.py:4:from writer import new_destination\n./tests/test_destinations.py:9:        row = new_destination(\"new\", \"new@example.test\")\n./tests/test_destinations.py:10:        self.assertEqual(list_destinations([row]),\n./tests/test_destinations.py:11:                         [{\"id\": \"new\", \"address\": \"new@example.test\"}])\n./tests/test_destinations.py:14:        self.assertEqual(list_destinations([]), [])\n./writer.py:1:def new_destination(record_id, address):\n./writer.py:2:    return {\"id\": record_id, \"destination\": {\"address\": address}}\n./README.md:1:# Saved destinations\n./README.md:5:Destination records can use legacy top-level `address` or current nested\n./README.md:6:`destination.address`. New writes use the nested shape. Background migration\n./README.md:8:both shapes until migration finishes. Existing addresses must be preserved.\n./README.md:10:`data/records.json` is a supported mixed snapshot. `api.list_destinations`\n./README.md:11:serves all saved records through the same reader. `migrate_batch` changes up to\n./README.md:12:its limit per invocation; there is no startup migration gate. The store is a\n./reader.py:1:def address_of(row):\n./reader.py:2:    return row[\"destination\"][\"address\"]\n./api.py:1:from reader import address_of\n./api.py:4:def list_destinations(records):\n./api.py:5:    return [{\"id\": row[\"id\"], \"address\": address_of(row)} for row in records]\n./migration.py:1:def migrate_batch(records, limit):\n./migration.py:2:    migrated = 0\n./migration.py:4:        if migrated >= limit:\n./migration.py:6:        if \"destination\" not in row:\n./migration.py:7:            row[\"destination\"] = {\"address\": row.pop(\"address\")}\n./migration.py:8:            migrated += 1\n./migration.py:9:    return migrated\n./data/records.json:4:    \"address\": \"a@example.test\"\n./data/records.json:8:    \"destination\": {\n./data/records.json:9:      \"address\": \"b@example.test\"\n./data/records.json:14:    \"address\": \"c@example.test\"\n# Saved destinations\n\nPython 3.9+, standard library only. Run `python3 -B -m unittest discover -s tests`.\n\nDestination records can use legacy top-level `address` or current nested\n`destination.address`. New writes use the nested shape. Background migration\nruns in bounded batches while reads remain available; a deployment must read\nboth shapes until migration finishes. Existing addresses must be preserved.\n\n`data/records.json` is a supported mixed snapshot. `api.list_destinations`\nserves all saved records through the same reader. `migrate_batch` changes up to\nits limit per invocation; there is no startup migration gate. The store is a\nlocal JSON model, with no production environment or external database required.\nfrom reader import address_of\n\n\ndef list_destinations(records):\n    return [{\"id\": row[\"id\"], \"address\": address_of(row)} for row in records]\ndef new_destination(record_id, address):\n    return {\"id\": record_id, \"destination\": {\"address\": address}}\ndef migrate_batch(records, limit):\n    migrated = 0\n    for row in records:\n        if migrated >= limit:\n            break\n        if \"destination\" not in row:\n            row[\"destination\"] = {\"address\": row.pop(\"address\")}\n            migrated += 1\n    return migrated\nimport unittest\n\nfrom api import list_destinations\nfrom writer import new_destination\n\n\nclass DestinationTests(unittest.TestCase):\n    def test_new_write_can_be_listed(self):\n        row = new_destination(\"new\", \"new@example.test\")\n        self.assertEqual(list_destinations([row]),\n                         [{\"id\": \"new\", \"address\": \"new@example.test\"}])\n\n    def test_empty_list(self):\n        self.assertEqual(list_destinations([]), [])\n[\n  {\n    \"id\": \"legacy-a\",\n    \"address\": \"a@example.test\"\n  },\n  {\n    \"id\": \"current-b\",\n    \"destination\": {\n      \"address\": \"b@example.test\"\n    }\n  },\n  {\n    \"id\": \"legacy-c\",\n    \"address\": \"c@example.test\"\n  }\n]\n",
+    "command": "/usr/bin/zsh -lc \"rg -n 'address_of|destination|migrat|address' . -g '\"'!__pycache__'\"' -g '\"'!.git'\"' && cat README.md api.py writer.py migration.py tests/test_destinations.py data/records.json\"",
+    "commandActions": [
+      {
+        "command": "rg -n 'address_of|destination|migrat|address' . -g '!__pycache__' -g '!.git' && cat README.md api.py writer.py migration.py tests/test_destinations.py data/records.json",
+        "type": "unknown"
+      }
+    ],
+    "cwd": "/tmp/fr-opus55-matrix-20261011/codex-baseline-R4-standard-2",
+    "durationMs": 51,
+    "exitCode": 0,
+    "id": "exec-dc9141ed-484d-4bef-af85-6afbabb5dd13",
+    "pluginId": null,
+    "processId": "33242",
+    "scriptPath": null,
+    "source": "unifiedExecStartup",
+    "status": "completed",
+    "type": "commandExecution"
+  },
+  "source_file": "items-01a12b32-4cbd-7153-aaac-544367ab3853.json",
+  "startedAtMs": 1791726121252,
+  "turnId": "01a12b32-4ce8-7ea0-a961-0e1067d1064e"
+}

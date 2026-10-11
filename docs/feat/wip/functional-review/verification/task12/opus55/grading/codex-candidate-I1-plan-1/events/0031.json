@@ -1,0 +1,23 @@
+{
+  "actor": "items-01a12b02-33db-7a02-966a-84b285541f59",
+  "completedAtMs": 1791723053249,
+  "id": "exec-194d6ff1-d739-43b6-a56a-9b3a933ce53b",
+  "item": {
+    "changes": [
+      {
+        "diff": "@@ -5,3 +5,3 @@\n ## Task 1: Client acknowledgement\n-- **Status:** pending\n+- **Status:** in-progress\n - **Depends on:** \u2014\n@@ -10,2 +10,43 @@\n \n+### Execution context\n+\n+- 2026-10-11 \u2014 **Observed:** Investigation began from clean revision\n+  `5692f67322e81b0f532ec167a7bee727dfd6fed2`. Scope is task 1 only;\n+  provider receipts remain task 2. No runtime or test files have been changed.\n+- 2026-10-11 \u2014 **Unresolved:** This task and `implementation.md` require\n+  unconditional rejection of successful responses without `applied: true`.\n+  `design.md` separately makes compatibility with the current provider a hard\n+  acceptance requirement, including ordinary saves with `enhanced_settings=False`.\n+  Neither document supplies an accepted exception or resolves the conflict.\n+- 2026-10-11 \u2014 **Observed boundary case:** `provider.py:update_settings` applies\n+  values and returns only `{\"ok\": True}`, even when the request includes\n+  `require_receipt: True`. `client.py:save_settings` currently returns\n+  `{\"saved\": True, \"enhanced\": False}` for that ordinary save. An unconditional\n+  receipt check would reject after the write, violating independent delivery.\n+  Disabling the enhanced UI does not change this ordinary-save response.\n+- 2026-10-11 \u2014 **Proposed, not accepted:** (A) Preserve independent delivery by\n+  allowing legacy success for ordinary saves and requiring receipts only when\n+  `enhanced_settings=True`; this changes the unconditional rejection requirement\n+  because an ordinary save without a receipt would still succeed. (B) Keep\n+  unconditional receipt rejection and coordinate release with task 2; this changes\n+  the independent-delivery guarantee because the current provider remains\n+  incompatible. Neither alternative satisfies both original requirements.\n+- 2026-10-11 \u2014 **Verified baseline:** On Python 3.10.12, the README command\n+  `python3 -B -m unittest discover -s tests` passed (1 test, exit 0). A read-only\n+  in-memory probe confirmed both the ordinary-save result and the missing receipt\n+  after a write with `require_receipt: True`. These results describe the unchanged\n+  local revision; no deployed revision or Python 3.9 run was verified. Required\n+  implement/test Python guidance was loaded; scoped Capy searches were empty.\n+- 2026-10-11 \u2014 **Pending decision:** Owner: user. Choose a requirement change or\n+  another resolution; the clarification was requested in this session. Dependent\n+  implementation is paused under `kk:implement` Step 2.3 because the requirements\n+  conflict. Next action: record explicit authorization and its rationale before\n+  editing dependent code. Verification condition: an agreed receipt contract and\n+  delivery policy that give a consistent outcome for the boundary case above.\n+- 2026-10-11 \u2014 **Pending execution/review:** Owner: implementing agent, after the\n+  decision. Implement the authorized contract, verify receipt handling and the\n+  agreed compatibility cases, and complete isolated code review before marking\n+  task 1 done. Baseline tests alone do not establish task completion or release\n+  readiness; no independent implementation review has occurred.\n+\n ## Task 2: Provider acknowledgement\n",
+        "kind": {
+          "move_path": null,
+          "type": "update"
+        },
+        "path": "/tmp/fr-opus55-matrix-20261011/codex-candidate-I1-plan-1/docs/feat/wip/settings-receipts/tasks.md"
+      }
+    ],
+    "id": "exec-194d6ff1-d739-43b6-a56a-9b3a933ce53b",
+    "status": "completed",
+    "type": "fileChange"
+  },
+  "source_file": "items-01a12b02-33db-7a02-966a-84b285541f59.json",
+  "startedAtMs": 1791723053227,
+  "turnId": "01a12b02-3406-71f2-acac-100394bfdaae"
+}

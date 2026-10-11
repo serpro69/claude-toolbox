@@ -1,0 +1,19 @@
+{
+  "actor": "main",
+  "block": {
+    "caller": {
+      "type": "direct"
+    },
+    "id": "toolu_01UZPt4UyA7q81z3DMUNrAUb",
+    "input": {
+      "content": "Pattern: client increment requires a new provider response field unconditionally (new consumer / old provider break). Seen in settings client (enhanced-settings task 1): save_settings added `require_receipt: True` and raised unless `response[\"applied\"] is True`. The released provider (eval-release provider/settings.py) persists values and returns only {\"ok\": True}, so every ordinary save fails AFTER values were applied \u2014 a false-failure on a committed write, breaking the independently-releasable-client contract even with the feature flag off. The unit test was updated to return the new field, so it never exercised the released provider shape. Review check: when a consumer starts depending on a new protocol field, verify against the released provider response, gate the new requirement on negotiation/flag, and treat an absent field as legacy success rather than failure.",
+      "source": "kk:review-findings"
+    },
+    "name": "mcp__capy__capy_index",
+    "type": "tool_use"
+  },
+  "id": "e126.0",
+  "parent_tool_use_id": null,
+  "session_id": "894a9628-6e34-4bdb-afff-7c87b18fc723",
+  "source_sequence": 126
+}

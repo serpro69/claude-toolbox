@@ -1,0 +1,28 @@
+{
+  "actor": "items-01a12ade-c29b-7f73-8898-626ef5a87486",
+  "completedAtMs": 1791720648872,
+  "id": "exec-45be7ba3-eb2d-41a2-ac0b-b9714f51297c",
+  "item": {
+    "aggregatedOutput": "/tmp/kk-review-code-pvbgm62Z.patch\ndiff --git a/cleanup.py b/cleanup.py\nindex a5e74d8..f716353 100644\n--- a/cleanup.py\n+++ b/cleanup.py\n@@ -1,5 +1,3 @@\n def cleanup_setup(store, workspace_id, setup_id):\n     store.pending.pop(setup_id, None)\n-    association = store.active.get(workspace_id)\n-    if association and association[\"setup_id\"] == setup_id:\n-        store.active.pop(workspace_id, None)\n+    store.active.pop(workspace_id, None)\n     1\tdef cleanup_setup(store, workspace_id, setup_id):\n     2\t    store.pending.pop(setup_id, None)\n     3\t    store.active.pop(workspace_id, None)\n     1\tclass Store:\n     2\t    def __init__(self):\n     3\t        self.pending = {}\n     4\t        self.active = {}\n     1\tdef begin_setup(store, workspace_id, setup_id):\n     2\t    store.pending[setup_id] = {\"workspace_id\": workspace_id}\n     3\t\n     4\t\n     5\tdef complete_setup(store, workspace_id, setup_id, connection):\n     6\t    store.active[workspace_id] = {\"setup_id\": setup_id, \"connection\": connection}\n     7\t    store.pending.pop(setup_id, None)\n     8\t\n     9\t\n    10\tdef active_connection(store, workspace_id):\n    11\t    association = store.active.get(workspace_id)\n    12\t    return association[\"connection\"] if association else None\n     1\timport unittest\n     2\tfrom store import Store\n     3\tfrom setup import begin_setup, complete_setup, active_connection\n     4\tfrom cleanup import cleanup_setup\n     5\t\n     6\t\n     7\tclass SetupTests(unittest.TestCase):\n     8\t    def test_completed_setup_is_visible(self):\n     9\t        store = Store()\n    10\t        begin_setup(store, \"w\", \"one\")\n    11\t        complete_setup(store, \"w\", \"one\", \"connection-one\")\n    12\t        self.assertEqual(active_connection(store, \"w\"), \"connection-one\")\n    13\t\n    14\t    def test_cleanup_removes_its_own_association(self):\n    15\t        store = Store()\n    16\t        begin_setup(store, \"w\", \"one\")\n    17\t        complete_setup(store, \"w\", \"one\", \"connection-one\")\n    18\t        cleanup_setup(store, \"w\", \"one\")\n    19\t        self.assertIsNone(active_connection(store, \"w\"))\n    20\t        self.assertNotIn(\"one\", store.pending)\n# Workspace associations\n\nPython 3.9+, standard library only. Run `python3 -B -m unittest discover -s tests`.\nA workspace has one active setup association. Setup jobs can fail after creating\na pending record. Another setup can complete before the failed job's queued\ncleanup runs. Completed associations are consumed by `active_connection`.\nCleanup removes the failed setup's pending record and any association it owns.\nThe store models serialized operations; concurrency and external services are\noutside this change.\n",
+    "command": "/usr/bin/zsh -lc 'review_diff_file=$(mktemp /tmp/kk-review-code-XXXXXXXX.patch) && git diff --cached > \"$review_diff_file\" && printf '\"'%s\\\\n' \\\"\"'$review_diff_file\" && cat \"$review_diff_file\" && nl -ba cleanup.py && nl -ba store.py && nl -ba setup.py && nl -ba tests/test_setup.py && cat README.md'",
+    "commandActions": [
+      {
+        "command": "review_diff_file=$(mktemp /tmp/kk-review-code-XXXXXXXX.patch) && git diff --cached > \"$review_diff_file\" && printf '%s\\n' \"$review_diff_file\" && cat \"$review_diff_file\" && nl -ba cleanup.py && nl -ba store.py && nl -ba setup.py && nl -ba tests/test_setup.py && cat README.md",
+        "type": "unknown"
+      }
+    ],
+    "cwd": "/tmp/fr-opus55-matrix-20261011/codex-baseline-R1-isolated-2",
+    "durationMs": 60,
+    "exitCode": 0,
+    "id": "exec-45be7ba3-eb2d-41a2-ac0b-b9714f51297c",
+    "pluginId": null,
+    "processId": "15175",
+    "scriptPath": null,
+    "source": "unifiedExecStartup",
+    "status": "completed",
+    "type": "commandExecution"
+  },
+  "source_file": "items-01a12ade-c29b-7f73-8898-626ef5a87486.json",
+  "startedAtMs": 1791720648811,
+  "turnId": "01a12ade-c2c7-7df3-b21f-a634fc4dbad3"
+}

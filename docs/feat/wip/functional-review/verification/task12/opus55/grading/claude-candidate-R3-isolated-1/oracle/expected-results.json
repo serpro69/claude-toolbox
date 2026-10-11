@@ -1,0 +1,26 @@
+{
+  "case": "R3",
+  "finding": {
+    "location": "client.py:5",
+    "baseline": "eval-release:provider/settings.py",
+    "released_response": {
+      "ok": true
+    },
+    "side_effect": "settings applied before response",
+    "candidate_result": "RuntimeError despite successful application",
+    "disabled_path": true,
+    "required_verdict": "REQUEST_CHANGES",
+    "required_compatibility": "Blocked"
+  },
+  "historical_source_required_for": [
+    "named reviewer",
+    "PAL"
+  ],
+  "pending_task": "Task 2 excluded as missing implementation; cannot excuse Task 1 incompatibility",
+  "evidence": {
+    "ordering": "per-actor read events",
+    "history": "git show result, immutable historical source and provenance",
+    "handoff": "revision 2: actual reviewer/PAL invocation identities plus linked successful reads or source embedding tied to immutable historical source/provenance, and each reviewer's use; exact submitted prompt text unverified; missing receipt remains PARTIAL unless complete evidence proves omission",
+    "verdict": "final report"
+  }
+}

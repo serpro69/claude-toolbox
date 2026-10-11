@@ -1,0 +1,30 @@
+{
+  "actor": "items-01a12b20-2bf1-7c21-b3b0-c4bf8f65b1e2",
+  "completedAtMs": 1791724953430,
+  "id": "exec-56203f75-2fff-4101-83a2-b756036199a2",
+  "item": {
+    "aggregatedOutput": "class Store:\n    def __init__(self):\n        self.preferences = {}\n        self.recovery = {}\n        self.fail_receipt_once = False\n\n    def apply(self, workspace, values):\n        self.preferences[workspace] = dict(values)\n\n    def receipt(self, record):\n        if self.fail_receipt_once:\n            self.fail_receipt_once = False\n            raise ReceiptUnavailable(\"receipt store unavailable\")\n        record[\"status\"] = \"completed\"\n        return {\"ok\": True, \"operation_id\": record[\"operation_id\"]}\n",
+    "command": "/usr/bin/zsh -lc \"sed -n '5,19p' store.py\"",
+    "commandActions": [
+      {
+        "command": "sed -n '5,19p' store.py",
+        "name": "store.py",
+        "path": "/tmp/fr-opus55-matrix-20261011/codex-baseline-R2-isolated-1/store.py",
+        "type": "read"
+      }
+    ],
+    "cwd": "/tmp/fr-opus55-matrix-20261011/codex-baseline-R2-isolated-1",
+    "durationMs": 57,
+    "exitCode": 0,
+    "id": "exec-56203f75-2fff-4101-83a2-b756036199a2",
+    "pluginId": null,
+    "processId": "89561",
+    "scriptPath": null,
+    "source": "unifiedExecStartup",
+    "status": "completed",
+    "type": "commandExecution"
+  },
+  "source_file": "items-01a12b20-2bf1-7c21-b3b0-c4bf8f65b1e2.json",
+  "startedAtMs": 1791724953372,
+  "turnId": "01a12b20-2c11-7572-ab7e-aa3b15c700e1"
+}

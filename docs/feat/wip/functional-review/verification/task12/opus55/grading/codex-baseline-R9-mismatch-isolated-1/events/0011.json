@@ -1,0 +1,28 @@
+{
+  "actor": "items-01a12b9c-58b3-7f80-9392-2cb2bd0dbc99",
+  "completedAtMs": 1791733074094,
+  "id": "exec-b8e3e389-71ae-466c-9e61-e8dfe5048fc6",
+  "item": {
+    "aggregatedOutput": "M  reader.py\nM  tests/test_reads.py\ndiff --git a/reader.py b/reader.py\nindex 9429bec..0000404 100644\n--- a/reader.py\n+++ b/reader.py\n@@ -1,2 +1,2 @@\n def read_preferences(repository, key):\n-    return repository.read_resilient(key)\n+    return repository.read_once(key.strip())\ndiff --git a/tests/test_reads.py b/tests/test_reads.py\nindex 23fc901..039b17d 100644\n--- a/tests/test_reads.py\n+++ b/tests/test_reads.py\n@@ -1,11 +1,17 @@\n import unittest\n \n from preferences import Preferences\n-from repository import Repository, ScriptedBackend\n+from repository import Repository, ScriptedBackend, TransientRead\n \n \n class ReadTests(unittest.TestCase):\n-    def test_existing_key(self):\n+    def test_trim_key(self):\n         backend = ScriptedBackend([{\"color\": \"blue\"}])\n-        self.assertEqual(Preferences(Repository(backend)).read(\"w\"), {\"color\": \"blue\"})\n+        self.assertEqual(Preferences(Repository(backend)).read(\" w \"), {\"color\": \"blue\"})\n+        self.assertEqual(backend.keys, [\"w\"])\n+\n+    def test_transient_error(self):\n+        backend = ScriptedBackend([TransientRead(\"busy\"), {\"color\": \"blue\"}])\n+        with self.assertRaises(TransientRead):\n+            Preferences(Repository(backend)).read(\" w \")\n         self.assertEqual(backend.keys, [\"w\"])\ndef read_preferences(repository, key):\n    return repository.read_once(key.strip())\nimport unittest\n\nfrom preferences import Preferences\nfrom repository import Repository, ScriptedBackend, TransientRead\n\n\nclass ReadTests(unittest.TestCase):\n    def test_trim_key(self):\n        backend = ScriptedBackend([{\"color\": \"blue\"}])\n        self.assertEqual(Preferences(Repository(backend)).read(\" w \"), {\"color\": \"blue\"})\n        self.assertEqual(backend.keys, [\"w\"])\n\n    def test_transient_error(self):\n        backend = ScriptedBackend([TransientRead(\"busy\"), {\"color\": \"blue\"}])\n        with self.assertRaises(TransientRead):\n            Preferences(Repository(backend)).read(\" w \")\n        self.assertEqual(backend.keys, [\"w\"])\nREADME.md\nreader.py\n.gitignore\ntests/test_reads.py\npreferences.py\nrepository.py\n",
+    "command": "/usr/bin/zsh -lc \"git status --short\ngit diff --cached --no-ext-diff --no-textconv\ncat reader.py tests/test_reads.py\nrg --files --hidden -g '\"'!.git'\"' -g '\"'!__pycache__'\"' -g '\"'!.pytest_cache'\"'\"",
+    "commandActions": [
+      {
+        "command": "git status --short\ngit diff --cached --no-ext-diff --no-textconv\ncat reader.py tests/test_reads.py\nrg --files --hidden -g '!.git' -g '!__pycache__' -g '!.pytest_cache'",
+        "type": "unknown"
+      }
+    ],
+    "cwd": "/tmp/fr-opus55-matrix-20261011/codex-baseline-R9-mismatch-isolated-1",
+    "durationMs": 49,
+    "exitCode": 0,
+    "id": "exec-b8e3e389-71ae-466c-9e61-e8dfe5048fc6",
+    "pluginId": null,
+    "processId": "88959",
+    "scriptPath": null,
+    "source": "unifiedExecStartup",
+    "status": "completed",
+    "type": "commandExecution"
+  },
+  "source_file": "items-01a12b9c-58b3-7f80-9392-2cb2bd0dbc99.json",
+  "startedAtMs": 1791733074044,
+  "turnId": "01a12b9c-58e0-7091-9933-244f6950d39d"
+}

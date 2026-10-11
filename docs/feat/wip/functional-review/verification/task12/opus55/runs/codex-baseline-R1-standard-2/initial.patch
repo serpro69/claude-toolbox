@@ -1,0 +1,11 @@
+diff --git a/cleanup.py b/cleanup.py
+index a5e74d8..f716353 100644
+--- a/cleanup.py
++++ b/cleanup.py
+@@ -1,5 +1,3 @@
+ def cleanup_setup(store, workspace_id, setup_id):
+     store.pending.pop(setup_id, None)
+-    association = store.active.get(workspace_id)
+-    if association and association["setup_id"] == setup_id:
+-        store.active.pop(workspace_id, None)
++    store.active.pop(workspace_id, None)

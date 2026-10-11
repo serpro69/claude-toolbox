@@ -1,0 +1,30 @@
+{
+  "actor": "items-01a12ad6-4496-7442-901b-9a9b8700f577",
+  "completedAtMs": 1791720104509,
+  "id": "exec-100187f2-b158-43a5-b85d-8fe0ae44557c",
+  "item": {
+    "aggregatedOutput": "tests/test_setup.py:3:from setup import begin_setup, complete_setup, active_connection\ntests/test_setup.py:4:from cleanup import cleanup_setup\ntests/test_setup.py:12:        self.assertEqual(active_connection(store, \"w\"), \"connection-one\")\ntests/test_setup.py:18:        cleanup_setup(store, \"w\", \"one\")\ntests/test_setup.py:19:        self.assertIsNone(active_connection(store, \"w\"))\ntests/test_setup.py:20:        self.assertNotIn(\"one\", store.pending)\nREADME.md:4:A workspace has one active setup association. Setup jobs can fail after creating\nREADME.md:5:a pending record. Another setup can complete before the failed job's queued\nREADME.md:6:cleanup runs. Completed associations are consumed by `active_connection`.\nREADME.md:7:Cleanup removes the failed setup's pending record and any association it owns.\nsetup.py:1:def begin_setup(store, workspace_id, setup_id):\nsetup.py:2:    store.pending[setup_id] = {\"workspace_id\": workspace_id}\nsetup.py:5:def complete_setup(store, workspace_id, setup_id, connection):\nsetup.py:6:    store.active[workspace_id] = {\"setup_id\": setup_id, \"connection\": connection}\nsetup.py:7:    store.pending.pop(setup_id, None)\nsetup.py:10:def active_connection(store, workspace_id):\nsetup.py:11:    association = store.active.get(workspace_id)\ncleanup.py:1:def cleanup_setup(store, workspace_id, setup_id):\ncleanup.py:2:    store.pending.pop(setup_id, None)\ncleanup.py:3:    store.active.pop(workspace_id, None)\nstore.py:3:        self.pending = {}\nstore.py:4:        self.active = {}\n",
+    "command": "/usr/bin/zsh -lc \"rg -n 'cleanup_setup|pending|active|workspace_id|setup_id' -g '*.py' -g '*.md'\"",
+    "commandActions": [
+      {
+        "command": "rg -n 'cleanup_setup|pending|active|workspace_id|setup_id' -g '*.py' -g '*.md'",
+        "path": null,
+        "query": "cleanup_setup|pending|active|workspace_id|setup_id",
+        "type": "search"
+      }
+    ],
+    "cwd": "/tmp/fr-opus55-matrix-20261011/codex-baseline-R1-standard-2",
+    "durationMs": 52,
+    "exitCode": 0,
+    "id": "exec-100187f2-b158-43a5-b85d-8fe0ae44557c",
+    "pluginId": null,
+    "processId": "79646",
+    "scriptPath": null,
+    "source": "unifiedExecStartup",
+    "status": "completed",
+    "type": "commandExecution"
+  },
+  "source_file": "items-01a12ad6-4496-7442-901b-9a9b8700f577.json",
+  "startedAtMs": 1791720104456,
+  "turnId": "01a12ad6-44c2-7be2-969d-71e0339f5bfb"
+}

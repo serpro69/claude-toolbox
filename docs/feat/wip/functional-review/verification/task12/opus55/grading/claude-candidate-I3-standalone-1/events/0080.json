@@ -1,0 +1,21 @@
+{
+  "actor": "main",
+  "block": {
+    "caller": {
+      "type": "direct"
+    },
+    "id": "toolu_01BfTf6gYDwn9vVzAdbaLP36",
+    "input": {
+      "description": "Isolated code review",
+      "prompt": "Review the selected changes using your full workflow. Load instructions before evidence.\n\n## Plugin Root\n/tmp/fr-opus55-matrix-20261011/claude-candidate-I3-standalone-1/plugins/kk\n\n## Instructions\n- /tmp/fr-opus55-matrix-20261011/claude-candidate-I3-standalone-1/plugins/kk/skills/review-code/shared-change-context.md\n- /tmp/fr-opus55-matrix-20261011/claude-candidate-I3-standalone-1/plugins/kk/skills/review-code/functional-review.md\n- /tmp/fr-opus55-matrix-20261011/claude-candidate-I3-standalone-1/plugins/kk/skills/review-code/shared-review-scope-protocol.md\n- /tmp/fr-opus55-matrix-20261011/claude-candidate-I3-standalone-1/plugins/kk/skills/review-code/shared-capy-knowledge-protocol.md\n\n## Active Profiles and Resolved Checklists\n[] \u2014 no profiles active. Detection ran over all 8 Known profiles (go, python, java, js_ts, kotlin, k8s, k8s-operator, skill-md) for the single changed file docs/help.md: no extension rule matches .md; not YAML/Chart/kustomize; no operator markers; no SKILL.md in docs/ or repo root (filename check).\n\n## Change Context and Spec Context\n- Intent and authority (explicit, from user request): correct the misspelling 'suported' to 'supported' in docs/help.md; keep the wording otherwise unchanged.\n- Change boundary: working-tree (unstaged) change to /tmp/fr-opus55-matrix-20261011/claude-candidate-I3-standalone-1/docs/help.md on branch master; review base HEAD 2487d7c (\"Initial subject\"). Tree was clean before the edit. No other files changed.\n- Existing behavior: documentation only; no code consumes this file (author grep of tests/ found no reference to help/docs). No delivery constraints, flags or migrations apply.\n- Baselines: review base HEAD 2487d7c; no released/deployed baseline relevant.\n- Author-attributed pre-edit content of line 3 (from an in-session Read before the edit, not from a git blob): \"The local greeting command is suported on Python 3.9 and newer.\"\n- Author-attributed verification: repo-wide grep for 'suported' returns no matches after the edit; tests/test_greet.py was NOT executed (shell unavailable); no code changed.\n\n## Task Scope\nNo task scope available \u2014 review the diff on its own merits without assuming any feature-level design doc.\n\n## Evidence Manifest\n- Selector: unstaged working-tree changes vs HEAD 2487d7c. Candidate = current worktree file (no materialization needed; worktree is the candidate).\n- Candidate source: /tmp/fr-opus55-matrix-20261011/claude-candidate-I3-standalone-1/docs/help.md\n- Possibly relevant context (optional): /tmp/fr-opus55-matrix-20261011/claude-candidate-I3-standalone-1/tests/test_greet.py\n- Missing evidence: the git diff file and HEAD blob of docs/help.md could not be obtained (shell commands denied in this session). The pre-edit line above is an author-sourced record, not Git evidence.\n\n## Rejected Approaches\nNone.\n\nIndependently inspect the evidence and challenge inferences. Request specific missing source by repository, revision, path/symbol and comparison needed. Report provisional findings and limits in your agent output format; do not claim test execution from source-only access.",
+      "run_in_background": false,
+      "subagent_type": "kk:code-reviewer"
+    },
+    "name": "Agent",
+    "type": "tool_use"
+  },
+  "id": "e212.0",
+  "parent_tool_use_id": null,
+  "session_id": "25013bcd-76e9-4748-a637-6c057903a507",
+  "source_sequence": 212
+}

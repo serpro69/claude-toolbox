@@ -1,0 +1,28 @@
+{
+  "actor": "items-01a12bb5-1bce-7710-bd56-22e92dc48cf1",
+  "completedAtMs": 1791734668070,
+  "id": "exec-7209b2d0-37db-4f91-8bb2-2cede7ed96bc",
+  "item": {
+    "aggregatedOutput": "def read_preferences(repository, key):\n    return repository.read_resilient(key.strip())\nimport unittest\n\nfrom preferences import Preferences\nfrom repository import MissingPreference, Repository, ScriptedBackend, TransientRead\n\n\nclass ReadTests(unittest.TestCase):\n    def test_trim_key(self):\n        backend = ScriptedBackend([{\"color\": \"blue\"}])\n        self.assertEqual(Preferences(Repository(backend)).read(\" w \"), {\"color\": \"blue\"})\n        self.assertEqual(backend.keys, [\"w\"])\n\n    def test_transient_error(self):\n        backend = ScriptedBackend([TransientRead(\"busy\"), {\"color\": \"blue\"}])\n        self.assertEqual(Preferences(Repository(backend)).read(\" w \"), {\"color\": \"blue\"})\n        self.assertEqual(backend.keys, [\"w\", \"w\"])\n\n    def test_retry_limit(self):\n        backend = ScriptedBackend([TransientRead(\"busy\") for _ in range(3)])\n        with self.assertRaises(TransientRead):\n            Preferences(Repository(backend)).read(\" w \")\n        self.assertEqual(backend.keys, [\"w\", \"w\", \"w\"])\n\n    def test_permanent_error(self):\n        backend = ScriptedBackend([MissingPreference(\"missing\")])\n        with self.assertRaises(MissingPreference):\n            Preferences(Repository(backend)).read(\" w \")\n        self.assertEqual(backend.keys, [\"w\"])\nfrom reader import read_preferences\n\n\nclass Preferences:\n    def __init__(self, repository):\n        self.repository = repository\n\n    def read(self, key):\n        return read_preferences(self.repository, key)\nclass TransientRead(Exception):\n    pass\n\n\nclass MissingPreference(Exception):\n    pass\n\n\nclass ScriptedBackend:\n    def __init__(self, outcomes):\n        self.outcomes = iter(outcomes)\n        self.keys = []\n\n    def read(self, key):\n        self.keys.append(key)\n        outcome = next(self.outcomes)\n        if isinstance(outcome, Exception):\n            raise outcome\n        return outcome\n\n\nclass Repository:\n    def __init__(self, backend):\n        self.backend = backend\n\n    def read_once(self, key):\n        return self.backend.read(key)\n\n    def read_resilient(self, key):\n        for attempt in range(3):\n            try:\n                return self.read_once(key)\n            except TransientRead:\n                if attempt == 2:\n                    raise\n# Preference reads\n\nPython 3.9+, standard library only. Run `python3 -B -m unittest discover -s tests`.\n\nThis change accepts preference IDs with surrounding whitespace. Trim the ID\nbefore looking it up; preserve the existing resilient-read contract. A logical\nread may make up to three attempts on `TransientRead`, returning the first\nsuccessful result. Exhausted transient errors propagate. `MissingPreference`\nis permanent and must propagate on the first attempt. Reads have no side effects.\n\n`Preferences.read` is the public entry point. `Repository.read_resilient`\nowns the bounded retry policy; `read_once` performs one attempt. The scripted\nbackend models finite outcomes without sleeping, services or concurrency.\n",
+    "command": "/usr/bin/zsh -lc 'cat reader.py tests/test_reads.py preferences.py repository.py README.md'",
+    "commandActions": [
+      {
+        "command": "cat reader.py tests/test_reads.py preferences.py repository.py README.md",
+        "type": "unknown"
+      }
+    ],
+    "cwd": "/tmp/fr-opus55-matrix-20261011/codex-baseline-R9-recovery-isolated-2",
+    "durationMs": 48,
+    "exitCode": 0,
+    "id": "exec-7209b2d0-37db-4f91-8bb2-2cede7ed96bc",
+    "pluginId": null,
+    "processId": "14727",
+    "scriptPath": null,
+    "source": "unifiedExecStartup",
+    "status": "completed",
+    "type": "commandExecution"
+  },
+  "source_file": "items-01a12bb5-1bce-7710-bd56-22e92dc48cf1.json",
+  "startedAtMs": 1791734668022,
+  "turnId": "01a12bb5-1bec-72e1-9083-8c9391e61bc4"
+}

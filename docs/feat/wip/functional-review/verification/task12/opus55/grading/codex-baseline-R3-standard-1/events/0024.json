@@ -1,0 +1,28 @@
+{
+  "actor": "items-01a12ae9-ffcc-7e61-92cd-0d818b7340a4",
+  "completedAtMs": 1791721381149,
+  "id": "exec-da6973f2-c4d0-4cd5-9af2-f9657f5f4226",
+  "item": {
+    "aggregatedOutput": "def save_settings(send, workspace_id, values, enhanced_settings=False):\n    response = send(workspace_id, {\"settings\": values, \"require_receipt\": True})\n    if not response.get(\"ok\"):\n        raise RuntimeError(\"Settings save failed\")\n    if response.get(\"applied\") is not True:\n        raise RuntimeError(\"Provider did not acknowledge applied settings\")\n    return {\"saved\": True, \"enhanced\": enhanced_settings}\nimport unittest\nfrom client import save_settings\n\n\nclass SettingsTests(unittest.TestCase):\n    def test_successful_save(self):\n        def send(workspace, request):\n            return {\"ok\": True, \"applied\": True}\n        self.assertEqual(save_settings(send, \"w\", {\"label\": \"blue\"}),\n                         {\"saved\": True, \"enhanced\": False})\n",
+    "command": "/usr/bin/zsh -lc 'cat client.py tests/test_client.py'",
+    "commandActions": [
+      {
+        "command": "cat client.py tests/test_client.py",
+        "type": "unknown"
+      }
+    ],
+    "cwd": "/tmp/fr-opus55-matrix-20261011/codex-baseline-R3-standard-1",
+    "durationMs": 124,
+    "exitCode": 0,
+    "id": "exec-da6973f2-c4d0-4cd5-9af2-f9657f5f4226",
+    "pluginId": null,
+    "processId": "59157",
+    "scriptPath": null,
+    "source": "unifiedExecStartup",
+    "status": "completed",
+    "type": "commandExecution"
+  },
+  "source_file": "items-01a12ae9-ffcc-7e61-92cd-0d818b7340a4.json",
+  "startedAtMs": 1791721381024,
+  "turnId": "01a12ae9-fff7-76b2-9137-450a3a080073"
+}

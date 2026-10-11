@@ -1,0 +1,19 @@
+{
+  "actor": "main",
+  "block": {
+    "caller": {
+      "type": "direct"
+    },
+    "id": "toolu_0165aUzeydtR3R4x3gHGm24k",
+    "input": {
+      "content": "# Idempotency/recovery record keyed by a coarser key than the operation (P0)\n\nPattern: a save/recovery path that dedupes retries switched its record lookup from `operation_id` to a scan matching `workspace`. Result: the first completed operation for a workspace absorbs every later operation \u2014 later saves skip apply, yet the caller still gets `ok: True` (response built from the caller's operation_id, not from the stored record). Writes still insert under `operation_id`, so lookup key and insert key differ, and records from different workspaces can overwrite each other.\n\nCheck during review: the idempotency key used for lookup must be exactly the key used for insert, and must identify a single operation. The response must come from the stored record or receipt, not be echoed from the request. Replaying a completed operation must return early, with no side effects such as a second receipt. Tests need at least two distinct operation_ids per scope.\n\nSeen in: service.py `save()` (save recovery update, 2026-10-11).",
+      "source": "kk:review-findings"
+    },
+    "name": "mcp__capy__capy_index",
+    "type": "tool_use"
+  },
+  "id": "e134.0",
+  "parent_tool_use_id": null,
+  "session_id": "c293f5e5-6bf5-41e7-942c-a124840ddf9d",
+  "source_sequence": 134
+}

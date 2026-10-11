@@ -1,0 +1,36 @@
+{
+  "actor": "items-01a12b5b-c484-7c51-b649-2b4f291c5384",
+  "completedAtMs": 1791728830526,
+  "id": "exec-82c6d0da-fdc8-4c5b-9bba-1b644070a6c1",
+  "item": {
+    "aggregatedOutput": "# Python \u2014 review checklists\n\nConsumed by the `$kk:review-code` skill. When the `python` profile is active, every checklist in **Always load** is applied to the diff. There are no conditional entries for this profile.\n\n## Always load\n\n- [security-checklist.md](security-checklist.md) \u2014 Python-specific security smells: input validation, deserialization, subprocess/shell injection, crypto misuse, secret handling.\n- [solid-checklist.md](solid-checklist.md) \u2014 SOLID design-principle smells expressed in Python: module cohesion, protocol segregation, dependency inversion, duck-typing boundaries.\n- [code-quality-checklist.md](code-quality-checklist.md) \u2014 idiomatic Python quality signals: typing, mutability, context managers, exception hygiene, maintainability.\n- [removal-plan.md](removal-plan.md) \u2014 staged-removal template for Python code being retired (modules, packages, public APIs).\n### 2) Detect active profiles\n\nDelegate to [shared-profile-detection.md](shared-profile-detection.md). Input: the filename list from Step 1. The shared procedure iterates its own \u00a7Known profiles list and reads each profile's `DETECTION.md` via the `Read` tool \u2014 no filesystem enumeration, no `Glob`.\n\nThe shared procedure returns a list of records:\n\n```\n[{ profile: \"<name>\", triggered_by: [...], files: [...] }, ...]\n```\n\nHold this list for Step 3. There is no single \"primary language\"; any number of profiles can be active on the same diff (e.g., `go` + `k8s` when a Go service ships a Helm chart).\n\nIf the list is empty (no profile matched), skip Steps 3\u20134's profile-specific loading and proceed to Step 5 with general guidance only.\n\n### 3) Load profile review indexes\n\nFor each active profile record from Step 2:\n\n1. Read `../../profiles/<profile>/review-code/index.md`.\n2. Collect every entry under **Always load**.\n3. For every conditional entry (**Load if:** predicate), classify the predicate:\n   - **Filename-evaluable** \u2014 the predicate is satisfied by filenames, extensions, or directory names alone (e.g., \"diff contains `Chart.yaml`\", \"file under `bases/` or `overlays/`\"). Evaluate now against the filename list from Step 1. If it matches, collect the entry into the `(profile, checklist)` list.\n   - **Content-evaluable** \u2014 the predicate requires inspecting file bytes (e.g., YAML `kind:` field values, `apiVersion:` keys, specific string anchors). Do **not** read file content here. Instead, append the entry to a **deferred list** keyed by `(profile, checklist, predicate)` \u2014 Step 6 resolves this list after Step 5 reads content.\n4. Append the collected filename-evaluable entries to the flat `(profile, checklist)` list.\n\nDo NOT hardcode checklist names \u2014 the index is authoritative, and new profiles or new conditional entries take effect without edits to this file.\n\n### 4) Read resolved checklists\n\nFor each `(profile, checklist)` record from Step 3, use the `Read` tool on `../../profiles/<profile>/review-code/<checklist>`. Every checklist file enters context now, before any diff content does. The review that follows in Step 6 reads *through* these checklists; if they are not loaded, the review cannot happen.\n\nThis is the single load-bearing gate of the workflow. If a checklist read fails (file missing, path unresolved), stop and surface the error \u2014 do not proceed with partial methodology.\n\n### 5) Read the diff, re-read changed files, run capy search\n",
+    "command": "/usr/bin/zsh -lc \"cat '/home/sergio/.codex/plugins/cache/fr-opus55-c2d28c9e-20261011/kk/0.23.0/profiles/python/review-code/index.md' && sed -n '35,68p' '/home/sergio/.codex/plugins/cache/fr-opus55-c2d28c9e-20261011/kk/0.23.0/skills/review-code/review-process.md'\"",
+    "commandActions": [
+      {
+        "command": "cat /home/sergio/.codex/plugins/cache/fr-opus55-c2d28c9e-20261011/kk/0.23.0/profiles/python/review-code/index.md",
+        "name": "index.md",
+        "path": "/home/sergio/.codex/plugins/cache/fr-opus55-c2d28c9e-20261011/kk/0.23.0/profiles/python/review-code/index.md",
+        "type": "read"
+      },
+      {
+        "command": "sed -n '35,68p' /home/sergio/.codex/plugins/cache/fr-opus55-c2d28c9e-20261011/kk/0.23.0/skills/review-code/review-process.md",
+        "name": "review-process.md",
+        "path": "/home/sergio/.codex/plugins/cache/fr-opus55-c2d28c9e-20261011/kk/0.23.0/skills/review-code/review-process.md",
+        "type": "read"
+      }
+    ],
+    "cwd": "/tmp/fr-opus55-matrix-20261011/codex-baseline-R6-standard-2",
+    "durationMs": 48,
+    "exitCode": 0,
+    "id": "exec-82c6d0da-fdc8-4c5b-9bba-1b644070a6c1",
+    "pluginId": null,
+    "processId": "74038",
+    "scriptPath": null,
+    "source": "unifiedExecStartup",
+    "status": "completed",
+    "type": "commandExecution"
+  },
+  "source_file": "items-01a12b5b-c484-7c51-b649-2b4f291c5384.json",
+  "startedAtMs": 1791728830477,
+  "turnId": "01a12b5b-c4af-7281-99a9-0c7746800911"
+}

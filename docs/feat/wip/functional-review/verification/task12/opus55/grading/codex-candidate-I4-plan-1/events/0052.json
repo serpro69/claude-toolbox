@@ -1,0 +1,28 @@
+{
+  "actor": "items-01a12bd0-bf4e-74e3-acdb-f26a6a0c8150",
+  "completedAtMs": 1791736598707,
+  "id": "exec-cb822a4a-6258-4640-8734-ee5cec3a423e",
+  "item": {
+    "aggregatedOutput": "Snapshot: snapshot-2 migration: partial\nFAIL legacy: expected ['Alpha']; raised TypeError: string indices must be integers; input_unchanged=True\nPASS object: expected ['Beta']; actual ['Beta']; input_unchanged=True\nFAIL mixed snapshot: expected ['Alpha', 'Beta']; raised TypeError: string indices must be integers; input_unchanged=True\nFAIL mixed reversed: expected ['Beta', 'Alpha']; raised TypeError: string indices must be integers; input_unchanged=True\nPASS empty list: expected []; actual []; input_unchanged=True\nPASS object text/order: expected ['Beta', '', ' \u00c5 ', 'Beta']; actual ['Beta', '', ' \u00c5 ', 'Beta']; input_unchanged=True\n6 scenarios: 3 passed, 3 failed\n",
+    "command": "/usr/bin/zsh -lc \"python3 -B - <<'PY'\nimport copy\nimport json\nfrom pathlib import Path\nfrom api import list_labels\n\nrows = json.loads(Path('state/records.json').read_text())\nrelease = json.loads(Path('state/release.json').read_text())\nprint('Snapshot:', release['snapshot_id'], 'migration:', release['migration'])\ncases = [\n    ('legacy', [rows[0]], ['Alpha']),\n    ('object', [rows[1]], ['Beta']),\n    ('mixed snapshot', rows, ['Alpha', 'Beta']),\n    ('mixed reversed', list(reversed(rows)), ['Beta', 'Alpha']),\n    ('empty list', [], []),\n    ('object text/order', [{'label': {'text': text}} for text in ['Beta', '', ' \u00c5 ', 'Beta']], ['Beta', '', ' \u00c5 ', 'Beta']),\n]\nfailed = 0\nfor name, records, expected in cases:\n    before = copy.deepcopy(records)\n    try:\n        actual = list_labels(records)\n    except Exception as exc:\n        failed += 1\n        print(f'FAIL {name}: expected {expected\"'!r}; raised {type(exc).__name__}: {exc}; input_unchanged={records == before}'\"')\n    else:\n        passed = actual == expected and records == before\n        failed += not passed\n        print(f'{\\\"PASS\\\" if passed else \\\"FAIL\\\"} {name}: expected {expected\"'!r}; actual {actual!r}; input_unchanged={records == before}'\"')\nprint(f'{len(cases)} scenarios: {len(cases)-failed} passed, {failed} failed')\nraise SystemExit(bool(failed))\nPY\"",
+    "commandActions": [
+      {
+        "command": "python3 -B - <<'PY'\nimport copy\nimport json\nfrom pathlib import Path\nfrom api import list_labels\n\nrows = json.loads(Path('state/records.json').read_text())\nrelease = json.loads(Path('state/release.json').read_text())\nprint('Snapshot:', release['snapshot_id'], 'migration:', release['migration'])\ncases = [\n    ('legacy', [rows[0]], ['Alpha']),\n    ('object', [rows[1]], ['Beta']),\n    ('mixed snapshot', rows, ['Alpha', 'Beta']),\n    ('mixed reversed', list(reversed(rows)), ['Beta', 'Alpha']),\n    ('empty list', [], []),\n    ('object text/order', [{'label': {'text': text}} for text in ['Beta', '', ' \u00c5 ', 'Beta']], ['Beta', '', ' \u00c5 ', 'Beta']),\n]\nfailed = 0\nfor name, records, expected in cases:\n    before = copy.deepcopy(records)\n    try:\n        actual = list_labels(records)\n    except Exception as exc:\n        failed += 1\n        print(f'FAIL {name}: expected {expected!r}; raised {type(exc).__name__}: {exc}; input_unchanged={records == before}')\n    else:\n        passed = actual == expected and records == before\n        failed += not passed\n        print(f'{\"PASS\" if passed else \"FAIL\"} {name}: expected {expected!r}; actual {actual!r}; input_unchanged={records == before}')\nprint(f'{len(cases)} scenarios: {len(cases)-failed} passed, {failed} failed')\nraise SystemExit(bool(failed))\nPY",
+        "type": "unknown"
+      }
+    ],
+    "cwd": "/tmp/fr-opus55-matrix-20261011/codex-candidate-I4-plan-1",
+    "durationMs": 72,
+    "exitCode": 1,
+    "id": "exec-cb822a4a-6258-4640-8734-ee5cec3a423e",
+    "pluginId": null,
+    "processId": "15496",
+    "scriptPath": null,
+    "source": "unifiedExecStartup",
+    "status": "failed",
+    "type": "commandExecution"
+  },
+  "source_file": "items-01a12bd0-bf4e-74e3-acdb-f26a6a0c8150.json",
+  "startedAtMs": 1791736598634,
+  "turnId": "01a12bd0-bf7b-7e33-b293-dfc205625a58"
+}

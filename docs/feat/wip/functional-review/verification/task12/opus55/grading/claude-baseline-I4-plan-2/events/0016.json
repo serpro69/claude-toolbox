@@ -1,0 +1,13 @@
+{
+  "actor": "main",
+  "block": {
+    "content": ".gitignore\nREADME.md\napi.py\ndocs/feat/wip/label-reader/design.md\ndocs/feat/wip/label-reader/handoff.md\ndocs/feat/wip/label-reader/implementation.md\ndocs/feat/wip/label-reader/tasks.md\nrecords.py\nstate/records.json\nstate/release.json\ntests/test_labels.py\n---\ndef read_label(record):\n    return record[\"label\"][\"text\"]\nfrom records import read_label\n\n\ndef list_labels(records):\n    return [read_label(record) for record in records]\n---\n[\n  {\n    \"id\": \"legacy-a\",\n    \"label\": \"Alpha\"\n  },\n  {\n    \"id\": \"current-b\",\n    \"label\": {\n      \"text\": \"Beta\"\n    }\n  }\n]\n{\n  \"snapshot_id\": \"snapshot-2\",\n  \"migration\": \"partial\",\n  \"record_file\": \"state/records.json\",\n  \"active_label_shapes\": [\n    \"text\",\n    \"object\"\n  ],\n  \"operator_notice\": {\n    \"status\": \"pending\",\n    \"owner\": \"Release coordinator\",\n    \"next_action\": \"Publish the operator notice before activating the new dashboard.\",\n    \"verification\": \"Attach the notice acknowledgement to the activation record.\"\n  }\n}\n---\ntest_labels.py\nimport unittest\n\nfrom api import list_labels\n\n\nclass LabelTests(unittest.TestCase):\n    def test_object_labels(self):\n        self.assertEqual(list_labels([{\"id\": \"current-b\", \"label\": {\"text\": \"Beta\"}}]), [\"Beta\"])\n\n    def test_empty_list(self):\n        self.assertEqual(list_labels([]), [])",
+    "is_error": false,
+    "tool_use_id": "toolu_016eRzpdoJf2uuZhntMvLVDU",
+    "type": "tool_result"
+  },
+  "id": "e24.0",
+  "parent_tool_use_id": null,
+  "session_id": "5c0c57e4-1663-4ad1-a09f-3ba9568dec6c",
+  "source_sequence": 24
+}

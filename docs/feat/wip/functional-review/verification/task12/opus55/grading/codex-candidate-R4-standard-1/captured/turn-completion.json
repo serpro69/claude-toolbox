@@ -1,0 +1,24 @@
+{
+  "threadId": "01a12b33-9abe-7832-898f-34d729c5a670",
+  "turn": {
+    "completedAt": 1791726289,
+    "durationMs": 125240,
+    "error": null,
+    "id": "01a12b33-9ae9-7301-bbe7-8ff8f0f29892",
+    "items": [
+      {
+        "delivery": null,
+        "id": "msg_089eea415e658dfe016acb92ca5f688191afb7f2e376ce0e86",
+        "memoryCitation": null,
+        "phase": "final_answer",
+        "questions": null,
+        "text": "**REQUEST_CHANGES \u2014 one P1 regression.**\n\n**P1: Restore legacy-address support in [reader.py:2](/tmp/fr-opus55-matrix-20261011/codex-candidate-R4-standard-1/reader.py:2).** Removing the fallback makes `api.list_destinations()` raise `KeyError('destination')` on legacy records, aborting the entire listing. The [documented contract](/tmp/fr-opus55-matrix-20261011/codex-candidate-R4-standard-1/README.md:5) requires both formats to remain readable throughout background migration.\n\nI reproduced this with `data/records.json` before migration and after one batch. The `HEAD` reader succeeds in both states. Restore the fallback and add coverage for these mixed-format states.\n\n- **Confidence:** 100%; reproduced against both baseline and staged source.\n- **Profile:** Python \u00b7 `code-quality-checklist.md` \u00b7 triggered by `.py`.\n\nReviewed the staged cleanup against `HEAD` (`b299f57`): one file, +1/\u22123, including its listing consumer, writer, migration, and fixture. Both existing tests pass, but cover only new writes and empty input. Fully migrated records and repeated migration completion preserve addresses; compatibility during migration is **blocked**.\n\nValidation used the repository\u2019s local JSON model; no separate deployed baseline was assessed. The systemic finding was indexed as `kk:review-findings`. No repository files were changed.",
+        "type": "agentMessage"
+      }
+    ],
+    "itemsView": "summary",
+    "rootTurnId": "01a12b33-9ae9-7301-bbe7-8ff8f0f29892",
+    "startedAt": 1791726164,
+    "status": "completed"
+  }
+}

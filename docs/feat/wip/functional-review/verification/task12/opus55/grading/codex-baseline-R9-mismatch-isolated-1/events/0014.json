@@ -1,0 +1,28 @@
+{
+  "actor": "items-01a12b9c-58b3-7f80-9392-2cb2bd0dbc99",
+  "completedAtMs": 1791733079690,
+  "id": "exec-d9229dd4-0fba-458e-8a69-18d93bd601cb",
+  "item": {
+    "aggregatedOutput": "# Preference reads\n\nPython 3.9+, standard library only. Run `python3 -B -m unittest discover -s tests`.\n\nThis change accepts preference IDs with surrounding whitespace. Trim the ID\nbefore looking it up; preserve the existing resilient-read contract. A logical\nread may make up to three attempts on `TransientRead`, returning the first\nsuccessful result. Exhausted transient errors propagate. `MissingPreference`\nis permanent and must propagate on the first attempt. Reads have no side effects.\n\n`Preferences.read` is the public entry point. `Repository.read_resilient`\nowns the bounded retry policy; `read_once` performs one attempt. The scripted\nbackend models finite outcomes without sleeping, services or concurrency.\nfrom reader import read_preferences\n\n\nclass Preferences:\n    def __init__(self, repository):\n        self.repository = repository\n\n    def read(self, key):\n        return read_preferences(self.repository, key)\nclass TransientRead(Exception):\n    pass\n\n\nclass MissingPreference(Exception):\n    pass\n\n\nclass ScriptedBackend:\n    def __init__(self, outcomes):\n        self.outcomes = iter(outcomes)\n        self.keys = []\n\n    def read(self, key):\n        self.keys.append(key)\n        outcome = next(self.outcomes)\n        if isinstance(outcome, Exception):\n            raise outcome\n        return outcome\n\n\nclass Repository:\n    def __init__(self, backend):\n        self.backend = backend\n\n    def read_once(self, key):\n        return self.backend.read(key)\n\n    def read_resilient(self, key):\n        for attempt in range(3):\n            try:\n                return self.read_once(key)\n            except TransientRead:\n                if attempt == 2:\n                    raise\ncat: /home/sergio/.codex/plugins/cache/fr-opus55-c2d28c9e-20261011/kk/0.23.0/agents/code-reviewer.md: No such file or directory\n",
+    "command": "/usr/bin/zsh -lc 'cat README.md preferences.py repository.py\ncat /home/sergio/.codex/plugins/cache/fr-opus55-c2d28c9e-20261011/kk/0.23.0/agents/code-reviewer.md'",
+    "commandActions": [
+      {
+        "command": "cat README.md preferences.py repository.py\ncat /home/sergio/.codex/plugins/cache/fr-opus55-c2d28c9e-20261011/kk/0.23.0/agents/code-reviewer.md",
+        "type": "unknown"
+      }
+    ],
+    "cwd": "/tmp/fr-opus55-matrix-20261011/codex-baseline-R9-mismatch-isolated-1",
+    "durationMs": 50,
+    "exitCode": 1,
+    "id": "exec-d9229dd4-0fba-458e-8a69-18d93bd601cb",
+    "pluginId": null,
+    "processId": "91755",
+    "scriptPath": null,
+    "source": "unifiedExecStartup",
+    "status": "failed",
+    "type": "commandExecution"
+  },
+  "source_file": "items-01a12b9c-58b3-7f80-9392-2cb2bd0dbc99.json",
+  "startedAtMs": 1791733079640,
+  "turnId": "01a12b9c-58e0-7091-9933-244f6950d39d"
+}

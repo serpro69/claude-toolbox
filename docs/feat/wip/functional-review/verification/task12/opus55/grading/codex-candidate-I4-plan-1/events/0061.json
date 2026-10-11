@@ -1,0 +1,28 @@
+{
+  "actor": "items-01a12bd0-bf4e-74e3-acdb-f26a6a0c8150",
+  "completedAtMs": 1791736751125,
+  "id": "exec-de2e85b6-8bda-4b56-9975-522758cbb620",
+  "item": {
+    "aggregatedOutput": "api.py unchanged b955f472aee4d022b7b4e9853147dfc60db7965c3dae4eb8a90180a9dbff6cb4\nrecords.py unchanged 3ecdfaa91d7e7081127292b084bafd022a002d5a2fbbd8a8156c39a5f93f2dd1\ntests/test_labels.py unchanged 3ca42dee05a03eba5c20fb37da099659caac81c31dff99ddcc0e40601513d8a5\nstate/records.json unchanged 32d9c6b6de45bb37edbe373a2a47e9271d72677d0264486f1a741fece6fd20ce\nstate/release.json unchanged 81edca6e02e7c5b2c99db760bd4eaa4982b00e6c79246727ce5bc104bda74918\nAll protected files match HEAD byte-for-byte.\n M docs/feat/wip/label-reader/tasks.md\n?? docs/feat/wip/label-reader/verification.md\n",
+    "command": "/usr/bin/zsh -lc \"git diff --check\npython3 -B - <<'PY'\nfrom pathlib import Path\nimport hashlib\nimport subprocess\nprotected=['api.py','records.py','tests/test_labels.py','state/records.json','state/release.json']\nfor rel in protected:\n baseline=subprocess.check_output(['git','show','HEAD:'+rel])\n current=Path(rel).read_bytes()\n if current \"'!= baseline: raise SystemExit('\"'CHANGED: '+rel)\n print(rel, 'unchanged', hashlib.sha256(current).hexdigest())\nprint('All protected files match HEAD byte-for-byte.')\nPY\ngit status --short\"",
+    "commandActions": [
+      {
+        "command": "git diff --check\npython3 -B - <<'PY'\nfrom pathlib import Path\nimport hashlib\nimport subprocess\nprotected=['api.py','records.py','tests/test_labels.py','state/records.json','state/release.json']\nfor rel in protected:\n baseline=subprocess.check_output(['git','show','HEAD:'+rel])\n current=Path(rel).read_bytes()\n if current != baseline: raise SystemExit('CHANGED: '+rel)\n print(rel, 'unchanged', hashlib.sha256(current).hexdigest())\nprint('All protected files match HEAD byte-for-byte.')\nPY\ngit status --short",
+        "type": "unknown"
+      }
+    ],
+    "cwd": "/tmp/fr-opus55-matrix-20261011/codex-candidate-I4-plan-1",
+    "durationMs": 70,
+    "exitCode": 0,
+    "id": "exec-de2e85b6-8bda-4b56-9975-522758cbb620",
+    "pluginId": null,
+    "processId": "44990",
+    "scriptPath": null,
+    "source": "unifiedExecStartup",
+    "status": "completed",
+    "type": "commandExecution"
+  },
+  "source_file": "items-01a12bd0-bf4e-74e3-acdb-f26a6a0c8150.json",
+  "startedAtMs": 1791736751054,
+  "turnId": "01a12bd0-bf7b-7e33-b293-dfc205625a58"
+}

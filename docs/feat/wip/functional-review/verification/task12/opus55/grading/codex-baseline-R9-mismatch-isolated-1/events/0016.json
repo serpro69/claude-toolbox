@@ -1,0 +1,28 @@
+{
+  "actor": "items-01a12b9c-58b3-7f80-9392-2cb2bd0dbc99",
+  "completedAtMs": 1791733117632,
+  "id": "exec-cbd999bb-1723-4bec-a22f-b8d67e2246f3",
+  "item": {
+    "aggregatedOutput": "PASS: immediate success: expected success/1 attempts; got success/1 attempts; keys=['w']\nFAIL: recover on second attempt: expected success/2 attempts; got TransientRead/1 attempts; keys=['w']\nFAIL: recover on third attempt: expected success/3 attempts; got TransientRead/1 attempts; keys=['w']\nFAIL: exhaust retries: expected TransientRead/3 attempts; got TransientRead/1 attempts; keys=['w']\nPASS: permanent error: expected MissingPreference/1 attempts; got MissingPreference/1 attempts; keys=['w']\nFAIL: transient then permanent: expected MissingPreference/2 attempts; got TransientRead/1 attempts; keys=['w']\n",
+    "command": "/usr/bin/zsh -lc \"python3 -B - <<'PY'\nfrom preferences import Preferences\nfrom repository import Repository, ScriptedBackend, TransientRead, MissingPreference\n\ncases = [\n    ('immediate success', [{'color': 'blue'}], 'success', 1),\n    ('recover on second attempt', [TransientRead('busy'), {'color': 'blue'}], 'success', 2),\n    ('recover on third attempt', [TransientRead('busy'), TransientRead('busy'), {'color': 'blue'}], 'success', 3),\n    ('exhaust retries', [TransientRead('one'), TransientRead('two'), TransientRead('three')], 'TransientRead', 3),\n    ('permanent error', [MissingPreference('missing')], 'MissingPreference', 1),\n    ('transient then permanent', [TransientRead('busy'), MissingPreference('missing')], 'MissingPreference', 2),\n]\nfor name, outcomes, expected_result, expected_attempts in cases:\n    backend = ScriptedBackend(outcomes)\n    try:\n        Preferences(Repository(backend)).read(' w ')\n        actual_result = 'success'\n    except Exception as exc:\n        actual_result = type(exc).__name__\n    passed = actual_result == expected_result and backend.keys == ['w'] * expected_attempts\n    print(f'{\\\"PASS\\\" if passed else \\\"FAIL\\\"}: {name}: expected {expected_result}/{expected_attempts} attempts; got {actual_result}/{len(backend.keys)} attempts; keys={backend.keys\"'!r}'\"')\nPY\"",
+    "commandActions": [
+      {
+        "command": "python3 -B - <<'PY'\nfrom preferences import Preferences\nfrom repository import Repository, ScriptedBackend, TransientRead, MissingPreference\n\ncases = [\n    ('immediate success', [{'color': 'blue'}], 'success', 1),\n    ('recover on second attempt', [TransientRead('busy'), {'color': 'blue'}], 'success', 2),\n    ('recover on third attempt', [TransientRead('busy'), TransientRead('busy'), {'color': 'blue'}], 'success', 3),\n    ('exhaust retries', [TransientRead('one'), TransientRead('two'), TransientRead('three')], 'TransientRead', 3),\n    ('permanent error', [MissingPreference('missing')], 'MissingPreference', 1),\n    ('transient then permanent', [TransientRead('busy'), MissingPreference('missing')], 'MissingPreference', 2),\n]\nfor name, outcomes, expected_result, expected_attempts in cases:\n    backend = ScriptedBackend(outcomes)\n    try:\n        Preferences(Repository(backend)).read(' w ')\n        actual_result = 'success'\n    except Exception as exc:\n        actual_result = type(exc).__name__\n    passed = actual_result == expected_result and backend.keys == ['w'] * expected_attempts\n    print(f'{\"PASS\" if passed else \"FAIL\"}: {name}: expected {expected_result}/{expected_attempts} attempts; got {actual_result}/{len(backend.keys)} attempts; keys={backend.keys!r}')\nPY",
+        "type": "unknown"
+      }
+    ],
+    "cwd": "/tmp/fr-opus55-matrix-20261011/codex-baseline-R9-mismatch-isolated-1",
+    "durationMs": 66,
+    "exitCode": 0,
+    "id": "exec-cbd999bb-1723-4bec-a22f-b8d67e2246f3",
+    "pluginId": null,
+    "processId": "56357",
+    "scriptPath": null,
+    "source": "unifiedExecStartup",
+    "status": "completed",
+    "type": "commandExecution"
+  },
+  "source_file": "items-01a12b9c-58b3-7f80-9392-2cb2bd0dbc99.json",
+  "startedAtMs": 1791733117565,
+  "turnId": "01a12b9c-58e0-7091-9933-244f6950d39d"
+}

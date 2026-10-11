@@ -1,0 +1,13 @@
+{
+  "actor": "main",
+  "block": {
+    "content": "# Saved destinations\n\nPython 3.9+, standard library only. Run `python3 -B -m unittest discover -s tests`.\n\nDestination records can use legacy top-level `address` or current nested\n`destination.address`. New writes use the nested shape. Background migration\nruns in bounded batches while reads remain available; a deployment must read\nboth shapes until migration finishes. Existing addresses must be preserved.\n\n`data/records.json` is a supported mixed snapshot. `api.list_destinations`\nserves all saved records through the same reader. `migrate_batch` changes up to\nits limit per invocation; there is no startup migration gate. The store is a\nlocal JSON model, with no production environment or external database required.\n---DIFF---\ndiff --git a/reader.py b/reader.py\nindex eec82e5..540547b 100644\n--- a/reader.py\n+++ b/reader.py\n@@ -1,4 +1,2 @@\n def address_of(row):\n-    if \"destination\" in row:\n-        return row[\"destination\"][\"address\"]\n-    return row[\"address\"]\n+    return row[\"destination\"][\"address\"]\n---READER---\n     1\tdef address_of(row):\n     2\t    return row[\"destination\"][\"address\"]\n---HEAD---\n     1\tdef address_of(row):\n     2\t    if \"destination\" in row:\n     3\t        return row[\"destination\"][\"address\"]\n     4\t    return row[\"address\"]\n.runner:\nmcp.json\nregistry.json\nsettings.json\n\ndata:\nrecords.json\n\ntests:\ntest_destinations.py\n[store]\npath = \".runner/knowledge.db\"\nkey_file = \"\"",
+    "is_error": false,
+    "tool_use_id": "toolu_01TEGTvkdq9up9Dn3NHFmSMj",
+    "type": "tool_result"
+  },
+  "id": "e66.0",
+  "parent_tool_use_id": null,
+  "session_id": "c297d00a-c99f-453d-856e-98238aa27dee",
+  "source_sequence": 66
+}

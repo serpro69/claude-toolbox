@@ -1,0 +1,25 @@
+diff --git a/formatting.py b/formatting.py
+index dd975ff..c1e1905 100644
+--- a/formatting.py
++++ b/formatting.py
+@@ -1,2 +1,2 @@
+ def format_count(count):
+-    return f"Items: {count}"
++    return f"Records: {count}"
+diff --git a/tests/test_report.py b/tests/test_report.py
+index 952d5d6..574b40b 100644
+--- a/tests/test_report.py
++++ b/tests/test_report.py
+@@ -6,10 +6,10 @@ from stats import summarize
+ 
+ class ReportTests(unittest.TestCase):
+     def test_empty_plain_report(self):
+-        self.assertEqual(report([]), "Items: 0")
++        self.assertEqual(report([]), "Records: 0")
+ 
+     def test_populated_plain_report(self):
+-        self.assertEqual(report([2, 4]), "Items: 2")
++        self.assertEqual(report([2, 4]), "Records: 2")
+ 
+     def test_detailed_mean(self):
+         self.assertEqual(summarize([2, 4], detailed=True), {"count": 2, "mean": 3})

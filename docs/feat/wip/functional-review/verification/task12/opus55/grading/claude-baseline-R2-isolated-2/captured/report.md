@@ -1,0 +1,78 @@
+## Review Summary (Isolated Mode)
+
+**Reviewers:** only the code-reviewer (a Claude sub-agent) ran. The second reviewer, pal codereview, couldn't run because the `pal` MCP server failed to connect. Nothing below has been confirmed by a second reviewer.
+**Files reviewed:** 1 file (`service.py`, staged), 16 lines changed. `store.py`, `client.py` and `tests/test_save.py` were also read for context.
+**Profile:** python (triggered by the `.py` extension). Checklists used: security, solid, code-quality, removal-plan.
+**Verdict:** the reviewer asks for changes.
+
+I read `store.py` and `tests/test_save.py` myself and confirmed the P0 against the real `Store`.
+
+---
+
+### Code Reviewer Findings
+
+- **`service.py:2-3`: Records are looked up by workspace, so every later save on that workspace is silently dropped**
+  - Severity: P0 | Confidence: 97% | Checklist: security-checklist.md (Data Integrity)
+  - The new lookup returns the first record that matches the workspace, whatever its `operation_id`. Example:
+    1. `op-1` saves `{"color": "blue"}` on workspace `w`, and its record ends up `completed`.
+    2. `op-2` saves `{"color": "red"}` on `w`. It finds the `op-1` record, sees it isn't `pending`, and skips `store.apply`.
+    3. The call still returns `{"ok": True, "operation_id": "op-2"}`, but preferences stay blue and no record for `op-2` exists.
+  - After its first save, a workspace can never change again.
+  - Fix: look records up by operation again (`store.recovery.get(operation_id)`). Optionally, reject a record whose workspace doesn't match the request.
+
+- **`service.py:11-12`: The response is echoed from the request instead of coming from the stored record**
+  - Severity: P1 | Confidence: 90% | Checklist: code-quality-checklist.md (Error Handling)
+  - The result of `store.receipt(record)` is thrown away, and the function returns the caller's `operation_id`. That's why the P0 reports success for an operation that was never recorded.
+  - Fix: `return store.receipt(record)`, or build the response from `record["operation_id"]`.
+
+- **`service.py:8-11`: Replaying a completed operation calls `store.receipt` again**
+  - Severity: P1 | Confidence: 85% | Checklist: security-checklist.md (Idempotency)
+  - The early return for `completed` records was removed. A replay now hits the receipt backend again: it raises `ReceiptUnavailable` if the backend is down, and a real backend could issue duplicate receipts.
+  - Fix: restore the early return for `completed` records, and only call `receipt` while the status is `applied`.
+
+- **`service.py:4-7`: Lookup and insert use different keys, so records from different workspaces can overwrite each other**
+  - Severity: P2 | Confidence: 80%
+  - The code looks up by workspace but inserts under `operation_id`. Reusing an `operation_id` on another workspace replaces the first workspace's record.
+  - Fix: use one key for both, either `operation_id` or the pair `(workspace, operation_id)`.
+
+- **`service.py:2-3`: Every save scans all records**
+  - Severity: P2 | Confidence: 75%
+  - A constant-time dict lookup became a scan over every record, and records are never removed. The P0 fix fixes this too.
+
+- **`service.py:8-9`: A retry with the same id but different values silently applies the old values**
+  - Severity: P2 | Confidence: 65%
+  - Replaying the stored values may be intended. Still, a reused id with a different payload is accepted and reported as `ok` without any warning. The usual practice is to reject it with a conflict error.
+
+- **`tests/test_save.py`: No test uses more than one operation id per workspace**
+  - Severity: P3 | Confidence: 90%
+  - Every test uses only `op-1` on `w`, so the P0 gets past the suite. Tests to add:
+    - two ids on one workspace both apply;
+    - the same id on two workspaces doesn't overwrite either record;
+    - replaying a completed operation doesn't call `receipt`.
+
+**Not covered:** concurrency (this was already unprotected before the change), the production receipt backend, and the intent of the change, since there's no spec.
+
+**Indexing:** I saved the P0 pattern (an idempotency record keyed more broadly than the operation) to the knowledge base as `kk:review-findings`.
+
+---
+
+## Next Steps
+
+The review found 7 issues, all from the code-reviewer: 1 P0, 2 P1, 3 P2, 1 P3. There were no findings from a second reviewer and none of my own.
+
+What I recommend fixing:
+1. **P0:** look records up by `operation_id` again.
+2. **P1:** return the stored receipt instead of building the response from the request.
+3. **P1:** restore the early return for `completed` records.
+4. **P2:** use the same key for lookup and insert. Fix 1 mostly covers this.
+5. **P3:** add the multi-operation tests.
+
+The mismatched-payload finding (P2, 65%) depends on what you intended. If replaying the stored values is deliberate, it can stay, but raising a conflict on a mismatch would be safer. The scan finding needs no separate work because fix 1 resolves it.
+
+**How would you like to proceed?**
+1. **Fix all.** I implement every suggested fix.
+2. **Fix high severity only.** I fix the P0 and both P1s.
+3. **Fix specific items.** Tell me which ones.
+4. **No changes.** The review is complete.
+
+You can also re-run once `pal` reconnects to get the second-reviewer pass.

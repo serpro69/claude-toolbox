@@ -1,0 +1,17 @@
+{
+  "actor": "items-01a12b31-0487-7151-bcb5-fe74129b940d",
+  "completedAtMs": 1791726077868,
+  "id": "msg_08b994e8392ee459016acb91f7b1208191ba0a358f3ebf2b3e",
+  "item": {
+    "delivery": null,
+    "id": "msg_08b994e8392ee459016acb91f7b1208191ba0a358f3ebf2b3e",
+    "memoryCitation": null,
+    "phase": "final_answer",
+    "questions": null,
+    "text": "**REQUEST_CHANGES** \u2014 reviewed 1 staged file, +1/\u22123 lines.\n\n- **P1: Retain legacy reads until migration completes** \u2014 [reader.py:2](/tmp/fr-opus55-matrix-20261011/codex-baseline-R4-standard-1/reader.py:2). Removing the fallback makes `list_destinations()` raise `KeyError('destination')` for the supported mixed snapshot, failing the entire listing. Migration runs in bounded batches without a startup gate, so legacy rows remain valid during rollout. Restore the fallback and cover mixed records before and after partial migration.\n  \n  Profile: `python` \u00b7 Checklist: `removal-plan.md` \u00b7 Trigger: `.py` extension. **Confidence: 100%** \u2014 reproduced both failures; the original reader handles both successfully.\n\nBoth existing tests pass but miss these cases. Finding indexed as `kk:review-findings`. No files changed.\n\nFix this finding, or leave it review-only?\n\nThe [review skill](/home/sergio/.codex/plugins/cache/fr-opus55-c2d28c9e-20261011/kk/0.23.0/skills/review-code/SKILL.md) requires \u201cNext steps confirmation from user.\u201d",
+    "type": "agentMessage"
+  },
+  "source_file": "items-01a12b31-0487-7151-bcb5-fe74129b940d.json",
+  "startedAtMs": 1791726071760,
+  "turnId": "01a12b31-04b2-7780-9583-a1bad029b365"
+}

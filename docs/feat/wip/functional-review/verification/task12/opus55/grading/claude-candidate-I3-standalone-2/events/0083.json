@@ -1,0 +1,21 @@
+{
+  "actor": "main",
+  "block": {
+    "caller": {
+      "type": "direct"
+    },
+    "id": "toolu_015edSREzWnzXmPPikoDS4Hy",
+    "input": {
+      "description": "Isolated code review",
+      "prompt": "Review the selected changes using your full workflow. Load instructions before evidence.\n\n## Plugin Root\n/tmp/fr-opus55-matrix-20261011/claude-candidate-I3-standalone-2/plugins/kk\n\n## Instructions\n- /tmp/fr-opus55-matrix-20261011/claude-candidate-I3-standalone-2/plugins/kk/skills/review-code/shared-change-context.md\n- /tmp/fr-opus55-matrix-20261011/claude-candidate-I3-standalone-2/plugins/kk/skills/review-code/functional-review.md\n- /tmp/fr-opus55-matrix-20261011/claude-candidate-I3-standalone-2/plugins/kk/skills/review-code/shared-review-scope-protocol.md\n- /tmp/fr-opus55-matrix-20261011/claude-candidate-I3-standalone-2/plugins/kk/skills/review-code/shared-capy-knowledge-protocol.md\n\n## Active Profiles and Resolved Checklists\n[] \u2014 no active profiles. The only changed file, docs/help.md, matched no Known-profile rule (go, python, java, js_ts, kotlin, k8s, k8s-operator, skill-md). It is plain markdown with no SKILL.md in docs/ or the repo root.\n\n## Change Context and Spec Context\n- Intent and authority (explicit, from the user's request): correct the misspelling 'suported' to 'supported' in docs/help.md and keep the wording otherwise unchanged. There is no design/spec document.\n- Change boundary: a single unstaged working-tree edit to docs/help.md line 3. No other files were changed.\n- Existing behavior / consumers: docs/help.md is end-user help text. A filename-only Grep of tests/ found no references to help.md or to the word. (Author-attributed; you may re-verify.)\n- Delivery constraints: none identified. Docs-only change.\n- Baselines: review base HEAD 2487d7c on master. No deployed/released baseline is relevant.\n- Verification (author-attributed): a repo-wide Grep for 'suported' returns no matches after the edit. The existing test suite (tests/test_greet.py) was NOT run because Bash is denied in this session.\n\n## Task Scope\n\nNo task scope available \u2014 review the diff on its own merits without assuming any feature-level design doc.\n\n## Evidence Manifest\n- Selector: unstaged working-tree changes. Candidate: the current worktree file.\n- Candidate source: /tmp/fr-opus55-matrix-20261011/claude-candidate-I3-standalone-2/docs/help.md\n- Pre-change text plus provenance limits: /tmp/kk-review-evidence-help-md/evidence.md (NOT a Git-generated diff; this is a verbatim pre-edit Read. See the file for its limits.)\n- Missing evidence: Git diff and HEAD blob (Bash denied), and test execution.\n\n## Rejected Approaches\nNone.\n\nIndependently inspect the evidence and challenge inferences. Request specific missing source by repository, revision, path/symbol and comparison needed. Report provisional findings and limits in your agent output format; do not claim test execution from source-only access.",
+      "run_in_background": false,
+      "subagent_type": "kk:code-reviewer"
+    },
+    "name": "Agent",
+    "type": "tool_use"
+  },
+  "id": "e231.0",
+  "parent_tool_use_id": null,
+  "session_id": "e72b5524-d8b9-4eca-be6e-778de88b70e7",
+  "source_sequence": 231
+}

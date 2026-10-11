@@ -1,0 +1,13 @@
+{
+  "actor": "main",
+  "block": {
+    "content": "Exit code 2\n# Settings client\n\nPython 3.9+, standard library only.\n\nRun the local suite with `python3 -B -m unittest discover -s tests`.\n---DIFF---\ndiff --git a/payload.py b/payload.py\nindex 32557de..8ad74d9 100644\n--- a/payload.py\n+++ b/payload.py\n@@ -1,2 +1,2 @@\n def build_payload(display_name):\n-    return {\"display_name\": display_name}\n+    return {\"display_name\": display_name.strip()}\ndiff --git a/tests/test_payload.py b/tests/test_payload.py\nnew file mode 100644\nindex 0000000..e427779\n--- /dev/null\n+++ b/tests/test_payload.py\n@@ -0,0 +1,11 @@\n+import unittest\n+\n+from payload import build_payload\n+\n+\n+class PayloadTests(unittest.TestCase):\n+    def test_trim_surrounding_spaces(self):\n+        self.assertEqual(build_payload(\"  Ada  \"), {\"display_name\": \"Ada\"})\n+\n+    def test_preserve_internal_space(self):\n+        self.assertEqual(build_payload(\"Ada Lovelace\"), {\"display_name\": \"Ada Lovelace\"})\n---PAYLOAD---\ndef build_payload(display_name):\n    return {\"display_name\": display_name.strip()}\n---CLIENT---\nfrom payload import build_payload\n\n\ndef save(transport, display_name):\n    return transport.put(\"/settings\", build_payload(display_name))\n---TESTS---\ntotal 16\ndrwxrwxr-x 2 sergio sergio 4096 Oct 11 11:01 .\ndrwxrwxr-x 6 sergio sergio 4096 Oct 11 11:01 ..\n-rw-rw-r-- 1 sergio sergio  631 Oct 11 09:27 test_client.py\n-rw-rw-r-- 1 sergio sergio  347 Oct 11 09:27 test_payload.py\nM  payload.py\nA  tests/test_payload.py\n!! .capy.toml\n!! .runner/\n!! plugins/",
+    "is_error": true,
+    "tool_use_id": "toolu_01LhN4VBzZzVJEiJ7MvVkjys",
+    "type": "tool_result"
+  },
+  "id": "e70.0",
+  "parent_tool_use_id": null,
+  "session_id": "f92101cd-2867-4306-b205-0a475dbf74c0",
+  "source_sequence": 70
+}

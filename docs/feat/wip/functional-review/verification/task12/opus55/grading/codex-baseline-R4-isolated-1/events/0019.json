@@ -1,0 +1,28 @@
+{
+  "actor": "items-01a12b37-b91f-72b1-8c79-1c1988b99872",
+  "completedAtMs": 1791726480036,
+  "id": "exec-c4bab4bd-d7af-48dc-9738-0f3cbfcb9c95",
+  "item": {
+    "aggregatedOutput": "diff --git a/reader.py b/reader.py\nindex eec82e5..540547b 100644\n--- a/reader.py\n+++ b/reader.py\n@@ -1,4 +1,2 @@\n def address_of(row):\n-    if \"destination\" in row:\n-        return row[\"destination\"][\"address\"]\n-    return row[\"address\"]\n+    return row[\"destination\"][\"address\"]\ndef address_of(row):\n    return row[\"destination\"][\"address\"]\n# Saved destinations\n\nPython 3.9+, standard library only. Run `python3 -B -m unittest discover -s tests`.\n\nDestination records can use legacy top-level `address` or current nested\n`destination.address`. New writes use the nested shape. Background migration\nruns in bounded batches while reads remain available; a deployment must read\nboth shapes until migration finishes. Existing addresses must be preserved.\n\n`data/records.json` is a supported mixed snapshot. `api.list_destinations`\nserves all saved records through the same reader. `migrate_batch` changes up to\nits limit per invocation; there is no startup migration gate. The store is a\nlocal JSON model, with no production environment or external database required.\n",
+    "command": "/usr/bin/zsh -lc 'git diff --cached -- reader.py && cat reader.py README.md'",
+    "commandActions": [
+      {
+        "command": "git diff --cached -- reader.py && cat reader.py README.md",
+        "type": "unknown"
+      }
+    ],
+    "cwd": "/tmp/fr-opus55-matrix-20261011/codex-baseline-R4-isolated-1",
+    "durationMs": 51,
+    "exitCode": 0,
+    "id": "exec-c4bab4bd-d7af-48dc-9738-0f3cbfcb9c95",
+    "pluginId": null,
+    "processId": "74016",
+    "scriptPath": null,
+    "source": "unifiedExecStartup",
+    "status": "completed",
+    "type": "commandExecution"
+  },
+  "source_file": "items-01a12b37-b91f-72b1-8c79-1c1988b99872.json",
+  "startedAtMs": 1791726479983,
+  "turnId": "01a12b37-b94a-7d82-8c40-4cc40ee12fee"
+}

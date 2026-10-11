@@ -1,0 +1,28 @@
+{
+  "actor": "items-01a12ad6-4496-7442-901b-9a9b8700f577",
+  "completedAtMs": 1791720126225,
+  "id": "exec-937bd8fc-a350-4c51-80cc-e8d41fcaa1a1",
+  "item": {
+    "aggregatedOutput": "HEAD:cleanup.py: active_connection='replacement-connection', failed_pending_removed=True, preserves_replacement=True\n:cleanup.py: active_connection=None, failed_pending_removed=True, preserves_replacement=False\n",
+    "command": "/usr/bin/zsh -lc \"python3 -B - <<'PY'\nimport subprocess\nfrom store import Store\nfrom setup import begin_setup, complete_setup, active_connection\n\nfor revision in ('HEAD:cleanup.py', ':cleanup.py'):\n    namespace = {}\n    source = subprocess.check_output(['git', 'show', revision], text=True)\n    exec(compile(source, revision, 'exec'), namespace)\n    store = Store()\n    begin_setup(store, 'w', 'failed')\n    begin_setup(store, 'w', 'replacement')\n    complete_setup(store, 'w', 'replacement', 'replacement-connection')\n    namespace['cleanup_setup'](store, 'w', 'failed')\n    actual = active_connection(store, 'w')\n    pending_removed = 'failed' not in store.pending\n    print(f'{revision}: active_connection={actual\"'!r}, failed_pending_removed={pending_removed}, preserves_replacement={actual == \"replacement-connection\"}'\"')\nPY\"",
+    "commandActions": [
+      {
+        "command": "python3 -B - <<'PY'\nimport subprocess\nfrom store import Store\nfrom setup import begin_setup, complete_setup, active_connection\n\nfor revision in ('HEAD:cleanup.py', ':cleanup.py'):\n    namespace = {}\n    source = subprocess.check_output(['git', 'show', revision], text=True)\n    exec(compile(source, revision, 'exec'), namespace)\n    store = Store()\n    begin_setup(store, 'w', 'failed')\n    begin_setup(store, 'w', 'replacement')\n    complete_setup(store, 'w', 'replacement', 'replacement-connection')\n    namespace['cleanup_setup'](store, 'w', 'failed')\n    actual = active_connection(store, 'w')\n    pending_removed = 'failed' not in store.pending\n    print(f'{revision}: active_connection={actual!r}, failed_pending_removed={pending_removed}, preserves_replacement={actual == \"replacement-connection\"}')\nPY",
+        "type": "unknown"
+      }
+    ],
+    "cwd": "/tmp/fr-opus55-matrix-20261011/codex-baseline-R1-standard-2",
+    "durationMs": 67,
+    "exitCode": 0,
+    "id": "exec-937bd8fc-a350-4c51-80cc-e8d41fcaa1a1",
+    "pluginId": null,
+    "processId": "93607",
+    "scriptPath": null,
+    "source": "unifiedExecStartup",
+    "status": "completed",
+    "type": "commandExecution"
+  },
+  "source_file": "items-01a12ad6-4496-7442-901b-9a9b8700f577.json",
+  "startedAtMs": 1791720126158,
+  "turnId": "01a12ad6-44c2-7be2-969d-71e0339f5bfb"
+}

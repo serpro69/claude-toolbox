@@ -1,12 +1,27 @@
 # Review preparation ordering: proposed follow-up
 
-> Status: scoped proposal; no guard, runtime probe or new candidate implemented
+> Status: conditional proposal awaiting Task 12.11 assessment; no guard or runtime probe implemented
 > Authority: the user agreed to scope instruction ordering after candidate 6
 > Parent: [design](design.md), [implementation](implementation.md), [Task 12](tasks.md#task-12-execute-and-assess-the-full-comparison-matrix)
 > Evidence: [candidate-6 results](verification/task12/candidate6/results.md)
 > Owner: implementing agent, Task 12
 
-## Recommendation
+## Current disposition — 2026-10-11
+
+The [full matrix](verification/task12/opus55/README.md) passes R5 standard twice
+on both providers. Its remaining confirmed Codex I4 sequencing failure concerns
+context loading before source investigation, after instruction preparation; this
+guard may not address that dependency. The user also requires severity to be
+weighed against added instruction and workflow burden.
+
+Start with [Task 12.11's assessment](follow-up.md), not automatic execution of
+12.10. Retain this bounded experiment as an option only if the assessment
+justifies its impact and cost. The original evidence and mechanism below remain
+historical rationale, not proof of a current priority or runtime capability.
+If selected, revalidate the exact declared runtimes and complete design review.
+No acceptance requirement or historical grade changes with this disposition.
+
+## Original recommendation — after candidate 6
 
 Keep candidate 6's clean-review closure change. Investigate a review-scoped tool
 guard in one bounded feasibility slice before committing to production hook

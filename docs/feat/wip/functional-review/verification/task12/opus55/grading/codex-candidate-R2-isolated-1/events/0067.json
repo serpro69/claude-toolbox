@@ -1,0 +1,30 @@
+{
+  "actor": "items-01a12b27-d222-7232-a6ae-d0758845377c",
+  "completedAtMs": 1791725447325,
+  "id": "exec-c4b155f9-0180-47a7-b49f-ce88e4808edf",
+  "item": {
+    "aggregatedOutput": "     1\tdiff --git a/service.py b/service.py\n     2\tindex 062b8a6..0435141 100644\n     3\t--- a/service.py\n     4\t+++ b/service.py\n     5\t@@ -1,12 +1,12 @@\n     6\t def save(store, workspace, operation_id, values):\n     7\t-    record = store.recovery.get(operation_id)\n     8\t-    if record is not None and record[\"status\"] == \"completed\":\n     9\t-        return {\"ok\": True, \"operation_id\": operation_id}\n    10\t+    record = next((item for item in store.recovery.values()\n    11\t+                   if item[\"workspace\"] == workspace), None)\n    12\t     if record is None:\n    13\t         record = {\"operation_id\": operation_id, \"workspace\": workspace,\n    14\t-                  \"status\": \"pending\"}\n    15\t+                  \"status\": \"pending\", \"values\": dict(values)}\n    16\t         store.recovery[operation_id] = record\n    17\t-    store.apply(workspace, values)\n    18\t-    record[\"values\"] = dict(values)\n    19\t-    record[\"status\"] = \"applied\"\n    20\t-    return store.receipt(record)\n    21\t+    if record[\"status\"] == \"pending\":\n    22\t+        store.apply(workspace, record[\"values\"])\n    23\t+        record[\"status\"] = \"applied\"\n    24\t+    store.receipt(record)\n    25\t+    return {\"ok\": True, \"operation_id\": operation_id}\n",
+    "command": "/usr/bin/zsh -lc \"cat -n '/tmp/kk-save-review-74x5_c32/staged.patch'\"",
+    "commandActions": [
+      {
+        "command": "cat -n /tmp/kk-save-review-74x5_c32/staged.patch",
+        "name": "staged.patch",
+        "path": "/tmp/kk-save-review-74x5_c32/staged.patch",
+        "type": "read"
+      }
+    ],
+    "cwd": "/tmp/fr-opus55-matrix-20261011/codex-candidate-R2-isolated-1",
+    "durationMs": 66,
+    "exitCode": 0,
+    "id": "exec-c4b155f9-0180-47a7-b49f-ce88e4808edf",
+    "pluginId": null,
+    "processId": "9207",
+    "scriptPath": null,
+    "source": "unifiedExecStartup",
+    "status": "completed",
+    "type": "commandExecution"
+  },
+  "source_file": "items-01a12b27-d222-7232-a6ae-d0758845377c.json",
+  "startedAtMs": 1791725447259,
+  "turnId": "01a12b27-d240-7652-a91c-871e4ec90072"
+}

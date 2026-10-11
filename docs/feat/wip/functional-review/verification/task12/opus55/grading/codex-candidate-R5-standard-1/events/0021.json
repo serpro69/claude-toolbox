@@ -1,0 +1,28 @@
+{
+  "actor": "items-01a12b48-a665-7c30-be85-dd290168b4d8",
+  "completedAtMs": 1791727634329,
+  "id": "exec-9645c7ae-281e-4f53-8687-8982bb6826fe",
+  "item": {
+    "aggregatedOutput": "Runtime: 3.10.12\n\nreview base:\ntest_current_settings (test_routes.RouteTests) ... ok\ntest_preview_route (test_routes.RouteTests) ... ok\ntest_unknown_route (test_routes.RouteTests) ... ok\n\n----------------------------------------------------------------------\nRan 3 tests in 0.000s\n\nOK\n\nstaged candidate:\ntest_current_settings (test_routes.RouteTests) ... ok\ntest_preview_route (test_routes.RouteTests) ... ok\ntest_unknown_route (test_routes.RouteTests) ... ok\n\n----------------------------------------------------------------------\nRan 3 tests in 0.000s\n\nOK\n",
+    "command": "/usr/bin/zsh -lc \"python3 -B - <<'PY'\nimport pathlib\nimport subprocess\nimport sys\nimport tempfile\n\nprint('Runtime:', sys.version.split()[0], flush=True)\nfor label, revision in [('review base', 'HEAD'), ('staged candidate', '')]:\n    with tempfile.TemporaryDirectory(prefix='export-preview-review-') as snapshot:\n        files = subprocess.check_output(['git', 'ls-tree', '-r', '--name-only', revision], text=True).splitlines() if revision else subprocess.check_output(['git', 'ls-files'], text=True).splitlines()\n        for name in files:\n            target = pathlib.Path(snapshot, name)\n            target.parent.mkdir(parents=True, exist_ok=True)\n            target.write_bytes(subprocess.check_output(['git', 'show', f'{revision}:{name}']))\n        print(f'\\\\n{label}:', flush=True)\n        result = subprocess.run([sys.executable, '-B', '-m', 'unittest', 'discover', '-s', 'tests', '-v'], cwd=snapshot)\n        if result.returncode:\n            raise SystemExit(result.returncode)\nPY\"",
+    "commandActions": [
+      {
+        "command": "python3 -B - <<'PY'\nimport pathlib\nimport subprocess\nimport sys\nimport tempfile\n\nprint('Runtime:', sys.version.split()[0], flush=True)\nfor label, revision in [('review base', 'HEAD'), ('staged candidate', '')]:\n    with tempfile.TemporaryDirectory(prefix='export-preview-review-') as snapshot:\n        files = subprocess.check_output(['git', 'ls-tree', '-r', '--name-only', revision], text=True).splitlines() if revision else subprocess.check_output(['git', 'ls-files'], text=True).splitlines()\n        for name in files:\n            target = pathlib.Path(snapshot, name)\n            target.parent.mkdir(parents=True, exist_ok=True)\n            target.write_bytes(subprocess.check_output(['git', 'show', f'{revision}:{name}']))\n        print(f'\\n{label}:', flush=True)\n        result = subprocess.run([sys.executable, '-B', '-m', 'unittest', 'discover', '-s', 'tests', '-v'], cwd=snapshot)\n        if result.returncode:\n            raise SystemExit(result.returncode)\nPY",
+        "type": "unknown"
+      }
+    ],
+    "cwd": "/tmp/fr-opus55-matrix-20261011/codex-candidate-R5-standard-1",
+    "durationMs": 135,
+    "exitCode": 0,
+    "id": "exec-9645c7ae-281e-4f53-8687-8982bb6826fe",
+    "pluginId": null,
+    "processId": "50352",
+    "scriptPath": null,
+    "source": "unifiedExecStartup",
+    "status": "completed",
+    "type": "commandExecution"
+  },
+  "source_file": "items-01a12b48-a665-7c30-be85-dd290168b4d8.json",
+  "startedAtMs": 1791727634194,
+  "turnId": "01a12b48-a68f-7110-813e-b707f27b27c9"
+}

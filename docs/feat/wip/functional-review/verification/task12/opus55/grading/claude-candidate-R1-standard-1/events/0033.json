@@ -1,0 +1,13 @@
+{
+  "actor": "main",
+  "block": {
+    "content": "Exit code 2\n# Workspace associations\n\nPython 3.9+, standard library only. Run `python3 -B -m unittest discover -s tests`.\nA workspace has one active setup association. Setup jobs can fail after creating\na pending record. Another setup can complete before the failed job's queued\ncleanup runs. Completed associations are consumed by `active_connection`.\nCleanup removes the failed setup's pending record and any association it owns.\nThe store models serialized operations; concurrency and external services are\noutside this change.\n----\ndiff --git a/cleanup.py b/cleanup.py\nindex a5e74d8..f716353 100644\n--- a/cleanup.py\n+++ b/cleanup.py\n@@ -1,5 +1,3 @@\n def cleanup_setup(store, workspace_id, setup_id):\n     store.pending.pop(setup_id, None)\n-    association = store.active.get(workspace_id)\n-    if association and association[\"setup_id\"] == setup_id:\n-        store.active.pop(workspace_id, None)\n+    store.active.pop(workspace_id, None)\n----\n     1\tdef cleanup_setup(store, workspace_id, setup_id):\n     2\t    store.pending.pop(setup_id, None)\n     3\t    store.active.pop(workspace_id, None)\n----\n     1\tdef cleanup_setup(store, workspace_id, setup_id):\n     2\t    store.pending.pop(setup_id, None)\n     3\t    association = store.active.get(workspace_id)\n     4\t    if association and association[\"setup_id\"] == setup_id:\n     5\t        store.active.pop(workspace_id, None)\ntests:\ntest_setup.py",
+    "is_error": true,
+    "tool_use_id": "toolu_01AErcSrwideovq48BABaFyM",
+    "type": "tool_result"
+  },
+  "id": "e81.0",
+  "parent_tool_use_id": null,
+  "session_id": "c945f40f-515b-444b-9a96-40b027ba8f61",
+  "source_sequence": 81
+}

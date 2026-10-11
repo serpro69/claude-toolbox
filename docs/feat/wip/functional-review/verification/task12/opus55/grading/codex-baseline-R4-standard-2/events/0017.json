@@ -1,0 +1,28 @@
+{
+  "actor": "items-01a12b32-4cbd-7153-aaac-544367ab3853",
+  "completedAtMs": 1791726135411,
+  "id": "exec-83b61f94-d5bd-49b3-804a-bb3fc028f30a",
+  "item": {
+    "aggregatedOutput": "migration limit=0, migrated=0: HEAD preserves all addresses; staged raises KeyError: 'destination'\nmigration limit=1, migrated=1: HEAD preserves all addresses; staged raises KeyError: 'destination'\nmigration limit=2, migrated=2: HEAD and staged preserve all addresses\n",
+    "command": "/usr/bin/zsh -lc \"python3 -B - <<'PY'\nimport copy\nimport json\nimport subprocess\nfrom pathlib import Path\nfrom api import list_destinations\nfrom migration import migrate_batch\n\nsnapshot = json.loads(Path('data/records.json').read_text())\nexpected = [{'id': row['id'], 'address': row['destination']['address'] if 'destination' in row else row['address']} for row in snapshot]\nold_module = {}\nexec(compile(subprocess.check_output(['git', 'show', 'HEAD:reader.py'], text=True), 'HEAD:reader.py', 'exec'), old_module)\nfor limit in (0, 1, 2):\n    records = copy.deepcopy(snapshot)\n    migrated = migrate_batch(records, limit)\n    baseline = [{'id': row['id'], 'address': old_module['address_of'](row)} for row in records]\n    assert baseline == expected\n    try:\n        actual = list_destinations(records)\n    except Exception as exc:\n        print(f'migration limit={limit}, migrated={migrated}: HEAD preserves all addresses; staged raises {type(exc).__name__}: {exc}')\n    else:\n        assert actual == expected\n        print(f'migration limit={limit}, migrated={migrated}: HEAD and staged preserve all addresses')\nPY\"",
+    "commandActions": [
+      {
+        "command": "python3 -B - <<'PY'\nimport copy\nimport json\nimport subprocess\nfrom pathlib import Path\nfrom api import list_destinations\nfrom migration import migrate_batch\n\nsnapshot = json.loads(Path('data/records.json').read_text())\nexpected = [{'id': row['id'], 'address': row['destination']['address'] if 'destination' in row else row['address']} for row in snapshot]\nold_module = {}\nexec(compile(subprocess.check_output(['git', 'show', 'HEAD:reader.py'], text=True), 'HEAD:reader.py', 'exec'), old_module)\nfor limit in (0, 1, 2):\n    records = copy.deepcopy(snapshot)\n    migrated = migrate_batch(records, limit)\n    baseline = [{'id': row['id'], 'address': old_module['address_of'](row)} for row in records]\n    assert baseline == expected\n    try:\n        actual = list_destinations(records)\n    except Exception as exc:\n        print(f'migration limit={limit}, migrated={migrated}: HEAD preserves all addresses; staged raises {type(exc).__name__}: {exc}')\n    else:\n        assert actual == expected\n        print(f'migration limit={limit}, migrated={migrated}: HEAD and staged preserve all addresses')\nPY",
+        "type": "unknown"
+      }
+    ],
+    "cwd": "/tmp/fr-opus55-matrix-20261011/codex-baseline-R4-standard-2",
+    "durationMs": 79,
+    "exitCode": 0,
+    "id": "exec-83b61f94-d5bd-49b3-804a-bb3fc028f30a",
+    "pluginId": null,
+    "processId": "9733",
+    "scriptPath": null,
+    "source": "unifiedExecStartup",
+    "status": "completed",
+    "type": "commandExecution"
+  },
+  "source_file": "items-01a12b32-4cbd-7153-aaac-544367ab3853.json",
+  "startedAtMs": 1791726135332,
+  "turnId": "01a12b32-4ce8-7ea0-a961-0e1067d1064e"
+}

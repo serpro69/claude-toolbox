@@ -1,0 +1,35 @@
+{
+  "actor": "items-01a12af7-1397-71f0-be3c-39e3cea0c218",
+  "completedAtMs": 1791722464731,
+  "id": "exec-85d64b66-9c04-4ce6-bee2-01fa22bc45c6",
+  "item": {
+    "appContext": null,
+    "arguments": {
+      "content": "# Mandatory receipts can turn committed legacy writes into reported failures\nP1 structural compatibility pattern: an independently shipped consumer begins requiring a new application receipt unconditionally, while the supported legacy provider commits the write and returns only its existing success acknowledgement. The consumer then reports failure after persistence, including on retries; a disabled feature flag offers no protection when the shared save path enforces receipts. Updating a success mock to emit the new field masks this mixed-version failure. Verify with actual supported provider source and assert both persisted state and caller-visible success; retain a legacy path until receipt capability is established, while rejecting explicit negative receipts. Encountered during isolated review of enhanced-settings task 1: staged client.py lines 2 and 5\u20136, provider/settings.py at eval-release (22140737b2bc5792b535f3f8ce16f7fa162101db). Parent reproduced previous-client success versus candidate exception after the same provider mutation. No live deployment claim.",
+      "source": "kk:review-findings"
+    },
+    "durationMs": 1,
+    "error": null,
+    "id": "exec-85d64b66-9c04-4ce6-bee2-01fa22bc45c6",
+    "mcpAppUi": null,
+    "pluginId": null,
+    "readOnlyHint": false,
+    "result": {
+      "_meta": null,
+      "content": [
+        {
+          "text": "Indexed 1 sections (0 with code) from: kk:review-findings\nUse search(queries: [\"...\"]) to query this content. Use source: \"kk:review-findings\" to scope results.",
+          "type": "text"
+        }
+      ],
+      "structuredContent": null
+    },
+    "server": "capy",
+    "status": "completed",
+    "tool": "capy_index",
+    "type": "mcpToolCall"
+  },
+  "source_file": "items-01a12af7-1397-71f0-be3c-39e3cea0c218.json",
+  "startedAtMs": 1791722464729,
+  "turnId": "01a12af7-13c5-7b52-8101-6e1e926212cb"
+}

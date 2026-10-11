@@ -1,0 +1,30 @@
+{
+  "actor": "items-01a12b09-1523-77a1-ad1a-8b508b33356c",
+  "completedAtMs": 1791723399542,
+  "id": "exec-beb45f0d-dab0-402c-9d59-dfcf190f0ec3",
+  "item": {
+    "aggregatedOutput": "diff --git a/README.md b/README.md\nindex 04a5381..0eff26f 100644\n--- a/README.md\n+++ b/README.md\n@@ -4,3 +4,6 @@ Python 3.9+, standard library only. Run `python3 -B -m unittest discover -s test\n The HTTP patch handler and command-line note action share settings.patch_settings.\n Callers own their input dictionaries. A patch contains only explicitly supplied\n keys. The optional note accepts text or None; the enabled flag is boolean.\n+Omitted keys keep their current values; supplied values, including None, empty\n+text, and False, replace them. Patching returns a new dictionary without changing\n+either input dictionary.\ndiff --git a/settings.py b/settings.py\nindex 17eee18..04ccefd 100644\n--- a/settings.py\n+++ b/settings.py\n@@ -1,5 +1,5 @@\n def patch_settings(current, patch):\n     result = dict(current)\n     for key, value in patch.items():\n-        result[key] = value or current.get(key)\n+        result[key] = value\n     return result\ndiff --git a/tests/test_settings.py b/tests/test_settings.py\nindex 87a59f4..248b5a3 100644\n--- a/tests/test_settings.py\n+++ b/tests/test_settings.py\n@@ -1,5 +1,7 @@\n import unittest\n from api import update_preferences\n+from cli import clear_note\n+from settings import patch_settings\n \n \n class SettingsTests(unittest.TestCase):\n@@ -8,3 +10,45 @@ class SettingsTests(unittest.TestCase):\n         result = update_preferences(original, {\"note\": \"after\"})\n         self.assertEqual(result, {\"note\": \"after\", \"enabled\": True})\n         self.assertEqual(original[\"note\"], \"before\")\n+\n+    def test_explicit_values_replace_current_values(self):\n+        cases = (\n+            ({\"note\": None}, {\"note\": None, \"enabled\": True}),\n+            ({\"note\": \"\"}, {\"note\": \"\", \"enabled\": True}),\n+            ({\"enabled\": False}, {\"note\": \"before\", \"enabled\": False}),\n+        )\n+        for update in (patch_settings, update_preferences):\n+            for patch, expected in cases:\n+                with self.subTest(update=update.__name__, patch=patch):\n+                    current = {\"note\": \"before\", \"enabled\": True}\n+                    original_patch = dict(patch)\n+                    result = update(current, patch)\n+                    self.assertEqual(result, expected)\n+                    self.assertIsNot(result, current)\n+                    self.assertEqual(current, {\"note\": \"before\", \"enabled\": True})\n+                    self.assertEqual(patch, original_patch)\n+\n+    def test_empty_patch_preserves_current_values_and_missing_keys(self):\n+        for update in (patch_settings, update_preferences):\n+            for current in ({\"note\": None, \"enabled\": False}, {\"note\": \"\"}, {}):\n+                with self.subTest(update=update.__name__, current=current):\n+                    result = update(current, {})\n+                    self.assertEqual(result, current)\n+                    self.assertIsNot(result, current)\n+\n+    def test_explicit_values_add_missing_keys(self):\n+        for update in (patch_settings, update_preferences):\n+            for patch in ({\"note\": None}, {\"note\": \"\"}, {\"enabled\": False}):\n+                with self.subTest(update=update.__name__, patch=patch):\n+                    current = {}\n+                    original_patch = dict(patch)\n+                    result = update(current, patch)\n+                    self.assertEqual(result, original_patch)\n+                    self.assertIsNot(result, patch)\n+                    self.assertEqual(current, {})\n+                    self.assertEqual(patch, original_patch)\n+\n+    def test_cli_clears_note(self):\n+        current = {\"note\": \"before\", \"enabled\": True}\n+        self.assertEqual(clear_note(current), {\"note\": None, \"enabled\": True})\n+        self.assertEqual(current, {\"note\": \"before\", \"enabled\": True})\n",
+    "command": "/usr/bin/zsh -lc 'cat /tmp/kk-review-code-wFu7o3ur.patch'",
+    "commandActions": [
+      {
+        "command": "cat /tmp/kk-review-code-wFu7o3ur.patch",
+        "name": "kk-review-code-wFu7o3ur.patch",
+        "path": "/tmp/kk-review-code-wFu7o3ur.patch",
+        "type": "read"
+      }
+    ],
+    "cwd": "/tmp/fr-opus55-matrix-20261011/codex-baseline-I2-standalone-1",
+    "durationMs": 52,
+    "exitCode": 0,
+    "id": "exec-beb45f0d-dab0-402c-9d59-dfcf190f0ec3",
+    "pluginId": null,
+    "processId": "76547",
+    "scriptPath": null,
+    "source": "unifiedExecStartup",
+    "status": "completed",
+    "type": "commandExecution"
+  },
+  "source_file": "items-01a12b09-1523-77a1-ad1a-8b508b33356c.json",
+  "startedAtMs": 1791723399489,
+  "turnId": "01a12b09-1543-7c51-bcb4-2e2aeb939bf5"
+}

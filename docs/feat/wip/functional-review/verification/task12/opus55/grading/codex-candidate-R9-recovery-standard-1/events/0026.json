@@ -1,0 +1,28 @@
+{
+  "actor": "items-01a12bae-16b6-7473-9dfe-6a4b152ab2ac",
+  "completedAtMs": 1791734287095,
+  "id": "exec-ef1f7536-96bb-41bb-992f-9d61c1821eef",
+  "item": {
+    "aggregatedOutput": "PASS: unchanged ID\nPASS: mixed surrounding whitespace\nPASS: success on third attempt\nPASS: permanent failure after transient\nPASS: reuse after successful read\nPASS: reuse after exhausted transient errors\nPASS: reuse after permanent error\n",
+    "command": "/usr/bin/zsh -lc \"python3 -B - <<'PY'\nfrom preferences import Preferences\nfrom repository import MissingPreference, Repository, ScriptedBackend, TransientRead\n\nvalue = {'color': 'blue'}\nscenarios = [\n    ('unchanged ID', 'w', [value], value, 1),\n    ('mixed surrounding whitespace', '\\\\t w \\\\n', [value], value, 1),\n    ('success on third attempt', ' w ', [TransientRead('1'), TransientRead('2'), value], value, 3),\n    ('permanent failure after transient', ' w ', [TransientRead('busy'), MissingPreference('missing')], MissingPreference, 2),\n]\nfor name, key, outcomes, expected, attempts in scenarios:\n    backend = ScriptedBackend(outcomes)\n    preferences = Preferences(Repository(backend))\n    try:\n        result = preferences.read(key)\n    except Exception as exc:\n        assert isinstance(expected, type) and type(exc) is expected, (name, exc)\n    else:\n        assert result == expected, (name, result)\n    assert backend.keys == ['w'] * attempts, (name, backend.keys)\n    print('PASS:', name)\n\nfor name, first_outcomes in [\n    ('successful read', [value]),\n    ('exhausted transient errors', [TransientRead('busy') for _ in range(3)]),\n    ('permanent error', [MissingPreference('missing')]),\n]:\n    later = {'color': 'green'}\n    backend = ScriptedBackend(first_outcomes + [later])\n    preferences = Preferences(Repository(backend))\n    try:\n        assert preferences.read(' w ') == value\n    except (TransientRead, MissingPreference) as exc:\n        assert type(exc) is type(first_outcomes[-1])\n    assert len(backend.keys) == len(first_outcomes)\n    assert preferences.read(' x ') == later\n    assert backend.keys == ['w'] * len(first_outcomes) + ['x']\n    print('PASS: reuse after', name)\nPY\"",
+    "commandActions": [
+      {
+        "command": "python3 -B - <<'PY'\nfrom preferences import Preferences\nfrom repository import MissingPreference, Repository, ScriptedBackend, TransientRead\n\nvalue = {'color': 'blue'}\nscenarios = [\n    ('unchanged ID', 'w', [value], value, 1),\n    ('mixed surrounding whitespace', '\\t w \\n', [value], value, 1),\n    ('success on third attempt', ' w ', [TransientRead('1'), TransientRead('2'), value], value, 3),\n    ('permanent failure after transient', ' w ', [TransientRead('busy'), MissingPreference('missing')], MissingPreference, 2),\n]\nfor name, key, outcomes, expected, attempts in scenarios:\n    backend = ScriptedBackend(outcomes)\n    preferences = Preferences(Repository(backend))\n    try:\n        result = preferences.read(key)\n    except Exception as exc:\n        assert isinstance(expected, type) and type(exc) is expected, (name, exc)\n    else:\n        assert result == expected, (name, result)\n    assert backend.keys == ['w'] * attempts, (name, backend.keys)\n    print('PASS:', name)\n\nfor name, first_outcomes in [\n    ('successful read', [value]),\n    ('exhausted transient errors', [TransientRead('busy') for _ in range(3)]),\n    ('permanent error', [MissingPreference('missing')]),\n]:\n    later = {'color': 'green'}\n    backend = ScriptedBackend(first_outcomes + [later])\n    preferences = Preferences(Repository(backend))\n    try:\n        assert preferences.read(' w ') == value\n    except (TransientRead, MissingPreference) as exc:\n        assert type(exc) is type(first_outcomes[-1])\n    assert len(backend.keys) == len(first_outcomes)\n    assert preferences.read(' x ') == later\n    assert backend.keys == ['w'] * len(first_outcomes) + ['x']\n    print('PASS: reuse after', name)\nPY",
+        "type": "unknown"
+      }
+    ],
+    "cwd": "/tmp/fr-opus55-matrix-20261011/codex-candidate-R9-recovery-standard-1",
+    "durationMs": 68,
+    "exitCode": 0,
+    "id": "exec-ef1f7536-96bb-41bb-992f-9d61c1821eef",
+    "pluginId": null,
+    "processId": "70673",
+    "scriptPath": null,
+    "source": "unifiedExecStartup",
+    "status": "completed",
+    "type": "commandExecution"
+  },
+  "source_file": "items-01a12bae-16b6-7473-9dfe-6a4b152ab2ac.json",
+  "startedAtMs": 1791734287026,
+  "turnId": "01a12bae-16e3-7d31-917f-d6f19d411dc9"
+}

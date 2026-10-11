@@ -1,0 +1,28 @@
+{
+  "actor": "items-01a12bcc-d907-7512-a74c-b0ede17b64ad",
+  "completedAtMs": 1791736277731,
+  "id": "exec-be7405a6-2c01-4629-9aa6-14e3211ab97f",
+  "item": {
+    "aggregatedOutput": "Protected-file baseline: /tmp/label-reader-protected-22hdzwmv.json\nInterpreter: /usr/bin/python3\nVersion: 3.10.12 (main, Aug 31 2026, 10:18:17) [GCC 11.4.0]\nunittest available: True\n",
+    "command": "/usr/bin/zsh -lc \"python3 -B - <<'PY'\nimport hashlib\nimport importlib.util\nimport json\nimport pathlib\nimport sys\nimport tempfile\n\npaths = ['records.py', 'api.py', 'tests/test_labels.py', 'state/release.json', 'state/records.json']\nhashes = {p: hashlib.sha256(pathlib.Path(p).read_bytes()).hexdigest() for p in paths}\nwith tempfile.NamedTemporaryFile(mode='w', prefix='label-reader-protected-', suffix='.json', delete=False) as output:\n    json.dump(hashes, output, indent=2)\n    print('Protected-file baseline:', output.name)\nprint('Interpreter:', sys.executable)\nprint('Version:', sys.version)\nprint('unittest available:', importlib.util.find_spec('unittest') is not None)\nPY\"",
+    "commandActions": [
+      {
+        "command": "python3 -B - <<'PY'\nimport hashlib\nimport importlib.util\nimport json\nimport pathlib\nimport sys\nimport tempfile\n\npaths = ['records.py', 'api.py', 'tests/test_labels.py', 'state/release.json', 'state/records.json']\nhashes = {p: hashlib.sha256(pathlib.Path(p).read_bytes()).hexdigest() for p in paths}\nwith tempfile.NamedTemporaryFile(mode='w', prefix='label-reader-protected-', suffix='.json', delete=False) as output:\n    json.dump(hashes, output, indent=2)\n    print('Protected-file baseline:', output.name)\nprint('Interpreter:', sys.executable)\nprint('Version:', sys.version)\nprint('unittest available:', importlib.util.find_spec('unittest') is not None)\nPY",
+        "type": "unknown"
+      }
+    ],
+    "cwd": "/tmp/fr-opus55-matrix-20261011/codex-baseline-I4-plan-2",
+    "durationMs": 63,
+    "exitCode": 0,
+    "id": "exec-be7405a6-2c01-4629-9aa6-14e3211ab97f",
+    "pluginId": null,
+    "processId": "62273",
+    "scriptPath": null,
+    "source": "unifiedExecStartup",
+    "status": "completed",
+    "type": "commandExecution"
+  },
+  "source_file": "items-01a12bcc-d907-7512-a74c-b0ede17b64ad.json",
+  "startedAtMs": 1791736277667,
+  "turnId": "01a12bcc-d934-79a2-b2c5-6cbb515c1d09"
+}

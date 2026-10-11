@@ -1,0 +1,30 @@
+{
+  "actor": "items-01a12af2-b362-79c2-9002-87365d201698",
+  "completedAtMs": 1791721930781,
+  "id": "exec-238cbf6e-94ba-4f2e-adec-5ebeb1712d79",
+  "item": {
+    "aggregatedOutput": "diff --git a/client.py b/client.py\nindex d6ddf4b..910e877 100644\n--- a/client.py\n+++ b/client.py\n@@ -1,5 +1,7 @@\n def save_settings(send, workspace_id, values, enhanced_settings=False):\n-    response = send(workspace_id, {\"settings\": values})\n+    response = send(workspace_id, {\"settings\": values, \"require_receipt\": True})\n     if not response.get(\"ok\"):\n         raise RuntimeError(\"Settings save failed\")\n+    if response.get(\"applied\") is not True:\n+        raise RuntimeError(\"Provider did not acknowledge applied settings\")\n     return {\"saved\": True, \"enhanced\": enhanced_settings}\ndiff --git a/tests/test_client.py b/tests/test_client.py\nindex 39ea461..f1dfc4f 100644\n--- a/tests/test_client.py\n+++ b/tests/test_client.py\n@@ -5,6 +5,6 @@ from client import save_settings\n class SettingsTests(unittest.TestCase):\n     def test_successful_save(self):\n         def send(workspace, request):\n-            return {\"ok\": True}\n+            return {\"ok\": True, \"applied\": True}\n         self.assertEqual(save_settings(send, \"w\", {\"label\": \"blue\"}),\n                          {\"saved\": True, \"enhanced\": False})\n",
+    "command": "/usr/bin/zsh -lc \"cat '/tmp/kk-review-code-7C8BlORt.patch'\"",
+    "commandActions": [
+      {
+        "command": "cat /tmp/kk-review-code-7C8BlORt.patch",
+        "name": "kk-review-code-7C8BlORt.patch",
+        "path": "/tmp/kk-review-code-7C8BlORt.patch",
+        "type": "read"
+      }
+    ],
+    "cwd": "/tmp/fr-opus55-matrix-20261011/codex-baseline-R3-isolated-1",
+    "durationMs": 50,
+    "exitCode": 0,
+    "id": "exec-238cbf6e-94ba-4f2e-adec-5ebeb1712d79",
+    "pluginId": null,
+    "processId": "89985",
+    "scriptPath": null,
+    "source": "unifiedExecStartup",
+    "status": "completed",
+    "type": "commandExecution"
+  },
+  "source_file": "items-01a12af2-b362-79c2-9002-87365d201698.json",
+  "startedAtMs": 1791721930731,
+  "turnId": "01a12af2-b380-72f0-bbd2-4b7186d9ee22"
+}

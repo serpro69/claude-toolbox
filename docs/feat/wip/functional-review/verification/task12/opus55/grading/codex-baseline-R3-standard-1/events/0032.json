@@ -1,0 +1,28 @@
+{
+  "actor": "items-01a12ae9-ffcc-7e61-92cd-0d818b7340a4",
+  "completedAtMs": 1791721407588,
+  "id": "exec-58f9d5cb-4e6a-4ee2-b0b6-aed2143c89c3",
+  "item": {
+    "aggregatedOutput": "HEAD client; enhanced_settings omitted (default False)\n  request: [{'settings': {'label': 'blue'}}]\n  stored: {'w': {'label': 'blue'}}\n  outcome: ('returned', {'saved': True, 'enhanced': False})\nstaged client; enhanced_settings omitted (default False)\n  request: [{'settings': {'label': 'blue'}, 'require_receipt': True}]\n  stored: {'w': {'label': 'blue'}}\n  outcome: ('raised', 'Provider did not acknowledge applied settings')\nConfirmed: the released provider applies both saves, but only the staged client reports failure.\n",
+    "command": "/usr/bin/zsh -lc \"python3 -B - <<'PY'\nimport subprocess\n\ndef load_revision(revision, path):\n    namespace = {}\n    source = subprocess.check_output(['git', 'show', f'{revision}:{path}'], text=True)\n    exec(compile(source, f'{revision}:{path}', 'exec'), namespace)\n    return namespace\n\nprovider = load_revision('eval-release', 'provider/settings.py')['update_settings']\nbaseline = load_revision('HEAD', 'client.py')['save_settings']\nstaged = load_revision('', 'client.py')['save_settings']\nvalues = {'label': 'blue'}\nfor label, save in [('HEAD client', baseline), ('staged client', staged)]:\n    storage = {}\n    requests = []\n    def send(workspace, request):\n        requests.append(request)\n        return provider(storage, workspace, request)\n    try:\n        outcome = ('returned', save(send, 'w', values))\n    except RuntimeError as error:\n        outcome = ('raised', str(error))\n    print(f'{label}; enhanced_settings omitted (default False)')\n    print(f'  request: {requests}')\n    print(f'  stored: {storage}')\n    print(f'  outcome: {outcome}')\n    assert storage['w'] == values\n    if label == 'HEAD client':\n        assert outcome == ('returned', {'saved': True, 'enhanced': False})\n    else:\n        assert outcome == ('raised', 'Provider did not acknowledge applied settings')\nprint('Confirmed: the released provider applies both saves, but only the staged client reports failure.')\nPY\"",
+    "commandActions": [
+      {
+        "command": "python3 -B - <<'PY'\nimport subprocess\n\ndef load_revision(revision, path):\n    namespace = {}\n    source = subprocess.check_output(['git', 'show', f'{revision}:{path}'], text=True)\n    exec(compile(source, f'{revision}:{path}', 'exec'), namespace)\n    return namespace\n\nprovider = load_revision('eval-release', 'provider/settings.py')['update_settings']\nbaseline = load_revision('HEAD', 'client.py')['save_settings']\nstaged = load_revision('', 'client.py')['save_settings']\nvalues = {'label': 'blue'}\nfor label, save in [('HEAD client', baseline), ('staged client', staged)]:\n    storage = {}\n    requests = []\n    def send(workspace, request):\n        requests.append(request)\n        return provider(storage, workspace, request)\n    try:\n        outcome = ('returned', save(send, 'w', values))\n    except RuntimeError as error:\n        outcome = ('raised', str(error))\n    print(f'{label}; enhanced_settings omitted (default False)')\n    print(f'  request: {requests}')\n    print(f'  stored: {storage}')\n    print(f'  outcome: {outcome}')\n    assert storage['w'] == values\n    if label == 'HEAD client':\n        assert outcome == ('returned', {'saved': True, 'enhanced': False})\n    else:\n        assert outcome == ('raised', 'Provider did not acknowledge applied settings')\nprint('Confirmed: the released provider applies both saves, but only the staged client reports failure.')\nPY",
+        "type": "unknown"
+      }
+    ],
+    "cwd": "/tmp/fr-opus55-matrix-20261011/codex-baseline-R3-standard-1",
+    "durationMs": 58,
+    "exitCode": 0,
+    "id": "exec-58f9d5cb-4e6a-4ee2-b0b6-aed2143c89c3",
+    "pluginId": null,
+    "processId": "92860",
+    "scriptPath": null,
+    "source": "unifiedExecStartup",
+    "status": "completed",
+    "type": "commandExecution"
+  },
+  "source_file": "items-01a12ae9-ffcc-7e61-92cd-0d818b7340a4.json",
+  "startedAtMs": 1791721407529,
+  "turnId": "01a12ae9-fff7-76b2-9137-450a3a080073"
+}

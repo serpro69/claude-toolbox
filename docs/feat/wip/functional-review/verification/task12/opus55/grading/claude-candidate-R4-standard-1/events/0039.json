@@ -1,0 +1,12 @@
+{
+  "actor": "main",
+  "block": {
+    "content": "1\tdef migrate_batch(records, limit):\n2\t    migrated = 0\n3\t    for row in records:\n4\t        if migrated >= limit:\n5\t            break\n6\t        if \"destination\" not in row:\n7\t            row[\"destination\"] = {\"address\": row.pop(\"address\")}\n8\t            migrated += 1\n9\t    return migrated\n10\t",
+    "tool_use_id": "toolu_01JipkHwdkYXDyEVhxv5KS1w",
+    "type": "tool_result"
+  },
+  "id": "e90.0",
+  "parent_tool_use_id": null,
+  "session_id": "c297d00a-c99f-453d-856e-98238aa27dee",
+  "source_sequence": 90
+}

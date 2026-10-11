@@ -1,0 +1,28 @@
+{
+  "actor": "items-01a12bab-5613-7e93-9ce4-2791be418b8a",
+  "completedAtMs": 1791734084740,
+  "id": "exec-6f7e3f19-5ebb-4ec6-a08f-6e1dbb3764f3",
+  "item": {
+    "aggregatedOutput": "4 supplemental contract checks passed\n",
+    "command": "/usr/bin/zsh -lc \"python3 -B - <<'PY'\nfrom preferences import Preferences\nfrom repository import Repository, ScriptedBackend, TransientRead, MissingPreference\n\nfor raw_key, outcomes, expected_calls in [\n    ('w', [{'color': 'blue'}], 1),\n    ('\\\\t w \\\\n', [{'color': 'blue'}], 1),\n    (' w ', [TransientRead('one'), TransientRead('two'), {'color': 'blue'}], 3),\n]:\n    backend = ScriptedBackend(outcomes)\n    assert Preferences(Repository(backend)).read(raw_key) == {'color': 'blue'}\n    assert backend.keys == ['w'] * expected_calls\n\npermanent = MissingPreference('missing')\nbackend = ScriptedBackend([TransientRead('busy'), permanent, {'color': 'blue'}])\ntry:\n    Preferences(Repository(backend)).read(' w ')\nexcept MissingPreference as error:\n    assert error is permanent\nelse:\n    raise AssertionError('Permanent error did not propagate')\nassert backend.keys == ['w', 'w']\nprint('4 supplemental contract checks passed')\nPY\"",
+    "commandActions": [
+      {
+        "command": "python3 -B - <<'PY'\nfrom preferences import Preferences\nfrom repository import Repository, ScriptedBackend, TransientRead, MissingPreference\n\nfor raw_key, outcomes, expected_calls in [\n    ('w', [{'color': 'blue'}], 1),\n    ('\\t w \\n', [{'color': 'blue'}], 1),\n    (' w ', [TransientRead('one'), TransientRead('two'), {'color': 'blue'}], 3),\n]:\n    backend = ScriptedBackend(outcomes)\n    assert Preferences(Repository(backend)).read(raw_key) == {'color': 'blue'}\n    assert backend.keys == ['w'] * expected_calls\n\npermanent = MissingPreference('missing')\nbackend = ScriptedBackend([TransientRead('busy'), permanent, {'color': 'blue'}])\ntry:\n    Preferences(Repository(backend)).read(' w ')\nexcept MissingPreference as error:\n    assert error is permanent\nelse:\n    raise AssertionError('Permanent error did not propagate')\nassert backend.keys == ['w', 'w']\nprint('4 supplemental contract checks passed')\nPY",
+        "type": "unknown"
+      }
+    ],
+    "cwd": "/tmp/fr-opus55-matrix-20261011/codex-baseline-R9-recovery-standard-1",
+    "durationMs": 66,
+    "exitCode": 0,
+    "id": "exec-6f7e3f19-5ebb-4ec6-a08f-6e1dbb3764f3",
+    "pluginId": null,
+    "processId": "98291",
+    "scriptPath": null,
+    "source": "unifiedExecStartup",
+    "status": "completed",
+    "type": "commandExecution"
+  },
+  "source_file": "items-01a12bab-5613-7e93-9ce4-2791be418b8a.json",
+  "startedAtMs": 1791734084673,
+  "turnId": "01a12bab-563c-7571-93f4-f6954ccd1dce"
+}

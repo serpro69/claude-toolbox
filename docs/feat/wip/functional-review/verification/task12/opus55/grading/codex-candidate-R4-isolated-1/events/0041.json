@@ -1,0 +1,17 @@
+{
+  "actor": "items-01a12b3c-af06-7c51-9301-c680e7d1cd28",
+  "completedAtMs": 1791727067275,
+  "id": "msg_09a10b9f5f1c0c16016acb95d0e6f48191ada588235fd038aa",
+  "item": {
+    "delivery": null,
+    "id": "msg_09a10b9f5f1c0c16016acb95d0e6f48191ada588235fd038aa",
+    "memoryCitation": null,
+    "phase": "final_answer",
+    "questions": null,
+    "text": "**REQUEST_CHANGES** \u2014 one P1 finding from the independent code reviewer.\n\n**P1: Preserve legacy reads until migration completes** \u2014 [reader.py:2](/tmp/fr-opus55-matrix-20261011/codex-candidate-R4-isolated-1/reader.py:2)\n\nThe unconditional `row[\"destination\"]` lookup raises `KeyError` for supported legacy records. Because `list_destinations` reads every record, one unmigrated row aborts the entire listing. This violates the [documented requirement](/tmp/fr-opus55-matrix-20261011/codex-candidate-R4-isolated-1/README.md:5) to keep both shapes readable during migration.\n\nRestore the legacy fallback and add regression coverage across migration states, asserting preserved addresses.\n\n*Reviewer: code-reviewer (GPT-6.1-sol); confidence: 100%. Python profile, `code-quality-checklist.md`, triggered by `.py` extension.*\n\nI reproduced these results against baseline `b299f57` and the staged candidate:\n\n| Scenario | Baseline | Staged |\n|---|---|---|\n| Initial mixed snapshot | Pass | `KeyError` |\n| After first migration batch | Pass | `KeyError` |\n| Completed migration and subsequent retry | Pass | Pass |\n| New write and empty list | Pass | Pass |\n\nBoth existing tests pass, but cover only new writes and empty lists. Compatibility with legacy and partially migrated records is **blocked**.\n\nReview covered the staged `reader.py` change (+1/\u22123), README, API consumer, writer, migration, fixture, and tests, including historical counterparts. PAL was unavailable, so this is a single-reviewer isolated assessment without external corroboration. I executed the checks; the independent reviewer inspected source.\n\nThe systemic pattern was indexed under `kk:review-findings`. No repository files were changed.",
+    "type": "agentMessage"
+  },
+  "source_file": "items-01a12b3c-af06-7c51-9301-c680e7d1cd28.json",
+  "startedAtMs": 1791727057086,
+  "turnId": "01a12b3c-af32-7402-b816-ce10ec6a5f34"
+}

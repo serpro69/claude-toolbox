@@ -1,0 +1,28 @@
+{
+  "actor": "items-01a12b41-6618-78c2-bf52-135bf41714e2",
+  "completedAtMs": 1791727136545,
+  "id": "exec-88b5e930-4f27-486c-8a76-990ff6793c0b",
+  "item": {
+    "aggregatedOutput": "# Saved destinations\n\nPython 3.9+, standard library only. Run `python3 -B -m unittest discover -s tests`.\n\nDestination records can use legacy top-level `address` or current nested\n`destination.address`. New writes use the nested shape. Background migration\nruns in bounded batches while reads remain available; a deployment must read\nboth shapes until migration finishes. Existing addresses must be preserved.\n\n`data/records.json` is a supported mixed snapshot. `api.list_destinations`\nserves all saved records through the same reader. `migrate_batch` changes up to\nits limit per invocation; there is no startup migration gate. The store is a\nlocal JSON model, with no production environment or external database required.\n./tests/test_destinations.py\n./writer.py\n./.gitignore\n./README.md\n./reader.py\n./api.py\n./migration.py\n./data/records.json\n",
+    "command": "/usr/bin/zsh -lc \"git show :README.md\n rg --files --hidden -g '\"'!'\"\\\\.git/**' -g '\"'!__pycache__/**'\"' -g '\"'!'\"\\\\.pytest_cache/**' .\"",
+    "commandActions": [
+      {
+        "command": "git show :README.md\n rg --files --hidden -g '!\\.git/**' -g '!__pycache__/**' -g '!\\.pytest_cache/**' .",
+        "type": "unknown"
+      }
+    ],
+    "cwd": "/tmp/fr-opus55-matrix-20261011/codex-candidate-R4-isolated-2",
+    "durationMs": 81,
+    "exitCode": 0,
+    "id": "exec-88b5e930-4f27-486c-8a76-990ff6793c0b",
+    "pluginId": null,
+    "processId": "25634",
+    "scriptPath": null,
+    "source": "unifiedExecStartup",
+    "status": "completed",
+    "type": "commandExecution"
+  },
+  "source_file": "items-01a12b41-6618-78c2-bf52-135bf41714e2.json",
+  "startedAtMs": 1791727136463,
+  "turnId": "01a12b41-6645-7d72-9d52-06d63b422a97"
+}

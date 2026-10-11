@@ -1,0 +1,30 @@
+{
+  "actor": "items-01a12b23-8536-7e01-9672-4c3052bbf9d0",
+  "completedAtMs": 1791725140101,
+  "id": "exec-a010986d-0031-40d0-9a3d-0cd11070a898",
+  "item": {
+    "aggregatedOutput": "tests/test_save.py:1:import unittest\ntests/test_save.py:2:\ntests/test_save.py:3:from client import submit\ntests/test_save.py:4:from store import ReceiptUnavailable, Store\ntests/test_save.py:5:\ntests/test_save.py:6:\ntests/test_save.py:7:class SaveTests(unittest.TestCase):\ntests/test_save.py:8:    def test_save(self):\ntests/test_save.py:9:        store = Store()\ntests/test_save.py:10:        result = submit(store, \"w\", \"op-1\", {\"color\": \"blue\"})\ntests/test_save.py:11:        self.assertTrue(result[\"ok\"])\ntests/test_save.py:12:        self.assertEqual(store.preferences[\"w\"], {\"color\": \"blue\"})\ntests/test_save.py:13:\ntests/test_save.py:14:    def test_retry_same_values(self):\ntests/test_save.py:15:        store = Store()\ntests/test_save.py:16:        store.fail_receipt_once = True\ntests/test_save.py:17:        with self.assertRaises(ReceiptUnavailable):\ntests/test_save.py:18:            submit(store, \"w\", \"op-1\", {\"color\": \"blue\"})\ntests/test_save.py:19:        self.assertTrue(submit(store, \"w\", \"op-1\", {\"color\": \"blue\"})[\"ok\"])\ntests/test_save.py:20:        self.assertEqual(store.preferences[\"w\"], {\"color\": \"blue\"})\ntests/test_save.py:21:\ntests/test_save.py:22:    def test_completed_id_returns_receipt(self):\ntests/test_save.py:23:        store = Store()\ntests/test_save.py:24:        submit(store, \"w\", \"op-1\", {\"color\": \"blue\"})\ntests/test_save.py:25:        result = submit(store, \"w\", \"op-1\", {\"color\": \"blue\"})\ntests/test_save.py:26:        self.assertEqual(result, {\"ok\": True, \"operation_id\": \"op-1\"})\nservice.py:1:def save(store, workspace, operation_id, values):\nservice.py:2:    record = next((item for item in store.recovery.values()\nservice.py:3:                   if item[\"workspace\"] == workspace), None)\nservice.py:4:    if record is None:\nservice.py:5:        record = {\"operation_id\": operation_id, \"workspace\": workspace,\nservice.py:6:                  \"status\": \"pending\", \"values\": dict(values)}\nservice.py:7:        store.recovery[operation_id] = record\nservice.py:8:    if record[\"status\"] == \"pending\":\nservice.py:9:        store.apply(workspace, record[\"values\"])\nservice.py:10:        record[\"status\"] = \"applied\"\nservice.py:11:    store.receipt(record)\nservice.py:12:    return {\"ok\": True, \"operation_id\": operation_id}\nclient.py:1:from service import save\nclient.py:2:\nclient.py:3:\nclient.py:4:def submit(store, workspace, operation_id, values):\nclient.py:5:    return save(store, workspace, operation_id, values)\nREADME.md:1:# Workspace preferences\nREADME.md:2:\nREADME.md:3:Python 3.9+, standard library only. Run `python3 -B -m unittest discover -s tests`.\nREADME.md:4:\nREADME.md:5:Saving preferences is a serialized operation identified by a caller-supplied\nREADME.md:6:operation ID. A failed save can be retried with the same ID and edited values;\nREADME.md:7:success means the latest submitted values are active. Repeating a completed ID\nREADME.md:8:returns its receipt. A fresh operation ID must perform a fresh save, even for\nREADME.md:9:the same workspace. Recovery records remain available for audit after completion.\nREADME.md:10:\nREADME.md:11:The provider replaces preferences idempotently. A receipt write can fail after\nREADME.md:12:the provider has applied values. The in-memory store models that boundary; no\nREADME.md:13:threads, process restart, network service or exactly-once external effect is promised.\nstore.py:1:class ReceiptUnavailable(Exception):\nstore.py:2:    pass\nstore.py:3:\nstore.py:4:\nstore.py:5:class Store:\nstore.py:6:    def __init__(self):\nstore.py:7:        self.preferences = {}\nstore.py:8:        self.recovery = {}\nstore.py:9:        self.fail_receipt_once = False\nstore.py:10:\nstore.py:11:    def apply(self, workspace, values):\nstore.py:12:        self.preferences[workspace] = dict(values)\nstore.py:13:\nstore.py:14:    def receipt(self, record):\nstore.py:15:        if self.fail_receipt_once:\nstore.py:16:            self.fail_receipt_once = False\nstore.py:17:            raise ReceiptUnavailable(\"receipt store unavailable\")\nstore.py:18:        record[\"status\"] = \"completed\"\nstore.py:19:        return {\"ok\": True, \"operation_id\": record[\"operation_id\"]}\n",
+    "command": "/usr/bin/zsh -lc \"rg -n '\"'^'\"' README.md service.py store.py client.py tests/test_save.py\"",
+    "commandActions": [
+      {
+        "command": "rg -n '^' README.md service.py store.py client.py tests/test_save.py",
+        "path": "README.md",
+        "query": "^",
+        "type": "search"
+      }
+    ],
+    "cwd": "/tmp/fr-opus55-matrix-20261011/codex-baseline-R2-isolated-2",
+    "durationMs": 112,
+    "exitCode": 0,
+    "id": "exec-a010986d-0031-40d0-9a3d-0cd11070a898",
+    "pluginId": null,
+    "processId": "83222",
+    "scriptPath": null,
+    "source": "unifiedExecStartup",
+    "status": "completed",
+    "type": "commandExecution"
+  },
+  "source_file": "items-01a12b23-8536-7e01-9672-4c3052bbf9d0.json",
+  "startedAtMs": 1791725139988,
+  "turnId": "01a12b23-855c-7a02-9175-2a094aa67342"
+}

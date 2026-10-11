@@ -1,0 +1,28 @@
+{
+  "actor": "items-01a12b92-c6fc-7c02-ae08-78d95c377162",
+  "completedAtMs": 1791732487455,
+  "id": "exec-03af62d3-08d7-4ddf-8415-70c44db780ac",
+  "item": {
+    "aggregatedOutput": "recovery on second attempt | public staged path | result='TransientRead' | keys=['w']\nrecovery on second attempt | existing resilient contract | result={'color': 'blue'} | keys=['w', 'w']\nrecovery on third attempt | public staged path | result='TransientRead' | keys=['w']\nrecovery on third attempt | existing resilient contract | result={'color': 'blue'} | keys=['w', 'w', 'w']\nexhausted transient errors | public staged path | result='TransientRead' | keys=['w']\nexhausted transient errors | existing resilient contract | result='TransientRead' | keys=['w', 'w', 'w']\npermanent failure | public staged path | result='MissingPreference' | keys=['w']\npermanent failure | existing resilient contract | result='MissingPreference' | keys=['w']\n",
+    "command": "/usr/bin/zsh -lc \"python3 -B - <<'PY'\nfrom preferences import Preferences\nfrom repository import Repository, ScriptedBackend, TransientRead, MissingPreference\n\ncases = [\n    ('recovery on second attempt', [TransientRead('busy'), {'color': 'blue'}]),\n    ('recovery on third attempt', [TransientRead('busy'), TransientRead('busy'), {'color': 'blue'}]),\n    ('exhausted transient errors', [TransientRead('busy')] * 3),\n    ('permanent failure', [MissingPreference('absent')]),\n]\nfor label, outcomes in cases:\n    for mode in ('public staged path', 'existing resilient contract'):\n        backend = ScriptedBackend(outcomes)\n        repository = Repository(backend)\n        try:\n            result = Preferences(repository).read(' w ') if mode == 'public staged path' else repository.read_resilient('w')\n        except (TransientRead, MissingPreference) as error:\n            result = type(error).__name__\n        print(f'{label} | {mode} | result={result\"'!r} | keys={backend.keys!r}'\"')\nPY\"",
+    "commandActions": [
+      {
+        "command": "python3 -B - <<'PY'\nfrom preferences import Preferences\nfrom repository import Repository, ScriptedBackend, TransientRead, MissingPreference\n\ncases = [\n    ('recovery on second attempt', [TransientRead('busy'), {'color': 'blue'}]),\n    ('recovery on third attempt', [TransientRead('busy'), TransientRead('busy'), {'color': 'blue'}]),\n    ('exhausted transient errors', [TransientRead('busy')] * 3),\n    ('permanent failure', [MissingPreference('absent')]),\n]\nfor label, outcomes in cases:\n    for mode in ('public staged path', 'existing resilient contract'):\n        backend = ScriptedBackend(outcomes)\n        repository = Repository(backend)\n        try:\n            result = Preferences(repository).read(' w ') if mode == 'public staged path' else repository.read_resilient('w')\n        except (TransientRead, MissingPreference) as error:\n            result = type(error).__name__\n        print(f'{label} | {mode} | result={result!r} | keys={backend.keys!r}')\nPY",
+        "type": "unknown"
+      }
+    ],
+    "cwd": "/tmp/fr-opus55-matrix-20261011/codex-baseline-R9-mismatch-standard-1",
+    "durationMs": 58,
+    "exitCode": 0,
+    "id": "exec-03af62d3-08d7-4ddf-8415-70c44db780ac",
+    "pluginId": null,
+    "processId": "37279",
+    "scriptPath": null,
+    "source": "unifiedExecStartup",
+    "status": "completed",
+    "type": "commandExecution"
+  },
+  "source_file": "items-01a12b92-c6fc-7c02-ae08-78d95c377162.json",
+  "startedAtMs": 1791732487397,
+  "turnId": "01a12b92-c726-7132-b192-3d44e256c9d8"
+}

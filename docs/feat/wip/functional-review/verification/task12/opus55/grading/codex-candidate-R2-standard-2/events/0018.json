@@ -1,0 +1,28 @@
+{
+  "actor": "items-01a12b1c-9064-7a72-9df3-0edf974fa30c",
+  "completedAtMs": 1791724714818,
+  "id": "exec-a82d0bcc-553f-42f3-ae26-641822b0c03f",
+  "item": {
+    "aggregatedOutput": "diff --git a/service.py b/service.py\nindex 062b8a6..0435141 100644\n--- a/service.py\n+++ b/service.py\n@@ -1,12 +1,12 @@\n def save(store, workspace, operation_id, values):\n-    record = store.recovery.get(operation_id)\n-    if record is not None and record[\"status\"] == \"completed\":\n-        return {\"ok\": True, \"operation_id\": operation_id}\n+    record = next((item for item in store.recovery.values()\n+                   if item[\"workspace\"] == workspace), None)\n     if record is None:\n         record = {\"operation_id\": operation_id, \"workspace\": workspace,\n-                  \"status\": \"pending\"}\n+                  \"status\": \"pending\", \"values\": dict(values)}\n         store.recovery[operation_id] = record\n-    store.apply(workspace, values)\n-    record[\"values\"] = dict(values)\n-    record[\"status\"] = \"applied\"\n-    return store.receipt(record)\n+    if record[\"status\"] == \"pending\":\n+        store.apply(workspace, record[\"values\"])\n+        record[\"status\"] = \"applied\"\n+    store.receipt(record)\n+    return {\"ok\": True, \"operation_id\": operation_id}\n     1\tdef save(store, workspace, operation_id, values):\n     2\t    record = next((item for item in store.recovery.values()\n     3\t                   if item[\"workspace\"] == workspace), None)\n     4\t    if record is None:\n     5\t        record = {\"operation_id\": operation_id, \"workspace\": workspace,\n     6\t                  \"status\": \"pending\", \"values\": dict(values)}\n     7\t        store.recovery[operation_id] = record\n     8\t    if record[\"status\"] == \"pending\":\n     9\t        store.apply(workspace, record[\"values\"])\n    10\t        record[\"status\"] = \"applied\"\n    11\t    store.receipt(record)\n    12\t    return {\"ok\": True, \"operation_id\": operation_id}\n     1\tdef save(store, workspace, operation_id, values):\n     2\t    record = store.recovery.get(operation_id)\n     3\t    if record is not None and record[\"status\"] == \"completed\":\n     4\t        return {\"ok\": True, \"operation_id\": operation_id}\n     5\t    if record is None:\n     6\t        record = {\"operation_id\": operation_id, \"workspace\": workspace,\n     7\t                  \"status\": \"pending\"}\n     8\t        store.recovery[operation_id] = record\n     9\t    store.apply(workspace, values)\n    10\t    record[\"values\"] = dict(values)\n    11\t    record[\"status\"] = \"applied\"\n    12\t    return store.receipt(record)\n",
+    "command": "/usr/bin/zsh -lc 'git diff --cached -- service.py\ngit show :service.py | nl -ba\ngit show HEAD:service.py | nl -ba'",
+    "commandActions": [
+      {
+        "command": "git diff --cached -- service.py\ngit show :service.py | nl -ba\ngit show HEAD:service.py | nl -ba",
+        "type": "unknown"
+      }
+    ],
+    "cwd": "/tmp/fr-opus55-matrix-20261011/codex-candidate-R2-standard-2",
+    "durationMs": 50,
+    "exitCode": 0,
+    "id": "exec-a82d0bcc-553f-42f3-ae26-641822b0c03f",
+    "pluginId": null,
+    "processId": "37226",
+    "scriptPath": null,
+    "source": "unifiedExecStartup",
+    "status": "completed",
+    "type": "commandExecution"
+  },
+  "source_file": "items-01a12b1c-9064-7a72-9df3-0edf974fa30c.json",
+  "startedAtMs": 1791724714767,
+  "turnId": "01a12b1c-9091-7091-816a-790cb4c11870"
+}

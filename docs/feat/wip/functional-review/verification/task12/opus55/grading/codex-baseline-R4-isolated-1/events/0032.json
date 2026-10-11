@@ -1,0 +1,35 @@
+{
+  "actor": "items-01a12b37-b91f-72b1-8c79-1c1988b99872",
+  "completedAtMs": 1791726575006,
+  "id": "exec-271bc1b9-51bf-464a-b5a3-000ab6613d42",
+  "item": {
+    "appContext": null,
+    "arguments": {
+      "content": "Destination reader migration compatibility: P1 found in staged reader.py cleanup. A writer emitting only nested destination.address does not establish that stored records have migrated. Where migration is bounded and reads remain available without a startup gate, readers must accept both legacy top-level address and the new shape until completion is guaranteed. Removing this compatibility path makes api.list_destinations fail for the whole list when one unmigrated row remains. Existing tests for new writes and empty input pass despite the outage. Verified against the repository's supported mixed data/records.json snapshot: listing fails before migration and after one limit=1 batch, then succeeds after all legacy rows migrate. Review/removal precondition: prove migration completion and exclusion of legacy records, with mixed-snapshot and partial-batch read coverage.",
+      "source": "kk:review-findings"
+    },
+    "durationMs": 1,
+    "error": null,
+    "id": "exec-271bc1b9-51bf-464a-b5a3-000ab6613d42",
+    "mcpAppUi": null,
+    "pluginId": null,
+    "readOnlyHint": false,
+    "result": {
+      "_meta": null,
+      "content": [
+        {
+          "text": "Indexed 1 sections (0 with code) from: kk:review-findings\nUse search(queries: [\"...\"]) to query this content. Use source: \"kk:review-findings\" to scope results.",
+          "type": "text"
+        }
+      ],
+      "structuredContent": null
+    },
+    "server": "capy",
+    "status": "completed",
+    "tool": "capy_index",
+    "type": "mcpToolCall"
+  },
+  "source_file": "items-01a12b37-b91f-72b1-8c79-1c1988b99872.json",
+  "startedAtMs": 1791726575004,
+  "turnId": "01a12b37-b94a-7d82-8c40-4cc40ee12fee"
+}

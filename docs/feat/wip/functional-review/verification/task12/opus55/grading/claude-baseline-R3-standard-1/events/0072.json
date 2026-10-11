@@ -1,0 +1,19 @@
+{
+  "actor": "main",
+  "block": {
+    "caller": {
+      "type": "direct"
+    },
+    "id": "toolu_01JV7gAv1WexkeJvYo2QxTvL",
+    "input": {
+      "command": "python3 -B -m unittest discover -s tests 2>&1 | tail -3; git show eval-release:provider/settings.py > /tmp/released_provider.py && python3 -B -c \"\nimport sys; sys.path[:0]=['/tmp','.']\nfrom released_provider import update_settings\nfrom client import save_settings\nstore={}\ntry:\n    print(save_settings(lambda w,r: update_settings(store,w,r), 'w', {'label':'blue'}))\nexcept Exception as e:\n    print('RAISED:', e)\nprint('storage after call:', store)\n\"",
+      "description": "Run tests and exercise client against released provider"
+    },
+    "name": "Bash",
+    "type": "tool_use"
+  },
+  "id": "e101.0",
+  "parent_tool_use_id": null,
+  "session_id": "ec03b30b-4d1a-4d12-9231-6487c5e3568e",
+  "source_sequence": 101
+}

@@ -1,0 +1,30 @@
+{
+  "actor": "items-01a12b94-9d01-7ba0-9714-d9688b097f71",
+  "completedAtMs": 1791732587685,
+  "id": "exec-5d7ca032-4e35-4959-8dd5-774394c74449",
+  "item": {
+    "aggregatedOutput": "./tests/test_reads.py:3:from preferences import Preferences\n./tests/test_reads.py:4:from repository import Repository, ScriptedBackend, TransientRead\n./tests/test_reads.py:14:        backend = ScriptedBackend([TransientRead(\"busy\"), {\"color\": \"blue\"}])\n./tests/test_reads.py:15:        with self.assertRaises(TransientRead):\n./preferences.py:1:from reader import read_preferences\n./preferences.py:9:        return read_preferences(self.repository, key)\n./reader.py:1:def read_preferences(repository, key):\n./reader.py:2:    return repository.read_once(key.strip())\n./README.md:5:This change accepts preference IDs with surrounding whitespace. Trim the ID\n./README.md:7:read may make up to three attempts on `TransientRead`, returning the first\n./README.md:11:`Preferences.read` is the public entry point. `Repository.read_resilient`\n./README.md:12:owns the bounded retry policy; `read_once` performs one attempt. The scripted\n./repository.py:1:class TransientRead(Exception):\n./repository.py:26:    def read_once(self, key):\n./repository.py:29:    def read_resilient(self, key):\n./repository.py:32:                return self.read_once(key)\n./repository.py:33:            except TransientRead:\n",
+    "command": "/usr/bin/zsh -lc \"rg -n 'read_resilient|read_once|read_preferences|TransientRead|retry|preference' .\"",
+    "commandActions": [
+      {
+        "command": "rg -n 'read_resilient|read_once|read_preferences|TransientRead|retry|preference' .",
+        "path": ".",
+        "query": "read_resilient|read_once|read_preferences|TransientRead|retry|preference",
+        "type": "search"
+      }
+    ],
+    "cwd": "/tmp/fr-opus55-matrix-20261011/codex-baseline-R9-mismatch-standard-2",
+    "durationMs": 67,
+    "exitCode": 0,
+    "id": "exec-5d7ca032-4e35-4959-8dd5-774394c74449",
+    "pluginId": null,
+    "processId": "96468",
+    "scriptPath": null,
+    "source": "unifiedExecStartup",
+    "status": "completed",
+    "type": "commandExecution"
+  },
+  "source_file": "items-01a12b94-9d01-7ba0-9714-d9688b097f71.json",
+  "startedAtMs": 1791732587617,
+  "turnId": "01a12b94-9d2d-78a1-913e-737f79577d61"
+}

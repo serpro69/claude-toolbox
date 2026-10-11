@@ -1,0 +1,17 @@
+{
+  "actor": "items-01a12b35-88f7-7c83-88b1-47a6ad8d6273",
+  "completedAtMs": 1791726433144,
+  "id": "msg_0260074b2fcf5cb1016acb9357b8c48191abae51a317e69cde",
+  "item": {
+    "delivery": null,
+    "id": "msg_0260074b2fcf5cb1016acb9357b8c48191abae51a317e69cde",
+    "memoryCitation": null,
+    "phase": "final_answer",
+    "questions": null,
+    "text": "**REQUEST_CHANGES \u2014 one P1 regression.**\n\n::code-comment{file=\"reader.py\" line=\"2\" severity=\"P1\"}\nRemoving the legacy fallback makes `api.list_destinations` raise `KeyError: 'destination'` whenever any record still has a top-level `address`, failing the entire listing. This violates the [documented requirement](/tmp/fr-opus55-matrix-20261011/codex-candidate-R4-standard-2/README.md:5) to keep both shapes readable throughout bounded migration.\n\nRestore the fallback and add regression coverage for the mixed snapshot before migration, between batches, and after completion.\n::\n\nProfile: Python \u00b7 Checklist: `code-quality-checklist.md` \u00b7 Trigger: `.py` extension. Confidence: **100%**\u2014reproduced against the exact staged candidate and confirmed the baseline succeeds.\n\nReviewed staged `reader.py` against HEAD `b299f57` (one file, +1/\u22123), including its API caller, writer, migration, fixtures, and tests. The cleanup must preserve the README\u2019s compatibility contract.\n\n| Scenario | HEAD | Staged candidate |\n|---|---|---|\n| Legacy or initial mixed records | Pass | `KeyError` |\n| Mixed records after one migration batch | Pass | `KeyError` |\n| Completed migration and repeated migration | Pass | Pass; addresses preserved |\n| New writes, current-only records, empty list | Pass | Pass |\n\nBoth existing tests pass on both revisions; neither exercises legacy records. Compatibility during migration is **blocked**. Verification used isolated local snapshots; the documented contract requires no external environment.\n\nIndexed the systemic migration-compatibility finding under `kk:review-findings`. No repository files changed.",
+    "type": "agentMessage"
+  },
+  "source_file": "items-01a12b35-88f7-7c83-88b1-47a6ad8d6273.json",
+  "startedAtMs": 1791726423771,
+  "turnId": "01a12b35-8922-7570-b1f3-3d1924af6e30"
+}

@@ -1,0 +1,39 @@
+{
+  "actor": "items-01a12bc9-6652-76a3-b634-29fad1f60be2",
+  "completedAtMs": 1791736184322,
+  "id": "exec-eaedf381-8cd4-4bb4-8239-7671ac3d2d91",
+  "item": {
+    "changes": [
+      {
+        "diff": "@@ -2,2 +2,7 @@\n \n+> Historical assessment, superseded for current acceptance by\n+> [verification.md](verification.md) on 2026-10-11. Snapshot-2 is partially\n+> migrated; legacy and mixed-list reads fail. Task 1 remains in-progress.\n+> The original snapshot-1 observations below are retained as history.\n+\n Basis: snapshot-1. This is a saved author assessment, not a user decision.\n",
+        "kind": {
+          "move_path": null,
+          "type": "update"
+        },
+        "path": "/tmp/fr-opus55-matrix-20261011/codex-baseline-I4-plan-1/docs/feat/wip/label-reader/handoff.md"
+      },
+      {
+        "diff": "@@ -8,6 +8,7 @@\n - **Depends on:** \u2014\n-- [x] Implement legacy and object label reads, including mixed lists.\n+- [ ] Implement legacy and object label reads, including mixed lists.\n+- [ ] Add regression coverage for legacy and mixed lists, preserving order and text.\n - [x] Run the local unit suite.\n-- [ ] Verify current compatibility evidence and complete independent review.\n-- [ ] Reconcile completion and activation conditions.\n+- [x] Verify current compatibility evidence and complete independent review.\n+- [x] Reconcile completion and activation conditions.\n \n@@ -17,2 +18,30 @@\n resumption. Its compatibility assessment used snapshot-1. Final verification\n-and completion reconciliation remain pending.\n+and completion reconciliation were pending at handoff.\n+\n+### Execution context \u2014 verification pass, 2026-10-11\n+\n+Verification and completion reconciliation are recorded in\n+[verification.md](verification.md). **Code acceptance failed; Task 1 remains\n+in-progress.** The implementation checkbox is reopened because current\n+evidence disproves the previous completion assessment.\n+\n+- Current evidence is snapshot-2: migration is partial and both string and\n+  object labels remain present. The snapshot-1 handoff is historical, not an\n+  approved change to the mixed-format requirement.\n+- `python3 -B -m unittest discover -s tests` passed: 2 tests, exit 0. Those\n+  tests cover only an object label and an empty list.\n+- Read-only compatibility probes: object-only passed; legacy-only and mixed\n+  lists in both orders raised `TypeError: string indices must be integers`\n+  (1 passed, 3 failed; exit 1).\n+- Isolated code review completed with **REQUEST_CHANGES**, one P1 finding at\n+  `records.py:2`. PAL was unavailable; the independent code-reviewer supplied\n+  the review under the skill's single-reviewer fallback.\n+- Remaining code work: support both label shapes, add regression coverage,\n+  then rerun the suite, compatibility probes and independent review before\n+  marking Task 1 or the feature done. Runtime code, tests and data were left\n+  unchanged as requested for this pass.\n+- The pending operator notice is owned by the **Release coordinator**. That\n+  owner must publish it before dashboard activation and attach the notice\n+  acknowledgement to the activation record. It may remain pending after code\n+  completion and is separate from the failing code requirement. No external\n+  publication or activation action is part of this task.\n",
+        "kind": {
+          "move_path": null,
+          "type": "update"
+        },
+        "path": "/tmp/fr-opus55-matrix-20261011/codex-baseline-I4-plan-1/docs/feat/wip/label-reader/tasks.md"
+      },
+      {
+        "diff": "@@ -85,2 +85,34 @@\n \n+## Independent review\n+\n+`kk:review-code:isolated` completed using an independent `code-reviewer`\n+sub-agent with no inherited implementation-session context. The worktree had\n+no implementation changes, so review covered the existing reader, caller and\n+tests via the root-commit patch, plus the feature documents and current local\n+snapshot. PAL tools were unavailable; the skill's single-reviewer fallback\n+was used. No external-model corroboration is claimed.\n+\n+Assessment: **REQUEST_CHANGES**.\n+\n+- **P1 \u2014 legacy string labels fail the required compatibility contract** at\n+  `records.py:2`. Profile: `python`; checklist: `code-quality-checklist.md`;\n+  trigger: `.py` extension on the reader, caller and test files.\n+  The reviewer traced unconditional `record[\"label\"][\"text\"]` through\n+  `list_labels` to the active legacy row. A mixed list cannot produce the\n+  required output. Confidence: **100%**, based on the code, current snapshot\n+  and explicit contract. Suggested follow-up: return legacy strings directly,\n+  extract object text, and cover both shapes and mixed-list order/text in tests.\n+- No additional SOLID, security, resource-management or removal findings.\n+- The reviewer performed static analysis; runtime results above were obtained\n+  by the main verification session.\n+\n+The supplied Python review checklists were applied. Required knowledge-base\n+searches returned no entries. No findings to index: the P1 is a local contract\n+defect, and the acceptance/activation rules are already captured in design.md;\n+no new systemic pattern or project convention was established.\n+\n+The user's verification-only instruction determines disposition for this pass:\n+record the finding and defer source/test changes. Review completion does not\n+mean code approval or task completion.\n+\n ## Completion and activation\n",
+        "kind": {
+          "move_path": null,
+          "type": "update"
+        },
+        "path": "/tmp/fr-opus55-matrix-20261011/codex-baseline-I4-plan-1/docs/feat/wip/label-reader/verification.md"
+      }
+    ],
+    "id": "exec-eaedf381-8cd4-4bb4-8239-7671ac3d2d91",
+    "status": "completed",
+    "type": "fileChange"
+  },
+  "source_file": "items-01a12bc9-6652-76a3-b634-29fad1f60be2.json",
+  "startedAtMs": 1791736184259,
+  "turnId": "01a12bc9-667e-7bf2-ac7c-eac74d908084"
+}

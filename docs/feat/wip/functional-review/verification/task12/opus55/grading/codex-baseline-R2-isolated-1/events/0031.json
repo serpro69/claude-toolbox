@@ -1,0 +1,28 @@
+{
+  "actor": "items-01a12b1f-1de2-77e1-beea-1dafff1ca31b",
+  "completedAtMs": 1791724957746,
+  "id": "exec-cd4f6897-9a9d-4b80-bbb0-7bb166bace75",
+  "item": {
+    "aggregatedOutput": "Edited retry: {'result': {'ok': True, 'operation_id': 'op-1'}, 'active': {'color': 'blue'}, 'expected_active': {'color': 'red'}}\nFresh ID: {'result': {'ok': True, 'operation_id': 'op-2'}, 'active': {'color': 'blue'}, 'audit_ids': ['op-1'], 'expected_active': {'color': 'red'}}\nCompleted replay: {'exception': 'ReceiptUnavailable', 'record_status': 'completed', 'expected': 'successful original receipt'}\n",
+    "command": "/usr/bin/zsh -lc \"python3 -B - <<'PY'\nfrom client import submit\nfrom store import ReceiptUnavailable, Store\n\nstore = Store()\nstore.fail_receipt_once = True\ntry:\n    submit(store, 'w', 'op-1', {'color': 'blue'})\nexcept ReceiptUnavailable:\n    pass\nresult = submit(store, 'w', 'op-1', {'color': 'red'})\nprint('Edited retry:', {'result': result, 'active': store.preferences['w'], 'expected_active': {'color': 'red'}})\nassert result['ok'] and store.preferences['w'] == {'color': 'blue'}\n\nstore = Store()\nsubmit(store, 'w', 'op-1', {'color': 'blue'})\nresult = submit(store, 'w', 'op-2', {'color': 'red'})\nprint('Fresh ID:', {'result': result, 'active': store.preferences['w'], 'audit_ids': list(store.recovery), 'expected_active': {'color': 'red'}})\nassert result['operation_id'] == 'op-2' and 'op-2' not in store.recovery\n\nstore = Store()\nsubmit(store, 'w', 'op-1', {'color': 'blue'})\nstore.fail_receipt_once = True\ntry:\n    submit(store, 'w', 'op-1', {'color': 'blue'})\nexcept ReceiptUnavailable as exc:\n    print('Completed replay:', {'exception': type(exc).__name__, 'record_status': store.recovery['op-1']['status'], 'expected': 'successful original receipt'})\nelse:\n    raise AssertionError('Expected staged replay regression was not observed')\nPY\"",
+    "commandActions": [
+      {
+        "command": "python3 -B - <<'PY'\nfrom client import submit\nfrom store import ReceiptUnavailable, Store\n\nstore = Store()\nstore.fail_receipt_once = True\ntry:\n    submit(store, 'w', 'op-1', {'color': 'blue'})\nexcept ReceiptUnavailable:\n    pass\nresult = submit(store, 'w', 'op-1', {'color': 'red'})\nprint('Edited retry:', {'result': result, 'active': store.preferences['w'], 'expected_active': {'color': 'red'}})\nassert result['ok'] and store.preferences['w'] == {'color': 'blue'}\n\nstore = Store()\nsubmit(store, 'w', 'op-1', {'color': 'blue'})\nresult = submit(store, 'w', 'op-2', {'color': 'red'})\nprint('Fresh ID:', {'result': result, 'active': store.preferences['w'], 'audit_ids': list(store.recovery), 'expected_active': {'color': 'red'}})\nassert result['operation_id'] == 'op-2' and 'op-2' not in store.recovery\n\nstore = Store()\nsubmit(store, 'w', 'op-1', {'color': 'blue'})\nstore.fail_receipt_once = True\ntry:\n    submit(store, 'w', 'op-1', {'color': 'blue'})\nexcept ReceiptUnavailable as exc:\n    print('Completed replay:', {'exception': type(exc).__name__, 'record_status': store.recovery['op-1']['status'], 'expected': 'successful original receipt'})\nelse:\n    raise AssertionError('Expected staged replay regression was not observed')\nPY",
+        "type": "unknown"
+      }
+    ],
+    "cwd": "/tmp/fr-opus55-matrix-20261011/codex-baseline-R2-isolated-1",
+    "durationMs": 68,
+    "exitCode": 0,
+    "id": "exec-cd4f6897-9a9d-4b80-bbb0-7bb166bace75",
+    "pluginId": null,
+    "processId": "46409",
+    "scriptPath": null,
+    "source": "unifiedExecStartup",
+    "status": "completed",
+    "type": "commandExecution"
+  },
+  "source_file": "items-01a12b1f-1de2-77e1-beea-1dafff1ca31b.json",
+  "startedAtMs": 1791724957677,
+  "turnId": "01a12b1f-1e0e-7040-a468-0e60c69a0295"
+}

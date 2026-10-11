@@ -1,0 +1,30 @@
+{
+  "actor": "items-01a12ae9-ffcc-7e61-92cd-0d818b7340a4",
+  "completedAtMs": 1791721388992,
+  "id": "exec-730cc93a-e938-44dd-bac4-b99fdec7bf30",
+  "item": {
+    "aggregatedOutput": "./tests/test_client.py:1:import unittest\n./tests/test_client.py:2:from client import save_settings\n./tests/test_client.py:5:class SettingsTests(unittest.TestCase):\n./tests/test_client.py:8:            return {\"ok\": True, \"applied\": True}\n./tests/test_client.py:9:        self.assertEqual(save_settings(send, \"w\", {\"label\": \"blue\"}),\n./README.md:3:Python 3.9+, standard library only. Tests: `python3 -B -m unittest discover -s tests`.\n./README.md:6:settings saves while enhanced_settings is false. `provider/settings.py` at that\n./README.md:9:A successful settings save means values were applied and the caller sees success.\n./client.py:1:def save_settings(send, workspace_id, values, enhanced_settings=False):\n./client.py:2:    response = send(workspace_id, {\"settings\": values, \"require_receipt\": True})\n./client.py:5:    if response.get(\"applied\") is not True:\n./client.py:6:        raise RuntimeError(\"Provider did not acknowledge applied settings\")\n./client.py:7:    return {\"saved\": True, \"enhanced\": enhanced_settings}\n",
+    "command": "/usr/bin/zsh -lc \"rg -n --hidden -g '\"'!.git/**'\"' 'save_settings|enhanced_settings|require_receipt|applied|unittest|pytest' .\"",
+    "commandActions": [
+      {
+        "command": "rg -n --hidden -g '!.git/**' 'save_settings|enhanced_settings|require_receipt|applied|unittest|pytest' .",
+        "path": ".",
+        "query": "save_settings|enhanced_settings|require_receipt|applied|unittest|pytest",
+        "type": "search"
+      }
+    ],
+    "cwd": "/tmp/fr-opus55-matrix-20261011/codex-baseline-R3-standard-1",
+    "durationMs": 49,
+    "exitCode": 0,
+    "id": "exec-730cc93a-e938-44dd-bac4-b99fdec7bf30",
+    "pluginId": null,
+    "processId": "26123",
+    "scriptPath": null,
+    "source": "unifiedExecStartup",
+    "status": "completed",
+    "type": "commandExecution"
+  },
+  "source_file": "items-01a12ae9-ffcc-7e61-92cd-0d818b7340a4.json",
+  "startedAtMs": 1791721388942,
+  "turnId": "01a12ae9-fff7-76b2-9137-450a3a080073"
+}

@@ -1,0 +1,28 @@
+{
+  "actor": "items-01a12b04-6da3-7f30-b87e-cb7020ba3ccc",
+  "completedAtMs": 1791723102494,
+  "id": "exec-1d2f66bc-9cf8-4760-b3bb-e3512f75b80b",
+  "item": {
+    "aggregatedOutput": "zsh:1: command not found: python\n",
+    "command": "/usr/bin/zsh -lc \"python - <<'PY'\nfrom pathlib import Path\np=Path('docs/feat/wip/settings-receipts/tasks.md')\nfor line in p.read_text().splitlines():\n    if line.startswith('#') or any(k in line.lower() for k in ['status:', 'dependencies:', 'depends on:', 'target', 'files:']):\n        print(line)\nfor p in [Path.cwd(), *Path.cwd().parents]:\n    a=p/'AGENTS.md'\n    if a.is_file():\n        print(f'INSTRUCTIONS {a}')\n        print(a.read_text())\nPY\"",
+    "commandActions": [
+      {
+        "command": "python - <<'PY'\nfrom pathlib import Path\np=Path('docs/feat/wip/settings-receipts/tasks.md')\nfor line in p.read_text().splitlines():\n    if line.startswith('#') or any(k in line.lower() for k in ['status:', 'dependencies:', 'depends on:', 'target', 'files:']):\n        print(line)\nfor p in [Path.cwd(), *Path.cwd().parents]:\n    a=p/'AGENTS.md'\n    if a.is_file():\n        print(f'INSTRUCTIONS {a}')\n        print(a.read_text())\nPY",
+        "type": "unknown"
+      }
+    ],
+    "cwd": "/tmp/fr-opus55-matrix-20261011/codex-candidate-I1-plan-2",
+    "durationMs": 43,
+    "exitCode": 127,
+    "id": "exec-1d2f66bc-9cf8-4760-b3bb-e3512f75b80b",
+    "pluginId": null,
+    "processId": "62116",
+    "scriptPath": null,
+    "source": "unifiedExecStartup",
+    "status": "failed",
+    "type": "commandExecution"
+  },
+  "source_file": "items-01a12b04-6da3-7f30-b87e-cb7020ba3ccc.json",
+  "startedAtMs": 1791723102450,
+  "turnId": "01a12b04-6dcf-7540-94ff-d0ffe24bb975"
+}

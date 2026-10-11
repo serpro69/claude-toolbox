@@ -1,0 +1,36 @@
+{
+  "actor": "items-01a12b31-0487-7151-bcb5-fe74129b940d",
+  "completedAtMs": 1791726036368,
+  "id": "exec-83db35ec-88d1-457d-b31a-8991ba1a15f1",
+  "item": {
+    "aggregatedOutput": ".gitignore:1:__pycache__/\n.gitignore:2:*.pyc\nwriter.py:1:def new_destination(record_id, address):\nwriter.py:2:    return {\"id\": record_id, \"destination\": {\"address\": address}}\nmigration.py:1:def migrate_batch(records, limit):\nmigration.py:2:    migrated = 0\nmigration.py:3:    for row in records:\nmigration.py:4:        if migrated >= limit:\nmigration.py:5:            break\nmigration.py:6:        if \"destination\" not in row:\nmigration.py:7:            row[\"destination\"] = {\"address\": row.pop(\"address\")}\nmigration.py:8:            migrated += 1\nmigration.py:9:    return migrated\napi.py:1:from reader import address_of\napi.py:4:def list_destinations(records):\napi.py:5:    return [{\"id\": row[\"id\"], \"address\": address_of(row)} for row in records]\ndata/records.json:1:[\ndata/records.json:2:  {\ndata/records.json:3:    \"id\": \"legacy-a\",\ndata/records.json:4:    \"address\": \"a@example.test\"\ndata/records.json:5:  },\ndata/records.json:6:  {\ndata/records.json:7:    \"id\": \"current-b\",\ndata/records.json:8:    \"destination\": {\ndata/records.json:9:      \"address\": \"b@example.test\"\ndata/records.json:10:    }\ndata/records.json:11:  },\ndata/records.json:12:  {\ndata/records.json:13:    \"id\": \"legacy-c\",\ndata/records.json:14:    \"address\": \"c@example.test\"\ndata/records.json:15:  }\ndata/records.json:16:]\nREADME.md:1:# Saved destinations\nREADME.md:3:Python 3.9+, standard library only. Run `python3 -B -m unittest discover -s tests`.\nREADME.md:5:Destination records can use legacy top-level `address` or current nested\nREADME.md:6:`destination.address`. New writes use the nested shape. Background migration\nREADME.md:7:runs in bounded batches while reads remain available; a deployment must read\nREADME.md:8:both shapes until migration finishes. Existing addresses must be preserved.\nREADME.md:10:`data/records.json` is a supported mixed snapshot. `api.list_destinations`\nREADME.md:11:serves all saved records through the same reader. `migrate_batch` changes up to\nREADME.md:12:its limit per invocation; there is no startup migration gate. The store is a\nREADME.md:13:local JSON model, with no production environment or external database required.\ntests/test_destinations.py:1:import unittest\ntests/test_destinations.py:3:from api import list_destinations\ntests/test_destinations.py:4:from writer import new_destination\ntests/test_destinations.py:7:class DestinationTests(unittest.TestCase):\ntests/test_destinations.py:8:    def test_new_write_can_be_listed(self):\ntests/test_destinations.py:9:        row = new_destination(\"new\", \"new@example.test\")\ntests/test_destinations.py:10:        self.assertEqual(list_destinations([row]),\ntests/test_destinations.py:11:                         [{\"id\": \"new\", \"address\": \"new@example.test\"}])\ntests/test_destinations.py:13:    def test_empty_list(self):\ntests/test_destinations.py:14:        self.assertEqual(list_destinations([]), [])\n./tests/test_destinations.py:3:from api import list_destinations\n./tests/test_destinations.py:4:from writer import new_destination\n./tests/test_destinations.py:9:        row = new_destination(\"new\", \"new@example.test\")\n./tests/test_destinations.py:10:        self.assertEqual(list_destinations([row]),\n./tests/test_destinations.py:14:        self.assertEqual(list_destinations([]), [])\n./README.md:1:# Saved destinations\n./README.md:5:Destination records can use legacy top-level `address` or current nested\n./README.md:6:`destination.address`. New writes use the nested shape. Background migration\n./README.md:8:both shapes until migration finishes. Existing addresses must be preserved.\n./README.md:10:`data/records.json` is a supported mixed snapshot. `api.list_destinations`\n./README.md:11:serves all saved records through the same reader. `migrate_batch` changes up to\n./README.md:12:its limit per invocation; there is no startup migration gate. The store is a\n./writer.py:1:def new_destination(record_id, address):\n./writer.py:2:    return {\"id\": record_id, \"destination\": {\"address\": address}}\n./reader.py:1:def address_of(row):\n./reader.py:2:    return row[\"destination\"][\"address\"]\n./api.py:1:from reader import address_of\n./api.py:4:def list_destinations(records):\n./api.py:5:    return [{\"id\": row[\"id\"], \"address\": address_of(row)} for row in records]\n./migration.py:1:def migrate_batch(records, limit):\n./migration.py:2:    migrated = 0\n./migration.py:3:    for row in records:\n./migration.py:4:        if migrated >= limit:\n./migration.py:6:        if \"destination\" not in row:\n./migration.py:7:            row[\"destination\"] = {\"address\": row.pop(\"address\")}\n./migration.py:8:            migrated += 1\n./migration.py:9:    return migrated\n./data/records.json:8:    \"destination\": {\n",
+    "command": "/usr/bin/zsh -lc \"rg -n '.' README.md api.py migration.py writer.py tests/test_destinations.py data/records.json .gitignore\n rg -n 'address_of|destination|migrat|records' .\"",
+    "commandActions": [
+      {
+        "command": "rg -n . README.md api.py migration.py writer.py tests/test_destinations.py data/records.json .gitignore",
+        "path": "README.md",
+        "query": ".",
+        "type": "search"
+      },
+      {
+        "command": "rg -n 'address_of|destination|migrat|records' .",
+        "path": ".",
+        "query": "address_of|destination|migrat|records",
+        "type": "search"
+      }
+    ],
+    "cwd": "/tmp/fr-opus55-matrix-20261011/codex-baseline-R4-standard-1",
+    "durationMs": 67,
+    "exitCode": 0,
+    "id": "exec-83db35ec-88d1-457d-b31a-8991ba1a15f1",
+    "pluginId": null,
+    "processId": "87512",
+    "scriptPath": null,
+    "source": "unifiedExecStartup",
+    "status": "completed",
+    "type": "commandExecution"
+  },
+  "source_file": "items-01a12b31-0487-7151-bcb5-fe74129b940d.json",
+  "startedAtMs": 1791726036301,
+  "turnId": "01a12b31-04b2-7780-9583-a1bad029b365"
+}

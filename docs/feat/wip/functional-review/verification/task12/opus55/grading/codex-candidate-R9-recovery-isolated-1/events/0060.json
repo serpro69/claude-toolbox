@@ -1,0 +1,30 @@
+{
+  "actor": "items-01a12bb8-c732-7992-bc21-e36ff36b47fd",
+  "completedAtMs": 1791734953608,
+  "id": "exec-37903f51-2732-4b92-8de2-dd404645b558",
+  "item": {
+    "aggregatedOutput": "# Preference reads\n\nPython 3.9+, standard library only. Run `python3 -B -m unittest discover -s tests`.\n\nThis change accepts preference IDs with surrounding whitespace. Trim the ID\nbefore looking it up; preserve the existing resilient-read contract. A logical\nread may make up to three attempts on `TransientRead`, returning the first\nsuccessful result. Exhausted transient errors propagate. `MissingPreference`\nis permanent and must propagate on the first attempt. Reads have no side effects.\n\n`Preferences.read` is the public entry point. `Repository.read_resilient`\nowns the bounded retry policy; `read_once` performs one attempt. The scripted\nbackend models finite outcomes without sleeping, services or concurrency.\n",
+    "command": "/usr/bin/zsh -lc \"cat '/tmp/kk-isolated-review-zvHtbV/candidate/README.md'\"",
+    "commandActions": [
+      {
+        "command": "cat /tmp/kk-isolated-review-zvHtbV/candidate/README.md",
+        "name": "README.md",
+        "path": "/tmp/kk-isolated-review-zvHtbV/candidate/README.md",
+        "type": "read"
+      }
+    ],
+    "cwd": "/tmp/fr-opus55-matrix-20261011/codex-candidate-R9-recovery-isolated-1",
+    "durationMs": 43,
+    "exitCode": 0,
+    "id": "exec-37903f51-2732-4b92-8de2-dd404645b558",
+    "pluginId": null,
+    "processId": "41419",
+    "scriptPath": null,
+    "source": "unifiedExecStartup",
+    "status": "completed",
+    "type": "commandExecution"
+  },
+  "source_file": "items-01a12bb8-c732-7992-bc21-e36ff36b47fd.json",
+  "startedAtMs": 1791734953564,
+  "turnId": "01a12bb8-c752-7da0-ba08-af077c7b45f4"
+}

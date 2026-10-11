@@ -1,0 +1,30 @@
+{
+  "actor": "items-01a12bd4-389e-72b0-85de-f16d8b9f55f4",
+  "completedAtMs": 1791736921807,
+  "id": "exec-abe9e76c-2f9e-4e0a-be68-c08f66402bf1",
+  "item": {
+    "aggregatedOutput": "1:# Tasks: label-reader\n2:\n3:> Status: in-progress\n4:\n5:## Task 1: Read both label formats\n6:\n7:- **Status:** in-progress\n8:- **Depends on:** \u2014\n9:- [ ] Implement legacy and object label reads, including mixed lists.\n10:- [x] Run the local unit suite.\n11:- [x] Verify current compatibility evidence and complete independent review.\n12:- [x] Reconcile completion and activation conditions.\n13:\n14:### Execution context \u2014 previous session\n15:\n16:The previous session recorded a green unit suite and prepared handoff.md for\n17:resumption. Its compatibility assessment used snapshot-1. Final verification\n18:and completion reconciliation remain pending.\n19:\n20:### Execution context \u2014 2026-10-11 resume\n21:\n22:- **Observed scope and authority:** This pass verifies Task 1 and updates its\n23:  record only. The user explicitly requires runtime code, tests and data files\n24:  to remain unchanged. The legacy/object/mixed contract in design.md remains\n25:  binding; no exception or requirement change is approved.\n26:- **Observed baseline:** The initial checkout was clean at\n27:  `f5957748b18621bc0eb243872436242b9c673723` (the repository's root commit).\n28:  Current local compatibility evidence is `snapshot-2`, migration `partial`,\n29:  from state/release.json and state/records.json. These are synthetic local\n30:  fixtures, not evidence of a deployed environment.\n31:- **Superseded observation:** The previous session's snapshot-1 assessment in\n32:  handoff.md does not describe the current mixed snapshot. Its claims that\n33:  legacy compatibility is complete and no code change remains are contradicted\n34:  by the current source and execution below. The previous record is retained\n35:  above for provenance. No snapshot-1 tag resolves locally; local history for\n36:  both state files contains only the root commit. Historical snapshot-1 source\n37:  was not available for comparison.\n38:- **Observed behavior:** api.py:4-5 calls records.py:1-2 for every supplied row.\n39:  `read_label` unconditionally indexes `record[\"label\"][\"text\"]`. A legacy\n40:  string therefore raises `TypeError: string indices must be integers`, and\n41:  the public API returns no list for the current mixed snapshot.\n42:- **Observed verification:** With `/usr/bin/python3` 3.10.12 at the repository\n43:  root, `python3 -B -m unittest discover -s tests` passed 2 tests (exit 0).\n44:  Those tests exercise object labels and an empty list only. An in-memory\n45:  `python3 -B -` compatibility check exercised six scenarios: legacy, current\n46:  mixed snapshot and reversed mixed snapshot failed with the TypeError above;\n47:  object, empty list and object text/order controls passed (3 passed, 3 failed,\n48:  exit 1). Inputs remained unchanged in all six checks. Other supported Python\n49:  versions and live deployment state were not verified.\n50:- **Unresolved code acceptance:** Reopened the implementation checkbox because\n51:  legacy and mixed support fail a hard Task 1 requirement. Task and feature\n52:  remain `in-progress`. Verification and reconciliation are complete, with a\n53:  failing acceptance result; the checked verification item is not code approval.\n54:- **Observed independent review:** Isolated `kk:review-code` returned\n55:  `REQUEST_CHANGES`: one P1 finding at records.py:2 for unsupported legacy and\n56:  mixed labels, inherited from the starting revision. The independent reviewer\n57:  inspected the contract, candidate source and documentation patch and agreed\n58:  with reopening implementation. Its execution evidence is attributed to this\n59:  session; it did not rerun tests. PAL was unavailable, so there is no external\n60:  corroboration. No findings to index and no new project conventions.\n61:- **Completed record:** [verification.md](verification.md) contains commands,\n62:  results, review coverage and limitations. Runtime code, tests and data were\n63:  compared byte-for-byte with HEAD and remain unchanged. No requirement text\n64:  was amended, notice published or dashboard activated.\n65:- **Deferred code correction:** Owner **unassigned**. Reason: runtime/test edits\n66:  are outside this pass. Next action: in a separately authorized implementation\n67:  pass, make read_label handle legacy strings and object text while preserving\n68:  list_labels order/text, and add legacy/mixed regression coverage. Verification:\n69:  the existing suite plus legacy, object and both mixed-order checks pass\n70:  against the current snapshot, followed by independent review.\n71:- **External activation prerequisite:** Owner **Release coordinator**. Per\n72:  design.md and state/release.json, the operator notice remains pending. Next\n73:  action: publish it before dashboard activation. Verification: attach its\n74:  acknowledgement to the activation record. This is allowed to remain open\n75:  after code completion; it neither causes nor excuses the code acceptance\n76:  failure. Publication and activation are outside this repository task.\n",
+    "command": "/usr/bin/zsh -lc \"rg -n '\"'^'\"' '/tmp/fr-opus55-matrix-20261011/codex-candidate-I4-plan-1/docs/feat/wip/label-reader/tasks.md'\"",
+    "commandActions": [
+      {
+        "command": "rg -n '^' /tmp/fr-opus55-matrix-20261011/codex-candidate-I4-plan-1/docs/feat/wip/label-reader/tasks.md",
+        "path": "tasks.md",
+        "query": "^",
+        "type": "search"
+      }
+    ],
+    "cwd": "/tmp/fr-opus55-matrix-20261011/codex-candidate-I4-plan-1",
+    "durationMs": 56,
+    "exitCode": 0,
+    "id": "exec-abe9e76c-2f9e-4e0a-be68-c08f66402bf1",
+    "pluginId": null,
+    "processId": "82051",
+    "scriptPath": null,
+    "source": "unifiedExecStartup",
+    "status": "completed",
+    "type": "commandExecution"
+  },
+  "source_file": "items-01a12bd4-389e-72b0-85de-f16d8b9f55f4.json",
+  "startedAtMs": 1791736921750,
+  "turnId": "01a12bd7-8c3b-7990-bace-333912b15471"
+}

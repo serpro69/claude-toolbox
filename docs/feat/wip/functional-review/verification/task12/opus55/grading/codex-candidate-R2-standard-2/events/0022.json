@@ -1,0 +1,28 @@
+{
+  "actor": "items-01a12b1c-9064-7a72-9df3-0edf974fa30c",
+  "completedAtMs": 1791724765212,
+  "id": "exec-f305a981-0b3a-4898-8836-0d0228044e91",
+  "item": {
+    "aggregatedOutput": "def save(store, workspace, operation_id, values):\n    record = next((item for item in store.recovery.values()\n                   if item[\"workspace\"] == workspace), None)\n    if record is None:\n        record = {\"operation_id\": operation_id, \"workspace\": workspace,\n                  \"status\": \"pending\", \"values\": dict(values)}\n        store.recovery[operation_id] = record\n    if record[\"status\"] == \"pending\":\n        store.apply(workspace, record[\"values\"])\n        record[\"status\"] = \"applied\"\n    store.receipt(record)\n    return {\"ok\": True, \"operation_id\": operation_id}\nclass ReceiptUnavailable(Exception):\n    pass\n\n\nclass Store:\n    def __init__(self):\n        self.preferences = {}\n        self.recovery = {}\n        self.fail_receipt_once = False\n\n    def apply(self, workspace, values):\n        self.preferences[workspace] = dict(values)\n\n    def receipt(self, record):\n        if self.fail_receipt_once:\n            self.fail_receipt_once = False\n            raise ReceiptUnavailable(\"receipt store unavailable\")\n        record[\"status\"] = \"completed\"\n        return {\"ok\": True, \"operation_id\": record[\"operation_id\"]}\n# Workspace preferences\n\nPython 3.9+, standard library only. Run `python3 -B -m unittest discover -s tests`.\n\nSaving preferences is a serialized operation identified by a caller-supplied\noperation ID. A failed save can be retried with the same ID and edited values;\nsuccess means the latest submitted values are active. Repeating a completed ID\nreturns its receipt. A fresh operation ID must perform a fresh save, even for\nthe same workspace. Recovery records remain available for audit after completion.\n\nThe provider replaces preferences idempotently. A receipt write can fail after\nthe provider has applied values. The in-memory store models that boundary; no\nthreads, process restart, network service or exactly-once external effect is promised.\nM  service.py\n0435141ceb7f934d59e6628b3720dea7f25f747f\n062b8a66b57a2e899212afb3a49a952afb1289a7\n",
+    "command": "/usr/bin/zsh -lc 'git show :service.py\ngit show :store.py\ngit show :README.md\ngit diff --cached --check\ngit status --short\ngit rev-parse :service.py HEAD:service.py'",
+    "commandActions": [
+      {
+        "command": "git show :service.py\ngit show :store.py\ngit show :README.md\ngit diff --cached --check\ngit status --short\ngit rev-parse :service.py HEAD:service.py",
+        "type": "unknown"
+      }
+    ],
+    "cwd": "/tmp/fr-opus55-matrix-20261011/codex-candidate-R2-standard-2",
+    "durationMs": 51,
+    "exitCode": 0,
+    "id": "exec-f305a981-0b3a-4898-8836-0d0228044e91",
+    "pluginId": null,
+    "processId": "18543",
+    "scriptPath": null,
+    "source": "unifiedExecStartup",
+    "status": "completed",
+    "type": "commandExecution"
+  },
+  "source_file": "items-01a12b1c-9064-7a72-9df3-0edf974fa30c.json",
+  "startedAtMs": 1791724765161,
+  "turnId": "01a12b1c-9091-7091-816a-790cb4c11870"
+}

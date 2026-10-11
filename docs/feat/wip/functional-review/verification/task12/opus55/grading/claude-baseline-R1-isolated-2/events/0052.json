@@ -1,0 +1,19 @@
+{
+  "actor": "main",
+  "block": {
+    "caller": {
+      "type": "direct"
+    },
+    "id": "toolu_01SUewUiKiX5hMsCNTwvUvg7",
+    "input": {
+      "content": "# Review finding: cleanup removes shared-keyed state without ownership check (P0)\n\n- Repo: claude-baseline-R1-isolated-2 \u00b7 File: cleanup.py:3 \u00b7 Date: 2026-10-11\n- Pattern: A cleanup/compensation path for a failed job deletes a record keyed by a shared key (workspace_id) instead of the job's own id, without checking that the record is owned by the job (setup_id). If another job completed first, a late cleanup deletes that job's valid state.\n- Trigger: a \"simplification\" changed the code to `store.active.pop(workspace_id, None)` without checking `active[workspace_id][\"setup_id\"] == setup_id`.\n- Fix: compare-and-delete on the owner id; add a test where a late cleanup runs after another setup has completed.\n- Systemic signal: watch for cleanup, rollback, or teardown code that removes entries keyed by a parent or shared id rather than by the actor's own id.",
+      "source": "kk:review-findings"
+    },
+    "name": "mcp__capy__capy_index",
+    "type": "tool_use"
+  },
+  "id": "e101.0",
+  "parent_tool_use_id": null,
+  "session_id": "f25827f9-e98d-4a77-87d0-f2d5959f6d0c",
+  "source_sequence": 101
+}

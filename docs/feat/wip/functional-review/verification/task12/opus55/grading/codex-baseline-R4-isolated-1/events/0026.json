@@ -1,0 +1,28 @@
+{
+  "actor": "items-01a12b37-b91f-72b1-8c79-1c1988b99872",
+  "completedAtMs": 1791726516528,
+  "id": "exec-d39c1d0a-0615-4d6c-98b7-44ca960f3d2f",
+  "item": {
+    "aggregatedOutput": "Baseline mixed-snapshot result: [{'id': 'legacy-a', 'address': 'a@example.test'}, {'id': 'current-b', 'address': 'b@example.test'}, {'id': 'legacy-c', 'address': 'c@example.test'}]\nStaged reader after 0 migration batches: KeyError('destination',)\nStaged reader after 1 migration batches: KeyError('destination',)\nStaged reader after 2 migration batches: matches baseline=True\n",
+    "command": "/usr/bin/zsh -lc \"python3 -B - <<'PY'\nimport copy\nimport json\nimport subprocess\nfrom pathlib import Path\nfrom api import list_destinations\nfrom migration import migrate_batch\n\nbaseline = {}\nexec(compile(subprocess.check_output(['git', 'show', 'HEAD:reader.py'], text=True), 'HEAD:reader.py', 'exec'), baseline)\noriginal = json.loads(Path('data/records.json').read_text())\nexpected = [{'id': row['id'], 'address': baseline['address_of'](row)} for row in original]\nprint('Baseline mixed-snapshot result:', expected)\nfor batches in (0, 1, 2):\n    records = copy.deepcopy(original)\n    for _ in range(batches):\n        migrate_batch(records, limit=1)\n    try:\n        result = list_destinations(records)\n    except KeyError as error:\n        print(f'Staged reader after {batches} migration batches: {type(error).__name__}{error.args\"'!r}'\"')\n    else:\n        print(f'Staged reader after {batches} migration batches: matches baseline={result == expected}')\nPY\"",
+    "commandActions": [
+      {
+        "command": "python3 -B - <<'PY'\nimport copy\nimport json\nimport subprocess\nfrom pathlib import Path\nfrom api import list_destinations\nfrom migration import migrate_batch\n\nbaseline = {}\nexec(compile(subprocess.check_output(['git', 'show', 'HEAD:reader.py'], text=True), 'HEAD:reader.py', 'exec'), baseline)\noriginal = json.loads(Path('data/records.json').read_text())\nexpected = [{'id': row['id'], 'address': baseline['address_of'](row)} for row in original]\nprint('Baseline mixed-snapshot result:', expected)\nfor batches in (0, 1, 2):\n    records = copy.deepcopy(original)\n    for _ in range(batches):\n        migrate_batch(records, limit=1)\n    try:\n        result = list_destinations(records)\n    except KeyError as error:\n        print(f'Staged reader after {batches} migration batches: {type(error).__name__}{error.args!r}')\n    else:\n        print(f'Staged reader after {batches} migration batches: matches baseline={result == expected}')\nPY",
+        "type": "unknown"
+      }
+    ],
+    "cwd": "/tmp/fr-opus55-matrix-20261011/codex-baseline-R4-isolated-1",
+    "durationMs": 61,
+    "exitCode": 0,
+    "id": "exec-d39c1d0a-0615-4d6c-98b7-44ca960f3d2f",
+    "pluginId": null,
+    "processId": "52263",
+    "scriptPath": null,
+    "source": "unifiedExecStartup",
+    "status": "completed",
+    "type": "commandExecution"
+  },
+  "source_file": "items-01a12b37-b91f-72b1-8c79-1c1988b99872.json",
+  "startedAtMs": 1791726516466,
+  "turnId": "01a12b37-b94a-7d82-8c40-4cc40ee12fee"
+}

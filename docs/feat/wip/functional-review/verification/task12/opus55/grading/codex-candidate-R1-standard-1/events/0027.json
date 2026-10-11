@@ -1,0 +1,28 @@
+{
+  "actor": "items-01a12ad8-0990-7523-be6f-610d48c47bba",
+  "completedAtMs": 1791720235410,
+  "id": "exec-87d1faf6-5fbe-42ea-b5a3-a61b200ca49b",
+  "item": {
+    "aggregatedOutput": "import unittest\nfrom store import Store\nfrom setup import begin_setup, complete_setup, active_connection\nfrom cleanup import cleanup_setup\n\n\nclass SetupTests(unittest.TestCase):\n    def test_completed_setup_is_visible(self):\n        store = Store()\n        begin_setup(store, \"w\", \"one\")\n        complete_setup(store, \"w\", \"one\", \"connection-one\")\n        self.assertEqual(active_connection(store, \"w\"), \"connection-one\")\n\n    def test_cleanup_removes_its_own_association(self):\n        store = Store()\n        begin_setup(store, \"w\", \"one\")\n        complete_setup(store, \"w\", \"one\", \"connection-one\")\n        cleanup_setup(store, \"w\", \"one\")\n        self.assertIsNone(active_connection(store, \"w\"))\n        self.assertNotIn(\"one\", store.pending)\n",
+    "command": "/usr/bin/zsh -lc 'git show :tests/test_setup.py'",
+    "commandActions": [
+      {
+        "command": "git show :tests/test_setup.py",
+        "type": "unknown"
+      }
+    ],
+    "cwd": "/tmp/fr-opus55-matrix-20261011/codex-candidate-R1-standard-1",
+    "durationMs": 62,
+    "exitCode": 0,
+    "id": "exec-87d1faf6-5fbe-42ea-b5a3-a61b200ca49b",
+    "pluginId": null,
+    "processId": "69440",
+    "scriptPath": null,
+    "source": "unifiedExecStartup",
+    "status": "completed",
+    "type": "commandExecution"
+  },
+  "source_file": "items-01a12ad8-0990-7523-be6f-610d48c47bba.json",
+  "startedAtMs": 1791720235347,
+  "turnId": "01a12ad8-09bc-72b3-bcf2-ecc642224160"
+}

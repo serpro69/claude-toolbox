@@ -1,0 +1,12 @@
+{
+  "actor": "child-of:toolu_015YrviLLvspSHGTJkNMKAUj",
+  "block": {
+    "content": "1\tdiff --git a/reader.py b/reader.py\n2\tindex 9429bec..0000404 100644\n3\t--- a/reader.py\n4\t+++ b/reader.py\n5\t@@ -1,2 +1,2 @@\n6\t def read_preferences(repository, key):\n7\t-    return repository.read_resilient(key)\n8\t+    return repository.read_once(key.strip())\n9\tdiff --git a/tests/test_reads.py b/tests/test_reads.py\n10\tindex 23fc901..039b17d 100644\n11\t--- a/tests/test_reads.py\n12\t+++ b/tests/test_reads.py\n13\t@@ -1,11 +1,17 @@\n14\t import unittest\n15\t\n16\t from preferences import Preferences\n17\t-from repository import Repository, ScriptedBackend\n18\t+from repository import Repository, ScriptedBackend, TransientRead\n19\t\n20\t\n21\t class ReadTests(unittest.TestCase):\n22\t-    def test_existing_key(self):\n23\t+    def test_trim_key(self):\n24\t         backend = ScriptedBackend([{\"color\": \"blue\"}])\n25\t-        self.assertEqual(Preferences(Repository(backend)).read(\"w\"), {\"color\": \"blue\"})\n26\t+        self.assertEqual(Preferences(Repository(backend)).read(\" w \"), {\"color\": \"blue\"})\n27\t+        self.assertEqual(backend.keys, [\"w\"])\n28\t+\n29\t+    def test_transient_error(self):\n30\t+        backend = ScriptedBackend([TransientRead(\"busy\"), {\"color\": \"blue\"}])\n31\t+        with self.assertRaises(TransientRead):\n32\t+            Preferences(Repository(backend)).read(\" w \")\n33\t         self.assertEqual(backend.keys, [\"w\"])\n34\t",
+    "tool_use_id": "toolu_016YyxCryViLYNm5iAYvkKtz",
+    "type": "tool_result"
+  },
+  "id": "e99.0",
+  "parent_tool_use_id": "toolu_015YrviLLvspSHGTJkNMKAUj",
+  "session_id": "6042df5f-38c5-4570-89a0-0c97e8dedab0",
+  "source_sequence": 99
+}

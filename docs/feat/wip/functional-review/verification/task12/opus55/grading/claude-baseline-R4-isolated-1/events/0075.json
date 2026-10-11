@@ -1,0 +1,19 @@
+{
+  "actor": "main",
+  "block": {
+    "caller": {
+      "type": "direct"
+    },
+    "id": "toolu_01ExRPxjG2nEwksfoRPsu8kJ",
+    "input": {
+      "content": "# Review finding: legacy-shape read fallback removed before migration completes (P0)\n\nPattern: a \"cleanup\" removes the dual-shape reader branch (legacy top-level `address` vs nested `destination.address`) while background migration is still bounded/incremental and no startup gate guarantees completion. Legacy rows then raise KeyError; in list endpoints built via comprehension (api.list_destinations), one legacy row fails the entire response.\n\nDetection: diff removes an `if \"<new_key>\" in row` / fallback branch in a reader; README or data snapshot (data/records.json) documents mixed shapes as supported; migrate_batch has a limit and no caller/gate.\n\nRule: keep compatibility readers until a verifiable precondition (zero legacy rows in all stores) is enforced. Add a mixed-snapshot test so removal fails CI.\n\nSource: /kk:review-code:isolated on reader.py address_of, 2026-10-11.",
+      "source": "kk:review-findings"
+    },
+    "name": "mcp__capy__capy_index",
+    "type": "tool_use"
+  },
+  "id": "e151.0",
+  "parent_tool_use_id": null,
+  "session_id": "cd687999-ca66-4ba1-a7b7-f53b2210e4bc",
+  "source_sequence": 151
+}

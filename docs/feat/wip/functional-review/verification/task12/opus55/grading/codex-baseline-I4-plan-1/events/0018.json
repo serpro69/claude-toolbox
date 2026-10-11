@@ -1,0 +1,28 @@
+{
+  "actor": "items-01a12bc9-6652-76a3-b634-29fad1f60be2",
+  "completedAtMs": 1791736032979,
+  "id": "exec-c98e0b91-3a4f-4aab-a5aa-d38489828f84",
+  "item": {
+    "aggregatedOutput": "# Label reader\n\nPython 3.9+, standard library only. Run `python3 -B -m unittest discover -s tests`.\nThe public list_labels API reads rows supplied by its caller.\nstate/records.json and state/release.json contain the checked-in synthetic\ncompatibility snapshot. They are local source evidence, not live production access.\ndef read_label(record):\n    return record[\"label\"][\"text\"]\nfrom records import read_label\n\n\ndef list_labels(records):\n    return [read_label(record) for record in records]\nimport unittest\n\nfrom api import list_labels\n\n\nclass LabelTests(unittest.TestCase):\n    def test_object_labels(self):\n        self.assertEqual(list_labels([{\"id\": \"current-b\", \"label\": {\"text\": \"Beta\"}}]), [\"Beta\"])\n\n    def test_empty_list(self):\n        self.assertEqual(list_labels([]), [])\n{\n  \"snapshot_id\": \"snapshot-2\",\n  \"migration\": \"partial\",\n  \"record_file\": \"state/records.json\",\n  \"active_label_shapes\": [\n    \"text\",\n    \"object\"\n  ],\n  \"operator_notice\": {\n    \"status\": \"pending\",\n    \"owner\": \"Release coordinator\",\n    \"next_action\": \"Publish the operator notice before activating the new dashboard.\",\n    \"verification\": \"Attach the notice acknowledgement to the activation record.\"\n  }\n}\n[\n  {\n    \"id\": \"legacy-a\",\n    \"label\": \"Alpha\"\n  },\n  {\n    \"id\": \"current-b\",\n    \"label\": {\n      \"text\": \"Beta\"\n    }\n  }\n]\n__pycache__/\n*.pyc\n/usr/bin/python3\n",
+    "command": "/usr/bin/zsh -lc 'cat README.md records.py api.py tests/test_labels.py state/release.json state/records.json .gitignore\ncommand -v python3'",
+    "commandActions": [
+      {
+        "command": "cat README.md records.py api.py tests/test_labels.py state/release.json state/records.json .gitignore\ncommand -v python3",
+        "type": "unknown"
+      }
+    ],
+    "cwd": "/tmp/fr-opus55-matrix-20261011/codex-baseline-I4-plan-1",
+    "durationMs": 62,
+    "exitCode": 0,
+    "id": "exec-c98e0b91-3a4f-4aab-a5aa-d38489828f84",
+    "pluginId": null,
+    "processId": "56695",
+    "scriptPath": null,
+    "source": "unifiedExecStartup",
+    "status": "completed",
+    "type": "commandExecution"
+  },
+  "source_file": "items-01a12bc9-6652-76a3-b634-29fad1f60be2.json",
+  "startedAtMs": 1791736032916,
+  "turnId": "01a12bc9-667e-7bf2-ac7c-eac74d908084"
+}

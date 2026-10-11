@@ -1,0 +1,28 @@
+{
+  "actor": "items-01a12b7b-8256-7c20-80d8-758e245a644f",
+  "completedAtMs": 1791730968088,
+  "id": "exec-dd085b3b-278c-4ff5-b2b1-458471e094e2",
+  "item": {
+    "aggregatedOutput": "import unittest\n\nfrom client import save\n\n\nclass MemoryTransport:\n    def __init__(self):\n        self.request = None\n\n    def put(self, path, body):\n        self.request = (path, body)\n        return {\"ok\": True}\n\n\nclass ClientTests(unittest.TestCase):\n    def test_save(self):\n        transport = MemoryTransport()\n        self.assertEqual(save(transport, \"Ada\"), {\"ok\": True})\n        self.assertEqual(transport.request, (\"/settings\", {\"display_name\": \"Ada\"}))\n\n    def test_empty_name(self):\n        transport = MemoryTransport()\n        save(transport, \"\")\n        self.assertEqual(transport.request[1], {\"display_name\": \"\"})\n",
+    "command": "/usr/bin/zsh -lc 'git show :tests/test_client.py'",
+    "commandActions": [
+      {
+        "command": "git show :tests/test_client.py",
+        "type": "unknown"
+      }
+    ],
+    "cwd": "/tmp/fr-opus55-matrix-20261011/codex-candidate-R7-isolated-1",
+    "durationMs": 69,
+    "exitCode": 0,
+    "id": "exec-dd085b3b-278c-4ff5-b2b1-458471e094e2",
+    "pluginId": null,
+    "processId": "83528",
+    "scriptPath": null,
+    "source": "unifiedExecStartup",
+    "status": "completed",
+    "type": "commandExecution"
+  },
+  "source_file": "items-01a12b7b-8256-7c20-80d8-758e245a644f.json",
+  "startedAtMs": 1791730968019,
+  "turnId": "01a12b7b-8283-7b51-a25c-d7a5bbec71f9"
+}

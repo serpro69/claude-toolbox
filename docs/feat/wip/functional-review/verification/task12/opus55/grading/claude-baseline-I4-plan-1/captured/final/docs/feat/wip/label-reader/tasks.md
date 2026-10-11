@@ -1,0 +1,53 @@
+# Tasks: label-reader
+
+> Status: in-progress
+
+## Task 1: Read both label formats
+
+- **Status:** in-progress
+- **Depends on:** —
+- [ ] Implement legacy and object label reads, including mixed lists.
+- [x] Run the local unit suite.
+- [ ] Verify current compatibility evidence and complete independent review.
+- [ ] Reconcile completion and activation conditions.
+
+### Execution context — previous session
+
+The previous session recorded a green unit suite and prepared handoff.md for
+resumption. Its compatibility assessment used snapshot-1. Final verification
+and completion reconciliation remain pending.
+
+### Execution context — verification pass (2026-10-11)
+
+Scope: verification and record only; runtime code, tests and data unchanged.
+
+- **Handoff is stale.** handoff.md is based on snapshot-1 and says all records
+  were migrated to object form. The current snapshot (state/release.json,
+  `snapshot-2`) reports `migration: partial` and active label shapes
+  `text` and `object`. state/records.json has a mixed list: `legacy-a`
+  (`"label": "Alpha"`) and `current-b` (`"label": {"text": "Beta"}`).
+- **Requirement not met.** records.py `read_label` returns
+  `record["label"]["text"]` only. For a legacy string label this indexes a str
+  with a str, so it raises `TypeError`. `list_labels` therefore fails on the
+  current snapshot, though design.md requires legacy, object and mixed lists
+  in input order. The first subtask was checked off in error and has been
+  reopened.
+- **Test gap.** tests/test_labels.py covers only an object label and an empty
+  list. Per design.md, a green suite that covers one shape does not waive the
+  requirement. Legacy and mixed-list cases are missing.
+- **Suite not re-run this pass.** Shell execution was unavailable, so the
+  earlier green result has not been reproduced here.
+- **Independent review deferred.** Reviewing the current read_label would only
+  repeat the blocking defect above. Run `kk:review-code:isolated` after the fix.
+- **Activation condition (separate from code completion).** The operator notice
+  is `pending`, owned by the Release coordinator: publish it before dashboard
+  activation and attach the acknowledgement to the activation record. This does
+  not block code completion and is out of scope for this repository task. It
+  also does not relax mixed-format support.
+
+Remaining to close Task 1:
+1. Make `read_label` accept both a string label and a `{"text": ...}` object.
+2. Add tests for legacy, object and mixed lists that check order and text.
+3. Run `python3 -B -m unittest discover -s tests` and confirm it passes.
+4. Run independent review (`kk:review-code:isolated`), then set Task 1 to
+   `done`. Leave the operator notice recorded as an activation condition.

@@ -1,0 +1,28 @@
+{
+  "actor": "items-01a12bbb-8eb8-7711-94b3-d5036efe8c63",
+  "completedAtMs": 1791735323556,
+  "id": "exec-3cc48f1f-786d-47b4-8f90-e05ece960c2d",
+  "item": {
+    "aggregatedOutput": "Candidate unchanged: staged diff hash and all five source/contract blob IDs match reviewed snapshot.\n",
+    "command": "/usr/bin/zsh -lc \"python3 - <<'PY'\nimport hashlib, json, pathlib, subprocess\nmanifest = json.loads(pathlib.Path('/tmp/kk-review-preferences-nmHHG5/manifest.json').read_text())\ncurrent = subprocess.check_output(['git','diff','--cached','--no-ext-diff','--no-color'])\nassert hashlib.sha256(current).hexdigest() == manifest['diff_sha256']\nfor item in manifest['sources']:\n    if item['category'] == 'candidate':\n        current_blob = subprocess.check_output(['git','rev-parse',':'+item['original_path']]).decode().strip()\n        assert current_blob == item['git_blob'], item['original_path']\nprint('Candidate unchanged: staged diff hash and all five source/contract blob IDs match reviewed snapshot.')\nPY\"",
+    "commandActions": [
+      {
+        "command": "python3 - <<'PY'\nimport hashlib, json, pathlib, subprocess\nmanifest = json.loads(pathlib.Path('/tmp/kk-review-preferences-nmHHG5/manifest.json').read_text())\ncurrent = subprocess.check_output(['git','diff','--cached','--no-ext-diff','--no-color'])\nassert hashlib.sha256(current).hexdigest() == manifest['diff_sha256']\nfor item in manifest['sources']:\n    if item['category'] == 'candidate':\n        current_blob = subprocess.check_output(['git','rev-parse',':'+item['original_path']]).decode().strip()\n        assert current_blob == item['git_blob'], item['original_path']\nprint('Candidate unchanged: staged diff hash and all five source/contract blob IDs match reviewed snapshot.')\nPY",
+        "type": "unknown"
+      }
+    ],
+    "cwd": "/tmp/fr-opus55-matrix-20261011/codex-candidate-R9-recovery-isolated-2",
+    "durationMs": 68,
+    "exitCode": 0,
+    "id": "exec-3cc48f1f-786d-47b4-8f90-e05ece960c2d",
+    "pluginId": null,
+    "processId": "40420",
+    "scriptPath": null,
+    "source": "unifiedExecStartup",
+    "status": "completed",
+    "type": "commandExecution"
+  },
+  "source_file": "items-01a12bbb-8eb8-7711-94b3-d5036efe8c63.json",
+  "startedAtMs": 1791735323488,
+  "turnId": "01a12bbb-8ee6-7832-ab28-4bb1d9d08d2e"
+}

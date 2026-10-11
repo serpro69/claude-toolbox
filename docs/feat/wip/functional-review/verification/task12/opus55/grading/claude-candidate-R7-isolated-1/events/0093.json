@@ -1,0 +1,12 @@
+{
+  "actor": "child-of:toolu_01E8eN1679HcwJJvBF4YmBWQ",
+  "block": {
+    "content": "client.py:1:from payload import build_payload\nclient.py:4:def save(transport, display_name):\nclient.py:5:    return transport.put(\"/settings\", build_payload(display_name))\npayload.py:1:def build_payload(display_name):\npayload.py:2:    return {\"display_name\": display_name.strip()}\ntests/test_client.py:16:    def test_save(self):\ntests/test_client.py:18:        self.assertEqual(save(transport, \"Ada\"), {\"ok\": True})\ntests/test_client.py:19:        self.assertEqual(transport.request, (\"/settings\", {\"display_name\": \"Ada\"}))\ntests/test_client.py:23:        save(transport, \"\")\ntests/test_client.py:24:        self.assertEqual(transport.request[1], {\"display_name\": \"\"})\ntests/test_payload.py:3:from payload import build_payload\ntests/test_payload.py:8:        self.assertEqual(build_payload(\"  Ada  \"), {\"display_name\": \"Ada\"})\ntests/test_payload.py:11:        self.assertEqual(build_payload(\"Ada Lovelace\"), {\"display_name\": \"Ada Lovelace\"})",
+    "tool_use_id": "toolu_01DCLDLDR9hMjz7nUZUJjbT6",
+    "type": "tool_result"
+  },
+  "id": "e175.0",
+  "parent_tool_use_id": "toolu_01E8eN1679HcwJJvBF4YmBWQ",
+  "session_id": "624d32da-a200-4c8e-9d28-e08fff2fc5a4",
+  "source_sequence": 175
+}

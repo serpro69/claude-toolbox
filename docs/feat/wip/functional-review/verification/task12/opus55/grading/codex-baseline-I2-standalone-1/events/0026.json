@@ -1,0 +1,23 @@
+{
+  "actor": "items-01a12b06-f8c8-7342-aef5-45ffcf3ad054",
+  "completedAtMs": 1791723340396,
+  "id": "exec-c1b6f735-1975-4372-8ed2-c689a5e5b23c",
+  "item": {
+    "changes": [
+      {
+        "diff": "@@ -2,2 +2,4 @@\n from api import update_preferences\n+from cli import clear_note\n+from settings import patch_settings\n \n@@ -10 +12,43 @@\n         self.assertEqual(original[\"note\"], \"before\")\n+\n+    def test_explicit_values_replace_current_values(self):\n+        cases = (\n+            ({\"note\": None}, {\"note\": None, \"enabled\": True}),\n+            ({\"note\": \"\"}, {\"note\": \"\", \"enabled\": True}),\n+            ({\"enabled\": False}, {\"note\": \"before\", \"enabled\": False}),\n+        )\n+        for update in (patch_settings, update_preferences):\n+            for patch, expected in cases:\n+                with self.subTest(update=update.__name__, patch=patch):\n+                    current = {\"note\": \"before\", \"enabled\": True}\n+                    original_patch = dict(patch)\n+                    result = update(current, patch)\n+                    self.assertEqual(result, expected)\n+                    self.assertIsNot(result, current)\n+                    self.assertEqual(current, {\"note\": \"before\", \"enabled\": True})\n+                    self.assertEqual(patch, original_patch)\n+\n+    def test_empty_patch_preserves_current_values_and_missing_keys(self):\n+        for update in (patch_settings, update_preferences):\n+            for current in ({\"note\": None, \"enabled\": False}, {\"note\": \"\"}, {}):\n+                with self.subTest(update=update.__name__, current=current):\n+                    result = update(current, {})\n+                    self.assertEqual(result, current)\n+                    self.assertIsNot(result, current)\n+\n+    def test_explicit_values_add_missing_keys(self):\n+        for update in (patch_settings, update_preferences):\n+            for patch in ({\"note\": None}, {\"note\": \"\"}, {\"enabled\": False}):\n+                with self.subTest(update=update.__name__, patch=patch):\n+                    current = {}\n+                    original_patch = dict(patch)\n+                    result = update(current, patch)\n+                    self.assertEqual(result, original_patch)\n+                    self.assertIsNot(result, patch)\n+                    self.assertEqual(current, {})\n+                    self.assertEqual(patch, original_patch)\n+\n+    def test_cli_clears_note(self):\n+        current = {\"note\": \"before\", \"enabled\": True}\n+        self.assertEqual(clear_note(current), {\"note\": None, \"enabled\": True})\n+        self.assertEqual(current, {\"note\": \"before\", \"enabled\": True})\n",
+        "kind": {
+          "move_path": null,
+          "type": "update"
+        },
+        "path": "/tmp/fr-opus55-matrix-20261011/codex-baseline-I2-standalone-1/tests/test_settings.py"
+      }
+    ],
+    "id": "exec-c1b6f735-1975-4372-8ed2-c689a5e5b23c",
+    "status": "completed",
+    "type": "fileChange"
+  },
+  "source_file": "items-01a12b06-f8c8-7342-aef5-45ffcf3ad054.json",
+  "startedAtMs": 1791723340376,
+  "turnId": "01a12b06-f8f2-7043-95f1-8b0eabba02d3"
+}

@@ -1,0 +1,28 @@
+{
+  "actor": "items-01a12bb2-ab24-7e23-b862-fe6dbdca4048",
+  "completedAtMs": 1791734513111,
+  "id": "exec-1ff02a65-69ca-4540-80ce-f43369728c2e",
+  "item": {
+    "aggregatedOutput": "     1\tdef read_preferences(repository, key):\n     2\t    return repository.read_resilient(key.strip())\n     3\tclass TransientRead(Exception):\n     4\t    pass\n     5\t\n     6\t\n     7\tclass MissingPreference(Exception):\n     8\t    pass\n     9\t\n    10\t\n    11\tclass ScriptedBackend:\n    12\t    def __init__(self, outcomes):\n    13\t        self.outcomes = iter(outcomes)\n    14\t        self.keys = []\n    15\t\n    16\t    def read(self, key):\n    17\t        self.keys.append(key)\n    18\t        outcome = next(self.outcomes)\n    19\t        if isinstance(outcome, Exception):\n    20\t            raise outcome\n    21\t        return outcome\n    22\t\n    23\t\n    24\tclass Repository:\n    25\t    def __init__(self, backend):\n    26\t        self.backend = backend\n    27\t\n    28\t    def read_once(self, key):\n    29\t        return self.backend.read(key)\n    30\t\n    31\t    def read_resilient(self, key):\n    32\t        for attempt in range(3):\n    33\t            try:\n    34\t                return self.read_once(key)\n    35\t            except TransientRead:\n    36\t                if attempt == 2:\n    37\t                    raise\n    38\tfrom reader import read_preferences\n    39\t\n    40\t\n    41\tclass Preferences:\n    42\t    def __init__(self, repository):\n    43\t        self.repository = repository\n    44\t\n    45\t    def read(self, key):\n    46\t        return read_preferences(self.repository, key)\n    47\t# Preference reads\n    48\t\n    49\tPython 3.9+, standard library only. Run `python3 -B -m unittest discover -s tests`.\n    50\t\n    51\tThis change accepts preference IDs with surrounding whitespace. Trim the ID\n    52\tbefore looking it up; preserve the existing resilient-read contract. A logical\n    53\tread may make up to three attempts on `TransientRead`, returning the first\n    54\tsuccessful result. Exhausted transient errors propagate. `MissingPreference`\n    55\tis permanent and must propagate on the first attempt. Reads have no side effects.\n    56\t\n    57\t`Preferences.read` is the public entry point. `Repository.read_resilient`\n    58\towns the bounded retry policy; `read_once` performs one attempt. The scripted\n    59\tbackend models finite outcomes without sleeping, services or concurrency.\n    60\timport unittest\n    61\t\n    62\tfrom preferences import Preferences\n    63\tfrom repository import MissingPreference, Repository, ScriptedBackend, TransientRead\n    64\t\n    65\t\n    66\tclass ReadTests(unittest.TestCase):\n    67\t    def test_trim_key(self):\n    68\t        backend = ScriptedBackend([{\"color\": \"blue\"}])\n    69\t        self.assertEqual(Preferences(Repository(backend)).read(\" w \"), {\"color\": \"blue\"})\n    70\t        self.assertEqual(backend.keys, [\"w\"])\n    71\t\n    72\t    def test_transient_error(self):\n    73\t        backend = ScriptedBackend([TransientRead(\"busy\"), {\"color\": \"blue\"}])\n    74\t        self.assertEqual(Preferences(Repository(backend)).read(\" w \"), {\"color\": \"blue\"})\n    75\t        self.assertEqual(backend.keys, [\"w\", \"w\"])\n    76\t\n    77\t    def test_retry_limit(self):\n    78\t        backend = ScriptedBackend([TransientRead(\"busy\") for _ in range(3)])\n    79\t        with self.assertRaises(TransientRead):\n    80\t            Preferences(Repository(backend)).read(\" w \")\n    81\t        self.assertEqual(backend.keys, [\"w\", \"w\", \"w\"])\n    82\t\n    83\t    def test_permanent_error(self):\n    84\t        backend = ScriptedBackend([MissingPreference(\"missing\")])\n    85\t        with self.assertRaises(MissingPreference):\n    86\t            Preferences(Repository(backend)).read(\" w \")\n    87\t        self.assertEqual(backend.keys, [\"w\"])\n",
+    "command": "/usr/bin/zsh -lc 'cat -n reader.py repository.py preferences.py README.md tests/test_reads.py'",
+    "commandActions": [
+      {
+        "command": "cat -n reader.py repository.py preferences.py README.md tests/test_reads.py",
+        "type": "unknown"
+      }
+    ],
+    "cwd": "/tmp/fr-opus55-matrix-20261011/codex-baseline-R9-recovery-isolated-1",
+    "durationMs": 53,
+    "exitCode": 0,
+    "id": "exec-1ff02a65-69ca-4540-80ce-f43369728c2e",
+    "pluginId": null,
+    "processId": "13280",
+    "scriptPath": null,
+    "source": "unifiedExecStartup",
+    "status": "completed",
+    "type": "commandExecution"
+  },
+  "source_file": "items-01a12bb2-ab24-7e23-b862-fe6dbdca4048.json",
+  "startedAtMs": 1791734513058,
+  "turnId": "01a12bb2-ab44-7e93-8f19-f794cecc4c82"
+}

@@ -1,0 +1,28 @@
+{
+  "actor": "items-01a12b38-be9e-7f43-b50e-7ebde299ae3f",
+  "completedAtMs": 1791726525972,
+  "id": "exec-1a74af72-d861-413f-81ee-5e2656bea44e",
+  "item": {
+    "aggregatedOutput": "# Saved destinations\n\nPython 3.9+, standard library only. Run `python3 -B -m unittest discover -s tests`.\n\nDestination records can use legacy top-level `address` or current nested\n`destination.address`. New writes use the nested shape. Background migration\nruns in bounded batches while reads remain available; a deployment must read\nboth shapes until migration finishes. Existing addresses must be preserved.\n\n`data/records.json` is a supported mixed snapshot. `api.list_destinations`\nserves all saved records through the same reader. `migrate_batch` changes up to\nits limit per invocation; there is no startup migration gate. The store is a\nlocal JSON model, with no production environment or external database required.\ndef address_of(row):\n    return row[\"destination\"][\"address\"]\nfrom reader import address_of\n\n\ndef list_destinations(records):\n    return [{\"id\": row[\"id\"], \"address\": address_of(row)} for row in records]\ndef new_destination(record_id, address):\n    return {\"id\": record_id, \"destination\": {\"address\": address}}\ndef migrate_batch(records, limit):\n    migrated = 0\n    for row in records:\n        if migrated >= limit:\n            break\n        if \"destination\" not in row:\n            row[\"destination\"] = {\"address\": row.pop(\"address\")}\n            migrated += 1\n    return migrated\n[\n  {\n    \"id\": \"legacy-a\",\n    \"address\": \"a@example.test\"\n  },\n  {\n    \"id\": \"current-b\",\n    \"destination\": {\n      \"address\": \"b@example.test\"\n    }\n  },\n  {\n    \"id\": \"legacy-c\",\n    \"address\": \"c@example.test\"\n  }\n]\nimport unittest\n\nfrom api import list_destinations\nfrom writer import new_destination\n\n\nclass DestinationTests(unittest.TestCase):\n    def test_new_write_can_be_listed(self):\n        row = new_destination(\"new\", \"new@example.test\")\n        self.assertEqual(list_destinations([row]),\n                         [{\"id\": \"new\", \"address\": \"new@example.test\"}])\n\n    def test_empty_list(self):\n        self.assertEqual(list_destinations([]), [])\n",
+    "command": "/usr/bin/zsh -lc 'cat README.md reader.py api.py writer.py migration.py data/records.json tests/test_destinations.py'",
+    "commandActions": [
+      {
+        "command": "cat README.md reader.py api.py writer.py migration.py data/records.json tests/test_destinations.py",
+        "type": "unknown"
+      }
+    ],
+    "cwd": "/tmp/fr-opus55-matrix-20261011/codex-baseline-R4-isolated-1",
+    "durationMs": 69,
+    "exitCode": 0,
+    "id": "exec-1a74af72-d861-413f-81ee-5e2656bea44e",
+    "pluginId": null,
+    "processId": "14703",
+    "scriptPath": null,
+    "source": "unifiedExecStartup",
+    "status": "completed",
+    "type": "commandExecution"
+  },
+  "source_file": "items-01a12b38-be9e-7f43-b50e-7ebde299ae3f.json",
+  "startedAtMs": 1791726525902,
+  "turnId": "01a12b38-bebd-7093-a600-377aac2aa363"
+}

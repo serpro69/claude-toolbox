@@ -1,0 +1,30 @@
+{
+  "actor": "items-01a12b14-c2e8-7d01-a26e-9a01924d3d6b",
+  "completedAtMs": 1791724175002,
+  "id": "exec-2499f1a7-a7bf-4ec0-995e-e7ed70ace897",
+  "item": {
+    "aggregatedOutput": "diff --git a/README.md b/README.md\nindex 04a5381..b15be76 100644\n--- a/README.md\n+++ b/README.md\n@@ -4,3 +4,6 @@ Python 3.9+, standard library only. Run `python3 -B -m unittest discover -s test\n The HTTP patch handler and command-line note action share settings.patch_settings.\n Callers own their input dictionaries. A patch contains only explicitly supplied\n keys. The optional note accepts text or None; the enabled flag is boolean.\n+Omitted keys retain their current values; supplied values, including None, empty\n+text, and False, replace them. The helper returns a new dictionary without\n+modifying either input.\ndiff --git a/settings.py b/settings.py\nindex 17eee18..04ccefd 100644\n--- a/settings.py\n+++ b/settings.py\n@@ -1,5 +1,5 @@\n def patch_settings(current, patch):\n     result = dict(current)\n     for key, value in patch.items():\n-        result[key] = value or current.get(key)\n+        result[key] = value\n     return result\ndiff --git a/tests/test_settings.py b/tests/test_settings.py\nindex 87a59f4..f2468bd 100644\n--- a/tests/test_settings.py\n+++ b/tests/test_settings.py\n@@ -1,5 +1,7 @@\n import unittest\n from api import update_preferences\n+from cli import clear_note\n+from settings import patch_settings\n \n \n class SettingsTests(unittest.TestCase):\n@@ -8,3 +10,43 @@ class SettingsTests(unittest.TestCase):\n         result = update_preferences(original, {\"note\": \"after\"})\n         self.assertEqual(result, {\"note\": \"after\", \"enabled\": True})\n         self.assertEqual(original[\"note\"], \"before\")\n+\n+    def test_explicit_values_replace_current_values(self):\n+        for patch, expected in (\n+            ({\"note\": None}, {\"note\": None, \"enabled\": True}),\n+            ({\"note\": \"\"}, {\"note\": \"\", \"enabled\": True}),\n+            ({\"enabled\": False}, {\"note\": \"before\", \"enabled\": False}),\n+        ):\n+            with self.subTest(patch=patch):\n+                original = {\"note\": \"before\", \"enabled\": True}\n+                payload = dict(patch)\n+                result = update_preferences(original, payload)\n+                self.assertEqual(result, expected)\n+                self.assertEqual(original, {\"note\": \"before\", \"enabled\": True})\n+                self.assertEqual(payload, patch)\n+\n+    def test_empty_patch_returns_unchanged_copy(self):\n+        original = {\"note\": \"before\", \"enabled\": False}\n+        patch = {}\n+        result = patch_settings(original, patch)\n+        self.assertEqual(result, original)\n+        self.assertIsNot(result, original)\n+        self.assertEqual(patch, {})\n+\n+    def test_patch_adds_explicit_values_without_mutating_inputs(self):\n+        original = {\"other\": \"keep\"}\n+        patch = {\"note\": \"\", \"enabled\": False, \"extra\": None}\n+        result = patch_settings(original, patch)\n+        self.assertEqual(\n+            result, {\"other\": \"keep\", \"note\": \"\", \"enabled\": False, \"extra\": None}\n+        )\n+        self.assertIsNot(result, original)\n+        self.assertIsNot(result, patch)\n+        self.assertEqual(original, {\"other\": \"keep\"})\n+        self.assertEqual(patch, {\"note\": \"\", \"enabled\": False, \"extra\": None})\n+\n+    def test_cli_clears_note(self):\n+        original = {\"note\": \"before\", \"enabled\": True}\n+        result = clear_note(original)\n+        self.assertEqual(result, {\"note\": None, \"enabled\": True})\n+        self.assertEqual(original, {\"note\": \"before\", \"enabled\": True})\n",
+    "command": "/usr/bin/zsh -lc \"cat '/tmp/kk-patch-settings-review-_vmwx0ey/selected.patch'\"",
+    "commandActions": [
+      {
+        "command": "cat /tmp/kk-patch-settings-review-_vmwx0ey/selected.patch",
+        "name": "selected.patch",
+        "path": "/tmp/kk-patch-settings-review-_vmwx0ey/selected.patch",
+        "type": "read"
+      }
+    ],
+    "cwd": "/tmp/fr-opus55-matrix-20261011/codex-candidate-I2-standalone-2",
+    "durationMs": 60,
+    "exitCode": 0,
+    "id": "exec-2499f1a7-a7bf-4ec0-995e-e7ed70ace897",
+    "pluginId": null,
+    "processId": "66248",
+    "scriptPath": null,
+    "source": "unifiedExecStartup",
+    "status": "completed",
+    "type": "commandExecution"
+  },
+  "source_file": "items-01a12b14-c2e8-7d01-a26e-9a01924d3d6b.json",
+  "startedAtMs": 1791724174941,
+  "turnId": "01a12b14-c307-74a1-9c4c-daea3f65e99c"
+}

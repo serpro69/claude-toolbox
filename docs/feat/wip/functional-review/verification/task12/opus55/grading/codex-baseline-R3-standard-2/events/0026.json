@@ -1,0 +1,28 @@
+{
+  "actor": "items-01a12aeb-75bb-76c3-95c8-2a43e915b0de",
+  "completedAtMs": 1791721503657,
+  "id": "exec-2578639b-e00d-454f-884d-a26c1cc7e564",
+  "item": {
+    "aggregatedOutput": "HEAD client returned: {'saved': True, 'enhanced': False}\nrequest: {'settings': {'label': 'blue'}}\nprovider storage: {'w': {'label': 'blue'}}\nstaged client raised: Provider did not acknowledge applied settings\nrequest: {'settings': {'label': 'blue'}, 'require_receipt': True}\nprovider storage: {'w': {'label': 'blue'}}\n     1\tdef save_settings(send, workspace_id, values, enhanced_settings=False):\n     2\t    response = send(workspace_id, {\"settings\": values, \"require_receipt\": True})\n     3\t    if not response.get(\"ok\"):\n     4\t        raise RuntimeError(\"Settings save failed\")\n     5\t    if response.get(\"applied\") is not True:\n     6\t        raise RuntimeError(\"Provider did not acknowledge applied settings\")\n     7\t    return {\"saved\": True, \"enhanced\": enhanced_settings}\n     1\timport unittest\n     2\tfrom client import save_settings\n     3\t\n     4\t\n     5\tclass SettingsTests(unittest.TestCase):\n     6\t    def test_successful_save(self):\n     7\t        def send(workspace, request):\n     8\t            return {\"ok\": True, \"applied\": True}\n     9\t        self.assertEqual(save_settings(send, \"w\", {\"label\": \"blue\"}),\n    10\t                         {\"saved\": True, \"enhanced\": False})\nM  client.py\nM  tests/test_client.py\n",
+    "command": "/usr/bin/zsh -lc \"python3 -B - <<'PY'\nimport subprocess\nfrom client import save_settings\n\nprovider = {}\nexec(compile(subprocess.check_output(['git', 'show', 'eval-release:provider/settings.py'], text=True), 'eval-release:provider/settings.py', 'exec'), provider)\nprevious_client = {}\nexec(compile(subprocess.check_output(['git', 'show', 'HEAD:client.py'], text=True), 'HEAD:client.py', 'exec'), previous_client)\nfor label, save in [('HEAD client', previous_client['save_settings']), ('staged client', save_settings)]:\n    storage = {}\n    requests = []\n    def send(workspace_id, request):\n        requests.append(request)\n        return provider['update_settings'](storage, workspace_id, request)\n    try:\n        result = save(send, 'w', {'label': 'blue'})\n        print(label, 'returned:', result)\n    except RuntimeError as error:\n        print(label, 'raised:', str(error))\n    print('request:', requests[0])\n    print('provider storage:', storage)\nPY\nnl -ba client.py; nl -ba tests/test_client.py; git status --short\"",
+    "commandActions": [
+      {
+        "command": "python3 -B - <<'PY'\nimport subprocess\nfrom client import save_settings\n\nprovider = {}\nexec(compile(subprocess.check_output(['git', 'show', 'eval-release:provider/settings.py'], text=True), 'eval-release:provider/settings.py', 'exec'), provider)\nprevious_client = {}\nexec(compile(subprocess.check_output(['git', 'show', 'HEAD:client.py'], text=True), 'HEAD:client.py', 'exec'), previous_client)\nfor label, save in [('HEAD client', previous_client['save_settings']), ('staged client', save_settings)]:\n    storage = {}\n    requests = []\n    def send(workspace_id, request):\n        requests.append(request)\n        return provider['update_settings'](storage, workspace_id, request)\n    try:\n        result = save(send, 'w', {'label': 'blue'})\n        print(label, 'returned:', result)\n    except RuntimeError as error:\n        print(label, 'raised:', str(error))\n    print('request:', requests[0])\n    print('provider storage:', storage)\nPY\nnl -ba client.py; nl -ba tests/test_client.py; git status --short",
+        "type": "unknown"
+      }
+    ],
+    "cwd": "/tmp/fr-opus55-matrix-20261011/codex-baseline-R3-standard-2",
+    "durationMs": 61,
+    "exitCode": 0,
+    "id": "exec-2578639b-e00d-454f-884d-a26c1cc7e564",
+    "pluginId": null,
+    "processId": "22053",
+    "scriptPath": null,
+    "source": "unifiedExecStartup",
+    "status": "completed",
+    "type": "commandExecution"
+  },
+  "source_file": "items-01a12aeb-75bb-76c3-95c8-2a43e915b0de.json",
+  "startedAtMs": 1791721503595,
+  "turnId": "01a12aeb-75e7-7930-b995-3511cf25ba04"
+}
