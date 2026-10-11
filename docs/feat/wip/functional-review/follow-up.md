@@ -1,19 +1,21 @@
 # Functional review: next-session handoff
 
 > Updated: 2026-10-11
-> Status: Task 12.11 complete; one bounded entry-path correction selected for Task 12.12
-> Owner: implementing agent, [Task 12.12](tasks.md#task-1212-resolve-isolated-review-instructions-at-entry)
+> Status: Task 12.12 complete; entry-path correction kept, broader acceptance remains open
+> Owner: implementing agent, [remaining Task 12 work](tasks.md#task-12-execute-and-assess-the-full-comparison-matrix)
 > Evidence: [completed matrix](verification/task12/opus55/README.md), [Claude](verification/task12/opus55/claude-results.md), [Codex](verification/task12/opus55/codex-results.md)
 
 ## Start here
 
-Task 12.11's [dated assessment](#assessment--2026-10-11) and
-[complete observation ledger](assessment-observations.md) select only Task 12.12:
-resolve the isolated command's instruction paths at entry. Resume with
-`/kk:implement task 12.12 of functional-review`; read the assessment, current
-Task 12 status, [design](design.md), [implementation](implementation.md) and
-[evaluation contract](evaluation.md), then check the worktree. Task 12.12 is
-planned, not implemented or measured by this assessment.
+Task 12.12's [outcome](#task-1212-outcome--2026-10-11) retains the isolated command's
+explicit instruction paths after its bounded comparison. The original
+[assessment](#assessment--2026-10-11) and [observation ledger](assessment-observations.md)
+remain tied to the earlier full matrix; its grades are not rewritten by this
+follow-up. Remaining investigation priority is [unsupported compatibility claims](#unsupported-compatibility-claims).
+No further operative correction or actor batch is selected or started here.
+Before resuming, read the current Task 12 status, [design](design.md),
+[implementation](implementation.md), [evaluation contract](evaluation.md) and
+the relevant sealed grades, then check the worktree.
 
 The user's latest constraint is explicit: fixing minor issues by overloading
 instructions can make the skills worse overall. Assess severity before adding
@@ -368,3 +370,33 @@ every non-PASS identity and matched baseline, group counts, local links and the
 documentation diff. These checks establish accounting and traceability, not new
 behavioral acceptance. Independent review and its outcome are recorded in the
 Task 12.11 execution context.
+
+## Task 12.12 outcome — 2026-10-11
+
+[Twelve fresh Claude isolated comparisons](verification/task12/entry-path-no-pal/README.md)
+are captured and independently graded. Candidate totals are **32 PASS / 8 FAIL /
+0 PARTIAL**, versus baseline **20 / 20 / 0**. Both repetitions satisfy the local
+R3 acquisition/history/ordering requirements and preserve R5 clean approval and
+R9 required recovery. The eight candidate FAILs are the still-required PAL
+components; positive local evidence does not turn those aggregate grades into PASS.
+
+**Keep the correction:** only the isolated command changes, adding two words and
+explicit paths to existing instructions. Common instructions and all 902 generated
+Codex files remain unchanged. No new actor phase, permission or general recovery
+protocol was added. The first loading probe unexpectedly connected PAL without
+calling it; a separately reviewed/frozen run-local configuration then excluded
+PAL for both fresh loading probes and all measured pairs. User settings, prompts,
+fixtures, models and grading thresholds stayed unchanged.
+
+The comparison uses the immutable pre-feature baseline, not an additional arm
+running the immediate predecessor. Its counts do not isolate the causal effect
+of two words or estimate reliability. It supports this bounded keep decision;
+implementation-mode acquisition, R7 claims, receipt gaps, other matrix cases and
+Codex behavior are not certified by it. Keep the ordering guard deferred.
+
+The implementing agent still owns the remaining dispositions and acceptance
+obligations above. Investigate R7's unsupported compatibility conclusions next in
+priority, applying the existing cost/benefit constraint before selecting any new
+operative slice. Live PAL remains user-deferred; legacy controls and Task 13
+remain pending. [Final independent review](verification/task12/entry-path-no-pal/completion-review.md)
+approved the completion record and bounded keep decision with no findings.

@@ -1,0 +1,1766 @@
+{
+  "runs": [
+    {
+      "run": "claude-baseline-R3-isolated-1",
+      "capture_files": 44,
+      "grading_files": 138,
+      "manifest_sha256": "02517f21ca308b8013f320894fc4813c5025881f9e1f85d1f274efc3bab9ab9d",
+      "subject_unchanged": true,
+      "bundle_unchanged": true,
+      "runtime_unchanged": true,
+      "git_refs_and_patch_unchanged": true,
+      "models": [
+        "claude-opus-5-5"
+      ],
+      "pal_calls": 0,
+      "tool_requests": 40,
+      "shell_requests": [
+        {
+          "sequence": 20,
+          "command": "git diff --stat; echo ---; git diff --cached --stat; ls; ls docs/feat/wip 2>/dev/null"
+        },
+        {
+          "sequence": 33,
+          "command": "ls docs/feat/wip/enhanced-settings; ls plugins/kk; ls plugins/kk/profiles 2>/dev/null; echo \"TOOLBOX=$TOOLBOX_PLUGIN_ROOT\""
+        },
+        {
+          "sequence": 61,
+          "command": "git -C /tmp/fr-entry-path-no-pal-20261011/claude-baseline-R3-isolated-1 diff --cached"
+        },
+        {
+          "sequence": 80,
+          "command": "git -C /tmp/fr-entry-path-no-pal-20261011/claude-baseline-R3-isolated-1 show eval-release:provider/settings.py"
+        },
+        {
+          "sequence": 87,
+          "command": "d=$(mktemp -d /tmp/kk-review-code-XXXXXXXX) && git diff --cached > \"$d/staged.patch\" && git show eval-release:provider/settings.py > \"$d/eval-release-provider-settings.py\" && echo \"$d\" && wc -l \"$d\"/*"
+        }
+      ],
+      "global_glob_metadata": [],
+      "command_matches_declaration": true,
+      "capy_config_unchanged": true
+    },
+    {
+      "run": "claude-baseline-R3-isolated-2",
+      "capture_files": 44,
+      "grading_files": 128,
+      "manifest_sha256": "16b19288a084cb812a4f0ab56e562d4a3d635ddc7f0ee0ab8d3fab292c493b29",
+      "subject_unchanged": true,
+      "bundle_unchanged": true,
+      "runtime_unchanged": true,
+      "git_refs_and_patch_unchanged": true,
+      "models": [
+        "claude-opus-5-5"
+      ],
+      "pal_calls": 0,
+      "tool_requests": 35,
+      "shell_requests": [
+        {
+          "sequence": 20,
+          "command": "git status --short && git diff --stat && git diff --cached --stat"
+        },
+        {
+          "sequence": 27,
+          "command": "diff_file=$(mktemp /tmp/kk-review-code-XXXXXXXX.patch) && git diff --cached > \"$diff_file\" && echo \"$diff_file\" && wc -l \"$diff_file\" && ls docs/feat/wip 2>/dev/null; ls; ls plugins/kk"
+        },
+        {
+          "sequence": 44,
+          "command": "git diff --cached"
+        },
+        {
+          "sequence": 88,
+          "command": "git show eval-release:provider/settings.py"
+        }
+      ],
+      "global_glob_metadata": [],
+      "command_matches_declaration": true,
+      "capy_config_unchanged": true
+    },
+    {
+      "run": "claude-candidate-R3-isolated-1",
+      "capture_files": 56,
+      "grading_files": 195,
+      "manifest_sha256": "4e269f8fa6a37f8aa9392b1345852732f2a91bc4fbfc17ba17a643250dbd3e8a",
+      "subject_unchanged": true,
+      "bundle_unchanged": true,
+      "runtime_unchanged": true,
+      "git_refs_and_patch_unchanged": true,
+      "models": [
+        "claude-opus-5-5"
+      ],
+      "pal_calls": 0,
+      "tool_requests": 62,
+      "shell_requests": [
+        {
+          "sequence": 21,
+          "command": "python3 /tmp/fr-entry-path-no-pal-20261011/claude-candidate-R3-isolated-1/plugins/kk/skills/review-code/scripts/prepare_instructions.py bootstrap"
+        },
+        {
+          "sequence": 41,
+          "command": "git status -sb && echo \"--- unstaged:\" && git diff --stat && echo \"--- staged:\" && git diff --cached --stat"
+        },
+        {
+          "sequence": 49,
+          "command": "ls -a . tests"
+        },
+        {
+          "sequence": 66,
+          "command": "python3 /tmp/fr-entry-path-no-pal-20261011/claude-candidate-R3-isolated-1/plugins/kk/skills/review-code/scripts/prepare_instructions.py profiles --profile python"
+        },
+        {
+          "sequence": 72,
+          "command": "python3 /tmp/fr-entry-path-no-pal-20261011/claude-candidate-R3-isolated-1/plugins/kk/skills/review-code/scripts/prepare_instructions.py checklists --profile python --load python/security-checklist.md --load python/solid-checklist.md --load python/code-quality-checklist.md --load python/removal-plan.md"
+        },
+        {
+          "sequence": 94,
+          "command": "cat README.md && echo ---- && find docs -type f | head -50 && echo ---- && cat .runner 2>/dev/null | head -30; ls -la .runner 2>/dev/null"
+        },
+        {
+          "sequence": 98,
+          "command": "for f in docs/feat/wip/enhanced-settings/*.md; do echo \"==== $f\"; cat \"$f\"; done; echo \"==== STAGED DIFF\"; git diff --cached; echo \"==== HEAD vs index identity\"; git rev-parse HEAD; git ls-files -s client.py tests/test_client.py; git diff --stat"
+        },
+        {
+          "sequence": 111,
+          "command": "git -C /tmp/fr-entry-path-no-pal-20261011/claude-candidate-R3-isolated-1 diff --cached"
+        },
+        {
+          "sequence": 122,
+          "command": "git -C /tmp/fr-entry-path-no-pal-20261011/claude-candidate-R3-isolated-1 rev-parse HEAD eval-release^{commit} eval-release:provider/settings.py"
+        },
+        {
+          "sequence": 127,
+          "command": "git -C /tmp/fr-entry-path-no-pal-20261011/claude-candidate-R3-isolated-1 show eval-release:provider/settings.py"
+        },
+        {
+          "sequence": 134,
+          "command": "mktemp -d /tmp/kk-review-evidence-XXXXXX"
+        },
+        {
+          "sequence": 138,
+          "command": "git -C /tmp/fr-entry-path-no-pal-20261011/claude-candidate-R3-isolated-1 diff --cached --output=/tmp/kk-review-evidence-hWfP8m/staged.patch"
+        },
+        {
+          "sequence": 142,
+          "command": "git -C /tmp/fr-entry-path-no-pal-20261011/claude-candidate-R3-isolated-1 cat-file blob a6aeedb05fcf8c2c11b68cf16b560bf5f245eada --filters --path=provider/settings.py"
+        },
+        {
+          "sequence": 154,
+          "command": "git hash-object /tmp/kk-review-evidence-hWfP8m/historical/eval-release/provider/settings.py"
+        }
+      ],
+      "global_glob_metadata": [],
+      "command_matches_declaration": true,
+      "capy_config_unchanged": true
+    },
+    {
+      "run": "claude-candidate-R3-isolated-2",
+      "capture_files": 55,
+      "grading_files": 200,
+      "manifest_sha256": "bc577ea2a0a68f4534782895ce671248d32f9c58a1ee3aaf7e154bee40c69be4",
+      "subject_unchanged": true,
+      "bundle_unchanged": true,
+      "runtime_unchanged": true,
+      "git_refs_and_patch_unchanged": true,
+      "models": [
+        "claude-opus-5-5"
+      ],
+      "pal_calls": 0,
+      "tool_requests": 62,
+      "shell_requests": [
+        {
+          "sequence": 19,
+          "command": "python3 plugins/kk/skills/review-code/scripts/prepare_instructions.py bootstrap"
+        },
+        {
+          "sequence": 39,
+          "command": "git status -sb && echo \"--- unstaged:\" && git diff --stat && echo \"--- staged:\" && git diff --cached --stat"
+        },
+        {
+          "sequence": 46,
+          "command": "ls -a . tests && git rev-parse --show-toplevel HEAD"
+        },
+        {
+          "sequence": 52,
+          "command": "python3 plugins/kk/skills/review-code/scripts/prepare_instructions.py profiles --profile python"
+        },
+        {
+          "sequence": 58,
+          "command": "python3 plugins/kk/skills/review-code/scripts/prepare_instructions.py checklists --profile python --load python/security-checklist.md --load python/solid-checklist.md --load python/code-quality-checklist.md --load python/removal-plan.md"
+        },
+        {
+          "sequence": 80,
+          "command": "cat README.md && echo ==== && find docs -type f | head -50 && echo ==== && cat .capy.toml .gitignore && ls -la .runner && git log --oneline --all | head"
+        },
+        {
+          "sequence": 84,
+          "command": "find docs -type f; echo '----'; cat .capy.toml .gitignore; ls -la .runner; echo '----'; git log --oneline --all --decorate | head; git tag"
+        },
+        {
+          "sequence": 96,
+          "command": "git diff --cached && echo '-----' && git show :client.py && echo '-----' && git show :tests/test_client.py && echo '----- worktree vs index' && git diff --stat"
+        },
+        {
+          "sequence": 102,
+          "command": "git rev-parse eval-release eval-release^{commit} && git ls-tree -r eval-release && echo ---- && git ls-tree -r HEAD && echo ---- && git show eval-release:provider/settings.py && echo ---- && git rev-parse eval-release:provider/settings.py && git diff --stat eval-release HEAD"
+        },
+        {
+          "sequence": 112,
+          "command": "EV=$(mktemp -d /tmp/kk-evidence-XXXXXX) && git diff --cached > \"$EV/selected.diff\" && mkdir -p \"$EV/candidate/tests\" \"$EV/historical/eval-release/provider\" && git show :client.py > \"$EV/candidate/client.py\" && git show :tests/test_client.py > \"$EV/candidate/tests/test_client.py\" && git show eval-release:provider/settings.py > \"$EV/historical/eval-release/provider/settings.py\" && cat > \"$EV/historical/manifest.json\" <<EOF\n{\n  \"repository\": \"$(pwd)\",\n  \"items\": [\n    {\"role\": \"historical baseline (named supported provider)\",\n     \"ref\": \"eval-release\",\n     \"revision\": \"$(git rev-parse eval-release)\",\n     \"original_path\": \"provider/settings.py\",\n     \"blob\": \"$(git rev-parse eval-release:provider/settings.py)\",\n     \"sha256\": \"$(sha256sum \"$EV/historical/eval-release/provider/settings.py\" | cut -d' ' -f1)\",\n     \"line_span\": \"1-3 (whole file)\",\n     \"omitted\": \"none\"}\n  ],\n  \"candidate\": {\"selector\": \"staged (index)\", \"review_base\": \"$(git rev-parse HEAD)\",\n    \"client.py_blob\": \"$(git rev-parse :client.py)\", \"tests/test_client.py_blob\": \"$(git rev-parse :tests/test_client.py)\",\n    \"note\": \"worktree identical to index for changed files\"},\n  \"notes\": \"provider/settings.py was removed from this checkout after eval-release (deleted in review base ac09e55 lineage); deployed state not verified - source-level tag comparison only.\"\n}\nEOF\nchmod -R a-w \"$EV\"; echo \"$EV\"; find \"$EV\" -type f; echo ---; python3 -B -m unittest discover -s tests 2>&1 | tail -5"
+        },
+        {
+          "sequence": 119,
+          "command": "mktemp -d /tmp/kk-evidence-XXXXXX"
+        },
+        {
+          "sequence": 123,
+          "command": "git diff --cached > /tmp/kk-evidence-CaLRxy/selected.diff && git show eval-release:provider/settings.py > /tmp/kk-evidence-CaLRxy/eval-release-provider-settings.py && sha256sum /tmp/kk-evidence-CaLRxy/*"
+        },
+        {
+          "sequence": 139,
+          "command": "python3 -B -m unittest discover -s tests"
+        }
+      ],
+      "global_glob_metadata": [],
+      "command_matches_declaration": true,
+      "capy_config_unchanged": true
+    },
+    {
+      "run": "claude-baseline-R5-isolated-1",
+      "capture_files": 47,
+      "grading_files": 132,
+      "manifest_sha256": "67091ff16b2a42b9003e3c4ae87a94604900388e558b2deec0073f459349c950",
+      "subject_unchanged": true,
+      "bundle_unchanged": true,
+      "runtime_unchanged": true,
+      "git_refs_and_patch_unchanged": true,
+      "models": [
+        "claude-opus-5-5"
+      ],
+      "pal_calls": 0,
+      "tool_requests": 36,
+      "shell_requests": [
+        {
+          "sequence": 21,
+          "command": "git status --short && git diff --stat && git diff --cached --stat"
+        },
+        {
+          "sequence": 30,
+          "command": "diff_file=$(mktemp /tmp/kk-review-code-XXXXXXXX.patch) && git diff --cached > \"$diff_file\" && echo \"$diff_file\" && wc -l \"$diff_file\" && ls; ls docs/feat/wip 2>/dev/null"
+        },
+        {
+          "sequence": 39,
+          "command": "echo \"$TOOLBOX_PLUGIN_ROOT\""
+        },
+        {
+          "sequence": 73,
+          "command": "git -C /tmp/fr-entry-path-no-pal-20261011/claude-baseline-R5-isolated-1 diff --cached"
+        }
+      ],
+      "global_glob_metadata": [],
+      "command_matches_declaration": true,
+      "capy_config_unchanged": true
+    },
+    {
+      "run": "claude-baseline-R5-isolated-2",
+      "capture_files": 46,
+      "grading_files": 123,
+      "manifest_sha256": "4f45832c1683b3c0e9f854e419376c5494864defdcb8693abe5d7fd780ca48b1",
+      "subject_unchanged": true,
+      "bundle_unchanged": true,
+      "runtime_unchanged": true,
+      "git_refs_and_patch_unchanged": true,
+      "models": [
+        "claude-opus-5-5"
+      ],
+      "pal_calls": 0,
+      "tool_requests": 32,
+      "shell_requests": [
+        {
+          "sequence": 13,
+          "command": "git status --short && git diff --stat && git diff --cached --stat; find / -name review-isolated.md -path '*review-code*' 2>/dev/null | head"
+        }
+      ],
+      "global_glob_metadata": [
+        {
+          "request": 18,
+          "result": 21,
+          "pattern": "**/review-code/**/review-isolated.md",
+          "external_instruction_filenames_returned": true,
+          "evaluator_directory_names_returned": false
+        }
+      ],
+      "command_matches_declaration": true,
+      "capy_config_unchanged": true
+    },
+    {
+      "run": "claude-candidate-R5-isolated-1",
+      "capture_files": 59,
+      "grading_files": 207,
+      "manifest_sha256": "1d5b4f9338f14e767a3eb740a7a0c3fdcf57d3037ca98b8ce61d7cb5c80a3953",
+      "subject_unchanged": true,
+      "bundle_unchanged": true,
+      "runtime_unchanged": true,
+      "git_refs_and_patch_unchanged": true,
+      "models": [
+        "claude-opus-5-5"
+      ],
+      "pal_calls": 0,
+      "tool_requests": 65,
+      "shell_requests": [
+        {
+          "sequence": 19,
+          "command": "python3 /tmp/fr-entry-path-no-pal-20261011/claude-candidate-R5-isolated-1/plugins/kk/skills/review-code/scripts/prepare_instructions.py bootstrap"
+        },
+        {
+          "sequence": 39,
+          "command": "git status -sb && echo --- && git diff --stat && echo --- && git diff --cached --stat"
+        },
+        {
+          "sequence": 46,
+          "command": "ls -a && test -e SKILL.md && echo \"root SKILL.md exists\" || echo \"no root SKILL.md\"; test -e ../SKILL.md && echo \"parent SKILL.md\" || echo \"no parent SKILL.md\""
+        },
+        {
+          "sequence": 66,
+          "command": "python3 /tmp/fr-entry-path-no-pal-20261011/claude-candidate-R5-isolated-1/plugins/kk/skills/review-code/scripts/prepare_instructions.py profiles --profile python"
+        },
+        {
+          "sequence": 72,
+          "command": "python3 /tmp/fr-entry-path-no-pal-20261011/claude-candidate-R5-isolated-1/plugins/kk/skills/review-code/scripts/prepare_instructions.py checklists --profile python --load python/security-checklist.md --load python/solid-checklist.md --load python/code-quality-checklist.md --load python/removal-plan.md"
+        },
+        {
+          "sequence": 100,
+          "command": "cat README.md; echo ==== TASKS; cat tasks.md; echo ====; ls -la tests .runner; cat .gitignore .capy.toml; git log --oneline -5"
+        },
+        {
+          "sequence": 104,
+          "command": "echo \"---- tasks.md\"; cat tasks.md; echo \"---- ls\"; ls -la tests .runner; echo \"---- gitignore\"; cat .gitignore; echo \"---- capy\"; cat .capy.toml; git log --oneline -5"
+        },
+        {
+          "sequence": 109,
+          "command": "git diff --cached; echo \"---- worktree vs index\"; git diff --name-only; echo \"---- untracked\"; git ls-files --others --exclude-standard"
+        },
+        {
+          "sequence": 114,
+          "command": "for f in config.py settings.py routes.py preview.py tests/test_routes.py; do echo \"---- $f\"; cat -n \"$f\"; done; echo \"---- git grep consumers\"; git grep -n -e EXPORT_PREVIEW_ENABLED -e render_preview -e \"import routes\" -e \"from routes\" -e \"routes\\.\" -- . ':!plugins'"
+        },
+        {
+          "sequence": 141,
+          "command": "mktemp -d /tmp/kk-review-code-XXXXXX"
+        },
+        {
+          "sequence": 152,
+          "command": "git -C /tmp/fr-entry-path-no-pal-20261011/claude-candidate-R5-isolated-1 diff --cached --output=/tmp/kk-review-code-yVs7qT/staged.patch"
+        },
+        {
+          "sequence": 162,
+          "command": "python3 -B -m unittest discover -s /tmp/fr-entry-path-no-pal-20261011/claude-candidate-R5-isolated-1/tests -t /tmp/fr-entry-path-no-pal-20261011/claude-candidate-R5-isolated-1 -v"
+        },
+        {
+          "sequence": 169,
+          "command": "python3 -B -m unittest discover -s tests -v"
+        },
+        {
+          "sequence": 286,
+          "command": "rm -r /tmp/kk-review-code-yVs7qT /tmp/kk-review-instructions-vzg_mxcf /tmp/kk-review-instructions-j7eny78z /tmp/kk-review-instructions-dtbv21tx"
+        }
+      ],
+      "global_glob_metadata": [],
+      "command_matches_declaration": true,
+      "capy_config_unchanged": true
+    },
+    {
+      "run": "claude-candidate-R5-isolated-2",
+      "capture_files": 59,
+      "grading_files": 185,
+      "manifest_sha256": "752d536a59b1d816d145554286911da0663150c1905921453a13abc0c166d92d",
+      "subject_unchanged": true,
+      "bundle_unchanged": true,
+      "runtime_unchanged": true,
+      "git_refs_and_patch_unchanged": true,
+      "models": [
+        "claude-opus-5-5"
+      ],
+      "pal_calls": 0,
+      "tool_requests": 55,
+      "shell_requests": [
+        {
+          "sequence": 19,
+          "command": "python3 /tmp/fr-entry-path-no-pal-20261011/claude-candidate-R5-isolated-2/plugins/kk/skills/review-code/scripts/prepare_instructions.py bootstrap"
+        },
+        {
+          "sequence": 39,
+          "command": "git status -sb && echo --- && git diff --stat && echo --- && git diff --cached --stat"
+        },
+        {
+          "sequence": 46,
+          "command": "ls -a && test -e SKILL.md && echo \"root SKILL.md present\" || echo \"no root SKILL.md\"; test -e Chart.yaml && echo chart || true"
+        },
+        {
+          "sequence": 50,
+          "command": "python3 /tmp/fr-entry-path-no-pal-20261011/claude-candidate-R5-isolated-2/plugins/kk/skills/review-code/scripts/prepare_instructions.py profiles --profile python"
+        },
+        {
+          "sequence": 56,
+          "command": "python3 /tmp/fr-entry-path-no-pal-20261011/claude-candidate-R5-isolated-2/plugins/kk/skills/review-code/scripts/prepare_instructions.py checklists --profile python --load python/security-checklist.md --load python/solid-checklist.md --load python/code-quality-checklist.md --load python/removal-plan.md"
+        },
+        {
+          "sequence": 92,
+          "command": "git diff --cached && echo ==== && git diff --quiet && echo \"worktree==index\" ; ls tests; cat .runner 2>/dev/null | head -20; cat .gitignore"
+        },
+        {
+          "sequence": 96,
+          "command": "git diff --quiet && echo \"worktree matches index\"; ls -la tests .runner; echo; cat .gitignore; echo; cat config.py; echo; cat settings.py; echo; git ls-files; echo; git ls-files --error-unmatch config.py"
+        },
+        {
+          "sequence": 102,
+          "command": "git log --oneline --all -- config.py | head; git show HEAD:config.py; echo; git grep -n \"routes\\|EXPORT_PREVIEW\" HEAD -- . ':!plugins' | head -20"
+        },
+        {
+          "sequence": 109,
+          "command": "python3 -B -m unittest discover -s tests -v 2>&1 | tail -15"
+        },
+        {
+          "sequence": 118,
+          "command": "d=$(mktemp -d /tmp/kk-review-code-XXXXXX) && git diff --cached > \"$d/staged.patch\" && mkdir \"$d/candidate\" && for f in preview.py routes.py config.py settings.py tests/test_routes.py README.md tasks.md; do mkdir -p \"$d/candidate/$(dirname $f)\"; git show \":$f\" > \"$d/candidate/$f\"; done && git rev-parse HEAD && find \"$d\" -type f && chmod -R a-w \"$d\""
+        },
+        {
+          "sequence": 244,
+          "command": "rm -rf /tmp/kk-review-instructions-45kkp6j_ /tmp/kk-review-instructions-fnv9s2gr /tmp/kk-review-instructions-5wph0q7n"
+        }
+      ],
+      "global_glob_metadata": [],
+      "command_matches_declaration": true,
+      "capy_config_unchanged": true
+    },
+    {
+      "run": "claude-baseline-R9-recovery-isolated-1",
+      "capture_files": 38,
+      "grading_files": 107,
+      "manifest_sha256": "5baef454d0c7e11cd950b01c7e87a63821da1fbc732455caba4e8db7890459f9",
+      "subject_unchanged": true,
+      "bundle_unchanged": true,
+      "runtime_unchanged": true,
+      "git_refs_and_patch_unchanged": true,
+      "models": [
+        "claude-opus-5-5"
+      ],
+      "pal_calls": 0,
+      "tool_requests": 28,
+      "shell_requests": [
+        {
+          "sequence": 21,
+          "command": "git status --short && git diff --stat && git diff --cached --stat"
+        },
+        {
+          "sequence": 28,
+          "command": "diff_file=$(mktemp /tmp/kk-review-code-XXXXXXXX.patch) && git diff --cached > \"$diff_file\" && echo \"$diff_file\" && wc -l \"$diff_file\" && ls plugins/kk plugins/kk/profiles 2>/dev/null; ls docs/feat/wip 2>/dev/null; ls"
+        },
+        {
+          "sequence": 38,
+          "command": "git -C /tmp/fr-entry-path-no-pal-20261011/claude-baseline-R9-recovery-isolated-1 diff --cached --stat"
+        },
+        {
+          "sequence": 66,
+          "command": "git -C /tmp/fr-entry-path-no-pal-20261011/claude-baseline-R9-recovery-isolated-1 diff --cached"
+        },
+        {
+          "sequence": 136,
+          "command": "python3 -B -m unittest discover -s tests"
+        }
+      ],
+      "global_glob_metadata": [],
+      "command_matches_declaration": true,
+      "capy_config_unchanged": true
+    },
+    {
+      "run": "claude-baseline-R9-recovery-isolated-2",
+      "capture_files": 30,
+      "grading_files": 56,
+      "manifest_sha256": "747c2f0aa7b7a98386ae988783b2da3c6592c1e90247999dd5a968e86cf111f3",
+      "subject_unchanged": true,
+      "bundle_unchanged": true,
+      "runtime_unchanged": true,
+      "git_refs_and_patch_unchanged": true,
+      "models": [
+        "claude-opus-5-5"
+      ],
+      "pal_calls": 0,
+      "tool_requests": 8,
+      "shell_requests": [
+        {
+          "sequence": 18,
+          "command": "git diff --stat; echo ---; git diff --cached --stat; ls plugins/kk/skills/review-code/ plugins/kk; ls docs/feat/wip 2>/dev/null"
+        },
+        {
+          "sequence": 31,
+          "command": "echo \"ROOT=$TOOLBOX_PLUGIN_ROOT\"; ls plugins/kk/profiles/ plugins/kk/profiles/python plugins/kk/profiles/python/review-code; diff_file=$(mktemp /tmp/kk-review-code-XXXXXXXX.patch); git diff --cached > \"$diff_file\" && wc -l \"$diff_file\" && echo \"$diff_file\""
+        }
+      ],
+      "global_glob_metadata": [],
+      "command_matches_declaration": true,
+      "capy_config_unchanged": true
+    },
+    {
+      "run": "claude-candidate-R9-recovery-isolated-1",
+      "capture_files": 52,
+      "grading_files": 188,
+      "manifest_sha256": "eb7766cceb2939fadfe649a8083621240b3754fd81dcb730216d7a70ecc6fe1c",
+      "subject_unchanged": true,
+      "bundle_unchanged": true,
+      "runtime_unchanged": true,
+      "git_refs_and_patch_unchanged": true,
+      "models": [
+        "claude-opus-5-5"
+      ],
+      "pal_calls": 0,
+      "tool_requests": 58,
+      "shell_requests": [
+        {
+          "sequence": 19,
+          "command": "python3 /tmp/fr-entry-path-no-pal-20261011/claude-candidate-R9-recovery-isolated-1/plugins/kk/skills/review-code/scripts/prepare_instructions.py bootstrap"
+        },
+        {
+          "sequence": 42,
+          "command": "git status -sb && echo '--- unstaged' && git diff --stat && echo '--- staged' && git diff --cached --stat"
+        },
+        {
+          "sequence": 60,
+          "command": "for d in . tests; do ls -1 \"$d\" | grep -x 'SKILL.md' && echo \"found in $d\"; done; ls /tmp/fr-entry-path-no-pal-20261011/SKILL.md /tmp/SKILL.md 2>&1; git rev-parse --show-toplevel"
+        },
+        {
+          "sequence": 88,
+          "command": "python3 /tmp/fr-entry-path-no-pal-20261011/claude-candidate-R9-recovery-isolated-1/plugins/kk/skills/review-code/scripts/prepare_instructions.py profiles --profile python"
+        },
+        {
+          "sequence": 95,
+          "command": "python3 /tmp/fr-entry-path-no-pal-20261011/claude-candidate-R9-recovery-isolated-1/plugins/kk/skills/review-code/scripts/prepare_instructions.py checklists --profile python --load python/security-checklist.md --load python/solid-checklist.md --load python/code-quality-checklist.md --load python/removal-plan.md"
+        },
+        {
+          "sequence": 133,
+          "command": "git diff --cached"
+        },
+        {
+          "sequence": 161,
+          "command": "python3 -B -m unittest discover -s tests -v 2>&1"
+        },
+        {
+          "sequence": 165,
+          "command": "d=$(mktemp -d /tmp/kk-review-code-XXXXXX) && git -C /tmp/fr-entry-path-no-pal-20261011/claude-candidate-R9-recovery-isolated-1 diff --cached > \"$d/staged.patch\" && git -C /tmp/fr-entry-path-no-pal-20261011/claude-candidate-R9-recovery-isolated-1 rev-parse HEAD && git -C /tmp/fr-entry-path-no-pal-20261011/claude-candidate-R9-recovery-isolated-1 ls-files -s reader.py tests/test_reads.py preferences.py repository.py README.md && echo \"$d\""
+        },
+        {
+          "sequence": 174,
+          "command": "git rev-parse HEAD"
+        },
+        {
+          "sequence": 178,
+          "command": "git ls-files -s reader.py tests/test_reads.py preferences.py repository.py README.md"
+        },
+        {
+          "sequence": 287,
+          "command": "rm -r /tmp/kk-review-code-7c0410c-staged /tmp/kk-review-instructions-6rs25abx /tmp/kk-review-instructions-4yo5sbve /tmp/kk-review-instructions-u1xvqytc"
+        }
+      ],
+      "global_glob_metadata": [],
+      "command_matches_declaration": true,
+      "capy_config_unchanged": true
+    },
+    {
+      "run": "claude-candidate-R9-recovery-isolated-2",
+      "capture_files": 52,
+      "grading_files": 176,
+      "manifest_sha256": "3497be23bce9088f975bc7f1c21956cb8517e46842f732418df0587e702c3920",
+      "subject_unchanged": true,
+      "bundle_unchanged": true,
+      "runtime_unchanged": true,
+      "git_refs_and_patch_unchanged": true,
+      "models": [
+        "claude-opus-5-5"
+      ],
+      "pal_calls": 0,
+      "tool_requests": 53,
+      "shell_requests": [
+        {
+          "sequence": 20,
+          "command": "python3 /tmp/fr-entry-path-no-pal-20261011/claude-candidate-R9-recovery-isolated-2/plugins/kk/skills/review-code/scripts/prepare_instructions.py bootstrap"
+        },
+        {
+          "sequence": 40,
+          "command": "git status -sb && echo \"--- unstaged:\" && git diff --stat && echo \"--- staged:\" && git diff --cached --stat"
+        },
+        {
+          "sequence": 48,
+          "command": "ls -a . tests; git ls-files | grep -E '(^|/)SKILL\\.md$|(^|/)PROJECT$|Makefile' | head"
+        },
+        {
+          "sequence": 67,
+          "command": "python3 /tmp/fr-entry-path-no-pal-20261011/claude-candidate-R9-recovery-isolated-2/plugins/kk/skills/review-code/scripts/prepare_instructions.py profiles --profile python"
+        },
+        {
+          "sequence": 73,
+          "command": "python3 /tmp/fr-entry-path-no-pal-20261011/claude-candidate-R9-recovery-isolated-2/plugins/kk/skills/review-code/scripts/prepare_instructions.py checklists --profile python --load python/security-checklist.md --load python/solid-checklist.md --load python/code-quality-checklist.md --load python/removal-plan.md"
+        },
+        {
+          "sequence": 97,
+          "command": "git diff --cached && echo \"=== tracked files\" && git ls-files | grep -v '^plugins/' && echo \"=== log\" && git log --oneline -5"
+        },
+        {
+          "sequence": 114,
+          "command": "git diff --quiet && echo \"worktree==index for tracked files\" ; python3 -B -m unittest discover -s tests -v 2>&1 | tail -15"
+        },
+        {
+          "sequence": 122,
+          "command": "D=$(mktemp -d /tmp/kk-review-evidence-XXXXXX) && git diff --cached > \"$D/staged.patch\" && echo \"$D\" && git rev-parse HEAD && git ls-files -s reader.py tests/test_reads.py preferences.py repository.py README.md"
+        },
+        {
+          "sequence": 223,
+          "command": "rm -r /tmp/kk-review-evidence-r9iso2 /tmp/kk-review-instructions-vjkub7n1 /tmp/kk-review-instructions-706h_sg_ /tmp/kk-review-instructions-_sbbbbd2"
+        }
+      ],
+      "global_glob_metadata": [],
+      "command_matches_declaration": true,
+      "capy_config_unchanged": true
+    }
+  ],
+  "capture_files": 582,
+  "grading_files": 1835,
+  "observations": [
+    {
+      "run": "claude-baseline-R3-isolated-1",
+      "side": "baseline",
+      "case": "R3",
+      "repetition": 1,
+      "assertion": "7.1",
+      "verdict": "FAIL",
+      "grade": "grades/claude-baseline-R3-isolated-1.md"
+    },
+    {
+      "run": "claude-baseline-R3-isolated-1",
+      "side": "baseline",
+      "case": "R3",
+      "repetition": 1,
+      "assertion": "7.2",
+      "verdict": "PASS",
+      "grade": "grades/claude-baseline-R3-isolated-1.md"
+    },
+    {
+      "run": "claude-baseline-R3-isolated-1",
+      "side": "baseline",
+      "case": "R3",
+      "repetition": 1,
+      "assertion": "7.3",
+      "verdict": "PASS",
+      "grade": "grades/claude-baseline-R3-isolated-1.md"
+    },
+    {
+      "run": "claude-baseline-R3-isolated-1",
+      "side": "baseline",
+      "case": "R3",
+      "repetition": 1,
+      "assertion": "7.4",
+      "verdict": "PASS",
+      "grade": "grades/claude-baseline-R3-isolated-1.md"
+    },
+    {
+      "run": "claude-baseline-R3-isolated-1",
+      "side": "baseline",
+      "case": "R3",
+      "repetition": 1,
+      "assertion": "7.5",
+      "verdict": "FAIL",
+      "grade": "grades/claude-baseline-R3-isolated-1.md"
+    },
+    {
+      "run": "claude-baseline-R3-isolated-1",
+      "side": "baseline",
+      "case": "R3",
+      "repetition": 1,
+      "assertion": "7.6",
+      "verdict": "FAIL",
+      "grade": "grades/claude-baseline-R3-isolated-1.md"
+    },
+    {
+      "run": "claude-baseline-R3-isolated-1",
+      "side": "baseline",
+      "case": "R3",
+      "repetition": 1,
+      "assertion": "7.7",
+      "verdict": "FAIL",
+      "grade": "grades/claude-baseline-R3-isolated-1.md"
+    },
+    {
+      "run": "claude-baseline-R3-isolated-1",
+      "side": "baseline",
+      "case": "R3",
+      "repetition": 1,
+      "assertion": "7.8",
+      "verdict": "PASS",
+      "grade": "grades/claude-baseline-R3-isolated-1.md"
+    },
+    {
+      "run": "claude-baseline-R3-isolated-2",
+      "side": "baseline",
+      "case": "R3",
+      "repetition": 2,
+      "assertion": "7.1",
+      "verdict": "FAIL",
+      "grade": "grades/claude-baseline-R3-isolated-2.md"
+    },
+    {
+      "run": "claude-baseline-R3-isolated-2",
+      "side": "baseline",
+      "case": "R3",
+      "repetition": 2,
+      "assertion": "7.2",
+      "verdict": "PASS",
+      "grade": "grades/claude-baseline-R3-isolated-2.md"
+    },
+    {
+      "run": "claude-baseline-R3-isolated-2",
+      "side": "baseline",
+      "case": "R3",
+      "repetition": 2,
+      "assertion": "7.3",
+      "verdict": "PASS",
+      "grade": "grades/claude-baseline-R3-isolated-2.md"
+    },
+    {
+      "run": "claude-baseline-R3-isolated-2",
+      "side": "baseline",
+      "case": "R3",
+      "repetition": 2,
+      "assertion": "7.4",
+      "verdict": "PASS",
+      "grade": "grades/claude-baseline-R3-isolated-2.md"
+    },
+    {
+      "run": "claude-baseline-R3-isolated-2",
+      "side": "baseline",
+      "case": "R3",
+      "repetition": 2,
+      "assertion": "7.5",
+      "verdict": "FAIL",
+      "grade": "grades/claude-baseline-R3-isolated-2.md"
+    },
+    {
+      "run": "claude-baseline-R3-isolated-2",
+      "side": "baseline",
+      "case": "R3",
+      "repetition": 2,
+      "assertion": "7.6",
+      "verdict": "FAIL",
+      "grade": "grades/claude-baseline-R3-isolated-2.md"
+    },
+    {
+      "run": "claude-baseline-R3-isolated-2",
+      "side": "baseline",
+      "case": "R3",
+      "repetition": 2,
+      "assertion": "7.7",
+      "verdict": "FAIL",
+      "grade": "grades/claude-baseline-R3-isolated-2.md"
+    },
+    {
+      "run": "claude-baseline-R3-isolated-2",
+      "side": "baseline",
+      "case": "R3",
+      "repetition": 2,
+      "assertion": "7.8",
+      "verdict": "PASS",
+      "grade": "grades/claude-baseline-R3-isolated-2.md"
+    },
+    {
+      "run": "claude-candidate-R3-isolated-1",
+      "side": "candidate",
+      "case": "R3",
+      "repetition": 1,
+      "assertion": "7.1",
+      "verdict": "PASS",
+      "grade": "grades/claude-candidate-R3-isolated-1.md"
+    },
+    {
+      "run": "claude-candidate-R3-isolated-1",
+      "side": "candidate",
+      "case": "R3",
+      "repetition": 1,
+      "assertion": "7.2",
+      "verdict": "PASS",
+      "grade": "grades/claude-candidate-R3-isolated-1.md"
+    },
+    {
+      "run": "claude-candidate-R3-isolated-1",
+      "side": "candidate",
+      "case": "R3",
+      "repetition": 1,
+      "assertion": "7.3",
+      "verdict": "PASS",
+      "grade": "grades/claude-candidate-R3-isolated-1.md"
+    },
+    {
+      "run": "claude-candidate-R3-isolated-1",
+      "side": "candidate",
+      "case": "R3",
+      "repetition": 1,
+      "assertion": "7.4",
+      "verdict": "PASS",
+      "grade": "grades/claude-candidate-R3-isolated-1.md"
+    },
+    {
+      "run": "claude-candidate-R3-isolated-1",
+      "side": "candidate",
+      "case": "R3",
+      "repetition": 1,
+      "assertion": "7.5",
+      "verdict": "FAIL",
+      "grade": "grades/claude-candidate-R3-isolated-1.md"
+    },
+    {
+      "run": "claude-candidate-R3-isolated-1",
+      "side": "candidate",
+      "case": "R3",
+      "repetition": 1,
+      "assertion": "7.6",
+      "verdict": "FAIL",
+      "grade": "grades/claude-candidate-R3-isolated-1.md"
+    },
+    {
+      "run": "claude-candidate-R3-isolated-1",
+      "side": "candidate",
+      "case": "R3",
+      "repetition": 1,
+      "assertion": "7.7",
+      "verdict": "PASS",
+      "grade": "grades/claude-candidate-R3-isolated-1.md"
+    },
+    {
+      "run": "claude-candidate-R3-isolated-1",
+      "side": "candidate",
+      "case": "R3",
+      "repetition": 1,
+      "assertion": "7.8",
+      "verdict": "PASS",
+      "grade": "grades/claude-candidate-R3-isolated-1.md"
+    },
+    {
+      "run": "claude-candidate-R3-isolated-2",
+      "side": "candidate",
+      "case": "R3",
+      "repetition": 2,
+      "assertion": "7.1",
+      "verdict": "PASS",
+      "grade": "grades/claude-candidate-R3-isolated-2.md"
+    },
+    {
+      "run": "claude-candidate-R3-isolated-2",
+      "side": "candidate",
+      "case": "R3",
+      "repetition": 2,
+      "assertion": "7.2",
+      "verdict": "PASS",
+      "grade": "grades/claude-candidate-R3-isolated-2.md"
+    },
+    {
+      "run": "claude-candidate-R3-isolated-2",
+      "side": "candidate",
+      "case": "R3",
+      "repetition": 2,
+      "assertion": "7.3",
+      "verdict": "PASS",
+      "grade": "grades/claude-candidate-R3-isolated-2.md"
+    },
+    {
+      "run": "claude-candidate-R3-isolated-2",
+      "side": "candidate",
+      "case": "R3",
+      "repetition": 2,
+      "assertion": "7.4",
+      "verdict": "PASS",
+      "grade": "grades/claude-candidate-R3-isolated-2.md"
+    },
+    {
+      "run": "claude-candidate-R3-isolated-2",
+      "side": "candidate",
+      "case": "R3",
+      "repetition": 2,
+      "assertion": "7.5",
+      "verdict": "FAIL",
+      "grade": "grades/claude-candidate-R3-isolated-2.md"
+    },
+    {
+      "run": "claude-candidate-R3-isolated-2",
+      "side": "candidate",
+      "case": "R3",
+      "repetition": 2,
+      "assertion": "7.6",
+      "verdict": "FAIL",
+      "grade": "grades/claude-candidate-R3-isolated-2.md"
+    },
+    {
+      "run": "claude-candidate-R3-isolated-2",
+      "side": "candidate",
+      "case": "R3",
+      "repetition": 2,
+      "assertion": "7.7",
+      "verdict": "PASS",
+      "grade": "grades/claude-candidate-R3-isolated-2.md"
+    },
+    {
+      "run": "claude-candidate-R3-isolated-2",
+      "side": "candidate",
+      "case": "R3",
+      "repetition": 2,
+      "assertion": "7.8",
+      "verdict": "PASS",
+      "grade": "grades/claude-candidate-R3-isolated-2.md"
+    },
+    {
+      "run": "claude-baseline-R5-isolated-1",
+      "side": "baseline",
+      "case": "R5",
+      "repetition": 1,
+      "assertion": "12.1",
+      "verdict": "FAIL",
+      "grade": "grades/claude-baseline-R5-isolated-1.md"
+    },
+    {
+      "run": "claude-baseline-R5-isolated-1",
+      "side": "baseline",
+      "case": "R5",
+      "repetition": 1,
+      "assertion": "12.2",
+      "verdict": "PASS",
+      "grade": "grades/claude-baseline-R5-isolated-1.md"
+    },
+    {
+      "run": "claude-baseline-R5-isolated-1",
+      "side": "baseline",
+      "case": "R5",
+      "repetition": 1,
+      "assertion": "12.3",
+      "verdict": "PASS",
+      "grade": "grades/claude-baseline-R5-isolated-1.md"
+    },
+    {
+      "run": "claude-baseline-R5-isolated-1",
+      "side": "baseline",
+      "case": "R5",
+      "repetition": 1,
+      "assertion": "12.4",
+      "verdict": "FAIL",
+      "grade": "grades/claude-baseline-R5-isolated-1.md"
+    },
+    {
+      "run": "claude-baseline-R5-isolated-1",
+      "side": "baseline",
+      "case": "R5",
+      "repetition": 1,
+      "assertion": "12.5",
+      "verdict": "PASS",
+      "grade": "grades/claude-baseline-R5-isolated-1.md"
+    },
+    {
+      "run": "claude-baseline-R5-isolated-1",
+      "side": "baseline",
+      "case": "R5",
+      "repetition": 1,
+      "assertion": "12.6",
+      "verdict": "FAIL",
+      "grade": "grades/claude-baseline-R5-isolated-1.md"
+    },
+    {
+      "run": "claude-baseline-R5-isolated-2",
+      "side": "baseline",
+      "case": "R5",
+      "repetition": 2,
+      "assertion": "12.1",
+      "verdict": "FAIL",
+      "grade": "grades/claude-baseline-R5-isolated-2.md"
+    },
+    {
+      "run": "claude-baseline-R5-isolated-2",
+      "side": "baseline",
+      "case": "R5",
+      "repetition": 2,
+      "assertion": "12.2",
+      "verdict": "PASS",
+      "grade": "grades/claude-baseline-R5-isolated-2.md"
+    },
+    {
+      "run": "claude-baseline-R5-isolated-2",
+      "side": "baseline",
+      "case": "R5",
+      "repetition": 2,
+      "assertion": "12.3",
+      "verdict": "PASS",
+      "grade": "grades/claude-baseline-R5-isolated-2.md"
+    },
+    {
+      "run": "claude-baseline-R5-isolated-2",
+      "side": "baseline",
+      "case": "R5",
+      "repetition": 2,
+      "assertion": "12.4",
+      "verdict": "PASS",
+      "grade": "grades/claude-baseline-R5-isolated-2.md"
+    },
+    {
+      "run": "claude-baseline-R5-isolated-2",
+      "side": "baseline",
+      "case": "R5",
+      "repetition": 2,
+      "assertion": "12.5",
+      "verdict": "PASS",
+      "grade": "grades/claude-baseline-R5-isolated-2.md"
+    },
+    {
+      "run": "claude-baseline-R5-isolated-2",
+      "side": "baseline",
+      "case": "R5",
+      "repetition": 2,
+      "assertion": "12.6",
+      "verdict": "FAIL",
+      "grade": "grades/claude-baseline-R5-isolated-2.md"
+    },
+    {
+      "run": "claude-candidate-R5-isolated-1",
+      "side": "candidate",
+      "case": "R5",
+      "repetition": 1,
+      "assertion": "12.1",
+      "verdict": "PASS",
+      "grade": "grades/claude-candidate-R5-isolated-1.md"
+    },
+    {
+      "run": "claude-candidate-R5-isolated-1",
+      "side": "candidate",
+      "case": "R5",
+      "repetition": 1,
+      "assertion": "12.2",
+      "verdict": "PASS",
+      "grade": "grades/claude-candidate-R5-isolated-1.md"
+    },
+    {
+      "run": "claude-candidate-R5-isolated-1",
+      "side": "candidate",
+      "case": "R5",
+      "repetition": 1,
+      "assertion": "12.3",
+      "verdict": "PASS",
+      "grade": "grades/claude-candidate-R5-isolated-1.md"
+    },
+    {
+      "run": "claude-candidate-R5-isolated-1",
+      "side": "candidate",
+      "case": "R5",
+      "repetition": 1,
+      "assertion": "12.4",
+      "verdict": "PASS",
+      "grade": "grades/claude-candidate-R5-isolated-1.md"
+    },
+    {
+      "run": "claude-candidate-R5-isolated-1",
+      "side": "candidate",
+      "case": "R5",
+      "repetition": 1,
+      "assertion": "12.5",
+      "verdict": "PASS",
+      "grade": "grades/claude-candidate-R5-isolated-1.md"
+    },
+    {
+      "run": "claude-candidate-R5-isolated-1",
+      "side": "candidate",
+      "case": "R5",
+      "repetition": 1,
+      "assertion": "12.6",
+      "verdict": "FAIL",
+      "grade": "grades/claude-candidate-R5-isolated-1.md"
+    },
+    {
+      "run": "claude-candidate-R5-isolated-2",
+      "side": "candidate",
+      "case": "R5",
+      "repetition": 2,
+      "assertion": "12.1",
+      "verdict": "PASS",
+      "grade": "grades/claude-candidate-R5-isolated-2.md"
+    },
+    {
+      "run": "claude-candidate-R5-isolated-2",
+      "side": "candidate",
+      "case": "R5",
+      "repetition": 2,
+      "assertion": "12.2",
+      "verdict": "PASS",
+      "grade": "grades/claude-candidate-R5-isolated-2.md"
+    },
+    {
+      "run": "claude-candidate-R5-isolated-2",
+      "side": "candidate",
+      "case": "R5",
+      "repetition": 2,
+      "assertion": "12.3",
+      "verdict": "PASS",
+      "grade": "grades/claude-candidate-R5-isolated-2.md"
+    },
+    {
+      "run": "claude-candidate-R5-isolated-2",
+      "side": "candidate",
+      "case": "R5",
+      "repetition": 2,
+      "assertion": "12.4",
+      "verdict": "PASS",
+      "grade": "grades/claude-candidate-R5-isolated-2.md"
+    },
+    {
+      "run": "claude-candidate-R5-isolated-2",
+      "side": "candidate",
+      "case": "R5",
+      "repetition": 2,
+      "assertion": "12.5",
+      "verdict": "PASS",
+      "grade": "grades/claude-candidate-R5-isolated-2.md"
+    },
+    {
+      "run": "claude-candidate-R5-isolated-2",
+      "side": "candidate",
+      "case": "R5",
+      "repetition": 2,
+      "assertion": "12.6",
+      "verdict": "FAIL",
+      "grade": "grades/claude-candidate-R5-isolated-2.md"
+    },
+    {
+      "run": "claude-baseline-R9-recovery-isolated-1",
+      "side": "baseline",
+      "case": "R9-recovery",
+      "repetition": 1,
+      "assertion": "11.1",
+      "verdict": "FAIL",
+      "grade": "grades/claude-baseline-R9-recovery-isolated-1.md"
+    },
+    {
+      "run": "claude-baseline-R9-recovery-isolated-1",
+      "side": "baseline",
+      "case": "R9-recovery",
+      "repetition": 1,
+      "assertion": "11.2",
+      "verdict": "PASS",
+      "grade": "grades/claude-baseline-R9-recovery-isolated-1.md"
+    },
+    {
+      "run": "claude-baseline-R9-recovery-isolated-1",
+      "side": "baseline",
+      "case": "R9-recovery",
+      "repetition": 1,
+      "assertion": "11.3",
+      "verdict": "PASS",
+      "grade": "grades/claude-baseline-R9-recovery-isolated-1.md"
+    },
+    {
+      "run": "claude-baseline-R9-recovery-isolated-1",
+      "side": "baseline",
+      "case": "R9-recovery",
+      "repetition": 1,
+      "assertion": "11.4",
+      "verdict": "PASS",
+      "grade": "grades/claude-baseline-R9-recovery-isolated-1.md"
+    },
+    {
+      "run": "claude-baseline-R9-recovery-isolated-1",
+      "side": "baseline",
+      "case": "R9-recovery",
+      "repetition": 1,
+      "assertion": "11.5",
+      "verdict": "PASS",
+      "grade": "grades/claude-baseline-R9-recovery-isolated-1.md"
+    },
+    {
+      "run": "claude-baseline-R9-recovery-isolated-1",
+      "side": "baseline",
+      "case": "R9-recovery",
+      "repetition": 1,
+      "assertion": "11.6",
+      "verdict": "FAIL",
+      "grade": "grades/claude-baseline-R9-recovery-isolated-1.md"
+    },
+    {
+      "run": "claude-baseline-R9-recovery-isolated-2",
+      "side": "baseline",
+      "case": "R9-recovery",
+      "repetition": 2,
+      "assertion": "11.1",
+      "verdict": "FAIL",
+      "grade": "grades/claude-baseline-R9-recovery-isolated-2.md"
+    },
+    {
+      "run": "claude-baseline-R9-recovery-isolated-2",
+      "side": "baseline",
+      "case": "R9-recovery",
+      "repetition": 2,
+      "assertion": "11.2",
+      "verdict": "FAIL",
+      "grade": "grades/claude-baseline-R9-recovery-isolated-2.md"
+    },
+    {
+      "run": "claude-baseline-R9-recovery-isolated-2",
+      "side": "baseline",
+      "case": "R9-recovery",
+      "repetition": 2,
+      "assertion": "11.3",
+      "verdict": "FAIL",
+      "grade": "grades/claude-baseline-R9-recovery-isolated-2.md"
+    },
+    {
+      "run": "claude-baseline-R9-recovery-isolated-2",
+      "side": "baseline",
+      "case": "R9-recovery",
+      "repetition": 2,
+      "assertion": "11.4",
+      "verdict": "PASS",
+      "grade": "grades/claude-baseline-R9-recovery-isolated-2.md"
+    },
+    {
+      "run": "claude-baseline-R9-recovery-isolated-2",
+      "side": "baseline",
+      "case": "R9-recovery",
+      "repetition": 2,
+      "assertion": "11.5",
+      "verdict": "FAIL",
+      "grade": "grades/claude-baseline-R9-recovery-isolated-2.md"
+    },
+    {
+      "run": "claude-baseline-R9-recovery-isolated-2",
+      "side": "baseline",
+      "case": "R9-recovery",
+      "repetition": 2,
+      "assertion": "11.6",
+      "verdict": "FAIL",
+      "grade": "grades/claude-baseline-R9-recovery-isolated-2.md"
+    },
+    {
+      "run": "claude-candidate-R9-recovery-isolated-1",
+      "side": "candidate",
+      "case": "R9-recovery",
+      "repetition": 1,
+      "assertion": "11.1",
+      "verdict": "PASS",
+      "grade": "grades/claude-candidate-R9-recovery-isolated-1.md"
+    },
+    {
+      "run": "claude-candidate-R9-recovery-isolated-1",
+      "side": "candidate",
+      "case": "R9-recovery",
+      "repetition": 1,
+      "assertion": "11.2",
+      "verdict": "PASS",
+      "grade": "grades/claude-candidate-R9-recovery-isolated-1.md"
+    },
+    {
+      "run": "claude-candidate-R9-recovery-isolated-1",
+      "side": "candidate",
+      "case": "R9-recovery",
+      "repetition": 1,
+      "assertion": "11.3",
+      "verdict": "PASS",
+      "grade": "grades/claude-candidate-R9-recovery-isolated-1.md"
+    },
+    {
+      "run": "claude-candidate-R9-recovery-isolated-1",
+      "side": "candidate",
+      "case": "R9-recovery",
+      "repetition": 1,
+      "assertion": "11.4",
+      "verdict": "PASS",
+      "grade": "grades/claude-candidate-R9-recovery-isolated-1.md"
+    },
+    {
+      "run": "claude-candidate-R9-recovery-isolated-1",
+      "side": "candidate",
+      "case": "R9-recovery",
+      "repetition": 1,
+      "assertion": "11.5",
+      "verdict": "PASS",
+      "grade": "grades/claude-candidate-R9-recovery-isolated-1.md"
+    },
+    {
+      "run": "claude-candidate-R9-recovery-isolated-1",
+      "side": "candidate",
+      "case": "R9-recovery",
+      "repetition": 1,
+      "assertion": "11.6",
+      "verdict": "FAIL",
+      "grade": "grades/claude-candidate-R9-recovery-isolated-1.md"
+    },
+    {
+      "run": "claude-candidate-R9-recovery-isolated-2",
+      "side": "candidate",
+      "case": "R9-recovery",
+      "repetition": 2,
+      "assertion": "11.1",
+      "verdict": "PASS",
+      "grade": "grades/claude-candidate-R9-recovery-isolated-2.md"
+    },
+    {
+      "run": "claude-candidate-R9-recovery-isolated-2",
+      "side": "candidate",
+      "case": "R9-recovery",
+      "repetition": 2,
+      "assertion": "11.2",
+      "verdict": "PASS",
+      "grade": "grades/claude-candidate-R9-recovery-isolated-2.md"
+    },
+    {
+      "run": "claude-candidate-R9-recovery-isolated-2",
+      "side": "candidate",
+      "case": "R9-recovery",
+      "repetition": 2,
+      "assertion": "11.3",
+      "verdict": "PASS",
+      "grade": "grades/claude-candidate-R9-recovery-isolated-2.md"
+    },
+    {
+      "run": "claude-candidate-R9-recovery-isolated-2",
+      "side": "candidate",
+      "case": "R9-recovery",
+      "repetition": 2,
+      "assertion": "11.4",
+      "verdict": "PASS",
+      "grade": "grades/claude-candidate-R9-recovery-isolated-2.md"
+    },
+    {
+      "run": "claude-candidate-R9-recovery-isolated-2",
+      "side": "candidate",
+      "case": "R9-recovery",
+      "repetition": 2,
+      "assertion": "11.5",
+      "verdict": "PASS",
+      "grade": "grades/claude-candidate-R9-recovery-isolated-2.md"
+    },
+    {
+      "run": "claude-candidate-R9-recovery-isolated-2",
+      "side": "candidate",
+      "case": "R9-recovery",
+      "repetition": 2,
+      "assertion": "11.6",
+      "verdict": "FAIL",
+      "grade": "grades/claude-candidate-R9-recovery-isolated-2.md"
+    }
+  ],
+  "owned_temporaries": {
+    "/tmp/kk-review-instructions-8740y9sx": {
+      "run": "claude-candidate-R3-isolated-1",
+      "creation_sequence": 21,
+      "kind": "instruction packet",
+      "members": [
+        {
+          "path": "/tmp/kk-review-instructions-8740y9sx/part-01.md",
+          "sha256": "b98ad3544a3bb3e1cb6758aebef1e6455f71be8405b6310990954f164a3c4bbc",
+          "artifact": "runs/claude-candidate-R3-isolated-1/payloads/b98ad3544a3bb3e1cb6758aebef1e6455f71be8405b6310990954f164a3c4bbc"
+        },
+        {
+          "path": "/tmp/kk-review-instructions-8740y9sx/part-02.md",
+          "sha256": "3ab0b2861b9575e137c395fae9159085cd3d46f220d0c4ce6729dba2d5badbf1",
+          "artifact": "runs/claude-candidate-R3-isolated-1/payloads/3ab0b2861b9575e137c395fae9159085cd3d46f220d0c4ce6729dba2d5badbf1"
+        },
+        {
+          "path": "/tmp/kk-review-instructions-8740y9sx/part-03.md",
+          "sha256": "d9f7192536ddf732f9239c723239fc6c9389ae9d63849f9df11f3ef52a029d1f",
+          "artifact": "runs/claude-candidate-R3-isolated-1/payloads/d9f7192536ddf732f9239c723239fc6c9389ae9d63849f9df11f3ef52a029d1f"
+        },
+        {
+          "path": "/tmp/kk-review-instructions-8740y9sx/part-04.md",
+          "sha256": "f50efda70057aee3eef843ade4cd09c378ca2206e205dba9d842ae2af0e04810",
+          "artifact": "runs/claude-candidate-R3-isolated-1/payloads/f50efda70057aee3eef843ade4cd09c378ca2206e205dba9d842ae2af0e04810"
+        },
+        {
+          "path": "/tmp/kk-review-instructions-8740y9sx/part-05.md",
+          "sha256": "9f0891fdb7147535fe37bd56c5b1152417bc7664f7b96d2ec6c20368f6030b40",
+          "artifact": "runs/claude-candidate-R3-isolated-1/payloads/9f0891fdb7147535fe37bd56c5b1152417bc7664f7b96d2ec6c20368f6030b40"
+        },
+        {
+          "path": "/tmp/kk-review-instructions-8740y9sx/part-06.md",
+          "sha256": "9fd10ec9b76fa57ff31989cf76183dfdd8260288df456139e6e6babb9bd2ad17",
+          "artifact": "runs/claude-candidate-R3-isolated-1/payloads/9fd10ec9b76fa57ff31989cf76183dfdd8260288df456139e6e6babb9bd2ad17"
+        }
+      ]
+    },
+    "/tmp/kk-review-instructions-i5aa4gkc": {
+      "run": "claude-candidate-R3-isolated-1",
+      "creation_sequence": 66,
+      "kind": "instruction packet",
+      "members": [
+        {
+          "path": "/tmp/kk-review-instructions-i5aa4gkc/part-01.md",
+          "sha256": "27d07f9431d089f3671b7739d9dacedd77cd468b0db747faf4cd3b8cbac9e074",
+          "artifact": "runs/claude-candidate-R3-isolated-1/payloads/27d07f9431d089f3671b7739d9dacedd77cd468b0db747faf4cd3b8cbac9e074"
+        }
+      ]
+    },
+    "/tmp/kk-review-instructions-sdc17va7": {
+      "run": "claude-candidate-R3-isolated-1",
+      "creation_sequence": 72,
+      "kind": "instruction packet",
+      "members": [
+        {
+          "path": "/tmp/kk-review-instructions-sdc17va7/part-01.md",
+          "sha256": "922c142c235c61995a19c12b78011be8878c7970681f117a2946484e407f474c",
+          "artifact": "runs/claude-candidate-R3-isolated-1/payloads/922c142c235c61995a19c12b78011be8878c7970681f117a2946484e407f474c"
+        },
+        {
+          "path": "/tmp/kk-review-instructions-sdc17va7/part-02.md",
+          "sha256": "9580596582701ade9b2927cdcd60b475e7fa6fc1f0f74de250cdbc362033e159",
+          "artifact": "runs/claude-candidate-R3-isolated-1/payloads/9580596582701ade9b2927cdcd60b475e7fa6fc1f0f74de250cdbc362033e159"
+        }
+      ]
+    },
+    "/tmp/kk-review-evidence-hWfP8m": {
+      "run": "claude-candidate-R3-isolated-1",
+      "creation_sequence": 134,
+      "kind": "evidence directory",
+      "members": []
+    },
+    "/tmp/kk-review-instructions-4ks2z4bw": {
+      "run": "claude-candidate-R3-isolated-2",
+      "creation_sequence": 19,
+      "kind": "instruction packet",
+      "members": [
+        {
+          "path": "/tmp/kk-review-instructions-4ks2z4bw/part-01.md",
+          "sha256": "2915799e9ca92a2becb11d04b5fb16680e1ff9df8bd64056c584ea671aa79d14",
+          "artifact": "runs/claude-candidate-R3-isolated-2/payloads/2915799e9ca92a2becb11d04b5fb16680e1ff9df8bd64056c584ea671aa79d14"
+        },
+        {
+          "path": "/tmp/kk-review-instructions-4ks2z4bw/part-02.md",
+          "sha256": "c87256c416a11e8f5afa1f1006dc78cc27d9a80d878b0815baef3d27cd899a9d",
+          "artifact": "runs/claude-candidate-R3-isolated-2/payloads/c87256c416a11e8f5afa1f1006dc78cc27d9a80d878b0815baef3d27cd899a9d"
+        },
+        {
+          "path": "/tmp/kk-review-instructions-4ks2z4bw/part-03.md",
+          "sha256": "028bbae7f6ec311628de2a88294977a975a0b72635e37381770516d212ecba0f",
+          "artifact": "runs/claude-candidate-R3-isolated-2/payloads/028bbae7f6ec311628de2a88294977a975a0b72635e37381770516d212ecba0f"
+        },
+        {
+          "path": "/tmp/kk-review-instructions-4ks2z4bw/part-04.md",
+          "sha256": "ca1ca4a23a4901a30fb97bbe866187fb3934c13bd1744e55947aee78bc99840e",
+          "artifact": "runs/claude-candidate-R3-isolated-2/payloads/ca1ca4a23a4901a30fb97bbe866187fb3934c13bd1744e55947aee78bc99840e"
+        },
+        {
+          "path": "/tmp/kk-review-instructions-4ks2z4bw/part-05.md",
+          "sha256": "3e70f2b5daa89312773fb147a63af12d40a707a6e0e32f7ff242332f1fb638a1",
+          "artifact": "runs/claude-candidate-R3-isolated-2/payloads/3e70f2b5daa89312773fb147a63af12d40a707a6e0e32f7ff242332f1fb638a1"
+        },
+        {
+          "path": "/tmp/kk-review-instructions-4ks2z4bw/part-06.md",
+          "sha256": "944dd192aaffb76782b2d4274d4d4666c75bc583121b3d165f9f91c8df31b188",
+          "artifact": "runs/claude-candidate-R3-isolated-2/payloads/944dd192aaffb76782b2d4274d4d4666c75bc583121b3d165f9f91c8df31b188"
+        }
+      ]
+    },
+    "/tmp/kk-review-instructions-1czqho7z": {
+      "run": "claude-candidate-R3-isolated-2",
+      "creation_sequence": 52,
+      "kind": "instruction packet",
+      "members": [
+        {
+          "path": "/tmp/kk-review-instructions-1czqho7z/part-01.md",
+          "sha256": "ac008d5ee48cb6bba703716845614e54d611206fdbc837d2fd7b6c7e7fca579a",
+          "artifact": "runs/claude-candidate-R3-isolated-2/payloads/ac008d5ee48cb6bba703716845614e54d611206fdbc837d2fd7b6c7e7fca579a"
+        }
+      ]
+    },
+    "/tmp/kk-review-instructions-nitgroaj": {
+      "run": "claude-candidate-R3-isolated-2",
+      "creation_sequence": 58,
+      "kind": "instruction packet",
+      "members": [
+        {
+          "path": "/tmp/kk-review-instructions-nitgroaj/part-01.md",
+          "sha256": "a2b5d812164cb5582477b90172982be1f93937876872984d4b94f35160ce11a3",
+          "artifact": "runs/claude-candidate-R3-isolated-2/payloads/a2b5d812164cb5582477b90172982be1f93937876872984d4b94f35160ce11a3"
+        },
+        {
+          "path": "/tmp/kk-review-instructions-nitgroaj/part-02.md",
+          "sha256": "6b937606bf32fef4287e4adf220c5f670dc500656e28298135acdc4e73769a17",
+          "artifact": "runs/claude-candidate-R3-isolated-2/payloads/6b937606bf32fef4287e4adf220c5f670dc500656e28298135acdc4e73769a17"
+        }
+      ]
+    },
+    "/tmp/kk-evidence-CaLRxy": {
+      "run": "claude-candidate-R3-isolated-2",
+      "creation_sequence": 119,
+      "kind": "evidence directory",
+      "members": []
+    },
+    "/tmp/kk-review-instructions-vzg_mxcf": {
+      "run": "claude-candidate-R5-isolated-1",
+      "creation_sequence": 19,
+      "kind": "instruction packet",
+      "members": [
+        {
+          "path": "/tmp/kk-review-instructions-vzg_mxcf/part-01.md",
+          "sha256": "1a3eddaa3a5d0812f5b35f52a055b92ff391aa411d62dd5991cc5846cfc42f7c",
+          "artifact": "runs/claude-candidate-R5-isolated-1/payloads/1a3eddaa3a5d0812f5b35f52a055b92ff391aa411d62dd5991cc5846cfc42f7c"
+        },
+        {
+          "path": "/tmp/kk-review-instructions-vzg_mxcf/part-02.md",
+          "sha256": "4f07b08a95873841cb94d98a3836affad0612a425ff82f40f2a26430fc52707b",
+          "artifact": "runs/claude-candidate-R5-isolated-1/payloads/4f07b08a95873841cb94d98a3836affad0612a425ff82f40f2a26430fc52707b"
+        },
+        {
+          "path": "/tmp/kk-review-instructions-vzg_mxcf/part-03.md",
+          "sha256": "352ecd7eaccc8864a70c791fb4748d663484b4b8817955113c28dcfec7710c28",
+          "artifact": "runs/claude-candidate-R5-isolated-1/payloads/352ecd7eaccc8864a70c791fb4748d663484b4b8817955113c28dcfec7710c28"
+        },
+        {
+          "path": "/tmp/kk-review-instructions-vzg_mxcf/part-04.md",
+          "sha256": "6c17decd782a37af6744a80ab5dafc5fe6439c180fec9df33a5bcf07f6a6d71f",
+          "artifact": "runs/claude-candidate-R5-isolated-1/payloads/6c17decd782a37af6744a80ab5dafc5fe6439c180fec9df33a5bcf07f6a6d71f"
+        },
+        {
+          "path": "/tmp/kk-review-instructions-vzg_mxcf/part-05.md",
+          "sha256": "b24acc26cdb7b92ebe6cf4c6c1d6ab85156f1eced5f59a1bf5f9aa68ded807b5",
+          "artifact": "runs/claude-candidate-R5-isolated-1/payloads/b24acc26cdb7b92ebe6cf4c6c1d6ab85156f1eced5f59a1bf5f9aa68ded807b5"
+        },
+        {
+          "path": "/tmp/kk-review-instructions-vzg_mxcf/part-06.md",
+          "sha256": "28dd81ae1af8bb2f37a4f4616e84f84dab5ad2b88ecc75750c615633e3688bc1",
+          "artifact": "runs/claude-candidate-R5-isolated-1/payloads/28dd81ae1af8bb2f37a4f4616e84f84dab5ad2b88ecc75750c615633e3688bc1"
+        }
+      ]
+    },
+    "/tmp/kk-review-instructions-j7eny78z": {
+      "run": "claude-candidate-R5-isolated-1",
+      "creation_sequence": 66,
+      "kind": "instruction packet",
+      "members": [
+        {
+          "path": "/tmp/kk-review-instructions-j7eny78z/part-01.md",
+          "sha256": "4e224f6d7af61cfae0e4714c92802cb93836a9eb7b2dd40beff1c6223111c16f",
+          "artifact": "runs/claude-candidate-R5-isolated-1/payloads/4e224f6d7af61cfae0e4714c92802cb93836a9eb7b2dd40beff1c6223111c16f"
+        }
+      ]
+    },
+    "/tmp/kk-review-instructions-dtbv21tx": {
+      "run": "claude-candidate-R5-isolated-1",
+      "creation_sequence": 72,
+      "kind": "instruction packet",
+      "members": [
+        {
+          "path": "/tmp/kk-review-instructions-dtbv21tx/part-01.md",
+          "sha256": "68c3f8103ae390c3c5f4823951aa3d7a0d2a7c6d7c3570fa34f29f5c177afb91",
+          "artifact": "runs/claude-candidate-R5-isolated-1/payloads/68c3f8103ae390c3c5f4823951aa3d7a0d2a7c6d7c3570fa34f29f5c177afb91"
+        },
+        {
+          "path": "/tmp/kk-review-instructions-dtbv21tx/part-02.md",
+          "sha256": "42b7b2746c26185f642ae99d234194a91f68045f962eac9af8a44e19496c4d4c",
+          "artifact": "runs/claude-candidate-R5-isolated-1/payloads/42b7b2746c26185f642ae99d234194a91f68045f962eac9af8a44e19496c4d4c"
+        }
+      ]
+    },
+    "/tmp/kk-review-code-yVs7qT": {
+      "run": "claude-candidate-R5-isolated-1",
+      "creation_sequence": 141,
+      "kind": "evidence directory",
+      "members": []
+    },
+    "/tmp/kk-review-instructions-45kkp6j_": {
+      "run": "claude-candidate-R5-isolated-2",
+      "creation_sequence": 19,
+      "kind": "instruction packet",
+      "members": [
+        {
+          "path": "/tmp/kk-review-instructions-45kkp6j_/part-01.md",
+          "sha256": "520c901145eb16a1bdf505b92c1511aacc878f488176dd7f0163df551c2a645d",
+          "artifact": "runs/claude-candidate-R5-isolated-2/payloads/520c901145eb16a1bdf505b92c1511aacc878f488176dd7f0163df551c2a645d"
+        },
+        {
+          "path": "/tmp/kk-review-instructions-45kkp6j_/part-02.md",
+          "sha256": "fe52b677ba4306cc0cc29e092130b3ddc869d00675066f12fb2344ac611ad18f",
+          "artifact": "runs/claude-candidate-R5-isolated-2/payloads/fe52b677ba4306cc0cc29e092130b3ddc869d00675066f12fb2344ac611ad18f"
+        },
+        {
+          "path": "/tmp/kk-review-instructions-45kkp6j_/part-03.md",
+          "sha256": "72212f7b6cd913ea806c42bade85bd550ab0478f2658dce392b0c24e4408338a",
+          "artifact": "runs/claude-candidate-R5-isolated-2/payloads/72212f7b6cd913ea806c42bade85bd550ab0478f2658dce392b0c24e4408338a"
+        },
+        {
+          "path": "/tmp/kk-review-instructions-45kkp6j_/part-04.md",
+          "sha256": "626f3e8f36f11478a547e07b994a7a61eec558361ad04b1b8ba2b1c3ed116308",
+          "artifact": "runs/claude-candidate-R5-isolated-2/payloads/626f3e8f36f11478a547e07b994a7a61eec558361ad04b1b8ba2b1c3ed116308"
+        },
+        {
+          "path": "/tmp/kk-review-instructions-45kkp6j_/part-05.md",
+          "sha256": "79d539e0130f186d662f14315746a4cfbcc319a1c09978ffd4628df56593fef2",
+          "artifact": "runs/claude-candidate-R5-isolated-2/payloads/79d539e0130f186d662f14315746a4cfbcc319a1c09978ffd4628df56593fef2"
+        },
+        {
+          "path": "/tmp/kk-review-instructions-45kkp6j_/part-06.md",
+          "sha256": "c558830c651d7ee82366b6b1931f8a81f7eb24436bde009832ca5377bd6430e4",
+          "artifact": "runs/claude-candidate-R5-isolated-2/payloads/c558830c651d7ee82366b6b1931f8a81f7eb24436bde009832ca5377bd6430e4"
+        }
+      ]
+    },
+    "/tmp/kk-review-instructions-fnv9s2gr": {
+      "run": "claude-candidate-R5-isolated-2",
+      "creation_sequence": 50,
+      "kind": "instruction packet",
+      "members": [
+        {
+          "path": "/tmp/kk-review-instructions-fnv9s2gr/part-01.md",
+          "sha256": "20afbf581348914b84618450457f4266663fe297bfcfb80b01a53574d02f4c54",
+          "artifact": "runs/claude-candidate-R5-isolated-2/payloads/20afbf581348914b84618450457f4266663fe297bfcfb80b01a53574d02f4c54"
+        }
+      ]
+    },
+    "/tmp/kk-review-instructions-5wph0q7n": {
+      "run": "claude-candidate-R5-isolated-2",
+      "creation_sequence": 56,
+      "kind": "instruction packet",
+      "members": [
+        {
+          "path": "/tmp/kk-review-instructions-5wph0q7n/part-01.md",
+          "sha256": "85ddfe5de8fc70abd7d18411831e5afcd8897334b460d5b052e738fb8c1582bd",
+          "artifact": "runs/claude-candidate-R5-isolated-2/payloads/85ddfe5de8fc70abd7d18411831e5afcd8897334b460d5b052e738fb8c1582bd"
+        },
+        {
+          "path": "/tmp/kk-review-instructions-5wph0q7n/part-02.md",
+          "sha256": "ae3f9968b714bcea64af389294543b6bc8df2d5b5288423b121206719b54070e",
+          "artifact": "runs/claude-candidate-R5-isolated-2/payloads/ae3f9968b714bcea64af389294543b6bc8df2d5b5288423b121206719b54070e"
+        }
+      ]
+    },
+    "/tmp/kk-review-instructions-6rs25abx": {
+      "run": "claude-candidate-R9-recovery-isolated-1",
+      "creation_sequence": 19,
+      "kind": "instruction packet",
+      "members": [
+        {
+          "path": "/tmp/kk-review-instructions-6rs25abx/part-01.md",
+          "sha256": "84347066c307d5e55809f3f2c3ab8d42f3d1a93ce1d6cbb4aef44b503d4d594d",
+          "artifact": "runs/claude-candidate-R9-recovery-isolated-1/payloads/84347066c307d5e55809f3f2c3ab8d42f3d1a93ce1d6cbb4aef44b503d4d594d"
+        },
+        {
+          "path": "/tmp/kk-review-instructions-6rs25abx/part-02.md",
+          "sha256": "05a695052ac804235bafc6ddc44fb7c8d1b890ea8856fbe008bd9e63f77410f3",
+          "artifact": "runs/claude-candidate-R9-recovery-isolated-1/payloads/05a695052ac804235bafc6ddc44fb7c8d1b890ea8856fbe008bd9e63f77410f3"
+        },
+        {
+          "path": "/tmp/kk-review-instructions-6rs25abx/part-03.md",
+          "sha256": "67cfd77cbfba7fd4496d632a1f8b944800ddebc8b36e47c46d782b02c17cb3e1",
+          "artifact": "runs/claude-candidate-R9-recovery-isolated-1/payloads/67cfd77cbfba7fd4496d632a1f8b944800ddebc8b36e47c46d782b02c17cb3e1"
+        },
+        {
+          "path": "/tmp/kk-review-instructions-6rs25abx/part-04.md",
+          "sha256": "dbb751a942c68442a1c5f1edcece80e169267e8566c808306f07f0bdeaf4262e",
+          "artifact": "runs/claude-candidate-R9-recovery-isolated-1/payloads/dbb751a942c68442a1c5f1edcece80e169267e8566c808306f07f0bdeaf4262e"
+        },
+        {
+          "path": "/tmp/kk-review-instructions-6rs25abx/part-05.md",
+          "sha256": "e1abfb831bc656b515fbfb85689ce828e41c2ad1b2ed120fc03a737c3cac0e1e",
+          "artifact": "runs/claude-candidate-R9-recovery-isolated-1/payloads/e1abfb831bc656b515fbfb85689ce828e41c2ad1b2ed120fc03a737c3cac0e1e"
+        },
+        {
+          "path": "/tmp/kk-review-instructions-6rs25abx/part-06.md",
+          "sha256": "74f20ba69a76c35d61790d243c51de84d3565da0f954d293f649b854d0690265",
+          "artifact": "runs/claude-candidate-R9-recovery-isolated-1/payloads/74f20ba69a76c35d61790d243c51de84d3565da0f954d293f649b854d0690265"
+        }
+      ]
+    },
+    "/tmp/kk-review-instructions-4yo5sbve": {
+      "run": "claude-candidate-R9-recovery-isolated-1",
+      "creation_sequence": 88,
+      "kind": "instruction packet",
+      "members": [
+        {
+          "path": "/tmp/kk-review-instructions-4yo5sbve/part-01.md",
+          "sha256": "01b03ff296684b887247c441de25abec527e4dacdb35e986f0029991e5c01ddb",
+          "artifact": "runs/claude-candidate-R9-recovery-isolated-1/payloads/01b03ff296684b887247c441de25abec527e4dacdb35e986f0029991e5c01ddb"
+        }
+      ]
+    },
+    "/tmp/kk-review-instructions-u1xvqytc": {
+      "run": "claude-candidate-R9-recovery-isolated-1",
+      "creation_sequence": 95,
+      "kind": "instruction packet",
+      "members": [
+        {
+          "path": "/tmp/kk-review-instructions-u1xvqytc/part-01.md",
+          "sha256": "d7eb50a0dbbedb90843867b9e2208ee3cdc45a1556bdf2b7c303289f44e4b335",
+          "artifact": "runs/claude-candidate-R9-recovery-isolated-1/payloads/d7eb50a0dbbedb90843867b9e2208ee3cdc45a1556bdf2b7c303289f44e4b335"
+        },
+        {
+          "path": "/tmp/kk-review-instructions-u1xvqytc/part-02.md",
+          "sha256": "4170827c222295e98fe9a88acac268d9b2d887e9527f75c926f0e62d1c0a27a2",
+          "artifact": "runs/claude-candidate-R9-recovery-isolated-1/payloads/4170827c222295e98fe9a88acac268d9b2d887e9527f75c926f0e62d1c0a27a2"
+        }
+      ]
+    },
+    "/tmp/kk-review-instructions-vjkub7n1": {
+      "run": "claude-candidate-R9-recovery-isolated-2",
+      "creation_sequence": 20,
+      "kind": "instruction packet",
+      "members": [
+        {
+          "path": "/tmp/kk-review-instructions-vjkub7n1/part-01.md",
+          "sha256": "854e4b3f7ccb8c4786b4241b0c60f343057553425c45d6c3277df11dad8e3224",
+          "artifact": "runs/claude-candidate-R9-recovery-isolated-2/payloads/854e4b3f7ccb8c4786b4241b0c60f343057553425c45d6c3277df11dad8e3224"
+        },
+        {
+          "path": "/tmp/kk-review-instructions-vjkub7n1/part-02.md",
+          "sha256": "2b696af0ce3e12c244220af490877223d3180c7ba153ea110c189f99eca13c4e",
+          "artifact": "runs/claude-candidate-R9-recovery-isolated-2/payloads/2b696af0ce3e12c244220af490877223d3180c7ba153ea110c189f99eca13c4e"
+        },
+        {
+          "path": "/tmp/kk-review-instructions-vjkub7n1/part-03.md",
+          "sha256": "af5886a7781d470558076aae2e621a0fd897408ac87b44826a99622f25c5c619",
+          "artifact": "runs/claude-candidate-R9-recovery-isolated-2/payloads/af5886a7781d470558076aae2e621a0fd897408ac87b44826a99622f25c5c619"
+        },
+        {
+          "path": "/tmp/kk-review-instructions-vjkub7n1/part-04.md",
+          "sha256": "40790cf864a890f9a62b358ee8d75e03d229583c74fa65bdd9dc6988bc5cf150",
+          "artifact": "runs/claude-candidate-R9-recovery-isolated-2/payloads/40790cf864a890f9a62b358ee8d75e03d229583c74fa65bdd9dc6988bc5cf150"
+        },
+        {
+          "path": "/tmp/kk-review-instructions-vjkub7n1/part-05.md",
+          "sha256": "537b9983c75304cc2678c9de4ef15bf4a9936483cfdbe639c775da6cd6f9e1f3",
+          "artifact": "runs/claude-candidate-R9-recovery-isolated-2/payloads/537b9983c75304cc2678c9de4ef15bf4a9936483cfdbe639c775da6cd6f9e1f3"
+        },
+        {
+          "path": "/tmp/kk-review-instructions-vjkub7n1/part-06.md",
+          "sha256": "a478d0fbcc78b6c9e2cc7eb4653cb9879ea2cc9895522dab74e3884da671d410",
+          "artifact": "runs/claude-candidate-R9-recovery-isolated-2/payloads/a478d0fbcc78b6c9e2cc7eb4653cb9879ea2cc9895522dab74e3884da671d410"
+        }
+      ]
+    },
+    "/tmp/kk-review-instructions-706h_sg_": {
+      "run": "claude-candidate-R9-recovery-isolated-2",
+      "creation_sequence": 67,
+      "kind": "instruction packet",
+      "members": [
+        {
+          "path": "/tmp/kk-review-instructions-706h_sg_/part-01.md",
+          "sha256": "33b3e8e0ae4ad542db4e6b8d196b960f23ca9ff7a1009550adc6b57c52f9bddd",
+          "artifact": "runs/claude-candidate-R9-recovery-isolated-2/payloads/33b3e8e0ae4ad542db4e6b8d196b960f23ca9ff7a1009550adc6b57c52f9bddd"
+        }
+      ]
+    },
+    "/tmp/kk-review-instructions-_sbbbbd2": {
+      "run": "claude-candidate-R9-recovery-isolated-2",
+      "creation_sequence": 73,
+      "kind": "instruction packet",
+      "members": [
+        {
+          "path": "/tmp/kk-review-instructions-_sbbbbd2/part-01.md",
+          "sha256": "ef4e72007568b39ace880b4e190491c366863a89b98b09018e2a10d6176958b9",
+          "artifact": "runs/claude-candidate-R9-recovery-isolated-2/payloads/ef4e72007568b39ace880b4e190491c366863a89b98b09018e2a10d6176958b9"
+        },
+        {
+          "path": "/tmp/kk-review-instructions-_sbbbbd2/part-02.md",
+          "sha256": "ced682660a6808247bdff05f070fc526d0e8d30ff1165665dc764255426528cc",
+          "artifact": "runs/claude-candidate-R9-recovery-isolated-2/payloads/ced682660a6808247bdff05f070fc526d0e8d30ff1165665dc764255426528cc"
+        }
+      ]
+    }
+  },
+  "source_and_fixture_freeze_verified": true,
+  "os_confinement_claimed": false
+}

@@ -1,0 +1,19 @@
+{
+  "actor": "main",
+  "block": {
+    "caller": {
+      "type": "direct"
+    },
+    "id": "toolu_016h9dHgQvBGvKqZPttfw1nD",
+    "input": {
+      "content": "## Incremental protocol change enforced unconditionally breaks released counterpart (P0)\n\nPattern: In a split client/provider rollout (enhanced-settings, Task 1), the client increment started requiring a new response field (`applied is True` receipt) on every save, ungated by the feature flag (`enhanced_settings`). The supported released provider (Git tag `eval-release`, `provider/settings.py`) returns only `{\"ok\": True}`, so every ordinary save raises even though the provider already persisted the values \u2014 client/server state diverge.\n\nMasking signal: the unit test stub was edited from the released response shape to the new unreleased shape (`{\"ok\": True, \"applied\": True}`), hiding the regression.\n\nReview check: when a diff adds a required protocol field/receipt, verify against the released counterpart snapshot (README names `eval-release` as baseline; provider source only in git history), confirm the requirement is gated behind the flag / tolerant of absence, and keep a test using the exact released response shape.",
+      "source": "kk:review-findings"
+    },
+    "name": "mcp__capy__capy_index",
+    "type": "tool_use"
+  },
+  "id": "e163.0",
+  "parent_tool_use_id": null,
+  "session_id": "067bfdce-6a01-401c-b6b9-fef61835d446",
+  "source_sequence": 163
+}

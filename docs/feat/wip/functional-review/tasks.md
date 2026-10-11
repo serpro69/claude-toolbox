@@ -12,7 +12,7 @@
 > Not Doing: new review skill, whole-system audits, mandatory production access, deployments, generic release engine, new models/dependencies, profile redesign
 > Delivery: preserve existing invocations/shared consumers; regenerate Codex artifacts with every operative slice.
 
-Scope and direction are approved; the reviews have been assessed and the detailed plan revised. Tasks 1–11 are done, including Task 2 gates 2A and 2B. Task 12's full core matrix is captured and graded; acceptance remains incomplete. **Task 12.11 is done; Task 12.12 is the selected next implementation:** resolve isolated-review instruction paths at entry. Task 13 retains final feature documentation and verification. The [gate 2B completion record](verification/task2b/README.md) documents the selected receipt/use contract, four new baselines and evidence limits. Exact submitted prompts remain unverified, and capture completion is not candidate acceptance. Earlier six-task numbering is superseded by this sequence; no completed work was renumbered. Size includes authored reasoning complexity; mechanical copies/symlinks/generated files are excluded. Parallel markers permit compatible work only and do not authorize delegation. Serialize generation if tasks run concurrently.
+Scope and direction are approved; the reviews have been assessed and the detailed plan revised. Tasks 1–11 are done, including Task 2 gates 2A and 2B. Task 12's full core matrix is captured and graded; acceptance remains incomplete. **Task 12.12 is done:** keep the entry-path correction after its bounded diagnostic comparison. Remaining acceptance gates and dispositions stay open; R7 unsupported-claim investigation retains next priority. Task 13 retains final feature documentation and verification. The [gate 2B completion record](verification/task2b/README.md) documents the selected receipt/use contract, four new baselines and evidence limits. Exact submitted prompts remain unverified, and capture completion is not candidate acceptance. Earlier six-task numbering is superseded by this sequence; no completed work was renumbered. Size includes authored reasoning complexity; mechanical copies/symlinks/generated files are excluded. Parallel markers permit compatible work only and do not authorize delegation. Serialize generation if tasks run concurrently.
 
 ## Task 1: Prove revision-bound evaluation loading
 
@@ -633,7 +633,7 @@ along with the task-status boundary check and `git diff --check`.
 
 ### Task 12.12: Resolve isolated-review instructions at entry
 
-- **Status:** pending; selected by Task 12.11, not executed by the assessment
+- **Status:** done; bounded diagnostic accepted, broader feature acceptance remains open
 - **Depends on:** Task 12.11
 - **Size:** S for the source correction; targeted measurement is separately bounded below
 - **Strategy:** Risk-First
@@ -650,18 +650,18 @@ entry-location correction, not a new shell-denial recovery mechanism. Check the
 actual generated distribution before asserting a Codex effect; command wrappers
 are not currently mirrored as standalone Codex skills.
 
-- [ ] 12.12.1 Load applicable profile instructions, make only the entry-path
+- [x] 12.12.1 Load applicable profile instructions, make only the entry-path
   replacement and regenerate → verify: no new phase, mandatory call, state,
   dependency or permission; at most 30 added authored words; common instruction
   bytes and their 800/1,200-word budgets preserved. Do not edit actors to name
   fixture defects or add fallback/retry prose. If this bound cannot address the
   observed entry ambiguity, record no change and return to assessment.
-- [ ] 12.12.2 Independently review the source change and verify path resolution,
+- [x] 12.12.2 Independently review the source change and verify path resolution,
   plugin structure/graph and generation freshness → verify: installed command
   loading resolves the intended files from the selected bundle, without global
   discovery; the existing direct-read and instruction-loading requirements remain.
   Reuse existing checks rather than adding text-presence tests for the wording.
-- [ ] 12.12.3 Freeze a new candidate and matching comparison declaration, then
+- [x] 12.12.3 Freeze a new candidate and matching comparison declaration, then
   run Claude R3-isolated plus R5-isolated and R9-recovery-isolated controls,
   two fresh runs per immutable baseline/candidate (**12 sessions**) → verify:
   unchanged fixtures, prompts, rubric and declared permission policy; actual
@@ -672,7 +672,7 @@ are not currently mirrored as standalone Codex skills.
   their own matching declaration; otherwise record unchanged bytes and no new
   Codex behavioral claim. Runtime/policy changes require a revised declaration
   and fresh matched pairs, not silent substitution.
-- [ ] 12.12.4 Record the bounded experiment's disposition → verify: both R3
+- [x] 12.12.4 Record the bounded experiment's disposition → verify: both R3
   candidates establish all non-PAL components (including local historical
   receipt/use); R5 retains clean scoped approval, R9 retains necessary recovery,
   and both controls retain instruction ordering/coverage. Reject or revert if
@@ -681,6 +681,80 @@ are not currently mirrored as standalone Codex skills.
   do not begin another iteration automatically. Composite PAL failures remain
   FAIL even when their local components improve. A useful diagnostic result
   completes only this slice, not Task 12 acceptance or the remaining dispositions.
+
+### Task 12.12 execution context — 2026-10-11
+
+The user authorized Task 12.12 and required the assessment to be committed first;
+`c84fc0f7` preserves it. The command now identifies the existing skill/workflow
+through explicit plugin-root paths, adding two words. Common methodology stays
+unchanged at 573/1,147 words. Both generation passes leave all 902 generated files
+byte-identical, so this command-only slice requires no new Codex measurements.
+
+All eight installed detection rules were evaluated. The command/planning files
+activate no profile; the new bounded capture adapter/tests activate Python.
+Core implement/test and all four review checklists are loaded, with no async
+conditional. /kk:dependency-handling checked path substitution against official
+documentation after Context7 lacked the exact runtime version. Existing capture
+APIs and transport are reused; no dependency or actor permission changed.
+
+The [comparison contract](verification/task12/entry-path/run-contract.md) and
+[temporary candidate provenance](verification/task12/entry-path/source-provenance.json)
+declare the selected 12 Claude isolated sessions, plus separate loading probes,
+and retain PAL deferral. Repository suites, graph/Go checks, 19 existing capture
+regressions, three adapter controls and fresh Capy state-isolation checks pass.
+Independent source review, actual command-path loading and measured outcomes
+remain pending; static checks establish no behavioral improvement.
+
+**Source checkpoint and runtime observation:** [independent review](verification/task12/entry-path/review.md)
+approved the source/adapter with no findings. The initial candidate loading probe
+completed and retained the substituted command and intended instruction reads,
+but PAL unexpectedly connected under the unchanged launcher. No PAL tool call
+occurred and no measured workflow started. Preserve the initial freeze/probe;
+[the runtime-change record](verification/task12/entry-path/runtime-change.md)
+explains why it cannot establish continuing PAL unavailability.
+
+**Required successor configuration:** [the revised declaration](verification/task12/entry-path-no-pal/run-contract.md)
+keeps the same candidate and all grading obligations but explicitly excludes PAL
+from the launched run-local MCP configuration on both sides. Original controller
+bytes/configuration and evidence remain retained. Four successor adapter controls
+pass; independent review and fresh binding under this configuration precede all
+twelve measurements. This enforces the existing user deferral without changing
+normal user settings, ordinary prompts or the actor's tool permission policy.
+
+**Successor ready for measurement:** [independent review](verification/task12/entry-path-no-pal/review.md)
+approved the configuration successor. Its separately frozen baseline/candidate
+probes both pass [the binding audit](verification/task12/entry-path-no-pal/binding-audit.json):
+Capy connected, PAL absent, Opus 5.5 for both parent/child, complete returned
+instruction content, selected-root identities and unchanged subjects. Candidate
+command delivery includes both substituted paths directly. Measured results
+remain pending; these loading observations do not establish functional improvement.
+
+**Completed comparison; keep decision:** [all twelve captures and independent grades](verification/task12/entry-path-no-pal/README.md)
+are complete under the successor declaration, with no measured transport failures.
+Baseline: **20 PASS / 20 FAIL / 0 PARTIAL**; candidate: **32 PASS / 8 FAIL / 0
+PARTIAL**. Both candidate repetitions meet all non-PAL diagnostic conditions for
+R3, R5 and R9-recovery, including the local receipt/use components of the composite
+failures. All eight candidate FAILs retain the required absent-PAL component.
+**Keep the two-word entry-path correction.** This does not waive full-feature
+acceptance or establish broader provider/mode reliability.
+
+[The integrity audit](verification/task12/entry-path-no-pal/audit.json) verifies
+582 capture files, 1,835 grading files, all 80 assertion identities, frozen inputs,
+bundles, runtime configurations, Git refs and unchanged subjects. All 534 tool
+requests and 93 shell requests were inspected. One baseline globally listed
+external instruction filenames; no evaluator file-content read was observed,
+and OS confinement is not claimed. [Cleanup](verification/task12/entry-path-no-pal/cleanup.json)
+retains and verifies contents before removing 21 proven-owned directories and
+six newly created files; a denied write's pre-existing destination stays untouched.
+Exact source archives and runtime inputs are retained for future release archiving.
+[Final independent review](verification/task12/entry-path-no-pal/completion-review.md)
+approves the completion record and bounded keep decision with no findings. It
+independently reconciled all grade rows/counts and inspected selected sealed
+receipts, runtime records and cleanup provenance. All documentation links and
+`git diff --check` pass; no source or grading change followed the review.
+**Task 12.12 is complete.** Task 12 acceptance, PAL, remaining dispositions,
+legacy controls and Task 13 stay open. No additional operative slice or actor
+iteration is selected; R7 unsupported-claim investigation retains next priority.
 
 ## Task 13: Document and verify the complete feature
 

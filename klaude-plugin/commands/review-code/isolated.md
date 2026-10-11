@@ -14,7 +14,7 @@ Review current unstaged changes (falling back to staged changes if no unstaged c
 
 ## Process
 
-**Mandatory order — methodology before evidence.** Invoke `/kk:review-code` using its `review-isolated.md` workflow, strictly in sequence. Load all instructions before investigation. The only early content inspection resolves declared routing predicates within approximately 16 KiB per candidate file, logs predicate/path and conservatively loads undecidable conditionals; it permits no analysis or findings.
+**Mandatory order — methodology before evidence.** Invoke `/kk:review-code` from `${CLAUDE_PLUGIN_ROOT}/skills/review-code/SKILL.md` using its `${CLAUDE_PLUGIN_ROOT}/skills/review-code/review-isolated.md` workflow, strictly in sequence. Load all instructions before investigation. The only early content inspection resolves declared routing predicates within approximately 16 KiB per candidate file, logs predicate/path and conservatively loads undecidable conditionals; it permits no analysis or findings.
 
 1. **Load basic instructions** — Process, shared protocols and common functional method.
 2. **Resolve scope** — Filenames/metadata only; no diff or specification contents.
