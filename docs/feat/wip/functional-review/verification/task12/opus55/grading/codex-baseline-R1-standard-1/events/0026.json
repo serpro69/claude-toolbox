@@ -1,0 +1,41 @@
+{
+  "actor": "items-01a12ad4-a153-7303-8e7f-a239beae8cb2",
+  "completedAtMs": 1791719992091,
+  "id": "exec-26830bc1-bd03-4f01-b106-a28661bcf717",
+  "item": {
+    "aggregatedOutput": "     1\tdef cleanup_setup(store, workspace_id, setup_id):\n     2\t    store.pending.pop(setup_id, None)\n     3\t    store.active.pop(workspace_id, None)\n# Workspace associations\n\nPython 3.9+, standard library only. Run `python3 -B -m unittest discover -s tests`.\nA workspace has one active setup association. Setup jobs can fail after creating\na pending record. Another setup can complete before the failed job's queued\ncleanup runs. Completed associations are consumed by `active_connection`.\nCleanup removes the failed setup's pending record and any association it owns.\nThe store models serialized operations; concurrency and external services are\noutside this change.\n./cleanup.py\n./store.py\n./tests/test_setup.py\n./.gitignore\n./setup.py\n./README.md\n",
+    "command": "/usr/bin/zsh -lc \"nl -ba cleanup.py\ncat README.md\nrg --files --hidden -g '\"'!.git'\"' .\"",
+    "commandActions": [
+      {
+        "command": "nl -ba cleanup.py",
+        "name": "cleanup.py",
+        "path": "/tmp/fr-opus55-matrix-20261011/codex-baseline-R1-standard-1/cleanup.py",
+        "type": "read"
+      },
+      {
+        "command": "cat README.md",
+        "name": "README.md",
+        "path": "/tmp/fr-opus55-matrix-20261011/codex-baseline-R1-standard-1/README.md",
+        "type": "read"
+      },
+      {
+        "command": "rg --files --hidden -g '!.git' .",
+        "path": ".",
+        "type": "listFiles"
+      }
+    ],
+    "cwd": "/tmp/fr-opus55-matrix-20261011/codex-baseline-R1-standard-1",
+    "durationMs": 50,
+    "exitCode": 0,
+    "id": "exec-26830bc1-bd03-4f01-b106-a28661bcf717",
+    "pluginId": null,
+    "processId": "19135",
+    "scriptPath": null,
+    "source": "unifiedExecStartup",
+    "status": "completed",
+    "type": "commandExecution"
+  },
+  "source_file": "items-01a12ad4-a153-7303-8e7f-a239beae8cb2.json",
+  "startedAtMs": 1791719992040,
+  "turnId": "01a12ad4-a17f-7631-a7c0-9c4e9306b0bd"
+}

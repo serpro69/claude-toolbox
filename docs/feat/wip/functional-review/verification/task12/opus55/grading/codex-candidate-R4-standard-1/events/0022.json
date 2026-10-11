@@ -1,0 +1,28 @@
+{
+  "actor": "items-01a12b33-9abe-7832-898f-34d729c5a670",
+  "completedAtMs": 1791726251100,
+  "id": "exec-c8c7eddc-deb4-4ff2-ad4c-8242b9c9d245",
+  "item": {
+    "aggregatedOutput": "HEAD, migrated=0/2: all three original addresses preserved\nHEAD, migrated=1/2: all three original addresses preserved\nHEAD, migrated=2/2: all three original addresses preserved\nHEAD, completed migration retried: original addresses preserved\nstaged, migrated=0/2: KeyError('destination'), listing aborted\nstaged, migrated=1/2: KeyError('destination'), listing aborted\nstaged, migrated=2/2: all three original addresses preserved\nstaged, completed migration retried: original addresses preserved\n",
+    "command": "/usr/bin/zsh -lc \"python3 -B - <<'PY'\nimport json\nimport subprocess\nimport sys\nimport types\nfrom copy import deepcopy\nfrom unittest.mock import patch\n\n\ndef blob(revision, path):\n    return subprocess.check_output(['git', 'show', f'{revision}:{path}'], text=True)\n\n\ndef module(name, source):\n    mod = types.ModuleType(name)\n    exec(compile(source, name + '.py', 'exec'), mod.__dict__)\n    return mod\n\nmigration = module('migration', blob('', 'migration.py'))\nsnapshot = json.loads(blob('', 'data/records.json'))\nexpected = [\n    {'id': 'legacy-a', 'address': 'a@example.test'},\n    {'id': 'current-b', 'address': 'b@example.test'},\n    {'id': 'legacy-c', 'address': 'c@example.test'},\n]\nfor label, revision in [('HEAD', 'HEAD'), ('staged', '')]:\n    reader = module('reader', blob(revision, 'reader.py'))\n    with patch.dict(sys.modules, {'reader': reader}):\n        api = module('api', blob('', 'api.py'))\n    records = deepcopy(snapshot)\n    for stage in range(3):\n        if stage:\n            migrated = migration.migrate_batch(records, 1)\n            assert migrated == 1\n        try:\n            result = api.list_destinations(records)\n        except KeyError as exc:\n            print(f'{label}, migrated={stage}/2: KeyError({str(exc)}), listing aborted')\n            assert label == 'staged' and stage < 2\n        else:\n            assert result == expected, (label, stage, result)\n            print(f'{label}, migrated={stage}/2: all three original addresses preserved')\n    assert migration.migrate_batch(records, 1) == 0\n    assert api.list_destinations(records) == expected\n    print(f'{label}, completed migration retried: original addresses preserved')\nPY\"",
+    "commandActions": [
+      {
+        "command": "python3 -B - <<'PY'\nimport json\nimport subprocess\nimport sys\nimport types\nfrom copy import deepcopy\nfrom unittest.mock import patch\n\n\ndef blob(revision, path):\n    return subprocess.check_output(['git', 'show', f'{revision}:{path}'], text=True)\n\n\ndef module(name, source):\n    mod = types.ModuleType(name)\n    exec(compile(source, name + '.py', 'exec'), mod.__dict__)\n    return mod\n\nmigration = module('migration', blob('', 'migration.py'))\nsnapshot = json.loads(blob('', 'data/records.json'))\nexpected = [\n    {'id': 'legacy-a', 'address': 'a@example.test'},\n    {'id': 'current-b', 'address': 'b@example.test'},\n    {'id': 'legacy-c', 'address': 'c@example.test'},\n]\nfor label, revision in [('HEAD', 'HEAD'), ('staged', '')]:\n    reader = module('reader', blob(revision, 'reader.py'))\n    with patch.dict(sys.modules, {'reader': reader}):\n        api = module('api', blob('', 'api.py'))\n    records = deepcopy(snapshot)\n    for stage in range(3):\n        if stage:\n            migrated = migration.migrate_batch(records, 1)\n            assert migrated == 1\n        try:\n            result = api.list_destinations(records)\n        except KeyError as exc:\n            print(f'{label}, migrated={stage}/2: KeyError({str(exc)}), listing aborted')\n            assert label == 'staged' and stage < 2\n        else:\n            assert result == expected, (label, stage, result)\n            print(f'{label}, migrated={stage}/2: all three original addresses preserved')\n    assert migration.migrate_batch(records, 1) == 0\n    assert api.list_destinations(records) == expected\n    print(f'{label}, completed migration retried: original addresses preserved')\nPY",
+        "type": "unknown"
+      }
+    ],
+    "cwd": "/tmp/fr-opus55-matrix-20261011/codex-candidate-R4-standard-1",
+    "durationMs": 101,
+    "exitCode": 0,
+    "id": "exec-c8c7eddc-deb4-4ff2-ad4c-8242b9c9d245",
+    "pluginId": null,
+    "processId": "82804",
+    "scriptPath": null,
+    "source": "unifiedExecStartup",
+    "status": "completed",
+    "type": "commandExecution"
+  },
+  "source_file": "items-01a12b33-9abe-7832-898f-34d729c5a670.json",
+  "startedAtMs": 1791726250999,
+  "turnId": "01a12b33-9ae9-7301-bbe7-8ff8f0f29892"
+}

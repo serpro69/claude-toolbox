@@ -1,0 +1,19 @@
+{
+  "actor": "main",
+  "block": {
+    "caller": {
+      "type": "direct"
+    },
+    "id": "toolu_01TCTKKBDhCYxib8uw4BSPcp",
+    "input": {
+      "command": "python3 -B -m unittest discover -s tests 2>&1 | tail -4; d=$(mktemp -d) && git show eval-release:provider/settings.py > \"$d/released_settings.py\" && python3 -B -c \"\nimport sys; sys.path.insert(0, '$d'); sys.path.insert(0, '.')\nfrom released_settings import update_settings\nfrom client import save_settings\nstorage = {}\nsend = lambda w, r: update_settings(storage, w, r)\ntry:\n    print('result:', save_settings(send, 'w', {'label': 'blue'}))\nexcept Exception as e:\n    print('raised:', type(e).__name__, e)\nprint('storage after:', storage)\n\"",
+      "description": "Run tests and replay released provider against client"
+    },
+    "name": "Bash",
+    "type": "tool_use"
+  },
+  "id": "e104.0",
+  "parent_tool_use_id": null,
+  "session_id": "894a9628-6e34-4bdb-afff-7c87b18fc723",
+  "source_sequence": 104
+}

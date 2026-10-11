@@ -1,0 +1,17 @@
+{
+  "actor": "items-01a12b1c-9064-7a72-9df3-0edf974fa30c",
+  "completedAtMs": 1791724820585,
+  "id": "msg_04c7aa70a989dd7b016acb8d063b0c87d2931e2255347b6902",
+  "item": {
+    "delivery": null,
+    "id": "msg_04c7aa70a989dd7b016acb8d063b0c87d2931e2255347b6902",
+    "memoryCitation": null,
+    "phase": "final_answer",
+    "questions": null,
+    "text": "**REQUEST_CHANGES** \u2014 two P1 regressions and one P2 regression.\n\nReviewed the staged `service.py` change (8 additions, 8 deletions) against `HEAD` (`feeb199`), using the README\u2019s save/recovery contract.\n\n1. **P1 \u2014 Fresh operation IDs silently skip saving.** [service.py:2](/tmp/fr-opus55-matrix-20261011/codex-candidate-R2-standard-2/service.py:2)  \n   Looking up records by workspace reuses an earlier operation\u2019s retained record. After saving blue with `op-1`, saving green with `op-2` returns success but leaves blue active and creates no `op-2` audit record. Restore lookup by operation ID. **Confidence: 100%; reproduced.**\n\n2. **P1 \u2014 Edited retries acknowledge values that were never applied.** [service.py:8](/tmp/fr-opus55-matrix-20261011/codex-candidate-R2-standard-2/service.py:8)  \n   When the receipt fails after applying blue, the record remains `applied`. Retrying that ID with green skips application, completes the receipt, and returns success while blue remains active. Apply the latest submitted values for unfinished operations and update the recovery payload accordingly, preserving the completed-operation shortcut. **Confidence: 100%; reproduced.**\n\n3. **P2 \u2014 Completed-operation replay can now fail.** [service.py:11](/tmp/fr-opus55-matrix-20261011/codex-candidate-R2-standard-2/service.py:11)  \n   Repeating a completed ID unconditionally calls the fallible receipt writer. With `fail_receipt_once` set, replay raises `ReceiptUnavailable`; `HEAD` returns the completed receipt successfully. Restore the early return for completed IDs. **Confidence: 100%; reproduced.**\n\nAll findings apply the Python security/reliability checklist, triggered by `service.py`\u2019s `.py` extension.\n\n**Verification:** All three existing tests pass on both revisions. Additional checks through the unchanged client reproduced these regressions only in the staged candidate. Initial saves, unchanged-value retries, ordinary completed replay, and separate-workspace saves remain supported. Edited retries, fresh IDs for existing workspaces, and completed replay during receipt failure are blocked.\n\nCoverage is limited to the documented serialized, in-memory model; concurrency, restart, and external deployment guarantees are outside that contract. The two P1 patterns were indexed as `kk:review-findings`. No repository files were changed.",
+    "type": "agentMessage"
+  },
+  "source_file": "items-01a12b1c-9064-7a72-9df3-0edf974fa30c.json",
+  "startedAtMs": 1791724806297,
+  "turnId": "01a12b1c-9091-7091-816a-790cb4c11870"
+}

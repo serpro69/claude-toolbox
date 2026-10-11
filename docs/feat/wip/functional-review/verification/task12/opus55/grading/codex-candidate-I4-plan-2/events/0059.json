@@ -1,0 +1,28 @@
+{
+  "actor": "items-01a12bd8-844f-73b1-93ca-96c32b18c15e",
+  "completedAtMs": 1791737106161,
+  "id": "exec-9d396d97-34d5-4617-88b4-c859407a8a3f",
+  "item": {
+    "aggregatedOutput": "snapshot: snapshot-2 migration: partial\nFAIL legacy: expected=['Alpha'], actual=TypeError: string indices must be integers\nPASS object: ['Beta']\nFAIL mixed snapshot: expected=['Alpha', 'Beta'], actual=TypeError: string indices must be integers\nFAIL mixed reversed: expected=['Beta', 'Alpha'], actual=TypeError: string indices must be integers\nPASS object order/text: ['Beta', ' Alpha ']\nPASS empty: []\n6 scenarios, 3 passed, 3 failed\n",
+    "command": "/usr/bin/zsh -lc \"python3 -B - <<'PY'\nimport json\nfrom pathlib import Path\nfrom api import list_labels\nrows = json.loads(Path('state/records.json').read_text())\nrelease = json.loads(Path('state/release.json').read_text())\nprint('snapshot:', release['snapshot_id'], 'migration:', release['migration'])\ncases = [\n    ('legacy', [rows[0]], ['Alpha']),\n    ('object', [rows[1]], ['Beta']),\n    ('mixed snapshot', rows, ['Alpha', 'Beta']),\n    ('mixed reversed', rows[::-1], ['Beta', 'Alpha']),\n    ('object order/text', [{'label': {'text': 'Beta'}}, {'label': {'text': ' Alpha '}}], ['Beta', ' Alpha ']),\n    ('empty', [], []),\n]\nfailed = 0\nfor name, inputs, expected in cases:\n    try:\n        actual = list_labels(inputs)\n        if actual \"'!= expected:\n            failed += 1\n            print(f'\"'FAIL {name}: expected={expected\"'!r}, actual={actual!r}'\"')\n        else:\n            print(f'PASS {name}: {actual\"'!r}'\"')\n    except Exception as exc:\n        failed += 1\n        print(f'FAIL {name}: expected={expected\"'!r}, actual={type(exc).__name__}: {exc}'\"')\nprint(f'{len(cases)} scenarios, {len(cases)-failed} passed, {failed} failed')\nraise SystemExit(bool(failed))\nPY\"",
+    "commandActions": [
+      {
+        "command": "python3 -B - <<'PY'\nimport json\nfrom pathlib import Path\nfrom api import list_labels\nrows = json.loads(Path('state/records.json').read_text())\nrelease = json.loads(Path('state/release.json').read_text())\nprint('snapshot:', release['snapshot_id'], 'migration:', release['migration'])\ncases = [\n    ('legacy', [rows[0]], ['Alpha']),\n    ('object', [rows[1]], ['Beta']),\n    ('mixed snapshot', rows, ['Alpha', 'Beta']),\n    ('mixed reversed', rows[::-1], ['Beta', 'Alpha']),\n    ('object order/text', [{'label': {'text': 'Beta'}}, {'label': {'text': ' Alpha '}}], ['Beta', ' Alpha ']),\n    ('empty', [], []),\n]\nfailed = 0\nfor name, inputs, expected in cases:\n    try:\n        actual = list_labels(inputs)\n        if actual != expected:\n            failed += 1\n            print(f'FAIL {name}: expected={expected!r}, actual={actual!r}')\n        else:\n            print(f'PASS {name}: {actual!r}')\n    except Exception as exc:\n        failed += 1\n        print(f'FAIL {name}: expected={expected!r}, actual={type(exc).__name__}: {exc}')\nprint(f'{len(cases)} scenarios, {len(cases)-failed} passed, {failed} failed')\nraise SystemExit(bool(failed))\nPY",
+        "type": "unknown"
+      }
+    ],
+    "cwd": "/tmp/fr-opus55-matrix-20261011/codex-candidate-I4-plan-2",
+    "durationMs": 73,
+    "exitCode": 1,
+    "id": "exec-9d396d97-34d5-4617-88b4-c859407a8a3f",
+    "pluginId": null,
+    "processId": "60472",
+    "scriptPath": null,
+    "source": "unifiedExecStartup",
+    "status": "failed",
+    "type": "commandExecution"
+  },
+  "source_file": "items-01a12bd8-844f-73b1-93ca-96c32b18c15e.json",
+  "startedAtMs": 1791737106088,
+  "turnId": "01a12bd8-847b-7a40-b69a-961a69fa57a2"
+}

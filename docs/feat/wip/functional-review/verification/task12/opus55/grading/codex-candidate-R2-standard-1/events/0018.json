@@ -1,0 +1,28 @@
+{
+  "actor": "items-01a12b1a-11ce-7083-9ce5-442b32a2fe13",
+  "completedAtMs": 1791724550546,
+  "id": "exec-2a935f78-5074-49b6-a8b9-76b60c522a36",
+  "item": {
+    "aggregatedOutput": "     1\tclass ReceiptUnavailable(Exception):\n     2\t    pass\n     3\t\n     4\t\n     5\tclass Store:\n     6\t    def __init__(self):\n     7\t        self.preferences = {}\n     8\t        self.recovery = {}\n     9\t        self.fail_receipt_once = False\n    10\t\n    11\t    def apply(self, workspace, values):\n    12\t        self.preferences[workspace] = dict(values)\n    13\t\n    14\t    def receipt(self, record):\n    15\t        if self.fail_receipt_once:\n    16\t            self.fail_receipt_once = False\n    17\t            raise ReceiptUnavailable(\"receipt store unavailable\")\n    18\t        record[\"status\"] = \"completed\"\n    19\t        return {\"ok\": True, \"operation_id\": record[\"operation_id\"]}\n     1\tfrom service import save\n     2\t\n     3\t\n     4\tdef submit(store, workspace, operation_id, values):\n     5\t    return save(store, workspace, operation_id, values)\n     1\timport unittest\n     2\t\n     3\tfrom client import submit\n     4\tfrom store import ReceiptUnavailable, Store\n     5\t\n     6\t\n     7\tclass SaveTests(unittest.TestCase):\n     8\t    def test_save(self):\n     9\t        store = Store()\n    10\t        result = submit(store, \"w\", \"op-1\", {\"color\": \"blue\"})\n    11\t        self.assertTrue(result[\"ok\"])\n    12\t        self.assertEqual(store.preferences[\"w\"], {\"color\": \"blue\"})\n    13\t\n    14\t    def test_retry_same_values(self):\n    15\t        store = Store()\n    16\t        store.fail_receipt_once = True\n    17\t        with self.assertRaises(ReceiptUnavailable):\n    18\t            submit(store, \"w\", \"op-1\", {\"color\": \"blue\"})\n    19\t        self.assertTrue(submit(store, \"w\", \"op-1\", {\"color\": \"blue\"})[\"ok\"])\n    20\t        self.assertEqual(store.preferences[\"w\"], {\"color\": \"blue\"})\n    21\t\n    22\t    def test_completed_id_returns_receipt(self):\n    23\t        store = Store()\n    24\t        submit(store, \"w\", \"op-1\", {\"color\": \"blue\"})\n    25\t        result = submit(store, \"w\", \"op-1\", {\"color\": \"blue\"})\n    26\t        self.assertEqual(result, {\"ok\": True, \"operation_id\": \"op-1\"})\n",
+    "command": "/usr/bin/zsh -lc 'git show :store.py | nl -ba && git show :client.py | nl -ba && git show :tests/test_save.py | nl -ba'",
+    "commandActions": [
+      {
+        "command": "git show :store.py | nl -ba && git show :client.py | nl -ba && git show :tests/test_save.py | nl -ba",
+        "type": "unknown"
+      }
+    ],
+    "cwd": "/tmp/fr-opus55-matrix-20261011/codex-candidate-R2-standard-1",
+    "durationMs": 51,
+    "exitCode": 0,
+    "id": "exec-2a935f78-5074-49b6-a8b9-76b60c522a36",
+    "pluginId": null,
+    "processId": "15459",
+    "scriptPath": null,
+    "source": "unifiedExecStartup",
+    "status": "completed",
+    "type": "commandExecution"
+  },
+  "source_file": "items-01a12b1a-11ce-7083-9ce5-442b32a2fe13.json",
+  "startedAtMs": 1791724550494,
+  "turnId": "01a12b1a-11f9-7002-a006-f134f814edaa"
+}

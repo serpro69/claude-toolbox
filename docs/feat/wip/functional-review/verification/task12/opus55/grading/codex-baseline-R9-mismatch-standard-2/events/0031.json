@@ -1,0 +1,28 @@
+{
+  "actor": "items-01a12b94-9d01-7ba0-9714-d9688b097f71",
+  "completedAtMs": 1791732620701,
+  "id": "exec-9a9fc4db-7f90-48cc-a7a6-94cbc81b9b91",
+  "item": {
+    "aggregatedOutput": "FAIL: success after one transient error\n  expected: ('return', {'color': 'blue'}, ['w', 'w'])\n  actual:   ('raise', 'TransientRead', ['w'])\nFAIL: success after two transient errors\n  expected: ('return', {'color': 'blue'}, ['w', 'w', 'w'])\n  actual:   ('raise', 'TransientRead', ['w'])\nFAIL: transient retry exhaustion\n  expected: ('raise', 'TransientRead', ['w', 'w', 'w'])\n  actual:   ('raise', 'TransientRead', ['w'])\nPASS: permanent error\n  expected: ('raise', 'MissingPreference', ['w'])\n  actual:   ('raise', 'MissingPreference', ['w'])\n",
+    "command": "/usr/bin/zsh -lc \"python3 -B - <<'PY'\nfrom preferences import Preferences\nfrom repository import Repository, ScriptedBackend, TransientRead, MissingPreference\n\nvalue = {'color': 'blue'}\ncases = [\n    ('success after one transient error', [TransientRead('busy'), value], ('return', value, ['w', 'w'])),\n    ('success after two transient errors', [TransientRead('busy'), TransientRead('busy'), value], ('return', value, ['w', 'w', 'w'])),\n    ('transient retry exhaustion', [TransientRead('busy') for _ in range(3)], ('raise', 'TransientRead', ['w', 'w', 'w'])),\n    ('permanent error', [MissingPreference('missing'), value], ('raise', 'MissingPreference', ['w'])),\n]\nfailures = 0\nfor name, outcomes, expected in cases:\n    backend = ScriptedBackend(outcomes)\n    try:\n        result = Preferences(Repository(backend)).read(' w ')\n        actual = ('return', result, backend.keys)\n    except Exception as error:\n        actual = ('raise', type(error).__name__, backend.keys)\n    passed = actual == expected\n    failures += not passed\n    print(f\\\"{'PASS' if passed else 'FAIL'}: {name}\\\")\n    print(f'  expected: {expected\"'!r}'\"')\n    print(f'  actual:   {actual\"'!r}'\"')\nraise SystemExit(bool(failures))\nPY\"",
+    "commandActions": [
+      {
+        "command": "python3 -B - <<'PY'\nfrom preferences import Preferences\nfrom repository import Repository, ScriptedBackend, TransientRead, MissingPreference\n\nvalue = {'color': 'blue'}\ncases = [\n    ('success after one transient error', [TransientRead('busy'), value], ('return', value, ['w', 'w'])),\n    ('success after two transient errors', [TransientRead('busy'), TransientRead('busy'), value], ('return', value, ['w', 'w', 'w'])),\n    ('transient retry exhaustion', [TransientRead('busy') for _ in range(3)], ('raise', 'TransientRead', ['w', 'w', 'w'])),\n    ('permanent error', [MissingPreference('missing'), value], ('raise', 'MissingPreference', ['w'])),\n]\nfailures = 0\nfor name, outcomes, expected in cases:\n    backend = ScriptedBackend(outcomes)\n    try:\n        result = Preferences(Repository(backend)).read(' w ')\n        actual = ('return', result, backend.keys)\n    except Exception as error:\n        actual = ('raise', type(error).__name__, backend.keys)\n    passed = actual == expected\n    failures += not passed\n    print(f\"{'PASS' if passed else 'FAIL'}: {name}\")\n    print(f'  expected: {expected!r}')\n    print(f'  actual:   {actual!r}')\nraise SystemExit(bool(failures))\nPY",
+        "type": "unknown"
+      }
+    ],
+    "cwd": "/tmp/fr-opus55-matrix-20261011/codex-baseline-R9-mismatch-standard-2",
+    "durationMs": 60,
+    "exitCode": 1,
+    "id": "exec-9a9fc4db-7f90-48cc-a7a6-94cbc81b9b91",
+    "pluginId": null,
+    "processId": "8969",
+    "scriptPath": null,
+    "source": "unifiedExecStartup",
+    "status": "failed",
+    "type": "commandExecution"
+  },
+  "source_file": "items-01a12b94-9d01-7ba0-9714-d9688b097f71.json",
+  "startedAtMs": 1791732620640,
+  "turnId": "01a12b94-9d2d-78a1-913e-737f79577d61"
+}

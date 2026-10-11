@@ -1,0 +1,28 @@
+{
+  "actor": "items-01a12bd0-bf4e-74e3-acdb-f26a6a0c8150",
+  "completedAtMs": 1791736572265,
+  "id": "exec-619c519a-757c-455a-b2d9-48aec5becbbb",
+  "item": {
+    "aggregatedOutput": "Instruction packet profiles: part 1/1\n\n\nBEGIN SOURCE /home/sergio/.codex/plugins/cache/fr-opus55-581dd0e1-20261011/kk/0.23.0/profiles/python/review-code/index.md\nSHA256 f61a2b16b8a5ff1f4f6e03d1c19447f6626732a0dc702a997310872987fc0ba6\nResolve links relative to this original source path.\n\n# Python \u2014 review checklists\n\nConsumed by the `$kk:review-code` skill. When the `python` profile is active, every checklist in **Always load** is applied to the diff. There are no conditional entries for this profile.\n\n## Always load\n\n- [security-checklist.md](security-checklist.md) \u2014 Python-specific security smells: input validation, deserialization, subprocess/shell injection, crypto misuse, secret handling.\n- [solid-checklist.md](solid-checklist.md) \u2014 SOLID design-principle smells expressed in Python: module cohesion, protocol segregation, dependency inversion, duck-typing boundaries.\n- [code-quality-checklist.md](code-quality-checklist.md) \u2014 idiomatic Python quality signals: typing, mutability, context managers, exception hygiene, maintainability.\n- [removal-plan.md](removal-plan.md) \u2014 staged-removal template for Python code being retired (modules, packages, public APIs).\n\nEND SOURCE\n\nEND PACKET PART 1/1\n.gitignore\nREADME.md\napi.py\ndocs/feat/wip/label-reader/design.md\ndocs/feat/wip/label-reader/handoff.md\ndocs/feat/wip/label-reader/implementation.md\ndocs/feat/wip/label-reader/tasks.md\nrecords.py\nstate/records.json\nstate/release.json\ntests/test_labels.py\n/usr/bin/python3\nInterpreter: 3.10.12 (main, Aug 31 2026, 10:18:17) [GCC 11.4.0]\nunittest available: True\nTest async predicate routing: imports, constructs, AsyncMock/IsolatedAsyncioTestCase and pytest markers; maximum 16 KiB per file.\napi.py False\nrecords.py False\ntests/test_labels.py False\n",
+    "command": "/usr/bin/zsh -lc \"cat /tmp/kk-review-instructions-lhp36x6x/part-01.md\ngit diff-tree --root --no-commit-id --name-only -r HEAD\ngit status --short\ncommand -v python3\npython3 -B - <<'PY'\nimport ast\nimport importlib.util\nimport sys\nfrom pathlib import Path\nprint('Interpreter:',sys.version)\nprint('unittest available:', importlib.util.find_spec('unittest') is not None)\nprint('Test async predicate routing: imports, constructs, AsyncMock/IsolatedAsyncioTestCase and pytest markers; maximum 16 KiB per file.')\nfor name in ['api.py','records.py','tests/test_labels.py']:\n tree=ast.parse(Path(name).read_bytes()[:16384])\n names={n.id for n in ast.walk(tree) if isinstance(n,ast.Name)} | {n.attr for n in ast.walk(tree) if isinstance(n,ast.Attribute)} | {n.name.split('.')[0] for n in ast.walk(tree) if isinstance(n,ast.alias)} | {n.module.split('.')[0] for n in ast.walk(tree) if isinstance(n,ast.ImportFrom) and n.module}\n match=bool(names & {'asyncio','anyio','trio','pytest_asyncio','AsyncMock','IsolatedAsyncioTestCase'}) or any(isinstance(n,(ast.AsyncFunctionDef,ast.Await,ast.AsyncFor,ast.AsyncWith)) for n in ast.walk(tree))\n print(name,match)\nPY\"",
+    "commandActions": [
+      {
+        "command": "cat /tmp/kk-review-instructions-lhp36x6x/part-01.md\ngit diff-tree --root --no-commit-id --name-only -r HEAD\ngit status --short\ncommand -v python3\npython3 -B - <<'PY'\nimport ast\nimport importlib.util\nimport sys\nfrom pathlib import Path\nprint('Interpreter:',sys.version)\nprint('unittest available:', importlib.util.find_spec('unittest') is not None)\nprint('Test async predicate routing: imports, constructs, AsyncMock/IsolatedAsyncioTestCase and pytest markers; maximum 16 KiB per file.')\nfor name in ['api.py','records.py','tests/test_labels.py']:\n tree=ast.parse(Path(name).read_bytes()[:16384])\n names={n.id for n in ast.walk(tree) if isinstance(n,ast.Name)} | {n.attr for n in ast.walk(tree) if isinstance(n,ast.Attribute)} | {n.name.split('.')[0] for n in ast.walk(tree) if isinstance(n,ast.alias)} | {n.module.split('.')[0] for n in ast.walk(tree) if isinstance(n,ast.ImportFrom) and n.module}\n match=bool(names & {'asyncio','anyio','trio','pytest_asyncio','AsyncMock','IsolatedAsyncioTestCase'}) or any(isinstance(n,(ast.AsyncFunctionDef,ast.Await,ast.AsyncFor,ast.AsyncWith)) for n in ast.walk(tree))\n print(name,match)\nPY",
+        "type": "unknown"
+      }
+    ],
+    "cwd": "/tmp/fr-opus55-matrix-20261011/codex-candidate-I4-plan-1",
+    "durationMs": 65,
+    "exitCode": 0,
+    "id": "exec-619c519a-757c-455a-b2d9-48aec5becbbb",
+    "pluginId": null,
+    "processId": "76183",
+    "scriptPath": null,
+    "source": "unifiedExecStartup",
+    "status": "completed",
+    "type": "commandExecution"
+  },
+  "source_file": "items-01a12bd0-bf4e-74e3-acdb-f26a6a0c8150.json",
+  "startedAtMs": 1791736572200,
+  "turnId": "01a12bd0-bf7b-7e33-b293-dfc205625a58"
+}

@@ -1,0 +1,19 @@
+{
+  "actor": "main",
+  "block": {
+    "caller": {
+      "type": "direct"
+    },
+    "id": "toolu_01M21ARPqhxZ48C12KEMzT7X",
+    "input": {
+      "content": "# Review finding: client enforces unreleased protocol field against released provider (P0, python, enhanced-settings task 1)\n\nPattern: A client increment in an independently-releasable client/provider pair made a new response field mandatory (`response.get(\"applied\") is not True` \u2192 raise) before the provider that emits it was released. The supported provider (`eval-release`) writes the settings and returns only `{\"ok\": True}`, so every ordinary save raises after the values have already been persisted. That is a false failure and breaks backward compatibility.\n\nCompounding pattern: the only unit test's stub was updated to the new provider's response shape. The legacy shape was no longer tested, so the suite passed while the compatibility contract was broken.\n\nGuidance: When adding protocol fields in staged client/provider increments, treat the missing field as legacy-compatible (or gate strictness on provider-advertised capability). Keep a test with the released provider's exact response shape.\n",
+      "source": "kk:review-findings"
+    },
+    "name": "mcp__capy__capy_index",
+    "type": "tool_use"
+  },
+  "id": "e154.0",
+  "parent_tool_use_id": null,
+  "session_id": "7eb01105-d689-4102-a927-25af621d06d0",
+  "source_sequence": 154
+}

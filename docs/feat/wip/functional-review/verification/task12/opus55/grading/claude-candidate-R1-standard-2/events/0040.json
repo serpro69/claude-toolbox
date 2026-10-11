@@ -1,0 +1,19 @@
+{
+  "actor": "main",
+  "block": {
+    "caller": {
+      "type": "direct"
+    },
+    "id": "toolu_01JVHTpjcpD8XcDcE3nrFqtC",
+    "input": {
+      "command": "python3 -B -m unittest discover -s tests 2>&1 | tail -3; d=$(mktemp -d) && cat > $d/repro.py <<'EOF'\nimport sys; sys.path.insert(0, sys.argv[1])\nfrom store import Store\nfrom setup import begin_setup, complete_setup, active_connection\nfrom cleanup import cleanup_setup\ns = Store()\nbegin_setup(s, \"w\", \"failed\")          # failed job leaves pending record\nbegin_setup(s, \"w\", \"two\")\ncomplete_setup(s, \"w\", \"two\", \"connection-two\")  # newer setup completes first\ncleanup_setup(s, \"w\", \"failed\")        # queued cleanup for failed job runs\nprint(\"pending:\", s.pending, \"active:\", active_connection(s, \"w\"))\nEOF\necho \"--- staged candidate\"; python3 -B $d/repro.py \"$PWD\"\nb=$(mktemp -d) && for f in store.py setup.py cleanup.py; do git show HEAD:$f > $b/$f; done\necho \"--- HEAD baseline\"; python3 -B $d/repro.py \"$b\"",
+      "description": "Run tests and reproduce cleanup race scenario"
+    },
+    "name": "Bash",
+    "type": "tool_use"
+  },
+  "id": "e87.0",
+  "parent_tool_use_id": null,
+  "session_id": "042f1e35-4728-4d69-8de2-e277f13cd66d",
+  "source_sequence": 87
+}

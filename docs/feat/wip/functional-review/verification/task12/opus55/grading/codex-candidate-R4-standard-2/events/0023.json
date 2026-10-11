@@ -1,0 +1,28 @@
+{
+  "actor": "items-01a12b35-88f7-7c83-88b1-47a6ad8d6273",
+  "completedAtMs": 1791726399320,
+  "id": "exec-cfeb8833-a5fc-4c62-95b2-6253ce15a20e",
+  "item": {
+    "aggregatedOutput": "     1\tdef address_of(row):\n     2\t    return row[\"destination\"][\"address\"]\n     1\t# Saved destinations\n     2\t\n     3\tPython 3.9+, standard library only. Run `python3 -B -m unittest discover -s tests`.\n     4\t\n     5\tDestination records can use legacy top-level `address` or current nested\n     6\t`destination.address`. New writes use the nested shape. Background migration\n     7\truns in bounded batches while reads remain available; a deployment must read\n     8\tboth shapes until migration finishes. Existing addresses must be preserved.\n     9\t\n    10\t`data/records.json` is a supported mixed snapshot. `api.list_destinations`\n    11\tserves all saved records through the same reader. `migrate_batch` changes up to\n    12\tits limit per invocation; there is no startup migration gate. The store is a\n    13\tlocal JSON model, with no production environment or external database required.\n     1\tfrom reader import address_of\n     2\t\n     3\t\n     4\tdef list_destinations(records):\n     5\t    return [{\"id\": row[\"id\"], \"address\": address_of(row)} for row in records]\n     1\tdef migrate_batch(records, limit):\n     2\t    migrated = 0\n     3\t    for row in records:\n     4\t        if migrated >= limit:\n     5\t            break\n     6\t        if \"destination\" not in row:\n     7\t            row[\"destination\"] = {\"address\": row.pop(\"address\")}\n     8\t            migrated += 1\n     9\t    return migrated\n## master\nM  reader.py\n",
+    "command": "/usr/bin/zsh -lc 'git show :reader.py | nl -ba && git show :README.md | nl -ba && git show :api.py | nl -ba && git show :migration.py | nl -ba && git status -sb && git diff --cached --check'",
+    "commandActions": [
+      {
+        "command": "git show :reader.py | nl -ba && git show :README.md | nl -ba && git show :api.py | nl -ba && git show :migration.py | nl -ba && git status -sb && git diff --cached --check",
+        "type": "unknown"
+      }
+    ],
+    "cwd": "/tmp/fr-opus55-matrix-20261011/codex-candidate-R4-standard-2",
+    "durationMs": 50,
+    "exitCode": 0,
+    "id": "exec-cfeb8833-a5fc-4c62-95b2-6253ce15a20e",
+    "pluginId": null,
+    "processId": "71667",
+    "scriptPath": null,
+    "source": "unifiedExecStartup",
+    "status": "completed",
+    "type": "commandExecution"
+  },
+  "source_file": "items-01a12b35-88f7-7c83-88b1-47a6ad8d6273.json",
+  "startedAtMs": 1791726399269,
+  "turnId": "01a12b35-8922-7570-b1f3-3d1924af6e30"
+}

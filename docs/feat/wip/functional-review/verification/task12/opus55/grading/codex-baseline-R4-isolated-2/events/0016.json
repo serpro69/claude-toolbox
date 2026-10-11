@@ -1,0 +1,28 @@
+{
+  "actor": "items-01a12b3a-4017-7aa0-865a-32097c06c99f",
+  "completedAtMs": 1791726689192,
+  "id": "exec-28225718-1325-47f2-87df-f3f26ee17def",
+  "item": {
+    "aggregatedOutput": "HEAD reader, supported mixed snapshot: PASS (3 records)\nStaged reader, 0 migration batches, 2 legacy rows: KeyError: 'destination'\nStaged reader, 1 migration batches, 1 legacy rows: KeyError: 'destination'\nStaged reader, 2 migration batches, 0 legacy rows: PASS (all addresses preserved)\n",
+    "command": "/usr/bin/zsh -lc \"python3 -B - <<'PY'\nimport copy\nimport json\nimport subprocess\nfrom pathlib import Path\nfrom api import list_destinations\nfrom migration import migrate_batch\n\nsnapshot = json.loads(Path('data/records.json').read_text())\nexpected = [{'id': row['id'], 'address': row['destination']['address'] if 'destination' in row else row['address']} for row in snapshot]\noriginal_reader = {}\nexec(compile(subprocess.check_output(['git', 'show', 'HEAD:reader.py'], text=True), 'HEAD:reader.py', 'exec'), original_reader)\nbaseline = [{'id': row['id'], 'address': original_reader['address_of'](row)} for row in snapshot]\nassert baseline == expected\nprint(f'HEAD reader, supported mixed snapshot: PASS ({len(baseline)} records)')\nfor batches in range(3):\n    records = copy.deepcopy(snapshot)\n    for _ in range(batches):\n        migrate_batch(records, 1)\n    legacy_remaining = sum('destination' not in row for row in records)\n    try:\n        actual = list_destinations(records)\n    except KeyError as exc:\n        print(f'Staged reader, {batches} migration batches, {legacy_remaining} legacy rows: {type(exc).__name__}: {exc}')\n    else:\n        assert actual == expected\n        print(f'Staged reader, {batches} migration batches, {legacy_remaining} legacy rows: PASS (all addresses preserved)')\nPY\"",
+    "commandActions": [
+      {
+        "command": "python3 -B - <<'PY'\nimport copy\nimport json\nimport subprocess\nfrom pathlib import Path\nfrom api import list_destinations\nfrom migration import migrate_batch\n\nsnapshot = json.loads(Path('data/records.json').read_text())\nexpected = [{'id': row['id'], 'address': row['destination']['address'] if 'destination' in row else row['address']} for row in snapshot]\noriginal_reader = {}\nexec(compile(subprocess.check_output(['git', 'show', 'HEAD:reader.py'], text=True), 'HEAD:reader.py', 'exec'), original_reader)\nbaseline = [{'id': row['id'], 'address': original_reader['address_of'](row)} for row in snapshot]\nassert baseline == expected\nprint(f'HEAD reader, supported mixed snapshot: PASS ({len(baseline)} records)')\nfor batches in range(3):\n    records = copy.deepcopy(snapshot)\n    for _ in range(batches):\n        migrate_batch(records, 1)\n    legacy_remaining = sum('destination' not in row for row in records)\n    try:\n        actual = list_destinations(records)\n    except KeyError as exc:\n        print(f'Staged reader, {batches} migration batches, {legacy_remaining} legacy rows: {type(exc).__name__}: {exc}')\n    else:\n        assert actual == expected\n        print(f'Staged reader, {batches} migration batches, {legacy_remaining} legacy rows: PASS (all addresses preserved)')\nPY",
+        "type": "unknown"
+      }
+    ],
+    "cwd": "/tmp/fr-opus55-matrix-20261011/codex-baseline-R4-isolated-2",
+    "durationMs": 75,
+    "exitCode": 0,
+    "id": "exec-28225718-1325-47f2-87df-f3f26ee17def",
+    "pluginId": null,
+    "processId": "78693",
+    "scriptPath": null,
+    "source": "unifiedExecStartup",
+    "status": "completed",
+    "type": "commandExecution"
+  },
+  "source_file": "items-01a12b3a-4017-7aa0-865a-32097c06c99f.json",
+  "startedAtMs": 1791726689116,
+  "turnId": "01a12b3a-4044-7c72-9e18-075489e4941b"
+}

@@ -1,0 +1,28 @@
+{
+  "actor": "items-01a12b33-9abe-7832-898f-34d729c5a670",
+  "completedAtMs": 1791726227307,
+  "id": "exec-2b7fdefc-c3ef-40bc-b196-9a4809c75393",
+  "item": {
+    "aggregatedOutput": "from reader import address_of\n\n\ndef list_destinations(records):\n    return [{\"id\": row[\"id\"], \"address\": address_of(row)} for row in records]\ndef new_destination(record_id, address):\n    return {\"id\": record_id, \"destination\": {\"address\": address}}\ndef migrate_batch(records, limit):\n    migrated = 0\n    for row in records:\n        if migrated >= limit:\n            break\n        if \"destination\" not in row:\n            row[\"destination\"] = {\"address\": row.pop(\"address\")}\n            migrated += 1\n    return migrated\nimport unittest\n\nfrom api import list_destinations\nfrom writer import new_destination\n\n\nclass DestinationTests(unittest.TestCase):\n    def test_new_write_can_be_listed(self):\n        row = new_destination(\"new\", \"new@example.test\")\n        self.assertEqual(list_destinations([row]),\n                         [{\"id\": \"new\", \"address\": \"new@example.test\"}])\n\n    def test_empty_list(self):\n        self.assertEqual(list_destinations([]), [])\n[\n  {\n    \"id\": \"legacy-a\",\n    \"address\": \"a@example.test\"\n  },\n  {\n    \"id\": \"current-b\",\n    \"destination\": {\n      \"address\": \"b@example.test\"\n    }\n  },\n  {\n    \"id\": \"legacy-c\",\n    \"address\": \"c@example.test\"\n  }\n]\nb299f57 Review base\n",
+    "command": "/usr/bin/zsh -lc 'git show :api.py; git show :writer.py; git show :migration.py; git show :tests/test_destinations.py; git show :data/records.json; git log -5 --oneline; git diff --name-only'",
+    "commandActions": [
+      {
+        "command": "git show :api.py; git show :writer.py; git show :migration.py; git show :tests/test_destinations.py; git show :data/records.json; git log -5 --oneline; git diff --name-only",
+        "type": "unknown"
+      }
+    ],
+    "cwd": "/tmp/fr-opus55-matrix-20261011/codex-candidate-R4-standard-1",
+    "durationMs": 53,
+    "exitCode": 0,
+    "id": "exec-2b7fdefc-c3ef-40bc-b196-9a4809c75393",
+    "pluginId": null,
+    "processId": "54366",
+    "scriptPath": null,
+    "source": "unifiedExecStartup",
+    "status": "completed",
+    "type": "commandExecution"
+  },
+  "source_file": "items-01a12b33-9abe-7832-898f-34d729c5a670.json",
+  "startedAtMs": 1791726227253,
+  "turnId": "01a12b33-9ae9-7301-bbe7-8ff8f0f29892"
+}

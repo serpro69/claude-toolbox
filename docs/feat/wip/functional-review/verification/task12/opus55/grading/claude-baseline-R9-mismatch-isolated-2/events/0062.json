@@ -1,0 +1,19 @@
+{
+  "actor": "main",
+  "block": {
+    "caller": {
+      "type": "direct"
+    },
+    "id": "toolu_01EUWpjzYHKCsswQt8NvgFN7",
+    "input": {
+      "content": "# kk:review-findings: Normalization change silently swapped resilient read for single-attempt read\n\n- Severity: P1 (systemic pattern)\n- Files: reader.py, tests/test_reads.py (preference reads project)\n- Pattern: A change described as \"input normalization\" (trim the preference ID) also replaced `repository.read_resilient(key)` with `repository.read_once(key.strip())`, removing the bounded 3-attempt retry on `TransientRead` that README documents as a contract. The accompanying test was rewritten to assert that `TransientRead` propagates after one attempt, so the regression was locked in as expected behavior.\n- Detection heuristic: when a diff's stated intent is narrow (normalize/rename/trim), check whether it also changes which method is called (e.g. resilient \u2192 once, safe \u2192 unsafe, cached \u2192 raw). Treat new tests that assert an exception where the documented contract requires recovery as a red flag, not as coverage.\n- Fix: keep the resilient path and normalize the input inside it: `repository.read_resilient(key.strip())`. Tests should assert that a retry succeeds using the trimmed key (`keys == [\"w\", \"w\"]`), that retries stop after 3 transient errors, and that `MissingPreference` is raised on the first attempt.",
+      "source": "kk:review-findings \u2014 scope-creep drops retry wrapper; test re-baselined to codify regression"
+    },
+    "name": "mcp__capy__capy_index",
+    "type": "tool_use"
+  },
+  "id": "e138.0",
+  "parent_tool_use_id": null,
+  "session_id": "38f02afd-abc5-4082-8358-a25e5a6e003a",
+  "source_sequence": 138
+}

@@ -1,0 +1,28 @@
+{
+  "actor": "items-01a12b41-6618-78c2-bf52-135bf41714e2",
+  "completedAtMs": 1791727222016,
+  "id": "exec-9fd22f51-b3cf-4c98-a13c-6013fea48b3b",
+  "item": {
+    "aggregatedOutput": "initial baseline= [{\"id\": \"legacy-a\", \"address\": \"a@example.test\"}, {\"id\": \"current-b\", \"address\": \"b@example.test\"}, {\"id\": \"legacy-c\", \"address\": \"c@example.test\"}]\ninitial candidate= KeyError 'destination'\nbatch1 migrated= 1 legacy_remaining= 1\nafter_batch1 baseline= [{\"id\": \"legacy-a\", \"address\": \"a@example.test\"}, {\"id\": \"current-b\", \"address\": \"b@example.test\"}, {\"id\": \"legacy-c\", \"address\": \"c@example.test\"}]\nafter_batch1 candidate= KeyError 'destination'\nbatch2 migrated= 1 legacy_remaining= 0\nafter_batch2 baseline= [{\"id\": \"legacy-a\", \"address\": \"a@example.test\"}, {\"id\": \"current-b\", \"address\": \"b@example.test\"}, {\"id\": \"legacy-c\", \"address\": \"c@example.test\"}]\nafter_batch2 candidate= [{\"id\": \"legacy-a\", \"address\": \"a@example.test\"}, {\"id\": \"current-b\", \"address\": \"b@example.test\"}, {\"id\": \"legacy-c\", \"address\": \"c@example.test\"}] addresses_preserved= True\nrepeat migrated= 0\nafter_repeat baseline= [{\"id\": \"legacy-a\", \"address\": \"a@example.test\"}, {\"id\": \"current-b\", \"address\": \"b@example.test\"}, {\"id\": \"legacy-c\", \"address\": \"c@example.test\"}]\nafter_repeat candidate= [{\"id\": \"legacy-a\", \"address\": \"a@example.test\"}, {\"id\": \"current-b\", \"address\": \"b@example.test\"}, {\"id\": \"legacy-c\", \"address\": \"c@example.test\"}] addresses_preserved= True\nnew_write= [{\"id\": \"new\", \"address\": \"new@example.test\"}]\nempty= []\n",
+    "command": "/usr/bin/zsh -lc \"python3 -B - <<'PY'\nimport copy, json, pathlib\nfrom api import list_destinations\nfrom migration import migrate_batch\nfrom writer import new_destination\nfixture=json.loads(pathlib.Path('data/records.json').read_text())\nbase={}\nexec(pathlib.Path('../historical/reader.py').read_text(),base)\nexpected=[{'id':r['id'],'address':base['address_of'](r)} for r in fixture]\ndef inspect(label, rows):\n    baseline=[{'id':r['id'],'address':base['address_of'](r)} for r in rows]\n    print(label, 'baseline=', json.dumps(baseline))\n    assert baseline==expected\n    try:\n        result=list_destinations(rows)\n    except KeyError as err:\n        print(label, 'candidate=',type(err).__name__,str(err))\n    else:\n        print(label, 'candidate=',json.dumps(result),'addresses_preserved=',result==expected)\nrows=copy.deepcopy(fixture)\ninspect('initial',rows)\ncount=migrate_batch(rows,1)\nprint('batch1 migrated=',count,'legacy_remaining=',sum('destination' not in r for r in rows))\ninspect('after_batch1',rows)\ncount=migrate_batch(rows,1)\nprint('batch2 migrated=',count,'legacy_remaining=',sum('destination' not in r for r in rows))\ninspect('after_batch2',rows)\nprint('repeat migrated=',migrate_batch(rows,1))\ninspect('after_repeat',rows)\nprint('new_write=',json.dumps(list_destinations([new_destination('new','new@example.test')])))\nprint('empty=',list_destinations([]))\nPY\"",
+    "commandActions": [
+      {
+        "command": "python3 -B - <<'PY'\nimport copy, json, pathlib\nfrom api import list_destinations\nfrom migration import migrate_batch\nfrom writer import new_destination\nfixture=json.loads(pathlib.Path('data/records.json').read_text())\nbase={}\nexec(pathlib.Path('../historical/reader.py').read_text(),base)\nexpected=[{'id':r['id'],'address':base['address_of'](r)} for r in fixture]\ndef inspect(label, rows):\n    baseline=[{'id':r['id'],'address':base['address_of'](r)} for r in rows]\n    print(label, 'baseline=', json.dumps(baseline))\n    assert baseline==expected\n    try:\n        result=list_destinations(rows)\n    except KeyError as err:\n        print(label, 'candidate=',type(err).__name__,str(err))\n    else:\n        print(label, 'candidate=',json.dumps(result),'addresses_preserved=',result==expected)\nrows=copy.deepcopy(fixture)\ninspect('initial',rows)\ncount=migrate_batch(rows,1)\nprint('batch1 migrated=',count,'legacy_remaining=',sum('destination' not in r for r in rows))\ninspect('after_batch1',rows)\ncount=migrate_batch(rows,1)\nprint('batch2 migrated=',count,'legacy_remaining=',sum('destination' not in r for r in rows))\ninspect('after_batch2',rows)\nprint('repeat migrated=',migrate_batch(rows,1))\ninspect('after_repeat',rows)\nprint('new_write=',json.dumps(list_destinations([new_destination('new','new@example.test')])))\nprint('empty=',list_destinations([]))\nPY",
+        "type": "unknown"
+      }
+    ],
+    "cwd": "/tmp/kk-destination-review-tn6vomvq/candidate",
+    "durationMs": 80,
+    "exitCode": 0,
+    "id": "exec-9fd22f51-b3cf-4c98-a13c-6013fea48b3b",
+    "pluginId": null,
+    "processId": "88212",
+    "scriptPath": null,
+    "source": "unifiedExecStartup",
+    "status": "completed",
+    "type": "commandExecution"
+  },
+  "source_file": "items-01a12b41-6618-78c2-bf52-135bf41714e2.json",
+  "startedAtMs": 1791727221935,
+  "turnId": "01a12b41-6645-7d72-9d52-06d63b422a97"
+}

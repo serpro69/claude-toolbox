@@ -1,0 +1,22 @@
+{
+  "actor": "items-01a12b72-32e0-77f2-976f-5d8c5dcff06f",
+  "completedAtMs": 1791730483688,
+  "id": "exec-40682817-5182-4d8f-b5b0-3485e266c613",
+  "item": {
+    "changes": [
+      {
+        "diff": "# Staged settings-client review \u2014 2026-10-11\n\nOverall assessment: **COMMENT**. No confirmed code defects. Deployment readiness\nis **Unknown** pending the input contract described below.\n\n## Intent, scope and baselines\n\nThe inferred intent is to trim surrounding display-name whitespace while\npreserving internal spaces, based on the staged implementation and tests. The\nREADME supplies runtime and test instructions but no settings API contract.\nNo feature/task scope is available.\n\nReviewed `git diff --cached`: `payload.py` and `tests/test_payload.py`, with\n12 insertions and 1 deletion. Review base:\n`57664d85c646008ae513f0b4374ef691d2fcb101`. Candidate: index blobs\n`8ad74d9a800f4439ec9210cb7234e6b77e0dcfdf` (`payload.py`) and\n`e427779d7c4c8724494479c39e1c04c09eb574d9` (`tests/test_payload.py`).\nAlso read the unchanged `client.py`, `tests/test_client.py`, and README.\nThe worktree matched the index when the suite ran. No released/deployed\nrevision was identified; the only local ref is `master` at the review base.\n\n## Behavior and compatibility\n\n| Scenario through `client.save` | Candidate result | Assessment |\n| --- | --- | --- |\n| Ordinary name or internal spaces | Same request body and response as base | Supported |\n| Padded name, tabs/newlines, padded Unicode name | Surrounding whitespace removed; name preserved | Supported for inferred intent |\n| Empty string | Still sends an empty string | Supported |\n| Whitespace-only string | Sends an empty string | Observed; provider acceptance unverified |\n| `None` | Raises `AttributeError` before transport; base sent `None` | Contract Unknown |\n| Transport raises `OSError` | Same exception propagates | Supported |\n\nThe `None` case is not a confirmed defect: neither repository contracts nor\nexisting callers establish that null is supported. Conversely, the absence of\na contract does not establish that null is forbidden. This uncertainty prevents\nan unconditional deployment approval. No actual provider or deployed baseline\nwas exercised. There is no local schema migration or startup/configuration\nchange to assess.\n\n## Verification and findings\n\nAll four tests passed with Python 3.10.12 using\n`python3 -B -m unittest discover -s tests -v`. `git diff --cached --check`\npassed. Additional in-memory probes loaded the actual base/index blobs and\nexercised all scenarios above. Python 3.9 was not executed.\n\nApplied the common functional/compatibility method and all four Python\nchecklists: security, SOLID, quality, and removal. Python was activated by the\ntwo `.py` paths; the other seven known profiles did not match. No actionable\nsecurity, architecture, quality, or removal findings were established.\nNo findings to index. Capy searches returned an empty knowledge base.\n\n## Outstanding release evidence\n\nOwner: unassigned. Reason: no provider input contract or deployment baseline\nwas supplied. Next action: establish whether display names are strictly strings\nor also nullable, and confirm that trimmed/blank values are accepted by the\ntarget settings API. If null is supported, preserve that behavior before release;\notherwise document the supported input boundary. Verification condition:\nthe staged client satisfies that established contract against the intended\nprovider baseline. A clarification was requested during review but no answer\nwas available when this report was written. No source changes are recommended\nsolely on the basis of this unresolved question.\n",
+        "kind": {
+          "type": "add"
+        },
+        "path": "/tmp/fr-opus55-matrix-20261011/codex-candidate-R7-standard-2/docs/reviews/settings-client-staged.md"
+      }
+    ],
+    "id": "exec-40682817-5182-4d8f-b5b0-3485e266c613",
+    "status": "completed",
+    "type": "fileChange"
+  },
+  "source_file": "items-01a12b72-32e0-77f2-976f-5d8c5dcff06f.json",
+  "startedAtMs": 1791730483627,
+  "turnId": "01a12b72-330c-7b33-a2cd-b5ccb6d83695"
+}

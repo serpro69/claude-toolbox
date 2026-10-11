@@ -1,0 +1,28 @@
+{
+  "actor": "items-01a12baf-d0cb-7b23-9ae0-36a3606135a4",
+  "completedAtMs": 1791734393727,
+  "id": "exec-828f5236-3da4-4fcc-bd2f-9620a0fcc88d",
+  "item": {
+    "aggregatedOutput": "PASS: normalized ID succeeds without consuming another outcome\nPASS: third attempt succeeds with the normalized ID on every attempt\nPASS: permanent error after a transient error stops retries immediately\n",
+    "command": "/usr/bin/zsh -lc \"python3 -B - <<'PY'\nfrom preferences import Preferences\nfrom repository import MissingPreference, Repository, ScriptedBackend, TransientRead\n\nresult = {'color': 'blue'}\nbackend = ScriptedBackend([result, {'unused': True}])\nassert Preferences(Repository(backend)).read('w') is result\nassert backend.keys == ['w']\nassert next(backend.outcomes) == {'unused': True}\nprint('PASS: normalized ID succeeds without consuming another outcome')\n\nbackend = ScriptedBackend([TransientRead('first'), TransientRead('second'), result])\nassert Preferences(Repository(backend)).read('\\\\t w \\\\n') is result\nassert backend.keys == ['w', 'w', 'w']\nprint('PASS: third attempt succeeds with the normalized ID on every attempt')\n\nmissing = MissingPreference('missing')\nbackend = ScriptedBackend([TransientRead('first'), missing, result])\ntry:\n    Preferences(Repository(backend)).read(' w ')\nexcept MissingPreference as error:\n    assert error is missing\nelse:\n    raise AssertionError('permanent error did not propagate')\nassert backend.keys == ['w', 'w']\nassert next(backend.outcomes) is result\nprint('PASS: permanent error after a transient error stops retries immediately')\nPY\"",
+    "commandActions": [
+      {
+        "command": "python3 -B - <<'PY'\nfrom preferences import Preferences\nfrom repository import MissingPreference, Repository, ScriptedBackend, TransientRead\n\nresult = {'color': 'blue'}\nbackend = ScriptedBackend([result, {'unused': True}])\nassert Preferences(Repository(backend)).read('w') is result\nassert backend.keys == ['w']\nassert next(backend.outcomes) == {'unused': True}\nprint('PASS: normalized ID succeeds without consuming another outcome')\n\nbackend = ScriptedBackend([TransientRead('first'), TransientRead('second'), result])\nassert Preferences(Repository(backend)).read('\\t w \\n') is result\nassert backend.keys == ['w', 'w', 'w']\nprint('PASS: third attempt succeeds with the normalized ID on every attempt')\n\nmissing = MissingPreference('missing')\nbackend = ScriptedBackend([TransientRead('first'), missing, result])\ntry:\n    Preferences(Repository(backend)).read(' w ')\nexcept MissingPreference as error:\n    assert error is missing\nelse:\n    raise AssertionError('permanent error did not propagate')\nassert backend.keys == ['w', 'w']\nassert next(backend.outcomes) is result\nprint('PASS: permanent error after a transient error stops retries immediately')\nPY",
+        "type": "unknown"
+      }
+    ],
+    "cwd": "/tmp/fr-opus55-matrix-20261011/codex-candidate-R9-recovery-standard-2",
+    "durationMs": 66,
+    "exitCode": 0,
+    "id": "exec-828f5236-3da4-4fcc-bd2f-9620a0fcc88d",
+    "pluginId": null,
+    "processId": "33182",
+    "scriptPath": null,
+    "source": "unifiedExecStartup",
+    "status": "completed",
+    "type": "commandExecution"
+  },
+  "source_file": "items-01a12baf-d0cb-7b23-9ae0-36a3606135a4.json",
+  "startedAtMs": 1791734393660,
+  "turnId": "01a12baf-d0f9-7d23-b68d-816931c4ff42"
+}

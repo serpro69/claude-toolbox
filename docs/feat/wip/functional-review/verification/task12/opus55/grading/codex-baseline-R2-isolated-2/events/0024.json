@@ -1,0 +1,28 @@
+{
+  "actor": "items-01a12b22-73dc-7103-93f9-cb542454702c",
+  "completedAtMs": 1791725093162,
+  "id": "exec-7e1773f5-dca7-456a-b5fd-8a9fa1f9d710",
+  "item": {
+    "aggregatedOutput": "diff --git a/service.py b/service.py\nindex 062b8a6..0435141 100644\n--- a/service.py\n+++ b/service.py\n@@ -1,12 +1,12 @@\n def save(store, workspace, operation_id, values):\n-    record = store.recovery.get(operation_id)\n-    if record is not None and record[\"status\"] == \"completed\":\n-        return {\"ok\": True, \"operation_id\": operation_id}\n+    record = next((item for item in store.recovery.values()\n+                   if item[\"workspace\"] == workspace), None)\n     if record is None:\n         record = {\"operation_id\": operation_id, \"workspace\": workspace,\n-                  \"status\": \"pending\"}\n+                  \"status\": \"pending\", \"values\": dict(values)}\n         store.recovery[operation_id] = record\n-    store.apply(workspace, values)\n-    record[\"values\"] = dict(values)\n-    record[\"status\"] = \"applied\"\n-    return store.receipt(record)\n+    if record[\"status\"] == \"pending\":\n+        store.apply(workspace, record[\"values\"])\n+        record[\"status\"] = \"applied\"\n+    store.receipt(record)\n+    return {\"ok\": True, \"operation_id\": operation_id}\n",
+    "command": "/usr/bin/zsh -lc 'git diff --cached --no-ext-diff -- service.py'",
+    "commandActions": [
+      {
+        "command": "git diff --cached --no-ext-diff -- service.py",
+        "type": "unknown"
+      }
+    ],
+    "cwd": "/tmp/fr-opus55-matrix-20261011/codex-baseline-R2-isolated-2",
+    "durationMs": 181,
+    "exitCode": 0,
+    "id": "exec-7e1773f5-dca7-456a-b5fd-8a9fa1f9d710",
+    "pluginId": null,
+    "processId": "53962",
+    "scriptPath": null,
+    "source": "unifiedExecStartup",
+    "status": "completed",
+    "type": "commandExecution"
+  },
+  "source_file": "items-01a12b22-73dc-7103-93f9-cb542454702c.json",
+  "startedAtMs": 1791725092981,
+  "turnId": "01a12b22-740d-79a1-ac1f-36cb8097de48"
+}

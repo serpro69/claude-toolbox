@@ -1,0 +1,28 @@
+{
+  "actor": "items-01a12b99-27d2-71d2-b9a3-3df2562ae8e3",
+  "completedAtMs": 1791732921067,
+  "id": "exec-c0aaf1c3-6454-469a-8ae4-6fa45a066de4",
+  "item": {
+    "aggregatedOutput": "# Preference reads\n\nPython 3.9+, standard library only. Run `python3 -B -m unittest discover -s tests`.\n\nThis change accepts preference IDs with surrounding whitespace. Trim the ID\nbefore looking it up; preserve the existing resilient-read contract. A logical\nread may make up to three attempts on `TransientRead`, returning the first\nsuccessful result. Exhausted transient errors propagate. `MissingPreference`\nis permanent and must propagate on the first attempt. Reads have no side effects.\n\n`Preferences.read` is the public entry point. `Repository.read_resilient`\nowns the bounded retry policy; `read_once` performs one attempt. The scripted\nbackend models finite outcomes without sleeping, services or concurrency.\n",
+    "command": "/usr/bin/zsh -lc 'git show :README.md'",
+    "commandActions": [
+      {
+        "command": "git show :README.md",
+        "type": "unknown"
+      }
+    ],
+    "cwd": "/tmp/fr-opus55-matrix-20261011/codex-candidate-R9-mismatch-standard-2",
+    "durationMs": 47,
+    "exitCode": 0,
+    "id": "exec-c0aaf1c3-6454-469a-8ae4-6fa45a066de4",
+    "pluginId": null,
+    "processId": "65017",
+    "scriptPath": null,
+    "source": "unifiedExecStartup",
+    "status": "completed",
+    "type": "commandExecution"
+  },
+  "source_file": "items-01a12b99-27d2-71d2-b9a3-3df2562ae8e3.json",
+  "startedAtMs": 1791732921020,
+  "turnId": "01a12b99-27fe-7161-8a97-43e76dc66a31"
+}

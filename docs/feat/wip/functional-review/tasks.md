@@ -7,11 +7,12 @@
 > Issue: [#166](https://github.com/serpro69/claude-toolbox/issues/166)
 > Status: in-progress
 > Created: 2026-10-07
-> Revised: 2026-10-10 with gate 2B complete and the candidate-6 ordering follow-up scoped
+> Revised: 2026-10-11 with the full matrix complete and severity/cost assessment next
+> Next-session handoff: [follow-up.md](follow-up.md)
 > Not Doing: new review skill, whole-system audits, mandatory production access, deployments, generic release engine, new models/dependencies, profile redesign
 > Delivery: preserve existing invocations/shared consumers; regenerate Codex artifacts with every operative slice.
 
-Scope and direction are approved; the reviews have been assessed and the detailed plan revised. Tasks 1–11 are done, including Task 2 gates 2A and 2B. Task 12's comparison matrix is in progress; Task 13 retains final feature documentation and verification. The [gate 2B completion record](verification/task2b/README.md) documents the selected receipt/use contract, four new baselines and evidence limits. Exact submitted prompts remain unverified, and baseline capture completion is not candidate acceptance. Earlier six-task numbering is superseded by this sequence; no completed work was renumbered. Size includes authored reasoning complexity; mechanical copies/symlinks/generated files are excluded. Parallel markers permit compatible work only and do not authorize delegation. Serialize generation if tasks run concurrently.
+Scope and direction are approved; the reviews have been assessed and the detailed plan revised. Tasks 1–11 are done, including Task 2 gates 2A and 2B. Task 12's full core matrix is captured and graded; acceptance remains incomplete. **Task 12.11 is next:** assess remaining issues against severity and instruction cost before selecting a fix. Task 13 retains final feature documentation and verification. The [gate 2B completion record](verification/task2b/README.md) documents the selected receipt/use contract, four new baselines and evidence limits. Exact submitted prompts remain unverified, and capture completion is not candidate acceptance. Earlier six-task numbering is superseded by this sequence; no completed work was renumbered. Size includes authored reasoning complexity; mechanical copies/symlinks/generated files are excluded. Parallel markers permit compatible work only and do not authorize delegation. Serialize generation if tasks run concurrently.
 
 ## Task 1: Prove revision-bound evaluation loading
 
@@ -352,10 +353,10 @@ The ordinary-prompt R3 isolated run loaded all eight detection rules and applica
 
 ### Subtasks
 
-- [ ] 12.1 Run all declared primary-provider case/mode pairs and secondary representative checks using two fresh baseline and candidate sessions per pair → verify: identical fixtures/rubric/model configuration, filtered revision-bound actor bundles, fresh writable state and identical initial knowledge seeds with the declared unavailable-vault policy.
-- [ ] 12.2 Run R8 phase replays, real PAL integration smoke and legacy routing/pre-write controls → verify: replay success is not reported as transport coverage and missing integration remains explicit.
-- [ ] 12.3 Grade sealed execution packages, including R3 history, R3/R7 verdicts and I4 resulting task/spec state → verify: every required candidate assertion passes twice under the selected versioned contract; contrary or missing evidence cannot pass, and any receipt/use fallback explicitly leaves exact prompt content unverified.
-- [x] 12.4 Retain failures, fixes and unrun gates with owner/reason/next action → verify: baseline comparisons are not cherry-picked and no statistical reliability or untested-provider parity is claimed. See [the current stop record](verification/task12/README.md); retained observations do not complete the other gates.
+- [x] 12.1 Run all declared case/mode pairs using two fresh baseline and candidate sessions per pair → verify: identical fixtures/rubric/model configuration, filtered revision-bound actor bundles, fresh writable state and identical initial knowledge seeds with the declared unavailable-vault policy. The user-expanded scope covers both providers fully: [192 completed sessions](verification/task12/opus55/README.md).
+- [ ] 12.2 Run R8 phase replays, real PAL integration smoke and legacy routing/pre-write controls → verify: replay success is not reported as transport coverage and missing integration remains explicit. R8 complete; live PAL user-deferred; legacy actor controls unrun.
+- [ ] 12.3 Grade sealed execution packages, including R3 history, R3/R7 verdicts and I4 resulting task/spec state → verify: every required candidate assertion passes twice under the selected versioned contract; contrary or missing evidence cannot pass, and any receipt/use fallback explicitly leaves exact prompt content unverified. All 192 packages are graded; required acceptance remains unmet.
+- [x] 12.4 Retain failures, fixes and unrun gates with owner/reason/next action → verify: baseline comparisons are not cherry-picked and no statistical reliability or untested-provider parity is claimed. See [the latest matrix record](verification/task12/opus55/README.md) and [historical stop record](verification/task12/README.md); retained observations do not complete the other gates.
 
 ### Execution context — 2026-10-10
 
@@ -497,9 +498,10 @@ production hook integration. Historical 12.7/12.8 results remain unchanged.
   independent evidence review. Missing activation, receipt, denial, ordering or
   lifetime evidence is NO-GO, not an invitation to weaken the gate.
 
-**12.10 planning metadata:** Status pending; size M; strategy Risk-First;
-depends on 12.9 and design review; cannot run in parallel with another source or
-runtime-policy change. The implementing agent owns it if selected for execution.
+**12.10 planning metadata:** Status pending, conditional; size M; strategy Risk-First;
+depends on 12.9, selection after 12.11's severity/cost assessment, and design review;
+cannot run in parallel with another source or runtime-policy change. The
+implementing agent owns it if selected for execution; it is not the default next task.
 Candidate-6 source/evidence remain uncommitted; no additional commit is made by
 this scope revision.
 
@@ -514,6 +516,74 @@ scoping turn. Independent design review and all probe execution remain pending.
 Scoping verification: all 115 local links/anchors across the four documents
 resolve, `git diff --check` passes, and canonical plugin bytes still match the
 frozen candidate-6 source. No behavioral test result is added by these checks.
+
+### Authorized full matrix rerun — Opus 5.5, 2026-10-11
+
+The user requested the complete functional matrix on both Claude and Codex,
+all applicable modes, twice per baseline/candidate, and explicitly retained the
+PAL deferral. This supersedes the earlier narrow diagnostic/probe scope and
+authorizes measurement without actor changes. The user upgraded Claude Code to
+2.1.296 after 2.1.272 rejected Opus 5.5. Preserve that failed probe and all prior
+captures. Baseline remains c2d28c9e; candidate is immutable 581dd0e1.
+
+[The new run contract](verification/task12/opus55/run-contract.md) declares
+192 fresh core sessions, unchanged fixtures/assertions/revision-2 grading, and
+separate R8 synthetic replays. PAL-dependent acceptance stays incomplete.
+[Runner review](verification/task12/opus55/review.md) approves the controller after
+two cleanup fixes; offline regressions and all ten fresh
+[grader controls](verification/task12/opus55/calibration.md) pass. Both providers
+and sides pass binding. [The completed execution record](verification/task12/opus55/README.md)
+retains **192/192 captures and independent grades**, with no unrun core cells or
+measured transport/finalization failures. No actor instructions, fixtures or
+assertion thresholds changed during this comparison.
+
+**Final results:** Claude baseline **189 PASS / 114 FAIL / 1 PARTIAL**, candidate
+**251 / 49 / 4**; Codex baseline **203 / 96 / 5**, candidate **264 / 30 / 10**.
+Each side/provider has 304 assertion observations. Candidate passes every
+required assertion twice in **9/24 Claude** and **7/24 Codex** combinations.
+R5 standard and both synthetic R8 replays pass twice on both providers; R6
+inherited-defect coverage/follow-up remains a gap, alongside other ordering,
+reporting and evidence failures. Required PAL omissions remain visible.
+
+**Integrity and cleanup:** [the final audit](verification/task12/opus55/audit.md#final-batch-audit)
+verifies every capture, actor bundle, runtime configuration, Git reference and
+grading package. All 1,216 required assertion observations are present exactly
+once per run; grader/rubric pins are unchanged. No evaluator access was observed
+in the targeted traces. All temporary evaluation registrations and caches were
+removed. Original review fixtures remain unchanged; report-only additions and
+four evidence-based grading corrections are retained transparently.
+
+Owner: implementing agent. **The requested rerun is complete; Task 12 acceptance
+remains in-progress and Task 13 pending.** Any behavioral fix or evidence-contract
+amendment needs a separately identified comparison with fresh affected pairs.
+Live PAL remains user-deferred; legacy actor controls and final feature
+verification remain separate gates. No statistical reliability or broader
+provider parity is claimed.
+
+### Severity and instruction-cost assessment — next session
+
+The user requested a durable handoff and emphasized that additional instructions
+for minor issues can make the skills worse overall. [The handoff](follow-up.md)
+records the evidence, assessment criteria and provisional investigation inventory.
+This supersedes the earlier recommendation to proceed directly to guard task
+12.10. It changes sequencing, not historical grades or acceptance requirements.
+
+- [ ] 12.11 Assess remaining issues and select a proportionate next step
+  → verify: every remaining candidate FAIL/PARTIAL is accounted for in a linked
+  disposition record, separating behavioral impact, report omissions, evidence
+  gaps and PAL deferral. Each proposed fix explains its smallest useful scope,
+  instruction/workflow cost and regression checks. Record fix, investigate,
+  defer or no change with reasons and acceptance consequences; select at most
+  one bounded next implementation task. Minor issues may justify small contained
+  corrections without materially added load. No operative edit or model run is
+  required to complete this assessment.
+
+**12.11 planning metadata:** Status pending; size M; strategy Risk-First;
+depends on the completed Opus 5.5 matrix and this user constraint; cannot run in
+parallel with source, rubric or runtime-policy changes. Owner: implementing agent.
+Resume with `/kk:implement task 12.11 of functional-review`. Preserve existing
+word budgets; avoid adding this assessment as a runtime skill protocol. Deferral
+leaves required acceptance open, with an owner and revisit trigger.
 
 ## Task 13: Document and verify the complete feature
 

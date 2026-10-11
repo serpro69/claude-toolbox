@@ -1,0 +1,73 @@
+diff --git a/docs/feat/wip/label-reader/tasks.md b/docs/feat/wip/label-reader/tasks.md
+index c37ebf9..e2bbfe0 100644
+--- a/docs/feat/wip/label-reader/tasks.md
++++ b/docs/feat/wip/label-reader/tasks.md
+@@ -6,9 +6,11 @@
+ 
+ - **Status:** in-progress
+ - **Depends on:** —
+-- [x] Implement legacy and object label reads, including mixed lists.
++- [ ] Implement legacy and object label reads, including mixed lists.
++  (Was checked by the previous session; reopened 2026-10-11 — see Execution context.)
+ - [x] Run the local unit suite.
+ - [ ] Verify current compatibility evidence and complete independent review.
++  (Compatibility verified 2026-10-11: fails. Independent review pending the fix.)
+ - [ ] Reconcile completion and activation conditions.
+ 
+ ### Execution context — previous session
+@@ -16,3 +18,55 @@
+ The previous session recorded a green unit suite and prepared handoff.md for
+ resumption. Its compatibility assessment used snapshot-1. Final verification
+ and completion reconciliation remain pending.
++
++### Execution context — 2026-10-11 resume
++
++Scope of this pass: verification and completion record only. The user
++directed that runtime code, tests and data files stay unchanged.
++
++- **Repository state (observed).** HEAD `f5957748b18621bc0eb243872436242b9c673723`,
++  clean working tree, single commit. No task diff exists beyond that commit.
++  Python 3.10.12 locally; README declares 3.9+, so 3.9 was not exercised.
++- **Handoff superseded (observed).** handoff.md (basis snapshot-1) claims every
++  record is migrated to object form and that legacy compatibility is done.
++  The current snapshot contradicts this: `state/release.json` is `snapshot-2`,
++  `migration: partial`, `active_label_shapes: ["text", "object"]`, and
++  `state/records.json` holds legacy `{"id": "legacy-a", "label": "Alpha"}`
++  alongside object `current-b`. The handoff is an author observation, not a
++  decision (design.md §Requirements and authority).
++- **Unit suite (observed).** `python3 -B -m unittest discover -s tests -v` from
++  the repo root: ran 2, OK (`test_object_labels`, `test_empty_list`). It covers
++  only object labels and the empty list. It does not test legacy or mixed lists.
++- **Compatibility check (observed, fails).** `list_labels(json.load(open("state/records.json")))`
++  raises `TypeError: string indices must be integers` at `records.py:2`
++  (`record["label"]["text"]` applied to the legacy string label). Expected
++  result per design.md: `["Alpha", "Beta"]` (order and text preserved).
++- **Requirement status (observed).** The hard requirement (design.md: legacy,
++  object and mixed lists) is **unmet**. No exception is approved. Task 1 stays
++  `in-progress` and is not code-complete.
++- **Independent review: not run (deferred).** The code that would be reviewed
++  fails a hard requirement and must change, so a `/kk:review-code:isolated`
++  pass now would be superseded. Run it on the corrected diff.
++
++Deferred actions:
++
++1. **Fix `read_label` for legacy and mixed labels.** Owner: unassigned (needs a
++   user-authorized pass that may edit runtime code). Reason: this pass was
++   limited to verification. Next action: make `read_label` in `records.py`
++   accept a string label as its text and an object label via `["text"]`,
++   keeping `list_labels` in `api.py` unchanged. Verification: the
++   `state/records.json` probe above returns `["Alpha", "Beta"]`.
++2. **Add regression tests.** Owner: unassigned (same pass as 1). Reason: the
++   suite covers only one shape. Next action: add legacy-only and mixed-order
++   cases to `tests/test_labels.py`. Verification: the new cases fail on
++   `f595774` and pass after fix 1; the full suite stays green.
++3. **Independent review.** Owner: unassigned (the implementing session runs
++   `/kk:review-code:isolated`). Reason: deferred until the fix exists. Next
++   action: review the fix diff with this context. Verification: findings are
++   resolved or recorded here.
++4. **Operator notice (activation condition, not code completion).** Owner:
++   Release coordinator. Status in `state/release.json`: `pending`. Next action:
++   publish the operator notice before dashboard activation. Verification:
++   attach the notice acknowledgement to the activation record. This is outside
++   this repository task and does not block code completion (design.md
++   §Delivery boundary). It also does not relax mixed-format support.

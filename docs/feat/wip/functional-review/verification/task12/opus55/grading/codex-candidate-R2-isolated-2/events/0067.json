@@ -1,0 +1,30 @@
+{
+  "actor": "items-01a12b2d-b8dc-7f53-9ce3-f1d94e42b26d",
+  "completedAtMs": 1791725826504,
+  "id": "exec-4a6e33c8-a1a0-4dbe-82af-a095f591e2be",
+  "item": {
+    "aggregatedOutput": "1:import unittest\n2:\n3:from client import submit\n4:from store import ReceiptUnavailable, Store\n5:\n6:\n7:class SaveTests(unittest.TestCase):\n8:    def test_save(self):\n9:        store = Store()\n10:        result = submit(store, \"w\", \"op-1\", {\"color\": \"blue\"})\n11:        self.assertTrue(result[\"ok\"])\n12:        self.assertEqual(store.preferences[\"w\"], {\"color\": \"blue\"})\n13:\n14:    def test_retry_same_values(self):\n15:        store = Store()\n16:        store.fail_receipt_once = True\n17:        with self.assertRaises(ReceiptUnavailable):\n18:            submit(store, \"w\", \"op-1\", {\"color\": \"blue\"})\n19:        self.assertTrue(submit(store, \"w\", \"op-1\", {\"color\": \"blue\"})[\"ok\"])\n20:        self.assertEqual(store.preferences[\"w\"], {\"color\": \"blue\"})\n21:\n22:    def test_completed_id_returns_receipt(self):\n23:        store = Store()\n24:        submit(store, \"w\", \"op-1\", {\"color\": \"blue\"})\n25:        result = submit(store, \"w\", \"op-1\", {\"color\": \"blue\"})\n26:        self.assertEqual(result, {\"ok\": True, \"operation_id\": \"op-1\"})\n",
+    "command": "/usr/bin/zsh -lc \"rg -n '\"'^'\"' '/tmp/kk-save-review-g8hjiwmj/historical/tests/test_save.py'\"",
+    "commandActions": [
+      {
+        "command": "rg -n '^' /tmp/kk-save-review-g8hjiwmj/historical/tests/test_save.py",
+        "path": "test_save.py",
+        "query": "^",
+        "type": "search"
+      }
+    ],
+    "cwd": "/tmp/fr-opus55-matrix-20261011/codex-candidate-R2-isolated-2",
+    "durationMs": 86,
+    "exitCode": 0,
+    "id": "exec-4a6e33c8-a1a0-4dbe-82af-a095f591e2be",
+    "pluginId": null,
+    "processId": "72733",
+    "scriptPath": null,
+    "source": "unifiedExecStartup",
+    "status": "completed",
+    "type": "commandExecution"
+  },
+  "source_file": "items-01a12b2d-b8dc-7f53-9ce3-f1d94e42b26d.json",
+  "startedAtMs": 1791725826418,
+  "turnId": "01a12b2d-b8fb-7443-abba-8761d11c8499"
+}

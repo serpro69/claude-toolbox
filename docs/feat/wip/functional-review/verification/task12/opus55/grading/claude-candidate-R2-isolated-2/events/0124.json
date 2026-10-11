@@ -1,0 +1,19 @@
+{
+  "actor": "main",
+  "block": {
+    "caller": {
+      "type": "direct"
+    },
+    "id": "toolu_011xdRVVCdq9o8MqyNwkPXA5",
+    "input": {
+      "content": "Idempotency/recovery record key mismatch (P1 pattern): a recovery record stored under operation_id (`store.recovery[operation_id] = record`) but looked up by a different attribute (e.g. scanning `recovery.values()` for a matching workspace). Effect: any fresh operation ID for an entity that already has a record reuses the old record, skips apply, re-receipts the old operation, and returns success under the new ID \u2014 silent lost updates and missing audit records. Check: lookup key must equal the storage key (`recovery.get(operation_id)`); responses should come from the record actually receipted, not from the call arguments. Seen in service.py save recovery update (2026-10-11).",
+      "source": "kk:review-findings"
+    },
+    "name": "mcp__capy__capy_index",
+    "type": "tool_use"
+  },
+  "id": "e280.0",
+  "parent_tool_use_id": null,
+  "session_id": "c07a19a5-defa-475c-855f-f2d57ed13f3f",
+  "source_sequence": 280
+}

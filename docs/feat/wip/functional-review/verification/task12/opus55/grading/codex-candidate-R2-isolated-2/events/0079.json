@@ -1,0 +1,30 @@
+{
+  "actor": "items-01a12b2d-b8dc-7f53-9ce3-f1d94e42b26d",
+  "completedAtMs": 1791725848141,
+  "id": "exec-56af63b3-46b1-412b-8d89-2d93eadadd07",
+  "item": {
+    "aggregatedOutput": "1:class ReceiptUnavailable(Exception):\n2:    pass\n3:\n4:\n5:class Store:\n6:    def __init__(self):\n7:        self.preferences = {}\n8:        self.recovery = {}\n9:        self.fail_receipt_once = False\n10:\n11:    def apply(self, workspace, values):\n12:        self.preferences[workspace] = dict(values)\n13:\n14:    def receipt(self, record):\n15:        if self.fail_receipt_once:\n16:            self.fail_receipt_once = False\n17:            raise ReceiptUnavailable(\"receipt store unavailable\")\n18:        record[\"status\"] = \"completed\"\n19:        return {\"ok\": True, \"operation_id\": record[\"operation_id\"]}\n",
+    "command": "/usr/bin/zsh -lc \"rg -n '\"'^'\"' '/tmp/kk-save-review-g8hjiwmj/candidate/store.py'\"",
+    "commandActions": [
+      {
+        "command": "rg -n '^' /tmp/kk-save-review-g8hjiwmj/candidate/store.py",
+        "path": "store.py",
+        "query": "^",
+        "type": "search"
+      }
+    ],
+    "cwd": "/tmp/fr-opus55-matrix-20261011/codex-candidate-R2-isolated-2",
+    "durationMs": 66,
+    "exitCode": 0,
+    "id": "exec-56af63b3-46b1-412b-8d89-2d93eadadd07",
+    "pluginId": null,
+    "processId": "78049",
+    "scriptPath": null,
+    "source": "unifiedExecStartup",
+    "status": "completed",
+    "type": "commandExecution"
+  },
+  "source_file": "items-01a12b2d-b8dc-7f53-9ce3-f1d94e42b26d.json",
+  "startedAtMs": 1791725848074,
+  "turnId": "01a12b2d-b8fb-7443-abba-8761d11c8499"
+}

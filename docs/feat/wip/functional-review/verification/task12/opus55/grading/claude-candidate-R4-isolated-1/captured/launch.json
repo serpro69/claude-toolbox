@@ -1,0 +1,68 @@
+{
+  "actor": {
+    "archive_sha256": "c7e56b46c89b28f6ae0c9cca42e4997e2e8acd7a238709de1489de957b032765",
+    "excluded_files": 1368,
+    "retained_files": 447,
+    "retained_manifest_sha256": "c23ee6c23fcf703556b0e40e459ffb5135544916912075e689a18f354be8f5f5",
+    "revision": "581dd0e11455398cb73e3d6ae5542854c016fe7f",
+    "source_files": 1815
+  },
+  "case": "R4",
+  "fixture_manifest_sha256": "07ef87c0cf90a31a7a242bdb5558d8964d86d451273286b82dedf3c3062d6162",
+  "initial_files": {
+    ".gitignore": "862263fa1f46c20f0d1e4dac5ffcc75abd55c08211b2c3864c5f8764b9d87793",
+    "README.md": "7270be55f11d5eae5baa9eeadf305639e6b0e734efb823d22163e2e004fa1835",
+    "api.py": "65132a757bfa9b8f60a93262025f2a7b1fd59df9648678db04ca89a180e89c41",
+    "data/records.json": "2c9f6fcef68ad4cc3191f316b76f3ac350e1fca595b3eaad70deafb121e8d5f5",
+    "migration.py": "e1795122efe7027d56d9143c9c88ab40ec7f1075e2c87820587b46ada33d9bad",
+    "reader.py": "eafdee331233eee997cf354012312156d7cd340a6052a0fc3afc00fa055bdea4",
+    "tests/test_destinations.py": "28bb7d12ae5bfdaf98d35d3ef3bcd6f0ffe60cae9ea130156c829bc1c8adee10",
+    "writer.py": "eba2918b469952a2859f73f7dd17f8e80a21eaad7cfd628fb0695c764153051c"
+  },
+  "initial_knowledge": "empty; database absent",
+  "knowledge_path": "/tmp/fr-opus55-matrix-20261011/claude-candidate-R4-isolated-1/.runner/knowledge.db",
+  "mcp": {
+    "capy": {
+      "args": [
+        "-u",
+        "CAPY_VAULT_KEY",
+        "-u",
+        "CAPY_DB_KEY",
+        "CAPY_DB_KEY=synthetic-functional-review-probe-key-20261008",
+        "CAPY_VAULT_PATH=/tmp/fr-opus55-matrix-20261011/claude-candidate-R4-isolated-1/.runner/vault",
+        "XDG_CONFIG_HOME=/tmp/fr-opus55-matrix-20261011/claude-candidate-R4-isolated-1/.runner/xdg",
+        "/home/sergio/.local/bin/capy",
+        "--project-dir",
+        "/tmp/fr-opus55-matrix-20261011/claude-candidate-R4-isolated-1",
+        "serve"
+      ],
+      "command": "env",
+      "environment_keys": []
+    },
+    "pal": {
+      "args": [
+        "-c",
+        "$HOME/.local/bin/uvx --from git+https://github.com/serpro69/pal-mcp-server.git pal-mcp-server"
+      ],
+      "command": "sh",
+      "environment_keys": []
+    }
+  },
+  "mode": "isolated",
+  "models": {
+    "claude": "claude-opus-5-5/high",
+    "claude_subagent": "claude-opus-5-5",
+    "codex": "gpt-6-astra/xhigh",
+    "codex_reviewer": "gpt-6.1-sol/xhigh",
+    "pal": "gemini-3.1-pro-preview/max"
+  },
+  "prompt": "I've staged the destination reader cleanup. Run `/kk:review-code:isolated` against it.",
+  "provider": "claude",
+  "purpose": "measured workflow",
+  "read_confinement": "No OS-wide confinement; audit actual reads for evaluator material",
+  "review_base": "b299f57e270af63447fb90814bf9fd5cfe45c6cc",
+  "rubric_sha256": "d2a8b209c109b6f07beaf677d00709dec476288ecb6bbb46103661ab1590cae6",
+  "side": "candidate",
+  "vault": "unavailable; private path and unset key",
+  "workspace": "/tmp/fr-opus55-matrix-20261011/claude-candidate-R4-isolated-1"
+}

@@ -1,0 +1,17 @@
+{
+  "actor": "items-01a12b41-6618-78c2-bf52-135bf41714e2",
+  "completedAtMs": 1791727401415,
+  "id": "msg_0c3b2abdbd7faee8016acb9721f0448191a08389061392f021",
+  "item": {
+    "delivery": null,
+    "id": "msg_0c3b2abdbd7faee8016acb9721f0448191a08389061392f021",
+    "memoryCitation": null,
+    "phase": "final_answer",
+    "questions": null,
+    "text": "**REQUEST_CHANGES \u2014 one P1 finding.**\n\n**[reader.py:2](/tmp/fr-opus55-matrix-20261011/codex-candidate-R4-isolated-2/reader.py:2): Preserve legacy-address support during migration.** Removing the fallback raises `KeyError('destination')` for supported legacy records, aborting the entire `list_destinations` call. This violates the README\u2019s requirement that reads remain available throughout bounded migration. Restore the fallback and add coverage for mixed records before and during migration.\n\nIndependent reviewer: **gpt-6.1-sol**, confidence **100%**, applying Python quality and removal guidance.\n\nI verified:\n\n- Both existing tests pass; they cover only new writes and empty listings.\n- The supplied mixed fixture fails before migration and after the first limit-one batch.\n- Completed and repeated migration preserve all addresses and allow listing.\n\nScope: staged `reader.py`, **+1/\u22123**, against HEAD `b299f57`; seven candidate files and the historical reader inspected. Compatibility was assessed against the documented mixed-data contract.\n\nPAL was unavailable, so this used one independent reviewer plus my runtime checks; no external corroboration is claimed. The systemic pattern was indexed as `kk:review-findings`. No repository files were changed.",
+    "type": "agentMessage"
+  },
+  "source_file": "items-01a12b41-6618-78c2-bf52-135bf41714e2.json",
+  "startedAtMs": 1791727393975,
+  "turnId": "01a12b41-6645-7d72-9d52-06d63b422a97"
+}

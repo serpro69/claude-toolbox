@@ -1,0 +1,19 @@
+{
+  "actor": "main",
+  "block": {
+    "caller": {
+      "type": "direct"
+    },
+    "id": "toolu_01Uag3zRj45VpcoaXKuooVrb",
+    "input": {
+      "content": "Pattern: input-normalization change silently swaps a resilient wrapper for its single-attempt primitive (e.g. read_resilient(key) -> read_once(key.strip())), dropping a documented retry contract. A new test then asserts the regressed behavior (TransientRead raised after one attempt), so the suite stays green. Review check: when a diff touches the call into a retry/resilience wrapper, confirm the wrapper is still the callee, and compare new test expectations against the component README contract instead of trusting green tests. Fix: apply the normalization inside the wrapped call (read_resilient(key.strip())), and test retry-then-success, exhaustion attempt count, and permanent-error first-attempt propagation.",
+      "source": "kk:review-findings"
+    },
+    "name": "mcp__capy__capy_index",
+    "type": "tool_use"
+  },
+  "id": "e286.0",
+  "parent_tool_use_id": null,
+  "session_id": "faaa4718-fb87-4a62-93ad-ec27b9d7afc2",
+  "source_sequence": 286
+}

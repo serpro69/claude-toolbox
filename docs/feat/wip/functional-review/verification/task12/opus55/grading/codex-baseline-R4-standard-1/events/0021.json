@@ -1,0 +1,28 @@
+{
+  "actor": "items-01a12b31-0487-7151-bcb5-fe74129b940d",
+  "completedAtMs": 1791726055336,
+  "id": "exec-69dd5e6a-bb39-4bac-8b8d-b04d29a0092a",
+  "item": {
+    "aggregatedOutput": "migration limit=0, migrated=0: HEAD=PASS; staged=FAIL: KeyError('destination',)\nmigration limit=1, migrated=1: HEAD=PASS; staged=FAIL: KeyError('destination',)\nmigration limit=2, migrated=2: HEAD=PASS; staged=PASS: all addresses preserved\n",
+    "command": "/usr/bin/zsh -lc \"python3 -B - <<'PY'\nimport json\nimport subprocess\nfrom pathlib import Path\nfrom api import list_destinations\nfrom migration import migrate_batch\n\nbaseline = {}\nexec(compile(subprocess.check_output(['git', 'show', 'HEAD:reader.py'], text=True), 'HEAD:reader.py', 'exec'), baseline)\nexpected = [\n    {'id': 'legacy-a', 'address': 'a@example.test'},\n    {'id': 'current-b', 'address': 'b@example.test'},\n    {'id': 'legacy-c', 'address': 'c@example.test'},\n]\nfor limit in (0, 1, 2):\n    records = json.loads(Path('data/records.json').read_text())\n    migrated = migrate_batch(records, limit)\n    old_result = [{'id': row['id'], 'address': baseline['address_of'](row)} for row in records]\n    assert old_result == expected\n    try:\n        actual = list_destinations(records)\n        assert actual == expected\n        result = 'PASS: all addresses preserved'\n    except KeyError as exc:\n        result = f'FAIL: {type(exc).__name__}{exc.args}'\n    print(f'migration limit={limit}, migrated={migrated}: HEAD=PASS; staged={result}')\nPY\"",
+    "commandActions": [
+      {
+        "command": "python3 -B - <<'PY'\nimport json\nimport subprocess\nfrom pathlib import Path\nfrom api import list_destinations\nfrom migration import migrate_batch\n\nbaseline = {}\nexec(compile(subprocess.check_output(['git', 'show', 'HEAD:reader.py'], text=True), 'HEAD:reader.py', 'exec'), baseline)\nexpected = [\n    {'id': 'legacy-a', 'address': 'a@example.test'},\n    {'id': 'current-b', 'address': 'b@example.test'},\n    {'id': 'legacy-c', 'address': 'c@example.test'},\n]\nfor limit in (0, 1, 2):\n    records = json.loads(Path('data/records.json').read_text())\n    migrated = migrate_batch(records, limit)\n    old_result = [{'id': row['id'], 'address': baseline['address_of'](row)} for row in records]\n    assert old_result == expected\n    try:\n        actual = list_destinations(records)\n        assert actual == expected\n        result = 'PASS: all addresses preserved'\n    except KeyError as exc:\n        result = f'FAIL: {type(exc).__name__}{exc.args}'\n    print(f'migration limit={limit}, migrated={migrated}: HEAD=PASS; staged={result}')\nPY",
+        "type": "unknown"
+      }
+    ],
+    "cwd": "/tmp/fr-opus55-matrix-20261011/codex-baseline-R4-standard-1",
+    "durationMs": 68,
+    "exitCode": 0,
+    "id": "exec-69dd5e6a-bb39-4bac-8b8d-b04d29a0092a",
+    "pluginId": null,
+    "processId": "42490",
+    "scriptPath": null,
+    "source": "unifiedExecStartup",
+    "status": "completed",
+    "type": "commandExecution"
+  },
+  "source_file": "items-01a12b31-0487-7151-bcb5-fe74129b940d.json",
+  "startedAtMs": 1791726055267,
+  "turnId": "01a12b31-04b2-7780-9583-a1bad029b365"
+}

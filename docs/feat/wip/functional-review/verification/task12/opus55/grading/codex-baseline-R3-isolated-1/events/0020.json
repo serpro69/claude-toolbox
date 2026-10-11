@@ -1,0 +1,28 @@
+{
+  "actor": "items-01a12af1-8732-7971-adbf-0a465cdc4eea",
+  "completedAtMs": 1791721931824,
+  "id": "exec-1e605fa1-e7f2-4b3e-990b-af6ba9a4d584",
+  "item": {
+    "aggregatedOutput": "{\"client\": \"HEAD client\", \"request\": {\"settings\": {\"label\": \"blue\"}}, \"response\": {\"ok\": true}, \"returned\": {\"enhanced\": false, \"saved\": true}, \"storage\": {\"w\": {\"label\": \"blue\"}}}\n{\"client\": \"staged client\", \"raised\": \"Provider did not acknowledge applied settings\", \"request\": {\"require_receipt\": true, \"settings\": {\"label\": \"blue\"}}, \"response\": {\"ok\": true}, \"storage\": {\"w\": {\"label\": \"blue\"}}}\n",
+    "command": "/usr/bin/zsh -lc \"python3 -B - <<'PY'\nimport json\nimport subprocess\nfrom client import save_settings\n\nprovider_scope = {}\nexec(compile(subprocess.check_output(['git', 'show', 'eval-release:provider/settings.py'], text=True), 'eval-release:provider/settings.py', 'exec'), provider_scope)\nprevious_client_scope = {}\nexec(compile(subprocess.check_output(['git', 'show', 'HEAD:client.py'], text=True), 'HEAD:client.py', 'exec'), previous_client_scope)\n\nfor label, save in [('HEAD client', previous_client_scope['save_settings']), ('staged client', save_settings)]:\n    storage = {}\n    exchange = {}\n    def send(workspace, request):\n        exchange['request'] = request\n        response = provider_scope['update_settings'](storage, workspace, request)\n        exchange['response'] = response\n        return response\n    try:\n        result = {'returned': save(send, 'w', {'label': 'blue'}, enhanced_settings=False)}\n    except RuntimeError as error:\n        result = {'raised': str(error)}\n    print(json.dumps({'client': label, 'storage': storage, **exchange, **result}, sort_keys=True))\nPY\"",
+    "commandActions": [
+      {
+        "command": "python3 -B - <<'PY'\nimport json\nimport subprocess\nfrom client import save_settings\n\nprovider_scope = {}\nexec(compile(subprocess.check_output(['git', 'show', 'eval-release:provider/settings.py'], text=True), 'eval-release:provider/settings.py', 'exec'), provider_scope)\nprevious_client_scope = {}\nexec(compile(subprocess.check_output(['git', 'show', 'HEAD:client.py'], text=True), 'HEAD:client.py', 'exec'), previous_client_scope)\n\nfor label, save in [('HEAD client', previous_client_scope['save_settings']), ('staged client', save_settings)]:\n    storage = {}\n    exchange = {}\n    def send(workspace, request):\n        exchange['request'] = request\n        response = provider_scope['update_settings'](storage, workspace, request)\n        exchange['response'] = response\n        return response\n    try:\n        result = {'returned': save(send, 'w', {'label': 'blue'}, enhanced_settings=False)}\n    except RuntimeError as error:\n        result = {'raised': str(error)}\n    print(json.dumps({'client': label, 'storage': storage, **exchange, **result}, sort_keys=True))\nPY",
+        "type": "unknown"
+      }
+    ],
+    "cwd": "/tmp/fr-opus55-matrix-20261011/codex-baseline-R3-isolated-1",
+    "durationMs": 59,
+    "exitCode": 0,
+    "id": "exec-1e605fa1-e7f2-4b3e-990b-af6ba9a4d584",
+    "pluginId": null,
+    "processId": "11836",
+    "scriptPath": null,
+    "source": "unifiedExecStartup",
+    "status": "completed",
+    "type": "commandExecution"
+  },
+  "source_file": "items-01a12af1-8732-7971-adbf-0a465cdc4eea.json",
+  "startedAtMs": 1791721931765,
+  "turnId": "01a12af1-875b-7df3-bef3-7319955945a0"
+}

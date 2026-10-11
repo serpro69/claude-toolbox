@@ -1,0 +1,19 @@
+{
+  "actor": "main",
+  "block": {
+    "caller": {
+      "type": "direct"
+    },
+    "id": "toolu_01XNJUtirwzRC1XNxFcQuktV",
+    "input": {
+      "content": "# Review finding: retry or resilience path silently swapped while making an unrelated change (Python, P1)\n\nPattern: a change described as input normalization (trimming a preference ID) also replaced `repository.read_resilient(key)` with `repository.read_once(key.strip())`. That dropped the bounded 3-attempt retry on TransientRead. The test was then rewritten to assert the regression: TransientRead is raised and the backend is called once.\n\nWhat to check: when a diff changes a call target (resilient \u2192 once, safe \u2192 raw, cached \u2192 uncached) as well as the stated change, confirm the contract is kept. Look out for tests that were renamed or rewritten to assert the new behavior instead of the documented contract.\n\nFix: apply the normalization inside the existing resilient call, e.g. `read_resilient(key.strip())`. Keep tests that check the retry happens and that permanent errors are not retried.",
+      "source": "kk:review-findings"
+    },
+    "name": "mcp__capy__capy_index",
+    "type": "tool_use"
+  },
+  "id": "e146.0",
+  "parent_tool_use_id": null,
+  "session_id": "6042df5f-38c5-4570-89a0-0c97e8dedab0",
+  "source_sequence": 146
+}

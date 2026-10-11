@@ -1,0 +1,28 @@
+{
+  "actor": "items-01a12b64-86da-7741-9162-06efd169bf3e",
+  "completedAtMs": 1791729462631,
+  "id": "exec-40a0a154-4dda-4cbd-a3c7-6e43113f3b11",
+  "item": {
+    "aggregatedOutput": "# Batch report\n\nPython 3.9+, standard library only. Run `python3 -B -m unittest discover -s tests`.\n\nThis change updates the plain report label from Items to Records. Preserve the\ncount and all calculation behavior. The shipped entry point uses the checked-in\nDETAILED_REPORT setting. Historical installations and their settings are not\nrecorded here. Detailed reporting is an existing optional path; it is not being\nactivated or redesigned in this increment.\nfrom config import DETAILED_REPORT\nfrom formatting import format_count\nfrom stats import summarize\n\n\ndef report(values):\n    result = summarize(values, detailed=DETAILED_REPORT)\n    return format_count(result[\"count\"])\nDETAILED_REPORT = False\ndef summarize(values, detailed=False):\n    result = {\"count\": len(values)}\n    if detailed:\n        result[\"mean\"] = sum(values) / len(values)\n    return result\ntest_detailed_mean (test_report.ReportTests) ... ok\ntest_empty_plain_report (test_report.ReportTests) ... ok\ntest_populated_plain_report (test_report.ReportTests) ... ok\n\n----------------------------------------------------------------------\nRan 3 tests in 0.000s\n\nOK\n",
+    "command": "/usr/bin/zsh -lc 'git show HEAD:README.md\ngit show HEAD:app.py\ngit show HEAD:config.py\ngit show HEAD:stats.py\npython3 -B -m unittest discover -s tests -v'",
+    "commandActions": [
+      {
+        "command": "git show HEAD:README.md\ngit show HEAD:app.py\ngit show HEAD:config.py\ngit show HEAD:stats.py\npython3 -B -m unittest discover -s tests -v",
+        "type": "unknown"
+      }
+    ],
+    "cwd": "/tmp/fr-opus55-matrix-20261011/codex-candidate-R6-isolated-1",
+    "durationMs": 121,
+    "exitCode": 0,
+    "id": "exec-40a0a154-4dda-4cbd-a3c7-6e43113f3b11",
+    "pluginId": null,
+    "processId": "97618",
+    "scriptPath": null,
+    "source": "unifiedExecStartup",
+    "status": "completed",
+    "type": "commandExecution"
+  },
+  "source_file": "items-01a12b64-86da-7741-9162-06efd169bf3e.json",
+  "startedAtMs": 1791729462509,
+  "turnId": "01a12b64-8706-7712-953f-3ebf9d1ed023"
+}

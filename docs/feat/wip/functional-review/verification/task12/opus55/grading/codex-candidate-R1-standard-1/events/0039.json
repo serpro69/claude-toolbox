@@ -1,0 +1,35 @@
+{
+  "actor": "items-01a12ad8-0990-7523-be6f-610d48c47bba",
+  "completedAtMs": 1791720294381,
+  "id": "exec-7fa59150-74cb-4fdb-8e53-fbebd546e434",
+  "item": {
+    "appContext": null,
+    "arguments": {
+      "content": "P1 review pattern: delayed or replayed cleanup can invalidate a newer resource even when all operations are serialized. Distinguish the stable resource key (workspace) from the operation that owns the current association (setup ID); cleanup by stable key alone can revoke a later successful setup. Verify failure -> another setup completes -> delayed cleanup -> unchanged reader, and cleanup -> replacement -> replay. Preserve owner-based deletion even when the pending record is already absent: successful completion may remove pending before cleanup of its own association. In this workspace review (HEAD a7ab15e9fc17243d0f00288ca01907dd06dcdb73 -> staged cleanup.py blob f716353505d7450510029a979109df2b9fb036b2), both existing tests passed, but direct HEAD/index reproductions showed active_connection returning None only in the candidate for delayed cleanup and replay after reuse. Restore the association setup_id equality guard and test the serialized lifecycle; concurrency mechanisms are unnecessary for this contract.",
+      "source": "kk:review-findings"
+    },
+    "durationMs": 1,
+    "error": null,
+    "id": "exec-7fa59150-74cb-4fdb-8e53-fbebd546e434",
+    "mcpAppUi": null,
+    "pluginId": null,
+    "readOnlyHint": false,
+    "result": {
+      "_meta": null,
+      "content": [
+        {
+          "text": "Indexed 1 sections (0 with code) from: kk:review-findings\nUse search(queries: [\"...\"]) to query this content. Use source: \"kk:review-findings\" to scope results.",
+          "type": "text"
+        }
+      ],
+      "structuredContent": null
+    },
+    "server": "capy",
+    "status": "completed",
+    "tool": "capy_index",
+    "type": "mcpToolCall"
+  },
+  "source_file": "items-01a12ad8-0990-7523-be6f-610d48c47bba.json",
+  "startedAtMs": 1791720294379,
+  "turnId": "01a12ad8-09bc-72b3-bcf2-ecc642224160"
+}

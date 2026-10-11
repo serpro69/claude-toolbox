@@ -1,0 +1,28 @@
+{
+  "actor": "items-01a12af7-1397-71f0-be3c-39e3cea0c218",
+  "completedAtMs": 1791722354164,
+  "id": "exec-31f0531f-1fc3-4af1-b3aa-c44bd3b34586",
+  "item": {
+    "aggregatedOutput": "{\"scenario\": \"released-provider ordinary save\", \"client\": \"review-base\", \"attempt\": 1, \"storage\": {\"w\": {\"label\": \"blue\"}}, \"request\": {\"settings\": {\"label\": \"blue\"}}, \"result\": {\"saved\": true, \"enhanced\": false}}\n{\"scenario\": \"released-provider ordinary save\", \"client\": \"review-base\", \"attempt\": 2, \"storage\": {\"w\": {\"label\": \"blue\"}}, \"request\": {\"settings\": {\"label\": \"blue\"}}, \"result\": {\"saved\": true, \"enhanced\": false}}\n{\"scenario\": \"released-provider ordinary save\", \"client\": \"candidate\", \"attempt\": 1, \"storage\": {\"w\": {\"label\": \"blue\"}}, \"request\": {\"settings\": {\"label\": \"blue\"}, \"require_receipt\": true}, \"exception\": \"RuntimeError\", \"message\": \"Provider did not acknowledge applied settings\"}\n{\"scenario\": \"released-provider ordinary save\", \"client\": \"candidate\", \"attempt\": 2, \"storage\": {\"w\": {\"label\": \"blue\"}}, \"request\": {\"settings\": {\"label\": \"blue\"}, \"require_receipt\": true}, \"exception\": \"RuntimeError\", \"message\": \"Provider did not acknowledge applied settings\"}\n{\"scenario\": \"response-control\", \"response\": {\"ok\": true, \"applied\": true}, \"result\": {\"saved\": true, \"enhanced\": false}}\n{\"scenario\": \"response-control\", \"response\": {\"ok\": false}, \"exception\": \"RuntimeError\", \"message\": \"Settings save failed\"}\n{\"scenario\": \"response-control\", \"response\": {\"ok\": true, \"applied\": false}, \"exception\": \"RuntimeError\", \"message\": \"Provider did not acknowledge applied settings\"}\n",
+    "command": "/usr/bin/zsh -lc \"python3 -B - <<'PY'\nimport json, pathlib\nbundle=pathlib.Path('/tmp/kk-receipt-review-d5m3gq8g')\ndef source(relative):\n    namespace={}\n    exec(compile((bundle/relative).read_text(),relative,'exec'),namespace)\n    return namespace\nprovider=source('historical/released-provider/provider/settings.py')['update_settings']\nfor version, path in [('review-base','historical/review-base/client.py'),('candidate','candidate/client.py')]:\n    save=source(path)['save_settings']\n    storage={'w':{'label':'red'}}\n    calls=[]\n    def send(workspace,request):\n        calls.append(dict(request))\n        return provider(storage,workspace,request)\n    for attempt in (1,2):\n        try:\n            result=save(send,'w',{'label':'blue'})\n            outcome={'result':result}\n        except Exception as error:\n            outcome={'exception':type(error).__name__,'message':str(error)}\n        print(json.dumps({'scenario':'released-provider ordinary save','client':version,'attempt':attempt,'storage':storage,'request':calls[-1],**outcome}))\nsave=source('candidate/client.py')['save_settings']\nfor response in [{'ok':True,'applied':True},{'ok':False},{'ok':True,'applied':False}]:\n    try:\n        result=save(lambda workspace,request:response,'w',{'label':'blue'})\n        outcome={'result':result}\n    except Exception as error:\n        outcome={'exception':type(error).__name__,'message':str(error)}\n    print(json.dumps({'scenario':'response-control','response':response,**outcome}))\nPY\"",
+    "commandActions": [
+      {
+        "command": "python3 -B - <<'PY'\nimport json, pathlib\nbundle=pathlib.Path('/tmp/kk-receipt-review-d5m3gq8g')\ndef source(relative):\n    namespace={}\n    exec(compile((bundle/relative).read_text(),relative,'exec'),namespace)\n    return namespace\nprovider=source('historical/released-provider/provider/settings.py')['update_settings']\nfor version, path in [('review-base','historical/review-base/client.py'),('candidate','candidate/client.py')]:\n    save=source(path)['save_settings']\n    storage={'w':{'label':'red'}}\n    calls=[]\n    def send(workspace,request):\n        calls.append(dict(request))\n        return provider(storage,workspace,request)\n    for attempt in (1,2):\n        try:\n            result=save(send,'w',{'label':'blue'})\n            outcome={'result':result}\n        except Exception as error:\n            outcome={'exception':type(error).__name__,'message':str(error)}\n        print(json.dumps({'scenario':'released-provider ordinary save','client':version,'attempt':attempt,'storage':storage,'request':calls[-1],**outcome}))\nsave=source('candidate/client.py')['save_settings']\nfor response in [{'ok':True,'applied':True},{'ok':False},{'ok':True,'applied':False}]:\n    try:\n        result=save(lambda workspace,request:response,'w',{'label':'blue'})\n        outcome={'result':result}\n    except Exception as error:\n        outcome={'exception':type(error).__name__,'message':str(error)}\n    print(json.dumps({'scenario':'response-control','response':response,**outcome}))\nPY",
+        "type": "unknown"
+      }
+    ],
+    "cwd": "/tmp/fr-opus55-matrix-20261011/codex-candidate-R3-isolated-1",
+    "durationMs": 61,
+    "exitCode": 0,
+    "id": "exec-31f0531f-1fc3-4af1-b3aa-c44bd3b34586",
+    "pluginId": null,
+    "processId": "80938",
+    "scriptPath": null,
+    "source": "unifiedExecStartup",
+    "status": "completed",
+    "type": "commandExecution"
+  },
+  "source_file": "items-01a12af7-1397-71f0-be3c-39e3cea0c218.json",
+  "startedAtMs": 1791722354103,
+  "turnId": "01a12af7-13c5-7b52-8101-6e1e926212cb"
+}

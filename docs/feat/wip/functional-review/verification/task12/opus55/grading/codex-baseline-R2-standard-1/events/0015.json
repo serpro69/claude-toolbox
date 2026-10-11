@@ -1,0 +1,28 @@
+{
+  "actor": "items-01a12b16-5172-7a42-bf47-956407e7a24a",
+  "completedAtMs": 1791724285681,
+  "id": "exec-547d5ca7-908b-4ef1-9b61-204e32faec96",
+  "item": {
+    "aggregatedOutput": "diff --git a/service.py b/service.py\nindex 062b8a6..0435141 100644\n--- a/service.py\n+++ b/service.py\n@@ -1,12 +1,12 @@\n def save(store, workspace, operation_id, values):\n-    record = store.recovery.get(operation_id)\n-    if record is not None and record[\"status\"] == \"completed\":\n-        return {\"ok\": True, \"operation_id\": operation_id}\n+    record = next((item for item in store.recovery.values()\n+                   if item[\"workspace\"] == workspace), None)\n     if record is None:\n         record = {\"operation_id\": operation_id, \"workspace\": workspace,\n-                  \"status\": \"pending\"}\n+                  \"status\": \"pending\", \"values\": dict(values)}\n         store.recovery[operation_id] = record\n-    store.apply(workspace, values)\n-    record[\"values\"] = dict(values)\n-    record[\"status\"] = \"applied\"\n-    return store.receipt(record)\n+    if record[\"status\"] == \"pending\":\n+        store.apply(workspace, record[\"values\"])\n+        record[\"status\"] = \"applied\"\n+    store.receipt(record)\n+    return {\"ok\": True, \"operation_id\": operation_id}\n",
+    "command": "/usr/bin/zsh -lc 'git diff --cached -- service.py'",
+    "commandActions": [
+      {
+        "command": "git diff --cached -- service.py",
+        "type": "unknown"
+      }
+    ],
+    "cwd": "/tmp/fr-opus55-matrix-20261011/codex-baseline-R2-standard-1",
+    "durationMs": 51,
+    "exitCode": 0,
+    "id": "exec-547d5ca7-908b-4ef1-9b61-204e32faec96",
+    "pluginId": null,
+    "processId": "33786",
+    "scriptPath": null,
+    "source": "unifiedExecStartup",
+    "status": "completed",
+    "type": "commandExecution"
+  },
+  "source_file": "items-01a12b16-5172-7a42-bf47-956407e7a24a.json",
+  "startedAtMs": 1791724285629,
+  "turnId": "01a12b16-519e-7981-a95b-6be8db49dfe5"
+}

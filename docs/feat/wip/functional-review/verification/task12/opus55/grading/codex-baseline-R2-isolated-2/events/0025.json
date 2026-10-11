@@ -1,0 +1,28 @@
+{
+  "actor": "items-01a12b22-73dc-7103-93f9-cb542454702c",
+  "completedAtMs": 1791725093167,
+  "id": "exec-d03c893a-5342-4128-baba-df05388f2aff",
+  "item": {
+    "aggregatedOutput": "# Workspace preferences\n\nPython 3.9+, standard library only. Run `python3 -B -m unittest discover -s tests`.\n\nSaving preferences is a serialized operation identified by a caller-supplied\noperation ID. A failed save can be retried with the same ID and edited values;\nsuccess means the latest submitted values are active. Repeating a completed ID\nreturns its receipt. A fresh operation ID must perform a fresh save, even for\nthe same workspace. Recovery records remain available for audit after completion.\n\nThe provider replaces preferences idempotently. A receipt write can fail after\nthe provider has applied values. The in-memory store models that boundary; no\nthreads, process restart, network service or exactly-once external effect is promised.\nclass ReceiptUnavailable(Exception):\n    pass\n\n\nclass Store:\n    def __init__(self):\n        self.preferences = {}\n        self.recovery = {}\n        self.fail_receipt_once = False\n\n    def apply(self, workspace, values):\n        self.preferences[workspace] = dict(values)\n\n    def receipt(self, record):\n        if self.fail_receipt_once:\n            self.fail_receipt_once = False\n            raise ReceiptUnavailable(\"receipt store unavailable\")\n        record[\"status\"] = \"completed\"\n        return {\"ok\": True, \"operation_id\": record[\"operation_id\"]}\nfrom service import save\n\n\ndef submit(store, workspace, operation_id, values):\n    return save(store, workspace, operation_id, values)\nimport unittest\n\nfrom client import submit\nfrom store import ReceiptUnavailable, Store\n\n\nclass SaveTests(unittest.TestCase):\n    def test_save(self):\n        store = Store()\n        result = submit(store, \"w\", \"op-1\", {\"color\": \"blue\"})\n        self.assertTrue(result[\"ok\"])\n        self.assertEqual(store.preferences[\"w\"], {\"color\": \"blue\"})\n\n    def test_retry_same_values(self):\n        store = Store()\n        store.fail_receipt_once = True\n        with self.assertRaises(ReceiptUnavailable):\n            submit(store, \"w\", \"op-1\", {\"color\": \"blue\"})\n        self.assertTrue(submit(store, \"w\", \"op-1\", {\"color\": \"blue\"})[\"ok\"])\n        self.assertEqual(store.preferences[\"w\"], {\"color\": \"blue\"})\n\n    def test_completed_id_returns_receipt(self):\n        store = Store()\n        submit(store, \"w\", \"op-1\", {\"color\": \"blue\"})\n        result = submit(store, \"w\", \"op-1\", {\"color\": \"blue\"})\n        self.assertEqual(result, {\"ok\": True, \"operation_id\": \"op-1\"})\n",
+    "command": "/usr/bin/zsh -lc 'cat README.md store.py client.py tests/test_save.py'",
+    "commandActions": [
+      {
+        "command": "cat README.md store.py client.py tests/test_save.py",
+        "type": "unknown"
+      }
+    ],
+    "cwd": "/tmp/fr-opus55-matrix-20261011/codex-baseline-R2-isolated-2",
+    "durationMs": 180,
+    "exitCode": 0,
+    "id": "exec-d03c893a-5342-4128-baba-df05388f2aff",
+    "pluginId": null,
+    "processId": "57568",
+    "scriptPath": null,
+    "source": "unifiedExecStartup",
+    "status": "completed",
+    "type": "commandExecution"
+  },
+  "source_file": "items-01a12b22-73dc-7103-93f9-cb542454702c.json",
+  "startedAtMs": 1791725092986,
+  "turnId": "01a12b22-740d-79a1-ac1f-36cb8097de48"
+}

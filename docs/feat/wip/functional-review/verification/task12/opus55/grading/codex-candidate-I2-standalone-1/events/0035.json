@@ -1,0 +1,23 @@
+{
+  "actor": "items-01a12b0c-a185-7343-bcdc-e8c2ff6b33a0",
+  "completedAtMs": 1791723712378,
+  "id": "exec-0838771b-0481-42c6-b005-6319c1ad2829",
+  "item": {
+    "changes": [
+      {
+        "diff": "@@ -2,2 +2,4 @@\n from api import update_preferences\n+from cli import clear_note\n+from settings import patch_settings\n \n@@ -10 +12,45 @@\n         self.assertEqual(original[\"note\"], \"before\")\n+\n+    def test_explicit_values_replace_current_values(self):\n+        for value in (None, \"\", False, 0):\n+            with self.subTest(value=value):\n+                current = {\"setting\": \"before\", \"untouched\": \"keep\"}\n+                patch = {\"setting\": value}\n+                result = patch_settings(current, patch)\n+                self.assertIs(result[\"setting\"], value)\n+                self.assertEqual(result[\"untouched\"], \"keep\")\n+                self.assertEqual(current, {\"setting\": \"before\", \"untouched\": \"keep\"})\n+                self.assertEqual(patch, {\"setting\": value})\n+                self.assertIsNot(result, current)\n+                self.assertIsNot(result, patch)\n+\n+    def test_empty_patch_returns_unchanged_copy(self):\n+        current = {\"note\": None, \"enabled\": False}\n+        result = patch_settings(current, {})\n+        self.assertEqual(result, current)\n+        self.assertIsNot(result, current)\n+\n+    def test_patch_adds_new_keys(self):\n+        patch = {\"note\": \"\", \"enabled\": False}\n+        self.assertEqual(patch_settings({}, patch), patch)\n+\n+    def test_preferences_preserve_omitted_values(self):\n+        current = {\"note\": \"before\", \"enabled\": True}\n+        cases = (\n+            ({}, {\"note\": \"before\", \"enabled\": True}),\n+            ({\"note\": None}, {\"note\": None, \"enabled\": True}),\n+            ({\"note\": \"\"}, {\"note\": \"\", \"enabled\": True}),\n+            ({\"enabled\": False}, {\"note\": \"before\", \"enabled\": False}),\n+            ({\"note\": None, \"enabled\": False}, {\"note\": None, \"enabled\": False}),\n+        )\n+        for payload, expected in cases:\n+            with self.subTest(payload=payload):\n+                original_payload = dict(payload)\n+                self.assertEqual(update_preferences(current, payload), expected)\n+                self.assertEqual(current, {\"note\": \"before\", \"enabled\": True})\n+                self.assertEqual(payload, original_payload)\n+\n+    def test_clear_note_preserves_other_settings_and_input(self):\n+        current = {\"note\": \"before\", \"enabled\": True}\n+        self.assertEqual(clear_note(current), {\"note\": None, \"enabled\": True})\n+        self.assertEqual(current, {\"note\": \"before\", \"enabled\": True})\n",
+        "kind": {
+          "move_path": null,
+          "type": "update"
+        },
+        "path": "/tmp/fr-opus55-matrix-20261011/codex-candidate-I2-standalone-1/tests/test_settings.py"
+      }
+    ],
+    "id": "exec-0838771b-0481-42c6-b005-6319c1ad2829",
+    "status": "completed",
+    "type": "fileChange"
+  },
+  "source_file": "items-01a12b0c-a185-7343-bcdc-e8c2ff6b33a0.json",
+  "startedAtMs": 1791723712357,
+  "turnId": "01a12b0c-a1b1-7a80-bd53-2742f7f59fc6"
+}

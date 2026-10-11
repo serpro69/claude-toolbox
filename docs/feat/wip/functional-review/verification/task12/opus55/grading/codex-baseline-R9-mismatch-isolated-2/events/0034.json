@@ -1,0 +1,28 @@
+{
+  "actor": "items-01a12b9f-06da-7d31-ada5-984efda2d687",
+  "completedAtMs": 1791733363381,
+  "id": "exec-27bcb124-b4ba-478a-85bd-e1aa01b01c41",
+  "item": {
+    "aggregatedOutput": "recovery on second attempt: FAIL; observed=TransientRead, attempts=1, keys=['w']; expected=success, attempts=2\nrecovery on third attempt: FAIL; observed=TransientRead, attempts=1, keys=['w']; expected=success, attempts=3\nexhausted transient reads: FAIL; observed=TransientRead, attempts=1, keys=['w']; expected=TransientRead, attempts=3\npermanent missing preference: PASS; observed=MissingPreference, attempts=1, keys=['w']; expected=MissingPreference, attempts=1\n",
+    "command": "/usr/bin/zsh -lc \"python3 -B - <<'PY'\nfrom preferences import Preferences\nfrom repository import Repository, ScriptedBackend, TransientRead, MissingPreference\n\ncases = [\n    ('recovery on second attempt', [TransientRead('busy'), {'color': 'blue'}], 'success', 2),\n    ('recovery on third attempt', [TransientRead('busy'), TransientRead('busy'), {'color': 'blue'}], 'success', 3),\n    ('exhausted transient reads', [TransientRead('busy') for _ in range(3)], 'TransientRead', 3),\n    ('permanent missing preference', [MissingPreference('missing')], 'MissingPreference', 1),\n]\nfor name, outcomes, expected_outcome, expected_attempts in cases:\n    backend = ScriptedBackend(outcomes)\n    try:\n        result = Preferences(Repository(backend)).read(' w ')\n        observed = 'success'\n    except (TransientRead, MissingPreference) as error:\n        observed = type(error).__name__\n    correct = observed == expected_outcome and backend.keys == ['w'] * expected_attempts\n    print(f'{name}: {\\\"PASS\\\" if correct else \\\"FAIL\\\"}; observed={observed}, attempts={len(backend.keys)}, keys={backend.keys}; expected={expected_outcome}, attempts={expected_attempts}')\nPY\"",
+    "commandActions": [
+      {
+        "command": "python3 -B - <<'PY'\nfrom preferences import Preferences\nfrom repository import Repository, ScriptedBackend, TransientRead, MissingPreference\n\ncases = [\n    ('recovery on second attempt', [TransientRead('busy'), {'color': 'blue'}], 'success', 2),\n    ('recovery on third attempt', [TransientRead('busy'), TransientRead('busy'), {'color': 'blue'}], 'success', 3),\n    ('exhausted transient reads', [TransientRead('busy') for _ in range(3)], 'TransientRead', 3),\n    ('permanent missing preference', [MissingPreference('missing')], 'MissingPreference', 1),\n]\nfor name, outcomes, expected_outcome, expected_attempts in cases:\n    backend = ScriptedBackend(outcomes)\n    try:\n        result = Preferences(Repository(backend)).read(' w ')\n        observed = 'success'\n    except (TransientRead, MissingPreference) as error:\n        observed = type(error).__name__\n    correct = observed == expected_outcome and backend.keys == ['w'] * expected_attempts\n    print(f'{name}: {\"PASS\" if correct else \"FAIL\"}; observed={observed}, attempts={len(backend.keys)}, keys={backend.keys}; expected={expected_outcome}, attempts={expected_attempts}')\nPY",
+        "type": "unknown"
+      }
+    ],
+    "cwd": "/tmp/fr-opus55-matrix-20261011/codex-baseline-R9-mismatch-isolated-2",
+    "durationMs": 63,
+    "exitCode": 0,
+    "id": "exec-27bcb124-b4ba-478a-85bd-e1aa01b01c41",
+    "pluginId": null,
+    "processId": "33816",
+    "scriptPath": null,
+    "source": "unifiedExecStartup",
+    "status": "completed",
+    "type": "commandExecution"
+  },
+  "source_file": "items-01a12b9f-06da-7d31-ada5-984efda2d687.json",
+  "startedAtMs": 1791733363317,
+  "turnId": "01a12b9f-0705-7612-8f7c-5b401cd00707"
+}

@@ -1,0 +1,81 @@
+diff --git a/README.md b/README.md
+index 04a5381..ecbe954 100644
+--- a/README.md
++++ b/README.md
+@@ -4,3 +4,5 @@ Python 3.9+, standard library only. Run `python3 -B -m unittest discover -s test
+ The HTTP patch handler and command-line note action share settings.patch_settings.
+ Callers own their input dictionaries. A patch contains only explicitly supplied
+ keys. The optional note accepts text or None; the enabled flag is boolean.
++Omitted keys keep their current values. Supplied values, including None, empty
++text, and False, replace the current values without modifying either input.
+diff --git a/settings.py b/settings.py
+index 17eee18..04ccefd 100644
+--- a/settings.py
++++ b/settings.py
+@@ -1,5 +1,5 @@
+ def patch_settings(current, patch):
+     result = dict(current)
+     for key, value in patch.items():
+-        result[key] = value or current.get(key)
++        result[key] = value
+     return result
+diff --git a/tests/test_settings.py b/tests/test_settings.py
+index 87a59f4..7651447 100644
+--- a/tests/test_settings.py
++++ b/tests/test_settings.py
+@@ -1,5 +1,7 @@
+ import unittest
+ from api import update_preferences
++from cli import clear_note
++from settings import patch_settings
+ 
+ 
+ class SettingsTests(unittest.TestCase):
+@@ -8,3 +10,47 @@ class SettingsTests(unittest.TestCase):
+         result = update_preferences(original, {"note": "after"})
+         self.assertEqual(result, {"note": "after", "enabled": True})
+         self.assertEqual(original["note"], "before")
++
++    def test_explicit_values_replace_current_values(self):
++        for value in (None, "", False, 0):
++            with self.subTest(value=value):
++                current = {"setting": "before", "untouched": "keep"}
++                patch = {"setting": value}
++                result = patch_settings(current, patch)
++                self.assertIs(result["setting"], value)
++                self.assertEqual(result["untouched"], "keep")
++                self.assertEqual(current, {"setting": "before", "untouched": "keep"})
++                self.assertEqual(patch, {"setting": value})
++                self.assertIsNot(result, current)
++                self.assertIsNot(result, patch)
++
++    def test_empty_patch_returns_unchanged_copy(self):
++        current = {"note": None, "enabled": False}
++        result = patch_settings(current, {})
++        self.assertEqual(result, current)
++        self.assertIsNot(result, current)
++
++    def test_patch_adds_new_keys(self):
++        patch = {"note": "", "enabled": False}
++        self.assertEqual(patch_settings({}, patch), patch)
++
++    def test_preferences_preserve_omitted_values(self):
++        current = {"note": "before", "enabled": True}
++        cases = (
++            ({}, {"note": "before", "enabled": True}),
++            ({"note": None}, {"note": None, "enabled": True}),
++            ({"note": ""}, {"note": "", "enabled": True}),
++            ({"enabled": False}, {"note": "before", "enabled": False}),
++            ({"note": None, "enabled": False}, {"note": None, "enabled": False}),
++        )
++        for payload, expected in cases:
++            with self.subTest(payload=payload):
++                original_payload = dict(payload)
++                self.assertEqual(update_preferences(current, payload), expected)
++                self.assertEqual(current, {"note": "before", "enabled": True})
++                self.assertEqual(payload, original_payload)
++
++    def test_clear_note_preserves_other_settings_and_input(self):
++        current = {"note": "before", "enabled": True}
++        self.assertEqual(clear_note(current), {"note": None, "enabled": True})
++        self.assertEqual(current, {"note": "before", "enabled": True})

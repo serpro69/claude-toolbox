@@ -1,0 +1,35 @@
+{
+  "actor": "items-01a12b3a-4017-7aa0-865a-32097c06c99f",
+  "completedAtMs": 1791726744877,
+  "id": "exec-bce33836-5746-413a-b3de-182024059a85",
+  "item": {
+    "appContext": null,
+    "arguments": {
+      "content": "# Reader compatibility removal during bounded migrations\nA reader cleanup that drops a legacy-shape fallback must be reviewed against persisted mixed snapshots and migration scheduling, even when all new writers emit the current shape. A bounded background migration without a completion gate leaves supported legacy rows reachable; a single strict reader access can fail a whole listing. Current-write and empty-list tests can both pass while this regresses existing data. Verify listing before migration and after a partial batch, preserving every original value; retire compatibility only once completion and the read contract justify it. Observed in destination reader cleanup: reader.py:2 caused KeyError('destination') through api.list_destinations on data/records.json before migration and after migrate_batch(records, 1).",
+      "source": "kk:review-findings"
+    },
+    "durationMs": 1,
+    "error": null,
+    "id": "exec-bce33836-5746-413a-b3de-182024059a85",
+    "mcpAppUi": null,
+    "pluginId": null,
+    "readOnlyHint": false,
+    "result": {
+      "_meta": null,
+      "content": [
+        {
+          "text": "Indexed 1 sections (0 with code) from: kk:review-findings\nUse search(queries: [\"...\"]) to query this content. Use source: \"kk:review-findings\" to scope results.",
+          "type": "text"
+        }
+      ],
+      "structuredContent": null
+    },
+    "server": "capy",
+    "status": "completed",
+    "tool": "capy_index",
+    "type": "mcpToolCall"
+  },
+  "source_file": "items-01a12b3a-4017-7aa0-865a-32097c06c99f.json",
+  "startedAtMs": 1791726744875,
+  "turnId": "01a12b3a-4044-7c72-9e18-075489e4941b"
+}

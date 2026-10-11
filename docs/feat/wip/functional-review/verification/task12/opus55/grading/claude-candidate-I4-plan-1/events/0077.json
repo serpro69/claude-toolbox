@@ -1,0 +1,12 @@
+{
+  "actor": "main",
+  "block": {
+    "content": "1\t## Profile detection procedure\n2\t\n3\tSingle source of truth for computing the set of profiles active in the current context.\n4\tConsumed by six skills: `/kk:review-code`, `/kk:review-spec`, `/kk:design`, `/kk:implement`, `/kk:test`, and `/kk:document`.\n5\t\n6\tEvery profile under `klaude-plugin/profiles/<name>/` declares its own trigger rule in `DETECTION.md` using the mandatory three-section schema (`## Path signals`, `## Filename signals`, `## Content signals`).\n7\tThe shared procedure below applies the same algorithm against every profile's declared values.\n8\t\n9\t### Inputs per consuming skill\n10\t\n11\tNot every consumer has a diff available. Use the input listed for your skill:\n12\t\n13\t- **`/kk:review-code`** \u2014 git diff (staged, or an explicit commit range). Scope is\n14\t  the set of files the diff touches.\n15\t- **`/kk:review-spec`** \u2014 git diff when invoked standalone; the feature directory's\n16\t  full file list when invoked by `/kk:implement` (spec review runs over the whole\n17\t  feature, not just the current task's diff).\n18\t- **`/kk:test`** \u2014 git diff mid-feature, OR the feature directory's file list\n19\t  post-implementation.\n20\t- **`/kk:implement`** \u2014 the current sub-task's target file list, augmented by the",
+    "tool_use_id": "toolu_01GDTEdUfxRhK3T7AGpXnkZw",
+    "type": "tool_result"
+  },
+  "id": "e166.0",
+  "parent_tool_use_id": null,
+  "session_id": "400bf369-2345-4929-89cd-ae828fed5365",
+  "source_sequence": 166
+}

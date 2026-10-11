@@ -1,0 +1,19 @@
+{
+  "actor": "main",
+  "block": {
+    "caller": {
+      "type": "direct"
+    },
+    "id": "toolu_01HWtgT6YpNYhQ8kBtAJDsYh",
+    "input": {
+      "command": "python3 -B -m unittest discover -s tests -v 2>&1 | tail -8; python3 -B -c '\nfrom preferences import Preferences\nfrom repository import Repository, ScriptedBackend, TransientRead, MissingPreference\nimport reader\ndef run(outcomes, fn=None):\n    b = ScriptedBackend(outcomes); r = Repository(b)\n    try: res = fn(r) if fn else Preferences(r).read(\" w \")\n    except Exception as e: res = type(e).__name__\n    return res, b.keys\nprint(\"candidate transient->ok:\", run([TransientRead(\"x\"), {\"c\":1}]))\nprint(\"candidate missing:\", run([MissingPreference(\"m\"), {\"c\":1}]))\nfixed = lambda r: r.read_resilient(\" w \".strip())\nprint(\"fixed transient->ok:\", run([TransientRead(\"x\"), {\"c\":1}], fixed))\nprint(\"fixed 3x transient:\", run([TransientRead(\"x\")]*3, fixed))\nprint(\"fixed missing:\", run([MissingPreference(\"m\"), {\"c\":1}], fixed))\n'",
+      "description": "Run tests and retry scenarios"
+    },
+    "name": "Bash",
+    "type": "tool_use"
+  },
+  "id": "e93.0",
+  "parent_tool_use_id": null,
+  "session_id": "b3a687df-44ec-4426-bc67-5212b14148e7",
+  "source_sequence": 93
+}

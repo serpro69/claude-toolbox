@@ -1,0 +1,19 @@
+{
+  "actor": "main",
+  "block": {
+    "caller": {
+      "type": "direct"
+    },
+    "id": "toolu_019RfKhp4C8VJdo7K8ywzFPq",
+    "input": {
+      "content": "## Cleanup must compare ownership before deleting a slot keyed by a shared id (P1)\n\nPattern: a cleanup handler for a failed or superseded job deletes a record keyed by a shared resource id (for example `store.active.pop(workspace_id)`), when it should only delete the record if the job still owns it (for example `association[\"setup_id\"] == setup_id`).\n\nWhy it is dangerous: a queued or retried cleanup that runs after a newer job has completed silently wipes the newer job's state. This happens even when operations are fully serialized, so it is not a concurrency bug.\n\nSignals:\n- the change is described as a \"simplification\" that removes an ownership guard;\n- an owner field that is written (for example `setup_id`) is no longer read anywhere.\n\nFix: compare-and-delete. Read the slot, check the owner id, and delete only on a match. Add a regression test for this order: older job fails, newer job completes, then the older job's cleanup runs.\n\nSeen in: workspace setup cleanup review (cleanup.py, 2026-10-11).",
+      "source": "kk:review-findings"
+    },
+    "name": "mcp__capy__capy_index",
+    "type": "tool_use"
+  },
+  "id": "e222.0",
+  "parent_tool_use_id": null,
+  "session_id": "9094a6ec-07a8-45cc-bcc4-2bf40a163b54",
+  "source_sequence": 222
+}

@@ -1,0 +1,30 @@
+{
+  "actor": "items-01a12b3b-52a4-7ee3-b135-17befc578e18",
+  "completedAtMs": 1791726697372,
+  "id": "exec-ec1e91e5-dea5-4a8f-b327-b159adb977cc",
+  "item": {
+    "aggregatedOutput": "def migrate_batch(records, limit):\n    migrated = 0\n    for row in records:\n        if migrated >= limit:\n            break\n        if \"destination\" not in row:\n            row[\"destination\"] = {\"address\": row.pop(\"address\")}\n            migrated += 1\n    return migrated\n",
+    "command": "/usr/bin/zsh -lc 'cat migration.py'",
+    "commandActions": [
+      {
+        "command": "cat migration.py",
+        "name": "migration.py",
+        "path": "/tmp/fr-opus55-matrix-20261011/codex-baseline-R4-isolated-2/migration.py",
+        "type": "read"
+      }
+    ],
+    "cwd": "/tmp/fr-opus55-matrix-20261011/codex-baseline-R4-isolated-2",
+    "durationMs": 85,
+    "exitCode": 0,
+    "id": "exec-ec1e91e5-dea5-4a8f-b327-b159adb977cc",
+    "pluginId": null,
+    "processId": "31960",
+    "scriptPath": null,
+    "source": "unifiedExecStartup",
+    "status": "completed",
+    "type": "commandExecution"
+  },
+  "source_file": "items-01a12b3b-52a4-7ee3-b135-17befc578e18.json",
+  "startedAtMs": 1791726697286,
+  "turnId": "01a12b3b-52c5-7713-87bc-64188f04cf99"
+}

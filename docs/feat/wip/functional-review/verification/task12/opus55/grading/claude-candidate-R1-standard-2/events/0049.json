@@ -1,0 +1,19 @@
+{
+  "actor": "main",
+  "block": {
+    "caller": {
+      "type": "direct"
+    },
+    "id": "toolu_0122kqZawbmcQXG1HbD3nHBG",
+    "input": {
+      "content": "Pattern: \"simplifying\" an ownership-guarded delete into an unconditional delete of shared keyed state. Example: cleanup_setup(store, workspace_id, setup_id) dropped the check `active[workspace_id][\"setup_id\"] == setup_id` and called store.active.pop(workspace_id) unconditionally. When a failed job's queued cleanup runs after a newer setup completed for the same workspace, it deletes the newer, valid association (active_connection -> None). Review rule: a cleanup or compensation path keyed by a shared key (workspace, tenant, resource) must verify it owns the record before deleting it. The existing own-record test still passes, so require a test for the \"other owner\" case. Severity P1.",
+      "source": "kk:review-findings"
+    },
+    "name": "mcp__capy__capy_index",
+    "type": "tool_use"
+  },
+  "id": "e107.0",
+  "parent_tool_use_id": null,
+  "session_id": "042f1e35-4728-4d69-8de2-e277f13cd66d",
+  "source_sequence": 107
+}

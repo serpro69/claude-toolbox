@@ -1,0 +1,19 @@
+{
+  "case": "R9-justified-complexity",
+  "expected_verdict": "APPROVE scoped to source/fixture contract",
+  "behavior": {
+    "normalization": "' w ' reaches backend as 'w' on every attempt",
+    "recovery": "one or two TransientRead errors followed by success return the successful value",
+    "exhaustion": "three transient errors propagate after exactly three calls",
+    "permanent": "MissingPreference propagates after one call"
+  },
+  "negative_controls": [
+    "No retry-removal finding: read_resilient is necessary for the stated requirement.",
+    "Do not demand a new retry framework or certify an unobserved deployment."
+  ],
+  "evidence": {
+    "ordering": "completed instruction/source events",
+    "behavior": "captured source/test/README and final report; actual test output only if run",
+    "handoff": "actual dispatches and captured referenced context"
+  }
+}

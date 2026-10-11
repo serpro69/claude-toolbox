@@ -1,0 +1,30 @@
+{
+  "actor": "items-01a12b16-5172-7a42-bf47-956407e7a24a",
+  "completedAtMs": 1791724290843,
+  "id": "exec-0e0eed66-38fc-4a66-82d7-e6e3f0a18864",
+  "item": {
+    "aggregatedOutput": "     1\timport unittest\n     2\t\n     3\tfrom client import submit\n     4\tfrom store import ReceiptUnavailable, Store\n     5\t\n     6\t\n     7\tclass SaveTests(unittest.TestCase):\n     8\t    def test_save(self):\n     9\t        store = Store()\n    10\t        result = submit(store, \"w\", \"op-1\", {\"color\": \"blue\"})\n    11\t        self.assertTrue(result[\"ok\"])\n    12\t        self.assertEqual(store.preferences[\"w\"], {\"color\": \"blue\"})\n    13\t\n    14\t    def test_retry_same_values(self):\n    15\t        store = Store()\n    16\t        store.fail_receipt_once = True\n    17\t        with self.assertRaises(ReceiptUnavailable):\n    18\t            submit(store, \"w\", \"op-1\", {\"color\": \"blue\"})\n    19\t        self.assertTrue(submit(store, \"w\", \"op-1\", {\"color\": \"blue\"})[\"ok\"])\n    20\t        self.assertEqual(store.preferences[\"w\"], {\"color\": \"blue\"})\n    21\t\n    22\t    def test_completed_id_returns_receipt(self):\n    23\t        store = Store()\n    24\t        submit(store, \"w\", \"op-1\", {\"color\": \"blue\"})\n    25\t        result = submit(store, \"w\", \"op-1\", {\"color\": \"blue\"})\n    26\t        self.assertEqual(result, {\"ok\": True, \"operation_id\": \"op-1\"})\n",
+    "command": "/usr/bin/zsh -lc 'nl -ba tests/test_save.py'",
+    "commandActions": [
+      {
+        "command": "nl -ba tests/test_save.py",
+        "name": "test_save.py",
+        "path": "/tmp/fr-opus55-matrix-20261011/codex-baseline-R2-standard-1/tests/test_save.py",
+        "type": "read"
+      }
+    ],
+    "cwd": "/tmp/fr-opus55-matrix-20261011/codex-baseline-R2-standard-1",
+    "durationMs": 55,
+    "exitCode": 0,
+    "id": "exec-0e0eed66-38fc-4a66-82d7-e6e3f0a18864",
+    "pluginId": null,
+    "processId": "68323",
+    "scriptPath": null,
+    "source": "unifiedExecStartup",
+    "status": "completed",
+    "type": "commandExecution"
+  },
+  "source_file": "items-01a12b16-5172-7a42-bf47-956407e7a24a.json",
+  "startedAtMs": 1791724290787,
+  "turnId": "01a12b16-519e-7981-a95b-6be8db49dfe5"
+}

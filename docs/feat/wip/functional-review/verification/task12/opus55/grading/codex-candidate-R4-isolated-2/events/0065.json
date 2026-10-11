@@ -1,0 +1,30 @@
+{
+  "actor": "items-01a12b43-7b42-7691-a7a4-d1c4ca599026",
+  "completedAtMs": 1791727283698,
+  "id": "exec-14d0a6ef-3ac8-459f-aced-b7c99db48474",
+  "item": {
+    "aggregatedOutput": "/tmp/kk-destination-review-tn6vomvq/candidate/tests/test_destinations.py:3:from api import list_destinations\n/tmp/kk-destination-review-tn6vomvq/candidate/tests/test_destinations.py:4:from writer import new_destination\n/tmp/kk-destination-review-tn6vomvq/candidate/tests/test_destinations.py:9:        row = new_destination(\"new\", \"new@example.test\")\n/tmp/kk-destination-review-tn6vomvq/candidate/tests/test_destinations.py:10:        self.assertEqual(list_destinations([row]),\n/tmp/kk-destination-review-tn6vomvq/candidate/tests/test_destinations.py:14:        self.assertEqual(list_destinations([]), [])\n/tmp/kk-destination-review-tn6vomvq/candidate/writer.py:1:def new_destination(record_id, address):\n/tmp/kk-destination-review-tn6vomvq/candidate/writer.py:2:    return {\"id\": record_id, \"destination\": {\"address\": address}}\n/tmp/kk-destination-review-tn6vomvq/candidate/migration.py:1:def migrate_batch(records, limit):\n/tmp/kk-destination-review-tn6vomvq/candidate/migration.py:6:        if \"destination\" not in row:\n/tmp/kk-destination-review-tn6vomvq/candidate/migration.py:7:            row[\"destination\"] = {\"address\": row.pop(\"address\")}\n/tmp/kk-destination-review-tn6vomvq/candidate/README.md:1:# Saved destinations\n/tmp/kk-destination-review-tn6vomvq/candidate/README.md:6:`destination.address`. New writes use the nested shape. Background migration\n/tmp/kk-destination-review-tn6vomvq/candidate/README.md:10:`data/records.json` is a supported mixed snapshot. `api.list_destinations`\n/tmp/kk-destination-review-tn6vomvq/candidate/README.md:11:serves all saved records through the same reader. `migrate_batch` changes up to\n/tmp/kk-destination-review-tn6vomvq/candidate/reader.py:1:def address_of(row):\n/tmp/kk-destination-review-tn6vomvq/candidate/reader.py:2:    return row[\"destination\"][\"address\"]\n/tmp/kk-destination-review-tn6vomvq/candidate/api.py:1:from reader import address_of\n/tmp/kk-destination-review-tn6vomvq/candidate/api.py:4:def list_destinations(records):\n/tmp/kk-destination-review-tn6vomvq/candidate/api.py:5:    return [{\"id\": row[\"id\"], \"address\": address_of(row)} for row in records]\n/tmp/kk-destination-review-tn6vomvq/candidate/data/records.json:8:    \"destination\": {\n",
+    "command": "/usr/bin/zsh -lc \"rg -n 'address_of|list_destinations|migrate_batch|destination' /tmp/kk-destination-review-tn6vomvq/candidate\"",
+    "commandActions": [
+      {
+        "command": "rg -n 'address_of|list_destinations|migrate_batch|destination' /tmp/kk-destination-review-tn6vomvq/candidate",
+        "path": "candidate",
+        "query": "address_of|list_destinations|migrate_batch|destination",
+        "type": "search"
+      }
+    ],
+    "cwd": "/tmp/fr-opus55-matrix-20261011/codex-candidate-R4-isolated-2",
+    "durationMs": 59,
+    "exitCode": 0,
+    "id": "exec-14d0a6ef-3ac8-459f-aced-b7c99db48474",
+    "pluginId": null,
+    "processId": "74056",
+    "scriptPath": null,
+    "source": "unifiedExecStartup",
+    "status": "completed",
+    "type": "commandExecution"
+  },
+  "source_file": "items-01a12b43-7b42-7691-a7a4-d1c4ca599026.json",
+  "startedAtMs": 1791727283639,
+  "turnId": "01a12b43-7b63-7041-ae2a-2b79ca064f92"
+}

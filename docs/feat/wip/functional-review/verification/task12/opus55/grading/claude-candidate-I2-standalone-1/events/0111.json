@@ -1,0 +1,19 @@
+{
+  "actor": "main",
+  "block": {
+    "caller": {
+      "type": "direct"
+    },
+    "id": "toolu_01NtBmjnGSTpRC89UKqb7z1n",
+    "input": {
+      "content": "# Change context \u2014 patch_settings explicit-value fix (standalone)\n\n## Intent and authority\n- User request (explicit): \"update patch_settings: omitted keys keep their current values; explicitly\n  supplied values, including None, empty text and False, replace the current value. Preserve\n  caller-owned inputs and existing exports. Add no dependencies.\"\n- README.md (repo root, explicit): Python 3.9+, standard library only; test command\n  `python3 -B -m unittest discover -s tests`; HTTP patch handler (api.py) and CLI note action (cli.py)\n  share settings.patch_settings; callers own their input dictionaries; a patch contains only\n  explicitly supplied keys; note accepts text or None; enabled is boolean.\n\n## Change boundary\n- Selector: unstaged worktree changes on branch `master`, HEAD 0b902ff (\"Initial subject\").\n- Changed files (author-reported; `git status`/`git diff` could not run \u2014 Bash permission denied):\n  - settings.py (modified)\n  - tests/test_settings.py (modified; 5 tests added)\n- Unchanged consumers: api.py (update_preferences), cli.py (clear_note), README.md.\n\n## Baseline (review base) \u2014 author-captured, NOT a git blob\nThe pre-edit settings.py content below was returned by a Read tool call of the worktree file at\nHEAD 0b902ff with a clean status, before any edit in this session. No blob hash available\n(git unavailable). Full file, lines 1-5, nothing omitted:\n\n```python\ndef patch_settings(current, patch):\n    result = dict(current)\n    for key, value in patch.items():\n        result[key] = value or current.get(key)\n    return result\n```\n\nPre-edit tests/test_settings.py contained only `test_updates_note` (lines 1-10 of the current file's\nfirst test, identical text; imports were only `unittest` and `from api import update_preferences`).\n\n## Existing behavior / defect\n`value or current.get(key)` discards falsey explicit values (None, \"\", False), so cli.clear_note\ncould not clear a note and api.update_preferences could not disable `enabled` or set an empty note.\n\n## Delivery constraints\nNo dependencies; stdlib only; Python 3.9+. No deployment/migration/flags involved (in-process helper).\n\n## Scenarios and evidence (author-attributed)\n- Explicit None / \"\" / False replace current; omitted keys preserved; current and patch not mutated;\n  update_preferences filters to note/enabled; clear_note sets None.\n- Tests added for these in tests/test_settings.py. Tests have NOT been executed: Bash is denied in\n  this session. No runtime results exist.\n\n## Rejected approaches\nNone.\n\n## Task Scope\nNo task scope available \u2014 review the diff on its own merits without assuming any feature-level design doc.\n",
+      "file_path": "/tmp/kk-review-code-patch-settings/change-context.md"
+    },
+    "name": "Write",
+    "type": "tool_use"
+  },
+  "id": "e236.0",
+  "parent_tool_use_id": null,
+  "session_id": "52ecac67-8fe0-40db-8c34-61bf0b684ed3",
+  "source_sequence": 236
+}

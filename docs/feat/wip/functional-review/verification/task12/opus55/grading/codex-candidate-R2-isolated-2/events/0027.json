@@ -1,0 +1,28 @@
+{
+  "actor": "items-01a12b2b-a796-7111-b949-0e6d6bc721ee",
+  "completedAtMs": 1791725718969,
+  "id": "exec-e0222bf7-85d4-4f56-8133-e5975b32e0e5",
+  "item": {
+    "aggregatedOutput": "diff --git a/service.py b/service.py\nindex 062b8a6..0435141 100644\n--- a/service.py\n+++ b/service.py\n@@ -1,12 +1,12 @@\n def save(store, workspace, operation_id, values):\n-    record = store.recovery.get(operation_id)\n-    if record is not None and record[\"status\"] == \"completed\":\n-        return {\"ok\": True, \"operation_id\": operation_id}\n+    record = next((item for item in store.recovery.values()\n+                   if item[\"workspace\"] == workspace), None)\n     if record is None:\n         record = {\"operation_id\": operation_id, \"workspace\": workspace,\n-                  \"status\": \"pending\"}\n+                  \"status\": \"pending\", \"values\": dict(values)}\n         store.recovery[operation_id] = record\n-    store.apply(workspace, values)\n-    record[\"values\"] = dict(values)\n-    record[\"status\"] = \"applied\"\n-    return store.receipt(record)\n+    if record[\"status\"] == \"pending\":\n+        store.apply(workspace, record[\"values\"])\n+        record[\"status\"] = \"applied\"\n+    store.receipt(record)\n+    return {\"ok\": True, \"operation_id\": operation_id}\ndef save(store, workspace, operation_id, values):\n    record = next((item for item in store.recovery.values()\n                   if item[\"workspace\"] == workspace), None)\n    if record is None:\n        record = {\"operation_id\": operation_id, \"workspace\": workspace,\n                  \"status\": \"pending\", \"values\": dict(values)}\n        store.recovery[operation_id] = record\n    if record[\"status\"] == \"pending\":\n        store.apply(workspace, record[\"values\"])\n        record[\"status\"] = \"applied\"\n    store.receipt(record)\n    return {\"ok\": True, \"operation_id\": operation_id}\nfrom service import save\n\n\ndef submit(store, workspace, operation_id, values):\n    return save(store, workspace, operation_id, values)\nclass ReceiptUnavailable(Exception):\n    pass\n\n\nclass Store:\n    def __init__(self):\n        self.preferences = {}\n        self.recovery = {}\n        self.fail_receipt_once = False\n\n    def apply(self, workspace, values):\n        self.preferences[workspace] = dict(values)\n\n    def receipt(self, record):\n        if self.fail_receipt_once:\n            self.fail_receipt_once = False\n            raise ReceiptUnavailable(\"receipt store unavailable\")\n        record[\"status\"] = \"completed\"\n        return {\"ok\": True, \"operation_id\": record[\"operation_id\"]}\nimport unittest\n\nfrom client import submit\nfrom store import ReceiptUnavailable, Store\n\n\nclass SaveTests(unittest.TestCase):\n    def test_save(self):\n        store = Store()\n        result = submit(store, \"w\", \"op-1\", {\"color\": \"blue\"})\n        self.assertTrue(result[\"ok\"])\n        self.assertEqual(store.preferences[\"w\"], {\"color\": \"blue\"})\n\n    def test_retry_same_values(self):\n        store = Store()\n        store.fail_receipt_once = True\n        with self.assertRaises(ReceiptUnavailable):\n            submit(store, \"w\", \"op-1\", {\"color\": \"blue\"})\n        self.assertTrue(submit(store, \"w\", \"op-1\", {\"color\": \"blue\"})[\"ok\"])\n        self.assertEqual(store.preferences[\"w\"], {\"color\": \"blue\"})\n\n    def test_completed_id_returns_receipt(self):\n        store = Store()\n        submit(store, \"w\", \"op-1\", {\"color\": \"blue\"})\n        result = submit(store, \"w\", \"op-1\", {\"color\": \"blue\"})\n        self.assertEqual(result, {\"ok\": True, \"operation_id\": \"op-1\"})\n",
+    "command": "/usr/bin/zsh -lc 'git diff --cached -- service.py; git show :service.py; git show :client.py; git show :store.py; git show :tests/test_save.py'",
+    "commandActions": [
+      {
+        "command": "git diff --cached -- service.py; git show :service.py; git show :client.py; git show :store.py; git show :tests/test_save.py",
+        "type": "unknown"
+      }
+    ],
+    "cwd": "/tmp/fr-opus55-matrix-20261011/codex-candidate-R2-isolated-2",
+    "durationMs": 632,
+    "exitCode": 0,
+    "id": "exec-e0222bf7-85d4-4f56-8133-e5975b32e0e5",
+    "pluginId": null,
+    "processId": "20376",
+    "scriptPath": null,
+    "source": "unifiedExecStartup",
+    "status": "completed",
+    "type": "commandExecution"
+  },
+  "source_file": "items-01a12b2b-a796-7111-b949-0e6d6bc721ee.json",
+  "startedAtMs": 1791725718336,
+  "turnId": "01a12b2b-a7c0-7be3-93a9-74a29979e233"
+}

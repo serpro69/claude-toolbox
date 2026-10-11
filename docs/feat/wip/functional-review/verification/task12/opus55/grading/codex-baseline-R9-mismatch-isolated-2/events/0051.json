@@ -1,0 +1,30 @@
+{
+  "actor": "items-01a12ba0-3ab7-7ee2-9f6a-79638e8f1b34",
+  "completedAtMs": 1791733324336,
+  "id": "exec-5dc4a9b0-6b41-410b-82e7-c4b0930f63cb",
+  "item": {
+    "aggregatedOutput": "README.md-4-\nREADME.md-5-This change accepts preference IDs with surrounding whitespace. Trim the ID\nREADME.md-6-before looking it up; preserve the existing resilient-read contract. A logical\nREADME.md:7:read may make up to three attempts on `TransientRead`, returning the first\nREADME.md:8:successful result. Exhausted transient errors propagate. `MissingPreference`\nREADME.md-9-is permanent and must propagate on the first attempt. Reads have no side effects.\nREADME.md-10-\nREADME.md:11:`Preferences.read` is the public entry point. `Repository.read_resilient`\nREADME.md:12:owns the bounded retry policy; `read_once` performs one attempt. The scripted\nREADME.md-13-backend models finite outcomes without sleeping, services or concurrency.\n--\nreader.py:1:def read_preferences(repository, key):\nreader.py:2:    return repository.read_once(key.strip())\n--\ntests/test_reads.py-1-import unittest\ntests/test_reads.py-2-\ntests/test_reads.py-3-from preferences import Preferences\ntests/test_reads.py:4:from repository import Repository, ScriptedBackend, TransientRead\ntests/test_reads.py-5-\ntests/test_reads.py-6-\ntests/test_reads.py-7-class ReadTests(unittest.TestCase):\n--\ntests/test_reads.py-11-        self.assertEqual(backend.keys, [\"w\"])\ntests/test_reads.py-12-\ntests/test_reads.py-13-    def test_transient_error(self):\ntests/test_reads.py:14:        backend = ScriptedBackend([TransientRead(\"busy\"), {\"color\": \"blue\"}])\ntests/test_reads.py:15:        with self.assertRaises(TransientRead):\ntests/test_reads.py-16-            Preferences(Repository(backend)).read(\" w \")\ntests/test_reads.py-17-        self.assertEqual(backend.keys, [\"w\"])\n--\nrepository.py:1:class TransientRead(Exception):\nrepository.py-2-    pass\nrepository.py-3-\nrepository.py-4-\nrepository.py:5:class MissingPreference(Exception):\nrepository.py-6-    pass\nrepository.py-7-\nrepository.py-8-\n--\nrepository.py-23-    def __init__(self, backend):\nrepository.py-24-        self.backend = backend\nrepository.py-25-\nrepository.py:26:    def read_once(self, key):\nrepository.py-27-        return self.backend.read(key)\nrepository.py-28-\nrepository.py:29:    def read_resilient(self, key):\nrepository.py-30-        for attempt in range(3):\nrepository.py-31-            try:\nrepository.py:32:                return self.read_once(key)\nrepository.py:33:            except TransientRead:\nrepository.py-34-                if attempt == 2:\nrepository.py-35-                    raise\n--\npreferences.py:1:from reader import read_preferences\npreferences.py-2-\npreferences.py-3-\npreferences.py-4-class Preferences:\n--\npreferences.py-6-        self.repository = repository\npreferences.py-7-\npreferences.py-8-    def read(self, key):\npreferences.py:9:        return read_preferences(self.repository, key)\n",
+    "command": "/usr/bin/zsh -lc \"rg -n -C 3 'read_preferences|read_resilient|read_once|TransientRead|MissingPreference' reader.py preferences.py repository.py tests/test_reads.py README.md\"",
+    "commandActions": [
+      {
+        "command": "rg -n -C 3 'read_preferences|read_resilient|read_once|TransientRead|MissingPreference' reader.py preferences.py repository.py tests/test_reads.py README.md",
+        "path": "reader.py",
+        "query": "read_preferences|read_resilient|read_once|TransientRead|MissingPreference",
+        "type": "search"
+      }
+    ],
+    "cwd": "/tmp/fr-opus55-matrix-20261011/codex-baseline-R9-mismatch-isolated-2",
+    "durationMs": 53,
+    "exitCode": 0,
+    "id": "exec-5dc4a9b0-6b41-410b-82e7-c4b0930f63cb",
+    "pluginId": null,
+    "processId": "63549",
+    "scriptPath": null,
+    "source": "unifiedExecStartup",
+    "status": "completed",
+    "type": "commandExecution"
+  },
+  "source_file": "items-01a12ba0-3ab7-7ee2-9f6a-79638e8f1b34.json",
+  "startedAtMs": 1791733324282,
+  "turnId": "01a12ba0-3ad7-7ef3-9805-b2ae7edf2165"
+}

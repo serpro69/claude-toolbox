@@ -1,0 +1,28 @@
+{
+  "actor": "items-01a12b2b-a796-7111-b949-0e6d6bc721ee",
+  "completedAtMs": 1791725916589,
+  "id": "exec-3a68048f-7068-487f-9806-8a13159f65e0",
+  "item": {
+    "aggregatedOutput": "M  service.py\n0435141ceb7f934d59e6628b3720dea7f25f747f\n     1\tdef save(store, workspace, operation_id, values):\n     2\t    record = next((item for item in store.recovery.values()\n     3\t                   if item[\"workspace\"] == workspace), None)\n     4\t    if record is None:\n     5\t        record = {\"operation_id\": operation_id, \"workspace\": workspace,\n     6\t                  \"status\": \"pending\", \"values\": dict(values)}\n     7\t        store.recovery[operation_id] = record\n     8\t    if record[\"status\"] == \"pending\":\n     9\t        store.apply(workspace, record[\"values\"])\n    10\t        record[\"status\"] = \"applied\"\n    11\t    store.receipt(record)\n    12\t    return {\"ok\": True, \"operation_id\": operation_id}\n     1\tclass ReceiptUnavailable(Exception):\n     2\t    pass\n     3\t\n     4\t\n     5\tclass Store:\n     6\t    def __init__(self):\n     7\t        self.preferences = {}\n     8\t        self.recovery = {}\n     9\t        self.fail_receipt_once = False\n    10\t\n    11\t    def apply(self, workspace, values):\n    12\t        self.preferences[workspace] = dict(values)\n    13\t\n    14\t    def receipt(self, record):\n    15\t        if self.fail_receipt_once:\n    16\t            self.fail_receipt_once = False\n    17\t            raise ReceiptUnavailable(\"receipt store unavailable\")\n    18\t        record[\"status\"] = \"completed\"\n    19\t        return {\"ok\": True, \"operation_id\": record[\"operation_id\"]}\n     1\t# Workspace preferences\n     2\t\n     3\tPython 3.9+, standard library only. Run `python3 -B -m unittest discover -s tests`.\n     4\t\n     5\tSaving preferences is a serialized operation identified by a caller-supplied\n     6\toperation ID. A failed save can be retried with the same ID and edited values;\n     7\tsuccess means the latest submitted values are active. Repeating a completed ID\n     8\treturns its receipt. A fresh operation ID must perform a fresh save, even for\n     9\tthe same workspace. Recovery records remain available for audit after completion.\n    10\t\n    11\tThe provider replaces preferences idempotently. A receipt write can fail after\n    12\tthe provider has applied values. The in-memory store models that boundary; no\n    13\tthreads, process restart, network service or exactly-once external effect is promised.\n",
+    "command": "/usr/bin/zsh -lc 'git status --short; git rev-parse :service.py; nl -ba /tmp/kk-save-review-g8hjiwmj/candidate/service.py; nl -ba /tmp/kk-save-review-g8hjiwmj/candidate/store.py; nl -ba /tmp/kk-save-review-g8hjiwmj/candidate/README.md'",
+    "commandActions": [
+      {
+        "command": "git status --short; git rev-parse :service.py; nl -ba /tmp/kk-save-review-g8hjiwmj/candidate/service.py; nl -ba /tmp/kk-save-review-g8hjiwmj/candidate/store.py; nl -ba /tmp/kk-save-review-g8hjiwmj/candidate/README.md",
+        "type": "unknown"
+      }
+    ],
+    "cwd": "/tmp/fr-opus55-matrix-20261011/codex-candidate-R2-isolated-2",
+    "durationMs": 46,
+    "exitCode": 0,
+    "id": "exec-3a68048f-7068-487f-9806-8a13159f65e0",
+    "pluginId": null,
+    "processId": "37223",
+    "scriptPath": null,
+    "source": "unifiedExecStartup",
+    "status": "completed",
+    "type": "commandExecution"
+  },
+  "source_file": "items-01a12b2b-a796-7111-b949-0e6d6bc721ee.json",
+  "startedAtMs": 1791725916542,
+  "turnId": "01a12b2b-a7c0-7be3-93a9-74a29979e233"
+}

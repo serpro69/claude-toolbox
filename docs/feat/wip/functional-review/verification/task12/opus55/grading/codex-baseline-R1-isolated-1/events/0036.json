@@ -1,0 +1,30 @@
+{
+  "actor": "items-01a12add-447b-7c30-ae6f-6062c3588769",
+  "completedAtMs": 1791720542972,
+  "id": "exec-422a1b6e-b193-48a4-be5a-38a7ff7d9a6d",
+  "item": {
+    "aggregatedOutput": "./tests/test_setup.py:3:from setup import begin_setup, complete_setup, active_connection\n./tests/test_setup.py:4:from cleanup import cleanup_setup\n./tests/test_setup.py:12:        self.assertEqual(active_connection(store, \"w\"), \"connection-one\")\n./tests/test_setup.py:18:        cleanup_setup(store, \"w\", \"one\")\n./tests/test_setup.py:19:        self.assertIsNone(active_connection(store, \"w\"))\n./tests/test_setup.py:20:        self.assertNotIn(\"one\", store.pending)\n./README.md:6:cleanup runs. Completed associations are consumed by `active_connection`.\n./setup.py:2:    store.pending[setup_id] = {\"workspace_id\": workspace_id}\n./setup.py:6:    store.active[workspace_id] = {\"setup_id\": setup_id, \"connection\": connection}\n./setup.py:7:    store.pending.pop(setup_id, None)\n./setup.py:10:def active_connection(store, workspace_id):\n./setup.py:11:    association = store.active.get(workspace_id)\n./cleanup.py:1:def cleanup_setup(store, workspace_id, setup_id):\n./cleanup.py:2:    store.pending.pop(setup_id, None)\n./cleanup.py:3:    store.active.pop(workspace_id, None)\n",
+    "command": "/usr/bin/zsh -lc \"rg -n 'cleanup_setup|active_connection|store\\\\.active|store\\\\.pending' .\"",
+    "commandActions": [
+      {
+        "command": "rg -n \"cleanup_setup|active_connection|store\\\\.active|store\\\\.pending\" .",
+        "path": ".",
+        "query": "cleanup_setup|active_connection|store\\.active|store\\.pending",
+        "type": "search"
+      }
+    ],
+    "cwd": "/tmp/fr-opus55-matrix-20261011/codex-baseline-R1-isolated-1",
+    "durationMs": 57,
+    "exitCode": 0,
+    "id": "exec-422a1b6e-b193-48a4-be5a-38a7ff7d9a6d",
+    "pluginId": null,
+    "processId": "21742",
+    "scriptPath": null,
+    "source": "unifiedExecStartup",
+    "status": "completed",
+    "type": "commandExecution"
+  },
+  "source_file": "items-01a12add-447b-7c30-ae6f-6062c3588769.json",
+  "startedAtMs": 1791720542914,
+  "turnId": "01a12add-449a-7ff1-80ee-d7cec15d62e2"
+}

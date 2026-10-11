@@ -1,0 +1,28 @@
+{
+  "actor": "items-01a12aeb-75bb-76c3-95c8-2a43e915b0de",
+  "completedAtMs": 1791721478088,
+  "id": "exec-a28d7349-6415-4173-87cd-7680d956d952",
+  "item": {
+    "aggregatedOutput": "diff --git a/client.py b/client.py\nindex d6ddf4b..910e877 100644\n--- a/client.py\n+++ b/client.py\n@@ -1,5 +1,7 @@\n def save_settings(send, workspace_id, values, enhanced_settings=False):\n-    response = send(workspace_id, {\"settings\": values})\n+    response = send(workspace_id, {\"settings\": values, \"require_receipt\": True})\n     if not response.get(\"ok\"):\n         raise RuntimeError(\"Settings save failed\")\n+    if response.get(\"applied\") is not True:\n+        raise RuntimeError(\"Provider did not acknowledge applied settings\")\n     return {\"saved\": True, \"enhanced\": enhanced_settings}\ndiff --git a/tests/test_client.py b/tests/test_client.py\nindex 39ea461..f1dfc4f 100644\n--- a/tests/test_client.py\n+++ b/tests/test_client.py\n@@ -5,6 +5,6 @@ from client import save_settings\n class SettingsTests(unittest.TestCase):\n     def test_successful_save(self):\n         def send(workspace, request):\n-            return {\"ok\": True}\n+            return {\"ok\": True, \"applied\": True}\n         self.assertEqual(save_settings(send, \"w\", {\"label\": \"blue\"}),\n                          {\"saved\": True, \"enhanced\": False})\ndef save_settings(send, workspace_id, values, enhanced_settings=False):\n    response = send(workspace_id, {\"settings\": values, \"require_receipt\": True})\n    if not response.get(\"ok\"):\n        raise RuntimeError(\"Settings save failed\")\n    if response.get(\"applied\") is not True:\n        raise RuntimeError(\"Provider did not acknowledge applied settings\")\n    return {\"saved\": True, \"enhanced\": enhanced_settings}\nimport unittest\nfrom client import save_settings\n\n\nclass SettingsTests(unittest.TestCase):\n    def test_successful_save(self):\n        def send(workspace, request):\n            return {\"ok\": True, \"applied\": True}\n        self.assertEqual(save_settings(send, \"w\", {\"label\": \"blue\"}),\n                         {\"saved\": True, \"enhanced\": False})\nclient.py\ntests/test_client.py\nREADME.md\n.gitignore\ndocs/feat/wip/enhanced-settings/design.md\ndocs/feat/wip/enhanced-settings/implementation.md\ndocs/feat/wip/enhanced-settings/tasks.md\n",
+    "command": "/usr/bin/zsh -lc \"git diff --cached -- client.py tests/test_client.py; cat client.py tests/test_client.py; rg --files --hidden -g '\"'!.git'\"' -g '\"'!__pycache__'\"' -g '\"'!.pytest_cache'\"'\"",
+    "commandActions": [
+      {
+        "command": "git diff --cached -- client.py tests/test_client.py; cat client.py tests/test_client.py; rg --files --hidden -g '!.git' -g '!__pycache__' -g '!.pytest_cache'",
+        "type": "unknown"
+      }
+    ],
+    "cwd": "/tmp/fr-opus55-matrix-20261011/codex-baseline-R3-standard-2",
+    "durationMs": 49,
+    "exitCode": 0,
+    "id": "exec-a28d7349-6415-4173-87cd-7680d956d952",
+    "pluginId": null,
+    "processId": "74260",
+    "scriptPath": null,
+    "source": "unifiedExecStartup",
+    "status": "completed",
+    "type": "commandExecution"
+  },
+  "source_file": "items-01a12aeb-75bb-76c3-95c8-2a43e915b0de.json",
+  "startedAtMs": 1791721478038,
+  "turnId": "01a12aeb-75e7-7930-b995-3511cf25ba04"
+}

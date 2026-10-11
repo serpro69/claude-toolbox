@@ -1,0 +1,19 @@
+{
+  "actor": "main",
+  "block": {
+    "caller": {
+      "type": "direct"
+    },
+    "id": "toolu_012hcaQh3nfHdor8qhipi5oe",
+    "input": {
+      "command": "python3 -c \"\nfrom store import Store\nfrom setup import begin_setup, complete_setup, active_connection\nfrom cleanup import cleanup_setup\ns=Store()\nbegin_setup(s,'w','one'); complete_setup(s,'w','one','conn-one')\nbegin_setup(s,'w','two'); cleanup_setup(s,'w','two')   # cancel a re-setup\nprint('after cancelling pending re-setup:', active_connection(s,'w'))\ns=Store()\nbegin_setup(s,'w','one'); complete_setup(s,'w','one','conn-one')\nbegin_setup(s,'w','two'); complete_setup(s,'w','two','conn-two')\ncleanup_setup(s,'w','one')   # clean up superseded setup\nprint('after cleaning superseded setup:', active_connection(s,'w'))\n\" && python3 -m unittest discover -s tests -t . 2>&1 | tail -3",
+      "description": "Reproduce cleanup behavior and run tests"
+    },
+    "name": "Bash",
+    "type": "tool_use"
+  },
+  "id": "e97.0",
+  "parent_tool_use_id": null,
+  "session_id": "6f1c89d5-9ae9-4056-869f-282081f49550",
+  "source_sequence": 97
+}

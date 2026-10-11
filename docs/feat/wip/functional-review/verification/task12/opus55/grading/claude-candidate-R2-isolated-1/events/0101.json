@@ -1,0 +1,12 @@
+{
+  "actor": "child-of:toolu_01QmhcuMyhPMaWpvYYrf7tro",
+  "block": {
+    "content": "tests/test_save.py:8:    def test_save(self):\ntests/test_save.py:10:        result = submit(store, \"w\", \"op-1\", {\"color\": \"blue\"})\ntests/test_save.py:16:        store.fail_receipt_once = True\ntests/test_save.py:18:            submit(store, \"w\", \"op-1\", {\"color\": \"blue\"})\ntests/test_save.py:19:        self.assertTrue(submit(store, \"w\", \"op-1\", {\"color\": \"blue\"})[\"ok\"])\ntests/test_save.py:22:    def test_completed_id_returns_receipt(self):\ntests/test_save.py:24:        submit(store, \"w\", \"op-1\", {\"color\": \"blue\"})\ntests/test_save.py:25:        result = submit(store, \"w\", \"op-1\", {\"color\": \"blue\"})\nclient.py:4:def submit(store, workspace, operation_id, values):\nclient.py:5:    return save(store, workspace, operation_id, values)\nstore.py:8:        self.recovery = {}\nstore.py:9:        self.fail_receipt_once = False\nstore.py:14:    def receipt(self, record):\nstore.py:15:        if self.fail_receipt_once:\nstore.py:16:            self.fail_receipt_once = False\nstore.py:17:            raise ReceiptUnavailable(\"receipt store unavailable\")\nREADME.md:8:returns its receipt. A fresh operation ID must perform a fresh save, even for\nREADME.md:11:The provider replaces preferences idempotently. A receipt write can fail after\nservice.py:1:def save(store, workspace, operation_id, values):\nservice.py:2:    record = next((item for item in store.recovery.values()\nservice.py:7:        store.recovery[operation_id] = record\nservice.py:11:    store.receipt(record)",
+    "tool_use_id": "toolu_011UMixG5szoZQDMqeVBwfUW",
+    "type": "tool_result"
+  },
+  "id": "e198.0",
+  "parent_tool_use_id": "toolu_01QmhcuMyhPMaWpvYYrf7tro",
+  "session_id": "cddbf65e-2d57-4800-aadf-d9e15a3dd4e1",
+  "source_sequence": 198
+}

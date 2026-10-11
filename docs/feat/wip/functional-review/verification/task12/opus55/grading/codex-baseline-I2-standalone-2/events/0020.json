@@ -1,0 +1,23 @@
+{
+  "actor": "items-01a12b0a-165b-7ba3-a44f-af3282480c0f",
+  "completedAtMs": 1791723520497,
+  "id": "exec-1a8d0cd7-7416-486c-a580-9a3e9cbb7f55",
+  "item": {
+    "changes": [
+      {
+        "diff": "@@ -2,2 +2,4 @@\n from api import update_preferences\n+from cli import clear_note\n+from settings import patch_settings\n \n@@ -10 +12,53 @@\n         self.assertEqual(original[\"note\"], \"before\")\n+\n+    def test_explicit_values_replace_current_values(self):\n+        for update in (patch_settings, update_preferences):\n+            for key, value in ((\"note\", None), (\"note\", \"\"), (\"enabled\", False)):\n+                with self.subTest(update=update.__name__, key=key, value=value):\n+                    original = {\"note\": \"before\", \"enabled\": True}\n+                    patch = {key: value}\n+\n+                    result = update(original, patch)\n+\n+                    self.assertEqual(result[key], value)\n+                    omitted_key = \"enabled\" if key == \"note\" else \"note\"\n+                    self.assertEqual(result[omitted_key], original[omitted_key])\n+                    self.assertEqual(original, {\"note\": \"before\", \"enabled\": True})\n+                    self.assertEqual(patch, {key: value})\n+                    self.assertIsNot(result, original)\n+                    self.assertIsNot(result, patch)\n+\n+    def test_empty_patch_preserves_values_and_returns_a_copy(self):\n+        for update in (patch_settings, update_preferences):\n+            for note in (\"before\", \"\", None):\n+                with self.subTest(update=update.__name__, note=note):\n+                    original = {\"note\": note, \"enabled\": False}\n+                    patch = {}\n+\n+                    result = update(original, patch)\n+\n+                    self.assertEqual(result, original)\n+                    self.assertIsNot(result, original)\n+                    result[\"note\"] = \"changed\"\n+                    self.assertEqual(original, {\"note\": note, \"enabled\": False})\n+                    self.assertEqual(patch, {})\n+\n+    def test_explicit_values_add_missing_keys(self):\n+        for value in (None, \"\", False, 0, \"new\"):\n+            with self.subTest(value=value):\n+                original = {}\n+                patch = {\"new_key\": value}\n+\n+                result = patch_settings(original, patch)\n+\n+                self.assertEqual(result, {\"new_key\": value})\n+                self.assertEqual(original, {})\n+                self.assertEqual(patch, {\"new_key\": value})\n+\n+    def test_clear_note_sets_none(self):\n+        original = {\"note\": \"before\", \"enabled\": True}\n+\n+        result = clear_note(original)\n+\n+        self.assertEqual(result, {\"note\": None, \"enabled\": True})\n+        self.assertEqual(original, {\"note\": \"before\", \"enabled\": True})\n",
+        "kind": {
+          "move_path": null,
+          "type": "update"
+        },
+        "path": "/tmp/fr-opus55-matrix-20261011/codex-baseline-I2-standalone-2/tests/test_settings.py"
+      }
+    ],
+    "id": "exec-1a8d0cd7-7416-486c-a580-9a3e9cbb7f55",
+    "status": "completed",
+    "type": "fileChange"
+  },
+  "source_file": "items-01a12b0a-165b-7ba3-a44f-af3282480c0f.json",
+  "startedAtMs": 1791723520475,
+  "turnId": "01a12b0a-1687-7951-bcd7-af2446589e8f"
+}

@@ -1,0 +1,12 @@
+{
+  "actor": "child-of:toolu_01NriUQYo4LBkM6q9H3E2FPg",
+  "block": {
+    "content": "1\tdiff --git a/preview.py b/preview.py\n2\tnew file mode 100644\n3\tindex 0000000..14b3c75\n4\t--- /dev/null\n5\t+++ b/preview.py\n6\t@@ -0,0 +1,2 @@\n7\t+def render_preview():\n8\t+    raise NotImplementedError(\"Export preview is scheduled for Task 2\")\n9\tdiff --git a/routes.py b/routes.py\n10\tindex 39ec034..fa60e31 100644\n11\t--- a/routes.py\n12\t+++ b/routes.py\n13\t@@ -1,7 +1,11 @@\n14\t+from config import EXPORT_PREVIEW_ENABLED\n15\t+from preview import render_preview\n16\t from settings import current_settings\n17\t \n18\t \n19\t def get(path):\n20\t     if path == \"/settings\":\n21\t         return 200, current_settings()\n22\t+    if EXPORT_PREVIEW_ENABLED and path == \"/export-preview\":\n23\t+        return 200, render_preview()\n24\t     return 404, None\n25\t",
+    "tool_use_id": "toolu_01QoFxEYgSwsUxXQD6LyRszS",
+    "type": "tool_result"
+  },
+  "id": "e198.0",
+  "parent_tool_use_id": "toolu_01NriUQYo4LBkM6q9H3E2FPg",
+  "session_id": "72908182-db0e-467e-9dca-33c41811e579",
+  "source_sequence": 198
+}

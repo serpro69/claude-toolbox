@@ -1,0 +1,30 @@
+{
+  "actor": "items-01a12b94-9d01-7ba0-9714-d9688b097f71",
+  "completedAtMs": 1791732576916,
+  "id": "exec-bee171a2-a588-4de0-ab36-fc6d83e9d67d",
+  "item": {
+    "aggregatedOutput": "     1\timport unittest\n     2\t\n     3\tfrom preferences import Preferences\n     4\tfrom repository import Repository, ScriptedBackend, TransientRead\n     5\t\n     6\t\n     7\tclass ReadTests(unittest.TestCase):\n     8\t    def test_trim_key(self):\n     9\t        backend = ScriptedBackend([{\"color\": \"blue\"}])\n    10\t        self.assertEqual(Preferences(Repository(backend)).read(\" w \"), {\"color\": \"blue\"})\n    11\t        self.assertEqual(backend.keys, [\"w\"])\n    12\t\n    13\t    def test_transient_error(self):\n    14\t        backend = ScriptedBackend([TransientRead(\"busy\"), {\"color\": \"blue\"}])\n    15\t        with self.assertRaises(TransientRead):\n    16\t            Preferences(Repository(backend)).read(\" w \")\n    17\t        self.assertEqual(backend.keys, [\"w\"])\n",
+    "command": "/usr/bin/zsh -lc 'nl -ba tests/test_reads.py'",
+    "commandActions": [
+      {
+        "command": "nl -ba tests/test_reads.py",
+        "name": "test_reads.py",
+        "path": "/tmp/fr-opus55-matrix-20261011/codex-baseline-R9-mismatch-standard-2/tests/test_reads.py",
+        "type": "read"
+      }
+    ],
+    "cwd": "/tmp/fr-opus55-matrix-20261011/codex-baseline-R9-mismatch-standard-2",
+    "durationMs": 59,
+    "exitCode": 0,
+    "id": "exec-bee171a2-a588-4de0-ab36-fc6d83e9d67d",
+    "pluginId": null,
+    "processId": "65200",
+    "scriptPath": null,
+    "source": "unifiedExecStartup",
+    "status": "completed",
+    "type": "commandExecution"
+  },
+  "source_file": "items-01a12b94-9d01-7ba0-9714-d9688b097f71.json",
+  "startedAtMs": 1791732576857,
+  "turnId": "01a12b94-9d2d-78a1-913e-737f79577d61"
+}

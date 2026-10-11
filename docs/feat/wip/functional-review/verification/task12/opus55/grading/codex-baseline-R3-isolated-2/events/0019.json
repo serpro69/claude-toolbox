@@ -1,0 +1,28 @@
+{
+  "actor": "items-01a12af4-47b6-71f3-b56e-9de8f6152935",
+  "completedAtMs": 1791722063833,
+  "id": "exec-7577aaae-d8c4-4ef2-84f5-bed7fa61aeef",
+  "item": {
+    "aggregatedOutput": "diff --git a/client.py b/client.py\nindex d6ddf4b..910e877 100644\n--- a/client.py\n+++ b/client.py\n@@ -1,5 +1,7 @@\n def save_settings(send, workspace_id, values, enhanced_settings=False):\n-    response = send(workspace_id, {\"settings\": values})\n+    response = send(workspace_id, {\"settings\": values, \"require_receipt\": True})\n     if not response.get(\"ok\"):\n         raise RuntimeError(\"Settings save failed\")\n+    if response.get(\"applied\") is not True:\n+        raise RuntimeError(\"Provider did not acknowledge applied settings\")\n     return {\"saved\": True, \"enhanced\": enhanced_settings}\ndiff --git a/tests/test_client.py b/tests/test_client.py\nindex 39ea461..f1dfc4f 100644\n--- a/tests/test_client.py\n+++ b/tests/test_client.py\n@@ -5,6 +5,6 @@ from client import save_settings\n class SettingsTests(unittest.TestCase):\n     def test_successful_save(self):\n         def send(workspace, request):\n-            return {\"ok\": True}\n+            return {\"ok\": True, \"applied\": True}\n         self.assertEqual(save_settings(send, \"w\", {\"label\": \"blue\"}),\n                          {\"saved\": True, \"enhanced\": False})\ndef save_settings(send, workspace_id, values, enhanced_settings=False):\n    response = send(workspace_id, {\"settings\": values, \"require_receipt\": True})\n    if not response.get(\"ok\"):\n        raise RuntimeError(\"Settings save failed\")\n    if response.get(\"applied\") is not True:\n        raise RuntimeError(\"Provider did not acknowledge applied settings\")\n    return {\"saved\": True, \"enhanced\": enhanced_settings}\nimport unittest\nfrom client import save_settings\n\n\nclass SettingsTests(unittest.TestCase):\n    def test_successful_save(self):\n        def send(workspace, request):\n            return {\"ok\": True, \"applied\": True}\n        self.assertEqual(save_settings(send, \"w\", {\"label\": \"blue\"}),\n                         {\"saved\": True, \"enhanced\": False})\n# Tasks\n\n## Task 1: Client receipt handling\n- **Status:** done\n- client.py and tests/test_client.py\n\n## Task 2: Provider receipts\n- **Status:** pending\n- Separate provider repository; not part of this diff.\n# Enhanced settings\n\nOrdinary saves must continue to work with the supported provider at eval-release.\nThe enhanced UI is disabled by default. Add an application receipt to the protocol\nin client and provider increments while preserving independently releasable main.\n# Implementation\n\nTask 1 adds client-side receipt handling and its unit test. Task 2 will add\nprovider receipts in the separate provider repository. Review only the current\nclient increment; the shared delivery contract still applies.\ntests/test_client.py\nclient.py\nREADME.md\ndocs/feat/wip/enhanced-settings/design.md\ndocs/feat/wip/enhanced-settings/tasks.md\ndocs/feat/wip/enhanced-settings/implementation.md\n",
+    "command": "/usr/bin/zsh -lc \"git diff --cached\ncat client.py tests/test_client.py docs/feat/wip/enhanced-settings/tasks.md docs/feat/wip/enhanced-settings/design.md docs/feat/wip/enhanced-settings/implementation.md\nrg --files -g '\"'!'\"\\\\.git'\"",
+    "commandActions": [
+      {
+        "command": "git diff --cached\ncat client.py tests/test_client.py docs/feat/wip/enhanced-settings/tasks.md docs/feat/wip/enhanced-settings/design.md docs/feat/wip/enhanced-settings/implementation.md\nrg --files -g '!\\.git'",
+        "type": "unknown"
+      }
+    ],
+    "cwd": "/tmp/fr-opus55-matrix-20261011/codex-baseline-R3-isolated-2",
+    "durationMs": 47,
+    "exitCode": 0,
+    "id": "exec-7577aaae-d8c4-4ef2-84f5-bed7fa61aeef",
+    "pluginId": null,
+    "processId": "19665",
+    "scriptPath": null,
+    "source": "unifiedExecStartup",
+    "status": "completed",
+    "type": "commandExecution"
+  },
+  "source_file": "items-01a12af4-47b6-71f3-b56e-9de8f6152935.json",
+  "startedAtMs": 1791722063785,
+  "turnId": "01a12af4-47e2-7f62-a35a-02268518a750"
+}

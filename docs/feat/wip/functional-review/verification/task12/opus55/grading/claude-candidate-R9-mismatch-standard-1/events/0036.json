@@ -1,0 +1,13 @@
+{
+  "actor": "main",
+  "block": {
+    "content": "Exit code 1\n# Preference reads\n\nPython 3.9+, standard library only. Run `python3 -B -m unittest discover -s tests`.\n\nThis change accepts preference IDs with surrounding whitespace. Trim the ID\nbefore looking it up; preserve the existing resilient-read contract. A logical\nread may make up to three attempts on `TransientRead`, returning the first\nsuccessful result. Exhausted transient errors propagate. `MissingPreference`\nis permanent and must propagate on the first attempt. Reads have no side effects.\n\n`Preferences.read` is the public entry point. `Repository.read_resilient`\nowns the bounded retry policy; `read_once` performs one attempt. The scripted\nbackend models finite outcomes without sleeping, services or concurrency.\n(eval):1: === not found",
+    "is_error": true,
+    "tool_use_id": "toolu_01DFSS2y4HdUNL2ZJAzgMrTN",
+    "type": "tool_result"
+  },
+  "id": "e78.0",
+  "parent_tool_use_id": null,
+  "session_id": "b3a687df-44ec-4426-bc67-5212b14148e7",
+  "source_sequence": 78
+}

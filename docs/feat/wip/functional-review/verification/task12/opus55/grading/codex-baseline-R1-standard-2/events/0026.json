@@ -1,0 +1,54 @@
+{
+  "actor": "items-01a12ad6-4496-7442-901b-9a9b8700f577",
+  "completedAtMs": 1791720104510,
+  "id": "exec-7ef0ec98-ae66-4284-8d94-e80dc7bb6706",
+  "item": {
+    "aggregatedOutput": "     1\tclass Store:\n     2\t    def __init__(self):\n     3\t        self.pending = {}\n     4\t        self.active = {}\n     1\tdef begin_setup(store, workspace_id, setup_id):\n     2\t    store.pending[setup_id] = {\"workspace_id\": workspace_id}\n     3\t\n     4\t\n     5\tdef complete_setup(store, workspace_id, setup_id, connection):\n     6\t    store.active[workspace_id] = {\"setup_id\": setup_id, \"connection\": connection}\n     7\t    store.pending.pop(setup_id, None)\n     8\t\n     9\t\n    10\tdef active_connection(store, workspace_id):\n    11\t    association = store.active.get(workspace_id)\n    12\t    return association[\"connection\"] if association else None\n     1\timport unittest\n     2\tfrom store import Store\n     3\tfrom setup import begin_setup, complete_setup, active_connection\n     4\tfrom cleanup import cleanup_setup\n     5\t\n     6\t\n     7\tclass SetupTests(unittest.TestCase):\n     8\t    def test_completed_setup_is_visible(self):\n     9\t        store = Store()\n    10\t        begin_setup(store, \"w\", \"one\")\n    11\t        complete_setup(store, \"w\", \"one\", \"connection-one\")\n    12\t        self.assertEqual(active_connection(store, \"w\"), \"connection-one\")\n    13\t\n    14\t    def test_cleanup_removes_its_own_association(self):\n    15\t        store = Store()\n    16\t        begin_setup(store, \"w\", \"one\")\n    17\t        complete_setup(store, \"w\", \"one\", \"connection-one\")\n    18\t        cleanup_setup(store, \"w\", \"one\")\n    19\t        self.assertIsNone(active_connection(store, \"w\"))\n    20\t        self.assertNotIn(\"one\", store.pending)\n# Workspace associations\n\nPython 3.9+, standard library only. Run `python3 -B -m unittest discover -s tests`.\nA workspace has one active setup association. Setup jobs can fail after creating\na pending record. Another setup can complete before the failed job's queued\ncleanup runs. Completed associations are consumed by `active_connection`.\nCleanup removes the failed setup's pending record and any association it owns.\nThe store models serialized operations; concurrency and external services are\noutside this change.\n*.py[cod]\n",
+    "command": "/usr/bin/zsh -lc 'nl -ba store.py && nl -ba setup.py && nl -ba tests/test_setup.py && cat README.md && cat .gitignore'",
+    "commandActions": [
+      {
+        "command": "nl -ba store.py",
+        "name": "store.py",
+        "path": "/tmp/fr-opus55-matrix-20261011/codex-baseline-R1-standard-2/store.py",
+        "type": "read"
+      },
+      {
+        "command": "nl -ba setup.py",
+        "name": "setup.py",
+        "path": "/tmp/fr-opus55-matrix-20261011/codex-baseline-R1-standard-2/setup.py",
+        "type": "read"
+      },
+      {
+        "command": "nl -ba tests/test_setup.py",
+        "name": "test_setup.py",
+        "path": "/tmp/fr-opus55-matrix-20261011/codex-baseline-R1-standard-2/tests/test_setup.py",
+        "type": "read"
+      },
+      {
+        "command": "cat README.md",
+        "name": "README.md",
+        "path": "/tmp/fr-opus55-matrix-20261011/codex-baseline-R1-standard-2/README.md",
+        "type": "read"
+      },
+      {
+        "command": "cat .gitignore",
+        "name": ".gitignore",
+        "path": "/tmp/fr-opus55-matrix-20261011/codex-baseline-R1-standard-2/.gitignore",
+        "type": "read"
+      }
+    ],
+    "cwd": "/tmp/fr-opus55-matrix-20261011/codex-baseline-R1-standard-2",
+    "durationMs": 54,
+    "exitCode": 0,
+    "id": "exec-7ef0ec98-ae66-4284-8d94-e80dc7bb6706",
+    "pluginId": null,
+    "processId": "16693",
+    "scriptPath": null,
+    "source": "unifiedExecStartup",
+    "status": "completed",
+    "type": "commandExecution"
+  },
+  "source_file": "items-01a12ad6-4496-7442-901b-9a9b8700f577.json",
+  "startedAtMs": 1791720104455,
+  "turnId": "01a12ad6-44c2-7be2-969d-71e0339f5bfb"
+}

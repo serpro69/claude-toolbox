@@ -1,0 +1,28 @@
+{
+  "actor": "items-01a12ad8-0990-7523-be6f-610d48c47bba",
+  "completedAtMs": 1791720235411,
+  "id": "exec-9bcbed20-36bc-4cc5-8c14-807c8629711a",
+  "item": {
+    "aggregatedOutput": "def begin_setup(store, workspace_id, setup_id):\n    store.pending[setup_id] = {\"workspace_id\": workspace_id}\n\n\ndef complete_setup(store, workspace_id, setup_id, connection):\n    store.active[workspace_id] = {\"setup_id\": setup_id, \"connection\": connection}\n    store.pending.pop(setup_id, None)\n\n\ndef active_connection(store, workspace_id):\n    association = store.active.get(workspace_id)\n    return association[\"connection\"] if association else None\n",
+    "command": "/usr/bin/zsh -lc 'git show :setup.py'",
+    "commandActions": [
+      {
+        "command": "git show :setup.py",
+        "type": "unknown"
+      }
+    ],
+    "cwd": "/tmp/fr-opus55-matrix-20261011/codex-candidate-R1-standard-1",
+    "durationMs": 65,
+    "exitCode": 0,
+    "id": "exec-9bcbed20-36bc-4cc5-8c14-807c8629711a",
+    "pluginId": null,
+    "processId": "80220",
+    "scriptPath": null,
+    "source": "unifiedExecStartup",
+    "status": "completed",
+    "type": "commandExecution"
+  },
+  "source_file": "items-01a12ad8-0990-7523-be6f-610d48c47bba.json",
+  "startedAtMs": 1791720235346,
+  "turnId": "01a12ad8-09bc-72b3-bcf2-ecc642224160"
+}

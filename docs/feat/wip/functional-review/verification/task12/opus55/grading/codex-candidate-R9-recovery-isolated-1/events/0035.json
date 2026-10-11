@@ -1,0 +1,28 @@
+{
+  "actor": "items-01a12bb6-10c3-75d0-aac2-a160322172ef",
+  "completedAtMs": 1791734947312,
+  "id": "exec-0c362fd2-580d-4659-8615-55f2b9a8364e",
+  "item": {
+    "aggregatedOutput": "All five reviewed candidate files still match index and worktree.\nM  reader.py\nM  tests/test_reads.py\n",
+    "command": "/usr/bin/zsh -lc \"python3 - <<'PY'\nfrom pathlib import Path\nimport json, subprocess\nbundle = Path('/tmp/kk-isolated-review-zvHtbV')\nfor item in json.loads((bundle / 'provenance.json').read_text()):\n    if item['role'] \"'!= '\"'candidate':\n        continue\n    path = item['original_path']\n    snapshot = Path(item['materialized_path']).read_bytes()\n    assert subprocess.check_output(['git', 'show', ':' + path]) == snapshot, path\n    assert Path(path).read_bytes() == snapshot, path\nprint('All five reviewed candidate files still match index and worktree.')\nprint(subprocess.check_output(['git', 'status', '--short']).decode(), end='')\nPY\"",
+    "commandActions": [
+      {
+        "command": "python3 - <<'PY'\nfrom pathlib import Path\nimport json, subprocess\nbundle = Path('/tmp/kk-isolated-review-zvHtbV')\nfor item in json.loads((bundle / 'provenance.json').read_text()):\n    if item['role'] != 'candidate':\n        continue\n    path = item['original_path']\n    snapshot = Path(item['materialized_path']).read_bytes()\n    assert subprocess.check_output(['git', 'show', ':' + path]) == snapshot, path\n    assert Path(path).read_bytes() == snapshot, path\nprint('All five reviewed candidate files still match index and worktree.')\nprint(subprocess.check_output(['git', 'status', '--short']).decode(), end='')\nPY",
+        "type": "unknown"
+      }
+    ],
+    "cwd": "/tmp/fr-opus55-matrix-20261011/codex-candidate-R9-recovery-isolated-1",
+    "durationMs": 68,
+    "exitCode": 0,
+    "id": "exec-0c362fd2-580d-4659-8615-55f2b9a8364e",
+    "pluginId": null,
+    "processId": "65830",
+    "scriptPath": null,
+    "source": "unifiedExecStartup",
+    "status": "completed",
+    "type": "commandExecution"
+  },
+  "source_file": "items-01a12bb6-10c3-75d0-aac2-a160322172ef.json",
+  "startedAtMs": 1791734947244,
+  "turnId": "01a12bb6-10f1-7911-8c16-03b8a29dc6e6"
+}

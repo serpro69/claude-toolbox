@@ -1,0 +1,28 @@
+{
+  "actor": "items-01a12b7b-8256-7c20-80d8-758e245a644f",
+  "completedAtMs": 1791730968109,
+  "id": "exec-5449464e-617e-4667-a329-78dffe8eeca5",
+  "item": {
+    "aggregatedOutput": "diff --git a/payload.py b/payload.py\nindex 32557de..8ad74d9 100644\n--- a/payload.py\n+++ b/payload.py\n@@ -1,2 +1,2 @@\n def build_payload(display_name):\n-    return {\"display_name\": display_name}\n+    return {\"display_name\": display_name.strip()}\ndiff --git a/tests/test_payload.py b/tests/test_payload.py\nnew file mode 100644\nindex 0000000..e427779\n--- /dev/null\n+++ b/tests/test_payload.py\n@@ -0,0 +1,11 @@\n+import unittest\n+\n+from payload import build_payload\n+\n+\n+class PayloadTests(unittest.TestCase):\n+    def test_trim_surrounding_spaces(self):\n+        self.assertEqual(build_payload(\"  Ada  \"), {\"display_name\": \"Ada\"})\n+\n+    def test_preserve_internal_space(self):\n+        self.assertEqual(build_payload(\"Ada Lovelace\"), {\"display_name\": \"Ada Lovelace\"})\n",
+    "command": "/usr/bin/zsh -lc 'git diff --cached'",
+    "commandActions": [
+      {
+        "command": "git diff --cached",
+        "type": "unknown"
+      }
+    ],
+    "cwd": "/tmp/fr-opus55-matrix-20261011/codex-candidate-R7-isolated-1",
+    "durationMs": 93,
+    "exitCode": 0,
+    "id": "exec-5449464e-617e-4667-a329-78dffe8eeca5",
+    "pluginId": null,
+    "processId": "42525",
+    "scriptPath": null,
+    "source": "unifiedExecStartup",
+    "status": "completed",
+    "type": "commandExecution"
+  },
+  "source_file": "items-01a12b7b-8256-7c20-80d8-758e245a644f.json",
+  "startedAtMs": 1791730968015,
+  "turnId": "01a12b7b-8283-7b51-a25c-d7a5bbec71f9"
+}

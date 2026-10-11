@@ -1,0 +1,30 @@
+{
+  "actor": "items-01a12ba8-9520-7142-8120-d24993e52284",
+  "completedAtMs": 1791733878702,
+  "id": "exec-5a556374-ddf6-43c9-9b58-b6c9dd88dc22",
+  "item": {
+    "aggregatedOutput": "1:diff --git a/reader.py b/reader.py\n2:index 9429bec..0000404 100644\n3:--- a/reader.py\n4:+++ b/reader.py\n5:@@ -1,2 +1,2 @@\n6: def read_preferences(repository, key):\n7:-    return repository.read_resilient(key)\n8:+    return repository.read_once(key.strip())\n9:diff --git a/tests/test_reads.py b/tests/test_reads.py\n10:index 23fc901..039b17d 100644\n11:--- a/tests/test_reads.py\n12:+++ b/tests/test_reads.py\n13:@@ -1,11 +1,17 @@\n14: import unittest\n15: \n16: from preferences import Preferences\n17:-from repository import Repository, ScriptedBackend\n18:+from repository import Repository, ScriptedBackend, TransientRead\n19: \n20: \n21: class ReadTests(unittest.TestCase):\n22:-    def test_existing_key(self):\n23:+    def test_trim_key(self):\n24:         backend = ScriptedBackend([{\"color\": \"blue\"}])\n25:-        self.assertEqual(Preferences(Repository(backend)).read(\"w\"), {\"color\": \"blue\"})\n26:+        self.assertEqual(Preferences(Repository(backend)).read(\" w \"), {\"color\": \"blue\"})\n27:+        self.assertEqual(backend.keys, [\"w\"])\n28:+\n29:+    def test_transient_error(self):\n30:+        backend = ScriptedBackend([TransientRead(\"busy\"), {\"color\": \"blue\"}])\n31:+        with self.assertRaises(TransientRead):\n32:+            Preferences(Repository(backend)).read(\" w \")\n33:         self.assertEqual(backend.keys, [\"w\"])\n",
+    "command": "/usr/bin/zsh -lc \"rg -n '\"'^'\"' '/tmp/kk-preference-review-6tjroj2k/selected.patch'\"",
+    "commandActions": [
+      {
+        "command": "rg -n '^' /tmp/kk-preference-review-6tjroj2k/selected.patch",
+        "path": "selected.patch",
+        "query": "^",
+        "type": "search"
+      }
+    ],
+    "cwd": "/tmp/fr-opus55-matrix-20261011/codex-candidate-R9-mismatch-isolated-2",
+    "durationMs": 78,
+    "exitCode": 0,
+    "id": "exec-5a556374-ddf6-43c9-9b58-b6c9dd88dc22",
+    "pluginId": null,
+    "processId": "21857",
+    "scriptPath": null,
+    "source": "unifiedExecStartup",
+    "status": "completed",
+    "type": "commandExecution"
+  },
+  "source_file": "items-01a12ba8-9520-7142-8120-d24993e52284.json",
+  "startedAtMs": 1791733878624,
+  "turnId": "01a12ba8-9541-7a41-9d5c-17c0b69ac113"
+}

@@ -1,0 +1,27 @@
+diff --git a/docs/feat/wip/settings-receipts/tasks.md b/docs/feat/wip/settings-receipts/tasks.md
+index 75f436f..1fdec41 100644
+--- a/docs/feat/wip/settings-receipts/tasks.md
++++ b/docs/feat/wip/settings-receipts/tasks.md
+@@ -3,11 +3,21 @@
+ > Status: planned
+ 
+ ## Task 1: Client acknowledgement
+-- **Status:** pending
++- **Status:** in-progress (blocked: requirement conflict awaiting user decision)
+ - **Depends on:** —
+ - [ ] Send require_receipt in client.py and require applied=true on success.
+ - [ ] Verify client receipt handling and complete independent review.
+ 
++### Execution context
++
++- 2026-10-11 — observed — Baseline `5692f67` (worktree clean). `provider.py:update_settings` returns `{"ok": True}` with no `applied` field and ignores `require_receipt`. `client.py:save_settings` returns success on `ok` alone. `tests/test_client.py::test_ordinary_save` exercises client against current provider with `enhanced_settings=False`. Python 3.9+, stdlib only (README.md).
++- 2026-10-11 — observed — Conflict: this task and `implementation.md` require the client to reject a successful response unless `applied` is true, unconditionally. `design.md` makes it a hard acceptance requirement that every merged client increment supports the current provider, including `enhanced_settings=False`, and that ordinary saves keep returning success. Boundary case: current provider returns `{"ok": True}` → Task 1 as written raises → ordinary save fails and `test_ordinary_save` breaks, violating the design guarantee. No accepted decision settles this (docs, Capy `kk:*` empty).
++- 2026-10-11 — proposed — Alternatives (none authorized; each changes one explicit requirement):
++  - A. Require `applied is True` only when `enhanced_settings=True`; ordinary saves keep current behavior. Counterexample: ordinary save against a receipt-capable provider still accepts a response without `applied` — Task 1's unconditional rejection becomes conditional. Consistent with `implementation.md` keeping enhanced UI disabled until Task 2.
++  - B. Reject only explicit `applied` false; treat absent `applied` as legacy success. Counterexample: current provider's `{"ok": True}` is accepted with no receipt — Task 1's rejection and the "trustworthy confirmation" goal are weakened for all saves.
++  - C. Implement Task 1 as written and grant an explicit exception to the design's independent-delivery guarantee (e.g., provider Task 2 must be deployed first). Counterexample: client released before provider breaks ordinary saves.
++- 2026-10-11 — unresolved — Owner: user. Next action: choose A, B, C or another resolution. Verification condition: decision recorded here with source/rationale before any `client.py` edit.
++
+ ## Task 2: Provider acknowledgement
+ - **Status:** pending
+ - **Depends on:** Task 1

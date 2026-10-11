@@ -1,0 +1,28 @@
+{
+  "actor": "items-01a12bb6-10c3-75d0-aac2-a160322172ef",
+  "completedAtMs": 1791734909333,
+  "id": "exec-0c2e6e63-8be0-44cb-aa8c-c52b1b29e155",
+  "item": {
+    "aggregatedOutput": "PASS: existing unpadded ID\nPASS: mixed surrounding whitespace\nPASS: third-attempt recovery\nPASS: permanent error after transient\nPASS: first success ends retries\nPASS: empty result is success\nPASS: exhausted transient preserves final exception\n",
+    "command": "/usr/bin/zsh -lc \"python3 -B - <<'PY'\nfrom preferences import Preferences\nfrom repository import MissingPreference, Repository, ScriptedBackend, TransientRead\n\ncases = [\n    ('existing unpadded ID', 'w', [{'color': 'blue'}], None, 1),\n    ('mixed surrounding whitespace', '\\\\t w \\\\n', [{'color': 'blue'}], None, 1),\n    ('third-attempt recovery', ' w ', [TransientRead('first'), TransientRead('second'), {'color': 'blue'}], None, 3),\n    ('permanent error after transient', ' w ', [TransientRead('first'), MissingPreference('missing'), {'unused': True}], MissingPreference, 2),\n    ('first success ends retries', ' w ', [{'color': 'blue'}, TransientRead('unused')], None, 1),\n    ('empty result is success', ' w ', [{}, TransientRead('unused')], None, 1),\n    ('exhausted transient preserves final exception', ' w ', [TransientRead('first'), TransientRead('second'), TransientRead('third')], TransientRead, 3),\n]\nfor name, key, outcomes, error, attempts in cases:\n    backend = ScriptedBackend(outcomes)\n    try:\n        result = Preferences(Repository(backend)).read(key)\n    except Exception as observed:\n        assert error is not None and type(observed) is error, (name, observed)\n        assert observed is outcomes[attempts - 1], name\n    else:\n        assert error is None, name\n        assert result is outcomes[attempts - 1], name\n    assert backend.keys == ['w'] * attempts, (name, backend.keys)\n    print('PASS:', name)\nPY\"",
+    "commandActions": [
+      {
+        "command": "python3 -B - <<'PY'\nfrom preferences import Preferences\nfrom repository import MissingPreference, Repository, ScriptedBackend, TransientRead\n\ncases = [\n    ('existing unpadded ID', 'w', [{'color': 'blue'}], None, 1),\n    ('mixed surrounding whitespace', '\\t w \\n', [{'color': 'blue'}], None, 1),\n    ('third-attempt recovery', ' w ', [TransientRead('first'), TransientRead('second'), {'color': 'blue'}], None, 3),\n    ('permanent error after transient', ' w ', [TransientRead('first'), MissingPreference('missing'), {'unused': True}], MissingPreference, 2),\n    ('first success ends retries', ' w ', [{'color': 'blue'}, TransientRead('unused')], None, 1),\n    ('empty result is success', ' w ', [{}, TransientRead('unused')], None, 1),\n    ('exhausted transient preserves final exception', ' w ', [TransientRead('first'), TransientRead('second'), TransientRead('third')], TransientRead, 3),\n]\nfor name, key, outcomes, error, attempts in cases:\n    backend = ScriptedBackend(outcomes)\n    try:\n        result = Preferences(Repository(backend)).read(key)\n    except Exception as observed:\n        assert error is not None and type(observed) is error, (name, observed)\n        assert observed is outcomes[attempts - 1], name\n    else:\n        assert error is None, name\n        assert result is outcomes[attempts - 1], name\n    assert backend.keys == ['w'] * attempts, (name, backend.keys)\n    print('PASS:', name)\nPY",
+        "type": "unknown"
+      }
+    ],
+    "cwd": "/tmp/fr-opus55-matrix-20261011/codex-candidate-R9-recovery-isolated-1",
+    "durationMs": 54,
+    "exitCode": 0,
+    "id": "exec-0c2e6e63-8be0-44cb-aa8c-c52b1b29e155",
+    "pluginId": null,
+    "processId": "5914",
+    "scriptPath": null,
+    "source": "unifiedExecStartup",
+    "status": "completed",
+    "type": "commandExecution"
+  },
+  "source_file": "items-01a12bb6-10c3-75d0-aac2-a160322172ef.json",
+  "startedAtMs": 1791734909278,
+  "turnId": "01a12bb6-10f1-7911-8c16-03b8a29dc6e6"
+}

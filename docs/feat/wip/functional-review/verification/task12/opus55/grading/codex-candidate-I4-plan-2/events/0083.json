@@ -1,0 +1,28 @@
+{
+  "actor": "items-01a12bd8-844f-73b1-93ca-96c32b18c15e",
+  "completedAtMs": 1791737463661,
+  "id": "exec-f2b10ce5-5833-4a9e-a282-88eea4a21df8",
+  "item": {
+    "aggregatedOutput": "Final checks passed: only tasks.md and handoff.md modified; protected files unchanged.\nRemoved this session's temporary review bundles after final reviewer confirmation.\n",
+    "command": "/usr/bin/zsh -lc \"python3 -B - <<'PY'\nfrom pathlib import Path\nimport subprocess\nfor name in ['api.py','records.py','tests/test_labels.py','state/records.json','state/release.json']:\n    assert Path(name).read_bytes() == subprocess.check_output(['git','show',f'HEAD:{name}']), name\nsubprocess.run(['git','diff','--check'],check=True)\nchanged = subprocess.check_output(['git','diff','--name-only'],text=True).splitlines()\nassert set(changed) == {'docs/feat/wip/label-reader/tasks.md','docs/feat/wip/label-reader/handoff.md'}\nassert not subprocess.check_output(['git','ls-files','--others','--exclude-standard'],text=True).strip()\nprint('Final checks passed: only tasks.md and handoff.md modified; protected files unchanged.')\nfor directory in ['/tmp/kk-review-instructions-39wq8sa9','/tmp/kk-review-instructions-cgqf5svg','/tmp/kk-review-instructions-vxq9h13e','/tmp/label-reader-review-u706gjoj']:\n    p = Path(directory)\n    for child in p.iterdir():\n        if not child.is_file(): raise RuntimeError(f'Unexpected nested path: {child}')\n        child.unlink()\n    p.rmdir()\nprint('Removed this session\\\\'s temporary review bundles after final reviewer confirmation.')\nPY\"",
+    "commandActions": [
+      {
+        "command": "python3 -B - <<'PY'\nfrom pathlib import Path\nimport subprocess\nfor name in ['api.py','records.py','tests/test_labels.py','state/records.json','state/release.json']:\n    assert Path(name).read_bytes() == subprocess.check_output(['git','show',f'HEAD:{name}']), name\nsubprocess.run(['git','diff','--check'],check=True)\nchanged = subprocess.check_output(['git','diff','--name-only'],text=True).splitlines()\nassert set(changed) == {'docs/feat/wip/label-reader/tasks.md','docs/feat/wip/label-reader/handoff.md'}\nassert not subprocess.check_output(['git','ls-files','--others','--exclude-standard'],text=True).strip()\nprint('Final checks passed: only tasks.md and handoff.md modified; protected files unchanged.')\nfor directory in ['/tmp/kk-review-instructions-39wq8sa9','/tmp/kk-review-instructions-cgqf5svg','/tmp/kk-review-instructions-vxq9h13e','/tmp/label-reader-review-u706gjoj']:\n    p = Path(directory)\n    for child in p.iterdir():\n        if not child.is_file(): raise RuntimeError(f'Unexpected nested path: {child}')\n        child.unlink()\n    p.rmdir()\nprint('Removed this session\\'s temporary review bundles after final reviewer confirmation.')\nPY",
+        "type": "unknown"
+      }
+    ],
+    "cwd": "/tmp/fr-opus55-matrix-20261011/codex-candidate-I4-plan-2",
+    "durationMs": 76,
+    "exitCode": 0,
+    "id": "exec-f2b10ce5-5833-4a9e-a282-88eea4a21df8",
+    "pluginId": null,
+    "processId": "46632",
+    "scriptPath": null,
+    "source": "unifiedExecStartup",
+    "status": "completed",
+    "type": "commandExecution"
+  },
+  "source_file": "items-01a12bd8-844f-73b1-93ca-96c32b18c15e.json",
+  "startedAtMs": 1791737463584,
+  "turnId": "01a12bd8-847b-7a40-b69a-961a69fa57a2"
+}

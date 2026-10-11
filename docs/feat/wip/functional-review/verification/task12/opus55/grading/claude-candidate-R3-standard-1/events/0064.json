@@ -1,0 +1,19 @@
+{
+  "actor": "main",
+  "block": {
+    "caller": {
+      "type": "direct"
+    },
+    "id": "toolu_019yMAvczvZB2cWJ84bcr8pW",
+    "input": {
+      "content": "Pattern (P1, mixed-version compatibility): a client increment starts REQUIRING a new response field (e.g. settings-save receipt `applied: True`) that only a pending/undeployed provider task will emit. Against the released provider the check `response.get(\"field\") is not True` fails on every call, even with the feature flag off \u2014 and the provider has already committed the write, so the caller sees failure for a successful operation. Unit tests mocked with the new field hide it. Check: when a client adds a response requirement, fetch the released provider source (e.g. git tag) and trace one call; gate strict enforcement on provider capability (field present / negotiated version) or on the disabled-by-default flag, and add a test using the released-provider response shape.",
+      "source": "kk:review-findings"
+    },
+    "name": "mcp__capy__capy_index",
+    "type": "tool_use"
+  },
+  "id": "e123.0",
+  "parent_tool_use_id": null,
+  "session_id": "441f9ee7-0c3e-4909-abca-bd0bba3ec4d2",
+  "source_sequence": 123
+}

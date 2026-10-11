@@ -1,0 +1,69 @@
+I recommend **requesting changes**. The staged change removes the code that reads old-format records. The README says that code has to stay until the data migration finishes, and nothing marks the migration as finished.
+
+## Code Review Summary
+
+**Files reviewed**: 1 file, 4 lines changed (+1/−3)
+**Overall assessment**: REQUEST_CHANGES
+**Intent and scope**: The change is the staged "destination reader cleanup" in `reader.py`; nothing is unstaged. There is no `docs/feat/wip`, so there is no task scope. The `README.md` contract is the requirement source.
+**Baselines**: I compared the base commit `HEAD` (b299f57) with the staged version of the file. No release or deployed version exists; the README describes a local JSON model.
+
+**Contract (README.md):** Records come in two formats: the old one with a top-level `address`, and the new one with a nested `destination.address`. The migration converts records in limited batches while reads keep working. *"A deployment must read both shapes until migration finishes. Existing addresses must be preserved."* Nothing checks at startup that the migration is done. `data/records.json` is a supported snapshot that mixes both formats.
+
+## Behavior and Compatibility
+
+| Scenario | Before | After | Evidence |
+| --- | --- | --- | --- |
+| New-format record (`writer.new_destination`) listed | address returned | address returned | test passes |
+| Empty list | `[]` | `[]` | test passes |
+| Old-format record listed (`legacy-a`) | `a@example.test` | `KeyError: 'destination'` | traced in source |
+| Mixed snapshot `data/records.json` through `api.list_destinations` | 3 addresses | the whole call fails on the first record | traced in source |
+| Partly migrated, after `migrate_batch(records, 1)` (`legacy-c` still old) | 3 addresses | the whole call fails | traced through `migration.py:6-8` |
+
+- **Mixed or partly migrated data**: **Blocked.** The README says this state is supported and has no end date.
+- **Fully migrated data**: Works. Nothing in the repo shows any environment is fully migrated.
+- **Rollback**: Reverting `reader.py` is enough. The change never writes data, so no data is at risk.
+
+**Evidence limits:** I ran `python3 -B -m unittest discover -s tests` and both tests passed. The working copy matches the staged version, so the tests ran against the staged code. I didn't run the old-format failure; I traced it from the source. One Bash command was blocked by permissions, so I read those files with the Read tool instead. Nothing went unread.
+
+---
+
+## Findings
+
+### P0 - Critical
+(none)
+
+### P1 - High
+
+- **[reader.py:2]** Removing the old-format read breaks listing while the migration is still running
+  - Profile: python · Checklist: code-quality-checklist.md (Boundary Conditions / Missing error handling), plus generic compatibility review
+  - Triggered by: content — `.py` extension
+  - **How it fails:** `api.list_destinations` calls `address_of` on every saved record. An old-format record has no `destination` key, so `row["destination"]` raises `KeyError`. Because the function builds one list over all records, a single old-format record makes the whole request fail.
+  - **Expected:** both formats are read until the migration finishes, as the README requires.
+  - **Actual:** the supported mixed snapshot can't be listed. After a partial `migrate_batch` run, any records left in the old format still break the call.
+  - Confidence: 97%. I checked the base and staged versions, the only caller (`api.py:5`), the migration's batch limit with no completion gate (`migration.py:1-9`), the snapshot data and the README contract. I'm not sure about one thing: whether you consider the migration finished somewhere outside this repo. If so, the README is out of date and needs updating in the same change.
+  - **Fix:** Revert to the dual-format read (the `HEAD` version). Remove it later, in a separate change, only once a check or recorded evidence shows that no old-format records remain anywhere.
+
+### P2 - Medium
+
+- **[tests/test_destinations.py:7]** No test covers old-format or mixed records, so the suite passes despite the regression
+  - Profile: generic · Checklist: —
+  - Triggered by: —
+  - **Gap:** both tests only use new-format records or an empty list. The README's main requirements — old records still readable, existing addresses preserved — aren't tested at all.
+  - Confidence: 95%. I ran the suite and it passed against the staged code.
+  - **Fix:** Add a test that lists an old-format record. Add another that lists the `data/records.json` records before and after `migrate_batch(records, 1)` and checks that all three addresses come back unchanged.
+
+### P3 - Low
+(none)
+
+---
+
+## Removal/Iteration Plan
+
+**Wait before removing.** Don't remove the old-format branch in `address_of` until:
+1. Migration completion can be checked, for example by a gate or a count of zero old-format records in every store.
+2. The README's "read both shapes" rule is updated in the same change.
+3. The old-format and mixed tests above have been in place and then moved to cover the new format only.
+
+**Indexing:** I saved the systemic P1 pattern (removing a dual-format read while a migration is still running) to the knowledge base under `kk:review-findings`. The base was empty before, so there were no earlier findings to compare against.
+
+**Next steps:** You asked for a review only, so I haven't edited anything. Should I revert `reader.py` and add the old-format and mixed tests?

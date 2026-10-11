@@ -1,0 +1,30 @@
+{
+  "actor": "items-01a12b38-be9e-7f43-b50e-7ebde299ae3f",
+  "completedAtMs": 1791726543932,
+  "id": "exec-50a39706-339e-44ae-9f13-7557a32b7ac8",
+  "item": {
+    "aggregatedOutput": "./tests/test_destinations.py:3:from api import list_destinations\n./tests/test_destinations.py:4:from writer import new_destination\n./tests/test_destinations.py:9:        row = new_destination(\"new\", \"new@example.test\")\n./tests/test_destinations.py:10:        self.assertEqual(list_destinations([row]),\n./tests/test_destinations.py:11:                         [{\"id\": \"new\", \"address\": \"new@example.test\"}])\n./tests/test_destinations.py:14:        self.assertEqual(list_destinations([]), [])\n./writer.py:1:def new_destination(record_id, address):\n./writer.py:2:    return {\"id\": record_id, \"destination\": {\"address\": address}}\n./migration.py:1:def migrate_batch(records, limit):\n./migration.py:6:        if \"destination\" not in row:\n./migration.py:7:            row[\"destination\"] = {\"address\": row.pop(\"address\")}\n./README.md:1:# Saved destinations\n./README.md:5:Destination records can use legacy top-level `address` or current nested\n./README.md:6:`destination.address`. New writes use the nested shape. Background migration\n./README.md:8:both shapes until migration finishes. Existing addresses must be preserved.\n./README.md:10:`data/records.json` is a supported mixed snapshot. `api.list_destinations`\n./README.md:11:serves all saved records through the same reader. `migrate_batch` changes up to\n./reader.py:1:def address_of(row):\n./reader.py:2:    return row[\"destination\"][\"address\"]\n./data/records.json:4:    \"address\": \"a@example.test\"\n./data/records.json:8:    \"destination\": {\n./data/records.json:9:      \"address\": \"b@example.test\"\n./data/records.json:14:    \"address\": \"c@example.test\"\n./api.py:1:from reader import address_of\n./api.py:4:def list_destinations(records):\n./api.py:5:    return [{\"id\": row[\"id\"], \"address\": address_of(row)} for row in records]\n",
+    "command": "/usr/bin/zsh -lc \"rg -n 'address_of|list_destinations|migrate_batch|destination|address' .\"",
+    "commandActions": [
+      {
+        "command": "rg -n 'address_of|list_destinations|migrate_batch|destination|address' .",
+        "path": ".",
+        "query": "address_of|list_destinations|migrate_batch|destination|address",
+        "type": "search"
+      }
+    ],
+    "cwd": "/tmp/fr-opus55-matrix-20261011/codex-baseline-R4-isolated-1",
+    "durationMs": 59,
+    "exitCode": 0,
+    "id": "exec-50a39706-339e-44ae-9f13-7557a32b7ac8",
+    "pluginId": null,
+    "processId": "4764",
+    "scriptPath": null,
+    "source": "unifiedExecStartup",
+    "status": "completed",
+    "type": "commandExecution"
+  },
+  "source_file": "items-01a12b38-be9e-7f43-b50e-7ebde299ae3f.json",
+  "startedAtMs": 1791726543872,
+  "turnId": "01a12b38-bebd-7093-a600-377aac2aa363"
+}

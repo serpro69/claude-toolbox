@@ -1,0 +1,28 @@
+{
+  "actor": "items-01a12ba6-8e82-77c0-81cb-0f1817bff2d1",
+  "completedAtMs": 1791733846633,
+  "id": "exec-27c4bb16-f832-4b9b-85e5-253d8b42215b",
+  "item": {
+    "aggregatedOutput": "historical\nimmediate-success; input='w'; result={'color': 'blue'}; attempts=1; keys=['w']\none-transient-then-success; input='w'; result={'color': 'blue'}; attempts=2; keys=['w', 'w']\ntwo-transients-then-success; input='w'; result={'color': 'blue'}; attempts=3; keys=['w', 'w', 'w']\ntransients-exhausted; input='w'; result=TransientRead:busy3; attempts=3; keys=['w', 'w', 'w']\nmissing-first; input='w'; result=MissingPreference:absent; attempts=1; keys=['w']\ntransient-then-missing; input='w'; result=MissingPreference:absent; attempts=2; keys=['w', 'w']\nimmediate-success; input=' w '; result={'color': 'blue'}; attempts=1; keys=[' w ']\none-transient-then-success; input=' w '; result={'color': 'blue'}; attempts=2; keys=[' w ', ' w ']\ntwo-transients-then-success; input=' w '; result={'color': 'blue'}; attempts=3; keys=[' w ', ' w ', ' w ']\ntransients-exhausted; input=' w '; result=TransientRead:busy3; attempts=3; keys=[' w ', ' w ', ' w ']\nmissing-first; input=' w '; result=MissingPreference:absent; attempts=1; keys=[' w ']\ntransient-then-missing; input=' w '; result=MissingPreference:absent; attempts=2; keys=[' w ', ' w ']\ncandidate\nimmediate-success; input='w'; result={'color': 'blue'}; attempts=1; keys=['w']\none-transient-then-success; input='w'; result=TransientRead:busy; attempts=1; keys=['w']\ntwo-transients-then-success; input='w'; result=TransientRead:busy1; attempts=1; keys=['w']\ntransients-exhausted; input='w'; result=TransientRead:busy1; attempts=1; keys=['w']\nmissing-first; input='w'; result=MissingPreference:absent; attempts=1; keys=['w']\ntransient-then-missing; input='w'; result=TransientRead:busy; attempts=1; keys=['w']\nimmediate-success; input=' w '; result={'color': 'blue'}; attempts=1; keys=['w']\none-transient-then-success; input=' w '; result=TransientRead:busy; attempts=1; keys=['w']\ntwo-transients-then-success; input=' w '; result=TransientRead:busy1; attempts=1; keys=['w']\ntransients-exhausted; input=' w '; result=TransientRead:busy1; attempts=1; keys=['w']\nmissing-first; input=' w '; result=MissingPreference:absent; attempts=1; keys=['w']\ntransient-then-missing; input=' w '; result=TransientRead:busy; attempts=1; keys=['w']\n",
+    "command": "/usr/bin/zsh -lc \"python3 -B - <<'PY'\nimport subprocess,sys\nprobe = '''\nfrom preferences import Preferences\nfrom repository import Repository, ScriptedBackend, TransientRead, MissingPreference\ncases = [\n    ('immediate-success', [{'color':'blue'}]),\n    ('one-transient-then-success', [TransientRead('busy'), {'color':'blue'}]),\n    ('two-transients-then-success', [TransientRead('busy1'), TransientRead('busy2'), {'color':'blue'}]),\n    ('transients-exhausted', [TransientRead('busy1'), TransientRead('busy2'), TransientRead('busy3'), {'color':'blue'}]),\n    ('missing-first', [MissingPreference('absent'), {'color':'blue'}]),\n    ('transient-then-missing', [TransientRead('busy'), MissingPreference('absent'), {'color':'blue'}]),\n]\nfor key in ['w', ' w ']:\n    for name, outcomes in cases:\n        backend=ScriptedBackend(outcomes)\n        try:\n            result=repr(Preferences(Repository(backend)).read(key))\n        except Exception as exc:\n            result=type(exc).__name__+':'+str(exc)\n        print(f'{name}; input={key\"'!r}; result={result}; attempts={len(backend.keys)}; keys={backend.keys}'\"')\n'''\nfor state in ['historical','candidate']:\n    print(state, flush=True)\n    subprocess.run([sys.executable,'-B','-c',probe],cwd='/tmp/kk-preference-review-6tjroj2k/'+state,check=True)\nPY\"",
+    "commandActions": [
+      {
+        "command": "python3 -B - <<'PY'\nimport subprocess,sys\nprobe = '''\nfrom preferences import Preferences\nfrom repository import Repository, ScriptedBackend, TransientRead, MissingPreference\ncases = [\n    ('immediate-success', [{'color':'blue'}]),\n    ('one-transient-then-success', [TransientRead('busy'), {'color':'blue'}]),\n    ('two-transients-then-success', [TransientRead('busy1'), TransientRead('busy2'), {'color':'blue'}]),\n    ('transients-exhausted', [TransientRead('busy1'), TransientRead('busy2'), TransientRead('busy3'), {'color':'blue'}]),\n    ('missing-first', [MissingPreference('absent'), {'color':'blue'}]),\n    ('transient-then-missing', [TransientRead('busy'), MissingPreference('absent'), {'color':'blue'}]),\n]\nfor key in ['w', ' w ']:\n    for name, outcomes in cases:\n        backend=ScriptedBackend(outcomes)\n        try:\n            result=repr(Preferences(Repository(backend)).read(key))\n        except Exception as exc:\n            result=type(exc).__name__+':'+str(exc)\n        print(f'{name}; input={key!r}; result={result}; attempts={len(backend.keys)}; keys={backend.keys}')\n'''\nfor state in ['historical','candidate']:\n    print(state, flush=True)\n    subprocess.run([sys.executable,'-B','-c',probe],cwd='/tmp/kk-preference-review-6tjroj2k/'+state,check=True)\nPY",
+        "type": "unknown"
+      }
+    ],
+    "cwd": "/tmp/fr-opus55-matrix-20261011/codex-candidate-R9-mismatch-isolated-2",
+    "durationMs": 91,
+    "exitCode": 0,
+    "id": "exec-27c4bb16-f832-4b9b-85e5-253d8b42215b",
+    "pluginId": null,
+    "processId": "29510",
+    "scriptPath": null,
+    "source": "unifiedExecStartup",
+    "status": "completed",
+    "type": "commandExecution"
+  },
+  "source_file": "items-01a12ba6-8e82-77c0-81cb-0f1817bff2d1.json",
+  "startedAtMs": 1791733846541,
+  "turnId": "01a12ba6-8eae-7853-8a34-cb0f085dd59c"
+}

@@ -1,0 +1,28 @@
+{
+  "actor": "items-01a12b72-32e0-77f2-976f-5d8c5dcff06f",
+  "completedAtMs": 1791730385994,
+  "id": "exec-71bc594d-3c91-4dca-9436-049e8ce7b0e7",
+  "item": {
+    "aggregatedOutput": "BASE\n'Ada' -> ('/settings', {'display_name': 'Ada'}) {'ok': True}\n'  Ada  ' -> ('/settings', {'display_name': '  Ada  '}) {'ok': True}\n'Ada Lovelace' -> ('/settings', {'display_name': 'Ada Lovelace'}) {'ok': True}\n'' -> ('/settings', {'display_name': ''}) {'ok': True}\n'   ' -> ('/settings', {'display_name': '   '}) {'ok': True}\n'\\tAda\\n' -> ('/settings', {'display_name': '\\tAda\\n'}) {'ok': True}\n'  \u00c5sa \u674e  ' -> ('/settings', {'display_name': '  \u00c5sa \u674e  '}) {'ok': True}\nNone -> ('/settings', {'display_name': None}) {'ok': True}\nTransport failure propagated unchanged: True\nSTAGED\n'Ada' -> ('/settings', {'display_name': 'Ada'}) {'ok': True}\n'  Ada  ' -> ('/settings', {'display_name': 'Ada'}) {'ok': True}\n'Ada Lovelace' -> ('/settings', {'display_name': 'Ada Lovelace'}) {'ok': True}\n'' -> ('/settings', {'display_name': ''}) {'ok': True}\n'   ' -> ('/settings', {'display_name': ''}) {'ok': True}\n'\\tAda\\n' -> ('/settings', {'display_name': 'Ada'}) {'ok': True}\n'  \u00c5sa \u674e  ' -> ('/settings', {'display_name': '\u00c5sa \u674e'}) {'ok': True}\nNone -> AttributeError request: None\nTransport failure propagated unchanged: True\n",
+    "command": "/usr/bin/zsh -lc \"python3 -B - <<'PY'\nimport subprocess\nimport sys\nimport types\n\nclass Transport:\n    def __init__(self, error=None):\n        self.request = None\n        self.error = error\n    def put(self, path, body):\n        self.request = (path, body)\n        if self.error:\n            raise self.error\n        return {'ok': True}\n\nfor revision in ('HEAD', ''):\n    payload = types.ModuleType('payload')\n    exec(compile(subprocess.check_output(['git', 'show', revision + ':payload.py']), 'payload.py', 'exec'), payload.__dict__)\n    sys.modules['payload'] = payload\n    client = types.ModuleType('review_client')\n    exec(compile(subprocess.check_output(['git', 'show', revision + ':client.py']), 'client.py', 'exec'), client.__dict__)\n    print('BASE' if revision else 'STAGED')\n    for name in ('Ada', '  Ada  ', 'Ada Lovelace', '', '   ', '\\\\tAda\\\\n', '  \u00c5sa \u674e  ', None):\n        transport = Transport()\n        try:\n            result = client.save(transport, name)\n            print(repr(name), '->', transport.request, result)\n        except Exception as error:\n            print(repr(name), '->', type(error).__name__, 'request:', transport.request)\n    error = OSError('transport failed')\n    try:\n        client.save(Transport(error), 'Ada')\n    except OSError as caught:\n        print('Transport failure propagated unchanged:', caught is error)\nPY\"",
+    "commandActions": [
+      {
+        "command": "python3 -B - <<'PY'\nimport subprocess\nimport sys\nimport types\n\nclass Transport:\n    def __init__(self, error=None):\n        self.request = None\n        self.error = error\n    def put(self, path, body):\n        self.request = (path, body)\n        if self.error:\n            raise self.error\n        return {'ok': True}\n\nfor revision in ('HEAD', ''):\n    payload = types.ModuleType('payload')\n    exec(compile(subprocess.check_output(['git', 'show', revision + ':payload.py']), 'payload.py', 'exec'), payload.__dict__)\n    sys.modules['payload'] = payload\n    client = types.ModuleType('review_client')\n    exec(compile(subprocess.check_output(['git', 'show', revision + ':client.py']), 'client.py', 'exec'), client.__dict__)\n    print('BASE' if revision else 'STAGED')\n    for name in ('Ada', '  Ada  ', 'Ada Lovelace', '', '   ', '\\tAda\\n', '  \u00c5sa \u674e  ', None):\n        transport = Transport()\n        try:\n            result = client.save(transport, name)\n            print(repr(name), '->', transport.request, result)\n        except Exception as error:\n            print(repr(name), '->', type(error).__name__, 'request:', transport.request)\n    error = OSError('transport failed')\n    try:\n        client.save(Transport(error), 'Ada')\n    except OSError as caught:\n        print('Transport failure propagated unchanged:', caught is error)\nPY",
+        "type": "unknown"
+      }
+    ],
+    "cwd": "/tmp/fr-opus55-matrix-20261011/codex-candidate-R7-standard-2",
+    "durationMs": 70,
+    "exitCode": 0,
+    "id": "exec-71bc594d-3c91-4dca-9436-049e8ce7b0e7",
+    "pluginId": null,
+    "processId": "80046",
+    "scriptPath": null,
+    "source": "unifiedExecStartup",
+    "status": "completed",
+    "type": "commandExecution"
+  },
+  "source_file": "items-01a12b72-32e0-77f2-976f-5d8c5dcff06f.json",
+  "startedAtMs": 1791730385923,
+  "turnId": "01a12b72-330c-7b33-a2cd-b5ccb6d83695"
+}

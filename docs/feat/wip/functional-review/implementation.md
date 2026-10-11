@@ -4,8 +4,9 @@
 > Evaluation: [evaluation.md](evaluation.md)
 > Tasks: [tasks.md](tasks.md)
 > Review disposition: [consolidated assessment](reviews/design-review-consolidation.md)
-> Status: Tasks 1–11 complete; candidate comparisons and final verification pending
-> Revised: 2026-10-10; Task 2 gate 2B closed; candidate-6 ordering follow-up scoped
+> Status: Tasks 1–11 and core matrix capture/grading complete; acceptance and final verification pending
+> Revised: 2026-10-11; severity/cost assessment is next
+> Next-session handoff: [follow-up.md](follow-up.md)
 
 ## Starting points
 
@@ -109,6 +110,12 @@ Task 12 waits for Task 2 gate 2B, producer, isolated consumers, staging, grading
 
 Review R3's historical-source handoff, R3/R7's verdict mapping, I4's resulting document state, and the grader calibration controls explicitly. Compare every candidate against the immutable actor baseline using the same fixture and grading revisions. An unavailable runtime or source capture yields an unrun gate with an owner/next action; it does not waive acceptance.
 
+The user subsequently expanded coverage to both providers' complete applicable
+matrix. [All 192 sessions and grades](verification/task12/opus55/README.md) are
+complete. Required acceptance remains unmet; preserve PAL deferral and the
+separate legacy/final gates. The next step is the severity/cost assessment below,
+not another automatic full rerun.
+
 ## Documentation and final verification
 
 ### Task 12 focused rework checkpoint
@@ -145,15 +152,15 @@ task documents; `/kk:review-design functional-review` remains available for an
 independent design assessment. These optional passes do not delay the already
 authorized rework.
 
-### Proposed ordering feasibility slice
+### Proposed ordering feasibility slice — conditional
 
 After candidate 6, the user approved scoping a separate ordering fix. The
 [ordering proposal](ordering.md) is the source of truth for this prospective
-slice. Preserve the existing uncommitted candidate-6 source and sealed results.
-This scope revision writes documents only; no new probe, hook or candidate is
-implemented or launched.
+slice. Preserve the candidate-6 source and sealed results. The original scope
+revision changed documents only; it did not implement or launch a probe, hook
+or candidate.
 
-The next proposed implementation task is **12.10**, a risk-first experiment
+If selected after Task 12.11, **12.10** is a risk-first experiment
 under `verification/task12/ordering-probe/`, using disposable plugin copies.
 Its four steps are capability declaration, offline receipt/state controls,
 at most two top-level runtime sessions per provider, and independent evidence
@@ -168,11 +175,28 @@ upgrade, provider substitution or matrix expansion. A later integrated candidate
 requires fresh matching comparisons as described in
 [conditional validation](ordering.md#conditional-integration-and-validation).
 
-Optional `/kk:clarify-docs` may refine `design.md`, `implementation.md`,
-`ordering.md` and `tasks.md`; `/kk:review-design functional-review` should then
-assess the complete proposal before implementation. The next handoff is
-`/kk:implement task 12.10 of functional-review`, once that probe is selected for
-execution. Task 13 remains dependent on Task 12's actual acceptance.
+### Next slice: assess severity and instruction cost
+
+Resume with `/kk:implement task 12.11 of functional-review` and use
+[follow-up.md](follow-up.md) as the current handoff. Assess the remaining grades
+before selecting a fix: distinguish practical behavioral impact, minor report
+omissions, missing evidence and explicit deferrals. Evaluate added context and
+mandatory workflow obligations as well as diff size. Prefer a contained change
+or simplification; defer changes whose cost outweighs their benefit.
+
+Produce a linked disposition record and at most one bounded next task with
+concrete targets and verification. This assessment does not require operative
+edits or new actor runs. Any later fix needs targeted comparisons and adjacent
+regression controls sufficient to judge its overall effect; it does not waive
+the remaining acceptance gates. The earlier guard task is only one conditional
+option, and its preparation barrier may not address I4's later context ordering.
+
+Optional `/kk:clarify-docs` may refine the changed `follow-up.md`, `design.md`,
+`implementation.md`, `ordering.md` and `tasks.md`; then
+`/kk:review-design functional-review` can assess the updated plan before operative
+implementation. Task 13 remains dependent on Task 12's actual acceptance.
+
+### Task 13 finalization
 
 Task 13 updates README.md and docs/user-guide/skills.md through /kk:document, and docs/contributing/testing.md for staging and grading. Then:
 
@@ -184,4 +208,6 @@ Task 13 updates README.md and docs/user-guide/skills.md through /kk:document, an
 - Run /kk:review-code with the actual detected profiles and /kk:review-spec against this complete design package.
 - Resolve findings or record permitted follow-up; do not mark required unrun/failed acceptance items complete.
 
-This design-revision task changes documentation only. Launch probes, grader changes, ADR/AGENTS amendments and operative skill changes above remain explicitly planned work.
+This handoff revision changes documentation only. Earlier completed slices and
+sealed evidence retain their status; the remaining assessment, conditional fixes
+and final verification are tracked in tasks.md.

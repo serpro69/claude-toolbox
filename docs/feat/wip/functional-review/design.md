@@ -1,12 +1,13 @@
 # Functional and operational review
 
 > Issue: [#166](https://github.com/serpro69/claude-toolbox/issues/166)
-> Status: implementation slices and baseline capture complete; candidate acceptance and final verification pending
-> Revised: 2026-10-10 with gate 2B closed and the candidate-6 ordering follow-up scoped
+> Status: implementation slices and full core comparison complete; candidate acceptance and final verification pending
+> Revised: 2026-10-11 with severity/cost assessment as the next step
 > Review disposition: [Consolidated assessment](reviews/design-review-consolidation.md)
 > Evaluation contract: [evaluation.md](evaluation.md)
 > Implementation: [implementation.md](implementation.md)
 > Tasks: [tasks.md](tasks.md)
+> Next-session handoff: [follow-up.md](follow-up.md)
 > Source baseline: c2d28c9e
 
 ## Problem and evidence
@@ -40,7 +41,7 @@ After this change:
 
 Acceptance uses the scenarios in [Evaluation](#evaluation) and the binding/grading rules in [evaluation.md](evaluation.md). Every assertions[] entry in a new full-workflow eval is required; optional observations live outside that array. Predeclare model, modes and fixture revisions, then run two independent fresh sessions per baseline/candidate case and mode. All required candidate assertions must pass in both runs; a missing trace is not a pass. Retain failures and report observed results without claiming statistical reliability. There is no promise of zero missed bugs, no target finding count, and no claim that static structure tests establish behavioral quality.
 
-The user-approved [2026-10-09 amendment](verification/run-contract-2026-10-09.md) separates implementation readiness from final verification. Both Task 2 gates are now complete: the [2026-10-10 gate 2B record](verification/task2b/README.md) preserves the bounded investigation, selected revision-2 receipt/use contract and four new Codex baselines against the immutable actor revision. Exact submitted prompt content remains unverified. Tasks 1–11 are complete; Task 12's candidate comparison matrix and Task 13's final verification remain pending. Baseline capture completion does not establish behavioral acceptance.
+The user-approved [2026-10-09 amendment](verification/run-contract-2026-10-09.md) separates implementation readiness from final verification. Both Task 2 gates are now complete: the [2026-10-10 gate 2B record](verification/task2b/README.md) preserves the bounded investigation, selected revision-2 receipt/use contract and four new Codex baselines against the immutable actor revision. Exact submitted prompt content remains unverified. Tasks 1–11 are complete. Task 12's [full core matrix](verification/task12/opus55/README.md) is captured and graded; candidate acceptance and Task 13's final verification remain pending. Capture completion does not establish behavioral acceptance.
 
 ## Scope and ownership
 
@@ -236,6 +237,22 @@ experiment but does not prove support in the pinned runtimes. Preserve the
 existing direct-read path, profile semantics, assertions and two-run threshold;
 integrate a guard only after feasibility and design review. Task 12 remains open.
 
+### Post-matrix decision — severity and instruction cost
+
+The 2026-10-11 matrix passes R5 standard twice on both providers, while other
+behavioral, reporting and evidence gaps remain. The user directed that remaining
+fixes be assessed for severity and their possible negative effect on the skills
+as a whole. [Task 12.11's handoff](follow-up.md) is the current next-step authority;
+the guard proposal remains conditional, not the default next implementation.
+
+A failed assertion alone does not justify another mandatory instruction. Prefer
+contained corrections, replacement or consolidation of existing guidance.
+Minor issues can warrant small fixes without material added burden; broader
+changes need demonstrated value sufficient to justify their added context,
+workflow and regression cost. Defer or no change are valid triage outcomes, but
+neither waives existing requirements or changes historical grades. This is a
+constraint on authoring the next iteration, not an extra runtime skill checklist.
+
 ### Existing integration constraints
 
 Keep one post-instruction entry point for content-level investigation in each workflow. The standard summary, detailed procedure, isolated wrapper, agent and implement mode files must agree. Subsequent targeted verification uses evidence gathered under that phase; the wording must not prohibit re-reading evidence to substantiate a finding.
@@ -298,6 +315,6 @@ The product requirements remain approved. The ordering mechanism in
 [the scoped follow-up](ordering.md) remains a feasibility question; no hard
 cross-provider enforcement guarantee is established. The original two supplied
 reviews were assessed in [the consolidated disposition](reviews/design-review-consolidation.md).
-The new proposal has not received independent design review. Any failed or unrun
-acceptance scenario stays explicitly open in tasks.md with its reason and next
-action; it is not silently treated as passed.
+The ordering proposal and post-matrix handoff have not received independent
+design review. Any failed or unrun acceptance scenario stays explicitly open in
+tasks.md with its reason and next action; it is not silently treated as passed.

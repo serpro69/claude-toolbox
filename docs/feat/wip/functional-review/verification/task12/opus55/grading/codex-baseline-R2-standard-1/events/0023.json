@@ -1,0 +1,28 @@
+{
+  "actor": "items-01a12b16-5172-7a42-bf47-956407e7a24a",
+  "completedAtMs": 1791724312634,
+  "id": "exec-44ecee4c-df5e-4615-a2fd-a01a873f1c97",
+  "item": {
+    "aggregatedOutput": "fresh_operation\n  HEAD: {'result': {'ok': True, 'operation_id': 'op-2'}, 'preferences': {'color': 'red'}, 'recovery_ids': ['op-1', 'op-2']}\n  staged: {'result': {'ok': True, 'operation_id': 'op-2'}, 'preferences': {'color': 'blue'}, 'recovery_ids': ['op-1']}\nedited_retry\n  HEAD: {'result': {'ok': True, 'operation_id': 'op-1'}, 'preferences': {'color': 'red'}, 'recovery_values': {'color': 'red'}}\n  staged: {'result': {'ok': True, 'operation_id': 'op-1'}, 'preferences': {'color': 'blue'}, 'recovery_values': {'color': 'blue'}}\ncompleted_retry\n  HEAD: {'result': {'ok': True, 'operation_id': 'op-1'}}\n  staged: {'error': 'ReceiptUnavailable'}\n",
+    "command": "/usr/bin/zsh -lc \"python3 -B - <<'PY'\nimport subprocess\nfrom service import save as staged_save\nfrom store import ReceiptUnavailable, Store\n\nbaseline = {}\nexec(compile(subprocess.check_output(['git', 'show', 'HEAD:service.py'], text=True), 'HEAD:service.py', 'exec'), baseline)\n\ndef fresh_operation(save):\n    store = Store()\n    save(store, 'w', 'op-1', {'color': 'blue'})\n    result = save(store, 'w', 'op-2', {'color': 'red'})\n    return {'result': result, 'preferences': store.preferences['w'], 'recovery_ids': list(store.recovery)}\n\ndef edited_retry(save):\n    store = Store()\n    store.fail_receipt_once = True\n    try:\n        save(store, 'w', 'op-1', {'color': 'blue'})\n    except ReceiptUnavailable:\n        pass\n    result = save(store, 'w', 'op-1', {'color': 'red'})\n    return {'result': result, 'preferences': store.preferences['w'], 'recovery_values': store.recovery['op-1']['values']}\n\ndef completed_retry(save):\n    store = Store()\n    save(store, 'w', 'op-1', {'color': 'blue'})\n    store.fail_receipt_once = True\n    try:\n        result = save(store, 'w', 'op-1', {'color': 'blue'})\n        return {'result': result}\n    except ReceiptUnavailable as error:\n        return {'error': type(error).__name__}\n\nfor case in (fresh_operation, edited_retry, completed_retry):\n    print(case.__name__)\n    print('  HEAD:', case(baseline['save']))\n    print('  staged:', case(staged_save))\nPY\"",
+    "commandActions": [
+      {
+        "command": "python3 -B - <<'PY'\nimport subprocess\nfrom service import save as staged_save\nfrom store import ReceiptUnavailable, Store\n\nbaseline = {}\nexec(compile(subprocess.check_output(['git', 'show', 'HEAD:service.py'], text=True), 'HEAD:service.py', 'exec'), baseline)\n\ndef fresh_operation(save):\n    store = Store()\n    save(store, 'w', 'op-1', {'color': 'blue'})\n    result = save(store, 'w', 'op-2', {'color': 'red'})\n    return {'result': result, 'preferences': store.preferences['w'], 'recovery_ids': list(store.recovery)}\n\ndef edited_retry(save):\n    store = Store()\n    store.fail_receipt_once = True\n    try:\n        save(store, 'w', 'op-1', {'color': 'blue'})\n    except ReceiptUnavailable:\n        pass\n    result = save(store, 'w', 'op-1', {'color': 'red'})\n    return {'result': result, 'preferences': store.preferences['w'], 'recovery_values': store.recovery['op-1']['values']}\n\ndef completed_retry(save):\n    store = Store()\n    save(store, 'w', 'op-1', {'color': 'blue'})\n    store.fail_receipt_once = True\n    try:\n        result = save(store, 'w', 'op-1', {'color': 'blue'})\n        return {'result': result}\n    except ReceiptUnavailable as error:\n        return {'error': type(error).__name__}\n\nfor case in (fresh_operation, edited_retry, completed_retry):\n    print(case.__name__)\n    print('  HEAD:', case(baseline['save']))\n    print('  staged:', case(staged_save))\nPY",
+        "type": "unknown"
+      }
+    ],
+    "cwd": "/tmp/fr-opus55-matrix-20261011/codex-baseline-R2-standard-1",
+    "durationMs": 72,
+    "exitCode": 0,
+    "id": "exec-44ecee4c-df5e-4615-a2fd-a01a873f1c97",
+    "pluginId": null,
+    "processId": "92853",
+    "scriptPath": null,
+    "source": "unifiedExecStartup",
+    "status": "completed",
+    "type": "commandExecution"
+  },
+  "source_file": "items-01a12b16-5172-7a42-bf47-956407e7a24a.json",
+  "startedAtMs": 1791724312562,
+  "turnId": "01a12b16-519e-7981-a95b-6be8db49dfe5"
+}

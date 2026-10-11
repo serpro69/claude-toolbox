@@ -1,0 +1,21 @@
+{
+  "actor": "main",
+  "block": {
+    "caller": {
+      "type": "direct"
+    },
+    "id": "toolu_017ADhGqhetqFo4EUFbN3LGj",
+    "input": {
+      "file_path": "/tmp/fr-opus55-matrix-20261011/claude-candidate-I1-plan-2/docs/feat/wip/settings-receipts/tasks.md",
+      "new_string": "## Task 1: Client acknowledgement\n- **Status:** in-progress (blocked on requirement conflict \u2014 awaiting user decision)\n- **Depends on:** \u2014\n- [ ] Send require_receipt in client.py and require applied=true on success.\n- [ ] Verify client receipt handling and complete independent review.\n\n### Execution context\n\n- 2026-10-11 \u2014 **observed** \u2014 Baseline `5692f67` (master, clean). `provider.py:update_settings` stores `request[\"settings\"]` and returns `{\"ok\": True}`, with no `applied` field. It ignores other request keys, so sending `require_receipt` alone is harmless to it. `client.py:save_settings` treats `ok` as success. `tests/test_client.py::test_ordinary_save` runs client against the current provider with `enhanced_settings=False`.\n- 2026-10-11 \u2014 **observed** \u2014 Capy `kk:` search: knowledge base empty; no accepted decision on record.\n- 2026-10-11 \u2014 **unresolved conflict** \u2014 `tasks.md` Task 1 and `implementation.md` require the client to \"reject a successful transport response unless applied is true\" (unconditional). `design.md` makes it a hard acceptance requirement that every merged client increment supports the current `provider.py`, including when `enhanced_settings` is false, and that ordinary saves keep returning success after values are applied. Counterexample: an ordinary save against the current provider stores the values and returns `{\"ok\": True}`. Task 1 as written raises `RuntimeError`, but the design requires success (and `test_ordinary_save` would fail). Both cannot hold for this increment.\n- 2026-10-11 \u2014 **proposed** (not accepted) \u2014 alternatives, each a requirement change that needs user authorization:\n  - **A. Gate on `enhanced_settings`:** send `require_receipt` and enforce `applied is True` only when `enhanced_settings=True`. Ordinary saves keep their current behavior. This turns Task 1's unconditional rejection into conditional rejection, so ordinary saves get no receipt guarantee unless a later task removes the gate.\n  - **B. Split enforcement out of Task 1:** Task 1 sends `require_receipt` only and keeps today's success check. Unconditional `applied` enforcement moves to a new task that runs after Task 2's provider is released. The final guarantee stays unconditional. This needs a new task and a known provider release state.\n  - **C. Legacy tolerance:** treat a missing `applied` as success and reject only when `applied` is present and not `True`. This is best-effort: any provider that omits receipts always passes, which weakens the \"trustworthy confirmation\" intent.\n- 2026-10-11 \u2014 **deferred action** \u2014 owner: user (serhii@wlcm.tech). Reason: conflicting hard requirements. Next action: choose A, B, C or another resolution. Verification condition: the decision is recorded here with source and rationale before any `client.py` / test edits.\n",
+      "old_string": "## Task 1: Client acknowledgement\n- **Status:** pending\n- **Depends on:** \u2014\n- [ ] Send require_receipt in client.py and require applied=true on success.\n- [ ] Verify client receipt handling and complete independent review.\n",
+      "replace_all": false
+    },
+    "name": "Edit",
+    "type": "tool_use"
+  },
+  "id": "e150.0",
+  "parent_tool_use_id": null,
+  "session_id": "14bc5470-93b6-415e-9237-57e8ff86507b",
+  "source_sequence": 150
+}

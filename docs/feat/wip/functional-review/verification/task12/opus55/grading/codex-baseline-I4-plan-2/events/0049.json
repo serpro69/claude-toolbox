@@ -1,0 +1,30 @@
+{
+  "actor": "items-01a12bce-3ed7-7a12-b77e-aff06f9f647b",
+  "completedAtMs": 1791736347747,
+  "id": "exec-f0b95e02-5d51-442c-a4ed-8b9507c90d48",
+  "item": {
+    "aggregatedOutput": "\nThis procedure reads files under the plugin root. The main agent resolves the plugin root from the installed skill's absolute `SKILL.md` path (the plugin root is the parent of the `skills/` directory) and passes that absolute path to sub-agents under `## Plugin Root`; a Read-only sub-agent uses the absolute plugin-root path injected into its prompt under `## Plugin Root` (see its agent definition). Substitute that resolved path for the plugin-root prefix in every `\u2026/profiles/\u2026` read below.\n\n1. **Iterate profiles.** For each \u00a7Known profiles `<name>`:\n   1. Use the `Read` tool on `../../profiles/<name>/DETECTION.md`.\n   2. If `Read` fails with ENOENT (profile name in list but directory missing \u2014 a stale list entry), skip silently and move on.\n   3. If `Read` succeeds, parse the declared `## Path signals`, `## Filename signals`, and `## Content signals` sections.\n\n2. **Evaluate in cost order.** For each input file, check signals in this order: path \u2192 filename \u2192 content. Cheapest first.\n3. **Apply the authority rule.** A file activates the profile only if a **filename signal** OR **content signal** matches.\n   A path-only match does NOT activate. Paths are a pre-filter that promotes files to \"candidates\"; authoritative activation requires filename or content confirmation.\n   A file that matches NO path signal is still evaluated against filename and content signals \u2014 path pre-filtering is a cost hint, not a gate.\n   (Otherwise a `Chart.yaml` at a non-standard path would be missed.)\n4. **Bound content inspection.** Read at most ~16 KB per file when evaluating content signals.\n   Multi-document YAML is inspected per `---`-separated block \u2014 a file may have five blocks, and only the third need match for the file to activate the profile.\n5. **Collect records.** Accumulate one record per matched profile with the triggering files and the signal descriptions that fired.\n\n### Tool choice\n\n- Single file at `../../\u2026` \u2192 `Read`. This is what the algorithm uses.\n- Enumeration across profiles \u2192 iterate the \u00a7Known profiles list, `Read` each. Never `Glob` (cwd-scoped, misses outside-cwd paths).\n\n### Two dimensions: cost vs authority\n\nSignals live on two axes that point in different directions. Keep them separate in your mental model:\n\n- **Evaluation cost** (cheapest first): path < filename < content.\n  Path globs touch only the path string;\n  filename matches are exact string compares;\n  content inspection opens the file.\n- **Authority** (most authoritative first): filename \u2248 content > path.\n  A filename or content match activates the profile; a path-only match does not.\n  Filename and content are equally authoritative, but filename resolves first at runtime \u2014 a filename match short-circuits content inspection for that file.\n\nEvaluating cheapest-first optimizes work. Applying authority correctly prevents false positives from incidental path matches \u2014 a stray `manifests/` directory in a Go project does not make the project Kubernetes.\n\n### Plugin-root resolution failure\n\nIf every `Read` attempt in Algorithm step 1 fails \u2014 i.e., the plugin root could not be resolved (the installed skill path is unavailable to the main agent, or no `## Plugin Root` path was provided to a sub-agent) or the paths do not exist \u2014 the procedure cannot continue.\n\nOn that failure:\n\n1. Emit an actionable error pointing to `CLAUDE.md` \u00a7Profile Conventions.\n2. Return an empty result set so the calling skill falls back to generic guidance rather than panicking.\n3. Do not retry; do not silently guess a path.\n\nConsumers inherit this check by invoking the shared procedure \u2014 no skill re-implements it.\n\n### Output shape\n\nA list of records, one per matched profile:\n",
+    "command": "/usr/bin/zsh -lc \"sed -n '60,110p' '/home/sergio/.codex/plugins/cache/fr-opus55-c2d28c9e-20261011/kk/0.23.0/skills/review-code/shared-profile-detection.md'\"",
+    "commandActions": [
+      {
+        "command": "sed -n '60,110p' /home/sergio/.codex/plugins/cache/fr-opus55-c2d28c9e-20261011/kk/0.23.0/skills/review-code/shared-profile-detection.md",
+        "name": "shared-profile-detection.md",
+        "path": "/home/sergio/.codex/plugins/cache/fr-opus55-c2d28c9e-20261011/kk/0.23.0/skills/review-code/shared-profile-detection.md",
+        "type": "read"
+      }
+    ],
+    "cwd": "/tmp/fr-opus55-matrix-20261011/codex-baseline-I4-plan-2",
+    "durationMs": 50,
+    "exitCode": 0,
+    "id": "exec-f0b95e02-5d51-442c-a4ed-8b9507c90d48",
+    "pluginId": null,
+    "processId": "77201",
+    "scriptPath": null,
+    "source": "unifiedExecStartup",
+    "status": "completed",
+    "type": "commandExecution"
+  },
+  "source_file": "items-01a12bce-3ed7-7a12-b77e-aff06f9f647b.json",
+  "startedAtMs": 1791736347696,
+  "turnId": "01a12bce-3ef7-7dc3-808f-687c6abb184d"
+}

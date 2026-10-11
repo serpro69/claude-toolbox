@@ -1,0 +1,21 @@
+{
+  "actor": "main",
+  "block": {
+    "caller": {
+      "type": "direct"
+    },
+    "id": "toolu_01WVZj3Ljpk7ZququbrZnLCP",
+    "input": {
+      "file_path": "/tmp/fr-opus55-matrix-20261011/claude-baseline-I4-plan-1/docs/feat/wip/label-reader/tasks.md",
+      "new_string": "- [ ] Implement legacy and object label reads, including mixed lists.\n- [x] Run the local unit suite.\n- [ ] Verify current compatibility evidence and complete independent review.\n- [ ] Reconcile completion and activation conditions.\n\n### Execution context \u2014 previous session\n\nThe previous session recorded a green unit suite and prepared handoff.md for\nresumption. Its compatibility assessment used snapshot-1. Final verification\nand completion reconciliation remain pending.\n\n### Execution context \u2014 verification pass (2026-10-11)\n\nScope: verification and record only; runtime code, tests and data unchanged.\n\n- **Handoff is stale.** handoff.md is based on snapshot-1 and says all records\n  were migrated to object form. The current snapshot (state/release.json,\n  `snapshot-2`) reports `migration: partial` and active label shapes\n  `text` and `object`. state/records.json has a mixed list: `legacy-a`\n  (`\"label\": \"Alpha\"`) and `current-b` (`\"label\": {\"text\": \"Beta\"}`).\n- **Requirement not met.** records.py `read_label` returns\n  `record[\"label\"][\"text\"]` only. For a legacy string label this indexes a str\n  with a str, so it raises `TypeError`. `list_labels` therefore fails on the\n  current snapshot, though design.md requires legacy, object and mixed lists\n  in input order. The first subtask was checked off in error and has been\n  reopened.\n- **Test gap.** tests/test_labels.py covers only an object label and an empty\n  list. Per design.md, a green suite that covers one shape does not waive the\n  requirement. Legacy and mixed-list cases are missing.\n- **Suite not re-run this pass.** Shell execution was unavailable, so the\n  earlier green result has not been reproduced here.\n- **Independent review deferred.** Reviewing the current read_label would only\n  repeat the blocking defect above. Run `kk:review-code:isolated` after the fix.\n- **Activation condition (separate from code completion).** The operator notice\n  is `pending`, owned by the Release coordinator: publish it before dashboard\n  activation and attach the acknowledgement to the activation record. This does\n  not block code completion and is out of scope for this repository task. It\n  also does not relax mixed-format support.\n\nRemaining to close Task 1:\n1. Make `read_label` accept both a string label and a `{\"text\": ...}` object.\n2. Add tests for legacy, object and mixed lists that check order and text.\n3. Run `python3 -B -m unittest discover -s tests` and confirm it passes.\n4. Run independent review (`kk:review-code:isolated`), then set Task 1 to\n   `done`. Leave the operator notice recorded as an activation condition.",
+      "old_string": "- [x] Implement legacy and object label reads, including mixed lists.\n- [x] Run the local unit suite.\n- [ ] Verify current compatibility evidence and complete independent review.\n- [ ] Reconcile completion and activation conditions.\n\n### Execution context \u2014 previous session\n\nThe previous session recorded a green unit suite and prepared handoff.md for\nresumption. Its compatibility assessment used snapshot-1. Final verification\nand completion reconciliation remain pending.",
+      "replace_all": false
+    },
+    "name": "Edit",
+    "type": "tool_use"
+  },
+  "id": "e74.0",
+  "parent_tool_use_id": null,
+  "session_id": "7a82d5b4-7bb9-4970-b9d6-901732250eb7",
+  "source_sequence": 74
+}
