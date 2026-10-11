@@ -600,7 +600,74 @@ leaves required acceptance open, with an owner and revisit trigger.
 - [ ] 13.3 Run make generate-kodex and confirm a second generation introduces no drift → verify: canonical/generated parity including agent definitions.
 - [ ] 13.4 Reconcile matrix evidence and shared-consumer checks → verify: all required declared coverage passes; /kk:review-spec and /kk:review-design retain their contracts.
 - [ ] 13.5 Run /kk:review-code with actual profiles and /kk:review-spec against design.md, implementation.md, evaluation.md and tasks.md → verify: findings are resolved or durably assigned without waiving required acceptance.
-- [ ] 13.6 Mark completion only after all required work is verified → verify: no unresolved hard constraint, unrun gate or unreviewed requirement change is represented as complete.
+- [ ] 13.6 Record feature verification completion after 13.1–13.5 and required acceptance are verified → verify: no unresolved hard constraint, unrun gate or unreviewed requirement change is represented as complete. Track release housekeeping in 13.7 separately; Task 13 remains open until both are complete.
+- [ ] 13.7 **Human-executed, AI-guided:** retain the compact verification record and reusable tooling, archive the full evidence as assets of the GitHub release containing this feature, then remove the archived evidence from the repository and its history → verify: follow the retention plan below; the human confirms archive retrieval/integrity, retained-content checks and history cleanup before closing this subtask.
+
+### 13.7 Evidence retention and release archive
+
+**Owner:** human maintainer; AI supplies the inventory, proposed keep/archive
+mapping, command guidance and verification interpretation. The human executes
+archiving/upload, repository removal, history rewriting, reflog expiry and garbage
+collection. A later /kk:implement session must not execute these actions
+automatically.
+
+**Sequencing:** prepare after 13.1–13.6 and the final evidence are complete.
+Use the GitHub release that includes the feature as the archive destination;
+record its actual tag and URL when known. This is release housekeeping, not a
+new behavioral acceptance gate: feature verification can finish before the
+release exists, while 13.7 and Task 13 remain explicitly open. Verify the uploaded
+archive before removing repository evidence or purging history.
+
+| Keep in Git | Required content and disposition |
+| --- | --- |
+| Compact verification record outside `verification/` | Create `verification-summary.md` at the feature-document root, retained when the feature moves to `docs/feat/done/`. Include final baseline/candidate results for both providers and modes, two-run coverage, material failures/regressions, evidence limits, acceptance disposition, accepted exceptions and unresolved follow-up. Preserve the lessons from failed iterations without copying their transcripts. |
+| Small result and provenance records | Retain a compact per-case/mode/repetition/assertion result table, in Markdown or JSON, linked by the summary. Record original source, fixture and grader identities; model/runtime/permission configuration; rubric/evidence-contract version and amendments. Record the release URL, asset names, archive SHA-256, manifest and archive-member paths needed to retrieve supporting evidence. Existing detailed grades may be consolidated; their originals remain in the archive. |
+| Durable design and regression assets | Keep feature design/implementation/task decisions and any still-relevant follow-up. Keep canonical eval definitions, fixtures, oracles, harness documentation and regression tests under `klaude-plugin/`, with their generated counterparts; these are maintained test assets, not disposable captures. |
+| Reusable execution tooling and tests | Extract the minimal runnable set into a repository tooling location such as `scripts/functional-review-evals/`, with tests and usage instructions. Assess `verification/task12/opus55/matrix.py`, `task12/rework/`, and the capture/grading helpers under `verification/`, `task2b/` and `task8/`. Resolve their existing cross-directory imports and frozen-path assumptions before removing the old tree. Retain only helpers/dependencies needed for future runs; archive historical variants. This cleanup does not require a new general-purpose evaluation framework. |
+
+**Archive outside Git:** package the complete retained
+`docs/feat/wip/functional-review/verification/` tree, or its eventual `done/`
+location, before removing it. Include all candidates and unsuccessful attempts,
+raw run/protocol transcripts, initial/final workspace and actor-bundle snapshots,
+copied grading inputs, detailed grades and corrections, manifests/freezes,
+contracts/rubrics, binding/calibration/audit/review records, controller versions,
+and startup/administrative logs. Include any exact source/fixture/grader inputs
+required by the frozen contracts that are not already sealed in that tree.
+The archive must remain interpretable after original Git commits are purged;
+preserve original IDs and content hashes rather than relabeling old evidence
+with rewritten commit IDs. Only regenerable local caches such as `__pycache__/`
+may be omitted, with exclusions recorded in the manifest.
+
+Attach a compressed archive (for example,
+`functional-review-evidence-<release-tag>.tar.zst`), its SHA-256 file and an
+inventory manifest to the feature's GitHub release. Keep these assets outside
+the Git object database. The manifest records original relative paths, file
+counts/hashes, exclusions and source provenance; the retained summary provides
+the lookup instructions. Do not preserve only successful runs or rely on an
+old commit URL as the archive.
+
+**Human execution and completion checks:**
+
+1. Finalize the keep/archive mapping and extract retained records/tooling
+   → verify: future evaluation inputs and required helper imports are accounted
+   for; retained tooling tests pass independently of the evidence directory.
+2. Create and upload the archive, checksum and manifest; download and extract
+   the uploaded copy outside the checkout → verify: its SHA-256 and manifest
+   match, and representative captures, grades and pinned inputs can be located.
+3. Remove the archived repository tree and repair references, including links
+   from feature documents and `docs/reviews/` → verify: retained links resolve
+   to the compact record or a release asset with an explicit member path;
+   canonical fixtures/tests remain intact. The entire `verification/` directory
+   can go once the keep list has been relocated.
+4. Perform the maintainer's chosen history cleanup with `git filter-repo`,
+   `git reflog expire` and `git gc --prune`, including the relevant refs and
+   historical evidence paths → verify: archived evidence is absent from the
+   intended retained history, kept files still exist, and the release/archive
+   remains accessible after any tag/ref changes. Retain any old-to-new revision
+   mapping needed to interpret the summary without modifying sealed evidence.
+5. Record the actual release assets, checksums, retained destinations and human
+   confirmation in the summary/task → verify: 13.7 closes only on observed
+   completion, not on a proposed command sequence or a locally prepared archive.
 
 ## Dependency Graph
 
