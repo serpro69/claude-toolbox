@@ -1,6 +1,6 @@
 # Review preparation ordering: proposed follow-up
 
-> Status: conditional proposal awaiting Task 12.11 assessment; no guard or runtime probe implemented
+> Status: deferred by Task 12.11 assessment; no guard or runtime probe implemented
 > Authority: the user agreed to scope instruction ordering after candidate 6
 > Parent: [design](design.md), [implementation](implementation.md), [Task 12](tasks.md#task-12-execute-and-assess-the-full-comparison-matrix)
 > Evidence: [candidate-6 results](verification/task12/candidate6/results.md)
@@ -14,10 +14,12 @@ context loading before source investigation, after instruction preparation; this
 guard may not address that dependency. The user also requires severity to be
 weighed against added instruction and workflow burden.
 
-Start with [Task 12.11's assessment](follow-up.md), not automatic execution of
-12.10. Retain this bounded experiment as an option only if the assessment
-justifies its impact and cost. The original evidence and mechanism below remain
-historical rationale, not proof of a current priority or runtime capability.
+The [Task 12.11 assessment](follow-up.md#context-ordering) defers 12.10 and selects
+an isolated-command entry-path correction in Task 12.12. Revisit this experiment
+only on evidence of a material preparation-order failure it actually addresses,
+with benefit sufficient to justify its hook/state and workflow cost. The original
+evidence and mechanism below remain historical rationale, not proof of a current
+priority or runtime capability.
 If selected, revalidate the exact declared runtimes and complete design review.
 No acceptance requirement or historical grade changes with this disposition.
 

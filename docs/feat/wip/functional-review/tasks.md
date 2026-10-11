@@ -7,12 +7,12 @@
 > Issue: [#166](https://github.com/serpro69/claude-toolbox/issues/166)
 > Status: in-progress
 > Created: 2026-10-07
-> Revised: 2026-10-11 with the full matrix complete and severity/cost assessment next
+> Revised: 2026-10-11 with severity/cost dispositions and one bounded entry-path follow-up
 > Next-session handoff: [follow-up.md](follow-up.md)
 > Not Doing: new review skill, whole-system audits, mandatory production access, deployments, generic release engine, new models/dependencies, profile redesign
 > Delivery: preserve existing invocations/shared consumers; regenerate Codex artifacts with every operative slice.
 
-Scope and direction are approved; the reviews have been assessed and the detailed plan revised. Tasks 1–11 are done, including Task 2 gates 2A and 2B. Task 12's full core matrix is captured and graded; acceptance remains incomplete. **Task 12.11 is next:** assess remaining issues against severity and instruction cost before selecting a fix. Task 13 retains final feature documentation and verification. The [gate 2B completion record](verification/task2b/README.md) documents the selected receipt/use contract, four new baselines and evidence limits. Exact submitted prompts remain unverified, and capture completion is not candidate acceptance. Earlier six-task numbering is superseded by this sequence; no completed work was renumbered. Size includes authored reasoning complexity; mechanical copies/symlinks/generated files are excluded. Parallel markers permit compatible work only and do not authorize delegation. Serialize generation if tasks run concurrently.
+Scope and direction are approved; the reviews have been assessed and the detailed plan revised. Tasks 1–11 are done, including Task 2 gates 2A and 2B. Task 12's full core matrix is captured and graded; acceptance remains incomplete. **Task 12.11 is done; Task 12.12 is the selected next implementation:** resolve isolated-review instruction paths at entry. Task 13 retains final feature documentation and verification. The [gate 2B completion record](verification/task2b/README.md) documents the selected receipt/use contract, four new baselines and evidence limits. Exact submitted prompts remain unverified, and capture completion is not candidate acceptance. Earlier six-task numbering is superseded by this sequence; no completed work was renumbered. Size includes authored reasoning complexity; mechanical copies/symlinks/generated files are excluded. Parallel markers permit compatible work only and do not authorize delegation. Serialize generation if tasks run concurrently.
 
 ## Task 1: Prove revision-bound evaluation loading
 
@@ -560,7 +560,7 @@ Live PAL remains user-deferred; legacy actor controls and final feature
 verification remain separate gates. No statistical reliability or broader
 provider parity is claimed.
 
-### Severity and instruction-cost assessment — next session
+### Severity and instruction-cost assessment — Task 12.11
 
 The user requested a durable handoff and emphasized that additional instructions
 for minor issues can make the skills worse overall. [The handoff](follow-up.md)
@@ -568,7 +568,7 @@ records the evidence, assessment criteria and provisional investigation inventor
 This supersedes the earlier recommendation to proceed directly to guard task
 12.10. It changes sequencing, not historical grades or acceptance requirements.
 
-- [ ] 12.11 Assess remaining issues and select a proportionate next step
+- [x] 12.11 Assess remaining issues and select a proportionate next step
   → verify: every remaining candidate FAIL/PARTIAL is accounted for in a linked
   disposition record, separating behavioral impact, report omissions, evidence
   gaps and PAL deferral. Each proposed fix explains its smallest useful scope,
@@ -578,12 +578,109 @@ This supersedes the earlier recommendation to proceed directly to guard task
   corrections without materially added load. No operative edit or model run is
   required to complete this assessment.
 
-**12.11 planning metadata:** Status pending; size M; strategy Risk-First;
+**12.11 planning metadata:** Status done; size M; strategy Risk-First;
 depends on the completed Opus 5.5 matrix and this user constraint; cannot run in
 parallel with source, rubric or runtime-policy changes. Owner: implementing agent.
-Resume with `/kk:implement task 12.11 of functional-review`. Preserve existing
+Assessment entry was `/kk:implement task 12.11 of functional-review`. Preserve existing
 word budgets; avoid adding this assessment as a runtime skill protocol. Deferral
 leaves required acceptance open, with an owner and revisit trigger.
+
+### Task 12.11 execution context — 2026-10-11
+
+**Authority and scope:** the user requested proceeding with Task 12.11. Assess
+the retained matrix, record every remaining candidate observation and choose at
+most one bounded next task. Preserve the user constraint against added instruction
+burden and the explicit live-PAL deferral. No operative edit, actor run, grading
+change, permission change or evidence archiving is part of this task.
+
+**Observed:** the [dated assessment](follow-up.md#assessment--2026-10-11) and
+[observation ledger](assessment-observations.md) account for all 608 candidate
+grades: 515 PASS, 79 FAIL and 14 PARTIAL. Each non-PASS has its original grade,
+matching baseline and one or more dispositions. Forty-four include PAL absence;
+composite local/evidence gaps remain separately identified. Root-cause hypotheses
+are distinguished from denied requests, missing receipts and observed omissions.
+
+**Selected:** Task 12.12's entry-path correction is the smallest proposed
+intervention in the evidence-acquisition failures. It does not promise to fix
+implementation-mode acquisition or all review failures. Unsupported compatibility
+claims retain higher-impact investigation priority; other bounded corrections
+and evidence decisions have owners, revisit triggers and verification conditions
+in the assessment. Task 12.10's guard remains deferred. No acceptance is waived.
+
+**Instructions and checks:** /kk:implement plan mode, all eight installed profile
+detection rules and the shared protocols were loaded before assessment edits.
+The target files are repository planning Markdown outside any skill root; no
+profile activates, and no dependency changes. /kk:test and isolated code-review
+instructions are loaded for accounting/link verification and independent review.
+Verification reconciles all 608 candidate rows, all 93 unique non-PASS identities
+and matching baseline verdicts, and all 11 overlapping group totals. All 480
+local links/anchors across the six changed documents resolve; `git diff --check`
+passes. Canonical/generated files, fixtures, grades and capture contracts are
+unchanged, so no regeneration or behavioral rerun is warranted for this
+documentation-only task.
+
+**Independent review and completion:** the [isolated code-review checkpoint](reviews/task12-11-assessment.md)
+returns **APPROVE scoped to Task 12.11**, with no P0–P3 findings. The reviewer
+independently reconciled all 608 candidate and 608 baseline grade rows and the
+93-row ledger, inspected decisive sealed traces and verified scope/cost limits.
+Its initial missing-methodology request was resolved from the unchanged canonical
+plugin root before investigation. PAL remains deferred; no external corroboration
+or behavioral acceptance is claimed. No new project convention or review finding
+requires indexing. **Task 12.11 is complete; Task 12.12 remains pending.** Task 12
+acceptance and Task 13 retain their open status. Final link verification includes
+the retained review record: 484 local links/anchors across seven documents pass,
+along with the task-status boundary check and `git diff --check`.
+
+### Task 12.12: Resolve isolated-review instructions at entry
+
+- **Status:** pending; selected by Task 12.11, not executed by the assessment
+- **Depends on:** Task 12.11
+- **Size:** S for the source correction; targeted measurement is separately bounded below
+- **Strategy:** Risk-First
+- **Owner:** implementing agent
+- **Can run in parallel with:** —; serialize source, runtime-policy and rubric changes
+- **Docs:** [acquisition evidence](follow-up.md#acquisition), [scope/cost limits](follow-up.md#selected-scope-and-verification-limits)
+
+Replace the ambiguous skill/workflow reference in
+`klaude-plugin/commands/review-code/isolated.md` with explicit plugin-root paths
+to the existing `review-code/SKILL.md` and `review-isolated.md`, preserving the
+current invocation, arguments, selector and instruction-before-investigation
+sequence. Use the repository's plugin-load substitution convention. This is an
+entry-location correction, not a new shell-denial recovery mechanism. Check the
+actual generated distribution before asserting a Codex effect; command wrappers
+are not currently mirrored as standalone Codex skills.
+
+- [ ] 12.12.1 Load applicable profile instructions, make only the entry-path
+  replacement and regenerate → verify: no new phase, mandatory call, state,
+  dependency or permission; at most 30 added authored words; common instruction
+  bytes and their 800/1,200-word budgets preserved. Do not edit actors to name
+  fixture defects or add fallback/retry prose. If this bound cannot address the
+  observed entry ambiguity, record no change and return to assessment.
+- [ ] 12.12.2 Independently review the source change and verify path resolution,
+  plugin structure/graph and generation freshness → verify: installed command
+  loading resolves the intended files from the selected bundle, without global
+  discovery; the existing direct-read and instruction-loading requirements remain.
+  Reuse existing checks rather than adding text-presence tests for the wording.
+- [ ] 12.12.3 Freeze a new candidate and matching comparison declaration, then
+  run Claude R3-isolated plus R5-isolated and R9-recovery-isolated controls,
+  two fresh runs per immutable baseline/candidate (**12 sessions**) → verify:
+  unchanged fixtures, prompts, rubric and declared permission policy; actual
+  instruction receipt before investigation, selected diff and historical source
+  acquisition, named-reviewer receipt/use, and supported final conclusions.
+  Preserve live-PAL deferral and independently grade every original assertion.
+  If generated operative Codex bytes change, include the same Codex pairs under
+  their own matching declaration; otherwise record unchanged bytes and no new
+  Codex behavioral claim. Runtime/policy changes require a revised declaration
+  and fresh matched pairs, not silent substitution.
+- [ ] 12.12.4 Record the bounded experiment's disposition → verify: both R3
+  candidates establish all non-PAL components (including local historical
+  receipt/use); R5 retains clean scoped approval, R9 retains necessary recovery,
+  and both controls retain instruction ordering/coverage. Reject or revert if
+  entry discovery/early stopping persists, required non-PAL target components
+  fail, controls regress or the cost bound is exceeded. Retain failed attempts;
+  do not begin another iteration automatically. Composite PAL failures remain
+  FAIL even when their local components improve. A useful diagnostic result
+  completes only this slice, not Task 12 acceptance or the remaining dispositions.
 
 ## Task 13: Document and verify the complete feature
 

@@ -2,7 +2,7 @@
 
 > Issue: [#166](https://github.com/serpro69/claude-toolbox/issues/166)
 > Status: implementation slices and full core comparison complete; candidate acceptance and final verification pending
-> Revised: 2026-10-11 with severity/cost assessment as the next step
+> Revised: 2026-10-11 with severity/cost dispositions and a bounded entry-path follow-up
 > Review disposition: [Consolidated assessment](reviews/design-review-consolidation.md)
 > Evaluation contract: [evaluation.md](evaluation.md)
 > Implementation: [implementation.md](implementation.md)
@@ -242,8 +242,11 @@ integrate a guard only after feasibility and design review. Task 12 remains open
 The 2026-10-11 matrix passes R5 standard twice on both providers, while other
 behavioral, reporting and evidence gaps remain. The user directed that remaining
 fixes be assessed for severity and their possible negative effect on the skills
-as a whole. [Task 12.11's handoff](follow-up.md) is the current next-step authority;
-the guard proposal remains conditional, not the default next implementation.
+as a whole. [Task 12.11's assessment](follow-up.md#assessment--2026-10-11) accounts
+for every remaining candidate observation and selects Task 12.12: explicit
+instruction paths in the isolated-review command. This bounded entry correction
+is proposed, not implemented or measured. The guard remains deferred; the other
+behavioral and evidence gaps retain separate dispositions and acceptance limits.
 
 A failed assertion alone does not justify another mandatory instruction. Prefer
 contained corrections, replacement or consolidation of existing guidance.
