@@ -14,8 +14,10 @@ context loading before source investigation, after instruction preparation; this
 guard may not address that dependency. The user also requires severity to be
 weighed against added instruction and workflow burden.
 
-The [Task 12.11 assessment](follow-up.md#context-ordering) defers 12.10 and selects
-an isolated-command entry-path correction in Task 12.12. Revisit this experiment
+The [Task 12.11 assessment](follow-up.md#context-ordering) defers 12.10. Task 12.12's
+[bounded comparison](verification/task12/entry-path-no-pal/README.md) supports keeping
+its isolated-command entry-path correction without adding an ordering guard.
+Revisit this experiment
 only on evidence of a material preparation-order failure it actually addresses,
 with benefit sufficient to justify its hook/state and workflow cost. The original
 evidence and mechanism below remain historical rationale, not proof of a current
