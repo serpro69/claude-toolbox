@@ -1,18 +1,19 @@
 # Functional review: next-session handoff
 
 > Updated: 2026-10-11
-> Status: recommendations awaiting severity/cost assessment; no new fix selected
-> Owner: implementing agent, [Task 12.11](tasks.md#severity-and-instruction-cost-assessment--next-session)
+> Status: Task 12.11 complete; one bounded entry-path correction selected for Task 12.12
+> Owner: implementing agent, [Task 12.12](tasks.md#task-1212-resolve-isolated-review-instructions-at-entry)
 > Evidence: [completed matrix](verification/task12/opus55/README.md), [Claude](verification/task12/opus55/claude-results.md), [Codex](verification/task12/opus55/codex-results.md)
 
 ## Start here
 
-Resume with `/kk:implement task 12.11 of functional-review`. Read this handoff,
-the current Task 12 status, [design](design.md), [implementation](implementation.md)
-and [evaluation contract](evaluation.md), then the individual grades linked from
-the provider summaries. Check the current worktree before proposing edits.
-This task assesses the remaining issues and records a bounded next step; it
-does not automatically implement every failed assertion or launch another matrix.
+Task 12.11's [dated assessment](#assessment--2026-10-11) and
+[complete observation ledger](assessment-observations.md) select only Task 12.12:
+resolve the isolated command's instruction paths at entry. Resume with
+`/kk:implement task 12.12 of functional-review`; read the assessment, current
+Task 12 status, [design](design.md), [implementation](implementation.md) and
+[evaluation contract](evaluation.md), then check the worktree. Task 12.12 is
+planned, not implemented or measured by this assessment.
 
 The user's latest constraint is explicit: fixing minor issues by overloading
 instructions can make the skills worse overall. Assess severity before adding
@@ -74,7 +75,9 @@ not extra actor instructions to manufacture an observable read.
 
 ## Provisional investigation inventory
 
-These are assessment candidates, **not an approved priority order or fix list**.
+This is the original investigation inventory, preserved for provenance; the
+dated assessment below supplies its dispositions. These were **not an approved
+priority order or fix list**.
 Account for every remaining candidate FAIL/PARTIAL from the provider grade
 indexes, grouping common causes without losing assertion-to-evidence links.
 
@@ -113,7 +116,7 @@ limits and design review before any production integration.
 
 ## Produce and verify the next bounded step
 
-Task 12.11 completes with a compact disposition record covering remaining
+The Task 12.11 completion contract was a compact disposition record covering remaining
 candidate failures/gaps, plus at most one selected next implementation task with
 concrete files, limits and verification. Add the decisions as a dated assessment
 section in this file and link it from Task 12.11; record the selected next task
@@ -135,3 +138,233 @@ and generated parity after operative edits. A narrow improvement that worsens
 broader behavior or adds unjustified instruction burden should be rejected or
 reverted. A full 192-session rerun is not the default for a small correction;
 targeted evidence still does not replace the remaining feature acceptance gates.
+
+## Assessment — 2026-10-11
+
+**Decision:** select one contained correction: give the isolated-review command
+explicit paths to its existing skill and workflow. The [Task 12.12 plan](tasks.md#task-1212-resolve-isolated-review-instructions-at-entry)
+defines its bounds and diagnostic comparisons. Do not add a general permission
+protocol, another checklist, a reporting section or an ordering guard in this
+slice. This assessment changes planning records only.
+
+The [observation ledger](assessment-observations.md) maps all **79 FAIL and 14
+PARTIAL** candidate grades, with matched baseline verdicts and original evidence
+links. Groups overlap where an assertion has several unsatisfied components;
+in particular, 44 assertions include PAL absence, and some also lack local
+evidence. All original grades, source identities and acceptance requirements
+remain unchanged. No new actor run or regrading was performed.
+
+Priorities below use the existing P1–P3 impact vocabulary for the **skill user's
+consequence**, not the severity of a planted fixture defect. Unknown receipt
+evidence and explicit PAL deferral have no inferred behavioral severity.
+Confidence describes these traces, not recurrence rates in general use.
+
+**Ownership and open acceptance:** the implementing agent owns every disposition
+below, including deferred work. Each subsection gives its revisit trigger and
+verification condition. All required non-PASS observations remain open under
+Task 12; a selected diagnostic improvement cannot complete feature acceptance.
+Live PAL requires the user to lift the existing deferral. Legacy routing/pre-write
+controls and Task 13 remain separate, unrun gates.
+
+### Acquisition
+
+**Investigate through the selected entry-path fix; P1, high confidence in the
+observed loss of evidence, moderate confidence in the proposed remedy.** This
+group contains 28 observations, including composite PAL failures. Claude misses
+diff attribution, historical comparison or executed verification, and sometimes
+withholds otherwise supportable approval. The two R3-isolated candidates each
+make one shell request containing broad instruction discovery; its denial is
+followed by a blanket shell-unavailable conclusion. The second stops before
+investigation. See their actual [first request](verification/task12/opus55/grading/claude-candidate-R3-isolated-1/events/0003.json),
+[second-run request](verification/task12/opus55/grading/claude-candidate-R3-isolated-2/events/0003.json),
+[denial](verification/task12/opus55/grading/claude-candidate-R3-isolated-2/events/0004.json)
+and [stopped report](verification/task12/opus55/grading/claude-candidate-R3-isolated-2/captured/report.md).
+Their [launch policy](verification/task12/opus55/grading/claude-candidate-R3-isolated-2/captured/command.json)
+lists Git/Python tools; neither run separately attempts the needed Git operation.
+This establishes an unsupported generalization, not proof that every alternative
+command would have succeeded.
+
+Successful R6/R9-recovery isolated repetitions start from the resolved helper
+path and later obtain diffs; the [R9 helper call](verification/task12/opus55/grading/claude-candidate-R9-recovery-isolated-2/events/0009.json)
+and [Git call](verification/task12/opus55/grading/claude-candidate-R9-recovery-isolated-2/events/0043.json)
+illustrate the available route. This contrast is a hypothesis, not a controlled
+test of the entry text. The command currently names the workflow without its
+resolved location. Replacing that reference with plugin-root paths has a smaller
+cost than teaching every invocation how to recover from shell denial.
+
+The same symptom in I2/I3/I4 is **deferred, not claimed fixed** by this command
+change: their first denied requests concern file/root discovery in implementation
+mode. I2 repetition 2 additionally tries a denied Capy execution tool; that is
+not a denied `Bash(python3 ...)` test invocation. R5's unsupported lazy-import
+suggestion and R6/R9's conditional final verdicts also remain separate report
+components even when diff acquisition contributed. Revisit these after Task
+12.12, using their sealed calls before considering shared guidance. Verify actual
+diff/history receipt and test results in fresh affected pairs; never broaden
+permissions or reclassify a denied action as successful. Existing common guidance
+already says to retry permitted individual reads, so duplicating that instruction
+is not selected.
+
+### PAL deferral
+
+**Defer; no actor fix.** All 44 affected assertions retain FAIL because an
+explicitly required reviewer was absent. The [run contract](verification/task12/opus55/run-contract.md)
+declared that absence. User-visible single-reviewer limits generally remain
+disclosed; absence is not evidence that the functional method failed. No extra
+runtime words or workflow steps are justified. Revisit when the user authorizes
+live PAL: verify actual invocation, relevant source receipt/use and the real
+smoke test, while retaining each assertion's other components. R8 replay passes
+do not substitute for those checks.
+
+### Unsupported compatibility claims
+
+**Investigate next in priority after the selected slice; P1.** Five Claude R7
+observations (four FAIL, one PARTIAL) mix unavailable provider/deployment evidence
+with supported-server or safe-to-deploy language. This can mislead a release
+decision; confidence is high for the explicit claims and lower for the ambiguous
+isolated report. In [standard repetition 1](verification/task12/opus55/grading/claude-candidate-R7-standard-1/captured/report.md)
+and [repetition 2](verification/task12/opus55/grading/claude-candidate-R7-standard-2/captured/report.md),
+an earlier Unknown does not qualify the later deployment assurance sufficiently.
+These standard runs already obtained the diff and ran tests, so missing shell
+access is not a sufficient explanation.
+
+The common method already requires named baselines and bounded conclusions.
+Do not add another deployment checklist. Revisit by tracing the unsupported
+conclusion into existing verdict/report wording and test whether replacement or
+consolidation can remove the conflict. Likely targets are `functional-review.md`,
+the existing report templates and `code-reviewer.md`; any shared edit affects
+both providers and modes. Verification must cover R7 both modes, R3's demonstrated
+incompatibility and R5's justified approval, twice per affected side/provider.
+Reject a proposed change that turns unrelated operational unknowns into blockers.
+
+### Inherited-defect detection
+
+**Defer broader detection changes; P2, high confidence in these misses.** Codex
+R6-standard misses the empty detailed-input condition in both candidates and both
+baselines (four candidate observations). The reviewed label change is still
+correct; the missed defect is inherited and unreachable with checked-in settings.
+There is no supported current-production incident or introduced regression.
+Revisit after acquisition/claim work if a general affected-path improvement can
+explain this miss without requiring whole-system or every-flag audits. The common
+method and Python guidance already cover boundaries. A new mandatory enumeration
+would impose broad cost for this bounded miss. Verify R6 detection and attribution
+while retaining R5/R9 clean and justified-complexity outcomes on both providers;
+fixture-specific hints are unacceptable.
+
+### Inherited-defect follow-up
+
+**Defer a small closure replacement; P2.** Three observations omit a bounded
+next action after surfacing a known inherited defect: both Claude standard runs
+regress from passing baselines, and one Codex isolated candidate also omits the
+next action. That Codex baseline never surfaced the defect; its conditional
+assertion PASS is not evidence of better follow-up. The
+[Claude report](verification/task12/opus55/grading/claude-candidate-R6-standard-2/captured/report.md)
+both describes the defect and says no changes are recommended. This is lost
+actionability, not an incorrect approval of the label change. Confidence in the
+omission is high; the clean-closure rule's causal role remains an inference.
+Do not combine it with the detection miss: the other Codex isolated final report
+does not surface the advisory, so that conditional follow-up assertion passes.
+
+Revisit after the selected slice. A worthwhile change would replace the existing
+closure condition in `review-process.md`/`review-isolated.md`, allow one bounded
+out-of-scope follow-up, and add no menu or mandatory work item to clean reviews.
+It affects both modes/providers and must retain R5's no-action closure and R9's
+necessary recovery mechanism in fresh paired checks. Reject added generic cleanup
+suggestions or any treatment of the inherited defect as a current-PR blocker.
+
+### Scenario order
+
+**No instruction change now; P2, high confidence in the reporting mismatch.**
+One Claude R1-standard observation changes the required failed-A/queued-cleanup
+then successful-B sequence into a different ordering. The supported corruption
+finding survives, but coverage of the requested sequence is unproved. The common
+method already requires the actual state transitions and a scenario record.
+Another sequence checklist has poor marginal value. Revisit if it recurs in a
+later affected-path comparison; verify both R1 repetitions against the exact
+event order, preserving the ordinary prompt and unchanged-consumer trace.
+
+### Report precision
+
+**Defer contained wording changes; P2 for I4, P3 for R2.** Three I4 final reports
+omit the production-state qualification; hard acceptance stays open and protected
+requirements remain intact. One calls fixture data “real data.” That is potentially
+misleading, but not evidence of a silent requirement waiver. One Codex R2 report
+finds the relevant defects yet fails to explain why green tests miss them.
+Confidence in these omissions is high. Existing report fields already have space
+for these qualifications. Revisit after higher-impact acquisition/claim work;
+consider replacing wording in implement's completion guidance or review's coverage
+guidance only if it adds no section or extra reporting phase. Verify I4's final
+qualification and preserved hard requirement, R2's test-gap explanation, and I3's
+proportionality across affected providers/modes. Do not use stricter ceremony for
+a trivial edit to obtain a cleaner score.
+
+### Context ordering
+
+**Defer a local sequencing correction; P2.** One Codex I4 run begins reading
+source 49 ms before the feature-document read completes; the [original grade](verification/task12/opus55/grades/codex-candidate-I4-plan-1.md)
+links both timestamps. Subsequent output refreshes the handoff and preserves the
+hard requirement, so harmful downstream reasoning is not demonstrated. This is
+a real dependency-order violation with high evidential confidence, not missing
+capture. Revisit if it recurs or a local replacement in implement's common
+investigation step can make the dependency clearer without another checkpoint.
+Verify I4 and the legacy plan/pre-write controls; use I3 as the cost control if
+shared guidance changes. Task 12.10's preparation guard does not establish this
+later context barrier, so its multi-provider hook/state cost is not justified
+by this observation. Keep that probe deferred unless new evidence demonstrates
+a material failure it actually addresses; design review and its GO/NO-GO gates
+still apply if reselected.
+
+### Entry-point receipts
+
+**Investigate capture when the controller next changes; no actor fix.** Six
+Codex PARTIALs have common/profile reads but lack captured successful SKILL.md
+delivery. They do not prove skipped instructions. Inspect existing raw delivery
+events and the capture adapter before adding any redundant actor read. A
+controller correction has zero added skill words but costs sealing, calibration
+and evidence review. Verify captured bytes, actor identity and ordering using
+positive/missing-event controls; follow the contract's regrading/recapture rules
+on both sides. Do not convert catalog metadata or a loading claim into a receipt.
+
+### Handoff receipts
+
+**Investigate the evidence contract before another affected capture; no actor
+fix.** I3/I4 have four Codex PARTIALs for unavailable submitted arguments despite
+observable reviewer reads/use. Sixteen non-R3 Codex isolated FAILs already fail
+on PAL absence and also retain the exact-handoff evidence obligation. The ledger
+tracks this latent gap without inventing another failed grade. R3 7.5/7.6 and
+I2 9.5 alone have the approved receipt/use fallback; no extension is made here.
+Revisit existing supported capture surfaces and the prior bounded investigation
+before choosing capture work or requesting an explicit prospective contract
+amendment. Do not repeat unchanged plaintext probes or weaken the rubric silently.
+Acceptance needs original dispatch evidence or a separately authorized, calibrated
+contract applied consistently to both sides. Extra actor prose cannot expose an
+unavailable transport field and is not selected.
+
+### Pre-edit assessment receipts
+
+**No actor instruction change; defer evidence-method decision.** Both Claude
+I3 PARTIALs concern an unobserved pre-edit non-runtime assessment; the exact typo
+fix succeeds and the visible assessment comes afterward. Private reasoning was
+excluded. There is no demonstrated inappropriate deployment gate or behavior
+change. Revisit alongside handoff/entry capture decisions: determine what public
+evidence can establish the current assertion, or explicitly propose a prospective
+contract change. Adding a compulsory narration step to every typo fix has worse
+cost than this unproved benefit. Both observations remain PARTIAL and acceptance
+open until sufficient evidence or an authorized successor contract exists.
+
+### Selected scope and verification limits
+
+Task 12.12 selects the earliest, cheapest acquisition intervention: replace the
+isolated command's ambiguous instruction location with resolved paths. It does
+not claim to cure permission interpretation, all 28 acquisition observations,
+R7 conclusions, implementation verification or missing transport evidence.
+The entry substitution should add at most 30 authored words, zero new phases,
+mandatory tool calls, dependencies or runtime state; it should eliminate discovery
+work rather than add a protocol. Existing common 800/1,200-word budgets remain.
+The task specifies fresh target/negative-control comparisons and rejection limits;
+PAL-related composite assertions retain their full original FAILs while deferred.
+
+The assessment itself is checked by reconciling all 608 candidate grade rows,
+every non-PASS identity and matched baseline, group counts, local links and the
+documentation diff. These checks establish accounting and traceability, not new
+behavioral acceptance. Independent review and its outcome are recorded in the
+Task 12.11 execution context.
