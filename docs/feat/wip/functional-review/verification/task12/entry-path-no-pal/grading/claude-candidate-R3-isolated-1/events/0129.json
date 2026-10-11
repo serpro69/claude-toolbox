@@ -1,0 +1,19 @@
+{
+  "actor": "main",
+  "block": {
+    "caller": {
+      "type": "direct"
+    },
+    "id": "toolu_01WPK1z79wWCKCvosWRUV6ob",
+    "input": {
+      "content": "Pattern: independently released client starts REQUIRING a new provider response field (e.g. a receipt like `applied: True`) before the supported released provider emits it. Every ordinary call then fails even though the provider applied the change. A feature flag (e.g. enhanced_settings) gives no protection when the new check is not gated on it. The regression hides because the unit-test fake provider is rewritten to return the future contract, so no test still exercises the released provider's actual response shape. Review check: compare each newly required response key with the released provider source at the supported tag, and keep a test that mirrors the legacy response. Fix shape: treat an absent field as the legacy acknowledgement (only when the legacy success already implies the guarantee) and reject only an explicit negative, or negotiate capability. (Seen: enhanced-settings Task 1, client.py receipt check vs eval-release provider/settings.py.)",
+      "source": "kk:review-findings"
+    },
+    "name": "mcp__capy__capy_index",
+    "type": "tool_use"
+  },
+  "id": "e259.0",
+  "parent_tool_use_id": null,
+  "session_id": "ca94de9f-5570-4812-b076-39f778d38307",
+  "source_sequence": 259
+}

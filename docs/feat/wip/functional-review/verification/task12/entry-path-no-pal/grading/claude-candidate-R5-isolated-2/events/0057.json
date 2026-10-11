@@ -1,0 +1,19 @@
+{
+  "actor": "main",
+  "block": {
+    "caller": {
+      "type": "direct"
+    },
+    "id": "toolu_01NzBoPai3WLdgkRdy2cu4bT",
+    "input": {
+      "command": "d=$(mktemp -d /tmp/kk-review-code-XXXXXX) && git diff --cached > \"$d/staged.patch\" && mkdir \"$d/candidate\" && for f in preview.py routes.py config.py settings.py tests/test_routes.py README.md tasks.md; do mkdir -p \"$d/candidate/$(dirname $f)\"; git show \":$f\" > \"$d/candidate/$f\"; done && git rev-parse HEAD && find \"$d\" -type f && chmod -R a-w \"$d\"",
+      "description": "Materialize staged diff and index blobs outside worktree"
+    },
+    "name": "Bash",
+    "type": "tool_use"
+  },
+  "id": "e118.0",
+  "parent_tool_use_id": null,
+  "session_id": "791a41e0-a942-4424-a475-08cbc89fa6fa",
+  "source_sequence": 118
+}

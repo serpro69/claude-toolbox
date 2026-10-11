@@ -5,7 +5,7 @@
 > Tasks: [tasks.md](tasks.md)
 > Review disposition: [consolidated assessment](reviews/design-review-consolidation.md)
 > Status: Tasks 1–11 and core matrix capture/grading complete; acceptance and final verification pending
-> Revised: 2026-10-11; severity/cost assessment selects the isolated entry-path correction
+> Revised: 2026-10-11; targeted comparison supports keeping the isolated entry-path correction
 > Next-session handoff: [follow-up.md](follow-up.md)
 
 ## Starting points
@@ -113,8 +113,8 @@ Review R3's historical-source handoff, R3/R7's verdict mapping, I4's resulting d
 The user subsequently expanded coverage to both providers' complete applicable
 matrix. [All 192 sessions and grades](verification/task12/opus55/README.md) are
 complete. Required acceptance remains unmet; preserve PAL deferral and the
-separate legacy/final gates. The severity/cost assessment below selects a bounded
-entry-path correction; no automatic full rerun follows.
+separate legacy/final gates. The bounded entry-path comparison below is complete;
+no automatic full rerun follows.
 
 ## Documentation and final verification
 
@@ -183,18 +183,24 @@ FAIL/PARTIAL, separating behavioral impact, report omissions, missing evidence
 and PAL deferral. Existing instruction burden is part of each disposition;
 deferred requirements remain open.
 
-Resume with `/kk:implement task 12.12 of functional-review`. Its
+Task 12.12's
 [bounded plan](tasks.md#task-1212-resolve-isolated-review-instructions-at-entry)
 replaces the isolated command's ambiguous instruction location with explicit
-plugin-root paths. It preserves existing workflow steps and limits the added
-word count. Source/loading checks precede a separately frozen R3-isolated
-comparison with R5/R9-recovery controls; fixtures, assertions and PAL deferral
-remain unchanged. No operative change or new actor run is claimed by the
-assessment. Reject the correction if the target evidence remains missing,
-controls regress or instruction cost exceeds the stated bound. Keep implementation
-acquisition, unsupported deployment claims and capture limitations separately
-assigned. The earlier guard remains deferred and may not address I4's later
-context-ordering violation.
+plugin-root paths, adding two words. [All twelve declared Claude comparisons](verification/task12/entry-path-no-pal/README.md)
+are captured and graded; both repetitions meet the R3 non-PAL conditions and
+R5/R9-recovery controls, supporting the keep decision. Common instructions and
+generated Codex bytes are unchanged. An unexpected PAL connection in the initial
+loading probe required a reviewed, separately frozen configuration that excludes
+PAL from the actual launched MCP set. Both measured sides use that configuration;
+fixtures, ordinary prompts, models, permission policy and assertions stay fixed.
+
+Candidate totals remain 32 PASS / 8 FAIL / 0 PARTIAL; every required PAL omission
+still fails its composite assertion. These observations neither close full feature
+acceptance nor isolate the incremental causal effect from the preceding candidate.
+Keep implementation acquisition, unsupported deployment claims and capture limits
+separately assigned. R7 claim investigation retains next priority under the cost
+constraint; no additional operative slice is selected. The earlier guard remains
+deferred and may not address I4's later context-ordering violation.
 
 Optional `/kk:clarify-docs` may refine the changed `follow-up.md`, `design.md`,
 `implementation.md`, `ordering.md` and `tasks.md`; then

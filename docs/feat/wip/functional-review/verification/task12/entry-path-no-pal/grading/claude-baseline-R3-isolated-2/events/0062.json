@@ -1,0 +1,12 @@
+{
+  "actor": "child-of:toolu_017eUDrFn3P96t7CiCpj2MPG",
+  "block": {
+    "content": "1\tdef save_settings(send, workspace_id, values, enhanced_settings=False):\n2\t    response = send(workspace_id, {\"settings\": values, \"require_receipt\": True})\n3\t    if not response.get(\"ok\"):\n4\t        raise RuntimeError(\"Settings save failed\")\n5\t    if response.get(\"applied\") is not True:\n6\t        raise RuntimeError(\"Provider did not acknowledge applied settings\")\n7\t    return {\"saved\": True, \"enhanced\": enhanced_settings}\n8\t",
+    "tool_use_id": "toolu_017w41QhGAd3aa6p8t9WLcWS",
+    "type": "tool_result"
+  },
+  "id": "e128.0",
+  "parent_tool_use_id": "toolu_017eUDrFn3P96t7CiCpj2MPG",
+  "session_id": "e0edcf71-4dcb-4313-bd56-ba47e4163aef",
+  "source_sequence": 128
+}

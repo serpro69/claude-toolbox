@@ -1,0 +1,44 @@
+## Review Summary (Isolated Mode)
+
+**Verdict: APPROVE, for the code only.** Task 1 changes nothing for existing routes, and the new route can't be reached with the checked-in setting. No changes are recommended.
+
+**Reviewers:**
+- **code-reviewer** (Opus 5.5): finished, no findings.
+- **PAL external review:** didn't run. PAL isn't available in this session, so nothing here is "corroborated" by two reviewers.
+- **Other limits:** the knowledge base is empty, so there were no past findings to check against. My attempt to write the diff to a temp file was denied, so I put the 13-line diff in the reviewer's prompt and pointed it at the repo files. That's safe because the working tree matches what's staged.
+
+**Files reviewed:**
+- Changed: `preview.py` (new) and `routes.py` (modified), 6 lines added.
+- Also read: `config.py`, `settings.py`, `tests/test_routes.py`, `README.md`, `tasks.md`.
+
+**What I checked against:** `README.md` (the GET /settings response and routing must not change, the increment must work on its own while Task 2 is pending, and the setting is hard-coded to False) and `tasks.md`. Task 1 is in progress and in scope; Task 2 is pending and out of scope. I reviewed the staged diff against the base commit `f1a16b5`. Python checklists applied: security, SOLID, code quality and removal plan.
+
+### Behavior and Compatibility
+
+| Scenario | Result | Evidence |
+|---|---|---|
+| `get("/settings")` | Same as before: (200, {"theme": "light"}) | Source trace, test passes |
+| `get("/unknown")` | Same as before: (404, None) | Source trace, test passes |
+| `get("/export-preview")` with the setting False | (404, None), same as before; `render_preview()` is never called | `routes.py:9` checks the setting first; `test_preview_route` passes |
+| Importing `routes` | Works. It now also imports `config` (already committed) and `preview` (staged in this change); neither does anything when imported | Source trace |
+| Where the setting comes from | Hard-coded `False`, as the README requires; nothing in a request or the environment can change it | Source trace; I also confirmed `HEAD:config.py` reads `EXPORT_PREVIEW_ENABLED = False`, which the reviewer couldn't read directly |
+| Shipping this before Task 2 | Fine | The new branch is unreachable |
+| Setting turned on (Task 2) | Not applicable to this change | Task 2 requires the real implementation and tests before the setting changes |
+| Deployed environment | Unknown | The repo doesn't track deployments; outside this review |
+
+I ran `python3 -B -m unittest discover -s tests` myself: 3 tests, all pass. The reviewer only read the source.
+
+### Code Reviewer Findings
+None at any severity.
+
+### Notes that only matter once Task 2 starts
+These aren't findings for this change:
+- **Testing the enabled path:** `routes.py:1` copies `EXPORT_PREVIEW_ENABLED` into `routes` when it's imported. Task 2's tests need to patch `routes.EXPORT_PREVIEW_ENABLED`; patching `config.EXPORT_PREVIEW_ENABLED` would have no effect.
+- **Errors from the preview:** `get()` doesn't catch errors from `render_preview()`. For now that's covered by Task 2's rule to implement it before turning the setting on.
+
+### Prerequisites
+- `routes.py` and `preview.py` must ship together, because `routes` now imports `preview`. Committing them in one commit covers this.
+
+No findings to record in the knowledge base.
+
+**Cleanup:** I couldn't delete the three temporary instruction folders this review created (`/tmp/kk-review-instructions-45kkp6j_`, `-fnv9s2gr`, `-5wph0q7n`) because Bash permission was denied. They hold only review instructions, no source code, so you can remove them whenever you like.
