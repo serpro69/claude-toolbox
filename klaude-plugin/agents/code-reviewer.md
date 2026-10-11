@@ -2,7 +2,8 @@
 name: code-reviewer
 description: |
   Independent code reviewer with no authorship attachment. Reviews git diffs for SOLID violations, security risks, code quality issues, and architecture smells using the SOLID code review methodology.
-model: claude-opus-4-8[1m]
+model: claude-opus-5-5
+effort: xhigh
 tools:
   - Read
   - Grep

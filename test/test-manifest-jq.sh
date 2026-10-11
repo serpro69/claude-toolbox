@@ -73,7 +73,7 @@ GENERATED=$(jq -n \
   --arg synced "2025-01-27T10:00:00Z" \
   --arg project "my-project" \
   --arg language "typescript" \
-  --arg cc_model "sonnet" \
+  --arg cc_model "default" \
   --arg cc_effort "high" \
   --arg cc_permission "default" \
   --arg cc_statusline "enhanced" \
