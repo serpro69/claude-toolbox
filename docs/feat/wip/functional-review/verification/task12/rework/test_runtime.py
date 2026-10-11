@@ -14,6 +14,7 @@ from unittest.mock import patch
 
 import runtime
 import capture
+import driver
 import probe_pal
 
 
@@ -162,10 +163,32 @@ while True: signal.pause()
             self.assertLess(time.monotonic(), deadline, "descendant survived capture")
             time.sleep(0.01)
 
-    def test_command_policy_matches_historical_capture(self):
+    def test_command_changes_only_model_from_historical_capture(self):
         previous = Path(__file__).resolve().parents[1] / "runs/claude-candidate-R1-standard-1/command.json"
         command = json.loads(previous.read_text())["argv"]
+        command[command.index("--model") + 1] = "claude-opus-5-5"
         self.assertEqual(capture.command_for(command[-1]), command)
+
+    def test_preparation_binds_model_and_launch_hash(self):
+        job = self.job("prepared")
+        job.evidence.mkdir()
+        launch = {"models": {"claude": "claude-opus-4-8[1m]/high", "pal": "unchanged"},
+                  "prompt": "ordinary review"}
+        prepared = {"launch_sha256": "old", "runtime_files": {"settings.json": "unchanged"}}
+        def historical_prepare(args):
+            capture.seed.write_json(args.evidence / "launch.json", launch)
+            capture.seed.write_json(args.evidence / "prepared.json", prepared)
+        with patch.object(driver.controller, "prepare", side_effect=historical_prepare):
+            driver.prepare_job(job)
+        actual_launch = json.loads((job.evidence / "launch.json").read_text())
+        command = capture.command_for(actual_launch["prompt"])
+        self.assertEqual(actual_launch["models"], {
+            "claude": command[command.index("--model") + 1] + "/high",
+            "claude_subagent": "claude-opus-5-5", "pal": "unchanged"})
+        self.assertEqual(actual_launch["prompt"], launch["prompt"])
+        actual_prepared = json.loads((job.evidence / "prepared.json").read_text())
+        self.assertEqual(actual_prepared, {
+            **prepared, "launch_sha256": capture.seed.sha((job.evidence / "launch.json").read_bytes())})
 
     def test_probe_broken_pipe_keeps_primary_error_and_seals(self):
         evidence = self.root / "probe"
@@ -239,12 +262,21 @@ while True: signal.pause()
         home = self.root / "fake-home"
         (home / ".codex").mkdir(parents=True)
         (home / ".codex/config.toml").write_text('[mcp_servers.pal.env]\nAPI_KEY="synthetic-secret"\n')
-        command = [sys.executable, "-c", 'import json; print(json.dumps({"type":"result","result":"synthetic-secret"})); raise SystemExit(9)']
-        with patch.object(capture.Path, "home", return_value=home), patch.object(capture, "command_for", return_value=command):
+        command = [sys.executable, "-c", 'import json,os; print(json.dumps({"type":"result","result":"synthetic-secret",'
+            '"capture_model":os.environ["CLAUDE_CODE_SUBAGENT_MODEL"],'
+            '"force_model":os.environ["CLAUDE_CODE_SUBAGENT_MODEL_FORCE"]})); raise SystemExit(9)']
+        with patch.object(capture.Path, "home", return_value=home), patch.object(capture, "command_for", return_value=command), \
+                patch.dict(os.environ, {"CLAUDE_CODE_SUBAGENT_MODEL": "old-model", "CLAUDE_CODE_SUBAGENT_MODEL_FORCE": "0"}):
             status = capture.run_claude(evidence)
         self.assertEqual(status, 9)
         self.assertEqual(runtime.completion_status(evidence), 9)
         self.assertEqual((evidence / "report.md").read_text(), "[credential redacted]\n")
+        event = json.loads((evidence / "events.jsonl").read_text())["event"]
+        self.assertEqual(event["capture_model"], "claude-opus-5-5")
+        self.assertEqual(event["force_model"], "1")
+        recorded = json.loads((evidence / "command.json").read_text())
+        self.assertEqual(recorded["model_environment"], {
+            "CLAUDE_CODE_SUBAGENT_MODEL": "claude-opus-5-5", "CLAUDE_CODE_SUBAGENT_MODEL_FORCE": "1"})
         seal = json.loads((evidence / "manifest.json").read_text())
         self.assertIn("completion.json", seal)
         self.assertIn("events.jsonl", seal)
