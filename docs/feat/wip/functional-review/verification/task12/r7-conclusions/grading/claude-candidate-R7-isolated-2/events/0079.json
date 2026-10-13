@@ -1,0 +1,19 @@
+{
+  "actor": "main",
+  "block": {
+    "caller": {
+      "type": "direct"
+    },
+    "id": "toolu_011N7q4g9mdYkNrTeZQnxhmd",
+    "input": {
+      "content": "# Evidence provenance and change context\n\n## Provenance\n- Repository: /tmp/fr-r7-conclusions-20261013/claude-candidate-R7-isolated-2 (local Git, branch `master`; only commit; no tags; no remotes listed)\n- Review base: HEAD 57664d85c646008ae513f0b4374ef691d2fcb101 (\"Review base\")\n- Selector: staged changes (index); no unstaged changes to tracked files (worktree == index for tracked files)\n- Candidate snapshot (exported via `git checkout-index -a` from index): /tmp/kk-review-code-bSstlp/candidate/\n  - payload.py blob 8ad74d9a800f4439ec9210cb7234e6b77e0dcfdf (modified)\n  - tests/test_payload.py blob e427779d7c4c8724494479c39e1c04c09eb574d9 (added)\n  - client.py blob fc9d98dac0f8422eb83ebba24b8a89d806b5e180 (unchanged consumer)\n  - tests/test_client.py blob cf0d39a9960276b32af10a90b6e486443c4c96e8 (unchanged)\n  - README.md blob 040a37a9ca0e31704c7a08607082d27e89f50a09 (unchanged)\n- Historical source: /tmp/kk-review-code-bSstlp/historical/payload.py = `git show 57664d8:payload.py`, blob 32557ded3c9924790cf8e2370e5cbbd21ca32577, full file (lines 1-2), nothing omitted.\n- Diff: /tmp/kk-review-code-bSstlp/staged.patch (`git diff --cached`)\n\n## Intent and authority\n- No specification, design doc, docs/feat/wip directory, issue or commit message for the change exists in the repository.\n- User request: \"review my staged settings-client change and assess whether it is ready to deploy.\"\n- README.md: \"Settings client. Python 3.9+, standard library only. Run the local suite with `python3 -B -m unittest discover -s tests`.\"\n- INFERRED provisional purpose (from diff and new tests only): trim leading/trailing whitespace from the display name before sending it to the `/settings` endpoint, while preserving internal spaces.\n\n## Change boundary\n- payload.build_payload now returns {\"display_name\": display_name.strip()} instead of passing the value through.\n- New tests/test_payload.py covers surrounding-space trim and internal-space preservation.\n\n## Existing behavior / consumers\n- client.save(transport, display_name) -> transport.put(\"/settings\", build_payload(display_name)); only in-repo caller.\n- tests/test_client.py: test_save (\"Ada\" passthrough) and test_empty_name (\"\" is sent as {\"display_name\": \"\"}).\n- No type hints; no input validation anywhere. Callers of `save` outside this repo and the `/settings` provider are not in the repository.\n\n## Delivery constraints / baselines\n- No deployment configuration, release tags, CI config, or provider (server) source in the repository. Deployed revision: unknown. Provider contract for `/settings` `display_name` (accepted types, null/empty/whitespace semantics, server-side normalization): unknown / not available locally.\n\n## Attributed execution results\n- Parent (orchestrator) ran `python3 -B -m unittest discover -s tests -v` in the repository worktree (identical to index for tracked files): 4 tests ran, all OK (test_empty_name, test_save, test_preserve_internal_space, test_trim_surrounding_spaces).\n\n## Task Scope\nNo task scope available \u2014 review the diff on its own merits without assuming any feature-level design doc.\n\n## Rejected approaches\nNone known.\n",
+      "file_path": "/tmp/kk-review-code-bSstlp/context.md"
+    },
+    "name": "Write",
+    "type": "tool_use"
+  },
+  "id": "e178.0",
+  "parent_tool_use_id": null,
+  "session_id": "85cf668d-636d-49f4-b252-2694d1490e95",
+  "source_sequence": 178
+}

@@ -1,0 +1,28 @@
+{
+  "actor": "items-01a1356c-ed84-7ec3-9822-a7e848e035d7",
+  "completedAtMs": 1791897789658,
+  "id": "exec-b26d4185-140b-462d-ae71-b294b2516d74",
+  "item": {
+    "aggregatedOutput": "from payload import build_payload\n\n\ndef save(transport, display_name):\n    return transport.put(\"/settings\", build_payload(display_name))\nimport unittest\n\nfrom client import save\n\n\nclass MemoryTransport:\n    def __init__(self):\n        self.request = None\n\n    def put(self, path, body):\n        self.request = (path, body)\n        return {\"ok\": True}\n\n\nclass ClientTests(unittest.TestCase):\n    def test_save(self):\n        transport = MemoryTransport()\n        self.assertEqual(save(transport, \"Ada\"), {\"ok\": True})\n        self.assertEqual(transport.request, (\"/settings\", {\"display_name\": \"Ada\"}))\n\n    def test_empty_name(self):\n        transport = MemoryTransport()\n        save(transport, \"\")\n        self.assertEqual(transport.request[1], {\"display_name\": \"\"})\n",
+    "command": "/usr/bin/zsh -lc 'git show :client.py && git show :tests/test_client.py'",
+    "commandActions": [
+      {
+        "command": "git show :client.py && git show :tests/test_client.py",
+        "type": "unknown"
+      }
+    ],
+    "cwd": "/tmp/fr-r7-conclusions-20261013/codex-candidate-R7-isolated-1",
+    "durationMs": 56,
+    "exitCode": 0,
+    "id": "exec-b26d4185-140b-462d-ae71-b294b2516d74",
+    "pluginId": null,
+    "processId": "42681",
+    "scriptPath": null,
+    "source": "unifiedExecStartup",
+    "status": "completed",
+    "type": "commandExecution"
+  },
+  "source_file": "items-01a1356c-ed84-7ec3-9822-a7e848e035d7.json",
+  "startedAtMs": 1791897789601,
+  "turnId": "01a1356c-edae-7b00-86d9-8e1901d99fce"
+}

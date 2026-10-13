@@ -1,0 +1,19 @@
+{
+  "actor": "main",
+  "block": {
+    "caller": {
+      "type": "direct"
+    },
+    "id": "toolu_01Uoprftg1R1VYifyrFg5JXE",
+    "input": {
+      "content": "Pattern: a client increment adds a new mandatory response field (e.g. a receipt like `applied is True`) that only a pending provider task will send. Against the released provider, which returns success without that field, every call fails, even though the provider already applied the side effect. That breaks the independent-release / old-provider compatibility requirement. Tell-tale sign: the test fixture changes from the released provider's response shape to the future shape, which removes baseline coverage. Check: compare against the released provider source at the named tag (it can be fetched with git show <tag>:<path> even when provider sources have moved out of the checkout). Fix: treat an absent field as legacy success and reject only an explicit negative value. Keep a test for the legacy response shape. Defer making the field mandatory until the supported baseline sends it. Gating on a UI feature flag is weaker, because it couples protocol capability to presentation.",
+      "source": "kk:review-findings"
+    },
+    "name": "mcp__capy__capy_index",
+    "type": "tool_use"
+  },
+  "id": "e272.0",
+  "parent_tool_use_id": null,
+  "session_id": "7b7ccc14-99a8-4fe5-83b2-d6ad7f0e6b25",
+  "source_sequence": 272
+}

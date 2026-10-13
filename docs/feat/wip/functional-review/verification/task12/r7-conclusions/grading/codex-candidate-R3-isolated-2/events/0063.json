@@ -1,0 +1,30 @@
+{
+  "actor": "items-01a13541-c744-7bb1-97cb-04afcf79e968",
+  "completedAtMs": 1791894965818,
+  "id": "exec-71f6bec7-7062-4ce6-9799-371aabf19a63",
+  "item": {
+    "aggregatedOutput": "1:diff --git a/client.py b/client.py\n2:index d6ddf4b..910e877 100644\n3:--- a/client.py\n4:+++ b/client.py\n5:@@ -1,5 +1,7 @@\n6: def save_settings(send, workspace_id, values, enhanced_settings=False):\n7:-    response = send(workspace_id, {\"settings\": values})\n8:+    response = send(workspace_id, {\"settings\": values, \"require_receipt\": True})\n9:     if not response.get(\"ok\"):\n10:         raise RuntimeError(\"Settings save failed\")\n11:+    if response.get(\"applied\") is not True:\n12:+        raise RuntimeError(\"Provider did not acknowledge applied settings\")\n13:     return {\"saved\": True, \"enhanced\": enhanced_settings}\n14:diff --git a/tests/test_client.py b/tests/test_client.py\n15:index 39ea461..f1dfc4f 100644\n16:--- a/tests/test_client.py\n17:+++ b/tests/test_client.py\n18:@@ -5,6 +5,6 @@ from client import save_settings\n19: class SettingsTests(unittest.TestCase):\n20:     def test_successful_save(self):\n21:         def send(workspace, request):\n22:-            return {\"ok\": True}\n23:+            return {\"ok\": True, \"applied\": True}\n24:         self.assertEqual(save_settings(send, \"w\", {\"label\": \"blue\"}),\n25:                          {\"saved\": True, \"enhanced\": False})\n",
+    "command": "/usr/bin/zsh -lc \"rg -n '\"'^'\"' '/tmp/kk-settings-review.gMOcuv/staged.patch'\"",
+    "commandActions": [
+      {
+        "command": "rg -n '^' /tmp/kk-settings-review.gMOcuv/staged.patch",
+        "path": "staged.patch",
+        "query": "^",
+        "type": "search"
+      }
+    ],
+    "cwd": "/tmp/fr-r7-conclusions-20261013/codex-candidate-R3-isolated-2",
+    "durationMs": 99,
+    "exitCode": 0,
+    "id": "exec-71f6bec7-7062-4ce6-9799-371aabf19a63",
+    "pluginId": null,
+    "processId": "9887",
+    "scriptPath": null,
+    "source": "unifiedExecStartup",
+    "status": "completed",
+    "type": "commandExecution"
+  },
+  "source_file": "items-01a13541-c744-7bb1-97cb-04afcf79e968.json",
+  "startedAtMs": 1791894965719,
+  "turnId": "01a13541-c762-79f3-9eac-5d955af030cf"
+}

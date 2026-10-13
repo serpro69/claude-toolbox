@@ -1,0 +1,60 @@
+diff --git a/klaude-plugin/skills/review-code/functional-review.md b/klaude-plugin/skills/review-code/functional-review.md
+index 9ba8f725..324dd59e 100644
+--- a/klaude-plugin/skills/review-code/functional-review.md
++++ b/klaude-plugin/skills/review-code/functional-review.md
+@@ -22,7 +22,7 @@ Assess the reviewed increment first. Expand to a production-to-candidate compari
+ 
+ For each applicable dimension, state:
+ 
+-- **Supported:** named scenarios and a named baseline support compatibility within stated evidence limits.
++- **Supported:** evidence supports the named scenarios against the named baseline. Client-only tests establish client behavior, not an uninspected provider's contract or deployment compatibility.
+ - **Blocked:** demonstrated incompatibility or a known unmet delivery requirement prevents the stated release.
+ - **Unknown:** material baseline, environment, consumer or data evidence is missing; name it and the next action.
+ - **Not applicable:** no consequence for that dimension, with a reason.
+@@ -37,7 +37,7 @@ Reserve P0 for demonstrated critical consequences needing immediate mitigation.
+ | --- | --- | --- |
+ | In-scope incompatibility caused or worsened by the change | One impact-rated finding. REQUEST_CHANGES for P0/P1 or a violated hard acceptance/delivery requirement; otherwise COMMENT for an actionable nonblocking issue. | Blocked for the affected required combination. |
+ | Known external rollout prerequisite, no demonstrated code defect | Assess code on its merits; APPROVE may be scoped explicitly to code. | Blocked until the prerequisite is met; document the dependency. |
+-| Unknown evidence essential to task acceptance or an explicitly requested release conclusion | COMMENT absent a defect warranting REQUEST_CHANGES. Never unconditionally approve the unverified requirement. | Unknown; name missing evidence and next action. |
++| Unknown evidence essential to task acceptance or an explicitly requested release conclusion | COMMENT absent a defect warranting REQUEST_CHANGES. Scoped code support is not release approval. | Unknown until the missing evidence is supplied and assessed. Name the next check rather than offering conditional deployment approval. |
+ | Unknown operational detail outside the requested/required assessment | Does not automatically downgrade a supported, explicitly scoped code verdict. | Unknown for that unassessed environment. |
+ | Supported or Not applicable | Apply existing severity/finding rules; neither overrides another defect. | Retain named baseline and limits. |
+ 
+@@ -47,6 +47,6 @@ Code approval with conditional release readiness cannot bypass a hard independen
+ 
+ Every report, including one with findings, identifies intent, actual scope/base/candidate, inspected paths and important evidence limits. Include a compact behavior/compatibility assessment with applicable conclusions. For each behavioral finding provide trigger, affected path, expected/actual result, consequence and correction; preserve confidence reasoning, severity and profile/checklist labels. Separate inherited findings and author-attributed inputs.
+ 
+-Before presenting, reconcile every claimed inspection or execution with successful returned tool results. Denied reads, unread source and truncated results belong under missing coverage. A supported finding does not establish that the full diff was inspected or tests ran; remove unsupported coverage claims, including copied template wording.
++Before presenting, reconcile inspection, execution and compatibility claims, including closing advice, with supporting evidence and successful returned tool results. Denied reads, unread source and truncated results belong under missing coverage. A supported finding does not establish that the full diff was inspected or tests ran; remove unsupported claims, including copied template wording.
+ 
+ Record outstanding evidence or release/migration/activation prerequisites and next actions; name their durable tracking location when deferred. Preserve disagreement and uncertainty. Reviewer agreement never replaces source evidence. In isolated reporting, retain native external findings and annotations, disclose failures or zero/incomplete source coverage, and do not claim corroboration or broad safety from an underfed external result. Useful available findings remain reportable.
+diff --git a/kodex-plugin/skills/review-code/functional-review.md b/kodex-plugin/skills/review-code/functional-review.md
+index 9ba8f725..324dd59e 100644
+--- a/kodex-plugin/skills/review-code/functional-review.md
++++ b/kodex-plugin/skills/review-code/functional-review.md
+@@ -22,7 +22,7 @@ Assess the reviewed increment first. Expand to a production-to-candidate compari
+ 
+ For each applicable dimension, state:
+ 
+-- **Supported:** named scenarios and a named baseline support compatibility within stated evidence limits.
++- **Supported:** evidence supports the named scenarios against the named baseline. Client-only tests establish client behavior, not an uninspected provider's contract or deployment compatibility.
+ - **Blocked:** demonstrated incompatibility or a known unmet delivery requirement prevents the stated release.
+ - **Unknown:** material baseline, environment, consumer or data evidence is missing; name it and the next action.
+ - **Not applicable:** no consequence for that dimension, with a reason.
+@@ -37,7 +37,7 @@ Reserve P0 for demonstrated critical consequences needing immediate mitigation.
+ | --- | --- | --- |
+ | In-scope incompatibility caused or worsened by the change | One impact-rated finding. REQUEST_CHANGES for P0/P1 or a violated hard acceptance/delivery requirement; otherwise COMMENT for an actionable nonblocking issue. | Blocked for the affected required combination. |
+ | Known external rollout prerequisite, no demonstrated code defect | Assess code on its merits; APPROVE may be scoped explicitly to code. | Blocked until the prerequisite is met; document the dependency. |
+-| Unknown evidence essential to task acceptance or an explicitly requested release conclusion | COMMENT absent a defect warranting REQUEST_CHANGES. Never unconditionally approve the unverified requirement. | Unknown; name missing evidence and next action. |
++| Unknown evidence essential to task acceptance or an explicitly requested release conclusion | COMMENT absent a defect warranting REQUEST_CHANGES. Scoped code support is not release approval. | Unknown until the missing evidence is supplied and assessed. Name the next check rather than offering conditional deployment approval. |
+ | Unknown operational detail outside the requested/required assessment | Does not automatically downgrade a supported, explicitly scoped code verdict. | Unknown for that unassessed environment. |
+ | Supported or Not applicable | Apply existing severity/finding rules; neither overrides another defect. | Retain named baseline and limits. |
+ 
+@@ -47,6 +47,6 @@ Code approval with conditional release readiness cannot bypass a hard independen
+ 
+ Every report, including one with findings, identifies intent, actual scope/base/candidate, inspected paths and important evidence limits. Include a compact behavior/compatibility assessment with applicable conclusions. For each behavioral finding provide trigger, affected path, expected/actual result, consequence and correction; preserve confidence reasoning, severity and profile/checklist labels. Separate inherited findings and author-attributed inputs.
+ 
+-Before presenting, reconcile every claimed inspection or execution with successful returned tool results. Denied reads, unread source and truncated results belong under missing coverage. A supported finding does not establish that the full diff was inspected or tests ran; remove unsupported coverage claims, including copied template wording.
++Before presenting, reconcile inspection, execution and compatibility claims, including closing advice, with supporting evidence and successful returned tool results. Denied reads, unread source and truncated results belong under missing coverage. A supported finding does not establish that the full diff was inspected or tests ran; remove unsupported claims, including copied template wording.
+ 
+ Record outstanding evidence or release/migration/activation prerequisites and next actions; name their durable tracking location when deferred. Preserve disagreement and uncertainty. Reviewer agreement never replaces source evidence. In isolated reporting, retain native external findings and annotations, disclose failures or zero/incomplete source coverage, and do not claim corroboration or broad safety from an underfed external result. Useful available findings remain reportable.

@@ -1,0 +1,7 @@
+{"id":"d1","actor":"main","sequence":1,"tool":"Agent","status":"completed","child_id":"reviewer-a","submitted_prompt":"unavailable; opaque runtime field"}
+{"id":"a1","actor":"reviewer-a","parent_dispatch_id":"d1","sequence":1,"tool":"Read","arguments":{"path":"source.py"},"status":"success","returned_content":"[not captured]"}
+{"id":"a2","actor":"reviewer-a","parent_dispatch_id":"d1","sequence":2,"tool":"Read","arguments":{"path":"provenance.json"},"status":"success","receipt":"returned content unavailable"}
+{"id":"a3","actor":"reviewer-a","parent_dispatch_id":"d1","sequence":3,"type":"result","text":"The supplied historical provider source returns ok=True without applied; requiring applied would reject this successful response. Exact prompt content was not inspected."}
+{"id":"p1","actor":"main","sequence":2,"tool":"PAL.codereview","invocation_id":"pal-1","arguments":{"relevant_files":["source.py","provenance.json"]},"status":"completed","source_receipt":{"kind":"unknown","reason":"embedding/read evidence missing"}}
+{"id":"p2","actor":"pal-reviewer","invocation_id":"pal-1","sequence":1,"type":"result","text":"Historical provider apply returns ok=True without applied. A new consumer requiring applied would incorrectly reject it."}
+{"id":"m3","actor":"main","sequence":3,"type":"turn-completed"}

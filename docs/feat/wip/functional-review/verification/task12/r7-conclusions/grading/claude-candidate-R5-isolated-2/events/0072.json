@@ -1,0 +1,19 @@
+{
+  "actor": "main",
+  "block": {
+    "caller": {
+      "type": "direct"
+    },
+    "id": "toolu_017NMbk1wcb3rezoJzZ8UChP",
+    "input": {
+      "content": "# Change context (parent-prepared, factual)\n\n## Intent and authority (explicit)\n- README.md: \"This increment prepares the export-preview module. The existing GET /settings\n  response and routing behavior remain the acceptance contract. Export preview activation\n  belongs to a later task; this increment must remain independently compatible while that\n  task is pending. The checked-in build setting is fixed at False; it is not supplied by a\n  request, environment variable or external config. No deployment inventory is maintained\n  in this small source repository.\"\n- tasks.md Task 1 (in-progress, the reviewed task): \"Preserve existing routes with preview\n  disabled in the checked-in build. Add the preview module and guarded route for the next\n  increment.\"\n- tasks.md Task 2 (pending): \"Implement render_preview and its enabled-path tests before\n  changing the build setting.\"\n\n## Change boundary\n- Selector: staged changes (`git diff --cached`); no unstaged changes exist.\n- Review base: HEAD f1a16b5c97799818739131e41ea37056edf057ac (\"Review base\").\n- Candidate: index. Worktree is identical to index for preview.py and routes.py.\n- Files: preview.py (added), routes.py (modified). config.py and tests/test_routes.py are\n  unchanged and already tracked at the base (config.py sets EXPORT_PREVIEW_ENABLED = False;\n  the test file already contains test_preview_route expecting 404).\n\n## Existing behavior to preserve\n- routes.get(\"/settings\") -> (200, {\"theme\": \"light\"}); any other path -> (404, None).\n- Unchanged consumer: tests/test_routes.py. No other in-repo callers of routes.get.\n\n## Delivery constraints\n- Python 3.9+, standard library only.\n- Increment must be independently compatible while Task 2 is pending.\n- Flag is a checked-in constant (config.EXPORT_PREVIEW_ENABLED = False), not runtime-supplied.\n\n## Baselines\n- Review base = HEAD f1a16b5. No release tag or deployment inventory exists (README states this).\n\n## Attributed verification (parent-executed)\n- `python3 -B -m unittest discover -s tests -v` on the candidate worktree (== index):\n  3 tests ran, all OK (test_current_settings, test_preview_route, test_unknown_route).\n\n## Rejected approaches\n- None recorded.\n",
+      "file_path": "/tmp/kk-review-evidence-WK5kp3/change-context.md"
+    },
+    "name": "Write",
+    "type": "tool_use"
+  },
+  "id": "e167.0",
+  "parent_tool_use_id": null,
+  "session_id": "1a8c0c48-7f06-4089-8fde-b8273dca84cc",
+  "source_sequence": 167
+}

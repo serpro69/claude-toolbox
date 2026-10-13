@@ -1,0 +1,19 @@
+{
+  "actor": "main",
+  "block": {
+    "caller": {
+      "type": "direct"
+    },
+    "id": "toolu_01X1wtrppFRSRtgH2hN94ugX",
+    "input": {
+      "content": "# Change context (factual record, parent-prepared)\n\n## Intent and authority\n- README.md (repo root): client and provider ship independently. Every merged client\n  increment must support the released provider at Git tag `eval-release`, including\n  ordinary settings saves while enhanced_settings is false. `provider/settings.py` at\n  that tag is the supported provider source. A successful settings save means values\n  were applied and the caller sees success. The candidate provider is not deployed and\n  a pending provider task cannot change the supported baseline. (explicit)\n- docs/feat/wip/enhanced-settings/design.md: ordinary saves must continue to work with\n  the supported provider at eval-release; enhanced UI disabled by default; add an\n  application receipt to the protocol in client and provider increments while\n  preserving independently releasable main. (explicit)\n- docs/feat/wip/enhanced-settings/implementation.md: Task 1 = client-side receipt\n  handling + unit test; Task 2 = provider receipts in separate provider repository.\n  Review only the client increment; shared delivery contract still applies. (explicit)\n\n## Change boundary\n- Selector: staged changes (`git diff --cached`); no unstaged changes exist.\n- Review base: HEAD ac09e55463b2d33bba4cdf6a759d759e3d80c024. Candidate: index.\n  Worktree files equal index blobs (status shows staged-only modifications).\n- Changed files: client.py (index blob 910e877), tests/test_client.py (index blob f1dfc4f).\n- Pending: Task 2 provider receipts.\n\n## Existing behavior\n- Entry point: client.save_settings(send, workspace_id, values, enhanced_settings=False).\n- No other in-repo callers of save_settings besides tests/test_client.py (grep).\n- Released provider (eval-release provider/settings.py, see historical bundle) stores\n  request[\"settings\"] and returns {\"ok\": True}; it does not read `require_receipt`\n  and returns no `applied` key.\n\n## Delivery constraints\n- Independently releasable main; client must support eval-release provider for\n  ordinary saves with enhanced_settings false. No live environment.\n\n## Baselines\n- Review base: HEAD ac09e55. Compatibility baseline: tag eval-release\n  (22140737b2bc5792b535f3f8ce16f7fa162101db), source-level only.\n\n## Verification results\n- No tests were executed by the parent for this review package. README test command:\n  `python3 -B -m unittest discover -s tests`. No author-supplied test results.\n\n## Rejected approaches\n- None recorded.\n",
+      "file_path": "/tmp/kk-review-code-GQVKG1/change-context.md"
+    },
+    "name": "Write",
+    "type": "tool_use"
+  },
+  "id": "e154.0",
+  "parent_tool_use_id": null,
+  "session_id": "7b7ccc14-99a8-4fe5-83b2-d6ad7f0e6b25",
+  "source_sequence": 154
+}

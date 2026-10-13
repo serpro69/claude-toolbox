@@ -1,0 +1,17 @@
+{
+  "actor": "items-01a1352c-224e-7711-a515-7dfc6fa31192",
+  "completedAtMs": 1791893584127,
+  "id": "msg_05296294db9ed367016ace204515ec81918633472dd0729997",
+  "item": {
+    "delivery": null,
+    "id": "msg_05296294db9ed367016ace204515ec81918633472dd0729997",
+    "memoryCitation": null,
+    "phase": "final_answer",
+    "questions": null,
+    "text": "**REQUEST_CHANGES \u2014 one P1 finding.**\n\n**P1: Preserve successful saves with the released provider** \u2014 [client.py:5](/tmp/fr-r7-conclusions-20261013/codex-candidate-R3-standard-1/client.py:5)\n\nThe provider at `eval-release` applies the settings and returns `{\"ok\": True}` without `applied`. The new unconditional check then raises\u2014even with `enhanced_settings=False`. Retrying applies the values again and raises again. The base client reports success in both cases.\n\nThis violates the documented independent-release requirement. Preserve legacy success handling while enforcing receipts when supported, and add regression coverage against the released provider. The updated test only mocks the future receipt format.\n\nProfile: Python \u00b7 Checklist: `code-quality-checklist.md` \u00b7 Trigger: `.py` files. **Confidence: 100%** for this baseline; reproduced using the staged client and actual historical provider source.\n\nReviewed both staged files, **4 additions / 2 deletions**, against HEAD `ac09e55`. Task 1 is in scope; task 2\u2019s provider implementation remains pending.\n\n| Executed scenario | Result |\n|---|---|\n| Staged unit test | Passes |\n| Base client + `eval-release` (`2214073`) | Save and retry succeed |\n| Staged client + released provider | **Blocked:** values apply, caller receives failure |\n| Receipt success, explicit failure, provider error stubs | Expected client outcomes |\n\nFuture-provider compatibility remains unverified; stub tests establish only client behavior. No live environment was assessed or required.\n\nIndexed the systemic finding as `kk:review-findings`. No repository files changed.",
+    "type": "agentMessage"
+  },
+  "source_file": "items-01a1352c-224e-7711-a515-7dfc6fa31192.json",
+  "startedAtMs": 1791893573118,
+  "turnId": "01a1352c-2279-74c3-905a-f55a6036156a"
+}

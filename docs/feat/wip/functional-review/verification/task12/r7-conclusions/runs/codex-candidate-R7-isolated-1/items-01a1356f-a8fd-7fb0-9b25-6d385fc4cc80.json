@@ -1,0 +1,921 @@
+[
+  {
+    "completedAtMs": 1791897891975,
+    "item": {
+      "type": "omitted_private_reasoning"
+    },
+    "startedAtMs": 1791897891975,
+    "turnId": "01a1356f-a91e-7e51-97d7-c0c17d2a5c7e"
+  },
+  {
+    "completedAtMs": 1791897892859,
+    "item": {
+      "delivery": null,
+      "id": "msg_0b9ea86fc24c6ff4016ace3124129c819184caa3d0e17fb18a",
+      "memoryCitation": null,
+      "phase": "commentary",
+      "questions": null,
+      "text": "I\u2019m loading the review method and Python checklists first. Then I\u2019ll trace the payload through the client and assess code compatibility and deployment readiness.\n",
+      "type": "agentMessage"
+    },
+    "startedAtMs": 1791897892110,
+    "turnId": "01a1356f-a91e-7e51-97d7-c0c17d2a5c7e"
+  },
+  {
+    "completedAtMs": 1791897897882,
+    "item": {
+      "aggregatedOutput": "# Change context\n\nEstablish this context before implementation edits or review findings. It is a shared reasoning and handoff contract, not a mandatory new document. Scale it to the change: a few sentences for a helper fix, a compact scenario table for a cross-component mutation. Omit empty boilerplate; explain briefly why an operational dimension is irrelevant.\n\n## Minimum useful record\n\n| Field | Content |\n| --- | --- |\n| Intent and authority | Intended outcomes and constraints; source locations; explicit, inferred or unresolved status. |\n| Change boundary | Current task/request, resolved diff scope, candidate revision/worktree state, affected components and deliberately pending functionality. |\n| Existing behavior | Entry points, unchanged callers/consumers, state/data contracts and invariants to preserve. |\n| Delivery constraints | Applicable repository policy, independent/ordered deployment expectations, flags, migrations, prerequisites and accepted exceptions. |\n| Baselines | Review base and candidate; separately, relevant released/deployed revisions, configurations and data shapes; explicit unknowns. |\n| Scenarios and evidence | Success, boundaries, failure/retry and lifecycle cases that apply; source/test bindings, observed results and unverified conditions. |\n\nUser decisions and applicable repository instructions establish requirements. Consult current design/task contracts and relevant linked issues without assuming an issue is newer or more authoritative. Explain consequential conflicts. Existing code establishes behavior, not product intent; tests can repeat an implementation's mistaken assumption. Without a specification, infer a provisional purpose from the request and inspected evidence and label it. Ask only when materially different interpretations prevent a useful judgment; continue independent investigation.\n\nNever equate the review base, local main, a stable tag and a deployed revision. Name the baseline actually inspected. Source compatibility with a tag does not verify a deployed environment. Missing documents or production access narrow conclusions; they neither disable functional reasoning nor create automatic access or approval requirements.\n\n## Producer and reviewer responsibilities\n\nThe producer supplies facts with file/symbol or revision references, separating assumptions, accepted decisions and unavailable evidence. Author explanations and claimed test results remain attributed inputs, not independent verification. Reviewers challenge inferences and request specific missing evidence.\n\nRefresh affected fields after scope/requirement changes or review fixes. On resume, inspect current repository state rather than trusting a stale handoff. In plan mode, record dated observations, sources, proposals, accepted decisions and unresolved actions in the current task's labeled **Execution context** subsection in `tasks.md`. Observations do not amend specifications; requirement changes need explicit user authorization with source and rationale. Standalone context stays conversational unless material work is deferred: use existing tracking or a concise repository-local review note naming owner (or unassigned), reason, next action and verification condition.\n\n## Historical evidence\n\nWhen compatibility depends on source absent from candidate files or diff hunks, the parent workflow obtains the relevant local Git blob or bounded excerpt. For independent reviewers, materialize actual source in a read-only evidence bundle outside the reviewed worktree. Label repository identity, full revision, original path, blob/content hash, original line span and omitted/redacted extent. Distinguish historical source from candidate files and methodology; give both reviewers the same relevant evidence, not merely the author's summary.\n\nA reviewer requests further evidence by naming repository, revision, path/symbol and the comparison needed. The parent supplies available local source through resume/reinvoke with original context and provisional findings, and supplies equivalent relevant additions through PAL continuation. Retain request provenance. This does not require reviewer shell permissions or authorize otherwise unapproved network/production access. Unavailable source or an inconclusive bounded investigation leaves the specific conclusion **Unknown**, with the missing evidence and next action.\n",
+      "command": "/usr/bin/zsh -lc \"cat '/home/sergio/.codex/plugins/cache/fr-r7-bf873de6-20261013/kk/0.23.0/skills/_shared/change-context.md'\"",
+      "commandActions": [
+        {
+          "command": "cat /home/sergio/.codex/plugins/cache/fr-r7-bf873de6-20261013/kk/0.23.0/skills/_shared/change-context.md",
+          "name": "change-context.md",
+          "path": "/home/sergio/.codex/plugins/cache/fr-r7-bf873de6-20261013/kk/0.23.0/skills/_shared/change-context.md",
+          "type": "read"
+        }
+      ],
+      "cwd": "/tmp/fr-r7-conclusions-20261013/codex-candidate-R7-isolated-1",
+      "durationMs": 106,
+      "exitCode": 0,
+      "id": "exec-940ce4fa-683c-4279-a99d-4eca60cb000e",
+      "pluginId": null,
+      "processId": "75210",
+      "scriptPath": null,
+      "source": "unifiedExecStartup",
+      "status": "completed",
+      "type": "commandExecution"
+    },
+    "startedAtMs": 1791897897776,
+    "turnId": "01a1356f-a91e-7e51-97d7-c0c17d2a5c7e"
+  },
+  {
+    "completedAtMs": 1791897897883,
+    "item": {
+      "aggregatedOutput": "# Capy Knowledge Base Protocol\n\nIf `capy` MCP tools are not available in this session, skip all search and index steps below and proceed normally.\n\n## Source Label Taxonomy\n\nAll plugin-managed labels use the `kk:` namespace prefix.\n\n| Label                    | Contents                                                              |\n| ------------------------ | --------------------------------------------------------------------- |\n| `kk:arch-decisions`      | Architecture decisions, design rationale, trade-offs                  |\n| `kk:review-findings`     | Code review patterns, recurring issues, anti-patterns                 |\n| `kk:lang-idioms`         | Language best practices, idiomatic patterns from external sources     |\n| `kk:project-conventions` | Discovered project patterns, naming conventions, structural decisions |\n| `kk:test-patterns`       | Testing approaches, edge cases, test infrastructure decisions         |\n| `kk:debug-context`       | Root causes, tricky bugs and their fixes, environment gotchas         |\n\n## Search Conventions\n\n- Use 2-4 specific terms per query \u2014 not vague keywords\n- Always scope with `source` filter to relevant `kk:*` labels\n- Use `source: \"kk:\"` only for broad cross-domain searches (e.g., CoVe verification)\n- Default `limit: 3` per query unless more context is needed\n- **Cold-start fallback:** If no results, proceed with standard guidelines \u2014 empty results are normal for new projects\n\n## Index Conventions\n\n- Only index non-obvious learnings not derivable from reading the code or git history\n- Keep content concise \u2014 summarize the insight, don't dump raw output\n- Always use a `kk:` prefixed label from the taxonomy above\n- One concept per `capy_index` call \u2014 don't bundle unrelated learnings\n- Skip indexing if the insight is already captured in design docs or CLAUDE.md\n",
+      "command": "/usr/bin/zsh -lc \"cat '/home/sergio/.codex/plugins/cache/fr-r7-bf873de6-20261013/kk/0.23.0/skills/review-code/shared-capy-knowledge-protocol.md'\"",
+      "commandActions": [
+        {
+          "command": "cat /home/sergio/.codex/plugins/cache/fr-r7-bf873de6-20261013/kk/0.23.0/skills/review-code/shared-capy-knowledge-protocol.md",
+          "name": "shared-capy-knowledge-protocol.md",
+          "path": "/home/sergio/.codex/plugins/cache/fr-r7-bf873de6-20261013/kk/0.23.0/skills/review-code/shared-capy-knowledge-protocol.md",
+          "type": "read"
+        }
+      ],
+      "cwd": "/tmp/fr-r7-conclusions-20261013/codex-candidate-R7-isolated-1",
+      "durationMs": 103,
+      "exitCode": 0,
+      "id": "exec-b96d9862-1c9c-4ebc-8af8-8e3e4037bb8a",
+      "pluginId": null,
+      "processId": "18115",
+      "scriptPath": null,
+      "source": "unifiedExecStartup",
+      "status": "completed",
+      "type": "commandExecution"
+    },
+    "startedAtMs": 1791897897779,
+    "turnId": "01a1356f-a91e-7e51-97d7-c0c17d2a5c7e"
+  },
+  {
+    "completedAtMs": 1791897897888,
+    "item": {
+      "aggregatedOutput": "# Change context\n\nEstablish this context before implementation edits or review findings. It is a shared reasoning and handoff contract, not a mandatory new document. Scale it to the change: a few sentences for a helper fix, a compact scenario table for a cross-component mutation. Omit empty boilerplate; explain briefly why an operational dimension is irrelevant.\n\n## Minimum useful record\n\n| Field | Content |\n| --- | --- |\n| Intent and authority | Intended outcomes and constraints; source locations; explicit, inferred or unresolved status. |\n| Change boundary | Current task/request, resolved diff scope, candidate revision/worktree state, affected components and deliberately pending functionality. |\n| Existing behavior | Entry points, unchanged callers/consumers, state/data contracts and invariants to preserve. |\n| Delivery constraints | Applicable repository policy, independent/ordered deployment expectations, flags, migrations, prerequisites and accepted exceptions. |\n| Baselines | Review base and candidate; separately, relevant released/deployed revisions, configurations and data shapes; explicit unknowns. |\n| Scenarios and evidence | Success, boundaries, failure/retry and lifecycle cases that apply; source/test bindings, observed results and unverified conditions. |\n\nUser decisions and applicable repository instructions establish requirements. Consult current design/task contracts and relevant linked issues without assuming an issue is newer or more authoritative. Explain consequential conflicts. Existing code establishes behavior, not product intent; tests can repeat an implementation's mistaken assumption. Without a specification, infer a provisional purpose from the request and inspected evidence and label it. Ask only when materially different interpretations prevent a useful judgment; continue independent investigation.\n\nNever equate the review base, local main, a stable tag and a deployed revision. Name the baseline actually inspected. Source compatibility with a tag does not verify a deployed environment. Missing documents or production access narrow conclusions; they neither disable functional reasoning nor create automatic access or approval requirements.\n\n## Producer and reviewer responsibilities\n\nThe producer supplies facts with file/symbol or revision references, separating assumptions, accepted decisions and unavailable evidence. Author explanations and claimed test results remain attributed inputs, not independent verification. Reviewers challenge inferences and request specific missing evidence.\n\nRefresh affected fields after scope/requirement changes or review fixes. On resume, inspect current repository state rather than trusting a stale handoff. In plan mode, record dated observations, sources, proposals, accepted decisions and unresolved actions in the current task's labeled **Execution context** subsection in `tasks.md`. Observations do not amend specifications; requirement changes need explicit user authorization with source and rationale. Standalone context stays conversational unless material work is deferred: use existing tracking or a concise repository-local review note naming owner (or unassigned), reason, next action and verification condition.\n\n## Historical evidence\n\nWhen compatibility depends on source absent from candidate files or diff hunks, the parent workflow obtains the relevant local Git blob or bounded excerpt. For independent reviewers, materialize actual source in a read-only evidence bundle outside the reviewed worktree. Label repository identity, full revision, original path, blob/content hash, original line span and omitted/redacted extent. Distinguish historical source from candidate files and methodology; give both reviewers the same relevant evidence, not merely the author's summary.\n\nA reviewer requests further evidence by naming repository, revision, path/symbol and the comparison needed. The parent supplies available local source through resume/reinvoke with original context and provisional findings, and supplies equivalent relevant additions through PAL continuation. Retain request provenance. This does not require reviewer shell permissions or authorize otherwise unapproved network/production access. Unavailable source or an inconclusive bounded investigation leaves the specific conclusion **Unknown**, with the missing evidence and next action.\n",
+      "command": "/usr/bin/zsh -lc \"cat '/home/sergio/.codex/plugins/cache/fr-r7-bf873de6-20261013/kk/0.23.0/skills/review-code/shared-change-context.md'\"",
+      "commandActions": [
+        {
+          "command": "cat /home/sergio/.codex/plugins/cache/fr-r7-bf873de6-20261013/kk/0.23.0/skills/review-code/shared-change-context.md",
+          "name": "shared-change-context.md",
+          "path": "/home/sergio/.codex/plugins/cache/fr-r7-bf873de6-20261013/kk/0.23.0/skills/review-code/shared-change-context.md",
+          "type": "read"
+        }
+      ],
+      "cwd": "/tmp/fr-r7-conclusions-20261013/codex-candidate-R7-isolated-1",
+      "durationMs": 110,
+      "exitCode": 0,
+      "id": "exec-4e7bc5fb-008d-45a9-8012-1b3ec5f25127",
+      "pluginId": null,
+      "processId": "75246",
+      "scriptPath": null,
+      "source": "unifiedExecStartup",
+      "status": "completed",
+      "type": "commandExecution"
+    },
+    "startedAtMs": 1791897897777,
+    "turnId": "01a1356f-a91e-7e51-97d7-c0c17d2a5c7e"
+  },
+  {
+    "completedAtMs": 1791897897894,
+    "item": {
+      "aggregatedOutput": "# SOLID Smell Prompts\n\n## SRP (Single Responsibility)\n\n- File owns unrelated concerns (e.g., HTTP + DB + domain rules in one file)\n- Large class/module with low cohesion or multiple reasons to change\n- Functions that orchestrate many unrelated steps\n- God objects that know too much about the system\n- Circular imports between modules (signals tangled responsibilities \u2014 causes `ImportError`/`AttributeError` at runtime)\n- **Ask**: \"What is the single reason this module would change?\"\n\n## OCP (Open/Closed)\n\n- Adding a new behavior requires editing many `if/elif` chains (or `match/case` blocks)\n- Feature growth requires modifying core logic rather than extending\n- No plugin/strategy/hook points for variation\n- **Ask**: \"Can I add a new variant without touching existing code?\"\n\n## LSP (Liskov Substitution)\n\n- Subclass checks for concrete type via `isinstance` or raises for base method\n- Overridden methods weaken preconditions or strengthen postconditions\n- Subclass ignores or no-ops parent behavior\n- **Ask**: \"Can I substitute any subclass without the caller knowing?\"\n\n## ISP (Interface Segregation)\n\n- ABCs/Protocols with many methods, most unused by implementers\n- Callers depend on broad interfaces for narrow needs\n- `NotImplementedError` stubs in subclasses\n- **Ask**: \"Do all implementers use all methods?\"\n\n## DIP (Dependency Inversion)\n\n- High-level logic depends on concrete IO, storage, or network types\n- Hard-coded implementations instead of abstractions or injection\n- Import chains that couple business logic to infrastructure\n- **Ask**: \"Can I swap the implementation without changing business logic?\"\n\n---\n\n## Common Code Smells (Beyond SOLID)\n\n| Smell | Signs |\n|-------|-------|\n| **Long method** | Function > 30 lines, multiple levels of nesting |\n| **Feature envy** | Method uses more data from another class than its own |\n| **Data clumps** | Same group of parameters passed together repeatedly |\n| **Primitive obsession** | Using strings/numbers instead of domain types |\n| **Shotgun surgery** | One change requires edits across many files |\n| **Divergent change** | One file changes for many unrelated reasons |\n| **Dead code** | Unreachable or never-called code |\n| **Speculative generality** | Abstractions for hypothetical future needs |\n| **Magic numbers/strings** | Hardcoded values without named constants |\n| **Expensive `@property`** | Property getter performs I/O, DB queries, or heavy computation \u2014 callers expect attribute access to be cheap |\n\n---\n\n## Refactor Heuristics\n\n1. **Split by responsibility, not by size** - A small file can still violate SRP\n2. **Introduce abstraction only when needed** - Wait for the second use case\n3. **Keep refactors incremental** - Isolate behavior before moving\n4. **Preserve behavior first** - Add tests before restructuring\n5. **Name things by intent** - If naming is hard, the abstraction might be wrong\n6. **Prefer composition over inheritance** - Multiple inheritance creates MRO complexity and tight coupling\n7. **Make illegal states unrepresentable** - Use types to enforce invariants\n",
+      "command": "/usr/bin/zsh -lc \"cat '/home/sergio/.codex/plugins/cache/fr-r7-bf873de6-20261013/kk/0.23.0/profiles/python/review-code/solid-checklist.md'\"",
+      "commandActions": [
+        {
+          "command": "cat /home/sergio/.codex/plugins/cache/fr-r7-bf873de6-20261013/kk/0.23.0/profiles/python/review-code/solid-checklist.md",
+          "name": "solid-checklist.md",
+          "path": "/home/sergio/.codex/plugins/cache/fr-r7-bf873de6-20261013/kk/0.23.0/profiles/python/review-code/solid-checklist.md",
+          "type": "read"
+        }
+      ],
+      "cwd": "/tmp/fr-r7-conclusions-20261013/codex-candidate-R7-isolated-1",
+      "durationMs": 109,
+      "exitCode": 0,
+      "id": "exec-5ec710a3-11d3-4760-a8d7-e534a87958cd",
+      "pluginId": null,
+      "processId": "3198",
+      "scriptPath": null,
+      "source": "unifiedExecStartup",
+      "status": "completed",
+      "type": "commandExecution"
+    },
+    "startedAtMs": 1791897897785,
+    "turnId": "01a1356f-a91e-7e51-97d7-c0c17d2a5c7e"
+  },
+  {
+    "completedAtMs": 1791897897898,
+    "item": {
+      "aggregatedOutput": "# Security and Reliability Checklist\n\n## Contents\n- Input/Output Safety (XSS, injection, SSRF, path traversal, unsafe deserialization)\n- AuthN/AuthZ\n- JWT & Token Security\n- Secrets and PII\n- Supply Chain & Dependencies\n- CORS & Headers\n- Runtime Risks (unbounded ops, GIL contention, resource exhaustion)\n- Cryptography\n- Race Conditions (shared state, TOCTOU, database concurrency, distributed)\n- Data Integrity\n\n## Input/Output Safety\n\n- **XSS**: Unsafe HTML injection, Jinja2 `|safe` filter or `Markup()` bypassing auto-escaping, raw string interpolation in HTML responses\n- **Injection**: SQL injection via f-strings or `%` formatting instead of parameterized queries; command injection via `os.system`, `subprocess.run(shell=True)` with user input\n- **SSRF**: User-controlled URLs reaching internal services without allowlist validation\n- **Path traversal**: User input in file paths without sanitization (`../` attacks), `os.path.join` with absolute user input bypassing base directory\n- **Unsafe deserialization**: Using `pickle.loads`, `yaml.load` (without `SafeLoader`), or `eval`/`exec` on untrusted input\n- **Code injection via imports**: User input reaching `__import__`, `importlib.import_module`, or dynamic module loading\n\n## AuthN/AuthZ\n\n- Missing tenant or ownership checks for read/write operations\n- New endpoints without auth guards or RBAC enforcement\n- Trusting client-provided roles/flags/IDs\n- Broken access control (IDOR - Insecure Direct Object Reference)\n- Session fixation or weak session management\n\n## JWT & Token Security\n\n- Algorithm confusion attacks (accepting `none` or `HS256` when expecting `RS256`)\n- Weak or hardcoded secrets\n- Missing expiration (`exp`) or not validating it\n- Sensitive data in JWT payload (tokens are base64, not encrypted)\n- Not validating `iss` (issuer) or `aud` (audience)\n\n## Secrets and PII\n\n- API keys, tokens, or credentials in code/config/logs\n- Secrets in git history or environment variables exposed to client\n- Excessive logging of PII or sensitive payloads\n- Missing data masking in error messages\n\n## Supply Chain & Dependencies\n\n- Unpinned dependencies allowing malicious updates (missing version pins in `requirements.txt`/`pyproject.toml`)\n- Dependency confusion (private package name collision on PyPI)\n- Importing from untrusted sources without integrity checks\n- Outdated dependencies with known CVEs\n\n## CORS & Headers\n\n- Overly permissive CORS (`Access-Control-Allow-Origin: *` with credentials)\n- Missing security headers (CSP, X-Frame-Options, X-Content-Type-Options)\n- Exposed internal headers or stack traces\n\n## Runtime Risks\n\n- Unbounded loops, recursive calls, or large in-memory buffers\n- Missing timeouts, retries, or rate limiting on external calls\n- Blocking operations on the event loop (sync I/O in `async` context)\n- Resource exhaustion (file handles, connections, memory)\n- **`assert` stripped in optimized mode**: `python -O` removes all `assert` statements \u2014 never use `assert` for security/input validation\n- ReDoS (Regular Expression Denial of Service)\n\n## Cryptography\n\n- Weak algorithms (MD5, SHA1 for security purposes)\n- Hardcoded IVs or salts\n- Using encryption without authentication (ECB mode, no HMAC)\n- Insufficient key length\n- Using `==` for secret/token comparison instead of `hmac.compare_digest` (leaks timing information)\n\n## Race Conditions\n\nRace conditions are subtle bugs that cause intermittent failures and security vulnerabilities. Pay special attention to:\n\n### Shared State Access\n- Multiple threads accessing shared variables without locks (GIL does not protect multi-step operations)\n- Global state or module-level mutables modified concurrently\n- Lazy initialization without proper locking\n- Non-thread-safe collections used in concurrent context\n\n### Check-Then-Act (TOCTOU)\n- `if (exists) then use` patterns without atomic operations\n- `if (authorized) then perform` where authorization can change\n- File existence check followed by file operation\n- Balance check followed by deduction (financial operations)\n- Inventory check followed by order placement\n- `tempfile.mktemp()` is deprecated (TOCTOU race) \u2014 use `tempfile.mkstemp()` or `NamedTemporaryFile`\n\n### Database Concurrency\n- Missing optimistic locking (`version` column, `updated_at` checks)\n- Missing pessimistic locking (`SELECT FOR UPDATE`)\n- Read-modify-write without transaction isolation\n- Counter increments without atomic operations (`UPDATE SET count = count + 1`)\n- Unique constraint violations in concurrent inserts\n\n### Distributed Systems\n- Missing distributed locks for shared resources\n- Leader election race conditions\n- Cache invalidation races (stale reads after writes)\n- Event ordering dependencies without proper sequencing\n- Split-brain scenarios in cluster operations\n\n### Common Patterns to Flag\n```python\n# Dangerous patterns:\n\n# TOCTOU\nif not os.path.exists(path):\n    open(path, \"w\").write(data)\n\n# Read-modify-write\nvalue = cache.get(key)\nvalue += 1\ncache.set(key, value)\n\n# Check-then-act\nif user.balance >= amount:\n    user.balance -= amount\n    user.save()\n```\n\n### Questions to Ask\n- \"What happens if two requests hit this code simultaneously?\"\n- \"Is this operation atomic or can it be interrupted?\"\n- \"What shared state does this code access?\"\n- \"How does this behave under high concurrency?\"\n\n## Data Integrity\n\n- Missing transactions, partial writes, or inconsistent state updates\n- Weak validation before persistence (implicit type conversion issues)\n- Missing idempotency for retryable operations\n- Lost updates due to concurrent modifications\n",
+      "command": "/usr/bin/zsh -lc \"cat '/home/sergio/.codex/plugins/cache/fr-r7-bf873de6-20261013/kk/0.23.0/profiles/python/review-code/security-checklist.md'\"",
+      "commandActions": [
+        {
+          "command": "cat /home/sergio/.codex/plugins/cache/fr-r7-bf873de6-20261013/kk/0.23.0/profiles/python/review-code/security-checklist.md",
+          "name": "security-checklist.md",
+          "path": "/home/sergio/.codex/plugins/cache/fr-r7-bf873de6-20261013/kk/0.23.0/profiles/python/review-code/security-checklist.md",
+          "type": "read"
+        }
+      ],
+      "cwd": "/tmp/fr-r7-conclusions-20261013/codex-candidate-R7-isolated-1",
+      "durationMs": 115,
+      "exitCode": 0,
+      "id": "exec-6c015545-9140-4f7c-b380-82dcd7276781",
+      "pluginId": null,
+      "processId": "20806",
+      "scriptPath": null,
+      "source": "unifiedExecStartup",
+      "status": "completed",
+      "type": "commandExecution"
+    },
+    "startedAtMs": 1791897897782,
+    "turnId": "01a1356f-a91e-7e51-97d7-c0c17d2a5c7e"
+  },
+  {
+    "completedAtMs": 1791897897910,
+    "item": {
+      "aggregatedOutput": "# Functional and operational review\n\nApply this common method after loading all instructions and resolved profile guidance. It complements SOLID, security and domain checklists on every change, including libraries, CLIs, infrastructure and agent instructions. Operational assessment applies where deployment, activation, persistence, startup, configuration or inter-component contracts are affected.\n\n## Trace the affected behavior\n\n1. Establish or reconstruct the record in [shared-change-context.md](shared-change-context.md). Locate and read the affected component's README or contract documentation before tracing behavior, when available. Record explicit outcomes, preserved invariants and delivery constraints with source locations; do not replace documented requirements with test expectations or invite a product decision already settled there. Label inferred intent when no contract exists. Use [shared-review-scope-protocol.md](shared-review-scope-protocol.md) to distinguish current work from genuinely pending functionality.\n2. Describe relevant behavior before and after the change. Trace changed entry points/callers through meaningful dependencies to responses, side effects or durable state. Include unchanged consumers whose expectations may now fail. Read adjacent source to answer an identified contract/impact question; stop expanding once its contract and consequence are established, or name the uncovered boundary. A failed compound command does not establish source unavailability: retry permitted individual reads, while honoring explicit access denials; an isolated reviewer can request those reads through its parent. A file-count cap must not silently cut off a necessary trace.\n3. Exercise that model with concrete success and boundary scenarios. Where applicable, include partial failure, retries, edits between attempts, cleanup and later reuse. Trace the documented scenario's actual state transitions through the unchanged consumer; a similar hypothetical sequence does not establish the documented failure/recovery path. For required transitions, cover the initial, relevant intermediate and final states against available fixtures; finding a failure in one state does not verify the others. Check which tests actually exercise the claimed contract and failure path. Green implementation-shaped tests or successful transport/status responses do not prove a successful business operation. Distinguish inspected source, executed tests and unverified assumptions; do not claim execution from source-only access.\n4. Compare the approach with requirements and existing conventions. Challenge complexity by naming its cost and a simpler alternative preserving required behavior. Trace the proposed correction against documented invariants, including completed-operation/idempotent paths; retain necessary retry/recovery guarantees. Recommend work only for a demonstrated issue or specific uncovered requirement; do not duplicate existing test coverage. More abstraction is not inherently better; a hypothetical race is not automatically a new requirement.\n5. Assess relevant compatibility combinations below, then apply profile expertise and substantiate findings. One issue spanning several lenses remains one finding.\n\nKeep a compact scenario record as you trace: **contract/source \u2192 initial state \u2192 operation or transition \u2192 expected result \u2192 candidate result \u2192 evidence/limit**. Populate it from the actual requirements before deciding which paths are covered; a finding does not complete unrelated required rows. Carry the relevant rows into the report, including supported controls and intermediate states. Small changes may use one sentence. For instruction changes, consumers may be another skill, an agent payload, a generator or a parser.\n\n## Compatibility and delivery\n\nIdentify combinations required by the actual delivery policy: for example, new consumer/old provider, old consumer/new provider, partly migrated data, disabled configuration, mixed versions or rollback. Select relevant combinations rather than an indiscriminate Cartesian product. Apply the shared context's historical-evidence rules when the decisive source is absent locally from the candidate.\n\nDeployment, activation and migration are distinct operations. A flag supports safety only after checking all affected startup, read, write and consumer paths obey it. Pending tasks cannot excuse a broken current flow. Conversely, unreachable unfinished paths need not be implemented for an otherwise compatible increment to ship. A documented prerequisite does not satisfy an explicit independently-releasable-main requirement.\n\nAssess the reviewed increment first. Expand to a production-to-candidate comparison only when a requested release assessment or relevant inherited change requires it and the baseline is available. Attribute inherited defects separately; distinguish introduced or worsened failures from pre-existing ones and supported reachability from hypothetical incidents. Bound any release conclusion when the full candidate cannot be assessed.\n\nFor each applicable dimension, state:\n\n- **Supported:** evidence supports the named scenarios against the named baseline. Client-only tests establish client behavior, not an uninspected provider's contract or deployment compatibility.\n- **Blocked:** demonstrated incompatibility or a known unmet delivery requirement prevents the stated release.\n- **Unknown:** material baseline, environment, consumer or data evidence is missing; name it and the next action.\n- **Not applicable:** no consequence for that dimension, with a reason.\n\nSupported is not a production guarantee. Missing evidence is not an invented code defect. Preserve existing P0\u2013P3 severity according to actual impact; do not create a separate severity taxonomy.\n\nReserve P0 for demonstrated critical consequences needing immediate mitigation. A scoped regression or recoverable wrong value does not establish catastrophic or irreversible loss. Hard acceptance violations still require changes when their impact merits P1 or P2.\n\n## Verdict mapping\n\n| Evidence | Code-review verdict | Release assessment |\n| --- | --- | --- |\n| In-scope incompatibility caused or worsened by the change | One impact-rated finding. REQUEST_CHANGES for P0/P1 or a violated hard acceptance/delivery requirement; otherwise COMMENT for an actionable nonblocking issue. | Blocked for the affected required combination. |\n| Known external rollout prerequisite, no demonstrated code defect | Assess code on its merits; APPROVE may be scoped explicitly to code. | Blocked until the prerequisite is met; document the dependency. |\n| Unknown evidence essential to task acceptance or an explicitly requested release conclusion | COMMENT absent a defect warranting REQUEST_CHANGES. Scoped code support is not release approval. | Unknown until the missing evidence is supplied and assessed. Name the next check rather than offering conditional deployment approval. |\n| Unknown operational detail outside the requested/required assessment | Does not automatically downgrade a supported, explicitly scoped code verdict. | Unknown for that unassessed environment. |\n| Supported or Not applicable | Apply existing severity/finding rules; neither overrides another defect. | Retain named baseline and limits. |\n\nCode approval with conditional release readiness cannot bypass a hard independent-delivery requirement. An unmet hard requirement stays open unless the user explicitly changes it or accepts an exception, recorded with rationale and prerequisites.\n\n## Evidence-qualified reporting\n\nEvery report, including one with findings, identifies intent, actual scope/base/candidate, inspected paths and important evidence limits. Include a compact behavior/compatibility assessment with applicable conclusions. For each behavioral finding provide trigger, affected path, expected/actual result, consequence and correction; preserve confidence reasoning, severity and profile/checklist labels. Separate inherited findings and author-attributed inputs.\n\nBefore presenting, reconcile inspection, execution and compatibility claims, including closing advice, with supporting evidence and successful returned tool results. Denied reads, unread source and truncated results belong under missing coverage. A supported finding does not establish that the full diff was inspected or tests ran; remove unsupported claims, including copied template wording.\n\nRecord outstanding evidence or release/migration/activation prerequisites and next actions; name their durable tracking location when deferred. Preserve disagreement and uncertainty. Reviewer agreement never replaces source evidence. In isolated reporting, retain native external findings and annotations, disclose failures or zero/incomplete source coverage, and do not claim corroboration or broad safety from an underfed external result. Useful available findings remain reportable.\n",
+      "command": "/usr/bin/zsh -lc \"cat '/home/sergio/.codex/plugins/cache/fr-r7-bf873de6-20261013/kk/0.23.0/skills/review-code/functional-review.md'\"",
+      "commandActions": [
+        {
+          "command": "cat /home/sergio/.codex/plugins/cache/fr-r7-bf873de6-20261013/kk/0.23.0/skills/review-code/functional-review.md",
+          "name": "functional-review.md",
+          "path": "/home/sergio/.codex/plugins/cache/fr-r7-bf873de6-20261013/kk/0.23.0/skills/review-code/functional-review.md",
+          "type": "read"
+        }
+      ],
+      "cwd": "/tmp/fr-r7-conclusions-20261013/codex-candidate-R7-isolated-1",
+      "durationMs": 130,
+      "exitCode": 0,
+      "id": "exec-82223c71-f206-4ee8-a087-44a9eef0d2f1",
+      "pluginId": null,
+      "processId": "4524",
+      "scriptPath": null,
+      "source": "unifiedExecStartup",
+      "status": "completed",
+      "type": "commandExecution"
+    },
+    "startedAtMs": 1791897897780,
+    "turnId": "01a1356f-a91e-7e51-97d7-c0c17d2a5c7e"
+  },
+  {
+    "completedAtMs": 1791897897914,
+    "item": {
+      "aggregatedOutput": "## Review scope protocol\n\nReviewers need task status alongside the diff and design docs. Without scope, they flag code-that-isn't-written-yet as `MISSING_IMPL` (spec review) or as missing functionality (code review). Standard review uses this scope locally; isolated review injects the same artifact into sub-agent and external-reviewer prompts. The existing $kk:review-spec payload remains sufficient; no additional change-context record is required by this protocol.\n\n**Code-review timing:** apply this protocol's task-document reads during the\npost-instruction investigation phase, after every resolved checklist is loaded.\nEarly diff selection uses filenames and Git metadata; it is distinct from\ndetermining task scope. Reading this protocol does not authorize early inspection\nof a discovered task file's requirements. The calling workflow still governs\nany bounded inspection needed solely for a declared routing predicate.\n\n### Input shapes\n\nThe review workflow must handle three invocation shapes:\n\n1. **Invoked from `$kk:implement`** \u2014 `/docs/feat/wip/[feature]/` exists with `design.md`, `implementation.md`, `tasks.md`. The current task id is known (the one just finished). Use full scope filtering.\n2. **Invoked directly inside a feature** \u2014 `/docs/feat/wip/[feature]/` exists but no current task is explicitly supplied. Derive scope from `tasks.md` status fields (`done` = in scope, `pending`/`in-progress` = out of scope).\n3. **Invoked on an arbitrary diff** \u2014 no `/docs/feat/wip/` directory relates to the diff. Skip the scope artifact entirely and note \"No task scope available\" in the reviewer prompt.\n\n### Scope artifact format\n\nWhen shape 1 or 2 applies, build this block and inject it into every reviewer prompt (sub-agent prompt template and the external-reviewer `step` framing):\n\n```\n## Task Scope\n\nReview mode: {mid-implementation | post-implementation}\n\nIn scope (review these):\n- Task {id}: {title} \u2014 status: done\n- [...more done tasks if applicable]\n\nOut of scope (pending \u2014 DO NOT flag as missing):\n- Task {id}: {title} \u2014 status: {pending|in-progress}\n- [...more pending tasks]\n\nThe feature's design docs describe the full end state. Pending tasks are expected gaps in the current diff \u2014 treat their absence from the code as intentional, not as a finding. You may still flag issues within the in-scope tasks even if they reference pending tasks (e.g., a broken interface contract). Pending work does not excuse current regressions or incompatibility: assess whether the reviewed increment preserves existing flows and meets applicable delivery requirements. Genuinely unreachable unfinished paths need not be implemented merely because they are planned.\n```\n\nWhen shape 3 applies, use:\n\n```\n## Task Scope\n\nNo task scope available \u2014 review the diff on its own merits without assuming any feature-level design doc.\n```\n\n### Determining mode\n\n- **mid-implementation** \u2014 at least one task in `tasks.md` has status `pending` or `in-progress`.\n- **post-implementation** \u2014 all tasks are `done`.\n\nIn shape 1, the invoking workflow (`$kk:implement`) may pass the current task id directly; that task is automatically in scope even if `tasks.md` hasn't been updated yet.\n\n### Interpretation guidance for reviewers\n\nThe reviewer prompt must also carry this instruction (agent definitions should state it; the workflow relays it implicitly via the scope block):\n\n- Do **not** report missing-implementation findings for items covered only by out-of-scope tasks.\n- Do still report real issues *within* the in-scope tasks, including ones that affect future pending work (e.g., a public API the pending task will depend on is shaped wrongly).\n- A current consumer that already requires a pending provider change remains reviewable, including when the larger feature is disabled. Distinguish deployment from activation and check the actual affected paths; a flag or a future task alone proves neither reachability nor safety.\n- Attribute introduced/worsened behavior separately from inherited defects. Do not invent a current regression or require pending work when the increment remains compatible under its actual delivery contract.\n- If a finding would be valid *only* after pending work lands, mention it under \"Areas Not Covered\" instead of the P0\u2013P3 sections.\n",
+      "command": "/usr/bin/zsh -lc \"cat '/home/sergio/.codex/plugins/cache/fr-r7-bf873de6-20261013/kk/0.23.0/skills/_shared/review-scope-protocol.md'\"",
+      "commandActions": [
+        {
+          "command": "cat /home/sergio/.codex/plugins/cache/fr-r7-bf873de6-20261013/kk/0.23.0/skills/_shared/review-scope-protocol.md",
+          "name": "review-scope-protocol.md",
+          "path": "/home/sergio/.codex/plugins/cache/fr-r7-bf873de6-20261013/kk/0.23.0/skills/_shared/review-scope-protocol.md",
+          "type": "read"
+        }
+      ],
+      "cwd": "/tmp/fr-r7-conclusions-20261013/codex-candidate-R7-isolated-1",
+      "durationMs": 133,
+      "exitCode": 0,
+      "id": "exec-b12040f3-2ef0-4922-bbd1-ba84c413c555",
+      "pluginId": null,
+      "processId": "88983",
+      "scriptPath": null,
+      "source": "unifiedExecStartup",
+      "status": "completed",
+      "type": "commandExecution"
+    },
+    "startedAtMs": 1791897897780,
+    "turnId": "01a1356f-a91e-7e51-97d7-c0c17d2a5c7e"
+  },
+  {
+    "completedAtMs": 1791897897914,
+    "item": {
+      "aggregatedOutput": "# Capy Knowledge Base Protocol\n\nIf `capy` MCP tools are not available in this session, skip all search and index steps below and proceed normally.\n\n## Source Label Taxonomy\n\nAll plugin-managed labels use the `kk:` namespace prefix.\n\n| Label                    | Contents                                                              |\n| ------------------------ | --------------------------------------------------------------------- |\n| `kk:arch-decisions`      | Architecture decisions, design rationale, trade-offs                  |\n| `kk:review-findings`     | Code review patterns, recurring issues, anti-patterns                 |\n| `kk:lang-idioms`         | Language best practices, idiomatic patterns from external sources     |\n| `kk:project-conventions` | Discovered project patterns, naming conventions, structural decisions |\n| `kk:test-patterns`       | Testing approaches, edge cases, test infrastructure decisions         |\n| `kk:debug-context`       | Root causes, tricky bugs and their fixes, environment gotchas         |\n\n## Search Conventions\n\n- Use 2-4 specific terms per query \u2014 not vague keywords\n- Always scope with `source` filter to relevant `kk:*` labels\n- Use `source: \"kk:\"` only for broad cross-domain searches (e.g., CoVe verification)\n- Default `limit: 3` per query unless more context is needed\n- **Cold-start fallback:** If no results, proceed with standard guidelines \u2014 empty results are normal for new projects\n\n## Index Conventions\n\n- Only index non-obvious learnings not derivable from reading the code or git history\n- Keep content concise \u2014 summarize the insight, don't dump raw output\n- Always use a `kk:` prefixed label from the taxonomy above\n- One concept per `capy_index` call \u2014 don't bundle unrelated learnings\n- Skip indexing if the insight is already captured in design docs or CLAUDE.md\n",
+      "command": "/usr/bin/zsh -lc \"cat '/home/sergio/.codex/plugins/cache/fr-r7-bf873de6-20261013/kk/0.23.0/skills/_shared/capy-knowledge-protocol.md'\"",
+      "commandActions": [
+        {
+          "command": "cat /home/sergio/.codex/plugins/cache/fr-r7-bf873de6-20261013/kk/0.23.0/skills/_shared/capy-knowledge-protocol.md",
+          "name": "capy-knowledge-protocol.md",
+          "path": "/home/sergio/.codex/plugins/cache/fr-r7-bf873de6-20261013/kk/0.23.0/skills/_shared/capy-knowledge-protocol.md",
+          "type": "read"
+        }
+      ],
+      "cwd": "/tmp/fr-r7-conclusions-20261013/codex-candidate-R7-isolated-1",
+      "durationMs": 135,
+      "exitCode": 0,
+      "id": "exec-936c68b6-a42c-423c-97d1-842c23456589",
+      "pluginId": null,
+      "processId": "31526",
+      "scriptPath": null,
+      "source": "unifiedExecStartup",
+      "status": "completed",
+      "type": "commandExecution"
+    },
+    "startedAtMs": 1791897897779,
+    "turnId": "01a1356f-a91e-7e51-97d7-c0c17d2a5c7e"
+  },
+  {
+    "completedAtMs": 1791897897916,
+    "item": {
+      "aggregatedOutput": "# Removal and Iteration Plan Template\n\n## Priority Levels\n\n- [ ] **P0**: Immediate removal needed (security risk, significant cost, blocking other work)\n- [ ] **P1**: Remove in current sprint\n- [ ] **P2**: Backlog / next iteration\n\n---\n\n## Safe to Remove Now\n\n### Item: [Name/Description]\n\n| Field | Details |\n|-------|---------|\n| **Location** | `path/to/file.py:line` |\n| **Rationale** | Why this should be removed |\n| **Evidence** | Unused (no references), dead feature flag, deprecated API |\n| **Impact** | None / Low - no active consumers |\n| **Deletion steps** | 1. Remove code 2. Remove tests 3. Remove config |\n| **Verification** | Run tests, check no runtime errors, monitor logs |\n\n---\n\n## Defer Removal (Plan Required)\n\n### Item: [Name/Description]\n\n| Field | Details |\n|-------|---------|\n| **Location** | `path/to/file.py:line` |\n| **Why defer** | Active consumers, needs migration, stakeholder sign-off |\n| **Preconditions** | Feature flag off for 2 weeks, telemetry shows 0 usage |\n| **Breaking changes** | List any API/contract changes |\n| **Migration plan** | Steps for consumers to migrate |\n| **Timeline** | Target date or sprint |\n| **Owner** | Person/team responsible |\n| **Validation** | Metrics to confirm safe removal (error rates, usage counts) |\n| **Rollback plan** | How to restore if issues found |\n\n---\n\n## Checklist Before Removal\n\n- [ ] Searched codebase for all references (`rg`, `grep`)\n- [ ] Checked for dynamic/reflection-based usage (`getattr`, `importlib`)\n- [ ] Verified no external consumers (APIs, SDKs, docs)\n- [ ] Feature flag telemetry reviewed (if applicable)\n- [ ] Tests updated/removed\n- [ ] Documentation updated\n- [ ] Team notified (if shared code)\n",
+      "command": "/usr/bin/zsh -lc \"cat '/home/sergio/.codex/plugins/cache/fr-r7-bf873de6-20261013/kk/0.23.0/profiles/python/review-code/removal-plan.md'\"",
+      "commandActions": [
+        {
+          "command": "cat /home/sergio/.codex/plugins/cache/fr-r7-bf873de6-20261013/kk/0.23.0/profiles/python/review-code/removal-plan.md",
+          "name": "removal-plan.md",
+          "path": "/home/sergio/.codex/plugins/cache/fr-r7-bf873de6-20261013/kk/0.23.0/profiles/python/review-code/removal-plan.md",
+          "type": "read"
+        }
+      ],
+      "cwd": "/tmp/fr-r7-conclusions-20261013/codex-candidate-R7-isolated-1",
+      "durationMs": 129,
+      "exitCode": 0,
+      "id": "exec-75d07012-9213-4366-a784-0e5f6562b50b",
+      "pluginId": null,
+      "processId": "40507",
+      "scriptPath": null,
+      "source": "unifiedExecStartup",
+      "status": "completed",
+      "type": "commandExecution"
+    },
+    "startedAtMs": 1791897897786,
+    "turnId": "01a1356f-a91e-7e51-97d7-c0c17d2a5c7e"
+  },
+  {
+    "completedAtMs": 1791897897920,
+    "item": {
+      "aggregatedOutput": "## Review scope protocol\n\nReviewers need task status alongside the diff and design docs. Without scope, they flag code-that-isn't-written-yet as `MISSING_IMPL` (spec review) or as missing functionality (code review). Standard review uses this scope locally; isolated review injects the same artifact into sub-agent and external-reviewer prompts. The existing $kk:review-spec payload remains sufficient; no additional change-context record is required by this protocol.\n\n**Code-review timing:** apply this protocol's task-document reads during the\npost-instruction investigation phase, after every resolved checklist is loaded.\nEarly diff selection uses filenames and Git metadata; it is distinct from\ndetermining task scope. Reading this protocol does not authorize early inspection\nof a discovered task file's requirements. The calling workflow still governs\nany bounded inspection needed solely for a declared routing predicate.\n\n### Input shapes\n\nThe review workflow must handle three invocation shapes:\n\n1. **Invoked from `$kk:implement`** \u2014 `/docs/feat/wip/[feature]/` exists with `design.md`, `implementation.md`, `tasks.md`. The current task id is known (the one just finished). Use full scope filtering.\n2. **Invoked directly inside a feature** \u2014 `/docs/feat/wip/[feature]/` exists but no current task is explicitly supplied. Derive scope from `tasks.md` status fields (`done` = in scope, `pending`/`in-progress` = out of scope).\n3. **Invoked on an arbitrary diff** \u2014 no `/docs/feat/wip/` directory relates to the diff. Skip the scope artifact entirely and note \"No task scope available\" in the reviewer prompt.\n\n### Scope artifact format\n\nWhen shape 1 or 2 applies, build this block and inject it into every reviewer prompt (sub-agent prompt template and the external-reviewer `step` framing):\n\n```\n## Task Scope\n\nReview mode: {mid-implementation | post-implementation}\n\nIn scope (review these):\n- Task {id}: {title} \u2014 status: done\n- [...more done tasks if applicable]\n\nOut of scope (pending \u2014 DO NOT flag as missing):\n- Task {id}: {title} \u2014 status: {pending|in-progress}\n- [...more pending tasks]\n\nThe feature's design docs describe the full end state. Pending tasks are expected gaps in the current diff \u2014 treat their absence from the code as intentional, not as a finding. You may still flag issues within the in-scope tasks even if they reference pending tasks (e.g., a broken interface contract). Pending work does not excuse current regressions or incompatibility: assess whether the reviewed increment preserves existing flows and meets applicable delivery requirements. Genuinely unreachable unfinished paths need not be implemented merely because they are planned.\n```\n\nWhen shape 3 applies, use:\n\n```\n## Task Scope\n\nNo task scope available \u2014 review the diff on its own merits without assuming any feature-level design doc.\n```\n\n### Determining mode\n\n- **mid-implementation** \u2014 at least one task in `tasks.md` has status `pending` or `in-progress`.\n- **post-implementation** \u2014 all tasks are `done`.\n\nIn shape 1, the invoking workflow (`$kk:implement`) may pass the current task id directly; that task is automatically in scope even if `tasks.md` hasn't been updated yet.\n\n### Interpretation guidance for reviewers\n\nThe reviewer prompt must also carry this instruction (agent definitions should state it; the workflow relays it implicitly via the scope block):\n\n- Do **not** report missing-implementation findings for items covered only by out-of-scope tasks.\n- Do still report real issues *within* the in-scope tasks, including ones that affect future pending work (e.g., a public API the pending task will depend on is shaped wrongly).\n- A current consumer that already requires a pending provider change remains reviewable, including when the larger feature is disabled. Distinguish deployment from activation and check the actual affected paths; a flag or a future task alone proves neither reachability nor safety.\n- Attribute introduced/worsened behavior separately from inherited defects. Do not invent a current regression or require pending work when the increment remains compatible under its actual delivery contract.\n- If a finding would be valid *only* after pending work lands, mention it under \"Areas Not Covered\" instead of the P0\u2013P3 sections.\n",
+      "command": "/usr/bin/zsh -lc \"cat '/home/sergio/.codex/plugins/cache/fr-r7-bf873de6-20261013/kk/0.23.0/skills/review-code/shared-review-scope-protocol.md'\"",
+      "commandActions": [
+        {
+          "command": "cat /home/sergio/.codex/plugins/cache/fr-r7-bf873de6-20261013/kk/0.23.0/skills/review-code/shared-review-scope-protocol.md",
+          "name": "shared-review-scope-protocol.md",
+          "path": "/home/sergio/.codex/plugins/cache/fr-r7-bf873de6-20261013/kk/0.23.0/skills/review-code/shared-review-scope-protocol.md",
+          "type": "read"
+        }
+      ],
+      "cwd": "/tmp/fr-r7-conclusions-20261013/codex-candidate-R7-isolated-1",
+      "durationMs": 143,
+      "exitCode": 0,
+      "id": "exec-95d27e48-eadb-4a5c-8f07-5e128b03130b",
+      "pluginId": null,
+      "processId": "34947",
+      "scriptPath": null,
+      "source": "unifiedExecStartup",
+      "status": "completed",
+      "type": "commandExecution"
+    },
+    "startedAtMs": 1791897897776,
+    "turnId": "01a1356f-a91e-7e51-97d7-c0c17d2a5c7e"
+  },
+  {
+    "completedAtMs": 1791897897927,
+    "item": {
+      "aggregatedOutput": "# Code Quality Checklist\n\n## Contents\n- Error Handling (anti-patterns, best practices, questions)\n- Performance & Caching (CPU, database/IO, caching, memory)\n- Boundary Conditions (None handling, empty collections, numeric, string)\n\n## Error Handling\n\n### Anti-patterns to Flag\n\n- **Swallowed exceptions**: Empty `except` blocks or catch with only logging. Example:\n  ```python\n  try: ...\n  except Exception: pass              # Silent failure\n  try: ...\n  except Exception as e: print(e)     # Log and forget, no re-raise\n  ```\n- **Overly broad except**: Catching bare `Exception` or `BaseException` instead of specific types\n- **Error information leakage**: Stack traces or internal details exposed to users\n- **Missing error handling**: No try-except around fallible operations (I/O, network, parsing)\n- **Async error handling**: Unhandled exceptions in `asyncio` tasks, missing `try/except` in coroutines, fire-and-forget tasks without error callbacks\n\n### Best Practices to Check\n\n- [ ] Errors are caught at appropriate boundaries\n- [ ] Error messages are user-friendly (no internal details exposed)\n- [ ] Errors are logged with sufficient context for debugging\n- [ ] Async task exceptions are retrieved or handled (not silently dropped)\n- [ ] Fallback behavior is defined for recoverable errors\n- [ ] Critical errors trigger alerts/monitoring\n\n### Questions to Ask\n- \"What happens when this operation fails?\"\n- \"Will the caller know something went wrong?\"\n- \"Is there enough context to debug this error?\"\n\n---\n\n## Performance & Caching\n\n### CPU-Intensive Operations\n\n- **Expensive operations in hot paths**: `re.compile` in loops, JSON parsing in hot paths, crypto in loops\n- **Blocking the event loop**: Sync I/O or heavy computation in `async` functions without `run_in_executor`\n- **Unnecessary recomputation**: Same calculation done multiple times\n- **Missing caching**: Pure functions called repeatedly with same inputs, no `@functools.lru_cache` or `@functools.cache`\n- **GIL limitation for CPU-bound work**: `threading` does not parallelize CPU-bound tasks due to the GIL \u2014 use `multiprocessing` or `concurrent.futures.ProcessPoolExecutor`\n\n### Database & I/O\n\n- **N+1 queries**: Loop that makes a query per item instead of batch\n  ```python\n  # Bad: N+1\n  for id in ids:\n      user = db.execute(\"SELECT * FROM users WHERE id = %s\", (id,)).fetchone()\n\n  # Good: Batch\n  users = db.execute(\"SELECT * FROM users WHERE id IN %s\", (tuple(ids),)).fetchall()\n  ```\n- **Missing indexes**: Queries on unindexed columns\n- **Over-fetching**: SELECT * when only few columns needed\n- **No pagination**: Loading entire dataset into memory\n\n### Caching Issues\n\n- **Missing cache for expensive operations**: Repeated API calls, DB queries, computations\n- **Cache without TTL**: Stale data served indefinitely\n- **Cache without invalidation strategy**: Data updated but cache not cleared\n- **Cache key collisions**: Insufficient key uniqueness\n- **Caching user-specific data globally**: Security/privacy issue\n\n### Memory\n\n- **Unbounded collections**: Lists/dicts that grow without limit\n- **Large object retention**: Holding references preventing GC, circular references\n- **String concatenation in loops**: Use `\"\".join(parts)` instead\n- **Loading large files entirely**: Use streaming/iterator patterns instead\n- **Mutable default arguments**: `def foo(items=[])` \u2014 default list is shared across all calls, mutating it causes cross-call contamination\n- **Generator exhaustion**: Iterating a generator/iterator twice silently produces no results on the second pass\n- **Missing context managers**: Not using `with` for files, DB connections, locks \u2014 resources leak on exceptions\n- **Late binding closures**: Lambdas/closures in loops capture the variable by reference, not by value \u2014 all closures see the final loop value\n- **`__del__` unreliability**: `__del__` is not guaranteed to run \u2014 never rely on it for cleanup; use context managers or `atexit`\n\n### Questions to Ask\n- \"What's the time complexity of this operation?\"\n- \"How does this behave with 10x/100x data?\"\n- \"Is this result cacheable? Should it be?\"\n- \"Can this be batched instead of one-by-one?\"\n\n---\n\n## Boundary Conditions\n\n### None Handling\n\n- **Missing None checks**: Accessing attributes on potentially `None` objects (causes `AttributeError`)\n- **Truthiness confusion**: `if value:` when `0`, `\"\"`, `[]`, `{}` are valid values\n- **Excessive None checks**: Deep chains of `if x is not None and x.y is not None` hiding structural issues\n- **`is` vs `==` confusion**: Using `is` to compare values instead of `==` \u2014 works unreliably due to interning (e.g., `x is \"hello\"` may pass for small strings but fail for others)\n- **None vs missing inconsistency**: Mixed usage of `None` and sentinel values without clear convention\n\n### Empty Collections\n\n- **Empty list not handled**: Code assumes list has items\n- **Empty dict edge case**: Iteration or key access on empty dict\n- **First/last element access**: `items[0]` or `items[-1]` without length check\n\n### Numeric Boundaries\n\n- **Division by zero**: Missing check before division (raises `ZeroDivisionError`)\n- **Integer overflow**: Python handles big ints natively, but watch for C-extension or struct boundaries\n- **Floating point comparison**: Using `==` instead of `math.isclose`\n- **Negative values**: Index or count that shouldn't be negative\n- **Off-by-one errors**: Loop bounds, slicing, pagination\n\n### String Boundaries\n\n- **Empty string**: Not handled as edge case\n- **Whitespace-only string**: Passes truthiness check but is effectively empty\n- **Very long strings**: No length limits causing memory/display issues\n- **Unicode edge cases**: Emoji, RTL text, combining characters\n\n### Common Patterns to Flag\n\n```python\n# Dangerous: no None check (AttributeError if user or profile is None)\nname = user.profile.name\n\n# Dangerous: list access without check (IndexError if items is empty)\nfirst = items[0]\n\n# Dangerous: division without check (ZeroDivisionError if count is 0)\navg = total / count\n\n# Dangerous: truthiness check excludes valid values\nif value:  ...   # fails for 0, \"\", [], {}, False\n```\n\n### Questions to Ask\n- \"What if this is None?\"\n- \"What if this collection is empty?\"\n- \"What's the valid range for this number?\"\n- \"What happens at the boundaries (0, -1, sys.maxsize)?\"\n",
+      "command": "/usr/bin/zsh -lc \"cat '/home/sergio/.codex/plugins/cache/fr-r7-bf873de6-20261013/kk/0.23.0/profiles/python/review-code/code-quality-checklist.md'\"",
+      "commandActions": [
+        {
+          "command": "cat /home/sergio/.codex/plugins/cache/fr-r7-bf873de6-20261013/kk/0.23.0/profiles/python/review-code/code-quality-checklist.md",
+          "name": "code-quality-checklist.md",
+          "path": "/home/sergio/.codex/plugins/cache/fr-r7-bf873de6-20261013/kk/0.23.0/profiles/python/review-code/code-quality-checklist.md",
+          "type": "read"
+        }
+      ],
+      "cwd": "/tmp/fr-r7-conclusions-20261013/codex-candidate-R7-isolated-1",
+      "durationMs": 140,
+      "exitCode": 0,
+      "id": "exec-59bdf80f-8968-4958-8b5d-ec7f7bbc6d3e",
+      "pluginId": null,
+      "processId": "93881",
+      "scriptPath": null,
+      "source": "unifiedExecStartup",
+      "status": "completed",
+      "type": "commandExecution"
+    },
+    "startedAtMs": 1791897897786,
+    "turnId": "01a1356f-a91e-7e51-97d7-c0c17d2a5c7e"
+  },
+  {
+    "completedAtMs": 1791897907743,
+    "item": {
+      "type": "omitted_private_reasoning"
+    },
+    "startedAtMs": 1791897907742,
+    "turnId": "01a1356f-a91e-7e51-97d7-c0c17d2a5c7e"
+  },
+  {
+    "completedAtMs": 1791897919642,
+    "item": {
+      "aggregatedOutput": "## Review scope protocol\n\nReviewers need task status alongside the diff and design docs. Without scope, they flag code-that-isn't-written-yet as `MISSING_IMPL` (spec review) or as missing functionality (code review). Standard review uses this scope locally; isolated review injects the same artifact into sub-agent and external-reviewer prompts. The existing $kk:review-spec payload remains sufficient; no additional change-context record is required by this protocol.\n\n**Code-review timing:** apply this protocol's task-document reads during the\npost-instruction investigation phase, after every resolved checklist is loaded.\nEarly diff selection uses filenames and Git metadata; it is distinct from\ndetermining task scope. Reading this protocol does not authorize early inspection\nof a discovered task file's requirements. The calling workflow still governs\nany bounded inspection needed solely for a declared routing predicate.\n\n### Input shapes\n\nThe review workflow must handle three invocation shapes:\n\n1. **Invoked from `$kk:implement`** \u2014 `/docs/feat/wip/[feature]/` exists with `design.md`, `implementation.md`, `tasks.md`. The current task id is known (the one just finished). Use full scope filtering.\n2. **Invoked directly inside a feature** \u2014 `/docs/feat/wip/[feature]/` exists but no current task is explicitly supplied. Derive scope from `tasks.md` status fields (`done` = in scope, `pending`/`in-progress` = out of scope).\n3. **Invoked on an arbitrary diff** \u2014 no `/docs/feat/wip/` directory relates to the diff. Skip the scope artifact entirely and note \"No task scope available\" in the reviewer prompt.\n\n### Scope artifact format\n\nWhen shape 1 or 2 applies, build this block and inject it into every reviewer prompt (sub-agent prompt template and the external-reviewer `step` framing):\n\n```\n## Task Scope\n\nReview mode: {mid-implementation | post-implementation}\n\nIn scope (review these):\n- Task {id}: {title} \u2014 status: done\n- [...more done tasks if applicable]\n\nOut of scope (pending \u2014 DO NOT flag as missing):\n- Task {id}: {title} \u2014 status: {pending|in-progress}\n- [...more pending tasks]\n\nThe feature's design docs describe the full end state. Pending tasks are expected gaps in the current diff \u2014 treat their absence from the code as intentional, not as a finding. You may still flag issues within the in-scope tasks even if they reference pending tasks (e.g., a broken interface contract). Pending work does not excuse current regressions or incompatibility: assess whether the reviewed increment preserves existing flows and meets applicable delivery requirements. Genuinely unreachable unfinished paths need not be implemented merely because they are planned.\n```\n\nWhen shape 3 applies, use:\n\n```\n## Task Scope\n\nNo task scope available \u2014 review the diff on its own merits without assuming any feature-level design doc.\n```\n\n### Determining mode\n\n- **mid-implementation** \u2014 at least one task in `tasks.md` has status `pending` or `in-progress`.\n- **post-implementation** \u2014 all tasks are `done`.\n\nIn shape 1, the invoking workflow (`$kk:implement`) may pass the current task id directly; that task is automatically in scope even if `tasks.md` hasn't been updated yet.\n\n### Interpretation guidance for reviewers\n\nThe reviewer prompt must also carry this instruction (agent definitions should state it; the workflow relays it implicitly via the scope block):\n\n- Do **not** report missing-implementation findings for items covered only by out-of-scope tasks.\n- Do still report real issues *within* the in-scope tasks, including ones that affect future pending work (e.g., a public API the pending task will depend on is shaped wrongly).\n- A current consumer that already requires a pending provider change remains reviewable, including when the larger feature is disabled. Distinguish deployment from activation and check the actual affected paths; a flag or a future task alone proves neither reachability nor safety.\n- Attribute introduced/worsened behavior separately from inherited defects. Do not invent a current regression or require pending work when the increment remains compatible under its actual delivery contract.\n- If a finding would be valid *only* after pending work lands, mention it under \"Areas Not Covered\" instead of the P0\u2013P3 sections.\n",
+      "command": "/usr/bin/zsh -lc \"cat '/home/sergio/.codex/plugins/cache/fr-r7-bf873de6-20261013/kk/0.23.0/skills/review-code/shared-review-scope-protocol.md'\"",
+      "commandActions": [
+        {
+          "command": "cat /home/sergio/.codex/plugins/cache/fr-r7-bf873de6-20261013/kk/0.23.0/skills/review-code/shared-review-scope-protocol.md",
+          "name": "shared-review-scope-protocol.md",
+          "path": "/home/sergio/.codex/plugins/cache/fr-r7-bf873de6-20261013/kk/0.23.0/skills/review-code/shared-review-scope-protocol.md",
+          "type": "read"
+        }
+      ],
+      "cwd": "/tmp/fr-r7-conclusions-20261013/codex-candidate-R7-isolated-1",
+      "durationMs": 88,
+      "exitCode": 0,
+      "id": "exec-53f7f52c-d12a-442f-b064-027473ef6a0c",
+      "pluginId": null,
+      "processId": "55633",
+      "scriptPath": null,
+      "source": "unifiedExecStartup",
+      "status": "completed",
+      "type": "commandExecution"
+    },
+    "startedAtMs": 1791897919553,
+    "turnId": "01a1356f-a91e-7e51-97d7-c0c17d2a5c7e"
+  },
+  {
+    "completedAtMs": 1791897919642,
+    "item": {
+      "aggregatedOutput": "# Capy Knowledge Base Protocol\n\nIf `capy` MCP tools are not available in this session, skip all search and index steps below and proceed normally.\n\n## Source Label Taxonomy\n\nAll plugin-managed labels use the `kk:` namespace prefix.\n\n| Label                    | Contents                                                              |\n| ------------------------ | --------------------------------------------------------------------- |\n| `kk:arch-decisions`      | Architecture decisions, design rationale, trade-offs                  |\n| `kk:review-findings`     | Code review patterns, recurring issues, anti-patterns                 |\n| `kk:lang-idioms`         | Language best practices, idiomatic patterns from external sources     |\n| `kk:project-conventions` | Discovered project patterns, naming conventions, structural decisions |\n| `kk:test-patterns`       | Testing approaches, edge cases, test infrastructure decisions         |\n| `kk:debug-context`       | Root causes, tricky bugs and their fixes, environment gotchas         |\n\n## Search Conventions\n\n- Use 2-4 specific terms per query \u2014 not vague keywords\n- Always scope with `source` filter to relevant `kk:*` labels\n- Use `source: \"kk:\"` only for broad cross-domain searches (e.g., CoVe verification)\n- Default `limit: 3` per query unless more context is needed\n- **Cold-start fallback:** If no results, proceed with standard guidelines \u2014 empty results are normal for new projects\n\n## Index Conventions\n\n- Only index non-obvious learnings not derivable from reading the code or git history\n- Keep content concise \u2014 summarize the insight, don't dump raw output\n- Always use a `kk:` prefixed label from the taxonomy above\n- One concept per `capy_index` call \u2014 don't bundle unrelated learnings\n- Skip indexing if the insight is already captured in design docs or CLAUDE.md\n",
+      "command": "/usr/bin/zsh -lc \"cat '/home/sergio/.codex/plugins/cache/fr-r7-bf873de6-20261013/kk/0.23.0/skills/_shared/capy-knowledge-protocol.md'\"",
+      "commandActions": [
+        {
+          "command": "cat /home/sergio/.codex/plugins/cache/fr-r7-bf873de6-20261013/kk/0.23.0/skills/_shared/capy-knowledge-protocol.md",
+          "name": "capy-knowledge-protocol.md",
+          "path": "/home/sergio/.codex/plugins/cache/fr-r7-bf873de6-20261013/kk/0.23.0/skills/_shared/capy-knowledge-protocol.md",
+          "type": "read"
+        }
+      ],
+      "cwd": "/tmp/fr-r7-conclusions-20261013/codex-candidate-R7-isolated-1",
+      "durationMs": 88,
+      "exitCode": 0,
+      "id": "exec-3b136c07-b9bf-485f-924f-176cdad71be3",
+      "pluginId": null,
+      "processId": "70920",
+      "scriptPath": null,
+      "source": "unifiedExecStartup",
+      "status": "completed",
+      "type": "commandExecution"
+    },
+    "startedAtMs": 1791897919553,
+    "turnId": "01a1356f-a91e-7e51-97d7-c0c17d2a5c7e"
+  },
+  {
+    "completedAtMs": 1791897919642,
+    "item": {
+      "aggregatedOutput": "# Capy Knowledge Base Protocol\n\nIf `capy` MCP tools are not available in this session, skip all search and index steps below and proceed normally.\n\n## Source Label Taxonomy\n\nAll plugin-managed labels use the `kk:` namespace prefix.\n\n| Label                    | Contents                                                              |\n| ------------------------ | --------------------------------------------------------------------- |\n| `kk:arch-decisions`      | Architecture decisions, design rationale, trade-offs                  |\n| `kk:review-findings`     | Code review patterns, recurring issues, anti-patterns                 |\n| `kk:lang-idioms`         | Language best practices, idiomatic patterns from external sources     |\n| `kk:project-conventions` | Discovered project patterns, naming conventions, structural decisions |\n| `kk:test-patterns`       | Testing approaches, edge cases, test infrastructure decisions         |\n| `kk:debug-context`       | Root causes, tricky bugs and their fixes, environment gotchas         |\n\n## Search Conventions\n\n- Use 2-4 specific terms per query \u2014 not vague keywords\n- Always scope with `source` filter to relevant `kk:*` labels\n- Use `source: \"kk:\"` only for broad cross-domain searches (e.g., CoVe verification)\n- Default `limit: 3` per query unless more context is needed\n- **Cold-start fallback:** If no results, proceed with standard guidelines \u2014 empty results are normal for new projects\n\n## Index Conventions\n\n- Only index non-obvious learnings not derivable from reading the code or git history\n- Keep content concise \u2014 summarize the insight, don't dump raw output\n- Always use a `kk:` prefixed label from the taxonomy above\n- One concept per `capy_index` call \u2014 don't bundle unrelated learnings\n- Skip indexing if the insight is already captured in design docs or CLAUDE.md\n",
+      "command": "/usr/bin/zsh -lc \"cat '/home/sergio/.codex/plugins/cache/fr-r7-bf873de6-20261013/kk/0.23.0/skills/review-code/shared-capy-knowledge-protocol.md'\"",
+      "commandActions": [
+        {
+          "command": "cat /home/sergio/.codex/plugins/cache/fr-r7-bf873de6-20261013/kk/0.23.0/skills/review-code/shared-capy-knowledge-protocol.md",
+          "name": "shared-capy-knowledge-protocol.md",
+          "path": "/home/sergio/.codex/plugins/cache/fr-r7-bf873de6-20261013/kk/0.23.0/skills/review-code/shared-capy-knowledge-protocol.md",
+          "type": "read"
+        }
+      ],
+      "cwd": "/tmp/fr-r7-conclusions-20261013/codex-candidate-R7-isolated-1",
+      "durationMs": 88,
+      "exitCode": 0,
+      "id": "exec-20e40748-2d43-4975-93e4-6554c7c75aaa",
+      "pluginId": null,
+      "processId": "1790",
+      "scriptPath": null,
+      "source": "unifiedExecStartup",
+      "status": "completed",
+      "type": "commandExecution"
+    },
+    "startedAtMs": 1791897919553,
+    "turnId": "01a1356f-a91e-7e51-97d7-c0c17d2a5c7e"
+  },
+  {
+    "completedAtMs": 1791897919642,
+    "item": {
+      "aggregatedOutput": "# Change context\n\nEstablish this context before implementation edits or review findings. It is a shared reasoning and handoff contract, not a mandatory new document. Scale it to the change: a few sentences for a helper fix, a compact scenario table for a cross-component mutation. Omit empty boilerplate; explain briefly why an operational dimension is irrelevant.\n\n## Minimum useful record\n\n| Field | Content |\n| --- | --- |\n| Intent and authority | Intended outcomes and constraints; source locations; explicit, inferred or unresolved status. |\n| Change boundary | Current task/request, resolved diff scope, candidate revision/worktree state, affected components and deliberately pending functionality. |\n| Existing behavior | Entry points, unchanged callers/consumers, state/data contracts and invariants to preserve. |\n| Delivery constraints | Applicable repository policy, independent/ordered deployment expectations, flags, migrations, prerequisites and accepted exceptions. |\n| Baselines | Review base and candidate; separately, relevant released/deployed revisions, configurations and data shapes; explicit unknowns. |\n| Scenarios and evidence | Success, boundaries, failure/retry and lifecycle cases that apply; source/test bindings, observed results and unverified conditions. |\n\nUser decisions and applicable repository instructions establish requirements. Consult current design/task contracts and relevant linked issues without assuming an issue is newer or more authoritative. Explain consequential conflicts. Existing code establishes behavior, not product intent; tests can repeat an implementation's mistaken assumption. Without a specification, infer a provisional purpose from the request and inspected evidence and label it. Ask only when materially different interpretations prevent a useful judgment; continue independent investigation.\n\nNever equate the review base, local main, a stable tag and a deployed revision. Name the baseline actually inspected. Source compatibility with a tag does not verify a deployed environment. Missing documents or production access narrow conclusions; they neither disable functional reasoning nor create automatic access or approval requirements.\n\n## Producer and reviewer responsibilities\n\nThe producer supplies facts with file/symbol or revision references, separating assumptions, accepted decisions and unavailable evidence. Author explanations and claimed test results remain attributed inputs, not independent verification. Reviewers challenge inferences and request specific missing evidence.\n\nRefresh affected fields after scope/requirement changes or review fixes. On resume, inspect current repository state rather than trusting a stale handoff. In plan mode, record dated observations, sources, proposals, accepted decisions and unresolved actions in the current task's labeled **Execution context** subsection in `tasks.md`. Observations do not amend specifications; requirement changes need explicit user authorization with source and rationale. Standalone context stays conversational unless material work is deferred: use existing tracking or a concise repository-local review note naming owner (or unassigned), reason, next action and verification condition.\n\n## Historical evidence\n\nWhen compatibility depends on source absent from candidate files or diff hunks, the parent workflow obtains the relevant local Git blob or bounded excerpt. For independent reviewers, materialize actual source in a read-only evidence bundle outside the reviewed worktree. Label repository identity, full revision, original path, blob/content hash, original line span and omitted/redacted extent. Distinguish historical source from candidate files and methodology; give both reviewers the same relevant evidence, not merely the author's summary.\n\nA reviewer requests further evidence by naming repository, revision, path/symbol and the comparison needed. The parent supplies available local source through resume/reinvoke with original context and provisional findings, and supplies equivalent relevant additions through PAL continuation. Retain request provenance. This does not require reviewer shell permissions or authorize otherwise unapproved network/production access. Unavailable source or an inconclusive bounded investigation leaves the specific conclusion **Unknown**, with the missing evidence and next action.\n",
+      "command": "/usr/bin/zsh -lc \"cat '/home/sergio/.codex/plugins/cache/fr-r7-bf873de6-20261013/kk/0.23.0/skills/review-code/shared-change-context.md'\"",
+      "commandActions": [
+        {
+          "command": "cat /home/sergio/.codex/plugins/cache/fr-r7-bf873de6-20261013/kk/0.23.0/skills/review-code/shared-change-context.md",
+          "name": "shared-change-context.md",
+          "path": "/home/sergio/.codex/plugins/cache/fr-r7-bf873de6-20261013/kk/0.23.0/skills/review-code/shared-change-context.md",
+          "type": "read"
+        }
+      ],
+      "cwd": "/tmp/fr-r7-conclusions-20261013/codex-candidate-R7-isolated-1",
+      "durationMs": 91,
+      "exitCode": 0,
+      "id": "exec-086b9647-545f-4e9f-bcbc-c51f1e09af74",
+      "pluginId": null,
+      "processId": "93998",
+      "scriptPath": null,
+      "source": "unifiedExecStartup",
+      "status": "completed",
+      "type": "commandExecution"
+    },
+    "startedAtMs": 1791897919550,
+    "turnId": "01a1356f-a91e-7e51-97d7-c0c17d2a5c7e"
+  },
+  {
+    "completedAtMs": 1791897934516,
+    "item": {
+      "type": "omitted_private_reasoning"
+    },
+    "startedAtMs": 1791897934516,
+    "turnId": "01a1356f-a91e-7e51-97d7-c0c17d2a5c7e"
+  },
+  {
+    "completedAtMs": 1791897936712,
+    "item": {
+      "delivery": null,
+      "id": "msg_0b9ea86fc24c6ff4016ace314e736881919fb2f6e01e110380",
+      "memoryCitation": null,
+      "phase": "commentary",
+      "questions": null,
+      "text": "Loading checkpoint complete: the four common guides, three supplied shared-guide copies, and four Python checklists are loaded. I\u2019ll read the component contract before the code; any runtime checks from the parent will remain attributed evidence.\n",
+      "type": "agentMessage"
+    },
+    "startedAtMs": 1791897934521,
+    "turnId": "01a1356f-a91e-7e51-97d7-c0c17d2a5c7e"
+  },
+  {
+    "completedAtMs": 1791897941106,
+    "item": {
+      "aggregatedOutput": "# Review context\nUser requests isolated review of staged settings-client changes and deployment readiness. Review only; no implementation edits authorized.\nBase: 57664d85c646008ae513f0b4374ef691d2fcb101. Candidate: staged index (blob identities in manifest). Worktree matches staged source. Scope: payload.py and tests/test_payload.py, 12 additions and 1 deletion.\nREADME gives Python 3.9+ and standard-library-only constraints; local test command is python3 -B -m unittest discover -s tests. No fuller functional or deployment contract found.\nInferred purpose, not explicit product specification: trim surrounding whitespace from display names before saving settings, retaining internal whitespace and existing empty-name behavior. Existing save(transport, display_name) calls transport.put('/settings', build_payload(display_name)) and returns the result. Tests use only MemoryTransport. Reviewers should independently challenge assumptions about valid inputs and provider semantics.\n## Task Scope\nNo task scope available \u2014 review the diff on its own merits without assuming any feature-level design doc.\n## Compatibility and evidence limits\nOnly local ref is master at the review base, with one local commit, no tags and no configured remote. Repository inventory has README.md, payload.py, client.py, tests/test_client.py, staged tests/test_payload.py and .gitignore. No provider source, provider baseline, deployment configuration or rollout contract is present. No named deployed revision supplied. Local mock is not provider implementation. Actual deployment state is unverified.\nNo test execution results were supplied by the author. Parent execution results, if any, will be separately labeled.\nAll 8 required instruction files in the manifest were fully loaded by parent before source investigation. Python activated by .py; all four Python checklists always apply. All other 7 profiles non-matching. Capy searches for relevant review findings and Python idioms returned an empty knowledge base. PAL tools are unavailable, so this is the single-independent-reviewer fallback.\nNo rejected approaches or prior implementation narrative supplied.\n",
+      "command": "/usr/bin/zsh -lc \"cat '/tmp/kk-settings-review-x0h14rd0/context.md'\"",
+      "commandActions": [
+        {
+          "command": "cat /tmp/kk-settings-review-x0h14rd0/context.md",
+          "name": "context.md",
+          "path": "/tmp/kk-settings-review-x0h14rd0/context.md",
+          "type": "read"
+        }
+      ],
+      "cwd": "/tmp/fr-r7-conclusions-20261013/codex-candidate-R7-isolated-1",
+      "durationMs": 95,
+      "exitCode": 0,
+      "id": "exec-30facfbd-1c4d-4970-b407-7b557bba3c3c",
+      "pluginId": null,
+      "processId": "6077",
+      "scriptPath": null,
+      "source": "unifiedExecStartup",
+      "status": "completed",
+      "type": "commandExecution"
+    },
+    "startedAtMs": 1791897941010,
+    "turnId": "01a1356f-a91e-7e51-97d7-c0c17d2a5c7e"
+  },
+  {
+    "completedAtMs": 1791897941106,
+    "item": {
+      "aggregatedOutput": "# Settings client\n\nPython 3.9+, standard library only.\n\nRun the local suite with `python3 -B -m unittest discover -s tests`.\n",
+      "command": "/usr/bin/zsh -lc \"cat '/tmp/kk-settings-review-x0h14rd0/candidate/README.md'\"",
+      "commandActions": [
+        {
+          "command": "cat /tmp/kk-settings-review-x0h14rd0/candidate/README.md",
+          "name": "README.md",
+          "path": "/tmp/kk-settings-review-x0h14rd0/candidate/README.md",
+          "type": "read"
+        }
+      ],
+      "cwd": "/tmp/fr-r7-conclusions-20261013/codex-candidate-R7-isolated-1",
+      "durationMs": 99,
+      "exitCode": 0,
+      "id": "exec-9604f5c1-c089-433f-8293-785069c6f410",
+      "pluginId": null,
+      "processId": "47452",
+      "scriptPath": null,
+      "source": "unifiedExecStartup",
+      "status": "completed",
+      "type": "commandExecution"
+    },
+    "startedAtMs": 1791897941006,
+    "turnId": "01a1356f-a91e-7e51-97d7-c0c17d2a5c7e"
+  },
+  {
+    "completedAtMs": 1791897941106,
+    "item": {
+      "aggregatedOutput": "{\n  \"selector\": \"git diff --cached\",\n  \"base\": \"57664d85c646008ae513f0b4374ef691d2fcb101\",\n  \"diff\": \"/tmp/kk-settings-review-x0h14rd0/staged.patch\",\n  \"instructions\": [\n    \"/home/sergio/.codex/plugins/cache/fr-r7-bf873de6-20261013/kk/0.23.0/skills/review-code/functional-review.md\",\n    \"/home/sergio/.codex/plugins/cache/fr-r7-bf873de6-20261013/kk/0.23.0/skills/review-code/shared-change-context.md\",\n    \"/home/sergio/.codex/plugins/cache/fr-r7-bf873de6-20261013/kk/0.23.0/skills/review-code/shared-review-scope-protocol.md\",\n    \"/home/sergio/.codex/plugins/cache/fr-r7-bf873de6-20261013/kk/0.23.0/skills/review-code/shared-capy-knowledge-protocol.md\",\n    \"/home/sergio/.codex/plugins/cache/fr-r7-bf873de6-20261013/kk/0.23.0/profiles/python/review-code/security-checklist.md\",\n    \"/home/sergio/.codex/plugins/cache/fr-r7-bf873de6-20261013/kk/0.23.0/profiles/python/review-code/solid-checklist.md\",\n    \"/home/sergio/.codex/plugins/cache/fr-r7-bf873de6-20261013/kk/0.23.0/profiles/python/review-code/code-quality-checklist.md\",\n    \"/home/sergio/.codex/plugins/cache/fr-r7-bf873de6-20261013/kk/0.23.0/profiles/python/review-code/removal-plan.md\"\n  ],\n  \"intent_context\": \"/tmp/kk-settings-review-x0h14rd0/context.md\",\n  \"sources\": [\n    {\n      \"category\": \"candidate\",\n      \"path\": \"/tmp/kk-settings-review-x0h14rd0/candidate/README.md\",\n      \"repository\": \"/tmp/fr-r7-conclusions-20261013/codex-candidate-R7-isolated-1\",\n      \"revision\": \"staged index based on 57664d85c646008ae513f0b4374ef691d2fcb101\",\n      \"original_path\": \"README.md\",\n      \"blob\": \"040a37a9ca0e31704c7a08607082d27e89f50a09\",\n      \"sha256\": \"50a0cc8c3c0754acd7b8a8aa8371095c7418bebdc6000da71f96bbca2f9046cb\",\n      \"line_span\": [\n        1,\n        5\n      ],\n      \"omitted_or_redacted\": \"none\"\n    },\n    {\n      \"category\": \"candidate\",\n      \"path\": \"/tmp/kk-settings-review-x0h14rd0/candidate/payload.py\",\n      \"repository\": \"/tmp/fr-r7-conclusions-20261013/codex-candidate-R7-isolated-1\",\n      \"revision\": \"staged index based on 57664d85c646008ae513f0b4374ef691d2fcb101\",\n      \"original_path\": \"payload.py\",\n      \"blob\": \"8ad74d9a800f4439ec9210cb7234e6b77e0dcfdf\",\n      \"sha256\": \"6b529489d108574338ff87b47af9e4290ba0753a4feec2691594e71d34f4f468\",\n      \"line_span\": [\n        1,\n        2\n      ],\n      \"omitted_or_redacted\": \"none\"\n    },\n    {\n      \"category\": \"candidate\",\n      \"path\": \"/tmp/kk-settings-review-x0h14rd0/candidate/client.py\",\n      \"repository\": \"/tmp/fr-r7-conclusions-20261013/codex-candidate-R7-isolated-1\",\n      \"revision\": \"staged index based on 57664d85c646008ae513f0b4374ef691d2fcb101\",\n      \"original_path\": \"client.py\",\n      \"blob\": \"fc9d98dac0f8422eb83ebba24b8a89d806b5e180\",\n      \"sha256\": \"8eac148bbabfad8ec2b1655931fec502572ddc2ee2cc9c16dd7d2004184d47ee\",\n      \"line_span\": [\n        1,\n        5\n      ],\n      \"omitted_or_redacted\": \"none\"\n    },\n    {\n      \"category\": \"candidate\",\n      \"path\": \"/tmp/kk-settings-review-x0h14rd0/candidate/tests/test_payload.py\",\n      \"repository\": \"/tmp/fr-r7-conclusions-20261013/codex-candidate-R7-isolated-1\",\n      \"revision\": \"staged index based on 57664d85c646008ae513f0b4374ef691d2fcb101\",\n      \"original_path\": \"tests/test_payload.py\",\n      \"blob\": \"e427779d7c4c8724494479c39e1c04c09eb574d9\",\n      \"sha256\": \"e36bd04a663e2192437200917130c9d23a5dad11d2c0e2e721c85164a9ad48a6\",\n      \"line_span\": [\n        1,\n        11\n      ],\n      \"omitted_or_redacted\": \"none\"\n    },\n    {\n      \"category\": \"candidate\",\n      \"path\": \"/tmp/kk-settings-review-x0h14rd0/candidate/tests/test_client.py\",\n      \"repository\": \"/tmp/fr-r7-conclusions-20261013/codex-candidate-R7-isolated-1\",\n      \"revision\": \"staged index based on 57664d85c646008ae513f0b4374ef691d2fcb101\",\n      \"original_path\": \"tests/test_client.py\",\n      \"blob\": \"cf0d39a9960276b32af10a90b6e486443c4c96e8\",\n      \"sha256\": \"640167c77af4572185bd36dcb6a3065b8ff7256f3a2329b9f5845a38da75419f\",\n      \"line_span\": [\n        1,\n        24\n      ],\n      \"omitted_or_redacted\": \"none\"\n    },\n    {\n      \"category\": \"historical\",\n      \"path\": \"/tmp/kk-settings-review-x0h14rd0/historical/payload.py\",\n      \"repository\": \"/tmp/fr-r7-conclusions-20261013/codex-candidate-R7-isolated-1\",\n      \"revision\": \"57664d85c646008ae513f0b4374ef691d2fcb101\",\n      \"original_path\": \"payload.py\",\n      \"blob\": \"32557ded3c9924790cf8e2370e5cbbd21ca32577\",\n      \"sha256\": \"d93631ce3c80b9b460f590755d1ee7e9efd88b26fb5cbcbc5dba50541bd1057f\",\n      \"line_span\": [\n        1,\n        2\n      ],\n      \"omitted_or_redacted\": \"none\"\n    },\n    {\n      \"category\": \"historical\",\n      \"path\": \"/tmp/kk-settings-review-x0h14rd0/historical/client.py\",\n      \"repository\": \"/tmp/fr-r7-conclusions-20261013/codex-candidate-R7-isolated-1\",\n      \"revision\": \"57664d85c646008ae513f0b4374ef691d2fcb101\",\n      \"original_path\": \"client.py\",\n      \"blob\": \"fc9d98dac0f8422eb83ebba24b8a89d806b5e180\",\n      \"sha256\": \"8eac148bbabfad8ec2b1655931fec502572ddc2ee2cc9c16dd7d2004184d47ee\",\n      \"line_span\": [\n        1,\n        5\n      ],\n      \"omitted_or_redacted\": \"none\"\n    },\n    {\n      \"category\": \"historical\",\n      \"path\": \"/tmp/kk-settings-review-x0h14rd0/historical/tests/test_client.py\",\n      \"repository\": \"/tmp/fr-r7-conclusions-20261013/codex-candidate-R7-isolated-1\",\n      \"revision\": \"57664d85c646008ae513f0b4374ef691d2fcb101\",\n      \"original_path\": \"tests/test_client.py\",\n      \"blob\": \"cf0d39a9960276b32af10a90b6e486443c4c96e8\",\n      \"sha256\": \"640167c77af4572185bd36dcb6a3065b8ff7256f3a2329b9f5845a38da75419f\",\n      \"line_span\": [\n        1,\n        24\n      ],\n      \"omitted_or_redacted\": \"none\"\n    }\n  ],\n  \"historical_lookup\": \"README read; git ls-files, git log --all, git tag --list, git show-ref and git remote -v: only base/master, no tags/remotes/provider path.\"\n}\n",
+      "command": "/usr/bin/zsh -lc \"cat '/tmp/kk-settings-review-x0h14rd0/manifest.json'\"",
+      "commandActions": [
+        {
+          "command": "cat /tmp/kk-settings-review-x0h14rd0/manifest.json",
+          "name": "manifest.json",
+          "path": "/tmp/kk-settings-review-x0h14rd0/manifest.json",
+          "type": "read"
+        }
+      ],
+      "cwd": "/tmp/fr-r7-conclusions-20261013/codex-candidate-R7-isolated-1",
+      "durationMs": 97,
+      "exitCode": 0,
+      "id": "exec-7d1fa1ef-4090-42d2-bf8d-cd9fb4e837f5",
+      "pluginId": null,
+      "processId": "22023",
+      "scriptPath": null,
+      "source": "unifiedExecStartup",
+      "status": "completed",
+      "type": "commandExecution"
+    },
+    "startedAtMs": 1791897941009,
+    "turnId": "01a1356f-a91e-7e51-97d7-c0c17d2a5c7e"
+  },
+  {
+    "completedAtMs": 1791897941254,
+    "item": {
+      "appContext": null,
+      "arguments": {
+        "limit": 3,
+        "queries": [
+          "Python str strip payload"
+        ],
+        "source": "kk:lang-idioms"
+      },
+      "durationMs": 142,
+      "error": null,
+      "id": "exec-d892c3ad-ea29-4e0b-b166-ba78d9bd2b58",
+      "mcpAppUi": null,
+      "pluginId": null,
+      "readOnlyHint": true,
+      "result": {
+        "_meta": null,
+        "content": [
+          {
+            "text": "The knowledge base is empty \u2014 nothing has been indexed yet.\n\nTo populate it, use:\n  \u2022 capy_batch_execute(commands, queries) \u2014 run commands, auto-index output, and search in one call\n  \u2022 capy_fetch_and_index(url) \u2014 fetch a URL, index it, then search with capy_search\n  \u2022 capy_index(content, source) \u2014 manually index text content\n\nAfter indexing, capy_search becomes available for follow-up queries.\n\nShared MCP server search budget: search call #1/8 in this window. Results limited to 2/query. Untapered calls left: 2; calls before block: 7; resets in 59745 ms (window 60000 ms; taper after 3; block after 8). Batch queries with search(queries: [\"q1\",\"q2\"]) or use batch_execute.",
+            "type": "text"
+          }
+        ],
+        "structuredContent": null
+      },
+      "server": "capy",
+      "status": "failed",
+      "tool": "capy_search",
+      "type": "mcpToolCall"
+    },
+    "startedAtMs": 1791897941111,
+    "turnId": "01a1356f-a91e-7e51-97d7-c0c17d2a5c7e"
+  },
+  {
+    "completedAtMs": 1791897941259,
+    "item": {
+      "appContext": null,
+      "arguments": {
+        "limit": 3,
+        "queries": [
+          "settings client payload display_name"
+        ],
+        "source": "kk:review-findings"
+      },
+      "durationMs": 1,
+      "error": null,
+      "id": "exec-55881c88-d9e3-4194-9e48-90783576fc00",
+      "mcpAppUi": null,
+      "pluginId": null,
+      "readOnlyHint": true,
+      "result": {
+        "_meta": null,
+        "content": [
+          {
+            "text": "The knowledge base is empty \u2014 nothing has been indexed yet.\n\nTo populate it, use:\n  \u2022 capy_batch_execute(commands, queries) \u2014 run commands, auto-index output, and search in one call\n  \u2022 capy_fetch_and_index(url) \u2014 fetch a URL, index it, then search with capy_search\n  \u2022 capy_index(content, source) \u2014 manually index text content\n\nAfter indexing, capy_search becomes available for follow-up queries.\n\nShared MCP server search budget: search call #2/8 in this window. Results limited to 2/query. Untapered calls left: 1; calls before block: 6; resets in 59599 ms (window 60000 ms; taper after 3; block after 8). Batch queries with search(queries: [\"q1\",\"q2\"]) or use batch_execute.",
+            "type": "text"
+          }
+        ],
+        "structuredContent": null
+      },
+      "server": "capy",
+      "status": "failed",
+      "tool": "capy_search",
+      "type": "mcpToolCall"
+    },
+    "startedAtMs": 1791897941257,
+    "turnId": "01a1356f-a91e-7e51-97d7-c0c17d2a5c7e"
+  },
+  {
+    "completedAtMs": 1791897951177,
+    "item": {
+      "type": "omitted_private_reasoning"
+    },
+    "startedAtMs": 1791897951176,
+    "turnId": "01a1356f-a91e-7e51-97d7-c0c17d2a5c7e"
+  },
+  {
+    "completedAtMs": 1791897955987,
+    "item": {
+      "aggregatedOutput": "import unittest\n\nfrom payload import build_payload\n\n\nclass PayloadTests(unittest.TestCase):\n    def test_trim_surrounding_spaces(self):\n        self.assertEqual(build_payload(\"  Ada  \"), {\"display_name\": \"Ada\"})\n\n    def test_preserve_internal_space(self):\n        self.assertEqual(build_payload(\"Ada Lovelace\"), {\"display_name\": \"Ada Lovelace\"})\n",
+      "command": "/usr/bin/zsh -lc \"cat '/tmp/kk-settings-review-x0h14rd0/candidate/tests/test_payload.py'\"",
+      "commandActions": [
+        {
+          "command": "cat /tmp/kk-settings-review-x0h14rd0/candidate/tests/test_payload.py",
+          "name": "test_payload.py",
+          "path": "/tmp/kk-settings-review-x0h14rd0/candidate/tests/test_payload.py",
+          "type": "read"
+        }
+      ],
+      "cwd": "/tmp/fr-r7-conclusions-20261013/codex-candidate-R7-isolated-1",
+      "durationMs": 184,
+      "exitCode": 0,
+      "id": "exec-07fe6036-1313-4d70-91e0-ab06b2523214",
+      "pluginId": null,
+      "processId": "98338",
+      "scriptPath": null,
+      "source": "unifiedExecStartup",
+      "status": "completed",
+      "type": "commandExecution"
+    },
+    "startedAtMs": 1791897955802,
+    "turnId": "01a1356f-a91e-7e51-97d7-c0c17d2a5c7e"
+  },
+  {
+    "completedAtMs": 1791897955987,
+    "item": {
+      "aggregatedOutput": "def build_payload(display_name):\n    return {\"display_name\": display_name.strip()}\n",
+      "command": "/usr/bin/zsh -lc \"cat '/tmp/kk-settings-review-x0h14rd0/candidate/payload.py'\"",
+      "commandActions": [
+        {
+          "command": "cat /tmp/kk-settings-review-x0h14rd0/candidate/payload.py",
+          "name": "payload.py",
+          "path": "/tmp/kk-settings-review-x0h14rd0/candidate/payload.py",
+          "type": "read"
+        }
+      ],
+      "cwd": "/tmp/fr-r7-conclusions-20261013/codex-candidate-R7-isolated-1",
+      "durationMs": 188,
+      "exitCode": 0,
+      "id": "exec-a4e64871-f85e-4463-8b3e-bae1bb323b94",
+      "pluginId": null,
+      "processId": "33364",
+      "scriptPath": null,
+      "source": "unifiedExecStartup",
+      "status": "completed",
+      "type": "commandExecution"
+    },
+    "startedAtMs": 1791897955798,
+    "turnId": "01a1356f-a91e-7e51-97d7-c0c17d2a5c7e"
+  },
+  {
+    "completedAtMs": 1791897955997,
+    "item": {
+      "aggregatedOutput": "def build_payload(display_name):\n    return {\"display_name\": display_name}\n",
+      "command": "/usr/bin/zsh -lc \"cat '/tmp/kk-settings-review-x0h14rd0/historical/payload.py'\"",
+      "commandActions": [
+        {
+          "command": "cat /tmp/kk-settings-review-x0h14rd0/historical/payload.py",
+          "name": "payload.py",
+          "path": "/tmp/kk-settings-review-x0h14rd0/historical/payload.py",
+          "type": "read"
+        }
+      ],
+      "cwd": "/tmp/fr-r7-conclusions-20261013/codex-candidate-R7-isolated-1",
+      "durationMs": 196,
+      "exitCode": 0,
+      "id": "exec-6f9d2c6c-752f-4865-8cb4-ec9e63169057",
+      "pluginId": null,
+      "processId": "43041",
+      "scriptPath": null,
+      "source": "unifiedExecStartup",
+      "status": "completed",
+      "type": "commandExecution"
+    },
+    "startedAtMs": 1791897955800,
+    "turnId": "01a1356f-a91e-7e51-97d7-c0c17d2a5c7e"
+  },
+  {
+    "completedAtMs": 1791897956001,
+    "item": {
+      "aggregatedOutput": "import unittest\n\nfrom client import save\n\n\nclass MemoryTransport:\n    def __init__(self):\n        self.request = None\n\n    def put(self, path, body):\n        self.request = (path, body)\n        return {\"ok\": True}\n\n\nclass ClientTests(unittest.TestCase):\n    def test_save(self):\n        transport = MemoryTransport()\n        self.assertEqual(save(transport, \"Ada\"), {\"ok\": True})\n        self.assertEqual(transport.request, (\"/settings\", {\"display_name\": \"Ada\"}))\n\n    def test_empty_name(self):\n        transport = MemoryTransport()\n        save(transport, \"\")\n        self.assertEqual(transport.request[1], {\"display_name\": \"\"})\n",
+      "command": "/usr/bin/zsh -lc \"cat '/tmp/kk-settings-review-x0h14rd0/candidate/tests/test_client.py'\"",
+      "commandActions": [
+        {
+          "command": "cat /tmp/kk-settings-review-x0h14rd0/candidate/tests/test_client.py",
+          "name": "test_client.py",
+          "path": "/tmp/kk-settings-review-x0h14rd0/candidate/tests/test_client.py",
+          "type": "read"
+        }
+      ],
+      "cwd": "/tmp/fr-r7-conclusions-20261013/codex-candidate-R7-isolated-1",
+      "durationMs": 200,
+      "exitCode": 0,
+      "id": "exec-399a3b7c-5a9d-43c5-9833-74f84ec50b62",
+      "pluginId": null,
+      "processId": "19347",
+      "scriptPath": null,
+      "source": "unifiedExecStartup",
+      "status": "completed",
+      "type": "commandExecution"
+    },
+    "startedAtMs": 1791897955800,
+    "turnId": "01a1356f-a91e-7e51-97d7-c0c17d2a5c7e"
+  },
+  {
+    "completedAtMs": 1791897956002,
+    "item": {
+      "aggregatedOutput": "from payload import build_payload\n\n\ndef save(transport, display_name):\n    return transport.put(\"/settings\", build_payload(display_name))\n",
+      "command": "/usr/bin/zsh -lc \"cat '/tmp/kk-settings-review-x0h14rd0/candidate/client.py'\"",
+      "commandActions": [
+        {
+          "command": "cat /tmp/kk-settings-review-x0h14rd0/candidate/client.py",
+          "name": "client.py",
+          "path": "/tmp/kk-settings-review-x0h14rd0/candidate/client.py",
+          "type": "read"
+        }
+      ],
+      "cwd": "/tmp/fr-r7-conclusions-20261013/codex-candidate-R7-isolated-1",
+      "durationMs": 201,
+      "exitCode": 0,
+      "id": "exec-b15cd896-c703-4ac3-b7d7-cd9549f50e7f",
+      "pluginId": null,
+      "processId": "25109",
+      "scriptPath": null,
+      "source": "unifiedExecStartup",
+      "status": "completed",
+      "type": "commandExecution"
+    },
+    "startedAtMs": 1791897955800,
+    "turnId": "01a1356f-a91e-7e51-97d7-c0c17d2a5c7e"
+  },
+  {
+    "completedAtMs": 1791897956002,
+    "item": {
+      "aggregatedOutput": "diff --git a/payload.py b/payload.py\nindex 32557de..8ad74d9 100644\n--- a/payload.py\n+++ b/payload.py\n@@ -1,2 +1,2 @@\n def build_payload(display_name):\n-    return {\"display_name\": display_name}\n+    return {\"display_name\": display_name.strip()}\ndiff --git a/tests/test_payload.py b/tests/test_payload.py\nnew file mode 100644\nindex 0000000..e427779\n--- /dev/null\n+++ b/tests/test_payload.py\n@@ -0,0 +1,11 @@\n+import unittest\n+\n+from payload import build_payload\n+\n+\n+class PayloadTests(unittest.TestCase):\n+    def test_trim_surrounding_spaces(self):\n+        self.assertEqual(build_payload(\"  Ada  \"), {\"display_name\": \"Ada\"})\n+\n+    def test_preserve_internal_space(self):\n+        self.assertEqual(build_payload(\"Ada Lovelace\"), {\"display_name\": \"Ada Lovelace\"})\n",
+      "command": "/usr/bin/zsh -lc \"cat '/tmp/kk-settings-review-x0h14rd0/staged.patch'\"",
+      "commandActions": [
+        {
+          "command": "cat /tmp/kk-settings-review-x0h14rd0/staged.patch",
+          "name": "staged.patch",
+          "path": "/tmp/kk-settings-review-x0h14rd0/staged.patch",
+          "type": "read"
+        }
+      ],
+      "cwd": "/tmp/fr-r7-conclusions-20261013/codex-candidate-R7-isolated-1",
+      "durationMs": 201,
+      "exitCode": 0,
+      "id": "exec-ca0cc797-6c9a-4a50-8745-1b9d76054034",
+      "pluginId": null,
+      "processId": "79003",
+      "scriptPath": null,
+      "source": "unifiedExecStartup",
+      "status": "completed",
+      "type": "commandExecution"
+    },
+    "startedAtMs": 1791897955801,
+    "turnId": "01a1356f-a91e-7e51-97d7-c0c17d2a5c7e"
+  },
+  {
+    "completedAtMs": 1791897956003,
+    "item": {
+      "aggregatedOutput": "import unittest\n\nfrom client import save\n\n\nclass MemoryTransport:\n    def __init__(self):\n        self.request = None\n\n    def put(self, path, body):\n        self.request = (path, body)\n        return {\"ok\": True}\n\n\nclass ClientTests(unittest.TestCase):\n    def test_save(self):\n        transport = MemoryTransport()\n        self.assertEqual(save(transport, \"Ada\"), {\"ok\": True})\n        self.assertEqual(transport.request, (\"/settings\", {\"display_name\": \"Ada\"}))\n\n    def test_empty_name(self):\n        transport = MemoryTransport()\n        save(transport, \"\")\n        self.assertEqual(transport.request[1], {\"display_name\": \"\"})\n",
+      "command": "/usr/bin/zsh -lc \"cat '/tmp/kk-settings-review-x0h14rd0/historical/tests/test_client.py'\"",
+      "commandActions": [
+        {
+          "command": "cat /tmp/kk-settings-review-x0h14rd0/historical/tests/test_client.py",
+          "name": "test_client.py",
+          "path": "/tmp/kk-settings-review-x0h14rd0/historical/tests/test_client.py",
+          "type": "read"
+        }
+      ],
+      "cwd": "/tmp/fr-r7-conclusions-20261013/codex-candidate-R7-isolated-1",
+      "durationMs": 202,
+      "exitCode": 0,
+      "id": "exec-041ff3c1-b9a2-46f1-90b7-a7e999a5583e",
+      "pluginId": null,
+      "processId": "55488",
+      "scriptPath": null,
+      "source": "unifiedExecStartup",
+      "status": "completed",
+      "type": "commandExecution"
+    },
+    "startedAtMs": 1791897955800,
+    "turnId": "01a1356f-a91e-7e51-97d7-c0c17d2a5c7e"
+  },
+  {
+    "completedAtMs": 1791897956004,
+    "item": {
+      "aggregatedOutput": "from payload import build_payload\n\n\ndef save(transport, display_name):\n    return transport.put(\"/settings\", build_payload(display_name))\n",
+      "command": "/usr/bin/zsh -lc \"cat '/tmp/kk-settings-review-x0h14rd0/historical/client.py'\"",
+      "commandActions": [
+        {
+          "command": "cat /tmp/kk-settings-review-x0h14rd0/historical/client.py",
+          "name": "client.py",
+          "path": "/tmp/kk-settings-review-x0h14rd0/historical/client.py",
+          "type": "read"
+        }
+      ],
+      "cwd": "/tmp/fr-r7-conclusions-20261013/codex-candidate-R7-isolated-1",
+      "durationMs": 203,
+      "exitCode": 0,
+      "id": "exec-bc554c18-60b0-4e86-982d-c3c844b34a8f",
+      "pluginId": null,
+      "processId": "48116",
+      "scriptPath": null,
+      "source": "unifiedExecStartup",
+      "status": "completed",
+      "type": "commandExecution"
+    },
+    "startedAtMs": 1791897955799,
+    "turnId": "01a1356f-a91e-7e51-97d7-c0c17d2a5c7e"
+  },
+  {
+    "completedAtMs": 1791897981333,
+    "item": {
+      "type": "omitted_private_reasoning"
+    },
+    "startedAtMs": 1791897981329,
+    "turnId": "01a1356f-a91e-7e51-97d7-c0c17d2a5c7e"
+  },
+  {
+    "completedAtMs": 1791897989857,
+    "item": {
+      "type": "omitted_private_reasoning"
+    },
+    "startedAtMs": 1791897989856,
+    "turnId": "01a1356f-a91e-7e51-97d7-c0c17d2a5c7e"
+  },
+  {
+    "completedAtMs": 1791897990708,
+    "item": {
+      "aggregatedOutput": "# Parent-executed verification\nCandidate snapshots and selected diff were compared with current Git index after execution; unchanged.\nRuntime: Python 3.10.12.\nCommand: python3 -B -m unittest discover -s tests -v\nExecution directory: candidate snapshot directory.\nResult: all four tests passed (test_empty_name, test_save, test_preserve_internal_space, test_trim_surrounding_spaces).\nAdditional inline checks through save and existing MemoryTransport: surrounding spaces trimmed; single and multiple internal spaces retained; empty string retained; whitespace-only input becomes empty string; tab/newline edges trimmed; transport return value retained. A throwing transport's RuntimeError propagated.\nThese checks exercise client behavior against a mock only; no actual settings provider or deployment was contacted. No new or modified source tests were written. Parent observations are not independent-reviewer execution.\n",
+      "command": "/usr/bin/zsh -lc \"cat '/tmp/kk-settings-review-x0h14rd0/parent-verification.md'\"",
+      "commandActions": [
+        {
+          "command": "cat /tmp/kk-settings-review-x0h14rd0/parent-verification.md",
+          "name": "parent-verification.md",
+          "path": "/tmp/kk-settings-review-x0h14rd0/parent-verification.md",
+          "type": "read"
+        }
+      ],
+      "cwd": "/tmp/fr-r7-conclusions-20261013/codex-candidate-R7-isolated-1",
+      "durationMs": 88,
+      "exitCode": 0,
+      "id": "exec-e6615e2b-e6fd-41cc-a701-4ad10e14abe9",
+      "pluginId": null,
+      "processId": "96350",
+      "scriptPath": null,
+      "source": "unifiedExecStartup",
+      "status": "completed",
+      "type": "commandExecution"
+    },
+    "startedAtMs": 1791897990619,
+    "turnId": "01a1356f-a91e-7e51-97d7-c0c17d2a5c7e"
+  },
+  {
+    "completedAtMs": 1791898016261,
+    "item": {
+      "type": "omitted_private_reasoning"
+    },
+    "startedAtMs": 1791898016261,
+    "turnId": "01a1356f-a91e-7e51-97d7-c0c17d2a5c7e"
+  },
+  {
+    "completedAtMs": 1791898018994,
+    "item": {
+      "delivery": null,
+      "id": "msg_0b9ea86fc24c6ff4016ace31a05e948191bdd209c7d2df450a",
+      "memoryCitation": null,
+      "phase": "commentary",
+      "questions": null,
+      "text": "The source trace supports trimming surrounding whitespace while preserving internal whitespace, empty strings, the request shape, transport return values, and error propagation. I found no substantiated code defect. Deployment readiness remains Unknown because the real settings provider contract and deployed client baseline are missing; the mock verifies only the outgoing request.\n",
+      "type": "agentMessage"
+    },
+    "startedAtMs": 1791898016402,
+    "turnId": "01a1356f-a91e-7e51-97d7-c0c17d2a5c7e"
+  },
+  {
+    "completedAtMs": 1791898036914,
+    "item": {
+      "type": "omitted_private_reasoning"
+    },
+    "startedAtMs": 1791898036914,
+    "turnId": "01a1356f-a91e-7e51-97d7-c0c17d2a5c7e"
+  },
+  {
+    "completedAtMs": 1791898068484,
+    "item": {
+      "delivery": null,
+      "id": "msg_0b9ea86fc24c6ff4016ace31b505c08191a2a1e24244fe0092",
+      "memoryCitation": null,
+      "phase": "final_answer",
+      "questions": null,
+      "text": "## Code Review Findings\n\n**Files reviewed**: 5 candidate files, 13 lines changed (12 additions, 1 deletion); also 3 historical snapshots  \n**Active profiles**: python  \n**Overall assessment**: COMMENT  \n**Intent and scope**: Inferred purpose is to trim surrounding display-name whitespace while preserving internal whitespace and empty strings. Reviewed the exact staged snapshots of `payload.py` and `tests/test_payload.py`, plus the unchanged caller, existing tests, and README. No task scope or fuller functional specification is available.  \n**Baselines**: Review base is `57664d85c646008ae513f0b4374ef691d2fcb101`; candidate is the staged index captured in the evidence manifest. Local compatibility was compared against that same base. No released or deployed baseline was supplied.\n\n### Behavior and Compatibility\n\nAll supplied candidate and historical source was inspected. Candidate coverage comprises README lines 1\u20135, payload lines 1\u20132, client lines 1\u20135, payload tests lines 1\u201311, and client tests lines 1\u201324.\n\nHistorical evidence comes from repository `/tmp/fr-r7-conclusions-20261013/codex-candidate-R7-isolated-1`, revision `57664d85c646008ae513f0b4374ef691d2fcb101`: [payload.py](/tmp/kk-settings-review-x0h14rd0/historical/payload.py:1), original lines 1\u20132; [client.py](/tmp/kk-settings-review-x0h14rd0/historical/client.py:1), original lines 1\u20135; and [tests/test_client.py](/tmp/kk-settings-review-x0h14rd0/historical/tests/test_client.py:1), original lines 1\u201324.\n\n| Dimension/scenario | Conclusion | Evidence and limits |\n| --- | --- | --- |\n| Surrounding whitespace | **Supported** | Candidate `build_payload` applies `.strip()`; unchanged `save` sends the resulting dictionary to `/settings`. `\"  Ada  \"` becomes `\"Ada\"`. This matches the inferred purpose. |\n| Existing string behavior | **Supported** | Clean names, internal spaces, and `\"\"` retain their values. Whitespace-only strings now become `\"\"`; tab/newline edges are removed. |\n| Client response and failure path | **Supported** | The transport return value remains returned directly; transport exceptions propagate. Repeated calls construct the same normalized body without introducing local state. Provider retry semantics are unverified. |\n| Local compatibility with the named base | **Supported** | Function signatures, endpoint, dictionary key, transport invocation, empty-string behavior, and return path are preserved. Surrounding-whitespace removal is the intended inferred behavioral change. |\n| Candidate client versus current settings provider | **Unknown** | `MemoryTransport` merely records the request and returns `{\"ok\": True}`. It establishes neither provider acceptance nor persisted settings behavior, including acceptance of `\"\"`. |\n| Deployment readiness | **Unknown** | The actual provider contract, deployed client revision, and deployment/rollout contract are unavailable. The inspected base is not established as the deployed baseline. |\n| Local migration and activation mechanisms | **Not applicable** | The reviewed increment adds no schema, startup, configuration, migration, or feature-flag mechanism. External deployment conditions remain unverified. |\n\nThe parent reports that all four tests passed on Python 3.10.12 from the candidate snapshot. Parent-executed checks also covered empty and whitespace-only strings, tab/newline edges, multiple internal spaces, transport return values, and exception propagation. These are attributed execution results, documented in [parent-verification.md](/tmp/kk-settings-review-x0h14rd0/parent-verification.md:1); I did not execute tests.\n\nNo substantiated security, SOLID, performance, or removal issue was found in the inspected change. Capy searches for prior findings and Python idioms returned an empty knowledge base.\n\n---\n\n### P0 - Critical\n\n(none)\n\n### P1 - High\n\n(none)\n\n### P2 - Medium\n\n(none)\n\n### P3 - Low\n\n(none)\n\n---\n\n### Removal/Iteration Plan\n\nNo removal or refactoring is warranted by the inspected evidence.\n\n### Areas Not Covered\n\n- Real provider validation, persistence, responses, and retry behavior.\n- Compatibility with a named deployed or released client/provider combination.\n- Execution on the README\u2019s minimum Python version, 3.9; parent execution used 3.10.12.\n- Valid-input contracts beyond strings. The baseline forwarded arbitrary values, while the candidate requires `.strip()`. No requirement or consumer establishes supported null/non-string inputs, so this is not a substantiated defect.\n- A second external review: PAL was unavailable; this is the single independent reviewer fallback.\n\n### Evidence Requests\n\n1. **Settings provider:** repository and released revision not supplied; request the `PUT /settings` handler/request schema governing `display_name`. Compare acceptance and resulting stored values for normalized strings, especially `\"\"`. Local provider source is unavailable; the parent\u2019s user request remains pending. This affects provider compatibility and deployment readiness.\n2. **Settings-client repository:** request the actual deployed/released revision and applicable deployment contract, then compare that source against the candidate. The parent found only the local review base, without tags or remotes. This prevents a production-to-candidate readiness conclusion.\n\n### Outstanding Prerequisites\n\nDeployment readiness remains unresolved until the provider contract and deployed baseline are identified and assessed. No known release blocker was demonstrated. No durable tracking location was supplied; if these evidence requests are deferred, the parent should record their owner, missing inputs, and completion condition.",
+      "type": "agentMessage"
+    },
+    "startedAtMs": 1791898037056,
+    "turnId": "01a1356f-a91e-7e51-97d7-c0c17d2a5c7e"
+  }
+]

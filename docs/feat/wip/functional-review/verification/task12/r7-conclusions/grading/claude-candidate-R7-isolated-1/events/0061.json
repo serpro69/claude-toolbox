@@ -1,0 +1,19 @@
+{
+  "actor": "main",
+  "block": {
+    "caller": {
+      "type": "direct"
+    },
+    "id": "toolu_01UVQUpB5tsgcp923GfE8rof",
+    "input": {
+      "command": "for rev in HEAD INDEX; do echo \"== $rev\"; d=$(mktemp -d); if [ $rev = HEAD ]; then git show HEAD:payload.py > $d/payload.py; else git show :payload.py > $d/payload.py; fi; python3 -I -c '\nimport sys; sys.path.insert(0, sys.argv[1]); from payload import build_payload\nfor v in [None, \"   \", \"\\tAda\\n\", \"Ada\u00a0\", 42, b\" Ada \"]:\n    try: print(repr(v), \"->\", build_payload(v))\n    except Exception as e: print(repr(v), \"-> RAISES\", type(e).__name__, e)\n' $d; rm -r $d; done\nEV=$(mktemp -d /tmp/kk-review-code-evidence-XXXXXX); git diff --cached > $EV/staged.patch; git rev-parse HEAD; git rev-parse :payload.py :tests/test_payload.py HEAD:payload.py; echo $EV",
+      "description": "Probe boundary inputs at base vs candidate; write diff file"
+    },
+    "name": "Bash",
+    "type": "tool_use"
+  },
+  "id": "e128.0",
+  "parent_tool_use_id": null,
+  "session_id": "5c310920-4d8e-43a9-ac96-c45dcef45739",
+  "source_sequence": 128
+}

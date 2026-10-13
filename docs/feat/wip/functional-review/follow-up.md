@@ -1,7 +1,7 @@
 # Functional review: next-session handoff
 
-> Updated: 2026-10-11
-> Status: Task 12.12 complete; entry-path correction kept, broader acceptance remains open
+> Updated: 2026-10-13
+> Status: Task 12.13 complete with candidate rejected; R7 remains open
 > Owner: implementing agent, [remaining Task 12 work](tasks.md#task-12-execute-and-assess-the-full-comparison-matrix)
 > Evidence: [completed matrix](verification/task12/opus55/README.md), [Claude](verification/task12/opus55/claude-results.md), [Codex](verification/task12/opus55/codex-results.md)
 
@@ -11,8 +11,16 @@ Task 12.12's [outcome](#task-1212-outcome--2026-10-11) retains the isolated comm
 explicit instruction paths after its bounded comparison. The original
 [assessment](#assessment--2026-10-11) and [observation ledger](assessment-observations.md)
 remain tied to the earlier full matrix; its grades are not rewritten by this
-follow-up. Remaining investigation priority is [unsupported compatibility claims](#unsupported-compatibility-claims).
-No further operative correction or actor batch is selected or started here.
+follow-up. [Task 12.13](tasks.md#task-1213-keep-compatibility-and-release-conclusions-within-their-evidence)
+tested the user-approved bounded wording replacement in all 48 declared sessions.
+Both Claude standard R7 reports still overclaim provider/deployment compatibility,
+so the candidate is rejected and the operative changes are reverted. All 336
+assertion rows, integrity checks and cleanup are recorded; [independent completion
+review](verification/task12/r7-conclusions/completion-review.md) approves the rejection
+record with no findings. All 52 actor workspaces were removed after archive checks.
+The user explicitly authorized the external transfer and comparison after the
+initial launch rejection; no authorization block remains. R7 is unresolved and no
+successor iteration is selected.
 Before resuming, read the current Task 12 status, [design](design.md),
 [implementation](implementation.md), [evaluation contract](evaluation.md) and
 the relevant sealed grades, then check the worktree.
@@ -218,6 +226,31 @@ smoke test, while retaining each assertion's other components. R8 replay passes
 do not substitute for those checks.
 
 ### Unsupported compatibility claims
+
+**Successor decision — 2026-10-13:** the user approved retaining Unknown and a
+concrete next check until missing compatibility evidence is supplied and assessed.
+Task 12.13 replaces existing common-method wording for Supported, the Unknown
+verdict row and final evidence reconciliation. Known rollout prerequisites and
+scoped code approval remain valid. No new checklist, report section or blanket
+deployment restriction is selected. Test the hypothesis with unchanged R7/R3/R5
+in both modes/providers, two fresh baseline/candidate repetitions each; preserve
+all original grades and the live-PAL deferral. The completed experiment below
+rejects that wording; this paragraph records the original hypothesis.
+
+**Measured disposition — 2026-10-13: reject.** All 48 sessions completed after
+explicit user authorization. Both Claude standard R7 candidates fail 14.3/14.4
+despite receiving the instructions; all Codex and Claude isolated R7 candidates
+meet the local target rows. R5's candidate non-PAL rows pass. Codex candidate R3
+isolated repetition 1 identifies the incompatibility but omits explicit Blocked
+classification in its final parent report; this also occurs in the baseline.
+Effective candidate totals are 147 PASS / 21 FAIL / 0 PARTIAL, with 16 required
+PAL omissions retained as FAIL. [Results and corrected grading provenance](verification/task12/r7-conclusions/results.md)
+remain separate from the historical full matrix.
+
+The 28-word increase and generated copy are reverted. Source checks passing did
+not establish the desired behavior. [The verification record](verification/task12/r7-conclusions/README.md)
+retains the rejected patch, immutable candidate, captures and grades. R7 remains
+unresolved; no further wording or actor iteration is selected automatically.
 
 **Investigate next in priority after the selected slice; P1.** Five Claude R7
 observations (four FAIL, one PARTIAL) mix unavailable provider/deployment evidence

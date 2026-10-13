@@ -1,0 +1,19 @@
+{
+  "actor": "main",
+  "block": {
+    "caller": {
+      "type": "direct"
+    },
+    "id": "toolu_01AUSQDyrDHHHdP6r86kRPh9",
+    "input": {
+      "command": "PYTHONPATH=. python3 -m unittest tests.test_payload tests.test_client -v 2>&1 | tail -20; echo \"---\"; PYTHONPATH=. python3 -c \"from payload import build_payload; print(repr(build_payload('   ')))\"; PYTHONPATH=. python3 -c \"from payload import build_payload; build_payload(None)\" 2>&1 | tail -1",
+      "description": "Run tests and probe edge cases"
+    },
+    "name": "Bash",
+    "type": "tool_use"
+  },
+  "id": "e89.0",
+  "parent_tool_use_id": null,
+  "session_id": "a7591ee5-ae0d-4c36-bfad-93268e42959c",
+  "source_sequence": 89
+}

@@ -1,0 +1,28 @@
+{
+  "actor": "items-01a1356c-ed84-7ec3-9822-a7e848e035d7",
+  "completedAtMs": 1791897789659,
+  "id": "exec-d029403e-5e91-4d8a-b9bb-e3646bec5ba2",
+  "item": {
+    "aggregatedOutput": "diff --git a/payload.py b/payload.py\nindex 32557de..8ad74d9 100644\n--- a/payload.py\n+++ b/payload.py\n@@ -1,2 +1,2 @@\n def build_payload(display_name):\n-    return {\"display_name\": display_name}\n+    return {\"display_name\": display_name.strip()}\ndiff --git a/tests/test_payload.py b/tests/test_payload.py\nnew file mode 100644\nindex 0000000..e427779\n--- /dev/null\n+++ b/tests/test_payload.py\n@@ -0,0 +1,11 @@\n+import unittest\n+\n+from payload import build_payload\n+\n+\n+class PayloadTests(unittest.TestCase):\n+    def test_trim_surrounding_spaces(self):\n+        self.assertEqual(build_payload(\"  Ada  \"), {\"display_name\": \"Ada\"})\n+\n+    def test_preserve_internal_space(self):\n+        self.assertEqual(build_payload(\"Ada Lovelace\"), {\"display_name\": \"Ada Lovelace\"})\ndef build_payload(display_name):\n    return {\"display_name\": display_name.strip()}\nimport unittest\n\nfrom payload import build_payload\n\n\nclass PayloadTests(unittest.TestCase):\n    def test_trim_surrounding_spaces(self):\n        self.assertEqual(build_payload(\"  Ada  \"), {\"display_name\": \"Ada\"})\n\n    def test_preserve_internal_space(self):\n        self.assertEqual(build_payload(\"Ada Lovelace\"), {\"display_name\": \"Ada Lovelace\"})\n",
+    "command": "/usr/bin/zsh -lc 'git diff --cached --no-ext-diff --no-color && git show :payload.py && git show :tests/test_payload.py'",
+    "commandActions": [
+      {
+        "command": "git diff --cached --no-ext-diff --no-color && git show :payload.py && git show :tests/test_payload.py",
+        "type": "unknown"
+      }
+    ],
+    "cwd": "/tmp/fr-r7-conclusions-20261013/codex-candidate-R7-isolated-1",
+    "durationMs": 58,
+    "exitCode": 0,
+    "id": "exec-d029403e-5e91-4d8a-b9bb-e3646bec5ba2",
+    "pluginId": null,
+    "processId": "23760",
+    "scriptPath": null,
+    "source": "unifiedExecStartup",
+    "status": "completed",
+    "type": "commandExecution"
+  },
+  "source_file": "items-01a1356c-ed84-7ec3-9822-a7e848e035d7.json",
+  "startedAtMs": 1791897789601,
+  "turnId": "01a1356c-edae-7b00-86d9-8e1901d99fce"
+}
