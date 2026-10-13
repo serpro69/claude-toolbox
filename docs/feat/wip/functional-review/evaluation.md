@@ -19,6 +19,23 @@ All assertions[] entries in new full-workflow evals are required; no schema exte
 
 Do not lower the threshold, switch the primary provider or replace a fixture after seeing failures without recording a revised run contract and repeating the affected baseline/candidate comparison.
 
+### Planned R7 validity reassessment
+
+On 2026-10-13 the user requested documentation of [Task 12.14](tasks.md#task-1214-redesign-the-r7-evaluation-before-further-skill-changes)
+for the next session. R7's simplified request-normalization fixture and treatment
+of conditional approval may confound a useful scoped review with unsupported
+deployment confidence. The [handoff](follow-up.md#r7-evaluation-redesign--next-session)
+proposes a material-dependency case, benign control and pre-run report examples.
+No successor fixture or rubric is adopted by this note. The existing pinned
+contracts and grades remain unchanged; any revised assertion/verdict semantics
+must be explicit, mapped and versioned prospectively before measurement.
+
+The proposed first measurement is a four-session diagnostic of the unchanged
+current skill: two Claude standard sessions per successor case. It provides no
+baseline/candidate improvement claim, does not close acceptance and cannot replace
+the matching comparison required for a later operative change. No further
+48-session batch or PAL expansion is selected.
+
 ### Codex handoff capture resolution
 
 **Authority and owner.** On 2026-10-09 the user approved the sequencing change and conditional fallback below. The implementing agent owns gate 2B: Codex R3 isolated and I2 standalone, two baseline repetitions each. Original captures, assertions and the frozen revision-1 rubric remain unchanged until a successor contract is explicitly recorded; ciphertext never satisfies an exact-prompt assertion.

@@ -155,6 +155,13 @@ reverted. The evidence boundary above remains the desired behavior; it is not a
 claim that the current instructions reliably enforce it. See the
 [retained experiment](verification/task12/r7-conclusions/README.md).
 
+The subsequent discussion questioned whether R7 makes the missing provider
+evidence materially relevant enough to justify its grading of conditional advice.
+[Task 12.14](tasks.md#task-1214-redesign-the-r7-evaluation-before-further-skill-changes)
+now reassesses the evaluation before further skill changes. The whitespace
+example does not establish a provider defect. This is a prospective test-validity
+investigation; it does not silently amend the verdict table or historical grades.
+
 ## /kk:implement workflow
 
 ### Before editing

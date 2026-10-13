@@ -7,13 +7,13 @@
 > Issue: [#166](https://github.com/serpro69/claude-toolbox/issues/166)
 > Status: in-progress
 > Created: 2026-10-07
-> Revised: 2026-10-13 with the rejected R7 wording experiment and retained evidence
+> Revised: 2026-10-13 with the R7 evaluation-redesign handoff after the rejected wording experiment
 > Next-session handoff: [follow-up.md](follow-up.md)
-> Current slice: Task 12.13 complete — candidate rejected and reverted; R7 remains open
+> Current slice: Task 12.14 pending — reassess R7 evaluation validity; keep operative skill instructions unchanged
 > Not Doing: new review skill, whole-system audits, mandatory production access, deployments, generic release engine, new models/dependencies, profile redesign
 > Delivery: preserve existing invocations/shared consumers; regenerate Codex artifacts with every operative slice.
 
-Scope and direction are approved; the reviews have been assessed and the detailed plan revised. Tasks 1–11 are done, including Task 2 gates 2A and 2B. Task 12's full core matrix is captured and graded; acceptance remains incomplete. **Task 12.12 is done:** keep the entry-path correction after its bounded diagnostic comparison. Remaining acceptance gates and dispositions stay open; R7 unsupported-claim investigation retains next priority. Task 13 retains final feature documentation and verification. The [gate 2B completion record](verification/task2b/README.md) documents the selected receipt/use contract, four new baselines and evidence limits. Exact submitted prompts remain unverified, and capture completion is not candidate acceptance. Earlier six-task numbering is superseded by this sequence; no completed work was renumbered. Size includes authored reasoning complexity; mechanical copies/symlinks/generated files are excluded. Parallel markers permit compatible work only and do not authorize delegation. Serialize generation if tasks run concurrently.
+Scope and direction are approved; the reviews have been assessed and the detailed plan revised. Tasks 1–11 are done, including Task 2 gates 2A and 2B. Task 12's full core matrix is captured and graded; acceptance remains incomplete. **Task 12.12 is done:** keep the entry-path correction after its bounded diagnostic comparison. Remaining acceptance gates and dispositions stay open; Task 12.14's R7 evaluation-validity reassessment is next, before another skill correction. Task 13 retains final feature documentation and verification. The [gate 2B completion record](verification/task2b/README.md) documents the selected receipt/use contract, four new baselines and evidence limits. Exact submitted prompts remain unverified, and capture completion is not candidate acceptance. Earlier six-task numbering is superseded by this sequence; no completed work was renumbered. Size includes authored reasoning complexity; mechanical copies/symlinks/generated files are excluded. Parallel markers permit compatible work only and do not authorize delegation. Serialize generation if tasks run concurrently.
 
 ## Task 1: Prove revision-bound evaluation loading
 
@@ -828,6 +828,30 @@ execution/hash verification to the root. [Final workspace cleanup](verification/
 rechecks all archived runtime inputs and final subject snapshots before removing
 the 52 proven-owned actor workspaces. **Task 12.13 is complete as a rejected
 experiment, not an accepted R7 fix.**
+
+### Task 12.14: Redesign the R7 evaluation before further skill changes
+
+- **Status:** pending — next-session handoff only
+- **Depends on:** Task 12.13 (done); user-requested reassessment documented 2026-10-13
+- **Size:** M
+- **Strategy:** Risk-First — establish test validity before changing shared instructions
+- **Owner:** next implementing agent
+- **Can run in parallel with:** —
+- **Docs:** [handoff and rationale](follow-up.md#r7-evaluation-redesign--next-session), [implementation scope](implementation.md#r7-evaluation-validity--task-1214), [prospective contract](evaluation.md#planned-r7-validity-reassessment)
+
+The immediate deliverable is a revised fixture pair and grading criteria, with
+acceptable/unacceptable report examples. The whitespace example does not establish
+a real provider incompatibility. Preserve all historical results; assess whether
+their significance warrants a skill change instead of optimizing for old labels.
+
+- [ ] 12.14.1 Audit `klaude-plugin/skills/review-code/evals/functional-missing-baseline/eval.json`, its sibling `oracle/`, and the Task 12.13 failed/passing reports → verify: distinguish demonstrated report claims, hypothetical server semantics, missing evidence and ambiguous review scope; identify exactly what the successor should measure.
+- [ ] 12.14.2 Design separately identified material-dependency and benign-control cases, with meaningful expected outcomes → verify: the unknown deployment fact matters in the first, scoped approval is justified in the second, and neither requires live access, fixture-specific actor hints or a large system.
+- [ ] 12.14.3 Author the successor fixtures/rubric and pre-run acceptable/unacceptable examples; document assertion mapping and any proposed verdict-contract amendment in `evaluation.md` → verify: historical files/grades stay unchanged, oracles remain grader-only, and report meaning rather than isolated approval keywords decides the revised criteria. Regenerate Codex output if canonical eval files are added.
+- [ ] 12.14.4 Review fixture/rubric validity before measurement, then declare and run the bounded diagnostic: two Claude standard sessions per case, four total, on the same unchanged current skill revision → verify: fresh staged workspaces outside a SKILL.md ancestor, pinned inputs/runtime, no evaluator material exposed, independent grading and retained attempts. No new skill candidate or 48-run comparison.
+- [ ] 12.14.5 Record whether a concrete skill failure survives the clearer test and choose investigate/defer/no-change accordingly → verify: distinguish evaluation validity from skill effectiveness, preserve PAL/capture limits and full-feature gates, and document any broader comparison separately before executing it.
+
+This request records the handoff; fixture implementation and diagnostic execution
+remain pending. No additional operative instruction change is selected.
 
 ## Task 13: Document and verify the complete feature
 

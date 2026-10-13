@@ -1,11 +1,19 @@
 # Functional review: next-session handoff
 
 > Updated: 2026-10-13
-> Status: Task 12.13 complete with candidate rejected; R7 remains open
+> Status: Task 12.13 complete; next is Task 12.14 — reassess R7 evaluation validity before further skill changes
 > Owner: implementing agent, [remaining Task 12 work](tasks.md#task-12-execute-and-assess-the-full-comparison-matrix)
 > Evidence: [completed matrix](verification/task12/opus55/README.md), [Claude](verification/task12/opus55/claude-results.md), [Codex](verification/task12/opus55/codex-results.md)
 
 ## Start here
+
+**Next session: start with [Task 12.14](tasks.md#task-1214-redesign-the-r7-evaluation-before-further-skill-changes).**
+The user questioned whether the simplified R7 fixture and its interpretation of
+conditional approval justify treating the observed reports as a material skill
+defect. Document and develop a revised test and grading criteria first. The
+[handoff below](#r7-evaluation-redesign--next-session) supersedes the earlier
+proposal to change standard-review closing guidance. Leave operative skill
+instructions unchanged while investigating evaluation validity.
 
 Task 12.12's [outcome](#task-1212-outcome--2026-10-11) retains the isolated command's
 explicit instruction paths after its bounded comparison. The original
@@ -19,8 +27,9 @@ assertion rows, integrity checks and cleanup are recorded; [independent completi
 review](verification/task12/r7-conclusions/completion-review.md) approves the rejection
 record with no findings. All 52 actor workspaces were removed after archive checks.
 The user explicitly authorized the external transfer and comparison after the
-initial launch rejection; no authorization block remains. R7 is unresolved and no
-successor iteration is selected.
+initial launch rejection; no authorization block remains for that completed
+batch. R7 is unresolved; its evaluation redesign is now the selected next task.
+No successor skill patch or new actor batch has been executed.
 Before resuming, read the current Task 12 status, [design](design.md),
 [implementation](implementation.md), [evaluation contract](evaluation.md) and
 the relevant sealed grades, then check the worktree.
@@ -31,6 +40,63 @@ more obligations. A small, contained correction remains worthwhile when its
 benefit is clear and it does not materially increase instruction burden.
 Keep this assessment in repository planning documents; it is not a new runtime
 checklist for every skill invocation.
+
+## R7 evaluation redesign — next session
+
+**Direction recorded 2026-10-13 at the user's request.** Start from commit
+`d5fb1694`, which records Task 12.13's rejected experiment. This handoff documents
+future work only; it does not implement revised fixtures or launch sessions.
+
+**Why reassess the test:** R7 trims a request's display-name string and asks whether
+the change is ready to deploy, without a provider contract or deployed revision.
+Its fixture never establishes that whitespace and empty strings have different
+operational meanings. That was a hypothetical example, not a demonstrated defect.
+The two failed Claude standard reports acknowledge missing evidence and return
+COMMENT, then offer stronger conditional advice. Their historical 14.3/14.4 FAILs
+remain valid under the pinned rubric, but the rubric's ability to distinguish
+useful scoped judgment from material overconfidence is now in question. Neither
+the fixture's invalidity nor the cause of the agent behavior is established.
+
+The next deliverable is a revised R7 fixture pair and explicit grading examples:
+
+1. **Material missing evidence:** use a small, realistic compatibility dependency,
+   such as a documented request capability requiring API v2 while the deployed
+   provider version is unknown. Explain the consequence of the missing fact.
+   Local mock success cannot settle that question. Keep this distinct from R3,
+   whose supported provider baseline is known and demonstrates incompatibility.
+2. **Benign control:** document the supported inputs and unchanged external
+   contract of a small change. Allow justified, scoped code approval without
+   demanding production access or inventing a deployment blocker. Make the review
+   scope clear in both cases so prompt ambiguity does not decide the outcome.
+3. **Meaning-based grading:** write acceptable and unacceptable example reports
+   before measuring agents. Distinguish code support, source-level compatibility,
+   and a particular deployment conclusion. Judge whether conditions and limits
+   address the material requirements; conditional phrasing alone is not proof of
+   overclaiming. Reconcile any proposed verdict-rule change explicitly with
+   design.md and the existing rubric before adopting it.
+4. **Small diagnostic after fixture/rubric review:** prospectively declare two
+   fresh Claude standard sessions per case, four sessions total, using the same
+   unchanged current skill revision. Pin fixture, rubric, grader, runtime and
+   model identities, and retain independent grades and all attempts. This tests
+   the revised evaluation's usefulness; it is not a baseline/candidate improvement
+   comparison or full-feature acceptance. Broaden only if a concrete failure
+   warrants a separately documented next step.
+
+Preserve old fixtures, assertions, captures, corrections, grades and freezes.
+Give successor cases/rubric separate identities and an old-to-new assertion
+mapping; do not retroactively turn old FAILs into PASS or pool unlike results.
+Do not add skill instructions, resume the reverted wording, launch another
+48-session matrix, expand PAL, or design a general deployment framework for this
+task. The four-run diagnostic follows the written fixture/rubric deliverable;
+it is not work to start merely by resuming the feature. Task 12 acceptance and
+Task 13 remain open. Owner: next implementing agent.
+
+Resume with `/kk:implement functional-review Task 12.14`, beginning with the
+fixture/rubric work. Optional `/kk:clarify-docs` can refine `follow-up.md`,
+`design.md`, `implementation.md`, `evaluation.md` and `tasks.md`; then use
+`/kk:review-design functional-review` to check the prospective evaluation plan
+before measurement. These are next-session recommendations, not reviews already
+performed or an instruction to start actor runs from this handoff.
 
 ## Established result and open gates
 
@@ -227,6 +293,11 @@ do not substitute for those checks.
 
 ### Unsupported compatibility claims
 
+**Current next action:** [reassess R7 evaluation validity](#r7-evaluation-redesign--next-session)
+under Task 12.14 before selecting any further instruction correction. The dated
+assessment and rejected experiment below remain historical evidence; the prior
+P1 characterization is not sufficient by itself to justify another skill change.
+
 **Successor decision — 2026-10-13:** the user approved retaining Unknown and a
 concrete next check until missing compatibility evidence is supplied and assessed.
 Task 12.13 replaces existing common-method wording for Supported, the Unknown
@@ -252,7 +323,7 @@ not establish the desired behavior. [The verification record](verification/task1
 retains the rejected patch, immutable candidate, captures and grades. R7 remains
 unresolved; no further wording or actor iteration is selected automatically.
 
-**Investigate next in priority after the selected slice; P1.** Five Claude R7
+**Earlier assessment — P1; action superseded by Task 12.14.** Five Claude R7
 observations (four FAIL, one PARTIAL) mix unavailable provider/deployment evidence
 with supported-server or safe-to-deploy language. This can mislead a release
 decision; confidence is high for the explicit claims and lower for the ambiguous
@@ -428,8 +499,8 @@ implementation-mode acquisition, R7 claims, receipt gaps, other matrix cases and
 Codex behavior are not certified by it. Keep the ordering guard deferred.
 
 The implementing agent still owns the remaining dispositions and acceptance
-obligations above. Investigate R7's unsupported compatibility conclusions next in
-priority, applying the existing cost/benefit constraint before selecting any new
+obligations above. Reassess R7's fixture and grading validity next under Task 12.14,
+applying the existing cost/benefit constraint before selecting any new
 operative slice. Live PAL remains user-deferred; legacy controls and Task 13
 remain pending. [Final independent review](verification/task12/entry-path-no-pal/completion-review.md)
 approved the completion record and bounded keep decision with no findings.
