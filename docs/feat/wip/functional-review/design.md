@@ -126,7 +126,7 @@ Pending tasks do not excuse broken current flows. Conversely, a feature whose in
 
 Use these evidence-qualified conclusions for applicable compatibility rows:
 
-- Supported: named scenarios against a named baseline support compatibility within stated limits.
+- Supported: evidence supports named scenarios against the named baseline. Client-only tests establish client behavior, not an uninspected provider's contract or deployment compatibility.
 - Blocked: a demonstrated incompatibility or known unmet delivery requirement prevents the stated release.
 - Unknown: material baseline, environment, consumer or data evidence is missing.
 - Not applicable: the change has no consequence for that dimension, with a reason.
@@ -137,11 +137,23 @@ These conclusions complement P0–P3 severity and the code-review verdict:
 | --- | --- | --- |
 | Demonstrated in-scope incompatibility caused or worsened by the change | Emit one severity-rated finding based on actual impact, not an automatic P0/P1. REQUEST_CHANGES for P0/P1 or a violated hard acceptance/delivery requirement; otherwise COMMENT for an actionable nonblocking issue. | Blocked for the affected required combination. |
 | Known external rollout prerequisite, with no demonstrated code defect | Assess the code on its merits; APPROVE can be explicitly scoped to code. | Blocked until the prerequisite is met; document the dependency. |
-| Unknown evidence essential to task acceptance or an explicitly requested release conclusion | COMMENT if there is no demonstrated defect warranting REQUEST_CHANGES. Do not issue an unconditional approval of the unverified requirement. | Unknown with the missing evidence and next action. |
+| Unknown evidence essential to task acceptance or an explicitly requested release conclusion | COMMENT if there is no demonstrated defect warranting REQUEST_CHANGES. Scoped code support is not release approval. | Unknown until missing evidence is supplied and assessed; identify the next check instead of conditional deployment approval. |
 | Unknown operational detail outside the requested/required assessment | It does not automatically downgrade a supported, explicitly scoped code verdict. | Unknown for that unassessed environment. |
 | Supported or Not applicable | Apply existing findings/severity rules; neither status overrides another defect. | Preserve the named baseline and limits. |
 
 Supported is not a production guarantee; missing information is not an invented code defect. A report can approve code while withholding release readiness, but cannot use that distinction to bypass an explicit independently-releasable-main requirement.
+
+On 2026-10-13 the user accepted this distinction for the R7 follow-up: unresolved
+compatibility evidence stays Unknown through the closing advice. A next check is
+useful; "safe to deploy if confirmed" is not an observed readiness result. This
+clarifies the existing evidence limit without changing known rollout prerequisites,
+unrelated operational unknowns, the assertions or their acceptance threshold.
+
+Task 12.13 tested three common-method wording replacements for this requirement.
+The candidate failed the predeclared keep criterion and its operative wording was
+reverted. The evidence boundary above remains the desired behavior; it is not a
+claim that the current instructions reliably enforce it. See the
+[retained experiment](verification/task12/r7-conclusions/README.md).
 
 ## /kk:implement workflow
 
