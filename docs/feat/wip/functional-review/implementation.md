@@ -5,7 +5,7 @@
 > Tasks: [tasks.md](tasks.md)
 > Review disposition: [consolidated assessment](reviews/design-review-consolidation.md)
 > Status: Tasks 1–11 and core matrix capture/grading complete; acceptance and final verification pending
-> Revised: 2026-10-11; targeted comparison supports keeping the isolated entry-path correction
+> Revised: 2026-10-13; R7 wording rejected, evaluation-validity reassessment is next
 > Next-session handoff: [follow-up.md](follow-up.md)
 
 ## Starting points
@@ -198,8 +198,8 @@ Candidate totals remain 32 PASS / 8 FAIL / 0 PARTIAL; every required PAL omissio
 still fails its composite assertion. These observations neither close full feature
 acceptance nor isolate the incremental causal effect from the preceding candidate.
 Keep implementation acquisition, unsupported deployment claims and capture limits
-separately assigned. R7 claim investigation retains next priority under the cost
-constraint; Task 12.13 below records the subsequent rejected wording experiment. The earlier guard remains
+separately assigned. Task 12.13 below records the rejected wording experiment;
+Task 12.14 now prioritizes R7 evaluation validity under the same cost constraint. The earlier guard remains
 deferred and may not address I4's later context-ordering violation.
 
 ### R7 conclusion consistency — Task 12.13
@@ -226,8 +226,25 @@ the [verification record](verification/task12/r7-conclusions/README.md). R7 stay
 unresolved and no successor wording or actor iteration is selected. Source checks
 passing did not establish the required behavioral result.
 
+### R7 evaluation validity — Task 12.14
+
+The user requested a next-session handoff after questioning R7's simplified
+whitespace fixture. Follow the [recorded redesign](follow-up.md#r7-evaluation-redesign--next-session):
+establish a material compatibility dependency and a benign control, then write
+meaning-based grading criteria and example reports before measuring agents.
+Start with the existing `functional-missing-baseline` eval/oracle and Task 12.13
+reports as evidence, not proof that another shared instruction is needed.
+
+Keep operative skill instructions unchanged. Author successor fixtures and rubric
+under separate identities; preserve historical results and explicitly document
+any contract amendment. After review, a prospectively declared four-session
+Claude standard diagnostic uses the unchanged current skill on both cases.
+It is not the required baseline/candidate acceptance comparison. Record its
+outcome before considering a skill patch or broader batch. This session documents
+that work only; all Task 12.14 subtasks remain pending.
+
 Optional `/kk:clarify-docs` may refine the changed `follow-up.md`, `design.md`,
-`implementation.md`, `ordering.md` and `tasks.md`; then
+`implementation.md`, `evaluation.md` and `tasks.md`; then
 `/kk:review-design functional-review` can assess the updated plan before operative
 implementation. Task 13 remains dependent on Task 12's actual acceptance.
 
