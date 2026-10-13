@@ -199,8 +199,32 @@ still fails its composite assertion. These observations neither close full featu
 acceptance nor isolate the incremental causal effect from the preceding candidate.
 Keep implementation acquisition, unsupported deployment claims and capture limits
 separately assigned. R7 claim investigation retains next priority under the cost
-constraint; no additional operative slice is selected. The earlier guard remains
+constraint; Task 12.13 below records the subsequent rejected wording experiment. The earlier guard remains
 deferred and may not address I4's later context-ordering violation.
+
+### R7 conclusion consistency — Task 12.13
+
+The user approved the bounded replacement approach on 2026-10-13. The experiment replaced existing
+Supported, Unknown-verdict and final evidence-reconciliation wording in
+`review-code/functional-review.md`; all standard/isolated consumers already load
+this common method. It added no reporting section, checklist, workflow phase or
+duplicated agent rule and preserved the intended treatment of known prerequisites,
+scoped code approval and unrelated unknowns. The Codex distribution was regenerated.
+
+The completed comparison used unchanged R7, R3 and R5 fixtures: both modes and
+providers, two fresh repetitions per immutable baseline/candidate (48 sessions).
+Runtime, filtered bundles, isolated state and capture contract were validated and
+frozen prospectively. PAL remained excluded and its required omissions retain
+FAIL. The fixed keep rule rejected the candidate if R7 still overclaimed or
+R3/R5 regressed, with no automatic further iteration. Task 12.13 owns the evidence;
+full-feature acceptance remains separate.
+
+**Disposition: reject the candidate.** Both Claude standard R7 repetitions still
+overclaim provider/deployment compatibility. The three operative replacements
+and generated counterpart are reverted; the source archive and patch remain in
+the [verification record](verification/task12/r7-conclusions/README.md). R7 stays
+unresolved and no successor wording or actor iteration is selected. Source checks
+passing did not establish the required behavioral result.
 
 Optional `/kk:clarify-docs` may refine the changed `follow-up.md`, `design.md`,
 `implementation.md`, `ordering.md` and `tasks.md`; then

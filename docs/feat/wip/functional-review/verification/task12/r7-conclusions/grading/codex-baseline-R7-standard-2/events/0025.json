@@ -1,0 +1,28 @@
+{
+  "actor": "items-01a1355e-2179-7f12-9883-e219d0809d5a",
+  "completedAtMs": 1791896817650,
+  "id": "exec-86c1ebdf-e671-4099-804c-12c1700fa87c",
+  "item": {
+    "aggregatedOutput": "PASS: 5 additional string boundary cases through save(), using a recording transport\n",
+    "command": "/usr/bin/zsh -lc \"python3 -B - <<'PY'\nfrom client import save\n\nclass RecordingTransport:\n    def __init__(self):\n        self.calls = []\n    def put(self, path, body):\n        self.calls.append((path, body))\n        return {'ok': True}\n\ncases = [\n    ('', ''),\n    ('   ', ''),\n    ('\\\\t Ada \\\\n', 'Ada'),\n    ('Ada  Lovelace', 'Ada  Lovelace'),\n    ('\\\\u00a0Ada\\\\u00a0', 'Ada'),\n]\nfor name, expected in cases:\n    transport = RecordingTransport()\n    result = save(transport, name)\n    assert transport.calls == [('/settings', {'display_name': expected})]\n    assert result == {'ok': True}\nprint('PASS: 5 additional string boundary cases through save(), using a recording transport')\nPY\"",
+    "commandActions": [
+      {
+        "command": "python3 -B - <<'PY'\nfrom client import save\n\nclass RecordingTransport:\n    def __init__(self):\n        self.calls = []\n    def put(self, path, body):\n        self.calls.append((path, body))\n        return {'ok': True}\n\ncases = [\n    ('', ''),\n    ('   ', ''),\n    ('\\t Ada \\n', 'Ada'),\n    ('Ada  Lovelace', 'Ada  Lovelace'),\n    ('\\u00a0Ada\\u00a0', 'Ada'),\n]\nfor name, expected in cases:\n    transport = RecordingTransport()\n    result = save(transport, name)\n    assert transport.calls == [('/settings', {'display_name': expected})]\n    assert result == {'ok': True}\nprint('PASS: 5 additional string boundary cases through save(), using a recording transport')\nPY",
+        "type": "unknown"
+      }
+    ],
+    "cwd": "/tmp/fr-r7-conclusions-20261013/codex-baseline-R7-standard-2",
+    "durationMs": 67,
+    "exitCode": 0,
+    "id": "exec-86c1ebdf-e671-4099-804c-12c1700fa87c",
+    "pluginId": null,
+    "processId": "56450",
+    "scriptPath": null,
+    "source": "unifiedExecStartup",
+    "status": "completed",
+    "type": "commandExecution"
+  },
+  "source_file": "items-01a1355e-2179-7f12-9883-e219d0809d5a.json",
+  "startedAtMs": 1791896817583,
+  "turnId": "01a1355e-21a6-73f0-828e-4e3811d616d6"
+}

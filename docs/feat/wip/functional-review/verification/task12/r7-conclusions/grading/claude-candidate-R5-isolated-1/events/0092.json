@@ -1,0 +1,12 @@
+{
+  "actor": "child-of:toolu_01CCePUaQeSxeM4tviJYqqtd",
+  "block": {
+    "content": "1\t# Change context \u2014 export-preview Task 1 (staged)\n2\t\n3\t## Intent and authority (explicit)\n4\t- README.md:5-10 \u2014 existing GET /settings response and routing behavior remain the acceptance\n5\t  contract; preview activation belongs to a later task; this increment must remain independently\n6\t  compatible while that task is pending; build setting is fixed at False in source, not supplied by\n7\t  request/env/external config. No deployment inventory exists in this repo.\n8\t- tasks.md \u2014 Task 1 (in-progress, the reviewed task): preserve existing routes with preview disabled\n9\t  in the checked-in build; add the preview module and guarded route. Task 2 (pending): implement\n10\t  render_preview and enabled-path tests before changing the build setting.\n11\t\n12\t## Change boundary\n13\t- Selector: `git diff --cached` (no unstaged changes). Diff: /tmp/kk-review-code-r5iso-20261013/staged.patch\n14\t- Review base: HEAD f1a16b5c97799818739131e41ea37056edf057ac. Candidate: index; `git diff` (worktree vs\n15\t  index) is empty for tracked files, so worktree files equal the candidate.\n16\t- Changed: preview.py (added), routes.py (modified). Deliberately pending: render_preview body and\n17\t  enabled-path tests (Task 2).\n18\t\n19\t## Existing behavior / consumers\n20\t- routes.get(path): \"/settings\" -> (200, current_settings()); anything else -> (404, None).\n21\t  Base routes.py is fully visible in the diff hunk (lines 1-7).\n22\t- Unchanged files at base: config.py (EXPORT_PREVIEW_ENABLED = False), settings.py, tests/test_routes.py\n23\t  (includes test_preview_route expecting get(\"/export-preview\") == (404, None)).\n24\t\n25\t## Delivery constraints\n26\t- Independently compatible increment on the checked-in build (flag False). Python 3.9+, stdlib only.\n27\t\n28\t## Baselines\n29\t- Only the review base is available; no released/deployed baseline exists in this repo (README:10).\n30\t\n31\t## Verification results\n32\t- Tests NOT executed: the parent's shell execution of `python3 -B -m unittest discover -s tests` was\n33\t  denied in this session. Any test conclusions are source-only.\n34\t\n35\t## Rejected approaches\n36\t- None recorded.\n37\t",
+    "tool_use_id": "toolu_01S178JUHcr5VAMPT6WBERg6",
+    "type": "tool_result"
+  },
+  "id": "e200.0",
+  "parent_tool_use_id": "toolu_01CCePUaQeSxeM4tviJYqqtd",
+  "session_id": "d3513e4a-f059-45ae-a665-a089a46817f3",
+  "source_sequence": 200
+}

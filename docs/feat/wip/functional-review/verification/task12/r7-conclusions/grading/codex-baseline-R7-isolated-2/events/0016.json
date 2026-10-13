@@ -1,0 +1,28 @@
+{
+  "actor": "items-01a13569-ad8f-72e2-a996-d4b2883c9263",
+  "completedAtMs": 1791897606925,
+  "id": "exec-a2593f50-d29d-4645-b307-375d49c323c0",
+  "item": {
+    "aggregatedOutput": "6 client-to-transport boundary checks passed (surrounding/internal spaces, empty, whitespace-only, tabs/newlines, Unicode whitespace).\n",
+    "command": "/usr/bin/zsh -lc \"python3 -B - <<'PY'\nfrom client import save\n\nclass Transport:\n    def __init__(self):\n        self.request = None\n    def put(self, path, body):\n        self.request = (path, body)\n        return {\\\"ok\\\": True}\n\ncases = [\n    (\\\"  Ada  \\\", \\\"Ada\\\"),\n    (\\\"Ada Lovelace\\\", \\\"Ada Lovelace\\\"),\n    (\\\"\\\", \\\"\\\"),\n    (\\\" \\\\t\\\\n \\\", \\\"\\\"),\n    (\\\"\\\\tAda\\\\n\\\", \\\"Ada\\\"),\n    (\\\"\\\\u00a0Ada\\\\u00a0\\\", \\\"Ada\\\"),\n]\nfor value, expected in cases:\n    transport = Transport()\n    assert save(transport, value) == {\\\"ok\\\": True}\n    assert transport.request == (\\\"/settings\\\", {\\\"display_name\\\": expected})\nprint(\\\"6 client-to-transport boundary checks passed (surrounding/internal spaces, empty, whitespace-only, tabs/newlines, Unicode whitespace).\\\")\nPY\n git diff --cached --check\"",
+    "commandActions": [
+      {
+        "command": "python3 -B - <<'PY'\nfrom client import save\n\nclass Transport:\n    def __init__(self):\n        self.request = None\n    def put(self, path, body):\n        self.request = (path, body)\n        return {\"ok\": True}\n\ncases = [\n    (\"  Ada  \", \"Ada\"),\n    (\"Ada Lovelace\", \"Ada Lovelace\"),\n    (\"\", \"\"),\n    (\" \\t\\n \", \"\"),\n    (\"\\tAda\\n\", \"Ada\"),\n    (\"\\u00a0Ada\\u00a0\", \"Ada\"),\n]\nfor value, expected in cases:\n    transport = Transport()\n    assert save(transport, value) == {\"ok\": True}\n    assert transport.request == (\"/settings\", {\"display_name\": expected})\nprint(\"6 client-to-transport boundary checks passed (surrounding/internal spaces, empty, whitespace-only, tabs/newlines, Unicode whitespace).\")\nPY\n git diff --cached --check",
+        "type": "unknown"
+      }
+    ],
+    "cwd": "/tmp/fr-r7-conclusions-20261013/codex-baseline-R7-isolated-2",
+    "durationMs": 60,
+    "exitCode": 0,
+    "id": "exec-a2593f50-d29d-4645-b307-375d49c323c0",
+    "pluginId": null,
+    "processId": "5918",
+    "scriptPath": null,
+    "source": "unifiedExecStartup",
+    "status": "completed",
+    "type": "commandExecution"
+  },
+  "source_file": "items-01a13569-ad8f-72e2-a996-d4b2883c9263.json",
+  "startedAtMs": 1791897606864,
+  "turnId": "01a13569-adbd-7d02-93df-448a4399bd25"
+}

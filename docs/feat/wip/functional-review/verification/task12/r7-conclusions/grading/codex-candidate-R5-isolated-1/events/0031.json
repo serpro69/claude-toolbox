@@ -1,0 +1,28 @@
+{
+  "actor": "items-01a13552-42a8-7760-8798-33d1ed05e8ea",
+  "completedAtMs": 1791896150454,
+  "id": "exec-091aea80-0d4e-44f6-8d8c-782793308c2a",
+  "item": {
+    "aggregatedOutput": "A  preview.py\nM  routes.py\nStaged diff unchanged: True\nIndex manifest SHA256: 8c1e0e671fb0aef9b8d91b08b8a362351ce56680d6c1f2b35648a179daf308a2\n",
+    "command": "/usr/bin/zsh -lc \"git status --short && git diff --cached --check && python3 - <<'PY'\nimport hashlib, pathlib, subprocess\nbundle=pathlib.Path('/tmp/kk-export-preview-review-3rel_e2z')\ncurrent=subprocess.check_output(['git','diff','--cached','--'])\nprint('Staged diff unchanged:', current == (bundle/'selected.patch').read_bytes())\nprint('Index manifest SHA256:', hashlib.sha256(subprocess.check_output(['git','ls-files','--stage'])).hexdigest())\nPY\"",
+    "commandActions": [
+      {
+        "command": "git status --short && git diff --cached --check && python3 - <<'PY'\nimport hashlib, pathlib, subprocess\nbundle=pathlib.Path('/tmp/kk-export-preview-review-3rel_e2z')\ncurrent=subprocess.check_output(['git','diff','--cached','--'])\nprint('Staged diff unchanged:', current == (bundle/'selected.patch').read_bytes())\nprint('Index manifest SHA256:', hashlib.sha256(subprocess.check_output(['git','ls-files','--stage'])).hexdigest())\nPY",
+        "type": "unknown"
+      }
+    ],
+    "cwd": "/tmp/fr-r7-conclusions-20261013/codex-candidate-R5-isolated-1",
+    "durationMs": 64,
+    "exitCode": 0,
+    "id": "exec-091aea80-0d4e-44f6-8d8c-782793308c2a",
+    "pluginId": null,
+    "processId": "79520",
+    "scriptPath": null,
+    "source": "unifiedExecStartup",
+    "status": "completed",
+    "type": "commandExecution"
+  },
+  "source_file": "items-01a13552-42a8-7760-8798-33d1ed05e8ea.json",
+  "startedAtMs": 1791896150389,
+  "turnId": "01a13552-42d4-73d0-ad6f-9e11d78941d3"
+}

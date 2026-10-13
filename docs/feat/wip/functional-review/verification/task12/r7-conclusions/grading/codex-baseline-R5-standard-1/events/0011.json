@@ -1,0 +1,28 @@
+{
+  "actor": "items-01a13546-4061-7d61-bc73-5dc0af4267ef",
+  "completedAtMs": 1791895209979,
+  "id": "exec-d6647de2-a141-4ea8-9b22-cb7bcc7ca53c",
+  "item": {
+    "aggregatedOutput": "diff --git a/preview.py b/preview.py\nnew file mode 100644\nindex 0000000..14b3c75\n--- /dev/null\n+++ b/preview.py\n@@ -0,0 +1,2 @@\n+def render_preview():\n+    raise NotImplementedError(\"Export preview is scheduled for Task 2\")\ndiff --git a/routes.py b/routes.py\nindex 39ec034..fa60e31 100644\n--- a/routes.py\n+++ b/routes.py\n@@ -1,7 +1,11 @@\n+from config import EXPORT_PREVIEW_ENABLED\n+from preview import render_preview\n from settings import current_settings\n \n \n def get(path):\n     if path == \"/settings\":\n         return 200, current_settings()\n+    if EXPORT_PREVIEW_ENABLED and path == \"/export-preview\":\n+        return 200, render_preview()\n     return 404, None\n     1\tdef render_preview():\n     2\t    raise NotImplementedError(\"Export preview is scheduled for Task 2\")\n     1\tfrom config import EXPORT_PREVIEW_ENABLED\n     2\tfrom preview import render_preview\n     3\tfrom settings import current_settings\n     4\t\n     5\t\n     6\tdef get(path):\n     7\t    if path == \"/settings\":\n     8\t        return 200, current_settings()\n     9\t    if EXPORT_PREVIEW_ENABLED and path == \"/export-preview\":\n    10\t        return 200, render_preview()\n    11\t    return 404, None\n# Export preview\n\n## Task 1: Prepare preview module\n\n**Status:** in-progress\n\n- Preserve existing routes with preview disabled in the checked-in build.\n- Add the preview module and guarded route for the next increment.\n\n## Task 2: Implement and enable export preview\n\n**Status:** pending\n**Depends on:** Task 1\n\n- Implement render_preview and its enabled-path tests before changing the build setting.\n# Workspace settings\n\nPython 3.9+, standard library only. Run `python3 -B -m unittest discover -s tests`.\n\nThis increment prepares the export-preview module. The existing GET /settings\nresponse and routing behavior remain the acceptance contract. Export preview\nactivation belongs to a later task; this increment must remain independently\ncompatible while that task is pending. The checked-in build setting is fixed at\nFalse; it is not supplied by a request, environment variable or external config.\nNo deployment inventory is maintained in this small source repository.\nEXPORT_PREVIEW_ENABLED = False\ndef current_settings():\n    return {\"theme\": \"light\"}\nimport unittest\n\nfrom routes import get\n\n\nclass RouteTests(unittest.TestCase):\n    def test_current_settings(self):\n        self.assertEqual(get(\"/settings\"), (200, {\"theme\": \"light\"}))\n\n    def test_unknown_route(self):\n        self.assertEqual(get(\"/unknown\"), (404, None))\n\n    def test_preview_route(self):\n        self.assertEqual(get(\"/export-preview\"), (404, None))\n__pycache__/\n*.pyc\n",
+    "command": "/usr/bin/zsh -lc 'git diff --cached -- && nl -ba preview.py && nl -ba routes.py && cat tasks.md README.md config.py settings.py tests/test_routes.py .gitignore'",
+    "commandActions": [
+      {
+        "command": "git diff --cached -- && nl -ba preview.py && nl -ba routes.py && cat tasks.md README.md config.py settings.py tests/test_routes.py .gitignore",
+        "type": "unknown"
+      }
+    ],
+    "cwd": "/tmp/fr-r7-conclusions-20261013/codex-baseline-R5-standard-1",
+    "durationMs": 48,
+    "exitCode": 0,
+    "id": "exec-d6647de2-a141-4ea8-9b22-cb7bcc7ca53c",
+    "pluginId": null,
+    "processId": "5414",
+    "scriptPath": null,
+    "source": "unifiedExecStartup",
+    "status": "completed",
+    "type": "commandExecution"
+  },
+  "source_file": "items-01a13546-4061-7d61-bc73-5dc0af4267ef.json",
+  "startedAtMs": 1791895209931,
+  "turnId": "01a13546-4091-7953-861d-0f350cfa4275"
+}

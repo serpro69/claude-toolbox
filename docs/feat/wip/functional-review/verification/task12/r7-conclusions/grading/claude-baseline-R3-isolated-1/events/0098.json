@@ -1,0 +1,19 @@
+{
+  "actor": "main",
+  "block": {
+    "caller": {
+      "type": "direct"
+    },
+    "id": "toolu_01TXj3dr7iReFymbjzcseGuM",
+    "input": {
+      "content": "# Protocol increment hard-requires a field the released counterpart never sends (P0)\n\nPattern: a client-side increment of a two-sided protocol change (e.g., enhanced-settings \"application receipt\") made a new response field mandatory (`response.get(\"applied\") is not True` \u2192 raise), unconditionally (not gated on the feature flag or a capability signal). The released/supported provider (git tag `eval-release`, `provider/settings.py`) returns only `{\"ok\": True}` and has already persisted the values, so every ordinary save fails after the write was applied \u2192 breaks independent releasability and causes misreported failures / duplicate retries.\n\nCompanion smell: the unit-test fake was updated to return the NEW protocol shape (`{\"ok\": True, \"applied\": True}`), so the suite passes while the supported-provider shape is untested.\n\nCheck in future reviews: when one side of a split client/provider change lands first, verify the new code against the supported counterpart's actual response (README names the baseline tag), keep a compatibility test using the baseline response shape, and gate strict checks behind a flag/capability until the counterpart is the supported baseline.",
+      "source": "kk:review-findings"
+    },
+    "name": "mcp__capy__capy_index",
+    "type": "tool_use"
+  },
+  "id": "e213.0",
+  "parent_tool_use_id": null,
+  "session_id": "df92095a-48bb-41e9-8188-0043bccd87a6",
+  "source_sequence": 213
+}

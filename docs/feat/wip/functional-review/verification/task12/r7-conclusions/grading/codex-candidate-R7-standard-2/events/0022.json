@@ -1,0 +1,28 @@
+{
+  "actor": "items-01a13563-2ff7-7f80-a58a-e4dc75e5bafd",
+  "completedAtMs": 1791897198109,
+  "id": "exec-c66ba7b8-2019-4f80-aeb6-08ca13faf71a",
+  "item": {
+    "aggregatedOutput": "'Ada' -> 'Ada': request verified\n'  Ada  ' -> 'Ada': request verified\n'Ada Lovelace' -> 'Ada Lovelace': request verified\n'' -> '': request verified\n' \\t\\n ' -> '': request verified\n'\\u2003Ada\\xa0' -> 'Ada': request verified\nTransport failure propagates to caller: verified\n100644 7a60b85e148f80966a550e5ab6a762a907c69ca6 0\t.gitignore\n100644 040a37a9ca0e31704c7a08607082d27e89f50a09 0\tREADME.md\n100644 fc9d98dac0f8422eb83ebba24b8a89d806b5e180 0\tclient.py\n100644 8ad74d9a800f4439ec9210cb7234e6b77e0dcfdf 0\tpayload.py\n100644 cf0d39a9960276b32af10a90b6e486443c4c96e8 0\ttests/test_client.py\n100644 e427779d7c4c8724494479c39e1c04c09eb574d9 0\ttests/test_payload.py\n",
+    "command": "/usr/bin/zsh -lc \"python3 -B - <<'PY'\nfrom client import save\n\nclass RecordingTransport:\n    def __init__(self):\n        self.requests = []\n    def put(self, path, body):\n        self.requests.append((path, body))\n        return {'ok': True}\n\ncases = [\n    ('Ada', 'Ada'),\n    ('  Ada  ', 'Ada'),\n    ('Ada Lovelace', 'Ada Lovelace'),\n    ('', ''),\n    (' \\\\t\\\\n ', ''),\n    ('\\\\u2003Ada\\\\u00a0', 'Ada'),\n]\nfor supplied, expected in cases:\n    transport = RecordingTransport()\n    assert save(transport, supplied) == {'ok': True}\n    assert transport.requests == [('/settings', {'display_name': expected})]\n    print(f'{supplied\"'!r} -> {expected!r}: request verified'\"')\n\nclass FailingTransport:\n    def put(self, path, body):\n        raise ConnectionError('simulated transport failure')\n\ntry:\n    save(FailingTransport(), ' Ada ')\nexcept ConnectionError:\n    print('Transport failure propagates to caller: verified')\nelse:\n    raise AssertionError('Transport failure was swallowed')\nPY\n\ngit diff --cached --check\ngit ls-files --stage\"",
+    "commandActions": [
+      {
+        "command": "python3 -B - <<'PY'\nfrom client import save\n\nclass RecordingTransport:\n    def __init__(self):\n        self.requests = []\n    def put(self, path, body):\n        self.requests.append((path, body))\n        return {'ok': True}\n\ncases = [\n    ('Ada', 'Ada'),\n    ('  Ada  ', 'Ada'),\n    ('Ada Lovelace', 'Ada Lovelace'),\n    ('', ''),\n    (' \\t\\n ', ''),\n    ('\\u2003Ada\\u00a0', 'Ada'),\n]\nfor supplied, expected in cases:\n    transport = RecordingTransport()\n    assert save(transport, supplied) == {'ok': True}\n    assert transport.requests == [('/settings', {'display_name': expected})]\n    print(f'{supplied!r} -> {expected!r}: request verified')\n\nclass FailingTransport:\n    def put(self, path, body):\n        raise ConnectionError('simulated transport failure')\n\ntry:\n    save(FailingTransport(), ' Ada ')\nexcept ConnectionError:\n    print('Transport failure propagates to caller: verified')\nelse:\n    raise AssertionError('Transport failure was swallowed')\nPY\n\ngit diff --cached --check\ngit ls-files --stage",
+        "type": "unknown"
+      }
+    ],
+    "cwd": "/tmp/fr-r7-conclusions-20261013/codex-candidate-R7-standard-2",
+    "durationMs": 60,
+    "exitCode": 0,
+    "id": "exec-c66ba7b8-2019-4f80-aeb6-08ca13faf71a",
+    "pluginId": null,
+    "processId": "94356",
+    "scriptPath": null,
+    "source": "unifiedExecStartup",
+    "status": "completed",
+    "type": "commandExecution"
+  },
+  "source_file": "items-01a13563-2ff7-7f80-a58a-e4dc75e5bafd.json",
+  "startedAtMs": 1791897198048,
+  "turnId": "01a13563-3025-7551-9eee-d140ec031734"
+}

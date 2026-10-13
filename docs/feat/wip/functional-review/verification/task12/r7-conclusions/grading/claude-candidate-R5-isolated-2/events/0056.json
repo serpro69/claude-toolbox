@@ -1,0 +1,19 @@
+{
+  "actor": "main",
+  "block": {
+    "caller": {
+      "type": "direct"
+    },
+    "id": "toolu_01JoJq5RNSJK5wDD2YxrynDD",
+    "input": {
+      "command": "EV=$(mktemp -d /tmp/kk-review-evidence-XXXXXX) && git diff --cached > \"$EV/staged.patch\" && mkdir -p \"$EV/historical\" && git show HEAD:routes.py > \"$EV/historical/routes.py\" && BLOB=$(git rev-parse HEAD:routes.py) && cat > \"$EV/historical/manifest.json\" <<EOF\n{\n  \"repository\": \"$(pwd)\",\n  \"revision\": \"$(git rev-parse HEAD)\",\n  \"items\": [\n    {\"original_path\": \"routes.py\", \"blob\": \"$BLOB\", \"line_span\": \"1-$(wc -l < \"$EV/historical/routes.py\")\", \"omitted\": \"none\", \"file\": \"$EV/historical/routes.py\"}\n  ]\n}\nEOF\nchmod -R a-w \"$EV/historical\" && echo \"$EV\" && cat \"$EV/historical/manifest.json\" && git diff --quiet -- preview.py routes.py && echo \"worktree == index for changed files\"",
+      "description": "Write staged diff and base snapshot to temp evidence dir"
+    },
+    "name": "Bash",
+    "type": "tool_use"
+  },
+  "id": "e134.0",
+  "parent_tool_use_id": null,
+  "session_id": "1a8c0c48-7f06-4089-8fde-b8273dca84cc",
+  "source_sequence": 134
+}

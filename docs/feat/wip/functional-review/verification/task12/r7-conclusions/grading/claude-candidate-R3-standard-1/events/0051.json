@@ -1,0 +1,13 @@
+{
+  "actor": "main",
+  "block": {
+    "content": "import unittest\nfrom client import save_settings\n\n\nclass SettingsTests(unittest.TestCase):\n    def test_successful_save(self):\n        def send(workspace, request):\n            return {\"ok\": True, \"applied\": True}\n        self.assertEqual(save_settings(send, \"w\", {\"label\": \"blue\"}),\n                         {\"saved\": True, \"enhanced\": False})\n-----\n22140737b2bc5792b535f3f8ce16f7fa162101db\nac09e55 (HEAD -> master) Review base\n2214073 (tag: eval-release) Released provider\n-----\ndef update_settings(storage, workspace_id, request):\n    storage[workspace_id] = dict(request[\"settings\"])\n    return {\"ok\": True}",
+    "is_error": false,
+    "tool_use_id": "toolu_01TTCbGA392KBMnWnWui7HZT",
+    "type": "tool_result"
+  },
+  "id": "e101.0",
+  "parent_tool_use_id": null,
+  "session_id": "8d258dcb-3988-438e-8324-7bdb20c1eef0",
+  "source_sequence": 101
+}

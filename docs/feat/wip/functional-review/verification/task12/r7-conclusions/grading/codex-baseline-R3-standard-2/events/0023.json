@@ -1,0 +1,28 @@
+{
+  "actor": "items-01a1352a-2223-7400-b520-969d667af763",
+  "completedAtMs": 1791893408718,
+  "id": "exec-101ff3fd-69a5-41d5-8570-b41bcf1932ce",
+  "item": {
+    "aggregatedOutput": "previous client (default enhanced_settings=False):\n  request: {'settings': {'label': 'blue'}}\n  stored settings: {'w': {'label': 'blue'}}\n  caller outcome: {'saved': True, 'enhanced': False}\nstaged client (default enhanced_settings=False):\n  request: {'settings': {'label': 'blue'}, 'require_receipt': True}\n  stored settings: {'w': {'label': 'blue'}}\n  caller outcome: RuntimeError: Provider did not acknowledge applied settings\n",
+    "command": "/usr/bin/zsh -lc \"python3 -B - <<'PY'\nimport subprocess\n\nprovider_scope = {}\nexec(compile(subprocess.check_output(['git', 'show', 'eval-release:provider/settings.py'], text=True), 'eval-release:provider/settings.py', 'exec'), provider_scope)\n\nfor label, ref in [('previous client', 'HEAD:client.py'), ('staged client', ':client.py')]:\n    client_scope = {}\n    exec(compile(subprocess.check_output(['git', 'show', ref], text=True), ref, 'exec'), client_scope)\n    storage = {}\n    requests = []\n    def send(workspace_id, request):\n        requests.append(request)\n        return provider_scope['update_settings'](storage, workspace_id, request)\n    try:\n        result = client_scope['save_settings'](send, 'w', {'label': 'blue'})\n        outcome = repr(result)\n    except Exception as exc:\n        outcome = f'{type(exc).__name__}: {exc}'\n    print(f'{label} (default enhanced_settings=False):')\n    print(f'  request: {requests[0]\"'!r}'\"')\n    print(f'  stored settings: {storage\"'!r}'\"')\n    print(f'  caller outcome: {outcome}')\nPY\"",
+    "commandActions": [
+      {
+        "command": "python3 -B - <<'PY'\nimport subprocess\n\nprovider_scope = {}\nexec(compile(subprocess.check_output(['git', 'show', 'eval-release:provider/settings.py'], text=True), 'eval-release:provider/settings.py', 'exec'), provider_scope)\n\nfor label, ref in [('previous client', 'HEAD:client.py'), ('staged client', ':client.py')]:\n    client_scope = {}\n    exec(compile(subprocess.check_output(['git', 'show', ref], text=True), ref, 'exec'), client_scope)\n    storage = {}\n    requests = []\n    def send(workspace_id, request):\n        requests.append(request)\n        return provider_scope['update_settings'](storage, workspace_id, request)\n    try:\n        result = client_scope['save_settings'](send, 'w', {'label': 'blue'})\n        outcome = repr(result)\n    except Exception as exc:\n        outcome = f'{type(exc).__name__}: {exc}'\n    print(f'{label} (default enhanced_settings=False):')\n    print(f'  request: {requests[0]!r}')\n    print(f'  stored settings: {storage!r}')\n    print(f'  caller outcome: {outcome}')\nPY",
+        "type": "unknown"
+      }
+    ],
+    "cwd": "/tmp/fr-r7-conclusions-20261013/codex-baseline-R3-standard-2",
+    "durationMs": 60,
+    "exitCode": 0,
+    "id": "exec-101ff3fd-69a5-41d5-8570-b41bcf1932ce",
+    "pluginId": null,
+    "processId": "92002",
+    "scriptPath": null,
+    "source": "unifiedExecStartup",
+    "status": "completed",
+    "type": "commandExecution"
+  },
+  "source_file": "items-01a1352a-2223-7400-b520-969d667af763.json",
+  "startedAtMs": 1791893408657,
+  "turnId": "01a1352a-2253-7090-8141-71dd688cfd24"
+}

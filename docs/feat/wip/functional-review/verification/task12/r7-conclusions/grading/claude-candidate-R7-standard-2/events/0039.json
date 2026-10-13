@@ -1,0 +1,13 @@
+{
+  "actor": "main",
+  "block": {
+    "content": "     1\tfrom payload import build_payload\n     2\t\n     3\t\n     4\tdef save(transport, display_name):\n     5\t    return transport.put(\"/settings\", build_payload(display_name))\n---\n     1\timport unittest\n     2\t\n     3\tfrom client import save\n     4\t\n     5\t\n     6\tclass MemoryTransport:\n     7\t    def __init__(self):\n     8\t        self.request = None\n     9\t\n    10\t    def put(self, path, body):\n    11\t        self.request = (path, body)\n    12\t        return {\"ok\": True}\n    13\t\n    14\t\n    15\tclass ClientTests(unittest.TestCase):\n    16\t    def test_save(self):\n    17\t        transport = MemoryTransport()\n    18\t        self.assertEqual(save(transport, \"Ada\"), {\"ok\": True})\n    19\t        self.assertEqual(transport.request, (\"/settings\", {\"display_name\": \"Ada\"}))\n    20\t\n    21\t    def test_empty_name(self):\n    22\t        transport = MemoryTransport()\n    23\t        save(transport, \"\")\n    24\t        self.assertEqual(transport.request[1], {\"display_name\": \"\"})\n---\n     1\tdef build_payload(display_name):\n     2\t    return {\"display_name\": display_name.strip()}\n57664d8 Review base",
+    "is_error": false,
+    "tool_use_id": "toolu_01QgkfyNTXH39UaPRiHCUNrk",
+    "type": "tool_result"
+  },
+  "id": "e96.0",
+  "parent_tool_use_id": null,
+  "session_id": "884b6f74-05ff-4f12-acd4-a87ff480d02c",
+  "source_sequence": 96
+}

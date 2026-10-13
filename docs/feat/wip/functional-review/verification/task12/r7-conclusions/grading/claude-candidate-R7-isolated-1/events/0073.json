@@ -1,0 +1,19 @@
+{
+  "actor": "main",
+  "block": {
+    "caller": {
+      "type": "direct"
+    },
+    "id": "toolu_01S4pqZi6oKbUtwrrYQsnMvk",
+    "input": {
+      "content": "# Change context (parent-prepared, factual)\n\n| Field | Content |\n| --- | --- |\n| Intent and authority | No spec or task docs exist (no docs/ directory). User request: \"review my staged settings-client change and assess whether it is ready to deploy\". INFERRED purpose (from diff + new tests only): trim leading/trailing whitespace from `display_name` before sending it in the settings PUT payload, preserving internal spaces. README.md states only: \"Settings client. Python 3.9+, standard library only.\" |\n| Change boundary | Selector: staged (`git diff --cached`); no unstaged changes; worktree == index for both files, so worktree paths are the candidate bytes. Changed: payload.py (modified), tests/test_payload.py (added). |\n| Existing behavior | Entry point `client.save(transport, display_name)` -> `transport.put(\"/settings\", build_payload(display_name))` (client.py:4-5). `build_payload` is the only producer of the payload; only callers are client.py and tests. Base (HEAD) build_payload passed display_name through unchanged, for any type including None. |\n| Delivery constraints | None documented. No CI config, no release policy, no flags. Python 3.9+ per README. |\n| Baselines | Review base: commit 57664d85c646008ae513f0b4374ef691d2fcb101 (only commit, \"Review base\"); no tags/branches with other history. Candidate: index. Provider (server handling PUT /settings) source is NOT in this repository or its history -> provider contract (whether it already trims, whether empty/None display_name is valid, whether None means \"clear\") is Unknown. Real transport implementation and real callers of `save` are not in the repo -> what types callers pass is Unknown. Deployed state Unknown. |\n| Scenarios and evidence | Parent executed `python3 -B -m unittest discover -s tests -v` on candidate (Python 3.10.12): 4 tests ran, all OK (test_client: test_save, test_empty_name; test_payload: test_trim_surrounding_spaces, test_preserve_internal_space). Parent attempted to execute boundary probes (None, whitespace-only, non-str) but the command was denied by the environment; those scenarios are NOT executed. |\n\n## Task Scope\n\nNo task scope available \u2014 review the diff on its own merits without assuming any feature-level design doc.\n\n## Rejected approaches\n\nNone known.\n",
+      "file_path": "/tmp/kk-review-code-evidence-m6wkjn/change-context.md"
+    },
+    "name": "Write",
+    "type": "tool_use"
+  },
+  "id": "e173.0",
+  "parent_tool_use_id": null,
+  "session_id": "5c310920-4d8e-43a9-ac96-c45dcef45739",
+  "source_sequence": 173
+}

@@ -7,8 +7,9 @@
 > Issue: [#166](https://github.com/serpro69/claude-toolbox/issues/166)
 > Status: in-progress
 > Created: 2026-10-07
-> Revised: 2026-10-11 with severity/cost dispositions and one bounded entry-path follow-up
+> Revised: 2026-10-13 with the rejected R7 wording experiment and retained evidence
 > Next-session handoff: [follow-up.md](follow-up.md)
+> Current slice: Task 12.13 complete — candidate rejected and reverted; R7 remains open
 > Not Doing: new review skill, whole-system audits, mandatory production access, deployments, generic release engine, new models/dependencies, profile redesign
 > Delivery: preserve existing invocations/shared consumers; regenerate Codex artifacts with every operative slice.
 
@@ -755,6 +756,78 @@ receipts, runtime records and cleanup provenance. All documentation links and
 **Task 12.12 is complete.** Task 12 acceptance, PAL, remaining dispositions,
 legacy controls and Task 13 stay open. No additional operative slice or actor
 iteration is selected; R7 unsupported-claim investigation retains next priority.
+
+### Task 12.13: Keep compatibility and release conclusions within their evidence
+
+- **Status:** done — rejected experiment; R7 correction remains open
+- **Depends on:** Task 12.12 (done), user-approved brainstorm outcome (2026-10-13)
+- **Size:** S for operative wording; 48-session comparison under the existing contract
+- **Owner:** implementing agent
+- **Disposition:** reject and revert the candidate; R7 remains unresolved
+- **Docs:** [R7 disposition](follow-up.md#unsupported-compatibility-claims), [slice](implementation.md#r7-conclusion-consistency--task-1213), [results](verification/task12/r7-conclusions/results.md)
+
+The user selected Unknown plus a concrete next check until missing compatibility
+evidence is supplied and assessed. The candidate replaced three existing common
+method passages, preserving the intended treatment of known prerequisites and
+scoped code approval without adding a checklist, report section or workflow phase.
+
+- [x] 12.13.1 Replace Supported, Unknown-verdict and closing reconciliation wording; regenerate Codex → candidate was 1,175/1,200 words; shared context stayed 573/800. The failed candidate is now reverted; source archive and patch remain.
+- [x] 12.13.2 Run repository checks and independent source/controller reviews → generation/structure, Go tests, graph validation, 19 capture regressions and four adapter controls pass; reviews have no current source finding.
+- [x] 12.13.3 Freeze, bind and capture R7/R3/R5 in both modes/providers, twice per baseline/candidate → all four loading probes and all 48 fresh sessions complete; real Capy state isolation and grader calibration pass.
+- [x] 12.13.4 Independently grade, audit and record keep/reject disposition → 336 assertion rows and integrity/cleanup audits complete; independent completion review approves the rejection record.
+
+#### Outcome — 2026-10-13
+
+[The frozen contract](verification/task12/r7-conclusions/run-contract.md) required
+both R7 candidate repetitions in every provider/mode to meet 14.1–14.6. Both
+Claude standard repetitions still fail 14.3/14.4: unsupported provider claims and
+conditional deployment approval survive the new wording. **Reject.** All Codex
+and Claude isolated R7 candidates meet those local rows, but that does not satisfy
+the cross-provider criterion. R5's candidate non-PAL rows pass. Codex candidate
+R3 isolated repetition 1 identifies the incompatibility but omits explicit
+Blocked classification from the parent report (7.7 FAIL); baseline reports also
+omit it, so no incremental regression is established.
+
+Effective candidate totals are **147 PASS / 21 FAIL / 0 PARTIAL**; baseline totals
+are **95 PASS / 72 FAIL / 1 PARTIAL**. Sixteen candidate failures are required PAL
+omissions, four are Claude R7 target failures, and one is the R3 reporting gap.
+[Two independent grader corrections](verification/task12/r7-conclusions/grade-corrections/README.md)
+fix grading-display truncation errors; original grades and sealed captures remain
+unchanged. Exact Codex prompts remain unverified and the existing receipt/use
+exception is not expanded. A pre-feature baseline and two repetitions do not
+isolate incremental causality or establish reliability.
+
+The canonical and generated operative files match starting
+`cc07a614a999e8f35e2f408a505546077154031f`; the prior Task 12.12 correction stays.
+[The rejected patch](verification/task12/r7-conclusions/candidate-method.patch)
+and candidate `bf873de63369662ebe3b0cde4226dbda1c16104b` remain archived.
+[Integrity checks](verification/task12/r7-conclusions/integrity-audit.json)
+verify frozen inputs, all 48 bundles, subjects/Git refs, 2,001 capture files,
+5,350 grading files and every assertion identity. [Access inspection](verification/task12/r7-conclusions/access-audit.json)
+covers 1,782 tool/lifecycle records, including 914 shell requests; no evaluator
+content read is observed, without claiming OS-wide confinement.
+[Cleanup](verification/task12/r7-conclusions/cleanup.json) preserves temporary
+evidence before removing proven-owned paths; temporary plugin/trust entries are
+absent. Exact runtime inputs and source archives are retained.
+
+The initial external loading command was rejected before launch by automatic
+approval review. The user then explicitly authorized the synthetic fixture and
+filtered-instruction transfer to authenticated Claude/Codex for probes and all
+48 sessions, with PAL excluded. That block was resolved before execution. The
+[verification record](verification/task12/r7-conclusions/README.md) retains the
+prospective declaration, source/runtime changes, original and corrected freeze,
+binding receipts, grades and local check limitations.
+
+No successor wording or actor iteration is selected. R7, Task 12 acceptance,
+other assigned dispositions, live PAL, legacy controls and Task 13 remain open.
+
+[Independent completion review](verification/task12/r7-conclusions/completion-review.md)
+approves this experiment's completion/rejection record with no current findings;
+it independently reconciles every assertion and both corrections, while attributing
+execution/hash verification to the root. [Final workspace cleanup](verification/task12/r7-conclusions/workspace-cleanup.json)
+rechecks all archived runtime inputs and final subject snapshots before removing
+the 52 proven-owned actor workspaces. **Task 12.13 is complete as a rejected
+experiment, not an accepted R7 fix.**
 
 ## Task 13: Document and verify the complete feature
 

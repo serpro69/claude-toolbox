@@ -1,0 +1,30 @@
+{
+  "actor": "items-01a1356f-a8fd-7fb0-9b25-6d385fc4cc80",
+  "completedAtMs": 1791897956002,
+  "id": "exec-ca0cc797-6c9a-4a50-8745-1b9d76054034",
+  "item": {
+    "aggregatedOutput": "diff --git a/payload.py b/payload.py\nindex 32557de..8ad74d9 100644\n--- a/payload.py\n+++ b/payload.py\n@@ -1,2 +1,2 @@\n def build_payload(display_name):\n-    return {\"display_name\": display_name}\n+    return {\"display_name\": display_name.strip()}\ndiff --git a/tests/test_payload.py b/tests/test_payload.py\nnew file mode 100644\nindex 0000000..e427779\n--- /dev/null\n+++ b/tests/test_payload.py\n@@ -0,0 +1,11 @@\n+import unittest\n+\n+from payload import build_payload\n+\n+\n+class PayloadTests(unittest.TestCase):\n+    def test_trim_surrounding_spaces(self):\n+        self.assertEqual(build_payload(\"  Ada  \"), {\"display_name\": \"Ada\"})\n+\n+    def test_preserve_internal_space(self):\n+        self.assertEqual(build_payload(\"Ada Lovelace\"), {\"display_name\": \"Ada Lovelace\"})\n",
+    "command": "/usr/bin/zsh -lc \"cat '/tmp/kk-settings-review-x0h14rd0/staged.patch'\"",
+    "commandActions": [
+      {
+        "command": "cat /tmp/kk-settings-review-x0h14rd0/staged.patch",
+        "name": "staged.patch",
+        "path": "/tmp/kk-settings-review-x0h14rd0/staged.patch",
+        "type": "read"
+      }
+    ],
+    "cwd": "/tmp/fr-r7-conclusions-20261013/codex-candidate-R7-isolated-1",
+    "durationMs": 201,
+    "exitCode": 0,
+    "id": "exec-ca0cc797-6c9a-4a50-8745-1b9d76054034",
+    "pluginId": null,
+    "processId": "79003",
+    "scriptPath": null,
+    "source": "unifiedExecStartup",
+    "status": "completed",
+    "type": "commandExecution"
+  },
+  "source_file": "items-01a1356f-a8fd-7fb0-9b25-6d385fc4cc80.json",
+  "startedAtMs": 1791897955801,
+  "turnId": "01a1356f-a91e-7e51-97d7-c0c17d2a5c7e"
+}
