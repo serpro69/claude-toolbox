@@ -1595,21 +1595,26 @@ assert_equals "0" "${#MODIFIED_FILES[@]}" "No modified files"
 
 log_test "compare_files does NOT flag per-repo built-in excluded files as deleted"
 # Regression: fetch_upstream_templates strips .claude/settings.local.json,
-# .claude/capy/, and .claude/scripts/capy.sh from staging because they are
-# per-repo files. compare_files must also skip them during deletion detection
-# or they will be incorrectly reported as deleted on every sync.
+# .claude/capy/, .claude/scripts/capy.sh, .codex/scripts/capy.sh and
+# .codex/capy-owner from staging because they are per-repo files.
+# compare_files must also skip them during deletion detection or they will be
+# incorrectly reported as deleted on every sync.
 reset_globals
 test_dir=$(create_temp_dir "compare-builtin-excl")
 
 # Empty staging (simulates fetch_upstream_templates after stripping)
 mkdir -p "$test_dir/staging/claude"
+mkdir -p "$test_dir/staging/codex"
 
 # Project has the per-repo files that should never be flagged as deleted
 mkdir -p "$test_dir/project/.claude/capy"
 mkdir -p "$test_dir/project/.claude/scripts"
+mkdir -p "$test_dir/project/.codex/scripts"
 echo "{}" >"$test_dir/project/.claude/settings.local.json"
 echo "capy config" >"$test_dir/project/.claude/capy/CLAUDE.md"
 echo "capy script" >"$test_dir/project/.claude/scripts/capy.sh"
+echo "capy script" >"$test_dir/project/.codex/scripts/capy.sh"
+echo "capy-codex-owner-v1:00000000000000000000000000000000" >"$test_dir/project/.codex/capy-owner"
 
 pushd "$test_dir/project" >/dev/null || {
   log_fail "Failed to cd to test directory"
