@@ -8,7 +8,7 @@
 > Status: in-progress
 > Created: 2026-10-07
 > Revised: 2026-10-14 with Task 12.14 complete and its retained diagnostic failure
-> Next-session handoff: [follow-up.md](follow-up.md)
+> Next-session handoff: [remaining issues and 12.14 lessons](follow-up.md#remaining-issues-for-the-next-session)
 > Current slice: Task 12.14 done — revised evaluation measured; no further R7 skill change selected
 > Not Doing: new review skill, whole-system audits, mandatory production access, deployments, generic release engine, new models/dependencies, profile redesign
 > Delivery: preserve existing invocations/shared consumers; regenerate Codex artifacts with every operative slice.
@@ -902,6 +902,22 @@ unchanged. Its one P3 calibration-path metadata finding was corrected and
 independently rechecked; no open in-scope source finding remains. See the
 [completion review](verification/task12/r7-validity/completion-review.md).
 **Task 12.14 is done.** This does not close Task 12 acceptance or Task 13.
+
+### Next-session handoff — remaining Task 12 issues
+
+The user requested a durable record of the 2026-10-14 discussion explaining what
+still fails and how Task 12.14's evaluation-validity approach could apply. See
+[the concrete failures, evidence and recommendations](follow-up.md#remaining-issues-for-the-next-session).
+Owner: implementing agent when work resumes. The recommendation is to reassess
+R6's dormant-defect and report-detail expectations while separately investigating
+unfinished implementation verification after command denial. Missing capture,
+the I4 read-order violation and user-deferred PAL coverage retain distinct
+dispositions and verification conditions.
+
+The next useful deliverable is an evidence-backed assessment with pre-run examples
+and a bounded proposed next task. No Task 12.15, operative change, revised assertion,
+model run or acceptance waiver is selected by this documentation request.
+Task 12.14 stays done; Task 12 acceptance and Task 13 stay open.
 
 ## Task 13: Document and verify the complete feature
 
