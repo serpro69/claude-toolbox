@@ -563,14 +563,18 @@ apply_substitutions "$test_dir/templates" "$output_dir" 2>/dev/null
 result=$(jq -r '.permissions.defaultMode' "$output_dir/claude/settings.json")
 assert_equals "default" "$result" "CC_PERMISSION_MODE defaults to default when missing"
 
-# --- Codex SKIP_CAPY Tests ---
+# --- Codex config.toml: downstream mcp_servers preservation ---
+#
+# MCP servers are registered per project (`capy setup --platform codex` writes
+# [mcp_servers.capy] bound to .codex/capy-owner); the template ships none.
+# apply_substitutions must carry the downstream table into staging or every
+# sync drops capy's registration.
 
-log_test "apply_substitutions strips [mcp_servers.capy] when SKIP_CAPY=true"
-reset_globals
-test_dir=$(create_temp_dir "subst-skip-capy-true")
-
-MANIFEST_PATH="$test_dir/manifest.json"
-cat >"$MANIFEST_PATH" <<'EOF'
+# Helper: manifest + upstream codex/config.toml (no mcp_servers) in $test_dir
+create_codex_config_fixture() {
+  local dir="$1"
+  MANIFEST_PATH="$dir/manifest.json"
+  cat >"$MANIFEST_PATH" <<'EOF'
 {
   "schema_version": "1",
   "upstream_repo": "test/repo",
@@ -580,84 +584,143 @@ cat >"$MANIFEST_PATH" <<'EOF'
     "PROJECT_NAME": "test-proj",
     "LANGUAGES": "bash",
     "CC_MODEL": "sonnet",
-    "SKIP_CAPY": "true"
+    "CODEX_MODEL": "gpt-6-custom"
   }
 }
 EOF
-
-mkdir -p "$test_dir/templates/codex"
-cat >"$test_dir/templates/codex/config.toml" <<'EOF'
+  mkdir -p "$dir/templates/codex" "$dir/project/.codex"
+  cat >"$dir/templates/codex/config.toml" <<'EOF'
 model = "gpt-6-astra"
 approval_policy = "on-request"
 
 [features]
 hooks = true
-
-[mcp_servers.capy]
-command = "bash"
-args = [".codex/scripts/capy.sh", "serve"]
 EOF
-
-output_dir="$test_dir/output"
-apply_substitutions "$test_dir/templates" "$output_dir" 2>/dev/null
-
-if grep -q '\[mcp_servers\.capy\]' "$output_dir/codex/config.toml"; then
-  log_fail "[mcp_servers.capy] should be stripped when SKIP_CAPY=true"
-else
-  log_pass "[mcp_servers.capy] stripped when SKIP_CAPY=true"
-fi
-# Verify the rest of the config is preserved
-if grep -q '\[features\]' "$output_dir/codex/config.toml"; then
-  log_pass "Non-capy sections preserved after stripping"
-else
-  log_fail "Non-capy sections should be preserved"
-fi
-
-log_test "apply_substitutions preserves [mcp_servers.capy] when SKIP_CAPY=false"
-reset_globals
-test_dir=$(create_temp_dir "subst-skip-capy-false")
-
-MANIFEST_PATH="$test_dir/manifest.json"
-cat >"$MANIFEST_PATH" <<'EOF'
-{
-  "schema_version": "1",
-  "upstream_repo": "test/repo",
-  "template_version": "v1.0.0",
-  "synced_at": "2025-01-27T10:00:00Z",
-  "variables": {
-    "PROJECT_NAME": "test-proj",
-    "LANGUAGES": "bash",
-    "CC_MODEL": "sonnet",
-    "SKIP_CAPY": "false"
-  }
 }
-EOF
 
-mkdir -p "$test_dir/templates/codex"
-cat >"$test_dir/templates/codex/config.toml" <<'EOF'
+log_test "apply_substitutions preserves downstream [mcp_servers.capy] the template does not ship"
+reset_globals
+test_dir=$(create_temp_dir "subst-codex-mcp-preserve")
+create_codex_config_fixture "$test_dir"
+cat >"$test_dir/project/.codex/config.toml" <<'EOF'
 model = "gpt-6-astra"
 approval_policy = "on-request"
 
 [mcp_servers.capy]
-command = "bash"
-args = [".codex/scripts/capy.sh", "serve"]
+command = "capy"
+args = ["codex-launch", "capy-codex-launch-v2", "0123456789abcdef0123456789abcdef", "serve", ""]
+env_vars = ["CAPY_DB_KEY", "CAPY_VAULT_KEY"]
 EOF
 
 output_dir="$test_dir/output"
+pushd "$test_dir/project" >/dev/null || {
+  log_fail "Failed to cd to test directory"
+  exit 1
+}
 apply_substitutions "$test_dir/templates" "$output_dir" 2>/dev/null
+popd >/dev/null || true
 
-if grep -q '\[mcp_servers\.capy\]' "$output_dir/codex/config.toml"; then
-  log_pass "[mcp_servers.capy] preserved when SKIP_CAPY=false"
+result=$(yq -p toml -o json '.mcp_servers.capy.command' "$output_dir/codex/config.toml")
+assert_equals '"capy"' "$result" "Downstream capy MCP entry preserved"
+result=$(yq -p toml -o json '.mcp_servers.capy.args[2]' "$output_dir/codex/config.toml")
+assert_equals '"0123456789abcdef0123456789abcdef"' "$result" "Owner-bound launch args preserved verbatim"
+result=$(yq -p toml -o json '.model' "$output_dir/codex/config.toml")
+assert_equals '"gpt-6-custom"' "$result" "CODEX_MODEL substitution still applied"
+result=$(yq -p toml -o json '.features.hooks' "$output_dir/codex/config.toml")
+assert_equals 'true' "$result" "Template sections preserved alongside merged table"
+
+log_test "apply_substitutions emits no mcp_servers table when neither side has one"
+reset_globals
+test_dir=$(create_temp_dir "subst-codex-mcp-none")
+create_codex_config_fixture "$test_dir"
+cp "$test_dir/templates/codex/config.toml" "$test_dir/project/.codex/config.toml"
+
+output_dir="$test_dir/output"
+pushd "$test_dir/project" >/dev/null || {
+  log_fail "Failed to cd to test directory"
+  exit 1
+}
+apply_substitutions "$test_dir/templates" "$output_dir" 2>/dev/null
+popd >/dev/null || true
+
+if grep -q 'mcp_servers' "$output_dir/codex/config.toml"; then
+  log_fail "No mcp_servers table should be written when neither side has one"
 else
-  log_fail "[mcp_servers.capy] should be preserved when SKIP_CAPY=false"
+  log_pass "No mcp_servers table written when neither side has one"
 fi
 
-log_test "apply_substitutions preserves [mcp_servers.capy] when SKIP_CAPY is missing (default)"
+log_test "apply_substitutions lets a template-shipped MCP server win by name"
 reset_globals
-test_dir=$(create_temp_dir "subst-skip-capy-default")
+test_dir=$(create_temp_dir "subst-codex-mcp-upstream-wins")
+create_codex_config_fixture "$test_dir"
+cat >>"$test_dir/templates/codex/config.toml" <<'EOF'
 
-MANIFEST_PATH="$test_dir/manifest.json"
-cat >"$MANIFEST_PATH" <<'EOF'
+[mcp_servers.shared]
+command = "new"
+EOF
+cat >"$test_dir/project/.codex/config.toml" <<'EOF'
+model = "gpt-6-astra"
+
+[mcp_servers.shared]
+command = "old"
+
+[mcp_servers.capy]
+command = "capy"
+EOF
+
+output_dir="$test_dir/output"
+pushd "$test_dir/project" >/dev/null || {
+  log_fail "Failed to cd to test directory"
+  exit 1
+}
+apply_substitutions "$test_dir/templates" "$output_dir" 2>/dev/null
+popd >/dev/null || true
+
+result=$(yq -p toml -o json '.mcp_servers.shared.command' "$output_dir/codex/config.toml")
+assert_equals '"new"' "$result" "Template-shipped server overrides downstream value"
+result=$(yq -p toml -o json '.mcp_servers.capy.command' "$output_dir/codex/config.toml")
+assert_equals '"capy"' "$result" "Downstream-only server kept alongside"
+
+log_test "apply_substitutions copies template config.toml as-is on first sync (no downstream file)"
+reset_globals
+test_dir=$(create_temp_dir "subst-codex-mcp-first-sync")
+create_codex_config_fixture "$test_dir"
+rm -rf "$test_dir/project/.codex"
+
+output_dir="$test_dir/output"
+pushd "$test_dir/project" >/dev/null || {
+  log_fail "Failed to cd to test directory"
+  exit 1
+}
+apply_substitutions "$test_dir/templates" "$output_dir" 2>/dev/null
+popd >/dev/null || true
+
+result=$(yq -p toml -o json '.model' "$output_dir/codex/config.toml")
+assert_equals '"gpt-6-custom"' "$result" "Substitution applied without downstream file"
+if grep -q 'mcp_servers' "$output_dir/codex/config.toml"; then
+  log_fail "No mcp_servers table expected on first sync"
+else
+  log_pass "No mcp_servers table on first sync"
+fi
+
+# --- Codex hooks.json: downstream hook preservation ---
+#
+# Toolbox owns entries that run scripts under .codex/scripts/ and ships them
+# from the template. Everything else downstream (capy's `capy codex-launch`
+# hooks registered by `capy setup --platform codex`, hand-added hooks) must
+# survive a sync, appended after toolbox's entries for the same event.
+
+TOOLBOX_SESSION_START_ENTRY='{"matcher":"startup|resume","hooks":[{"type":"command","command":"bash \"$(git rev-parse --show-toplevel)/.codex/scripts/session-start.sh\"","additionalContextLimit":10000}]}'
+TOOLBOX_PRETOOLUSE_ENTRY='{"matcher":"Bash","hooks":[{"type":"command","command":"bash \"$(git rev-parse --show-toplevel)/.codex/scripts/pretooluse-bash.sh\""}]}'
+CAPY_SESSION_START_ENTRY='{"hooks":[{"command":"bash -c '"'"'capy codex-launch \"$0\" \"$1\"'"'"' capy-codex-launch-v2 0123456789abcdef0123456789abcdef hook sessionstart","type":"command"}],"matcher":"^.*$"}'
+CAPY_PRETOOLUSE_ENTRY='{"hooks":[{"command":"bash -c '"'"'capy codex-launch \"$0\" \"$1\"'"'"' capy-codex-launch-v2 0123456789abcdef0123456789abcdef hook pretooluse","type":"command"}],"matcher":"^(Bash|mcp__[^[:space:]]+__capy_execute)$"}'
+CAPY_SESSION_END_ENTRY='{"hooks":[{"command":"bash -c '"'"'capy codex-launch \"$0\" \"$1\"'"'"' capy-codex-launch-v2 0123456789abcdef0123456789abcdef hook sessionend","type":"command"}],"matcher":"^.*$"}'
+
+# Helper: manifest + upstream codex/hooks.json (toolbox entries only) in $test_dir
+create_codex_hooks_fixture() {
+  local dir="$1"
+  MANIFEST_PATH="$dir/manifest.json"
+  cat >"$MANIFEST_PATH" <<'EOF'
 {
   "schema_version": "1",
   "upstream_repo": "test/repo",
@@ -670,25 +733,102 @@ cat >"$MANIFEST_PATH" <<'EOF'
   }
 }
 EOF
+  mkdir -p "$dir/templates/codex" "$dir/project/.codex"
+  jq -n --argjson ss "$TOOLBOX_SESSION_START_ENTRY" --argjson pt "$TOOLBOX_PRETOOLUSE_ENTRY" \
+    '{hooks: {SessionStart: [$ss], PreToolUse: [$pt]}}' >"$dir/templates/codex/hooks.json"
+}
 
-mkdir -p "$test_dir/templates/codex"
-cat >"$test_dir/templates/codex/config.toml" <<'EOF'
-model = "gpt-6-astra"
-approval_policy = "on-request"
-
-[mcp_servers.capy]
-command = "bash"
-args = [".codex/scripts/capy.sh", "serve"]
-EOF
+log_test "apply_substitutions preserves capy's hook entries next to toolbox's"
+reset_globals
+test_dir=$(create_temp_dir "subst-codex-hooks-preserve")
+create_codex_hooks_fixture "$test_dir"
+# Downstream as `capy setup --platform codex` leaves it: toolbox entries with
+# reordered keys, capy entries appended, plus a capy-only event.
+jq -n --argjson ss "$TOOLBOX_SESSION_START_ENTRY" --argjson pt "$TOOLBOX_PRETOOLUSE_ENTRY" \
+  --argjson css "$CAPY_SESSION_START_ENTRY" --argjson cpt "$CAPY_PRETOOLUSE_ENTRY" --argjson cse "$CAPY_SESSION_END_ENTRY" \
+  '{hooks: {SessionEnd: [$cse], PreToolUse: [($pt | {hooks, matcher}), $cpt], SessionStart: [($ss | {hooks, matcher}), $css]}}' \
+  >"$test_dir/project/.codex/hooks.json"
 
 output_dir="$test_dir/output"
+pushd "$test_dir/project" >/dev/null || {
+  log_fail "Failed to cd to test directory"
+  exit 1
+}
 apply_substitutions "$test_dir/templates" "$output_dir" 2>/dev/null
+popd >/dev/null || true
 
-if grep -q '\[mcp_servers\.capy\]' "$output_dir/codex/config.toml"; then
-  log_pass "[mcp_servers.capy] preserved when SKIP_CAPY not in manifest"
+merged="$output_dir/codex/hooks.json"
+assert_equals "2" "$(jq '.hooks.SessionStart | length' "$merged")" "SessionStart has toolbox + capy entries"
+assert_equals "2" "$(jq '.hooks.PreToolUse | length' "$merged")" "PreToolUse has toolbox + capy entries"
+assert_equals "1" "$(jq '.hooks.SessionEnd | length' "$merged")" "Downstream-only event kept whole"
+assert_equals "true" "$(jq '.hooks.SessionStart[0].hooks[0].command | contains(".codex/scripts/session-start.sh")' "$merged")" "Toolbox entry comes first"
+assert_equals "true" "$(jq '.hooks.SessionStart[1].hooks[0].command | contains("capy codex-launch")' "$merged")" "Capy entry appended after toolbox's"
+assert_equals "true" "$(jq '.hooks.PreToolUse[1].hooks[0].command | contains("capy codex-launch")' "$merged")" "Capy PreToolUse entry preserved"
+assert_equals "SessionStart,PreToolUse,SessionEnd" "$(jq -r '.hooks | keys_unsorted | join(",")' "$merged")" "Template event order first, downstream-only events after"
+assert_equals "true" "$(jq '.hooks.SessionStart[0].hooks[0] | has("additionalContextLimit")' "$merged")" "Toolbox entry taken verbatim from template"
+
+log_test "apply_substitutions replaces a stale toolbox hook entry instead of duplicating it"
+reset_globals
+test_dir=$(create_temp_dir "subst-codex-hooks-stale")
+create_codex_hooks_fixture "$test_dir"
+# Downstream has an older toolbox SessionStart entry (different matcher) plus capy's.
+stale_ss=$(jq -c '.matcher = "startup"' <<<"$TOOLBOX_SESSION_START_ENTRY")
+jq -n --argjson ss "$stale_ss" --argjson pt "$TOOLBOX_PRETOOLUSE_ENTRY" --argjson css "$CAPY_SESSION_START_ENTRY" \
+  '{hooks: {SessionStart: [$ss, $css], PreToolUse: [$pt]}}' >"$test_dir/project/.codex/hooks.json"
+
+output_dir="$test_dir/output"
+pushd "$test_dir/project" >/dev/null || {
+  log_fail "Failed to cd to test directory"
+  exit 1
+}
+apply_substitutions "$test_dir/templates" "$output_dir" 2>/dev/null
+popd >/dev/null || true
+
+merged="$output_dir/codex/hooks.json"
+assert_equals "2" "$(jq '.hooks.SessionStart | length' "$merged")" "Stale toolbox entry not duplicated"
+assert_equals '"startup|resume"' "$(jq '.hooks.SessionStart[0].matcher' "$merged")" "Template version of toolbox entry wins"
+assert_equals "true" "$(jq '.hooks.SessionStart[1].hooks[0].command | contains("capy codex-launch")' "$merged")" "Capy entry still preserved"
+
+log_test "apply_substitutions copies template hooks.json as-is on first sync (no downstream file)"
+reset_globals
+test_dir=$(create_temp_dir "subst-codex-hooks-first-sync")
+create_codex_hooks_fixture "$test_dir"
+rm -rf "$test_dir/project/.codex"
+
+output_dir="$test_dir/output"
+pushd "$test_dir/project" >/dev/null || {
+  log_fail "Failed to cd to test directory"
+  exit 1
+}
+apply_substitutions "$test_dir/templates" "$output_dir" 2>/dev/null
+popd >/dev/null || true
+
+if diff -q <(jq -S . "$test_dir/templates/codex/hooks.json") <(jq -S . "$output_dir/codex/hooks.json") >/dev/null; then
+  log_pass "Template hooks.json staged unchanged on first sync"
 else
-  log_fail "[mcp_servers.capy] should be preserved when SKIP_CAPY is missing (defaults to false)"
+  log_fail "Template hooks.json should be staged unchanged on first sync"
 fi
+
+log_test "apply_substitutions falls back to template hooks.json when downstream is invalid JSON"
+reset_globals
+test_dir=$(create_temp_dir "subst-codex-hooks-invalid")
+create_codex_hooks_fixture "$test_dir"
+echo "{ not json" >"$test_dir/project/.codex/hooks.json"
+
+output_dir="$test_dir/output"
+pushd "$test_dir/project" >/dev/null || {
+  log_fail "Failed to cd to test directory"
+  exit 1
+}
+apply_substitutions "$test_dir/templates" "$output_dir" 2>/dev/null
+popd >/dev/null || true
+
+if diff -q <(jq -S . "$test_dir/templates/codex/hooks.json") <(jq -S . "$output_dir/codex/hooks.json") >/dev/null; then
+  log_pass "Template hooks.json used when downstream is invalid"
+else
+  log_fail "Template hooks.json should be used when downstream is invalid"
+fi
+assert_file_not_exists "$output_dir/codex/hooks.json.tmp" "No temp file left behind on fallback"
 
 # =============================================================================
 # Section 5: Smart Merge Tests
