@@ -3,6 +3,7 @@
 > Updated: 2026-10-14
 > Status: Task 12.14 done; no further R7 skill patch selected; broader acceptance remains open
 > Owner: implementing agent, [remaining Task 12 work](tasks.md#task-12-execute-and-assess-the-full-comparison-matrix)
+> Next-session starting point: [remaining issues and applying the 12.14 lessons](#remaining-issues-for-the-next-session)
 > Evidence: [completed matrix](verification/task12/opus55/README.md), [Claude](verification/task12/opus55/claude-results.md), [Codex](verification/task12/opus55/codex-results.md)
 
 ## Start here
@@ -20,6 +21,183 @@ successor cases do not replace original R7 for feature acceptance. No broader
 batch or next implementation is selected automatically; Task 12's remaining
 dispositions, live PAL deferral, legacy controls and Task 13 retain their owners
 and verification conditions.
+
+## Remaining issues for the next session
+
+**Discussion captured 2026-10-14 at the user's request.** Task 12.14 is complete
+and committed as `b20d11f0`. The user asked what the remaining failures mean and
+whether the same evaluation-validity approach could help. This section preserves
+that discussion and the recommended investigations. It does not select another
+implementation task, change a requirement, amend grading, or launch measurements.
+Owner of the next assessment: the implementing agent when feature work resumes.
+
+Most observations below come from the earlier full matrix, not a fresh test of
+the current revision. Task 12.12 improved selected isolated-review acquisition
+cases; Task 12.14 investigated R7. Neither result establishes that every similar
+issue in other modes is fixed. The [observation ledger](assessment-observations.md)
+remains the exhaustive mapping to old grades; its overlapping group totals are
+not a count of distinct bugs or the current candidate's failure rate.
+
+### What 12.14 teaches us
+
+The original whitespace fixture did not establish why missing provider evidence
+was consequential. Separately identified material-dependency and benign cases,
+with explicit contracts and pre-run report examples, elicited appropriate
+compatibility conclusions twice each using unchanged skill instructions. Overall
+grading remained 23 PASS / 1 FAIL: one report omitted the endpoint from its trace.
+The [results](verification/task12/r7-validity/README.md) support no further R7
+instruction change for this slice. They do not prove the old test invalid or the
+skill reliable, and they do not replace original R7 for feature acceptance.
+
+Apply the same discipline elsewhere: establish the consequence of the behavior
+being tested, include a benign control, define acceptable report meanings before
+measurement, and first test unchanged instructions. Distinguish a wrong conclusion,
+an incomplete report, a procedure violation, an unavailable capability and an
+unobservable event. A red assertion alone does not justify more runtime prose.
+
+### A. Verification left unfinished after command denial
+
+**Observed:** in both Claude I2 implementation runs, the code and regression tests
+were written but no successful test execution occurred. One trace never invokes
+the tests; the other attempts a denied Capy execution tool. That denial is not
+evidence that the permitted Python shell command was unavailable. In a typo-only
+I3 run, the independent reviewer received no actual diff. Some I4 verification
+also remains source-only. See [I2 repetition 1](verification/task12/opus55/grades/claude-candidate-I2-standalone-1.md),
+[I2 repetition 2](verification/task12/opus55/grades/claude-candidate-I2-standalone-2.md)
+and [I3's missing diff](verification/task12/opus55/grades/claude-candidate-I3-standalone-1.md).
+
+**Why it matters:** code inspection and written tests do not provide executed
+verification. A reviewer without the diff cannot establish change attribution.
+The isolated-command correction in Task 12.12 does not establish a fix for these
+implementation-mode paths. See the existing [acquisition disposition](#acquisition).
+
+**Recommended investigation:** inspect actual allowed tools and attempted commands
+before attributing the failure to the skill or changing permissions. A successor
+diagnostic should distinguish an available permitted verification route from
+genuinely unavailable execution. In the first case require actual execution and
+diff delivery; in the second require accurate limits and an unresolved verification
+obligation. Disclosure alone must not turn unrun required tests into a PASS.
+This remains the higher-impact behavioral concern, separate from report wording.
+
+### B. R6 expects discovery of an unchanged, disabled-path bug
+
+**Observed:** the requested change only renames a report label from “Items” to
+“Records.” Unchanged `summarize([], detailed=True)` divides by zero in both base
+and candidate, while the supplied entry point uses `DETAILED_REPORT=False`.
+Codex standard misses that old defect in both candidate and baseline runs.
+The [eval](../../../../klaude-plugin/skills/review-code/evals/functional-inherited-conditional-defect/eval.json)
+requires discovery and attribution despite the narrow review prompt. Other reports
+surface it but omit the bounded follow-up required by assertion 13.5; the
+[Claude report](verification/task12/opus55/grading/claude-candidate-R6-standard-2/captured/report.md)
+approves the label change, explains the inherited bug, and ends “No changes recommended.”
+
+**Question to settle:** does safe review of this increment reasonably require
+finding that dormant defect? Separately, does the closing advice mean no changes
+to this PR, or does it misleadingly dismiss an acknowledged issue? Do not conflate
+missed discovery, correct attribution and follow-up usefulness.
+
+**Recommended application of 12.14:** compare a defect reached or worsened by the
+changed path with an unchanged dormant-bug control. State review scope explicitly
+and define useful scoped approval/advisory examples before measuring. This is the
+strongest candidate for evaluation-validity reassessment. A new requirement to
+audit every optional path would have broad cost and is not justified by this
+fixture alone. Preserve the original 13.3–13.5 grades and the existing
+[detection](#inherited-defect-detection)/[follow-up](#inherited-defect-follow-up)
+dispositions until a prospective decision is made.
+
+### C. Correct outcomes with missing report details
+
+**Observed:** [R2](verification/task12/opus55/grades/codex-candidate-R2-standard-2.md)
+finds both retry defects, gives justified REQUEST_CHANGES and useful fixes, but
+does not explain why the existing green tests missed them. Some I4 reports
+correctly identify mixed-format incompatibility, preserve the hard requirement
+and reopen the task, but omit the required final qualification that production
+state was not verified. In one [Codex I4 run](verification/task12/opus55/grades/codex-candidate-I4-plan-2.md)
+that qualification exists in task context but not the final response. These
+observations do not establish false task completion.
+
+**Recommended application of 12.14:** write examples of genuinely misleading
+completion/compatibility claims and concise reports that communicate enough to
+make the correct decision. Assess the whole report, its actual evidence and any
+explicitly linked verification record. Decide which omitted information changes
+the user's understanding; avoid inventing a required phrase or extra report
+section to obtain a clean score. Record any proposed change to the existing
+final-response requirement explicitly before applying it.
+
+The [R1 scenario-order failure](verification/task12/opus55/grades/claude-candidate-R1-standard-1.md)
+needs a distinct semantic check: the report finds cleanup corruption but reverses
+part of the required event sequence. That is not merely missing wording; assess
+whether its described execution actually supports the claimed consequence.
+
+### D. Tests demand evidence the capture does not expose
+
+**Observed:** some Codex runs lack captured successful skill-entry delivery or
+exact submitted reviewer prompts, despite later instruction reads or reviewer
+use of context. Both Claude typo-edit runs have an unobservable pre-edit
+non-runtime assessment; the typo fix and proportionate behavior themselves pass.
+Private reasoning was deliberately excluded. See [entry receipts](#entry-point-receipts),
+[handoff receipts](#handoff-receipts) and [pre-edit assessment receipts](#pre-edit-assessment-receipts).
+
+**Recommended application of 12.14:** define public evidence of the useful
+behavior, then determine whether capture can supply it. Inspect existing raw
+events first. Reviewer receipt/use may establish context consumption but cannot
+prove exact submitted wording. Observable edits and verification can demonstrate
+a proportionate typo correction without compulsory narration of private reasoning.
+Any narrower evidence contract requires an explicit prospective amendment and
+calibration; the approved receipt/use fallback currently covers only R3 7.5/7.6
+and I2 9.5. Missing evidence stays missing under the existing contract.
+
+### E. One context/source read overlapped by 49 milliseconds
+
+**Observed:** [Codex I4 repetition 1](verification/task12/opus55/grades/codex-candidate-I4-plan-1.md)
+starts a full source read 49 ms before task/design/implementation loading completes.
+The later outcome correctly refreshes stale context, finds the incompatibility
+and keeps acceptance open. This is a demonstrated ordering violation; no harmful
+downstream decision was established in that run.
+
+**Recommended treatment:** retain the failure and keep its impact separate from
+missing context or a wrong decision. Consider a focused sequencing check or small
+scheduling correction if warranted. Task 12.10's proposed preparation guard does
+not establish this later context barrier and remains conditional, not the next
+default task. A broader mechanism needs evidence of a material problem it solves.
+
+### F. The external reviewer was intentionally unavailable
+
+PAL absence is user-deferred verification, not evidence that another actor
+instruction is needed. Historical composite assertions may also contain local
+failures; assess those components separately. Resume actual invocation, source
+receipt/use and integration checks only when the existing deferral is lifted.
+Keep the [PAL disposition](#pal-deferral), synthetic R8 results and live transport
+coverage distinct.
+
+### Recommended starting point and completion boundary
+
+The recommendation discussed was to reassess **R6 and report-detail expectations**,
+while separately investigating **unfinished implementation verification**. These
+are two different questions: whether the evaluation asks for something useful,
+and whether the agent completes verification that is actually available. It is
+not a selected patch or an approved batch size.
+
+A useful first deliverable for the next session is a compact assessment of those
+cases with the exact failed assertion/report, practical consequence, acceptable
+and unacceptable examples, any proposed successor/control, and a fix/investigate/
+defer/no-change disposition. Consult the current design, implementation, evaluation
+contract and task status before acting. Only then select a bounded next task and
+declare any measurement. Preserve historical fixtures, grades and freezes; review
+new criteria before testing unchanged instructions; keep actor inputs isolated
+from grading material. No automatic full-matrix rerun follows from this handoff.
+
+Task 12 still needs legacy routing/pre-write controls, resolution of its required
+acceptance conditions and an explicit decision about original R7 versus successor
+coverage. Task 13 retains final documentation/reviews and human-executed release
+evidence housekeeping. This note records future investigation; none of those
+remaining gates has been run or closed by saving it.
+
+Optional wording-only refinement: `/kk:clarify-docs
+docs/feat/wip/functional-review/follow-up.md
+docs/feat/wip/functional-review/tasks.md`.
+
+## Historical handoff — 2026-10-13
 
 **Recorded starting point (2026-10-13): [Task 12.14](tasks.md#task-1214-redesign-the-r7-evaluation-before-further-skill-changes).**
 The user questioned whether the simplified R7 fixture and its interpretation of
@@ -56,6 +234,9 @@ Keep this assessment in repository planning documents; it is not a new runtime
 checklist for every skill invocation.
 
 ## R7 evaluation redesign — next session
+
+**Historical plan, now completed by Task 12.14.** Use the
+[remaining-issues handoff](#remaining-issues-for-the-next-session) for new work.
 
 **Direction recorded 2026-10-13 at the user's request.** Start from commit
 `d5fb1694`, which records Task 12.13's rejected experiment. This handoff documents
