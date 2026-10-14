@@ -1,0 +1,138 @@
+{
+  "run": "claude-candidate-R7B-standard-2",
+  "sealed_files": 25,
+  "hashes": "PASS",
+  "runtime_model_plugin_capy_no_pal": "PASS",
+  "initial_subject_unchanged": "PASS",
+  "root_receipts": [],
+  "registered_skill_receipts": [
+    7
+  ],
+  "direct_instruction_reads": [
+    {
+      "call": 8,
+      "result": 9,
+      "actor": "main",
+      "path": "skills/review-code/packet-preparation.md",
+      "complete_numbered_text": true,
+      "source_sha256": "39bfec8332a4bb85ed2ba156fbf957e231d544dfc15afc46974c7ea8c23716c8"
+    }
+  ],
+  "shell_requests": [
+    {
+      "event": 10,
+      "command": "python3 /private/tmp/fr-r7-validity-20261014/claude-candidate-R7B-standard-2/plugins/kk/skills/review-code/scripts/prepare_instructions.py bootstrap",
+      "result_event": 13,
+      "error": false
+    },
+    {
+      "event": 27,
+      "command": "git status -sb && echo --- && git diff --stat && echo --- && git diff --cached --stat",
+      "result_event": 30,
+      "error": false
+    },
+    {
+      "event": 35,
+      "command": "ls -a . tests && python3 plugins/kk/skills/review-code/scripts/prepare_instructions.py profiles --profile python",
+      "result_event": 38,
+      "error": false
+    },
+    {
+      "event": 41,
+      "command": "python3 plugins/kk/skills/review-code/scripts/prepare_instructions.py checklists --profile python --load python/security-checklist.md --load python/solid-checklist.md --load python/code-quality-checklist.md --load python/removal-plan.md",
+      "result_event": 44,
+      "error": false
+    },
+    {
+      "event": 70,
+      "command": "cat README.md && echo ===== && cat protocol.md && echo ===== && git diff --cached && echo ===== && git show :client.py && echo ===== && git show :tests/test_client.py && echo ==== && ls -a .runner; cat .gitignore .capy.toml",
+      "result_event": 73,
+      "error": true
+    },
+    {
+      "event": 75,
+      "command": "cat protocol.md; echo '-----DIFF'; git diff --cached; echo '-----CLIENT'; git show :client.py; echo '-----TEST'; git show :tests/test_client.py; echo '-----BASE CLIENT'; git show HEAD:client.py; echo '-----MISC'; ls -la .runner; cat .gitignore .capy.toml",
+      "result_event": 78,
+      "error": false
+    },
+    {
+      "event": 98,
+      "command": "git diff --quiet && echo \"worktree==index\" ; python3 --version; python3 -B -m unittest discover -s tests -v 2>&1 | tail -12; python3 -I -c '\nimport sys\nbad=[c for c in range(sys.maxunicode+1) if 0xD800>c or c>0xDFFF if (s:=f\"{chr(c)}a {chr(c)}b{chr(c)}\").strip().strip()!=s.strip()]\nws=[hex(c) for c in range(sys.maxunicode+1) if chr(c).strip()==\"\"]\nprint(\"idempotence violations:\",bad); print(\"strip-whitespace set:\",ws)'",
+      "result_event": 102,
+      "error": false
+    }
+  ],
+  "file_requests": [
+    {
+      "event": 8,
+      "tool": "Read",
+      "arguments": {
+        "file_path": "/private/tmp/fr-r7-validity-20261014/claude-candidate-R7B-standard-2/plugins/kk/skills/review-code/packet-preparation.md"
+      }
+    },
+    {
+      "event": 14,
+      "tool": "Read",
+      "arguments": {
+        "file_path": "/var/folders/vv/lnz9c5h95pnbjzsz93qmr0n80000gn/T/kk-review-instructions-ns661npj/part-01.md"
+      }
+    },
+    {
+      "event": 16,
+      "tool": "Read",
+      "arguments": {
+        "file_path": "/var/folders/vv/lnz9c5h95pnbjzsz93qmr0n80000gn/T/kk-review-instructions-ns661npj/part-02.md"
+      }
+    },
+    {
+      "event": 18,
+      "tool": "Read",
+      "arguments": {
+        "file_path": "/var/folders/vv/lnz9c5h95pnbjzsz93qmr0n80000gn/T/kk-review-instructions-ns661npj/part-03.md"
+      }
+    },
+    {
+      "event": 20,
+      "tool": "Read",
+      "arguments": {
+        "file_path": "/var/folders/vv/lnz9c5h95pnbjzsz93qmr0n80000gn/T/kk-review-instructions-ns661npj/part-04.md"
+      }
+    },
+    {
+      "event": 22,
+      "tool": "Read",
+      "arguments": {
+        "file_path": "/var/folders/vv/lnz9c5h95pnbjzsz93qmr0n80000gn/T/kk-review-instructions-ns661npj/part-05.md"
+      }
+    },
+    {
+      "event": 24,
+      "tool": "Read",
+      "arguments": {
+        "file_path": "/var/folders/vv/lnz9c5h95pnbjzsz93qmr0n80000gn/T/kk-review-instructions-ns661npj/part-06.md"
+      }
+    },
+    {
+      "event": 39,
+      "tool": "Read",
+      "arguments": {
+        "file_path": "/var/folders/vv/lnz9c5h95pnbjzsz93qmr0n80000gn/T/kk-review-instructions-w0n48ewx/part-01.md"
+      }
+    },
+    {
+      "event": 45,
+      "tool": "Read",
+      "arguments": {
+        "file_path": "/var/folders/vv/lnz9c5h95pnbjzsz93qmr0n80000gn/T/kk-review-instructions-rv8_mkjd/part-01.md"
+      }
+    },
+    {
+      "event": 47,
+      "tool": "Read",
+      "arguments": {
+        "file_path": "/var/folders/vv/lnz9c5h95pnbjzsz93qmr0n80000gn/T/kk-review-instructions-rv8_mkjd/part-02.md"
+      }
+    }
+  ],
+  "access_assessment": "manual review required; paths/commands are evidence, not OS confinement"
+}

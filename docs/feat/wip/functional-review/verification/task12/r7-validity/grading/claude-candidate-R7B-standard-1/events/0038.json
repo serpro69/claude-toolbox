@@ -1,0 +1,12 @@
+{
+  "actor": "main",
+  "block": {
+    "content": "1\t# Settings protocol\n2\t\n3\t`PUT /settings` accepts a JSON object with one `display_name` member.\n4\t\n5\t| Value | Protocol v1 | Protocol v2 |\n6\t| --- | --- | --- |\n7\t| String | Store the string after removing leading/trailing Unicode whitespace | Same as v1 |\n8\t| Empty string (including a whitespace-only string after normalization) | Store an explicit empty label | Same as v1 |\n9\t| `null` | Return HTTP 422; leave the stored value unchanged | Remove the explicit label; subsequent reads use the account default |\n10\t\n11\tHere, surrounding Unicode whitespace means exactly the characters removed by\n12\tPython's `str.strip()` with no argument. Both provider versions use this same\n13\tdefinition and preserve internal whitespace. A successful write returns\n14\t`{\"ok\": true}`. A transport returns that response on success and raises on\n15\tnon-success HTTP status. The client receives a borrowed transport; it neither\n16\towns the connection nor retries calls. These are versioned protocol semantics,\n17\tnot a record of which version a deployment runs.\n18\t",
+    "tool_use_id": "toolu_01KdDcyAjQypxc1w1vFxEPJw",
+    "type": "tool_result"
+  },
+  "id": "e70.0",
+  "parent_tool_use_id": null,
+  "session_id": "df21c3d5-d899-40d5-aa7b-4359fb63a3ed",
+  "source_sequence": 70
+}

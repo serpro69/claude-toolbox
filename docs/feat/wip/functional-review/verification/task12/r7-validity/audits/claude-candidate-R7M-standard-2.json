@@ -1,0 +1,150 @@
+{
+  "run": "claude-candidate-R7M-standard-2",
+  "sealed_files": 25,
+  "hashes": "PASS",
+  "runtime_model_plugin_capy_no_pal": "PASS",
+  "initial_subject_unchanged": "PASS",
+  "root_receipts": [],
+  "registered_skill_receipts": [
+    6
+  ],
+  "direct_instruction_reads": [
+    {
+      "call": 8,
+      "result": 9,
+      "actor": "main",
+      "path": "skills/review-code/packet-preparation.md",
+      "complete_numbered_text": true,
+      "source_sha256": "39bfec8332a4bb85ed2ba156fbf957e231d544dfc15afc46974c7ea8c23716c8"
+    }
+  ],
+  "shell_requests": [
+    {
+      "event": 10,
+      "command": "python3 /private/tmp/fr-r7-validity-20261014/claude-candidate-R7M-standard-2/plugins/kk/skills/review-code/scripts/prepare_instructions.py bootstrap",
+      "result_event": 13,
+      "error": false
+    },
+    {
+      "event": 27,
+      "command": "git status -sb && git diff --stat && echo --- && git diff --cached --stat",
+      "result_event": 30,
+      "error": false
+    },
+    {
+      "event": 35,
+      "command": "ls -a . tests; ls SKILL.md tests/SKILL.md 2>&1",
+      "result_event": 38,
+      "error": true
+    },
+    {
+      "event": 54,
+      "command": "python3 /private/tmp/fr-r7-validity-20261014/claude-candidate-R7M-standard-2/plugins/kk/skills/review-code/scripts/prepare_instructions.py profiles --profile python",
+      "result_event": 57,
+      "error": false
+    },
+    {
+      "event": 60,
+      "command": "python3 /private/tmp/fr-r7-validity-20261014/claude-candidate-R7M-standard-2/plugins/kk/skills/review-code/scripts/prepare_instructions.py checklists --profile python --load python/security-checklist.md --load python/solid-checklist.md --load python/code-quality-checklist.md --load python/removal-plan.md",
+      "result_event": 63,
+      "error": false
+    },
+    {
+      "event": 82,
+      "command": "cat README.md; echo ======; cat protocol.md; echo ======; cat .capy.toml; ls -la .runner; cat .gitignore",
+      "result_event": 85,
+      "error": true
+    },
+    {
+      "event": 87,
+      "command": "cat protocol.md; echo \"=== CAPY\"; cat .capy.toml; echo \"=== RUNNER\"; ls -la .runner; echo \"=== GITIGNORE\"; cat .gitignore",
+      "result_event": 90,
+      "error": false
+    },
+    {
+      "event": 91,
+      "command": "git diff --cached; echo \"=== INDEX client.py\"; git show :client.py; echo \"=== INDEX tests\"; git show :tests/test_client.py; echo \"=== worktree vs index\"; git diff --stat",
+      "result_event": 95,
+      "error": false
+    },
+    {
+      "event": 107,
+      "command": "python3 --version && python3 -B -m unittest discover -s tests -v 2>&1; echo \"=== refs\"; git tag; git branch -a; git log --oneline --all",
+      "result_event": 110,
+      "error": false
+    }
+  ],
+  "file_requests": [
+    {
+      "event": 8,
+      "tool": "Read",
+      "arguments": {
+        "file_path": "/private/tmp/fr-r7-validity-20261014/claude-candidate-R7M-standard-2/plugins/kk/skills/review-code/packet-preparation.md"
+      }
+    },
+    {
+      "event": 14,
+      "tool": "Read",
+      "arguments": {
+        "file_path": "/var/folders/vv/lnz9c5h95pnbjzsz93qmr0n80000gn/T/kk-review-instructions-fcgrifcx/part-01.md"
+      }
+    },
+    {
+      "event": 16,
+      "tool": "Read",
+      "arguments": {
+        "file_path": "/var/folders/vv/lnz9c5h95pnbjzsz93qmr0n80000gn/T/kk-review-instructions-fcgrifcx/part-02.md"
+      }
+    },
+    {
+      "event": 18,
+      "tool": "Read",
+      "arguments": {
+        "file_path": "/var/folders/vv/lnz9c5h95pnbjzsz93qmr0n80000gn/T/kk-review-instructions-fcgrifcx/part-03.md"
+      }
+    },
+    {
+      "event": 20,
+      "tool": "Read",
+      "arguments": {
+        "file_path": "/var/folders/vv/lnz9c5h95pnbjzsz93qmr0n80000gn/T/kk-review-instructions-fcgrifcx/part-04.md"
+      }
+    },
+    {
+      "event": 22,
+      "tool": "Read",
+      "arguments": {
+        "file_path": "/var/folders/vv/lnz9c5h95pnbjzsz93qmr0n80000gn/T/kk-review-instructions-fcgrifcx/part-05.md"
+      }
+    },
+    {
+      "event": 24,
+      "tool": "Read",
+      "arguments": {
+        "file_path": "/var/folders/vv/lnz9c5h95pnbjzsz93qmr0n80000gn/T/kk-review-instructions-fcgrifcx/part-06.md"
+      }
+    },
+    {
+      "event": 58,
+      "tool": "Read",
+      "arguments": {
+        "file_path": "/var/folders/vv/lnz9c5h95pnbjzsz93qmr0n80000gn/T/kk-review-instructions-5dojo7wc/part-01.md"
+      }
+    },
+    {
+      "event": 64,
+      "tool": "Read",
+      "arguments": {
+        "file_path": "/var/folders/vv/lnz9c5h95pnbjzsz93qmr0n80000gn/T/kk-review-instructions-23qtbjkl/part-01.md"
+      }
+    },
+    {
+      "event": 66,
+      "tool": "Read",
+      "arguments": {
+        "file_path": "/var/folders/vv/lnz9c5h95pnbjzsz93qmr0n80000gn/T/kk-review-instructions-23qtbjkl/part-02.md"
+      }
+    }
+  ],
+  "access_assessment": "manual review required; paths/commands are evidence, not OS confinement"
+}

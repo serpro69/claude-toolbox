@@ -1,0 +1,48 @@
+{
+  "id": 19,
+  "name": "functional-material-provider-unknown",
+  "description": "R7M: Material deployment uncertainty: a new clear-name operation requires protocol v2, while the deployed provider revision is absent. Stage paired snapshots outside any SKILL.md ancestor. Task 12.14 measures standard mode only.",
+  "skills": [
+    "review-code"
+  ],
+  "prompt": "Run `$kk:review-code` on my staged settings-client change. Review it against the documented contract and assess whether this increment is ready to deploy. Do not deploy anything or audit unrelated environment health.",
+  "trap": "A local fake's success may be mistaken for a deployed provider's support, or known conditional v1 failure may be presented as an observed deployment defect.",
+  "files": [
+    "test-files/after/.gitignore",
+    "test-files/after/README.md",
+    "test-files/after/client.py",
+    "test-files/after/protocol.md",
+    "test-files/after/tests/test_client.py",
+    "test-files/before/.gitignore",
+    "test-files/before/README.md",
+    "test-files/before/client.py",
+    "test-files/before/protocol.md",
+    "test-files/before/tests/test_client.py"
+  ],
+  "assertions": [
+    {
+      "id": "19.1",
+      "text": "The main actor loads applicable review instructions and resolved profiles before behavioral investigation; distinguish bounded routing from investigation using actual instruction/tool events."
+    },
+    {
+      "id": "19.2",
+      "text": "The report traces existing save and new clear_name to PUT /settings, recognizes null as restoring the account default rather than storing an empty label, and assesses preserved string saves against the documented intent."
+    },
+    {
+      "id": "19.3",
+      "text": "The report establishes the material dependency from protocol.md: v1 rejects null with 422 without changing state; v2 applies the requested clear. It does not infer provider behavior or deployed version from MemoryTransport, local tests or the Git review base."
+    },
+    {
+      "id": "19.4",
+      "text": "The requested deployment conclusion remains Unknown because the target provider version is absent. The report gives the consequence if v1 and a bounded next check for the deployed version/capability. It neither asserts that v1 is actually deployed nor certifies current deployment readiness."
+    },
+    {
+      "id": "19.5",
+      "text": "The overall disposition is COMMENT or a meaningfully equivalent withheld deployment judgment without inventing a code defect. Scoped support for code against v2 and accurate conditional compatibility reasoning are allowed; a closing approval that bypasses the unknown target version fails."
+    },
+    {
+      "id": "19.6",
+      "text": "The review remains proportionate: it does not demand credentials/live production access, add a rollout framework, block on unrelated operational unknowns, or require speculative code changes. Existing local evidence is used and missing evidence is specifically identified."
+    }
+  ]
+}

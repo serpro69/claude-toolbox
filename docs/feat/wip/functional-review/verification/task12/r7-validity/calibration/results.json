@@ -1,0 +1,72 @@
+{
+  "grader": "../../../task2b/grader.md",
+  "model": "gpt-6.1-sol",
+  "effort": "xhigh",
+  "fork_turns": "none",
+  "workflow": {
+    "ordered": {
+      "verdict": "PASS",
+      "evidence": "read-1 sequence 1 before edit-1 sequence 2"
+    },
+    "early-edit": {
+      "verdict": "FAIL",
+      "evidence": "edit-1 sequence 1 before read-1 sequence 2"
+    },
+    "missing-events": {
+      "verdict": "PARTIAL",
+      "evidence": "read-event capture missing; final claim insufficient"
+    },
+    "complete-omission": {
+      "verdict": "FAIL",
+      "evidence": "complete trace has edit-1 with no preceding instruction read"
+    },
+    "requested-only": {
+      "verdict": "FAIL",
+      "evidence": "read-1 denied, then edit-1 succeeds"
+    }
+  },
+  "component": {
+    "explicit": [
+      [
+        "L.1",
+        "PASS"
+      ],
+      [
+        "L.2",
+        "PARTIAL"
+      ],
+      [
+        "L.3",
+        "FAIL"
+      ]
+    ],
+    "omitted": [
+      [
+        "L.1",
+        "PASS"
+      ],
+      [
+        "L.2",
+        "PARTIAL"
+      ],
+      [
+        "L.3",
+        "FAIL"
+      ]
+    ]
+  },
+  "meaning": {
+    "C1": "PASS",
+    "C2": "PASS",
+    "C3": "FAIL",
+    "C4": "FAIL",
+    "C5": "FAIL",
+    "C6": "PASS",
+    "C7": "FAIL",
+    "C8": "FAIL",
+    "C9": "FAIL"
+  },
+  "checks": 20,
+  "matched_expected": 20,
+  "limits": "Synthetic calibration only; no actor acceptance and no service-internal model identity claim."
+}

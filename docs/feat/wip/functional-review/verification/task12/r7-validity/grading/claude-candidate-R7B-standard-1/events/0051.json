@@ -1,0 +1,19 @@
+{
+  "actor": "main",
+  "block": {
+    "caller": {
+      "type": "direct"
+    },
+    "id": "toolu_01DqKbs53tkgAudoB7pUrSSq",
+    "input": {
+      "command": "cd /tmp && python3 -I -c '\nimport sys, random\nws = [chr(c) for c in range(sys.maxunicode+1) if chr(c).isspace()]\nprint(\"whitespace chars:\", len(ws), [hex(ord(c)) for c in ws])\nprovider = lambda v: v.strip()          # protocol.md: v1 and v2 string rule\nold = lambda s: provider(s)             # old client sent raw string\nnew = lambda s: provider(s.strip())     # new client pre-strips\npool = ws + list(\"Ada  Lovelace\u0301\\U0001F600\") + [\"\u200b\", \"\ufeff\"]\nrandom.seed(0)\nbad = 0\nfor _ in range(200000):\n    s = \"\".join(random.choice(pool) for _ in range(random.randint(0, 8)))\n    if old(s) != new(s): bad += 1\nfor c in ws: assert old(c*3) == new(c*3) == \"\"\nprint(\"mismatches:\", bad)\n# payload type/shape unchanged, null never produced for str input\nprint(type(new(\"  \")), repr(new(\"  \")))\n'; ls /usr/bin/python3* /opt/homebrew/bin/python3.* 2>/dev/null",
+      "description": "Check old and new clients store identical labels"
+    },
+    "name": "Bash",
+    "type": "tool_use"
+  },
+  "id": "e99.0",
+  "parent_tool_use_id": null,
+  "session_id": "df21c3d5-d899-40d5-aa7b-4359fb63a3ed",
+  "source_sequence": 99
+}

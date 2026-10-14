@@ -7,13 +7,13 @@
 > Issue: [#166](https://github.com/serpro69/claude-toolbox/issues/166)
 > Status: in-progress
 > Created: 2026-10-07
-> Revised: 2026-10-13 with the R7 evaluation-redesign handoff after the rejected wording experiment
+> Revised: 2026-10-14 with Task 12.14 complete and its retained diagnostic failure
 > Next-session handoff: [follow-up.md](follow-up.md)
-> Current slice: Task 12.14 pending — reassess R7 evaluation validity; keep operative skill instructions unchanged
+> Current slice: Task 12.14 done — revised evaluation measured; no further R7 skill change selected
 > Not Doing: new review skill, whole-system audits, mandatory production access, deployments, generic release engine, new models/dependencies, profile redesign
 > Delivery: preserve existing invocations/shared consumers; regenerate Codex artifacts with every operative slice.
 
-Scope and direction are approved; the reviews have been assessed and the detailed plan revised. Tasks 1–11 are done, including Task 2 gates 2A and 2B. Task 12's full core matrix is captured and graded; acceptance remains incomplete. **Task 12.12 is done:** keep the entry-path correction after its bounded diagnostic comparison. Remaining acceptance gates and dispositions stay open; Task 12.14's R7 evaluation-validity reassessment is next, before another skill correction. Task 13 retains final feature documentation and verification. The [gate 2B completion record](verification/task2b/README.md) documents the selected receipt/use contract, four new baselines and evidence limits. Exact submitted prompts remain unverified, and capture completion is not candidate acceptance. Earlier six-task numbering is superseded by this sequence; no completed work was renumbered. Size includes authored reasoning complexity; mechanical copies/symlinks/generated files are excluded. Parallel markers permit compatible work only and do not authorize delegation. Serialize generation if tasks run concurrently.
+Scope and direction are approved; the reviews have been assessed and the detailed plan revised. Tasks 1–11 are done, including Task 2 gates 2A and 2B. Task 12's full core matrix is captured and graded; acceptance remains incomplete. **Task 12.12 is done:** keep the entry-path correction after its bounded diagnostic comparison. Remaining acceptance gates and dispositions stay open; Task 12.14's evaluation-validity reassessment is done: both target conclusions pass twice, one report-trace assertion remains failed, and no further R7 instruction change is selected. Task 13 retains final feature documentation and verification. The [gate 2B completion record](verification/task2b/README.md) documents the selected receipt/use contract, four new baselines and evidence limits. Exact submitted prompts remain unverified, and capture completion is not candidate acceptance. Earlier six-task numbering is superseded by this sequence; no completed work was renumbered. Size includes authored reasoning complexity; mechanical copies/symlinks/generated files are excluded. Parallel markers permit compatible work only and do not authorize delegation. Serialize generation if tasks run concurrently.
 
 ## Task 1: Prove revision-bound evaluation loading
 
@@ -831,7 +831,7 @@ experiment, not an accepted R7 fix.**
 
 ### Task 12.14: Redesign the R7 evaluation before further skill changes
 
-- **Status:** pending — next-session handoff only
+- **Status:** done — diagnostic complete; 23 PASS / 1 FAIL retained; no operative skill change
 - **Depends on:** Task 12.13 (done); user-requested reassessment documented 2026-10-13
 - **Size:** M
 - **Strategy:** Risk-First — establish test validity before changing shared instructions
@@ -844,14 +844,64 @@ acceptable/unacceptable report examples. The whitespace example does not establi
 a real provider incompatibility. Preserve all historical results; assess whether
 their significance warrants a skill change instead of optimizing for old labels.
 
-- [ ] 12.14.1 Audit `klaude-plugin/skills/review-code/evals/functional-missing-baseline/eval.json`, its sibling `oracle/`, and the Task 12.13 failed/passing reports → verify: distinguish demonstrated report claims, hypothetical server semantics, missing evidence and ambiguous review scope; identify exactly what the successor should measure.
-- [ ] 12.14.2 Design separately identified material-dependency and benign-control cases, with meaningful expected outcomes → verify: the unknown deployment fact matters in the first, scoped approval is justified in the second, and neither requires live access, fixture-specific actor hints or a large system.
-- [ ] 12.14.3 Author the successor fixtures/rubric and pre-run acceptable/unacceptable examples; document assertion mapping and any proposed verdict-contract amendment in `evaluation.md` → verify: historical files/grades stay unchanged, oracles remain grader-only, and report meaning rather than isolated approval keywords decides the revised criteria. Regenerate Codex output if canonical eval files are added.
-- [ ] 12.14.4 Review fixture/rubric validity before measurement, then declare and run the bounded diagnostic: two Claude standard sessions per case, four total, on the same unchanged current skill revision → verify: fresh staged workspaces outside a SKILL.md ancestor, pinned inputs/runtime, no evaluator material exposed, independent grading and retained attempts. No new skill candidate or 48-run comparison.
-- [ ] 12.14.5 Record whether a concrete skill failure survives the clearer test and choose investigate/defer/no-change accordingly → verify: distinguish evaluation validity from skill effectiveness, preserve PAL/capture limits and full-feature gates, and document any broader comparison separately before executing it.
+- [x] 12.14.1 Audit `klaude-plugin/skills/review-code/evals/functional-missing-baseline/eval.json`, its sibling `oracle/`, and the Task 12.13 failed/passing reports → verify: distinguish demonstrated report claims, hypothetical server semantics, missing evidence and ambiguous review scope; identify exactly what the successor should measure.
+- [x] 12.14.2 Design separately identified material-dependency and benign-control cases, with meaningful expected outcomes → verify: the unknown deployment fact matters in the first, scoped approval is justified in the second, and neither requires live access, fixture-specific actor hints or a large system.
+- [x] 12.14.3 Author the successor fixtures/rubric and pre-run acceptable/unacceptable examples; document assertion mapping and any proposed verdict-contract amendment in `evaluation.md` → verify: historical files/grades stay unchanged, oracles remain grader-only, and report meaning rather than isolated approval keywords decides the revised criteria. Regenerate Codex output if canonical eval files are added.
+- [x] 12.14.4 Review fixture/rubric validity before measurement, then declare and run the bounded diagnostic: two Claude standard sessions per case, four total, on the same unchanged current skill revision → verify: fresh staged workspaces outside a SKILL.md ancestor, pinned inputs/runtime, no evaluator material exposed, independent grading and retained attempts. No new skill candidate or 48-run comparison.
+- [x] 12.14.5 Record whether a concrete skill failure survives the clearer test and choose investigate/defer/no-change accordingly → verify: distinguish evaluation validity from skill effectiveness, preserve PAL/capture limits and full-feature gates, and document any broader comparison separately before executing it.
 
-This request records the handoff; fixture implementation and diagnostic execution
-remain pending. No additional operative instruction change is selected.
+The fixture/rubric work, four-session diagnostic and final independent evidence
+review are complete. No additional operative instruction change is selected.
+
+#### Execution context — 2026-10-14
+
+The user requested implementation of Task 12.14. The starting worktree is clean
+at `6bc277ea`; the existing Task 12.13 evidence and operative instruction bytes
+remain unchanged. Scope is the revised fixture pair, explicit grading examples,
+premeasurement independent review and four fresh Claude standard sessions on the
+same current skill revision. PAL remains user-deferred; Task 12 acceptance and
+Task 13 are separate open gates.
+
+All eight installed profile detection rules were loaded before investigation.
+Planned Python fixtures/controller activate `python`; canonical eval files
+activate `skill-md` through their nearest `review-code/SKILL.md` ancestor.
+Python core and universal/provider/kk implementation guidance are loaded.
+Existing staging-isolation knowledge was consulted. No operative instruction
+change or new package dependency was introduced.
+
+**Observed result:** [Task 12.14 verification](verification/task12/r7-validity/README.md)
+retains separately identified evals 19/R7M and 20/R7B, prospective examples/rubric,
+independent premeasurement validity/source reviews, frozen source/runtime inputs,
+binding/state probes, all four fresh Claude standard captures and independent
+grades. All target compatibility conclusions pass twice: material target readiness
+stays Unknown; benign code receives justified scoped approval. Totals are
+**23 PASS / 1 FAIL / 0 PARTIAL**. R7M repetition 1's 19.2 remains FAIL because its
+report omits the explicit PUT /settings endpoint from the behavior trace.
+
+**Disposition:** no further operative skill change for the R7 compatibility concern.
+The retained report-completeness omission does not demonstrate material overconfidence
+or justify added instruction burden. This is not a full diagnostic pass, proof that
+old R7 is invalid, or replacement of its historical acceptance requirement. Owner:
+implementing agent; revisit the omission if it obscures a material consequence,
+under a separately declared comparison. Task 12 acceptance, live PAL, other assigned
+dispositions, legacy controls and Task 13 remain open.
+
+**Checks:** 27 fixture/host-runtime checks and all four supplied snapshot suites
+(10 fixture tests) pass; all 11 shell suites (645 assertions), Go tests, graph
+validation and repeated-generation freshness (926 files) pass. The initial
+inherited Linux helper failed five Darwin cleanup checks before any actor ran;
+the independently reviewed controller-only correction passed before capture.
+No operative instructions, prior evals, historical captures/grades or persistent
+user settings changed. Exact runtime/packet inputs are archived and hash-verified.
+Recorded owned scratch copies are intentionally retained until Task 13 housekeeping;
+durable evidence does not depend on them.
+
+**Completion review:** the independent code-reviewer approves the completed
+diagnostic and no-change disposition, with the 19.2 failure and broader gates
+unchanged. Its one P3 calibration-path metadata finding was corrected and
+independently rechecked; no open in-scope source finding remains. See the
+[completion review](verification/task12/r7-validity/completion-review.md).
+**Task 12.14 is done.** This does not close Task 12 acceptance or Task 13.
 
 ## Task 13: Document and verify the complete feature
 
