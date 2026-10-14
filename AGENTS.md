@@ -45,6 +45,10 @@ The Go tools under `cmd/` have their own tests: `make generate-kodex` (Codex gen
 
 See `README.md` for detailed troubleshooting of MCP connection issues and template sync problems.
 
+## Working from GitHub issues
+
+Issues in this repo are often filed from agent sessions in sibling projects (e.g., capy) that cannot change toolbox themselves, so they tend to spec the most cautious possible interface: explicit opt-in flags, activation checks, rollback procedures, release gating. Treat those acceptance criteria as negotiable and the underlying problem as the deliverable. Before adopting any of them, ask whether a stateless check at the point of use makes them unnecessary, and say so. Example: issue #170 asked for a manifest opt-in plus rollback; the implementation is a per-event `jq` check of capy's entries in `.codex/hooks.json`, re-evaluated on every call, with no stored state.
+
 ## Skill & Command Naming Conventions
 
 Applies when creating or renaming kk-plugin skills and commands.
