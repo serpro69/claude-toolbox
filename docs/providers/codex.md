@@ -12,8 +12,8 @@ Codex (OpenAI) is supported as a secondary provider. Skills are generated from t
 
 | File | Purpose |
 |------|---------|
-| `.codex/config.toml` | Main configuration |
-| `.codex/hooks.json` | Session-start and pre-tool-use hooks; `capy setup --platform codex` registers capy's hooks here too |
+| `.codex/config.toml` | Main configuration; `capy setup --platform codex` registers capy's MCP server here, template sync preserves it |
+| `.codex/hooks.json` | Session-start and pre-tool-use hooks; `capy setup --platform codex` registers capy's hooks here too, template sync preserves them |
 | `.codex/rules/default.rules` | Starlark permission rules |
 | `.codex/scripts/session-start.sh` | Behavioral instructions (session startup), plus capy guidance until capy's hooks take over |
 | `.codex/scripts/pretooluse-bash.sh` | File-path denylist on shell commands, plus HTTP routing until capy's hooks take over |
@@ -36,11 +36,15 @@ The check runs on every session start and every shell call, so there is no flag 
 
     Codex trusts hooks individually through `/hooks`, and capy's setup never changes trust. A capy entry that is present but disabled still makes toolbox step aside, so the project ends up with no capy guidance and no HTTP routing at all. To switch capy's Codex hooks off, delete its entries from `.codex/hooks.json`. After running setup, review and trust the new entries in `/hooks`; registration alone does not execute them.
 
-!!! warning "Template sync overwrites `.codex/hooks.json`"
+### Template sync and capy's entries
 
-    Template sync copies the upstream `.codex/` tree over the project, which drops capy's registered entries and silently returns the project to the legacy path. Until sync merges that file, either rerun `capy setup --platform codex` after every sync, or add `.codex/hooks.json` to `sync_exclusions` in `.github/template-state.json` at the cost of no longer receiving toolbox hook updates. Tracked as a follow-up to [issue #170](https://github.com/serpro69/claude-toolbox/issues/170).
+Template sync does not own capy's registration. The template ships no `[mcp_servers]` table in `config.toml` and only toolbox's own entries in `hooks.json`; on every sync the downstream copies of both files are merged rather than replaced:
 
-    The `.codex/capy-owner` installation marker is safe: it is a built-in sync exclusion, so sync never reports it as deleted or removes it. Capy refuses to regenerate a lost marker, so keep it committed alongside `hooks.json` and `config.toml` as capy's setup instructs.
+- `config.toml`: toolbox substitutes `model` and `approval_policy` from the manifest, then keeps every `mcp_servers.*` entry the project has that the template does not ship. A server the template does ship wins by name.
+- `hooks.json`: toolbox owns every entry whose command runs a script under `.codex/scripts/`, and those come from the template verbatim, so a toolbox entry that changed or was removed upstream does not linger. Every other entry the project has (capy's `capy codex-launch` hooks, hand-added hooks) is appended after toolbox's entries for its event.
+- `.codex/capy-owner`: a built-in sync exclusion, never reported as deleted or removed. Capy refuses to regenerate a lost marker, so keep it committed alongside `hooks.json` and `config.toml` as capy's setup instructs.
+
+The merge is stateless and derived from the project's files on every run. If either downstream file fails to parse, sync warns and falls back to the template copy for that file, which drops capy's entries; rerun `capy setup --platform codex` after fixing the file.
 
 ## Known Limitations
 
