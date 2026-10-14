@@ -66,8 +66,7 @@ You don't need all servers to get started. Add them incrementally:
 
 !!! note
     MCP servers are added via `codex mcp add` and stored in `~/.codex/config.toml`.
-    Capy is already configured at the project level in `.codex/config.toml` — no user setup needed.
-    With capy v0.17.1 or later, run `capy setup --platform codex` in the project to register capy's own Codex hooks; toolbox's hooks detect them and hand over guidance and HTTP routing. See [Capy Hooks](../providers/codex.md#capy-hooks).
+    Capy registers itself at the project level: run `capy setup --platform codex` in the project to add its MCP server to `.codex/config.toml` and its own Codex hooks to `.codex/hooks.json`. Toolbox's hooks detect them and hand over guidance and HTTP routing, and template sync preserves both. See [Capy Hooks](../providers/codex.md#capy-hooks).
 
 ```bash
 # Context7 — streamable HTTP, no API key env var needed (key is in the URL header)
