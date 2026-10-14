@@ -1,0 +1,13 @@
+{
+  "actor": "main",
+  "block": {
+    "content": "# Settings protocol\n\n`PUT /settings` accepts a JSON object with one `display_name` member.\n\n| Value | Protocol v1 | Protocol v2 |\n| --- | --- | --- |\n| String | Store the string after removing leading/trailing Unicode whitespace | Same as v1 |\n| Empty string (including a whitespace-only string after normalization) | Store an explicit empty label | Same as v1 |\n| `null` | Return HTTP 422; leave the stored value unchanged | Remove the explicit label; subsequent reads use the account default |\n\nHere, surrounding Unicode whitespace means exactly the characters removed by\nPython's `str.strip()` with no argument. Both provider versions use this same\ndefinition and preserve internal whitespace. A successful write returns\n`{\"ok\": true}`. A transport returns that response on success and raises on\nnon-success HTTP status. The client receives a borrowed transport; it neither\nowns the connection nor retries calls. These are versioned protocol semantics,\nnot a record of which version a deployment runs.\n=== CAPY\n[store]\npath = \".runner/knowledge.db\"\nkey_file = \"\"\n=== RUNNER\ntotal 16\ndrwxr-xr-x  6 sergio wheel 192 Oct 14 08:43 .\ndrwxr-xr-x 11 sergio wheel 352 Oct 14 08:43 ..\n-rw-r--r--  1 sergio wheel 621 Oct 14 08:43 mcp-no-pal.json\n-rw-------  1 sergio wheel 807 Oct 14 08:43 mcp.json\n-rw-r--r--  1 sergio wheel 396 Oct 14 08:43 registry.json\n-rw-r--r--  1 sergio wheel 182 Oct 14 08:43 settings.json\n=== GITIGNORE\n__pycache__/\n*.pyc",
+    "is_error": false,
+    "tool_use_id": "toolu_01EVKzGggWuWdjV13FaLT8TR",
+    "type": "tool_result"
+  },
+  "id": "e90.0",
+  "parent_tool_use_id": null,
+  "session_id": "818f5541-0721-49a9-90d7-65b4cd6fe29d",
+  "source_sequence": 90
+}

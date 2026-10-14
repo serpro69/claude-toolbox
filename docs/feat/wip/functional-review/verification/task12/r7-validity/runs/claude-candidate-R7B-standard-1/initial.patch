@@ -1,0 +1,24 @@
+diff --git a/client.py b/client.py
+index 94f2650..fed5f03 100644
+--- a/client.py
++++ b/client.py
+@@ -1,2 +1,2 @@
+ def save(transport, display_name):
+-    return transport.put("/settings", {"display_name": display_name})
++    return transport.put("/settings", {"display_name": display_name.strip()})
+diff --git a/tests/test_client.py b/tests/test_client.py
+index 0f4b422..1092a98 100644
+--- a/tests/test_client.py
++++ b/tests/test_client.py
+@@ -21,3 +21,11 @@ class ClientTests(unittest.TestCase):
+         transport = MemoryTransport()
+         save(transport, "")
+         self.assertEqual(transport.request, ("/settings", {"display_name": ""}))
++
++    def test_normalized_requests(self):
++        for value, expected in [("  Ada  ", "Ada"), ("Ada Lovelace", "Ada Lovelace"),
++                                (" \t\n", ""), ("\u00a0Ada\u3000", "Ada")]:
++            with self.subTest(value=value):
++                transport = MemoryTransport()
++                save(transport, value)
++                self.assertEqual(transport.request, ("/settings", {"display_name": expected}))

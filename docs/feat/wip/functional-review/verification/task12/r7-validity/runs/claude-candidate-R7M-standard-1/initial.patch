@@ -1,0 +1,32 @@
+diff --git a/client.py b/client.py
+index 94f2650..b3d74f3 100644
+--- a/client.py
++++ b/client.py
+@@ -1,2 +1,6 @@
+ def save(transport, display_name):
+     return transport.put("/settings", {"display_name": display_name})
++
++
++def clear_name(transport):
++    return transport.put("/settings", {"display_name": None})
+diff --git a/tests/test_client.py b/tests/test_client.py
+index 0f4b422..bc5b0a3 100644
+--- a/tests/test_client.py
++++ b/tests/test_client.py
+@@ -1,6 +1,6 @@
+ import unittest
+ 
+-from client import save
++from client import save, clear_name
+ 
+ class MemoryTransport:
+     def __init__(self):
+@@ -21,3 +21,8 @@ class ClientTests(unittest.TestCase):
+         transport = MemoryTransport()
+         save(transport, "")
+         self.assertEqual(transport.request, ("/settings", {"display_name": ""}))
++
++    def test_clear_name(self):
++        transport = MemoryTransport()
++        self.assertEqual(clear_name(transport), {"ok": True})
++        self.assertEqual(transport.request, ("/settings", {"display_name": None}))

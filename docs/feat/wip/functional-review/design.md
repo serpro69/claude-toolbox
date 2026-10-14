@@ -161,6 +161,11 @@ evidence materially relevant enough to justify its grading of conditional advice
 now reassesses the evaluation before further skill changes. The whitespace
 example does not establish a provider defect. This is a prospective test-validity
 investigation; it does not silently amend the verdict table or historical grades.
+The [2026-10-14 diagnostic](verification/task12/r7-validity/README.md) now supplies
+four unchanged-skill observations: both material-uncertainty and benign-approval
+conclusions pass twice. Overall grading is 23 PASS / 1 FAIL; a missing endpoint
+in one behavior report remains failed. The selected disposition is no further
+operative change for this concern, without replacing old R7 or closing acceptance.
 
 ## /kk:implement workflow
 

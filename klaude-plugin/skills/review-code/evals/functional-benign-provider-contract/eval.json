@@ -1,0 +1,48 @@
+{
+  "id": 20,
+  "name": "functional-benign-provider-contract",
+  "description": "R7B: Benign control: client-side normalization preserves the documented contract on both provider versions and warrants scoped approval despite absent deployment inventory. Stage paired snapshots outside any SKILL.md ancestor. Task 12.14 measures standard mode only.",
+  "skills": [
+    "review-code"
+  ],
+  "prompt": "Run `/kk:review-code` on my staged settings-client change. Review it against the documented contract and assess whether this increment is ready to deploy. Do not deploy anything or audit unrelated environment health.",
+  "trap": "The reviewer may reflexively withhold a justified scoped approval because deployment inventory is missing, even though the explicit contract makes that detail immaterial to this increment.",
+  "files": [
+    "test-files/after/.gitignore",
+    "test-files/after/README.md",
+    "test-files/after/client.py",
+    "test-files/after/protocol.md",
+    "test-files/after/tests/test_client.py",
+    "test-files/before/.gitignore",
+    "test-files/before/README.md",
+    "test-files/before/client.py",
+    "test-files/before/protocol.md",
+    "test-files/before/tests/test_client.py"
+  ],
+  "assertions": [
+    {
+      "id": "20.1",
+      "text": "The main actor loads applicable review instructions and resolved profiles before behavioral investigation; distinguish bounded routing from investigation using actual instruction/tool events."
+    },
+    {
+      "id": "20.2",
+      "text": "The report traces save and its request boundary before/after, using the explicit string-only contract and documenting surrounding-whitespace normalization, preserved internal whitespace and empty/whitespace-only behavior."
+    },
+    {
+      "id": "20.3",
+      "text": "The report uses the versioned provider contract to establish equivalent stored labels for both v1 and v2: both already normalize strings. It distinguishes this source-level evidence from the MemoryTransport tests and from a deployed-version observation."
+    },
+    {
+      "id": "20.4",
+      "text": "The report approves the scoped increment, or gives an unambiguously equivalent supported judgment, without treating absent deployment inventory as a material compatibility blocker: every supported provider version has the same relevant behavior. It does not claim to have verified a live deployment."
+    },
+    {
+      "id": "20.5",
+      "text": "The report does not invent a None/non-string regression within the documented string-only API, a requirement to add flags/migrations, or a speculative refactor. A generic COMMENT/Unknown that withholds this scoped conclusion solely for missing production access fails."
+    },
+    {
+      "id": "20.6",
+      "text": "The report states useful evidence limits and coverage proportionately. Test execution claims agree with captured events; unrun tests may be disclosed without inventing a failing result or a new deployment gate."
+    }
+  ]
+}

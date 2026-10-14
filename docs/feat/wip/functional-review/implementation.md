@@ -239,9 +239,13 @@ Keep operative skill instructions unchanged. Author successor fixtures and rubri
 under separate identities; preserve historical results and explicitly document
 any contract amendment. After review, a prospectively declared four-session
 Claude standard diagnostic uses the unchanged current skill on both cases.
-It is not the required baseline/candidate acceptance comparison. Record its
-outcome before considering a skill patch or broader batch. This session documents
-that work only; all Task 12.14 subtasks remain pending.
+It is not the required baseline/candidate acceptance comparison. The
+[completed four-session diagnostic](verification/task12/r7-validity/README.md)
+records 23 PASS / 1 FAIL / 0 PARTIAL, with both target compatibility conclusions
+passing twice and one retained report-trace omission. The disposition is no
+further operative skill change for this R7 concern. Historical R7 and all broader
+acceptance gates remain unchanged. Independent completion review approves closing
+Task 12.14 as this bounded diagnostic.
 
 Optional `/kk:clarify-docs` may refine the changed `follow-up.md`, `design.md`,
 `implementation.md`, `evaluation.md` and `tasks.md`; then
