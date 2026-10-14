@@ -26,11 +26,19 @@ for the next session. R7's simplified request-normalization fixture and treatmen
 of conditional approval may confound a useful scoped review with unsupported
 deployment confidence. The [handoff](follow-up.md#r7-evaluation-redesign--next-session)
 proposes a material-dependency case, benign control and pre-run report examples.
-No successor fixture or rubric is adopted by this note. The existing pinned
-contracts and grades remain unchanged; any revised assertion/verdict semantics
-must be explicit, mapped and versioned prospectively before measurement.
+Task 12.14 implementation began on 2026-10-14. Successor evals 19 (R7M,
+`functional-material-provider-unknown`) and 20 (R7B,
+`functional-benign-provider-contract`) have separate identities. The
+[validity audit](verification/task12/r7-validity/audit.md) and
+[prospective rubric/examples/mapping](verification/task12/r7-validity/rubric.md)
+explain the material distinction and meaning-based grading. Independent validity
+review and the four-session diagnostic are complete: [results and disposition](verification/task12/r7-validity/README.md)
+record 23 PASS / 1 FAIL / 0 PARTIAL. All target compatibility conclusions pass
+twice; one report-trace omission remains failed. Existing pinned contracts and grades are
+unchanged. This diagnostic does not replace historical R7 or amend the feature
+verdict table; any later amendment must be separately explicit.
 
-The proposed first measurement is a four-session diagnostic of the unchanged
+The completed first measurement is a four-session diagnostic of the unchanged
 current skill: two Claude standard sessions per successor case. It provides no
 baseline/candidate improvement claim, does not close acceptance and cannot replace
 the matching comparison required for a later operative change. No further

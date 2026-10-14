@@ -1,13 +1,27 @@
 # Functional review: next-session handoff
 
-> Updated: 2026-10-13
-> Status: Task 12.13 complete; next is Task 12.14 — reassess R7 evaluation validity before further skill changes
+> Updated: 2026-10-14
+> Status: Task 12.14 done; no further R7 skill patch selected; broader acceptance remains open
 > Owner: implementing agent, [remaining Task 12 work](tasks.md#task-12-execute-and-assess-the-full-comparison-matrix)
 > Evidence: [completed matrix](verification/task12/opus55/README.md), [Claude](verification/task12/opus55/claude-results.md), [Codex](verification/task12/opus55/codex-results.md)
 
 ## Start here
 
-**Next session: start with [Task 12.14](tasks.md#task-1214-redesign-the-r7-evaluation-before-further-skill-changes).**
+**Current outcome — 2026-10-14:** [Task 12.14's four-session diagnostic](verification/task12/r7-validity/README.md)
+is captured and independently graded: 23 PASS / 1 FAIL / 0 PARTIAL. Both material
+cases retain Unknown target readiness, and both benign controls give justified
+scoped approval. One report omits the explicit endpoint in its behavior trace;
+that failure remains. The disposition is **no further operative instruction change
+for the R7 compatibility concern**. Independent completion review approves this
+disposition with the failed assertion and broader acceptance gates retained.
+
+The 2026-10-13 handoff below is historical and has now been executed. These
+successor cases do not replace original R7 for feature acceptance. No broader
+batch or next implementation is selected automatically; Task 12's remaining
+dispositions, live PAL deferral, legacy controls and Task 13 retain their owners
+and verification conditions.
+
+**Recorded starting point (2026-10-13): [Task 12.14](tasks.md#task-1214-redesign-the-r7-evaluation-before-further-skill-changes).**
 The user questioned whether the simplified R7 fixture and its interpretation of
 conditional approval justify treating the observed reports as a material skill
 defect. Document and develop a revised test and grading criteria first. The
@@ -293,10 +307,13 @@ do not substitute for those checks.
 
 ### Unsupported compatibility claims
 
-**Current next action:** [reassess R7 evaluation validity](#r7-evaluation-redesign--next-session)
-under Task 12.14 before selecting any further instruction correction. The dated
-assessment and rejected experiment below remain historical evidence; the prior
-P1 characterization is not sufficient by itself to justify another skill change.
+**Current disposition — 2026-10-14:** [Task 12.14](verification/task12/r7-validity/README.md)
+is complete. The clearer material/benign cases preserve appropriate compatibility
+conclusions twice each; one endpoint-trace omission remains failed. Select no
+further operative instruction change for this concern. Original R7 acceptance
+is not replaced or waived. The dated assessment and rejected experiment below
+remain historical evidence; their P1 characterization alone does not justify
+another skill change.
 
 **Successor decision — 2026-10-13:** the user approved retaining Unknown and a
 concrete next check until missing compatibility evidence is supplied and assessed.
