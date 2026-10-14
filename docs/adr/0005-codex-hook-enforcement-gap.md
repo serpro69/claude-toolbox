@@ -2,7 +2,19 @@
 
 ## Status
 
-Accepted — partially superseded (see Update 2026-04-26)
+Accepted — partially superseded (see Updates 2026-04-26 and 2026-10-14)
+
+## Update 2026-10-14
+
+Capy v0.17.1 ships its own Codex hooks, registered in `.codex/hooks.json` by
+`capy setup --platform codex`. When a capy entry is registered for an event,
+toolbox's hook for that event detects it (a command invoking
+`capy codex-launch`) and steps aside: `session-start.sh` no longer injects
+`.capy/AGENTS.md`, and `pretooluse-bash.sh` no longer denies curl/wget/inline
+HTTP. Capy's hooks own both. The file-path denylist on shell commands and the
+advisory layer for non-Bash tools described below are unchanged. See
+`docs/providers/codex.md` §Capy Hooks and
+https://github.com/serpro69/claude-toolbox/issues/170.
 
 ## Update 2026-04-26
 

@@ -27,6 +27,7 @@ Run a single suite:
 | `test-semver-compare.sh` | Semver comparison logic used by release workflows |
 | `test-cpr.sh` | Claude Plugin Root resolver — exact/fuzzy matching, project-path resolution cascade (project → user → last-installed), install-path validation, env var precedence, error handling |
 | `test-hooks.sh` | Hook script validation (Bash denylist patterns, capy HTTP interception) |
+| `test-codex-hooks.sh` | Codex hook scripts — `session-start.sh` and `pretooluse-bash.sh` with and without capy's own Codex hooks registered in `hooks.json` (legacy injection/denials, per-event handoff to capy, denylist and provider/extras preservation) |
 
 ## Test Infrastructure
 

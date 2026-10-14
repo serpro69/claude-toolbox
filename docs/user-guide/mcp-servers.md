@@ -67,6 +67,7 @@ You don't need all servers to get started. Add them incrementally:
 !!! note
     MCP servers are added via `codex mcp add` and stored in `~/.codex/config.toml`.
     Capy is already configured at the project level in `.codex/config.toml` — no user setup needed.
+    With capy v0.17.1 or later, run `capy setup --platform codex` in the project to register capy's own Codex hooks; toolbox's hooks detect them and hand over guidance and HTTP routing. See [Capy Hooks](../providers/codex.md#capy-hooks).
 
 ```bash
 # Context7 — streamable HTTP, no API key env var needed (key is in the URL header)
@@ -120,3 +121,5 @@ Skills are **knowledge-aware** via Capy. They search for relevant context before
 Without Capy, each session starts fresh — all skills still work, they just don't carry learnings forward. Install when you want cross-session memory.
 
 **Installation:** `brew install serpro69/tap/capy` then run `capy setup` in your project directory. The bootstrap script sets up Capy automatically if the binary is on PATH.
+
+**Codex:** capy v0.17.1 and later also provides its own Codex hooks. Run `capy setup --platform codex` to register them; toolbox's Codex hooks then stop injecting `.capy/AGENTS.md` and stop blocking HTTP commands, leaving both to capy. See [Capy Hooks](../providers/codex.md#capy-hooks) for the handoff rules.
