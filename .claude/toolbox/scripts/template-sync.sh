@@ -114,6 +114,7 @@ BUILTIN_EXCLUSIONS=(
   ".claude/capy/*"
   ".claude/scripts/capy.sh"
   ".codex/scripts/capy.sh"
+  ".codex/capy-owner"
 )
 
 # Resolved version (for reporting)
@@ -1122,6 +1123,10 @@ fetch_upstream_templates() {
   if [[ -d "$upstream_root/.codex" ]]; then
     cp -rp "$upstream_root/.codex" "$FETCHED_TEMPLATES_PATH/codex"
     rm -f "$FETCHED_TEMPLATES_PATH/codex/scripts/capy.sh"
+    # .codex/capy-owner is the per-repo installation ID written by
+    # `capy setup --platform codex`; capy refuses to regenerate it, so it
+    # must never be synced or deleted downstream.
+    rm -f "$FETCHED_TEMPLATES_PATH/codex/capy-owner"
   fi
   if [[ ! -d "$FETCHED_TEMPLATES_PATH/claude" ]]; then
     log_error "Config directories not found in upstream at version: $version"

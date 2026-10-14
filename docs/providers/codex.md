@@ -40,6 +40,8 @@ The check runs on every session start and every shell call, so there is no flag 
 
     Template sync copies the upstream `.codex/` tree over the project, which drops capy's registered entries and silently returns the project to the legacy path. Until sync merges that file, either rerun `capy setup --platform codex` after every sync, or add `.codex/hooks.json` to `sync_exclusions` in `.github/template-state.json` at the cost of no longer receiving toolbox hook updates. Tracked as a follow-up to [issue #170](https://github.com/serpro69/claude-toolbox/issues/170).
 
+    The `.codex/capy-owner` installation marker is safe: it is a built-in sync exclusion, so sync never reports it as deleted or removes it. Capy refuses to regenerate a lost marker, so keep it committed alongside `hooks.json` and `config.toml` as capy's setup instructs.
+
 ## Known Limitations
 
 !!! warning "Current limitations"
