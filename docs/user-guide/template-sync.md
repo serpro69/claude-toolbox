@@ -32,7 +32,7 @@ Repos created from this template can pull configuration updates via the **Templa
     .claude/toolbox/scripts/template-sync.sh --local --dry-run  # preview only
     ```
 
-    Requires `jq`, `git`, `curl`, and `yq` ([mikefarah/yq](https://github.com/mikefarah/yq)). Review changes with `git diff` before committing.
+    Requires `jq`, `git`, `curl`, `yq` ([mikefarah/yq](https://github.com/mikefarah/yq)), and Python 3 (standard library only). Python preserves unchanged Codex MCP table formatting. Review changes with `git diff` before committing.
 
 ## Troubleshooting
 

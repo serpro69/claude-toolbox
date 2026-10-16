@@ -650,6 +650,119 @@ cp "$output_dir/codex/config.toml" "$test_dir/project/.codex/config.toml"
 assert_equals "$(yq -p toml -o json '.' "$output_dir/codex/config.toml" | jq -cS .)" \
   "$(yq -p toml -o json '.' "$test_dir/repeated/codex/config.toml" | jq -cS .)" \
   "Repeated sync preserves the full parsed config"
+assert_exit_code 0 "cmp -s '$output_dir/codex/config.toml' '$test_dir/repeated/codex/config.toml'" \
+  "Repeated sync preserves config bytes"
+
+log_test "sync preserves Capy setup formatting and unchanged server tables verbatim"
+reset_globals
+test_dir=$(create_temp_dir "subst-codex-mcp-format")
+create_codex_config_fixture "$test_dir"
+output_dir="$test_dir/output"
+(
+  cd "$test_dir/project"
+  apply_substitutions "$test_dir/templates" "$output_dir" 2>/dev/null
+)
+cp "$output_dir/codex/config.toml" "$test_dir/project/.codex/config.toml"
+# Exact Capy setup layout: unquoted table key and compact JSON launch args.
+# Include another server with comments, literal strings, nested tables and
+# header-like text inside multiline strings/arrays to exercise table boundaries.
+cat >>"$test_dir/project/.codex/config.toml" <<'EOF'
+
+[mcp_servers.capy]
+command = "capy"
+args = ["codex-launch","capy-codex-launch-v2","0123456789abcdef0123456789abcdef","serve",""]
+env_vars = ["CAPY_DB_KEY", "CAPY_VAULT_KEY"]
+
+# Keep this registration's notes and spelling.
+[ mcp_servers . 'remote.server' ] # deliberately spaced header
+url='https://example.test/mcp' # preserve comment
+enabled = true
+notes = """
+[mcp_servers.not_a_server]
+"""
+literal = '''
+[tui]
+'''
+matrix = [
+  ["mcp_servers.also_not_a_server"]
+]
+
+# Nested settings belong to the same server.
+[mcp_servers.'remote.server'.http_headers]
+'X-Example' = 'literal value'
+notes = """
+# This is string content, including its closing delimiter."""
+
+# This real comment belongs to the next server.
+[mcp_servers.third]
+command = 'third'
+notes = '''
+# A literal multiline string can also close on a comment-like line.'''
+
+[mcp_servers.fourth]
+command = 'fourth'
+EOF
+(
+  cd "$test_dir/project"
+  apply_substitutions "$test_dir/templates" "$test_dir/formatted" 2>/dev/null
+)
+assert_exit_code 0 "cmp -s '$test_dir/project/.codex/config.toml' '$test_dir/formatted/codex/config.toml'" \
+  "Capy setup followed by sync leaves the complete config byte-identical"
+cp "$test_dir/formatted/codex/config.toml" "$test_dir/project/.codex/config.toml"
+(
+  cd "$test_dir/project"
+  apply_substitutions "$test_dir/templates" "$test_dir/formatted-again" 2>/dev/null
+)
+assert_exit_code 0 "cmp -s '$test_dir/formatted/codex/config.toml' '$test_dir/formatted-again/codex/config.toml'" \
+  "Repeated sync retains comments, table order, quotes and whitespace"
+
+for ending in crlf no-final-newline; do
+  cp "$output_dir/codex/config.toml" "$test_dir/project/.codex/config.toml"
+  printf '\n' >>"$test_dir/project/.codex/config.toml"
+  if [[ "$ending" == crlf ]]; then
+    awk '/^\[mcp_servers.capy\]/{keep=1} keep{printf "%s\r\n", $0}' \
+      "$test_dir/formatted/codex/config.toml" >>"$test_dir/project/.codex/config.toml"
+  else
+    printf '%s' "$(sed -n '/^\[mcp_servers.capy\]/,$p' "$test_dir/formatted/codex/config.toml")" \
+      >>"$test_dir/project/.codex/config.toml"
+  fi
+  (
+    cd "$test_dir/project"
+    apply_substitutions "$test_dir/templates" "$test_dir/$ending" 2>/dev/null
+  )
+  assert_exit_code 0 "cmp -s '$test_dir/project/.codex/config.toml' '$test_dir/$ending/codex/config.toml'" \
+    "Unchanged MCP tables preserve $ending bytes"
+done
+cp "$test_dir/formatted/codex/config.toml" "$test_dir/project/.codex/config.toml"
+
+# An actual upstream conflict may change one server, but must not reformat
+# the other registration. Capturing Capy's bytes avoids parser-only assertions.
+sed -n '/^\[mcp_servers.capy\]/,/^env_vars/p' "$test_dir/project/.codex/config.toml" >"$test_dir/capy-before"
+cat >>"$test_dir/templates/codex/config.toml" <<'EOF'
+
+[mcp_servers.'remote.server']
+url = "https://changed.example.test/mcp"
+EOF
+(
+  cd "$test_dir/project"
+  apply_substitutions "$test_dir/templates" "$test_dir/conflict" 2>/dev/null
+)
+sed -n '/^\[mcp_servers.capy\]/,/^env_vars/p' "$test_dir/conflict/codex/config.toml" >"$test_dir/capy-after"
+assert_exit_code 0 "cmp -s '$test_dir/capy-before' '$test_dir/capy-after'" \
+  "Changing another server leaves Capy's registration bytes untouched"
+result=$(yq -p toml -o json '.mcp_servers."remote.server".url' "$test_dir/conflict/codex/config.toml")
+assert_equals '"https://changed.example.test/mcp"' "$result" "Changed server gets the upstream value"
+
+log_test "first sync preserves quoted upstream server names and table formatting"
+rm "$test_dir/project/.codex/config.toml"
+(
+  cd "$test_dir/project"
+  apply_substitutions "$test_dir/templates" "$test_dir/first-sync" 2>/dev/null
+)
+result=$(yq -p toml -o json '.mcp_servers."remote.server".url' "$test_dir/first-sync/codex/config.toml")
+assert_equals '"https://changed.example.test/mcp"' "$result" "First sync keeps a dotted server name as one key"
+assert_output_contains "[mcp_servers.'remote.server']" "cat '$test_dir/first-sync/codex/config.toml'" \
+  "First sync keeps the original upstream table header"
 
 for mcp_form in inline misplaced repaired; do
   log_test "apply_substitutions normalizes $mcp_form MCP configuration"
