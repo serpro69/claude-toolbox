@@ -595,6 +595,9 @@ approval_policy = "on-request"
 
 [features]
 hooks = true
+
+[tui]
+animations = false
 EOF
 }
 
@@ -610,6 +613,9 @@ approval_policy = "on-request"
 command = "capy"
 args = ["codex-launch", "capy-codex-launch-v2", "0123456789abcdef0123456789abcdef", "serve", ""]
 env_vars = ["CAPY_DB_KEY", "CAPY_VAULT_KEY"]
+
+[mcp_servers.capy.env]
+EXAMPLE = "preserved"
 EOF
 
 output_dir="$test_dir/output"
@@ -628,6 +634,64 @@ result=$(yq -p toml -o json '.model' "$output_dir/codex/config.toml")
 assert_equals '"gpt-6-custom"' "$result" "CODEX_MODEL substitution still applied"
 result=$(yq -p toml -o json '.features.hooks' "$output_dir/codex/config.toml")
 assert_equals 'true' "$result" "Template sections preserved alongside merged table"
+result=$(yq -p toml -o json '.tui' "$output_dir/codex/config.toml" | jq -c .)
+assert_equals '{"animations":false}' "$result" "MCP servers do not leak into the final template table"
+result=$(yq -p toml -o json '.mcp_servers.capy.env.EXAMPLE' "$output_dir/codex/config.toml")
+assert_equals '"preserved"' "$result" "Nested MCP settings preserved"
+assert_output_contains '[mcp_servers.' "cat '$output_dir/codex/config.toml'" "Explicit server tables remain editable by capy setup"
+
+# A second sync must preserve the exact parsed configuration, including arrays
+# and nested maps, rather than moving the registration under [tui] or dropping it.
+cp "$output_dir/codex/config.toml" "$test_dir/project/.codex/config.toml"
+(
+  cd "$test_dir/project"
+  apply_substitutions "$test_dir/templates" "$test_dir/repeated" 2>/dev/null
+)
+assert_equals "$(yq -p toml -o json '.' "$output_dir/codex/config.toml" | jq -cS .)" \
+  "$(yq -p toml -o json '.' "$test_dir/repeated/codex/config.toml" | jq -cS .)" \
+  "Repeated sync preserves the full parsed config"
+
+for mcp_form in inline misplaced repaired; do
+  log_test "apply_substitutions normalizes $mcp_form MCP configuration"
+  reset_globals
+  test_dir=$(create_temp_dir "subst-codex-mcp-$mcp_form")
+  create_codex_config_fixture "$test_dir"
+  case "$mcp_form" in
+    inline)
+      cat >"$test_dir/project/.codex/config.toml" <<'EOF'
+mcp_servers = { capy = { command = "capy", args = ["serve"] }, "remote.server" = { url = "https://example.test/mcp" } }
+[tui]
+animations = true
+EOF
+      ;;
+    misplaced|repaired)
+      cat >"$test_dir/project/.codex/config.toml" <<'EOF'
+[tui]
+animations = true
+mcp_servers = { capy = { command = "bash", args = [".codex/scripts/capy.sh", "serve"], env = { LEGACY = "old" } }, "remote.server" = { url = "https://example.test/mcp" } }
+EOF
+      if [[ "$mcp_form" == repaired ]]; then
+        cat >>"$test_dir/project/.codex/config.toml" <<'EOF'
+
+[mcp_servers.capy]
+command = "capy"
+args = ["codex-launch", "capy-codex-launch-v2", "0123456789abcdef0123456789abcdef", "serve", ""]
+EOF
+      fi
+      ;;
+  esac
+  output_dir="$test_dir/output"
+  (
+    cd "$test_dir/project"
+    apply_substitutions "$test_dir/templates" "$output_dir" 2>/dev/null
+  )
+  expected=$(yq -p toml -o json '.' "$test_dir/project/.codex/config.toml" | jq -cS '(.tui.mcp_servers // {}) + (.mcp_servers // {})')
+  result=$(yq -p toml -o json '.mcp_servers' "$output_dir/codex/config.toml" | jq -cS .)
+  assert_equals "$expected" "$result" "$mcp_form servers recovered at root; valid root entries take precedence"
+  result=$(yq -p toml -o json '.tui' "$output_dir/codex/config.toml" | jq -c .)
+  assert_equals '{"animations":false}' "$result" "$mcp_form merge keeps the template TUI settings without misplaced servers"
+  assert_output_contains '[mcp_servers.' "cat '$output_dir/codex/config.toml'" "$mcp_form servers use explicit tables"
+done
 
 log_test "apply_substitutions emits no mcp_servers table when neither side has one"
 reset_globals
