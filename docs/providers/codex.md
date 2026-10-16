@@ -40,13 +40,15 @@ The check runs on every session start and every shell call, so there is no flag 
 
 Template sync does not own capy's registration. The template ships no `[mcp_servers]` table in `config.toml` and only toolbox's own entries in `hooks.json`; on every sync the downstream copies of both files are merged rather than replaced:
 
-- `config.toml`: toolbox substitutes `model` and `approval_policy` from the manifest, then keeps every `mcp_servers.*` entry the project has that the template does not ship. A server the template does ship wins by name. Preserved servers are written as explicit root-level `[mcp_servers."name"]` tables so `capy setup` can update its registration.
+- `config.toml`: toolbox substitutes `model` and `approval_policy` from the manifest, then keeps every `mcp_servers.*` entry the project has that the template does not ship. A server the template does ship wins by name. Existing explicit server tables whose values are unchanged are preserved byte-for-byte, including comments, ordering, quoting, nested tables, and whitespace. Only changed or repaired registrations are rendered as new explicit root-level tables, which `capy setup` can update.
 - `hooks.json`: toolbox owns every entry whose command runs a script under `.codex/scripts/`, and those come from the template verbatim, so a toolbox entry that changed or was removed upstream does not linger. Every other entry the project has (capy's `capy codex-launch` hooks, hand-added hooks) is appended after toolbox's entries for its event.
 - `.codex/capy-owner`: a built-in sync exclusion, never reported as deleted or removed. Capy refuses to regenerate a lost marker, so keep it committed alongside `hooks.json` and `config.toml` as capy's setup instructs.
 
 The merge is stateless and derived from the project's files on every run. If either downstream file fails to parse, sync warns and falls back to the template copy for that file, which drops capy's entries; rerun `capy setup --platform codex` after fixing the file.
 
 Older syncs could append an inline `mcp_servers = { ... }` assignment after `[tui]`, making it part of the TUI settings instead of a root-level registration. Sync now recovers those misplaced servers into root-level tables. If `capy setup` has already added a valid root-level entry, that whole entry takes precedence over the misplaced copy. Applying sync removes the stray TUI assignment; no manual cleanup is needed.
+
+Sync does not run `capy setup`. Preserving existing table text avoids formatting churn when alternating setup and sync. Table extraction uses Python 3's standard library; `yq` validates the extracted registrations and the complete merged MCP map before the candidate file is accepted.
 
 ## Known Limitations
 

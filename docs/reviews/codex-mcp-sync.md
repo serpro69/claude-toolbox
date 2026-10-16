@@ -11,7 +11,43 @@ output to verify its MCP map before accepting it. Quoted server names are
 compatible with Capy's table parser. Nested settings remain inline within each
 server table.
 
-## Verification
+## Formatting-preservation follow-up
+
+Unchanged explicit MCP server tables are now copied from the original TOML
+byte-for-byte. A Python standard-library scanner locates table spans, skipping
+strings, comments, and nested array values. `yq` interprets each table path and
+checks each server's complete source against its merged value before preservation.
+Only changed or repaired registrations are re-rendered. Original upstream MCP
+values are read before substitutions, avoiding `yq`'s loss of quotes around dotted
+server names. The helper stays embedded in the sync script so an older script's
+self-update handoff does not need to copy a new helper file.
+
+- `bash test/test-template-sync.sh`: 146 cases and 265 assertions passed; three
+  existing network-dependent checks skipped. Tests ran with Python 3.10.12 and
+  `yq` 4.52.5.
+- Byte comparisons cover Capy's compact launch-argument formatting, comments,
+  quoting, table order, nested tables, repeated syncs, CRLF, and missing final
+  newlines. A changed upstream registration does not reformat other servers.
+  First-sync and conflicting dotted server names retain their correct meaning.
+- The installed Capy v0.17.1 was run in a disposable project through
+  `setup --platform codex` → sync → setup → sync. The entire `config.toml` stayed
+  byte-identical. Python 3.12's independent `tomllib` parser also agreed with `yq`
+  on the resulting configuration.
+- Independent review found that a multiline string's closing line beginning
+  with `#` could be misclassified as a comment, causing a failed fragment parse
+  and template fallback. A regression reproduced the failure. The scanner now
+  records actual comment/blank lines during lexical scanning; regression fixtures
+  cover both basic and literal multiline strings. Re-review approved the fix
+  with no remaining findings.
+- Shell syntax and whitespace checks passed. ShellCheck warnings matched the
+  baseline. Python 3 is now a documented prerequisite; no Python packages or
+  automatic Capy setup step were added.
+
+The broader environment limitations below were observed during the initial
+placement fix. The formatting follow-up reran the focused sync suite and actual
+Capy integration; it does not claim a fresh pass of the unrelated blocked suites.
+
+## Initial placement-fix verification (c17570cc)
 
 - The regression failed before the fix: the parsed root Capy command was `null`.
 - `bash test/test-template-sync.sh`: 144 cases, 256 assertions passed. Three
