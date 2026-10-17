@@ -1,12 +1,42 @@
 # Functional review: next-session handoff
 
 > Updated: 2026-10-17
-> Status: Task 12.17 done; R6 diagnostic retains 10 failed assertions; broader acceptance remains open
+> Status: Task 12.20 done; adapter frozen and fresh calibration passed; binding/state/preflight, comparison and adoption unrun
 > Owner: implementing agent, [remaining Task 12 work](tasks.md#task-12-execute-and-assess-the-full-comparison-matrix)
-> Next-session starting point: [remaining issues and applying the 12.14 lessons](#remaining-issues-for-the-next-session)
+> Next-session starting point: [advisory-closure execution record](verification/task12/advisory-closure-execution/README.md#verification-and-next-action)
 > Evidence: [completed matrix](verification/task12/opus55/README.md), [Claude](verification/task12/opus55/claude-results.md), [Codex](verification/task12/opus55/codex-results.md)
 
 ## Start here
+
+**Completed adapter and calibration — 2026-10-17:** the user selected
+[Task 12.20](tasks.md#task-1220-prepare-the-execution-adapter-and-run-fresh-calibration).
+The [execution record](verification/task12/advisory-closure-execution/README.md)
+retains the reviewed/frozen adapter and 25 fresh grader sessions. All 69 assertion
+judgments and 11 conditional-trigger values match; expected FAIL/PARTIAL controls
+remain visible. Completion review approves with no findings. No binding/state
+probe or measured actor ran. Next work is four provider/source binding probes,
+two independent state probes and a reviewed preflight attestation. PAL, original
+acceptance, other assigned investigations and Task 13 remain open.
+
+**Completed freeze and declaration — 2026-10-17:** the user selected
+[Task 12.19](tasks.md#task-1219-freeze-the-closure-candidate-and-review-its-comparison-contract).
+The [preparation record](verification/task12/advisory-closure/README.md) preserves
+the exact source/filtered bundles, 64-session matrix, grading inputs and reviewed
+KEEP / REJECT / INCONCLUSIVE contract. Both independent reviews approve after one
+22.4 component-mapping clarification; archive, source-delta and checksum checks pass.
+No actor execution was selected or performed. Next execution-preparation work is
+the successor adapter, execution freeze, fresh calibration/binding/state checks
+and preflight attestation. Original acceptance, PAL and Task 13 remain open.
+
+**Completed candidate preparation — 2026-10-17:** the user selected the bounded
+advisory-closure investigation. [Task 12.18](tasks.md#task-1218-assess-and-prepare-a-bounded-advisory-closure-correction)
+prepared a small replacement in the standard and isolated closing rules, with
+generated parity, local checks and [independent source approval](reviews/advisory-closure-review.md).
+Eleven of twelve shell suites pass; the known hook-fixture mismatch remains assigned. The
+[assessment](advisory-closure.md) explains the evidence, preserved controls and
+prospective comparison. Behavioral improvement and adoption remain unmeasured;
+no actor batch was selected and historical acceptance is unchanged. Next action:
+review and freeze a concrete comparison declaration if measurement is selected.
 
 **Completed measurement — 2026-10-17:** the user authorized the proposed eight
 R6M/R6D sessions across Claude/Codex standard review, twice each, on unchanged
