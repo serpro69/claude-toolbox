@@ -7,9 +7,9 @@
 > Issue: [#166](https://github.com/serpro69/claude-toolbox/issues/166)
 > Status: in-progress
 > Created: 2026-10-07
-> Revised: 2026-10-17 with Task 12.17's R6 diagnostic complete and failures retained
-> Next-session handoff: [remaining issues and 12.14 lessons](follow-up.md#remaining-issues-for-the-next-session)
-> Current slice: Task 12.17 done — eight sessions graded; 58 PASS / 10 FAIL / 0 PARTIAL; no patch selected
+> Revised: 2026-10-17 with Task 12.20's adapter frozen and fresh calibration independently approved
+> Next-session handoff: [advisory-closure execution record](verification/task12/advisory-closure-execution/README.md#verification-and-next-action)
+> Current slice: Task 12.20 done — 25 fresh calibration controls matched; binding/state/preflight and measurement unrun
 > Not Doing: new review skill, whole-system audits, mandatory production access, deployments, generic release engine, new models/dependencies, profile redesign
 > Delivery: preserve existing invocations/shared consumers; regenerate Codex artifacts with every operative slice.
 
@@ -1091,6 +1091,187 @@ remain open. Task 12.17 completion records the experiment, not feature acceptanc
 and scope decisions, while advisory actionability still fails in both providers.
 Separating these from report-detail omissions makes the next investigation smaller
 without relabeling failed required rows or treating two repetitions as reliability.
+
+### Task 12.18: Assess and prepare a bounded advisory-closure correction
+
+- **Status:** done — candidate preparation only; behavioral comparison/adoption unrun
+- **Depends on:** Task 12.17 (done)
+- **Owner:** implementing agent
+- **Authority:** on 2026-10-17 the user selected the first proposed next step:
+  assess a small closure-rule replacement, review it before measurement, and
+  preserve clean approvals and required corrective advice.
+- **Scope:** source-backed assessment, a minimal candidate in the standard and
+  isolated closing rules, generated parity, local checks and independent review.
+  This task does not select or launch another actor batch or establish adoption.
+- **Docs:** [assessment and comparison proposal](advisory-closure.md)
+
+- [x] 12.18.1 Reconcile the four missing follow-ups with existing closure and reporting guidance → verify: distinguish a plausible instruction ambiguity from established causation; preserve correct verdicts and historical failures.
+- [x] 12.18.2 Prepare the smallest justified replacement in both closing branches → verify: surfaced substantiated inherited defects receive a bounded separate action; clean reviews, in-scope corrections, required evidence and review-only authorization retain their contracts.
+- [x] 12.18.3 Regenerate Codex output and run relevant local checks → verify: generated parity, instruction packaging and links; no static-check result is reported as behavioral improvement.
+- [x] 12.18.4 Obtain independent source review and record a prospective comparison/disposition → verify: explicit advisory-trigger coverage, negative controls, providers/modes and unchanged acceptance boundaries; any adoption decision remains dependent on measurement.
+
+#### Execution context — 2026-10-17
+
+Starting revision is `11b2c6efb0638605bb6acd3eb184edb9abd10f56`, with a clean
+worktree. Four R6D final reports describe the inherited failure and omit a next
+action, despite appropriate scoped approval. Current closure branches use
+"actionable findings" and "no changes are recommended" without explicitly
+addressing an inherited issue reported outside Findings. That is a plausible
+ambiguity, not an isolated cause. The common method already requires a correction
+for behavioral findings; avoid adding another report section or broad audit rule.
+
+All eight installed profile detection rules were loaded. `skill-md` activates
+through the nearest `review-code/SKILL.md` for both target procedure files;
+universal, Claude Code and kk-plugin implement/review guidance is loaded. The
+provider directories and canonical paths satisfy both conditional predicates.
+No dependency, profile, description or workflow-order change is needed. PAL
+remains user-deferred. Measurement, original acceptance and Task 13 remain open.
+
+**Outcome:** the two closure replacements and generated copies are prepared;
+canonical growth is 19 words in standard review and 37 in isolated review.
+The [assessment](advisory-closure.md) records source evidence, meaning-based
+examples, rejected alternatives and a prospective 64-session comparison covering
+R6D/R6M/R5/R9 recovery across both providers and modes. This is not a selected or
+frozen batch, and no actor was launched or historical grade changed.
+
+**Verification/review:** generation, all Go tests, graph validation and nine packet
+tests pass; second generation preserves 958 file hashes. Eleven of twelve shell
+suites pass; the unchanged, previously assigned Codex hook-fixture mismatch remains
+open. Initial sandbox-only generation/cache failures passed on permitted retries.
+[Independent source review](reviews/advisory-closure-review.md) approves candidate
+preparation with no findings, attributing execution checks to the parent. Local
+links and whitespace checks pass. No new conventions or systemic findings need
+indexing.
+
+**Reflection and boundary:** the observed actionability gap survives appropriate
+scoped approval and correct attribution. The candidate
+connects an already surfaced issue to a separate action at closure. Whether that
+wording improves behavior is still unknown. The implementing agent owns the next
+concrete declaration and measurement under the assessment's controls; adoption,
+PAL, original acceptance and Task 13 remain open.
+
+### Task 12.19: Freeze the closure candidate and review its comparison contract
+
+- **Status:** done — reviewed source/criteria freeze; no actor execution
+- **Depends on:** Task 12.18 (done)
+- **Size:** S
+- **Can run in parallel with:** —
+- **Owner:** implementing agent
+- **Authority:** on 2026-10-17 the user selected the first next step: freeze the
+  candidate and write an independently reviewed run contract with explicit
+  keep/reject criteria. Actor execution and adoption are not selected.
+- **Docs:** [run contract](verification/task12/advisory-closure/run-contract.md)
+
+- [x] 12.19.1 Preserve the exact reviewed operative candidate and immutable baseline → verify: archived source and filtered-bundle identities, only the four expected closure files differ from the parent, and no branch/index/cache registration changes.
+- [x] 12.19.2 Pin the 64-session matrix, fixtures, ordinary prompts, grading inputs and runtime declaration → verify: same inputs per side, explicit conditional-trigger evidence and separate prelaunch calibration/binding gates.
+- [x] 12.19.3 Define keep/reject/inconclusive criteria and obtain independent contract review → verify: target follow-up and negative controls cannot pass on absent evidence; original required grades, PAL deferral and broader acceptance remain intact.
+- [x] 12.19.4 Seal and locally verify the preparation artifacts, then record the outcome → verify: hashes, recoverable archives, generated parity and no actor execution; launch readiness is not claimed before the remaining gates run.
+
+#### Execution context — 2026-10-17
+
+The Task 12.18 changes remain uncommitted and are preserved. Freeze a temporary
+source snapshot from `11b2c6efb0638605bb6acd3eb184edb9abd10f56` plus only the four
+reviewed canonical/generated closure files, without committing the working branch.
+Installed version probes report Claude Code 2.1.296, Codex 0.163.0, Capy 0.17.3
+and the existing Python 3.12.11 interpreter. A new launch adapter and fresh
+calibration/binding results are separate prelaunch obligations; no previous result
+substitutes for them. PAL stays excluded under the existing user deferral.
+
+Profile detection reuses the eight loaded rules. Existing operative changes
+activate `skill-md`; declaration files outside skill roots do not. Python guidance
+is loaded for any necessary preparation helper, with no async constructs planned.
+Use the existing offline bundle builder; no dependency or operative edit is needed.
+
+**Outcome:** [preparation record](verification/task12/advisory-closure/README.md)
+retains candidate `4b69421465131e2e9e497f200ec9ddbdb439ac83`, baseline source and
+filtered actor archives, 159 evaluation-input files, 17 existing controller files,
+all 64 ordinary prompts/jobs and 464 original assertion rows. Only the four
+reviewed closure files differ from the parent; working HEAD and staged content
+are unchanged. No runtime registration or actor/calibration/binding call occurred.
+
+**Review:** independent design review resolved one P2 ambiguity by explicitly
+mapping 22.4's required components and sole tolerated reporting omission. Missing
+trigger detail means REJECT; truncated evidence is PARTIAL; original whole-row
+grades remain intact. Final design assessment is SOUND; independent preparation
+source review is APPROVE with no findings. PAL remains deferred. Both reviews
+attribute archive/hash execution to the parent.
+
+**Verification:** all six archives recover with matching path/byte/mode/link and
+exclusion manifests; a tampered instruction is rejected. Source delta, generated
+closure parity, matrix, prompts and local links pass. The final preparation seal
+checksums 27 files including `freeze.json`; its SHA-256 is
+`2850e0416ef0277109849e206e11851f10d92fdcfd6954d8ecf5d68127e95bea`.
+No unchanged full-repository suite was rerun; Task 12.18's known hook-fixture issue
+retains its assignment. Preparation attempts and their corrections are recorded.
+
+**Reflection and next action:** explicit component mapping prevents an omission
+exception from accidentally permitting other missing evidence. The implementing
+agent owns the successor adapter/review, execution freeze, fresh calibration,
+four binding probes, two state probes and preflight attestation before measurement
+when that work is selected. This preparation freeze is not launch readiness,
+adoption, a change to historical grades or completion of broader acceptance.
+
+### Task 12.20: Prepare the execution adapter and run fresh calibration
+
+- **Status:** done — adapter/freeze/calibration only; binding/measurement unrun
+- **Depends on:** Task 12.19 (done)
+- **Size:** M
+- **Owner:** implementing agent
+- **Can run in parallel with:** —
+- **Authority:** on 2026-10-17 the user requested execution-adapter preparation,
+  independent review/freezing and fresh calibration. Binding/state probes and the
+  64 measured actor sessions remain unselected.
+- **Docs:** [frozen contract](verification/task12/advisory-closure/run-contract.md)
+
+- [x] 12.20.1 Implement a successor adapter using the frozen source/criteria and existing transports → verify: exact matrix/prompt identity, per-case rubric routing, fresh inputs, refusal of overwrite/reuse and preflight gates.
+- [x] 12.20.2 Verify offline controls and obtain independent source review before freezing → verify: frozen-input drift, preparation/capture failure and interruption cannot silently pass; historical files and preparation seal remain unchanged.
+- [x] 12.20.3 Freeze execution dependencies and calibration inputs, then dispatch fresh independent graders → verify: five ordering and eight semantic controls plus the declared disposition cases match their controller-only expected results, with expected-verdict tables excluded from every permitted grader packet.
+- [x] 12.20.4 Retain dispatches, verbatim returns, comparison results and independent completion review → verify: calibration success is not actor effectiveness or completed binding/preflight; any mismatch stays visible and unresolved until reviewed.
+
+#### Execution context — 2026-10-17
+
+Task 12.19's preparation freeze remains authoritative, SHA-256
+`2850e0416ef0277109849e206e11851f10d92fdcfd6954d8ecf5d68127e95bea`.
+Create execution artifacts in a separate `verification/task12/advisory-closure-execution/`
+directory. Restore controller/fixture/source inputs from the checked archives;
+do not modify historical controllers or use an installed plugin as the candidate.
+Python activates for the new adapter/tests; core implement/test and all review
+checklists are loaded. No async constructs or new dependency are planned.
+Existing skill-md guidance remains loaded for the retained candidate changes.
+PAL remains deferred. Only independent calibration graders may be launched here.
+
+**Outcome:** the [execution record](verification/task12/advisory-closure-execution/README.md)
+retains the successor adapter and execution freeze
+`edc9cc7798bc3b2f7759a0c707db26abe2ead848bf51b6ec9de8535497a5dd85`.
+All 25 fresh calibration controls matched: 69 assertion verdicts and 11 explicit
+trigger values. Returned totals are 32 PASS / 35 FAIL / 2 PARTIAL, matching the
+deliberate negative/missing-evidence controls. No calibration attempt was retried.
+No binding/state probe, measured actor, PAL call or runtime registration occurred.
+
+**Review and checks:** independent source review approved after correcting exact
+dispatch validation, frozen-expectation verification and mandatory Plugin Root
+delivery. Calibration review resolved one P1 inconsistency in absent-advisory
+controls before freeze, retaining unchanged expected outcomes. Final validity is
+SOUND; [completion review](verification/task12/advisory-closure-execution/review/completion-review.md)
+approves with no findings. Twenty-one new offline tests, 19 inherited runtime
+tests and six matrix tests pass. Parent verification checks the 26 preparation
+files, five execution dependencies and 203 calibration inputs against their hashes;
+standalone reconciliation/verification pass. Initial packets and superseded
+requests remain retained. The whole repository suite was not rerun; its existing
+unrelated hook-fixture issue retains its assignment.
+
+**Evidence limits and next action:** public role settings, exact submitted
+requests, returned task identities and verdict tables are retained; internal
+service-model telemetry and per-grader raw read histories are unavailable. Expected
+answers were excluded from supplied packet manifests; no OS-confinement claim is
+made. The implementing agent owns four binding probes, two independent state
+probes and reviewed preflight before measured execution when selected. Calibration
+does not establish candidate improvement, adoption or broader acceptance.
+
+**Reflection:** independent pre-freeze review caught controls that accidentally
+tested two failure causes and dispatch metadata that could not substantiate the
+declared setup. The corrected controls isolate the intended decisions, and the
+result checks now tie every observation to frozen inputs and a distinct request.
 
 ## Task 13: Document and verify the complete feature
 

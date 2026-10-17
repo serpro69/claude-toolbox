@@ -5,7 +5,7 @@
 > Tasks: [tasks.md](tasks.md)
 > Review disposition: [consolidated assessment](reviews/design-review-consolidation.md)
 > Status: Tasks 1–11 and core matrix capture/grading complete; acceptance and final verification pending
-> Revised: 2026-10-17; R7 diagnostic complete, R6 successor authoring selected
+> Revised: 2026-10-17; advisory-closure adapter frozen and fresh calibration independently approved
 > Next-session handoff: [follow-up.md](follow-up.md)
 
 ## Starting points
@@ -294,6 +294,57 @@ advisory-closure investigation and defers added trace instructions pending value
 No operative patch or broader batch is selected. Original R6/R7 acceptance, PAL,
 legacy actor controls, implementation-verification concerns and Task 13 remain
 separate. Capture completion is not a full diagnostic or feature pass.
+
+### Advisory-closure candidate — Task 12.18
+
+The user selected the bounded advisory-closure investigation after Task 12.17.
+The [assessment](advisory-closure.md) ties all four missing follow-ups to a possible
+ambiguity between in-scope findings and separately reported inherited defects.
+It does not claim that closure wording caused the omissions.
+
+Replace only the standard and isolated closing branches: a surfaced substantiated
+inherited defect receives a concrete separate follow-up when repair is outside
+the task, without blocking an otherwise supported increment. Preserve clean
+no-action approval, in-scope corrections, required evidence and authorization
+limits. Regenerate Codex copies, verify packaging/parity and obtain independent
+source review. [Source review](reviews/advisory-closure-review.md) and local checks
+are complete; Task 12.18 completes candidate preparation only. The prospective
+comparison, adoption and all existing acceptance gates remain separate.
+
+### Advisory-closure freeze and declaration — Task 12.19
+
+The user selected source/criteria preparation before measurement. The
+[record](verification/task12/advisory-closure/README.md) retains candidate
+`4b69421465131e2e9e497f200ec9ddbdb439ac83`, the immutable baseline, complete
+source/filtered archives, evaluation/controller inputs and a 64-session matrix.
+The [contract](verification/task12/advisory-closure/run-contract.md) defines bounded
+KEEP / REJECT / INCONCLUSIVE outcomes separately from all original assertion grades
+and full feature acceptance. Both independent reviews approve after clarifying
+22.4's tolerated omission; archive recovery, source delta and final seal pass.
+
+No operative change or model run occurs in this task. Execution needs a successor
+adapter, its own reviewed dependency freeze, fresh grader/disposition calibration,
+four binding probes, two state probes and passing preflight before measurement.
+The source/criteria freeze remains immutable input; any revision gets a separately
+identified successor. PAL, original acceptance and Task 13 retain their status.
+
+### Advisory-closure adapter and calibration — Task 12.20
+
+The user selected execution-adapter preparation and fresh calibration. The
+[execution record](verification/task12/advisory-closure-execution/README.md)
+preserves the reviewed adapter, checked archived dependencies, per-case rubric
+routing, no-overwrite/serial-stop guards and exact frozen dispatch plans.
+The preparation seal and operative candidate remain unchanged.
+
+After source and calibration-validity review, the execution freeze preceded all
+25 fresh independent grader calls. Every expected verdict/trigger matched:
+69 assertions and 11 trigger observations. Returned FAIL/PARTIAL judgments are
+the intended negative controls. Independent completion review approves with no
+findings; tests and integrity checks remain parent-attributed execution evidence.
+
+No actor, binding/state probe, PAL or registration action occurred. Four binding
+probes, two state probes and a reviewed preflight remain the next unrun gates;
+measured execution/adoption and broader acceptance are separate.
 
 ### Task 13 finalization
 

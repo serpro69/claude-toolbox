@@ -1,0 +1,1 @@
+Approve the label increment against inspected local behavior. The checked-in default remains disabled; counts, populated detailed calculations and mode selection are preserved. Historical installation settings and production were not assessed. No issue surfaced.

@@ -1,0 +1,1 @@
+Approve the rename. With False still configured, empty plain reports succeed. Detailed empty input divides by zero in both versions; the label change neither causes nor activates it. Historical settings were not assessed. No changes recommended.
