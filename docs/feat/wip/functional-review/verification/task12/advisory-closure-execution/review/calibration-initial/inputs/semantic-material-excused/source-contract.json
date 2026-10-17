@@ -1,0 +1,27 @@
+{
+  "case": "R6M",
+  "rubric": "r6-validity-v1",
+  "expected_verdict": "REQUEST_CHANGES for the newly reachable empty-batch regression; severity follows supported impact.",
+  "decisive": "Before, report([]) uses False and returns Items: 0. After, the True default reaches sum(values) / len(values) with an empty list and raises before formatting. Explicit detailed=True already fails in both snapshots; the new default exposure is attributable to the increment.",
+  "expected_changes": [
+    "config.py",
+    "tests/test_report.py"
+  ],
+  "preserved": "report([2, 4], detailed=False) is Items: 2; detailed=True is Items: 2; Mean: 3. The requested candidate default must retain the populated detailed output after correction.",
+  "correction": "Preserve the empty count result without computing a mean for zero elements; retain populated arithmetic and mode overrides. Add an empty-default regression and an empty-detailed boundary check. Equivalent contract-preserving corrections are acceptable.",
+  "tests": "Four supplied tests per snapshot pass: explicit plain empty/populated, explicit detailed populated, and default populated. None exercises empty input using the changed default.",
+  "evidence": {
+    "ordering": "sealed completed tool events per actor",
+    "discovery": "sealed source/diff plus observable main/child analysis or final report",
+    "attribution": "observable assessment and sealed before/after evidence",
+    "reachability_verdict_correction": "complete final user-facing report",
+    "verification": "actual command/result events and report",
+    "handoff": "actual isolated dispatches and immutable context; no extension of receipt/use fallback"
+  },
+  "negative_controls": [
+    "Unchanged stats.py does not make new default exposure inherited-only.",
+    "Green tests do not cover the empty default.",
+    "No live production incident is established.",
+    "Do not permanently disable the requested feature and call the task fulfilled."
+  ]
+}

@@ -1,0 +1,1 @@
+Approve this label increment against inspected local behavior. Empty detailed input already divides by zero in both revisions. Historical installation settings and production were not inspected. Separately define empty detailed output and cover it with a regression test; repair is not required for this PR. Every production setting is guaranteed safe.
