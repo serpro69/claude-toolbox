@@ -1,0 +1,12 @@
+{
+  "actor": "main",
+  "block": {
+    "content": "1\timport unittest\n2\t\n3\tfrom client import submit\n4\tfrom store import ReceiptUnavailable, Store\n5\t\n6\t\n7\tclass SaveTests(unittest.TestCase):\n8\t    def test_save(self):\n9\t        store = Store()\n10\t        result = submit(store, \"w\", \"op-1\", {\"color\": \"blue\"})\n11\t        self.assertTrue(result[\"ok\"])\n12\t        self.assertEqual(store.preferences[\"w\"], {\"color\": \"blue\"})\n13\t\n14\t    def test_retry_same_values(self):\n15\t        store = Store()\n16\t        store.fail_receipt_once = True\n17\t        with self.assertRaises(ReceiptUnavailable):\n18\t            submit(store, \"w\", \"op-1\", {\"color\": \"blue\"})\n19\t        self.assertTrue(submit(store, \"w\", \"op-1\", {\"color\": \"blue\"})[\"ok\"])\n20\t        self.assertEqual(store.preferences[\"w\"], {\"color\": \"blue\"})\n21\t\n22\t    def test_completed_id_returns_receipt(self):\n23\t        store = Store()\n24\t        submit(store, \"w\", \"op-1\", {\"color\": \"blue\"})\n25\t        result = submit(store, \"w\", \"op-1\", {\"color\": \"blue\"})\n26\t        self.assertEqual(result, {\"ok\": True, \"operation_id\": \"op-1\"})\n27\t",
+    "tool_use_id": "toolu_01MHuzeyHWz9HSnjgWJv51tn",
+    "type": "tool_result"
+  },
+  "id": "e103.0",
+  "parent_tool_use_id": null,
+  "session_id": "e658a63f-ca15-431c-a5a7-54dbc835cdc8",
+  "source_sequence": 103
+}

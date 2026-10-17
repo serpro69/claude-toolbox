@@ -1,0 +1,54 @@
+diff --git a/settings.py b/settings.py
+index 17eee18..04ccefd 100644
+--- a/settings.py
++++ b/settings.py
+@@ -1,5 +1,5 @@
+ def patch_settings(current, patch):
+     result = dict(current)
+     for key, value in patch.items():
+-        result[key] = value or current.get(key)
++        result[key] = value
+     return result
+diff --git a/tests/test_settings.py b/tests/test_settings.py
+index 87a59f4..a5322e0 100644
+--- a/tests/test_settings.py
++++ b/tests/test_settings.py
+@@ -1,5 +1,7 @@
+ import unittest
+ from api import update_preferences
++from cli import clear_note
++from settings import patch_settings
+ 
+ 
+ class SettingsTests(unittest.TestCase):
+@@ -8,3 +10,30 @@ class SettingsTests(unittest.TestCase):
+         result = update_preferences(original, {"note": "after"})
+         self.assertEqual(result, {"note": "after", "enabled": True})
+         self.assertEqual(original["note"], "before")
++
++    def test_none_replaces_existing_value(self):
++        result = patch_settings({"note": "before"}, {"note": None})
++        self.assertIsNone(result["note"])
++
++    def test_empty_text_replaces_existing_value(self):
++        result = patch_settings({"note": "before"}, {"note": ""})
++        self.assertEqual(result["note"], "")
++
++    def test_false_replaces_existing_value(self):
++        result = patch_settings({"enabled": True}, {"enabled": False})
++        self.assertIs(result["enabled"], False)
++
++    def test_omitted_keys_keep_current_values(self):
++        result = patch_settings({"note": "keep", "enabled": True}, {"enabled": False})
++        self.assertEqual(result, {"note": "keep", "enabled": False})
++
++    def test_clear_note_clears_the_note(self):
++        result = clear_note({"note": "before", "enabled": True})
++        self.assertEqual(result, {"note": None, "enabled": True})
++
++    def test_inputs_are_not_mutated(self):
++        current = {"note": "before", "enabled": True}
++        patch = {"enabled": False}
++        patch_settings(current, patch)
++        self.assertEqual(current, {"note": "before", "enabled": True})
++        self.assertEqual(patch, {"enabled": False})

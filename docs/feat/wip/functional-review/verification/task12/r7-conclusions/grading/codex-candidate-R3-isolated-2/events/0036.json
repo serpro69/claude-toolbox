@@ -1,0 +1,35 @@
+{
+  "actor": "items-01a1353e-a392-7ec1-9ad7-7140f5d25182",
+  "completedAtMs": 1791895099369,
+  "id": "exec-c04ec601-65dc-467f-88b0-745b33124dba",
+  "item": {
+    "appContext": null,
+    "arguments": {
+      "content": "# P1: New-protocol mocks can conceal released-provider incompatibility\nWhen client and provider release independently, changing a client success predicate and updating its sole success mock to the future provider response can create a green test while breaking the supported provider. A successful durable write followed by a missing new receipt produces a caller-visible failure; persistence alone is not successful save behavior.\nReview both durable state and caller outcome using the actual named release provider source, and compare review-base versus candidate client against that same source. A UI flag does not protect a shared save path unless the changed protocol behavior obeys it. Preserve legacy success on the supported legacy protocol while applying stricter receipt validation only when that receipt contract is established; add baseline compatibility coverage alongside new-protocol tests.\nObserved in enhanced-settings task 1: client.py required applied=True, while provider/settings.py at eval-release returned only ok=True after storing values. The updated unit mock fabricated applied=True. Parent executed the baseline/candidate comparison and confirmed the staged unit test passes despite the default-save regression. This records the testing/review pattern, not a deployment claim.",
+      "source": "kk:review-findings"
+    },
+    "durationMs": 2,
+    "error": null,
+    "id": "exec-c04ec601-65dc-467f-88b0-745b33124dba",
+    "mcpAppUi": null,
+    "pluginId": null,
+    "readOnlyHint": false,
+    "result": {
+      "_meta": null,
+      "content": [
+        {
+          "text": "Indexed 1 sections (0 with code) from: kk:review-findings\nUse search(queries: [\"...\"]) to query this content. Use source: \"kk:review-findings\" to scope results.",
+          "type": "text"
+        }
+      ],
+      "structuredContent": null
+    },
+    "server": "capy",
+    "status": "completed",
+    "tool": "capy_index",
+    "type": "mcpToolCall"
+  },
+  "source_file": "items-01a1353e-a392-7ec1-9ad7-7140f5d25182.json",
+  "startedAtMs": 1791895099366,
+  "turnId": "01a1353e-a3bf-7e03-b6f4-df2399ba46c6"
+}

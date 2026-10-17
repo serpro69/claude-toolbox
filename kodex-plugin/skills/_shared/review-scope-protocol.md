@@ -1,6 +1,13 @@
 ## Review scope protocol
 
-Isolated reviewers see the diff and the design docs but have zero visibility into which tasks are done versus pending. Without scope, they flag code-that-isn't-written-yet as `MISSING_IMPL` (spec review) or as missing functionality (code review). This protocol defines a scope artifact both skills inject into their sub-agent and external-reviewer prompts.
+Reviewers need task status alongside the diff and design docs. Without scope, they flag code-that-isn't-written-yet as `MISSING_IMPL` (spec review) or as missing functionality (code review). Standard review uses this scope locally; isolated review injects the same artifact into sub-agent and external-reviewer prompts. The existing $kk:review-spec payload remains sufficient; no additional change-context record is required by this protocol.
+
+**Code-review timing:** apply this protocol's task-document reads during the
+post-instruction investigation phase, after every resolved checklist is loaded.
+Early diff selection uses filenames and Git metadata; it is distinct from
+determining task scope. Reading this protocol does not authorize early inspection
+of a discovered task file's requirements. The calling workflow still governs
+any bounded inspection needed solely for a declared routing predicate.
 
 ### Input shapes
 
@@ -27,7 +34,7 @@ Out of scope (pending — DO NOT flag as missing):
 - Task {id}: {title} — status: {pending|in-progress}
 - [...more pending tasks]
 
-The feature's design docs describe the full end state. Pending tasks are expected gaps in the current diff — treat their absence from the code as intentional, not as a finding. You may still flag issues within the in-scope tasks even if they reference pending tasks (e.g., a broken interface contract).
+The feature's design docs describe the full end state. Pending tasks are expected gaps in the current diff — treat their absence from the code as intentional, not as a finding. You may still flag issues within the in-scope tasks even if they reference pending tasks (e.g., a broken interface contract). Pending work does not excuse current regressions or incompatibility: assess whether the reviewed increment preserves existing flows and meets applicable delivery requirements. Genuinely unreachable unfinished paths need not be implemented merely because they are planned.
 ```
 
 When shape 3 applies, use:
@@ -51,4 +58,6 @@ The reviewer prompt must also carry this instruction (agent definitions should s
 
 - Do **not** report missing-implementation findings for items covered only by out-of-scope tasks.
 - Do still report real issues *within* the in-scope tasks, including ones that affect future pending work (e.g., a public API the pending task will depend on is shaped wrongly).
+- A current consumer that already requires a pending provider change remains reviewable, including when the larger feature is disabled. Distinguish deployment from activation and check the actual affected paths; a flag or a future task alone proves neither reachability nor safety.
+- Attribute introduced/worsened behavior separately from inherited defects. Do not invent a current regression or require pending work when the increment remains compatible under its actual delivery contract.
 - If a finding would be valid *only* after pending work lands, mention it under "Areas Not Covered" instead of the P0–P3 sections.

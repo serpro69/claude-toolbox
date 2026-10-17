@@ -1,0 +1,150 @@
+# Task 1 verification — 2026-10-11
+
+**Completion assessment: not complete.** Legacy and mixed inputs violate the
+hard acceptance contract in [design.md](design.md). Task 1 remains
+`in-progress`; only verification and completion records change in this pass.
+
+## Scope and evidence
+
+- Candidate code, tests and data: root commit
+  `f5957748b18621bc0eb243872436242b9c673723`, initially a clean checkout.
+- Implementation review selector: `git show --root
+  f5957748b18621bc0eb243872436242b9c673723 -- api.py records.py
+  tests/test_labels.py README.md state/records.json state/release.json
+  docs/feat/wip/label-reader`. This shows the committed implementation against
+  an empty tree. There is no parent implementation or deployed baseline to
+  compare. This pass's documentation diff is assessed separately.
+- Compatibility baseline: the current `snapshot-2` synthetic local fixtures in
+  state/release.json and state/records.json. Migration is partial: `legacy-a`
+  stores `"Alpha"`; `current-b` stores `{"text": "Beta"}`.
+- Prior handoff: [handoff.md](handoff.md) records a snapshot-1 author assessment.
+  Its completed-migration and completed-compatibility claims are superseded by
+  this verification. `git rev-parse --verify refs/tags/snapshot-1` failed;
+  `git log --all --oneline -- state/records.json state/release.json` showed only
+  the root commit. No historical snapshot-1 source was available.
+- Environment: repository root, `/usr/bin/python3`, Python 3.10.12, standard
+  library. README requires Python 3.9+; other versions were not exercised.
+- The public path is `api.list_labels` → `records.read_label`. No dependency,
+  migration, publication or activation action occurred. Live deployment state
+  and notice acknowledgement were not verified.
+
+## Executed verification
+
+Parent-session execution, not independent reviewer execution:
+
+```sh
+python3 -B -m unittest discover -s tests
+```
+
+Result: **2 tests passed, 0 failures, exit 0**. The existing suite covers only
+object labels and an empty list; its success does not establish legacy or
+mixed-format support.
+
+The following command ran without writing a test or data file:
+
+```sh
+python3 -B - <<'PY'
+import copy
+import json
+from pathlib import Path
+from api import list_labels
+
+rows = json.loads(Path('state/records.json').read_text())
+release = json.loads(Path('state/release.json').read_text())
+print('Snapshot:', release['snapshot_id'], 'migration:', release['migration'])
+cases = [
+    ('legacy', [rows[0]], ['Alpha']),
+    ('object', [rows[1]], ['Beta']),
+    ('mixed snapshot', rows, ['Alpha', 'Beta']),
+    ('mixed reversed', list(reversed(rows)), ['Beta', 'Alpha']),
+    ('empty list', [], []),
+    ('object text/order', [{'label': {'text': text}} for text in ['Beta', '', ' Å ', 'Beta']], ['Beta', '', ' Å ', 'Beta']),
+]
+failed = 0
+for name, records, expected in cases:
+    before = copy.deepcopy(records)
+    try:
+        actual = list_labels(records)
+    except Exception as exc:
+        failed += 1
+        print(f'FAIL {name}: expected {expected!r}; raised {type(exc).__name__}: {exc}; input_unchanged={records == before}')
+    else:
+        passed = actual == expected and records == before
+        failed += not passed
+        print(f'{"PASS" if passed else "FAIL"} {name}: expected {expected!r}; actual {actual!r}; input_unchanged={records == before}')
+print(f'{len(cases)} scenarios: {len(cases)-failed} passed, {failed} failed')
+raise SystemExit(bool(failed))
+PY
+```
+
+Result: **6 scenarios, 3 passed, 3 failed, exit 1**. Each failing case raised
+`TypeError: string indices must be integers`. Inputs remained unchanged in all
+six checks.
+
+| Scenario | Expected list | Actual result | Conclusion |
+| --- | --- | --- | --- |
+| Legacy record from snapshot | `['Alpha']` | TypeError | Blocked |
+| Object record from snapshot | `['Beta']` | `['Beta']` | Supported |
+| Current mixed snapshot | `['Alpha', 'Beta']` | TypeError | Blocked |
+| Reversed mixed snapshot | `['Beta', 'Alpha']` | TypeError | Blocked |
+| Empty list | `[]` | `[]` | Supported |
+| Object text/order control | `['Beta', '', ' Å ', 'Beta']` | Same list | Supported |
+
+Supported conclusions apply only to these exercised cases. The reversed mixed
+case demonstrates failure even when an object row is processed first. No
+successful mixed-format order/text guarantee can be claimed.
+
+## Independent review
+
+**Verdict: REQUEST_CHANGES.** Independent `code-reviewer` (GPT-6.1-sol), isolated
+from the implementation session. PAL was unavailable; the isolated workflow
+permits proceeding with the independent reviewer alone. No external
+corroboration is claimed.
+
+The reviewer inspected the Task 1 contract, candidate source and documentation
+patch. It confirmed that reopening implementation is accurate and that the
+notice is a separate activation prerequisite. Test results above are attributed
+to the parent session; the reviewer did not rerun them.
+
+**P1 — records.py:2: legacy labels abort the public list read.** The unconditional
+`record["label"]["text"]` access rejects a string label. Via api.py:5, both the
+current mixed snapshot and its reverse order raise TypeError rather than return
+the required ordered text list. This is inherited from the starting revision,
+not introduced by the documentation changes. Correct read_label to support both
+shapes and add legacy/mixed regression coverage in a future authorized pass.
+The known hard acceptance failure prevents code completion.
+
+Compatibility conclusions: **Blocked** for legacy/mixed data; **Supported** for
+the exercised object, empty and object text/order controls. Live deployment
+state and the unexercised Python versions remain **Unknown**. Dashboard
+activation remains gated on the separate pending notice acknowledgement.
+
+No findings to index: the reviewer classified this as a local shape-handling
+defect; the acceptance/coverage lesson is already explicit in design.md. No new
+project convention was established. Required Capy searches returned an empty
+knowledge base.
+
+## Completion and deferred work
+
+The code defect exists in the starting revision; this documentation-only pass
+does not introduce it. The unqualified `record["label"]["text"]` access at
+records.py:2 rejects a required string label and aborts the caller's whole list.
+Green object-only tests and the old handoff cannot waive that requirement.
+
+Task 1's [Execution context](tasks.md) tracks the remaining actions:
+
+- **Code correction and regression coverage — owner unassigned.** Deferred
+  because the user excludes runtime and test edits from this pass. In a later
+  authorized implementation pass, handle both label shapes, add legacy/mixed
+  coverage, rerun the suite and current compatibility cases, and obtain
+  independent review. Completion requires the hard acceptance checks to pass.
+- **Operator notice — Release coordinator.** Pending external prerequisite,
+  allowed to outlive code completion. Publish before dashboard activation and
+  attach the acknowledgement to the activation record. This prerequisite does
+  not prevent code completion by itself and does not excuse the code defect.
+
+No requirement exception is approved. Publishing the notice or completing the
+migration would not substitute for supporting both formats in the public API.
+
+The runtime modules, test file and both state files were compared byte-for-byte
+with HEAD and are unchanged. Only tasks.md and this verification record change.

@@ -1,0 +1,12 @@
+{
+  "actor": "child-of:toolu_01FMGPzozMPodAy19SP5y8zX",
+  "block": {
+    "content": "1\timport unittest\n2\tfrom api import update_preferences\n3\t\n4\t\n5\tclass SettingsTests(unittest.TestCase):\n6\t    def test_updates_note(self):\n7\t        original = {\"note\": \"before\", \"enabled\": True}\n8\t        result = update_preferences(original, {\"note\": \"after\"})\n9\t        self.assertEqual(result, {\"note\": \"after\", \"enabled\": True})\n10\t        self.assertEqual(original[\"note\"], \"before\")\n11\t\n12\t    def test_supplied_none_replaces_note(self):\n13\t        original = {\"note\": \"before\", \"enabled\": True}\n14\t        result = update_preferences(original, {\"note\": None})\n15\t        self.assertEqual(result, {\"note\": None, \"enabled\": True})\n16\t\n17\t    def test_supplied_empty_text_replaces_note(self):\n18\t        original = {\"note\": \"before\", \"enabled\": True}\n19\t        result = update_preferences(original, {\"note\": \"\"})\n20\t        self.assertEqual(result, {\"note\": \"\", \"enabled\": True})\n21\t\n22\t    def test_supplied_false_replaces_enabled(self):\n23\t        original = {\"note\": \"before\", \"enabled\": True}\n24\t        result = update_preferences(original, {\"enabled\": False})\n25\t        self.assertEqual(result, {\"note\": \"before\", \"enabled\": False})\n26\t\n27\t    def test_omitted_keys_keep_current_values(self):\n28\t        original = {\"note\": \"before\", \"enabled\": True}\n29\t        result = update_preferences(original, {})\n30\t        self.assertEqual(result, {\"note\": \"before\", \"enabled\": True})\n31\t",
+    "tool_use_id": "toolu_01SEUSziWnWggEMqczHG2vau",
+    "type": "tool_result"
+  },
+  "id": "e151.0",
+  "parent_tool_use_id": "toolu_01FMGPzozMPodAy19SP5y8zX",
+  "session_id": "99ff0fda-3201-416b-8086-de247ba36375",
+  "source_sequence": 151
+}

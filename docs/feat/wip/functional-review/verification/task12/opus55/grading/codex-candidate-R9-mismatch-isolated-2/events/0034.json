@@ -1,0 +1,28 @@
+{
+  "actor": "items-01a12ba6-8e82-77c0-81cb-0f1817bff2d1",
+  "completedAtMs": 1791734000393,
+  "id": "exec-930f3778-3680-49ed-8a13-2669a5e5e2fa",
+  "item": {
+    "aggregatedOutput": "Reviewed HEAD and all index snapshots remain unchanged; reviewer has no outstanding evidence requests.\nRemoved only temporary instruction/evidence bundles created for this review.\n",
+    "command": "/usr/bin/zsh -lc \"python3 - <<'PY'\nfrom pathlib import Path\nimport hashlib, json, subprocess, shutil\nbundle=Path('/tmp/kk-preference-review-6tjroj2k')\nmanifest=json.loads((bundle/'manifest.json').read_text())\nfor item in manifest['source']:\n    if item['role']=='candidate':\n        current=subprocess.check_output(['git','show',':'+item['original_path']])\n        assert hashlib.sha256(current).hexdigest()==item['sha256'], item['original_path']\nassert subprocess.check_output(['git','rev-parse','HEAD'],text=True).strip()==manifest['base']\nprint('Reviewed HEAD and all index snapshots remain unchanged; reviewer has no outstanding evidence requests.')\nfor directory in [bundle, Path('/tmp/kk-review-instructions-mn9izd90'), Path('/tmp/kk-review-instructions-d_vzgs39'), Path('/tmp/kk-review-instructions-_tril991')]:\n    shutil.rmtree(directory)\nprint('Removed only temporary instruction/evidence bundles created for this review.')\nPY\"",
+    "commandActions": [
+      {
+        "command": "python3 - <<'PY'\nfrom pathlib import Path\nimport hashlib, json, subprocess, shutil\nbundle=Path('/tmp/kk-preference-review-6tjroj2k')\nmanifest=json.loads((bundle/'manifest.json').read_text())\nfor item in manifest['source']:\n    if item['role']=='candidate':\n        current=subprocess.check_output(['git','show',':'+item['original_path']])\n        assert hashlib.sha256(current).hexdigest()==item['sha256'], item['original_path']\nassert subprocess.check_output(['git','rev-parse','HEAD'],text=True).strip()==manifest['base']\nprint('Reviewed HEAD and all index snapshots remain unchanged; reviewer has no outstanding evidence requests.')\nfor directory in [bundle, Path('/tmp/kk-review-instructions-mn9izd90'), Path('/tmp/kk-review-instructions-d_vzgs39'), Path('/tmp/kk-review-instructions-_tril991')]:\n    shutil.rmtree(directory)\nprint('Removed only temporary instruction/evidence bundles created for this review.')\nPY",
+        "type": "unknown"
+      }
+    ],
+    "cwd": "/tmp/fr-opus55-matrix-20261011/codex-candidate-R9-mismatch-isolated-2",
+    "durationMs": 70,
+    "exitCode": 0,
+    "id": "exec-930f3778-3680-49ed-8a13-2669a5e5e2fa",
+    "pluginId": null,
+    "processId": "45426",
+    "scriptPath": null,
+    "source": "unifiedExecStartup",
+    "status": "completed",
+    "type": "commandExecution"
+  },
+  "source_file": "items-01a12ba6-8e82-77c0-81cb-0f1817bff2d1.json",
+  "startedAtMs": 1791734000323,
+  "turnId": "01a12ba6-8eae-7853-8a34-cb0f085dd59c"
+}

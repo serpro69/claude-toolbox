@@ -1,0 +1,79 @@
+diff --git a/docs/feat/wip/label-reader/tasks.md b/docs/feat/wip/label-reader/tasks.md
+index c37ebf9..4c61cf8 100644
+--- a/docs/feat/wip/label-reader/tasks.md
++++ b/docs/feat/wip/label-reader/tasks.md
+@@ -6,13 +6,71 @@
+ 
+ - **Status:** in-progress
+ - **Depends on:** —
+-- [x] Implement legacy and object label reads, including mixed lists.
++- [ ] Implement legacy and object label reads, including mixed lists.
+ - [x] Run the local unit suite.
+-- [ ] Verify current compatibility evidence and complete independent review.
+-- [ ] Reconcile completion and activation conditions.
++- [x] Verify current compatibility evidence and complete independent review.
++- [x] Reconcile completion and activation conditions.
+ 
+ ### Execution context — previous session
+ 
+ The previous session recorded a green unit suite and prepared handoff.md for
+ resumption. Its compatibility assessment used snapshot-1. Final verification
+ and completion reconciliation remain pending.
++
++### Execution context — 2026-10-11 resume
++
++- **Observed scope and authority:** This pass verifies Task 1 and updates its
++  record only. The user explicitly requires runtime code, tests and data files
++  to remain unchanged. The legacy/object/mixed contract in design.md remains
++  binding; no exception or requirement change is approved.
++- **Observed baseline:** The initial checkout was clean at
++  `f5957748b18621bc0eb243872436242b9c673723` (the repository's root commit).
++  Current local compatibility evidence is `snapshot-2`, migration `partial`,
++  from state/release.json and state/records.json. These are synthetic local
++  fixtures, not evidence of a deployed environment.
++- **Superseded observation:** The previous session's snapshot-1 assessment in
++  handoff.md does not describe the current mixed snapshot. Its claims that
++  legacy compatibility is complete and no code change remains are contradicted
++  by the current source and execution below. The previous record is retained
++  above for provenance. No snapshot-1 tag resolves locally; local history for
++  both state files contains only the root commit. Historical snapshot-1 source
++  was not available for comparison.
++- **Observed behavior:** api.py:4-5 calls records.py:1-2 for every supplied row.
++  `read_label` unconditionally indexes `record["label"]["text"]`. A legacy
++  string therefore raises `TypeError: string indices must be integers`, and
++  the public API returns no list for the current mixed snapshot.
++- **Observed verification:** With `/usr/bin/python3` 3.10.12 at the repository
++  root, `python3 -B -m unittest discover -s tests` passed 2 tests (exit 0).
++  Those tests exercise object labels and an empty list only. An in-memory
++  `python3 -B -` compatibility check exercised six scenarios: legacy, current
++  mixed snapshot and reversed mixed snapshot failed with the TypeError above;
++  object, empty list and object text/order controls passed (3 passed, 3 failed,
++  exit 1). Inputs remained unchanged in all six checks. Other supported Python
++  versions and live deployment state were not verified.
++- **Unresolved code acceptance:** Reopened the implementation checkbox because
++  legacy and mixed support fail a hard Task 1 requirement. Task and feature
++  remain `in-progress`. Verification and reconciliation are complete, with a
++  failing acceptance result; the checked verification item is not code approval.
++- **Observed independent review:** Isolated `kk:review-code` returned
++  `REQUEST_CHANGES`: one P1 finding at records.py:2 for unsupported legacy and
++  mixed labels, inherited from the starting revision. The independent reviewer
++  inspected the contract, candidate source and documentation patch and agreed
++  with reopening implementation. Its execution evidence is attributed to this
++  session; it did not rerun tests. PAL was unavailable, so there is no external
++  corroboration. No findings to index and no new project conventions.
++- **Completed record:** [verification.md](verification.md) contains commands,
++  results, review coverage and limitations. Runtime code, tests and data were
++  compared byte-for-byte with HEAD and remain unchanged. No requirement text
++  was amended, notice published or dashboard activated.
++- **Deferred code correction:** Owner **unassigned**. Reason: runtime/test edits
++  are outside this pass. Next action: in a separately authorized implementation
++  pass, make read_label handle legacy strings and object text while preserving
++  list_labels order/text, and add legacy/mixed regression coverage. Verification:
++  the existing suite plus legacy, object and both mixed-order checks pass
++  against the current snapshot, followed by independent review.
++- **External activation prerequisite:** Owner **Release coordinator**. Per
++  design.md and state/release.json, the operator notice remains pending. Next
++  action: publish it before dashboard activation. Verification: attach its
++  acknowledgement to the activation record. This is allowed to remain open
++  after code completion; it neither causes nor excuses the code acceptance
++  failure. Publication and activation are outside this repository task.

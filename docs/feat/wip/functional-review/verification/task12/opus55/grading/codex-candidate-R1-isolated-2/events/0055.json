@@ -1,0 +1,30 @@
+{
+  "actor": "items-01a12ae8-00b5-7eb0-bf39-7ce5af07c69f",
+  "completedAtMs": 1791721244987,
+  "id": "exec-f1578a5d-2b09-4985-9756-3bee51e41f4a",
+  "item": {
+    "aggregatedOutput": "import unittest\nfrom store import Store\nfrom setup import begin_setup, complete_setup, active_connection\nfrom cleanup import cleanup_setup\n\n\nclass SetupTests(unittest.TestCase):\n    def test_completed_setup_is_visible(self):\n        store = Store()\n        begin_setup(store, \"w\", \"one\")\n        complete_setup(store, \"w\", \"one\", \"connection-one\")\n        self.assertEqual(active_connection(store, \"w\"), \"connection-one\")\n\n    def test_cleanup_removes_its_own_association(self):\n        store = Store()\n        begin_setup(store, \"w\", \"one\")\n        complete_setup(store, \"w\", \"one\", \"connection-one\")\n        cleanup_setup(store, \"w\", \"one\")\n        self.assertIsNone(active_connection(store, \"w\"))\n        self.assertNotIn(\"one\", store.pending)\n",
+    "command": "/usr/bin/zsh -lc \"cat '/tmp/kk-cleanup-review-oucct3k9/candidate/tests/test_setup.py'\"",
+    "commandActions": [
+      {
+        "command": "cat /tmp/kk-cleanup-review-oucct3k9/candidate/tests/test_setup.py",
+        "name": "test_setup.py",
+        "path": "/tmp/kk-cleanup-review-oucct3k9/candidate/tests/test_setup.py",
+        "type": "read"
+      }
+    ],
+    "cwd": "/tmp/fr-opus55-matrix-20261011/codex-candidate-R1-isolated-2",
+    "durationMs": 77,
+    "exitCode": 0,
+    "id": "exec-f1578a5d-2b09-4985-9756-3bee51e41f4a",
+    "pluginId": null,
+    "processId": "18077",
+    "scriptPath": null,
+    "source": "unifiedExecStartup",
+    "status": "completed",
+    "type": "commandExecution"
+  },
+  "source_file": "items-01a12ae8-00b5-7eb0-bf39-7ce5af07c69f.json",
+  "startedAtMs": 1791721244910,
+  "turnId": "01a12ae8-00d5-7ea0-9af6-0cb356af94da"
+}

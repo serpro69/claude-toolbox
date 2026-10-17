@@ -1,0 +1,30 @@
+{
+  "actor": "items-01a12ba4-03cf-7480-88f0-4a521ed13682",
+  "completedAtMs": 1791733584921,
+  "id": "exec-e91f6be7-94a7-4421-a2ec-8590f0a9af67",
+  "item": {
+    "aggregatedOutput": "     1\tdiff --git a/reader.py b/reader.py\n     2\tindex 9429bec..0000404 100644\n     3\t--- a/reader.py\n     4\t+++ b/reader.py\n     5\t@@ -1,2 +1,2 @@\n     6\t def read_preferences(repository, key):\n     7\t-    return repository.read_resilient(key)\n     8\t+    return repository.read_once(key.strip())\n     9\tdiff --git a/tests/test_reads.py b/tests/test_reads.py\n    10\tindex 23fc901..039b17d 100644\n    11\t--- a/tests/test_reads.py\n    12\t+++ b/tests/test_reads.py\n    13\t@@ -1,11 +1,17 @@\n    14\t import unittest\n    15\t \n    16\t from preferences import Preferences\n    17\t-from repository import Repository, ScriptedBackend\n    18\t+from repository import Repository, ScriptedBackend, TransientRead\n    19\t \n    20\t \n    21\t class ReadTests(unittest.TestCase):\n    22\t-    def test_existing_key(self):\n    23\t+    def test_trim_key(self):\n    24\t         backend = ScriptedBackend([{\"color\": \"blue\"}])\n    25\t-        self.assertEqual(Preferences(Repository(backend)).read(\"w\"), {\"color\": \"blue\"})\n    26\t+        self.assertEqual(Preferences(Repository(backend)).read(\" w \"), {\"color\": \"blue\"})\n    27\t+        self.assertEqual(backend.keys, [\"w\"])\n    28\t+\n    29\t+    def test_transient_error(self):\n    30\t+        backend = ScriptedBackend([TransientRead(\"busy\"), {\"color\": \"blue\"}])\n    31\t+        with self.assertRaises(TransientRead):\n    32\t+            Preferences(Repository(backend)).read(\" w \")\n    33\t         self.assertEqual(backend.keys, [\"w\"])\n",
+    "command": "/usr/bin/zsh -lc \"cat -n '/tmp/kk-preference-review-v2kvkt1k/staged.patch'\"",
+    "commandActions": [
+      {
+        "command": "cat -n /tmp/kk-preference-review-v2kvkt1k/staged.patch",
+        "name": "staged.patch",
+        "path": "/tmp/kk-preference-review-v2kvkt1k/staged.patch",
+        "type": "read"
+      }
+    ],
+    "cwd": "/tmp/fr-opus55-matrix-20261011/codex-candidate-R9-mismatch-isolated-1",
+    "durationMs": 85,
+    "exitCode": 0,
+    "id": "exec-e91f6be7-94a7-4421-a2ec-8590f0a9af67",
+    "pluginId": null,
+    "processId": "70030",
+    "scriptPath": null,
+    "source": "unifiedExecStartup",
+    "status": "completed",
+    "type": "commandExecution"
+  },
+  "source_file": "items-01a12ba4-03cf-7480-88f0-4a521ed13682.json",
+  "startedAtMs": 1791733584836,
+  "turnId": "01a12ba4-03f1-7bc0-b8d8-fc506a3b1a04"
+}

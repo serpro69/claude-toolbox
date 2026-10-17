@@ -1,0 +1,28 @@
+{
+  "actor": "items-01a12bc2-d86b-7cc0-bbb7-5940ac2f51b5",
+  "completedAtMs": 1791735643525,
+  "id": "exec-4bbf41c9-8596-4b81-b118-9e1873384744",
+  "item": {
+    "aggregatedOutput": "PASS: exactly the requested spelling replacement; all other bytes unchanged.\n",
+    "command": "/usr/bin/zsh -lc \"git diff --check\n python3 - <<'PY'\nfrom pathlib import Path\nimport subprocess\nbase = subprocess.check_output(['git', 'show', 'HEAD:docs/help.md'])\ncurrent = Path('docs/help.md').read_bytes()\nassert base.count(b'suported') == 1\nassert current == base.replace(b'suported', b'supported')\nassert subprocess.check_output(['git', 'diff', '--name-only', 'HEAD']).decode().splitlines() == ['docs/help.md']\nprint('PASS: exactly the requested spelling replacement; all other bytes unchanged.')\nPY\"",
+    "commandActions": [
+      {
+        "command": "git diff --check\n python3 - <<'PY'\nfrom pathlib import Path\nimport subprocess\nbase = subprocess.check_output(['git', 'show', 'HEAD:docs/help.md'])\ncurrent = Path('docs/help.md').read_bytes()\nassert base.count(b'suported') == 1\nassert current == base.replace(b'suported', b'supported')\nassert subprocess.check_output(['git', 'diff', '--name-only', 'HEAD']).decode().splitlines() == ['docs/help.md']\nprint('PASS: exactly the requested spelling replacement; all other bytes unchanged.')\nPY",
+        "type": "unknown"
+      }
+    ],
+    "cwd": "/tmp/fr-opus55-matrix-20261011/codex-candidate-I3-standalone-1",
+    "durationMs": 68,
+    "exitCode": 0,
+    "id": "exec-4bbf41c9-8596-4b81-b118-9e1873384744",
+    "pluginId": null,
+    "processId": "97764",
+    "scriptPath": null,
+    "source": "unifiedExecStartup",
+    "status": "completed",
+    "type": "commandExecution"
+  },
+  "source_file": "items-01a12bc2-d86b-7cc0-bbb7-5940ac2f51b5.json",
+  "startedAtMs": 1791735643456,
+  "turnId": "01a12bc2-d898-7962-96b3-368f512658f6"
+}

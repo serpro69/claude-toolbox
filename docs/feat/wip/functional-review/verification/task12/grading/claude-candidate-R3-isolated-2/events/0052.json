@@ -1,0 +1,13 @@
+{
+  "actor": "main",
+  "block": {
+    "content": "===STAGED DIFF===\ndiff --git a/client.py b/client.py\nindex d6ddf4b..910e877 100644\n--- a/client.py\n+++ b/client.py\n@@ -1,5 +1,7 @@\n def save_settings(send, workspace_id, values, enhanced_settings=False):\n-    response = send(workspace_id, {\"settings\": values})\n+    response = send(workspace_id, {\"settings\": values, \"require_receipt\": True})\n     if not response.get(\"ok\"):\n         raise RuntimeError(\"Settings save failed\")\n+    if response.get(\"applied\") is not True:\n+        raise RuntimeError(\"Provider did not acknowledge applied settings\")\n     return {\"saved\": True, \"enhanced\": enhanced_settings}\ndiff --git a/tests/test_client.py b/tests/test_client.py\nindex 39ea461..f1dfc4f 100644\n--- a/tests/test_client.py\n+++ b/tests/test_client.py\n@@ -5,6 +5,6 @@ from client import save_settings\n class SettingsTests(unittest.TestCase):\n     def test_successful_save(self):\n         def send(workspace, request):\n-            return {\"ok\": True}\n+            return {\"ok\": True, \"applied\": True}\n         self.assertEqual(save_settings(send, \"w\", {\"label\": \"blue\"}),\n                          {\"saved\": True, \"enhanced\": False})\n===LS ROOT===\ntotal 252\ndrwxrwxr-x   7 sergio sergio   4096 Oct 10 16:05 .\ndrwxrwxrwt 408 root   root   212992 Oct 10 16:06 ..\n-rw-rw-r--   1 sergio sergio     52 Oct 10 16:05 .capy.toml\ndrwxrwxr-x   6 sergio sergio   4096 Oct 10 16:05 .git\n-rw-rw-r--   1 sergio sergio     10 Oct  9 15:07 .gitignore\ndrwxrwxr-x   2 sergio sergio   4096 Oct 10 16:05 .runner\n-rw-rw-r--   1 sergio sergio    721 Oct  9 15:07 README.md\n-rw-rw-r--   1 sergio sergio    413 Oct  9 15:07 client.py\ndrwxrwxr-x   3 sergio sergio   4096 Oct 10 16:05 docs\ndrwxrwxr-x   3 sergio sergio   4096 Oct 10 16:05 plugins\ndrwxrwxr-x   2 sergio sergio   4096 Oct 10 16:05 tests\n===FEAT DOCS===\ndocs/feat/wip/enhanced-settings/implementation.md\ndocs/feat/wip/enhanced-settings/tasks.md\ndocs/feat/wip/enhanced-settings/design.md",
+    "is_error": false,
+    "tool_use_id": "toolu_01CdGpG5PQuFzj96DxzPDdL9",
+    "type": "tool_result"
+  },
+  "id": "e88.0",
+  "parent_tool_use_id": null,
+  "session_id": "21198cb7-2cf8-4170-8a6b-2903937df7f6",
+  "source_sequence": 88
+}

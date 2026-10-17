@@ -1,0 +1,19 @@
+{
+  "actor": "main",
+  "block": {
+    "caller": {
+      "type": "direct"
+    },
+    "id": "toolu_01YZCJBSf9f6Zs6EmqC6pFdm",
+    "input": {
+      "content": "Anti-pattern: dropping a backward-compatible read branch during an in-progress, gateless schema migration. A reader that handled both legacy (top-level `address`) and current (nested `destination.address`) shapes was \"cleaned up\" to only read the nested shape. But the migration is incremental/bounded with no startup gate, and a supported mixed data snapshot still contains legacy rows, so the reader crashes with KeyError on unmigrated records \u2014 taking down the whole batch read (list comprehension). Signal to check: when a diff removes a compatibility/fallback branch, verify the legacy shape is actually extinct (migration complete, 0 legacy rows, telemetry) before deleting the branch; a README/contract stating \"read both shapes until migration finishes\" is a hard acceptance requirement. Green tests that only exercise the new shape mask this (test-coverage gap for the legacy path).",
+      "source": "kk:review-findings"
+    },
+    "name": "mcp__capy__capy_index",
+    "type": "tool_use"
+  },
+  "id": "e153.0",
+  "parent_tool_use_id": null,
+  "session_id": "1f85da2b-16ca-4267-9445-b43faeecaabd",
+  "source_sequence": 153
+}

@@ -1,0 +1,28 @@
+{
+  "actor": "items-01a12bbb-8eb8-7711-94b3-d5036efe8c63",
+  "completedAtMs": 1791735238029,
+  "id": "exec-20327f81-587f-4648-9c51-73c45cc07fec",
+  "item": {
+    "aggregatedOutput": "PASS: 24 public-entry-point scenarios; successes on attempts 1/2/3, normalization controls, immediate permanent-error propagation at each attempt, bounded transient exhaustion, first falsey success returned.\n",
+    "command": "/usr/bin/zsh -lc \"python3 -B - <<'PY'\nfrom preferences import Preferences\nfrom repository import MissingPreference, Repository, ScriptedBackend, TransientRead\nchecks = []\nfor key in ['w', ' w ', '\\\\t w\\\\n', '', ' \\\\t\\\\n']:\n    for failures in range(3):\n        value = {'attempt': failures + 1}\n        backend = ScriptedBackend([TransientRead('busy') for _ in range(failures)] + [value])\n        actual = Preferences(Repository(backend)).read(key)\n        assert actual is value\n        assert backend.keys == [key.strip()] * (failures + 1)\n        checks.append(('success', repr(key), failures + 1))\nfor failures in range(3):\n    permanent = MissingPreference('missing')\n    backend = ScriptedBackend([TransientRead('busy') for _ in range(failures)] + [permanent, {'unexpected': True}])\n    try:\n        Preferences(Repository(backend)).read(' w ')\n    except MissingPreference as error:\n        assert error is permanent\n    else:\n        raise AssertionError('permanent error swallowed')\n    assert backend.keys == ['w'] * (failures + 1)\n    checks.append(('permanent error', failures + 1))\nerrors = [TransientRead(str(i)) for i in range(3)]\nbackend = ScriptedBackend(errors + [{'unexpected': True}])\ntry:\n    Preferences(Repository(backend)).read(' w ')\nexcept TransientRead as error:\n    assert error is errors[-1]\nelse:\n    raise AssertionError('transient exhaustion swallowed')\nassert backend.keys == ['w'] * 3\nchecks.append(('exhausted transient', 3))\nfor value in [None, False, 0, {}, '']:\n    backend = ScriptedBackend([value, {'unexpected': True}])\n    assert Preferences(Repository(backend)).read(' w ') is value\n    assert backend.keys == ['w']\n    checks.append(('first success including falsey', repr(value)))\nprint(f'PASS: {len(checks)} public-entry-point scenarios; successes on attempts 1/2/3, normalization controls, immediate permanent-error propagation at each attempt, bounded transient exhaustion, first falsey success returned.')\nPY\"",
+    "commandActions": [
+      {
+        "command": "python3 -B - <<'PY'\nfrom preferences import Preferences\nfrom repository import MissingPreference, Repository, ScriptedBackend, TransientRead\nchecks = []\nfor key in ['w', ' w ', '\\t w\\n', '', ' \\t\\n']:\n    for failures in range(3):\n        value = {'attempt': failures + 1}\n        backend = ScriptedBackend([TransientRead('busy') for _ in range(failures)] + [value])\n        actual = Preferences(Repository(backend)).read(key)\n        assert actual is value\n        assert backend.keys == [key.strip()] * (failures + 1)\n        checks.append(('success', repr(key), failures + 1))\nfor failures in range(3):\n    permanent = MissingPreference('missing')\n    backend = ScriptedBackend([TransientRead('busy') for _ in range(failures)] + [permanent, {'unexpected': True}])\n    try:\n        Preferences(Repository(backend)).read(' w ')\n    except MissingPreference as error:\n        assert error is permanent\n    else:\n        raise AssertionError('permanent error swallowed')\n    assert backend.keys == ['w'] * (failures + 1)\n    checks.append(('permanent error', failures + 1))\nerrors = [TransientRead(str(i)) for i in range(3)]\nbackend = ScriptedBackend(errors + [{'unexpected': True}])\ntry:\n    Preferences(Repository(backend)).read(' w ')\nexcept TransientRead as error:\n    assert error is errors[-1]\nelse:\n    raise AssertionError('transient exhaustion swallowed')\nassert backend.keys == ['w'] * 3\nchecks.append(('exhausted transient', 3))\nfor value in [None, False, 0, {}, '']:\n    backend = ScriptedBackend([value, {'unexpected': True}])\n    assert Preferences(Repository(backend)).read(' w ') is value\n    assert backend.keys == ['w']\n    checks.append(('first success including falsey', repr(value)))\nprint(f'PASS: {len(checks)} public-entry-point scenarios; successes on attempts 1/2/3, normalization controls, immediate permanent-error propagation at each attempt, bounded transient exhaustion, first falsey success returned.')\nPY",
+        "type": "unknown"
+      }
+    ],
+    "cwd": "/tmp/kk-review-preferences-nmHHG5/candidate",
+    "durationMs": 69,
+    "exitCode": 0,
+    "id": "exec-20327f81-587f-4648-9c51-73c45cc07fec",
+    "pluginId": null,
+    "processId": "12503",
+    "scriptPath": null,
+    "source": "unifiedExecStartup",
+    "status": "completed",
+    "type": "commandExecution"
+  },
+  "source_file": "items-01a12bbb-8eb8-7711-94b3-d5036efe8c63.json",
+  "startedAtMs": 1791735237960,
+  "turnId": "01a12bbb-8ee6-7832-ab28-4bb1d9d08d2e"
+}

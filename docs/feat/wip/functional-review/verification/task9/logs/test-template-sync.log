@@ -1,0 +1,625 @@
+
+=== Section 1: Argument Parsing ===
+[TEST] parse_arguments with --version flag
+[PASS] --version sets TARGET_VERSION
+[TEST] parse_arguments with --dry-run flag
+[PASS] --dry-run sets DRY_RUN=true
+[TEST] parse_arguments with --ci flag
+[PASS] --ci sets CI_MODE=true
+[TEST] parse_arguments with --output-dir flag
+[PASS] --output-dir sets STAGING_DIR
+[TEST] parse_arguments with multiple flags
+[PASS] Multiple flags: TARGET_VERSION
+[PASS] Multiple flags: DRY_RUN
+[PASS] Multiple flags: CI_MODE
+[PASS] Multiple flags: STAGING_DIR
+[TEST] parse_arguments with no flags uses defaults
+[PASS] Default TARGET_VERSION is 'latest'
+[PASS] Default DRY_RUN is false
+[PASS] Default CI_MODE is false
+[TEST] parse_arguments --version without value exits with code 2
+[PASS] --version without value exits with code 2
+[TEST] parse_arguments --output-dir without value exits with code 2
+[PASS] --output-dir without value exits with code 2
+[TEST] parse_arguments with unknown option exits with code 2
+[PASS] Unknown option exits with code 2
+
+=== Section 2: Manifest Reading ===
+[TEST] read_manifest fails when file is missing
+[PASS] read_manifest exits non-zero for missing file
+[TEST] read_manifest fails for invalid JSON
+[PASS] read_manifest exits non-zero for invalid JSON
+[TEST] read_manifest succeeds for valid manifest
+[PASS] read_manifest succeeds for valid manifest
+[TEST] read_manifest fails when schema_version is missing
+[PASS] read_manifest fails for missing schema_version
+[TEST] read_manifest fails when variables object is missing
+[PASS] read_manifest fails for missing variables
+
+=== Section 3: Manifest Validation ===
+[TEST] validate_manifest fails for unsupported schema version
+[INFO] Manifest loaded: /home/sergio/Projects/personal/claude-toolbox/test/fixtures/manifests/unsupported-schema.json
+[PASS] validate_manifest fails for schema version 2
+[TEST] validate_manifest fails for invalid upstream_repo format
+[INFO] Manifest loaded: /home/sergio/Projects/personal/claude-toolbox/test/fixtures/manifests/invalid-upstream-repo.json
+[PASS] validate_manifest fails for invalid upstream_repo format
+[TEST] validate_manifest succeeds for valid manifest
+[INFO] Manifest loaded: /home/sergio/Projects/personal/claude-toolbox/test/fixtures/manifests/valid-manifest.json
+[PASS] validate_manifest succeeds for valid manifest
+
+=== Section 3b: Manifest Variable Backfill ===
+[TEST] backfill_manifest_variables adds CC_STATUSLINE when missing
+[INFO] Backfilled missing manifest variables: CC_STATUSLINE=enhanced CC_EFFORT_LEVEL=high CC_PERMISSION_MODE=default CODEX_MODEL=gpt-6-astra CODEX_APPROVAL_POLICY=on-request SKIP_CAPY=false
+[INFO] Manifest loaded: /tmp/backfill-statusline.iLweLh/manifest.json
+[PASS] CC_STATUSLINE backfilled with default 'enhanced'
+[TEST] backfill_manifest_variables adds CC_EFFORT_LEVEL when missing
+[INFO] Backfilled missing manifest variables: CC_STATUSLINE=enhanced CC_EFFORT_LEVEL=high CC_PERMISSION_MODE=default CODEX_MODEL=gpt-6-astra CODEX_APPROVAL_POLICY=on-request SKIP_CAPY=false
+[INFO] Manifest loaded: /tmp/backfill-effort.zgiwPF/manifest.json
+[PASS] CC_EFFORT_LEVEL backfilled with default 'high'
+[TEST] backfill_manifest_variables adds all missing variables at once
+[INFO] Backfilled missing manifest variables: CC_STATUSLINE=enhanced CC_EFFORT_LEVEL=high CC_PERMISSION_MODE=default CODEX_MODEL=gpt-6-astra CODEX_APPROVAL_POLICY=on-request SKIP_CAPY=false
+[INFO] Manifest loaded: /tmp/backfill-all.okIgYr/manifest.json
+[PASS] CC_STATUSLINE backfilled
+[PASS] CC_EFFORT_LEVEL backfilled
+[PASS] CC_PERMISSION_MODE backfilled
+[PASS] SKIP_CAPY backfilled
+[TEST] backfill_manifest_variables does not overwrite existing values
+[INFO] Backfilled missing manifest variables: CODEX_MODEL=gpt-6-astra CODEX_APPROVAL_POLICY=on-request SKIP_CAPY=false
+[INFO] Manifest loaded: /tmp/backfill-noop.rDfnGY/manifest.json
+[PASS] Existing CC_EFFORT_LEVEL preserved
+[PASS] Existing CC_PERMISSION_MODE preserved
+[PASS] Existing CC_STATUSLINE preserved
+[TEST] backfill_manifest_variables does not overwrite existing SKIP_CAPY=true
+[INFO] Backfilled missing manifest variables: CC_STATUSLINE=enhanced CC_EFFORT_LEVEL=high CC_PERMISSION_MODE=default CODEX_MODEL=gpt-6-astra CODEX_APPROVAL_POLICY=on-request
+[INFO] Manifest loaded: /tmp/backfill-skip-capy-noop.znq2Iw/manifest.json
+[PASS] Existing SKIP_CAPY=true preserved
+
+=== Section 4: Substitution Application ===
+[TEST] apply_substitutions handles CC_MODEL=default (removes model line)
+>>> Applying substitutions from manifest
+[INFO] Applied Claude Code settings
+✓ Substitutions applied to /tmp/subst-model-test.THeWXW/output
+[PASS] CC_MODEL=default removes model key from settings
+[TEST] apply_substitutions substitutes non-default CC_MODEL
+>>> Applying substitutions from manifest
+[INFO] Applied Claude Code settings
+✓ Substitutions applied to /tmp/subst-model-value-test.deaBnS/output
+[PASS] CC_MODEL value substituted
+[TEST] apply_substitutions substitutes CC_EFFORT_LEVEL
+>>> Applying substitutions from manifest
+[INFO] Applied Claude Code settings
+✓ Substitutions applied to /tmp/subst-effort-level-test.7aaATh/output
+[PASS] CC_EFFORT_LEVEL value substituted
+[TEST] apply_substitutions removes effortLevel key when CC_EFFORT_LEVEL=default
+>>> Applying substitutions from manifest
+[INFO] Applied Claude Code settings
+✓ Substitutions applied to /tmp/subst-effort-level-default-test.wyWMp9/output
+[PASS] CC_EFFORT_LEVEL=default removes effortLevel key from settings
+[TEST] apply_substitutions defaults CC_EFFORT_LEVEL to high when missing from manifest
+>>> Applying substitutions from manifest
+[INFO] Applied Claude Code settings
+✓ Substitutions applied to /tmp/subst-effort-level-fallback-test.yd9hMX/output
+[PASS] CC_EFFORT_LEVEL defaults to high when missing
+[TEST] apply_substitutions substitutes CC_PERMISSION_MODE
+>>> Applying substitutions from manifest
+[INFO] Applied Claude Code settings
+✓ Substitutions applied to /tmp/subst-permission-mode-test.yHn6Zt/output
+[PASS] CC_PERMISSION_MODE value substituted
+[TEST] apply_substitutions defaults CC_PERMISSION_MODE to default when missing from manifest
+>>> Applying substitutions from manifest
+[INFO] Applied Claude Code settings
+✓ Substitutions applied to /tmp/subst-permission-mode-fallback-test.86qfu6/output
+[PASS] CC_PERMISSION_MODE defaults to default when missing
+[TEST] apply_substitutions strips [mcp_servers.capy] when SKIP_CAPY=true
+>>> Applying substitutions from manifest
+[INFO] Stripped capy MCP server config (SKIP_CAPY=true)
+[INFO] Applied Codex config.toml settings
+✓ Substitutions applied to /tmp/subst-skip-capy-true.ZTOz34/output
+[PASS] [mcp_servers.capy] stripped when SKIP_CAPY=true
+[PASS] Non-capy sections preserved after stripping
+[TEST] apply_substitutions preserves [mcp_servers.capy] when SKIP_CAPY=false
+>>> Applying substitutions from manifest
+[INFO] Applied Codex config.toml settings
+✓ Substitutions applied to /tmp/subst-skip-capy-false.tk7dGv/output
+[PASS] [mcp_servers.capy] preserved when SKIP_CAPY=false
+[TEST] apply_substitutions preserves [mcp_servers.capy] when SKIP_CAPY is missing (default)
+>>> Applying substitutions from manifest
+[INFO] Applied Codex config.toml settings
+✓ Substitutions applied to /tmp/subst-skip-capy-default.phSs27/output
+[PASS] [mcp_servers.capy] preserved when SKIP_CAPY not in manifest
+
+=== Section 5: Smart Merge (settings.json) ===
+[TEST] smart merge: downstream scalar wins over upstream
+>>> Applying substitutions from manifest
+[INFO] Applied Claude Code settings
+✓ Substitutions applied to /tmp/merge-scalar-wins.r0PQ2W/output
+[PASS] effortLevel set by manifest default after merge
+[TEST] smart merge: new key from upstream added to downstream
+>>> Applying substitutions from manifest
+[INFO] Applied Claude Code settings
+✓ Substitutions applied to /tmp/merge-new-key.BsCou3/output
+[PASS] enabledPlugins added from upstream
+[TEST] smart merge: arrays concat and deduplicate
+>>> Applying substitutions from manifest
+[INFO] Applied Claude Code settings
+✓ Substitutions applied to /tmp/merge-array-concat.AHCH32/output
+[PASS] Allow list has 3 entries (deduped concat)
+[PASS] First entry from downstream preserved
+[PASS] Second entry from downstream preserved
+[PASS] Upstream-only entry appended
+[TEST] smart merge: deny list propagation from upstream
+>>> Applying substitutions from manifest
+[INFO] Applied Claude Code settings
+✓ Substitutions applied to /tmp/merge-deny-propagation.8clW3a/output
+[PASS] Deny list has 4 entries (downstream 2 + upstream 2 new)
+[PASS] Downstream deny entry preserved
+[PASS] Upstream deny entry added
+[TEST] smart merge: nested object merge (env)
+>>> Applying substitutions from manifest
+[INFO] Applied Claude Code settings
+✓ Substitutions applied to /tmp/merge-nested-object.oyuVx7/output
+[PASS] Downstream env.B preserved
+[PASS] Downstream env.C preserved
+[PASS] Upstream env.A added
+[TEST] smart merge: manifest substitution overrides merge result
+>>> Applying substitutions from manifest
+[INFO] Applied Claude Code settings
+✓ Substitutions applied to /tmp/merge-manifest-override.TUr54V/output
+[PASS] Manifest CC_MODEL overrides merge result (downstream had sonnet)
+[TEST] smart merge: first-time sync uses upstream as-is
+>>> Applying substitutions from manifest
+[INFO] Applied Claude Code settings
+✓ Substitutions applied to /tmp/merge-first-time.XVKQad/output
+[PASS] Model set from manifest on first-time sync
+[PASS] enabledPlugins present from upstream template
+[TEST] smart merge: empty upstream array does not duplicate downstream entries
+>>> Applying substitutions from manifest
+[INFO] Applied Claude Code settings
+✓ Substitutions applied to /tmp/merge-empty-array.plYV1d/output
+[PASS] Empty upstream array does not add entries
+[PASS] Downstream entry preserved
+[TEST] smart merge: type mismatch preserves downstream value
+>>> Applying substitutions from manifest
+[INFO] Applied Claude Code settings
+✓ Substitutions applied to /tmp/merge-type-mismatch.KmyV0S/output
+[PASS] Downstream string preserved when upstream has object
+[PASS] Downstream string preserved when upstream has array
+[TEST] smart merge: statusLine old path migrated to new path
+>>> Applying substitutions from manifest
+[INFO] Applied Claude Code settings
+✓ Substitutions applied to /tmp/merge-statusline-path.nsIK2M/output
+[PASS] statusLine command uses new toolbox path
+[PASS] statusLine command no longer uses old path
+
+=== Section 6: File Comparison ===
+[TEST] compare_files detects added files
+>>> Comparing files with current project
+✓ Comparison complete: 1 added, 0 modified, 0 deleted, 0 unchanged, 0 excluded
+[PASS] One file detected as added
+[TEST] compare_files detects modified files
+>>> Comparing files with current project
+✓ Comparison complete: 0 added, 1 modified, 0 deleted, 0 unchanged, 0 excluded
+[PASS] One file detected as modified
+[TEST] compare_files detects deleted files
+>>> Comparing files with current project
+✓ Comparison complete: 0 added, 0 modified, 1 deleted, 0 unchanged, 0 excluded
+[PASS] One file detected as deleted
+[TEST] compare_files detects unchanged files
+>>> Comparing files with current project
+✓ Comparison complete: 0 added, 0 modified, 0 deleted, 1 unchanged, 0 excluded
+[PASS] One file detected as unchanged
+[TEST] compare_files does NOT flag workflow files as deleted (sync infrastructure exclusion)
+>>> Comparing files with current project
+✓ Comparison complete: 0 added, 0 modified, 0 deleted, 1 unchanged, 0 excluded
+[PASS] No files should be flagged as deleted in workflows dir
+[PASS] Only the sync workflow file should be compared
+
+=== Section 7: Diff Report Generation ===
+[TEST] generate_diff_report shows version transition
+[PASS] Report shows current version
+[PASS] Report shows target version
+[TEST] generate_diff_report shows 'up to date' when no changes
+[PASS] Report shows 'up to date' message
+[TEST] generate_diff_report shows counts when changes exist
+[PASS] Report shows added count
+[PASS] Report shows modified count
+[TEST] generate_diff_report CI mode outputs GitHub Actions format
+[PASS] CI mode outputs has_changes
+[PASS] CI mode outputs added_count
+
+=== Section 8: Sync Infrastructure Copying ===
+[TEST] copy_sync_files copies workflow when present
+>>> Copying sync infrastructure files
+[INFO] Copied template-sync.yml
+✓ Copied 1 sync infrastructure file(s)
+[PASS] Workflow copied to staging
+[TEST] copy_sync_files handles missing workflow gracefully
+>>> Copying sync infrastructure files
+[INFO] No sync infrastructure files found in upstream
+[PASS] copy_sync_files succeeds even when workflow is missing
+
+=== Section 9: Version Resolution ===
+[TEST] resolve_version returns specific tag as-is
+[PASS] Specific tag returned as-is
+[TEST] resolve_version resolves 'master' to SHA
+[PASS] master resolved to SHA: 94c5a05198e0...
+[TEST] resolve_version resolves 'HEAD' to SHA
+[PASS] HEAD resolved to SHA: 94c5a05198e0...
+[TEST] resolve_version resolves 'latest' to most recent stable tag
+[PASS] latest resolved to tag: v0.23.0
+[PASS] latest resolved to stable release (no pre-release suffix)
+[TEST] resolve_version returns arbitrary values as-is (validation happens during fetch)
+[PASS] Arbitrary value returned as-is
+
+=== Section 10: Sync Exclusion - is_excluded() ===
+[TEST] is_excluded returns 1 when no exclusions configured
+[PASS] No exclusions means not excluded
+[TEST] is_excluded returns 0 for exact path match
+[PASS] Exact path match is excluded
+[TEST] is_excluded returns 0 for glob pattern with trailing wildcard
+[PASS] Glob wildcard matches file in directory
+[TEST] is_excluded returns 1 for non-matching path
+[PASS] Non-matching path is not excluded
+[TEST] is_excluded matches across directory separators (bash case * crosses /)
+[PASS] Glob * matches across directory separators
+[TEST] is_excluded handles multiple patterns (second pattern matches)
+[PASS] Second pattern in list matches
+
+=== Section 11: Manifest sync_exclusions Loading and Validation ===
+[TEST] read_manifest loads sync_exclusions from manifest
+[INFO] Manifest loaded: /home/sergio/Projects/personal/claude-toolbox/test/fixtures/manifests/valid-manifest-with-exclusions.json
+[INFO] Loaded 2 sync exclusion pattern(s)
+[PASS] SYNC_EXCLUSIONS has 2 patterns
+[PASS] First exclusion pattern correct
+[PASS] Second exclusion pattern correct
+[TEST] read_manifest handles missing sync_exclusions (optional field)
+[INFO] Manifest loaded: /home/sergio/Projects/personal/claude-toolbox/test/fixtures/manifests/valid-manifest.json
+[PASS] SYNC_EXCLUSIONS is empty when field absent
+[TEST] validate_manifest accepts valid sync_exclusions array
+[INFO] Manifest loaded: /home/sergio/Projects/personal/claude-toolbox/test/fixtures/manifests/valid-manifest-with-exclusions.json
+[INFO] Loaded 2 sync exclusion pattern(s)
+[PASS] validate_manifest passes with valid sync_exclusions
+[TEST] validate_manifest accepts manifest without sync_exclusions
+[INFO] Manifest loaded: /home/sergio/Projects/personal/claude-toolbox/test/fixtures/manifests/valid-manifest.json
+[PASS] validate_manifest passes without sync_exclusions
+[TEST] validate_manifest rejects sync_exclusions that is not an array
+[INFO] Manifest loaded: /home/sergio/Projects/personal/claude-toolbox/test/fixtures/manifests/exclusions-not-array.json
+[PASS] validate_manifest fails when sync_exclusions is a string
+[TEST] validate_manifest rejects sync_exclusions with non-string elements
+[INFO] Manifest loaded: /home/sergio/Projects/personal/claude-toolbox/test/fixtures/manifests/exclusions-non-string-elements.json
+[INFO] Loaded 3 sync exclusion pattern(s)
+[PASS] validate_manifest fails when sync_exclusions contains non-strings
+
+=== Section 12: compare_files() Exclusion Integration ===
+[TEST] compare_files excludes matching files from ADDED
+>>> Comparing files with current project
+✓ Comparison complete: 0 added, 0 modified, 0 deleted, 0 unchanged, 1 excluded
+[PASS] Excluded file not in ADDED_FILES
+[PASS] Excluded file tracked in EXCLUDED_FILES
+[TEST] compare_files excludes matching files from MODIFIED
+>>> Comparing files with current project
+✓ Comparison complete: 0 added, 0 modified, 0 deleted, 0 unchanged, 1 excluded
+[PASS] Excluded file not in MODIFIED_FILES
+[PASS] Excluded file tracked in EXCLUDED_FILES
+[TEST] compare_files skips excluded files in deletion detection
+>>> Comparing files with current project
+✓ Comparison complete: 0 added, 0 modified, 0 deleted, 0 unchanged, 0 excluded
+[PASS] Excluded file not in DELETED_FILES
+[TEST] compare_files categorizes non-excluded files normally alongside exclusions
+>>> Comparing files with current project
+✓ Comparison complete: 1 added, 0 modified, 0 deleted, 0 unchanged, 1 excluded
+[PASS] Non-excluded file still categorized as added
+[PASS] Excluded file tracked
+[PASS] No modified files
+[TEST] compare_files does NOT flag per-repo built-in excluded files as deleted
+>>> Comparing files with current project
+✓ Comparison complete: 0 added, 0 modified, 0 deleted, 0 unchanged, 0 excluded
+[PASS] Built-in excluded files not flagged as deleted
+[TEST] compare_files handles multiple exclusion patterns
+>>> Comparing files with current project
+✓ Comparison complete: 1 added, 0 modified, 0 deleted, 0 unchanged, 2 excluded
+[PASS] Non-excluded file categorized as added
+[PASS] Both excluded files tracked
+[TEST] compare_files does not double-count files in EXCLUDED_FILES
+>>> Comparing files with current project
+✓ Comparison complete: 0 added, 0 modified, 0 deleted, 0 unchanged, 1 excluded
+[PASS] Excluded file counted only once (not double-counted)
+[PASS] Excluded file not in UNCHANGED_FILES
+
+=== Section 13: Reporting Functions - Excluded Files Display ===
+[TEST] generate_diff_report shows excluded count in summary
+[PASS] Report shows 'Excluded:' line in summary
+[TEST] generate_diff_report lists excluded files with marker
+[PASS] Report shows excluded files header
+[PASS] Report lists first excluded file
+[PASS] Report lists second excluded file
+[TEST] generate_diff_report CI mode includes excluded_count
+[PASS] CI mode outputs excluded_count=2
+[TEST] excluded_count does NOT affect has_changes
+[PASS] has_changes is false when only excluded files present
+[PASS] excluded_count still reported
+[TEST] generate_markdown_summary includes excluded files section
+[PASS] Markdown table contains Excluded row
+[PASS] Markdown contains Excluded Files heading
+[PASS] Markdown contains explanatory text about sync_exclusions
+[PASS] Markdown lists first excluded file
+[PASS] Markdown lists second excluded file
+[TEST] generate_diff_report does not show excluded section when no exclusions
+[PASS] Report correctly omits excluded files section when no exclusions
+[TEST] generate_markdown_summary omits excluded section when no exclusions
+[PASS] Markdown table shows Excluded count 0
+[PASS] Markdown correctly omits Excluded Files section when no exclusions
+
+=== Section 14: Manifest Migration ===
+[TEST] migrate_manifest rewrites old upstream_repo to new value
+[INFO] Manifest loaded: /tmp/tmp.IvYqZr284m/manifest.json
+✓ Manifest validation passed
+[INFO] Migrating upstream_repo from serpro69/claude-starter-kit to serpro69/claude-toolbox
+[INFO] Manifest loaded: /tmp/tmp.IvYqZr284m/manifest.json
+[PASS] upstream_repo rewritten to serpro69/claude-toolbox
+[TEST] migrate_manifest does not modify manifest with current upstream_repo
+[INFO] Manifest loaded: /tmp/tmp.Ou1SFrN9Zc/manifest.json
+✓ Manifest validation passed
+[PASS] manifest not modified when upstream_repo is already current
+[TEST] migrate_manifest emits log message when migration triggers
+[INFO] Manifest loaded: /tmp/tmp.RinAw9OBTO/manifest.json
+✓ Manifest validation passed
+[PASS] migration emits log message
+
+=== Plugin Migration Detection ===
+[TEST] needs_plugin_migration returns true when upstream has plugin and not yet migrated
+[PASS] Migration needed when upstream has plugin and no flag set
+[TEST] needs_plugin_migration returns false when already migrated
+[PASS] No migration needed when plugin_migrated flag is set
+[TEST] needs_plugin_migration returns false when upstream has no plugin
+[PASS] No migration needed when upstream lacks plugin manifest
+
+=== Plugin Migration Execution ===
+[TEST] run_plugin_migration removes skills, commands, and validate-bash.sh
+[PASS] skills/ directory removed
+[PASS] commands/ directory removed
+[PASS] validate-bash.sh removed
+[PASS] statusline.sh preserved
+[TEST] run_plugin_migration updates settings.json
+[PASS] hooks removed from settings.json
+[PASS] extraKnownMarketplaces added to settings.json
+[PASS] enabledPlugins not set in migrated settings.json
+[PASS] model preserved in settings.json
+[TEST] run_plugin_migration sets plugin_migrated flag in manifest
+[PASS] plugin_migrated flag set in manifest
+[TEST] run_plugin_migration tracks deleted files
+[PASS] DELETED_FILES populated (5 entries)
+
+=== Serena Removal Migration ===
+[TEST] needs_serena_removal returns true when SERENA_INITIAL_PROMPT in manifest
+[INFO] Manifest loaded: /tmp/serena-needs-remove.c24AsA/manifest.json
+[PASS] needs_serena_removal detected SERENA_INITIAL_PROMPT in manifest
+[TEST] needs_serena_removal returns false when no serena artifacts exist
+[INFO] Manifest loaded: /tmp/serena-already-clean.ENLNJy/manifest.json
+[PASS] needs_serena_removal correctly skips clean repos
+[TEST] run_serena_removal deletes .serena/ and cleans manifest
+[INFO] Manifest loaded: /tmp/serena-run-remove.2zgod3/manifest.json
+>>> Removing Serena artifacts (no longer in upstream defaults)
+[INFO] Removed .serena/
+[INFO] Manifest loaded: /tmp/serena-run-remove.2zgod3/manifest.json
+[INFO] Removed SERENA_INITIAL_PROMPT from manifest
+✓ Serena removal complete
+[PASS] .serena/ directory removed
+[PASS] SERENA_INITIAL_PROMPT removed from manifest
+[TEST] run_serena_removal respects sync_exclusions for .serena/
+[INFO] Manifest loaded: /tmp/serena-excluded.3uSVCI/manifest.json
+[INFO] Loaded 1 sync exclusion pattern(s)
+>>> Removing Serena artifacts (no longer in upstream defaults)
+[INFO] Skipping .serena/ removal (matched sync_exclusions)
+[INFO] Manifest loaded: /tmp/serena-excluded.3uSVCI/manifest.json
+[INFO] Loaded 1 sync exclusion pattern(s)
+[INFO] Removed SERENA_INITIAL_PROMPT from manifest
+✓ Serena removal complete
+[PASS] .serena/ preserved when in sync_exclusions
+[PASS] SERENA_INITIAL_PROMPT removed from manifest even when dir excluded
+
+=== json_update helper ===
+[TEST] json_update modifies file atomically
+[PASS] json_update sets value
+[TEST] json_update with --arg passes jq arguments
+[PASS] json_update passes --arg to jq
+[TEST] json_update returns 1 on invalid expression
+[PASS] json_update returns 1 on failure
+[PASS] file unchanged after failed json_update
+
+=== apply_changes ===
+[TEST] apply_changes copies staged files to working tree
+[INFO] Manifest loaded: /tmp/apply-copy.9it38y/.github/template-state.json
+>>> Applying staged changes
+[INFO] Applied changes to .claude/
+>>> Migrating to kk plugin system
+[INFO] Set plugin_migrated flag in manifest
+✓ Plugin migration complete
+[INFO] Backfilled missing manifest variables: CC_STATUSLINE=enhanced CC_EFFORT_LEVEL=high CC_PERMISSION_MODE=default CODEX_MODEL=gpt-6-astra CODEX_APPROVAL_POLICY=on-request SKIP_CAPY=false
+[INFO] Manifest loaded: /tmp/apply-copy.9it38y/.github/template-state.json
+[INFO] Updated manifest to version v2.0.0
+✓ All changes applied
+[PASS] staged file copied to .claude/
+[PASS] manifest version updated
+[PASS] synced_at timestamp updated
+[TEST] apply_changes auto-imports CLAUDE.extra.md
+[INFO] Manifest loaded: /tmp/apply-import.AjZDR2/.github/template-state.json
+>>> Applying staged changes
+[INFO] Applied changes to .claude/
+[INFO] Added @import reference for .claude/CLAUDE.extra.md to CLAUDE.md
+[INFO] Backfilled missing manifest variables: CC_STATUSLINE=enhanced CC_EFFORT_LEVEL=high CC_PERMISSION_MODE=default CODEX_MODEL=gpt-6-astra CODEX_APPROVAL_POLICY=on-request SKIP_CAPY=false
+[INFO] Manifest loaded: /tmp/apply-import.AjZDR2/.github/template-state.json
+[INFO] Updated manifest to version v2.0.0
+✓ All changes applied
+[PASS] CLAUDE.extra.md @import added to CLAUDE.md
+[TEST] apply_changes skips CLAUDE.extra.md import when already present
+[INFO] Manifest loaded: /tmp/apply-import-skip.aHr265/.github/template-state.json
+>>> Applying staged changes
+[INFO] Applied changes to .claude/
+[INFO] Backfilled missing manifest variables: CC_STATUSLINE=enhanced CC_EFFORT_LEVEL=high CC_PERMISSION_MODE=default CODEX_MODEL=gpt-6-astra CODEX_APPROVAL_POLICY=on-request SKIP_CAPY=false
+[INFO] Manifest loaded: /tmp/apply-import-skip.aHr265/.github/template-state.json
+[INFO] Updated manifest to version v2.0.0
+✓ All changes applied
+[PASS] @import not duplicated when already present
+[TEST] apply_changes auto-imports .claude/toolbox/CLAUDE.md
+[INFO] Manifest loaded: /tmp/apply-import-toolbox.pKRltx/.github/template-state.json
+>>> Applying staged changes
+[INFO] Applied changes to .claude/
+[INFO] Added @import reference for .claude/toolbox/CLAUDE.md to CLAUDE.md
+[INFO] Backfilled missing manifest variables: CC_STATUSLINE=enhanced CC_EFFORT_LEVEL=high CC_PERMISSION_MODE=default CODEX_MODEL=gpt-6-astra CODEX_APPROVAL_POLICY=on-request SKIP_CAPY=false
+[INFO] Manifest loaded: /tmp/apply-import-toolbox.pKRltx/.github/template-state.json
+[INFO] Updated manifest to version v2.0.0
+✓ All changes applied
+[PASS] toolbox CLAUDE.md @import added to CLAUDE.md
+[TEST] apply_changes places toolbox import next to CLAUDE.extra.md import
+[INFO] Manifest loaded: /tmp/apply-import-toolbox-adjacent.m3elZL/.github/template-state.json
+>>> Applying staged changes
+[INFO] Applied changes to .claude/
+[INFO] Added @import reference for .claude/toolbox/CLAUDE.md to CLAUDE.md
+[INFO] Backfilled missing manifest variables: CC_STATUSLINE=enhanced CC_EFFORT_LEVEL=high CC_PERMISSION_MODE=default CODEX_MODEL=gpt-6-astra CODEX_APPROVAL_POLICY=on-request SKIP_CAPY=false
+[INFO] Manifest loaded: /tmp/apply-import-toolbox-adjacent.m3elZL/.github/template-state.json
+[INFO] Updated manifest to version v2.0.0
+✓ All changes applied
+[PASS] toolbox @import inserted directly after CLAUDE.extra.md import
+[TEST] apply_changes skips toolbox CLAUDE.md import when already present
+[INFO] Manifest loaded: /tmp/apply-import-toolbox-skip.dD2Y5k/.github/template-state.json
+>>> Applying staged changes
+[INFO] Applied changes to .claude/
+[INFO] Backfilled missing manifest variables: CC_STATUSLINE=enhanced CC_EFFORT_LEVEL=high CC_PERMISSION_MODE=default CODEX_MODEL=gpt-6-astra CODEX_APPROVAL_POLICY=on-request SKIP_CAPY=false
+[INFO] Manifest loaded: /tmp/apply-import-toolbox-skip.dD2Y5k/.github/template-state.json
+[INFO] Updated manifest to version v2.0.0
+✓ All changes applied
+[PASS] toolbox @import not duplicated when already present
+[TEST] apply_wiring adds toolbox @import without apply_changes (0-change re-run)
+[INFO] Added @import reference for .claude/toolbox/CLAUDE.md to CLAUDE.md
+[PASS] apply_wiring added toolbox @import on its own
+[PASS] apply_wiring places toolbox @import next to CLAUDE.extra.md import
+[TEST] apply_changes backfills manifest variables
+[INFO] Manifest loaded: /tmp/apply-backfill.jPJwdZ/.github/template-state.json
+>>> Applying staged changes
+[INFO] Backfilled missing manifest variables: CC_STATUSLINE=enhanced CC_EFFORT_LEVEL=high CC_PERMISSION_MODE=default CODEX_MODEL=gpt-6-astra CODEX_APPROVAL_POLICY=on-request SKIP_CAPY=false
+[INFO] Manifest loaded: /tmp/apply-backfill.jPJwdZ/.github/template-state.json
+[INFO] Updated manifest to version v2.0.0
+✓ All changes applied
+[PASS] CC_STATUSLINE backfilled
+[PASS] SKIP_CAPY backfilled
+
+=== --apply argument parsing ===
+[TEST] parse_arguments with --apply flag
+[PASS] --apply sets APPLY_MODE=true
+[TEST] parse_arguments without --apply keeps APPLY_MODE=false
+[PASS] APPLY_MODE defaults to false
+[TEST] parse_arguments with --apply and --version
+[PASS] --apply with other flags: APPLY_MODE
+[PASS] --apply with other flags: TARGET_VERSION
+[PASS] --apply with other flags: STAGING_DIR
+
+=== --local argument parsing ===
+[TEST] parse_arguments with --local flag
+[PASS] --local sets LOCAL_MODE=true
+[TEST] parse_arguments with --local and --version
+[PASS] --local with --version: LOCAL_MODE
+[PASS] --local with --version: TARGET_VERSION
+[TEST] --local and --apply are independent
+[PASS] --local does not set APPLY_MODE
+
+=== detect-only mode ===
+[TEST] run_plugin_migration in detect mode populates DELETED_FILES without mutations
+[PASS] DELETED_FILES populated in detect mode (2 entries)
+[PASS] skill file preserved in detect mode
+[PASS] validate-bash.sh preserved in detect mode
+[TEST] run_serena_removal in detect mode populates arrays without mutations
+[INFO] Manifest loaded: /tmp/detect-serena.eoqlUf/manifest.json
+>>> Removing Serena artifacts (no longer in upstream defaults)
+[INFO] Would remove .serena/
+[INFO] Would remove SERENA_INITIAL_PROMPT from manifest
+✓ Serena removal complete
+[PASS] DELETED_FILES populated in detect mode
+[PASS] .serena/ preserved in detect mode
+[PASS] SERENA_INITIAL_PROMPT preserved in manifest (detect mode)
+
+=== Script Consolidation Migration ===
+[TEST] needs_script_consolidation returns true when old-location scripts exist
+[PASS] needs_script_consolidation returns 0 when old scripts exist
+[TEST] needs_script_consolidation returns false when no old-location scripts exist
+[PASS] needs_script_consolidation returns non-zero when no old scripts
+[TEST] run_script_consolidation in detect mode populates DELETED_FILES without mutations
+[PASS] DELETED_FILES has 4 entries in detect mode
+[PASS] template-sync.sh preserved in detect mode
+[PASS] statusline.sh preserved in detect mode
+[PASS] update.sh preserved in detect mode
+[TEST] run_script_consolidation in apply mode removes old files
+[PASS] DELETED_FILES has 3 entries in apply mode
+[PASS] template-sync.sh removed in apply mode
+[PASS] semver-compare.sh removed in apply mode
+[PASS] update.sh removed in apply mode
+
+=== Feature-docs relocation migration ===
+[TEST] needs_docs_feat_migration returns true when legacy docs dirs exist
+[PASS] needs_docs_feat_migration returns 0 when docs/wip exists
+[TEST] needs_docs_feat_migration returns false when only docs/feat exists
+[PASS] needs_docs_feat_migration returns non-zero when no legacy dirs
+[TEST] run_docs_feat_migration in detect mode tracks moves without mutating
+[PASS] DELETED_FILES has 3 entries in detect mode
+[PASS] ADDED_FILES has 3 entries in detect mode
+[PASS] docs/wip preserved in detect mode
+[PASS] docs/feat/wip not created in detect mode
+[TEST] run_docs_feat_migration in apply mode relocates legacy dirs
+[PASS] DELETED_FILES has 2 entries in apply mode
+[PASS] docs/wip removed in apply mode
+[PASS] docs/feat/wip created in apply mode
+[PASS] docs/feat/done created in apply mode
+[TEST] run_docs_feat_migration skips a pair when the target already exists
+[PASS] no deletions tracked when target collides
+[PASS] legacy docs/wip left in place on collision
+
+=== Pre-compare deletion preservation ===
+[TEST] compare_files preserves pre-compare deletions from script consolidation
+>>> Comparing files with current project
+✓ Comparison complete: 2 added, 0 modified, 0 deleted, 0 unchanged, 0 excluded
+[PASS] .github/scripts/template-sync.sh preserved in DELETED_FILES after compare
+[PASS] docs/update.sh preserved in DELETED_FILES after compare
+[TEST] compare_files deduplicates overlapping deletions from .claude/scripts/
+>>> Comparing files with current project
+✓ Comparison complete: 1 added, 0 modified, 1 deleted, 0 unchanged, 0 excluded
+[PASS] .claude/scripts/statusline.sh appears exactly once (deduplicated)
+
+=== handoff_to_upstream_script ===
+[TEST] handoff is a no-op when sourced (not the entry point)
+[PASS] returns 0 without exec when IS_ENTRYPOINT=false
+[PASS] no bin/ copy staged when not entry point
+[TEST] handoff is a no-op when TEMPLATE_SYNC_NO_HANDOFF is set
+[PASS] returns 0 without exec when disabled via env
+[PASS] no bin/ copy staged when disabled
+[TEST] handoff is a no-op when upstream script is byte-identical
+[PASS] returns 0 without exec when scripts match
+[PASS] no bin/ copy staged when scripts match
+[TEST] handoff is a no-op when upstream has no sync script
+[PASS] returns 0 when target version ships no template-sync.sh
+[TEST] handoff execs the upstream script with original args (fetch mode)
+[PASS] handoff exec()'d the upstream script (parent code not reached)
+[PASS] original CLI arguments passed through verbatim
+[PASS] child receives TEMPLATE_SYNC_NO_HANDOFF=1 (loop guard)
+[PASS] child receives parent TEMP_DIR via TEMPLATE_SYNC_HANDOFF_CLEANUP
+[PASS] upstream script runs from stable $STAGING_DIR/bin copy
+[PASS] semver-compare.sh copied next to the script
+[PASS] fetched/ cleared so child can re-fetch
+[PASS] upstream/ and substituted/ cleared in fetch mode
+[TEST] handoff preserves staged tree in --apply mode
+[PASS] apply-mode arguments passed through verbatim
+[PASS] no cleanup delegation when staging dir is user-provided (TEMP_DIR empty)
+[PASS] substituted/ kept for the child to apply
+[PASS] upstream/ kept in apply mode
+[TEST] cleanup_on_exit removes the parent temp dir delegated via handoff
+[PASS] delegated template-sync.* temp dir removed
+[PASS] paths outside the mktemp naming pattern are left alone
+[TEST] entry point exits cleanly after main (self-overwrite guard)
+[PASS] script executed directly exits 0 via the entry-point guard
+[PASS] trailing exit prevents reading the overwritten script (rc=0, no stray output)
+
+=== Test Summary ===
+Test cases:        136
+Assertions passed: 228
+Assertions failed: 0
+
+All tests passed!

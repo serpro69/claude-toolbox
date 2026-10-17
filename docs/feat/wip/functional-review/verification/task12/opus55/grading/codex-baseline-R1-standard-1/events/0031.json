@@ -1,0 +1,28 @@
+{
+  "actor": "items-01a12ad4-a153-7303-8e7f-a239beae8cb2",
+  "completedAtMs": 1791720017387,
+  "id": "exec-424afc47-3c26-4f51-bb26-995586067c43",
+  "item": {
+    "aggregatedOutput": "Before delayed cleanup: 'new-connection'\nFailed pending record removed: True\nAfter delayed cleanup: None\nTraceback (most recent call last):\n  File \"<stdin>\", line 13, in <module>\nAssertionError: Cleanup for failed-setup deleted the active association owned by new-setup\n",
+    "command": "/usr/bin/zsh -lc \"python3 -B - <<'PY'\nfrom cleanup import cleanup_setup\nfrom setup import begin_setup, complete_setup, active_connection\nfrom store import Store\n\nstore = Store()\nbegin_setup(store, 'workspace', 'failed-setup')\nbegin_setup(store, 'workspace', 'new-setup')\ncomplete_setup(store, 'workspace', 'new-setup', 'new-connection')\nprint('Before delayed cleanup:', repr(active_connection(store, 'workspace')))\ncleanup_setup(store, 'workspace', 'failed-setup')\nprint('Failed pending record removed:', 'failed-setup' not in store.pending)\nprint('After delayed cleanup:', repr(active_connection(store, 'workspace')))\nassert active_connection(store, 'workspace') == 'new-connection', 'Cleanup for failed-setup deleted the active association owned by new-setup'\nPY\"",
+    "commandActions": [
+      {
+        "command": "python3 -B - <<'PY'\nfrom cleanup import cleanup_setup\nfrom setup import begin_setup, complete_setup, active_connection\nfrom store import Store\n\nstore = Store()\nbegin_setup(store, 'workspace', 'failed-setup')\nbegin_setup(store, 'workspace', 'new-setup')\ncomplete_setup(store, 'workspace', 'new-setup', 'new-connection')\nprint('Before delayed cleanup:', repr(active_connection(store, 'workspace')))\ncleanup_setup(store, 'workspace', 'failed-setup')\nprint('Failed pending record removed:', 'failed-setup' not in store.pending)\nprint('After delayed cleanup:', repr(active_connection(store, 'workspace')))\nassert active_connection(store, 'workspace') == 'new-connection', 'Cleanup for failed-setup deleted the active association owned by new-setup'\nPY",
+        "type": "unknown"
+      }
+    ],
+    "cwd": "/tmp/fr-opus55-matrix-20261011/codex-baseline-R1-standard-1",
+    "durationMs": 92,
+    "exitCode": 1,
+    "id": "exec-424afc47-3c26-4f51-bb26-995586067c43",
+    "pluginId": null,
+    "processId": "31793",
+    "scriptPath": null,
+    "source": "unifiedExecStartup",
+    "status": "failed",
+    "type": "commandExecution"
+  },
+  "source_file": "items-01a12ad4-a153-7303-8e7f-a239beae8cb2.json",
+  "startedAtMs": 1791720017294,
+  "turnId": "01a12ad4-a17f-7631-a7c0-9c4e9306b0bd"
+}

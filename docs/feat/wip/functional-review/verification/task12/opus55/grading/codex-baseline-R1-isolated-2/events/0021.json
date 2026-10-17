@@ -1,0 +1,35 @@
+{
+  "actor": "items-01a12ade-c29b-7f73-8898-626ef5a87486",
+  "completedAtMs": 1791720731490,
+  "id": "exec-e64c391a-4d78-4e53-834e-904a5df2f5f2",
+  "item": {
+    "appContext": null,
+    "arguments": {
+      "content": "P1 review pattern: delayed cleanup must retain operation ownership checks. When a logical resource (such as a workspace) can be reassigned by a newer operation before an older operation's queued cleanup runs, deletion keyed only by the resource ID can destroy the newer operation's state. This failure requires only serialized lifecycle events, not concurrent execution. Preserve setup/generation identity when simplifying compensating cleanup. Regression scenario: begin failed A, complete B on the same workspace, clean A; verify B remains visible and A's pending record is removed. Observed in the staged cleanup.py simplification: HEAD retained B's connection, staged code returned None; both existing tests passed. Independent code-reviewer severity P1, confidence 100%.",
+      "source": "kk:review-findings"
+    },
+    "durationMs": 1,
+    "error": null,
+    "id": "exec-e64c391a-4d78-4e53-834e-904a5df2f5f2",
+    "mcpAppUi": null,
+    "pluginId": null,
+    "readOnlyHint": false,
+    "result": {
+      "_meta": null,
+      "content": [
+        {
+          "text": "Indexed 1 sections (0 with code) from: kk:review-findings\nUse search(queries: [\"...\"]) to query this content. Use source: \"kk:review-findings\" to scope results.",
+          "type": "text"
+        }
+      ],
+      "structuredContent": null
+    },
+    "server": "capy",
+    "status": "completed",
+    "tool": "capy_index",
+    "type": "mcpToolCall"
+  },
+  "source_file": "items-01a12ade-c29b-7f73-8898-626ef5a87486.json",
+  "startedAtMs": 1791720731488,
+  "turnId": "01a12ade-c2c7-7df3-b21f-a634fc4dbad3"
+}

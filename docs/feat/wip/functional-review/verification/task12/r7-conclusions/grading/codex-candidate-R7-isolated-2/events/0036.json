@@ -1,0 +1,28 @@
+{
+  "actor": "items-01a13574-0cbc-7633-8875-f76d3d024149",
+  "completedAtMs": 1791898531265,
+  "id": "exec-f09dfeb9-674a-4a43-872f-e40d1834e529",
+  "item": {
+    "aggregatedOutput": "Review base and all staged snapshot bytes remain unchanged.\n",
+    "command": "/usr/bin/zsh -lc \"python3 - <<'PY'\nimport hashlib, json, pathlib, subprocess\nr=pathlib.Path('/tmp/kk-settings-review-iqgavy9k')\nm=json.loads((r/'provenance.json').read_text())\nassert subprocess.check_output(['git','rev-parse','HEAD'],text=True).strip()==m['review_base']\nassert subprocess.check_output(['git','diff','--cached'])==(r/'selected.patch').read_bytes()\nfor item in m['items']:\n    if item['role']=='candidate':\n        data=subprocess.check_output(['git','show',':'+item['original_path']])\n        assert hashlib.sha256(data).hexdigest()==item['sha256']\nprint('Review base and all staged snapshot bytes remain unchanged.')\nPY\"",
+    "commandActions": [
+      {
+        "command": "python3 - <<'PY'\nimport hashlib, json, pathlib, subprocess\nr=pathlib.Path('/tmp/kk-settings-review-iqgavy9k')\nm=json.loads((r/'provenance.json').read_text())\nassert subprocess.check_output(['git','rev-parse','HEAD'],text=True).strip()==m['review_base']\nassert subprocess.check_output(['git','diff','--cached'])==(r/'selected.patch').read_bytes()\nfor item in m['items']:\n    if item['role']=='candidate':\n        data=subprocess.check_output(['git','show',':'+item['original_path']])\n        assert hashlib.sha256(data).hexdigest()==item['sha256']\nprint('Review base and all staged snapshot bytes remain unchanged.')\nPY",
+        "type": "unknown"
+      }
+    ],
+    "cwd": "/tmp/fr-r7-conclusions-20261013/codex-candidate-R7-isolated-2",
+    "durationMs": 107,
+    "exitCode": 0,
+    "id": "exec-f09dfeb9-674a-4a43-872f-e40d1834e529",
+    "pluginId": null,
+    "processId": "86786",
+    "scriptPath": null,
+    "source": "unifiedExecStartup",
+    "status": "completed",
+    "type": "commandExecution"
+  },
+  "source_file": "items-01a13574-0cbc-7633-8875-f76d3d024149.json",
+  "startedAtMs": 1791898531158,
+  "turnId": "01a13574-0cfa-7d31-b364-d7164822ae21"
+}

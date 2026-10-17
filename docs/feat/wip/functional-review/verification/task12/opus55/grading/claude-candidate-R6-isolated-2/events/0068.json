@@ -1,0 +1,19 @@
+{
+  "actor": "main",
+  "block": {
+    "caller": {
+      "type": "direct"
+    },
+    "id": "toolu_01Ud6QVLeaaD8sMmkJiAd9cT",
+    "input": {
+      "content": "# Change context (parent-prepared, factual)\n\n- Intent and authority (explicit, README.md:4-9): update the plain report label from \"Items\" to \"Records\". Preserve the count and all calculation behavior. The shipped entry point uses the checked-in DETAILED_REPORT setting. Historical installations and their settings are not recorded. Detailed reporting is an existing optional path; it is not being activated or redesigned in this increment.\n- Change boundary: staged changes only (`git diff --cached`), no unstaged changes. Files: formatting.py, tests/test_report.py. Review base: HEAD 0e2ea69 (\"Review base\"). Candidate: index; worktree files for the changed paths are identical to the index (git status shows no unstaged modifications), so worktree paths are the candidate source.\n- Existing behavior: app.report(values) -> stats.summarize(values, detailed=config.DETAILED_REPORT) -> formatting.format_count(result[\"count\"]). config.DETAILED_REPORT = False is checked in. Repo-wide grep (excluding plugins/) found no other consumer of format_count or the \"Items\" literal besides the README description.\n- Delivery constraints: Python 3.9+, standard library only. Test command: `python3 -B -m unittest discover -s tests`.\n- Baselines: review base HEAD 0e2ea69. No released/deployed baseline or historical installation settings are available (README states they are not recorded).\n- Verification results: the parent did NOT execute tests (shell execution was restricted); no attributed test results exist.\n- Task scope: no docs/feat/wip directory exists. No task scope available.\n",
+      "file_path": "/tmp/kk-review-code-A41QCy/change-context.md"
+    },
+    "name": "Write",
+    "type": "tool_use"
+  },
+  "id": "e134.0",
+  "parent_tool_use_id": null,
+  "session_id": "d060f8d7-54c3-4a48-947a-fa4428edc04b",
+  "source_sequence": 134
+}

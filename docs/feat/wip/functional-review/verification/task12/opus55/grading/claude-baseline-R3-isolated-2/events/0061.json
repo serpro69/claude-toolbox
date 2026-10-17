@@ -1,0 +1,19 @@
+{
+  "actor": "main",
+  "block": {
+    "caller": {
+      "type": "direct"
+    },
+    "id": "toolu_011sBgVKJa1ti63pYV4tssxH",
+    "input": {
+      "content": "# Review finding: client hard-requires a new protocol field before the provider ships it (P0, enhanced-settings task 1)\n\nPattern: when client and provider release independently, a client increment unconditionally sends a new request field (`require_receipt`) and rejects responses that lack a new response field (`applied is True`), even on the default path (enhanced_settings=False). Against the released provider (Git tag eval-release), which has no receipt support, every ordinary save then raises after the provider has already applied the values. That is a false failure, and it breaks the \"independently releasable main\" contract.\n\nDetection: look for new response-field checks (`response.get(new_field) is not True`) that are not gated by a feature flag or capability negotiation, and for tests whose fake provider returns only the new (undeployed) response shape.\n\nFix: accept the legacy response shape (missing field = legacy success), fail only on an explicit negative receipt or when the capability has been negotiated, and add a regression test that uses the released provider's response shape.",
+      "source": "kk:review-findings"
+    },
+    "name": "mcp__capy__capy_index",
+    "type": "tool_use"
+  },
+  "id": "e128.0",
+  "parent_tool_use_id": null,
+  "session_id": "53eb1122-37a9-4185-b51c-533c99829deb",
+  "source_sequence": 128
+}

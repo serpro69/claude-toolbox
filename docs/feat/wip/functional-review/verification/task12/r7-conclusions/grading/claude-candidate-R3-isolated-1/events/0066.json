@@ -1,0 +1,19 @@
+{
+  "actor": "main",
+  "block": {
+    "caller": {
+      "type": "direct"
+    },
+    "id": "toolu_01CTF7chaXDFfKSW9PqhTEfp",
+    "input": {
+      "command": "set -e; R=/tmp/fr-r7-conclusions-20261013/claude-candidate-R3-isolated-1; D=$(mktemp -d /tmp/kk-review-code-XXXXXX); git -C \"$R\" diff --cached > \"$D/staged.patch\"; mkdir \"$D/candidate\" \"$D/historical\"; mkdir -p \"$D/candidate/tests\"; git -C \"$R\" show :client.py > \"$D/candidate/client.py\"; git -C \"$R\" show :tests/test_client.py > \"$D/candidate/tests/test_client.py\"; git -C \"$R\" show eval-release:provider/settings.py > \"$D/historical/provider_settings.py\"; git -C \"$R\" show HEAD:client.py > \"$D/historical/client_base.py\"; printf '%s\\n' \"repository: $R (local Git)\" \"tag: eval-release -> commit $(git -C \"$R\" rev-parse eval-release^{commit})\" \"original path: provider/settings.py\" \"blob: $(git -C \"$R\" rev-parse eval-release:provider/settings.py)\" \"sha256: $(sha256sum \"$D/historical/provider_settings.py\" | cut -d' ' -f1)\" \"line span: 1-$(wc -l < \"$D/historical/provider_settings.py\" | tr -d ' ')+ (entire file, nothing omitted)\" \"note: source-level release snapshot; deployed state not verified (no live env)\" \"\" \"review base: HEAD $(git -C \"$R\" rev-parse HEAD) client.py blob $(git -C \"$R\" rev-parse HEAD:client.py) -> client_base.py (entire file)\" \"candidate: staged index blobs client.py $(git -C \"$R\" rev-parse :client.py), tests/test_client.py $(git -C \"$R\" rev-parse :tests/test_client.py); worktree identical (no unstaged changes)\" > \"$D/historical/manifest.txt\"; chmod -R a-w \"$D/historical\"; echo \"$D\"; ls -R \"$D\"",
+      "description": "Build staged-diff and evidence bundle in temp dir"
+    },
+    "name": "Bash",
+    "type": "tool_use"
+  },
+  "id": "e144.0",
+  "parent_tool_use_id": null,
+  "session_id": "97c0632a-bac0-43d2-b1c3-61fd1ef7d3c3",
+  "source_sequence": 144
+}

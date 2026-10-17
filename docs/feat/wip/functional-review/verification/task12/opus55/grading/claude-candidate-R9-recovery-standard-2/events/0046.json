@@ -1,0 +1,19 @@
+{
+  "actor": "main",
+  "block": {
+    "caller": {
+      "type": "direct"
+    },
+    "id": "toolu_01RPY3REtu5BoB91MqsmHQ2A",
+    "input": {
+      "command": "python3 -B -c '\nfrom preferences import Preferences\nfrom repository import *\nb=ScriptedBackend([TransientRead(\"a\"),TransientRead(\"b\"),{\"x\":1}]); print(\"3rd-attempt\", Preferences(Repository(b)).read(\"\\tw\\n\"), b.keys)\nb=ScriptedBackend([TransientRead(\"a\"),MissingPreference(\"m\")])\ntry: Preferences(Repository(b)).read(\" w \")\nexcept MissingPreference: print(\"transient-then-missing propagates\", b.keys)\nb=ScriptedBackend([{\"x\":1}]); print(\"untrimmed\", Preferences(Repository(b)).read(\"w\"), b.keys)\nb=ScriptedBackend([{\"x\":1}]); print(\"inner-space\", Preferences(Repository(b)).read(\" a b \"), b.keys)\n'",
+      "description": "Run boundary scenarios against the candidate read path"
+    },
+    "name": "Bash",
+    "type": "tool_use"
+  },
+  "id": "e101.0",
+  "parent_tool_use_id": null,
+  "session_id": "aca06b2f-7109-4af2-bdde-bc5f596d8678",
+  "source_sequence": 101
+}

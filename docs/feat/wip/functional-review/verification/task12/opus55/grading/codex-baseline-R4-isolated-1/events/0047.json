@@ -1,0 +1,17 @@
+{
+  "actor": "items-01a12b38-be9e-7f43-b50e-7ebde299ae3f",
+  "completedAtMs": 1791726565531,
+  "id": "msg_01b2186e7e6d43c4016acb93dca06c8191926f2faf67b28ca8",
+  "item": {
+    "delivery": null,
+    "id": "msg_01b2186e7e6d43c4016acb93dca06c8191926f2faf67b28ca8",
+    "memoryCitation": null,
+    "phase": "final_answer",
+    "questions": null,
+    "text": "## Code Review Findings\n\n**Files reviewed**: 7 files, 4 lines changed\n**Active profiles**: python\n**Overall assessment**: REQUEST_CHANGES\n\n---\n\n### P0 - Critical\n\n(none)\n\n### P1 - High\n\n- **[reader.py:2]** Preserve legacy reads until migration completes\n  - Profile: python \u00b7 Checklist: removal-plan.md\n  - Triggered by: content \u2014 .py extension (reader.py)\n  - The unconditional `row[\"destination\"]` lookup raises `KeyError` for supported legacy records. `data/records.json:3\u20134` contains such a record, and `api.py:5` propagates the exception, failing the entire destination listing. `README.md:5\u201312` explicitly requires both shapes during bounded migration, and `migration.py:4\u20137` leaves legacy rows after partial batches.\n  - Confidence: 100% \u2014 the supported snapshot lacks the required key, and the complete caller path contains no fallback or migration gate.\n  - Suggested fix: Restore the legacy `row[\"address\"]` fallback. Add coverage for the supported mixed snapshot and reads after partial migration.\n\n### P2 - Medium\n\n(none)\n\n### P3 - Low\n\n(none)\n\n---\n\n### Removal/Iteration Plan\n\nDefer removal of the legacy fallback until all supported records are migrated and deployment guarantees establish that legacy records cannot reach the reader.\n\n### Areas Not Covered\n\nRead all four provided checklists before examining evidence. Traced the reader, API caller, writer, bounded migration, supported snapshot, README contract, and existing tests. Existing tests cover only nested writes and empty lists.\n\nNo tests or runtime reproductions were executed during this read-only review. Both Capy knowledge searches returned an empty knowledge base.",
+    "type": "agentMessage"
+  },
+  "source_file": "items-01a12b38-be9e-7f43-b50e-7ebde299ae3f.json",
+  "startedAtMs": 1791726556662,
+  "turnId": "01a12b38-bebd-7093-a600-377aac2aa363"
+}

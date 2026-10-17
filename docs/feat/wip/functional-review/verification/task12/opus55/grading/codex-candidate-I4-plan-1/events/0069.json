@@ -1,0 +1,31 @@
+{
+  "actor": "items-01a12bd0-bf4e-74e3-acdb-f26a6a0c8150",
+  "completedAtMs": 1791736883788,
+  "id": "exec-f92f4888-56cb-49ee-a715-13a5776bb6a0",
+  "item": {
+    "changes": [
+      {
+        "diff": "@@ -10,4 +10,4 @@\n - [x] Run the local unit suite.\n-- [ ] Verify current compatibility evidence and complete independent review.\n-- [ ] Reconcile completion and activation conditions.\n+- [x] Verify current compatibility evidence and complete independent review.\n+- [x] Reconcile completion and activation conditions.\n \n@@ -51,3 +51,15 @@\n   legacy and mixed support fail a hard Task 1 requirement. Task and feature\n-  remain `in-progress`. Independent review and final reconciliation follow.\n+  remain `in-progress`. Verification and reconciliation are complete, with a\n+  failing acceptance result; the checked verification item is not code approval.\n+- **Observed independent review:** Isolated `kk:review-code` returned\n+  `REQUEST_CHANGES`: one P1 finding at records.py:2 for unsupported legacy and\n+  mixed labels, inherited from the starting revision. The independent reviewer\n+  inspected the contract, candidate source and documentation patch and agreed\n+  with reopening implementation. Its execution evidence is attributed to this\n+  session; it did not rerun tests. PAL was unavailable, so there is no external\n+  corroboration. No findings to index and no new project conventions.\n+- **Completed record:** [verification.md](verification.md) contains commands,\n+  results, review coverage and limitations. Runtime code, tests and data were\n+  compared byte-for-byte with HEAD and remain unchanged. No requirement text\n+  was amended, notice published or dashboard activated.\n - **Deferred code correction:** Owner **unassigned**. Reason: runtime/test edits\n",
+        "kind": {
+          "move_path": null,
+          "type": "update"
+        },
+        "path": "/tmp/fr-opus55-matrix-20261011/codex-candidate-I4-plan-1/docs/feat/wip/label-reader/tasks.md"
+      },
+      {
+        "diff": "@@ -98,8 +98,30 @@\n \n-Isolated `kk:review-code` is in progress. An independent `code-reviewer` has\n-received the full Task 1 contract, exact candidate source, real Git patches,\n-source hashes and attributed results above. PAL is unavailable in this session;\n-the isolated workflow permits proceeding with the independent reviewer alone.\n-No external corroboration is claimed.\n+**Verdict: REQUEST_CHANGES.** Independent `code-reviewer` (GPT-6.1-sol), isolated\n+from the implementation session. PAL was unavailable; the isolated workflow\n+permits proceeding with the independent reviewer alone. No external\n+corroboration is claimed.\n+\n+The reviewer inspected the Task 1 contract, candidate source and documentation\n+patch. It confirmed that reopening implementation is accurate and that the\n+notice is a separate activation prerequisite. Test results above are attributed\n+to the parent session; the reviewer did not rerun them.\n \n+**P1 \u2014 records.py:2: legacy labels abort the public list read.** The unconditional\n+`record[\"label\"][\"text\"]` access rejects a string label. Via api.py:5, both the\n+current mixed snapshot and its reverse order raise TypeError rather than return\n+the required ordered text list. This is inherited from the starting revision,\n+not introduced by the documentation changes. Correct read_label to support both\n+shapes and add legacy/mixed regression coverage in a future authorized pass.\n+The known hard acceptance failure prevents code completion.\n+\n+Compatibility conclusions: **Blocked** for legacy/mixed data; **Supported** for\n+the exercised object, empty and object text/order controls. Live deployment\n+state and the unexercised Python versions remain **Unknown**. Dashboard\n+activation remains gated on the separate pending notice acknowledgement.\n+\n+No findings to index: the reviewer classified this as a local shape-handling\n+defect; the acceptance/coverage lesson is already explicit in design.md. No new\n+project convention was established. Required Capy searches returned an empty\n+knowledge base.\n+\n ## Completion and deferred work\n@@ -125 +147,4 @@\n migration would not substitute for supporting both formats in the public API.\n+\n+The runtime modules, test file and both state files were compared byte-for-byte\n+with HEAD and are unchanged. Only tasks.md and this verification record change.\n",
+        "kind": {
+          "move_path": null,
+          "type": "update"
+        },
+        "path": "/tmp/fr-opus55-matrix-20261011/codex-candidate-I4-plan-1/docs/feat/wip/label-reader/verification.md"
+      }
+    ],
+    "id": "exec-f92f4888-56cb-49ee-a715-13a5776bb6a0",
+    "status": "completed",
+    "type": "fileChange"
+  },
+  "source_file": "items-01a12bd0-bf4e-74e3-acdb-f26a6a0c8150.json",
+  "startedAtMs": 1791736883734,
+  "turnId": "01a12bd0-bf7b-7e33-b293-dfc205625a58"
+}

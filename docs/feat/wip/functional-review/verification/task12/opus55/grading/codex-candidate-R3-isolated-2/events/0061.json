@@ -1,0 +1,30 @@
+{
+  "actor": "items-01a12afd-c72a-7120-aa68-5e47c98d0300",
+  "completedAtMs": 1791722678063,
+  "id": "exec-fb6dd721-1e69-4295-a342-bc8dc5088b09",
+  "item": {
+    "aggregatedOutput": "     1\tdiff --git a/client.py b/client.py\n     2\tindex d6ddf4b..910e877 100644\n     3\t--- a/client.py\n     4\t+++ b/client.py\n     5\t@@ -1,5 +1,7 @@\n     6\t def save_settings(send, workspace_id, values, enhanced_settings=False):\n     7\t-    response = send(workspace_id, {\"settings\": values})\n     8\t+    response = send(workspace_id, {\"settings\": values, \"require_receipt\": True})\n     9\t     if not response.get(\"ok\"):\n    10\t         raise RuntimeError(\"Settings save failed\")\n    11\t+    if response.get(\"applied\") is not True:\n    12\t+        raise RuntimeError(\"Provider did not acknowledge applied settings\")\n    13\t     return {\"saved\": True, \"enhanced\": enhanced_settings}\n    14\tdiff --git a/tests/test_client.py b/tests/test_client.py\n    15\tindex 39ea461..f1dfc4f 100644\n    16\t--- a/tests/test_client.py\n    17\t+++ b/tests/test_client.py\n    18\t@@ -5,6 +5,6 @@ from client import save_settings\n    19\t class SettingsTests(unittest.TestCase):\n    20\t     def test_successful_save(self):\n    21\t         def send(workspace, request):\n    22\t-            return {\"ok\": True}\n    23\t+            return {\"ok\": True, \"applied\": True}\n    24\t         self.assertEqual(save_settings(send, \"w\", {\"label\": \"blue\"}),\n    25\t                          {\"saved\": True, \"enhanced\": False})\n",
+    "command": "/usr/bin/zsh -lc 'cat -n /tmp/kk-review-isolated.aRBae2/staged.patch'",
+    "commandActions": [
+      {
+        "command": "cat -n /tmp/kk-review-isolated.aRBae2/staged.patch",
+        "name": "staged.patch",
+        "path": "/tmp/kk-review-isolated.aRBae2/staged.patch",
+        "type": "read"
+      }
+    ],
+    "cwd": "/tmp/fr-opus55-matrix-20261011/codex-candidate-R3-isolated-2",
+    "durationMs": 68,
+    "exitCode": 0,
+    "id": "exec-fb6dd721-1e69-4295-a342-bc8dc5088b09",
+    "pluginId": null,
+    "processId": "82293",
+    "scriptPath": null,
+    "source": "unifiedExecStartup",
+    "status": "completed",
+    "type": "commandExecution"
+  },
+  "source_file": "items-01a12afd-c72a-7120-aa68-5e47c98d0300.json",
+  "startedAtMs": 1791722677995,
+  "turnId": "01a12afd-c74a-7022-ace7-a3bbd0e986e2"
+}

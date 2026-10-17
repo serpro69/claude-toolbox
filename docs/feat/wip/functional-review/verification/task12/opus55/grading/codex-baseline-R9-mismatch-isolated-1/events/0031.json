@@ -1,0 +1,30 @@
+{
+  "actor": "items-01a12b9d-76d3-71c3-bd26-e6223c805ac0",
+  "completedAtMs": 1791733127599,
+  "id": "exec-4b0b9bea-b3da-49fa-943f-427f35e3dc0a",
+  "item": {
+    "aggregatedOutput": "diff --git a/reader.py b/reader.py\nindex 9429bec..0000404 100644\n--- a/reader.py\n+++ b/reader.py\n@@ -1,2 +1,2 @@\n def read_preferences(repository, key):\n-    return repository.read_resilient(key)\n+    return repository.read_once(key.strip())\ndiff --git a/tests/test_reads.py b/tests/test_reads.py\nindex 23fc901..039b17d 100644\n--- a/tests/test_reads.py\n+++ b/tests/test_reads.py\n@@ -1,11 +1,17 @@\n import unittest\n \n from preferences import Preferences\n-from repository import Repository, ScriptedBackend\n+from repository import Repository, ScriptedBackend, TransientRead\n \n \n class ReadTests(unittest.TestCase):\n-    def test_existing_key(self):\n+    def test_trim_key(self):\n         backend = ScriptedBackend([{\"color\": \"blue\"}])\n-        self.assertEqual(Preferences(Repository(backend)).read(\"w\"), {\"color\": \"blue\"})\n+        self.assertEqual(Preferences(Repository(backend)).read(\" w \"), {\"color\": \"blue\"})\n+        self.assertEqual(backend.keys, [\"w\"])\n+\n+    def test_transient_error(self):\n+        backend = ScriptedBackend([TransientRead(\"busy\"), {\"color\": \"blue\"}])\n+        with self.assertRaises(TransientRead):\n+            Preferences(Repository(backend)).read(\" w \")\n         self.assertEqual(backend.keys, [\"w\"])\n",
+    "command": "/usr/bin/zsh -lc \"cat '/tmp/kk-review-code-8Sp8F90a.patch'\"",
+    "commandActions": [
+      {
+        "command": "cat /tmp/kk-review-code-8Sp8F90a.patch",
+        "name": "kk-review-code-8Sp8F90a.patch",
+        "path": "/tmp/kk-review-code-8Sp8F90a.patch",
+        "type": "read"
+      }
+    ],
+    "cwd": "/tmp/fr-opus55-matrix-20261011/codex-baseline-R9-mismatch-isolated-1",
+    "durationMs": 56,
+    "exitCode": 0,
+    "id": "exec-4b0b9bea-b3da-49fa-943f-427f35e3dc0a",
+    "pluginId": null,
+    "processId": "88168",
+    "scriptPath": null,
+    "source": "unifiedExecStartup",
+    "status": "completed",
+    "type": "commandExecution"
+  },
+  "source_file": "items-01a12b9d-76d3-71c3-bd26-e6223c805ac0.json",
+  "startedAtMs": 1791733127542,
+  "turnId": "01a12b9d-76f3-7f73-87df-5b28f1489c85"
+}

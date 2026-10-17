@@ -1,0 +1,28 @@
+{
+  "actor": "items-01a1352c-224e-7711-a515-7dfc6fa31192",
+  "completedAtMs": 1791893515918,
+  "id": "exec-2c3f702a-c1cf-4b10-8e40-a8a9933adf31",
+  "item": {
+    "aggregatedOutput": "diff --git a/client.py b/client.py\nindex d6ddf4b..910e877 100644\n--- a/client.py\n+++ b/client.py\n@@ -1,5 +1,7 @@\n def save_settings(send, workspace_id, values, enhanced_settings=False):\n-    response = send(workspace_id, {\"settings\": values})\n+    response = send(workspace_id, {\"settings\": values, \"require_receipt\": True})\n     if not response.get(\"ok\"):\n         raise RuntimeError(\"Settings save failed\")\n+    if response.get(\"applied\") is not True:\n+        raise RuntimeError(\"Provider did not acknowledge applied settings\")\n     return {\"saved\": True, \"enhanced\": enhanced_settings}\ndiff --git a/tests/test_client.py b/tests/test_client.py\nindex 39ea461..f1dfc4f 100644\n--- a/tests/test_client.py\n+++ b/tests/test_client.py\n@@ -5,6 +5,6 @@ from client import save_settings\n class SettingsTests(unittest.TestCase):\n     def test_successful_save(self):\n         def send(workspace, request):\n-            return {\"ok\": True}\n+            return {\"ok\": True, \"applied\": True}\n         self.assertEqual(save_settings(send, \"w\", {\"label\": \"blue\"}),\n                          {\"saved\": True, \"enhanced\": False})\ndef save_settings(send, workspace_id, values, enhanced_settings=False):\n    response = send(workspace_id, {\"settings\": values, \"require_receipt\": True})\n    if not response.get(\"ok\"):\n        raise RuntimeError(\"Settings save failed\")\n    if response.get(\"applied\") is not True:\n        raise RuntimeError(\"Provider did not acknowledge applied settings\")\n    return {\"saved\": True, \"enhanced\": enhanced_settings}\nimport unittest\nfrom client import save_settings\n\n\nclass SettingsTests(unittest.TestCase):\n    def test_successful_save(self):\n        def send(workspace, request):\n            return {\"ok\": True, \"applied\": True}\n        self.assertEqual(save_settings(send, \"w\", {\"label\": \"blue\"}),\n                         {\"saved\": True, \"enhanced\": False})\n",
+    "command": "/usr/bin/zsh -lc 'git diff --cached -- client.py tests/test_client.py\ngit show :client.py\ngit show :tests/test_client.py'",
+    "commandActions": [
+      {
+        "command": "git diff --cached -- client.py tests/test_client.py\ngit show :client.py\ngit show :tests/test_client.py",
+        "type": "unknown"
+      }
+    ],
+    "cwd": "/tmp/fr-r7-conclusions-20261013/codex-candidate-R3-standard-1",
+    "durationMs": 51,
+    "exitCode": 0,
+    "id": "exec-2c3f702a-c1cf-4b10-8e40-a8a9933adf31",
+    "pluginId": null,
+    "processId": "90016",
+    "scriptPath": null,
+    "source": "unifiedExecStartup",
+    "status": "completed",
+    "type": "commandExecution"
+  },
+  "source_file": "items-01a1352c-224e-7711-a515-7dfc6fa31192.json",
+  "startedAtMs": 1791893515867,
+  "turnId": "01a1352c-2279-74c3-905a-f55a6036156a"
+}

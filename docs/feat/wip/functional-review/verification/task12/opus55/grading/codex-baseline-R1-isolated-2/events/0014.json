@@ -1,0 +1,28 @@
+{
+  "actor": "items-01a12ade-c29b-7f73-8898-626ef5a87486",
+  "completedAtMs": 1791720682105,
+  "id": "exec-45d87e25-2dc8-40bb-b9e8-c26a90c899e7",
+  "item": {
+    "aggregatedOutput": "HEAD: active_connection='connection-successful'; failed_pending=False\nstaged: active_connection=None; failed_pending=False\n",
+    "command": "/usr/bin/zsh -lc \"python3 -B - <<'PY'\nimport subprocess\nfrom store import Store\nfrom setup import begin_setup, complete_setup, active_connection\n\nfor label, revision in [('HEAD', 'HEAD:cleanup.py'), ('staged', ':cleanup.py')]:\n    source = subprocess.check_output(['git', 'show', revision], text=True)\n    namespace = {}\n    exec(compile(source, revision, 'exec'), namespace)\n    store = Store()\n    begin_setup(store, 'w', 'failed')\n    begin_setup(store, 'w', 'successful')\n    complete_setup(store, 'w', 'successful', 'connection-successful')\n    namespace['cleanup_setup'](store, 'w', 'failed')\n    print(f'{label}: active_connection={active_connection(store, \\\"w\\\")\"'!r}; failed_pending={\"failed\" in store.pending}'\"')\nPY\"",
+    "commandActions": [
+      {
+        "command": "python3 -B - <<'PY'\nimport subprocess\nfrom store import Store\nfrom setup import begin_setup, complete_setup, active_connection\n\nfor label, revision in [('HEAD', 'HEAD:cleanup.py'), ('staged', ':cleanup.py')]:\n    source = subprocess.check_output(['git', 'show', revision], text=True)\n    namespace = {}\n    exec(compile(source, revision, 'exec'), namespace)\n    store = Store()\n    begin_setup(store, 'w', 'failed')\n    begin_setup(store, 'w', 'successful')\n    complete_setup(store, 'w', 'successful', 'connection-successful')\n    namespace['cleanup_setup'](store, 'w', 'failed')\n    print(f'{label}: active_connection={active_connection(store, \"w\")!r}; failed_pending={\"failed\" in store.pending}')\nPY",
+        "type": "unknown"
+      }
+    ],
+    "cwd": "/tmp/fr-opus55-matrix-20261011/codex-baseline-R1-isolated-2",
+    "durationMs": 76,
+    "exitCode": 0,
+    "id": "exec-45d87e25-2dc8-40bb-b9e8-c26a90c899e7",
+    "pluginId": null,
+    "processId": "13528",
+    "scriptPath": null,
+    "source": "unifiedExecStartup",
+    "status": "completed",
+    "type": "commandExecution"
+  },
+  "source_file": "items-01a12ade-c29b-7f73-8898-626ef5a87486.json",
+  "startedAtMs": 1791720682029,
+  "turnId": "01a12ade-c2c7-7df3-b21f-a634fc4dbad3"
+}

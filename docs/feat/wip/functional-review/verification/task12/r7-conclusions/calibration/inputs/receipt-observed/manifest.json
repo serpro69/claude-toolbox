@@ -1,0 +1,57 @@
+{
+  "run": {
+    "id": "receipt-observed",
+    "skill": "calibration",
+    "eval": "receipt-observed",
+    "provider": "synthetic",
+    "mode": "isolated-receipt-use",
+    "repetition": 1
+  },
+  "identity": {
+    "actor": "synthetic-v2",
+    "fixture": "synthetic-v2",
+    "grader": "pinned by gate 2B controller at dispatch",
+    "rubric": "receipt-use-v2"
+  },
+  "evidence_root": ".",
+  "files": [
+    {
+      "path": "assertions.json",
+      "sha256": "6af6cf52ff52c0aeb6b06b8fd4d48ae5ab6b550c404354e6fdc5eb99f41c80ae",
+      "role": "assertions.json"
+    },
+    {
+      "path": "events.jsonl",
+      "sha256": "d9337501ff0e65494f565e32d189f11223d27d03b53f56ce4b2cb9377fded35e",
+      "role": "events.jsonl"
+    },
+    {
+      "path": "provenance.json",
+      "sha256": "0390ff572be6018d07baf8e80cf3c42d19a6f9512be381c838838e831b51450a",
+      "role": "provenance.json"
+    },
+    {
+      "path": "report.md",
+      "sha256": "b6d937c4d687275c836467636d2abb1e11cc20a2e9d43468939b7b776030d85e",
+      "role": "report.md"
+    },
+    {
+      "path": "rubric.md",
+      "sha256": "819c75d15646399a0a68cf0e0d0762cedd7a19494a5e64c85bc198d3138a605c",
+      "role": "rubric.md"
+    },
+    {
+      "path": "source.py",
+      "sha256": "40c14d5dc6afd7e1c81243079c16a46c3256a0e21a95f92b6d6e33a656e25400",
+      "role": "source.py"
+    }
+  ],
+  "completeness": {
+    "events": "complete",
+    "dispatches": "actual synthetic recipient identities retained; submitted prompt opaque",
+    "snapshots": "source/provenance immutable and listed"
+  },
+  "redactions": [],
+  "integrity": "controller must validate before dispatch",
+  "actor_grading_material_access": "not applicable; synthetic controller records"
+}

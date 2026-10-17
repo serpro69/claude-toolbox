@@ -1,0 +1,28 @@
+{
+  "actor": "items-01a12ae9-ffcc-7e61-92cd-0d818b7340a4",
+  "completedAtMs": 1791721381138,
+  "id": "exec-891f1f91-42e9-4f61-9b61-b97f37736312",
+  "item": {
+    "aggregatedOutput": "diff --git a/client.py b/client.py\nindex d6ddf4b..910e877 100644\n--- a/client.py\n+++ b/client.py\n@@ -1,5 +1,7 @@\n def save_settings(send, workspace_id, values, enhanced_settings=False):\n-    response = send(workspace_id, {\"settings\": values})\n+    response = send(workspace_id, {\"settings\": values, \"require_receipt\": True})\n     if not response.get(\"ok\"):\n         raise RuntimeError(\"Settings save failed\")\n+    if response.get(\"applied\") is not True:\n+        raise RuntimeError(\"Provider did not acknowledge applied settings\")\n     return {\"saved\": True, \"enhanced\": enhanced_settings}\ndiff --git a/tests/test_client.py b/tests/test_client.py\nindex 39ea461..f1dfc4f 100644\n--- a/tests/test_client.py\n+++ b/tests/test_client.py\n@@ -5,6 +5,6 @@ from client import save_settings\n class SettingsTests(unittest.TestCase):\n     def test_successful_save(self):\n         def send(workspace, request):\n-            return {\"ok\": True}\n+            return {\"ok\": True, \"applied\": True}\n         self.assertEqual(save_settings(send, \"w\", {\"label\": \"blue\"}),\n                          {\"saved\": True, \"enhanced\": False})\n",
+    "command": "/usr/bin/zsh -lc 'git diff --cached -- client.py tests/test_client.py'",
+    "commandActions": [
+      {
+        "command": "git diff --cached -- client.py tests/test_client.py",
+        "type": "unknown"
+      }
+    ],
+    "cwd": "/tmp/fr-opus55-matrix-20261011/codex-baseline-R3-standard-1",
+    "durationMs": 111,
+    "exitCode": 0,
+    "id": "exec-891f1f91-42e9-4f61-9b61-b97f37736312",
+    "pluginId": null,
+    "processId": "33921",
+    "scriptPath": null,
+    "source": "unifiedExecStartup",
+    "status": "completed",
+    "type": "commandExecution"
+  },
+  "source_file": "items-01a12ae9-ffcc-7e61-92cd-0d818b7340a4.json",
+  "startedAtMs": 1791721381026,
+  "turnId": "01a12ae9-fff7-76b2-9137-450a3a080073"
+}

@@ -1,0 +1,30 @@
+{
+  "actor": "items-01a12b23-8536-7e01-9672-4c3052bbf9d0",
+  "completedAtMs": 1791725140107,
+  "id": "exec-7e5185d7-7087-4206-ba81-e0a15c18a6c8",
+  "item": {
+    "aggregatedOutput": "diff --git a/service.py b/service.py\nindex 062b8a6..0435141 100644\n--- a/service.py\n+++ b/service.py\n@@ -1,12 +1,12 @@\n def save(store, workspace, operation_id, values):\n-    record = store.recovery.get(operation_id)\n-    if record is not None and record[\"status\"] == \"completed\":\n-        return {\"ok\": True, \"operation_id\": operation_id}\n+    record = next((item for item in store.recovery.values()\n+                   if item[\"workspace\"] == workspace), None)\n     if record is None:\n         record = {\"operation_id\": operation_id, \"workspace\": workspace,\n-                  \"status\": \"pending\"}\n+                  \"status\": \"pending\", \"values\": dict(values)}\n         store.recovery[operation_id] = record\n-    store.apply(workspace, values)\n-    record[\"values\"] = dict(values)\n-    record[\"status\"] = \"applied\"\n-    return store.receipt(record)\n+    if record[\"status\"] == \"pending\":\n+        store.apply(workspace, record[\"values\"])\n+        record[\"status\"] = \"applied\"\n+    store.receipt(record)\n+    return {\"ok\": True, \"operation_id\": operation_id}\n",
+    "command": "/usr/bin/zsh -lc 'cat /tmp/kk-review-code-nk218ct4.patch'",
+    "commandActions": [
+      {
+        "command": "cat /tmp/kk-review-code-nk218ct4.patch",
+        "name": "kk-review-code-nk218ct4.patch",
+        "path": "/tmp/kk-review-code-nk218ct4.patch",
+        "type": "read"
+      }
+    ],
+    "cwd": "/tmp/fr-opus55-matrix-20261011/codex-baseline-R2-isolated-2",
+    "durationMs": 118,
+    "exitCode": 0,
+    "id": "exec-7e5185d7-7087-4206-ba81-e0a15c18a6c8",
+    "pluginId": null,
+    "processId": "93032",
+    "scriptPath": null,
+    "source": "unifiedExecStartup",
+    "status": "completed",
+    "type": "commandExecution"
+  },
+  "source_file": "items-01a12b23-8536-7e01-9672-4c3052bbf9d0.json",
+  "startedAtMs": 1791725139988,
+  "turnId": "01a12b23-855c-7a02-9175-2a094aa67342"
+}

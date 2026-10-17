@@ -1,0 +1,30 @@
+{
+  "actor": "items-01a12b9d-76d3-71c3-bd26-e6223c805ac0",
+  "completedAtMs": 1791733150468,
+  "id": "exec-3a085e5e-db8a-4021-9570-612b85188579",
+  "item": {
+    "aggregatedOutput": "README.md:7:read may make up to three attempts on `TransientRead`, returning the first\nREADME.md:8:successful result. Exhausted transient errors propagate. `MissingPreference`\nREADME.md:11:`Preferences.read` is the public entry point. `Repository.read_resilient`\nREADME.md:12:owns the bounded retry policy; `read_once` performs one attempt. The scripted\npreferences.py:1:from reader import read_preferences\npreferences.py:9:        return read_preferences(self.repository, key)\nreader.py:1:def read_preferences(repository, key):\nreader.py:2:    return repository.read_once(key.strip())\ntests/test_reads.py:4:from repository import Repository, ScriptedBackend, TransientRead\ntests/test_reads.py:11:        self.assertEqual(backend.keys, [\"w\"])\ntests/test_reads.py:14:        backend = ScriptedBackend([TransientRead(\"busy\"), {\"color\": \"blue\"}])\ntests/test_reads.py:15:        with self.assertRaises(TransientRead):\ntests/test_reads.py:17:        self.assertEqual(backend.keys, [\"w\"])\nrepository.py:1:class TransientRead(Exception):\nrepository.py:5:class MissingPreference(Exception):\nrepository.py:26:    def read_once(self, key):\nrepository.py:29:    def read_resilient(self, key):\nrepository.py:32:                return self.read_once(key)\nrepository.py:33:            except TransientRead:\n",
+    "command": "/usr/bin/zsh -lc \"rg -n 'read_preferences|read_resilient|read_once|TransientRead|MissingPreference|assertRaises|backend.keys' reader.py preferences.py repository.py tests/test_reads.py README.md\"",
+    "commandActions": [
+      {
+        "command": "rg -n 'read_preferences|read_resilient|read_once|TransientRead|MissingPreference|assertRaises|backend.keys' reader.py preferences.py repository.py tests/test_reads.py README.md",
+        "path": "reader.py",
+        "query": "read_preferences|read_resilient|read_once|TransientRead|MissingPreference|assertRaises|backend.keys",
+        "type": "search"
+      }
+    ],
+    "cwd": "/tmp/fr-opus55-matrix-20261011/codex-baseline-R9-mismatch-isolated-1",
+    "durationMs": 50,
+    "exitCode": 0,
+    "id": "exec-3a085e5e-db8a-4021-9570-612b85188579",
+    "pluginId": null,
+    "processId": "11481",
+    "scriptPath": null,
+    "source": "unifiedExecStartup",
+    "status": "completed",
+    "type": "commandExecution"
+  },
+  "source_file": "items-01a12b9d-76d3-71c3-bd26-e6223c805ac0.json",
+  "startedAtMs": 1791733150417,
+  "turnId": "01a12b9d-76f3-7f73-87df-5b28f1489c85"
+}

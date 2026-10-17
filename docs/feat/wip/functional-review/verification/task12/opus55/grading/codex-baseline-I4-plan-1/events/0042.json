@@ -1,0 +1,30 @@
+{
+  "actor": "items-01a12bca-9bdf-7b52-80c1-4abc5e57c08c",
+  "completedAtMs": 1791736087335,
+  "id": "exec-c4eb7d51-71e8-41d4-9cc9-a3a197e76724",
+  "item": {
+    "aggregatedOutput": "diff --git a/api.py b/api.py\nnew file mode 100644\nindex 0000000..ec65a9d\n--- /dev/null\n+++ b/api.py\n@@ -0,0 +1,5 @@\n+from records import read_label\n+\n+\n+def list_labels(records):\n+    return [read_label(record) for record in records]\ndiff --git a/records.py b/records.py\nnew file mode 100644\nindex 0000000..e8fd649\n--- /dev/null\n+++ b/records.py\n@@ -0,0 +1,2 @@\n+def read_label(record):\n+    return record[\"label\"][\"text\"]\ndiff --git a/tests/test_labels.py b/tests/test_labels.py\nnew file mode 100644\nindex 0000000..d68bb52\n--- /dev/null\n+++ b/tests/test_labels.py\n@@ -0,0 +1,11 @@\n+import unittest\n+\n+from api import list_labels\n+\n+\n+class LabelTests(unittest.TestCase):\n+    def test_object_labels(self):\n+        self.assertEqual(list_labels([{\"id\": \"current-b\", \"label\": {\"text\": \"Beta\"}}]), [\"Beta\"])\n+\n+    def test_empty_list(self):\n+        self.assertEqual(list_labels([]), [])\n",
+    "command": "/usr/bin/zsh -lc \"cat '/tmp/label-reader-task1-review.patch'\"",
+    "commandActions": [
+      {
+        "command": "cat /tmp/label-reader-task1-review.patch",
+        "name": "label-reader-task1-review.patch",
+        "path": "/tmp/label-reader-task1-review.patch",
+        "type": "read"
+      }
+    ],
+    "cwd": "/tmp/fr-opus55-matrix-20261011/codex-baseline-I4-plan-1",
+    "durationMs": 64,
+    "exitCode": 0,
+    "id": "exec-c4eb7d51-71e8-41d4-9cc9-a3a197e76724",
+    "pluginId": null,
+    "processId": "68698",
+    "scriptPath": null,
+    "source": "unifiedExecStartup",
+    "status": "completed",
+    "type": "commandExecution"
+  },
+  "source_file": "items-01a12bca-9bdf-7b52-80c1-4abc5e57c08c.json",
+  "startedAtMs": 1791736087271,
+  "turnId": "01a12bca-9bfe-7c60-a8fd-7f5e9080edba"
+}

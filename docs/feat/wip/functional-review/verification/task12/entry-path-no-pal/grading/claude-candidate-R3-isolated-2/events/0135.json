@@ -1,0 +1,19 @@
+{
+  "actor": "main",
+  "block": {
+    "caller": {
+      "type": "direct"
+    },
+    "id": "toolu_01QkYvLoEJeMXGkHvXXFRhFw",
+    "input": {
+      "content": "Pattern (P1, compatibility): Client increment strictly requires a new response field (e.g. `response.get(\"applied\") is not True` -> raise) that only a pending/unreleased provider will emit, while the client must ship independently against a released provider baseline. The old provider applies the change and returns success without the field, so every call reports false failure after side effects already happened; retries repeat the failure. Feature flags (e.g. enhanced_settings) did not gate the new check. Companion smell: the test mock was edited to return the new field, so no test covers the released provider's response shape and the suite stays green. Review action: compare against the named release-tag provider source (git show <tag>:<path>), require a tolerant read (fail only on explicit negative receipt) or flag-gating until the supported baseline advances, and keep a test that mimics the released provider response.",
+      "source": "kk:review-findings"
+    },
+    "name": "mcp__capy__capy_index",
+    "type": "tool_use"
+  },
+  "id": "e258.0",
+  "parent_tool_use_id": null,
+  "session_id": "88c143cd-887b-4cd8-b9d6-abd4e41da9d1",
+  "source_sequence": 258
+}

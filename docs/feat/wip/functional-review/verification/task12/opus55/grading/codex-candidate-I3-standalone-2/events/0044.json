@@ -1,0 +1,28 @@
+{
+  "actor": "items-01a12bc6-9a44-71f3-9a69-6fc64132582f",
+  "completedAtMs": 1791735870246,
+  "id": "exec-8c7f6e38-a1c7-4b06-860e-7349590ba402",
+  "item": {
+    "aggregatedOutput": "PASS: exact spelling replacement; all other bytes unchanged\ntest_greeting (test_greet.GreetingTests) ... ok\n\n----------------------------------------------------------------------\nRan 1 test in 0.000s\n\nOK\n",
+    "command": "/usr/bin/zsh -lc \"git diff --check\npython3 - <<'PY'\nfrom pathlib import Path\nimport subprocess\nbefore = subprocess.check_output(['git', 'show', 'HEAD:docs/help.md'])\nafter = Path('docs/help.md').read_bytes()\nassert before.count(b'suported') == 1\nassert after == before.replace(b'suported', b'supported')\nprint('PASS: exact spelling replacement; all other bytes unchanged')\nPY\npython3 -B -m unittest discover -s tests -v\"",
+    "commandActions": [
+      {
+        "command": "git diff --check\npython3 - <<'PY'\nfrom pathlib import Path\nimport subprocess\nbefore = subprocess.check_output(['git', 'show', 'HEAD:docs/help.md'])\nafter = Path('docs/help.md').read_bytes()\nassert before.count(b'suported') == 1\nassert after == before.replace(b'suported', b'supported')\nprint('PASS: exact spelling replacement; all other bytes unchanged')\nPY\npython3 -B -m unittest discover -s tests -v",
+        "type": "unknown"
+      }
+    ],
+    "cwd": "/tmp/fr-opus55-matrix-20261011/codex-candidate-I3-standalone-2",
+    "durationMs": 96,
+    "exitCode": 0,
+    "id": "exec-8c7f6e38-a1c7-4b06-860e-7349590ba402",
+    "pluginId": null,
+    "processId": "9063",
+    "scriptPath": null,
+    "source": "unifiedExecStartup",
+    "status": "completed",
+    "type": "commandExecution"
+  },
+  "source_file": "items-01a12bc6-9a44-71f3-9a69-6fc64132582f.json",
+  "startedAtMs": 1791735870149,
+  "turnId": "01a12bc6-9a71-7e92-9cef-32631f3cf2ef"
+}

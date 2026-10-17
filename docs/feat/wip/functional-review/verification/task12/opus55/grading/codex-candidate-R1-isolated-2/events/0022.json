@@ -1,0 +1,28 @@
+{
+  "actor": "items-01a12ae6-0d41-7f22-ac4e-95173c817826",
+  "completedAtMs": 1791721149727,
+  "id": "exec-cd2bd4db-98c1-4cd6-9ab6-1fef86cc8bc7",
+  "item": {
+    "aggregatedOutput": "diff --git a/cleanup.py b/cleanup.py\nindex a5e74d8..f716353 100644\n--- a/cleanup.py\n+++ b/cleanup.py\n@@ -1,5 +1,3 @@\n def cleanup_setup(store, workspace_id, setup_id):\n     store.pending.pop(setup_id, None)\n-    association = store.active.get(workspace_id)\n-    if association and association[\"setup_id\"] == setup_id:\n-        store.active.pop(workspace_id, None)\n+    store.active.pop(workspace_id, None)\ndef cleanup_setup(store, workspace_id, setup_id):\n    store.pending.pop(setup_id, None)\n    store.active.pop(workspace_id, None)\ndef begin_setup(store, workspace_id, setup_id):\n    store.pending[setup_id] = {\"workspace_id\": workspace_id}\n\n\ndef complete_setup(store, workspace_id, setup_id, connection):\n    store.active[workspace_id] = {\"setup_id\": setup_id, \"connection\": connection}\n    store.pending.pop(setup_id, None)\n\n\ndef active_connection(store, workspace_id):\n    association = store.active.get(workspace_id)\n    return association[\"connection\"] if association else None\nclass Store:\n    def __init__(self):\n        self.pending = {}\n        self.active = {}\nimport unittest\nfrom store import Store\nfrom setup import begin_setup, complete_setup, active_connection\nfrom cleanup import cleanup_setup\n\n\nclass SetupTests(unittest.TestCase):\n    def test_completed_setup_is_visible(self):\n        store = Store()\n        begin_setup(store, \"w\", \"one\")\n        complete_setup(store, \"w\", \"one\", \"connection-one\")\n        self.assertEqual(active_connection(store, \"w\"), \"connection-one\")\n\n    def test_cleanup_removes_its_own_association(self):\n        store = Store()\n        begin_setup(store, \"w\", \"one\")\n        complete_setup(store, \"w\", \"one\", \"connection-one\")\n        cleanup_setup(store, \"w\", \"one\")\n        self.assertIsNone(active_connection(store, \"w\"))\n        self.assertNotIn(\"one\", store.pending)\n",
+    "command": "/usr/bin/zsh -lc 'git diff --cached -- cleanup.py && git show :cleanup.py && git show :setup.py && git show :store.py && git show :tests/test_setup.py'",
+    "commandActions": [
+      {
+        "command": "git diff --cached -- cleanup.py && git show :cleanup.py && git show :setup.py && git show :store.py && git show :tests/test_setup.py",
+        "type": "unknown"
+      }
+    ],
+    "cwd": "/tmp/fr-opus55-matrix-20261011/codex-candidate-R1-isolated-2",
+    "durationMs": 92,
+    "exitCode": 0,
+    "id": "exec-cd2bd4db-98c1-4cd6-9ab6-1fef86cc8bc7",
+    "pluginId": null,
+    "processId": "64759",
+    "scriptPath": null,
+    "source": "unifiedExecStartup",
+    "status": "completed",
+    "type": "commandExecution"
+  },
+  "source_file": "items-01a12ae6-0d41-7f22-ac4e-95173c817826.json",
+  "startedAtMs": 1791721149634,
+  "turnId": "01a12ae6-0d6c-71a0-9de7-d1180044f729"
+}

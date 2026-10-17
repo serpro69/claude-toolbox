@@ -1,0 +1,28 @@
+{
+  "actor": "items-01a12ba1-c719-7aa3-ae89-c6cd9a90e92f",
+  "completedAtMs": 1791733686614,
+  "id": "exec-785979f0-2488-451e-83c7-cb0d43043e1a",
+  "item": {
+    "aggregatedOutput": "Reviewed index blobs unchanged. No source files edited.\nRemoved only temporary evidence and instruction packets created for this review.\n",
+    "command": "/usr/bin/zsh -lc \"python3 - <<'PY'\nimport json, pathlib, shutil, subprocess\nbundle = pathlib.Path('/tmp/kk-preference-review-v2kvkt1k')\nmanifest = json.loads((bundle / 'manifest.json').read_text())\nfor item in manifest['evidence']:\n    if item['kind'] == 'candidate':\n        current_blob = subprocess.check_output(['git', 'rev-parse', ':' + item['original_path']], text=True).strip()\n        assert current_blob == item['blob'], item['original_path']\nprint('Reviewed index blobs unchanged. No source files edited.')\nfor path in [bundle, pathlib.Path('/tmp/kk-review-instructions-zsb0laby'), pathlib.Path('/tmp/kk-review-instructions-d_7l0q5w'), pathlib.Path('/tmp/kk-review-instructions-tc_n5a86')]:\n    shutil.rmtree(path)\nprint('Removed only temporary evidence and instruction packets created for this review.')\nPY\"",
+    "commandActions": [
+      {
+        "command": "python3 - <<'PY'\nimport json, pathlib, shutil, subprocess\nbundle = pathlib.Path('/tmp/kk-preference-review-v2kvkt1k')\nmanifest = json.loads((bundle / 'manifest.json').read_text())\nfor item in manifest['evidence']:\n    if item['kind'] == 'candidate':\n        current_blob = subprocess.check_output(['git', 'rev-parse', ':' + item['original_path']], text=True).strip()\n        assert current_blob == item['blob'], item['original_path']\nprint('Reviewed index blobs unchanged. No source files edited.')\nfor path in [bundle, pathlib.Path('/tmp/kk-review-instructions-zsb0laby'), pathlib.Path('/tmp/kk-review-instructions-d_7l0q5w'), pathlib.Path('/tmp/kk-review-instructions-tc_n5a86')]:\n    shutil.rmtree(path)\nprint('Removed only temporary evidence and instruction packets created for this review.')\nPY",
+        "type": "unknown"
+      }
+    ],
+    "cwd": "/tmp/fr-opus55-matrix-20261011/codex-candidate-R9-mismatch-isolated-1",
+    "durationMs": 76,
+    "exitCode": 0,
+    "id": "exec-785979f0-2488-451e-83c7-cb0d43043e1a",
+    "pluginId": null,
+    "processId": "59087",
+    "scriptPath": null,
+    "source": "unifiedExecStartup",
+    "status": "completed",
+    "type": "commandExecution"
+  },
+  "source_file": "items-01a12ba1-c719-7aa3-ae89-c6cd9a90e92f.json",
+  "startedAtMs": 1791733686537,
+  "turnId": "01a12ba1-c747-75d2-896b-02a4bf489e60"
+}

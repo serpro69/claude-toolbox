@@ -1,0 +1,13 @@
+{
+  "actor": "main",
+  "block": {
+    "content": "===LS===\ntotal 264\ndrwxrwxr-x   6 sergio sergio   4096 Oct 10 16:28 .\ndrwxrwxrwt 546 root   root   212992 Oct 10 16:29 ..\n-rw-rw-r--   1 sergio sergio     52 Oct 10 16:28 .capy.toml\ndrwxrwxr-x   6 sergio sergio   4096 Oct 10 16:28 .git\n-rw-rw-r--   1 sergio sergio     19 Oct 10 13:43 .gitignore\ndrwxrwxr-x   2 sergio sergio   4096 Oct 10 16:28 .runner\n-rw-rw-r--   1 sergio sergio    571 Oct 10 13:43 README.md\n-rw-rw-r--   1 sergio sergio     31 Oct 10 13:43 config.py\ndrwxrwxr-x   3 sergio sergio   4096 Oct 10 16:28 plugins\n-rw-rw-r--   1 sergio sergio     94 Oct 10 13:43 preview.py\n-rw-rw-r--   1 sergio sergio    318 Oct 10 13:43 routes.py\n-rw-rw-r--   1 sergio sergio     54 Oct 10 13:43 settings.py\n-rw-rw-r--   1 sergio sergio    401 Oct 10 13:43 tasks.md\ndrwxrwxr-x   2 sergio sergio   4096 Oct 10 16:28 tests\n===config.py===\nEXPORT_PREVIEW_ENABLED = False\n===settings.py===\ndef current_settings():\n    return {\"theme\": \"light\"}\n===routes.py FULL===\nfrom config import EXPORT_PREVIEW_ENABLED\nfrom preview import render_preview\nfrom settings import current_settings\n\n\ndef get(path):\n    if path == \"/settings\":\n        return 200, current_settings()\n    if EXPORT_PREVIEW_ENABLED and path == \"/export-preview\":\n        return 200, render_preview()\n    return 404, None",
+    "is_error": false,
+    "tool_use_id": "toolu_01Bqrbhw38ts4J61sqdZFQT6",
+    "type": "tool_result"
+  },
+  "id": "e91.0",
+  "parent_tool_use_id": null,
+  "session_id": "61d88a0c-85e1-4e2c-8b03-9842eb2ee9b3",
+  "source_sequence": 91
+}

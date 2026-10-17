@@ -1,0 +1,19 @@
+{
+  "actor": "main",
+  "block": {
+    "caller": {
+      "type": "direct"
+    },
+    "id": "toolu_012UNahpERnZT66JLVxzF3pi",
+    "input": {
+      "command": "EV=$(mktemp -d /tmp/kk-evidence-XXXXXX) && git diff --cached > \"$EV/selected.diff\" && mkdir -p \"$EV/candidate/tests\" \"$EV/historical/eval-release/provider\" && git show :client.py > \"$EV/candidate/client.py\" && git show :tests/test_client.py > \"$EV/candidate/tests/test_client.py\" && git show eval-release:provider/settings.py > \"$EV/historical/eval-release/provider/settings.py\" && cat > \"$EV/historical/manifest.json\" <<EOF\n{\n  \"repository\": \"$(pwd)\",\n  \"items\": [\n    {\"role\": \"historical baseline (named supported provider)\",\n     \"ref\": \"eval-release\",\n     \"revision\": \"$(git rev-parse eval-release)\",\n     \"original_path\": \"provider/settings.py\",\n     \"blob\": \"$(git rev-parse eval-release:provider/settings.py)\",\n     \"sha256\": \"$(sha256sum \"$EV/historical/eval-release/provider/settings.py\" | cut -d' ' -f1)\",\n     \"line_span\": \"1-3 (whole file)\",\n     \"omitted\": \"none\"}\n  ],\n  \"candidate\": {\"selector\": \"staged (index)\", \"review_base\": \"$(git rev-parse HEAD)\",\n    \"client.py_blob\": \"$(git rev-parse :client.py)\", \"tests/test_client.py_blob\": \"$(git rev-parse :tests/test_client.py)\",\n    \"note\": \"worktree identical to index for changed files\"},\n  \"notes\": \"provider/settings.py was removed from this checkout after eval-release (deleted in review base ac09e55 lineage); deployed state not verified - source-level tag comparison only.\"\n}\nEOF\nchmod -R a-w \"$EV\"; echo \"$EV\"; find \"$EV\" -type f; echo ---; python3 -B -m unittest discover -s tests 2>&1 | tail -5",
+      "description": "Materialize evidence bundle and run unit tests"
+    },
+    "name": "Bash",
+    "type": "tool_use"
+  },
+  "id": "e112.0",
+  "parent_tool_use_id": null,
+  "session_id": "88c143cd-887b-4cd8-b9d6-abd4e41da9d1",
+  "source_sequence": 112
+}

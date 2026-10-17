@@ -1,0 +1,28 @@
+{
+  "actor": "items-01a12b7b-8256-7c20-80d8-758e245a644f",
+  "completedAtMs": 1791731069261,
+  "id": "exec-371c0d4f-3275-4b3e-872f-4712ed6d3963",
+  "item": {
+    "aggregatedOutput": "/tmp/kk-settings-review-5tlvvM/verification.md\n",
+    "command": "/usr/bin/zsh -lc \"python3 - <<'PY'\nimport pathlib\np = pathlib.Path('/tmp/kk-settings-review-5tlvvM/verification.md')\np.write_text('''# Parent-executed verification\nExecuted against the read-only staged candidate snapshot, using Python 3.10.12.\n\n\"'`python3 -B -m unittest discover -s tests -v`: all 4 tests pass: empty name, save Ada, trim surrounding spaces, preserve internal space.\n\nAn ephemeral standard-library probe called client.save with a capture transport. Verified one PUT /settings request containing the expected display_name and identical returned transport object for:\n- \"  Ada  \" -> \"Ada\"\n- \"Ada Lovelace\" -> unchanged\n- empty string -> empty string\n- whitespace-only space/tab/newline -> empty string\n- surrounding tabs/newlines -> removed\n- surrounding U+00A0 no-break spaces -> removed\nA failing transport raising OSError propagated that exception.\n\nThese are parent-executed local checks, not independent-reviewer execution or real-provider acceptance/persistence checks. No Python 3.9 runtime test, production request, or deployment was performed.\n'\"''')\np.chmod(0o444)\nprint(str(p))\nPY\"",
+    "commandActions": [
+      {
+        "command": "python3 - <<'PY'\nimport pathlib\np = pathlib.Path('/tmp/kk-settings-review-5tlvvM/verification.md')\np.write_text('''# Parent-executed verification\nExecuted against the read-only staged candidate snapshot, using Python 3.10.12.\n\n`python3 -B -m unittest discover -s tests -v`: all 4 tests pass: empty name, save Ada, trim surrounding spaces, preserve internal space.\n\nAn ephemeral standard-library probe called client.save with a capture transport. Verified one PUT /settings request containing the expected display_name and identical returned transport object for:\n- \"  Ada  \" -> \"Ada\"\n- \"Ada Lovelace\" -> unchanged\n- empty string -> empty string\n- whitespace-only space/tab/newline -> empty string\n- surrounding tabs/newlines -> removed\n- surrounding U+00A0 no-break spaces -> removed\nA failing transport raising OSError propagated that exception.\n\nThese are parent-executed local checks, not independent-reviewer execution or real-provider acceptance/persistence checks. No Python 3.9 runtime test, production request, or deployment was performed.\n''')\np.chmod(0o444)\nprint(str(p))\nPY",
+        "type": "unknown"
+      }
+    ],
+    "cwd": "/tmp/fr-opus55-matrix-20261011/codex-candidate-R7-isolated-1",
+    "durationMs": 58,
+    "exitCode": 0,
+    "id": "exec-371c0d4f-3275-4b3e-872f-4712ed6d3963",
+    "pluginId": null,
+    "processId": "68356",
+    "scriptPath": null,
+    "source": "unifiedExecStartup",
+    "status": "completed",
+    "type": "commandExecution"
+  },
+  "source_file": "items-01a12b7b-8256-7c20-80d8-758e245a644f.json",
+  "startedAtMs": 1791731069202,
+  "turnId": "01a12b7b-8283-7b51-a25c-d7a5bbec71f9"
+}

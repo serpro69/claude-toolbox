@@ -1,0 +1,28 @@
+{
+  "actor": "items-01a1356c-ed84-7ec3-9822-a7e848e035d7",
+  "completedAtMs": 1791897886085,
+  "id": "exec-f090b5b6-6726-4db3-896d-cf695172d44f",
+  "item": {
+    "aggregatedOutput": "'  Ada  ' -> 'Ada'\n'Ada Lovelace' -> 'Ada Lovelace'\n'' -> ''\n' \\t\\n' -> ''\n'\\tAda\\n' -> 'Ada'\n'Ada  Lovelace' -> 'Ada  Lovelace'\ntransport failure propagates\n",
+    "command": "/usr/bin/zsh -lc \"python3 -B - <<'PY'\nfrom client import save\nfrom tests.test_client import MemoryTransport\nfor value, expected in [('  Ada  ', 'Ada'), ('Ada Lovelace', 'Ada Lovelace'), ('', ''), (' \\\\t\\\\n', ''), ('\\\\tAda\\\\n', 'Ada'), ('Ada  Lovelace', 'Ada  Lovelace')]:\n    transport=MemoryTransport()\n    result=save(transport,value)\n    assert transport.request==('/settings', {'display_name':expected})\n    assert result=={'ok':True}\n    print(repr(value), '->', repr(transport.request[1]['display_name']))\nclass FailingTransport:\n    def put(self,path,body):\n        raise RuntimeError('transport failure')\ntry:\n    save(FailingTransport(),' Ada ')\nexcept RuntimeError as error:\n    assert str(error)=='transport failure'\n    print('transport failure propagates')\nelse:\n    raise AssertionError('transport failure swallowed')\nPY\"",
+    "commandActions": [
+      {
+        "command": "python3 -B - <<'PY'\nfrom client import save\nfrom tests.test_client import MemoryTransport\nfor value, expected in [('  Ada  ', 'Ada'), ('Ada Lovelace', 'Ada Lovelace'), ('', ''), (' \\t\\n', ''), ('\\tAda\\n', 'Ada'), ('Ada  Lovelace', 'Ada  Lovelace')]:\n    transport=MemoryTransport()\n    result=save(transport,value)\n    assert transport.request==('/settings', {'display_name':expected})\n    assert result=={'ok':True}\n    print(repr(value), '->', repr(transport.request[1]['display_name']))\nclass FailingTransport:\n    def put(self,path,body):\n        raise RuntimeError('transport failure')\ntry:\n    save(FailingTransport(),' Ada ')\nexcept RuntimeError as error:\n    assert str(error)=='transport failure'\n    print('transport failure propagates')\nelse:\n    raise AssertionError('transport failure swallowed')\nPY",
+        "type": "unknown"
+      }
+    ],
+    "cwd": "/tmp/kk-settings-review-x0h14rd0/candidate",
+    "durationMs": 77,
+    "exitCode": 0,
+    "id": "exec-f090b5b6-6726-4db3-896d-cf695172d44f",
+    "pluginId": null,
+    "processId": "50579",
+    "scriptPath": null,
+    "source": "unifiedExecStartup",
+    "status": "completed",
+    "type": "commandExecution"
+  },
+  "source_file": "items-01a1356c-ed84-7ec3-9822-a7e848e035d7.json",
+  "startedAtMs": 1791897886008,
+  "turnId": "01a1356c-edae-7b00-86d9-8e1901d99fce"
+}

@@ -1,0 +1,35 @@
+{
+  "actor": "items-01a12ada-3490-7642-831a-089e602cf7f0",
+  "completedAtMs": 1791720421280,
+  "id": "exec-8afb60b7-48dc-461a-8783-67b667fef520",
+  "item": {
+    "appContext": null,
+    "arguments": {
+      "content": "Delayed cleanup must remain scoped to the operation that scheduled it, even in a serialized store. A mutable parent key (such as workspace_id) can point to a replacement operation by the time queued cleanup or a retry runs; deleting solely by that key removes a successful replacement. Preserve an operation identity/ownership check before deleting active state, while independently removing the failed operation's pending record. Verification should cover failed operation pending -> replacement completes -> stale cleanup -> unchanged consumer still sees replacement, plus stale retry after later reuse and same-owner cleanup controls. These lifecycle checks expose regressions that same-owner cleanup tests miss without requiring concurrency. Confirmed P1 in staged cleanup.py versus HEAD a7ab15e9fc17243d0f00288ca01907dd06dcdb73.",
+      "source": "kk:review-findings"
+    },
+    "durationMs": 1,
+    "error": null,
+    "id": "exec-8afb60b7-48dc-461a-8783-67b667fef520",
+    "mcpAppUi": null,
+    "pluginId": null,
+    "readOnlyHint": false,
+    "result": {
+      "_meta": null,
+      "content": [
+        {
+          "text": "Indexed 1 sections (0 with code) from: kk:review-findings\nUse search(queries: [\"...\"]) to query this content. Use source: \"kk:review-findings\" to scope results.",
+          "type": "text"
+        }
+      ],
+      "structuredContent": null
+    },
+    "server": "capy",
+    "status": "completed",
+    "tool": "capy_index",
+    "type": "mcpToolCall"
+  },
+  "source_file": "items-01a12ada-3490-7642-831a-089e602cf7f0.json",
+  "startedAtMs": 1791720421278,
+  "turnId": "01a12ada-34bc-7460-b0dd-dbafaa6ef16f"
+}

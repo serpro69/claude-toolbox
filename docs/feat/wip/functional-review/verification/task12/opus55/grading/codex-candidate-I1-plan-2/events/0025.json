@@ -1,0 +1,30 @@
+{
+  "actor": "items-01a12b04-6da3-7f30-b87e-cb7020ba3ccc",
+  "completedAtMs": 1791723126822,
+  "id": "exec-7ea2439a-8d85-4af2-9387-5107b52ecd37",
+  "item": {
+    "aggregatedOutput": "# Python type contracts\n\n## Describe the behavior callers can rely on\n\n- Follow the project's annotation policy; annotate new or changed public boundaries and non-obvious return shapes. Avoid unrelated annotation churn.\n- Accept the narrowest required capability: `Iterable` for one pass, `Sequence` for indexing, or `Mapping` for read access. These interfaces do not guarantee that the underlying object is immutable.\n- Model absence explicitly. An optional argument with a default is not necessarily nullable; include `None` only when the contract allows it.\n- Use a small `Protocol` when consumers need structural behavior, and a `TypedDict` for a known dictionary shape. Add abstractions only when they clarify a real boundary.\n- Prefer narrowing uncertain values to spreading `Any`. Keep casts or type-checker suppressions local and explain why the value is safe.\n\nAnnotations, `TypedDict`, and `cast()` do not validate external data at runtime. Parse and validate at the boundary before trusting a typed value. See [Python typing](https://docs.python.org/3/library/typing.html).\n\n## Preserve compatibility and runtime behavior\n\n- Choose annotation syntax and typing APIs supported by the project's Python versions and configured checker. A new typing convenience does not justify raising the runtime floor or adding a backport dependency by default.\n- Before moving an import under `TYPE_CHECKING` or changing annotation evaluation, check whether the application inspects annotations at runtime. Frameworks and serializers may need those names to resolve.\n- For `.pyi` changes, preserve the stub's imports, exported names, defaults, overloads, and sync/async shape. Match an available implementation; when it is absent, state that limitation rather than inventing runtime behavior. Validate with the existing checker when available.\n",
+    "command": "/usr/bin/zsh -lc 'cat /home/sergio/.codex/plugins/cache/fr-opus55-581dd0e1-20261011/kk/0.23.0/profiles/python/implement/typing.md'",
+    "commandActions": [
+      {
+        "command": "cat /home/sergio/.codex/plugins/cache/fr-opus55-581dd0e1-20261011/kk/0.23.0/profiles/python/implement/typing.md",
+        "name": "typing.md",
+        "path": "/home/sergio/.codex/plugins/cache/fr-opus55-581dd0e1-20261011/kk/0.23.0/profiles/python/implement/typing.md",
+        "type": "read"
+      }
+    ],
+    "cwd": "/tmp/fr-opus55-matrix-20261011/codex-candidate-I1-plan-2",
+    "durationMs": 69,
+    "exitCode": 0,
+    "id": "exec-7ea2439a-8d85-4af2-9387-5107b52ecd37",
+    "pluginId": null,
+    "processId": "37055",
+    "scriptPath": null,
+    "source": "unifiedExecStartup",
+    "status": "completed",
+    "type": "commandExecution"
+  },
+  "source_file": "items-01a12b04-6da3-7f30-b87e-cb7020ba3ccc.json",
+  "startedAtMs": 1791723126752,
+  "turnId": "01a12b04-6dcf-7540-94ff-d0ffe24bb975"
+}

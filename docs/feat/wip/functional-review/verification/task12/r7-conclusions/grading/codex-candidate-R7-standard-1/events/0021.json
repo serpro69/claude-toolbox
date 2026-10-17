@@ -1,0 +1,28 @@
+{
+  "actor": "items-01a13560-192c-7ec3-8aa6-821218d30987",
+  "completedAtMs": 1791896974917,
+  "id": "exec-50038946-2880-4547-93f8-42ac9b1247af",
+  "item": {
+    "aggregatedOutput": "Runtime: 3.10.12\n'Ada' base= {'display_name': 'Ada'} candidate= ('/settings', {'display_name': 'Ada'})\n'  Ada  ' base= {'display_name': '  Ada  '} candidate= ('/settings', {'display_name': 'Ada'})\n'Ada Lovelace' base= {'display_name': 'Ada Lovelace'} candidate= ('/settings', {'display_name': 'Ada Lovelace'})\n'' base= {'display_name': ''} candidate= ('/settings', {'display_name': ''})\n'   ' base= {'display_name': '   '} candidate= ('/settings', {'display_name': ''})\n'\\tAda\\n' base= {'display_name': '\\tAda\\n'} candidate= ('/settings', {'display_name': 'Ada'})\n'\\xa0Ada\\xa0' base= {'display_name': '\\xa0Ada\\xa0'} candidate= ('/settings', {'display_name': 'Ada'})\n",
+    "command": "/usr/bin/zsh -lc \"python3 -B - <<'PY'\nimport subprocess\nimport sys\nfrom client import save\n\nprint('Runtime:', sys.version.split()[0])\nbase = {}\nexec(compile(subprocess.check_output(['git', 'show', 'HEAD:payload.py'], text=True), 'HEAD:payload.py', 'exec'), base)\n\nclass RecordingTransport:\n    def put(self, path, body):\n        self.request = (path, body)\n        return {'ok': True}\n\nfor value in ['Ada', '  Ada  ', 'Ada Lovelace', '', '   ', '\\\\tAda\\\\n', '\\\\u00a0Ada\\\\u00a0']:\n    transport = RecordingTransport()\n    result = save(transport, value)\n    expected = {'display_name': value.strip()}\n    assert transport.request == ('/settings', expected)\n    assert result == {'ok': True}\n    print(repr(value), 'base=', repr(base['build_payload'](value)), 'candidate=', repr(transport.request))\nPY\"",
+    "commandActions": [
+      {
+        "command": "python3 -B - <<'PY'\nimport subprocess\nimport sys\nfrom client import save\n\nprint('Runtime:', sys.version.split()[0])\nbase = {}\nexec(compile(subprocess.check_output(['git', 'show', 'HEAD:payload.py'], text=True), 'HEAD:payload.py', 'exec'), base)\n\nclass RecordingTransport:\n    def put(self, path, body):\n        self.request = (path, body)\n        return {'ok': True}\n\nfor value in ['Ada', '  Ada  ', 'Ada Lovelace', '', '   ', '\\tAda\\n', '\\u00a0Ada\\u00a0']:\n    transport = RecordingTransport()\n    result = save(transport, value)\n    expected = {'display_name': value.strip()}\n    assert transport.request == ('/settings', expected)\n    assert result == {'ok': True}\n    print(repr(value), 'base=', repr(base['build_payload'](value)), 'candidate=', repr(transport.request))\nPY",
+        "type": "unknown"
+      }
+    ],
+    "cwd": "/tmp/fr-r7-conclusions-20261013/codex-candidate-R7-standard-1",
+    "durationMs": 66,
+    "exitCode": 0,
+    "id": "exec-50038946-2880-4547-93f8-42ac9b1247af",
+    "pluginId": null,
+    "processId": "30309",
+    "scriptPath": null,
+    "source": "unifiedExecStartup",
+    "status": "completed",
+    "type": "commandExecution"
+  },
+  "source_file": "items-01a13560-192c-7ec3-8aa6-821218d30987.json",
+  "startedAtMs": 1791896974850,
+  "turnId": "01a13560-195e-7911-9446-85e4a55cb71b"
+}

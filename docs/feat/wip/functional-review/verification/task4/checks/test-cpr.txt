@@ -1,0 +1,74 @@
+
+=== Section 1: Exact Matching ===
+[TEST] Exact match on plugin name
+[PASS] kk resolves to kk@claude-toolbox
+[TEST] Exact match is case-insensitive
+[PASS] KK matches kk
+[TEST] Exact match on different plugin
+[PASS] cortex resolves correctly
+[TEST] No substring false positive: 'kk' does not match 'kk-utils'
+[PASS] kk is not kk-utils
+[TEST] kk-utils matches its own entry
+[PASS] kk-utils resolves to kk-utils@other-repo
+
+=== Section 2: Project Resolution Cascade ===
+[TEST] Project-bound install wins when projectPath matches (proj-a)
+[PASS] proj-a resolves to its own install, not the newer proj-b
+[TEST] Project-bound install wins when projectPath matches (proj-b)
+[PASS] proj-b resolves to its own install
+[TEST] A nested cwd matches its project root
+[PASS] subdirectory of proj-a resolves to proj-a
+[TEST] Falls back to the user-scope (global) entry when no project matches
+[PASS] unrelated project gets the global install
+[TEST] No project match and no user scope: falls back to last installed
+[PASS] most-recently-installed cross-project entry wins as last resort
+
+=== Section 3: Fuzzy Matching ===
+[TEST] Fuzzy match on close name
+Warning: no exact match for 'corte'; using closest fuzzy match: /var/folders/vv/lnz9c5h95pnbjzsz93qmr0n80000gn/T/cpr-test.Y9Puzs/cache/cortex-ai/cortex/0.3.0
+[PASS] corte fuzzy-matches cortex
+[TEST] Fuzzy match warns on stderr (fail loud — may be the wrong plugin)
+[PASS] fuzzy match emits a warning on stderr
+[TEST] Exact match is silent on stderr
+[PASS] exact match emits no warning
+[TEST] No match for completely unrelated name
+[PASS] zzzzz should not match anything
+
+=== Section 4: Error Handling ===
+[TEST] No arguments exits non-zero
+[PASS] No arguments should fail
+[TEST] Usage message on no arguments
+[PASS] Shows usage on no args
+[TEST] Missing plugins file exits non-zero
+[PASS] Missing plugins file should fail
+[TEST] Malformed JSON exits non-zero
+[PASS] Malformed JSON should fail
+[TEST] Plugin not found shows error on stderr
+[PASS] Shows error for unknown plugin
+
+=== Section 5: Install Path Validation ===
+[TEST] Entry with non-existent installPath is skipped
+[PASS] Non-existent installPath should not be returned
+[TEST] Missing project-bound installPath falls through to a valid lower tier
+[PASS] missing tier-1 path falls through to the user-scope install
+
+=== Section 6: set-plugin-root.sh ===
+[TEST] Writes export line resolved via cpr.py
+[PASS] cpr.py-resolved path is exported
+[TEST] Passes $CLAUDE_PROJECT_DIR through to cpr.py
+[PASS] CLAUDE_PROJECT_DIR selects the project-bound install
+[TEST] Falls back to $1 when cpr.py cannot resolve
+[PASS] argument fallback is exported
+[TEST] Unset CLAUDE_ENV_FILE exits cleanly without error
+[PASS] no ambiguous-redirect error when CLAUDE_ENV_FILE is unset
+[TEST] Neither cpr.py nor $1 resolves: nothing written
+[PASS] no export line when no valid root found
+[TEST] Exits cleanly when the env file append fails (unwritable target)
+[PASS] append failure does not produce a non-zero hook exit
+
+=== Test Summary ===
+Test cases:        27
+Assertions passed: 27
+Assertions failed: 0
+
+All tests passed!

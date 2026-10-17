@@ -1,0 +1,70 @@
+# Tasks: label-reader
+
+> Status: in-progress
+
+## Task 1: Read both label formats
+
+- **Status:** in-progress
+- **Depends on:** —
+- [ ] Implement legacy and object label reads, including mixed lists.
+      (Reopened 2026-10-11: previously checked on a snapshot-1 basis; current
+      records.py reads object labels only — see Execution context.)
+- [x] Run the local unit suite. (Previous session; covers object and empty
+      lists only.)
+- [ ] Verify current compatibility evidence and complete independent review.
+      (Compatibility verification done 2026-10-11 — fails; review deferred.)
+- [x] Reconcile completion and activation conditions.
+
+### Execution context — previous session
+
+The previous session recorded a green unit suite and prepared handoff.md for
+resumption. Its compatibility assessment used snapshot-1. Final verification
+and completion reconciliation remain pending.
+
+### Execution context — 2026-10-11 resume
+
+Basis: commit f595774, clean worktree; local snapshot `state/release.json`
+`snapshot_id: snapshot-2`. Pass scope set by the user: verification and
+completion record only, so runtime code, tests and data were left unchanged.
+
+- **Observed — handoff superseded.** handoff.md (basis snapshot-1) says that
+  "all label records have been migrated to object form" and that legacy work is
+  complete. The current snapshot contradicts this: `state/release.json` has
+  `migration: partial` and `active_label_shapes: [text, object]`, and
+  `state/records.json` contains `legacy-a` with string label `"Alpha"`
+  alongside `current-b` with object label `{"text": "Beta"}`. handoff.md is an
+  author assessment, not a requirement change (design.md §Requirements and
+  authority).
+- **Observed — hard requirement unmet.** `records.py:2` `read_label` returns
+  `record["label"]["text"]` with no string branch. Static trace:
+  `api.list_labels(<state/records.json rows>)` reaches `"Alpha"["text"]` and
+  raises `TypeError` instead of returning `["Alpha", "Beta"]`. Legacy-only and
+  mixed lists both fail; object-only lists work. design.md approves no
+  exception to mixed-format support.
+- **Observed — test gap.** `tests/test_labels.py` covers only an object label
+  and an empty list. There are no legacy-string or mixed-list cases, so the
+  previous green run does not test the Task 1 contract.
+- **Verification — runtime unavailable.** The documented command
+  `python3 -B -m unittest discover -s tests` (README.md) could not run here
+  because shell execution was denied. No runtime result is claimed for this
+  pass; the failure above comes from source tracing only.
+- **Review — deferred.** Independent review (`/kk:review-code` isolated) was not
+  run. The implementation under review fails a hard requirement and must change
+  first, so reviewing it now would not count toward completion.
+- **Completion — not done.** Code completion is blocked by the unmet
+  mixed-format requirement. Activation is a separate condition (below) and does
+  not affect code completion either way.
+
+Deferred actions:
+
+| # | Action | Owner | Reason | Next action | Verification condition |
+| - | ------ | ----- | ------ | ----------- | ---------------------- |
+| 1 | Support legacy string labels in `read_label` | Unassigned (next `/kk:implement` pass) | Hard Task 1 requirement unmet; code edits out of scope for this pass | Accept both `"label": "<text>"` and `"label": {"text": "<text>"}`, preserving `list_labels` order and text | `list_labels` on `state/records.json` rows returns `["Alpha", "Beta"]` |
+| 2 | Add legacy, object and mixed-list tests | Unassigned (with #1) | Suite does not exercise the contract | Extend `tests/test_labels.py` with legacy-only and mixed-order cases | New cases fail on f595774 `records.py` and pass after #1 |
+| 3 | Run documented unit suite | Unassigned (with #1) | Shell execution unavailable this session | `python3 -B -m unittest discover -s tests` | Exit 0 with a non-zero executed-test count that includes the new cases |
+| 4 | Independent code review | Unassigned (after #1–#3) | Deferred until the implementation changes | `/kk:review-code` isolated with refreshed context | Findings resolved or durably recorded |
+| 5 | Publish operator notice (activation condition, not code completion) | Release coordinator | design.md §Delivery boundary; `state/release.json` `operator_notice.status: pending` | Publish the notice before dashboard activation | Notice acknowledgement attached to the activation record |
+
+Open question (not a requirement): design.md does not specify behavior for a
+label that is neither a string nor a `{"text": ...}` object. Decide whether to
+raise or reject such labels while doing #1. Do not invent a silent fallback.

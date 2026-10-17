@@ -1,0 +1,30 @@
+{
+  "actor": "items-01a12bb8-c732-7992-bc21-e36ff36b47fd",
+  "completedAtMs": 1791734974768,
+  "id": "exec-e263f980-8a06-4f2f-a1b9-6261d54b4c89",
+  "item": {
+    "aggregatedOutput": "class TransientRead(Exception):\n    pass\n\n\nclass MissingPreference(Exception):\n    pass\n\n\nclass ScriptedBackend:\n    def __init__(self, outcomes):\n        self.outcomes = iter(outcomes)\n        self.keys = []\n\n    def read(self, key):\n        self.keys.append(key)\n        outcome = next(self.outcomes)\n        if isinstance(outcome, Exception):\n            raise outcome\n        return outcome\n\n\nclass Repository:\n    def __init__(self, backend):\n        self.backend = backend\n\n    def read_once(self, key):\n        return self.backend.read(key)\n\n    def read_resilient(self, key):\n        for attempt in range(3):\n            try:\n                return self.read_once(key)\n            except TransientRead:\n                if attempt == 2:\n                    raise\n",
+    "command": "/usr/bin/zsh -lc \"cat '/tmp/kk-isolated-review-zvHtbV/candidate/repository.py'\"",
+    "commandActions": [
+      {
+        "command": "cat /tmp/kk-isolated-review-zvHtbV/candidate/repository.py",
+        "name": "repository.py",
+        "path": "/tmp/kk-isolated-review-zvHtbV/candidate/repository.py",
+        "type": "read"
+      }
+    ],
+    "cwd": "/tmp/fr-opus55-matrix-20261011/codex-candidate-R9-recovery-isolated-1",
+    "durationMs": 62,
+    "exitCode": 0,
+    "id": "exec-e263f980-8a06-4f2f-a1b9-6261d54b4c89",
+    "pluginId": null,
+    "processId": "56836",
+    "scriptPath": null,
+    "source": "unifiedExecStartup",
+    "status": "completed",
+    "type": "commandExecution"
+  },
+  "source_file": "items-01a12bb8-c732-7992-bc21-e36ff36b47fd.json",
+  "startedAtMs": 1791734974705,
+  "turnId": "01a12bb8-c752-7da0-ba08-af077c7b45f4"
+}

@@ -1,0 +1,30 @@
+{
+  "actor": "items-01a12b23-8536-7e01-9672-4c3052bbf9d0",
+  "completedAtMs": 1791725160344,
+  "id": "exec-ff0838d3-02c5-4814-ad15-43f2d8c3bef3",
+  "item": {
+    "aggregatedOutput": "README.md:8:returns its receipt. A fresh operation ID must perform a fresh save, even for\nREADME.md:11:The provider replaces preferences idempotently. A receipt write can fail after\nservice.py:1:def save(store, workspace, operation_id, values):\nservice.py:2:    record = next((item for item in store.recovery.values()\nservice.py:5:        record = {\"operation_id\": operation_id, \"workspace\": workspace,\nservice.py:7:        store.recovery[operation_id] = record\nservice.py:11:    store.receipt(record)\nservice.py:12:    return {\"ok\": True, \"operation_id\": operation_id}\nclient.py:4:def submit(store, workspace, operation_id, values):\nclient.py:5:    return save(store, workspace, operation_id, values)\nstore.py:8:        self.recovery = {}\nstore.py:9:        self.fail_receipt_once = False\nstore.py:14:    def receipt(self, record):\nstore.py:15:        if self.fail_receipt_once:\nstore.py:16:            self.fail_receipt_once = False\nstore.py:17:            raise ReceiptUnavailable(\"receipt store unavailable\")\nstore.py:19:        return {\"ok\": True, \"operation_id\": record[\"operation_id\"]}\ntests/test_save.py:8:    def test_save(self):\ntests/test_save.py:10:        result = submit(store, \"w\", \"op-1\", {\"color\": \"blue\"})\ntests/test_save.py:16:        store.fail_receipt_once = True\ntests/test_save.py:18:            submit(store, \"w\", \"op-1\", {\"color\": \"blue\"})\ntests/test_save.py:19:        self.assertTrue(submit(store, \"w\", \"op-1\", {\"color\": \"blue\"})[\"ok\"])\ntests/test_save.py:22:    def test_completed_id_returns_receipt(self):\ntests/test_save.py:24:        submit(store, \"w\", \"op-1\", {\"color\": \"blue\"})\ntests/test_save.py:25:        result = submit(store, \"w\", \"op-1\", {\"color\": \"blue\"})\ntests/test_save.py:26:        self.assertEqual(result, {\"ok\": True, \"operation_id\": \"op-1\"})\n",
+    "command": "/usr/bin/zsh -lc \"rg -n 'save\\\\(|submit\\\\(|recovery|receipt|operation_id|fail_receipt_once' service.py store.py client.py tests README.md\"",
+    "commandActions": [
+      {
+        "command": "rg -n \"save\\\\(|submit\\\\(|recovery|receipt|operation_id|fail_receipt_once\" service.py store.py client.py tests README.md",
+        "path": "service.py",
+        "query": "save\\(|submit\\(|recovery|receipt|operation_id|fail_receipt_once",
+        "type": "search"
+      }
+    ],
+    "cwd": "/tmp/fr-opus55-matrix-20261011/codex-baseline-R2-isolated-2",
+    "durationMs": 94,
+    "exitCode": 0,
+    "id": "exec-ff0838d3-02c5-4814-ad15-43f2d8c3bef3",
+    "pluginId": null,
+    "processId": "6744",
+    "scriptPath": null,
+    "source": "unifiedExecStartup",
+    "status": "completed",
+    "type": "commandExecution"
+  },
+  "source_file": "items-01a12b23-8536-7e01-9672-4c3052bbf9d0.json",
+  "startedAtMs": 1791725160249,
+  "turnId": "01a12b23-855c-7a02-9175-2a094aa67342"
+}

@@ -1,0 +1,28 @@
+{
+  "actor": "items-01a12b92-c6fc-7c02-ae08-78d95c377162",
+  "completedAtMs": 1791732460629,
+  "id": "exec-e16fa260-0af6-406a-b3b3-55e99bf9d83c",
+  "item": {
+    "aggregatedOutput": "     1\tclass TransientRead(Exception):\n     2\t    pass\n     3\t\n     4\t\n     5\tclass MissingPreference(Exception):\n     6\t    pass\n     7\t\n     8\t\n     9\tclass ScriptedBackend:\n    10\t    def __init__(self, outcomes):\n    11\t        self.outcomes = iter(outcomes)\n    12\t        self.keys = []\n    13\t\n    14\t    def read(self, key):\n    15\t        self.keys.append(key)\n    16\t        outcome = next(self.outcomes)\n    17\t        if isinstance(outcome, Exception):\n    18\t            raise outcome\n    19\t        return outcome\n    20\t\n    21\t\n    22\tclass Repository:\n    23\t    def __init__(self, backend):\n    24\t        self.backend = backend\n    25\t\n    26\t    def read_once(self, key):\n    27\t        return self.backend.read(key)\n    28\t\n    29\t    def read_resilient(self, key):\n    30\t        for attempt in range(3):\n    31\t            try:\n    32\t                return self.read_once(key)\n    33\t            except TransientRead:\n    34\t                if attempt == 2:\n    35\t                    raise\n     1\tfrom reader import read_preferences\n     2\t\n     3\t\n     4\tclass Preferences:\n     5\t    def __init__(self, repository):\n     6\t        self.repository = repository\n     7\t\n     8\t    def read(self, key):\n     9\t        return read_preferences(self.repository, key)\n# Preference reads\n\nPython 3.9+, standard library only. Run `python3 -B -m unittest discover -s tests`.\n\nThis change accepts preference IDs with surrounding whitespace. Trim the ID\nbefore looking it up; preserve the existing resilient-read contract. A logical\nread may make up to three attempts on `TransientRead`, returning the first\nsuccessful result. Exhausted transient errors propagate. `MissingPreference`\nis permanent and must propagate on the first attempt. Reads have no side effects.\n\n`Preferences.read` is the public entry point. `Repository.read_resilient`\nowns the bounded retry policy; `read_once` performs one attempt. The scripted\nbackend models finite outcomes without sleeping, services or concurrency.\n__pycache__/\n*.pyc\n./tests/test_reads.py:3:from preferences import Preferences\n./tests/test_reads.py:4:from repository import Repository, ScriptedBackend, TransientRead\n./tests/test_reads.py:14:        backend = ScriptedBackend([TransientRead(\"busy\"), {\"color\": \"blue\"}])\n./tests/test_reads.py:15:        with self.assertRaises(TransientRead):\n./preferences.py:1:from reader import read_preferences\n./preferences.py:9:        return read_preferences(self.repository, key)\n./README.md:5:This change accepts preference IDs with surrounding whitespace. Trim the ID\n./README.md:7:read may make up to three attempts on `TransientRead`, returning the first\n./README.md:11:`Preferences.read` is the public entry point. `Repository.read_resilient`\n./README.md:12:owns the bounded retry policy; `read_once` performs one attempt. The scripted\n./reader.py:1:def read_preferences(repository, key):\n./reader.py:2:    return repository.read_once(key.strip())\n./repository.py:1:class TransientRead(Exception):\n./repository.py:26:    def read_once(self, key):\n./repository.py:29:    def read_resilient(self, key):\n./repository.py:32:                return self.read_once(key)\n./repository.py:33:            except TransientRead:\n",
+    "command": "/usr/bin/zsh -lc \"nl -ba repository.py; nl -ba preferences.py; cat README.md .gitignore; rg -n 'read_resilient|read_once|read_preferences|TransientRead|retri|normaliz|preference' .\"",
+    "commandActions": [
+      {
+        "command": "nl -ba repository.py; nl -ba preferences.py; cat README.md .gitignore; rg -n 'read_resilient|read_once|read_preferences|TransientRead|retri|normaliz|preference' .",
+        "type": "unknown"
+      }
+    ],
+    "cwd": "/tmp/fr-opus55-matrix-20261011/codex-baseline-R9-mismatch-standard-1",
+    "durationMs": 62,
+    "exitCode": 0,
+    "id": "exec-e16fa260-0af6-406a-b3b3-55e99bf9d83c",
+    "pluginId": null,
+    "processId": "83973",
+    "scriptPath": null,
+    "source": "unifiedExecStartup",
+    "status": "completed",
+    "type": "commandExecution"
+  },
+  "source_file": "items-01a12b92-c6fc-7c02-ae08-78d95c377162.json",
+  "startedAtMs": 1791732460566,
+  "turnId": "01a12b92-c726-7132-b192-3d44e256c9d8"
+}

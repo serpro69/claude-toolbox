@@ -1,0 +1,19 @@
+{
+  "actor": "main",
+  "block": {
+    "caller": {
+      "type": "direct"
+    },
+    "id": "toolu_012cpwhYprCRdLNM8xh2ocH2",
+    "input": {
+      "content": "Pattern: Client increment that hard-requires a NEW response field the released/old provider cannot yet emit \u2192 breaks old-provider compatibility (independently-releasable-main violation).\n\nSymptom: new client adds `if response.get(\"new_field\") is not True: raise ...` unconditionally. Released provider returns success without that field, so `.get()` yields None, `None is not True` is True, and every ordinary operation raises even though it actually succeeded. Classic new-consumer/old-provider incompatibility.\n\nChecks when reviewing protocol/receipt/handshake additions:\n- Retrieve the ACTUAL supported provider source at its named baseline (e.g. git tag), not the test's fake. Trace the default/ordinary path against it.\n- A green unit test whose fake `send` returns the NEW shape ({\"ok\":True,\"applied\":True}) masks the regression; demand a test driving the baseline shape ({\"ok\":True}).\n- Absence of a receipt field must be treated as legacy-success (gate enforcement on explicit rejection `is False`, or scope it behind the feature flag), not as failure.\n- Pending provider work in a separate repo does NOT excuse the broken current flow; distinguish deployment from activation.\n\nSeverity: P0 (breaks 100% of ordinary saves against supported baseline). Companion P1: test fidelity gap.",
+      "source": "kk:review-findings"
+    },
+    "name": "mcp__capy__capy_index",
+    "type": "tool_use"
+  },
+  "id": "e262.0",
+  "parent_tool_use_id": null,
+  "session_id": "21198cb7-2cf8-4170-8a6b-2903937df7f6",
+  "source_sequence": 262
+}

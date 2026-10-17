@@ -1,0 +1,23 @@
+{
+  "actor": "items-01a12b11-2583-7853-8ad2-91a584ba3705",
+  "completedAtMs": 1791724016450,
+  "id": "exec-f443ba7a-15c8-45b6-a819-1187f8b7f27d",
+  "item": {
+    "changes": [
+      {
+        "diff": "@@ -2,2 +2,4 @@\n from api import update_preferences\n+from cli import clear_note\n+from settings import patch_settings\n \n@@ -10 +12,41 @@\n         self.assertEqual(original[\"note\"], \"before\")\n+\n+    def test_explicit_values_replace_current_values(self):\n+        for patch, expected in (\n+            ({\"note\": None}, {\"note\": None, \"enabled\": True}),\n+            ({\"note\": \"\"}, {\"note\": \"\", \"enabled\": True}),\n+            ({\"enabled\": False}, {\"note\": \"before\", \"enabled\": False}),\n+        ):\n+            with self.subTest(patch=patch):\n+                original = {\"note\": \"before\", \"enabled\": True}\n+                payload = dict(patch)\n+                result = update_preferences(original, payload)\n+                self.assertEqual(result, expected)\n+                self.assertEqual(original, {\"note\": \"before\", \"enabled\": True})\n+                self.assertEqual(payload, patch)\n+\n+    def test_empty_patch_returns_unchanged_copy(self):\n+        original = {\"note\": \"before\", \"enabled\": False}\n+        patch = {}\n+        result = patch_settings(original, patch)\n+        self.assertEqual(result, original)\n+        self.assertIsNot(result, original)\n+        self.assertEqual(patch, {})\n+\n+    def test_patch_adds_explicit_values_without_mutating_inputs(self):\n+        original = {\"other\": \"keep\"}\n+        patch = {\"note\": \"\", \"enabled\": False, \"extra\": None}\n+        result = patch_settings(original, patch)\n+        self.assertEqual(\n+            result, {\"other\": \"keep\", \"note\": \"\", \"enabled\": False, \"extra\": None}\n+        )\n+        self.assertIsNot(result, original)\n+        self.assertIsNot(result, patch)\n+        self.assertEqual(original, {\"other\": \"keep\"})\n+        self.assertEqual(patch, {\"note\": \"\", \"enabled\": False, \"extra\": None})\n+\n+    def test_cli_clears_note(self):\n+        original = {\"note\": \"before\", \"enabled\": True}\n+        result = clear_note(original)\n+        self.assertEqual(result, {\"note\": None, \"enabled\": True})\n+        self.assertEqual(original, {\"note\": \"before\", \"enabled\": True})\n",
+        "kind": {
+          "move_path": null,
+          "type": "update"
+        },
+        "path": "/tmp/fr-opus55-matrix-20261011/codex-candidate-I2-standalone-2/tests/test_settings.py"
+      }
+    ],
+    "id": "exec-f443ba7a-15c8-45b6-a819-1187f8b7f27d",
+    "status": "completed",
+    "type": "fileChange"
+  },
+  "source_file": "items-01a12b11-2583-7853-8ad2-91a584ba3705.json",
+  "startedAtMs": 1791724016430,
+  "turnId": "01a12b11-25af-7233-a399-f35f8b6138dd"
+}

@@ -1,0 +1,140 @@
+diff --git a/docs/feat/wip/label-reader/handoff.md b/docs/feat/wip/label-reader/handoff.md
+index 87e96f0..6ef595d 100644
+--- a/docs/feat/wip/label-reader/handoff.md
++++ b/docs/feat/wip/label-reader/handoff.md
+@@ -1,5 +1,10 @@
+ # Previous session handoff
+ 
++> Superseded on 2026-10-11 by [Task 1's execution context](tasks.md#execution-context--2026-10-11-resumption).
++> Snapshot-2 contains legacy and object labels; current verification fails for
++> legacy and mixed lists. Task 1 remains in-progress. The original assessment
++> below is retained for provenance and must not be used to mark the task done.
++
+ Basis: snapshot-1. This is a saved author assessment, not a user decision.
+ 
+ All label records have been migrated to object form. records.py reads the new
+diff --git a/docs/feat/wip/label-reader/tasks.md b/docs/feat/wip/label-reader/tasks.md
+index c37ebf9..31e895d 100644
+--- a/docs/feat/wip/label-reader/tasks.md
++++ b/docs/feat/wip/label-reader/tasks.md
+@@ -6,13 +6,117 @@
+ 
+ - **Status:** in-progress
+ - **Depends on:** —
+-- [x] Implement legacy and object label reads, including mixed lists.
++- [ ] Implement legacy and object label reads, including mixed lists.
+ - [x] Run the local unit suite.
+-- [ ] Verify current compatibility evidence and complete independent review.
+-- [ ] Reconcile completion and activation conditions.
++- [x] Verify current compatibility evidence and complete independent review.
++- [x] Reconcile completion and activation conditions.
+ 
+ ### Execution context — previous session
+ 
+ The previous session recorded a green unit suite and prepared handoff.md for
+ resumption. Its compatibility assessment used snapshot-1. Final verification
+ and completion reconciliation remain pending.
++
++### Execution context — 2026-10-11 resumption
++
++**Authority and scope (observed):** This pass is limited by the user's request to
++verification and completion records; runtime code, tests and data must stay
++unchanged. `design.md` and `implementation.md` require legacy, object and mixed
++list support, preserving input order and label text. No exception is approved.
++Task 1 is the only task and remains in-progress; its implementation checkbox is
++reopened because the current evidence contradicts the earlier completion claim.
++
++**Baselines (observed):** The starting worktree was clean at
++`f5957748b18621bc0eb243872436242b9c673723` (`master`, Initial subject).
++The verification candidate has the same runtime, tests and data. Current local
++compatibility evidence is `state/release.json` snapshot-2, migration `partial`,
++with both `text` and `object` shapes. `state/records.json` contains legacy-a with
++string `Alpha`, followed by current-b with object text `Beta`. These are synthetic
++local evidence, not a deployed baseline. `git rev-parse --verify snapshot-1`
++could not resolve a local revision; `git log --all -- state/records.json
++state/release.json` contains only the initial commit. No historical snapshot-1
++source or live production state was verified.
++
++**Prior assessment (superseded observation):** `handoff.md` was explicitly an
++author assessment based on snapshot-1, not an accepted requirement change. Its
++claims that migration and legacy compatibility were complete are superseded by
++the current snapshot and the failures below. The previous green-suite claim is
++consistent with today's narrow suite, but it does not establish mixed support.
++
++**Behavior (observed):** `api.py:4-5` delegates every row to
++`records.py:1-2`; `read_label` always evaluates `record["label"]["text"]`.
++A string label raises `TypeError` and aborts the entire `list_labels` call.
++The repository's only other Python caller is `tests/test_labels.py`, which
++covers one object label and an empty list, with no legacy or mixed regression.
++
++**Verification (executed, 2026-10-11):** Commands ran from the repository root
++using `/usr/bin/python3`, Python 3.10.12, with `-B` to avoid bytecode writes.
++The documented `python3 -B -m unittest discover -s tests` passed both tests
++(2 executed, 0 failures/errors/skips; exit 0). A separate read-only stdin probe
++ran these contract scenarios (exit 1; 3 passed, 3 failed):
++
++| Scenario | Required output | Actual result |
++| --- | --- | --- |
++| Legacy row from snapshot-2 | `['Alpha']` | `TypeError: string indices must be integers` |
++| Object row from snapshot-2 | `['Beta']` | Passed |
++| Full snapshot-2 mixed list | `['Alpha', 'Beta']` | Same `TypeError` |
++| Reversed snapshot-2 mixed list | `['Beta', 'Alpha']` | Same `TypeError` |
++| Two objects, including surrounding whitespace | `['Beta', ' Alpha ']` | Passed, order and text preserved |
++| Empty list | `[]` | Passed |
++
++Reproduce the decisive current-snapshot failure without changing files:
++
++```sh
++python3 -B - <<'PY'
++import json
++from pathlib import Path
++from api import list_labels
++rows = json.loads(Path('state/records.json').read_text())
++assert list_labels(rows) == ['Alpha', 'Beta']
++PY
++```
++
++**Evidence limits:** Legacy and mixed compatibility are blocked, not unknown.
++Successful object/empty cases do not prove the hard acceptance requirement.
++Only Python 3.10.12 was executed; the full documented Python 3.9+ range and live
++deployment behavior were not verified. No dependency, deployment, migration or
++activation action was performed. Knowledge searches across the required Capy
++labels returned an empty knowledge base; no new project convention was established.
++
++**Independent review (completed, 2026-10-11):** Isolated `$kk:review-code` used a
++fresh code-reviewer (GPT-6.1 Sol) with no implementation conversation history.
++It inspected the complete selected task/handoff diff and all ten supplied
++subject files: README, reader, caller, tests, both snapshot files and the four
++feature documents. Its verdict is **REQUEST_CHANGES for Task 1 code acceptance**
++and **APPROVE for the documentation changes**. The reviewer reported one P1 at
++`records.py:2`: a legacy label aborts the public API, violating the required
++legacy and mixed behavior (Python code-quality checklist; confidence 100%).
++This defect is inherited from HEAD, not introduced by this documentation pass.
++The reviewer independently traced all six scenarios in the table; executed
++results remain attributed to this session, since it did not run tests. No
++additional evidence was needed to decide current acceptance. PAL tools were
++unavailable; this used the permitted single-independent-reviewer fallback,
++with no claim of external corroboration. No findings to index: the review
++identified a one-off gap already documented here. Review completion does not
++mean approval of the implementation; verification/review checkboxes record
++performed work, while the implementation checkbox remains open.
++
++**Change-boundary check (observed):** `git diff --check` passed. Byte comparisons
++against HEAD confirmed `api.py`, `records.py`, `tests/test_labels.py`,
++`state/records.json` and `state/release.json` unchanged. The only modified files
++are this task record and `handoff.md`; there are no untracked files.
++
++**Completion assessment (observed):** Code acceptance is blocked by the legacy
++and mixed-list failures; Task 1 and the feature must remain in-progress. This
++is separate from the allowed external operator-notice prerequisite. Even after
++code completion, dashboard activation remains conditional on publishing the
++notice and attaching its acknowledgement. A pending notice alone would not
++prevent code completion under `design.md`.
++
++**Remaining actions (unresolved, 2026-10-11):**
++
++| Action | Owner | Reason and next action | Verification condition |
++| --- | --- | --- | --- |
++| Restore legacy and mixed-format support | Unassigned | Runtime edits are excluded from this pass. In a subsequent implementation pass, update `read_label` to accept both approved shapes while preserving `list_labels` behavior. | Legacy, object and both mixed orders return the exact expected text in order against the current snapshot; independent review clears the acceptance blocker. |
++| Add the missing regression coverage | Unassigned | Test edits are excluded from this pass. Add legacy and mixed cases to the existing unittest suite alongside object/empty controls. | New regressions fail on the current reader and pass after the fix; the full suite passes. |
++| Publish the operator notice before dashboard activation | Release coordinator | External prerequisite from `design.md` and `state/release.json`; publishing and activation are outside this repository task. | Attach the notice acknowledgement to the activation record before activation. |

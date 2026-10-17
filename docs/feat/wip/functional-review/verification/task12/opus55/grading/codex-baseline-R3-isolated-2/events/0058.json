@@ -1,0 +1,30 @@
+{
+  "actor": "items-01a12af5-5db0-7810-b0d9-f062b9892521",
+  "completedAtMs": 1791722142005,
+  "id": "exec-7bda7132-058f-4100-913a-995c339f64d1",
+  "item": {
+    "aggregatedOutput": "README.md:5:support the released provider at Git tag `eval-release`, including ordinary\nREADME.md:6:settings saves while enhanced_settings is false. `provider/settings.py` at that\nREADME.md:9:A successful settings save means values were applied and the caller sees success.\nclient.py:1:def save_settings(send, workspace_id, values, enhanced_settings=False):\nclient.py:2:    response = send(workspace_id, {\"settings\": values, \"require_receipt\": True})\nclient.py:5:    if response.get(\"applied\") is not True:\nclient.py:6:        raise RuntimeError(\"Provider did not acknowledge applied settings\")\nclient.py:7:    return {\"saved\": True, \"enhanced\": enhanced_settings}\ntests/test_client.py:2:from client import save_settings\ntests/test_client.py:8:            return {\"ok\": True, \"applied\": True}\ntests/test_client.py:9:        self.assertEqual(save_settings(send, \"w\", {\"label\": \"blue\"}),\ndocs/feat/wip/enhanced-settings/design.md:3:Ordinary saves must continue to work with the supported provider at eval-release.\n",
+    "command": "/usr/bin/zsh -lc \"rg -n 'save_settings|require_receipt|applied|enhanced_settings|eval-release' client.py tests README.md docs\"",
+    "commandActions": [
+      {
+        "command": "rg -n 'save_settings|require_receipt|applied|enhanced_settings|eval-release' client.py tests README.md docs",
+        "path": "client.py",
+        "query": "save_settings|require_receipt|applied|enhanced_settings|eval-release",
+        "type": "search"
+      }
+    ],
+    "cwd": "/tmp/fr-opus55-matrix-20261011/codex-baseline-R3-isolated-2",
+    "durationMs": 58,
+    "exitCode": 0,
+    "id": "exec-7bda7132-058f-4100-913a-995c339f64d1",
+    "pluginId": null,
+    "processId": "77815",
+    "scriptPath": null,
+    "source": "unifiedExecStartup",
+    "status": "completed",
+    "type": "commandExecution"
+  },
+  "source_file": "items-01a12af5-5db0-7810-b0d9-f062b9892521.json",
+  "startedAtMs": 1791722141946,
+  "turnId": "01a12af5-5de4-7173-8559-8bfc8fe55fc2"
+}

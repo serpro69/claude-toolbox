@@ -1,0 +1,28 @@
+{
+  "actor": "items-01a12ada-3490-7642-831a-089e602cf7f0",
+  "completedAtMs": 1791720414702,
+  "id": "exec-48a92c43-445a-4543-af63-a99664823e51",
+  "item": {
+    "aggregatedOutput": "     1\tdef cleanup_setup(store, workspace_id, setup_id):\n     2\t    store.pending.pop(setup_id, None)\n     3\t    store.active.pop(workspace_id, None)\n     1\tdef begin_setup(store, workspace_id, setup_id):\n     2\t    store.pending[setup_id] = {\"workspace_id\": workspace_id}\n     3\t\n     4\t\n     5\tdef complete_setup(store, workspace_id, setup_id, connection):\n     6\t    store.active[workspace_id] = {\"setup_id\": setup_id, \"connection\": connection}\n     7\t    store.pending.pop(setup_id, None)\n     8\t\n     9\t\n    10\tdef active_connection(store, workspace_id):\n    11\t    association = store.active.get(workspace_id)\n    12\t    return association[\"connection\"] if association else None\n     1\t# Workspace associations\n     2\t\n     3\tPython 3.9+, standard library only. Run `python3 -B -m unittest discover -s tests`.\n     4\tA workspace has one active setup association. Setup jobs can fail after creating\n     5\ta pending record. Another setup can complete before the failed job's queued\n     6\tcleanup runs. Completed associations are consumed by `active_connection`.\n     7\tCleanup removes the failed setup's pending record and any association it owns.\n     8\tThe store models serialized operations; concurrency and external services are\n     9\toutside this change.\n## master\nM  cleanup.py\n",
+    "command": "/usr/bin/zsh -lc 'git show :cleanup.py | nl -ba\ngit show :setup.py | nl -ba\ngit show :README.md | nl -ba\ngit status -sb'",
+    "commandActions": [
+      {
+        "command": "git show :cleanup.py | nl -ba\ngit show :setup.py | nl -ba\ngit show :README.md | nl -ba\ngit status -sb",
+        "type": "unknown"
+      }
+    ],
+    "cwd": "/tmp/fr-opus55-matrix-20261011/codex-candidate-R1-standard-2",
+    "durationMs": 47,
+    "exitCode": 0,
+    "id": "exec-48a92c43-445a-4543-af63-a99664823e51",
+    "pluginId": null,
+    "processId": "37149",
+    "scriptPath": null,
+    "source": "unifiedExecStartup",
+    "status": "completed",
+    "type": "commandExecution"
+  },
+  "source_file": "items-01a12ada-3490-7642-831a-089e602cf7f0.json",
+  "startedAtMs": 1791720414655,
+  "turnId": "01a12ada-34bc-7460-b0dd-dbafaa6ef16f"
+}

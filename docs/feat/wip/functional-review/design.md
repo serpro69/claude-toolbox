@@ -1,18 +1,20 @@
 # Functional and operational review
 
 > Issue: [#166](https://github.com/serpro69/claude-toolbox/issues/166)
-> Status: revised after two independent design reviews on 2026-10-07; implementation pending
+> Status: implementation slices and full core comparison complete; candidate acceptance and final verification pending
+> Revised: 2026-10-11 with the bounded entry-path comparison complete
 > Review disposition: [Consolidated assessment](reviews/design-review-consolidation.md)
 > Evaluation contract: [evaluation.md](evaluation.md)
 > Implementation: [implementation.md](implementation.md)
 > Tasks: [tasks.md](tasks.md)
+> Next-session handoff: [follow-up.md](follow-up.md)
 > Source baseline: c2d28c9e
 
 ## Problem and evidence
 
 The user repeatedly needed to ask whether completed implementation met requirements and whether an intermediate release would break production. Subsequent reviews found valid defects despite earlier checks passing. The desired outcome is for /kk:review-code and /kk:implement to perform that reasoning without those additional prompts.
 
-The current workflow contains correctness, reliability and surrounding-code guidance, but its organizing activity is applying profile checklists. Standard review makes caller and contract investigation conditional on "if needed". Isolated review explicitly falls back to "code quality alone" without specification context. Its external-review preparation selects nearby files rather than the complete affected behavior. /kk:implement requires a completed code review but supplies no common record of intended behavior, compatibility constraints or evidence limits.
+At the c2d28c9e baseline, the workflow contains correctness, reliability and surrounding-code guidance, but its organizing activity is applying profile checklists. Standard review makes caller and contract investigation conditional on "if needed". Isolated review explicitly falls back to "code quality alone" without specification context. Its external-review preparation selects nearby files rather than the complete affected behavior. /kk:implement requires a completed code review but supplies no common record of intended behavior, compatibility constraints or evidence limits.
 
 The task-scope protocol correctly prevents reports of unfinished future work as missing implementation. It needs an explicit distinction between those expected gaps and a current increment that breaks an existing flow while awaiting future work.
 
@@ -38,6 +40,8 @@ After this change:
 5. Evidence-based findings explain a trigger, affected path and consequence. A clean review identifies inspected paths and important limits.
 
 Acceptance uses the scenarios in [Evaluation](#evaluation) and the binding/grading rules in [evaluation.md](evaluation.md). Every assertions[] entry in a new full-workflow eval is required; optional observations live outside that array. Predeclare model, modes and fixture revisions, then run two independent fresh sessions per baseline/candidate case and mode. All required candidate assertions must pass in both runs; a missing trace is not a pass. Retain failures and report observed results without claiming statistical reliability. There is no promise of zero missed bugs, no target finding count, and no claim that static structure tests establish behavioral quality.
+
+The user-approved [2026-10-09 amendment](verification/run-contract-2026-10-09.md) separates implementation readiness from final verification. Both Task 2 gates are now complete: the [2026-10-10 gate 2B record](verification/task2b/README.md) preserves the bounded investigation, selected revision-2 receipt/use contract and four new Codex baselines against the immutable actor revision. Exact submitted prompt content remains unverified. Tasks 1–11 are complete. Task 12's [full core matrix](verification/task12/opus55/README.md) is captured and graded; candidate acceptance and Task 13's final verification remain pending. Capture completion does not establish behavioral acceptance.
 
 ## Scope and ownership
 
@@ -122,7 +126,7 @@ Pending tasks do not excuse broken current flows. Conversely, a feature whose in
 
 Use these evidence-qualified conclusions for applicable compatibility rows:
 
-- Supported: named scenarios against a named baseline support compatibility within stated limits.
+- Supported: evidence supports named scenarios against the named baseline. Client-only tests establish client behavior, not an uninspected provider's contract or deployment compatibility.
 - Blocked: a demonstrated incompatibility or known unmet delivery requirement prevents the stated release.
 - Unknown: material baseline, environment, consumer or data evidence is missing.
 - Not applicable: the change has no consequence for that dimension, with a reason.
@@ -133,11 +137,35 @@ These conclusions complement P0–P3 severity and the code-review verdict:
 | --- | --- | --- |
 | Demonstrated in-scope incompatibility caused or worsened by the change | Emit one severity-rated finding based on actual impact, not an automatic P0/P1. REQUEST_CHANGES for P0/P1 or a violated hard acceptance/delivery requirement; otherwise COMMENT for an actionable nonblocking issue. | Blocked for the affected required combination. |
 | Known external rollout prerequisite, with no demonstrated code defect | Assess the code on its merits; APPROVE can be explicitly scoped to code. | Blocked until the prerequisite is met; document the dependency. |
-| Unknown evidence essential to task acceptance or an explicitly requested release conclusion | COMMENT if there is no demonstrated defect warranting REQUEST_CHANGES. Do not issue an unconditional approval of the unverified requirement. | Unknown with the missing evidence and next action. |
+| Unknown evidence essential to task acceptance or an explicitly requested release conclusion | COMMENT if there is no demonstrated defect warranting REQUEST_CHANGES. Scoped code support is not release approval. | Unknown until missing evidence is supplied and assessed; identify the next check instead of conditional deployment approval. |
 | Unknown operational detail outside the requested/required assessment | It does not automatically downgrade a supported, explicitly scoped code verdict. | Unknown for that unassessed environment. |
 | Supported or Not applicable | Apply existing findings/severity rules; neither status overrides another defect. | Preserve the named baseline and limits. |
 
 Supported is not a production guarantee; missing information is not an invented code defect. A report can approve code while withholding release readiness, but cannot use that distinction to bypass an explicit independently-releasable-main requirement.
+
+On 2026-10-13 the user accepted this distinction for the R7 follow-up: unresolved
+compatibility evidence stays Unknown through the closing advice. A next check is
+useful; "safe to deploy if confirmed" is not an observed readiness result. This
+clarifies the existing evidence limit without changing known rollout prerequisites,
+unrelated operational unknowns, the assertions or their acceptance threshold.
+
+Task 12.13 tested three common-method wording replacements for this requirement.
+The candidate failed the predeclared keep criterion and its operative wording was
+reverted. The evidence boundary above remains the desired behavior; it is not a
+claim that the current instructions reliably enforce it. See the
+[retained experiment](verification/task12/r7-conclusions/README.md).
+
+The subsequent discussion questioned whether R7 makes the missing provider
+evidence materially relevant enough to justify its grading of conditional advice.
+[Task 12.14](tasks.md#task-1214-redesign-the-r7-evaluation-before-further-skill-changes)
+now reassesses the evaluation before further skill changes. The whitespace
+example does not establish a provider defect. This is a prospective test-validity
+investigation; it does not silently amend the verdict table or historical grades.
+The [2026-10-14 diagnostic](verification/task12/r7-validity/README.md) now supplies
+four unchanged-skill observations: both material-uncertainty and benign-approval
+conclusions pass twice. Overall grading is 23 PASS / 1 FAIL; a missing endpoint
+in one behavior report remains failed. The selected disposition is no further
+operative change for this concern, without replacing old R7 or closing acceptance.
 
 ## /kk:implement workflow
 
@@ -180,6 +208,83 @@ One issue spanning several lenses is one finding. Keep confidence reasoning and 
 
 ## Instruction ordering and integration
 
+### Focused Task 12 rework — accepted continuation
+
+After candidate 4 repeatedly failed ordering and scenario coverage, the user
+accepted focused rework followed by a small R1/R3/R5 checkpoint. Preserve the
+existing requirements, original grades and two-run threshold. PAL verification
+remains temporarily deferred. This supersedes the earlier stop for this bounded
+rework; it does not authorize silently weakening a failed assertion.
+
+Use a local instruction-packet helper to reduce navigation during preparation.
+It reads only the selected plugin's instructions, never subject code, Git state,
+or evaluation material. A bootstrap packet contains the common methodology and
+every detection rule named by the shared procedure. After ordinary detection and
+conditional routing, a checklist packet contains the selected original profile
+files with their source paths and hashes. The actor reads complete packet files
+before investigation; unread/truncated packets do not open the checkpoint.
+Direct source reads remain the fallback when the helper is unavailable and the
+path for read-only isolated agents. No detection predicate is reimplemented.
+
+Packet completeness and source identity are mechanically testable. They do not
+prove the actor consumed the returned content or prevent arbitrary early reads;
+actual ordered tool events remain authoritative. Cross-provider hook enforcement
+is outside this bounded experiment: current integrations lack one shared
+instruction-receipt barrier, and adding a session policy engine would exceed the
+scope. The hypothesis being tested is that fewer instruction-navigation steps,
+followed by one visible completion checkpoint, improve compliance.
+
+Replace competing generic suggestions with one evidence-backed recommendation
+rule. Build a compact scenario record from actual contracts: starting state,
+operation/transition, expected result, candidate result and evidence. Use it for
+the final coverage assessment; this connects the stated requirement to the
+demonstrated path without adding fixture-specific hints or exhaustive categories.
+
+Classify evaluation failures as procedure, behavioral correctness, or report
+precision/recommendation quality for diagnosis. Keep all existing assertions
+required. Classification does not alter their PASS/FAIL/PARTIAL semantics, so
+the pinned rubric and both sides' prior grades remain valid.
+
+### Proposed ordering feasibility — after candidate 6
+
+The user approved scoping a separate ordering fix after candidate 6 passed both
+clean-closure checks but still investigated source early in one repetition.
+[The ordering proposal](ordering.md) recommends a bounded, controller-only
+feasibility experiment for a review-scoped tool guard. It defines activation,
+same-actor instruction receipts, pre-execution denial, concurrent-call ordering
+and review lifetime as explicit capability gates on both declared runtimes.
+
+This is a scoped proposal, not implemented enforcement or authorization to
+expand the matrix. The earlier exclusion of cross-provider hook enforcement
+still applies to operative code. Current hook documentation motivates the
+experiment but does not prove support in the pinned runtimes. Preserve the
+existing direct-read path, profile semantics, assertions and two-run threshold;
+integrate a guard only after feasibility and design review. Task 12 remains open.
+
+### Post-matrix decision — severity and instruction cost
+
+The 2026-10-11 matrix passes R5 standard twice on both providers, while other
+behavioral, reporting and evidence gaps remain. The user directed that remaining
+fixes be assessed for severity and their possible negative effect on the skills
+as a whole. [Task 12.11's assessment](follow-up.md#assessment--2026-10-11) accounts
+for every remaining candidate observation and selected Task 12.12: explicit
+instruction paths in the isolated-review command. Its [bounded comparison](verification/task12/entry-path-no-pal/README.md)
+now meets the non-PAL diagnostic requirements twice in all three selected Claude
+isolated cases; retain the two-word correction. Composite PAL assertions remain
+FAIL, and no broader mode/provider acceptance or causal isolation is claimed.
+The guard remains deferred; other behavioral and evidence gaps retain separate
+dispositions and acceptance limits.
+
+A failed assertion alone does not justify another mandatory instruction. Prefer
+contained corrections, replacement or consolidation of existing guidance.
+Minor issues can warrant small fixes without material added burden; broader
+changes need demonstrated value sufficient to justify their added context,
+workflow and regression cost. Defer or no change are valid triage outcomes, but
+neither waives existing requirements or changes historical grades. This is a
+constraint on authoring the next iteration, not an extra runtime skill checklist.
+
+### Existing integration constraints
+
 Keep one post-instruction entry point for content-level investigation in each workflow. The standard summary, detailed procedure, isolated wrapper, agent and implement mode files must agree. Subsequent targeted verification uses evidence gathered under that phase; the wording must not prohibit re-reading evidence to substantiate a finding.
 
 Before operative workflow changes, amend [ADR 0004](../../../adr/0004-skill-workflow-ordering.md) and the ordering section of [AGENTS.md](../../../../AGENTS.md) to state a narrow routing exception. Current absolute wording conflicts with existing content-based detection and with this proposal; do not describe the new ordering as already fully authorized by those documents.
@@ -210,7 +315,7 @@ Build small synthetic fixtures, independently reproducible without private repos
 | I3: trivial non-runtime change | Perform required instruction/profile steps; keep functional assessment proportionate and avoid irrelevant deployment gates or duplicated tests. |
 | I4: completion and resume | Refresh a stale handoff, distinguish tests from release evidence, keep a violated hard requirement open, and durably record a permitted external prerequisite. |
 
-Run R1–R7 and both R9 variants through standard review and actual isolated orchestration, not only a directly prompted reviewer. R8 is a deliberately narrower report-phase replay with controller-supplied synthetic PAL outcomes, including success with zero source coverage and tool failure; it does not certify live MCP transport. A separate real PAL smoke run checks integration. Inspect actual agent/PAL dispatches and historical evidence for parity. Run I1/I4 through plan mode and I2/I3 through standalone mode. Existing profile-routing and pre-write-ordering evals remain regression controls.
+Run R1–R7 and both R9 variants through standard review and actual isolated orchestration, not only a directly prompted reviewer. R8 is a deliberately narrower report-phase replay with controller-supplied synthetic PAL outcomes, including success with zero source coverage and tool failure; it does not certify live MCP transport. A separate real PAL smoke run checks integration. Inspect actual agent/PAL invocations and historical evidence for required context coverage under the selected [evidence contract](evaluation.md#execution-evidence-contract); the conditional receipt/use fallback leaves exact prompt parity unverified. Run I1/I4 through plan mode and I2/I3 through standalone mode. Existing profile-routing and pre-write-ordering evals remain regression controls.
 
 Extend the existing eval-grader with an explicit workflow mode that accepts a sealed evidence manifest, ordered tool events, captured dispatches and resulting-file snapshots. Its default component mode remains unchanged. Ordering and handoff assertions are graded from execution evidence, not claims in the final response. Details, required negative grading controls and the baseline/candidate loading mechanisms are in [evaluation.md](evaluation.md).
 
@@ -224,6 +329,7 @@ The current review eval staging script treats every fixture file as newly added;
 | Separate opt-in functional/release review | Easy to isolate additional effort | Rejected: preserves the need for the user's additional prompt. |
 | Shared context plus mandatory behavior reasoning in existing workflows | Addresses preparation, investigation and claims at their current boundaries | Selected: adds context work, controlled by relevance and evidence limits. |
 | Mandatory whole-system/live-environment audit | Broader possible coverage | Rejected: unavailable access and disproportionate scope would make ordinary reviews impractical. |
+| Hold all implementation for Codex plaintext handoff capture | Completes seed capture before any operative edit | Rejected on 2026-10-09: the immutable baseline remains runnable later. Keep the capture work as an acceptance gate and bound further investigation; use the versioned receipt/use fallback if plaintext remains unavailable. |
 
 The method increases review effort when a change crosses contracts or persistent state. Small changes remain small. Additional prose can become ceremony; the evals must grade demonstrated reasoning and outcomes, not whether a report repeats section names.
 
@@ -235,4 +341,10 @@ The method increases review effort when a change crosses contracts or persistent
 - The existing PAL tool can receive criteria and the required evidence within a focused invocation/continuation. Verify actual coverage; its failure does not disable the local independent reviewer.
 - No design-phase files exist in the installed skill-md profile. The user confirmed that profile; implementation and review must resolve its applicable phase guidance when operative skills are changed.
 
-No product-scope decision remains open. The two supplied reviews have been assessed in [the consolidated disposition](reviews/design-review-consolidation.md); these revised mechanics still need implementation and verification. Any failed or unrun acceptance scenario stays explicitly open in tasks.md with its reason and next action; it is not silently treated as passed.
+The product requirements remain approved. The ordering mechanism in
+[the scoped follow-up](ordering.md) remains a feasibility question; no hard
+cross-provider enforcement guarantee is established. The original two supplied
+reviews were assessed in [the consolidated disposition](reviews/design-review-consolidation.md).
+The ordering proposal and post-matrix handoff have not received independent
+design review. Any failed or unrun acceptance scenario stays explicitly open in
+tasks.md with its reason and next action; it is not silently treated as passed.

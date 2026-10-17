@@ -1,0 +1,13 @@
+{
+  "actor": "main",
+  "block": {
+    "content": "# Batch report\n\nPython 3.9+, standard library only. Run `python3 -B -m unittest discover -s tests`.\n\nThis change updates the plain report label from Items to Records. Preserve the\ncount and all calculation behavior. The shipped entry point uses the checked-in\nDETAILED_REPORT setting. Historical installations and their settings are not\nrecorded here. Detailed reporting is an existing optional path; it is not being\nactivated or redesigned in this increment.\n---DIFF---\ndiff --git a/formatting.py b/formatting.py\nindex dd975ff..c1e1905 100644\n--- a/formatting.py\n+++ b/formatting.py\n@@ -1,2 +1,2 @@\n def format_count(count):\n-    return f\"Items: {count}\"\n+    return f\"Records: {count}\"\ndiff --git a/tests/test_report.py b/tests/test_report.py\nindex 952d5d6..574b40b 100644\n--- a/tests/test_report.py\n+++ b/tests/test_report.py\n@@ -6,10 +6,10 @@ from stats import summarize\n \n class ReportTests(unittest.TestCase):\n     def test_empty_plain_report(self):\n-        self.assertEqual(report([]), \"Items: 0\")\n+        self.assertEqual(report([]), \"Records: 0\")\n \n     def test_populated_plain_report(self):\n-        self.assertEqual(report([2, 4]), \"Items: 2\")\n+        self.assertEqual(report([2, 4]), \"Records: 2\")\n \n     def test_detailed_mean(self):\n         self.assertEqual(summarize([2, 4], detailed=True), {\"count\": 2, \"mean\": 3})\n---DOCS---\n[store]\npath = \".runner/knowledge.db\"\nkey_file = \"\"\nmcp.json\nregistry.json\nsettings.json",
+    "is_error": false,
+    "tool_use_id": "toolu_01YAyR1dD6WxqM59jqz6nVgf",
+    "type": "tool_result"
+  },
+  "id": "e90.0",
+  "parent_tool_use_id": null,
+  "session_id": "d060f8d7-54c3-4a48-947a-fa4428edc04b",
+  "source_sequence": 90
+}

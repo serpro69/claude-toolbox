@@ -1,0 +1,19 @@
+{
+  "actor": "main",
+  "block": {
+    "caller": {
+      "type": "direct"
+    },
+    "id": "toolu_01Fm5QsCNB8vv15eSsoSTgRJ",
+    "input": {
+      "content": "Pattern: \"Simplification\" that drops an ownership/identity guard before a state mutation causes eviction of UNRELATED state. Example: cleanup_setup(store, workspace_id, setup_id) originally removed the workspace's active association only when active[workspace_id][\"setup_id\"] == setup_id. A refactor replaced the guarded removal with an unconditional store.active.pop(workspace_id, None). Regression: cleaning up a stale/superseded/cancelled setup for a workspace silently evicts the CURRENTLY active setup's association (active_connection returns None). Reachable via public API because complete_setup overwrites active[workspace_id] and begin_setup allows multiple pending setups per workspace. Existing test stayed green because it only covered the matching-setup case. Review heuristic: when a diff deletes a conditional immediately before a pop/delete/overwrite, ask \"did that condition scope the mutation to the correct owner?\" \u2014 a passing same-key test does not cover the cross-key/superseded case. Severity P1 (correctness + silent state loss).",
+      "source": "kk:review-findings"
+    },
+    "name": "mcp__capy__capy_index",
+    "type": "tool_use"
+  },
+  "id": "e125.0",
+  "parent_tool_use_id": null,
+  "session_id": "1b417db3-0880-40b1-80bb-a723431f7794",
+  "source_sequence": 125
+}

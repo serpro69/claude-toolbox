@@ -1,0 +1,19 @@
+{
+  "actor": "main",
+  "block": {
+    "caller": {
+      "type": "direct"
+    },
+    "id": "toolu_01V176oUFNa1uDJUqiubMg7X",
+    "input": {
+      "content": "Pattern: \"Simplification\" that removes an ownership/identity guard before a mutation on shared single-slot state causes a correctness regression. Case: cleanup_setup(store, workspace_id, setup_id) originally popped store.active[workspace_id] ONLY when store.active[workspace_id][\"setup_id\"] == setup_id. store.active is keyed by workspace_id (single active association per workspace), so a late cleanup of a superseded setup must not evict a newer setup's active association. The simplified version popped unconditionally, evicting the current (different) setup's active connection \u2192 active_connection() returns None. Lesson: when a conditional guards a mutation by identity/ownership, verify the unconditional form only runs for the matching id before treating the guard as redundant. Existing tests that only cover the matching-id case give false confidence; add a mismatch-id (stale-cleanup-after-resetup) test.",
+      "source": "kk:review-findings"
+    },
+    "name": "mcp__capy__capy_index",
+    "type": "tool_use"
+  },
+  "id": "e117.0",
+  "parent_tool_use_id": null,
+  "session_id": "30e60627-c0d3-4790-9a07-1bf05b7f029a",
+  "source_sequence": 117
+}

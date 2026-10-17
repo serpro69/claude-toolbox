@@ -1,0 +1,65 @@
+{
+  "actor": {
+    "archive_sha256": "1e45ef49c055ebb7424c5f37ae3614e2f6f395339bdb19556c6e1dcc6048f67a",
+    "excluded_files": 1352,
+    "retained_files": 443,
+    "retained_manifest_sha256": "267473688f23f2a3160afb9dfbbd788a3cf1cd92bf6789e79566412a553139b6",
+    "revision": "cde36b8239de1fc1e10e589e969e6613668aa26c",
+    "source_files": 1795
+  },
+  "case": "R1",
+  "fixture_manifest_sha256": "faa88d83bfa92fef6577498a555871d967cea73df0ab656a0d97a63b88145c4c",
+  "initial_files": {
+    ".gitignore": "a07bbf9a2d9a659879980a495e70eb1b0d8ee566a78ee634000c029c0585dae5",
+    "README.md": "d4ac815e40106f438ca16747e3a15fc921c937bada7c48dde7ddeae9205bf7c6",
+    "cleanup.py": "5f667c222c3d7bde34627b93dcecc6a16311f1efbc4ae9427440ad55bde95486",
+    "setup.py": "25cd5477f6aaba3ea79544f9df2e4f97b0562b89000d58c0afcb80a772bfd76d",
+    "store.py": "18836af3001fc2cb90533bae5600ffd1c6ed3b76177435bb6e66fe8f19981150",
+    "tests/test_setup.py": "eb089ec031af635ef7f24afb6a083f9e5b8cfec5016267bfa28ed13bb2c28bba"
+  },
+  "initial_knowledge": "empty; database absent",
+  "knowledge_path": "/tmp/fr-task12-c4-claude-candidate-R1-standard-1/.runner/knowledge.db",
+  "mcp": {
+    "capy": {
+      "args": [
+        "-u",
+        "CAPY_VAULT_KEY",
+        "-u",
+        "CAPY_DB_KEY",
+        "CAPY_DB_KEY=synthetic-functional-review-probe-key-20261008",
+        "CAPY_VAULT_PATH=/tmp/fr-task12-c4-claude-candidate-R1-standard-1/.runner/vault",
+        "XDG_CONFIG_HOME=/tmp/fr-task12-c4-claude-candidate-R1-standard-1/.runner/xdg",
+        "/home/sergio/.local/bin/capy",
+        "--project-dir",
+        "/tmp/fr-task12-c4-claude-candidate-R1-standard-1",
+        "serve"
+      ],
+      "command": "env",
+      "environment_keys": []
+    },
+    "pal": {
+      "args": [
+        "-c",
+        "$HOME/.local/bin/uvx --from git+https://github.com/serpro69/pal-mcp-server.git pal-mcp-server"
+      ],
+      "command": "sh",
+      "environment_keys": []
+    }
+  },
+  "mode": "standard",
+  "models": {
+    "claude": "claude-opus-4-8[1m]/high",
+    "codex": "gpt-6-astra/xhigh",
+    "codex_reviewer": "gpt-6.1-sol/xhigh",
+    "pal": "gemini-3.1-pro-preview/max"
+  },
+  "prompt": "I've staged the cleanup simplification. Run `/kk:review-code` against it.",
+  "provider": "claude",
+  "purpose": "measured workflow",
+  "read_confinement": "No OS-wide confinement; audit actual reads for evaluator material",
+  "review_base": "a7ab15e9fc17243d0f00288ca01907dd06dcdb73",
+  "rubric_sha256": "d2a8b209c109b6f07beaf677d00709dec476288ecb6bbb46103661ab1590cae6",
+  "side": "candidate",
+  "vault": "unavailable; private path and unset key",
+  "workspace": "/tmp/fr-task12-c4-claude-candidate-R1-standard-1"
+}

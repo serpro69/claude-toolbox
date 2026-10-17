@@ -1,0 +1,12 @@
+{
+  "actor": "main",
+  "block": {
+    "content": "tests/test_destinations.py:3:from api import list_destinations\ntests/test_destinations.py:4:from writer import new_destination\ntests/test_destinations.py:9:        row = new_destination(\"new\", \"new@example.test\")\ntests/test_destinations.py:10:        self.assertEqual(list_destinations([row]),\ntests/test_destinations.py:14:        self.assertEqual(list_destinations([]), [])\nwriter.py:1:def new_destination(record_id, address):\nwriter.py:2:    return {\"id\": record_id, \"destination\": {\"address\": address}}\nreader.py:1:def address_of(row):\nreader.py:2:    return row[\"destination\"][\"address\"]\napi.py:1:from reader import address_of\napi.py:4:def list_destinations(records):\napi.py:5:    return [{\"id\": row[\"id\"], \"address\": address_of(row)} for row in records]\nREADME.md:1:# Saved destinations\nREADME.md:6:`destination.address`. New writes use the nested shape. Background migration\nREADME.md:10:`data/records.json` is a supported mixed snapshot. `api.list_destinations`\nmigration.py:6:        if \"destination\" not in row:\nmigration.py:7:            row[\"destination\"] = {\"address\": row.pop(\"address\")}\ndata/records.json:8:    \"destination\": {",
+    "tool_use_id": "toolu_01CG6MLdQZ9LC1x4YhHxk5gn",
+    "type": "tool_result"
+  },
+  "id": "e85.0",
+  "parent_tool_use_id": null,
+  "session_id": "d236ea82-815f-4ff1-8820-f9d452c740b3",
+  "source_sequence": 85
+}

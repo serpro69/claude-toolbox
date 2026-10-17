@@ -1,0 +1,167 @@
+"""Seal Task 8 grader inputs from the immutable Task 2 captures (offline only).
+
+Run from any directory with a fresh destination argument. This is a bounded
+Task 2 adapter, not a runtime capture service or a behavioral grading engine.
+"""
+
+import argparse
+import hashlib
+import json
+from pathlib import Path
+import shutil
+
+
+HERE = Path(__file__).resolve().parent
+VERIFICATION = HERE.parent
+REPO = VERIFICATION.parents[4]
+CASES = {
+    "R1": ("review-code", "functional-cleanup-ownership"),
+    "R3": ("review-code", "functional-disabled-provider-history"),
+    "I1": ("implement", "functional-plan-delivery-conflict"),
+    "I2": ("implement", "functional-standalone-patch-contract"),
+}
+
+
+def digest(path):
+    return hashlib.sha256(path.read_bytes()).hexdigest()
+
+
+def write_json(path, value):
+    path.write_text(json.dumps(value, indent=2) + "\n")
+
+
+def checked_file(root, relative, expected):
+    """Resolve only regular, confined files and verify the retained seal."""
+    rel = Path(relative)
+    if rel.is_absolute() or ".." in rel.parts:
+        raise ValueError("Unsafe manifest path: " + relative)
+    path = root / rel
+    if any(p.is_symlink() for p in [path, *path.parents] if p != root.parent):
+        raise ValueError("Symlink in evidence path: " + relative)
+    if not path.is_file() or digest(path) != expected:
+        raise ValueError("Evidence hash mismatch: " + str(path))
+    return path
+
+
+def observable_events(source, provider):
+    """Keep observable blocks/IDs without private reasoning or host notices."""
+    events = []
+    if provider == "claude":
+        for row in map(json.loads, (source / "events.jsonl").read_text().splitlines()):
+            event = row["event"]
+            message = event.get("message")
+            if not isinstance(message, dict):
+                continue
+            for offset, block in enumerate(message.get("content", [])):
+                if not isinstance(block, dict) or block.get("type") not in {"tool_use", "tool_result", "text"}:
+                    continue
+                # User text is not needed: prompt and explicit decision policy
+                # are supplied separately. User tool results remain evidence.
+                if event.get("type") == "user" and block["type"] == "text":
+                    continue
+                parent = event.get("parent_tool_use_id")
+                events.append({"id": f"e{row['sequence']}.{offset}",
+                    "source_sequence": row["sequence"], "session_id": event.get("session_id"),
+                    "actor": "child-of:" + parent if parent else "main",
+                    "parent_tool_use_id": parent, "block": block})
+    else:
+        for path in sorted(source.glob("items-*.json")):
+            for row in json.loads(path.read_text()):
+                item = row["item"]
+                if item["type"] in {"reasoning", "omitted_private_reasoning", "userMessage"}:
+                    continue
+                events.append({"id": item["id"], "actor": path.stem,
+                    "source_file": path.name, **row})
+    return events
+
+
+def prepare(destination):
+    frozen = json.loads((VERIFICATION / "task2-frozen.json").read_text())
+    rubric = VERIFICATION / "task2-rubric.md"
+    if digest(rubric) != frozen["rubric_sha256"]:
+        raise ValueError("Frozen rubric changed")
+    for case, (skill, name) in CASES.items():
+        fixture = REPO / "klaude-plugin/skills" / skill / "evals" / name
+        for rel, sha in frozen["fixtures"][case].items():
+            checked_file(fixture, rel, sha)
+    captures = json.loads((VERIFICATION / "task2/capture-index.json").read_text())
+    # Verify every original capture seal before creating output. Never reseal
+    # altered evidence under a fresh identity without reporting the alteration.
+    for capture in captures:
+        if capture["capture_status"] != "captured":
+            continue
+        source = VERIFICATION / "task2" / capture["evidence"]
+        for rel, sha in json.loads((source / "manifest.json").read_text()).items():
+            checked_file(source, rel, sha)
+    destination.mkdir(parents=True, exist_ok=False)
+    shutil.copyfile(REPO / "klaude-plugin/agents/eval-grader.md", destination / "grader.md")
+    shutil.copyfile(rubric, destination / "rubric.md")
+    pin = {"grader_sha256": digest(destination / "grader.md"),
+        "rubric_sha256": digest(destination / "rubric.md"), "rubric_version": 1,
+        "fixture_manifest_sha256": digest(VERIFICATION / "task2-frozen.json"),
+        "adapter_sha256": digest(Path(__file__)),
+        "grader_runtime": "current Codex collaboration default agent; inherited parent model/effort",
+        "instruction_binding": "fresh default agents read pinned grader.md; no installed legacy role override",
+        "baseline_actor": frozen["actor_revision"],
+        "fallback": "not selected; exact dispatch evidence required",
+        "policy": "same grader/rubric for candidate traces; any change requires both sides regraded"}
+    write_json(destination / "pin.json", pin)
+    index = []
+    for capture in captures:
+        if capture["capture_status"] != "captured":
+            index.append({"run": capture["run"], "status": capture["capture_status"],
+                "reason": capture.get("observed_error", capture.get("reason", "see preserved Task 2 capture index"))})
+            continue
+        source = VERIFICATION / "task2" / capture["evidence"]
+        target = destination / capture["run"]
+        target.mkdir()
+        seal = json.loads((source / "manifest.json").read_text())
+        selected = []
+        for rel in seal:
+            if (rel.startswith(("initial/", "final/", "payloads/")) or rel in {
+                "initial.patch", "final.patch", "report.md", "payload-events.jsonl",
+                "released-provider.py", "launch.json", "prompt.txt", "credential-redactions.json"}):
+                out = target / rel
+                out.parent.mkdir(parents=True, exist_ok=True)
+                shutil.copyfile(source / rel, out)
+                selected.append(rel)
+        events = observable_events(source, capture["provider"])
+        (target / "events.jsonl").write_text("".join(json.dumps(e) + "\n" for e in events))
+        # One readable block per event allows a Read-only grader to request
+        # bounded line ranges without a JSON parser or searching live inputs.
+        (target / "events.txt").write_text("\n\n".join(
+            "EVENT " + e["id"] + "\n" + json.dumps(e, indent=2) for e in events) + "\n")
+        skill, name = CASES[capture["case"]]
+        fixture = REPO / "klaude-plugin/skills" / skill / "evals" / name
+        write_json(target / "assertions.json", json.loads((fixture / "eval.json").read_text())["assertions"])
+        for oracle in (fixture / "oracle").iterdir():
+            shutil.copyfile(oracle, target / ("expected-" + oracle.name))
+        launch = json.loads((target / "launch.json").read_text())
+        files = [{"path": str(p.relative_to(target)), "sha256": digest(p), "role": p.name}
+            for p in sorted(target.rglob("*")) if p.is_file()]
+        manifest = {"run": {**{k: capture[k] for k in ("run", "case", "mode", "provider", "repetition")},
+            "skill": skill, "eval": name}, "identity": pin,
+            "source_manifest_sha256": digest(source / "manifest.json"),
+            "source_path": str(source.relative_to(REPO)),
+            "evidence_root": ".", "files": files,
+            "completeness": {
+                "events": "observable retained messages/items only; original sequence/item IDs preserved; inspect returned content for truncation",
+                "children": "parent_tool_use_id/actual runtime links only; child tool-read coverage is not guaranteed by child final text",
+                "dispatches": "actual tool arguments and payload mapping where captured; absent references remain gaps",
+                "snapshots": "initial/final tracked and unignored subject files; ignored runtime files excluded",
+                "user_decisions": "ordinary prompt only; no requirement-changing reply supplied"},
+            "redactions": ["private reasoning, host notices and unrelated conversation omitted; no invented events"],
+            "integrity": "all original sealed files and derived listed hashes validated by controller",
+            "actor_grading_material_access": "not observed in Task 2 audit; no OS-wide confinement",
+            "initial_knowledge": launch.get("initial_knowledge"),
+            "source_event_hashes": {rel: sha for rel, sha in seal.items() if rel == "events.jsonl" or rel.startswith("items-")}}
+        write_json(target / "manifest.json", manifest)
+        index.append({"run": capture["run"], "status": "ready-to-grade",
+            "manifest_sha256": digest(target / "manifest.json")})
+    write_json(destination / "index.json", index)
+
+
+if __name__ == "__main__":
+    parser = argparse.ArgumentParser(description=__doc__)
+    parser.add_argument("destination", type=Path)
+    prepare(parser.parse_args().destination)

@@ -1,0 +1,28 @@
+{
+  "actor": "items-01a12bc9-6652-76a3-b634-29fad1f60be2",
+  "completedAtMs": 1791736184529,
+  "id": "exec-f1bef094-247a-4a23-8c73-e8f31a625c60",
+  "item": {
+    "aggregatedOutput": " docs/feat/wip/label-reader/handoff.md |  5 +++++\n docs/feat/wip/label-reader/tasks.md   | 37 +++++++++++++++++++++++++++++++----\n 2 files changed, 38 insertions(+), 4 deletions(-)\ndiff --git a/docs/feat/wip/label-reader/handoff.md b/docs/feat/wip/label-reader/handoff.md\nindex 87e96f0..06a8b23 100644\n--- a/docs/feat/wip/label-reader/handoff.md\n+++ b/docs/feat/wip/label-reader/handoff.md\n@@ -1,5 +1,10 @@\n # Previous session handoff\n \n+> Historical assessment, superseded for current acceptance by\n+> [verification.md](verification.md) on 2026-10-11. Snapshot-2 is partially\n+> migrated; legacy and mixed-list reads fail. Task 1 remains in-progress.\n+> The original snapshot-1 observations below are retained as history.\n+\n Basis: snapshot-1. This is a saved author assessment, not a user decision.\n \n All label records have been migrated to object form. records.py reads the new\ndiff --git a/docs/feat/wip/label-reader/tasks.md b/docs/feat/wip/label-reader/tasks.md\nindex c37ebf9..1bfd8fc 100644\n--- a/docs/feat/wip/label-reader/tasks.md\n+++ b/docs/feat/wip/label-reader/tasks.md\n@@ -6,13 +6,42 @@\n \n - **Status:** in-progress\n - **Depends on:** \u2014\n-- [x] Implement legacy and object label reads, including mixed lists.\n+- [ ] Implement legacy and object label reads, including mixed lists.\n+- [ ] Add regression coverage for legacy and mixed lists, preserving order and text.\n - [x] Run the local unit suite.\n-- [ ] Verify current compatibility evidence and complete independent review.\n-- [ ] Reconcile completion and activation conditions.\n+- [x] Verify current compatibility evidence and complete independent review.\n+- [x] Reconcile completion and activation conditions.\n \n ### Execution context \u2014 previous session\n \n The previous session recorded a green unit suite and prepared handoff.md for\n resumption. Its compatibility assessment used snapshot-1. Final verification\n-and completion reconciliation remain pending.\n+and completion reconciliation were pending at handoff.\n+\n+### Execution context \u2014 verification pass, 2026-10-11\n+\n+Verification and completion reconciliation are recorded in\n+[verification.md](verification.md). **Code acceptance failed; Task 1 remains\n+in-progress.** The implementation checkbox is reopened because current\n+evidence disproves the previous completion assessment.\n+\n+- Current evidence is snapshot-2: migration is partial and both string and\n+  object labels remain present. The snapshot-1 handoff is historical, not an\n+  approved change to the mixed-format requirement.\n+- `python3 -B -m unittest discover -s tests` passed: 2 tests, exit 0. Those\n+  tests cover only an object label and an empty list.\n+- Read-only compatibility probes: object-only passed; legacy-only and mixed\n+  lists in both orders raised `TypeError: string indices must be integers`\n+  (1 passed, 3 failed; exit 1).\n+- Isolated code review completed with **REQUEST_CHANGES**, one P1 finding at\n+  `records.py:2`. PAL was unavailable; the independent code-reviewer supplied\n+  the review under the skill's single-reviewer fallback.\n+- Remaining code work: support both label shapes, add regression coverage,\n+  then rerun the suite, compatibility probes and independent review before\n+  marking Task 1 or the feature done. Runtime code, tests and data were left\n+  unchanged as requested for this pass.\n+- The pending operator notice is owned by the **Release coordinator**. That\n+  owner must publish it before dashboard activation and attach the notice\n+  acknowledgement to the activation record. It may remain pending after code\n+  completion and is separate from the failing code requirement. No external\n+  publication or activation action is part of this task.\n3ecdfaa91d7e7081127292b084bafd022a002d5a2fbbd8a8156c39a5f93f2dd1  records.py\nb955f472aee4d022b7b4e9853147dfc60db7965c3dae4eb8a90180a9dbff6cb4  api.py\n3ca42dee05a03eba5c20fb37da099659caac81c31dff99ddcc0e40601513d8a5  tests/test_labels.py\n81edca6e02e7c5b2c99db760bd4eaa4982b00e6c79246727ce5bc104bda74918  state/release.json\n32d9c6b6de45bb37edbe373a2a47e9271d72677d0264486f1a741fece6fd20ce  state/records.json\n M docs/feat/wip/label-reader/handoff.md\n M docs/feat/wip/label-reader/tasks.md\n?? docs/feat/wip/label-reader/verification.md\n",
+    "command": "/usr/bin/zsh -lc 'git diff --check\ngit diff --stat\ngit diff -- docs/feat/wip/label-reader/tasks.md docs/feat/wip/label-reader/handoff.md\nsha256sum records.py api.py tests/test_labels.py state/release.json state/records.json\ngit status --short'",
+    "commandActions": [
+      {
+        "command": "git diff --check\ngit diff --stat\ngit diff -- docs/feat/wip/label-reader/tasks.md docs/feat/wip/label-reader/handoff.md\nsha256sum records.py api.py tests/test_labels.py state/release.json state/records.json\ngit status --short",
+        "type": "unknown"
+      }
+    ],
+    "cwd": "/tmp/fr-opus55-matrix-20261011/codex-baseline-I4-plan-1",
+    "durationMs": 48,
+    "exitCode": 0,
+    "id": "exec-f1bef094-247a-4a23-8c73-e8f31a625c60",
+    "pluginId": null,
+    "processId": "76248",
+    "scriptPath": null,
+    "source": "unifiedExecStartup",
+    "status": "completed",
+    "type": "commandExecution"
+  },
+  "source_file": "items-01a12bc9-6652-76a3-b634-29fad1f60be2.json",
+  "startedAtMs": 1791736184480,
+  "turnId": "01a12bc9-667e-7bf2-ac7c-eac74d908084"
+}

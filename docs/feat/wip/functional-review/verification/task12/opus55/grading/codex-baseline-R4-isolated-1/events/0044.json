@@ -1,0 +1,30 @@
+{
+  "actor": "items-01a12b38-be9e-7f43-b50e-7ebde299ae3f",
+  "completedAtMs": 1791726543933,
+  "id": "exec-ef000836-ab21-463f-b9ef-af04f0c9b341",
+  "item": {
+    "aggregatedOutput": "tests/test_destinations.py:1:import unittest\ntests/test_destinations.py:2:\ntests/test_destinations.py:3:from api import list_destinations\ntests/test_destinations.py:4:from writer import new_destination\ntests/test_destinations.py:5:\ntests/test_destinations.py:6:\ntests/test_destinations.py:7:class DestinationTests(unittest.TestCase):\ntests/test_destinations.py:8:    def test_new_write_can_be_listed(self):\ntests/test_destinations.py:9:        row = new_destination(\"new\", \"new@example.test\")\ntests/test_destinations.py:10:        self.assertEqual(list_destinations([row]),\ntests/test_destinations.py:11:                         [{\"id\": \"new\", \"address\": \"new@example.test\"}])\ntests/test_destinations.py:12:\ntests/test_destinations.py:13:    def test_empty_list(self):\ntests/test_destinations.py:14:        self.assertEqual(list_destinations([]), [])\ndata/records.json:1:[\ndata/records.json:2:  {\ndata/records.json:3:    \"id\": \"legacy-a\",\ndata/records.json:4:    \"address\": \"a@example.test\"\ndata/records.json:5:  },\ndata/records.json:6:  {\ndata/records.json:7:    \"id\": \"current-b\",\ndata/records.json:8:    \"destination\": {\ndata/records.json:9:      \"address\": \"b@example.test\"\ndata/records.json:10:    }\ndata/records.json:11:  },\ndata/records.json:12:  {\ndata/records.json:13:    \"id\": \"legacy-c\",\ndata/records.json:14:    \"address\": \"c@example.test\"\ndata/records.json:15:  }\ndata/records.json:16:]\napi.py:1:from reader import address_of\napi.py:2:\napi.py:3:\napi.py:4:def list_destinations(records):\napi.py:5:    return [{\"id\": row[\"id\"], \"address\": address_of(row)} for row in records]\nREADME.md:1:# Saved destinations\nREADME.md:2:\nREADME.md:3:Python 3.9+, standard library only. Run `python3 -B -m unittest discover -s tests`.\nREADME.md:4:\nREADME.md:5:Destination records can use legacy top-level `address` or current nested\nREADME.md:6:`destination.address`. New writes use the nested shape. Background migration\nREADME.md:7:runs in bounded batches while reads remain available; a deployment must read\nREADME.md:8:both shapes until migration finishes. Existing addresses must be preserved.\nREADME.md:9:\nREADME.md:10:`data/records.json` is a supported mixed snapshot. `api.list_destinations`\nREADME.md:11:serves all saved records through the same reader. `migrate_batch` changes up to\nREADME.md:12:its limit per invocation; there is no startup migration gate. The store is a\nREADME.md:13:local JSON model, with no production environment or external database required.\nreader.py:1:def address_of(row):\nreader.py:2:    return row[\"destination\"][\"address\"]\nmigration.py:1:def migrate_batch(records, limit):\nmigration.py:2:    migrated = 0\nmigration.py:3:    for row in records:\nmigration.py:4:        if migrated >= limit:\nmigration.py:5:            break\nmigration.py:6:        if \"destination\" not in row:\nmigration.py:7:            row[\"destination\"] = {\"address\": row.pop(\"address\")}\nmigration.py:8:            migrated += 1\nmigration.py:9:    return migrated\n",
+    "command": "/usr/bin/zsh -lc \"rg -n '\"'^'\"' reader.py README.md api.py migration.py data/records.json tests/test_destinations.py\"",
+    "commandActions": [
+      {
+        "command": "rg -n '^' reader.py README.md api.py migration.py data/records.json tests/test_destinations.py",
+        "path": "reader.py",
+        "query": "^",
+        "type": "search"
+      }
+    ],
+    "cwd": "/tmp/fr-opus55-matrix-20261011/codex-baseline-R4-isolated-1",
+    "durationMs": 60,
+    "exitCode": 0,
+    "id": "exec-ef000836-ab21-463f-b9ef-af04f0c9b341",
+    "pluginId": null,
+    "processId": "57567",
+    "scriptPath": null,
+    "source": "unifiedExecStartup",
+    "status": "completed",
+    "type": "commandExecution"
+  },
+  "source_file": "items-01a12b38-be9e-7f43-b50e-7ebde299ae3f.json",
+  "startedAtMs": 1791726543872,
+  "turnId": "01a12b38-bebd-7093-a600-377aac2aa363"
+}

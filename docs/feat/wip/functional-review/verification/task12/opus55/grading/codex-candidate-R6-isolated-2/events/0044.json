@@ -1,0 +1,28 @@
+{
+  "actor": "items-01a12b68-8da6-7710-8c29-ae7e14bba9a9",
+  "completedAtMs": 1791729900958,
+  "id": "exec-9f6df582-3ec9-4364-aa52-c35fdd7e2f8f",
+  "item": {
+    "aggregatedOutput": "Reviewed staged diff is unchanged; review temporary files removed.\n",
+    "command": "/usr/bin/zsh -lc \"python3 - <<'PY'\nimport pathlib, shutil, subprocess\nbundle=pathlib.Path('/tmp/kk-batch-review-d89jKx')\ncurrent=subprocess.check_output(['git','diff','--cached','--no-ext-diff','--no-color'])\nassert current==(bundle/'staged.patch').read_bytes(), 'Staged diff changed during review'\nassert not subprocess.check_output(['git','diff','--name-only']), 'Unstaged tracked changes appeared'\nfor directory in ['/tmp/kk-batch-review-d89jKx','/tmp/kk-review-instructions-ne19zdgu','/tmp/kk-review-instructions-kjq29xhq','/tmp/kk-review-instructions-i9m88c_t']:\n    shutil.rmtree(directory)\nprint('Reviewed staged diff is unchanged; review temporary files removed.')\nPY\"",
+    "commandActions": [
+      {
+        "command": "python3 - <<'PY'\nimport pathlib, shutil, subprocess\nbundle=pathlib.Path('/tmp/kk-batch-review-d89jKx')\ncurrent=subprocess.check_output(['git','diff','--cached','--no-ext-diff','--no-color'])\nassert current==(bundle/'staged.patch').read_bytes(), 'Staged diff changed during review'\nassert not subprocess.check_output(['git','diff','--name-only']), 'Unstaged tracked changes appeared'\nfor directory in ['/tmp/kk-batch-review-d89jKx','/tmp/kk-review-instructions-ne19zdgu','/tmp/kk-review-instructions-kjq29xhq','/tmp/kk-review-instructions-i9m88c_t']:\n    shutil.rmtree(directory)\nprint('Reviewed staged diff is unchanged; review temporary files removed.')\nPY",
+        "type": "unknown"
+      }
+    ],
+    "cwd": "/tmp/fr-opus55-matrix-20261011/codex-candidate-R6-isolated-2",
+    "durationMs": 61,
+    "exitCode": 0,
+    "id": "exec-9f6df582-3ec9-4364-aa52-c35fdd7e2f8f",
+    "pluginId": null,
+    "processId": "90471",
+    "scriptPath": null,
+    "source": "unifiedExecStartup",
+    "status": "completed",
+    "type": "commandExecution"
+  },
+  "source_file": "items-01a12b68-8da6-7710-8c29-ae7e14bba9a9.json",
+  "startedAtMs": 1791729900897,
+  "turnId": "01a12b68-8dd3-7742-a078-50dbb4180a01"
+}

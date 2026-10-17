@@ -1,0 +1,20 @@
+{
+  "repository": "r3-isolated6 (local worktree)",
+  "revision_base": "HEAD (ac09e55)",
+  "review_selector": "staged (git diff --cached); worktree == index",
+  "items": [
+    {
+      "original_path": "client.py",
+      "revision": "HEAD",
+      "role": "review-base source (pre-change)",
+      "note": "Supported-provider contract the client relied on: response carries 'ok' only, no 'applied' key."
+    },
+    {
+      "original_path": "tests/test_client.py",
+      "revision": "HEAD",
+      "role": "review-base test",
+      "note": "HEAD mock `send` returns {'ok': True} -> evidence that the supported provider does NOT return 'applied' today."
+    }
+  ],
+  "unavailable": "Task 2 provider source lives in a SEPARATE provider repository, not present locally. Exact deployed provider behavior at eval-release is Unknown. Next action: inspect the provider repo / deployment to confirm whether 'applied: true' is returned before the client ships to main."
+}

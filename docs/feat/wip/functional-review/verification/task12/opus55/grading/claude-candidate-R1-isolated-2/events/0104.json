@@ -1,0 +1,19 @@
+{
+  "actor": "main",
+  "block": {
+    "caller": {
+      "type": "direct"
+    },
+    "id": "toolu_01ABXY8nXxCLFM9GdZPiTgho",
+    "input": {
+      "content": "Pattern: an ownership guard removed from deferred or queued cleanup of single-slot state (\"simplification\" P1).\nShape: cleanup(entity_id, owner_token) deletes a shared slot keyed by entity (e.g. active[workspace_id]) without checking that the slot still belongs to owner_token.\nFailure: a newer operation fills the slot before the stale or failed job's queued cleanup runs. The cleanup then deletes the newer owner's state. This happens even with fully serialized execution, so it is not a concurrency-only issue, and it makes cleanup non-idempotent on retry.\nReview check: if a cleanup deletes by a shared key, require a compare-before-delete on the owner identifier. Look for a regression test covering the interleaving \"A fails \u2192 B completes \u2192 A's cleanup runs\". Tests that only cover the happy path, where the owner cleans up its own state, pass both with and without the guard.\nSeen: cleanup.py cleanup_setup (workspace associations), 2026-10-11.",
+      "source": "kk:review-findings"
+    },
+    "name": "mcp__capy__capy_index",
+    "type": "tool_use"
+  },
+  "id": "e207.0",
+  "parent_tool_use_id": null,
+  "session_id": "527e46ae-6b6e-4673-b833-94292eaa30aa",
+  "source_sequence": 207
+}

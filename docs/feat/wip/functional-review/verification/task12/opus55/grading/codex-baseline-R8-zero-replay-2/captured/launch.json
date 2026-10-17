@@ -1,0 +1,68 @@
+{
+  "actor": {
+    "archive_sha256": "645174753421c14bfb525c8060c9d313b0bfa5a6f486413590444930fc937131",
+    "excluded_files": 836,
+    "retained_files": 435,
+    "retained_manifest_sha256": "0dedccb8cdb3825f3531d851b5fd83ac9938538c22a3d9c6e299a67b53edf230",
+    "revision": "c2d28c9e3064a0a71a0e5ac3748a9616c794eb61",
+    "source_files": 1271
+  },
+  "case": "R8-zero",
+  "fixture_manifest_sha256": "07ef87c0cf90a31a7a242bdb5558d8964d86d451273286b82dedf3c3062d6162",
+  "initial_files": {
+    "change.patch": "c3d96b5ce4cc31ea576c7f5241c35b66766ae37298a5782cd9968b7f3532763f",
+    "checkpoint.md": "e8e3037700c07537352689815a34b01ed52d9548c3ae049776361e457478c7e3",
+    "independent-review.md": "0558716fdd914ec900eb08c6619fdeae39078810173b3c0584fc85f6da7edb5b",
+    "pal-result.json": "03b30d1c5cc09ec4285e29a6667182de5df12da999c5ae5bb3410a4ba5688d63",
+    "scope.json": "f92c2a1b4b54d14371f16e81e25c564dbdb07dac97222998ff456ed93473e376",
+    "source/base/settings.py": "4a70270481fc1944106a2636d91aa2a98945f0527b4737dc49f8d395e5b6f2bb",
+    "source/candidate/settings.py": "80181c47cc1afc9780e943f3e9c80fe84c9cd3a08111245ec3c6f8c20102ef81",
+    "source/provider.py": "868fe25e020e44f3a82994ce6d80239d22ae3de4ba237d0f48b1bcb3a1f3add5"
+  },
+  "initial_knowledge": "empty; database absent",
+  "knowledge_path": "/tmp/fr-opus55-matrix-20261011/codex-baseline-R8-zero-replay-2/.runner/knowledge.db",
+  "mcp": {
+    "capy": {
+      "args": [
+        "-u",
+        "CAPY_VAULT_KEY",
+        "-u",
+        "CAPY_DB_KEY",
+        "CAPY_DB_KEY=synthetic-functional-review-probe-key-20261008",
+        "CAPY_VAULT_PATH=/tmp/fr-opus55-matrix-20261011/codex-baseline-R8-zero-replay-2/.runner/vault",
+        "XDG_CONFIG_HOME=/tmp/fr-opus55-matrix-20261011/codex-baseline-R8-zero-replay-2/.runner/xdg",
+        "/home/sergio/.local/bin/capy",
+        "--project-dir",
+        "/tmp/fr-opus55-matrix-20261011/codex-baseline-R8-zero-replay-2",
+        "serve"
+      ],
+      "command": "env",
+      "environment_keys": []
+    },
+    "pal": {
+      "args": [
+        "-c",
+        "$HOME/.local/bin/uvx --from git+https://github.com/serpro69/pal-mcp-server.git pal-mcp-server"
+      ],
+      "command": "sh",
+      "environment_keys": []
+    }
+  },
+  "mode": "replay",
+  "models": {
+    "claude": "claude-opus-4-8[1m]/high",
+    "codex": "gpt-6-astra/xhigh",
+    "codex_reviewer": "gpt-6.1-sol/xhigh",
+    "pal": "user-deferred; disabled"
+  },
+  "prompt": "Use `$kk:review-code isolated` to resume the supplied checkpoint.md and present the review.",
+  "provider": "codex",
+  "purpose": "measured workflow",
+  "read_confinement": "No OS-wide confinement; audit actual reads for evaluator material",
+  "repetition": 2,
+  "review_base": "7fa5ed0f7626817d88a3baedddeb6722b819245a",
+  "rubric_sha256": "d2a8b209c109b6f07beaf677d00709dec476288ecb6bbb46103661ab1590cae6",
+  "side": "baseline",
+  "vault": "unavailable; private path and unset key",
+  "workspace": "/tmp/fr-opus55-matrix-20261011/codex-baseline-R8-zero-replay-2"
+}

@@ -1,0 +1,19 @@
+{
+  "actor": "main",
+  "block": {
+    "caller": {
+      "type": "direct"
+    },
+    "id": "toolu_01HkgBBn8HBEHhq2mrmew5fX",
+    "input": {
+      "content": "# Idempotency/recovery record looked up by a non-idempotency key (P0)\n\nPattern: a recovery/idempotency record store is keyed by operation_id on write, but the read path looks it up by another attribute (e.g. workspace) via a linear scan. Records are never pruned, so the first completed record for that attribute matches every later request. New operations then skip apply and still return ok \u2014 a silent lost update. A related symptom: the read and write keys don't match, so a reused operation_id from another scope overwrites that scope's record.\n\nDetection: idempotency lookup that doesn't match on the idempotency key; `next(... for item in store.values() if item[<non-key>] == ...)`; the response built from request args instead of the matched record/receipt (this hides the mismatch from tests).\n\nFix: read and write by the same key (operation_id, or a composite (scope, operation_id)); short-circuit completed records before side-effecting calls; reject a reused key with a different payload; add a test for two operation_ids on the same scope.\n\nSeen in: service.py save() (save recovery update), 2026-10-11.",
+      "source": "kk:review-findings"
+    },
+    "name": "mcp__capy__capy_index",
+    "type": "tool_use"
+  },
+  "id": "e113.0",
+  "parent_tool_use_id": null,
+  "session_id": "a6ef2f7f-973c-4336-924b-e7c2ed198c73",
+  "source_sequence": 113
+}

@@ -1,0 +1,1 @@
+Approve this label increment against inspected local behavior. Empty detailed input already divides by zero in both revisions. The checked-in default remains disabled. Historical installation settings and production were not inspected. No changes recommended.

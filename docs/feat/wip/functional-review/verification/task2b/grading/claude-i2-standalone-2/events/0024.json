@@ -1,0 +1,12 @@
+{
+  "actor": "main",
+  "block": {
+    "content": "1\t# Python type contracts\n2\t\n3\t## Describe the behavior callers can rely on\n4\t\n5\t- Follow the project's annotation policy; annotate new or changed public boundaries and non-obvious return shapes. Avoid unrelated annotation churn.\n6\t- Accept the narrowest required capability: `Iterable` for one pass, `Sequence` for indexing, or `Mapping` for read access. These interfaces do not guarantee that the underlying object is immutable.\n7\t- Model absence explicitly. An optional argument with a default is not necessarily nullable; include `None` only when the contract allows it.\n8\t- Use a small `Protocol` when consumers need structural behavior, and a `TypedDict` for a known dictionary shape. Add abstractions only when they clarify a real boundary.\n9\t- Prefer narrowing uncertain values to spreading `Any`. Keep casts or type-checker suppressions local and explain why the value is safe.\n10\t\n11\tAnnotations, `TypedDict`, and `cast()` do not validate external data at runtime. Parse and validate at the boundary before trusting a typed value. See [Python typing](https://docs.python.org/3/library/typing.html).\n12\t\n13\t## Preserve compatibility and runtime behavior\n14\t\n15\t- Choose annotation syntax and typing APIs supported by the project's Python versions and configured checker. A new typing convenience does not justify raising the runtime floor or adding a backport dependency by default.\n16\t- Before moving an import under `TYPE_CHECKING` or changing annotation evaluation, check whether the application inspects annotations at runtime. Frameworks and serializers may need those names to resolve.\n17\t- For `.pyi` changes, preserve the stub's imports, exported names, defaults, overloads, and sync/async shape. Match an available implementation; when it is absent, state that limitation rather than inventing runtime behavior. Validate with the existing checker when available.\n18\t",
+    "tool_use_id": "toolu_01VYhYFWk5HmHoSLwW5KR64i",
+    "type": "tool_result"
+  },
+  "id": "e45.0",
+  "parent_tool_use_id": null,
+  "session_id": "5160257a-e96d-4ed7-b3a2-e699343e4f9a",
+  "source_sequence": 45
+}

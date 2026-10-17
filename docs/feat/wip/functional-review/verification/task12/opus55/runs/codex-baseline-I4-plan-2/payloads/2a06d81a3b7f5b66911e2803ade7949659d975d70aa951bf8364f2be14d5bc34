@@ -1,0 +1,99 @@
+# Task 1 verification — 2026-10-11
+
+Task 1 remains **in-progress**: the current implementation fails the approved
+legacy and mixed-format contract. This verification pass changes documentation
+only; runtime code, tests, and compatibility data remain unchanged.
+
+## Evidence and authority
+
+- Reviewed revision: `f5957748b18621bc0eb243872436242b9c673723`.
+- [design.md](design.md) requires legacy strings, objects, and mixed lists, with
+  input order and label text preserved. No exception is approved.
+- [state/release.json](../../../../state/release.json) identifies `snapshot-2`,
+  migration `partial`, and active shapes `text` and `object`.
+- [state/records.json](../../../../state/records.json) contains, in order,
+  `legacy-a` with label `"Alpha"` and `current-b` with label `{"text": "Beta"}`.
+  These are checked-in synthetic observations, not live production evidence.
+- [handoff.md](handoff.md) describes `snapshot-1`. Its claims that migration and
+  legacy compatibility are complete and no code change remains are superseded
+  by the current evidence. The handoff does not change the approved contract.
+
+## Verification results
+
+Commands ran from the repository root with `/usr/bin/python3`, Python 3.10.12,
+using `-B` to avoid writing bytecode. No dependencies or test files were added.
+The README specifies Python 3.9+; only the available 3.10 interpreter was used.
+
+`python3 -B -m unittest discover -s tests` exited **0**:
+
+```text
+Ran 2 tests in 0.000s
+
+OK
+```
+
+The suite covers an object label and an empty list. Its green result does not
+establish legacy or mixed-format support.
+
+A separate read-only probe exercised the public `list_labels` API against the
+current snapshot:
+
+| Case | Expected output | Observed result |
+| --- | --- | --- |
+| Legacy only | `['Alpha']` | `TypeError: string indices must be integers` |
+| Object only | `['Beta']` | Passed |
+| Mixed, snapshot order | `['Alpha', 'Beta']` | Same `TypeError` |
+| Mixed, reverse order | `['Beta', 'Alpha']` | Same `TypeError` |
+| Empty | `[]` | Passed |
+
+Probe result: **5 checks, 2 passed, 3 failed; exit 1**. Because mixed calls raise,
+preservation of text and ordering for mixed input has not passed verification.
+
+Reproduce without editing files:
+
+```sh
+python3 -B - <<'PY'
+import json
+from pathlib import Path
+from api import list_labels
+
+release = json.loads(Path('state/release.json').read_text())
+rows = json.loads(Path(release['record_file']).read_text())
+cases = [
+    ('legacy-only', [rows[0]], ['Alpha']),
+    ('object-only', [rows[1]], ['Beta']),
+    ('mixed snapshot order', rows, ['Alpha', 'Beta']),
+    ('mixed reverse order', list(reversed(rows)), ['Beta', 'Alpha']),
+    ('empty', [], []),
+]
+failures = 0
+for name, input_rows, expected in cases:
+    try:
+        actual = list_labels(input_rows)
+    except Exception as exc:
+        failures += 1
+        print(f'FAIL {name}: expected {expected!r}; raised {type(exc).__name__}: {exc}')
+    else:
+        if actual == expected:
+            print(f'PASS {name}: {actual!r}')
+        else:
+            failures += 1
+            print(f'FAIL {name}: expected {expected!r}; got {actual!r}')
+print(f'{len(cases)} checks: {len(cases) - failures} passed, {failures} failed')
+raise SystemExit(1 if failures else 0)
+PY
+```
+
+## Completion and activation
+
+Code completion requires correcting `read_label` to accept both approved shapes,
+adding regression coverage for legacy and mixed lists (including order and text),
+then rerunning the suite, compatibility checks, and independent review. Those
+code and test changes are outside this pass's authorized scope. Task 1 cannot be
+marked done based on its existing unit tests or the earlier handoff.
+
+The operator notice is separately **pending**, owned by the **Release
+coordinator**. Before dashboard activation, that owner must publish the notice
+and attach its acknowledgement to the activation record. The notice may remain
+pending after code completion; it neither blocks code completion by itself nor
+waives mixed-format acceptance. No notice publication or activation was performed.

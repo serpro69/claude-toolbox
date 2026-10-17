@@ -1,0 +1,19 @@
+{
+  "actor": "main",
+  "block": {
+    "caller": {
+      "type": "direct"
+    },
+    "id": "toolu_01335RjkJpjfah83ZaJmfeRj",
+    "input": {
+      "content": "## P0 pattern: new protocol field required unconditionally in an independently released client (settings client, enhanced-settings task 1)\n\nContext: client and provider ship independently; every merged client increment must work with the released provider at tag `eval-release` (provider/settings.py returns only `{\"ok\": True}` and ignores extra request keys).\n\nDefect: client.py save_settings added `if response.get(\"applied\") is not True: raise RuntimeError(...)` unconditionally, not gated on `enhanced_settings`. Against the released provider every ordinary save raises, after the provider has already persisted the values, so the caller sees failure for an applied write (breaks the README contract \"successful save means values were applied and caller sees success\"; retries/duplicate writes).\n\nWhy tests missed it: the unit-test fake `send` was updated to return `applied: True`. That edits the fake to match the new client instead of the released provider contract.\n\nReview heuristic: for any client-side protocol addition, (1) check the released counterpart at the release tag (`git show <tag>:<path>`), (2) treat a missing field as legacy and do not fail on it, or gate it behind the feature flag, (3) keep a test fake that returns the released provider's exact response shape.",
+      "source": "kk:review-findings"
+    },
+    "name": "mcp__capy__capy_index",
+    "type": "tool_use"
+  },
+  "id": "e114.0",
+  "parent_tool_use_id": null,
+  "session_id": "c2f0ef88-38c8-432c-bab5-b0d28d1d0c91",
+  "source_sequence": 114
+}

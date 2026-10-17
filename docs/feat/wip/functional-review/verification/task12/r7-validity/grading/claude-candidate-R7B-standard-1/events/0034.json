@@ -1,0 +1,13 @@
+{
+  "actor": "main",
+  "block": {
+    "content": ".gitignore\nREADME.md\nclient.py\nprotocol.md\ntests/test_client.py\n----\ntotal 20\ndrwxr-xr-x 11 sergio wheel  352 Oct 14 08:43 .\ndrwxr-xr-x  7 sergio wheel  224 Oct 14 08:43 ..\n-rw-r--r--  1 sergio wheel   52 Oct 14 08:43 .capy.toml\ndrwxr-xr-x 10 sergio wheel  320 Oct 14 08:55 .git\n-rw-r--r--  1 sergio wheel   19 Oct 14 07:44 .gitignore\ndrwxr-xr-x  6 sergio wheel  192 Oct 14 08:43 .runner\n-rw-r--r--  1 sergio wheel  779 Oct 14 07:44 README.md\n-rw-r--r--  1 sergio wheel  113 Oct 14 07:44 client.py\ndrwxr-xr-x  3 sergio wheel   96 Oct 14 08:43 plugins\n-rw-r--r--  1 sergio wheel 1005 Oct 14 08:00 protocol.md\ndrwxr-xr-x  3 sergio wheel   96 Oct 14 08:43 tests\n----\ndiff --git a/client.py b/client.py\nindex 94f2650..fed5f03 100644\n--- a/client.py\n+++ b/client.py\n@@ -1,2 +1,2 @@\n def save(transport, display_name):\n-    return transport.put(\"/settings\", {\"display_name\": display_name})\n+    return transport.put(\"/settings\", {\"display_name\": display_name.strip()})\ndiff --git a/tests/test_client.py b/tests/test_client.py\nindex 0f4b422..1092a98 100644\n--- a/tests/test_client.py\n+++ b/tests/test_client.py\n@@ -21,3 +21,11 @@ class ClientTests(unittest.TestCase):\n         transport = MemoryTransport()\n         save(transport, \"\")\n         self.assertEqual(transport.request, (\"/settings\", {\"display_name\": \"\"}))\n+\n+    def test_normalized_requests(self):\n+        for value, expected in [(\"  Ada  \", \"Ada\"), (\"Ada Lovelace\", \"Ada Lovelace\"),\n+                                (\" \\t\\n\", \"\"), (\"\\u00a0Ada\\u3000\", \"Ada\")]:\n+            with self.subTest(value=value):\n+                transport = MemoryTransport()\n+                save(transport, value)\n+                self.assertEqual(transport.request, (\"/settings\", {\"display_name\": expected}))",
+    "is_error": false,
+    "tool_use_id": "toolu_01QqKbBtzLWnr6FcSbtHkAUk",
+    "type": "tool_result"
+  },
+  "id": "e66.0",
+  "parent_tool_use_id": null,
+  "session_id": "df21c3d5-d899-40d5-aa7b-4359fb63a3ed",
+  "source_sequence": 66
+}

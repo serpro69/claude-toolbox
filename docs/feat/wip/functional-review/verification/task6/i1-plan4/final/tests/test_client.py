@@ -1,0 +1,62 @@
+import unittest
+from client import save_settings
+from provider import update_settings
+
+
+class SettingsTests(unittest.TestCase):
+    def test_ordinary_save(self):
+        storage = {}
+        result = save_settings(lambda w, r: update_settings(storage, w, r),
+                               "w", {"label": "blue"})
+        self.assertTrue(result["saved"])
+        self.assertEqual(storage["w"], {"label": "blue"})
+
+    def test_sends_require_receipt(self):
+        captured = {}
+
+        def send(workspace_id, request):
+            captured["request"] = request
+            return {"ok": True}
+
+        save_settings(send, "w", {"label": "blue"})
+        self.assertTrue(captured["request"]["require_receipt"])
+        self.assertEqual(captured["request"]["settings"], {"label": "blue"})
+
+    def test_current_provider_without_receipt_still_succeeds(self):
+        # Independent-delivery guarantee: the Task-1 client must keep working against
+        # the current provider, which returns ok without an `applied` receipt, even
+        # when enhanced_settings is false.
+        storage = {}
+        result = save_settings(lambda w, r: update_settings(storage, w, r),
+                               "w", {"label": "blue"}, enhanced_settings=False)
+        self.assertTrue(result["saved"])
+        self.assertFalse(result["enhanced"])
+
+    def test_applied_receipt_succeeds(self):
+        result = save_settings(lambda w, r: {"ok": True, "applied": True},
+                               "w", {"label": "blue"})
+        self.assertTrue(result["saved"])
+
+    def test_receipt_not_applied_is_rejected(self):
+        # A present-but-falsey receipt means the save was not trustworthy.
+        with self.assertRaises(RuntimeError):
+            save_settings(lambda w, r: {"ok": True, "applied": False},
+                          "w", {"label": "blue"})
+
+    def test_present_non_true_receipt_is_rejected(self):
+        # Only an explicit boolean True confirms the save. A present receipt that is
+        # truthy-but-not-True (e.g. the string "false") must not be trusted as applied.
+        for receipt in ("false", 1, None):
+            with self.subTest(receipt=receipt):
+                with self.assertRaises(RuntimeError):
+                    save_settings(lambda w, r: {"ok": True, "applied": receipt},
+                                  "w", {"label": "blue"})
+
+    def test_transport_failure_is_rejected(self):
+        with self.assertRaises(RuntimeError):
+            save_settings(lambda w, r: {"ok": False},
+                          "w", {"label": "blue"})
+
+
+if __name__ == "__main__":
+    unittest.main()

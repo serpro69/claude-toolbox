@@ -1,0 +1,19 @@
+{
+  "actor": "main",
+  "block": {
+    "caller": {
+      "type": "direct"
+    },
+    "id": "toolu_01UyuBsxihz9EPmJXmU46rTN",
+    "input": {
+      "content": "reader.py / read_preferences (preferences repo): a \"trim preference ID\" change also swapped Repository.read_resilient -> read_once, silently dropping the 3-attempt TransientRead retry that README requires. The same diff rewrote a test to assertRaises(TransientRead) on the first transient error, so the suite passed while locking in the regression. Pattern to watch: input-normalization changes that also switch a resilient call to its single-attempt primitive, plus tests edited to bless the new behavior. Check that normalization is applied on top of read_resilient, and that tests cover retry-then-success, exhausted retries, and MissingPreference with no retry.",
+      "source": "kk:review-findings"
+    },
+    "name": "mcp__capy__capy_index",
+    "type": "tool_use"
+  },
+  "id": "e110.0",
+  "parent_tool_use_id": null,
+  "session_id": "b62e6f08-57f1-4084-ad6e-43d9e196be1c",
+  "source_sequence": 110
+}

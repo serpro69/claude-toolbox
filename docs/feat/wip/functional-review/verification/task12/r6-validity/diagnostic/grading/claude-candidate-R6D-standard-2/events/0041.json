@@ -1,0 +1,19 @@
+{
+  "actor": "main",
+  "block": {
+    "caller": {
+      "type": "direct"
+    },
+    "id": "toolu_01KgPXnq5e9yETZga52cHviv",
+    "input": {
+      "command": "python3 -B -m unittest discover -s tests 2>&1 | tail -4; for rev in HEAD INDEX; do d=$(mktemp -d); if [ $rev = HEAD ]; then git archive HEAD app.py config.py formatting.py stats.py | tar -x -C $d; else git checkout-index --prefix=$d/ app.py config.py formatting.py stats.py; fi; echo \"== $rev\"; (cd $d && python3 -B -c '\nfrom app import report\nfor args in [([],False),([2,4],False),([2,4],True),([1,2],True),([],True)]:\n    try: print(args, repr(report(*args)))\n    except Exception as e: print(args, type(e).__name__, e)\n'); rm -rf $d; done",
+      "description": "Run tests and compare base vs staged scenarios"
+    },
+    "name": "Bash",
+    "type": "tool_use"
+  },
+  "id": "e88.0",
+  "parent_tool_use_id": null,
+  "session_id": "965cded8-8d56-49b3-b871-fc90aff774f1",
+  "source_sequence": 88
+}

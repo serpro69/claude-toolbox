@@ -1,0 +1,19 @@
+{
+  "actor": "main",
+  "block": {
+    "caller": {
+      "type": "direct"
+    },
+    "id": "toolu_01BQrjGv82Lv1BY6sS91gYcY",
+    "input": {
+      "content": "Idempotency/recovery key confusion (service.py save): recovery records were looked up by workspace instead of operation_id. Because completed records are kept for audit, any later save on the same workspace with a fresh operation ID matched the old completed record, skipped store.apply, and returned ok with the new ID. The new values were silently dropped. Rule: dedupe/recovery lookups must key on the caller-supplied operation ID. Never key on a domain entity that outlives the operation. Add a test for \"fresh op ID, same workspace -> fresh save\".",
+      "source": "kk:review-findings"
+    },
+    "name": "mcp__capy__capy_index",
+    "type": "tool_use"
+  },
+  "id": "e107.0",
+  "parent_tool_use_id": null,
+  "session_id": "08c1ae78-0ca0-4a52-b4ae-37722bd523d0",
+  "source_sequence": 107
+}

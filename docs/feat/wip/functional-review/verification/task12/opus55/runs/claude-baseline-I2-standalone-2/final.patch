@@ -1,0 +1,63 @@
+diff --git a/settings.py b/settings.py
+index 17eee18..04ccefd 100644
+--- a/settings.py
++++ b/settings.py
+@@ -1,5 +1,5 @@
+ def patch_settings(current, patch):
+     result = dict(current)
+     for key, value in patch.items():
+-        result[key] = value or current.get(key)
++        result[key] = value
+     return result
+diff --git a/tests/test_settings.py b/tests/test_settings.py
+index 87a59f4..220183f 100644
+--- a/tests/test_settings.py
++++ b/tests/test_settings.py
+@@ -1,5 +1,7 @@
+ import unittest
+ from api import update_preferences
++from cli import clear_note
++from settings import patch_settings
+ 
+ 
+ class SettingsTests(unittest.TestCase):
+@@ -8,3 +10,39 @@ class SettingsTests(unittest.TestCase):
+         result = update_preferences(original, {"note": "after"})
+         self.assertEqual(result, {"note": "after", "enabled": True})
+         self.assertEqual(original["note"], "before")
++
++    def test_explicit_falsey_values_replace_current(self):
++        cases = [
++            ("none note", {"note": None}, {"note": None, "enabled": True}),
++            ("empty note", {"note": ""}, {"note": "", "enabled": True}),
++            ("disabled", {"enabled": False}, {"note": "before", "enabled": False}),
++        ]
++        for name, payload, expected in cases:
++            with self.subTest(name):
++                original = {"note": "before", "enabled": True}
++                result = update_preferences(original, payload)
++                self.assertEqual(result, expected)
++                self.assertEqual(original, {"note": "before", "enabled": True})
++
++    def test_omitted_keys_keep_current_values(self):
++        original = {"note": "before", "enabled": True}
++        result = update_preferences(original, {})
++        self.assertEqual(result, original)
++        self.assertIsNot(result, original)
++
++    def test_clear_note_sets_none(self):
++        original = {"note": "before", "enabled": True}
++        result = clear_note(original)
++        self.assertEqual(result, {"note": None, "enabled": True})
++        self.assertEqual(original["note"], "before")
++
++    def test_patch_settings_does_not_mutate_inputs(self):
++        current = {"note": "before", "enabled": True}
++        patch = {"enabled": False}
++        patch_settings(current, patch)
++        self.assertEqual(current, {"note": "before", "enabled": True})
++        self.assertEqual(patch, {"enabled": False})
++
++
++if __name__ == "__main__":
++    unittest.main()

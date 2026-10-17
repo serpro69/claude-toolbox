@@ -1,0 +1,30 @@
+{
+  "actor": "items-01a12bb8-c732-7992-bc21-e36ff36b47fd",
+  "completedAtMs": 1791734974774,
+  "id": "exec-fa63a728-82c4-4fa0-9926-0cdf61b314e0",
+  "item": {
+    "aggregatedOutput": "diff --git a/reader.py b/reader.py\nindex 9429bec..8ae04ed 100644\n--- a/reader.py\n+++ b/reader.py\n@@ -1,2 +1,2 @@\n def read_preferences(repository, key):\n-    return repository.read_resilient(key)\n+    return repository.read_resilient(key.strip())\ndiff --git a/tests/test_reads.py b/tests/test_reads.py\nindex 23fc901..378ccb8 100644\n--- a/tests/test_reads.py\n+++ b/tests/test_reads.py\n@@ -1,11 +1,28 @@\n import unittest\n \n from preferences import Preferences\n-from repository import Repository, ScriptedBackend\n+from repository import MissingPreference, Repository, ScriptedBackend, TransientRead\n \n \n class ReadTests(unittest.TestCase):\n-    def test_existing_key(self):\n+    def test_trim_key(self):\n         backend = ScriptedBackend([{\"color\": \"blue\"}])\n-        self.assertEqual(Preferences(Repository(backend)).read(\"w\"), {\"color\": \"blue\"})\n+        self.assertEqual(Preferences(Repository(backend)).read(\" w \"), {\"color\": \"blue\"})\n+        self.assertEqual(backend.keys, [\"w\"])\n+\n+    def test_transient_error(self):\n+        backend = ScriptedBackend([TransientRead(\"busy\"), {\"color\": \"blue\"}])\n+        self.assertEqual(Preferences(Repository(backend)).read(\" w \"), {\"color\": \"blue\"})\n+        self.assertEqual(backend.keys, [\"w\", \"w\"])\n+\n+    def test_retry_limit(self):\n+        backend = ScriptedBackend([TransientRead(\"busy\") for _ in range(3)])\n+        with self.assertRaises(TransientRead):\n+            Preferences(Repository(backend)).read(\" w \")\n+        self.assertEqual(backend.keys, [\"w\", \"w\", \"w\"])\n+\n+    def test_permanent_error(self):\n+        backend = ScriptedBackend([MissingPreference(\"missing\")])\n+        with self.assertRaises(MissingPreference):\n+            Preferences(Repository(backend)).read(\" w \")\n         self.assertEqual(backend.keys, [\"w\"])\n",
+    "command": "/usr/bin/zsh -lc \"cat '/tmp/kk-isolated-review-zvHtbV/staged.patch'\"",
+    "commandActions": [
+      {
+        "command": "cat /tmp/kk-isolated-review-zvHtbV/staged.patch",
+        "name": "staged.patch",
+        "path": "/tmp/kk-isolated-review-zvHtbV/staged.patch",
+        "type": "read"
+      }
+    ],
+    "cwd": "/tmp/fr-opus55-matrix-20261011/codex-candidate-R9-recovery-isolated-1",
+    "durationMs": 66,
+    "exitCode": 0,
+    "id": "exec-fa63a728-82c4-4fa0-9926-0cdf61b314e0",
+    "pluginId": null,
+    "processId": "10213",
+    "scriptPath": null,
+    "source": "unifiedExecStartup",
+    "status": "completed",
+    "type": "commandExecution"
+  },
+  "source_file": "items-01a12bb8-c732-7992-bc21-e36ff36b47fd.json",
+  "startedAtMs": 1791734974707,
+  "turnId": "01a12bb8-c752-7da0-ba08-af077c7b45f4"
+}

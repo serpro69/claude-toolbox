@@ -1,0 +1,19 @@
+{
+  "actor": "main",
+  "block": {
+    "caller": {
+      "type": "direct"
+    },
+    "id": "toolu_01XERP5hF1gAwNNsYgVqY4dn",
+    "input": {
+      "command": "echo \"=== existing tests ===\" && python3 -B -m unittest discover -s tests 2>&1 | tail -5 && echo \"=== repro on supported mixed snapshot data/records.json ===\" && python3 -B -c \"\nimport json\nfrom api import list_destinations\nrecords = json.load(open('data/records.json'))\ntry:\n    print(list_destinations(records))\nexcept Exception as e:\n    print(type(e).__name__ + ': ' + str(e))\n\"",
+      "description": "Run tests and reproduce against mixed snapshot"
+    },
+    "name": "Bash",
+    "type": "tool_use"
+  },
+  "id": "e121.0",
+  "parent_tool_use_id": null,
+  "session_id": "1f85da2b-16ca-4267-9445-b43faeecaabd",
+  "source_sequence": 121
+}

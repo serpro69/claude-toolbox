@@ -1,0 +1,28 @@
+{
+  "actor": "items-01a12b81-787e-7fc0-a2de-333e8bf8f708",
+  "completedAtMs": 1791731341160,
+  "id": "exec-8a174093-6b55-456a-84ff-83f26172d5ce",
+  "item": {
+    "aggregatedOutput": "from payload import build_payload\n\n\ndef save(transport, display_name):\n    return transport.put(\"/settings\", build_payload(display_name))\nimport unittest\n\nfrom client import save\n\n\nclass MemoryTransport:\n    def __init__(self):\n        self.request = None\n\n    def put(self, path, body):\n        self.request = (path, body)\n        return {\"ok\": True}\n\n\nclass ClientTests(unittest.TestCase):\n    def test_save(self):\n        transport = MemoryTransport()\n        self.assertEqual(save(transport, \"Ada\"), {\"ok\": True})\n        self.assertEqual(transport.request, (\"/settings\", {\"display_name\": \"Ada\"}))\n\n    def test_empty_name(self):\n        transport = MemoryTransport()\n        save(transport, \"\")\n        self.assertEqual(transport.request[1], {\"display_name\": \"\"})\n__pycache__/\n*.pyc\n",
+    "command": "/usr/bin/zsh -lc 'git show :client.py; git show :tests/test_client.py; git show :.gitignore'",
+    "commandActions": [
+      {
+        "command": "git show :client.py; git show :tests/test_client.py; git show :.gitignore",
+        "type": "unknown"
+      }
+    ],
+    "cwd": "/tmp/fr-opus55-matrix-20261011/codex-candidate-R7-isolated-2",
+    "durationMs": 64,
+    "exitCode": 0,
+    "id": "exec-8a174093-6b55-456a-84ff-83f26172d5ce",
+    "pluginId": null,
+    "processId": "73495",
+    "scriptPath": null,
+    "source": "unifiedExecStartup",
+    "status": "completed",
+    "type": "commandExecution"
+  },
+  "source_file": "items-01a12b81-787e-7fc0-a2de-333e8bf8f708.json",
+  "startedAtMs": 1791731341095,
+  "turnId": "01a12b81-78ab-7c73-a95e-3feca5aec617"
+}

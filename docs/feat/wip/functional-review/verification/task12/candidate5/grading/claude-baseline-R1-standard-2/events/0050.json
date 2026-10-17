@@ -1,0 +1,19 @@
+{
+  "actor": "main",
+  "block": {
+    "caller": {
+      "type": "direct"
+    },
+    "id": "toolu_01HZztsgYjpCBQmk4TQezYNZ",
+    "input": {
+      "content": "Pattern: guarded-delete \"simplification\" that drops a scoping invariant (P0 correctness/data-loss).\n\nIn cleanup_setup(store, workspace_id, setup_id), the original guarded the active-association removal:\n    association = store.active.get(workspace_id)\n    if association and association[\"setup_id\"] == setup_id:\n        store.active.pop(workspace_id, None)\nA simplification replaced it with an unconditional store.active.pop(workspace_id, None).\n\nWhy it's a bug: complete_setup overwrites store.active[workspace_id] with a NEW setup_id, so a workspace's active association can belong to a setup different from the one being cleaned up. The guard made cleanup setup-scoped and idempotent: a late/out-of-order cleanup for a superseded setup must NOT remove the currently-active association. Removing the guard silently clobbers a valid active connection (active_connection returns None) when cleanup fires for an old/stale setup_id.\n\nLesson: \"A == B then delete A\" guards on shared mutable state (dicts keyed by a different id than the one passed in) are usually load-bearing compare-and-delete protections, not redundant checks. Don't drop them without a test covering the mismatch case. Existing happy-path tests (cleanup of the currently-active setup) still pass, masking the regression.",
+      "source": "kk:review-findings"
+    },
+    "name": "mcp__capy__capy_index",
+    "type": "tool_use"
+  },
+  "id": "e116.0",
+  "parent_tool_use_id": null,
+  "session_id": "2635afac-7a58-4f8c-8c4a-f962da293142",
+  "source_sequence": 116
+}

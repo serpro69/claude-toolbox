@@ -1,0 +1,12 @@
+{
+  "actor": "main",
+  "block": {
+    "content": "tests/test_reads.py:4:from repository import Repository, ScriptedBackend, TransientRead\ntests/test_reads.py:14:        backend = ScriptedBackend([TransientRead(\"busy\"), {\"color\": \"blue\"}])\ntests/test_reads.py:15:        with self.assertRaises(TransientRead):\npreferences.py:1:from reader import read_preferences\npreferences.py:9:        return read_preferences(self.repository, key)\nreader.py:1:def read_preferences(repository, key):\nreader.py:2:    return repository.read_once(key.strip())\nrepository.py:1:class TransientRead(Exception):\nrepository.py:26:    def read_once(self, key):\nrepository.py:29:    def read_resilient(self, key):\nrepository.py:32:                return self.read_once(key)\nrepository.py:33:            except TransientRead:\nREADME.md:7:read may make up to three attempts on `TransientRead`, returning the first\nREADME.md:11:`Preferences.read` is the public entry point. `Repository.read_resilient`\nREADME.md:12:owns the bounded retry policy; `read_once` performs one attempt. The scripted",
+    "tool_use_id": "toolu_0147G5cYdgKaS2so3wRnFkUf",
+    "type": "tool_result"
+  },
+  "id": "e81.0",
+  "parent_tool_use_id": null,
+  "session_id": "b62e6f08-57f1-4084-ad6e-43d9e196be1c",
+  "source_sequence": 81
+}

@@ -1,0 +1,19 @@
+{
+  "actor": "main",
+  "block": {
+    "caller": {
+      "type": "direct"
+    },
+    "id": "toolu_014FcDYCwsU8AsuyyWcr9sEC",
+    "input": {
+      "content": "Preference reads (reader.py / repository.py): an unrelated change (preference ID whitespace trimming) swapped `repository.read_resilient(key)` for `repository.read_once(key.strip())`. That silently dropped the documented bounded-retry contract (up to 3 attempts on TransientRead; MissingPreference propagates immediately). The test was rewritten to assert the regression (`assertRaises(TransientRead)` with `backend.keys == [\"w\"]`), so the suite passed. Pattern to watch: input-normalization changes that also swap a resilient wrapper for its single-attempt primitive, plus tests updated to match the new behavior instead of the contract in README. Fix: keep `read_resilient(key.strip())` and assert that the retry succeeds.",
+      "source": "kk:review-findings"
+    },
+    "name": "mcp__capy__capy_index",
+    "type": "tool_use"
+  },
+  "id": "e103.0",
+  "parent_tool_use_id": null,
+  "session_id": "cf390cda-143a-45e1-98bd-d9e5f1f1ce75",
+  "source_sequence": 103
+}

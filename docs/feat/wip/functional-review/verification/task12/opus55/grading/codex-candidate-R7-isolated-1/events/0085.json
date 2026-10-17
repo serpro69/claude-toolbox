@@ -1,0 +1,30 @@
+{
+  "actor": "items-01a12b7e-10b5-73d0-bf1d-2a6ed46dea16",
+  "completedAtMs": 1791731114080,
+  "id": "exec-b306289d-2728-4779-b8ed-fef7b2f0f711",
+  "item": {
+    "aggregatedOutput": "1:# Parent-executed verification\n2:Executed against the read-only staged candidate snapshot, using Python 3.10.12.\n3:\n4:`python3 -B -m unittest discover -s tests -v`: all 4 tests pass: empty name, save Ada, trim surrounding spaces, preserve internal space.\n5:\n6:An ephemeral standard-library probe called client.save with a capture transport. Verified one PUT /settings request containing the expected display_name and identical returned transport object for:\n7:- \"  Ada  \" -> \"Ada\"\n8:- \"Ada Lovelace\" -> unchanged\n9:- empty string -> empty string\n10:- whitespace-only space/tab/newline -> empty string\n11:- surrounding tabs/newlines -> removed\n12:- surrounding U+00A0 no-break spaces -> removed\n13:A failing transport raising OSError propagated that exception.\n14:\n15:These are parent-executed local checks, not independent-reviewer execution or real-provider acceptance/persistence checks. No Python 3.9 runtime test, production request, or deployment was performed.\n",
+    "command": "/usr/bin/zsh -lc \"rg -n '\"'^'\"' /tmp/kk-settings-review-5tlvvM/verification.md\"",
+    "commandActions": [
+      {
+        "command": "rg -n '^' /tmp/kk-settings-review-5tlvvM/verification.md",
+        "path": "verification.md",
+        "query": "^",
+        "type": "search"
+      }
+    ],
+    "cwd": "/tmp/fr-opus55-matrix-20261011/codex-candidate-R7-isolated-1",
+    "durationMs": 68,
+    "exitCode": 0,
+    "id": "exec-b306289d-2728-4779-b8ed-fef7b2f0f711",
+    "pluginId": null,
+    "processId": "67154",
+    "scriptPath": null,
+    "source": "unifiedExecStartup",
+    "status": "completed",
+    "type": "commandExecution"
+  },
+  "source_file": "items-01a12b7e-10b5-73d0-bf1d-2a6ed46dea16.json",
+  "startedAtMs": 1791731114012,
+  "turnId": "01a12b7e-10d5-77f1-bc9f-b401de1d863e"
+}

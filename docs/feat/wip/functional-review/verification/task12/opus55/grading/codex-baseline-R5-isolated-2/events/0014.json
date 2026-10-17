@@ -1,0 +1,28 @@
+{
+  "actor": "items-01a12b4d-d90f-7b31-8761-23077fefe246",
+  "completedAtMs": 1791727946958,
+  "id": "exec-d8322016-24f4-4f9c-858e-00ee67bdd62f",
+  "item": {
+    "aggregatedOutput": "diff --git a/preview.py b/preview.py\nnew file mode 100644\nindex 0000000..14b3c75\n--- /dev/null\n+++ b/preview.py\n@@ -0,0 +1,2 @@\n+def render_preview():\n+    raise NotImplementedError(\"Export preview is scheduled for Task 2\")\ndiff --git a/routes.py b/routes.py\nindex 39ec034..fa60e31 100644\n--- a/routes.py\n+++ b/routes.py\n@@ -1,7 +1,11 @@\n+from config import EXPORT_PREVIEW_ENABLED\n+from preview import render_preview\n from settings import current_settings\n \n \n def get(path):\n     if path == \"/settings\":\n         return 200, current_settings()\n+    if EXPORT_PREVIEW_ENABLED and path == \"/export-preview\":\n+        return 200, render_preview()\n     return 404, None\n\npreview.py\n     1\tdef render_preview():\n     2\t    raise NotImplementedError(\"Export preview is scheduled for Task 2\")\n\nroutes.py\n     1\tfrom config import EXPORT_PREVIEW_ENABLED\n     2\tfrom preview import render_preview\n     3\tfrom settings import current_settings\n     4\t\n     5\t\n     6\tdef get(path):\n     7\t    if path == \"/settings\":\n     8\t        return 200, current_settings()\n     9\t    if EXPORT_PREVIEW_ENABLED and path == \"/export-preview\":\n    10\t        return 200, render_preview()\n    11\t    return 404, None\n\nconfig.py\n     1\tEXPORT_PREVIEW_ENABLED = False\n\nsettings.py\n     1\tdef current_settings():\n     2\t    return {\"theme\": \"light\"}\n\ntests/test_routes.py\n     1\timport unittest\n     2\t\n     3\tfrom routes import get\n     4\t\n     5\t\n     6\tclass RouteTests(unittest.TestCase):\n     7\t    def test_current_settings(self):\n     8\t        self.assertEqual(get(\"/settings\"), (200, {\"theme\": \"light\"}))\n     9\t\n    10\t    def test_unknown_route(self):\n    11\t        self.assertEqual(get(\"/unknown\"), (404, None))\n    12\t\n    13\t    def test_preview_route(self):\n    14\t        self.assertEqual(get(\"/export-preview\"), (404, None))\n\nREADME.md\n     1\t# Workspace settings\n     2\t\n     3\tPython 3.9+, standard library only. Run `python3 -B -m unittest discover -s tests`.\n     4\t\n     5\tThis increment prepares the export-preview module. The existing GET /settings\n     6\tresponse and routing behavior remain the acceptance contract. Export preview\n     7\tactivation belongs to a later task; this increment must remain independently\n     8\tcompatible while that task is pending. The checked-in build setting is fixed at\n     9\tFalse; it is not supplied by a request, environment variable or external config.\n    10\tNo deployment inventory is maintained in this small source repository.\n\ntasks.md\n     1\t# Export preview\n     2\t\n     3\t## Task 1: Prepare preview module\n     4\t\n     5\t**Status:** in-progress\n     6\t\n     7\t- Preserve existing routes with preview disabled in the checked-in build.\n     8\t- Add the preview module and guarded route for the next increment.\n     9\t\n    10\t## Task 2: Implement and enable export preview\n    11\t\n    12\t**Status:** pending\n    13\t**Depends on:** Task 1\n    14\t\n    15\t- Implement render_preview and its enabled-path tests before changing the build setting.\n",
+    "command": "/usr/bin/zsh -lc \"git diff --cached\nfor review_source in preview.py routes.py config.py settings.py tests/test_routes.py README.md tasks.md; do printf '\\\\n%s\\\\n' \\\"\"'$review_source\"; nl -ba \"$review_source\"; done'",
+    "commandActions": [
+      {
+        "command": "git diff --cached\nfor review_source in preview.py routes.py config.py settings.py tests/test_routes.py README.md tasks.md; do printf '\\n%s\\n' \"$review_source\"; nl -ba \"$review_source\"; done",
+        "type": "unknown"
+      }
+    ],
+    "cwd": "/tmp/fr-opus55-matrix-20261011/codex-baseline-R5-isolated-2",
+    "durationMs": 53,
+    "exitCode": 0,
+    "id": "exec-d8322016-24f4-4f9c-858e-00ee67bdd62f",
+    "pluginId": null,
+    "processId": "24191",
+    "scriptPath": null,
+    "source": "unifiedExecStartup",
+    "status": "completed",
+    "type": "commandExecution"
+  },
+  "source_file": "items-01a12b4d-d90f-7b31-8761-23077fefe246.json",
+  "startedAtMs": 1791727946905,
+  "turnId": "01a12b4d-d93b-7810-b6cf-f0f2372dce96"
+}

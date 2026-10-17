@@ -1,0 +1,30 @@
+{
+  "actor": "items-01a12bd0-bf4e-74e3-acdb-f26a6a0c8150",
+  "completedAtMs": 1791736510498,
+  "id": "exec-8c088feb-776c-44f0-8f73-9281189dc728",
+  "item": {
+    "aggregatedOutput": "# Python errors and resource ownership\n\n## Preserve failures callers need to handle\n\n- Catch the specific exception where recovery, translation, or reporting is possible. Let other failures propagate; fallible operations do not each need their own `try/except`.\n- Keep the protected block narrow so a handler does not accidentally catch an unrelated failure. Use bare `raise` to rethrow; use `raise DomainError(...) from exc` when translating while preserving the cause.\n- Do not turn failures into empty values or apparent success unless the API explicitly defines that fallback. Broad exception handling belongs at deliberate boundaries with a defined outcome; avoid swallowing `BaseException`, which includes termination signals.\n- Use explicit exceptions for input and security validation. Assertions may be disabled and are appropriate only for internal invariants.\n- Avoid returning or transferring control from `finally`: that can hide a pending failure or replace a result. See [errors and exceptions](https://docs.python.org/3/tutorial/errors.html).\n\n## Give each resource an owner\n\n- Use `with` for supported resource protocols; use `try/finally` when cleanup is manual. Register cleanup as soon as acquisition succeeds, including when later acquisition can fail. `ExitStack` helps with a variable number of resources.\n- Close resources this function owns. For borrowed files, clients, and connections, follow the caller's ownership contract instead of closing them unexpectedly.\n- Verify what a context manager actually does. A database transaction context may commit or roll back without closing its connection. Do not assume every `with` block releases every associated resource.\n- For generator-based context managers, put cleanup in `finally` around the yield and propagate exceptions unless suppression is intentional. See [contextlib](https://docs.python.org/3/library/contextlib.html).\n\n## Make operational failure understandable\n\n- Add useful operation context without exposing credentials or sensitive payloads. Log at the boundary responsible for handling the failure; avoid duplicate stack traces at every layer.\n- Bound external calls with the project's timeout policy. Retry only classified transient failures when repeating the operation is safe, with a finite attempt or time budget.\n- Verify cleanup on both success and failure, and verify that the caller can distinguish failure from an empty successful result.\n",
+    "command": "/usr/bin/zsh -lc 'cat /home/sergio/.codex/plugins/cache/fr-opus55-581dd0e1-20261011/kk/0.23.0/profiles/python/implement/errors-and-resources.md'",
+    "commandActions": [
+      {
+        "command": "cat /home/sergio/.codex/plugins/cache/fr-opus55-581dd0e1-20261011/kk/0.23.0/profiles/python/implement/errors-and-resources.md",
+        "name": "errors-and-resources.md",
+        "path": "/home/sergio/.codex/plugins/cache/fr-opus55-581dd0e1-20261011/kk/0.23.0/profiles/python/implement/errors-and-resources.md",
+        "type": "read"
+      }
+    ],
+    "cwd": "/tmp/fr-opus55-matrix-20261011/codex-candidate-I4-plan-1",
+    "durationMs": 53,
+    "exitCode": 0,
+    "id": "exec-8c088feb-776c-44f0-8f73-9281189dc728",
+    "pluginId": null,
+    "processId": "69667",
+    "scriptPath": null,
+    "source": "unifiedExecStartup",
+    "status": "completed",
+    "type": "commandExecution"
+  },
+  "source_file": "items-01a12bd0-bf4e-74e3-acdb-f26a6a0c8150.json",
+  "startedAtMs": 1791736510444,
+  "turnId": "01a12bd0-bf7b-7e33-b293-dfc205625a58"
+}

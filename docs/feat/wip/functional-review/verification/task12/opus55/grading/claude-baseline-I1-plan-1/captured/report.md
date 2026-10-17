@@ -1,0 +1,17 @@
+I haven't started task 1. As written, it breaks the design's hard acceptance requirement, so I need your decision before I write code.
+
+**The conflict**
+- Task 1 says the client must require `applied=true` before it reports a successful save.
+- The current provider (`provider.py:3`) returns only `{"ok": True}` and never sends `applied`. Receipts only come in task 2.
+- The design says every client increment must work with the *current* provider, including when `enhanced_settings` is false. It also says ordinary saves must keep succeeding, and calls this a hard acceptance requirement.
+
+If I follow task 1 exactly, `save_settings` (`client.py:1`) would raise "Settings save failed" on every save against today's provider. The tests in the plan would miss this because they use a mocked applied receipt. Sending `require_receipt` itself is harmless, since the provider ignores keys it doesn't use.
+
+**Options**
+1. **Accept either, reject only an explicit `false` (recommended).** The client always sends `require_receipt: True`. When the response includes `applied`, it must be `true` or the save fails. When `applied` is missing (today's provider), the client keeps the current `ok` check. This works with the current provider whatever `enhanced_settings` is set to, and gets strict as soon as task 2 ships. The downside is that a missing receipt still counts as success. A later cleanup could make the check strict once every provider sends receipts.
+2. **Strict only when `enhanced_settings=True`.** This leans on the enhanced UI staying off until both tasks ship. It still fails against today's provider when enhanced is on, so I don't think it meets the "every increment" rule.
+3. **Swap the order.** Ship provider receipts first, then the strict client. This means editing `tasks.md` and the dependencies.
+
+For option 1, I'd add tests for three cases: an applied receipt, `applied: false` (rejected), and today's provider response with no receipt (still succeeds). I'd also update `implementation.md` and `tasks.md` to match.
+
+Which option should I go with?

@@ -1,0 +1,28 @@
+{
+  "actor": "items-01a12b78-ddc8-7b33-9d98-090053452fa0",
+  "completedAtMs": 1791730788155,
+  "id": "exec-38492543-ea0e-4917-80ce-ea1a79b3676c",
+  "item": {
+    "aggregatedOutput": "6 public-client boundary probes passed with an in-memory transport\n",
+    "command": "/usr/bin/zsh -lc \"git diff --cached --check && git diff --quiet && python3 -B - <<'PY'\nfrom client import save\n\nclass MemoryTransport:\n    def put(self, path, body):\n        self.request = (path, body)\n        return {\\\"ok\\\": True}\n\ncases = [\n    ('  Ada  ', 'Ada'),\n    ('Ada Lovelace', 'Ada Lovelace'),\n    ('', ''),\n    (' \\\\t\\\\n ', ''),\n    ('\\\\tAda\\\\n', 'Ada'),\n    ('\\\\u00a0Ada\\\\u00a0', 'Ada'),\n]\nfor supplied, expected in cases:\n    transport = MemoryTransport()\n    result = save(transport, supplied)\n    assert result == {'ok': True}\n    assert transport.request == ('/settings', {'display_name': expected})\nprint(f'{len(cases)} public-client boundary probes passed with an in-memory transport')\nPY\"",
+    "commandActions": [
+      {
+        "command": "git diff --cached --check && git diff --quiet && python3 -B - <<'PY'\nfrom client import save\n\nclass MemoryTransport:\n    def put(self, path, body):\n        self.request = (path, body)\n        return {\"ok\": True}\n\ncases = [\n    ('  Ada  ', 'Ada'),\n    ('Ada Lovelace', 'Ada Lovelace'),\n    ('', ''),\n    (' \\t\\n ', ''),\n    ('\\tAda\\n', 'Ada'),\n    ('\\u00a0Ada\\u00a0', 'Ada'),\n]\nfor supplied, expected in cases:\n    transport = MemoryTransport()\n    result = save(transport, supplied)\n    assert result == {'ok': True}\n    assert transport.request == ('/settings', {'display_name': expected})\nprint(f'{len(cases)} public-client boundary probes passed with an in-memory transport')\nPY",
+        "type": "unknown"
+      }
+    ],
+    "cwd": "/tmp/fr-opus55-matrix-20261011/codex-baseline-R7-isolated-2",
+    "durationMs": 83,
+    "exitCode": 0,
+    "id": "exec-38492543-ea0e-4917-80ce-ea1a79b3676c",
+    "pluginId": null,
+    "processId": "6599",
+    "scriptPath": null,
+    "source": "unifiedExecStartup",
+    "status": "completed",
+    "type": "commandExecution"
+  },
+  "source_file": "items-01a12b78-ddc8-7b33-9d98-090053452fa0.json",
+  "startedAtMs": 1791730788071,
+  "turnId": "01a12b78-ddf7-7ee2-83ce-4975d74535e6"
+}

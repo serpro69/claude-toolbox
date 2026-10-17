@@ -112,6 +112,36 @@ for skill in brainstorm design; do
   done
 done
 
+# Functional-review packaging: only register consumers that already exist.
+CHANGE_CONTEXT_CONSUMERS=(review-code implement)
+
+log_test "Functional-review shared source and consumer links are valid"
+assert_file_exists "$REPO_ROOT/klaude-plugin/skills/_shared/change-context.md" \
+  "Shared change-context source exists"
+for skill in "${CHANGE_CONTEXT_CONSUMERS[@]}"; do
+  context_link="$REPO_ROOT/klaude-plugin/skills/$skill/shared-change-context.md"
+  if [[ -L "$context_link" ]]; then
+    assert_equals "../_shared/change-context.md" "$(readlink "$context_link")" \
+      "Change-context target for $skill"
+    assert_file_exists "$context_link" "Change-context link resolves for $skill"
+  else
+    log_fail "Not a symlink: $context_link"
+  fi
+done
+
+log_test "Functional-review instructions fit complete-file word budgets"
+for entry in "_shared/change-context.md:800" "review-code/functional-review.md:1200"; do
+  instruction_path="$REPO_ROOT/klaude-plugin/skills/${entry%:*}"
+  word_budget="${entry##*:}"
+  assert_file_exists "$instruction_path" "Instruction exists: ${entry%:*}"
+  word_count=$(LC_ALL=C wc -w < "$instruction_path")
+  if (( word_count > 0 && word_count <= word_budget )); then
+    log_pass "${entry%:*}: $word_count words within $word_budget-word budget"
+  else
+    log_fail "${entry%:*}: $word_count words outside 1–$word_budget budget"
+  fi
+done
+
 # Eval oracle-staging invariant (CLAUDE.md §Skill evaluations): grader-only
 # oracles live in a sibling oracle/ dir, never inside test-files/ — a harness
 # that stages the whole test-files/ directory must not leak graded answers to
@@ -442,6 +472,20 @@ if [[ -z "$dangling" ]]; then
 else
   log_fail "Dangling symlinks found: $dangling"
 fi
+
+log_test "Generated change-context consumers match the generated shared source"
+assert_file_exists "$REPO_ROOT/kodex-plugin/skills/_shared/change-context.md" \
+  "Generated change-context source exists"
+assert_file_exists "$REPO_ROOT/kodex-plugin/skills/review-code/functional-review.md" \
+  "Generated functional-review method exists"
+for skill in "${CHANGE_CONTEXT_CONSUMERS[@]}"; do
+  if cmp -s "$REPO_ROOT/kodex-plugin/skills/_shared/change-context.md" \
+    "$REPO_ROOT/kodex-plugin/skills/$skill/shared-change-context.md"; then
+    log_pass "Generated change-context copy matches for $skill"
+  else
+    log_fail "Generated change-context copy missing or different for $skill"
+  fi
+done
 
 log_test "No \${TOOLBOX_PLUGIN_ROOT} brace literals in generated kodex-plugin skills"
 # The codex generator resolves the brace form to a relative path. Bare

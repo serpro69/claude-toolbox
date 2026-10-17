@@ -4,13 +4,15 @@
 > Evaluation: [evaluation.md](evaluation.md)
 > Tasks: [tasks.md](tasks.md)
 > Review disposition: [consolidated assessment](reviews/design-review-consolidation.md)
-> Status: planned; no operative skill changes implemented
+> Status: Tasks 1–11 and core matrix capture/grading complete; acceptance and final verification pending
+> Revised: 2026-10-17; corrected bindings complete, high-effort launch verified, candidate detection receipts incomplete
+> Next-session handoff: [follow-up.md](follow-up.md)
 
 ## Starting points
 
 Canonical changes belong under klaude-plugin/. Current entry points are review-code/SKILL.md, review-process.md and review-isolated.md; agents/code-reviewer.md; implement/SKILL.md, plan-mode.md and standalone-mode.md. Shared review-scope-protocol.md also serves /kk:review-spec; pal-codereview-invocation.md also serves /kk:review-design. Preserve those consumers.
 
-The immutable actor baseline is c2d28c9e (v0.23.0), resolved to a full commit when runs are prepared. All seed workflow baselines are captured before operative changes. The installed cache and an intermediate Task 4 working tree are not valid substitutes. [Evaluation binding](evaluation.md#bind-the-actual-instructions) specifies entry-point, runtime-root and agent loading.
+The immutable actor baseline is c2d28c9e (v0.23.0), resolved to a full commit when runs are prepared. Task 2 gate 2A preserves the final seed fixtures, frozen inputs and 16 baseline captures from before operative changes. Gate 2B adds four fresh Codex baselines against that same preserved actor revision under the selected revision-2 contract. The installed normal cache and an intermediate Task 4 working tree are not valid substitutes. [Evaluation binding](evaluation.md#bind-the-actual-instructions) specifies entry-point, runtime-root and agent loading.
 
 ## Delivery and verification rules
 
@@ -24,7 +26,11 @@ Use source-relative links and local shared symlinks. Distributed instructions ex
 
 Task 1 establishes the revision-bound launch probes and run contract. It builds filtered actor bundles, scans bundles/cache copies for evaluator material, and proves per-run Capy/fixture isolation before any measured run. Operative files retain their original bytes; normal plugin distribution is unchanged. Task 2 owns the final seed fixtures R1/R3/I1/I2. It creates their complete eval.json, paired snapshot layout where applicable, and separate oracle directories before capturing standard, isolated, plan and standalone runs. The source/fixture identity and provider-specific launch probes are defined in [evaluation.md](evaluation.md#comparison-identity-and-acceptance).
 
-Capture raw execution evidence now; the workflow grader introduced later grades the preserved package. The grading procedure/rubric is pinned with the run contract; pin the concrete grader implementation before grading either side. A rubric change requires regrading both sides, and recapturing both if the changed assertion needs evidence absent from the saved traces.
+The user-approved [2026-10-09 amendment](verification/run-contract-2026-10-09.md) separates implementation readiness from capture completion. Both gates are now done. The [gate 2B completion record](verification/task2b/README.md) retains four new Codex captures, independent grades and the revised evidence contract. Task 12 is next; observed baseline failures are data, not candidate passes.
+
+The implementing agent completed [the resolution procedure](evaluation.md#codex-handoff-capture-resolution): no viable supported plaintext alternative was found, so revision 2 selected observable reviewer receipt/use before measurement. The fallback narrows the claim about prompt content; it retains both reviewers, all required behavior and the two-run candidate threshold. [The run contract](verification/task2b/run-contract.md) records the selected path, assertion mapping and configuration. Future comparisons must match that declaration or recapture affected pairs under a new one.
+
+Capture raw execution evidence; the workflow grader introduced later grades the preserved package. Preserve the original rubric, freeze and sealed records. Pin any successor rubric and the concrete grader implementation before grading either side. A rubric change requires regrading both sides, and recapturing both if saved evidence is insufficient. A runtime/model/tool-policy change requires a revised run contract and fresh affected baseline/candidate comparisons under the same configuration; developing the candidate does not change the identity of the preserved baseline.
 
 Later fixture tasks extend the same directories and author only the remaining cases. Use the manual staging contract until the paired-snapshot helper exists, creating a fresh workspace and knowledge state for every run. Baseline and candidate must use identical fixture revisions and initial knowledge seeds; never relabel an intermediate candidate run as the unchanged baseline. Record the intentional unavailable-vault policy separately from knowledge search/index availability.
 
@@ -82,7 +88,7 @@ Verify offline: additions, modifications, deletions, unchanged files, hidden fil
 
 Task 8 extends agents/eval-grader.md with explicit workflow mode while preserving the default component contract and Read-only access. Update review-code/evals/_harness/HARNESS.md and add implement/evals/README.md to carry the [execution-evidence contract](evaluation.md#execution-evidence-contract).
 
-The controller assembles ordered tool events, real dispatches and resulting-file snapshots with hashes. The grader may read only manifest-listed evidence, its instructions and supplied rubric. Add calibration records under the harness's grading-fixtures directory: early edit plus false final claim fails, missing events are partial, and a complete ordered trace passes. Legacy component grading remains unchanged.
+The controller assembles ordered tool events, real dispatches and resulting-file snapshots with hashes. The grader may read only manifest-listed evidence, its instructions and supplied rubric. Add calibration records under the harness's grading-fixtures directory: early edit plus false final claim fails, missing events are partial, and a complete ordered trace passes. Legacy component grading remains unchanged. Task 8 can implement and calibrate the grader while gate 2B is open; if the fallback is selected later, update its evidence mapping and regrade affected retained traces before acceptance.
 
 R8 uses the concrete report-phase replay defined in [evaluation.md](evaluation.md#r8-controlled-report-phase-replay). No MCP proxy, tool interception API or new server dependency is introduced. A real PAL smoke run has separate evidence and cannot be replaced by the replay.
 
@@ -100,11 +106,290 @@ Fixture authoring does not count as a matrix run. Do not include private source 
 
 ## Matrix execution
 
-Task 12 waits for producer, isolated consumers, staging, grading and all scenarios. Run the declared primary-provider matrix and secondary representative coverage with the predeclared two-run threshold. Preserve raw traces and per-assertion results, including failed attempts and unknown tool coverage.
+Task 12 waits for Task 2 gate 2B, producer, isolated consumers, staging, grading and all scenarios. Run the declared primary-provider matrix and secondary representative coverage with the predeclared two-run threshold and selected versioned evidence contract. Preserve raw traces and per-assertion results, including failed attempts and unknown tool coverage. If the receipt/use fallback was selected, report that narrower observation and leave exact submitted prompt content explicitly unverified.
 
 Review R3's historical-source handoff, R3/R7's verdict mapping, I4's resulting document state, and the grader calibration controls explicitly. Compare every candidate against the immutable actor baseline using the same fixture and grading revisions. An unavailable runtime or source capture yields an unrun gate with an owner/next action; it does not waive acceptance.
 
+The user subsequently expanded coverage to both providers' complete applicable
+matrix. [All 192 sessions and grades](verification/task12/opus55/README.md) are
+complete. Required acceptance remains unmet; preserve PAL deferral and the
+separate legacy/final gates. The bounded entry-path comparison below is complete;
+no automatic full rerun follows.
+
 ## Documentation and final verification
+
+### Task 12 focused rework checkpoint
+
+The user approved focused rework after candidate 4. Execute these bounded slices
+before expanding the matrix:
+
+1. Add successor capture helpers under `verification/task12/rework/`, preserving
+   historical controller bytes. Prepare the whole batch before launch and run
+   captures serially in the owning process. Record SIGINT/SIGTERM without raising
+   during acquisition; stop the owned Linux process group before reaping its
+   leader, then seal evidence. Ignore repeated termination during cleanup.
+   Check the sealed actor exit status and missing completion explicitly.
+   Make probe evidence finalization independent of teardown success while
+   preserving the primary failure. → Verify: offline subprocess tests for
+   preparation failure, runtime failure, interruption and teardown failure; no
+   model or live PAL calls in these tests. Independent review precedes capture.
+2. Add a plugin-local instruction-packet helper and integrate it into standard
+   review preparation. Preserve original instruction bytes, source paths,
+   bounded reads and the direct-read fallback; include all known detection rules
+   and validate selected profile paths against their indexes. Resolve profile
+   predicates in the existing procedure, not in Python. Remove conflicting
+   speculative-suggestion cues and use the contract-driven scenario record.
+   → Verify: offline packet completeness/path-boundary/truncation controls,
+   canonical/generated parity, source review and a separate binding probe.
+3. Freeze candidate 5 and a diagnostic declaration for R1/R3/R5 standard, twice
+   per side with fresh state. Report failure classes separately while preserving
+   the pinned assertions/rubric and all old results. Runtime/capture changes get
+   fresh matching baseline runs. → Verify: independently grade all twelve sealed
+   captures; expand only if every candidate assertion passes in both runs.
+
+Optional `/kk:clarify-docs` can refine the amended design, implementation and
+task documents; `/kk:review-design functional-review` remains available for an
+independent design assessment. These optional passes do not delay the already
+authorized rework.
+
+### Proposed ordering feasibility slice — conditional
+
+After candidate 6, the user approved scoping a separate ordering fix. The
+[ordering proposal](ordering.md) is the source of truth for this prospective
+slice. Preserve the candidate-6 source and sealed results. The original scope
+revision changed documents only; it did not implement or launch a probe, hook
+or candidate.
+
+If selected after Task 12.11, **12.10** is a risk-first experiment
+under `verification/task12/ordering-probe/`, using disposable plugin copies.
+Its four steps are capability declaration, offline receipt/state controls,
+at most two top-level runtime sessions per provider, and independent evidence
+review with a GO / NO-GO disposition. Each step's verification is specified in
+[the bounded slice](ordering.md#bounded-feasibility-slice). Declare any actual
+runtime/tool-policy changes before launch and preserve existing evidence.
+
+GO supports designing a later production integration; it is not R5 acceptance.
+NO-GO records the missing capability and ends this experiment. Neither outcome
+changes the pinned assertions or authorizes a generic policy engine, runtime
+upgrade, provider substitution or matrix expansion. A later integrated candidate
+requires fresh matching comparisons as described in
+[conditional validation](ordering.md#conditional-integration-and-validation).
+
+### Severity and instruction-cost disposition
+
+The [dated assessment](follow-up.md#assessment--2026-10-11) and
+[observation ledger](assessment-observations.md) account for every candidate
+FAIL/PARTIAL, separating behavioral impact, report omissions, missing evidence
+and PAL deferral. Existing instruction burden is part of each disposition;
+deferred requirements remain open.
+
+Task 12.12's
+[bounded plan](tasks.md#task-1212-resolve-isolated-review-instructions-at-entry)
+replaces the isolated command's ambiguous instruction location with explicit
+plugin-root paths, adding two words. [All twelve declared Claude comparisons](verification/task12/entry-path-no-pal/README.md)
+are captured and graded; both repetitions meet the R3 non-PAL conditions and
+R5/R9-recovery controls, supporting the keep decision. Common instructions and
+generated Codex bytes are unchanged. An unexpected PAL connection in the initial
+loading probe required a reviewed, separately frozen configuration that excludes
+PAL from the actual launched MCP set. Both measured sides use that configuration;
+fixtures, ordinary prompts, models, permission policy and assertions stay fixed.
+
+Candidate totals remain 32 PASS / 8 FAIL / 0 PARTIAL; every required PAL omission
+still fails its composite assertion. These observations neither close full feature
+acceptance nor isolate the incremental causal effect from the preceding candidate.
+Keep implementation acquisition, unsupported deployment claims and capture limits
+separately assigned. Task 12.13 below records the rejected wording experiment;
+Task 12.14 now prioritizes R7 evaluation validity under the same cost constraint. The earlier guard remains
+deferred and may not address I4's later context-ordering violation.
+
+### R7 conclusion consistency — Task 12.13
+
+The user approved the bounded replacement approach on 2026-10-13. The experiment replaced existing
+Supported, Unknown-verdict and final evidence-reconciliation wording in
+`review-code/functional-review.md`; all standard/isolated consumers already load
+this common method. It added no reporting section, checklist, workflow phase or
+duplicated agent rule and preserved the intended treatment of known prerequisites,
+scoped code approval and unrelated unknowns. The Codex distribution was regenerated.
+
+The completed comparison used unchanged R7, R3 and R5 fixtures: both modes and
+providers, two fresh repetitions per immutable baseline/candidate (48 sessions).
+Runtime, filtered bundles, isolated state and capture contract were validated and
+frozen prospectively. PAL remained excluded and its required omissions retain
+FAIL. The fixed keep rule rejected the candidate if R7 still overclaimed or
+R3/R5 regressed, with no automatic further iteration. Task 12.13 owns the evidence;
+full-feature acceptance remains separate.
+
+**Disposition: reject the candidate.** Both Claude standard R7 repetitions still
+overclaim provider/deployment compatibility. The three operative replacements
+and generated counterpart are reverted; the source archive and patch remain in
+the [verification record](verification/task12/r7-conclusions/README.md). R7 stays
+unresolved and no successor wording or actor iteration is selected. Source checks
+passing did not establish the required behavioral result.
+
+### R7 evaluation validity — Task 12.14
+
+The user requested a next-session handoff after questioning R7's simplified
+whitespace fixture. Follow the [recorded redesign](follow-up.md#r7-evaluation-redesign--next-session):
+establish a material compatibility dependency and a benign control, then write
+meaning-based grading criteria and example reports before measuring agents.
+Start with the existing `functional-missing-baseline` eval/oracle and Task 12.13
+reports as evidence, not proof that another shared instruction is needed.
+
+Keep operative skill instructions unchanged. Author successor fixtures and rubric
+under separate identities; preserve historical results and explicitly document
+any contract amendment. After review, a prospectively declared four-session
+Claude standard diagnostic uses the unchanged current skill on both cases.
+It is not the required baseline/candidate acceptance comparison. The
+[completed four-session diagnostic](verification/task12/r7-validity/README.md)
+records 23 PASS / 1 FAIL / 0 PARTIAL, with both target compatibility conclusions
+passing twice and one retained report-trace omission. The disposition is no
+further operative skill change for this R7 concern. Historical R7 and all broader
+acceptance gates remain unchanged. Independent completion review approves closing
+Task 12.14 as this bounded diagnostic.
+
+Optional `/kk:clarify-docs` may refine the changed `follow-up.md`, `design.md`,
+`implementation.md`, `evaluation.md` and `tasks.md`; then
+`/kk:review-design functional-review` can assess the updated plan before operative
+implementation. Task 13 remains dependent on Task 12's actual acceptance.
+
+### R6 evaluation validity — Tasks 12.15 and 12.16
+
+The completed [assessment](r6-assessment.md) separates inherited discovery,
+reachability, correct scoped approval and missing advisory follow-up. The user
+selected Task 12.16 to author the proposed material-exposure/dormant-control pair,
+its criteria and pre-run examples, and obtain independent validity/source review.
+Use separately identified evals 21/R6M and 22/R6D; preserve all original R6 files.
+
+Both cases share a small reporting implementation whose detailed mean has a
+visible consumer. R6M enables that mode by default while requiring empty-batch
+success; R6D changes only the count label and leaves detailed mode disabled.
+The [prospective rubric](verification/task12/r6-validity/rubric.md) makes dormant
+discovery optional only in R6D, retains attribution and surfaced-advisory follow-up,
+and separates final-report evidence from child discovery. This is the explicit
+successor scope decision under the authoring request, not an old-grade amendment.
+
+Verify complete snapshot manifests, intended diff boundaries, actual outcomes,
+passing supplied tests with the intended coverage gap, and evaluator-free staging
+through the existing helper. Generate Codex counterparts and run relevant
+structure/staging/graph checks. Independent review must assess fixture validity
+and criteria before measurement. The [authoring record](verification/task12/r6-validity/README.md)
+retains checks and findings. This task ends at reviewed assets; a later bounded
+diagnostic requires its own declaration. Operative instructions, historical
+acceptance, PAL deferral, other investigations and Task 13 remain unchanged.
+
+### R6 bounded diagnostic — Task 12.17
+
+After authoring, the user authorized eight fresh standard reviews: R6M/R6D,
+Claude/Codex, twice each, with unchanged operative instructions. The
+[diagnostic declaration](verification/task12/r6-validity/diagnostic/run-contract.md)
+pins its distinct runtime and evidence boundaries. Grader calibration, source
+review, immutable freezing and both provider binding/state checks preceded
+measurement. All eight captures are independently graded: **58 PASS / 10 FAIL /
+0 PARTIAL**, with correct scoped verdicts in every run. Follow-up and reported
+trace/reachability omissions remain failed. All four final dormant advisories
+triggered the follow-up requirement; none received the required next action.
+
+The [record](verification/task12/r6-validity/diagnostic/README.md) assigns bounded
+advisory-closure investigation and defers added trace instructions pending value.
+No operative patch or broader batch is selected. Original R6/R7 acceptance, PAL,
+legacy actor controls, implementation-verification concerns and Task 13 remain
+separate. Capture completion is not a full diagnostic or feature pass.
+
+### Advisory-closure candidate — Task 12.18
+
+The user selected the bounded advisory-closure investigation after Task 12.17.
+The [assessment](advisory-closure.md) ties all four missing follow-ups to a possible
+ambiguity between in-scope findings and separately reported inherited defects.
+It does not claim that closure wording caused the omissions.
+
+Replace only the standard and isolated closing branches: a surfaced substantiated
+inherited defect receives a concrete separate follow-up when repair is outside
+the task, without blocking an otherwise supported increment. Preserve clean
+no-action approval, in-scope corrections, required evidence and authorization
+limits. Regenerate Codex copies, verify packaging/parity and obtain independent
+source review. [Source review](reviews/advisory-closure-review.md) and local checks
+are complete; Task 12.18 completes candidate preparation only. The prospective
+comparison, adoption and all existing acceptance gates remain separate.
+
+### Advisory-closure freeze and declaration — Task 12.19
+
+The user selected source/criteria preparation before measurement. The
+[record](verification/task12/advisory-closure/README.md) retains candidate
+`4b69421465131e2e9e497f200ec9ddbdb439ac83`, the immutable baseline, complete
+source/filtered archives, evaluation/controller inputs and a 64-session matrix.
+The [contract](verification/task12/advisory-closure/run-contract.md) defines bounded
+KEEP / REJECT / INCONCLUSIVE outcomes separately from all original assertion grades
+and full feature acceptance. Both independent reviews approve after clarifying
+22.4's tolerated omission; archive recovery, source delta and final seal pass.
+
+No operative change or model run occurs in this task. Execution needs a successor
+adapter, its own reviewed dependency freeze, fresh grader/disposition calibration,
+four binding probes, two state probes and passing preflight before measurement.
+The source/criteria freeze remains immutable input; any revision gets a separately
+identified successor. PAL, original acceptance and Task 13 retain their status.
+
+### Advisory-closure adapter and calibration — Task 12.20
+
+The user selected execution-adapter preparation and fresh calibration. The
+[execution record](verification/task12/advisory-closure-execution/README.md)
+preserves the reviewed adapter, checked archived dependencies, per-case rubric
+routing, no-overwrite/serial-stop guards and exact frozen dispatch plans.
+The preparation seal and operative candidate remain unchanged.
+
+After source and calibration-validity review, the execution freeze preceded all
+25 fresh independent grader calls. Every expected verdict/trigger matched:
+69 assertions and 11 trigger observations. Returned FAIL/PARTIAL judgments are
+the intended negative controls. Independent completion review approves with no
+findings; tests and integrity checks remain parent-attributed execution evidence.
+
+No actor, binding/state probe, PAL or registration action occurred. Four binding
+probes, two state probes and a reviewed preflight remain the next unrun gates;
+measured execution/adoption and broader acceptance are separate.
+
+### Advisory-closure runtime preflight — Task 12.21
+
+The user selected the four binding probes, two Capy state probes and independent
+review. The [retained result](verification/task12/advisory-closure-execution/preflight-result.md)
+supports instruction/model/role loading, state isolation, unchanged subjects and
+owned cleanup, but does not establish the declared Claude child high effort.
+Candidate frontmatter specifies xhigh; the parent high flag and model override
+do not prove the child's effective effort under documented precedence.
+
+Independent review returns COMMENT and readiness remains BLOCKED. Preserve every
+capture and freeze; the implementing agent owns a reviewed successor launch-time
+effort pin/receipt, its runtime/calibration identity and fresh affected Claude
+bindings. No original requirement, historical grade, actor source or measured
+comparison was changed. Task 12.21's PASS gate remains open.
+
+The user selected the launcher correction. The [reviewed successor](verification/task12/advisory-closure-execution/high-effort-host/README.md)
+now supplies/records high at the actual Claude launch boundary for both source
+sides and binding/measured paths; actor bytes remain unchanged. Nine new and 26
+predecessor tests pass. Calibration, Codex and state reuse preserves original
+identities and has independent source approval. After a preserved sandbox-limited
+startup failure, a separately frozen host request was rejected by automatic
+approval review before launch over private-payload authorization to Claude/API.
+Explicit approval of the two affected probes is now required; fresh receipts,
+retention, independent evidence review and successful guard remain outstanding.
+No measured execution, adoption or original-acceptance change follows.
+
+The user subsequently explicitly approved both host/API bindings. The
+[completed corrected probes](verification/task12/advisory-closure-execution/high-effort-host/preflight-result.md)
+verify the high-effort launch mapping and both unchanged subjects. Baseline meets
+the receipt inventory; candidate omits all eight bootstrap detection files and
+expressly reports that omission. Keep 12.21.4 open. Reconcile the binding prompt's
+stopping instruction with the required inventory and review any separately
+identified successor before another affected capture. No further actor or
+operative instruction change is selected; original acceptance remains unchanged.
+
+Independent completion review confirms the loading failure and approves a
+verification-only guard correction: the selected `guarded_successor.py` entry
+recomputes pinned successful receipt evidence rather than trusting audit file
+presence/hashes. Five regressions pass; its separate guard freeze preserves all
+actual capture/runtime identities. The strict gate rejects the incomplete
+candidate and the attestation stays BLOCKED. Use that guarded entry for later
+preparation/measurement; the original frozen launcher remains historical.
+
+### Task 13 finalization
 
 Task 13 updates README.md and docs/user-guide/skills.md through /kk:document, and docs/contributing/testing.md for staging and grading. Then:
 
@@ -116,4 +401,14 @@ Task 13 updates README.md and docs/user-guide/skills.md through /kk:document, an
 - Run /kk:review-code with the actual detected profiles and /kk:review-spec against this complete design package.
 - Resolve findings or record permitted follow-up; do not mark required unrun/failed acceptance items complete.
 
-This design-revision task changes documentation only. Launch probes, grader changes, ADR/AGENTS amendments and operative skill changes above remain explicitly planned work.
+[Task 13.7](tasks.md#137-evidence-retention-and-release-archive) is human-executed,
+AI-guided release housekeeping. Keep the compact verification record, maintained
+eval assets and reusable tooling in Git; archive the complete historical evidence
+as assets of the GitHub release containing the feature. Verify downloaded archive
+integrity before the human removes repository evidence and purges its history.
+Feature verification and this release follow-up have separate completion records;
+Task 13 stays open until both are done.
+
+This handoff revision changes documentation only. Earlier completed slices and
+sealed evidence retain their status; the selected and deferred follow-ups
+and final verification are tracked in tasks.md.

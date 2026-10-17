@@ -1,0 +1,28 @@
+{
+  "actor": "items-01a12ae6-0d41-7f22-ac4e-95173c817826",
+  "completedAtMs": 1791721227368,
+  "id": "exec-81fecac2-c105-4ce1-9405-ac749ba08a46",
+  "item": {
+    "aggregatedOutput": "historical documented delayed-cleanup: initial=(None, {'failed': {'workspace_id': 'w'}}); intermediate=('connection-replacement', {'failed': {'workspace_id': 'w'}}); final=('connection-replacement', {}); preserved=True\nhistorical own-association cleanup and repeated cleanup: PASS\nhistorical pending-only cleanup: PASS\ncandidate documented delayed-cleanup: initial=(None, {'failed': {'workspace_id': 'w'}}); intermediate=('connection-replacement', {'failed': {'workspace_id': 'w'}}); final=(None, {}); preserved=False\ncandidate own-association cleanup and repeated cleanup: PASS\ncandidate pending-only cleanup: PASS\n",
+    "command": "/usr/bin/zsh -lc \"python3 -B - <<'PY'\nfrom pathlib import Path\nimport sys\nroot=Path('/tmp/kk-cleanup-review-oucct3k9')\nsys.path.insert(0,str(root/'candidate'))\nfrom setup import begin_setup,complete_setup,active_connection\nfrom store import Store\nfor label in ('historical','candidate'):\n    namespace={}\n    exec(compile((root/label/'cleanup.py').read_text(),str(root/label/'cleanup.py'),'exec'),namespace)\n    cleanup=namespace['cleanup_setup']\n    store=Store()\n    begin_setup(store,'w','failed')\n    initial=(active_connection(store,'w'),dict(store.pending))\n    begin_setup(store,'w','replacement')\n    complete_setup(store,'w','replacement','connection-replacement')\n    intermediate=(active_connection(store,'w'),dict(store.pending))\n    cleanup(store,'w','failed')\n    final=(active_connection(store,'w'),dict(store.pending))\n    print(f'{label} documented delayed-cleanup: initial={initial}; intermediate={intermediate}; final={final}; preserved={active_connection(store,\\\"w\\\")==\\\"connection-replacement\\\"}')\n    assert 'failed' not in store.pending\n    store=Store()\n    begin_setup(store,'w','own')\n    complete_setup(store,'w','own','connection-own')\n    cleanup(store,'w','own')\n    assert active_connection(store,'w') is None and not store.pending\n    cleanup(store,'w','own')\n    assert active_connection(store,'w') is None and not store.pending\n    print(f'{label} own-association cleanup and repeated cleanup: PASS')\n    store=Store()\n    begin_setup(store,'w','failed')\n    cleanup(store,'w','failed')\n    assert active_connection(store,'w') is None and not store.pending\n    print(f'{label} pending-only cleanup: PASS')\nPY\"",
+    "commandActions": [
+      {
+        "command": "python3 -B - <<'PY'\nfrom pathlib import Path\nimport sys\nroot=Path('/tmp/kk-cleanup-review-oucct3k9')\nsys.path.insert(0,str(root/'candidate'))\nfrom setup import begin_setup,complete_setup,active_connection\nfrom store import Store\nfor label in ('historical','candidate'):\n    namespace={}\n    exec(compile((root/label/'cleanup.py').read_text(),str(root/label/'cleanup.py'),'exec'),namespace)\n    cleanup=namespace['cleanup_setup']\n    store=Store()\n    begin_setup(store,'w','failed')\n    initial=(active_connection(store,'w'),dict(store.pending))\n    begin_setup(store,'w','replacement')\n    complete_setup(store,'w','replacement','connection-replacement')\n    intermediate=(active_connection(store,'w'),dict(store.pending))\n    cleanup(store,'w','failed')\n    final=(active_connection(store,'w'),dict(store.pending))\n    print(f'{label} documented delayed-cleanup: initial={initial}; intermediate={intermediate}; final={final}; preserved={active_connection(store,\"w\")==\"connection-replacement\"}')\n    assert 'failed' not in store.pending\n    store=Store()\n    begin_setup(store,'w','own')\n    complete_setup(store,'w','own','connection-own')\n    cleanup(store,'w','own')\n    assert active_connection(store,'w') is None and not store.pending\n    cleanup(store,'w','own')\n    assert active_connection(store,'w') is None and not store.pending\n    print(f'{label} own-association cleanup and repeated cleanup: PASS')\n    store=Store()\n    begin_setup(store,'w','failed')\n    cleanup(store,'w','failed')\n    assert active_connection(store,'w') is None and not store.pending\n    print(f'{label} pending-only cleanup: PASS')\nPY",
+        "type": "unknown"
+      }
+    ],
+    "cwd": "/tmp/fr-opus55-matrix-20261011/codex-candidate-R1-isolated-2",
+    "durationMs": 94,
+    "exitCode": 0,
+    "id": "exec-81fecac2-c105-4ce1-9405-ac749ba08a46",
+    "pluginId": null,
+    "processId": "72584",
+    "scriptPath": null,
+    "source": "unifiedExecStartup",
+    "status": "completed",
+    "type": "commandExecution"
+  },
+  "source_file": "items-01a12ae6-0d41-7f22-ac4e-95173c817826.json",
+  "startedAtMs": 1791721227273,
+  "turnId": "01a12ae6-0d6c-71a0-9de7-d1180044f729"
+}

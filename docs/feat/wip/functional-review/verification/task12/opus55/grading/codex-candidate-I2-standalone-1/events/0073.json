@@ -1,0 +1,30 @@
+{
+  "actor": "items-01a12b0f-66ee-77f0-aa10-853f27dda2e2",
+  "completedAtMs": 1791723831871,
+  "id": "exec-f2848988-471d-4374-b71d-f1315f261b7a",
+  "item": {
+    "aggregatedOutput": "     1\timport unittest\n     2\tfrom api import update_preferences\n     3\tfrom cli import clear_note\n     4\tfrom settings import patch_settings\n     5\t\n     6\t\n     7\tclass SettingsTests(unittest.TestCase):\n     8\t    def test_updates_note(self):\n     9\t        original = {\"note\": \"before\", \"enabled\": True}\n    10\t        result = update_preferences(original, {\"note\": \"after\"})\n    11\t        self.assertEqual(result, {\"note\": \"after\", \"enabled\": True})\n    12\t        self.assertEqual(original[\"note\"], \"before\")\n    13\t\n    14\t    def test_explicit_values_replace_current_values(self):\n    15\t        for value in (None, \"\", False, 0):\n    16\t            with self.subTest(value=value):\n    17\t                current = {\"setting\": \"before\", \"untouched\": \"keep\"}\n    18\t                patch = {\"setting\": value}\n    19\t                result = patch_settings(current, patch)\n    20\t                self.assertIs(result[\"setting\"], value)\n    21\t                self.assertEqual(result[\"untouched\"], \"keep\")\n    22\t                self.assertEqual(current, {\"setting\": \"before\", \"untouched\": \"keep\"})\n    23\t                self.assertEqual(patch, {\"setting\": value})\n    24\t                self.assertIsNot(result, current)\n    25\t                self.assertIsNot(result, patch)\n    26\t\n    27\t    def test_empty_patch_returns_unchanged_copy(self):\n    28\t        current = {\"note\": None, \"enabled\": False}\n    29\t        result = patch_settings(current, {})\n    30\t        self.assertEqual(result, current)\n    31\t        self.assertIsNot(result, current)\n    32\t\n    33\t    def test_patch_adds_new_keys(self):\n    34\t        patch = {\"note\": \"\", \"enabled\": False}\n    35\t        self.assertEqual(patch_settings({}, patch), patch)\n    36\t\n    37\t    def test_preferences_preserve_omitted_values(self):\n    38\t        current = {\"note\": \"before\", \"enabled\": True}\n    39\t        cases = (\n    40\t            ({}, {\"note\": \"before\", \"enabled\": True}),\n    41\t            ({\"note\": None}, {\"note\": None, \"enabled\": True}),\n    42\t            ({\"note\": \"\"}, {\"note\": \"\", \"enabled\": True}),\n    43\t            ({\"enabled\": False}, {\"note\": \"before\", \"enabled\": False}),\n    44\t            ({\"note\": None, \"enabled\": False}, {\"note\": None, \"enabled\": False}),\n    45\t        )\n    46\t        for payload, expected in cases:\n    47\t            with self.subTest(payload=payload):\n    48\t                original_payload = dict(payload)\n    49\t                self.assertEqual(update_preferences(current, payload), expected)\n    50\t                self.assertEqual(current, {\"note\": \"before\", \"enabled\": True})\n    51\t                self.assertEqual(payload, original_payload)\n    52\t\n    53\t    def test_clear_note_preserves_other_settings_and_input(self):\n    54\t        current = {\"note\": \"before\", \"enabled\": True}\n    55\t        self.assertEqual(clear_note(current), {\"note\": None, \"enabled\": True})\n    56\t        self.assertEqual(current, {\"note\": \"before\", \"enabled\": True})\n",
+    "command": "/usr/bin/zsh -lc \"cat -n '/tmp/fr-opus55-matrix-20261011/codex-candidate-I2-standalone-1/tests/test_settings.py'\"",
+    "commandActions": [
+      {
+        "command": "cat -n /tmp/fr-opus55-matrix-20261011/codex-candidate-I2-standalone-1/tests/test_settings.py",
+        "name": "test_settings.py",
+        "path": "/tmp/fr-opus55-matrix-20261011/codex-candidate-I2-standalone-1/tests/test_settings.py",
+        "type": "read"
+      }
+    ],
+    "cwd": "/tmp/fr-opus55-matrix-20261011/codex-candidate-I2-standalone-1",
+    "durationMs": 56,
+    "exitCode": 0,
+    "id": "exec-f2848988-471d-4374-b71d-f1315f261b7a",
+    "pluginId": null,
+    "processId": "21006",
+    "scriptPath": null,
+    "source": "unifiedExecStartup",
+    "status": "completed",
+    "type": "commandExecution"
+  },
+  "source_file": "items-01a12b0f-66ee-77f0-aa10-853f27dda2e2.json",
+  "startedAtMs": 1791723831815,
+  "turnId": "01a12b0f-670d-7371-8a65-35bcf68059c8"
+}

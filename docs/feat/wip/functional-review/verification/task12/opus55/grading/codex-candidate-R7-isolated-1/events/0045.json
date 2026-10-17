@@ -1,0 +1,28 @@
+{
+  "actor": "items-01a12b7b-8256-7c20-80d8-758e245a644f",
+  "completedAtMs": 1791731055237,
+  "id": "exec-b73a2083-83f4-4281-8cb0-5d6d5c9c4d3f",
+  "item": {
+    "aggregatedOutput": "'  Ada  ' -> 'Ada' request and response verified\n'Ada Lovelace' -> 'Ada Lovelace' request and response verified\n'' -> '' request and response verified\n' \\t\\n ' -> '' request and response verified\n'\\tAda\\n' -> 'Ada' request and response verified\n'\\xa0Ada\\xa0' -> 'Ada' request and response verified\nTransport exception propagated\n",
+    "command": "/usr/bin/zsh -lc \"python3 -B - <<'PY'\nfrom client import save\nclass Capture:\n    def __init__(self):\n        self.calls = []\n        self.result = {'saved': True}\n    def put(self, path, body):\n        self.calls.append((path, body))\n        return self.result\nfor raw, expected in [('  Ada  ', 'Ada'), ('Ada Lovelace', 'Ada Lovelace'), ('', ''), (' \\\\t\\\\n ', ''), ('\\\\tAda\\\\n', 'Ada'), ('\\\\u00a0Ada\\\\u00a0', 'Ada')]:\n    transport = Capture()\n    result = save(transport, raw)\n    assert result is transport.result\n    assert transport.calls == [('/settings', {'display_name': expected})]\n    print(repr(raw), '->', repr(expected), 'request and response verified')\nclass Failing:\n    def put(self, path, body):\n        raise OSError('simulated transport failure')\ntry:\n    save(Failing(), ' Ada ')\nexcept OSError as error:\n    assert str(error) == 'simulated transport failure'\n    print('Transport exception propagated')\nelse:\n    raise AssertionError('Expected transport error')\nPY\"",
+    "commandActions": [
+      {
+        "command": "python3 -B - <<'PY'\nfrom client import save\nclass Capture:\n    def __init__(self):\n        self.calls = []\n        self.result = {'saved': True}\n    def put(self, path, body):\n        self.calls.append((path, body))\n        return self.result\nfor raw, expected in [('  Ada  ', 'Ada'), ('Ada Lovelace', 'Ada Lovelace'), ('', ''), (' \\t\\n ', ''), ('\\tAda\\n', 'Ada'), ('\\u00a0Ada\\u00a0', 'Ada')]:\n    transport = Capture()\n    result = save(transport, raw)\n    assert result is transport.result\n    assert transport.calls == [('/settings', {'display_name': expected})]\n    print(repr(raw), '->', repr(expected), 'request and response verified')\nclass Failing:\n    def put(self, path, body):\n        raise OSError('simulated transport failure')\ntry:\n    save(Failing(), ' Ada ')\nexcept OSError as error:\n    assert str(error) == 'simulated transport failure'\n    print('Transport exception propagated')\nelse:\n    raise AssertionError('Expected transport error')\nPY",
+        "type": "unknown"
+      }
+    ],
+    "cwd": "/tmp/kk-settings-review-5tlvvM/candidate",
+    "durationMs": 67,
+    "exitCode": 0,
+    "id": "exec-b73a2083-83f4-4281-8cb0-5d6d5c9c4d3f",
+    "pluginId": null,
+    "processId": "14076",
+    "scriptPath": null,
+    "source": "unifiedExecStartup",
+    "status": "completed",
+    "type": "commandExecution"
+  },
+  "source_file": "items-01a12b7b-8256-7c20-80d8-758e245a644f.json",
+  "startedAtMs": 1791731055169,
+  "turnId": "01a12b7b-8283-7b51-a25c-d7a5bbec71f9"
+}

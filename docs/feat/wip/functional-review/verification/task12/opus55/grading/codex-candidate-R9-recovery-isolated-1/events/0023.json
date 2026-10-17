@@ -1,0 +1,28 @@
+{
+  "actor": "items-01a12bb6-10c3-75d0-aac2-a160322172ef",
+  "completedAtMs": 1791734798379,
+  "id": "exec-73bcb049-7d97-4633-bd48-62cb4d731d91",
+  "item": {
+    "aggregatedOutput": "def read_preferences(repository, key):\n    return repository.read_resilient(key.strip())\nimport unittest\n\nfrom preferences import Preferences\nfrom repository import MissingPreference, Repository, ScriptedBackend, TransientRead\n\n\nclass ReadTests(unittest.TestCase):\n    def test_trim_key(self):\n        backend = ScriptedBackend([{\"color\": \"blue\"}])\n        self.assertEqual(Preferences(Repository(backend)).read(\" w \"), {\"color\": \"blue\"})\n        self.assertEqual(backend.keys, [\"w\"])\n\n    def test_transient_error(self):\n        backend = ScriptedBackend([TransientRead(\"busy\"), {\"color\": \"blue\"}])\n        self.assertEqual(Preferences(Repository(backend)).read(\" w \"), {\"color\": \"blue\"})\n        self.assertEqual(backend.keys, [\"w\", \"w\"])\n\n    def test_retry_limit(self):\n        backend = ScriptedBackend([TransientRead(\"busy\") for _ in range(3)])\n        with self.assertRaises(TransientRead):\n            Preferences(Repository(backend)).read(\" w \")\n        self.assertEqual(backend.keys, [\"w\", \"w\", \"w\"])\n\n    def test_permanent_error(self):\n        backend = ScriptedBackend([MissingPreference(\"missing\")])\n        with self.assertRaises(MissingPreference):\n            Preferences(Repository(backend)).read(\" w \")\n        self.assertEqual(backend.keys, [\"w\"])\n",
+    "command": "/usr/bin/zsh -lc 'git show :reader.py; git show :tests/test_reads.py'",
+    "commandActions": [
+      {
+        "command": "git show :reader.py; git show :tests/test_reads.py",
+        "type": "unknown"
+      }
+    ],
+    "cwd": "/tmp/fr-opus55-matrix-20261011/codex-candidate-R9-recovery-isolated-1",
+    "durationMs": 63,
+    "exitCode": 0,
+    "id": "exec-73bcb049-7d97-4633-bd48-62cb4d731d91",
+    "pluginId": null,
+    "processId": "42169",
+    "scriptPath": null,
+    "source": "unifiedExecStartup",
+    "status": "completed",
+    "type": "commandExecution"
+  },
+  "source_file": "items-01a12bb6-10c3-75d0-aac2-a160322172ef.json",
+  "startedAtMs": 1791734798315,
+  "turnId": "01a12bb6-10f1-7911-8c16-03b8a29dc6e6"
+}

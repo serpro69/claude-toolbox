@@ -1,0 +1,13 @@
+{
+  "actor": "main",
+  "block": {
+    "content": "# Saved destinations\n\nPython 3.9+, standard library only. Run `python3 -B -m unittest discover -s tests`.\n\nDestination records can use legacy top-level `address` or current nested\n`destination.address`. New writes use the nested shape. Background migration\nruns in bounded batches while reads remain available; a deployment must read\nboth shapes until migration finishes. Existing addresses must be preserved.\n\n`data/records.json` is a supported mixed snapshot. `api.list_destinations`\nserves all saved records through the same reader. `migrate_batch` changes up to\nits limit per invocation; there is no startup migration gate. The store is a\nlocal JSON model, with no production environment or external database required.\n---\ndiff --git a/reader.py b/reader.py\nindex eec82e5..540547b 100644\n--- a/reader.py\n+++ b/reader.py\n@@ -1,4 +1,2 @@\n def address_of(row):\n-    if \"destination\" in row:\n-        return row[\"destination\"][\"address\"]\n-    return row[\"address\"]\n+    return row[\"destination\"][\"address\"]\n---\ndef address_of(row):\n    return row[\"destination\"][\"address\"]",
+    "is_error": false,
+    "tool_use_id": "toolu_01JZ5VRBjn18fhkbbsaHjuGv",
+    "type": "tool_result"
+  },
+  "id": "e76.0",
+  "parent_tool_use_id": null,
+  "session_id": "417cf08a-4f9b-4c27-9636-ec51a0bfeff3",
+  "source_sequence": 76
+}

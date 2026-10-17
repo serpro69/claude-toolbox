@@ -1,0 +1,19 @@
+{
+  "actor": "main",
+  "block": {
+    "caller": {
+      "type": "direct"
+    },
+    "id": "toolu_014VL8RAJe8eRhW4XyiPwj6b",
+    "input": {
+      "content": "# Increment enforces a new protocol field before its counterpart is released (P0)\n\nPattern: a client increment in a split client/provider rollout makes a new response field mandatory (e.g. `if response.get(\"applied\") is not True: raise`). The field is not gated on the feature flag and has no legacy fallback. The supported released provider never sends that field, so every ordinary request fails. The provider may already have persisted the write, so the caller sees a failure for a write that succeeded.\n\nMasking signal: the unit-test fake was changed to return the new response shape, so the suite stays green while compatibility with the released baseline breaks.\n\nReview heuristic: when a diff adds a required response field, find the released counterpart (e.g. `git show <release-tag>:<path>`) and check its actual response shape. Require a test whose fake mirrors the released counterpart exactly. Fix by treating an absent field as legacy success, or by gating strict enforcement behind the feature flag until the counterpart becomes the baseline.\n\nSeen in: enhanced-settings task 1 (client.py save_settings vs provider at eval-release).",
+      "source": "kk:review-findings"
+    },
+    "name": "mcp__capy__capy_index",
+    "type": "tool_use"
+  },
+  "id": "e153.0",
+  "parent_tool_use_id": null,
+  "session_id": "e0edcf71-4dcb-4313-bd56-ba47e4163aef",
+  "source_sequence": 153
+}

@@ -1,0 +1,19 @@
+{
+  "actor": "main",
+  "block": {
+    "caller": {
+      "type": "direct"
+    },
+    "id": "toolu_0188pF138DY1zSMxzBSmGZzY",
+    "input": {
+      "content": "Pattern: \"Simplification\" commits that delete a conditional guard can silently change behavior when the guard was load-bearing. Concrete case (cleanup.py / setup.py): store.active is keyed by workspace_id with value {setup_id, connection} \u2014 at most one active setup per workspace. cleanup_setup(store, workspace_id, setup_id) originally popped active[workspace_id] ONLY when active[workspace_id][\"setup_id\"] == setup_id. A refactor replaced that with an unconditional store.active.pop(workspace_id, None). Regression: cleaning up a superseded/failed setup now evicts the DIFFERENT setup's live active connection for the same workspace. Detection cue: when a value dict stores an identifier (setup_id) precisely to disambiguate which entry owns a slot, an unconditional delete keyed only by the slot (workspace_id) ignores ownership. Existing test only covered the matching-id case, so green tests did not catch it. Reviewer lesson: treat any removed `if ... == id` guard around a pop/delete as a candidate ownership-check regression; construct the cross-id scenario explicitly.",
+      "source": "kk:review-findings"
+    },
+    "name": "mcp__capy__capy_index",
+    "type": "tool_use"
+  },
+  "id": "e124.0",
+  "parent_tool_use_id": null,
+  "session_id": "b8d76ae8-531d-4b8e-8fa8-8641995beb22",
+  "source_sequence": 124
+}

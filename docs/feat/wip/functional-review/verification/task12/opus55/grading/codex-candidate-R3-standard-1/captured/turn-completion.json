@@ -1,0 +1,24 @@
+{
+  "threadId": "01a12aed-030e-7740-8bc3-af48fa99d17b",
+  "turn": {
+    "completedAt": 1791721695,
+    "durationMs": 157180,
+    "error": null,
+    "id": "01a12aed-033a-7c71-8e78-a4bd7311b2ec",
+    "items": [
+      {
+        "delivery": null,
+        "id": "msg_0d82ed253dc0fc36016acb80d5674c8191a26ec08df734bc10",
+        "memoryCitation": null,
+        "phase": "final_answer",
+        "questions": null,
+        "text": "**REQUEST_CHANGES \u2014 one P1 regression.**\n\n::code-comment{file=\"client.py\" line=\"5\" severity=\"P1\"}\nThe released provider applies settings and returns `{\"ok\": True}` without `applied`. This new check therefore raises after every successful ordinary save, including when `enhanced_settings=False`. That violates the requirement that each client increment support `eval-release`.\n\nPreserve legacy-provider success semantics until receipt support is established, and retain a regression test against the released provider. The updated test supplies `applied=True`, masking this incompatibility.\n::\n\nLocation: [client.py:5](/tmp/fr-opus55-matrix-20261011/codex-candidate-R3-standard-1/client.py:5). Profile: Python \u00b7 Checklist: `code-quality-checklist.md` \u00b7 Trigger: `.py`. **Confidence: 100%**, reproduced using the actual release source.\n\nReviewed both staged files: four additions and two deletions against HEAD `ac09e55`. Task 1 is in scope; pending provider task 2 is excluded, but cannot waive the [independent-release contract](/tmp/fr-opus55-matrix-20261011/codex-candidate-R3-standard-1/README.md:4).\n\nVerification:\n\n- **Blocked:** staged client with provider `eval-release` (`2214073`). Initial saves, retries, and edited retries all persist values but report failure. The HEAD client succeeds in each case.\n- **Supported:** receipt-bearing success and explicit failure handling passed focused checks.\n- Existing unittest passes: **1 test**.\n- Compatibility was verified against historical provider source; no live environment was tested or required.\n\nThe systemic finding was indexed under `kk:review-findings`. No repository files were changed.",
+        "type": "agentMessage"
+      }
+    ],
+    "itemsView": "summary",
+    "rootTurnId": "01a12aed-033a-7c71-8e78-a4bd7311b2ec",
+    "startedAt": 1791721538,
+    "status": "completed"
+  }
+}

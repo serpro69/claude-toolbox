@@ -1,0 +1,13 @@
+{
+  "actor": "main",
+  "block": {
+    "content": "import unittest\n\nfrom client import save\n\n\nclass MemoryTransport:\n    def __init__(self):\n        self.request = None\n\n    def put(self, path, body):\n        self.request = (path, body)\n        return {\"ok\": True}\n\n\nclass ClientTests(unittest.TestCase):\n    def test_save(self):\n        transport = MemoryTransport()\n        self.assertEqual(save(transport, \"Ada\"), {\"ok\": True})\n        self.assertEqual(transport.request, (\"/settings\", {\"display_name\": \"Ada\"}))\n\n    def test_empty_name(self):\n        transport = MemoryTransport()\n        save(transport, \"\")\n        self.assertEqual(transport.request[1], {\"display_name\": \"\"})\n#####\n57664d8 Review base\ncommit 57664d85c646008ae513f0b4374ef691d2fcb101\nAuthor: Workflow Eval <eval@example.invalid>\nDate:   Thu Oct 8 00:00:00 2026 +0000\n\n    Review base\n\n .gitignore           |  2 ++\n README.md            |  5 +++++\n client.py            |  5 +++++\n payload.py           |  2 ++\n tests/test_client.py | 24 ++++++++++++++++++++++++\n 5 files changed, 38 insertions(+)\n#####\n(eval):1: no matches found: --include=*.py",
+    "is_error": false,
+    "tool_use_id": "toolu_01HoMoFhVWh5GhoxsKnu7Pqb",
+    "type": "tool_result"
+  },
+  "id": "e79.0",
+  "parent_tool_use_id": null,
+  "session_id": "aa2ba031-829a-451d-af70-c565d7522ee4",
+  "source_sequence": 79
+}

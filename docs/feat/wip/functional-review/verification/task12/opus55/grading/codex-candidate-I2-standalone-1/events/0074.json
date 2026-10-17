@@ -1,0 +1,30 @@
+{
+  "actor": "items-01a12b0f-66ee-77f0-aa10-853f27dda2e2",
+  "completedAtMs": 1791723831871,
+  "id": "exec-68b15a58-bc74-4523-89c9-86c5356ab39f",
+  "item": {
+    "aggregatedOutput": "     1\tdiff --git a/README.md b/README.md\n     2\tindex 04a5381..ecbe954 100644\n     3\t--- a/README.md\n     4\t+++ b/README.md\n     5\t@@ -4,3 +4,5 @@ Python 3.9+, standard library only. Run `python3 -B -m unittest discover -s test\n     6\t The HTTP patch handler and command-line note action share settings.patch_settings.\n     7\t Callers own their input dictionaries. A patch contains only explicitly supplied\n     8\t keys. The optional note accepts text or None; the enabled flag is boolean.\n     9\t+Omitted keys keep their current values. Supplied values, including None, empty\n    10\t+text, and False, replace the current values without modifying either input.\n    11\tdiff --git a/settings.py b/settings.py\n    12\tindex 17eee18..04ccefd 100644\n    13\t--- a/settings.py\n    14\t+++ b/settings.py\n    15\t@@ -1,5 +1,5 @@\n    16\t def patch_settings(current, patch):\n    17\t     result = dict(current)\n    18\t     for key, value in patch.items():\n    19\t-        result[key] = value or current.get(key)\n    20\t+        result[key] = value\n    21\t     return result\n    22\tdiff --git a/tests/test_settings.py b/tests/test_settings.py\n    23\tindex 87a59f4..7651447 100644\n    24\t--- a/tests/test_settings.py\n    25\t+++ b/tests/test_settings.py\n    26\t@@ -1,5 +1,7 @@\n    27\t import unittest\n    28\t from api import update_preferences\n    29\t+from cli import clear_note\n    30\t+from settings import patch_settings\n    31\t \n    32\t \n    33\t class SettingsTests(unittest.TestCase):\n    34\t@@ -8,3 +10,47 @@ class SettingsTests(unittest.TestCase):\n    35\t         result = update_preferences(original, {\"note\": \"after\"})\n    36\t         self.assertEqual(result, {\"note\": \"after\", \"enabled\": True})\n    37\t         self.assertEqual(original[\"note\"], \"before\")\n    38\t+\n    39\t+    def test_explicit_values_replace_current_values(self):\n    40\t+        for value in (None, \"\", False, 0):\n    41\t+            with self.subTest(value=value):\n    42\t+                current = {\"setting\": \"before\", \"untouched\": \"keep\"}\n    43\t+                patch = {\"setting\": value}\n    44\t+                result = patch_settings(current, patch)\n    45\t+                self.assertIs(result[\"setting\"], value)\n    46\t+                self.assertEqual(result[\"untouched\"], \"keep\")\n    47\t+                self.assertEqual(current, {\"setting\": \"before\", \"untouched\": \"keep\"})\n    48\t+                self.assertEqual(patch, {\"setting\": value})\n    49\t+                self.assertIsNot(result, current)\n    50\t+                self.assertIsNot(result, patch)\n    51\t+\n    52\t+    def test_empty_patch_returns_unchanged_copy(self):\n    53\t+        current = {\"note\": None, \"enabled\": False}\n    54\t+        result = patch_settings(current, {})\n    55\t+        self.assertEqual(result, current)\n    56\t+        self.assertIsNot(result, current)\n    57\t+\n    58\t+    def test_patch_adds_new_keys(self):\n    59\t+        patch = {\"note\": \"\", \"enabled\": False}\n    60\t+        self.assertEqual(patch_settings({}, patch), patch)\n    61\t+\n    62\t+    def test_preferences_preserve_omitted_values(self):\n    63\t+        current = {\"note\": \"before\", \"enabled\": True}\n    64\t+        cases = (\n    65\t+            ({}, {\"note\": \"before\", \"enabled\": True}),\n    66\t+            ({\"note\": None}, {\"note\": None, \"enabled\": True}),\n    67\t+            ({\"note\": \"\"}, {\"note\": \"\", \"enabled\": True}),\n    68\t+            ({\"enabled\": False}, {\"note\": \"before\", \"enabled\": False}),\n    69\t+            ({\"note\": None, \"enabled\": False}, {\"note\": None, \"enabled\": False}),\n    70\t+        )\n    71\t+        for payload, expected in cases:\n    72\t+            with self.subTest(payload=payload):\n    73\t+                original_payload = dict(payload)\n    74\t+                self.assertEqual(update_preferences(current, payload), expected)\n    75\t+                self.assertEqual(current, {\"note\": \"before\", \"enabled\": True})\n    76\t+                self.assertEqual(payload, original_payload)\n    77\t+\n    78\t+    def test_clear_note_preserves_other_settings_and_input(self):\n    79\t+        current = {\"note\": \"before\", \"enabled\": True}\n    80\t+        self.assertEqual(clear_note(current), {\"note\": None, \"enabled\": True})\n    81\t+        self.assertEqual(current, {\"note\": \"before\", \"enabled\": True})\n",
+    "command": "/usr/bin/zsh -lc \"cat -n '/tmp/kk-patch-settings-review-2zIToT.patch'\"",
+    "commandActions": [
+      {
+        "command": "cat -n /tmp/kk-patch-settings-review-2zIToT.patch",
+        "name": "kk-patch-settings-review-2zIToT.patch",
+        "path": "/tmp/kk-patch-settings-review-2zIToT.patch",
+        "type": "read"
+      }
+    ],
+    "cwd": "/tmp/fr-opus55-matrix-20261011/codex-candidate-I2-standalone-1",
+    "durationMs": 59,
+    "exitCode": 0,
+    "id": "exec-68b15a58-bc74-4523-89c9-86c5356ab39f",
+    "pluginId": null,
+    "processId": "12352",
+    "scriptPath": null,
+    "source": "unifiedExecStartup",
+    "status": "completed",
+    "type": "commandExecution"
+  },
+  "source_file": "items-01a12b0f-66ee-77f0-aa10-853f27dda2e2.json",
+  "startedAtMs": 1791723831812,
+  "turnId": "01a12b0f-670d-7371-8a65-35bcf68059c8"
+}

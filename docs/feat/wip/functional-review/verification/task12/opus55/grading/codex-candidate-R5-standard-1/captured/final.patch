@@ -1,0 +1,24 @@
+diff --git a/preview.py b/preview.py
+new file mode 100644
+index 0000000..14b3c75
+--- /dev/null
++++ b/preview.py
+@@ -0,0 +1,2 @@
++def render_preview():
++    raise NotImplementedError("Export preview is scheduled for Task 2")
+diff --git a/routes.py b/routes.py
+index 39ec034..fa60e31 100644
+--- a/routes.py
++++ b/routes.py
+@@ -1,7 +1,11 @@
++from config import EXPORT_PREVIEW_ENABLED
++from preview import render_preview
+ from settings import current_settings
+ 
+ 
+ def get(path):
+     if path == "/settings":
+         return 200, current_settings()
++    if EXPORT_PREVIEW_ENABLED and path == "/export-preview":
++        return 200, render_preview()
+     return 404, None

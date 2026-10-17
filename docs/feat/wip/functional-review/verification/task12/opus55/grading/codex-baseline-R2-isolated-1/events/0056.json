@@ -1,0 +1,30 @@
+{
+  "actor": "items-01a12b20-2bf1-7c21-b3b0-c4bf8f65b1e2",
+  "completedAtMs": 1791724953427,
+  "id": "exec-aa08ae06-75b4-4b9a-841f-9665a65cd063",
+  "item": {
+    "aggregatedOutput": "def save(store, workspace, operation_id, values):\n    record = next((item for item in store.recovery.values()\n                   if item[\"workspace\"] == workspace), None)\n    if record is None:\n        record = {\"operation_id\": operation_id, \"workspace\": workspace,\n                  \"status\": \"pending\", \"values\": dict(values)}\n        store.recovery[operation_id] = record\n    if record[\"status\"] == \"pending\":\n        store.apply(workspace, record[\"values\"])\n        record[\"status\"] = \"applied\"\n    store.receipt(record)\n    return {\"ok\": True, \"operation_id\": operation_id}\n",
+    "command": "/usr/bin/zsh -lc \"sed -n '1,12p' service.py\"",
+    "commandActions": [
+      {
+        "command": "sed -n '1,12p' service.py",
+        "name": "service.py",
+        "path": "/tmp/fr-opus55-matrix-20261011/codex-baseline-R2-isolated-1/service.py",
+        "type": "read"
+      }
+    ],
+    "cwd": "/tmp/fr-opus55-matrix-20261011/codex-baseline-R2-isolated-1",
+    "durationMs": 55,
+    "exitCode": 0,
+    "id": "exec-aa08ae06-75b4-4b9a-841f-9665a65cd063",
+    "pluginId": null,
+    "processId": "96324",
+    "scriptPath": null,
+    "source": "unifiedExecStartup",
+    "status": "completed",
+    "type": "commandExecution"
+  },
+  "source_file": "items-01a12b20-2bf1-7c21-b3b0-c4bf8f65b1e2.json",
+  "startedAtMs": 1791724953371,
+  "turnId": "01a12b20-2c11-7572-ab7e-aa3b15c700e1"
+}

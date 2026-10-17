@@ -1,0 +1,28 @@
+{
+  "actor": "items-01a12ad8-0990-7523-be6f-610d48c47bba",
+  "completedAtMs": 1791720294376,
+  "id": "exec-e909491b-a98d-47e8-8cf5-d6287f2a281b",
+  "item": {
+    "aggregatedOutput": "cleanup.py\n1: def cleanup_setup(store, workspace_id, setup_id):\n2:     store.pending.pop(setup_id, None)\n3:     store.active.pop(workspace_id, None)\nsetup.py\n1: def begin_setup(store, workspace_id, setup_id):\n2:     store.pending[setup_id] = {\"workspace_id\": workspace_id}\n3: \n4: \n5: def complete_setup(store, workspace_id, setup_id, connection):\n6:     store.active[workspace_id] = {\"setup_id\": setup_id, \"connection\": connection}\n7:     store.pending.pop(setup_id, None)\n8: \n9: \n10: def active_connection(store, workspace_id):\n11:     association = store.active.get(workspace_id)\n12:     return association[\"connection\"] if association else None\nREADME.md\n1: # Workspace associations\n2: \n3: Python 3.9+, standard library only. Run `python3 -B -m unittest discover -s tests`.\n4: A workspace has one active setup association. Setup jobs can fail after creating\n5: a pending record. Another setup can complete before the failed job's queued\n6: cleanup runs. Completed associations are consumed by `active_connection`.\n7: Cleanup removes the failed setup's pending record and any association it owns.\n8: The store models serialized operations; concurrency and external services are\n9: outside this change.\n",
+    "command": "/usr/bin/zsh -lc \"python3 -B - <<'PY'\nimport subprocess\nfor path in ('cleanup.py', 'setup.py', 'README.md'):\n    content = subprocess.check_output(['git', 'show', ':' + path], text=True)\n    print(path)\n    for lineno, line in enumerate(content.splitlines(), 1):\n        print(f'{lineno}: {line}')\nPY\"",
+    "commandActions": [
+      {
+        "command": "python3 -B - <<'PY'\nimport subprocess\nfor path in ('cleanup.py', 'setup.py', 'README.md'):\n    content = subprocess.check_output(['git', 'show', ':' + path], text=True)\n    print(path)\n    for lineno, line in enumerate(content.splitlines(), 1):\n        print(f'{lineno}: {line}')\nPY",
+        "type": "unknown"
+      }
+    ],
+    "cwd": "/tmp/fr-opus55-matrix-20261011/codex-candidate-R1-standard-1",
+    "durationMs": 59,
+    "exitCode": 0,
+    "id": "exec-e909491b-a98d-47e8-8cf5-d6287f2a281b",
+    "pluginId": null,
+    "processId": "65385",
+    "scriptPath": null,
+    "source": "unifiedExecStartup",
+    "status": "completed",
+    "type": "commandExecution"
+  },
+  "source_file": "items-01a12ad8-0990-7523-be6f-610d48c47bba.json",
+  "startedAtMs": 1791720294317,
+  "turnId": "01a12ad8-09bc-72b3-bcf2-ecc642224160"
+}

@@ -1,0 +1,28 @@
+{
+  "actor": "items-01a12bd0-bf4e-74e3-acdb-f26a6a0c8150",
+  "completedAtMs": 1791736510284,
+  "id": "exec-35c43f9d-23ec-49a6-8909-c7ede9fcaeed",
+  "item": {
+    "aggregatedOutput": "Routing predicate: Python async constructs/imports; bounded to 16 KiB per candidate.\nrecords.py match=False complete=True\napi.py match=False complete=True\ntests/test_labels.py match=False complete=True\n",
+    "command": "/usr/bin/zsh -lc \"python3 - <<'PY'\nfrom pathlib import Path\nimport ast\nprint('Routing predicate: Python async constructs/imports; bounded to 16 KiB per candidate.')\nfor name in ['records.py','api.py','tests/test_labels.py']:\n p=Path(name)\n src=p.read_bytes()[:16384]\n try:\n  tree=ast.parse(src)\n  match=any(isinstance(n,(ast.AsyncFunctionDef,ast.Await,ast.AsyncFor,ast.AsyncWith)) or isinstance(n,ast.Import) and any(a.name.split('.')[0] in {'asyncio','anyio','trio'} for a in n.names) or isinstance(n,ast.ImportFrom) and (n.module or '').split('.')[0] in {'asyncio','anyio','trio'} for n in ast.walk(tree))\n  print(name, 'match='+str(match), 'complete='+str(len(src)==p.stat().st_size))\n except SyntaxError: print(name,'undecidable; load conservatively')\nPY\"",
+    "commandActions": [
+      {
+        "command": "python3 - <<'PY'\nfrom pathlib import Path\nimport ast\nprint('Routing predicate: Python async constructs/imports; bounded to 16 KiB per candidate.')\nfor name in ['records.py','api.py','tests/test_labels.py']:\n p=Path(name)\n src=p.read_bytes()[:16384]\n try:\n  tree=ast.parse(src)\n  match=any(isinstance(n,(ast.AsyncFunctionDef,ast.Await,ast.AsyncFor,ast.AsyncWith)) or isinstance(n,ast.Import) and any(a.name.split('.')[0] in {'asyncio','anyio','trio'} for a in n.names) or isinstance(n,ast.ImportFrom) and (n.module or '').split('.')[0] in {'asyncio','anyio','trio'} for n in ast.walk(tree))\n  print(name, 'match='+str(match), 'complete='+str(len(src)==p.stat().st_size))\n except SyntaxError: print(name,'undecidable; load conservatively')\nPY",
+        "type": "unknown"
+      }
+    ],
+    "cwd": "/tmp/fr-opus55-matrix-20261011/codex-candidate-I4-plan-1",
+    "durationMs": 59,
+    "exitCode": 0,
+    "id": "exec-35c43f9d-23ec-49a6-8909-c7ede9fcaeed",
+    "pluginId": null,
+    "processId": "20133",
+    "scriptPath": null,
+    "source": "unifiedExecStartup",
+    "status": "completed",
+    "type": "commandExecution"
+  },
+  "source_file": "items-01a12bd0-bf4e-74e3-acdb-f26a6a0c8150.json",
+  "startedAtMs": 1791736510224,
+  "turnId": "01a12bd0-bf7b-7e33-b293-dfc205625a58"
+}

@@ -1,0 +1,19 @@
+{
+  "actor": "main",
+  "block": {
+    "caller": {
+      "type": "direct"
+    },
+    "id": "toolu_01H7P6XkJaqMbDzgGJJTGGWq",
+    "input": {
+      "command": "D=$(mktemp -d) && git checkout-index -a --prefix=\"$D/\" && cd \"$D\" && python3 -B -m unittest discover -s tests -v 2>&1 | tail -12; python3 -B -I -c '\nimport sys; sys.path.insert(0, \".\")\nfrom payload import build_payload\nfor v in [\"   \", \"\u00a0Ada\u00a0\", \"Ada\\n\", None, 42]:\n    try: print(repr(v), \"->\", build_payload(v))\n    except Exception as e: print(repr(v), \"-> EXC\", type(e).__name__, e)\n'; echo --- base; cd /tmp/fr-opus55-matrix-20261011/claude-candidate-R7-standard-1 && git show HEAD:payload.py",
+      "description": "Run tests on staged snapshot and probe edge inputs"
+    },
+    "name": "Bash",
+    "type": "tool_use"
+  },
+  "id": "e91.0",
+  "parent_tool_use_id": null,
+  "session_id": "5a482549-38a6-48c2-9265-64253dfd0757",
+  "source_sequence": 91
+}

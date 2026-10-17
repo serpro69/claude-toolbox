@@ -1,0 +1,28 @@
+{
+  "actor": "items-01a12bd8-844f-73b1-93ca-96c32b18c15e",
+  "completedAtMs": 1791737223483,
+  "id": "exec-c514d5e5-b74a-41f0-a2b9-e5393ac289f5",
+  "item": {
+    "aggregatedOutput": "UNCHANGED: api.py\nUNCHANGED: records.py\nUNCHANGED: tests/test_labels.py\nUNCHANGED: state/records.json\nUNCHANGED: state/release.json\nChanged paths are limited to task and handoff records.\nUntracked files: []\n",
+    "command": "/usr/bin/zsh -lc \"python3 -B - <<'PY'\nfrom pathlib import Path\nimport subprocess\nprotected = ['api.py','records.py','tests/test_labels.py','state/records.json','state/release.json']\nfor name in protected:\n    baseline = subprocess.check_output(['git','show',f'HEAD:{name}'])\n    actual = Path(name).read_bytes()\n    if actual \"'!= baseline:\n        raise SystemExit(f'\"'CHANGED: {name}')\n    print(f'UNCHANGED: {name}')\nchanged = subprocess.check_output(['git','diff','--name-only'],text=True).splitlines()\nallowed = {'docs/feat/wip/label-reader/tasks.md','docs/feat/wip/label-reader/handoff.md'}\nassert set(changed) <= allowed, changed\nprint('Changed paths are limited to task and handoff records.')\nprint('Untracked files:', subprocess.check_output(['git','ls-files','--others','--exclude-standard'],text=True).splitlines())\nPY\"",
+    "commandActions": [
+      {
+        "command": "python3 -B - <<'PY'\nfrom pathlib import Path\nimport subprocess\nprotected = ['api.py','records.py','tests/test_labels.py','state/records.json','state/release.json']\nfor name in protected:\n    baseline = subprocess.check_output(['git','show',f'HEAD:{name}'])\n    actual = Path(name).read_bytes()\n    if actual != baseline:\n        raise SystemExit(f'CHANGED: {name}')\n    print(f'UNCHANGED: {name}')\nchanged = subprocess.check_output(['git','diff','--name-only'],text=True).splitlines()\nallowed = {'docs/feat/wip/label-reader/tasks.md','docs/feat/wip/label-reader/handoff.md'}\nassert set(changed) <= allowed, changed\nprint('Changed paths are limited to task and handoff records.')\nprint('Untracked files:', subprocess.check_output(['git','ls-files','--others','--exclude-standard'],text=True).splitlines())\nPY",
+        "type": "unknown"
+      }
+    ],
+    "cwd": "/tmp/fr-opus55-matrix-20261011/codex-candidate-I4-plan-2",
+    "durationMs": 66,
+    "exitCode": 0,
+    "id": "exec-c514d5e5-b74a-41f0-a2b9-e5393ac289f5",
+    "pluginId": null,
+    "processId": "8457",
+    "scriptPath": null,
+    "source": "unifiedExecStartup",
+    "status": "completed",
+    "type": "commandExecution"
+  },
+  "source_file": "items-01a12bd8-844f-73b1-93ca-96c32b18c15e.json",
+  "startedAtMs": 1791737223416,
+  "turnId": "01a12bd8-847b-7a40-b69a-961a69fa57a2"
+}

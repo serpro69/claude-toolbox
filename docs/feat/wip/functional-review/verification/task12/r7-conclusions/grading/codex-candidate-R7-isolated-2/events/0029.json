@@ -1,0 +1,28 @@
+{
+  "actor": "items-01a13574-0cbc-7633-8875-f76d3d024149",
+  "completedAtMs": 1791898392915,
+  "id": "exec-c151275a-1954-482d-a485-8acec8693e01",
+  "item": {
+    "aggregatedOutput": "'Ada' -> ('/settings', {'display_name': 'Ada'})\n'  Ada  ' -> ('/settings', {'display_name': 'Ada'})\n'Ada Lovelace' -> ('/settings', {'display_name': 'Ada Lovelace'})\n'' -> ('/settings', {'display_name': ''})\n' \\t\\n' -> ('/settings', {'display_name': ''})\n'\\tAda\\n' -> ('/settings', {'display_name': 'Ada'})\n'\\xa0Ada\\xa0' -> ('/settings', {'display_name': 'Ada'})\n",
+    "command": "/usr/bin/zsh -lc \"python3 -B - <<'PY'\nfrom client import save\nfrom payload import build_payload\nclass RecordingTransport:\n    def put(self, path, body):\n        self.request = (path, body)\n        return {'ok': True}\nfor source, expected in [('Ada','Ada'),('  Ada  ','Ada'),('Ada Lovelace','Ada Lovelace'),('',''),(' \\\\t\\\\n',''),('\\\\tAda\\\\n','Ada'),('\\\\u00a0Ada\\\\u00a0','Ada')]:\n    transport=RecordingTransport()\n    result=save(transport,source)\n    assert transport.request == ('/settings', {'display_name':expected})\n    assert result == {'ok':True}\n    print(repr(source),'->',repr(transport.request))\nPY\"",
+    "commandActions": [
+      {
+        "command": "python3 -B - <<'PY'\nfrom client import save\nfrom payload import build_payload\nclass RecordingTransport:\n    def put(self, path, body):\n        self.request = (path, body)\n        return {'ok': True}\nfor source, expected in [('Ada','Ada'),('  Ada  ','Ada'),('Ada Lovelace','Ada Lovelace'),('',''),(' \\t\\n',''),('\\tAda\\n','Ada'),('\\u00a0Ada\\u00a0','Ada')]:\n    transport=RecordingTransport()\n    result=save(transport,source)\n    assert transport.request == ('/settings', {'display_name':expected})\n    assert result == {'ok':True}\n    print(repr(source),'->',repr(transport.request))\nPY",
+        "type": "unknown"
+      }
+    ],
+    "cwd": "/tmp/kk-settings-review-iqgavy9k/candidate",
+    "durationMs": 122,
+    "exitCode": 0,
+    "id": "exec-c151275a-1954-482d-a485-8acec8693e01",
+    "pluginId": null,
+    "processId": "52995",
+    "scriptPath": null,
+    "source": "unifiedExecStartup",
+    "status": "completed",
+    "type": "commandExecution"
+  },
+  "source_file": "items-01a13574-0cbc-7633-8875-f76d3d024149.json",
+  "startedAtMs": 1791898392792,
+  "turnId": "01a13574-0cfa-7d31-b364-d7164822ae21"
+}

@@ -1,0 +1,28 @@
+{
+  "actor": "items-01a13566-6a79-7f31-b3e9-eefc239d45fc",
+  "completedAtMs": 1791897373168,
+  "id": "exec-1ffd666c-ee9a-413e-8004-d0f06bc2e281",
+  "item": {
+    "aggregatedOutput": "Python: 3.10.12\nPassed 6 boundary cases through payload builder and save caller.\n",
+    "command": "/usr/bin/zsh -lc \"python3 -B - <<'PY'\nimport sys\nfrom client import save\nfrom payload import build_payload\n\nclass RecordingTransport:\n    def put(self, path, body):\n        self.request = (path, body)\n        return {'ok': True}\n\ncases = [\n    ('  Ada  ', 'Ada'),\n    ('Ada Lovelace', 'Ada Lovelace'),\n    ('', ''),\n    (' \\\\t\\\\n ', ''),\n    ('\\\\tAda\\\\n', 'Ada'),\n    ('\\\\u00a0Ada\\\\u00a0', 'Ada'),\n]\nfor value, expected in cases:\n    transport = RecordingTransport()\n    assert build_payload(value) == {'display_name': expected}\n    assert save(transport, value) == {'ok': True}\n    assert transport.request == ('/settings', {'display_name': expected})\nprint('Python:', sys.version.split()[0])\nprint('Passed 6 boundary cases through payload builder and save caller.')\nPY\"",
+    "commandActions": [
+      {
+        "command": "python3 -B - <<'PY'\nimport sys\nfrom client import save\nfrom payload import build_payload\n\nclass RecordingTransport:\n    def put(self, path, body):\n        self.request = (path, body)\n        return {'ok': True}\n\ncases = [\n    ('  Ada  ', 'Ada'),\n    ('Ada Lovelace', 'Ada Lovelace'),\n    ('', ''),\n    (' \\t\\n ', ''),\n    ('\\tAda\\n', 'Ada'),\n    ('\\u00a0Ada\\u00a0', 'Ada'),\n]\nfor value, expected in cases:\n    transport = RecordingTransport()\n    assert build_payload(value) == {'display_name': expected}\n    assert save(transport, value) == {'ok': True}\n    assert transport.request == ('/settings', {'display_name': expected})\nprint('Python:', sys.version.split()[0])\nprint('Passed 6 boundary cases through payload builder and save caller.')\nPY",
+        "type": "unknown"
+      }
+    ],
+    "cwd": "/tmp/fr-r7-conclusions-20261013/codex-baseline-R7-isolated-1",
+    "durationMs": 68,
+    "exitCode": 0,
+    "id": "exec-1ffd666c-ee9a-413e-8004-d0f06bc2e281",
+    "pluginId": null,
+    "processId": "8432",
+    "scriptPath": null,
+    "source": "unifiedExecStartup",
+    "status": "completed",
+    "type": "commandExecution"
+  },
+  "source_file": "items-01a13566-6a79-7f31-b3e9-eefc239d45fc.json",
+  "startedAtMs": 1791897373100,
+  "turnId": "01a13566-6aa6-7470-8202-fa735595c804"
+}

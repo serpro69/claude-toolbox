@@ -1,0 +1,19 @@
+{
+  "actor": "main",
+  "block": {
+    "caller": {
+      "type": "direct"
+    },
+    "id": "toolu_01S26U23yMLNz5LchLXSyHo2",
+    "input": {
+      "command": "python3 -m unittest discover -s tests -v 2>&1 | tail -8; python3 -c '\nimport sys; sys.path.insert(0,\".\")\nfrom api import list_labels\nfor name,recs in [(\"legacy\",[{\"id\":\"a\",\"label\":\"Alpha\"}]),(\"mixed\",[{\"id\":\"a\",\"label\":\"Alpha\"},{\"id\":\"b\",\"label\":{\"text\":\"Beta\"}}])]:\n    try: print(name, list_labels(recs))\n    except Exception as e: print(name, type(e).__name__, e)\n'",
+      "description": "Run unit suite and probe legacy/mixed shapes"
+    },
+    "name": "Bash",
+    "type": "tool_use"
+  },
+  "id": "e33.0",
+  "parent_tool_use_id": null,
+  "session_id": "5c0c57e4-1663-4ad1-a09f-3ba9568dec6c",
+  "source_sequence": 33
+}

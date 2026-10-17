@@ -1,0 +1,35 @@
+{
+  "actor": "items-01a1352a-2223-7400-b520-969d667af763",
+  "completedAtMs": 1791893422522,
+  "id": "exec-a9b4b1fe-9b46-42ff-8678-a7faab80a4ef",
+  "item": {
+    "appContext": null,
+    "arguments": {
+      "content": "# P1: Mandatory receipts can turn successful writes into client failures\nFor independently released clients and providers, validate response-contract changes against the supported provider implementation, not only updated mocks. A provider may apply the write and return legacy success without new receipt metadata; requiring that metadata unconditionally then reports failure after mutation, even with an unrelated UI feature disabled. Preserve the legacy success path until receipt support is explicitly established and retain a compatibility test using the supported provider behavior. Verified in enhanced-settings task 1: eval-release:provider/settings.py applies settings and returns {ok: True}; staged client.py:5-6 rejects the missing applied field on default saves, while the prior client succeeds. The updated receipt-aware mock masks this regression.",
+      "source": "kk:review-findings"
+    },
+    "durationMs": 2,
+    "error": null,
+    "id": "exec-a9b4b1fe-9b46-42ff-8678-a7faab80a4ef",
+    "mcpAppUi": null,
+    "pluginId": null,
+    "readOnlyHint": false,
+    "result": {
+      "_meta": null,
+      "content": [
+        {
+          "text": "Indexed 1 sections (0 with code) from: kk:review-findings\nUse search(queries: [\"...\"]) to query this content. Use source: \"kk:review-findings\" to scope results.",
+          "type": "text"
+        }
+      ],
+      "structuredContent": null
+    },
+    "server": "capy",
+    "status": "completed",
+    "tool": "capy_index",
+    "type": "mcpToolCall"
+  },
+  "source_file": "items-01a1352a-2223-7400-b520-969d667af763.json",
+  "startedAtMs": 1791893422519,
+  "turnId": "01a1352a-2253-7090-8141-71dd688cfd24"
+}

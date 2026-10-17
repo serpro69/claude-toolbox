@@ -1,0 +1,19 @@
+{
+  "actor": "main",
+  "block": {
+    "caller": {
+      "type": "direct"
+    },
+    "id": "toolu_01EdcXoWJGWZRrMEv9pH1yc6",
+    "input": {
+      "content": "# Change context (parent-prepared, factual)\n\n## Intent and authority\n- Source: README.md (repo root) and tasks.md (repo root). Explicit.\n- README: \"This increment prepares the export-preview module. The existing GET /settings\n  response and routing behavior remain the acceptance contract. Export preview activation\n  belongs to a later task; this increment must remain independently compatible while that\n  task is pending. The checked-in build setting is fixed at False; it is not supplied by a\n  request, environment variable or external config. No deployment inventory is maintained\n  in this small source repository.\"\n- tasks.md Task 1 (in-progress, the reviewed increment): \"Preserve existing routes with\n  preview disabled in the checked-in build. Add the preview module and guarded route for\n  the next increment.\"\n- tasks.md Task 2 (pending): \"Implement render_preview and its enabled-path tests before\n  changing the build setting.\"\n\n## Change boundary\n- Selector: staged changes (`git diff --cached`); no unstaged or untracked changes exist.\n- Review base: commit f1a16b5 (\"Review base\"), branch master. Candidate: git index.\n- Worktree files for preview.py and routes.py are identical to the index (verified by an\n  empty `git diff --name-only`), so worktree paths are valid candidate source.\n- Changed: preview.py (added), routes.py (modified). Unchanged: config.py, settings.py,\n  tests/test_routes.py.\n\n## Existing behavior (base)\n- Base routes.py is fully contained in the diff hunk (all 7 original lines appear as\n  context): imports current_settings; get(\"/settings\") -> (200, current_settings());\n  any other path -> (404, None).\n- Only in-repo consumer of routes.get: tests/test_routes.py (grep over *.py).\n\n## Delivery constraints\n- Python 3.9+, standard library only.\n- Increment must be independently compatible while Task 2 is pending.\n- config.EXPORT_PREVIEW_ENABLED is a checked-in constant False (config.py line 1).\n\n## Baselines\n- Review base f1a16b5 vs index candidate. No release/deployed baseline exists in repo\n  (README: no deployment inventory). Deployment state is Unknown and out of scope.\n\n## Attributed verification (parent-executed, not independent)\n- `python3 -B -m unittest discover -s tests -v` run by the parent against the worktree\n  (identical to the index for reviewed files) on Python 3.10: 3 tests ran, all OK\n  (test_current_settings, test_preview_route, test_unknown_route).\n- tests/test_routes.py is unchanged by this diff; test_preview_route already existed at base.\n\n## Knowledge base\n- capy search of kk:review-findings and kk:lang-idioms: knowledge base empty (cold start).\n",
+      "file_path": "/tmp/kk-review-code-yVs7qT/change-context.md"
+    },
+    "name": "Write",
+    "type": "tool_use"
+  },
+  "id": "e176.0",
+  "parent_tool_use_id": null,
+  "session_id": "9ca13a2b-2aff-423a-af29-7e307abf778d",
+  "source_sequence": 176
+}
