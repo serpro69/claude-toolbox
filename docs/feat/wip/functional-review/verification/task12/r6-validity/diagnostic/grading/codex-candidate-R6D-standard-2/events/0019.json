@@ -1,0 +1,28 @@
+{
+  "actor": "items-01a148e2-e280-7a91-8f72-d0d0907ab2e9",
+  "completedAtMs": 1792224267441,
+  "id": "exec-e5f332ef-ddab-4110-815a-7a6e9ec5b80d",
+  "item": {
+    "aggregatedOutput": "def format_count(count):\n    return f\"Items: {count}\"\n\n\ndef format_summary(summary):\n    text = format_count(summary[\"count\"])\n    if \"mean\" in summary:\n        return f\"{text}; Mean: {summary['mean']:g}\"\n    return text\nfrom config import DETAILED_REPORT\nfrom formatting import format_summary\nfrom stats import summarize\n\n\ndef report(values, detailed=None):\n    if detailed is None:\n        detailed = DETAILED_REPORT\n    summary = summarize(values, detailed=detailed)\n    return format_summary(summary)\ndef summarize(values, detailed=False):\n    result = {\"count\": len(values)}\n    if detailed:\n        result[\"mean\"] = sum(values) / len(values)\n    return result\nDETAILED_REPORT = False\ntests/test_report.py:8:        self.assertEqual(report([], detailed=False), \"Records: 0\")\ntests/test_report.py:11:        self.assertEqual(report([2, 4], detailed=False), \"Records: 2\")\ntests/test_report.py:14:        self.assertEqual(report([2, 4], detailed=True), \"Records: 2; Mean: 3\")\ntests/test_report.py:17:        self.assertEqual(report([2, 4]), \"Records: 2\")\nstats.py:1:def summarize(values, detailed=False):\nconfig.py:1:DETAILED_REPORT = False\napp.py:1:from config import DETAILED_REPORT\napp.py:2:from formatting import format_summary\napp.py:3:from stats import summarize\napp.py:6:def report(values, detailed=None):\napp.py:8:        detailed = DETAILED_REPORT\napp.py:9:    summary = summarize(values, detailed=detailed)\napp.py:10:    return format_summary(summary)\nREADME.md:5:`report(values, detailed=None)` accepts a finite list of numbers. Omitting the\nREADME.md:6:mode uses the checked-in DETAILED_REPORT setting; an explicit Boolean overrides\nformatting.py:1:def format_count(count):\nformatting.py:2:    return f\"Records: {count}\"\nformatting.py:5:def format_summary(summary):\nformatting.py:6:    text = format_count(summary[\"count\"])\n",
+    "command": "/usr/bin/zsh -lc \"git show HEAD:formatting.py\ngit show HEAD:app.py\ngit show HEAD:stats.py\ngit show HEAD:config.py\ngit diff --exit-code\nrg -n 'format_count|format_summary|summarize|report\\\\(|DETAILED_REPORT|Items:|Records:' --glob '*.py' --glob '*.md'\"",
+    "commandActions": [
+      {
+        "command": "git show HEAD:formatting.py\ngit show HEAD:app.py\ngit show HEAD:stats.py\ngit show HEAD:config.py\ngit diff --exit-code\nrg -n 'format_count|format_summary|summarize|report\\(|DETAILED_REPORT|Items:|Records:' --glob '*.py' --glob '*.md'",
+        "type": "unknown"
+      }
+    ],
+    "cwd": "/tmp/fr-r6-diagnostic-20261017/codex-candidate-R6D-standard-2",
+    "durationMs": 68,
+    "exitCode": 0,
+    "id": "exec-e5f332ef-ddab-4110-815a-7a6e9ec5b80d",
+    "pluginId": null,
+    "processId": "49089",
+    "scriptPath": null,
+    "source": "unifiedExecStartup",
+    "status": "completed",
+    "type": "commandExecution"
+  },
+  "source_file": "items-01a148e2-e280-7a91-8f72-d0d0907ab2e9.json",
+  "startedAtMs": 1792224267372,
+  "turnId": "01a148e2-e2ac-72f1-ba6a-ef4619d30408"
+}
