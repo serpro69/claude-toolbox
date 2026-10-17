@@ -1,12 +1,50 @@
 # Functional review: next-session handoff
 
 > Updated: 2026-10-17
-> Status: Task 12.20 done; adapter frozen and fresh calibration passed; binding/state/preflight, comparison and adoption unrun
+> Status: Task 12.21 corrected bindings complete; high-effort launch verified, candidate detection receipts incomplete; comparison/adoption unrun
 > Owner: implementing agent, [remaining Task 12 work](tasks.md#task-12-execute-and-assess-the-full-comparison-matrix)
-> Next-session starting point: [advisory-closure execution record](verification/task12/advisory-closure-execution/README.md#verification-and-next-action)
+> Next-session starting point: [corrected binding result and loading follow-up](verification/task12/advisory-closure-execution/high-effort-host/preflight-result.md)
 > Evidence: [completed matrix](verification/task12/opus55/README.md), [Claude](verification/task12/opus55/claude-results.md), [Codex](verification/task12/opus55/codex-results.md)
 
 ## Start here
+
+**Corrected bindings completed — 2026-10-17:** explicit user approval resolved
+the host/API authorization blocker. Both Claude probes completed once with high
+in their actual launch/command records, expected models/roots and unchanged
+subjects. The [result](verification/task12/advisory-closure-execution/high-effort-host/preflight-result.md)
+keeps preflight BLOCKED: baseline passes, but candidate explicitly skips all eight
+profile-detection files required by bootstrap/fallback loading. Independent
+review confirms the failure. Its P2 guard finding is fixed in a separately
+reviewed/frozen verification entry with five passing regressions; the strict guard
+rejects the actual incomplete candidate. Next investigation: reconcile the probe's stopping
+point with its required instruction inventory and review a bounded successor
+before another affected capture. No operative skill change, additional actor or
+measured comparison is selected; original acceptance and Task 13 remain open.
+
+**Effort correction prepared — 2026-10-17:** the user selected the next step.
+The [successor](verification/task12/advisory-closure-execution/high-effort-host/README.md)
+enforces and records Claude high effort without changing actor instructions.
+Nine successor tests and 26 predecessor regressions pass; independent review
+approves the launcher and calibration/Codex/state reuse under original identities.
+The first sandboxed baseline attempt failed normal startup and is preserved as
+incomplete. The separately reviewed/frozen host successor was rejected before
+launch by automatic approval review over private-payload authorization to Claude/API.
+Next: obtain explicit approval for two fresh bindings sending the filtered plugin
+and synthetic fixture to authenticated Claude, with normal host session access,
+isolated Capy and PAL excluded; then capture, audit and independently review them.
+No host probe or measured session ran; 12.21.4 remains open. Earlier evidence and
+all broader acceptance gates retain their status.
+
+**Preflight executed, readiness blocked — 2026-10-17:** the user selected
+[Task 12.21](tasks.md#task-1221-run-and-independently-review-runtime-preflight).
+Four binding probes and two Capy state probes completed, with full instruction
+receipts, expected model identities, unchanged subjects and owned cleanup. The
+[result](verification/task12/advisory-closure-execution/preflight-result.md) and
+independent review retain one blocker: Claude child effort is not established at
+the declared high value, and the candidate definition specifies xhigh. Prepare a
+reviewed successor launcher that enforces/records high, then fresh affected Claude
+bindings. No measured run, runtime/requirement change or replacement attempt was
+made. Earlier calibration and all historical grades remain unchanged.
 
 **Completed adapter and calibration — 2026-10-17:** the user selected
 [Task 12.20](tasks.md#task-1220-prepare-the-execution-adapter-and-run-fresh-calibration).

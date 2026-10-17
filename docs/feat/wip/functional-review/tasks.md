@@ -7,9 +7,9 @@
 > Issue: [#166](https://github.com/serpro69/claude-toolbox/issues/166)
 > Status: in-progress
 > Created: 2026-10-07
-> Revised: 2026-10-17 with Task 12.20's adapter frozen and fresh calibration independently approved
-> Next-session handoff: [advisory-closure execution record](verification/task12/advisory-closure-execution/README.md#verification-and-next-action)
-> Current slice: Task 12.20 done — 25 fresh calibration controls matched; binding/state/preflight and measurement unrun
+> Revised: 2026-10-17 with completed corrected bindings and the candidate's missing detection receipts
+> Next-session handoff: [corrected binding results and concrete follow-up](verification/task12/advisory-closure-execution/high-effort-host/preflight-result.md)
+> Current slice: Task 12.21 in progress — high-effort launch verified; candidate omits eight required detection reads; preflight BLOCKED and measurement unrun
 > Not Doing: new review skill, whole-system audits, mandatory production access, deployments, generic release engine, new models/dependencies, profile redesign
 > Delivery: preserve existing invocations/shared consumers; regenerate Codex artifacts with every operative slice.
 
@@ -1272,6 +1272,140 @@ does not establish candidate improvement, adoption or broader acceptance.
 tested two failure causes and dispatch metadata that could not substantiate the
 declared setup. The corrected controls isolate the intended decisions, and the
 result checks now tie every observation to frozen inputs and a distinct request.
+
+### Task 12.21: Run and independently review runtime preflight
+
+- **Status:** in-progress — corrected host probes complete; effort gap addressed; candidate bootstrap receipts incomplete
+- **Depends on:** Task 12.20 (done)
+- **Size:** M
+- **Owner:** implementing agent
+- **Can run in parallel with:** —
+- **Authority:** on 2026-10-17 the user requested the preflight: four binding
+  probes, two Capy state probes and independent review/sealing. This selects
+  those model probes and their owned temporary runtime setup/cleanup, not the
+  64 measured sessions or PAL resumption.
+- **Docs:** [preflight declaration](verification/task12/advisory-closure-execution/preflight-contract.md)
+
+- [x] 12.21.1 Verify unchanged source/execution/calibration identities and run four fresh binding probes → verify: both providers and both source sides receive their own selected instructions/models/roles; no evaluator material, mixed installation or PAL launch. Captures and those receipts are complete; the separate Claude effort qualification blocks 12.21.4.
+- [x] 12.21.2 Run two independent Capy state probes → verify: empty distinct stores, successful index/search, foreign marker absent and private vault unavailable; retain raw evidence.
+- [x] 12.21.3 Audit actual instruction receipts, runtime configuration and cleanup; obtain independent review → verify: source/read/model claims follow successful captured events, and temporary registrations are restored. Review is COMMENT with the effort gap explicit.
+- [ ] 12.21.4 Seal the preflight attestation and pass the adapter's preflight guard → verify: all evidence matches this execution freeze and calibration result; no measured capture or adoption is claimed.
+
+#### Execution context — 2026-10-17
+
+Start at clean commit `8be4b166`. The execution freeze remains
+`edc9cc7798bc3b2f7759a0c707db26abe2ead848bf51b6ec9de8535497a5dd85`;
+source/criteria preparation and fresh calibration verification both pass. Exact
+client binaries/versions still match. Reuse the reviewed adapter and archived
+state-probe helper; preserve every attempt and all previous seals. Python/core
+test/review guidance and the shared protocols remain loaded for any audit helper;
+no operative edit, new dependency or async construct is planned. PAL stays excluded.
+
+**Outcome:** [all four bindings and two state probes](verification/task12/advisory-closure-execution/preflight-result.md)
+completed. Full side-specific instruction bytes, named children/model identities,
+unchanged subjects, working isolated Capy state and no observed evaluator/PAL/app
+access are supported. Both temporary Codex plugin/trust entries are absent after
+cleanup. Thirty-two verified run-local files are retained; five decoder controls
+pass. The Claude candidate's unused out-of-bound packet creation and three failed
+Codex metadata searches remain disclosed. A metadata-export attempt through Capy
+was rejected by automatic approval review; local auditing completed that work.
+
+**Blocked readiness:** Claude parent `--effort high` does not establish child
+effort when the candidate definition declares xhigh. The launcher records model
+overrides but no effort override/receipt. [Official precedence and bounded lookup](verification/task12/advisory-closure-execution/claude-effort-assessment.md)
+leave effective Claude child effort unverified. Independent review confirms
+COMMENT / BLOCKED preflight. No PASS attestation, replacement attempt or measured
+session is claimed; 12.21.4 stays open.
+
+**Next action — implementing agent:** prepare and independently review a successor
+that enforces/records high effort for Claude binding and later measured launches,
+freeze its changed runtime identity and calibration relationship, and run fresh
+affected baseline/candidate bindings. Preserve original actor sources, all current
+captures and existing freezes. Good Codex/state observations retain their actual
+identities; they do not waive the missing condition.
+
+**Reflection:** process completion, model-name binding and complete instruction
+reads did not establish all declared runtime settings. Checking the distinct
+effort precedence prevented an uncontrolled comparison before measured execution.
+
+#### Authorized effort correction — 2026-10-17
+
+The user selected the next step: correct/review the launcher, freeze its separate
+runtime identity and calibration relationship, rerun the affected Claude bindings,
+and assess closure of 12.21.4. Preserve all preceding captures and seals. The
+64-session comparison, PAL resumption and feature adoption remain unselected.
+The successor lives under `verification/task12/advisory-closure-execution/high-effort/`.
+Only the Claude process environment/receipt changes; actor source is immutable.
+Existing Codex and state evidence may be retained under their actual prior
+identity, subject to independent review of the unchanged applicable configuration.
+
+All eight installed profile rules were evaluated. New controller/test `.py`
+files activate Python; repository documents do not activate skill-md. Python
+core implement/test guidance is loaded, with async guidance conservatively
+included for inherited transports. No dependency/version upgrade is selected.
+The environment setting is checked through /kk:dependency-handling against
+official documentation and the installed 2.1.296 binary before use.
+
+**Outcome:** the [reviewed correction](verification/task12/advisory-closure-execution/high-effort-host/README.md)
+pins high in the actual Claude subprocess environment and its command receipt,
+for both sides and binding/measured launch paths. Nine successor tests and 26
+predecessor adapter/receipt regressions pass. Independent source review approves;
+its runtime-retention guard finding was fixed and regression-tested before freeze.
+Calibration, Codex bindings and state checks retain their original identities;
+limited reuse is reviewed and their hashes remain verified. Actor sources and
+historical seals are unchanged.
+
+The first sandboxed baseline attempt failed SessionStart with EROFS and Capy
+startup failure, followed by API retries without instruction receipts. Parent
+interruption returned 130 without controller finalization; partial evidence is
+preserved and graceful cleanup is unverified. A separately reviewed host successor
+changes only its owned workspace root in Python and explicitly declares normal
+host execution. Freeze: `be7d605b7aabe88855051362a3f92bc99a0cf56a6fe22b0805adfc1763830764`.
+
+**Earlier approval blocker, subsequently resolved below:** automatic approval review rejected its baseline request
+before process creation because private plugin/repository content may be sent to
+authenticated Claude/API and the general continuation lacked specific payload/
+destination authorization. No bypass or candidate request followed. Owner:
+implementing agent after explicit approval for the two frozen-instruction/synthetic-
+fixture Claude bindings with normal host session access and PAL excluded. Then run
+fresh probes, retain/audit receipts, obtain independent evidence review and pass
+the successor guard. 12.21.4 stays open; no measurement or adoption is claimed.
+
+#### Authorized host probes — 2026-10-17
+
+The user answered "proceed" to the explicit filtered-instruction/synthetic-fixture
+transfer request for both authenticated Claude bindings, normal host session
+access, isolated Capy and PAL excluded. Both probes completed once under the host
+freeze, with exit 0 and no interruption. Both actual command records pin high;
+named reviewers/models, roots and successful hooks/Capy startup are observed.
+The previous effort launch-evidence gap is addressed, without claiming internal
+service telemetry.
+
+The [retained result](verification/task12/advisory-closure-execution/high-effort-host/preflight-result.md)
+keeps readiness BLOCKED: baseline satisfies the original receipt audit, while
+candidate returns seven parent methodology and five child sources but omits all
+eight required profile-detection files. The final report explicitly confirms
+that omission. Frozen bootstrap/fallback instructions include those files before
+diff selection; do not waive the declared inventory or relabel the audit failure.
+Independent completion review confirms this failure. Both subjects remain unchanged;
+31/35 sealed capture files and ten retained runtime configurations verify.
+All original source/calibration/preflight seals remain intact.
+
+The review also found a P2 guard gap: successful audit content was not checked
+beyond filenames/hashes. The separately reviewed `guarded_successor.py` now
+recomputes pinned receipt checks before the original gate. Five new regressions
+pass; final independent review approves the correction with no remaining source
+findings. Its separate verifier freeze preserves captured runtime identities.
+The actual strict guard exits 1 for the eight missing candidate detections, and
+the successor attestation remains BLOCKED. Use the guarded entry for any later
+preparation/measurement. Original source, failed review and all captures stay
+unchanged; no additional actor was needed for this verification-only correction.
+
+Owner: implementing agent. Reconcile probe stopping-point wording with required
+bootstrap loading and independently review any bounded successor declaration
+before a further affected capture. No operative source edit, additional actor,
+measured comparison, grading change or acceptance waiver is selected. 12.21.4,
+Task 12 acceptance and Task 13 remain open.
 
 ## Task 13: Document and verify the complete feature
 

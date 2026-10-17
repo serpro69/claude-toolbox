@@ -81,6 +81,28 @@ the existing rubric and fixtures; interpret each complete report, not keywords.
 
 ## Prospective comparison and adoption boundary
 
+**Corrected probes completed 2026-10-17:** after explicit host/API approval,
+[both fresh Claude bindings](verification/task12/advisory-closure-execution/high-effort-host/preflight-result.md)
+completed with verified high-effort launch configuration. Baseline satisfies the
+receipt audit; candidate omits all eight required detection-file reads. Readiness
+stays BLOCKED, confirmed by independent completion review. Its guard finding is
+resolved in a separately reviewed/frozen receipt-verification layer; five new
+tests pass and the actual incomplete candidate is rejected.
+No additional actor, measurement, adoption or operative instruction change follows.
+
+**Effort correction reviewed 2026-10-17:** the [launcher successor](verification/task12/advisory-closure-execution/high-effort-host/README.md)
+enforces/records high and passes nine new plus 26 predecessor tests. Independent
+source review approves; frozen actor instructions remain unchanged. Corrected
+host bindings are unrun because automatic approval review requires explicit
+private-payload authorization to authenticated Claude/API. The earlier sandboxed
+startup failure is preserved. Preflight and behavioral adoption remain open.
+
+**Preflight executed 2026-10-17:** [Task 12.21's result](verification/task12/advisory-closure-execution/preflight-result.md)
+records four binding and two state probes, but readiness is BLOCKED by unverified
+Claude child effort against the declared high setting. Source/model receipts and
+state checks remain supported; the effort assessment owns the concrete successor
+launcher/fresh-binding proposal. No measured comparison or adoption follows yet.
+
 **Adapter/calibration completed 2026-10-17:** [Task 12.20](verification/task12/advisory-closure-execution/README.md)
 adds the independently reviewed execution adapter and freeze. Twenty-five fresh
 calibration sessions match all 69 assertion judgments and 11 trigger values.
