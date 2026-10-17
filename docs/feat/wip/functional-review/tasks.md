@@ -7,9 +7,9 @@
 > Issue: [#166](https://github.com/serpro69/claude-toolbox/issues/166)
 > Status: in-progress
 > Created: 2026-10-07
-> Revised: 2026-10-14 with Task 12.14 complete and its retained diagnostic failure
+> Revised: 2026-10-17 with Task 12.17's R6 diagnostic complete and failures retained
 > Next-session handoff: [remaining issues and 12.14 lessons](follow-up.md#remaining-issues-for-the-next-session)
-> Current slice: Task 12.14 done — revised evaluation measured; no further R7 skill change selected
+> Current slice: Task 12.17 done — eight sessions graded; 58 PASS / 10 FAIL / 0 PARTIAL; no patch selected
 > Not Doing: new review skill, whole-system audits, mandatory production access, deployments, generic release engine, new models/dependencies, profile redesign
 > Delivery: preserve existing invocations/shared consumers; regenerate Codex artifacts with every operative slice.
 
@@ -918,6 +918,179 @@ The next useful deliverable is an evidence-backed assessment with pre-run exampl
 and a bounded proposed next task. No Task 12.15, operative change, revised assertion,
 model run or acceptance waiver is selected by this documentation request.
 Task 12.14 stays done; Task 12 acceptance and Task 13 stay open.
+
+**Selected on 2026-10-17:** the user subsequently requested the next priority.
+Task 12.15 below selects the R6 assessment only; the preceding paragraph records
+the earlier documentation-only boundary.
+
+### Task 12.15: Assess R6 evaluation validity and review scope
+
+- **Status:** done — assessment complete; no operative change or actor measurement
+- **Depends on:** Task 12.14 (done)
+- **Owner:** implementing agent
+- **Size:** S
+- **Docs:** [R6 assessment and successor proposal](r6-assessment.md)
+- **Scope:** the user's 2026-10-17 request to do the next priority selects the R6
+  assessment from the remaining-issues handoff. Produce an evidence-backed
+  assessment and one bounded proposed next task. Other report-detail cases and
+  unfinished implementation verification retain their existing owners.
+
+- [x] 12.15.1 Inspect the original R6 prompt, snapshots, assertions/oracle and matched reports/grades → verify: distinguish discovery, attribution, reachability, follow-up and acquisition failures.
+- [x] 12.15.2 Establish the practical consequence and write acceptable/unacceptable report examples → verify: scoped approval, inherited advisories and introduced exposure have distinct meanings without prescribing exact wording.
+- [x] 12.15.3 Propose an affected-path case and dormant control, with an explicit old-to-proposed assertion mapping → verify: the proposal preserves original fixtures/grades and identifies any prospective requirement change before measurement.
+- [x] 12.15.4 Record a bounded next task and disposition, verify the documentation and obtain independent review → verify: no operative patch, actor batch, regrading or acceptance waiver is implied by this assessment.
+
+#### Execution context — 2026-10-17
+
+Started from clean `6093213a` on `feat/functional_review`. All eight installed
+profile detection rules were read; repository planning Markdown has no matching
+file signals or `SKILL.md` ancestor, so no implement/test profile content applies.
+Relevant knowledge searches and the current design, implementation, evaluation
+contract and task handoff are loaded. The authorized output is a repository-local
+R6 assessment with tracking updates. Live PAL remains user-deferred. Task 12
+acceptance, Task 13 and the original R7 disposition stay unchanged.
+
+**Outcome:** the [assessment](r6-assessment.md) separates missed dormant discovery
+from correct PR approval, conditional advisory follow-up, and acquisition/capture
+failures. It proposes R6M/R6D cases and an explicit old-to-proposed mapping, with
+report examples written before measurement. Optional discovery in the dormant
+successor is a proposed coverage change, not a waiver of original 13.3/13.4.
+No broader skill instruction is selected. The bounded next proposal is fixture
+and rubric authoring plus independent validity review; it is not automatically
+selected or measured by completing this task.
+
+**Verification:** original snapshot suites pass 3/3 each; read-only probes confirm
+the inherited failure and unchanged checked-in reachability. All 1,738 hashes
+across 16 historical R6 packages verify, and current candidate snapshot/oracle
+bytes match captured inputs. Local Markdown links and whitespace checks pass.
+[Independent completion review](reviews/r6-assessment-review.md) approves with
+no findings; test/hash/link results remain parent-attributed. PAL remains deferred.
+Only planning documents changed, so regeneration and full runtime suites are
+not applicable. Historical grades were not recomputed; Task 12 acceptance and
+Task 13 remain open.
+
+**Reflection:** a single composite failure can represent a discovery miss, a
+useful but incomplete advisory, or missing evidence. Separating those meanings
+supports a smaller next experiment without pretending the original gate passed.
+
+### Task 12.16: Author and review R6 material-exposure and dormant-control evaluations
+
+- **Status:** done — fixtures/rubric reviewed; actor measurement remains unrun
+- **Depends on:** Task 12.15 (done)
+- **Owner:** implementing agent
+- **Size:** M
+- **Docs:** [assessment](r6-assessment.md#bounded-next-task-and-completion-boundary), [authoring/verification record](verification/task12/r6-validity/README.md), [rubric](verification/task12/r6-validity/rubric.md)
+- **Authority:** on 2026-10-17 the user accepted the proposed next step: author and
+  independently review the two fixtures and grading criteria, verify them locally,
+  and review the optional-discovery rule explicitly. Actor measurements and
+  operative skill changes are outside this task.
+
+- [x] 12.16.1 Author separately identified R6M/R6D evals with complete before/after snapshots and grader-only oracles → verify: a real changed default exposes the inherited failure in R6M; the label-only R6D change preserves reachability and allows scoped approval.
+- [x] 12.16.2 Write prospective criteria, evidence mapping and positive/negative report examples → verify: discovery, attribution, reachability, verdict and follow-up are distinct; optional dormant discovery applies only to the new control and no old grade changes.
+- [x] 12.16.3 Verify snapshot behavior, declared file lists, staging isolation and generated parity → verify: supplied tests pass while a separate boundary probe demonstrates the intended failure; no evaluator material enters staged actor inputs.
+- [x] 12.16.4 Obtain independent fixture/rubric and source review, resolve findings and record the disposition → verify: reviewed authoring completes this task without claiming diagnostic or full-feature acceptance.
+
+#### Execution context — 2026-10-17
+
+Started at `6093213a` with the four uncommitted Task 12.15 planning files preserved.
+The next available review eval IDs are 21 and 22. Python activates for fixture
+and verification `.py` files; skill-md activates for eval assets through the
+review-code skill ancestor. Python core implement/test guidance and skill-md
+universal/provider/kk implement guidance are loaded; provider directories and
+canonical paths satisfy the skill-md conditionals. No async constructs or new
+package dependencies are planned. The successor control's optional discovery is
+the explicit prospective scope decision for this authoring task, subject to
+independent validity review; original R6 and feature acceptance remain binding.
+PAL stays user-deferred, and no actor configuration or measurement is selected.
+
+**Outcome:** evals 21/R6M and 22/R6D and their generated counterparts provide the
+material default-exposure case and dormant label-only control. The rubric includes
+separate evidence mappings and pre-run examples; conditional absence is recorded
+without claiming exercised discovery or follow-up. The explicit optional-discovery
+scope decision applies only to R6D. [Independent review](verification/task12/r6-validity/review.md)
+approves source and evaluation validity with no findings. No operative instruction
+or original fixture/assertion/grade changed.
+
+**Verification:** six controller tests pass, including 16 supplied snapshot tests,
+32 scenario outcomes and real staging isolation. Generation is stable across 958
+files; structure, Go tests and graph validation pass. Eleven shell suites pass
+686 assertions without skips. The twelfth has a pre-existing hook-fixture mismatch,
+reproduced with unchanged committed inputs and durably assigned with its next
+action in the [verification record](verification/task12/r6-validity/README.md#environment-attempts-and-unrelated-test-follow-up).
+The initial protected-path generation failure and Python/TOML environment failures
+are recorded with their successful recovery. No full-repository-green claim is made.
+
+**Completion boundary:** Task 12.16 is done. A future diagnostic needs empirical
+grading calibration, a frozen declaration and fresh isolated inputs; no batch is
+selected automatically. Original R6 acceptance, R7 disposition, PAL, legacy actor
+controls, other remaining investigations and Task 13 stay open as previously assigned.
+
+**Reflection:** giving detailed output a real consumer and a per-call override
+makes the exposure/control distinction explicit without changing operative review
+instructions. Keeping conditional trigger observations separate avoids mistaking
+an unexercised advisory path for successful follow-up.
+
+### Task 12.17: Measure the bounded R6 diagnostic
+
+- **Status:** done — eight captures/grades complete; diagnostic failures retained
+- **Depends on:** Task 12.16 (done)
+- **Owner:** implementing agent
+- **Authority:** user approved the proposed eight-session diagnostic on 2026-10-17:
+  R6M/R6D × Claude/Codex standard review × two fresh repetitions, after grader
+  calibration and input freezing. Independent grading and accurate trigger
+  accounting are required; no operative patch or broader batch is selected.
+- **Docs:** [rubric](verification/task12/r6-validity/rubric.md), [diagnostic record](verification/task12/r6-validity/diagnostic/README.md), [results](verification/task12/r6-validity/diagnostic/results.json)
+
+- [x] 12.17.1 Calibrate the pinned independent grader on ordering, report meaning and conditional-trigger controls → verify: expected PASS/FAIL/PARTIAL results and present/absent/unobservable conditions match without exposing expected answers.
+- [x] 12.17.2 Review the capture adapter, declare/freeze source, fixtures, rubric, grader and runtime; prove binding and state isolation → verify: unchanged HEAD instructions, filtered bundles and fresh per-run state; actual selected runtime and configuration are recorded.
+- [x] 12.17.3 Prepare all eight inputs, capture serially, seal and audit every attempt → verify: ordinary prompts, no evaluator leakage, no reuse/overwrite or automatic iteration; capture errors remain explicit.
+- [x] 12.17.4 Independently grade all sealed packages, record trigger coverage and disposition, obtain completion review → verify: no unexercised conditional pass is evidence of follow-up capability; no original acceptance or PAL waiver.
+
+#### Execution context — 2026-10-17
+
+Existing uncommitted Task 12.15/12.16 files are preserved. Operative source remains
+`6093213a2710708d90b43733ac024da6779bc32b`; new eval assets are excluded from actor
+bundles. This is an unchanged-instruction diagnostic, not a baseline/candidate
+comparison. Installed versions observed: Claude Code 2.1.296, Codex 0.163.0,
+Capy 0.17.3; controller/actor Python will be the installed 3.12.11. Python and
+skill-md guidance from the preceding task remains loaded; new controller files
+activate Python, while existing eval additions still activate skill-md. No async
+constructs or new dependency is introduced. The historical transports are reused
+through a successor adapter; no historical controller or evidence is edited.
+PAL stays excluded. The unrelated hook-fixture failure retains its existing owner.
+
+**Outcome:** all eight declared sessions completed without retry and received
+independent grades: **58 PASS / 10 FAIL / 0 PARTIAL** across 68 assertions. Every
+scoped verdict is correct. All four material cases find/attribute the new exposure
+and propose bounded corrections. All four dormant reports surface the inherited
+defect but omit a separate next action (22.6 FAIL). Codex additionally omits required
+path-report details in all four runs (21.2/22.2) and checked-in reachability context
+in both dormant reports (22.4). These are ten failed assertion observations, not
+ten independent bugs. No absent dormant trigger supplies a pass; all four are
+present. Eight isolated-dispatch conditions are absent in standard mode and give
+no isolated/PAL coverage. The full diagnostic pass condition is unmet.
+
+**Verification/review:** 33 calibration judgments match; six new controller,
+18 inherited runtime and six matrix tests pass. Both binding and both state probes
+pass. All capture seals, 700 grading-file hashes and 75 archived runtime files
+verify; frozen inputs and subjects remain unchanged. Temporary Codex registration
+and trust entries are gone. [Independent completion review](verification/task12/r6-validity/diagnostic/completion-review.md)
+approves with no findings; it reconciles reports/grades/manifests while attributing
+execution/hash checks to the parent. The unrelated hook-test failure remains
+assigned, with no full-repository-green claim.
+
+**Disposition:** no broader discovery rule or operative patch. The
+[diagnostic follow-up](verification/task12/r6-validity/diagnostic/README.md#disposition-and-concrete-follow-up)
+assigns bounded advisory-closure investigation and defers extra trace prose pending
+demonstrated practical value; both retain concrete next actions and verification
+conditions. No further batch is automatically selected. Original R6/R7 acceptance,
+unfinished implementation verification, PAL, legacy actor controls and Task 13
+remain open. Task 12.17 completion records the experiment, not feature acceptance.
+
+**Reflection:** the clearer fixture pair produces the correct change-attribution
+and scope decisions, while advisory actionability still fails in both providers.
+Separating these from report-detail omissions makes the next investigation smaller
+without relabeling failed required rows or treating two repetitions as reliability.
 
 ## Task 13: Document and verify the complete feature
 

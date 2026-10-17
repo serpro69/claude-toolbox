@@ -44,6 +44,39 @@ baseline/candidate improvement claim, does not close acceptance and cannot repla
 the matching comparison required for a later operative change. No further
 48-session batch or PAL expansion is selected.
 
+### R6 successor scope and validity authoring
+
+On 2026-10-17 the user selected [Task 12.16](tasks.md#task-1216-author-and-review-r6-material-exposure-and-dormant-control-evaluations):
+author and independently review the material-exposure and dormant-control pair
+proposed by the [R6 assessment](r6-assessment.md), with local fixture verification
+before any actor measurement. Separately identified evals 21/R6M and 22/R6D use
+the [prospective rubric](verification/task12/r6-validity/rubric.md).
+
+The explicit successor scope decision is that R6D may approve its label-only
+increment without discovering the unchanged dormant bug; any discovered defect
+must be attributed accurately and any surfaced final advisory needs a bounded
+separate follow-up. R6M still requires finding and blocking newly introduced
+default-path exposure. Discovery, attribution, reachability, verdict, actionability
+and conditional triggers are tracked separately. This changes only the new
+control's coverage; it does not reinterpret original 13.3/13.4 or replace R6 for
+feature acceptance. Independent validity review precedes any future measurement.
+
+The [authoring record](verification/task12/r6-validity/README.md) contains offline
+checks and review status. No actor batch, runtime/model change, operative patch,
+regrading or acceptance waiver is selected here. Historical contracts, two-run
+acceptance, receipt/use limits and PAL deferral remain unchanged.
+
+The user subsequently authorized Task 12.17's separately
+[declared eight-session diagnostic](verification/task12/r6-validity/diagnostic/run-contract.md).
+Calibration matched 33 expected judgments before freezing. Both providers ran R6M
+and R6D standard review twice on unchanged instructions; all eight captures are
+graded, **58 PASS / 10 FAIL / 0 PARTIAL**. All scoped verdicts are correct, while
+advisory follow-up and report-detail failures remain. All four dormant discovery
+and final-advisory triggers are present; none of those passes relies on absent
+triggers. Standard dispatch conditions remain absent. The
+[results and dispositions](verification/task12/r6-validity/diagnostic/README.md)
+do not substitute for original acceptance or establish reliability/improvement.
+
 ### Codex handoff capture resolution
 
 **Authority and owner.** On 2026-10-09 the user approved the sequencing change and conditional fallback below. The implementing agent owns gate 2B: Codex R3 isolated and I2 standalone, two baseline repetitions each. Original captures, assertions and the frozen revision-1 rubric remain unchanged until a successor contract is explicitly recorded; ciphertext never satisfies an exact-prompt assertion.

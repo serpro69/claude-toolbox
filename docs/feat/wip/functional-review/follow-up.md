@@ -1,12 +1,46 @@
 # Functional review: next-session handoff
 
-> Updated: 2026-10-14
-> Status: Task 12.14 done; no further R7 skill patch selected; broader acceptance remains open
+> Updated: 2026-10-17
+> Status: Task 12.17 done; R6 diagnostic retains 10 failed assertions; broader acceptance remains open
 > Owner: implementing agent, [remaining Task 12 work](tasks.md#task-12-execute-and-assess-the-full-comparison-matrix)
 > Next-session starting point: [remaining issues and applying the 12.14 lessons](#remaining-issues-for-the-next-session)
 > Evidence: [completed matrix](verification/task12/opus55/README.md), [Claude](verification/task12/opus55/claude-results.md), [Codex](verification/task12/opus55/codex-results.md)
 
 ## Start here
+
+**Completed measurement — 2026-10-17:** the user authorized the proposed eight
+R6M/R6D sessions across Claude/Codex standard review, twice each, on unchanged
+instructions. [Task 12.17](tasks.md#task-1217-measure-the-bounded-r6-diagnostic)
+completed calibration, freezing, binding/state probes and all eight captures with
+independent grading: **58 PASS / 10 FAIL / 0 PARTIAL**. Every scoped verdict is
+correct. All four dormant reports surface the old defect but omit a separate next
+action; Codex also omits required trace/reachability details. The
+[diagnostic record](verification/task12/r6-validity/diagnostic/README.md) preserves
+the evidence and independently approved dispositions: investigate bounded
+advisory closure, defer additional trace prose pending value, and add no broader
+discovery obligation. Original acceptance, higher-impact implementation verification,
+PAL, legacy controls and Task 13 stay open. No patch or further batch is selected.
+
+**Completed continuation — 2026-10-17:** the user accepted the proposed fixture
+and rubric authoring step. [Task 12.16](tasks.md#task-1216-author-and-review-r6-material-exposure-and-dormant-control-evaluations)
+authored evals 21/R6M and 22/R6D, verified them offline and obtained independent
+validity/source approval with no findings. The [authoring record](verification/task12/r6-validity/README.md)
+and [prospective rubric](verification/task12/r6-validity/rubric.md) record the
+optional-discovery decision for the new dormant control. The possible next step
+is a separately declared bounded diagnostic on unchanged instructions after
+grading calibration; no run is selected automatically. A pre-existing hook-test
+fixture failure is separately assigned in the authoring record. Historical
+acceptance remains open; no skill edits or historical regrading occurred.
+
+**Current outcome — 2026-10-17:** the user selected the next priority, R6 evaluation
+validity. [Task 12.15](tasks.md#task-1215-assess-r6-evaluation-validity-and-review-scope)
+completed the [R6 assessment](r6-assessment.md): source-backed consequences,
+report examples, a proposed affected-path/dormant pair and assertion mapping.
+Independent completion review approves with no findings. It changes no operative
+instructions or historical grades and launches no actors.
+The assessment proposes fixture/rubric authoring next; that subsequent task is
+not automatically selected. Other report-detail and implementation-verification
+investigations retain the assignments below.
 
 **Current outcome — 2026-10-14:** [Task 12.14's four-session diagnostic](verification/task12/r7-validity/README.md)
 is captured and independently graded: 23 PASS / 1 FAIL / 0 PARTIAL. Both material
@@ -80,6 +114,11 @@ obligation. Disclosure alone must not turn unrun required tests into a PASS.
 This remains the higher-impact behavioral concern, separate from report wording.
 
 ### B. R6 expects discovery of an unchanged, disabled-path bug
+
+**2026-10-17 assessment:** [R6 scope, evidence and successor proposal](r6-assessment.md)
+separates mandatory dormant discovery from introduced exposure and conditional
+follow-up. Original grades remain binding; optional discovery in a successor
+control is explicitly a prospective proposal, not an acceptance amendment.
 
 **Observed:** the requested change only renames a report label from “Items” to
 “Records.” Unchanged `summarize([], detailed=True)` divides by zero in both base
