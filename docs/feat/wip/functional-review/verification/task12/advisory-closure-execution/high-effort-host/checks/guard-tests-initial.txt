@@ -1,0 +1,32 @@
+test_actual_candidate_missing_reads_cannot_reach_approval_gate (test_guarded_successor.ReceiptGuardTests.test_actual_candidate_missing_reads_cannot_reach_approval_gate) ... FAIL
+test_actual_complete_baseline_receipts_pass (test_guarded_successor.ReceiptGuardTests.test_actual_complete_baseline_receipts_pass) ... ERROR
+test_empty_or_failed_audit_rejected_despite_good_raw_baseline (test_guarded_successor.ReceiptGuardTests.test_empty_or_failed_audit_rejected_despite_good_raw_baseline) ... ok
+test_guard_dependency_drift_refused (test_guarded_successor.ReceiptGuardTests.test_guard_dependency_drift_refused) ... ok
+
+======================================================================
+ERROR: test_actual_complete_baseline_receipts_pass (test_guarded_successor.ReceiptGuardTests.test_actual_complete_baseline_receipts_pass)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/sergio/Projects/personal/claude-toolbox/docs/feat/wip/functional-review/verification/task12/advisory-closure-execution/high-effort-host/test_guarded_successor.py", line 24, in test_actual_complete_baseline_receipts_pass
+    guard.verify_receipt(self.adapter, "baseline")
+  File "/home/sergio/Projects/personal/claude-toolbox/docs/feat/wip/functional-review/verification/task12/advisory-closure-execution/high-effort-host/guarded_successor.py", line 46, in verify_receipt
+    raise ValueError("Receipt audit differs from successful sealed evidence: " + side)
+ValueError: Receipt audit differs from successful sealed evidence: baseline
+
+======================================================================
+FAIL: test_actual_candidate_missing_reads_cannot_reach_approval_gate (test_guarded_successor.ReceiptGuardTests.test_actual_candidate_missing_reads_cannot_reach_approval_gate)
+----------------------------------------------------------------------
+ValueError: Receipt audit differs from successful sealed evidence: baseline
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/home/sergio/Projects/personal/claude-toolbox/docs/feat/wip/functional-review/verification/task12/advisory-closure-execution/high-effort-host/test_guarded_successor.py", line 29, in test_actual_candidate_missing_reads_cannot_reach_approval_gate
+    with self.assertRaisesRegex(ValueError, "Incomplete Claude instructions"):
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: "Incomplete Claude instructions" does not match "Receipt audit differs from successful sealed evidence: baseline"
+
+----------------------------------------------------------------------
+Ran 4 tests in 1.847s
+
+FAILED (failures=1, errors=1)

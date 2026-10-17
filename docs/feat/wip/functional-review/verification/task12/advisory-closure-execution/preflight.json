@@ -1,0 +1,46 @@
+{
+  "binding_manifests": {
+    "binding-claude-baseline": "366227a04dbd59ef48bb0580bdcdcc5436cf957ba9ca456444c98c60a055b587",
+    "binding-claude-candidate": "1a2584926f5764b77c59c5a828371769c684e905ede44700c4fd29ceab41f22a",
+    "binding-codex-baseline": "91dff2ae85b3dee9eaa75d80b10a4c45510bc46be8662f75cc3a453c6ca6284a",
+    "binding-codex-candidate": "dd56cf47ab06a8924d46712b071cb6fbfc9afa4778281e55a1e9b33441e44691"
+  },
+  "blockers": [
+    {
+      "evidence": "claude-effort-assessment.md",
+      "id": "claude_child_effort",
+      "next_action": "Review and freeze a successor launch-time high-effort pin/receipt, then run fresh affected Claude baseline/candidate bindings.",
+      "observed": "Baseline definition omits effort; candidate specifies xhigh; parent high flag and model overrides do not establish child effort.",
+      "owner": "implementing agent",
+      "required": "high for both Claude named reviewers"
+    }
+  ],
+  "calibration_results_sha256": "5c91269bca4fccc283dbd8a617de8d214526c9ec008dbea6abab241fadd40345",
+  "execution_freeze_sha256": "edc9cc7798bc3b2f7759a0c707db26abe2ead848bf51b6ec9de8535497a5dd85",
+  "independent_review": {
+    "path": "preflight-review.md",
+    "sha256": "1c439e115520e60834a59d222799245727337aff5b448fde36409787a550d919",
+    "status": "COMMENT"
+  },
+  "measured_sessions": 0,
+  "state": {
+    "evidence": {
+      "state-probe/state-a.json": "fbf9140ed0b0c106512d6964275d1e4fea3f4fdc64864e457ccf691b9f3a48ac",
+      "state-probe/state-a.stderr": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "state-probe/state-b.json": "a3471a6715c026d04e7b33f5dafaadd45191b23865c49beb4aeb430cb73896d8",
+      "state-probe/state-b.stderr": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "state-probe/summary.json": "0473f4dbfd23854a2512e2d0e7e112799a5c0a72951bc5161552a80cca6cf180"
+    },
+    "path": "state-probe/summary.json",
+    "sha256": "0473f4dbfd23854a2512e2d0e7e112799a5c0a72951bc5161552a80cca6cf180",
+    "status": "PASS"
+  },
+  "status": "BLOCKED",
+  "supported_checks": [
+    "complete selected instruction receipts",
+    "expected parent/child model identities and named roles",
+    "unchanged subjects",
+    "two independent Capy state probes",
+    "owned temporary Codex registration/trust cleanup"
+  ]
+}
