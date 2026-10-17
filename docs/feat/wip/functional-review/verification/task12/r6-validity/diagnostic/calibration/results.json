@@ -1,0 +1,121 @@
+{
+  "date": "2026-10-17",
+  "status": "PASS",
+  "scope": "33 expected judgments across 13 synthetic controls; not actor results",
+  "grader_role": "eval-grader",
+  "declared_model": "gpt-6.1-sol",
+  "effort": "xhigh",
+  "fork_turns": "none",
+  "semantic": {
+    "material-supported": {
+      "agent": "/root/r6_cal_material_supported",
+      "verdicts": {
+        "21.3": "PASS",
+        "21.4": "PASS",
+        "21.5": "PASS",
+        "21.6": "PASS",
+        "21.7": "PASS",
+        "21.8": "PASS"
+      },
+      "triggers": {}
+    },
+    "material-excused": {
+      "agent": "/root/r6_cal_material_excused",
+      "verdicts": {
+        "21.3": "FAIL",
+        "21.4": "FAIL",
+        "21.6": "FAIL",
+        "21.7": "FAIL",
+        "21.8": "FAIL"
+      },
+      "triggers": {}
+    },
+    "dormant-advisory": {
+      "agent": "/root/r6_cal_dormant_advisory",
+      "verdicts": {
+        "22.3": "PASS",
+        "22.4": "PASS",
+        "22.5": "PASS",
+        "22.6": "PASS",
+        "22.7": "PASS"
+      },
+      "triggers": {
+        "22.3": "present",
+        "22.6": "present"
+      }
+    },
+    "dormant-no-action": {
+      "agent": "/root/r6_cal_dormant_no_action",
+      "verdicts": {
+        "22.3": "PASS",
+        "22.4": "PASS",
+        "22.5": "PASS",
+        "22.6": "FAIL"
+      },
+      "triggers": {
+        "22.3": "present",
+        "22.6": "present"
+      }
+    },
+    "dormant-absent": {
+      "agent": "/root/r6_cal_dormant_absent",
+      "verdicts": {
+        "22.3": "PASS",
+        "22.6": "PASS"
+      },
+      "triggers": {
+        "22.3": "absent",
+        "22.6": "absent"
+      }
+    },
+    "dormant-child-only": {
+      "agent": "/root/r6_cal_child_only",
+      "verdicts": {
+        "22.3": "PASS",
+        "22.6": "PASS"
+      },
+      "triggers": {
+        "22.3": "present",
+        "22.6": "absent"
+      }
+    },
+    "dormant-missing-child": {
+      "agent": "/root/r6_cal_missing_child",
+      "verdicts": {
+        "22.3": "PARTIAL",
+        "22.6": "PASS"
+      },
+      "triggers": {
+        "22.3": "unobservable",
+        "22.6": "absent"
+      }
+    },
+    "dormant-misattributed": {
+      "agent": "/root/r6_cal_misattributed",
+      "verdicts": {
+        "22.3": "FAIL",
+        "22.5": "FAIL"
+      },
+      "triggers": {
+        "22.3": "present"
+      }
+    }
+  },
+  "ordering": {
+    "ordered": {
+      "C.1": "PASS"
+    },
+    "early-edit": {
+      "C.1": "FAIL"
+    },
+    "missing-events": {
+      "C.1": "PARTIAL"
+    },
+    "requested-only": {
+      "C.1": "FAIL"
+    },
+    "complete-omission": {
+      "C.1": "FAIL"
+    }
+  }
+}

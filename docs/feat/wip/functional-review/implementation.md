@@ -5,7 +5,7 @@
 > Tasks: [tasks.md](tasks.md)
 > Review disposition: [consolidated assessment](reviews/design-review-consolidation.md)
 > Status: Tasks 1–11 and core matrix capture/grading complete; acceptance and final verification pending
-> Revised: 2026-10-13; R7 wording rejected, evaluation-validity reassessment is next
+> Revised: 2026-10-17; R7 diagnostic complete, R6 successor authoring selected
 > Next-session handoff: [follow-up.md](follow-up.md)
 
 ## Starting points
@@ -251,6 +251,49 @@ Optional `/kk:clarify-docs` may refine the changed `follow-up.md`, `design.md`,
 `implementation.md`, `evaluation.md` and `tasks.md`; then
 `/kk:review-design functional-review` can assess the updated plan before operative
 implementation. Task 13 remains dependent on Task 12's actual acceptance.
+
+### R6 evaluation validity — Tasks 12.15 and 12.16
+
+The completed [assessment](r6-assessment.md) separates inherited discovery,
+reachability, correct scoped approval and missing advisory follow-up. The user
+selected Task 12.16 to author the proposed material-exposure/dormant-control pair,
+its criteria and pre-run examples, and obtain independent validity/source review.
+Use separately identified evals 21/R6M and 22/R6D; preserve all original R6 files.
+
+Both cases share a small reporting implementation whose detailed mean has a
+visible consumer. R6M enables that mode by default while requiring empty-batch
+success; R6D changes only the count label and leaves detailed mode disabled.
+The [prospective rubric](verification/task12/r6-validity/rubric.md) makes dormant
+discovery optional only in R6D, retains attribution and surfaced-advisory follow-up,
+and separates final-report evidence from child discovery. This is the explicit
+successor scope decision under the authoring request, not an old-grade amendment.
+
+Verify complete snapshot manifests, intended diff boundaries, actual outcomes,
+passing supplied tests with the intended coverage gap, and evaluator-free staging
+through the existing helper. Generate Codex counterparts and run relevant
+structure/staging/graph checks. Independent review must assess fixture validity
+and criteria before measurement. The [authoring record](verification/task12/r6-validity/README.md)
+retains checks and findings. This task ends at reviewed assets; a later bounded
+diagnostic requires its own declaration. Operative instructions, historical
+acceptance, PAL deferral, other investigations and Task 13 remain unchanged.
+
+### R6 bounded diagnostic — Task 12.17
+
+After authoring, the user authorized eight fresh standard reviews: R6M/R6D,
+Claude/Codex, twice each, with unchanged operative instructions. The
+[diagnostic declaration](verification/task12/r6-validity/diagnostic/run-contract.md)
+pins its distinct runtime and evidence boundaries. Grader calibration, source
+review, immutable freezing and both provider binding/state checks preceded
+measurement. All eight captures are independently graded: **58 PASS / 10 FAIL /
+0 PARTIAL**, with correct scoped verdicts in every run. Follow-up and reported
+trace/reachability omissions remain failed. All four final dormant advisories
+triggered the follow-up requirement; none received the required next action.
+
+The [record](verification/task12/r6-validity/diagnostic/README.md) assigns bounded
+advisory-closure investigation and defers added trace instructions pending value.
+No operative patch or broader batch is selected. Original R6/R7 acceptance, PAL,
+legacy actor controls, implementation-verification concerns and Task 13 remain
+separate. Capture completion is not a full diagnostic or feature pass.
 
 ### Task 13 finalization
 

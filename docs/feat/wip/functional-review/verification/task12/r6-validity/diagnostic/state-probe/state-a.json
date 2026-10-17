@@ -1,0 +1,177 @@
+[
+  {
+    "request": {
+      "jsonrpc": "2.0",
+      "id": 1,
+      "method": "initialize",
+      "params": {
+        "protocolVersion": "2024-11-05",
+        "capabilities": {},
+        "clientInfo": {
+          "name": "functional-review-probe",
+          "version": "1"
+        }
+      }
+    }
+  },
+  {
+    "response": {
+      "jsonrpc": "2.0",
+      "id": 1,
+      "result": {
+        "protocolVersion": "2024-11-05",
+        "capabilities": {
+          "tools": {}
+        },
+        "serverInfo": {
+          "name": "capy",
+          "version": "v0.17.3"
+        }
+      }
+    }
+  },
+  {
+    "request": {
+      "jsonrpc": "2.0",
+      "id": 2,
+      "method": "tools/call",
+      "params": {
+        "name": "capy_search",
+        "arguments": {
+          "queries": [
+            "transport orchard"
+          ],
+          "limit": 3
+        }
+      }
+    }
+  },
+  {
+    "response": {
+      "jsonrpc": "2.0",
+      "id": 2,
+      "result": {
+        "content": [
+          {
+            "type": "text",
+            "text": "The knowledge base is empty \u2014 nothing has been indexed yet.\n\nTo populate it, use:\n  \u2022 capy_batch_execute(commands, queries) \u2014 run commands, auto-index output, and search in one call\n  \u2022 capy_fetch_and_index(url) \u2014 fetch a URL, index it, then search with capy_search\n  \u2022 capy_index(content, source) \u2014 manually index text content\n\nAfter indexing, capy_search becomes available for follow-up queries.\n\nShared MCP server search budget: search call #1/8 in this window. Results limited to 2/query. Untapered calls left: 2; calls before block: 7; resets in 59999 ms (window 60000 ms; taper after 3; block after 8). Batch queries with search(queries: [\"q1\",\"q2\"]) or use batch_execute."
+          }
+        ],
+        "isError": true
+      }
+    }
+  },
+  {
+    "request": {
+      "jsonrpc": "2.0",
+      "id": 3,
+      "method": "tools/call",
+      "params": {
+        "name": "capy_index",
+        "arguments": {
+          "source": "probe-isolation",
+          "content": "# Transport orchard\n\nRetained marker ambercapybara."
+        }
+      }
+    }
+  },
+  {
+    "response": {
+      "jsonrpc": "2.0",
+      "id": 3,
+      "result": {
+        "content": [
+          {
+            "type": "text",
+            "text": "Indexed 1 sections (0 with code) from: probe-isolation\nUse search(queries: [\"...\"]) to query this content. Use source: \"probe-isolation\" to scope results."
+          }
+        ]
+      }
+    }
+  },
+  {
+    "request": {
+      "jsonrpc": "2.0",
+      "id": 4,
+      "method": "tools/call",
+      "params": {
+        "name": "capy_search",
+        "arguments": {
+          "queries": [
+            "transport orchard"
+          ],
+          "limit": 3
+        }
+      }
+    }
+  },
+  {
+    "response": {
+      "jsonrpc": "2.0",
+      "id": 4,
+      "result": {
+        "content": [
+          {
+            "type": "text",
+            "text": "## transport orchard\n\n--- [probe-isolation] ---\n### Output\n\n# Transport orchard\n\nRetained marker ambercapybara.\n\nShared MCP server search budget: search call #2/8 in this window. Results limited to 2/query. Untapered calls left: 1; calls before block: 6; resets in 59835 ms (window 60000 ms; taper after 3; block after 8). Batch queries with search(queries: [\"q1\",\"q2\"]) or use batch_execute."
+          }
+        ]
+      }
+    }
+  },
+  {
+    "request": {
+      "jsonrpc": "2.0",
+      "id": 5,
+      "method": "tools/call",
+      "params": {
+        "name": "capy_doctor",
+        "arguments": {}
+      }
+    }
+  },
+  {
+    "response": {
+      "jsonrpc": "2.0",
+      "id": 5,
+      "result": {
+        "content": [
+          {
+            "type": "text",
+            "text": "## capy doctor\n\n- [x] Version: v0.17.3\n- [x] Runtimes: 6/11 (go, javascript, perl, python, rust, shell)\n- [x] FTS5: available\n- [x] Config: loaded (db path: /tmp/fr-r6-diagnostic-20261017/state-probes/state-a/.runner/knowledge.db)\n- [ ] Platform registration: no capy registration found; run `capy setup --platform claude-code` or `capy setup --platform codex`\n- [x] Knowledge credential: selected from CAPY_DB_KEY (database authentication checked separately)\n- [x] Knowledge base: 1 sources, 1 chunks\n- [-] Vault: disabled (CAPY_VAULT_KEY not set) \u2014 sessions are not archived; wrappers no longer source .env. Set CAPY_VAULT_KEY in the actual launch environment and restart the host/MCP process\n- [x] Security: 1 policy files, 2 deny patterns\n- [x] Project: /tmp/fr-r6-diagnostic-20261017/state-probes/state-a"
+          }
+        ]
+      }
+    }
+  },
+  {
+    "request": {
+      "jsonrpc": "2.0",
+      "id": 6,
+      "method": "tools/call",
+      "params": {
+        "name": "capy_vault_search",
+        "arguments": {
+          "queries": [
+            "transport orchard"
+          ]
+        }
+      }
+    }
+  },
+  {
+    "response": {
+      "jsonrpc": "2.0",
+      "id": 6,
+      "result": {
+        "content": [
+          {
+            "type": "text",
+            "text": "Vault search is disabled \u2014 set CAPY_VAULT_KEY to archive and search past sessions.\nOnce enabled, run `capy vault reindex` to update already-archived sessions to the current index."
+          }
+        ],
+        "isError": true
+      }
+    }
+  }
+]
