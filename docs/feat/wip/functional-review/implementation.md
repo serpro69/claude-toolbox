@@ -5,7 +5,7 @@
 > Tasks: [tasks.md](tasks.md)
 > Review disposition: [consolidated assessment](reviews/design-review-consolidation.md)
 > Status: Tasks 1–11 and core matrix capture/grading complete; acceptance and final verification pending
-> Revised: 2026-10-17; advisory-closure adapter frozen and fresh calibration independently approved
+> Revised: 2026-10-17; corrected bindings complete, high-effort launch verified, candidate detection receipts incomplete
 > Next-session handoff: [follow-up.md](follow-up.md)
 
 ## Starting points
@@ -345,6 +345,49 @@ findings; tests and integrity checks remain parent-attributed execution evidence
 No actor, binding/state probe, PAL or registration action occurred. Four binding
 probes, two state probes and a reviewed preflight remain the next unrun gates;
 measured execution/adoption and broader acceptance are separate.
+
+### Advisory-closure runtime preflight — Task 12.21
+
+The user selected the four binding probes, two Capy state probes and independent
+review. The [retained result](verification/task12/advisory-closure-execution/preflight-result.md)
+supports instruction/model/role loading, state isolation, unchanged subjects and
+owned cleanup, but does not establish the declared Claude child high effort.
+Candidate frontmatter specifies xhigh; the parent high flag and model override
+do not prove the child's effective effort under documented precedence.
+
+Independent review returns COMMENT and readiness remains BLOCKED. Preserve every
+capture and freeze; the implementing agent owns a reviewed successor launch-time
+effort pin/receipt, its runtime/calibration identity and fresh affected Claude
+bindings. No original requirement, historical grade, actor source or measured
+comparison was changed. Task 12.21's PASS gate remains open.
+
+The user selected the launcher correction. The [reviewed successor](verification/task12/advisory-closure-execution/high-effort-host/README.md)
+now supplies/records high at the actual Claude launch boundary for both source
+sides and binding/measured paths; actor bytes remain unchanged. Nine new and 26
+predecessor tests pass. Calibration, Codex and state reuse preserves original
+identities and has independent source approval. After a preserved sandbox-limited
+startup failure, a separately frozen host request was rejected by automatic
+approval review before launch over private-payload authorization to Claude/API.
+Explicit approval of the two affected probes is now required; fresh receipts,
+retention, independent evidence review and successful guard remain outstanding.
+No measured execution, adoption or original-acceptance change follows.
+
+The user subsequently explicitly approved both host/API bindings. The
+[completed corrected probes](verification/task12/advisory-closure-execution/high-effort-host/preflight-result.md)
+verify the high-effort launch mapping and both unchanged subjects. Baseline meets
+the receipt inventory; candidate omits all eight bootstrap detection files and
+expressly reports that omission. Keep 12.21.4 open. Reconcile the binding prompt's
+stopping instruction with the required inventory and review any separately
+identified successor before another affected capture. No further actor or
+operative instruction change is selected; original acceptance remains unchanged.
+
+Independent completion review confirms the loading failure and approves a
+verification-only guard correction: the selected `guarded_successor.py` entry
+recomputes pinned successful receipt evidence rather than trusting audit file
+presence/hashes. Five regressions pass; its separate guard freeze preserves all
+actual capture/runtime identities. The strict gate rejects the incomplete
+candidate and the attestation stays BLOCKED. Use that guarded entry for later
+preparation/measurement; the original frozen launcher remains historical.
 
 ### Task 13 finalization
 
