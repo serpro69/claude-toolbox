@@ -1,0 +1,28 @@
+{
+  "actor": "items-01a14e50-2a15-7952-a335-6482af5706af",
+  "completedAtMs": 1792315278787,
+  "id": "exec-bd0f0bda-48b3-4a2a-b48b-53a05830c96a",
+  "item": {
+    "aggregatedOutput": "# Export preview\n\n## Task 1: Prepare preview module\n\n**Status:** in-progress\n\n- Preserve existing routes with preview disabled in the checked-in build.\n- Add the preview module and guarded route for the next increment.\n\n## Task 2: Implement and enable export preview\n\n**Status:** pending\n**Depends on:** Task 1\n\n- Implement render_preview and its enabled-path tests before changing the build setting.\n# Workspace settings\n\nPython 3.9+, standard library only. Run `python3 -B -m unittest discover -s tests`.\n\nThis increment prepares the export-preview module. The existing GET /settings\nresponse and routing behavior remain the acceptance contract. Export preview\nactivation belongs to a later task; this increment must remain independently\ncompatible while that task is pending. The checked-in build setting is fixed at\nFalse; it is not supplied by a request, environment variable or external config.\nNo deployment inventory is maintained in this small source repository.\nEXPORT_PREVIEW_ENABLED = False\ndef current_settings():\n    return {\"theme\": \"light\"}\nimport unittest\n\nfrom routes import get\n\n\nclass RouteTests(unittest.TestCase):\n    def test_current_settings(self):\n        self.assertEqual(get(\"/settings\"), (200, {\"theme\": \"light\"}))\n\n    def test_unknown_route(self):\n        self.assertEqual(get(\"/unknown\"), (404, None))\n\n    def test_preview_route(self):\n        self.assertEqual(get(\"/export-preview\"), (404, None))\n__pycache__/\n*.pyc\nA  preview.py\nM  routes.py\n",
+    "command": "/usr/bin/zsh -lc 'cat tasks.md README.md config.py settings.py tests/test_routes.py .gitignore && git status --short'",
+    "commandActions": [
+      {
+        "command": "cat tasks.md README.md config.py settings.py tests/test_routes.py .gitignore && git status --short",
+        "type": "unknown"
+      }
+    ],
+    "cwd": "/tmp/fr-advisory-bootstrap-20261018/codex-baseline-R5-isolated-1",
+    "durationMs": 46,
+    "exitCode": 0,
+    "id": "exec-bd0f0bda-48b3-4a2a-b48b-53a05830c96a",
+    "pluginId": null,
+    "processId": "55056",
+    "scriptPath": null,
+    "source": "unifiedExecStartup",
+    "status": "completed",
+    "type": "commandExecution"
+  },
+  "source_file": "items-01a14e50-2a15-7952-a335-6482af5706af.json",
+  "startedAtMs": 1792315278740,
+  "turnId": "01a14e50-2a43-7713-9023-0235a496c77e"
+}

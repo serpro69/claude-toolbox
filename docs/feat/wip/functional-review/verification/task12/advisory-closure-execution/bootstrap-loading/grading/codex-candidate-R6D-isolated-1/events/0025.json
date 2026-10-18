@@ -1,0 +1,28 @@
+{
+  "actor": "items-01a14e17-c8ba-77c0-9fd5-1948c4543ecf",
+  "completedAtMs": 1792311618633,
+  "id": "exec-52d2833a-6144-44f7-a476-ec0b6e249369",
+  "item": {
+    "aggregatedOutput": "\nINDEX SOURCE: formatting.py\ndef format_count(count):\n    return f\"Records: {count}\"\n\n\ndef format_summary(summary):\n    text = format_count(summary[\"count\"])\n    if \"mean\" in summary:\n        return f\"{text}; Mean: {summary['mean']:g}\"\n    return text\n\n\nINDEX SOURCE: tests/test_report.py\nimport unittest\n\nfrom app import report\n\n\nclass ReportTests(unittest.TestCase):\n    def test_plain_empty(self):\n        self.assertEqual(report([], detailed=False), \"Records: 0\")\n\n    def test_plain_populated(self):\n        self.assertEqual(report([2, 4], detailed=False), \"Records: 2\")\n\n    def test_detailed_populated(self):\n        self.assertEqual(report([2, 4], detailed=True), \"Records: 2; Mean: 3\")\n\n    def test_default_populated(self):\n        self.assertEqual(report([2, 4]), \"Records: 2\")\n\n\nINDEX SOURCE: app.py\nfrom config import DETAILED_REPORT\nfrom formatting import format_summary\nfrom stats import summarize\n\n\ndef report(values, detailed=None):\n    if detailed is None:\n        detailed = DETAILED_REPORT\n    summary = summarize(values, detailed=detailed)\n    return format_summary(summary)\n\n\nINDEX SOURCE: stats.py\ndef summarize(values, detailed=False):\n    result = {\"count\": len(values)}\n    if detailed:\n        result[\"mean\"] = sum(values) / len(values)\n    return result\n\n\nINDEX SOURCE: config.py\nDETAILED_REPORT = False\n\nBASE: 2b50e59ae84150f97d5c6822cb9d23d9fc911a3b\n\nUNSTAGED: \n",
+    "command": "/usr/bin/zsh -lc \"python3 - <<'PY'\nimport subprocess\nfor name in ['formatting.py','tests/test_report.py','app.py','stats.py','config.py']:\n print('\\\\nINDEX SOURCE: '+name)\n print(subprocess.check_output(['git','show',':'+name], text=True))\nprint('BASE:',subprocess.check_output(['git','rev-parse','HEAD'],text=True))\nprint('UNSTAGED:',subprocess.check_output(['git','diff','--name-only'],text=True))\nPY\"",
+    "commandActions": [
+      {
+        "command": "python3 - <<'PY'\nimport subprocess\nfor name in ['formatting.py','tests/test_report.py','app.py','stats.py','config.py']:\n print('\\nINDEX SOURCE: '+name)\n print(subprocess.check_output(['git','show',':'+name], text=True))\nprint('BASE:',subprocess.check_output(['git','rev-parse','HEAD'],text=True))\nprint('UNSTAGED:',subprocess.check_output(['git','diff','--name-only'],text=True))\nPY",
+        "type": "unknown"
+      }
+    ],
+    "cwd": "/tmp/fr-advisory-bootstrap-20261018/codex-candidate-R6D-isolated-1",
+    "durationMs": 89,
+    "exitCode": 0,
+    "id": "exec-52d2833a-6144-44f7-a476-ec0b6e249369",
+    "pluginId": null,
+    "processId": "63623",
+    "scriptPath": null,
+    "source": "unifiedExecStartup",
+    "status": "completed",
+    "type": "commandExecution"
+  },
+  "source_file": "items-01a14e17-c8ba-77c0-9fd5-1948c4543ecf.json",
+  "startedAtMs": 1792311618543,
+  "turnId": "01a14e17-c8ed-7b41-921d-ebf408730ab1"
+}

@@ -1,0 +1,19 @@
+{
+  "actor": "main",
+  "block": {
+    "caller": {
+      "type": "direct"
+    },
+    "id": "toolu_01PSbq9fg5pjwLbBeTCPqEiY",
+    "input": {
+      "content": "# Review finding (P0) \u2014 config.py / stats.py: default flip exposes latent empty-batch crash\n\n- Date: 2026-10-18. Files: config.py (DETAILED_REPORT False -> True), stats.py:4, app.py:7-9, tests/test_report.py.\n- Pattern: flipping a config default promotes a previously opt-in code path to the default path, but that path had a latent edge-case bug that was never tested. `summarize(values, detailed=True)` does `sum(values) / len(values)` with no empty guard, so `report([])` with the new default raises ZeroDivisionError. The README contract says empty batches are valid in either mode and yield `Items: 0`.\n- The test suite covers only explicit plain empty (`detailed=False`) and populated defaults, so all 4 tests pass while the contract is broken.\n- Fix: guard the mean (`if detailed and values:`) in stats.summarize; add tests for `report([])` default and `report([], detailed=True)` -> \"Items: 0\".\n- Lesson: when changing a default, re-test the newly-default path against the edge cases (empty, zero, None) the old default handled.\n",
+      "source": "kk:review-findings"
+    },
+    "name": "mcp__capy__capy_index",
+    "type": "tool_use"
+  },
+  "id": "e105.0",
+  "parent_tool_use_id": null,
+  "session_id": "dbe91df1-237e-4ee6-8b2f-d41af1ed2e48",
+  "source_sequence": 105
+}

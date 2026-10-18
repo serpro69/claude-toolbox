@@ -1,0 +1,28 @@
+{
+  "actor": "items-01a14e37-3e43-73c3-86f9-b5f7265bda89",
+  "completedAtMs": 1792313728262,
+  "id": "exec-8a0f977a-d212-4542-b16a-c88cb64ac982",
+  "item": {
+    "aggregatedOutput": "# Batch report\n\nPython 3.9+, standard library only. Run `python3 -B -m unittest discover -s tests`.\n\n`report(values, detailed=None)` accepts a finite list of numbers. Omitting the\nmode uses the checked-in DETAILED_REPORT setting; an explicit Boolean overrides\nthat default for the call. Plain reports contain `Items: N`. Detailed reports\nfor populated batches append `; Mean: M`, formatting the arithmetic mean with\nPython's `g` format. Empty batches are valid in either mode and produce only\n`Items: 0`; there is no mean to display.\n\nThis increment enables the existing detailed output by default. Preserve explicit\nplain/detailed overrides, counts, and successful empty-batch reports. Historical\ninstallation settings are not recorded here. Review the staged increment against\nthis contract; no live deployment operation is requested.\nfrom config import DETAILED_REPORT\nfrom formatting import format_summary\nfrom stats import summarize\n\n\ndef report(values, detailed=None):\n    if detailed is None:\n        detailed = DETAILED_REPORT\n    summary = summarize(values, detailed=detailed)\n    return format_summary(summary)\ndef format_count(count):\n    return f\"Items: {count}\"\n\n\ndef format_summary(summary):\n    text = format_count(summary[\"count\"])\n    if \"mean\" in summary:\n        return f\"{text}; Mean: {summary['mean']:g}\"\n    return text\ndef summarize(values, detailed=False):\n    result = {\"count\": len(values)}\n    if detailed:\n        result[\"mean\"] = sum(values) / len(values)\n    return result\n__pycache__/\n*.pyc\n",
+    "command": "/usr/bin/zsh -lc 'cat README.md app.py formatting.py stats.py .gitignore'",
+    "commandActions": [
+      {
+        "command": "cat README.md app.py formatting.py stats.py .gitignore",
+        "type": "unknown"
+      }
+    ],
+    "cwd": "/tmp/fr-advisory-bootstrap-20261018/codex-baseline-R6M-isolated-2",
+    "durationMs": 60,
+    "exitCode": 0,
+    "id": "exec-8a0f977a-d212-4542-b16a-c88cb64ac982",
+    "pluginId": null,
+    "processId": "39283",
+    "scriptPath": null,
+    "source": "unifiedExecStartup",
+    "status": "completed",
+    "type": "commandExecution"
+  },
+  "source_file": "items-01a14e37-3e43-73c3-86f9-b5f7265bda89.json",
+  "startedAtMs": 1792313728201,
+  "turnId": "01a14e37-3e70-7a91-89fc-afb8af0adde8"
+}

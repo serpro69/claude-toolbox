@@ -1,0 +1,28 @@
+{
+  "actor": "items-01a14e31-2a40-7750-bc96-3678d5de940d",
+  "completedAtMs": 1792313295704,
+  "id": "exec-a1b00022-5430-421b-b627-aedb33ae4896",
+  "item": {
+    "aggregatedOutput": "M  config.py\nM  tests/test_report.py\n     1\tdef summarize(values, detailed=False):\n     2\t    result = {\"count\": len(values)}\n     3\t    if detailed:\n     4\t        result[\"mean\"] = sum(values) / len(values)\n     5\t    return result\n     1\timport unittest\n     2\t\n     3\tfrom app import report\n     4\t\n     5\t\n     6\tclass ReportTests(unittest.TestCase):\n     7\t    def test_plain_empty(self):\n     8\t        self.assertEqual(report([], detailed=False), \"Items: 0\")\n     9\t\n    10\t    def test_plain_populated(self):\n    11\t        self.assertEqual(report([2, 4], detailed=False), \"Items: 2\")\n    12\t\n    13\t    def test_detailed_populated(self):\n    14\t        self.assertEqual(report([2, 4], detailed=True), \"Items: 2; Mean: 3\")\n    15\t\n    16\t    def test_default_populated(self):\n    17\t        self.assertEqual(report([2, 4]), \"Items: 2; Mean: 3\")\n     1\t# Batch report\n     2\t\n     3\tPython 3.9+, standard library only. Run `python3 -B -m unittest discover -s tests`.\n     4\t\n     5\t`report(values, detailed=None)` accepts a finite list of numbers. Omitting the\n     6\tmode uses the checked-in DETAILED_REPORT setting; an explicit Boolean overrides\n     7\tthat default for the call. Plain reports contain `Items: N`. Detailed reports\n     8\tfor populated batches append `; Mean: M`, formatting the arithmetic mean with\n     9\tPython's `g` format. Empty batches are valid in either mode and produce only\n    10\t`Items: 0`; there is no mean to display.\n    11\t\n    12\tThis increment enables the existing detailed output by default. Preserve explicit\n    13\tplain/detailed overrides, counts, and successful empty-batch reports. Historical\n    14\tinstallation settings are not recorded here. Review the staged increment against\n    15\tthis contract; no live deployment operation is requested.\n",
+    "command": "/usr/bin/zsh -lc 'git diff --cached --check && git status --short && nl -ba stats.py && nl -ba tests/test_report.py && nl -ba README.md'",
+    "commandActions": [
+      {
+        "command": "git diff --cached --check && git status --short && nl -ba stats.py && nl -ba tests/test_report.py && nl -ba README.md",
+        "type": "unknown"
+      }
+    ],
+    "cwd": "/tmp/fr-advisory-bootstrap-20261018/codex-baseline-R6M-isolated-1",
+    "durationMs": 46,
+    "exitCode": 0,
+    "id": "exec-a1b00022-5430-421b-b627-aedb33ae4896",
+    "pluginId": null,
+    "processId": "43160",
+    "scriptPath": null,
+    "source": "unifiedExecStartup",
+    "status": "completed",
+    "type": "commandExecution"
+  },
+  "source_file": "items-01a14e31-2a40-7750-bc96-3678d5de940d.json",
+  "startedAtMs": 1792313295657,
+  "turnId": "01a14e31-2a6b-77d3-8ebe-844c3091204e"
+}

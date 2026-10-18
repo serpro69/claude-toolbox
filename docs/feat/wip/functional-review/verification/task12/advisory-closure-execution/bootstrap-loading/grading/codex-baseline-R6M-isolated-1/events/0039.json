@@ -1,0 +1,30 @@
+{
+  "actor": "items-01a14e32-3f3c-7ba2-a7da-ab800c29a500",
+  "completedAtMs": 1792313304972,
+  "id": "exec-db81291d-4162-45cc-851b-ecead6fd8e6b",
+  "item": {
+    "aggregatedOutput": "formatting.py:5:def format_summary(summary):\nformatting.py:7:    if \"mean\" in summary:\nformatting.py:8:        return f\"{text}; Mean: {summary['mean']:g}\"\nREADME.md:5:`report(values, detailed=None)` accepts a finite list of numbers. Omitting the\nREADME.md:6:mode uses the checked-in DETAILED_REPORT setting; an explicit Boolean overrides\nREADME.md:8:for populated batches append `; Mean: M`, formatting the arithmetic mean with\nREADME.md:9:Python's `g` format. Empty batches are valid in either mode and produce only\nREADME.md:10:`Items: 0`; there is no mean to display.\nstats.py:1:def summarize(values, detailed=False):\nstats.py:4:        result[\"mean\"] = sum(values) / len(values)\ntests/test_report.py:8:        self.assertEqual(report([], detailed=False), \"Items: 0\")\ntests/test_report.py:11:        self.assertEqual(report([2, 4], detailed=False), \"Items: 2\")\ntests/test_report.py:14:        self.assertEqual(report([2, 4], detailed=True), \"Items: 2; Mean: 3\")\ntests/test_report.py:17:        self.assertEqual(report([2, 4]), \"Items: 2; Mean: 3\")\napp.py:1:from config import DETAILED_REPORT\napp.py:2:from formatting import format_summary\napp.py:6:def report(values, detailed=None):\napp.py:8:        detailed = DETAILED_REPORT\napp.py:10:    return format_summary(summary)\nconfig.py:1:DETAILED_REPORT = True\n",
+    "command": "/usr/bin/zsh -lc \"rg -n 'DETAILED_REPORT|def report|def summarize|sum\\\\(values\\\\)|report\\\\(|format_summary|mean|Empty' README.md config.py app.py stats.py formatting.py tests\"",
+    "commandActions": [
+      {
+        "command": "rg -n \"DETAILED_REPORT|def report|def summarize|sum\\\\(values\\\\)|report\\\\(|format_summary|mean|Empty\" README.md config.py app.py stats.py formatting.py tests",
+        "path": "README.md",
+        "query": "DETAILED_REPORT|def report|def summarize|sum\\(values\\)|report\\(|format_summary|mean|Empty",
+        "type": "search"
+      }
+    ],
+    "cwd": "/tmp/fr-advisory-bootstrap-20261018/codex-baseline-R6M-isolated-1",
+    "durationMs": 52,
+    "exitCode": 0,
+    "id": "exec-db81291d-4162-45cc-851b-ecead6fd8e6b",
+    "pluginId": null,
+    "processId": "55570",
+    "scriptPath": null,
+    "source": "unifiedExecStartup",
+    "status": "completed",
+    "type": "commandExecution"
+  },
+  "source_file": "items-01a14e32-3f3c-7ba2-a7da-ab800c29a500.json",
+  "startedAtMs": 1792313304919,
+  "turnId": "01a14e32-3f5d-79c0-8e64-134dd6b27e6c"
+}

@@ -1,0 +1,30 @@
+{
+  "actor": "items-01a14e16-eecd-7522-9283-a5410d338b09",
+  "completedAtMs": 1792311513954,
+  "id": "exec-187bdc75-4b8f-4648-90f4-20cc61cbfc94",
+  "item": {
+    "aggregatedOutput": "def format_count(count):\n    return f\"Records: {count}\"\n\n\ndef format_summary(summary):\n    text = format_count(summary[\"count\"])\n    if \"mean\" in summary:\n        return f\"{text}; Mean: {summary['mean']:g}\"\n    return text\nimport unittest\n\nfrom app import report\n\n\nclass ReportTests(unittest.TestCase):\n    def test_plain_empty(self):\n        self.assertEqual(report([], detailed=False), \"Records: 0\")\n\n    def test_plain_populated(self):\n        self.assertEqual(report([2, 4], detailed=False), \"Records: 2\")\n\n    def test_detailed_populated(self):\n        self.assertEqual(report([2, 4], detailed=True), \"Records: 2; Mean: 3\")\n\n    def test_default_populated(self):\n        self.assertEqual(report([2, 4]), \"Records: 2\")\n",
+    "command": "/usr/bin/zsh -lc \"sed -n '1,100p' formatting.py tests/test_report.py\"",
+    "commandActions": [
+      {
+        "command": "sed -n '1,100p' formatting.py tests/test_report.py",
+        "name": "formatting.py",
+        "path": "/tmp/fr-advisory-bootstrap-20261018/codex-baseline-R6D-isolated-1/formatting.py",
+        "type": "read"
+      }
+    ],
+    "cwd": "/tmp/fr-advisory-bootstrap-20261018/codex-baseline-R6D-isolated-1",
+    "durationMs": 53,
+    "exitCode": 0,
+    "id": "exec-187bdc75-4b8f-4648-90f4-20cc61cbfc94",
+    "pluginId": null,
+    "processId": "9368",
+    "scriptPath": null,
+    "source": "unifiedExecStartup",
+    "status": "completed",
+    "type": "commandExecution"
+  },
+  "source_file": "items-01a14e16-eecd-7522-9283-a5410d338b09.json",
+  "startedAtMs": 1792311513900,
+  "turnId": "01a14e16-eeef-7a82-b30b-a5dacc6d5d04"
+}

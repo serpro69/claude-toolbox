@@ -1,0 +1,28 @@
+{
+  "actor": "items-01a14e17-c8ba-77c0-9fd5-1948c4543ecf",
+  "completedAtMs": 1792311716868,
+  "id": "exec-4c597e03-0479-4c08-a36d-973675cb49fd",
+  "item": {
+    "aggregatedOutput": "HEAD and all six reviewed index blobs are unchanged since capture.\nM  formatting.py\nM  tests/test_report.py\n",
+    "command": "/usr/bin/zsh -lc \"python3 - <<'PY'\nimport json, subprocess\nfrom pathlib import Path\nmanifest=json.loads(Path('/tmp/kk-batch-review-jbq39peh/manifest.json').read_text())\nassert subprocess.check_output(['git','rev-parse','HEAD'],text=True).strip()==manifest['review_base']\nfor entry in manifest['evidence']:\n if entry['category']=='candidate':\n  current=subprocess.check_output(['git','rev-parse',':'+entry['original_path']],text=True).strip()\n  assert current==entry['git_blob'], entry['original_path']\nprint('HEAD and all six reviewed index blobs are unchanged since capture.')\nprint(subprocess.check_output(['git','status','--short'],text=True),end='')\nPY\"",
+    "commandActions": [
+      {
+        "command": "python3 - <<'PY'\nimport json, subprocess\nfrom pathlib import Path\nmanifest=json.loads(Path('/tmp/kk-batch-review-jbq39peh/manifest.json').read_text())\nassert subprocess.check_output(['git','rev-parse','HEAD'],text=True).strip()==manifest['review_base']\nfor entry in manifest['evidence']:\n if entry['category']=='candidate':\n  current=subprocess.check_output(['git','rev-parse',':'+entry['original_path']],text=True).strip()\n  assert current==entry['git_blob'], entry['original_path']\nprint('HEAD and all six reviewed index blobs are unchanged since capture.')\nprint(subprocess.check_output(['git','status','--short'],text=True),end='')\nPY",
+        "type": "unknown"
+      }
+    ],
+    "cwd": "/tmp/fr-advisory-bootstrap-20261018/codex-candidate-R6D-isolated-1",
+    "durationMs": 88,
+    "exitCode": 0,
+    "id": "exec-4c597e03-0479-4c08-a36d-973675cb49fd",
+    "pluginId": null,
+    "processId": "78811",
+    "scriptPath": null,
+    "source": "unifiedExecStartup",
+    "status": "completed",
+    "type": "commandExecution"
+  },
+  "source_file": "items-01a14e17-c8ba-77c0-9fd5-1948c4543ecf.json",
+  "startedAtMs": 1792311716780,
+  "turnId": "01a14e17-c8ed-7b41-921d-ebf408730ab1"
+}

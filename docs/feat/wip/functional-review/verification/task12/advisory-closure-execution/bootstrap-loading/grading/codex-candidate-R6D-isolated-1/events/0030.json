@@ -1,0 +1,28 @@
+{
+  "actor": "items-01a14e17-c8ba-77c0-9fd5-1948c4543ecf",
+  "completedAtMs": 1792311695004,
+  "id": "exec-53a4eab1-2c74-4999-9cdd-f3cf4cff0ec0",
+  "item": {
+    "aggregatedOutput": "PASS: 36 baseline/candidate scenario pairs preserve behavior except Items -> Records.\nCoverage: empty/singleton/populated/negative/fractional/large values; both default settings; omitted/false/true overrides.\nInherited exception scenarios, identical at HEAD and index: [{\"default\": false, \"mode\": true, \"values\": [], \"result\": {\"error\": \"ZeroDivisionError\", \"message\": \"division by zero\"}}, {\"default\": true, \"mode\": null, \"values\": [], \"result\": {\"error\": \"ZeroDivisionError\", \"message\": \"division by zero\"}}, {\"default\": true, \"mode\": true, \"values\": [], \"result\": {\"error\": \"ZeroDivisionError\", \"message\": \"division by zero\"}}]\n",
+    "command": "/usr/bin/zsh -lc \"python3 -B - <<'PY'\nimport json, subprocess, sys\nroot='/tmp/kk-batch-review-jbq39peh'\ncode='''import app, json\nsamples=[[],[7],[2,4],[-3,1],[0.1,0.2],[1000000,2000000]]\nrows=[]\nfor default in (False,True):\n app.DETAILED_REPORT=default\n for mode in (None,False,True):\n  for values in samples:\n   try:\n    result={'value':app.report(values,detailed=mode)}\n   except Exception as e:\n    result={'error':type(e).__name__,'message':str(e)}\n   rows.append({'default':default,'mode':mode,'values':values,'result':result})\nprint(json.dumps(rows))\n'''\nrows={stage:json.loads(subprocess.check_output([sys.executable,'-B','-c',code],cwd=root+'/'+stage,text=True)) for stage in ['historical','candidate']}\nfor before,after in zip(rows['historical'],rows['candidate']):\n expected=dict(before['result'])\n if 'value' in expected:\n  expected['value']=expected['value'].replace('Items:', 'Records:', 1)\n assert after['result']==expected, (before,after)\nprint('PASS: 36 baseline/candidate scenario pairs preserve behavior except Items -> Records.')\nprint('Coverage: empty/singleton/populated/negative/fractional/large values; both default settings; omitted/false/true overrides.')\nfailures=[r for r in rows['candidate'] if 'error' in r['result']]\nprint('Inherited exception scenarios, identical at HEAD and index: '+json.dumps(failures))\nPY\"",
+    "commandActions": [
+      {
+        "command": "python3 -B - <<'PY'\nimport json, subprocess, sys\nroot='/tmp/kk-batch-review-jbq39peh'\ncode='''import app, json\nsamples=[[],[7],[2,4],[-3,1],[0.1,0.2],[1000000,2000000]]\nrows=[]\nfor default in (False,True):\n app.DETAILED_REPORT=default\n for mode in (None,False,True):\n  for values in samples:\n   try:\n    result={'value':app.report(values,detailed=mode)}\n   except Exception as e:\n    result={'error':type(e).__name__,'message':str(e)}\n   rows.append({'default':default,'mode':mode,'values':values,'result':result})\nprint(json.dumps(rows))\n'''\nrows={stage:json.loads(subprocess.check_output([sys.executable,'-B','-c',code],cwd=root+'/'+stage,text=True)) for stage in ['historical','candidate']}\nfor before,after in zip(rows['historical'],rows['candidate']):\n expected=dict(before['result'])\n if 'value' in expected:\n  expected['value']=expected['value'].replace('Items:', 'Records:', 1)\n assert after['result']==expected, (before,after)\nprint('PASS: 36 baseline/candidate scenario pairs preserve behavior except Items -> Records.')\nprint('Coverage: empty/singleton/populated/negative/fractional/large values; both default settings; omitted/false/true overrides.')\nfailures=[r for r in rows['candidate'] if 'error' in r['result']]\nprint('Inherited exception scenarios, identical at HEAD and index: '+json.dumps(failures))\nPY",
+        "type": "unknown"
+      }
+    ],
+    "cwd": "/tmp/fr-advisory-bootstrap-20261018/codex-candidate-R6D-isolated-1",
+    "durationMs": 106,
+    "exitCode": 0,
+    "id": "exec-53a4eab1-2c74-4999-9cdd-f3cf4cff0ec0",
+    "pluginId": null,
+    "processId": "35441",
+    "scriptPath": null,
+    "source": "unifiedExecStartup",
+    "status": "completed",
+    "type": "commandExecution"
+  },
+  "source_file": "items-01a14e17-c8ba-77c0-9fd5-1948c4543ecf.json",
+  "startedAtMs": 1792311694897,
+  "turnId": "01a14e17-c8ed-7b41-921d-ebf408730ab1"
+}

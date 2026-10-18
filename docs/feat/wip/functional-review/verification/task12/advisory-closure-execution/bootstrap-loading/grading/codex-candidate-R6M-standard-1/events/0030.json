@@ -1,0 +1,28 @@
+{
+  "actor": "items-01a14e2c-71d2-7ab3-ba42-3da16ab7246a",
+  "completedAtMs": 1792312979059,
+  "id": "exec-4a8633b4-1836-4ae7-a2a3-a54e74d55d31",
+  "item": {
+    "aggregatedOutput": "BASE a210364\nempty/default: 'Items: 0'\nempty/None: 'Items: 0'\nempty/plain: 'Items: 0'\nempty/detailed: ZeroDivisionError: division by zero\npopulated/default: 'Items: 2'\npopulated/None: 'Items: 2'\npopulated/plain: 'Items: 2'\npopulated/detailed: 'Items: 2; Mean: 3'\nzero/detailed: 'Items: 1; Mean: 0'\nnegative/detailed: 'Items: 2; Mean: -3'\nfractional/detailed: 'Items: 2; Mean: 1.5'\nCANDIDATE staged index\nempty/default: ZeroDivisionError: division by zero\nempty/None: ZeroDivisionError: division by zero\nempty/plain: 'Items: 0'\nempty/detailed: ZeroDivisionError: division by zero\npopulated/default: 'Items: 2; Mean: 3'\npopulated/None: 'Items: 2; Mean: 3'\npopulated/plain: 'Items: 2'\npopulated/detailed: 'Items: 2; Mean: 3'\nzero/detailed: 'Items: 1; Mean: 0'\nnegative/detailed: 'Items: 2; Mean: -3'\nfractional/detailed: 'Items: 2; Mean: 1.5'\n",
+    "command": "/usr/bin/zsh -lc \"python3 -B - <<'PY'\nimport subprocess\nimport sys\nimport tempfile\nfrom pathlib import Path\n\nprobe = '''\nfrom app import report\ncases = [\n    (\\\"empty/default\\\", [], {}),\n    (\\\"empty/None\\\", [], {\\\"detailed\\\": None}),\n    (\\\"empty/plain\\\", [], {\\\"detailed\\\": False}),\n    (\\\"empty/detailed\\\", [], {\\\"detailed\\\": True}),\n    (\\\"populated/default\\\", [2, 4], {}),\n    (\\\"populated/None\\\", [2, 4], {\\\"detailed\\\": None}),\n    (\\\"populated/plain\\\", [2, 4], {\\\"detailed\\\": False}),\n    (\\\"populated/detailed\\\", [2, 4], {\\\"detailed\\\": True}),\n    (\\\"zero/detailed\\\", [0], {\\\"detailed\\\": True}),\n    (\\\"negative/detailed\\\", [-2, -4], {\\\"detailed\\\": True}),\n    (\\\"fractional/detailed\\\", [1, 2], {\\\"detailed\\\": True}),\n]\nfor label, values, kwargs in cases:\n    try:\n        print(f\\\"{label}: {report(values, **kwargs)\"'!r}\")\n    except Exception as error:\n        print(f\"{label}: {type(error).__name__}: {error}\")\n'\"'''\nfor label, revision in [(\\\"BASE a210364\\\", \\\"HEAD:\\\"), (\\\"CANDIDATE staged index\\\", \\\":\\\")]:\n    with tempfile.TemporaryDirectory(prefix=\\\"batch-report-review-\\\") as directory:\n        for name in [\\\"app.py\\\", \\\"config.py\\\", \\\"stats.py\\\", \\\"formatting.py\\\"]:\n            source = subprocess.run([\\\"git\\\", \\\"show\\\", revision + name], check=True, capture_output=True).stdout\n            (Path(directory) / name).write_bytes(source)\n        result = subprocess.run([sys.executable, \\\"-B\\\", \\\"-c\\\", probe], cwd=directory, check=True, text=True, capture_output=True)\n        print(label)\n        print(result.stdout, end=\\\"\\\")\nPY\"",
+    "commandActions": [
+      {
+        "command": "python3 -B - <<'PY'\nimport subprocess\nimport sys\nimport tempfile\nfrom pathlib import Path\n\nprobe = '''\nfrom app import report\ncases = [\n    (\"empty/default\", [], {}),\n    (\"empty/None\", [], {\"detailed\": None}),\n    (\"empty/plain\", [], {\"detailed\": False}),\n    (\"empty/detailed\", [], {\"detailed\": True}),\n    (\"populated/default\", [2, 4], {}),\n    (\"populated/None\", [2, 4], {\"detailed\": None}),\n    (\"populated/plain\", [2, 4], {\"detailed\": False}),\n    (\"populated/detailed\", [2, 4], {\"detailed\": True}),\n    (\"zero/detailed\", [0], {\"detailed\": True}),\n    (\"negative/detailed\", [-2, -4], {\"detailed\": True}),\n    (\"fractional/detailed\", [1, 2], {\"detailed\": True}),\n]\nfor label, values, kwargs in cases:\n    try:\n        print(f\"{label}: {report(values, **kwargs)!r}\")\n    except Exception as error:\n        print(f\"{label}: {type(error).__name__}: {error}\")\n'''\nfor label, revision in [(\"BASE a210364\", \"HEAD:\"), (\"CANDIDATE staged index\", \":\")]:\n    with tempfile.TemporaryDirectory(prefix=\"batch-report-review-\") as directory:\n        for name in [\"app.py\", \"config.py\", \"stats.py\", \"formatting.py\"]:\n            source = subprocess.run([\"git\", \"show\", revision + name], check=True, capture_output=True).stdout\n            (Path(directory) / name).write_bytes(source)\n        result = subprocess.run([sys.executable, \"-B\", \"-c\", probe], cwd=directory, check=True, text=True, capture_output=True)\n        print(label)\n        print(result.stdout, end=\"\")\nPY",
+        "type": "unknown"
+      }
+    ],
+    "cwd": "/tmp/fr-advisory-bootstrap-20261018/codex-candidate-R6M-standard-1",
+    "durationMs": 93,
+    "exitCode": 0,
+    "id": "exec-4a8633b4-1836-4ae7-a2a3-a54e74d55d31",
+    "pluginId": null,
+    "processId": "69118",
+    "scriptPath": null,
+    "source": "unifiedExecStartup",
+    "status": "completed",
+    "type": "commandExecution"
+  },
+  "source_file": "items-01a14e2c-71d2-7ab3-ba42-3da16ab7246a.json",
+  "startedAtMs": 1792312978965,
+  "turnId": "01a14e2c-7202-7ff3-a382-9d17e85954cd"
+}

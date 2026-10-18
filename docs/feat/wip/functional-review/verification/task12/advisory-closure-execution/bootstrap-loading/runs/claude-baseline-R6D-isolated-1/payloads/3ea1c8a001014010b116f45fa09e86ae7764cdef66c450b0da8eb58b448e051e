@@ -1,0 +1,33 @@
+diff --git a/formatting.py b/formatting.py
+index 566c4ad..e8beead 100644
+--- a/formatting.py
++++ b/formatting.py
+@@ -1,5 +1,5 @@
+ def format_count(count):
+-    return f"Items: {count}"
++    return f"Records: {count}"
+
+
+ def format_summary(summary):
+diff --git a/tests/test_report.py b/tests/test_report.py
+index 9431699..2bc9eaa 100644
+--- a/tests/test_report.py
++++ b/tests/test_report.py
+@@ -5,13 +5,13 @@ from app import report
+
+ class ReportTests(unittest.TestCase):
+     def test_plain_empty(self):
+-        self.assertEqual(report([], detailed=False), "Items: 0")
++        self.assertEqual(report([], detailed=False), "Records: 0")
+
+     def test_plain_populated(self):
+-        self.assertEqual(report([2, 4], detailed=False), "Items: 2")
++        self.assertEqual(report([2, 4], detailed=False), "Records: 2")
+
+     def test_detailed_populated(self):
+-        self.assertEqual(report([2, 4], detailed=True), "Items: 2; Mean: 3")
++        self.assertEqual(report([2, 4], detailed=True), "Records: 2; Mean: 3")
+
+     def test_default_populated(self):
+-        self.assertEqual(report([2, 4]), "Items: 2")
++        self.assertEqual(report([2, 4]), "Records: 2")

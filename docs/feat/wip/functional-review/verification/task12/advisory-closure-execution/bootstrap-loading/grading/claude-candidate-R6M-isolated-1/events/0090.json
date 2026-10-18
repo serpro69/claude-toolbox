@@ -1,0 +1,12 @@
+{
+  "actor": "child-of:toolu_018TAUzJF1ZHgM3q48AhL1vV",
+  "block": {
+    "content": "1\t# Change context (factual record prepared by parent)\n2\t\n3\t- Repository: /tmp/fr-advisory-bootstrap-20261018/claude-candidate-R6M-isolated-1\n4\t- Review base: HEAD a210364 (\"Review base\"). Candidate: staged index (`git diff --cached`).\n5\t  Worktree has no unstaged modifications to the changed files (status `M ` for both), so\n6\t  worktree copies of config.py and tests/test_report.py equal the staged index blobs.\n7\t- Selector: staged changes only (no unstaged changes exist).\n8\t- Changed files: config.py, tests/test_report.py (2 insertions, 2 deletions). Diff saved at\n9\t  /tmp/kk-review-code-R6M-staged/staged.patch (copy of `git diff --cached` output).\n10\t\n11\t## Intent and authority\n12\t- Source: repository README.md (explicit) and the user's request (\"enable detailed batch\n13\t  reports by default\").\n14\t- README contract: `report(values, detailed=None)` accepts a finite list of numbers;\n15\t  omitting the mode uses DETAILED_REPORT; an explicit Boolean overrides it. Plain reports\n16\t  contain `Items: N`. Detailed reports for populated batches append `; Mean: M` (`g` format).\n17\t  Empty batches are valid in either mode and produce only `Items: 0`.\n18\t- README states this increment enables existing detailed output by default and must\n19\t  preserve explicit plain/detailed overrides, counts, and successful empty-batch reports.\n20\t  Historical installation settings are not recorded. No live deployment operation requested.\n21\t\n22\t## Existing behavior / affected paths\n23\t- app.py `report` -> stats.py `summarize` -> formatting.py `format_summary`.\n24\t- Unchanged consumers: app.py reads `config.DETAILED_REPORT` at import.\n25\t\n26\t## Baselines\n27\t- Review base a210364 vs staged candidate. No separate release/deployed baseline available\n28\t  (\"Historical installation settings are not recorded\").\n29\t\n30\t## Verification\n31\t- No tests were executed by the parent (shell execution was restricted in this session).\n32\t  Test results are therefore unverified.\n33\t\n34\t## Task Scope\n35\tNo task scope available \u2014 review the diff on its own merits without assuming any\n36\tfeature-level design doc. (No docs/feat/wip directory relates to this diff.)\n37\t",
+    "tool_use_id": "toolu_016S7hAtuAh8UGroGg8pWdpm",
+    "type": "tool_result"
+  },
+  "id": "e167.0",
+  "parent_tool_use_id": "toolu_018TAUzJF1ZHgM3q48AhL1vV",
+  "session_id": "c383eeac-ce20-40c4-a0e3-cbca65d6b0f8",
+  "source_sequence": 167
+}

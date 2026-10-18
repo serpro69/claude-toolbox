@@ -1,0 +1,30 @@
+{
+  "actor": "items-01a14e53-b5f6-7cd3-b15c-e908537c64d5",
+  "completedAtMs": 1792315480538,
+  "id": "exec-bf1e9dd6-4763-449d-bb3d-3fbd5235e0f3",
+  "item": {
+    "aggregatedOutput": "# Capy Knowledge Base Protocol\n\nIf `capy` MCP tools are not available in this session, skip all search and index steps below and proceed normally.\n\n## Source Label Taxonomy\n\nAll plugin-managed labels use the `kk:` namespace prefix.\n\n| Label                    | Contents                                                              |\n| ------------------------ | --------------------------------------------------------------------- |\n| `kk:arch-decisions`      | Architecture decisions, design rationale, trade-offs                  |\n| `kk:review-findings`     | Code review patterns, recurring issues, anti-patterns                 |\n| `kk:lang-idioms`         | Language best practices, idiomatic patterns from external sources     |\n| `kk:project-conventions` | Discovered project patterns, naming conventions, structural decisions |\n| `kk:test-patterns`       | Testing approaches, edge cases, test infrastructure decisions         |\n| `kk:debug-context`       | Root causes, tricky bugs and their fixes, environment gotchas         |\n\n## Search Conventions\n\n- Use 2-4 specific terms per query \u2014 not vague keywords\n- Always scope with `source` filter to relevant `kk:*` labels\n- Use `source: \"kk:\"` only for broad cross-domain searches (e.g., CoVe verification)\n- Default `limit: 3` per query unless more context is needed\n- **Cold-start fallback:** If no results, proceed with standard guidelines \u2014 empty results are normal for new projects\n\n## Index Conventions\n\n- Only index non-obvious learnings not derivable from reading the code or git history\n- Keep content concise \u2014 summarize the insight, don't dump raw output\n- Always use a `kk:` prefixed label from the taxonomy above\n- One concept per `capy_index` call \u2014 don't bundle unrelated learnings\n- Skip indexing if the insight is already captured in design docs or CLAUDE.md\n",
+    "command": "/usr/bin/zsh -lc \"cat '/home/sergio/.codex/plugins/cache/fr-advisory-4b694214/kk/0.23.0/skills/review-code/shared-capy-knowledge-protocol.md'\"",
+    "commandActions": [
+      {
+        "command": "cat /home/sergio/.codex/plugins/cache/fr-advisory-4b694214/kk/0.23.0/skills/review-code/shared-capy-knowledge-protocol.md",
+        "name": "shared-capy-knowledge-protocol.md",
+        "path": "/home/sergio/.codex/plugins/cache/fr-advisory-4b694214/kk/0.23.0/skills/review-code/shared-capy-knowledge-protocol.md",
+        "type": "read"
+      }
+    ],
+    "cwd": "/tmp/fr-advisory-bootstrap-20261018/codex-candidate-R5-isolated-1",
+    "durationMs": 95,
+    "exitCode": 0,
+    "id": "exec-bf1e9dd6-4763-449d-bb3d-3fbd5235e0f3",
+    "pluginId": null,
+    "processId": "14965",
+    "scriptPath": null,
+    "source": "unifiedExecStartup",
+    "status": "completed",
+    "type": "commandExecution"
+  },
+  "source_file": "items-01a14e53-b5f6-7cd3-b15c-e908537c64d5.json",
+  "startedAtMs": 1792315480442,
+  "turnId": "01a14e53-b617-7cd1-8ea6-71ee279906b0"
+}

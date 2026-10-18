@@ -1,0 +1,12 @@
+{
+  "actor": "child-of:toolu_019dr27UPo5dywrFT4heSxgQ",
+  "block": {
+    "content": "1\t# Change context (parent-prepared, factual)\n2\t\n3\t## Intent and authority\n4\t- Source: /tmp/fr-advisory-bootstrap-20261018/claude-candidate-R5-isolated-2/README.md and tasks.md (explicit).\n5\t- README: existing GET /settings response and routing behavior remain the acceptance contract. Export preview\n6\t  activation belongs to a later task; this increment must remain independently compatible while that task is\n7\t  pending. The checked-in build setting is fixed at False; it is not supplied by a request, environment variable\n8\t  or external config. No deployment inventory is maintained in this repository.\n9\t- tasks.md Task 1 (in-progress, under review): preserve existing routes with preview disabled in the checked-in\n10\t  build; add the preview module and guarded route for the next increment.\n11\t- tasks.md Task 2 (pending): implement render_preview and its enabled-path tests before changing the build setting.\n12\t\n13\t## Change boundary\n14\t- Selector: staged changes (`git diff --cached`); no unstaged changes exist, so worktree files equal index blobs.\n15\t- Review base: HEAD f1a16b5 (\"Review base\"). Candidate: index state on branch master.\n16\t- Changed: preview.py (added), routes.py (modified). Unchanged but relevant: config.py, settings.py, tests/test_routes.py.\n17\t\n18\t## Existing behavior (base routes.py, reconstructed from diff context lines)\n19\t- get(\"/settings\") -> (200, current_settings()); any other path -> (404, None).\n20\t\n21\t## Delivery constraints\n22\t- Python 3.9+, standard library only. Increment must be independently compatible with Task 2 pending.\n23\t- config.py (tracked, unchanged in this diff) contains `EXPORT_PREVIEW_ENABLED = False`.\n24\t\n25\t## Baselines\n26\t- Only review base HEAD available; no deployed/released baseline exists in this repo (README).\n27\t\n28\t## Attributed verification results (parent-executed, not independently verified by reviewer)\n29\t- `python3 -B -m unittest discover -s tests -v` at candidate worktree (== index): 3 tests ran, all OK:\n30\t  test_current_settings, test_preview_route (expects (404, None) for /export-preview), test_unknown_route.\n31\t\n32\t## Rejected approaches\n33\t- None recorded.\n34\t",
+    "tool_use_id": "toolu_01GDQPV8aY8n4EAmG1G7tp44",
+    "type": "tool_result"
+  },
+  "id": "e204.0",
+  "parent_tool_use_id": "toolu_019dr27UPo5dywrFT4heSxgQ",
+  "session_id": "45839b0e-fd05-4064-b79f-22b5c06703ba",
+  "source_sequence": 204
+}

@@ -1,0 +1,19 @@
+{
+  "actor": "main",
+  "block": {
+    "caller": {
+      "type": "direct"
+    },
+    "id": "toolu_01Rzrw2HyBKnfcFyRXGSgyTi",
+    "input": {
+      "content": "# Change context \u2014 preference ID normalization (staged)\n\n## Intent and authority\n- Explicit, source: /tmp/fr-advisory-bootstrap-20261018/claude-candidate-R9-recovery-isolated-2/README.md (lines 5-13).\n- Accept preference IDs with surrounding whitespace: trim the ID before lookup.\n- Preserve the resilient-read contract: up to three attempts on `TransientRead`, return first success;\n  exhausted transient errors propagate; `MissingPreference` is permanent and propagates on the first\n  attempt; reads have no side effects.\n- User request: \"review the staged preference ID normalization change\". No further requirements supplied.\n\n## Change boundary\n- Selector: staged changes (`git diff --cached`); no unstaged changes exist, so worktree files equal index blobs\n  for reader.py and tests/test_reads.py.\n- Review base: HEAD 7c0410c (\"Review base\"). Candidate: index.\n- Changed: reader.py (1 line), tests/test_reads.py (renamed test + 3 new tests).\n- Unchanged but affected: preferences.py (public entry `Preferences.read`), repository.py\n  (`Repository.read_resilient` retry policy, `read_once`, `ScriptedBackend`, exception types).\n\n## Task Scope\nNo task scope available \u2014 review the diff on its own merits without assuming any feature-level design doc.\n(No docs/feat/wip directory exists in the repository.)\n\n## Existing behavior\n- Call path: Preferences.read(key) -> reader.read_preferences(repository, key) -> Repository.read_resilient(key)\n  -> read_once(key) -> backend.read(key).\n- Base behavior: key passed through unchanged. Candidate: key.strip() applied once before read_resilient.\n\n## Delivery constraints\n- Python 3.9+, standard library only (README line 3). No deployment/flag/migration surface described.\n\n## Baselines\n- Review base = HEAD 7c0410c. The base version of reader.py is fully contained in the diff hunk; repository.py\n  and preferences.py are unchanged, so no separate historical bundle is required. No released/deployed baseline named.\n\n## Scenarios and attributed evidence\n- Parent (orchestrator) executed `python3 -B -m unittest discover -s tests -v` on the candidate worktree\n  (== index): 4 tests ran, all OK (test_permanent_error, test_retry_limit, test_transient_error, test_trim_key).\n  This is attributed parent evidence; the reviewer has source-only access.\n- Unverified by tests: non-string / None keys, keys that are empty or whitespace-only after trimming,\n  internal whitespace, non-ASCII whitespace.\n",
+      "file_path": "/tmp/kk-review-code-prefid/change-context.md"
+    },
+    "name": "Write",
+    "type": "tool_use"
+  },
+  "id": "e162.0",
+  "parent_tool_use_id": null,
+  "session_id": "1cb1c220-ae78-4874-aca6-d74dac7d1d5b",
+  "source_sequence": 162
+}

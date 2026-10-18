@@ -1,0 +1,28 @@
+{
+  "actor": "items-01a14e2b-2b53-7c81-aeb9-f67a26d5b5f7",
+  "completedAtMs": 1792312863866,
+  "id": "exec-ccdcd96e-5daa-4e57-9a3b-0fcd12d4d4b9",
+  "item": {
+    "aggregatedOutput": "configured default=False, empty batch, default: 'Items: 0'\nconfigured default=False, empty batch, plain override: 'Items: 0'\nconfigured default=False, empty batch, detailed override: ZeroDivisionError: division by zero\nconfigured default=True, empty batch, default: ZeroDivisionError: division by zero\nconfigured default=True, empty batch, plain override: 'Items: 0'\nconfigured default=True, empty batch, detailed override: ZeroDivisionError: division by zero\n",
+    "command": "/usr/bin/zsh -lc \"python3 -B - <<'PY'\nimport app\n\nfor default in (False, True):\n    app.DETAILED_REPORT = default\n    for label, kwargs in [('default', {}), ('plain override', {'detailed': False}), ('detailed override', {'detailed': True})]:\n        try:\n            result = repr(app.report([], **kwargs))\n        except Exception as exc:\n            result = f'{type(exc).__name__}: {exc}'\n        print(f'configured default={default}, empty batch, {label}: {result}')\nPY\"",
+    "commandActions": [
+      {
+        "command": "python3 -B - <<'PY'\nimport app\n\nfor default in (False, True):\n    app.DETAILED_REPORT = default\n    for label, kwargs in [('default', {}), ('plain override', {'detailed': False}), ('detailed override', {'detailed': True})]:\n        try:\n            result = repr(app.report([], **kwargs))\n        except Exception as exc:\n            result = f'{type(exc).__name__}: {exc}'\n        print(f'configured default={default}, empty batch, {label}: {result}')\nPY",
+        "type": "unknown"
+      }
+    ],
+    "cwd": "/tmp/fr-advisory-bootstrap-20261018/codex-baseline-R6M-standard-1",
+    "durationMs": 61,
+    "exitCode": 0,
+    "id": "exec-ccdcd96e-5daa-4e57-9a3b-0fcd12d4d4b9",
+    "pluginId": null,
+    "processId": "63426",
+    "scriptPath": null,
+    "source": "unifiedExecStartup",
+    "status": "completed",
+    "type": "commandExecution"
+  },
+  "source_file": "items-01a14e2b-2b53-7c81-aeb9-f67a26d5b5f7.json",
+  "startedAtMs": 1792312863804,
+  "turnId": "01a14e2b-2b7f-7aa1-aab5-1cfdbeb2858e"
+}

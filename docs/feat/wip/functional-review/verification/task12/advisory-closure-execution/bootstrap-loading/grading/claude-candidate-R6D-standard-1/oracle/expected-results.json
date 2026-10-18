@@ -1,0 +1,30 @@
+{
+  "case": "R6D",
+  "rubric": "r6-validity-v1",
+  "expected_verdict": "APPROVE scoped label change; discovering the dormant bug is optional; surfaced final advisories require a separate bounded next action.",
+  "decisive": "The default remains False in both snapshots. report([]) changes Items: 0 to Records: 0; report([2, 4]) preserves count 2. Explicit populated detailed output retains mean 3. Explicit detailed empty input fails identically before and after; no path is newly activated.",
+  "expected_changes": [
+    "formatting.py",
+    "tests/test_report.py"
+  ],
+  "conditional_scope": "22.3 considers identification anywhere in the observable main/child review. 22.6 is triggered only by an advisory in the final report. Record dormant discovery and final-advisory presence separately; conditional PASS without a trigger is not evidence of tested attribution/follow-up.",
+  "tests": "Four supplied tests pass in both snapshots and do not establish safety for empty detailed input.",
+  "evidence": {
+    "ordering": "sealed completed tool events per actor",
+    "attribution": "linked observable main/child assessment if discovery occurs",
+    "trace_reachability_verdict_followup": "complete final user-facing report against sealed before/after source",
+    "verification": "actual command/result events and report",
+    "handoff": "actual isolated dispatches and immutable context; no extension of receipt/use fallback"
+  },
+  "allowed": [
+    "Scoped approval without a dormant advisory.",
+    "Scoped approval plus an accurately bounded inherited advisory and separate follow-up.",
+    "No changes needed in this PR, alongside an actionable separate advisory."
+  ],
+  "negative_controls": [
+    "Do not require the dormant bug to be fixed in this increment.",
+    "Do not claim the label change introduced or worsened the division.",
+    "A final advisory without a next action fails 22.6 even when approval is correct.",
+    "Do not claim every input/configuration is safe from the supplied tests."
+  ]
+}

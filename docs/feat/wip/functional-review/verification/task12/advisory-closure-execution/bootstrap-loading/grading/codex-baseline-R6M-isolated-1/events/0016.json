@@ -1,0 +1,28 @@
+{
+  "actor": "items-01a14e31-2a40-7750-bc96-3678d5de940d",
+  "completedAtMs": 1792313289949,
+  "id": "exec-575a9397-539d-4576-ad9c-330e1a4edf3a",
+  "item": {
+    "aggregatedOutput": "HEAD default; report([], detailed=None) -> 'Items: 0'\nHEAD default; report([], detailed=False) -> 'Items: 0'\nHEAD default; report([], detailed=True) -> ZeroDivisionError: division by zero\nHEAD default; report([2, 4], detailed=None) -> 'Items: 2'\nHEAD default; report([2, 4], detailed=False) -> 'Items: 2'\nHEAD default; report([2, 4], detailed=True) -> 'Items: 2; Mean: 3'\nstaged default; report([], detailed=None) -> ZeroDivisionError: division by zero\nstaged default; report([], detailed=False) -> 'Items: 0'\nstaged default; report([], detailed=True) -> ZeroDivisionError: division by zero\nstaged default; report([2, 4], detailed=None) -> 'Items: 2; Mean: 3'\nstaged default; report([2, 4], detailed=False) -> 'Items: 2'\nstaged default; report([2, 4], detailed=True) -> 'Items: 2; Mean: 3'\n",
+    "command": "/usr/bin/zsh -lc \"python3 -B - <<'PY'\nimport app\nimport subprocess\n\nbase_config = {}\nexec(subprocess.check_output(['git', 'show', 'HEAD:config.py'], text=True), base_config)\nstaged_default = app.DETAILED_REPORT\nfor label, default in [('HEAD default', base_config['DETAILED_REPORT']), ('staged default', staged_default)]:\n    app.DETAILED_REPORT = default\n    for values in [[], [2, 4]]:\n        for mode in [None, False, True]:\n            try:\n                result = repr(app.report(values, detailed=mode))\n            except Exception as exc:\n                result = f'{type(exc).__name__}: {exc}'\n            print(f'{label}; report({values}, detailed={mode}) -> {result}')\napp.DETAILED_REPORT = staged_default\nPY\"",
+    "commandActions": [
+      {
+        "command": "python3 -B - <<'PY'\nimport app\nimport subprocess\n\nbase_config = {}\nexec(subprocess.check_output(['git', 'show', 'HEAD:config.py'], text=True), base_config)\nstaged_default = app.DETAILED_REPORT\nfor label, default in [('HEAD default', base_config['DETAILED_REPORT']), ('staged default', staged_default)]:\n    app.DETAILED_REPORT = default\n    for values in [[], [2, 4]]:\n        for mode in [None, False, True]:\n            try:\n                result = repr(app.report(values, detailed=mode))\n            except Exception as exc:\n                result = f'{type(exc).__name__}: {exc}'\n            print(f'{label}; report({values}, detailed={mode}) -> {result}')\napp.DETAILED_REPORT = staged_default\nPY",
+        "type": "unknown"
+      }
+    ],
+    "cwd": "/tmp/fr-advisory-bootstrap-20261018/codex-baseline-R6M-isolated-1",
+    "durationMs": 72,
+    "exitCode": 0,
+    "id": "exec-575a9397-539d-4576-ad9c-330e1a4edf3a",
+    "pluginId": null,
+    "processId": "52473",
+    "scriptPath": null,
+    "source": "unifiedExecStartup",
+    "status": "completed",
+    "type": "commandExecution"
+  },
+  "source_file": "items-01a14e31-2a40-7750-bc96-3678d5de940d.json",
+  "startedAtMs": 1792313289876,
+  "turnId": "01a14e31-2a6b-77d3-8ebe-844c3091204e"
+}

@@ -1,0 +1,13 @@
+I've stopped before the review started because I can't get the staged diff in this session.
+
+**What's blocking it:** the isolated workflow starts by running `git diff --cached` to capture your staged changes. Bash isn't allowed in this session (it's in don't-ask mode), so I can't run git. The file tools can't read git's stored objects either, so I have no way to see the previous version of the two staged files (`formatting.py` and `tests/test_report.py`). I could run git through the capy execution tool, but that would get around a permission you've turned off, so I won't.
+
+**Second gap:** the second reviewer, `pal codereview` (an external model), isn't connected to this session. Even with the diff, only the Claude `code-reviewer` sub-agent would run, so the report would have no findings that both reviewers agree on.
+
+**Ways to go forward:**
+
+1. **Allow read-only git** (`git diff --cached` and `git diff --cached --stat`). I'd run the workflow properly, with the `code-reviewer` sub-agent as the only reviewer and a note that pal wasn't available.
+2. **Paste the diff here** (output of `git diff --cached`). I'd save it to a file the reviewer can read and run the same way.
+3. **Review the whole files without a diff.** The reviewer would read both files in full, guided only by "count label change". Findings could land on code you didn't touch.
+
+I'd go with 1 or 2. Which do you want?

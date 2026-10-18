@@ -1,0 +1,28 @@
+{
+  "actor": "items-01a14e3a-6f11-73e3-b949-1a240d7c0590",
+  "completedAtMs": 1792314042933,
+  "id": "exec-5425f3ed-b85a-434d-b4fc-245387879c25",
+  "item": {
+    "aggregatedOutput": "## master\nM  config.py\nM  tests/test_report.py\n config.py            | 2 +-\n tests/test_report.py | 2 +-\n 2 files changed, 2 insertions(+), 2 deletions(-)\nReviewed index blobs are unchanged.\nRemoved temporary evidence and instruction packets created for this review.\n",
+    "command": "/usr/bin/zsh -lc \"git status -sb\ngit diff --cached --stat\ngit diff --name-only\npython3 - <<'PY'\nfrom pathlib import Path\nimport subprocess, json, shutil\nbundle=Path('/tmp/kk-review-batch.Lzo81S')\nmanifest=json.loads((bundle/'manifest.json').read_text())\nfor entry in manifest['candidate']:\n    current=subprocess.check_output(['git','rev-parse',':'+entry['original_path']],text=True).strip()\n    assert current == entry['blob'], entry['original_path']\nprint('Reviewed index blobs are unchanged.')\nfor folder in [bundle,Path('/tmp/kk-review-instructions-accvde24'),Path('/tmp/kk-review-instructions-_zwyqd53'),Path('/tmp/kk-review-instructions-ybywcg41')]:\n    shutil.rmtree(folder)\nprint('Removed temporary evidence and instruction packets created for this review.')\nPY\"",
+    "commandActions": [
+      {
+        "command": "git status -sb\ngit diff --cached --stat\ngit diff --name-only\npython3 - <<'PY'\nfrom pathlib import Path\nimport subprocess, json, shutil\nbundle=Path('/tmp/kk-review-batch.Lzo81S')\nmanifest=json.loads((bundle/'manifest.json').read_text())\nfor entry in manifest['candidate']:\n    current=subprocess.check_output(['git','rev-parse',':'+entry['original_path']],text=True).strip()\n    assert current == entry['blob'], entry['original_path']\nprint('Reviewed index blobs are unchanged.')\nfor folder in [bundle,Path('/tmp/kk-review-instructions-accvde24'),Path('/tmp/kk-review-instructions-_zwyqd53'),Path('/tmp/kk-review-instructions-ybywcg41')]:\n    shutil.rmtree(folder)\nprint('Removed temporary evidence and instruction packets created for this review.')\nPY",
+        "type": "unknown"
+      }
+    ],
+    "cwd": "/tmp/fr-advisory-bootstrap-20261018/codex-candidate-R6M-isolated-2",
+    "durationMs": 86,
+    "exitCode": 0,
+    "id": "exec-5425f3ed-b85a-434d-b4fc-245387879c25",
+    "pluginId": null,
+    "processId": "9716",
+    "scriptPath": null,
+    "source": "unifiedExecStartup",
+    "status": "completed",
+    "type": "commandExecution"
+  },
+  "source_file": "items-01a14e3a-6f11-73e3-b949-1a240d7c0590.json",
+  "startedAtMs": 1792314042846,
+  "turnId": "01a14e3a-6f3f-7a42-8dfe-53e9b9563426"
+}

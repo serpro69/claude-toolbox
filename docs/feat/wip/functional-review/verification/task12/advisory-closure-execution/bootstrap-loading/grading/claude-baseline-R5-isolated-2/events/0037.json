@@ -1,0 +1,21 @@
+{
+  "actor": "main",
+  "block": {
+    "caller": {
+      "type": "direct"
+    },
+    "id": "toolu_01X13SEjKfqRPF37CWSCkYkG",
+    "input": {
+      "description": "Isolated code review",
+      "prompt": "You are reviewing the following code changes. Apply your full review workflow.\n\n## Plugin Root\n\n/tmp/fr-advisory-bootstrap-20261018/claude-baseline-R5-isolated-2/plugins/kk\n\n## Git Diff\n\nRepository root: /tmp/fr-advisory-bootstrap-20261018/claude-baseline-R5-isolated-2 (staged changes, `git diff --cached`):\n\n```diff\ndiff --git a/preview.py b/preview.py\nnew file mode 100644\nindex 0000000..14b3c75\n--- /dev/null\n+++ b/preview.py\n@@ -0,0 +1,2 @@\n+def render_preview():\n+    raise NotImplementedError(\"Export preview is scheduled for Task 2\")\ndiff --git a/routes.py b/routes.py\nindex 39ec034..fa60e31 100644\n--- a/routes.py\n+++ b/routes.py\n@@ -1,7 +1,11 @@\n+from config import EXPORT_PREVIEW_ENABLED\n+from preview import render_preview\n from settings import current_settings\n \n \n def get(path):\n     if path == \"/settings\":\n         return 200, current_settings()\n+    if EXPORT_PREVIEW_ENABLED and path == \"/export-preview\":\n+        return 200, render_preview()\n     return 404, None\n```\n\nSurrounding files you may read for context (absolute paths under the repo root): config.py, settings.py, tests/test_routes.py, README.md, tasks.md.\n\n## Active Profiles and Resolved Checklists\n\n- profile: python, checklist: security-checklist.md, triggered_by: content \u2014 extension .py (preview.py, routes.py)\n- profile: python, checklist: solid-checklist.md, triggered_by: content \u2014 extension .py (preview.py, routes.py)\n- profile: python, checklist: code-quality-checklist.md, triggered_by: content \u2014 extension .py (preview.py, routes.py)\n- profile: python, checklist: removal-plan.md, triggered_by: content \u2014 extension .py (preview.py, routes.py)\n\nFor each record, read the checklist at `/tmp/fr-advisory-bootstrap-20261018/claude-baseline-R5-isolated-2/plugins/kk/profiles/python/review-code/<checklist>` and apply it to the diff.\n\n## Spec Context\n\nFrom README.md: Python 3.9+, standard library only. Tests: `python3 -B -m unittest discover -s tests`. \"This increment prepares the export-preview module. The existing GET /settings response and routing behavior remain the acceptance contract. Export preview activation belongs to a later task; this increment must remain independently compatible while that task is pending. The checked-in build setting is fixed at False; it is not supplied by a request, environment variable or external config. No deployment inventory is maintained in this small source repository.\"\n\nFrom tasks.md:\n- Task 1: Prepare preview module \u2014 Preserve existing routes with preview disabled in the checked-in build. Add the preview module and guarded route for the next increment.\n- Task 2: Implement and enable export preview \u2014 Implement render_preview and its enabled-path tests before changing the build setting.\n\n## Task Scope\n\nReview mode: mid-implementation\n\nIn scope (review these):\n- Task 1: Prepare preview module \u2014 status: in-progress (the change under review)\n\nOut of scope (pending \u2014 DO NOT flag as missing):\n- Task 2: Implement and enable export preview \u2014 status: pending\n\nThe feature's design docs describe the full end state. Pending tasks are expected gaps in the current diff \u2014 treat their absence from the code as intentional, not as a finding. You may still flag issues within the in-scope tasks even if they reference pending tasks (e.g., a broken interface contract). If a finding would be valid only after pending work lands, mention it under \"Areas Not Covered\" instead of the P0\u2013P3 sections.\n\n## Rejected Approaches\n\nNo rejected approaches to note.\n\nProduce your findings in the output format specified in your agent definition.",
+      "run_in_background": false,
+      "subagent_type": "kk:code-reviewer"
+    },
+    "name": "Agent",
+    "type": "tool_use"
+  },
+  "id": "e71.0",
+  "parent_tool_use_id": null,
+  "session_id": "f03a6a95-f376-45f2-8910-997706b42978",
+  "source_sequence": 71
+}

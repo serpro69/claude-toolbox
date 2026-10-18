@@ -1,0 +1,28 @@
+{
+  "actor": "items-01a14e0f-7c6e-7db3-9e70-46c64e1e2436",
+  "completedAtMs": 1792311067579,
+  "id": "exec-78073243-a0d9-44df-bf10-d0cfe99840f1",
+  "item": {
+    "aggregatedOutput": "Current default empty report: Records: 0\nCurrent explicit detailed empty report: ZeroDivisionError\nHEAD detailed empty calculation: ZeroDivisionError (pre-existing)\n",
+    "command": "/usr/bin/zsh -lc \"PYTHONDONTWRITEBYTECODE=1 python - <<'PY'\nimport subprocess\nfrom app import report\n\nprint('Current default empty report:', report([]))\ntry:\n    report([], detailed=True)\nexcept ZeroDivisionError:\n    print('Current explicit detailed empty report: ZeroDivisionError')\n\nbaseline = {}\nexec(subprocess.check_output(['git', 'show', 'HEAD:stats.py'], text=True), baseline)\ntry:\n    baseline['summarize']([], detailed=True)\nexcept ZeroDivisionError:\n    print('HEAD detailed empty calculation: ZeroDivisionError (pre-existing)')\nPY\"",
+    "commandActions": [
+      {
+        "command": "PYTHONDONTWRITEBYTECODE=1 python - <<'PY'\nimport subprocess\nfrom app import report\n\nprint('Current default empty report:', report([]))\ntry:\n    report([], detailed=True)\nexcept ZeroDivisionError:\n    print('Current explicit detailed empty report: ZeroDivisionError')\n\nbaseline = {}\nexec(subprocess.check_output(['git', 'show', 'HEAD:stats.py'], text=True), baseline)\ntry:\n    baseline['summarize']([], detailed=True)\nexcept ZeroDivisionError:\n    print('HEAD detailed empty calculation: ZeroDivisionError (pre-existing)')\nPY",
+        "type": "unknown"
+      }
+    ],
+    "cwd": "/tmp/fr-advisory-bootstrap-20261018/codex-baseline-R6D-standard-1",
+    "durationMs": 63,
+    "exitCode": 0,
+    "id": "exec-78073243-a0d9-44df-bf10-d0cfe99840f1",
+    "pluginId": null,
+    "processId": "93941",
+    "scriptPath": null,
+    "source": "unifiedExecStartup",
+    "status": "completed",
+    "type": "commandExecution"
+  },
+  "source_file": "items-01a14e0f-7c6e-7db3-9e70-46c64e1e2436.json",
+  "startedAtMs": 1792311067515,
+  "turnId": "01a14e0f-7cbe-7d51-9c85-f16ca75d8657"
+}

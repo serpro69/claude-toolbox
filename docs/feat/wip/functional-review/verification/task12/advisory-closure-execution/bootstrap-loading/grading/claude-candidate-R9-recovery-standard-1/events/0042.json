@@ -1,0 +1,12 @@
+{
+  "actor": "main",
+  "block": {
+    "content": "1\tclass TransientRead(Exception):\n2\t    pass\n3\t\n4\t\n5\tclass MissingPreference(Exception):\n6\t    pass\n7\t\n8\t\n9\tclass ScriptedBackend:\n10\t    def __init__(self, outcomes):\n11\t        self.outcomes = iter(outcomes)\n12\t        self.keys = []\n13\t\n14\t    def read(self, key):\n15\t        self.keys.append(key)\n16\t        outcome = next(self.outcomes)\n17\t        if isinstance(outcome, Exception):\n18\t            raise outcome\n19\t        return outcome\n20\t\n21\t\n22\tclass Repository:\n23\t    def __init__(self, backend):\n24\t        self.backend = backend\n25\t\n26\t    def read_once(self, key):\n27\t        return self.backend.read(key)\n28\t\n29\t    def read_resilient(self, key):\n30\t        for attempt in range(3):\n31\t            try:\n32\t                return self.read_once(key)\n33\t            except TransientRead:\n34\t                if attempt == 2:\n35\t                    raise\n36\t",
+    "tool_use_id": "toolu_016oG3BmxG21CmfqDXgtHj5Z",
+    "type": "tool_result"
+  },
+  "id": "e102.0",
+  "parent_tool_use_id": null,
+  "session_id": "865d7a3c-362d-4b58-9c3f-7200eac13146",
+  "source_sequence": 102
+}

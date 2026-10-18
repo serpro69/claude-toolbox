@@ -1,0 +1,28 @@
+{
+  "actor": "items-01a14e74-2568-7660-9c9e-a6cfeb6db249",
+  "completedAtMs": 1792317716983,
+  "id": "exec-0b1ecf9d-e96d-4947-a287-52383fd55e66",
+  "item": {
+    "aggregatedOutput": "3.12.11 (main, Sep 18 2025, 19:47:19) [Clang 20.1.4 ]\nPASS: unchanged unpadded ID attempts= 1\nPASS: tab and newline trimming attempts= 1\nPASS: success on final allowed attempt attempts= 3\nPASS: permanent error after transient failure attempts= 2\n",
+    "command": "/usr/bin/zsh -lc \"python3 -B - <<'PY'\nimport sys\nfrom preferences import Preferences\nfrom repository import Repository, ScriptedBackend, TransientRead, MissingPreference\nprint(sys.version)\nvalue = {'color': 'blue'}\nfor name, key, outcomes, count, error in [\n    ('unchanged unpadded ID', 'w', [value, MissingPreference('unused')], 1, None),\n    ('tab and newline trimming', '\\\\t w\\\\n', [value], 1, None),\n    ('success on final allowed attempt', ' w ', [TransientRead('one'), TransientRead('two'), value, MissingPreference('unused')], 3, None),\n    ('permanent error after transient failure', ' w ', [TransientRead('busy'), MissingPreference('missing'), value], 2, MissingPreference),\n]:\n    backend = ScriptedBackend(outcomes)\n    try:\n        result = Preferences(Repository(backend)).read(key)\n    except Exception as exc:\n        assert error is not None and type(exc) is error, (name, exc)\n    else:\n        assert error is None and result is value, (name, result)\n    assert backend.keys == ['w'] * count, (name, backend.keys)\n    print('PASS:', name, 'attempts=', count)\nPY\"",
+    "commandActions": [
+      {
+        "command": "python3 -B - <<'PY'\nimport sys\nfrom preferences import Preferences\nfrom repository import Repository, ScriptedBackend, TransientRead, MissingPreference\nprint(sys.version)\nvalue = {'color': 'blue'}\nfor name, key, outcomes, count, error in [\n    ('unchanged unpadded ID', 'w', [value, MissingPreference('unused')], 1, None),\n    ('tab and newline trimming', '\\t w\\n', [value], 1, None),\n    ('success on final allowed attempt', ' w ', [TransientRead('one'), TransientRead('two'), value, MissingPreference('unused')], 3, None),\n    ('permanent error after transient failure', ' w ', [TransientRead('busy'), MissingPreference('missing'), value], 2, MissingPreference),\n]:\n    backend = ScriptedBackend(outcomes)\n    try:\n        result = Preferences(Repository(backend)).read(key)\n    except Exception as exc:\n        assert error is not None and type(exc) is error, (name, exc)\n    else:\n        assert error is None and result is value, (name, result)\n    assert backend.keys == ['w'] * count, (name, backend.keys)\n    print('PASS:', name, 'attempts=', count)\nPY",
+        "type": "unknown"
+      }
+    ],
+    "cwd": "/tmp/kk-review-preference-5kdpw0i9/candidate",
+    "durationMs": 60,
+    "exitCode": 0,
+    "id": "exec-0b1ecf9d-e96d-4947-a287-52383fd55e66",
+    "pluginId": null,
+    "processId": "8099",
+    "scriptPath": null,
+    "source": "unifiedExecStartup",
+    "status": "completed",
+    "type": "commandExecution"
+  },
+  "source_file": "items-01a14e74-2568-7660-9c9e-a6cfeb6db249.json",
+  "startedAtMs": 1792317716922,
+  "turnId": "01a14e74-2594-72e0-be87-22dea196725c"
+}

@@ -1,0 +1,28 @@
+{
+  "actor": "items-01a14e33-373f-7442-bf55-78e48401edfc",
+  "completedAtMs": 1792313544524,
+  "id": "exec-5cd0d56a-8cd3-49e1-b3ee-71a266b0a390",
+  "item": {
+    "aggregatedOutput": "Reviewed index blobs and staged diff are unchanged.\nM  config.py\nM  tests/test_report.py\n",
+    "command": "/usr/bin/zsh -lc \"python3 - <<'PY'\nfrom pathlib import Path\nimport json, subprocess\nroot = Path('/tmp/kk-review-batch-nmlomip2')\nmanifest = json.loads((root / 'manifest.json').read_text())\nfor item in manifest['sources']:\n    if item['role'] == 'candidate':\n        current = subprocess.check_output(['git', 'show', ':' + item['original_path']])\n        assert current == Path(item['path']).read_bytes(), item['original_path']\nassert subprocess.check_output(['git', 'diff', '--cached', '--no-ext-diff', '--no-color']) == (root / 'staged.patch').read_bytes()\nprint('Reviewed index blobs and staged diff are unchanged.')\nprint(subprocess.check_output(['git', 'status', '--short'], text=True), end='')\nPY\"",
+    "commandActions": [
+      {
+        "command": "python3 - <<'PY'\nfrom pathlib import Path\nimport json, subprocess\nroot = Path('/tmp/kk-review-batch-nmlomip2')\nmanifest = json.loads((root / 'manifest.json').read_text())\nfor item in manifest['sources']:\n    if item['role'] == 'candidate':\n        current = subprocess.check_output(['git', 'show', ':' + item['original_path']])\n        assert current == Path(item['path']).read_bytes(), item['original_path']\nassert subprocess.check_output(['git', 'diff', '--cached', '--no-ext-diff', '--no-color']) == (root / 'staged.patch').read_bytes()\nprint('Reviewed index blobs and staged diff are unchanged.')\nprint(subprocess.check_output(['git', 'status', '--short'], text=True), end='')\nPY",
+        "type": "unknown"
+      }
+    ],
+    "cwd": "/tmp/fr-advisory-bootstrap-20261018/codex-candidate-R6M-isolated-1",
+    "durationMs": 79,
+    "exitCode": 0,
+    "id": "exec-5cd0d56a-8cd3-49e1-b3ee-71a266b0a390",
+    "pluginId": null,
+    "processId": "72682",
+    "scriptPath": null,
+    "source": "unifiedExecStartup",
+    "status": "completed",
+    "type": "commandExecution"
+  },
+  "source_file": "items-01a14e33-373f-7442-bf55-78e48401edfc.json",
+  "startedAtMs": 1792313544444,
+  "turnId": "01a14e33-376d-7c03-af1d-df943c2ec1f4"
+}

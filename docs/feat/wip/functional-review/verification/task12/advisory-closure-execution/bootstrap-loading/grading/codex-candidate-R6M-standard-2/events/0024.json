@@ -1,0 +1,28 @@
+{
+  "actor": "items-01a14e2f-6d3f-7aa0-8186-5c87a3ef620b",
+  "completedAtMs": 1792313191070,
+  "id": "exec-1a477e5f-009b-4dba-8f02-cf7d031ae52d",
+  "item": {
+    "aggregatedOutput": "     1\tDETAILED_REPORT = True\n     1\tfrom config import DETAILED_REPORT\n     2\tfrom formatting import format_summary\n     3\tfrom stats import summarize\n     4\t\n     5\t\n     6\tdef report(values, detailed=None):\n     7\t    if detailed is None:\n     8\t        detailed = DETAILED_REPORT\n     9\t    summary = summarize(values, detailed=detailed)\n    10\t    return format_summary(summary)\n     1\tdef summarize(values, detailed=False):\n     2\t    result = {\"count\": len(values)}\n     3\t    if detailed:\n     4\t        result[\"mean\"] = sum(values) / len(values)\n     5\t    return result\n     1\tdef format_count(count):\n     2\t    return f\"Items: {count}\"\n     3\t\n     4\t\n     5\tdef format_summary(summary):\n     6\t    text = format_count(summary[\"count\"])\n     7\t    if \"mean\" in summary:\n     8\t        return f\"{text}; Mean: {summary['mean']:g}\"\n     9\t    return text\n     1\t# Batch report\n     2\t\n     3\tPython 3.9+, standard library only. Run `python3 -B -m unittest discover -s tests`.\n     4\t\n     5\t`report(values, detailed=None)` accepts a finite list of numbers. Omitting the\n     6\tmode uses the checked-in DETAILED_REPORT setting; an explicit Boolean overrides\n     7\tthat default for the call. Plain reports contain `Items: N`. Detailed reports\n     8\tfor populated batches append `; Mean: M`, formatting the arithmetic mean with\n     9\tPython's `g` format. Empty batches are valid in either mode and produce only\n    10\t`Items: 0`; there is no mean to display.\n    11\t\n    12\tThis increment enables the existing detailed output by default. Preserve explicit\n    13\tplain/detailed overrides, counts, and successful empty-batch reports. Historical\n    14\tinstallation settings are not recorded here. Review the staged increment against\n    15\tthis contract; no live deployment operation is requested.\n## master\nM  config.py\nM  tests/test_report.py\n",
+    "command": "/usr/bin/zsh -lc 'git show :config.py | nl -ba && git show :app.py | nl -ba && git show :stats.py | nl -ba && git show :formatting.py | nl -ba && git show :README.md | nl -ba && git diff --cached --check && git status -sb'",
+    "commandActions": [
+      {
+        "command": "git show :config.py | nl -ba && git show :app.py | nl -ba && git show :stats.py | nl -ba && git show :formatting.py | nl -ba && git show :README.md | nl -ba && git diff --cached --check && git status -sb",
+        "type": "unknown"
+      }
+    ],
+    "cwd": "/tmp/fr-advisory-bootstrap-20261018/codex-candidate-R6M-standard-2",
+    "durationMs": 85,
+    "exitCode": 0,
+    "id": "exec-1a477e5f-009b-4dba-8f02-cf7d031ae52d",
+    "pluginId": null,
+    "processId": "23297",
+    "scriptPath": null,
+    "source": "unifiedExecStartup",
+    "status": "completed",
+    "type": "commandExecution"
+  },
+  "source_file": "items-01a14e2f-6d3f-7aa0-8186-5c87a3ef620b.json",
+  "startedAtMs": 1792313190984,
+  "turnId": "01a14e2f-6d6e-7513-8481-577873c1f76d"
+}

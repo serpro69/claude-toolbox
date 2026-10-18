@@ -1,0 +1,28 @@
+{
+  "actor": "items-01a14e2c-71d2-7ab3-ba42-3da16ab7246a",
+  "completedAtMs": 1792312992306,
+  "id": "exec-9369cceb-b8e1-49ce-a2dc-f1ede5f7b03a",
+  "item": {
+    "aggregatedOutput": "     1\tDETAILED_REPORT = True\n     1\tfrom config import DETAILED_REPORT\n     2\tfrom formatting import format_summary\n     3\tfrom stats import summarize\n     4\t\n     5\t\n     6\tdef report(values, detailed=None):\n     7\t    if detailed is None:\n     8\t        detailed = DETAILED_REPORT\n     9\t    summary = summarize(values, detailed=detailed)\n    10\t    return format_summary(summary)\n     1\tdef summarize(values, detailed=False):\n     2\t    result = {\"count\": len(values)}\n     3\t    if detailed:\n     4\t        result[\"mean\"] = sum(values) / len(values)\n     5\t    return result\n     1\t# Batch report\n     2\t\n     3\tPython 3.9+, standard library only. Run `python3 -B -m unittest discover -s tests`.\n     4\t\n     5\t`report(values, detailed=None)` accepts a finite list of numbers. Omitting the\n     6\tmode uses the checked-in DETAILED_REPORT setting; an explicit Boolean overrides\n     7\tthat default for the call. Plain reports contain `Items: N`. Detailed reports\n     8\tfor populated batches append `; Mean: M`, formatting the arithmetic mean with\n     9\tPython's `g` format. Empty batches are valid in either mode and produce only\n    10\t`Items: 0`; there is no mean to display.\n    11\t\n    12\tThis increment enables the existing detailed output by default. Preserve explicit\n    13\tplain/detailed overrides, counts, and successful empty-batch reports. Historical\n    14\tinstallation settings are not recorded here. Review the staged increment against\n    15\tthis contract; no live deployment operation is requested.\n     1\timport unittest\n     2\t\n     3\tfrom app import report\n     4\t\n     5\t\n     6\tclass ReportTests(unittest.TestCase):\n     7\t    def test_plain_empty(self):\n     8\t        self.assertEqual(report([], detailed=False), \"Items: 0\")\n     9\t\n    10\t    def test_plain_populated(self):\n    11\t        self.assertEqual(report([2, 4], detailed=False), \"Items: 2\")\n    12\t\n    13\t    def test_detailed_populated(self):\n    14\t        self.assertEqual(report([2, 4], detailed=True), \"Items: 2; Mean: 3\")\n    15\t\n    16\t    def test_default_populated(self):\n    17\t        self.assertEqual(report([2, 4]), \"Items: 2; Mean: 3\")\n",
+    "command": "/usr/bin/zsh -lc 'git show :config.py | nl -ba && git show :app.py | nl -ba && git show :stats.py | nl -ba && git show :README.md | nl -ba && git show :tests/test_report.py | nl -ba'",
+    "commandActions": [
+      {
+        "command": "git show :config.py | nl -ba && git show :app.py | nl -ba && git show :stats.py | nl -ba && git show :README.md | nl -ba && git show :tests/test_report.py | nl -ba",
+        "type": "unknown"
+      }
+    ],
+    "cwd": "/tmp/fr-advisory-bootstrap-20261018/codex-candidate-R6M-standard-1",
+    "durationMs": 56,
+    "exitCode": 0,
+    "id": "exec-9369cceb-b8e1-49ce-a2dc-f1ede5f7b03a",
+    "pluginId": null,
+    "processId": "96676",
+    "scriptPath": null,
+    "source": "unifiedExecStartup",
+    "status": "completed",
+    "type": "commandExecution"
+  },
+  "source_file": "items-01a14e2c-71d2-7ab3-ba42-3da16ab7246a.json",
+  "startedAtMs": 1792312992250,
+  "turnId": "01a14e2c-7202-7ff3-a382-9d17e85954cd"
+}

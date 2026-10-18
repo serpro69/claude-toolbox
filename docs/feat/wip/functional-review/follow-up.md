@@ -1,12 +1,59 @@
 # Functional review: next-session handoff
 
-> Updated: 2026-10-17
-> Status: Task 12.21 corrected bindings complete; high-effort launch verified, candidate detection receipts incomplete; comparison/adoption unrun
+> Updated: 2026-10-18
+> Status: Tasks 12.21–12.23 complete; rejected closure candidate reverted and independently reviewed
 > Owner: implementing agent, [remaining Task 12 work](tasks.md#task-12-execute-and-assess-the-full-comparison-matrix)
-> Next-session starting point: [corrected binding result and loading follow-up](verification/task12/advisory-closure-execution/high-effort-host/preflight-result.md)
+> Next-session starting point: [closure rollback record](verification/task12/advisory-closure-revert/README.md)
 > Evidence: [completed matrix](verification/task12/opus55/README.md), [Claude](verification/task12/opus55/claude-results.md), [Codex](verification/task12/opus55/codex-results.md)
 
 ## Start here
+
+**Closure rollback complete — 2026-10-18:** the user explicitly requested the
+rollback. The canonical standard/isolated closing instructions and generated
+Codex copies restore the exact pre-candidate wording. Verification passes and
+independent review approves. The rejected candidate and comparison evidence are retained;
+completion-time handoff copies preserve the original comparison-seal hashes.
+The rollback does not resolve the broader Task 12 acceptance obligations.
+
+**Measured comparison complete — 2026-10-18:** all 64 sessions completed
+successfully; all 464 original assertions and eight separate grading clarifications
+are retained. The strict audit passes and owned Codex setup is cleaned up.
+The disposition is **REJECT**: two candidate decision failures and an
+absent final advisory in one of eight dormant runs prevent KEEP. Independent
+completion review approves the record. The next recommendation is reverting only the closure candidate
+when selected; no automatic rollback or further wording experiment follows.
+Original Task 12 acceptance and Task 13 remain open.
+
+## Earlier checkpoints
+
+The entries below retain historical preparation and superseded blockers. They
+do not authorize relaunching the now-completed batch.
+
+**Comparison prepared — 2026-10-18:** the user selected the frozen comparison.
+All 64 inputs are prepared and individually validated, with strict preflight and
+runtime identities still passing. Automatic approval review rejected the batch
+launch before process creation and requires explicit approval of the 64-session
+instruction/fixture transfer to authenticated Anthropic Claude and OpenAI Codex.
+No measured actor ran. [Task 12.22's execution record](verification/task12/advisory-closure-execution/bootstrap-loading/comparison.md)
+specifies the approval scope and resume command. After approval, reverify and run
+the existing prepared batch; do not rerun preparation or overwrite inputs.
+Independent grading, bounded disposition and completion review remain pending.
+
+**Runtime preflight PASS — 2026-10-18:** explicit user approval resolved the launch
+blocker. Both corrected Claude bindings completed; all required reads, including
+eight candidate detections and five child sources, are verified. The original
+auditor rejected two permitted instruction-filename listings; a separately
+reviewed/frozen verifier now validates their narrow scope without counting them
+as Reads. Twelve verifier tests pass. Original captures/failures and operative
+skill bytes stay unchanged. Independent evidence review approves, and the strict
+guard passes. [Task 12.21.4 is complete](verification/task12/advisory-closure-execution/bootstrap-loading/preflight-result.md).
+
+The next item is the frozen 64-session advisory-closure comparison when selected.
+Use `verification/task12/advisory-closure-execution/bootstrap-loading/listing_guard.py`
+for preparation/measurement and reverify the declared inputs. No measured session
+or adoption decision occurred in this preflight task. Original feature acceptance,
+PAL deferral, legacy controls, other investigations and Task 13 remain open.
+The entries below retain the earlier sequence and superseded blockers.
 
 **Corrected bindings completed — 2026-10-17:** explicit user approval resolved
 the host/API authorization blocker. Both Claude probes completed once with high

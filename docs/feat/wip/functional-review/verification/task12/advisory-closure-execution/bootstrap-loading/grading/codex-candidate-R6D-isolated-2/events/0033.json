@@ -1,0 +1,28 @@
+{
+  "actor": "items-01a14e1d-711c-7662-a810-7ff6b307e7ec",
+  "completedAtMs": 1792312049094,
+  "id": "exec-2334b41f-d03b-4544-af46-c3d6479b4a49",
+  "item": {
+    "aggregatedOutput": "36 paired baseline/candidate scenarios matched with only the requested count-label change.\nCovered both default settings, omitted and explicit modes, empty, populated, singleton, signed, zero, and fractional-mean inputs.\nDetailed empty outcome, identical in HEAD and index: [{\"setting\": false, \"mode\": true, \"values\": [], \"result\": {\"error\": \"ZeroDivisionError\", \"message\": \"division by zero\"}}, {\"setting\": true, \"mode\": null, \"values\": [], \"result\": {\"error\": \"ZeroDivisionError\", \"message\": \"division by zero\"}}, {\"setting\": true, \"mode\": true, \"values\": [], \"result\": {\"error\": \"ZeroDivisionError\", \"message\": \"division by zero\"}}]\n",
+    "command": "/usr/bin/zsh -lc \"python3 -B - <<'PY'\nimport json, pathlib, subprocess, sys\nroot = pathlib.Path('/tmp/kk-batch-report-review-WhasQ2')\nprobe = '''import json, app\ncases=[]\nfor setting in (False, True):\n    app.DETAILED_REPORT = setting\n    for mode in (None, False, True):\n        for values in ([], [2,4], [3], [-2,4], [0,0], [1,2]):\n            try:\n                result = {'value': app.report(values, detailed=mode)}\n            except Exception as exc:\n                result = {'error': type(exc).__name__, 'message': str(exc)}\n            cases.append({'setting': setting, 'mode': mode, 'values': values, 'result': result})\nprint(json.dumps(cases))\n'''\nresults={}\nfor revision in ('historical','candidate'):\n    output=subprocess.check_output([sys.executable,'-B','-c',probe],cwd=root/revision,text=True)\n    results[revision]=json.loads(output)\nfor before, after in zip(results['historical'],results['candidate']):\n    expected=dict(before['result'])\n    if 'value' in expected:\n        expected['value']=expected['value'].replace('Items: ', 'Records: ', 1)\n    assert after['result']==expected, (before,after)\nprint('36 paired baseline/candidate scenarios matched with only the requested count-label change.')\nprint('Covered both default settings, omitted and explicit modes, empty, populated, singleton, signed, zero, and fractional-mean inputs.')\nprint('Detailed empty outcome, identical in HEAD and index:', json.dumps([row for row in results['candidate'] if row['values']==[] and row['result'].get('error')]))\n(root/'verification.json').write_text(json.dumps({'command':'python3 -B source-isolated probes; paired assertion after replacing Items prefix with Records', 'cases':results},indent=2)+'\\\\n')\n(root/'verification.json').chmod(0o444)\nPY\"",
+    "commandActions": [
+      {
+        "command": "python3 -B - <<'PY'\nimport json, pathlib, subprocess, sys\nroot = pathlib.Path('/tmp/kk-batch-report-review-WhasQ2')\nprobe = '''import json, app\ncases=[]\nfor setting in (False, True):\n    app.DETAILED_REPORT = setting\n    for mode in (None, False, True):\n        for values in ([], [2,4], [3], [-2,4], [0,0], [1,2]):\n            try:\n                result = {'value': app.report(values, detailed=mode)}\n            except Exception as exc:\n                result = {'error': type(exc).__name__, 'message': str(exc)}\n            cases.append({'setting': setting, 'mode': mode, 'values': values, 'result': result})\nprint(json.dumps(cases))\n'''\nresults={}\nfor revision in ('historical','candidate'):\n    output=subprocess.check_output([sys.executable,'-B','-c',probe],cwd=root/revision,text=True)\n    results[revision]=json.loads(output)\nfor before, after in zip(results['historical'],results['candidate']):\n    expected=dict(before['result'])\n    if 'value' in expected:\n        expected['value']=expected['value'].replace('Items: ', 'Records: ', 1)\n    assert after['result']==expected, (before,after)\nprint('36 paired baseline/candidate scenarios matched with only the requested count-label change.')\nprint('Covered both default settings, omitted and explicit modes, empty, populated, singleton, signed, zero, and fractional-mean inputs.')\nprint('Detailed empty outcome, identical in HEAD and index:', json.dumps([row for row in results['candidate'] if row['values']==[] and row['result'].get('error')]))\n(root/'verification.json').write_text(json.dumps({'command':'python3 -B source-isolated probes; paired assertion after replacing Items prefix with Records', 'cases':results},indent=2)+'\\n')\n(root/'verification.json').chmod(0o444)\nPY",
+        "type": "unknown"
+      }
+    ],
+    "cwd": "/tmp/fr-advisory-bootstrap-20261018/codex-candidate-R6D-isolated-2",
+    "durationMs": 100,
+    "exitCode": 0,
+    "id": "exec-2334b41f-d03b-4544-af46-c3d6479b4a49",
+    "pluginId": null,
+    "processId": "73779",
+    "scriptPath": null,
+    "source": "unifiedExecStartup",
+    "status": "completed",
+    "type": "commandExecution"
+  },
+  "source_file": "items-01a14e1d-711c-7662-a810-7ff6b307e7ec.json",
+  "startedAtMs": 1792312048993,
+  "turnId": "01a14e1d-714a-7b91-83c5-ffdb44761c99"
+}

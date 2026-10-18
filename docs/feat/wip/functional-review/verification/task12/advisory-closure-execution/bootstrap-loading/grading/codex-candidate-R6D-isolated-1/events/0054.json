@@ -1,0 +1,30 @@
+{
+  "actor": "items-01a14e19-c2d1-7820-b432-3bf193062e81",
+  "completedAtMs": 1792311712117,
+  "id": "exec-c1044f73-b71d-4fba-bef3-e75f4c427a6f",
+  "item": {
+    "aggregatedOutput": "/tmp/kk-batch-review-jbq39peh/candidate/config.py:1:DETAILED_REPORT = False\n/tmp/kk-batch-review-jbq39peh/candidate/stats.py:1:def summarize(values, detailed=False):\n/tmp/kk-batch-review-jbq39peh/candidate/stats.py:2:    result = {\"count\": len(values)}\n/tmp/kk-batch-review-jbq39peh/candidate/stats.py:3:    if detailed:\n/tmp/kk-batch-review-jbq39peh/candidate/stats.py:4:        result[\"mean\"] = sum(values) / len(values)\n/tmp/kk-batch-review-jbq39peh/candidate/stats.py:5:    return result\n/tmp/kk-batch-review-jbq39peh/candidate/tests/test_report.py:1:import unittest\n/tmp/kk-batch-review-jbq39peh/candidate/tests/test_report.py:2:\n/tmp/kk-batch-review-jbq39peh/candidate/tests/test_report.py:3:from app import report\n/tmp/kk-batch-review-jbq39peh/candidate/tests/test_report.py:4:\n/tmp/kk-batch-review-jbq39peh/candidate/tests/test_report.py:5:\n/tmp/kk-batch-review-jbq39peh/candidate/tests/test_report.py:6:class ReportTests(unittest.TestCase):\n/tmp/kk-batch-review-jbq39peh/candidate/tests/test_report.py:7:    def test_plain_empty(self):\n/tmp/kk-batch-review-jbq39peh/candidate/tests/test_report.py:8:        self.assertEqual(report([], detailed=False), \"Records: 0\")\n/tmp/kk-batch-review-jbq39peh/candidate/tests/test_report.py:9:\n/tmp/kk-batch-review-jbq39peh/candidate/tests/test_report.py:10:    def test_plain_populated(self):\n/tmp/kk-batch-review-jbq39peh/candidate/tests/test_report.py:11:        self.assertEqual(report([2, 4], detailed=False), \"Records: 2\")\n/tmp/kk-batch-review-jbq39peh/candidate/tests/test_report.py:12:\n/tmp/kk-batch-review-jbq39peh/candidate/tests/test_report.py:13:    def test_detailed_populated(self):\n/tmp/kk-batch-review-jbq39peh/candidate/tests/test_report.py:14:        self.assertEqual(report([2, 4], detailed=True), \"Records: 2; Mean: 3\")\n/tmp/kk-batch-review-jbq39peh/candidate/tests/test_report.py:15:\n/tmp/kk-batch-review-jbq39peh/candidate/tests/test_report.py:16:    def test_default_populated(self):\n/tmp/kk-batch-review-jbq39peh/candidate/tests/test_report.py:17:        self.assertEqual(report([2, 4]), \"Records: 2\")\n/tmp/kk-batch-review-jbq39peh/candidate/formatting.py:1:def format_count(count):\n/tmp/kk-batch-review-jbq39peh/candidate/formatting.py:2:    return f\"Records: {count}\"\n/tmp/kk-batch-review-jbq39peh/candidate/formatting.py:3:\n/tmp/kk-batch-review-jbq39peh/candidate/formatting.py:4:\n/tmp/kk-batch-review-jbq39peh/candidate/formatting.py:5:def format_summary(summary):\n/tmp/kk-batch-review-jbq39peh/candidate/formatting.py:6:    text = format_count(summary[\"count\"])\n/tmp/kk-batch-review-jbq39peh/candidate/formatting.py:7:    if \"mean\" in summary:\n/tmp/kk-batch-review-jbq39peh/candidate/formatting.py:8:        return f\"{text}; Mean: {summary['mean']:g}\"\n/tmp/kk-batch-review-jbq39peh/candidate/formatting.py:9:    return text\n/tmp/kk-batch-review-jbq39peh/candidate/app.py:1:from config import DETAILED_REPORT\n/tmp/kk-batch-review-jbq39peh/candidate/app.py:2:from formatting import format_summary\n/tmp/kk-batch-review-jbq39peh/candidate/app.py:3:from stats import summarize\n/tmp/kk-batch-review-jbq39peh/candidate/app.py:4:\n/tmp/kk-batch-review-jbq39peh/candidate/app.py:5:\n/tmp/kk-batch-review-jbq39peh/candidate/app.py:6:def report(values, detailed=None):\n/tmp/kk-batch-review-jbq39peh/candidate/app.py:7:    if detailed is None:\n/tmp/kk-batch-review-jbq39peh/candidate/app.py:8:        detailed = DETAILED_REPORT\n/tmp/kk-batch-review-jbq39peh/candidate/app.py:9:    summary = summarize(values, detailed=detailed)\n/tmp/kk-batch-review-jbq39peh/candidate/app.py:10:    return format_summary(summary)\n",
+    "command": "/usr/bin/zsh -lc \"rg -n '\"'^'\"' /tmp/kk-batch-review-jbq39peh/candidate/formatting.py /tmp/kk-batch-review-jbq39peh/candidate/tests/test_report.py /tmp/kk-batch-review-jbq39peh/candidate/app.py /tmp/kk-batch-review-jbq39peh/candidate/stats.py /tmp/kk-batch-review-jbq39peh/candidate/config.py\"",
+    "commandActions": [
+      {
+        "command": "rg -n '^' /tmp/kk-batch-review-jbq39peh/candidate/formatting.py /tmp/kk-batch-review-jbq39peh/candidate/tests/test_report.py /tmp/kk-batch-review-jbq39peh/candidate/app.py /tmp/kk-batch-review-jbq39peh/candidate/stats.py /tmp/kk-batch-review-jbq39peh/candidate/config.py",
+        "path": "formatting.py",
+        "query": "^",
+        "type": "search"
+      }
+    ],
+    "cwd": "/tmp/fr-advisory-bootstrap-20261018/codex-candidate-R6D-isolated-1",
+    "durationMs": 64,
+    "exitCode": 0,
+    "id": "exec-c1044f73-b71d-4fba-bef3-e75f4c427a6f",
+    "pluginId": null,
+    "processId": "32924",
+    "scriptPath": null,
+    "source": "unifiedExecStartup",
+    "status": "completed",
+    "type": "commandExecution"
+  },
+  "source_file": "items-01a14e19-c2d1-7820-b432-3bf193062e81.json",
+  "startedAtMs": 1792311712052,
+  "turnId": "01a14e19-c2f2-7a70-ac10-eba3ca6c8018"
+}

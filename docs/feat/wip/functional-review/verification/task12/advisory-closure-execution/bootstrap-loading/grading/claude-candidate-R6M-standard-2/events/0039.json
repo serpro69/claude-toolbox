@@ -1,0 +1,19 @@
+{
+  "actor": "main",
+  "block": {
+    "caller": {
+      "type": "direct"
+    },
+    "id": "toolu_01ELKhMmbHANGqUYsyTur3yn",
+    "input": {
+      "command": "python3 -B -m unittest discover -s tests 2>&1 | tail -3; echo '---candidate (index)'; python3 -B -c 'from app import report\nfor args in [([],), ([],True), ([],False), ([2,4],)]:\n    try: print(args, repr(report(*args)))\n    except Exception as e: print(args, type(e).__name__, e)'; echo '---base HEAD'; d=$(mktemp -d); git archive HEAD | tar -x -C \"$d\"; (cd \"$d\" && python3 -B -c 'from app import report\nfor args in [([],), ([],True)]:\n    try: print(args, repr(report(*args)))\n    except Exception as e: print(args, type(e).__name__, e)'); rm -rf \"$d\"; git diff --quiet && echo \"worktree == index\"",
+      "description": "Run tests and compare empty-batch behavior base vs candidate"
+    },
+    "name": "Bash",
+    "type": "tool_use"
+  },
+  "id": "e101.0",
+  "parent_tool_use_id": null,
+  "session_id": "2c55a015-7652-434a-8f1d-714181ade184",
+  "source_sequence": 101
+}

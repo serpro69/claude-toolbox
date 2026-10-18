@@ -1,0 +1,19 @@
+{
+  "actor": "main",
+  "block": {
+    "caller": {
+      "type": "direct"
+    },
+    "id": "toolu_01CmQke3QgfdjJdhinzAE5qY",
+    "input": {
+      "content": "# Change context (parent-prepared, factual)\n\n## Intent and authority\n- Source: /tmp/fr-advisory-bootstrap-20261018/claude-candidate-R9-recovery-isolated-1/README.md (blob 6d935949aa8de38a9f440c089a1cab08fc9437db), explicit:\n  - Accept preference IDs with surrounding whitespace; trim the ID before lookup.\n  - Preserve the resilient-read contract: up to three attempts on `TransientRead`, return first success;\n    exhausted transient errors propagate; `MissingPreference` is permanent and must propagate on the first\n    attempt; reads have no side effects.\n  - `Preferences.read` is the public entry point; `Repository.read_resilient` owns bounded retry; `read_once`\n    performs one attempt. Scripted backend models finite outcomes (no sleeping/services/concurrency).\n  - Python 3.9+, stdlib only. Test command: `python3 -B -m unittest discover -s tests`.\n- User request: \"I've staged the preference ID normalization change.\" No design/task docs exist (no docs/ directory).\n\n## Change boundary\n- Selector: staged changes (`git diff --cached`); no unstaged changes exist.\n- Review base: HEAD 7c0410c18bac40c33f857000ac3cc59d38a02165 (\"Review base\").\n- Candidate: index. Worktree files are identical to the index (no unstaged changes), so worktree paths are the candidate source.\n  - reader.py index blob 8ae04ed0a21d3aa3355aa58e2d4f152c7ec04fe1 (base blob 9429bec)\n  - tests/test_reads.py index blob 378ccb85348e46aefae7fa5f96eaac0e772fad92 (base blob 23fc901)\n- Changed: reader.py (key.strip() before read_resilient), tests/test_reads.py (renamed existing test, added\n  transient/retry-limit/permanent tests, all using \" w \").\n- Unchanged consumers/dependencies: preferences.py (blob 46fa1bc6...), repository.py (blob b3483bb1...).\n\n## Historical evidence\n- Both base files are fully contained in the diff hunks (reader.py was 2 lines; tests/test_reads.py hunk -1,11\n  spans the whole base file). No separate historical bundle was needed. No release/deployed baseline is named.\n\n## Attributed verification (parent-executed, not independent)\n- Parent ran `python3 -B -m unittest discover -s tests -v` in the worktree (== index): 4 tests ran, all OK\n  (test_permanent_error, test_retry_limit, test_transient_error, test_trim_key).\n\n## Delivery constraints\n- None documented beyond the README. Single-component library; no flags, migrations or deployment ordering.\n",
+      "file_path": "/tmp/kk-review-code-X3SjsD/change-context.md"
+    },
+    "name": "Write",
+    "type": "tool_use"
+  },
+  "id": "e158.0",
+  "parent_tool_use_id": null,
+  "session_id": "01777fce-95d9-450c-b991-e20147a7688f",
+  "source_sequence": 158
+}

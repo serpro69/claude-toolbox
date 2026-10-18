@@ -1,0 +1,30 @@
+{
+  "actor": "items-01a14e75-b0f4-7811-b206-32c97b6dee9c",
+  "completedAtMs": 1792317747762,
+  "id": "exec-374d71f4-43eb-4ad6-a0ea-6aa2f54ffc91",
+  "item": {
+    "aggregatedOutput": "class TransientRead(Exception):\n    pass\n\n\nclass MissingPreference(Exception):\n    pass\n\n\nclass ScriptedBackend:\n    def __init__(self, outcomes):\n        self.outcomes = iter(outcomes)\n        self.keys = []\n\n    def read(self, key):\n        self.keys.append(key)\n        outcome = next(self.outcomes)\n        if isinstance(outcome, Exception):\n            raise outcome\n        return outcome\n\n\nclass Repository:\n    def __init__(self, backend):\n        self.backend = backend\n\n    def read_once(self, key):\n        return self.backend.read(key)\n\n    def read_resilient(self, key):\n        for attempt in range(3):\n            try:\n                return self.read_once(key)\n            except TransientRead:\n                if attempt == 2:\n                    raise\n",
+    "command": "/usr/bin/zsh -lc \"cat '/tmp/kk-review-preference-5kdpw0i9/candidate/repository.py'\"",
+    "commandActions": [
+      {
+        "command": "cat /tmp/kk-review-preference-5kdpw0i9/candidate/repository.py",
+        "name": "repository.py",
+        "path": "/tmp/kk-review-preference-5kdpw0i9/candidate/repository.py",
+        "type": "read"
+      }
+    ],
+    "cwd": "/tmp/fr-advisory-bootstrap-20261018/codex-candidate-R9-recovery-isolated-2",
+    "durationMs": 63,
+    "exitCode": 0,
+    "id": "exec-374d71f4-43eb-4ad6-a0ea-6aa2f54ffc91",
+    "pluginId": null,
+    "processId": "5633",
+    "scriptPath": null,
+    "source": "unifiedExecStartup",
+    "status": "completed",
+    "type": "commandExecution"
+  },
+  "source_file": "items-01a14e75-b0f4-7811-b206-32c97b6dee9c.json",
+  "startedAtMs": 1792317747698,
+  "turnId": "01a14e75-b115-7a53-96b8-c9685119e1b0"
+}

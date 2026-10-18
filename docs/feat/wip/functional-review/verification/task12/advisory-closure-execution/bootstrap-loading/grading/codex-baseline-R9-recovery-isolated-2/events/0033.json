@@ -1,0 +1,30 @@
+{
+  "actor": "items-01a14e73-575a-7142-832e-082fb6da3ca5",
+  "completedAtMs": 1792317572854,
+  "id": "exec-8e1875d2-3487-4ac5-97d8-a58112c493d1",
+  "item": {
+    "aggregatedOutput": "README.md:1:# Preference reads\nREADME.md:2:\nREADME.md:3:Python 3.9+, standard library only. Run `python3 -B -m unittest discover -s tests`.\nREADME.md:4:\nREADME.md:5:This change accepts preference IDs with surrounding whitespace. Trim the ID\nREADME.md:6:before looking it up; preserve the existing resilient-read contract. A logical\nREADME.md:7:read may make up to three attempts on `TransientRead`, returning the first\nREADME.md:8:successful result. Exhausted transient errors propagate. `MissingPreference`\nREADME.md:9:is permanent and must propagate on the first attempt. Reads have no side effects.\nREADME.md:10:\nREADME.md:11:`Preferences.read` is the public entry point. `Repository.read_resilient`\nREADME.md:12:owns the bounded retry policy; `read_once` performs one attempt. The scripted\nREADME.md:13:backend models finite outcomes without sleeping, services or concurrency.\ntests/test_reads.py:1:import unittest\ntests/test_reads.py:2:\ntests/test_reads.py:3:from preferences import Preferences\ntests/test_reads.py:4:from repository import MissingPreference, Repository, ScriptedBackend, TransientRead\ntests/test_reads.py:5:\ntests/test_reads.py:6:\ntests/test_reads.py:7:class ReadTests(unittest.TestCase):\ntests/test_reads.py:8:    def test_trim_key(self):\ntests/test_reads.py:9:        backend = ScriptedBackend([{\"color\": \"blue\"}])\ntests/test_reads.py:10:        self.assertEqual(Preferences(Repository(backend)).read(\" w \"), {\"color\": \"blue\"})\ntests/test_reads.py:11:        self.assertEqual(backend.keys, [\"w\"])\ntests/test_reads.py:12:\ntests/test_reads.py:13:    def test_transient_error(self):\ntests/test_reads.py:14:        backend = ScriptedBackend([TransientRead(\"busy\"), {\"color\": \"blue\"}])\ntests/test_reads.py:15:        self.assertEqual(Preferences(Repository(backend)).read(\" w \"), {\"color\": \"blue\"})\ntests/test_reads.py:16:        self.assertEqual(backend.keys, [\"w\", \"w\"])\ntests/test_reads.py:17:\ntests/test_reads.py:18:    def test_retry_limit(self):\ntests/test_reads.py:19:        backend = ScriptedBackend([TransientRead(\"busy\") for _ in range(3)])\ntests/test_reads.py:20:        with self.assertRaises(TransientRead):\ntests/test_reads.py:21:            Preferences(Repository(backend)).read(\" w \")\ntests/test_reads.py:22:        self.assertEqual(backend.keys, [\"w\", \"w\", \"w\"])\ntests/test_reads.py:23:\ntests/test_reads.py:24:    def test_permanent_error(self):\ntests/test_reads.py:25:        backend = ScriptedBackend([MissingPreference(\"missing\")])\ntests/test_reads.py:26:        with self.assertRaises(MissingPreference):\ntests/test_reads.py:27:            Preferences(Repository(backend)).read(\" w \")\ntests/test_reads.py:28:        self.assertEqual(backend.keys, [\"w\"])\nrepository.py:1:class TransientRead(Exception):\nrepository.py:2:    pass\nrepository.py:3:\nrepository.py:4:\nrepository.py:5:class MissingPreference(Exception):\nrepository.py:6:    pass\nrepository.py:7:\nrepository.py:8:\nrepository.py:9:class ScriptedBackend:\nrepository.py:10:    def __init__(self, outcomes):\nrepository.py:11:        self.outcomes = iter(outcomes)\nrepository.py:12:        self.keys = []\nrepository.py:13:\nrepository.py:14:    def read(self, key):\nrepository.py:15:        self.keys.append(key)\nrepository.py:16:        outcome = next(self.outcomes)\nrepository.py:17:        if isinstance(outcome, Exception):\nrepository.py:18:            raise outcome\nrepository.py:19:        return outcome\nrepository.py:20:\nrepository.py:21:\nrepository.py:22:class Repository:\nrepository.py:23:    def __init__(self, backend):\nrepository.py:24:        self.backend = backend\nrepository.py:25:\nrepository.py:26:    def read_once(self, key):\nrepository.py:27:        return self.backend.read(key)\nrepository.py:28:\nrepository.py:29:    def read_resilient(self, key):\nrepository.py:30:        for attempt in range(3):\nrepository.py:31:            try:\nrepository.py:32:                return self.read_once(key)\nrepository.py:33:            except TransientRead:\nrepository.py:34:                if attempt == 2:\nrepository.py:35:                    raise\nreader.py:1:def read_preferences(repository, key):\nreader.py:2:    return repository.read_resilient(key.strip())\npreferences.py:1:from reader import read_preferences\npreferences.py:2:\npreferences.py:3:\npreferences.py:4:class Preferences:\npreferences.py:5:    def __init__(self, repository):\npreferences.py:6:        self.repository = repository\npreferences.py:7:\npreferences.py:8:    def read(self, key):\npreferences.py:9:        return read_preferences(self.repository, key)\n",
+    "command": "/usr/bin/zsh -lc \"rg -n '\"'^'\"' reader.py preferences.py repository.py tests/test_reads.py README.md\"",
+    "commandActions": [
+      {
+        "command": "rg -n '^' reader.py preferences.py repository.py tests/test_reads.py README.md",
+        "path": "reader.py",
+        "query": "^",
+        "type": "search"
+      }
+    ],
+    "cwd": "/tmp/fr-advisory-bootstrap-20261018/codex-baseline-R9-recovery-isolated-2",
+    "durationMs": 65,
+    "exitCode": 0,
+    "id": "exec-8e1875d2-3487-4ac5-97d8-a58112c493d1",
+    "pluginId": null,
+    "processId": "59445",
+    "scriptPath": null,
+    "source": "unifiedExecStartup",
+    "status": "completed",
+    "type": "commandExecution"
+  },
+  "source_file": "items-01a14e73-575a-7142-832e-082fb6da3ca5.json",
+  "startedAtMs": 1792317572789,
+  "turnId": "01a14e73-577c-73e0-9a06-6a64fb5f614c"
+}

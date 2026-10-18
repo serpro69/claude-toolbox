@@ -1,0 +1,28 @@
+{
+  "actor": "items-01a14e14-0459-74d2-b644-453c410c30d5",
+  "completedAtMs": 1792311370892,
+  "id": "exec-ac97f16b-a165-43e5-a941-1daebf69ea64",
+  "item": {
+    "aggregatedOutput": "from config import DETAILED_REPORT\nfrom formatting import format_summary\nfrom stats import summarize\n\n\ndef report(values, detailed=None):\n    if detailed is None:\n        detailed = DETAILED_REPORT\n    summary = summarize(values, detailed=detailed)\n    return format_summary(summary)\ndef summarize(values, detailed=False):\n    result = {\"count\": len(values)}\n    if detailed:\n        result[\"mean\"] = sum(values) / len(values)\n    return result\ndef format_count(count):\n    return f\"Items: {count}\"\n\n\ndef format_summary(summary):\n    text = format_count(summary[\"count\"])\n    if \"mean\" in summary:\n        return f\"{text}; Mean: {summary['mean']:g}\"\n    return text\nDETAILED_REPORT = False\n100644 7a60b85e148f80966a550e5ab6a762a907c69ca6 0\t.gitignore\n100644 16d86e39d64b6a41057f331ea868dca1c516cb1d 0\tREADME.md\n100644 fbb1b9380d825fe19ad375313a0fa17816aac726 0\tapp.py\n100644 2f90767da3e6077bbf0917bada9e6b99377851fa 0\tconfig.py\n100644 e8beeadb609f86e1abf8b671edddc599d0c05bc2 0\tformatting.py\n100644 f98f01444134d8cef762e79a9025207cbd2bf025 0\tstats.py\n100644 2bc9eaa914da614b6f5365e9967ad1943567edda 0\ttests/test_report.py\n",
+    "command": "/usr/bin/zsh -lc 'git show HEAD:app.py && git show HEAD:stats.py && git show HEAD:formatting.py && git show HEAD:config.py && git diff --quiet && git ls-files -s'",
+    "commandActions": [
+      {
+        "command": "git show HEAD:app.py && git show HEAD:stats.py && git show HEAD:formatting.py && git show HEAD:config.py && git diff --quiet && git ls-files -s",
+        "type": "unknown"
+      }
+    ],
+    "cwd": "/tmp/fr-advisory-bootstrap-20261018/codex-candidate-R6D-standard-2",
+    "durationMs": 54,
+    "exitCode": 0,
+    "id": "exec-ac97f16b-a165-43e5-a941-1daebf69ea64",
+    "pluginId": null,
+    "processId": "48072",
+    "scriptPath": null,
+    "source": "unifiedExecStartup",
+    "status": "completed",
+    "type": "commandExecution"
+  },
+  "source_file": "items-01a14e14-0459-74d2-b644-453c410c30d5.json",
+  "startedAtMs": 1792311370837,
+  "turnId": "01a14e14-0489-7383-bdb1-79115f64461f"
+}

@@ -1,0 +1,30 @@
+{
+  "actor": "items-01a14e75-b0f4-7811-b206-32c97b6dee9c",
+  "completedAtMs": 1792317764393,
+  "id": "exec-e5eb9044-dd2e-4b91-a078-d885b177ec14",
+  "item": {
+    "aggregatedOutput": "1:class TransientRead(Exception):\n2:    pass\n3:\n4:\n5:class MissingPreference(Exception):\n6:    pass\n7:\n8:\n9:class ScriptedBackend:\n10:    def __init__(self, outcomes):\n11:        self.outcomes = iter(outcomes)\n12:        self.keys = []\n13:\n14:    def read(self, key):\n15:        self.keys.append(key)\n16:        outcome = next(self.outcomes)\n17:        if isinstance(outcome, Exception):\n18:            raise outcome\n19:        return outcome\n20:\n21:\n22:class Repository:\n23:    def __init__(self, backend):\n24:        self.backend = backend\n25:\n26:    def read_once(self, key):\n27:        return self.backend.read(key)\n28:\n29:    def read_resilient(self, key):\n30:        for attempt in range(3):\n31:            try:\n32:                return self.read_once(key)\n33:            except TransientRead:\n34:                if attempt == 2:\n35:                    raise\n",
+    "command": "/usr/bin/zsh -lc \"rg -n '\"'^'\"' '/tmp/kk-review-preference-5kdpw0i9/historical/repository.py'\"",
+    "commandActions": [
+      {
+        "command": "rg -n '^' /tmp/kk-review-preference-5kdpw0i9/historical/repository.py",
+        "path": "repository.py",
+        "query": "^",
+        "type": "search"
+      }
+    ],
+    "cwd": "/tmp/fr-advisory-bootstrap-20261018/codex-candidate-R9-recovery-isolated-2",
+    "durationMs": 63,
+    "exitCode": 0,
+    "id": "exec-e5eb9044-dd2e-4b91-a078-d885b177ec14",
+    "pluginId": null,
+    "processId": "43888",
+    "scriptPath": null,
+    "source": "unifiedExecStartup",
+    "status": "completed",
+    "type": "commandExecution"
+  },
+  "source_file": "items-01a14e75-b0f4-7811-b206-32c97b6dee9c.json",
+  "startedAtMs": 1792317764329,
+  "turnId": "01a14e75-b115-7a53-96b8-c9685119e1b0"
+}

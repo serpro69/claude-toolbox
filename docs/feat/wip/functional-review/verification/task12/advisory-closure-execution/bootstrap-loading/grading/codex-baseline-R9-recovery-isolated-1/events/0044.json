@@ -1,0 +1,30 @@
+{
+  "actor": "items-01a14e6e-a366-74a2-920f-f62baeeab0d0",
+  "completedAtMs": 1792317260450,
+  "id": "exec-e95d0b0d-3016-4e14-be62-4e8414d2f1ee",
+  "item": {
+    "aggregatedOutput": "     1\tclass TransientRead(Exception):\n     2\t    pass\n     3\t\n     4\t\n     5\tclass MissingPreference(Exception):\n     6\t    pass\n     7\t\n     8\t\n     9\tclass ScriptedBackend:\n    10\t    def __init__(self, outcomes):\n    11\t        self.outcomes = iter(outcomes)\n    12\t        self.keys = []\n    13\t\n    14\t    def read(self, key):\n    15\t        self.keys.append(key)\n    16\t        outcome = next(self.outcomes)\n    17\t        if isinstance(outcome, Exception):\n    18\t            raise outcome\n    19\t        return outcome\n    20\t\n    21\t\n    22\tclass Repository:\n    23\t    def __init__(self, backend):\n    24\t        self.backend = backend\n    25\t\n    26\t    def read_once(self, key):\n    27\t        return self.backend.read(key)\n    28\t\n    29\t    def read_resilient(self, key):\n    30\t        for attempt in range(3):\n    31\t            try:\n    32\t                return self.read_once(key)\n    33\t            except TransientRead:\n    34\t                if attempt == 2:\n    35\t                    raise\n",
+    "command": "/usr/bin/zsh -lc 'cat -n repository.py'",
+    "commandActions": [
+      {
+        "command": "cat -n repository.py",
+        "name": "repository.py",
+        "path": "/tmp/fr-advisory-bootstrap-20261018/codex-baseline-R9-recovery-isolated-1/repository.py",
+        "type": "read"
+      }
+    ],
+    "cwd": "/tmp/fr-advisory-bootstrap-20261018/codex-baseline-R9-recovery-isolated-1",
+    "durationMs": 99,
+    "exitCode": 0,
+    "id": "exec-e95d0b0d-3016-4e14-be62-4e8414d2f1ee",
+    "pluginId": null,
+    "processId": "30874",
+    "scriptPath": null,
+    "source": "unifiedExecStartup",
+    "status": "completed",
+    "type": "commandExecution"
+  },
+  "source_file": "items-01a14e6e-a366-74a2-920f-f62baeeab0d0.json",
+  "startedAtMs": 1792317260350,
+  "turnId": "01a14e6e-a38a-7b63-93f4-7d35b2807ea0"
+}

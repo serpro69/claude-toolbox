@@ -1,0 +1,67 @@
+{
+  "actor": {
+    "archive_sha256": "645174753421c14bfb525c8060c9d313b0bfa5a6f486413590444930fc937131",
+    "excluded_files": 836,
+    "retained_files": 435,
+    "retained_manifest_sha256": "0dedccb8cdb3825f3531d851b5fd83ac9938538c22a3d9c6e299a67b53edf230",
+    "revision": "c2d28c9e3064a0a71a0e5ac3748a9616c794eb61",
+    "source_files": 1271
+  },
+  "case": "R6M",
+  "fixture_manifest_sha256": "4a0c926f6af7a70e5b12fc175e670b7d68715ccb0295d8a94b8ba2dd7ebecdec",
+  "initial_files": {
+    ".gitignore": "862263fa1f46c20f0d1e4dac5ffcc75abd55c08211b2c3864c5f8764b9d87793",
+    "README.md": "2f86b743e443299bcb4890e149365d13ddb5176cea4ab6cb903589aa8709a52c",
+    "app.py": "51d3ee73851de97def6f1b2744b4cd01bb0ec2a6eab1bcc34b51b4cb3c2846b8",
+    "config.py": "592b16147c3543291529ec228cce9a7f115a173406b47f7795d8cb1e5ac172a8",
+    "formatting.py": "b5b5635855f91bb6e76d4b889bc5ff2288f21821467b4966c8d17955335ed6ec",
+    "stats.py": "70f1ee77e490dbbb7fe9f9205301512763fc34feb207733fbe2e47453e4944b6",
+    "tests/test_report.py": "38a00efa82bc73f186f6e41b72c3a7f267c26f1a804ec443e59b66f54ee8de9b"
+  },
+  "initial_knowledge": "empty; database absent",
+  "knowledge_path": "/tmp/fr-advisory-bootstrap-20261018/codex-baseline-R6M-standard-1/.runner/knowledge.db",
+  "mcp": {
+    "capy": {
+      "args": [
+        "-u",
+        "CAPY_VAULT_KEY",
+        "-u",
+        "CAPY_DB_KEY",
+        "CAPY_DB_KEY=synthetic-functional-review-probe-key-20261008",
+        "CAPY_VAULT_PATH=/tmp/fr-advisory-bootstrap-20261018/codex-baseline-R6M-standard-1/.runner/vault",
+        "XDG_CONFIG_HOME=/tmp/fr-advisory-bootstrap-20261018/codex-baseline-R6M-standard-1/.runner/xdg",
+        "/home/sergio/.local/bin/capy",
+        "--project-dir",
+        "/tmp/fr-advisory-bootstrap-20261018/codex-baseline-R6M-standard-1",
+        "serve"
+      ],
+      "command": "env",
+      "environment_keys": []
+    },
+    "pal": {
+      "args": [
+        "-c",
+        "$HOME/.local/bin/uvx --from git+https://github.com/serpro69/pal-mcp-server.git pal-mcp-server"
+      ],
+      "command": "sh",
+      "environment_keys": []
+    }
+  },
+  "mode": "standard",
+  "models": {
+    "claude": "claude-opus-4-8[1m]/high",
+    "codex": "gpt-6-astra/xhigh",
+    "codex_reviewer": "gpt-6.1-sol/xhigh",
+    "pal": "user-deferred; disabled"
+  },
+  "prompt": "I've staged the change to enable detailed batch reports by default. Run `$kk:review-code` on it.",
+  "provider": "codex",
+  "purpose": "measured workflow",
+  "read_confinement": "No OS-wide confinement; audit actual reads for evaluator material",
+  "repetition": 1,
+  "review_base": "a21036447ee7843887ddbaff82408db6e044b053",
+  "rubric_sha256": "cdf64959facb7dd4a71a169b9c6f62d7a026ea412af7c415b5d4ba151f3f86ea",
+  "side": "baseline",
+  "vault": "unavailable; private path and unset key",
+  "workspace": "/tmp/fr-advisory-bootstrap-20261018/codex-baseline-R6M-standard-1"
+}

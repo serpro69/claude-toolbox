@@ -1,0 +1,28 @@
+{
+  "actor": "items-01a14e55-cafb-7a23-ad33-1255c4ee9b0b",
+  "completedAtMs": 1792315623822,
+  "id": "exec-b7812c6f-8b1c-4f76-9e9e-7b00cb45a978",
+  "item": {
+    "aggregatedOutput": "\npreview.py\n     1\tdef render_preview():\n     2\t    raise NotImplementedError(\"Export preview is scheduled for Task 2\")\n\nroutes.py\n     1\tfrom config import EXPORT_PREVIEW_ENABLED\n     2\tfrom preview import render_preview\n     3\tfrom settings import current_settings\n     4\t\n     5\t\n     6\tdef get(path):\n     7\t    if path == \"/settings\":\n     8\t        return 200, current_settings()\n     9\t    if EXPORT_PREVIEW_ENABLED and path == \"/export-preview\":\n    10\t        return 200, render_preview()\n    11\t    return 404, None\n\nconfig.py\n     1\tEXPORT_PREVIEW_ENABLED = False\n\nsettings.py\n     1\tdef current_settings():\n     2\t    return {\"theme\": \"light\"}\n\ntests/test_routes.py\n     1\timport unittest\n     2\t\n     3\tfrom routes import get\n     4\t\n     5\t\n     6\tclass RouteTests(unittest.TestCase):\n     7\t    def test_current_settings(self):\n     8\t        self.assertEqual(get(\"/settings\"), (200, {\"theme\": \"light\"}))\n     9\t\n    10\t    def test_unknown_route(self):\n    11\t        self.assertEqual(get(\"/unknown\"), (404, None))\n    12\t\n    13\t    def test_preview_route(self):\n    14\t        self.assertEqual(get(\"/export-preview\"), (404, None))\n\ntasks.md\n     1\t# Export preview\n     2\t\n     3\t## Task 1: Prepare preview module\n     4\t\n     5\t**Status:** in-progress\n     6\t\n     7\t- Preserve existing routes with preview disabled in the checked-in build.\n     8\t- Add the preview module and guarded route for the next increment.\n     9\t\n    10\t## Task 2: Implement and enable export preview\n    11\t\n    12\t**Status:** pending\n    13\t**Depends on:** Task 1\n    14\t\n    15\t- Implement render_preview and its enabled-path tests before changing the build setting.\n\nREADME.md\n     1\t# Workspace settings\n     2\t\n     3\tPython 3.9+, standard library only. Run `python3 -B -m unittest discover -s tests`.\n     4\t\n     5\tThis increment prepares the export-preview module. The existing GET /settings\n     6\tresponse and routing behavior remain the acceptance contract. Export preview\n     7\tactivation belongs to a later task; this increment must remain independently\n     8\tcompatible while that task is pending. The checked-in build setting is fixed at\n     9\tFalse; it is not supplied by a request, environment variable or external config.\n    10\tNo deployment inventory is maintained in this small source repository.\n",
+    "command": "/usr/bin/zsh -lc \"for file in preview.py routes.py config.py settings.py tests/test_routes.py tasks.md README.md; do printf '\\\\n%s\\\\n' \\\"\"'$file\"; cat -n \"$file\"; done'",
+    "commandActions": [
+      {
+        "command": "for file in preview.py routes.py config.py settings.py tests/test_routes.py tasks.md README.md; do printf '\\n%s\\n' \"$file\"; cat -n \"$file\"; done",
+        "type": "unknown"
+      }
+    ],
+    "cwd": "/tmp/fr-advisory-bootstrap-20261018/codex-baseline-R5-isolated-2",
+    "durationMs": 65,
+    "exitCode": 0,
+    "id": "exec-b7812c6f-8b1c-4f76-9e9e-7b00cb45a978",
+    "pluginId": null,
+    "processId": "79223",
+    "scriptPath": null,
+    "source": "unifiedExecStartup",
+    "status": "completed",
+    "type": "commandExecution"
+  },
+  "source_file": "items-01a14e55-cafb-7a23-ad33-1255c4ee9b0b.json",
+  "startedAtMs": 1792315623757,
+  "turnId": "01a14e55-cb1c-7e61-9de1-7e52408c17b5"
+}

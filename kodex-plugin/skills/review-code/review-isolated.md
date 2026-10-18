@@ -188,14 +188,11 @@ tracking location when deferred; separate them from demonstrated code defects}
 
 Omit empty finding sections, but always report behavior/compatibility coverage and limits, even with defects. Preserve useful findings during external failure or undercoverage without claiming corroboration or release safety from that external response.
 
-Close with the scoped verdict and coverage. When no substantiated issue or
-required evidence/prerequisite needs action, state that no changes are recommended
-for the reviewed increment. Omit remediation menus and hypothetical future work.
-For a substantiated inherited defect surfaced in the report, give one concrete
-separate follow-up when its repair is outside the reviewed task; do not make that
-repair a condition of approving an otherwise supported increment. In-scope
-findings and required evidence/prerequisites retain their corrections or next
-checks. For review-only work, obtain authorization before
+When neither actionable findings nor outstanding evidence/prerequisites required
+by the reviewed task remain,
+finish with the scoped verdict and coverage; state that no changes are recommended.
+Do not append a remediation menu or offer hypothetical future work. Otherwise,
+offer only supported actions. For review-only work, obtain authorization before
 editing; when the invoking implementation request already authorizes fixes,
 follow that scope without asking again. Unverified hard requirements still follow
 the common method's conditional verdict rules.

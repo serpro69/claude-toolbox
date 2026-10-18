@@ -1,0 +1,28 @@
+{
+  "actor": "items-01a14e33-373f-7442-bf55-78e48401edfc",
+  "completedAtMs": 1792313468460,
+  "id": "exec-5c6c93f1-690b-4861-b4ef-74271d1f90ec",
+  "item": {
+    "aggregatedOutput": "{\"snapshot\": \"historical\", \"scenarios\": [{\"values\": [], \"mode\": \"default\", \"result\": \"Items: 0\"}, {\"values\": [], \"mode\": false, \"result\": \"Items: 0\"}, {\"values\": [], \"mode\": true, \"error\": \"ZeroDivisionError: division by zero\"}, {\"values\": [2, 4], \"mode\": \"default\", \"result\": \"Items: 2\"}, {\"values\": [2, 4], \"mode\": false, \"result\": \"Items: 2\"}, {\"values\": [2, 4], \"mode\": true, \"result\": \"Items: 2; Mean: 3\"}, {\"values\": [0], \"mode\": \"default\", \"result\": \"Items: 1\"}, {\"values\": [0], \"mode\": false, \"result\": \"Items: 1\"}, {\"values\": [0], \"mode\": true, \"result\": \"Items: 1; Mean: 0\"}, {\"values\": [-2, 4], \"mode\": \"default\", \"result\": \"Items: 2\"}, {\"values\": [-2, 4], \"mode\": false, \"result\": \"Items: 2\"}, {\"values\": [-2, 4], \"mode\": true, \"result\": \"Items: 2; Mean: 1\"}]}\n{\"snapshot\": \"candidate\", \"scenarios\": [{\"values\": [], \"mode\": \"default\", \"error\": \"ZeroDivisionError: division by zero\"}, {\"values\": [], \"mode\": false, \"result\": \"Items: 0\"}, {\"values\": [], \"mode\": true, \"error\": \"ZeroDivisionError: division by zero\"}, {\"values\": [2, 4], \"mode\": \"default\", \"result\": \"Items: 2; Mean: 3\"}, {\"values\": [2, 4], \"mode\": false, \"result\": \"Items: 2\"}, {\"values\": [2, 4], \"mode\": true, \"result\": \"Items: 2; Mean: 3\"}, {\"values\": [0], \"mode\": \"default\", \"result\": \"Items: 1; Mean: 0\"}, {\"values\": [0], \"mode\": false, \"result\": \"Items: 1\"}, {\"values\": [0], \"mode\": true, \"result\": \"Items: 1; Mean: 0\"}, {\"values\": [-2, 4], \"mode\": \"default\", \"result\": \"Items: 2; Mean: 1\"}, {\"values\": [-2, 4], \"mode\": false, \"result\": \"Items: 2\"}, {\"values\": [-2, 4], \"mode\": true, \"result\": \"Items: 2; Mean: 1\"}]}\n",
+    "command": "/usr/bin/zsh -lc \"python3 -B - <<'PY'\nimport json\nimport subprocess\nfrom pathlib import Path\nroot = Path('/tmp/kk-review-batch-nmlomip2')\nscript = '''import json\nfrom app import report\nfor values in ([], [2, 4], [0], [-2, 4]):\n    for mode in ('default', False, True):\n        try:\n            result = report(values) if mode == 'default' else report(values, detailed=mode)\n            row = {'values': values, 'mode': mode, 'result': result}\n        except Exception as exc:\n            row = {'values': values, 'mode': mode, 'error': type(exc).__name__ + ': ' + str(exc)}\n        print(json.dumps(row))\n'''\nfor snapshot in ('historical', 'candidate'):\n    result = subprocess.run(['python3', '-B', '-c', script], cwd=root / snapshot, capture_output=True, text=True, check=True)\n    print(json.dumps({'snapshot': snapshot, 'scenarios': [json.loads(line) for line in result.stdout.splitlines()]}))\nPY\"",
+    "commandActions": [
+      {
+        "command": "python3 -B - <<'PY'\nimport json\nimport subprocess\nfrom pathlib import Path\nroot = Path('/tmp/kk-review-batch-nmlomip2')\nscript = '''import json\nfrom app import report\nfor values in ([], [2, 4], [0], [-2, 4]):\n    for mode in ('default', False, True):\n        try:\n            result = report(values) if mode == 'default' else report(values, detailed=mode)\n            row = {'values': values, 'mode': mode, 'result': result}\n        except Exception as exc:\n            row = {'values': values, 'mode': mode, 'error': type(exc).__name__ + ': ' + str(exc)}\n        print(json.dumps(row))\n'''\nfor snapshot in ('historical', 'candidate'):\n    result = subprocess.run(['python3', '-B', '-c', script], cwd=root / snapshot, capture_output=True, text=True, check=True)\n    print(json.dumps({'snapshot': snapshot, 'scenarios': [json.loads(line) for line in result.stdout.splitlines()]}))\nPY",
+        "type": "unknown"
+      }
+    ],
+    "cwd": "/tmp/fr-advisory-bootstrap-20261018/codex-candidate-R6M-isolated-1",
+    "durationMs": 102,
+    "exitCode": 0,
+    "id": "exec-5c6c93f1-690b-4861-b4ef-74271d1f90ec",
+    "pluginId": null,
+    "processId": "22333",
+    "scriptPath": null,
+    "source": "unifiedExecStartup",
+    "status": "completed",
+    "type": "commandExecution"
+  },
+  "source_file": "items-01a14e33-373f-7442-bf55-78e48401edfc.json",
+  "startedAtMs": 1792313468357,
+  "turnId": "01a14e33-376d-7c03-af1d-df943c2ec1f4"
+}

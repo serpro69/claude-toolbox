@@ -1,0 +1,27 @@
+{
+  "mcpServers": {
+    "capy": {
+      "args": [
+        "-u",
+        "CAPY_VAULT_KEY",
+        "-u",
+        "CAPY_DB_KEY",
+        "CAPY_DB_KEY=synthetic-functional-review-probe-key-20261008",
+        "CAPY_VAULT_PATH=/tmp/fr-advisory-bootstrap-20261018/binding-claude-baseline/.runner/vault",
+        "XDG_CONFIG_HOME=/tmp/fr-advisory-bootstrap-20261018/binding-claude-baseline/.runner/xdg",
+        "/home/sergio/.local/bin/capy",
+        "--project-dir",
+        "/tmp/fr-advisory-bootstrap-20261018/binding-claude-baseline",
+        "serve"
+      ],
+      "command": "env"
+    },
+    "pal": {
+      "args": [
+        "-c",
+        "$HOME/.local/bin/uvx --from git+https://github.com/serpro69/pal-mcp-server.git pal-mcp-server"
+      ],
+      "command": "sh"
+    }
+  }
+}

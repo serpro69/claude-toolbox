@@ -1,0 +1,24 @@
+{
+  "threadId": "01a14e2f-6d3f-7aa0-8186-5c87a3ef620b",
+  "turn": {
+    "completedAt": 1792313206,
+    "durationMs": 112512,
+    "error": null,
+    "id": "01a14e2f-6d6e-7513-8481-577873c1f76d",
+    "items": [
+      {
+        "delivery": null,
+        "id": "msg_0eece23972ea6ccb016ad4876e95f88191bcc4981aae01494d",
+        "memoryCitation": null,
+        "phase": "final_answer",
+        "questions": null,
+        "text": "**REQUEST_CHANGES \u2014 one P1 finding.**\n\n::code-comment{file=\"config.py\" line=\"1\" severity=\"P1\"}\nEnabling this default makes `report([])` and `report([], detailed=None)` raise `ZeroDivisionError` instead of returning `Items: 0`, violating the README contract. `summarize()` now reaches `sum(values) / len(values)` for empty batches.\n\nSkip mean calculation for empty batches, preserving the count-only summary, and add regression coverage for default and explicit detailed empty reports.\n\nProfile: Python \u00b7 Checklist: code-quality-checklist.md \u00b7 Trigger: `.py` files. Confidence: 100% \u2014 reproduced against both HEAD and staged snapshots.\n::\n\nReviewed the staged changes in [config.py](/tmp/fr-advisory-bootstrap-20261018/codex-candidate-R6M-standard-2/config.py:1) and `tests/test_report.py` against `HEAD` (`a210364`): two insertions and two deletions. Traced configuration through summarization and formatting against the README\u2019s requirements; no feature task scope exists.\n\nAll four existing tests pass in both snapshots. Additional probes confirm:\n\n- **Blocked:** default empty-batch compatibility; previously successful calls now crash.\n- **Supported:** populated reports, counts, mean formatting, and explicit plain overrides.\n- Explicit detailed empty reports already failed at `HEAD`; this change exposes that inherited defect through the default path.\n\nNo deployment settings were assessed; this verdict covers the staged increment. The finding pattern was indexed as `kk:review-findings`. No repository files were changed.",
+        "type": "agentMessage"
+      }
+    ],
+    "itemsView": "summary",
+    "rootTurnId": "01a14e2f-6d6e-7513-8481-577873c1f76d",
+    "startedAt": 1792313093,
+    "status": "completed"
+  }
+}

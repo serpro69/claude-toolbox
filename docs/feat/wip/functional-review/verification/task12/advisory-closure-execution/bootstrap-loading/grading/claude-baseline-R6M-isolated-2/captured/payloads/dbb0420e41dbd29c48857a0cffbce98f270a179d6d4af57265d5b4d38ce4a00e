@@ -1,0 +1,17 @@
+diff --git a/config.py b/config.py
+index 2f90767..13d0514 100644
+--- a/config.py
++++ b/config.py
+@@ -1 +1 @@
+-DETAILED_REPORT = False
++DETAILED_REPORT = True
+diff --git a/tests/test_report.py b/tests/test_report.py
+index 9431699..952955d 100644
+--- a/tests/test_report.py
++++ b/tests/test_report.py
+@@ -14,4 +14,4 @@ class ReportTests(unittest.TestCase):
+         self.assertEqual(report([2, 4], detailed=True), "Items: 2; Mean: 3")
+
+     def test_default_populated(self):
+-        self.assertEqual(report([2, 4]), "Items: 2")
++        self.assertEqual(report([2, 4]), "Items: 2; Mean: 3")

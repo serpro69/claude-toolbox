@@ -1,0 +1,19 @@
+{
+  "actor": "main",
+  "block": {
+    "caller": {
+      "type": "direct"
+    },
+    "id": "toolu_01Sj5Kb6oGKYvkzCbAWmFKPq",
+    "input": {
+      "content": "# Change context (parent-supplied facts)\n\n## Intent and authority\n- Explicit: /tmp/fr-advisory-bootstrap-20261018/claude-candidate-R6M-isolated-2/README.md\n  - `report(values, detailed=None)` accepts a finite list of numbers. Omitting the mode uses the\n    checked-in DETAILED_REPORT setting; an explicit Boolean overrides it per call.\n  - Plain: `Items: N`. Detailed for populated batches appends `; Mean: M` (`g` format).\n  - Empty batches are valid in either mode and produce only `Items: 0`.\n  - \"This increment enables the existing detailed output by default. Preserve explicit\n    plain/detailed overrides, counts, and successful empty-batch reports. Historical installation\n    settings are not recorded here. Review the staged increment against this contract; no live\n    deployment operation is requested.\"\n- User request: \"I've staged the change to enable detailed batch reports by default.\"\n\n## Change boundary\n- Selector: staged changes (`git diff --cached`); no unstaged changes (worktree == index for all files).\n- Review base: HEAD a21036447ee7843887ddbaff82408db6e044b053.\n- Candidate: index. Staged blobs: config.py 13d0514c, tests/test_report.py 952955dd,\n  app.py fbb1b938 (unchanged), stats.py f98f0144 (unchanged), formatting.py 566c4adf (unchanged).\n- Worktree files equal index blobs, so worktree paths are the candidate source.\n\n## Existing behavior (unchanged consumers)\n- app.py `report` resolves `detailed=None` to config.DETAILED_REPORT, calls stats.summarize and\n  formatting.format_summary.\n- Base value: DETAILED_REPORT = False (base blob 2f90767).\n\n## Delivery constraints\n- Python 3.9+, stdlib only. No deployment/migration requested. Historical installation settings\n  not recorded (release baseline Unknown / not requested).\n\n## Scenarios and evidence\n- Tests: tests/test_report.py (4 tests). Parent has NOT executed tests in this session (shell\n  execution restricted); no attributed test results.\n",
+      "file_path": "/tmp/kk-review-code-R6M-20261018/change-context.md"
+    },
+    "name": "Write",
+    "type": "tool_use"
+  },
+  "id": "e138.0",
+  "parent_tool_use_id": null,
+  "session_id": "c6ddcf04-1d0e-4e5b-af36-48e5fa39a3be",
+  "source_sequence": 138
+}

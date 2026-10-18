@@ -1,0 +1,28 @@
+{
+  "actor": "items-01a14e2c-71d2-7ab3-ba42-3da16ab7246a",
+  "completedAtMs": 1792312955086,
+  "id": "exec-c6050c94-c27d-45b3-88a2-bc00ce4ccf19",
+  "item": {
+    "aggregatedOutput": "from config import DETAILED_REPORT\nfrom formatting import format_summary\nfrom stats import summarize\n\n\ndef report(values, detailed=None):\n    if detailed is None:\n        detailed = DETAILED_REPORT\n    summary = summarize(values, detailed=detailed)\n    return format_summary(summary)\ndef summarize(values, detailed=False):\n    result = {\"count\": len(values)}\n    if detailed:\n        result[\"mean\"] = sum(values) / len(values)\n    return result\ndef format_count(count):\n    return f\"Items: {count}\"\n\n\ndef format_summary(summary):\n    text = format_count(summary[\"count\"])\n    if \"mean\" in summary:\n        return f\"{text}; Mean: {summary['mean']:g}\"\n    return text\n",
+    "command": "/usr/bin/zsh -lc 'git show :app.py && git show :stats.py && git show :formatting.py && git diff --name-only'",
+    "commandActions": [
+      {
+        "command": "git show :app.py && git show :stats.py && git show :formatting.py && git diff --name-only",
+        "type": "unknown"
+      }
+    ],
+    "cwd": "/tmp/fr-advisory-bootstrap-20261018/codex-candidate-R6M-standard-1",
+    "durationMs": 76,
+    "exitCode": 0,
+    "id": "exec-c6050c94-c27d-45b3-88a2-bc00ce4ccf19",
+    "pluginId": null,
+    "processId": "79117",
+    "scriptPath": null,
+    "source": "unifiedExecStartup",
+    "status": "completed",
+    "type": "commandExecution"
+  },
+  "source_file": "items-01a14e2c-71d2-7ab3-ba42-3da16ab7246a.json",
+  "startedAtMs": 1792312955009,
+  "turnId": "01a14e2c-7202-7ff3-a382-9d17e85954cd"
+}

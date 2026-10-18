@@ -1,0 +1,12 @@
+{
+  "actor": "child-of:toolu_012DbNLQLwUA2ue6Lnsgf53Q",
+  "block": {
+    "content": "1\t# Change context (parent-supplied facts)\n2\t\n3\t## Intent and authority\n4\t- Explicit: /tmp/fr-advisory-bootstrap-20261018/claude-candidate-R6M-isolated-2/README.md\n5\t  - `report(values, detailed=None)` accepts a finite list of numbers. Omitting the mode uses the\n6\t    checked-in DETAILED_REPORT setting; an explicit Boolean overrides it per call.\n7\t  - Plain: `Items: N`. Detailed for populated batches appends `; Mean: M` (`g` format).\n8\t  - Empty batches are valid in either mode and produce only `Items: 0`.\n9\t  - \"This increment enables the existing detailed output by default. Preserve explicit\n10\t    plain/detailed overrides, counts, and successful empty-batch reports. Historical installation\n11\t    settings are not recorded here. Review the staged increment against this contract; no live\n12\t    deployment operation is requested.\"\n13\t- User request: \"I've staged the change to enable detailed batch reports by default.\"\n14\t\n15\t## Change boundary\n16\t- Selector: staged changes (`git diff --cached`); no unstaged changes (worktree == index for all files).\n17\t- Review base: HEAD a21036447ee7843887ddbaff82408db6e044b053.\n18\t- Candidate: index. Staged blobs: config.py 13d0514c, tests/test_report.py 952955dd,\n19\t  app.py fbb1b938 (unchanged), stats.py f98f0144 (unchanged), formatting.py 566c4adf (unchanged).\n20\t- Worktree files equal index blobs, so worktree paths are the candidate source.\n21\t\n22\t## Existing behavior (unchanged consumers)\n23\t- app.py `report` resolves `detailed=None` to config.DETAILED_REPORT, calls stats.summarize and\n24\t  formatting.format_summary.\n25\t- Base value: DETAILED_REPORT = False (base blob 2f90767).\n26\t\n27\t## Delivery constraints\n28\t- Python 3.9+, stdlib only. No deployment/migration requested. Historical installation settings\n29\t  not recorded (release baseline Unknown / not requested).\n30\t\n31\t## Scenarios and evidence\n32\t- Tests: tests/test_report.py (4 tests). Parent has NOT executed tests in this session (shell\n33\t  execution restricted); no attributed test results.\n34\t",
+    "tool_use_id": "toolu_01LoWEXaQbbD6HRFv8jbeZRS",
+    "type": "tool_result"
+  },
+  "id": "e174.0",
+  "parent_tool_use_id": "toolu_012DbNLQLwUA2ue6Lnsgf53Q",
+  "session_id": "c6ddcf04-1d0e-4e5b-af36-48e5fa39a3be",
+  "source_sequence": 174
+}

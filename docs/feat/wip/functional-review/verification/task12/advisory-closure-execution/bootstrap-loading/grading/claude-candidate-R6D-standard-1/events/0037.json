@@ -1,0 +1,13 @@
+{
+  "actor": "main",
+  "block": {
+    "content": "# Batch report\n\nPython 3.9+, standard library only. Run `python3 -B -m unittest discover -s tests`.\n\n`report(values, detailed=None)` accepts a finite list of numbers. Omitting the\nmode uses the checked-in DETAILED_REPORT setting; an explicit Boolean overrides\nthat default for the call. Plain reports contain the count, including zero for\nan empty batch. Detailed reports for populated batches also append `; Mean: M`,\nformatting the arithmetic mean with Python's `g` format.\n\nThis increment changes the count label from Items to Records. Preserve counts,\ncalculations, mode selection and the mean suffix. Detailed reporting is an\nexisting optional path; it is not being activated or redesigned in this increment.\nHistorical installation settings are not recorded here. Review the staged\nincrement; no live deployment operation is requested.\nls: cannot access 'docs': No such file or directory\n---\ndiff --git a/formatting.py b/formatting.py\nindex 566c4ad..e8beead 100644\n--- a/formatting.py\n+++ b/formatting.py\n@@ -1,5 +1,5 @@\n def format_count(count):\n-    return f\"Items: {count}\"\n+    return f\"Records: {count}\"\n \n \n def format_summary(summary):\ndiff --git a/tests/test_report.py b/tests/test_report.py\nindex 9431699..2bc9eaa 100644\n--- a/tests/test_report.py\n+++ b/tests/test_report.py\n@@ -5,13 +5,13 @@ from app import report\n \n class ReportTests(unittest.TestCase):\n     def test_plain_empty(self):\n-        self.assertEqual(report([], detailed=False), \"Items: 0\")\n+        self.assertEqual(report([], detailed=False), \"Records: 0\")\n \n     def test_plain_populated(self):\n-        self.assertEqual(report([2, 4], detailed=False), \"Items: 2\")\n+        self.assertEqual(report([2, 4], detailed=False), \"Records: 2\")\n \n     def test_detailed_populated(self):\n-        self.assertEqual(report([2, 4], detailed=True), \"Items: 2; Mean: 3\")\n+        self.assertEqual(report([2, 4], detailed=True), \"Records: 2; Mean: 3\")\n \n     def test_default_populated(self):\n-        self.assertEqual(report([2, 4]), \"Items: 2\")\n+        self.assertEqual(report([2, 4]), \"Records: 2\")",
+    "is_error": false,
+    "tool_use_id": "toolu_01HRjNoPfJVnjENewSv1p5jp",
+    "type": "tool_result"
+  },
+  "id": "e74.0",
+  "parent_tool_use_id": null,
+  "session_id": "5ba068d2-4150-4c7f-b62f-363918405869",
+  "source_sequence": 74
+}

@@ -1,0 +1,36 @@
+{
+  "actor": "items-01a14e66-c7bb-79e2-ab80-9b446500bf2f",
+  "completedAtMs": 1792316756056,
+  "id": "exec-abcf6254-ceb7-4dcb-a905-d3282034e218",
+  "item": {
+    "aggregatedOutput": "     1\tdef read_preferences(repository, key):\n     2\t    return repository.read_resilient(key.strip())\n     1\timport unittest\n     2\t\n     3\tfrom preferences import Preferences\n     4\tfrom repository import MissingPreference, Repository, ScriptedBackend, TransientRead\n     5\t\n     6\t\n     7\tclass ReadTests(unittest.TestCase):\n     8\t    def test_trim_key(self):\n     9\t        backend = ScriptedBackend([{\"color\": \"blue\"}])\n    10\t        self.assertEqual(Preferences(Repository(backend)).read(\" w \"), {\"color\": \"blue\"})\n    11\t        self.assertEqual(backend.keys, [\"w\"])\n    12\t\n    13\t    def test_transient_error(self):\n    14\t        backend = ScriptedBackend([TransientRead(\"busy\"), {\"color\": \"blue\"}])\n    15\t        self.assertEqual(Preferences(Repository(backend)).read(\" w \"), {\"color\": \"blue\"})\n    16\t        self.assertEqual(backend.keys, [\"w\", \"w\"])\n    17\t\n    18\t    def test_retry_limit(self):\n    19\t        backend = ScriptedBackend([TransientRead(\"busy\") for _ in range(3)])\n    20\t        with self.assertRaises(TransientRead):\n    21\t            Preferences(Repository(backend)).read(\" w \")\n    22\t        self.assertEqual(backend.keys, [\"w\", \"w\", \"w\"])\n    23\t\n    24\t    def test_permanent_error(self):\n    25\t        backend = ScriptedBackend([MissingPreference(\"missing\")])\n    26\t        with self.assertRaises(MissingPreference):\n    27\t            Preferences(Repository(backend)).read(\" w \")\n    28\t        self.assertEqual(backend.keys, [\"w\"])\n",
+    "command": "/usr/bin/zsh -lc 'nl -ba reader.py && nl -ba tests/test_reads.py'",
+    "commandActions": [
+      {
+        "command": "nl -ba reader.py",
+        "name": "reader.py",
+        "path": "/tmp/fr-advisory-bootstrap-20261018/codex-baseline-R9-recovery-standard-1/reader.py",
+        "type": "read"
+      },
+      {
+        "command": "nl -ba tests/test_reads.py",
+        "name": "test_reads.py",
+        "path": "/tmp/fr-advisory-bootstrap-20261018/codex-baseline-R9-recovery-standard-1/tests/test_reads.py",
+        "type": "read"
+      }
+    ],
+    "cwd": "/tmp/fr-advisory-bootstrap-20261018/codex-baseline-R9-recovery-standard-1",
+    "durationMs": 55,
+    "exitCode": 0,
+    "id": "exec-abcf6254-ceb7-4dcb-a905-d3282034e218",
+    "pluginId": null,
+    "processId": "63873",
+    "scriptPath": null,
+    "source": "unifiedExecStartup",
+    "status": "completed",
+    "type": "commandExecution"
+  },
+  "source_file": "items-01a14e66-c7bb-79e2-ab80-9b446500bf2f.json",
+  "startedAtMs": 1792316756000,
+  "turnId": "01a14e66-c7eb-7252-a36e-0bd03a30a39c"
+}

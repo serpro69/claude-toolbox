@@ -1,0 +1,28 @@
+{
+  "actor": "items-01a14e2e-4e4e-76f1-8247-d1728f99a04d",
+  "completedAtMs": 1792313074160,
+  "id": "exec-b3f1f3f4-688b-4c71-9c17-6e9ef6f1ceca",
+  "item": {
+    "aggregatedOutput": "HEAD: report([], {}) -> 'Items: 0'\nHEAD: report([2, 4], {}) -> 'Items: 2'\nHEAD: report([], {'detailed': False}) -> 'Items: 0'\nHEAD: report([], {'detailed': True}) -> ZeroDivisionError: division by zero\nstaged: report([], {}) -> ZeroDivisionError: division by zero\nstaged: report([2, 4], {}) -> 'Items: 2; Mean: 3'\nstaged: report([], {'detailed': False}) -> 'Items: 0'\nstaged: report([], {'detailed': True}) -> ZeroDivisionError: division by zero\n",
+    "command": "/usr/bin/zsh -lc \"python3 -B - <<'PY'\nimport ast\nimport subprocess\nfrom unittest.mock import patch\n\nimport app\n\nold_config = ast.parse(subprocess.check_output(['git', 'show', 'HEAD:config.py'], text=True))\nold_default = ast.literal_eval(old_config.body[0].value)\n\nfor label, default in [('HEAD', old_default), ('staged', app.DETAILED_REPORT)]:\n    with patch.object(app, 'DETAILED_REPORT', default):\n        for values, options in [([], {}), ([2, 4], {}), ([], {'detailed': False}), ([], {'detailed': True})]:\n            try:\n                result = repr(app.report(values, **options))\n            except Exception as error:\n                result = f'{type(error).__name__}: {error}'\n            print(f'{label}: report({values\"'!r}, {options!r}) -> {result}'\"')\nPY\"",
+    "commandActions": [
+      {
+        "command": "python3 -B - <<'PY'\nimport ast\nimport subprocess\nfrom unittest.mock import patch\n\nimport app\n\nold_config = ast.parse(subprocess.check_output(['git', 'show', 'HEAD:config.py'], text=True))\nold_default = ast.literal_eval(old_config.body[0].value)\n\nfor label, default in [('HEAD', old_default), ('staged', app.DETAILED_REPORT)]:\n    with patch.object(app, 'DETAILED_REPORT', default):\n        for values, options in [([], {}), ([2, 4], {}), ([], {'detailed': False}), ([], {'detailed': True})]:\n            try:\n                result = repr(app.report(values, **options))\n            except Exception as error:\n                result = f'{type(error).__name__}: {error}'\n            print(f'{label}: report({values!r}, {options!r}) -> {result}')\nPY",
+        "type": "unknown"
+      }
+    ],
+    "cwd": "/tmp/fr-advisory-bootstrap-20261018/codex-baseline-R6M-standard-2",
+    "durationMs": 92,
+    "exitCode": 0,
+    "id": "exec-b3f1f3f4-688b-4c71-9c17-6e9ef6f1ceca",
+    "pluginId": null,
+    "processId": "90305",
+    "scriptPath": null,
+    "source": "unifiedExecStartup",
+    "status": "completed",
+    "type": "commandExecution"
+  },
+  "source_file": "items-01a14e2e-4e4e-76f1-8247-d1728f99a04d.json",
+  "startedAtMs": 1792313074067,
+  "turnId": "01a14e2e-4e7f-7d41-9a04-29f35abcebb0"
+}

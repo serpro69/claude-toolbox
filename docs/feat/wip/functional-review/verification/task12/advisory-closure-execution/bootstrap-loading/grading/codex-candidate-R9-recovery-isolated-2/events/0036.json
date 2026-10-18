@@ -1,0 +1,28 @@
+{
+  "actor": "items-01a14e74-2568-7660-9c9e-a6cfeb6db249",
+  "completedAtMs": 1792317814803,
+  "id": "exec-479d4e4a-305f-4e83-a4cc-62061d91ecb2",
+  "item": {
+    "aggregatedOutput": "Verified staged diff and candidate blobs are unchanged since review capture.\nM  reader.py\nM  tests/test_reads.py\nRemoved only temporary instruction and evidence bundles created for this review.\n",
+    "command": "/usr/bin/zsh -lc \"python3 - <<'PY'\nimport json,pathlib,shutil,subprocess\nbundle=pathlib.Path('/tmp/kk-review-preference-5kdpw0i9')\nmanifest=json.loads((bundle/'manifest.json').read_text())\nassert subprocess.check_output(['git','rev-parse','HEAD'],text=True).strip()==manifest['base']\nassert subprocess.check_output(['git','diff','--cached','HEAD','--'])==(bundle/'staged.patch').read_bytes()\nfor item in manifest['evidence']:\n    if item['role']=='candidate':\n        assert subprocess.check_output(['git','rev-parse',':'+item['original_path']],text=True).strip()==item['blob']\nprint('Verified staged diff and candidate blobs are unchanged since review capture.')\nprint(subprocess.check_output(['git','status','--short'],text=True),end='')\nfor path in [bundle,pathlib.Path('/tmp/kk-review-instructions-8ed420by'),pathlib.Path('/tmp/kk-review-instructions-c2_j0c70'),pathlib.Path('/tmp/kk-review-instructions-sezs7kf5')]:\n    shutil.rmtree(path)\nprint('Removed only temporary instruction and evidence bundles created for this review.')\nPY\"",
+    "commandActions": [
+      {
+        "command": "python3 - <<'PY'\nimport json,pathlib,shutil,subprocess\nbundle=pathlib.Path('/tmp/kk-review-preference-5kdpw0i9')\nmanifest=json.loads((bundle/'manifest.json').read_text())\nassert subprocess.check_output(['git','rev-parse','HEAD'],text=True).strip()==manifest['base']\nassert subprocess.check_output(['git','diff','--cached','HEAD','--'])==(bundle/'staged.patch').read_bytes()\nfor item in manifest['evidence']:\n    if item['role']=='candidate':\n        assert subprocess.check_output(['git','rev-parse',':'+item['original_path']],text=True).strip()==item['blob']\nprint('Verified staged diff and candidate blobs are unchanged since review capture.')\nprint(subprocess.check_output(['git','status','--short'],text=True),end='')\nfor path in [bundle,pathlib.Path('/tmp/kk-review-instructions-8ed420by'),pathlib.Path('/tmp/kk-review-instructions-c2_j0c70'),pathlib.Path('/tmp/kk-review-instructions-sezs7kf5')]:\n    shutil.rmtree(path)\nprint('Removed only temporary instruction and evidence bundles created for this review.')\nPY",
+        "type": "unknown"
+      }
+    ],
+    "cwd": "/tmp/fr-advisory-bootstrap-20261018/codex-candidate-R9-recovery-isolated-2",
+    "durationMs": 73,
+    "exitCode": 0,
+    "id": "exec-479d4e4a-305f-4e83-a4cc-62061d91ecb2",
+    "pluginId": null,
+    "processId": "7389",
+    "scriptPath": null,
+    "source": "unifiedExecStartup",
+    "status": "completed",
+    "type": "commandExecution"
+  },
+  "source_file": "items-01a14e74-2568-7660-9c9e-a6cfeb6db249.json",
+  "startedAtMs": 1792317814729,
+  "turnId": "01a14e74-2594-72e0-be87-22dea196725c"
+}

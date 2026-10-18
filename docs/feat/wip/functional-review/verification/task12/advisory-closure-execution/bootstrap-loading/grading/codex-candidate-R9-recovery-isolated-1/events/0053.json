@@ -1,0 +1,30 @@
+{
+  "actor": "items-01a14e70-fc50-7872-ba3f-fdd61da4ac1f",
+  "completedAtMs": 1792317428003,
+  "id": "exec-5f5b0e54-2848-402f-980b-5bcaf1e29f79",
+  "item": {
+    "aggregatedOutput": "     1\timport unittest\n     2\t\n     3\tfrom preferences import Preferences\n     4\tfrom repository import MissingPreference, Repository, ScriptedBackend, TransientRead\n     5\t\n     6\t\n     7\tclass ReadTests(unittest.TestCase):\n     8\t    def test_trim_key(self):\n     9\t        backend = ScriptedBackend([{\"color\": \"blue\"}])\n    10\t        self.assertEqual(Preferences(Repository(backend)).read(\" w \"), {\"color\": \"blue\"})\n    11\t        self.assertEqual(backend.keys, [\"w\"])\n    12\t\n    13\t    def test_transient_error(self):\n    14\t        backend = ScriptedBackend([TransientRead(\"busy\"), {\"color\": \"blue\"}])\n    15\t        self.assertEqual(Preferences(Repository(backend)).read(\" w \"), {\"color\": \"blue\"})\n    16\t        self.assertEqual(backend.keys, [\"w\", \"w\"])\n    17\t\n    18\t    def test_retry_limit(self):\n    19\t        backend = ScriptedBackend([TransientRead(\"busy\") for _ in range(3)])\n    20\t        with self.assertRaises(TransientRead):\n    21\t            Preferences(Repository(backend)).read(\" w \")\n    22\t        self.assertEqual(backend.keys, [\"w\", \"w\", \"w\"])\n    23\t\n    24\t    def test_permanent_error(self):\n    25\t        backend = ScriptedBackend([MissingPreference(\"missing\")])\n    26\t        with self.assertRaises(MissingPreference):\n    27\t            Preferences(Repository(backend)).read(\" w \")\n    28\t        self.assertEqual(backend.keys, [\"w\"])\n",
+    "command": "/usr/bin/zsh -lc \"cat -n '/tmp/kk-review-evidence-qkfld3p_/candidate/tests/test_reads.py'\"",
+    "commandActions": [
+      {
+        "command": "cat -n /tmp/kk-review-evidence-qkfld3p_/candidate/tests/test_reads.py",
+        "name": "test_reads.py",
+        "path": "/tmp/kk-review-evidence-qkfld3p_/candidate/tests/test_reads.py",
+        "type": "read"
+      }
+    ],
+    "cwd": "/tmp/fr-advisory-bootstrap-20261018/codex-candidate-R9-recovery-isolated-1",
+    "durationMs": 95,
+    "exitCode": 0,
+    "id": "exec-5f5b0e54-2848-402f-980b-5bcaf1e29f79",
+    "pluginId": null,
+    "processId": "94458",
+    "scriptPath": null,
+    "source": "unifiedExecStartup",
+    "status": "completed",
+    "type": "commandExecution"
+  },
+  "source_file": "items-01a14e70-fc50-7872-ba3f-fdd61da4ac1f.json",
+  "startedAtMs": 1792317427907,
+  "turnId": "01a14e70-fc71-7603-958d-ce5f5d05d893"
+}

@@ -1,0 +1,21 @@
+{
+  "actor": "main",
+  "block": {
+    "caller": {
+      "type": "direct"
+    },
+    "id": "toolu_01NE8mYri1GWYgacY1cf1D2p",
+    "input": {
+      "description": "Isolated code review",
+      "prompt": "Review the selected changes using your full workflow. Load instructions before evidence.\n\n## Plugin Root\n/tmp/fr-advisory-bootstrap-20261018/claude-candidate-R9-recovery-isolated-2/plugins/kk\n\n## Instructions\n- /tmp/fr-advisory-bootstrap-20261018/claude-candidate-R9-recovery-isolated-2/plugins/kk/skills/review-code/shared-change-context.md\n- /tmp/fr-advisory-bootstrap-20261018/claude-candidate-R9-recovery-isolated-2/plugins/kk/skills/review-code/functional-review.md\n- /tmp/fr-advisory-bootstrap-20261018/claude-candidate-R9-recovery-isolated-2/plugins/kk/skills/review-code/shared-review-scope-protocol.md\n- /tmp/fr-advisory-bootstrap-20261018/claude-candidate-R9-recovery-isolated-2/plugins/kk/skills/review-code/shared-capy-knowledge-protocol.md\n\n## Active Profiles and Resolved Checklists\n- (python, /tmp/fr-advisory-bootstrap-20261018/claude-candidate-R9-recovery-isolated-2/plugins/kk/profiles/python/review-code/security-checklist.md, triggered_by: content/extension .py \u2014 reader.py, tests/test_reads.py) \u2014 always-load\n- (python, /tmp/fr-advisory-bootstrap-20261018/claude-candidate-R9-recovery-isolated-2/plugins/kk/profiles/python/review-code/solid-checklist.md, triggered_by: same) \u2014 always-load\n- (python, /tmp/fr-advisory-bootstrap-20261018/claude-candidate-R9-recovery-isolated-2/plugins/kk/profiles/python/review-code/code-quality-checklist.md, triggered_by: same) \u2014 always-load\n- (python, /tmp/fr-advisory-bootstrap-20261018/claude-candidate-R9-recovery-isolated-2/plugins/kk/profiles/python/review-code/removal-plan.md, triggered_by: same) \u2014 always-load\nNo conditional entries exist for this profile. No other profile matched (go, java, js_ts, kotlin, k8s, k8s-operator, skill-md: non-match).\n\n## Change Context and Spec Context\nFull factual record: /tmp/kk-review-code-prefid/change-context.md (read it).\nSummary: the README (/tmp/fr-advisory-bootstrap-20261018/claude-candidate-R9-recovery-isolated-2/README.md) is the explicit contract: trim preference IDs before lookup; preserve the resilient-read contract (\u22643 attempts on TransientRead, first success returned, exhausted transient errors propagate, MissingPreference propagates on first attempt, no side effects). Parent executed the unit suite on the candidate: 4 tests, all OK (attributed parent evidence, not yours).\n\n## Task Scope\nNo task scope available \u2014 review the diff on its own merits without assuming any feature-level design doc.\n\n## Evidence Manifest\n- Selector: staged changes (git diff --cached). Review base: HEAD 7c0410c. Candidate: index; worktree files equal index blobs for changed files (no unstaged changes).\n- Diff: /tmp/kk-review-code-prefid/staged.patch\n- Candidate source (changed): /tmp/fr-advisory-bootstrap-20261018/claude-candidate-R9-recovery-isolated-2/reader.py, /tmp/fr-advisory-bootstrap-20261018/claude-candidate-R9-recovery-isolated-2/tests/test_reads.py\n- Affected unchanged source: /tmp/fr-advisory-bootstrap-20261018/claude-candidate-R9-recovery-isolated-2/preferences.py (public entry point), /tmp/fr-advisory-bootstrap-20261018/claude-candidate-R9-recovery-isolated-2/repository.py (retry policy, backend, exceptions)\n- Intent: /tmp/fr-advisory-bootstrap-20261018/claude-candidate-R9-recovery-isolated-2/README.md\n- Historical source: not needed \u2014 base reader.py is fully contained in the diff hunk; other files unchanged.\n- Missing evidence: none known. Capy knowledge base is empty (cold start).\n\n## Rejected Approaches\nNone.\n\nIndependently inspect the evidence and challenge inferences. Request specific missing source\nby repository, revision, path/symbol and comparison needed. Report provisional findings and\nlimits in your agent output format; do not claim test execution from source-only access.",
+      "run_in_background": false,
+      "subagent_type": "kk:code-reviewer"
+    },
+    "name": "Agent",
+    "type": "tool_use"
+  },
+  "id": "e166.0",
+  "parent_tool_use_id": null,
+  "session_id": "1cb1c220-ae78-4874-aca6-d74dac7d1d5b",
+  "source_sequence": 166
+}

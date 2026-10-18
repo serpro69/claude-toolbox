@@ -1,0 +1,19 @@
+{
+  "actor": "main",
+  "block": {
+    "caller": {
+      "type": "direct"
+    },
+    "id": "toolu_019EjKpAyLCEJGZ7taiEKCfW",
+    "input": {
+      "content": "# Change context (parent-prepared, factual record)\n\n## Intent and authority (explicit)\n- README.md (repo root): \"The existing GET /settings response and routing behavior remain the\n  acceptance contract. Export preview activation belongs to a later task; this increment must\n  remain independently compatible while that task is pending. The checked-in build setting is\n  fixed at False; it is not supplied by a request, environment variable or external config.\n  No deployment inventory is maintained in this small source repository.\"\n- tasks.md Task 1 (status: in-progress; user states this staged diff is Task 1):\n  \"Preserve existing routes with preview disabled in the checked-in build.\" /\n  \"Add the preview module and guarded route for the next increment.\"\n- tasks.md Task 2 (pending, depends on Task 1): \"Implement render_preview and its enabled-path\n  tests before changing the build setting.\"\n\n## Change boundary\n- Selector: staged changes (`git diff --cached`); no unstaged changes exist.\n- Candidate: Git index. Worktree copies of preview.py and routes.py equal the index (no unstaged diff).\n- Review base: HEAD f1a16b5 (\"Review base\").\n- Changed: preview.py (added), routes.py (modified). Unchanged but relevant: config.py\n  (EXPORT_PREVIEW_ENABLED = False, tracked at base), settings.py, tests/test_routes.py.\n- Deliberately pending: render_preview implementation, enabled-path tests, flipping the flag (Task 2).\n\n## Existing behavior to preserve\n- routes.get(\"/settings\") -> (200, current_settings()) == (200, {\"theme\": \"light\"})\n- routes.get(<any other path>) -> (404, None), including \"/export-preview\" while disabled.\n\n## Delivery constraints\n- Python 3.9+, stdlib only. Independently compatible increment; flag fixed False in source.\n\n## Baselines\n- Review base: f1a16b5. No released/deployed baseline exists in this repo (README: no deployment\n  inventory). Release comparison: Not applicable / Unknown beyond source.\n\n## Scenarios and evidence\n- Parent executed `python3 -B -m unittest discover -s tests -v` at the candidate worktree\n  (equal to index): 3 tests ran, all OK (test_current_settings, test_preview_route,\n  test_unknown_route). This is parent-attributed execution; reviewers have source-only access.\n- No test exercises EXPORT_PREVIEW_ENABLED=True (pending Task 2 by design).\n\n## Rejected approaches\n- None recorded.\n",
+      "file_path": "/tmp/kk-review-code-r5iso/change-context.md"
+    },
+    "name": "Write",
+    "type": "tool_use"
+  },
+  "id": "e179.0",
+  "parent_tool_use_id": null,
+  "session_id": "e136c40e-b849-4a02-a139-a8a03a981e85",
+  "source_sequence": 179
+}

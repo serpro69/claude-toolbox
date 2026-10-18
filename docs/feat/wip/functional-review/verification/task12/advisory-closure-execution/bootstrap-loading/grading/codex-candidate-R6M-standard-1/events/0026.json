@@ -1,0 +1,28 @@
+{
+  "actor": "items-01a14e2c-71d2-7ab3-ba42-3da16ab7246a",
+  "completedAtMs": 1792312955086,
+  "id": "exec-f3bdf09a-ff2f-4f13-a1de-ea15a91d140d",
+  "item": {
+    "aggregatedOutput": "diff --git a/config.py b/config.py\nindex 2f90767..13d0514 100644\n--- a/config.py\n+++ b/config.py\n@@ -1 +1 @@\n-DETAILED_REPORT = False\n+DETAILED_REPORT = True\ndiff --git a/tests/test_report.py b/tests/test_report.py\nindex 9431699..952955d 100644\n--- a/tests/test_report.py\n+++ b/tests/test_report.py\n@@ -14,4 +14,4 @@ class ReportTests(unittest.TestCase):\n         self.assertEqual(report([2, 4], detailed=True), \"Items: 2; Mean: 3\")\n \n     def test_default_populated(self):\n-        self.assertEqual(report([2, 4]), \"Items: 2\")\n+        self.assertEqual(report([2, 4]), \"Items: 2; Mean: 3\")\nDETAILED_REPORT = True\nimport unittest\n\nfrom app import report\n\n\nclass ReportTests(unittest.TestCase):\n    def test_plain_empty(self):\n        self.assertEqual(report([], detailed=False), \"Items: 0\")\n\n    def test_plain_populated(self):\n        self.assertEqual(report([2, 4], detailed=False), \"Items: 2\")\n\n    def test_detailed_populated(self):\n        self.assertEqual(report([2, 4], detailed=True), \"Items: 2; Mean: 3\")\n\n    def test_default_populated(self):\n        self.assertEqual(report([2, 4]), \"Items: 2; Mean: 3\")\n",
+    "command": "/usr/bin/zsh -lc 'git diff --cached -- config.py tests/test_report.py && git show :config.py && git show :tests/test_report.py'",
+    "commandActions": [
+      {
+        "command": "git diff --cached -- config.py tests/test_report.py && git show :config.py && git show :tests/test_report.py",
+        "type": "unknown"
+      }
+    ],
+    "cwd": "/tmp/fr-advisory-bootstrap-20261018/codex-candidate-R6M-standard-1",
+    "durationMs": 77,
+    "exitCode": 0,
+    "id": "exec-f3bdf09a-ff2f-4f13-a1de-ea15a91d140d",
+    "pluginId": null,
+    "processId": "24452",
+    "scriptPath": null,
+    "source": "unifiedExecStartup",
+    "status": "completed",
+    "type": "commandExecution"
+  },
+  "source_file": "items-01a14e2c-71d2-7ab3-ba42-3da16ab7246a.json",
+  "startedAtMs": 1792312955008,
+  "turnId": "01a14e2c-7202-7ff3-a382-9d17e85954cd"
+}

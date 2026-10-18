@@ -1,0 +1,30 @@
+{
+  "actor": "items-01a14e66-c7bb-79e2-ab80-9b446500bf2f",
+  "completedAtMs": 1792316760611,
+  "id": "exec-f7bee460-15f5-43e4-91a0-b6093767a064",
+  "item": {
+    "aggregatedOutput": "tests/test_reads.py:3:from preferences import Preferences\ntests/test_reads.py:4:from repository import MissingPreference, Repository, ScriptedBackend, TransientRead\ntests/test_reads.py:8:    def test_trim_key(self):\ntests/test_reads.py:10:        self.assertEqual(Preferences(Repository(backend)).read(\" w \"), {\"color\": \"blue\"})\ntests/test_reads.py:11:        self.assertEqual(backend.keys, [\"w\"])\ntests/test_reads.py:15:        self.assertEqual(Preferences(Repository(backend)).read(\" w \"), {\"color\": \"blue\"})\ntests/test_reads.py:16:        self.assertEqual(backend.keys, [\"w\", \"w\"])\ntests/test_reads.py:21:            Preferences(Repository(backend)).read(\" w \")\ntests/test_reads.py:22:        self.assertEqual(backend.keys, [\"w\", \"w\", \"w\"])\ntests/test_reads.py:25:        backend = ScriptedBackend([MissingPreference(\"missing\")])\ntests/test_reads.py:26:        with self.assertRaises(MissingPreference):\ntests/test_reads.py:27:            Preferences(Repository(backend)).read(\" w \")\ntests/test_reads.py:28:        self.assertEqual(backend.keys, [\"w\"])\npreferences.py:1:from reader import read_preferences\npreferences.py:4:class Preferences:\npreferences.py:8:    def read(self, key):\npreferences.py:9:        return read_preferences(self.repository, key)\nREADME.md:1:# Preference reads\nREADME.md:8:successful result. Exhausted transient errors propagate. `MissingPreference`\nREADME.md:11:`Preferences.read` is the public entry point. `Repository.read_resilient`\nreader.py:1:def read_preferences(repository, key):\nreader.py:2:    return repository.read_resilient(key.strip())\nrepository.py:5:class MissingPreference(Exception):\nrepository.py:12:        self.keys = []\nrepository.py:14:    def read(self, key):\nrepository.py:15:        self.keys.append(key)\nrepository.py:26:    def read_once(self, key):\nrepository.py:27:        return self.backend.read(key)\nrepository.py:29:    def read_resilient(self, key):\nrepository.py:32:                return self.read_once(key)\n",
+    "command": "/usr/bin/zsh -lc \"rg -n 'read_preferences|read_resilient|normalize|strip|key|Preference' --glob '*.py' --glob '*.md'\"",
+    "commandActions": [
+      {
+        "command": "rg -n 'read_preferences|read_resilient|normalize|strip|key|Preference' --glob '*.py' --glob '*.md'",
+        "path": null,
+        "query": "read_preferences|read_resilient|normalize|strip|key|Preference",
+        "type": "search"
+      }
+    ],
+    "cwd": "/tmp/fr-advisory-bootstrap-20261018/codex-baseline-R9-recovery-standard-1",
+    "durationMs": 53,
+    "exitCode": 0,
+    "id": "exec-f7bee460-15f5-43e4-91a0-b6093767a064",
+    "pluginId": null,
+    "processId": "76224",
+    "scriptPath": null,
+    "source": "unifiedExecStartup",
+    "status": "completed",
+    "type": "commandExecution"
+  },
+  "source_file": "items-01a14e66-c7bb-79e2-ab80-9b446500bf2f.json",
+  "startedAtMs": 1792316760558,
+  "turnId": "01a14e66-c7eb-7252-a36e-0bd03a30a39c"
+}

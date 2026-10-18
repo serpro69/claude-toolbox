@@ -1,0 +1,30 @@
+{
+  "actor": "items-01a14e75-b0f4-7811-b206-32c97b6dee9c",
+  "completedAtMs": 1792317742130,
+  "id": "exec-2b9b84d4-97c2-48a1-b176-7e9b2c4631f8",
+  "item": {
+    "aggregatedOutput": "Intent and authority: README.md explicitly requires trimming surrounding whitespace from preference IDs before lookup, preserving resilient reads: at most three attempts on TransientRead, first success returned, exhausted transient failures propagated, MissingPreference propagated on first attempt, no read side effects. Public entry point Preferences.read; Repository.read_resilient owns retry policy and read_once owns one attempt. Python 3.9+, standard library only.\nScope: user requests isolated review of staged preference ID normalization. Only reader.py and tests/test_reads.py are changed (+21/-4). Selector git diff --cached HEAD. Base 7c0410c18bac40c33f857000ac3cc59d38a02165; candidate is staged index captured here. Worktree matched index at collection. No separate release/deployed baseline named or available; no remote or tags configured. Historical source is full HEAD files with manifest provenance; no omitted bytes.\nTask Scope: No task scope available \u2014 review the diff on its own merits without assuming any feature-level design doc. README is the explicit component contract. No pending functionality documented.\nAffected path for inspection: Preferences.read -> read_preferences -> Repository.read_resilient -> read_once -> ScriptedBackend.read. Inspect successful reads, unchanged unpadded IDs, whitespace normalization, success after one or two transient failures, three exhausted transient failures, and permanent errors including after a transient failure. This is a local synchronous read-only flow; no migration, versioned provider rollout, deployment policy or activation flag is specified.\nExecution evidence: none yet; test source supplied is not proof of execution. Capy searches for kk:review-findings and kk:lang-idioms returned an empty knowledge base. No rejected approaches or author rationale supplied.\nReview capability: PAL codereview and listmodels are absent from callable tool inventory, so only the independent code-reviewer is available. Do not claim corroboration.\n",
+    "command": "/usr/bin/zsh -lc \"cat '/tmp/kk-review-preference-5kdpw0i9/context.md'\"",
+    "commandActions": [
+      {
+        "command": "cat /tmp/kk-review-preference-5kdpw0i9/context.md",
+        "name": "context.md",
+        "path": "/tmp/kk-review-preference-5kdpw0i9/context.md",
+        "type": "read"
+      }
+    ],
+    "cwd": "/tmp/fr-advisory-bootstrap-20261018/codex-candidate-R9-recovery-isolated-2",
+    "durationMs": 63,
+    "exitCode": 0,
+    "id": "exec-2b9b84d4-97c2-48a1-b176-7e9b2c4631f8",
+    "pluginId": null,
+    "processId": "87165",
+    "scriptPath": null,
+    "source": "unifiedExecStartup",
+    "status": "completed",
+    "type": "commandExecution"
+  },
+  "source_file": "items-01a14e75-b0f4-7811-b206-32c97b6dee9c.json",
+  "startedAtMs": 1792317742066,
+  "turnId": "01a14e75-b115-7a53-96b8-c9685119e1b0"
+}

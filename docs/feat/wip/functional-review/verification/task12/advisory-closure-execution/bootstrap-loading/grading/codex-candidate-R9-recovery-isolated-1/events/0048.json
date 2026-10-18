@@ -1,0 +1,30 @@
+{
+  "actor": "items-01a14e70-fc50-7872-ba3f-fdd61da4ac1f",
+  "completedAtMs": 1792317421894,
+  "id": "exec-207cf8ab-2f6c-4eb4-a13a-4a40f7cc8557",
+  "item": {
+    "aggregatedOutput": "# Review context\nUser requests isolated review of staged preference ID normalization; review-only.\nSelector: git diff --cached; base HEAD 7c0410c18bac40c33f857000ac3cc59d38a02165. Candidate is staged index; no unstaged changes at capture. Two changed files: reader.py (+1/-1), tests/test_reads.py (+20/-3).\nExplicit contract: candidate README.md says trim surrounding whitespace before lookup, preserve resilient reads: up to three attempts on TransientRead, return first success, propagate exhausted TransientRead, propagate permanent MissingPreference on first attempt; reads have no side effects. Preferences.read is public entry; Repository.read_resilient owns retries, read_once performs one attempt.\nTask Scope: No task scope available \u2014 review diff on its own merits without assuming feature-level design docs.\nCompatibility baseline: local HEAD 7c0410c18bac40c33f857000ac3cc59d38a02165; no named release/deployment baseline or deployment configuration present. Standard-library Python 3.9+ code; no schema, persistence mutation or release prerequisites declared.\nAffected chain: Preferences.read -> reader.read_preferences -> Repository.read_resilient -> Repository.read_once -> ScriptedBackend.read.\nEvidence: full staged and HEAD snapshots of all five repository files supplied, plus selected diff and provenance. No tests have been run yet at bundle creation. Prior-findings and Python idiom Capy searches returned empty knowledge base.\nRejected approaches: none supplied.\nApply all eight criteria files before reviewing evidence. Python activated by .py extension on both changed files; all four Python checklist files always load, with no conditionals. Other seven known profiles did not match.\nIndependently inspect the evidence and challenge inferences. Request specific missing source by repository/revision/path or symbol and comparison. Do not assume source-only review proves execution. PAL tool unavailable in current session; no second reviewer conclusions exist.\n",
+    "command": "/usr/bin/zsh -lc \"cat '/tmp/kk-review-evidence-qkfld3p_/context.md'\"",
+    "commandActions": [
+      {
+        "command": "cat /tmp/kk-review-evidence-qkfld3p_/context.md",
+        "name": "context.md",
+        "path": "/tmp/kk-review-evidence-qkfld3p_/context.md",
+        "type": "read"
+      }
+    ],
+    "cwd": "/tmp/fr-advisory-bootstrap-20261018/codex-candidate-R9-recovery-isolated-1",
+    "durationMs": 50,
+    "exitCode": 0,
+    "id": "exec-207cf8ab-2f6c-4eb4-a13a-4a40f7cc8557",
+    "pluginId": null,
+    "processId": "36118",
+    "scriptPath": null,
+    "source": "unifiedExecStartup",
+    "status": "completed",
+    "type": "commandExecution"
+  },
+  "source_file": "items-01a14e70-fc50-7872-ba3f-fdd61da4ac1f.json",
+  "startedAtMs": 1792317421843,
+  "turnId": "01a14e70-fc71-7603-958d-ce5f5d05d893"
+}

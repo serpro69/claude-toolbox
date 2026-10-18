@@ -1,0 +1,28 @@
+{
+  "actor": "items-01a14e72-5f14-7e22-92ea-1f9eb03903ff",
+  "completedAtMs": 1792317522869,
+  "id": "exec-8557aace-6fb9-4dfa-9d58-2746ff8f85ae",
+  "item": {
+    "aggregatedOutput": "diff --git a/reader.py b/reader.py\nindex 9429bec..8ae04ed 100644\n--- a/reader.py\n+++ b/reader.py\n@@ -1,2 +1,2 @@\n def read_preferences(repository, key):\n-    return repository.read_resilient(key)\n+    return repository.read_resilient(key.strip())\ndiff --git a/tests/test_reads.py b/tests/test_reads.py\nindex 23fc901..378ccb8 100644\n--- a/tests/test_reads.py\n+++ b/tests/test_reads.py\n@@ -1,11 +1,28 @@\n import unittest\n \n from preferences import Preferences\n-from repository import Repository, ScriptedBackend\n+from repository import MissingPreference, Repository, ScriptedBackend, TransientRead\n \n \n class ReadTests(unittest.TestCase):\n-    def test_existing_key(self):\n+    def test_trim_key(self):\n         backend = ScriptedBackend([{\"color\": \"blue\"}])\n-        self.assertEqual(Preferences(Repository(backend)).read(\"w\"), {\"color\": \"blue\"})\n+        self.assertEqual(Preferences(Repository(backend)).read(\" w \"), {\"color\": \"blue\"})\n+        self.assertEqual(backend.keys, [\"w\"])\n+\n+    def test_transient_error(self):\n+        backend = ScriptedBackend([TransientRead(\"busy\"), {\"color\": \"blue\"}])\n+        self.assertEqual(Preferences(Repository(backend)).read(\" w \"), {\"color\": \"blue\"})\n+        self.assertEqual(backend.keys, [\"w\", \"w\"])\n+\n+    def test_retry_limit(self):\n+        backend = ScriptedBackend([TransientRead(\"busy\") for _ in range(3)])\n+        with self.assertRaises(TransientRead):\n+            Preferences(Repository(backend)).read(\" w \")\n+        self.assertEqual(backend.keys, [\"w\", \"w\", \"w\"])\n+\n+    def test_permanent_error(self):\n+        backend = ScriptedBackend([MissingPreference(\"missing\")])\n+        with self.assertRaises(MissingPreference):\n+            Preferences(Repository(backend)).read(\" w \")\n         self.assertEqual(backend.keys, [\"w\"])\ndef read_preferences(repository, key):\n    return repository.read_resilient(key.strip())\nimport unittest\n\nfrom preferences import Preferences\nfrom repository import MissingPreference, Repository, ScriptedBackend, TransientRead\n\n\nclass ReadTests(unittest.TestCase):\n    def test_trim_key(self):\n        backend = ScriptedBackend([{\"color\": \"blue\"}])\n        self.assertEqual(Preferences(Repository(backend)).read(\" w \"), {\"color\": \"blue\"})\n        self.assertEqual(backend.keys, [\"w\"])\n\n    def test_transient_error(self):\n        backend = ScriptedBackend([TransientRead(\"busy\"), {\"color\": \"blue\"}])\n        self.assertEqual(Preferences(Repository(backend)).read(\" w \"), {\"color\": \"blue\"})\n        self.assertEqual(backend.keys, [\"w\", \"w\"])\n\n    def test_retry_limit(self):\n        backend = ScriptedBackend([TransientRead(\"busy\") for _ in range(3)])\n        with self.assertRaises(TransientRead):\n            Preferences(Repository(backend)).read(\" w \")\n        self.assertEqual(backend.keys, [\"w\", \"w\", \"w\"])\n\n    def test_permanent_error(self):\n        backend = ScriptedBackend([MissingPreference(\"missing\")])\n        with self.assertRaises(MissingPreference):\n            Preferences(Repository(backend)).read(\" w \")\n        self.assertEqual(backend.keys, [\"w\"])\n# Preference reads\n\nPython 3.9+, standard library only. Run `python3 -B -m unittest discover -s tests`.\n\nThis change accepts preference IDs with surrounding whitespace. Trim the ID\nbefore looking it up; preserve the existing resilient-read contract. A logical\nread may make up to three attempts on `TransientRead`, returning the first\nsuccessful result. Exhausted transient errors propagate. `MissingPreference`\nis permanent and must propagate on the first attempt. Reads have no side effects.\n\n`Preferences.read` is the public entry point. `Repository.read_resilient`\nowns the bounded retry policy; `read_once` performs one attempt. The scripted\nbackend models finite outcomes without sleeping, services or concurrency.\nreader.py\nrepository.py\nREADME.md\ntests/test_reads.py\npreferences.py\n.gitignore\nM  reader.py\nM  tests/test_reads.py\n",
+    "command": "/usr/bin/zsh -lc \"git diff --cached\ncat reader.py tests/test_reads.py README.md\nrg --files --hidden -g '\"'!.git'\"' -g '\"'!__pycache__'\"' -g '\"'!node_modules'\"'\ngit status --short\"",
+    "commandActions": [
+      {
+        "command": "git diff --cached\ncat reader.py tests/test_reads.py README.md\nrg --files --hidden -g '!.git' -g '!__pycache__' -g '!node_modules'\ngit status --short",
+        "type": "unknown"
+      }
+    ],
+    "cwd": "/tmp/fr-advisory-bootstrap-20261018/codex-baseline-R9-recovery-isolated-2",
+    "durationMs": 56,
+    "exitCode": 0,
+    "id": "exec-8557aace-6fb9-4dfa-9d58-2746ff8f85ae",
+    "pluginId": null,
+    "processId": "81815",
+    "scriptPath": null,
+    "source": "unifiedExecStartup",
+    "status": "completed",
+    "type": "commandExecution"
+  },
+  "source_file": "items-01a14e72-5f14-7e22-92ea-1f9eb03903ff.json",
+  "startedAtMs": 1792317522812,
+  "turnId": "01a14e72-5f3f-77c0-9ec1-75de81f1144e"
+}

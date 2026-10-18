@@ -1,0 +1,28 @@
+{
+  "actor": "items-01a14e3a-6f11-73e3-b949-1a240d7c0590",
+  "completedAtMs": 1792313939523,
+  "id": "exec-5caa416d-16eb-48e3-b69f-46dd900af4f4",
+  "item": {
+    "aggregatedOutput": "{\"snapshot\": \"historical\", \"results\": [{\"values\": [], \"mode\": \"default\", \"output\": \"Items: 0\"}, {\"values\": [], \"mode\": false, \"output\": \"Items: 0\"}, {\"values\": [], \"mode\": true, \"error\": \"ZeroDivisionError\", \"message\": \"division by zero\"}, {\"values\": [2, 4], \"mode\": \"default\", \"output\": \"Items: 2\"}, {\"values\": [2, 4], \"mode\": false, \"output\": \"Items: 2\"}, {\"values\": [2, 4], \"mode\": true, \"output\": \"Items: 2; Mean: 3\"}]}\n{\"snapshot\": \"candidate\", \"results\": [{\"values\": [], \"mode\": \"default\", \"error\": \"ZeroDivisionError\", \"message\": \"division by zero\"}, {\"values\": [], \"mode\": false, \"output\": \"Items: 0\"}, {\"values\": [], \"mode\": true, \"error\": \"ZeroDivisionError\", \"message\": \"division by zero\"}, {\"values\": [2, 4], \"mode\": \"default\", \"output\": \"Items: 2; Mean: 3\"}, {\"values\": [2, 4], \"mode\": false, \"output\": \"Items: 2\"}, {\"values\": [2, 4], \"mode\": true, \"output\": \"Items: 2; Mean: 3\"}]}\n",
+    "command": "/usr/bin/zsh -lc \"python3 -B - <<'PY'\nimport subprocess, json\nfrom pathlib import Path\nroot=Path('/tmp/kk-review-batch.Lzo81S')\nscript='''import json\nfrom app import report\nfor values in ([], [2, 4]):\n    for mode in (None, False, True):\n        try:\n            result = {'output': report(values) if mode is None else report(values, detailed=mode)}\n        except Exception as exc:\n            result = {'error': type(exc).__name__, 'message': str(exc)}\n        print(json.dumps({'values':values,'mode':'default' if mode is None else mode,**result}))\n'''\nfor kind in ('historical','candidate'):\n    p=subprocess.run(['python3','-B','-c',script],cwd=root/kind,text=True,capture_output=True,check=True)\n    print(json.dumps({'snapshot':kind,'results':[json.loads(line) for line in p.stdout.splitlines()]}))\nPY\"",
+    "commandActions": [
+      {
+        "command": "python3 -B - <<'PY'\nimport subprocess, json\nfrom pathlib import Path\nroot=Path('/tmp/kk-review-batch.Lzo81S')\nscript='''import json\nfrom app import report\nfor values in ([], [2, 4]):\n    for mode in (None, False, True):\n        try:\n            result = {'output': report(values) if mode is None else report(values, detailed=mode)}\n        except Exception as exc:\n            result = {'error': type(exc).__name__, 'message': str(exc)}\n        print(json.dumps({'values':values,'mode':'default' if mode is None else mode,**result}))\n'''\nfor kind in ('historical','candidate'):\n    p=subprocess.run(['python3','-B','-c',script],cwd=root/kind,text=True,capture_output=True,check=True)\n    print(json.dumps({'snapshot':kind,'results':[json.loads(line) for line in p.stdout.splitlines()]}))\nPY",
+        "type": "unknown"
+      }
+    ],
+    "cwd": "/tmp/fr-advisory-bootstrap-20261018/codex-candidate-R6M-isolated-2",
+    "durationMs": 110,
+    "exitCode": 0,
+    "id": "exec-5caa416d-16eb-48e3-b69f-46dd900af4f4",
+    "pluginId": null,
+    "processId": "46260",
+    "scriptPath": null,
+    "source": "unifiedExecStartup",
+    "status": "completed",
+    "type": "commandExecution"
+  },
+  "source_file": "items-01a14e3a-6f11-73e3-b949-1a240d7c0590.json",
+  "startedAtMs": 1792313939413,
+  "turnId": "01a14e3a-6f3f-7a42-8dfe-53e9b9563426"
+}

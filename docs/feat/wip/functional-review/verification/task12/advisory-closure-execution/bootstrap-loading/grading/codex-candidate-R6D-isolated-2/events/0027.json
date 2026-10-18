@@ -1,0 +1,28 @@
+{
+  "actor": "items-01a14e1d-711c-7662-a810-7ff6b307e7ec",
+  "completedAtMs": 1792311974518,
+  "id": "exec-8a790663-b597-49a3-80fe-1f011bc9cd8c",
+  "item": {
+    "aggregatedOutput": "from config import DETAILED_REPORT\nfrom formatting import format_summary\nfrom stats import summarize\n\n\ndef report(values, detailed=None):\n    if detailed is None:\n        detailed = DETAILED_REPORT\n    summary = summarize(values, detailed=detailed)\n    return format_summary(summary)\ndef summarize(values, detailed=False):\n    result = {\"count\": len(values)}\n    if detailed:\n        result[\"mean\"] = sum(values) / len(values)\n    return result\nDETAILED_REPORT = False\n2b50e59 Review base\n",
+    "command": "/usr/bin/zsh -lc 'git show :app.py && git show :stats.py && git show :config.py && git diff --name-only && git log -5 --oneline'",
+    "commandActions": [
+      {
+        "command": "git show :app.py && git show :stats.py && git show :config.py && git diff --name-only && git log -5 --oneline",
+        "type": "unknown"
+      }
+    ],
+    "cwd": "/tmp/fr-advisory-bootstrap-20261018/codex-candidate-R6D-isolated-2",
+    "durationMs": 54,
+    "exitCode": 0,
+    "id": "exec-8a790663-b597-49a3-80fe-1f011bc9cd8c",
+    "pluginId": null,
+    "processId": "32382",
+    "scriptPath": null,
+    "source": "unifiedExecStartup",
+    "status": "completed",
+    "type": "commandExecution"
+  },
+  "source_file": "items-01a14e1d-711c-7662-a810-7ff6b307e7ec.json",
+  "startedAtMs": 1792311974463,
+  "turnId": "01a14e1d-714a-7b91-83c5-ffdb44761c99"
+}

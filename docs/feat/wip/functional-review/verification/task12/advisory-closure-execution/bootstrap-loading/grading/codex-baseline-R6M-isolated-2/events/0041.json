@@ -1,0 +1,28 @@
+{
+  "actor": "items-01a14e38-e925-7ae1-b3e8-a255a8372ded",
+  "completedAtMs": 1792313735394,
+  "id": "exec-33c64b23-f103-43c7-b1a6-540b2792192e",
+  "item": {
+    "aggregatedOutput": "# Batch report\n\nPython 3.9+, standard library only. Run `python3 -B -m unittest discover -s tests`.\n\n`report(values, detailed=None)` accepts a finite list of numbers. Omitting the\nmode uses the checked-in DETAILED_REPORT setting; an explicit Boolean overrides\nthat default for the call. Plain reports contain `Items: N`. Detailed reports\nfor populated batches append `; Mean: M`, formatting the arithmetic mean with\nPython's `g` format. Empty batches are valid in either mode and produce only\n`Items: 0`; there is no mean to display.\n\nThis increment enables the existing detailed output by default. Preserve explicit\nplain/detailed overrides, counts, and successful empty-batch reports. Historical\ninstallation settings are not recorded here. Review the staged increment against\nthis contract; no live deployment operation is requested.\nfrom config import DETAILED_REPORT\nfrom formatting import format_summary\nfrom stats import summarize\n\n\ndef report(values, detailed=None):\n    if detailed is None:\n        detailed = DETAILED_REPORT\n    summary = summarize(values, detailed=detailed)\n    return format_summary(summary)\ndef format_count(count):\n    return f\"Items: {count}\"\n\n\ndef format_summary(summary):\n    text = format_count(summary[\"count\"])\n    if \"mean\" in summary:\n        return f\"{text}; Mean: {summary['mean']:g}\"\n    return text\ndef summarize(values, detailed=False):\n    result = {\"count\": len(values)}\n    if detailed:\n        result[\"mean\"] = sum(values) / len(values)\n    return result\nDETAILED_REPORT = True\nimport unittest\n\nfrom app import report\n\n\nclass ReportTests(unittest.TestCase):\n    def test_plain_empty(self):\n        self.assertEqual(report([], detailed=False), \"Items: 0\")\n\n    def test_plain_populated(self):\n        self.assertEqual(report([2, 4], detailed=False), \"Items: 2\")\n\n    def test_detailed_populated(self):\n        self.assertEqual(report([2, 4], detailed=True), \"Items: 2; Mean: 3\")\n\n    def test_default_populated(self):\n        self.assertEqual(report([2, 4]), \"Items: 2; Mean: 3\")\n",
+    "command": "/usr/bin/zsh -lc 'cat README.md app.py formatting.py stats.py config.py tests/test_report.py'",
+    "commandActions": [
+      {
+        "command": "cat README.md app.py formatting.py stats.py config.py tests/test_report.py",
+        "type": "unknown"
+      }
+    ],
+    "cwd": "/tmp/fr-advisory-bootstrap-20261018/codex-baseline-R6M-isolated-2",
+    "durationMs": 45,
+    "exitCode": 0,
+    "id": "exec-33c64b23-f103-43c7-b1a6-540b2792192e",
+    "pluginId": null,
+    "processId": "79439",
+    "scriptPath": null,
+    "source": "unifiedExecStartup",
+    "status": "completed",
+    "type": "commandExecution"
+  },
+  "source_file": "items-01a14e38-e925-7ae1-b3e8-a255a8372ded.json",
+  "startedAtMs": 1792313735349,
+  "turnId": "01a14e38-e947-7dd1-826d-02abf0e570a0"
+}

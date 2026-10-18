@@ -1,0 +1,28 @@
+{
+  "actor": "items-01a14e2e-4e4e-76f1-8247-d1728f99a04d",
+  "completedAtMs": 1792313059504,
+  "id": "exec-e624fc91-aa16-4739-8dd7-d29c486315b5",
+  "item": {
+    "aggregatedOutput": "from config import DETAILED_REPORT\nfrom formatting import format_summary\nfrom stats import summarize\n\n\ndef report(values, detailed=None):\n    if detailed is None:\n        detailed = DETAILED_REPORT\n    summary = summarize(values, detailed=detailed)\n    return format_summary(summary)\ndef format_count(count):\n    return f\"Items: {count}\"\n\n\ndef format_summary(summary):\n    text = format_count(summary[\"count\"])\n    if \"mean\" in summary:\n        return f\"{text}; Mean: {summary['mean']:g}\"\n    return text\ndef summarize(values, detailed=False):\n    result = {\"count\": len(values)}\n    if detailed:\n        result[\"mean\"] = sum(values) / len(values)\n    return result\n# Batch report\n\nPython 3.9+, standard library only. Run `python3 -B -m unittest discover -s tests`.\n\n`report(values, detailed=None)` accepts a finite list of numbers. Omitting the\nmode uses the checked-in DETAILED_REPORT setting; an explicit Boolean overrides\nthat default for the call. Plain reports contain `Items: N`. Detailed reports\nfor populated batches append `; Mean: M`, formatting the arithmetic mean with\nPython's `g` format. Empty batches are valid in either mode and produce only\n`Items: 0`; there is no mean to display.\n\nThis increment enables the existing detailed output by default. Preserve explicit\nplain/detailed overrides, counts, and successful empty-batch reports. Historical\ninstallation settings are not recorded here. Review the staged increment against\nthis contract; no live deployment operation is requested.\n__pycache__/\n*.pyc\n./tests/test_report.py:3:from app import report\n./tests/test_report.py:8:        self.assertEqual(report([], detailed=False), \"Items: 0\")\n./tests/test_report.py:11:        self.assertEqual(report([2, 4], detailed=False), \"Items: 2\")\n./tests/test_report.py:13:    def test_detailed_populated(self):\n./tests/test_report.py:14:        self.assertEqual(report([2, 4], detailed=True), \"Items: 2; Mean: 3\")\n./tests/test_report.py:17:        self.assertEqual(report([2, 4]), \"Items: 2; Mean: 3\")\n./README.md:1:# Batch report\n./README.md:5:`report(values, detailed=None)` accepts a finite list of numbers. Omitting the\n./README.md:7:that default for the call. Plain reports contain `Items: N`. Detailed reports\n./README.md:8:for populated batches append `; Mean: M`, formatting the arithmetic mean with\n./README.md:9:Python's `g` format. Empty batches are valid in either mode and produce only\n./README.md:10:`Items: 0`; there is no mean to display.\n./README.md:12:This increment enables the existing detailed output by default. Preserve explicit\n./README.md:13:plain/detailed overrides, counts, and successful empty-batch reports. Historical\n./formatting.py:7:    if \"mean\" in summary:\n./formatting.py:8:        return f\"{text}; Mean: {summary['mean']:g}\"\n./stats.py:1:def summarize(values, detailed=False):\n./stats.py:3:    if detailed:\n./stats.py:4:        result[\"mean\"] = sum(values) / len(values)\n./app.py:6:def report(values, detailed=None):\n./app.py:7:    if detailed is None:\n./app.py:8:        detailed = DETAILED_REPORT\n./app.py:9:    summary = summarize(values, detailed=detailed)\n",
+    "command": "/usr/bin/zsh -lc \"cat app.py formatting.py stats.py README.md .gitignore\nrg -n 'report|detailed|mean|batch' .\"",
+    "commandActions": [
+      {
+        "command": "cat app.py formatting.py stats.py README.md .gitignore\nrg -n 'report|detailed|mean|batch' .",
+        "type": "unknown"
+      }
+    ],
+    "cwd": "/tmp/fr-advisory-bootstrap-20261018/codex-baseline-R6M-standard-2",
+    "durationMs": 98,
+    "exitCode": 0,
+    "id": "exec-e624fc91-aa16-4739-8dd7-d29c486315b5",
+    "pluginId": null,
+    "processId": "52183",
+    "scriptPath": null,
+    "source": "unifiedExecStartup",
+    "status": "completed",
+    "type": "commandExecution"
+  },
+  "source_file": "items-01a14e2e-4e4e-76f1-8247-d1728f99a04d.json",
+  "startedAtMs": 1792313059406,
+  "turnId": "01a14e2e-4e7f-7d41-9a04-29f35abcebb0"
+}

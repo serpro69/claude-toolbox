@@ -1,0 +1,28 @@
+{
+  "actor": "items-01a14e2f-6d3f-7aa0-8186-5c87a3ef620b",
+  "completedAtMs": 1792313151300,
+  "id": "exec-2cc1dba2-dab5-441a-bf6d-67130fa08d64",
+  "item": {
+    "aggregatedOutput": "from config import DETAILED_REPORT\nfrom formatting import format_summary\nfrom stats import summarize\n\n\ndef report(values, detailed=None):\n    if detailed is None:\n        detailed = DETAILED_REPORT\n    summary = summarize(values, detailed=detailed)\n    return format_summary(summary)\ndef summarize(values, detailed=False):\n    result = {\"count\": len(values)}\n    if detailed:\n        result[\"mean\"] = sum(values) / len(values)\n    return result\ndef format_count(count):\n    return f\"Items: {count}\"\n\n\ndef format_summary(summary):\n    text = format_count(summary[\"count\"])\n    if \"mean\" in summary:\n        return f\"{text}; Mean: {summary['mean']:g}\"\n    return text\nDETAILED_REPORT = False\nimport unittest\n\nfrom app import report\n\n\nclass ReportTests(unittest.TestCase):\n    def test_plain_empty(self):\n        self.assertEqual(report([], detailed=False), \"Items: 0\")\n\n    def test_plain_populated(self):\n        self.assertEqual(report([2, 4], detailed=False), \"Items: 2\")\n\n    def test_detailed_populated(self):\n        self.assertEqual(report([2, 4], detailed=True), \"Items: 2; Mean: 3\")\n\n    def test_default_populated(self):\n        self.assertEqual(report([2, 4]), \"Items: 2\")\na210364 Review base\n",
+    "command": "/usr/bin/zsh -lc 'git show :app.py && git show :stats.py && git show :formatting.py && git show HEAD:config.py && git show HEAD:tests/test_report.py && git log -4 --oneline'",
+    "commandActions": [
+      {
+        "command": "git show :app.py && git show :stats.py && git show :formatting.py && git show HEAD:config.py && git show HEAD:tests/test_report.py && git log -4 --oneline",
+        "type": "unknown"
+      }
+    ],
+    "cwd": "/tmp/fr-advisory-bootstrap-20261018/codex-candidate-R6M-standard-2",
+    "durationMs": 56,
+    "exitCode": 0,
+    "id": "exec-2cc1dba2-dab5-441a-bf6d-67130fa08d64",
+    "pluginId": null,
+    "processId": "36871",
+    "scriptPath": null,
+    "source": "unifiedExecStartup",
+    "status": "completed",
+    "type": "commandExecution"
+  },
+  "source_file": "items-01a14e2f-6d3f-7aa0-8186-5c87a3ef620b.json",
+  "startedAtMs": 1792313151243,
+  "turnId": "01a14e2f-6d6e-7513-8481-577873c1f76d"
+}

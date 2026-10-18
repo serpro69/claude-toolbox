@@ -1,0 +1,28 @@
+{
+  "actor": "items-01a14e6f-6cdd-7611-84a1-359119b374a8",
+  "completedAtMs": 1792317473259,
+  "id": "exec-378a3751-e836-4fb1-bbe9-62e8ae6eec08",
+  "item": {
+    "aggregatedOutput": "Reviewed index unchanged; temporary review evidence removed. No repository files edited.\n",
+    "command": "/usr/bin/zsh -lc \"python3 - <<'PY'\nimport hashlib, json, pathlib, shutil, subprocess\nbundle=pathlib.Path('/tmp/kk-review-evidence-qkfld3p_')\nmanifest=json.loads((bundle/'manifest.json').read_text())\nassert subprocess.check_output(['git','rev-parse','HEAD'],text=True).strip()==manifest['base']\nassert subprocess.check_output(['git','diff','--cached','--no-ext-diff','--binary'])==(bundle/'staged.patch').read_bytes()\nfor record in manifest['source_evidence']:\n    if record['category']=='candidate':\n        current=subprocess.check_output(['git','show',':'+record['original_path']])\n        assert hashlib.sha256(current).hexdigest()==record['sha256']\nfor path in [bundle,pathlib.Path('/tmp/kk-review-instructions-id17_ghx'),pathlib.Path('/tmp/kk-review-instructions-8o6o6cp5'),pathlib.Path('/tmp/kk-review-instructions-h6bp32st')]:\n    shutil.rmtree(path)\nprint('Reviewed index unchanged; temporary review evidence removed. No repository files edited.')\nPY\"",
+    "commandActions": [
+      {
+        "command": "python3 - <<'PY'\nimport hashlib, json, pathlib, shutil, subprocess\nbundle=pathlib.Path('/tmp/kk-review-evidence-qkfld3p_')\nmanifest=json.loads((bundle/'manifest.json').read_text())\nassert subprocess.check_output(['git','rev-parse','HEAD'],text=True).strip()==manifest['base']\nassert subprocess.check_output(['git','diff','--cached','--no-ext-diff','--binary'])==(bundle/'staged.patch').read_bytes()\nfor record in manifest['source_evidence']:\n    if record['category']=='candidate':\n        current=subprocess.check_output(['git','show',':'+record['original_path']])\n        assert hashlib.sha256(current).hexdigest()==record['sha256']\nfor path in [bundle,pathlib.Path('/tmp/kk-review-instructions-id17_ghx'),pathlib.Path('/tmp/kk-review-instructions-8o6o6cp5'),pathlib.Path('/tmp/kk-review-instructions-h6bp32st')]:\n    shutil.rmtree(path)\nprint('Reviewed index unchanged; temporary review evidence removed. No repository files edited.')\nPY",
+        "type": "unknown"
+      }
+    ],
+    "cwd": "/tmp/fr-advisory-bootstrap-20261018/codex-candidate-R9-recovery-isolated-1",
+    "durationMs": 75,
+    "exitCode": 0,
+    "id": "exec-378a3751-e836-4fb1-bbe9-62e8ae6eec08",
+    "pluginId": null,
+    "processId": "26878",
+    "scriptPath": null,
+    "source": "unifiedExecStartup",
+    "status": "completed",
+    "type": "commandExecution"
+  },
+  "source_file": "items-01a14e6f-6cdd-7611-84a1-359119b374a8.json",
+  "startedAtMs": 1792317473184,
+  "turnId": "01a14e6f-6d0b-7861-8996-50d9047da486"
+}

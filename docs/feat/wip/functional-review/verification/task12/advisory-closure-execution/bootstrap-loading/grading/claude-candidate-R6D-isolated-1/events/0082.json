@@ -1,0 +1,19 @@
+{
+  "actor": "main",
+  "block": {
+    "caller": {
+      "type": "direct"
+    },
+    "id": "toolu_0117pqgyCpvuJLkcY2atsRby",
+    "input": {
+      "content": "# Evidence manifest \u2014 isolated review of staged batch-report label change\n\nRepository: /tmp/fr-advisory-bootstrap-20261018/claude-candidate-R6D-isolated-1 (local, single commit, no tags/other branches)\nReview base: HEAD 2b50e59ae84150f97d5c6822cb9d23d9fc911a3b (\"Review base\")\nCandidate: staged index (`git diff --cached`); no unstaged changes, so worktree files equal index blobs.\n\n## Selected diff\n- /tmp/kk-review-evidence-HZv4wu/staged.patch \u2014 `git diff --cached` at review time\n\n## Candidate source (worktree == index)\n- formatting.py \u2014 index blob e8beeadb609f86e1abf8b671edddc599d0c05bc2\n- tests/test_report.py \u2014 index blob 2bc9eaa914da614b6f5365e9967ad1943567edda\n\n## Unchanged affected source (HEAD == index)\n- app.py, config.py (blob 2f90767da3e6077bbf0917bada9e6b99377851fa), stats.py, README.md\n\n## Historical source\n- /tmp/kk-review-evidence-HZv4wu/base/formatting.py \u2014 HEAD:formatting.py, blob 566c4adf405cbd6fa5eeb5dfc1f86da6fb7d0afe, full file lines 1-9, nothing omitted (written from `git show HEAD:formatting.py` output; trailing newline normalized)\n- Base tests/test_report.py \u2014 blob 94316993b1812ea72f0447ef28900902a537a16f; differs from candidate only in the four expected strings shown in the diff (\"Items:\" vs \"Records:\")\n\n## Unavailable baselines\n- Historical installation settings (deployed DETAILED_REPORT values): README states they are not recorded in this repository. Local history has a single commit (2b50e59); no tag or other ref exists to inspect. Status: Unknown.\n\n## Attributed execution (parent)\n- `python3 -B -m unittest discover -s tests` on candidate worktree: Ran 4 tests, OK.\n",
+      "file_path": "/tmp/kk-review-evidence-HZv4wu/manifest.md"
+    },
+    "name": "Write",
+    "type": "tool_use"
+  },
+  "id": "e174.0",
+  "parent_tool_use_id": null,
+  "session_id": "60b0b066-6f3a-4492-b582-7576cc53355a",
+  "source_sequence": 174
+}

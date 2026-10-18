@@ -1,0 +1,28 @@
+{
+  "actor": "items-01a14e15-e13d-7df0-8eef-c8078f2ed8da",
+  "completedAtMs": 1792311472014,
+  "id": "exec-9373364e-d14b-4cd4-bc83-a62283473198",
+  "item": {
+    "aggregatedOutput": "from config import DETAILED_REPORT\nfrom formatting import format_summary\nfrom stats import summarize\n\n\ndef report(values, detailed=None):\n    if detailed is None:\n        detailed = DETAILED_REPORT\n    summary = summarize(values, detailed=detailed)\n    return format_summary(summary)\nDETAILED_REPORT = False\ndef summarize(values, detailed=False):\n    result = {\"count\": len(values)}\n    if detailed:\n        result[\"mean\"] = sum(values) / len(values)\n    return result\n",
+    "command": "/usr/bin/zsh -lc 'cat app.py config.py stats.py'",
+    "commandActions": [
+      {
+        "command": "cat app.py config.py stats.py",
+        "type": "unknown"
+      }
+    ],
+    "cwd": "/tmp/fr-advisory-bootstrap-20261018/codex-baseline-R6D-isolated-1",
+    "durationMs": 51,
+    "exitCode": 0,
+    "id": "exec-9373364e-d14b-4cd4-bc83-a62283473198",
+    "pluginId": null,
+    "processId": "78637",
+    "scriptPath": null,
+    "source": "unifiedExecStartup",
+    "status": "completed",
+    "type": "commandExecution"
+  },
+  "source_file": "items-01a14e15-e13d-7df0-8eef-c8078f2ed8da.json",
+  "startedAtMs": 1792311471962,
+  "turnId": "01a14e15-e16a-7bd2-b7e3-61ead92f1e0b"
+}

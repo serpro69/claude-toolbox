@@ -1,0 +1,28 @@
+{
+  "actor": "items-01a14e67-c2ab-77d0-a63d-8dca90f0f076",
+  "completedAtMs": 1792316846761,
+  "id": "exec-e1112c29-cfba-4f67-89d8-9a46266e8d96",
+  "item": {
+    "aggregatedOutput": "# Preference reads\n\nPython 3.9+, standard library only. Run `python3 -B -m unittest discover -s tests`.\n\nThis change accepts preference IDs with surrounding whitespace. Trim the ID\nbefore looking it up; preserve the existing resilient-read contract. A logical\nread may make up to three attempts on `TransientRead`, returning the first\nsuccessful result. Exhausted transient errors propagate. `MissingPreference`\nis permanent and must propagate on the first attempt. Reads have no side effects.\n\n`Preferences.read` is the public entry point. `Repository.read_resilient`\nowns the bounded retry policy; `read_once` performs one attempt. The scripted\nbackend models finite outcomes without sleeping, services or concurrency.\n7c0410c Review base\n",
+    "command": "/usr/bin/zsh -lc \"git show :README.md; git ls-files docs; git log -4 --format='%h %s'; git tag --list\"",
+    "commandActions": [
+      {
+        "command": "git show :README.md; git ls-files docs; git log -4 --format='%h %s'; git tag --list",
+        "type": "unknown"
+      }
+    ],
+    "cwd": "/tmp/fr-advisory-bootstrap-20261018/codex-candidate-R9-recovery-standard-1",
+    "durationMs": 52,
+    "exitCode": 0,
+    "id": "exec-e1112c29-cfba-4f67-89d8-9a46266e8d96",
+    "pluginId": null,
+    "processId": "39957",
+    "scriptPath": null,
+    "source": "unifiedExecStartup",
+    "status": "completed",
+    "type": "commandExecution"
+  },
+  "source_file": "items-01a14e67-c2ab-77d0-a63d-8dca90f0f076.json",
+  "startedAtMs": 1792316846709,
+  "turnId": "01a14e67-c2da-7b40-b99b-f15af51e3641"
+}

@@ -1,0 +1,21 @@
+{
+  "actor": "main",
+  "block": {
+    "caller": {
+      "type": "direct"
+    },
+    "id": "toolu_01XEKjyFN7Qi3xCNtMvu9Wve",
+    "input": {
+      "description": "Isolated code review",
+      "prompt": "You are reviewing the following code changes. Apply your full review workflow.\n\n## Plugin Root\n\n/tmp/fr-advisory-bootstrap-20261018/claude-baseline-R9-recovery-isolated-1/plugins/kk\n\n## Git Diff\n\nThe staged diff is at: /tmp/kk-review-code-prefid-normalize.patch\n\nRepository root: /tmp/fr-advisory-bootstrap-20261018/claude-baseline-R9-recovery-isolated-1\nChanged files (absolute):\n- /tmp/fr-advisory-bootstrap-20261018/claude-baseline-R9-recovery-isolated-1/reader.py\n- /tmp/fr-advisory-bootstrap-20261018/claude-baseline-R9-recovery-isolated-1/tests/test_reads.py\nSurrounding code (imported by / calling the changed code \u2014 read these to verify cross-file correctness):\n- /tmp/fr-advisory-bootstrap-20261018/claude-baseline-R9-recovery-isolated-1/preferences.py\n- /tmp/fr-advisory-bootstrap-20261018/claude-baseline-R9-recovery-isolated-1/repository.py\n\n## Active Profiles and Resolved Checklists\n\n- profile: python, checklist: security-checklist.md, triggered_by: content \u2014 file extension `.py` (reader.py, tests/test_reads.py)\n- profile: python, checklist: solid-checklist.md, triggered_by: content \u2014 file extension `.py` (reader.py, tests/test_reads.py)\n- profile: python, checklist: code-quality-checklist.md, triggered_by: content \u2014 file extension `.py` (reader.py, tests/test_reads.py)\n- profile: python, checklist: removal-plan.md, triggered_by: content \u2014 file extension `.py` (reader.py, tests/test_reads.py)\n\nFor each record, read the checklist at `/tmp/fr-advisory-bootstrap-20261018/claude-baseline-R9-recovery-isolated-1/plugins/kk/profiles/python/review-code/<checklist>` and apply it to the diff.\n\n## Spec Context\n\nThe change is described by its author as \"preference ID normalization\": preference keys should be normalized (whitespace-trimmed) before being read from the repository. No design doc is available \u2014 review based on code quality alone, plus whether the change actually achieves that intent end-to-end (e.g. is the normalization applied on the path the tests exercise; is it applied consistently on all read paths; do the tests actually verify it).\n\n## Task Scope\n\nNo task scope available \u2014 review the diff on its own merits without assuming any feature-level design doc.\n\n## Rejected Approaches\n\nNo rejected approaches to note.\n\nProduce your findings in the output format specified in your agent definition. For every finding cite file:line and include severity (P0\u2013P3) and confidence.",
+      "run_in_background": false,
+      "subagent_type": "kk:code-reviewer"
+    },
+    "name": "Agent",
+    "type": "tool_use"
+  },
+  "id": "e101.0",
+  "parent_tool_use_id": null,
+  "session_id": "c1ab0c89-d641-4c2c-b98a-7ce8029794fb",
+  "source_sequence": 101
+}

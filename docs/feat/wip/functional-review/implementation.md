@@ -5,7 +5,7 @@
 > Tasks: [tasks.md](tasks.md)
 > Review disposition: [consolidated assessment](reviews/design-review-consolidation.md)
 > Status: Tasks 1–11 and core matrix capture/grading complete; acceptance and final verification pending
-> Revised: 2026-10-17; corrected bindings complete, high-effort launch verified, candidate detection receipts incomplete
+> Revised: 2026-10-18; preflight complete; explicitly authorized comparison capture and independent grading underway
 > Next-session handoff: [follow-up.md](follow-up.md)
 
 ## Starting points
@@ -388,6 +388,66 @@ presence/hashes. Five regressions pass; its separate guard freeze preserves all
 actual capture/runtime identities. The strict gate rejects the incomplete
 candidate and the attestation stays BLOCKED. Use that guarded entry for later
 preparation/measurement; the original frozen launcher remains historical.
+
+The user selected that loading follow-up on 2026-10-18. The
+[bootstrap successor](verification/task12/advisory-closure-execution/bootstrap-loading/preflight-result.md)
+clarifies the probe-only stopping boundary while preserving source-specific
+instruction requirements, measured prompts, runtime policy and strict receipt
+recomputation. Independent source review approves after correcting historical
+evidence drift checks; 48 local tests pass. The successor is separately frozen.
+Automatic approval review rejected its baseline launch before process creation
+over explicit payload/destination authorization. At that checkpoint no actor ran. The handoff
+records the exact approval scope, then serial capture/audit, retention, independent
+completion review and strict preflight verification. 12.21.4 remains open; old
+failed captures, original acceptance and measured comparison stay unchanged.
+
+The user then explicitly approved both transfers/probes. Both completed with
+unchanged subjects and full required instruction receipts, including all eight
+candidate detection files. Independent assessment found the auditor's blanket
+rejection of two allowed instruction-filename Globs was a verifier defect. The
+separately reviewed `bootstrap-loading/listing_guard.py` validates the narrow
+listing scope and complete results while preserving every original receipt gate;
+twelve tests pass and the original failure/captures remain untouched. Its verifier
+freeze preserves the actual actor runtime identity. Independent final evidence
+review approves; the sealed attestation passes the strict guard with exit 0.
+Task 12.21.4 is complete. Later preparation/measurement must use that selected
+entry point; the 64-session comparison, adoption and original acceptance are
+still separate, uncompleted work.
+
+### Advisory comparison execution — Task 12.22
+
+After preflight passed, the user selected the 64-session comparison. All declared
+inputs were prepared and each launch independently validated by the existing
+adapter; no source/runtime/rubric change was needed. Automatic approval review
+initially rejected launch before process creation. The user's explicit "yes" to
+the concrete payload/destination request resolved that blocker. All 64 sessions
+then completed successfully, without retries, and all 464 original assertion rows
+were independently graded. Original returns and eight same-packet clarifications
+are retained separately; the strict audit passes. Runtime retention preserves
+480 configuration files and confirms removal of owned Codex entries for 32 jobs.
+
+[The result report](verification/task12/advisory-closure-execution/bootstrap-loading/comparison-result.md)
+records **REJECT** under the unchanged contract: an inaccurate evidence
+claim and speculative refactor advice each fail a candidate decision check.
+The initially graded truncation was traced to the grader's viewing tool and
+corrected from existing sealed evidence. Seven of eight dormant final reports surface
+the advisory and supply an action; the eighth leaves the target unexercised.
+Independent completion review approves; Task 12.22 is complete. The next recommendation is to revert
+only the closure candidate when selected, preserving its patch and evidence.
+No rollback, new experiment or full feature acceptance follows automatically.
+
+### Closure candidate rollback — Task 12.23
+
+The user explicitly requested reverting the rejected closure candidate. Restore
+only its frozen four-file patch: two canonical closing sections and their generated
+Codex copies, matching source parent `11b2c6efb0638605bb6acd3eb184edb9abd10f56`.
+The broader functional-review implementation remains in place. Preserve the
+comparison's original evidence and completion seal, with its four historical
+handoff targets archived before live tracking updates. The
+[rollback record](verification/task12/advisory-closure-revert/README.md) retains
+scope, passing verification, provenance and independent review APPROVE. Task 12.23
+is complete. No actor rerun, new wording
+experiment, PAL resumption or acceptance claim follows from this rollback.
 
 ### Task 13 finalization
 

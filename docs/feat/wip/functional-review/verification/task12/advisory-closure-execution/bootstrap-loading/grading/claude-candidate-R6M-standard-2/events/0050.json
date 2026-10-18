@@ -1,0 +1,19 @@
+{
+  "actor": "main",
+  "block": {
+    "caller": {
+      "type": "direct"
+    },
+    "id": "toolu_012GzfUNM7BN54kFvc1WSYKT",
+    "input": {
+      "content": "Pattern: flipping a config default (e.g. DETAILED_REPORT False -> True) sends every default-mode call through a previously opt-in code path, including boundary inputs the old default never reached. In batch-report, stats.summarize computes sum(values)/len(values) when detailed=True and has no empty-input guard. As a result, report([]) went from \"Items: 0\" to ZeroDivisionError, which breaks the contract that empty batches are valid in either mode. The diff updated only the populated default test, so the suite stayed green. Review check: when a default flips, list the boundary cases the new default path handles (empty, zero, None) and require a default-mode test for each one the contract covers.",
+      "source": "kk:review-findings"
+    },
+    "name": "mcp__capy__capy_index",
+    "type": "tool_use"
+  },
+  "id": "e131.0",
+  "parent_tool_use_id": null,
+  "session_id": "2c55a015-7652-434a-8f1d-714181ade184",
+  "source_sequence": 131
+}

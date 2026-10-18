@@ -1,0 +1,30 @@
+{
+  "actor": "items-01a14e70-fc50-7872-ba3f-fdd61da4ac1f",
+  "completedAtMs": 1792317428003,
+  "id": "exec-cbb6ac96-b471-4dcb-b49a-ada2ecdecbc1",
+  "item": {
+    "aggregatedOutput": "     1\tclass TransientRead(Exception):\n     2\t    pass\n     3\t\n     4\t\n     5\tclass MissingPreference(Exception):\n     6\t    pass\n     7\t\n     8\t\n     9\tclass ScriptedBackend:\n    10\t    def __init__(self, outcomes):\n    11\t        self.outcomes = iter(outcomes)\n    12\t        self.keys = []\n    13\t\n    14\t    def read(self, key):\n    15\t        self.keys.append(key)\n    16\t        outcome = next(self.outcomes)\n    17\t        if isinstance(outcome, Exception):\n    18\t            raise outcome\n    19\t        return outcome\n    20\t\n    21\t\n    22\tclass Repository:\n    23\t    def __init__(self, backend):\n    24\t        self.backend = backend\n    25\t\n    26\t    def read_once(self, key):\n    27\t        return self.backend.read(key)\n    28\t\n    29\t    def read_resilient(self, key):\n    30\t        for attempt in range(3):\n    31\t            try:\n    32\t                return self.read_once(key)\n    33\t            except TransientRead:\n    34\t                if attempt == 2:\n    35\t                    raise\n",
+    "command": "/usr/bin/zsh -lc \"cat -n '/tmp/kk-review-evidence-qkfld3p_/historical/repository.py'\"",
+    "commandActions": [
+      {
+        "command": "cat -n /tmp/kk-review-evidence-qkfld3p_/historical/repository.py",
+        "name": "repository.py",
+        "path": "/tmp/kk-review-evidence-qkfld3p_/historical/repository.py",
+        "type": "read"
+      }
+    ],
+    "cwd": "/tmp/fr-advisory-bootstrap-20261018/codex-candidate-R9-recovery-isolated-1",
+    "durationMs": 90,
+    "exitCode": 0,
+    "id": "exec-cbb6ac96-b471-4dcb-b49a-ada2ecdecbc1",
+    "pluginId": null,
+    "processId": "89802",
+    "scriptPath": null,
+    "source": "unifiedExecStartup",
+    "status": "completed",
+    "type": "commandExecution"
+  },
+  "source_file": "items-01a14e70-fc50-7872-ba3f-fdd61da4ac1f.json",
+  "startedAtMs": 1792317427912,
+  "turnId": "01a14e70-fc71-7603-958d-ce5f5d05d893"
+}

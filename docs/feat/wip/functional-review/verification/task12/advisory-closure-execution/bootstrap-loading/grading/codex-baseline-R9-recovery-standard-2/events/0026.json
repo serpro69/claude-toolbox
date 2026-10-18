@@ -1,0 +1,28 @@
+{
+  "actor": "items-01a14e69-5c55-7ae0-b205-8e2c52d272ff",
+  "completedAtMs": 1792316952475,
+  "id": "exec-1ecbf831-d7e9-4f94-b20f-ca37131a64e2",
+  "item": {
+    "aggregatedOutput": "Passed 4 third-attempt success checks: unpadded, spaces, tabs/newlines, Unicode whitespace.\n",
+    "command": "/usr/bin/zsh -lc \"python3 -B - <<'PY'\nfrom preferences import Preferences\nfrom repository import Repository, ScriptedBackend, TransientRead\n\nfor key in ('w', ' w ', '\\\\t\\\\nw\\\\r\\\\n', '\\\\u2003w\\\\u2003'):\n    backend = ScriptedBackend([TransientRead('first'), TransientRead('second'), {'color': 'blue'}])\n    assert Preferences(Repository(backend)).read(key) == {'color': 'blue'}\n    assert backend.keys == ['w', 'w', 'w']\nprint('Passed 4 third-attempt success checks: unpadded, spaces, tabs/newlines, Unicode whitespace.')\nPY\"",
+    "commandActions": [
+      {
+        "command": "python3 -B - <<'PY'\nfrom preferences import Preferences\nfrom repository import Repository, ScriptedBackend, TransientRead\n\nfor key in ('w', ' w ', '\\t\\nw\\r\\n', '\\u2003w\\u2003'):\n    backend = ScriptedBackend([TransientRead('first'), TransientRead('second'), {'color': 'blue'}])\n    assert Preferences(Repository(backend)).read(key) == {'color': 'blue'}\n    assert backend.keys == ['w', 'w', 'w']\nprint('Passed 4 third-attempt success checks: unpadded, spaces, tabs/newlines, Unicode whitespace.')\nPY",
+        "type": "unknown"
+      }
+    ],
+    "cwd": "/tmp/fr-advisory-bootstrap-20261018/codex-baseline-R9-recovery-standard-2",
+    "durationMs": 60,
+    "exitCode": 0,
+    "id": "exec-1ecbf831-d7e9-4f94-b20f-ca37131a64e2",
+    "pluginId": null,
+    "processId": "32646",
+    "scriptPath": null,
+    "source": "unifiedExecStartup",
+    "status": "completed",
+    "type": "commandExecution"
+  },
+  "source_file": "items-01a14e69-5c55-7ae0-b205-8e2c52d272ff.json",
+  "startedAtMs": 1792316952414,
+  "turnId": "01a14e69-5c83-7d93-9821-d234536d08aa"
+}

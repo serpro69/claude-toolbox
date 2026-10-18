@@ -1,0 +1,28 @@
+{
+  "actor": "items-01a14e1d-711c-7662-a810-7ff6b307e7ec",
+  "completedAtMs": 1792312104890,
+  "id": "exec-1fca264b-e7b0-4e6e-b7db-ad8b1c105cc9",
+  "item": {
+    "aggregatedOutput": "Reviewed index and HEAD are unchanged.\nM  formatting.py\nM  tests/test_report.py\nRemoved only temporary evidence/instruction bundles created for this review.\n",
+    "command": "/usr/bin/zsh -lc \"python3 - <<'PY'\nimport json, pathlib, shutil, subprocess\nroot=pathlib.Path('/tmp/kk-batch-report-review-WhasQ2')\nmanifest=json.loads((root/'manifest.json').read_text())\nassert subprocess.check_output(['git','rev-parse','HEAD'],text=True).strip()==manifest['base']\nfor entry in manifest['sources']:\n    if entry['role']=='candidate':\n        assert subprocess.check_output(['git','show',':'+entry['original_path']])==pathlib.Path(entry['path']).read_bytes(), entry['original_path']\nassert subprocess.check_output(['git','diff','--cached','--no-ext-diff','--binary'])==(root/'staged.patch').read_bytes()\nprint('Reviewed index and HEAD are unchanged.')\nprint(subprocess.check_output(['git','status','--short'],text=True),end='')\nfor directory in [root,pathlib.Path('/tmp/kk-review-instructions-nf8x_d63'),pathlib.Path('/tmp/kk-review-instructions-7kukhtlm'),pathlib.Path('/tmp/kk-review-instructions-q1gr60m8')]:\n    shutil.rmtree(directory)\nprint('Removed only temporary evidence/instruction bundles created for this review.')\nPY\"",
+    "commandActions": [
+      {
+        "command": "python3 - <<'PY'\nimport json, pathlib, shutil, subprocess\nroot=pathlib.Path('/tmp/kk-batch-report-review-WhasQ2')\nmanifest=json.loads((root/'manifest.json').read_text())\nassert subprocess.check_output(['git','rev-parse','HEAD'],text=True).strip()==manifest['base']\nfor entry in manifest['sources']:\n    if entry['role']=='candidate':\n        assert subprocess.check_output(['git','show',':'+entry['original_path']])==pathlib.Path(entry['path']).read_bytes(), entry['original_path']\nassert subprocess.check_output(['git','diff','--cached','--no-ext-diff','--binary'])==(root/'staged.patch').read_bytes()\nprint('Reviewed index and HEAD are unchanged.')\nprint(subprocess.check_output(['git','status','--short'],text=True),end='')\nfor directory in [root,pathlib.Path('/tmp/kk-review-instructions-nf8x_d63'),pathlib.Path('/tmp/kk-review-instructions-7kukhtlm'),pathlib.Path('/tmp/kk-review-instructions-q1gr60m8')]:\n    shutil.rmtree(directory)\nprint('Removed only temporary evidence/instruction bundles created for this review.')\nPY",
+        "type": "unknown"
+      }
+    ],
+    "cwd": "/tmp/fr-advisory-bootstrap-20261018/codex-candidate-R6D-isolated-2",
+    "durationMs": 87,
+    "exitCode": 0,
+    "id": "exec-1fca264b-e7b0-4e6e-b7db-ad8b1c105cc9",
+    "pluginId": null,
+    "processId": "6542",
+    "scriptPath": null,
+    "source": "unifiedExecStartup",
+    "status": "completed",
+    "type": "commandExecution"
+  },
+  "source_file": "items-01a14e1d-711c-7662-a810-7ff6b307e7ec.json",
+  "startedAtMs": 1792312104802,
+  "turnId": "01a14e1d-714a-7b91-83c5-ffdb44761c99"
+}

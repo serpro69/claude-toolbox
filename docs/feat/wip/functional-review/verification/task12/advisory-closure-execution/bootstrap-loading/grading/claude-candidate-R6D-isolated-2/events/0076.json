@@ -1,0 +1,19 @@
+{
+  "actor": "main",
+  "block": {
+    "caller": {
+      "type": "direct"
+    },
+    "id": "toolu_012toSqFDUYLh9LvEjSAVYrR",
+    "input": {
+      "content": "# Change context (parent-prepared, factual record)\n\n## Intent and authority\n- Source: /tmp/fr-advisory-bootstrap-20261018/claude-candidate-R6D-isolated-2/README.md (explicit).\n- \"This increment changes the count label from Items to Records. Preserve counts,\n  calculations, mode selection and the mean suffix. Detailed reporting is an existing\n  optional path; it is not being activated or redesigned in this increment.\"\n- README contract: `report(values, detailed=None)` accepts a finite list of numbers.\n  Omitting the mode uses checked-in DETAILED_REPORT; explicit Boolean overrides per call.\n  Plain reports contain the count, including zero for an empty batch. Detailed reports\n  for populated batches also append `; Mean: M` (Python `g` format).\n- User request: review the staged batch-report count label change.\n\n## Change boundary\n- Selector: staged (`git diff --cached`); no unstaged changes exist.\n- Review base: HEAD 2b50e59ae84150f97d5c6822cb9d23d9fc911a3b (\"Review base\", only commit).\n- Candidate: index. Worktree tracked files are identical to the index (verified with\n  `git diff --quiet`), so candidate source paths below are the worktree files.\n- Changed: formatting.py (blob 566c4ad -> e8beead), tests/test_report.py (9431699 -> 2bc9eaa).\n- No feature docs (no docs/ directory).\n\n## Existing behavior / consumers\n- app.py `report` -> stats.summarize -> formatting.format_summary -> format_count.\n- config.py: DETAILED_REPORT = False (checked-in default).\n- Repository grep (excluding plugin tooling) for `Items`, `format_count`, `format_summary`:\n  no other in-repo consumer of the label string besides tests and README.\n\n## Delivery constraints / baselines\n- README: \"Historical installation settings are not recorded here. Review the staged\n  increment; no live deployment operation is requested.\"\n- No released/deployed baseline is available; external consumers of the output string\n  are unknown.\n\n## Scenarios and evidence\n- Tests were NOT executed by the parent (shell execution was denied in this session).\n  No author-supplied test results are available. Source-only evidence.\n- Historical source: not separately materialized; the full base side of every changed\n  line is in the diff hunks, and the unchanged remainder of each file is identical at base.\n\n## Rejected approaches\n- None recorded.\n",
+      "file_path": "/tmp/kk-review-code-r6d2-evidence/change-context.md"
+    },
+    "name": "Write",
+    "type": "tool_use"
+  },
+  "id": "e181.0",
+  "parent_tool_use_id": null,
+  "session_id": "d36be1c4-a4b2-47b0-b772-8c592b773eaa",
+  "source_sequence": 181
+}

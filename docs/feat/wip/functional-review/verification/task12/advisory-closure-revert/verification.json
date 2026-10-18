@@ -1,0 +1,41 @@
+{
+  "status": "PASS",
+  "source_parent": "11b2c6efb0638605bb6acd3eb184edb9abd10f56",
+  "operative_files": 4,
+  "source_parent_byte_equality": true,
+  "forward_frozen_patch_check_exit": 0,
+  "saved_rollback_patch_reverse_check_exit": 0,
+  "saved_rollback_patch_matches_exact_git_diff": true,
+  "saved_rollback_patch_sha256": "5062b7592e18a06755d822034b261480883ae9a6b332cf8eab8874a4195e8832",
+  "generated_freshness": {
+    "files_and_links": 958,
+    "sha256": "841a8e081547dd957433d52f0318e9b3ca75eb74e2f6b48169ae7e50d606d8a1",
+    "second_generation_unchanged": true
+  },
+  "checks": [
+    {
+      "command": "make generate-kodex",
+      "environment": "Python 3.12.11 on PATH; protected .codex/agents write access granted",
+      "exit_code": 0,
+      "log": "generation.log",
+      "result": "Generator Go tests pass; plugin structure 223 assertions and Codex structure 29 assertions pass."
+    },
+    {
+      "command": "make plugin-graph",
+      "environment": "GOCACHE=/tmp/fr-closure-revert-go-build; Python 3.12.11 on PATH",
+      "exit_code": 0,
+      "log": "graph.log",
+      "result": "Graph Go tests pass; no broken edges or orphans. Cycle warning is non-fatal."
+    },
+    {
+      "command": "git diff --check",
+      "exit_code": 0
+    }
+  ],
+  "recovered_environment_failures": [
+    "Initial generator invocation could not write protected .codex/agents; authorized invocation completed generation.",
+    "Default Python 3.10 lacked tomllib/tomli, causing 7 TOML parser checks to fail; Python 3.12 rerun passed all 29 Codex assertions.",
+    "Initial graph invocation could not write the default Go build cache; isolated writable /tmp cache rerun passed."
+  ],
+  "comparison_evidence": "All 35 original seal hashes preserved: 31 original artifact files plus 4 exact completion-time handoff snapshots."
+}
