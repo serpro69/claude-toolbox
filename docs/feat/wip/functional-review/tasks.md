@@ -7,9 +7,9 @@
 > Issue: [#166](https://github.com/serpro69/claude-toolbox/issues/166)
 > Status: in-progress
 > Created: 2026-10-07
-> Revised: 2026-10-17 with completed corrected bindings and the candidate's missing detection receipts
-> Next-session handoff: [corrected binding results and concrete follow-up](verification/task12/advisory-closure-execution/high-effort-host/preflight-result.md)
-> Current slice: Task 12.21 in progress — high-effort launch verified; candidate omits eight required detection reads; preflight BLOCKED and measurement unrun
+> Revised: 2026-10-18 with completed corrected bindings, independent evidence approval and passing strict preflight
+> Next-session handoff: [completed runtime preflight and comparison boundary](verification/task12/advisory-closure-execution/bootstrap-loading/preflight-result.md)
+> Current slice: Task 12.22 in progress — explicit approval received; serial measured capture and independent grading underway
 > Not Doing: new review skill, whole-system audits, mandatory production access, deployments, generic release engine, new models/dependencies, profile redesign
 > Delivery: preserve existing invocations/shared consumers; regenerate Codex artifacts with every operative slice.
 
@@ -1275,7 +1275,7 @@ result checks now tie every observation to frozen inputs and a distinct request.
 
 ### Task 12.21: Run and independently review runtime preflight
 
-- **Status:** in-progress — corrected host probes complete; effort gap addressed; candidate bootstrap receipts incomplete
+- **Status:** done — corrected bindings independently reviewed; sealed strict runtime preflight PASS
 - **Depends on:** Task 12.20 (done)
 - **Size:** M
 - **Owner:** implementing agent
@@ -1286,10 +1286,10 @@ result checks now tie every observation to frozen inputs and a distinct request.
   64 measured sessions or PAL resumption.
 - **Docs:** [preflight declaration](verification/task12/advisory-closure-execution/preflight-contract.md)
 
-- [x] 12.21.1 Verify unchanged source/execution/calibration identities and run four fresh binding probes → verify: both providers and both source sides receive their own selected instructions/models/roles; no evaluator material, mixed installation or PAL launch. Captures and those receipts are complete; the separate Claude effort qualification blocks 12.21.4.
+- [x] 12.21.1 Verify unchanged source/execution/calibration identities and run four fresh binding probes → verify: both providers and both source sides receive their own selected instructions/models/roles; no evaluator material, mixed installation or PAL launch. Final Claude successors resolve the earlier effort/loading gaps; approved Codex/state reuse retains its original identity.
 - [x] 12.21.2 Run two independent Capy state probes → verify: empty distinct stores, successful index/search, foreign marker absent and private vault unavailable; retain raw evidence.
-- [x] 12.21.3 Audit actual instruction receipts, runtime configuration and cleanup; obtain independent review → verify: source/read/model claims follow successful captured events, and temporary registrations are restored. Review is COMMENT with the effort gap explicit.
-- [ ] 12.21.4 Seal the preflight attestation and pass the adapter's preflight guard → verify: all evidence matches this execution freeze and calibration result; no measured capture or adoption is claimed.
+- [x] 12.21.3 Audit actual instruction receipts, runtime configuration and cleanup; obtain independent review → verify: source/read/model claims follow successful captured events, and temporary registrations are restored. Final evidence review APPROVE; earlier COMMENT/BLOCKED records preserved.
+- [x] 12.21.4 Seal the preflight attestation and pass the adapter's preflight guard → verify: all evidence matches this execution freeze and calibration result; no measured capture or adoption is claimed. The separately frozen listing verifier's strict guard exits 0 on 2026-10-18.
 
 #### Execution context — 2026-10-17
 
@@ -1406,6 +1406,161 @@ bootstrap loading and independently review any bounded successor declaration
 before a further affected capture. No operative source edit, additional actor,
 measured comparison, grading change or acceptance waiver is selected. 12.21.4,
 Task 12 acceptance and Task 13 remain open.
+
+#### Authorized bootstrap-loading correction — 2026-10-18
+
+The user selected the first priority: reconcile the binding prompt's stopping
+point with bootstrap loading, review the correction, rerun affected captures and
+assess 12.21.4. The separately identified
+[successor declaration](verification/task12/advisory-closure-execution/bootstrap-loading/run-contract.md)
+preserves frozen actor sources, measured prompts, original failures and the
+receipt-recomputing guard. Both Claude binding probes use the same corrected
+prompt, with fresh owned workspaces and unchanged high-effort host configuration.
+The existing explicit Claude payload/destination authorization remains applicable.
+PAL and the 64 measured sessions remain outside this task.
+
+Python is the only active implementation profile; core and conservative async
+guidance are loaded with test/review checklists. Archived inputs were restored
+and the original guarded launcher verifies against the pinned runtimes. No new
+dependency, operative skill edit or generation is needed.
+
+**Outcome:** [source review](verification/task12/advisory-closure-execution/bootstrap-loading/source-review.md)
+approves the prompt/launcher and limited calibration/Codex/state reuse. Its P2
+historical-evidence integrity gap was fixed and regression-tested before freeze;
+eight new, fourteen predecessor and twenty-six original adapter/receipt tests
+pass. Successor freeze:
+`4a0c926f6af7a70e5b12fc175e670b7d68715ccb0295d8a94b8ba2dd7ebecdec`.
+
+**Earlier blocked launch:** automatic approval review rejected the baseline request
+before process creation, requiring specific authorization for repository-derived
+instructions and synthetic fixture data sent to authenticated Anthropic Claude
+API. The task continuation and earlier recorded approval were not accepted for
+this new request. No bypass, retry, candidate request or capture followed.
+Owner: implementing agent after explicit approval of both frozen bindings with
+normal host access, isolated Capy and PAL excluded. Then reverify, capture/audit
+serially, retain evidence, obtain independent completion review and pass the strict
+guard. [Current handoff](verification/task12/advisory-closure-execution/bootstrap-loading/preflight-result.md).
+That record predates the explicit approval and completed probes below.
+
+#### Completed bootstrap bindings and strict preflight — 2026-10-18
+
+The user answered **"proceed"** to the concrete two-probe payload/destination
+request. [Authorization](verification/task12/advisory-closure-execution/bootstrap-loading/authorization.md)
+resolved the launch blocker. Both fresh Claude bindings completed once with exit 0,
+unchanged subjects, expected roots/models and high-effort launch settings.
+All eight candidate detection files and all five required child sources returned
+completely. Forty baseline and forty-four candidate sealed files and ten retained
+runtime configurations verify. No actor-source or measured-prompt change occurred.
+
+The original auditor rejected two instruction-only filename listings. Independent
+assessment identified a verifier mismatch with the existing allowed tool/prompt
+contract. A separately reviewed verifier validates base/pattern, paired complete
+results, normalized unique frozen paths and separate listing provenance; listings
+never count as Reads. Twelve new verifier tests pass, including the corrected
+normalized-alias review finding. Original failure, captures and baseline audit
+bytes remain preserved. No further actor was run.
+
+[Independent final evidence review](verification/task12/advisory-closure-execution/bootstrap-loading/capture-review.md)
+approves the scoped preflight with no findings. The
+[attestation](verification/task12/advisory-closure-execution/bootstrap-loading/preflight.json)
+binds execution freeze `4a0c926f6af7a70e5b12fc175e670b7d68715ccb0295d8a94b8ba2dd7ebecdec`,
+verifier freeze `4659cc668c11a7ff81f44afa735c5523250f3a1aa609987e96ac11a6fe0a457b`,
+all four binding manifests, calibration, state, runtime retention and review.
+The selected `bootstrap-loading/listing_guard.py preflight` exits **0**.
+Task 12.21 and 12.21.4 are complete. This proves runtime/input readiness only.
+
+Next owner: implementing agent when the separately frozen 64-session comparison
+is selected. Use `bootstrap-loading/listing_guard.py`, reverify identities and
+prepare all declared runs before measurement. Comparison/adoption, original
+acceptance, deferred PAL, other investigations and Task 13 remain open; exact
+Codex child prompts, internal effort telemetry and OS confinement remain unclaimed.
+
+### Task 12.22: Execute and grade the frozen advisory-closure comparison
+
+- **Status:** done — 64 captures, 464 original grades, independent completion review APPROVE; closure candidate REJECT
+- **Depends on:** Task 12.21 (done)
+- **Owner:** implementing agent
+- **Authority:** the user answered "proceed" to the completed preflight and next
+  frozen 64-session comparison. This selects the declared Claude/Codex measured
+  batch, required temporary runtime setup/cleanup, independent grading and bounded
+  disposition. PAL remains excluded. No source, fixture, model, rubric or threshold
+  change is selected.
+- **Docs:** [comparison contract](verification/task12/advisory-closure/run-contract.md),
+  [execution record](verification/task12/advisory-closure-execution/bootstrap-loading/comparison.md)
+
+- [x] 12.22.1 Reverify frozen inputs, calibration and strict preflight; prepare all 64 fresh declared inputs before capture. All 64 individual launch validations pass.
+- [x] 12.22.2 Capture the complete serial matrix, preserving order and every attempt; stop on setup/integrity/runtime failure without retry, skipping or overwrite. All 64 captures completed successfully without replacement.
+- [x] 12.22.3 Audit/seal evidence and grade every original assertion independently with fresh pinned graders; preserve original FAIL/PARTIAL rows and conditional triggers. All 464 rows retained, corrections separately recorded, runtime files retained and owned Codex entries removed.
+- [x] 12.22.4 Apply the predeclared bounded KEEP/REJECT/INCONCLUSIVE criteria, obtain independent completion review and document the result without conflating it with full feature acceptance. REJECT, independently reviewed; full feature acceptance remains open.
+
+#### Execution context — 2026-10-18
+
+All 64 inputs are prepared, with 32 sessions per provider and 16 per case; every
+prepared launch validates against frozen identities and ordinary prompts. The
+batch request was rejected by automatic approval review before process creation
+because it requires explicit authorization for repository-derived instruction and
+fixture transfers to authenticated Anthropic Claude and OpenAI Codex for all
+64 sessions. No measured run, temporary registration, bypass or retry followed.
+The [execution record](verification/task12/advisory-closure-execution/bootstrap-loading/comparison.md)
+retains exact approval scope and resume steps. Owner: implementing agent after
+explicit approval. Reverify and run the already prepared batch; do not prepare
+again or overwrite inputs. Grading, disposition and completion review remain open.
+
+The user subsequently answered **"yes"** to the concrete 64-session payload and
+destination request. [Batch authorization](verification/task12/advisory-closure-execution/bootstrap-loading/comparison-authorization.md)
+resolved the blocker; the serial batch launched after another successful strict
+preflight. Fresh independent graders process completed sealed captures while
+execution continues. Exact dispatches and original returns are retained beside
+the execution record. Behavioral FAIL/PARTIAL results do not trigger actor
+retries or criterion changes; setup/integrity/runtime failures retain the separate
+stop rule. No adoption or full-comparison completion was claimed mid-batch.
+
+#### Capture and grading complete — 2026-10-18
+
+All 64 captures completed exit 0 and all 464 original rows are independently
+graded. The strict reconciliation audit passes; all subjects are unchanged.
+Eight same-packet clarifications preserve original tables and yield seven effective
+grade corrections. Original totals are baseline 158 PASS / 61 FAIL / 13 PARTIAL
+and candidate 200 / 31 / 1; effective totals are 163 / 57 / 12 and 202 / 30 / 0.
+The reviewed retainer archives 480 runtime files and verifies owned Codex cleanup
+for all 32 jobs. [The result report](verification/task12/advisory-closure-execution/bootstrap-loading/comparison-result.md)
+records REJECT under the frozen criteria: an inaccurate evidence claim
+and speculative remediation. The initially graded instruction truncation was
+independently traced to the grader's viewing tool and corrected to PASS, preserving
+the original table and first audit. Advisory follow-up
+is exercised in seven of eight candidate final reports.
+[Independent completion review](verification/task12/advisory-closure-execution/bootstrap-loading/comparison-completion-review.md)
+approves the bounded completion record with no outstanding findings. Task 12.22
+is complete. Recommend reverting only the closure candidate when selected;
+no rollback or next experiment occurs automatically. Full Task 12 and Task 13
+remain open.
+
+### Task 12.23: Revert the rejected closure candidate
+
+- **Status:** done — exact rollback applied; verification passed; independent review APPROVE
+- **Depends on:** Task 12.22 (done, candidate REJECT)
+- **Owner:** implementing agent
+- **Authority:** user explicitly requested “revert the closure candidate.”
+- **Docs:** [rollback record](verification/task12/advisory-closure-revert/README.md)
+
+- [x] 12.23.1 Verify current candidate bytes against the frozen four-file patch and preserve completion-time handoff documents before updating live tracking.
+- [x] 12.23.2 Restore only the canonical standard/isolated closing wording from source parent `11b2c6efb0638605bb6acd3eb184edb9abd10f56` and regenerate Codex copies.
+- [x] 12.23.3 Verify exact inverse/source-parent equality, generated freshness and applicable structure/graph checks. All four files match the source parent; 958 generated file/link hashes are stable; 252 structure assertions and graph checks pass.
+- [x] 12.23.4 Obtain independent review and update handoffs, preserving rejected evidence and broader acceptance boundaries. Independent review APPROVE; no remaining findings.
+
+#### Execution context — 2026-10-18
+
+This reverses only the closure candidate, not the broader functional-review
+implementation or the pre-feature baseline. Frozen source, criteria, original
+grades and comparison artifacts stay unchanged. The comparison seal's four live
+handoff targets were archived byte-for-byte before these updates; their historical
+hashes resolve through [handoff provenance](verification/task12/advisory-closure-revert/handoff-provenance.json).
+All four operative files match the source parent. A second generation preserves
+all 958 generated file/link hashes; generator tests, 252 structure assertions,
+graph tests/validation and patch replay checks pass. Independent review approves.
+Its saved-patch context-line finding was corrected without changing restored source.
+No new actor batch, wording experiment, acceptance waiver or PAL resumption is
+selected. Original Task 12 acceptance and Task 13 remain open.
 
 ## Task 13: Document and verify the complete feature
 

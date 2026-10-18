@@ -172,16 +172,13 @@ Apply [functional-review.md](functional-review.md)'s verdict mapping: a hard acc
 
 ### 10) Close the review or handle required next steps
 
-Close with the scoped verdict and coverage. When no substantiated issue or
-required evidence/prerequisite needs action, state that no changes are recommended
-for the reviewed increment. Omit remediation menus and invitations to start
-pending work.
+When there are no actionable findings and no outstanding evidence/prerequisite
+required by the reviewed task, end with the scoped verdict and coverage. State
+that no changes are recommended. Omit a Next Steps menu, remediation choices and
+invitations to start pending work. A clean review is a complete result.
 
-For a substantiated inherited defect surfaced in the report, give one concrete
-separate follow-up when its repair is outside the reviewed task; do not make that
-repair a condition of approving an otherwise supported increment. In-scope
-findings and required evidence/prerequisites retain their corrections or next
-checks. Ask which actions to take only when the current request
+When action is needed, list only substantiated findings and specific required
+evidence or prerequisites. Ask which actions to take only when the current request
 has not already authorized them; an invoking implementation request may already
 cover fixes. Review-only work still does not authorize edits.
 

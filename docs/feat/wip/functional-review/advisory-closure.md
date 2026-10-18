@@ -81,6 +81,34 @@ the existing rubric and fixtures; interpret each complete report, not keywords.
 
 ## Prospective comparison and adoption boundary
 
+**Rollback complete — 2026-10-18:** the user requested reverting this candidate.
+The exact pre-candidate standard/isolated closing wording is restored in canonical
+and generated files; verification passes and independent review approves in
+[Task 12.23](verification/task12/advisory-closure-revert/README.md). The proposal
+below and its rejected comparison remain historical evidence, not adopted policy.
+
+**Measured comparison complete — 2026-10-18:** all 64 sessions
+completed successfully and all 464 original assertion rows are retained, with
+independently reviewed same-packet clarifications separately recorded. The
+[result report](verification/task12/advisory-closure-execution/bootstrap-loading/comparison-result.md)
+records **REJECT** under the frozen criteria: an inaccurate evidence claim
+and speculative refactor advice. An initially graded ordering failure was corrected
+after distinguishing grader display truncation from complete actor reads.
+Only seven of eight candidate
+final dormant reports exercise advisory follow-up. Strict audit and runtime
+retention pass; independent completion review approves. Recommend reverting only
+this closure candidate when selected; no automatic next experiment or acceptance
+waiver follows. Earlier preparation checkpoints below remain historical.
+
+**Runtime preflight passed 2026-10-18:** [Task 12.21.4](verification/task12/advisory-closure-execution/bootstrap-loading/preflight-result.md)
+is complete after explicit approval, both corrected Claude bindings, full receipt
+audits, independent evidence review and a successful strict guard. A separately
+reviewed verifier recognizes two permitted instruction-filename listings without
+counting them as Reads; twelve tests pass and original failures stay retained.
+Use `bootstrap-loading/listing_guard.py` for later preparation/measurement.
+No measured comparison or adoption decision occurred; the following dated entries
+preserve the earlier preparation sequence and superseded blockers.
+
 **Corrected probes completed 2026-10-17:** after explicit host/API approval,
 [both fresh Claude bindings](verification/task12/advisory-closure-execution/high-effort-host/preflight-result.md)
 completed with verified high-effort launch configuration. Baseline satisfies the
