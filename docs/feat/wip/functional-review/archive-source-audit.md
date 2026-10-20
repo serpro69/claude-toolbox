@@ -3,7 +3,7 @@
 > Assessed: 2026-10-20 at `73c8b69ad5bea7bffff7d4d60f4e6a67072d83b0`
 > Scope: Task 13.7 preparation; original evidence unchanged
 > Current disposition: unavailable temporary inputs accepted as an exact-replay limitation; recovery gate retired
-> Owner: AI-assisted local preparation; human maintainer for cleanup and later release upload
+> Owner: human maintainer for remaining cleanup; local preparation and user-requested draft upload are verified
 
 ## Accepted retention decision — 2026-10-20
 
@@ -108,11 +108,11 @@ Some hashes serve more than one generated/shared path; each original
 
 ## Next action and completion condition
 
-Assemble the retained evidence plus the still-available core source export in
-the project's ignored local archive directory. No release/tag is required.
-Include this accepted limitation with the archive provenance. Verify an
-extraction of the local archive against its checksum and member manifest; do not
-require missing temporary inputs to appear in it. Then complete the reference-
-repair and human history-cleanup steps; upload to the later release separately.
+The retained evidence and available core export have been locally archived and
+verified, with this limitation documented. The subsequent user-requested draft
+release upload and downloaded checksum/member verification are also complete;
+see the [handoff](release-archive-handoff.md). Do not require missing temporary
+inputs to appear in the archive. The remaining work is reference repair and
+human evidence/history cleanup; publication of the draft was not performed.
 The decision changes retention requirements, not historical grades or feature
 behavioral acceptance.

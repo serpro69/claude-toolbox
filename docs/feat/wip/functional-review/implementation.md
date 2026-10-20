@@ -498,6 +498,10 @@ in the project's ignored `.local-archives/functional-review/` directory.
 Verify local archive integrity and extracted members before the human removes
 repository evidence and purges its history. Create the release and attach/verify
 the assets afterward; a release/tag is not needed for the local archive.
+The user's subsequent explicit request selected an existing draft release for
+upload before cleanup. That upload and downloaded-asset/member verification are
+now complete; the handoff records actual asset URLs. Human reference repair and
+history cleanup remain, with no draft publication performed.
 The user accepted unavailable historical temporary inputs on 2026-10-20: preserve
 their original identities and disclose exact-replay limits without requiring
 recovery. Include still-available inputs such as the known core source export.

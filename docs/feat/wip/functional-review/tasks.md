@@ -9,7 +9,7 @@
 > Created: 2026-10-07
 > Revised: 2026-10-20 with final feature verification and human-owned release handoff
 > Next-session handoff: [verification summary](verification-summary.md) and [archive handoff](release-archive-handoff.md)
-> Current slice: Tasks 13.1–13.6 complete; 13.7 local archive verified, temporary-input limitation accepted — cleanup then release upload remain
+> Current slice: Tasks 13.1–13.6 complete; 13.7 local and draft-release archives verified — human reference repair and cleanup remain
 > Not Doing: new review skill, whole-system audits, mandatory production access, deployments, generic release engine, new models/dependencies, profile redesign
 > Delivery: preserve existing invocations/shared consumers; regenerate Codex artifacts with every operative slice.
 
@@ -1749,7 +1749,8 @@ provider configuration, model run or operative skill change is introduced.
 - [x] Local checksum and extracted-member verification; record local asset paths
   in the summary/handoff.
 - [ ] Human reference repair, evidence removal and history cleanup.
-- [ ] Later release creation, upload/download verification and actual asset URLs.
+- [x] User-selected draft release upload/download verification and actual asset
+  URLs; draft publication was not requested.
 
 At the initial preparation checkpoint, historical captures/grades/source files
 and distributed plugin output were unchanged; no archive had been created,
@@ -1795,6 +1796,21 @@ its original identity. Only recorded cache directories are excluded.
 All assets are ignored by Git; original evidence and history remain intact.
 Independent documentation review approves the sequence; local link/syntax checks
 pass. Cleanup and later release upload remain pending.
+
+### User-selected draft upload — 2026-10-20
+
+The user explicitly requested uploading all archive sets to
+`https://github.com/serpro69/claude-toolbox/releases/tag/untagged-c0a403db0376380a3b00`,
+superseding the earlier cleanup-before-upload ordering. The selected release is
+`v0.24.0-draft`, ID `418689774`, with an empty actual tag field. All 27 assets
+(nine archives, manifests and checksum files) uploaded successfully and matched
+remote size/state/digest checks. Fresh downloads matched all original SHA-256
+values; all nine downloaded archives passed complete extracted-member verification.
+Actual asset IDs/API/download URLs are retained in the
+[release receipt](../../../archives/feature-evidence/release-assets.json).
+The draft remains unpublished. No source evidence was removed and no history was
+rewritten. Task 13.7 stays open for human reference repair/removal/history cleanup;
+upload verification is complete and is not an outstanding gate.
 
 ### 13.7 Evidence retention and release archive
 
