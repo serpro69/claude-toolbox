@@ -89,9 +89,11 @@ python3 -B scripts/functional-review-evals/inventory.py verify \
 The inventory preserves file bytes/modes, symlink targets and empty directories.
 It omits only directories named `__pycache__`, recording their original paths.
 It neither follows symlinks nor proves that external source dependencies were
-included. Resolve the source-input audit in the release handoff before deletion.
-Archive creation, upload, retrieval, repository removal and history cleanup stay
-with the maintainer.
+included. Follow the release handoff's declared retention scope and record any
+accepted source-input limitations. A verified local archive can precede release
+creation/upload when the maintainer selects that sequence. Keep project-local
+archives ignored by Git. Repository removal, history cleanup and later release
+upload remain maintainer actions.
 
 ## Test
 

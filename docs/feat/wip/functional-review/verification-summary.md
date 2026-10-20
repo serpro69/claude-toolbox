@@ -3,7 +3,7 @@
 > Updated: 2026-10-20 · feature verification complete (Tasks 13.1–13.6)
 > Current source base: `70180071` plus Task 13 documentation/test-fixture changes
 > Acceptance: Task 12 complete with disclosed limits; source review APPROVE and spec review CONFORMANT
-> Release archive: not yet created or published; human-owned Task 13.7 remains open
+> Archive: local copy created and verified; human cleanup and later release upload remain under Task 13.7
 
 ## What is implemented
 
@@ -130,13 +130,29 @@ fixing a receipt-retention regression. These are tooling checks, not new actor
 evaluations or completed release housekeeping.
 
 [The source-input audit](archive-source-audit.md) identifies a recoverable core
-source export and early inputs that still need recovery: 18 distinct source
-hashes remain unmatched in the examined evidence files/archive members. The
-maintainer owns recovery and original-hash verification before cleanup.
-[Command guidance](release-archive-commands.md) stops at that prerequisite.
-No preservation exception has been accepted.
+source export and unavailable early inputs: 18 distinct source hashes remain
+unmatched in the examined evidence files/archive members. On 2026-10-20 the user
+accepted this limitation on exact replay and retired the recovery gate.
+Archive the retained evidence, compact records and available core export using
+the [command guidance](release-archive-commands.md). Missing temporary inputs are
+not represented as recovered. The user then approved preparing and verifying a
+local archive under the project's ignored `.local-archives/functional-review/`
+directory before cleanup. A release/tag is not needed for that work; release
+upload and download verification follow cleanup and release creation.
 
-Release tag/URL, archive name, archive SHA-256, manifest and retrieval verification
-are **pending**, not placeholders for a completed upload. Record those actual
-values here when the feature's release exists. Task 13.7 prevents removing the
-evidence tree before archive retrieval and retained-tooling checks succeed.
+The local archive is now verified at
+`.local-archives/functional-review/20261020T171149Z-9fa9906a/functional-review-evidence-20261020T171149Z-9fa9906a.tar.gz`
+(project-relative, ignored by Git; 188,522,487 bytes).
+SHA-256: `ce99e6e69bcb6a266573e69ad9a561d3c891a343d90568abe8fe39efd191149d`.
+The same directory contains the `.manifest.json` and `.sha256` companions.
+Archive members begin with `payload/`; original evidence is under
+`payload/docs/feat/wip/functional-review/verification/`.
+
+Checksum and complete extracted-member verification pass: 73,126 regular files,
+66 symlinks and 9,544 directories. The extracted evidence subtree matches every
+original evidence inventory entry, with only recorded cache exclusions.
+The [handoff](release-archive-handoff.md#verified-local-archive--2026-10-20)
+retains detailed hashes, provenance and the assembly-time document-snapshot limit.
+Local archive and retained-tooling prerequisites are complete. Human reference
+repair, evidence removal and history cleanup remain; release tag/URL and uploaded-
+asset verification follow later. No cleanup or upload has been performed.

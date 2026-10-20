@@ -490,11 +490,17 @@ Task 13 updates README.md and docs/user-guide/skills.md through /kk:document, an
 - Run /kk:review-code with the actual detected profiles and /kk:review-spec against this complete design package.
 - Resolve findings or record permitted follow-up; do not mark required unrun/failed acceptance items complete.
 
-[Task 13.7](tasks.md#137-evidence-retention-and-release-archive) is human-executed,
-AI-guided release housekeeping. Keep the compact verification record, maintained
-eval assets and reusable tooling in Git; archive the complete historical evidence
-as assets of the GitHub release containing the feature. Verify downloaded archive
-integrity before the human removes repository evidence and purges its history.
+[Task 13.7](tasks.md#137-evidence-retention-and-release-archive) combines authorized
+AI-assisted local preparation with human cleanup and release housekeeping.
+Keep the compact verification record, maintained
+eval assets and reusable tooling in Git; archive the complete retained evidence
+in the project's ignored `.local-archives/functional-review/` directory.
+Verify local archive integrity and extracted members before the human removes
+repository evidence and purges its history. Create the release and attach/verify
+the assets afterward; a release/tag is not needed for the local archive.
+The user accepted unavailable historical temporary inputs on 2026-10-20: preserve
+their original identities and disclose exact-replay limits without requiring
+recovery. Include still-available inputs such as the known core source export.
 Feature verification and this release follow-up have separate completion records;
 Task 13 stays open until both are done.
 
