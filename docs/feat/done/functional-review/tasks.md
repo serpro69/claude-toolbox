@@ -5,11 +5,11 @@
 > Evaluation: [evaluation.md](evaluation.md)
 > Review disposition: [consolidated assessment](reviews/design-review-consolidation.md)
 > Issue: [#166](https://github.com/serpro69/claude-toolbox/issues/166)
-> Status: in-progress
+> Status: done
 > Created: 2026-10-07
-> Revised: 2026-10-20 with final feature verification and human-owned release handoff
+> Revised: 2026-10-20 with verified archive upload, maintainer cleanup and documentation closure
 > Next-session handoff: [verification summary](verification-summary.md) and [archive handoff](release-archive-handoff.md)
-> Current slice: Tasks 13.1–13.6 complete; 13.7 local and draft-release archives verified — human reference repair and cleanup remain
+> Current slice: Tasks 1–13 complete; v0.24.0 draft promotion remains a separate release action
 > Not Doing: new review skill, whole-system audits, mandatory production access, deployments, generic release engine, new models/dependencies, profile redesign
 > Delivery: preserve existing invocations/shared consumers; regenerate Codex artifacts with every operative slice.
 
@@ -25,8 +25,8 @@ retain original thresholds as history. Retired R6/R7/report/receipt gates, defer
 PAL and blanket legacy actor coverage no longer keep acceptance open. No old FAIL
 is changed to PASS. Task 12.25 has now completed the remaining bounded assessment
 with independent approval: accept the local functional-review increment with the
-documented execution/recovery limitation. Task 12 is done; Task 13 retains actual
-finalization and human-owned release housekeeping. Historical I2 execution is
+documented execution/recovery limitation. Tasks 12 and 13 are done; finalization,
+archiving and maintainer cleanup are recorded below. Historical I2 execution is
 still incomplete, not retrospectively passed.
 
 ## Task 1: Prove revision-bound evaluation loading
@@ -49,7 +49,7 @@ still incomplete, not retrospectively passed.
 
 ### Execution context — 2026-10-08
 
-Observed evidence: [verification record](verification/README.md), [run contract](verification/run-contract.md), and [independent controller review](verification/review.md). Baseline source identity is the full c2d28c9e commit; 435 operative files retained, 836 evaluator files excluded. Fresh Capy stores passed actual search/index and unavailable-vault probes. Eight controller tests and nine existing shell suites passed (three existing skips). Controller review findings were fixed and independently re-reviewed; no operative skill changes or measured behavioral runs occurred.
+Observed evidence: [verification record](../../../archives/feature-evidence/functional-review.md "Archive member: payload/docs/feat/wip/functional-review/verification/README.md"), [run contract](../../../archives/feature-evidence/functional-review.md "Archive member: payload/docs/feat/wip/functional-review/verification/run-contract.md"), and [independent controller review](../../../archives/feature-evidence/functional-review.md "Archive member: payload/docs/feat/wip/functional-review/verification/review.md"). Baseline source identity is the full c2d28c9e commit; 435 operative files retained, 836 evaluator files excluded. Fresh Capy stores passed actual search/index and unavailable-vault probes. Eight controller tests and nine existing shell suites passed (three existing skips). Controller review findings were fixed and independently re-reviewed; no operative skill changes or measured behavioral runs occurred.
 
 Initial authenticated Claude loading failed because OAuth expired; the user refreshed login. Fresh baseline and candidate-location probes then passed registered entry-point reads, hook-root binding, named reviewer dispatch, child instruction reads and run-local Capy marker retrieval. Earlier failed attempts remain retained, not counted as passes.
 
@@ -63,7 +63,7 @@ Task 1 is complete. These are loading probes only, with unchanged baseline bytes
 - **Depends on:** Task 1
 - **Size:** M
 - **Can run in parallel with:** Tasks 3–11 (gate 2B only, after 2A)
-- **Docs:** [Baseline preparation](implementation.md#baseline-preparation), [capture resolution](evaluation.md#codex-handoff-capture-resolution), [run-contract amendment](verification/run-contract-2026-10-09.md)
+- **Docs:** [Baseline preparation](implementation.md#baseline-preparation), [capture resolution](evaluation.md#codex-handoff-capture-resolution), [run-contract amendment](../../../archives/feature-evidence/functional-review.md "Archive member: payload/docs/feat/wip/functional-review/verification/run-contract-2026-10-09.md")
 - **Gate 2A — implementation readiness:** done; final fixtures, frozen inputs and 16 baseline captures retained. Satisfies Task 3's prerequisite without asserting behavioral acceptance.
 - **Gate 2B — capture completion:** done; all four missing Codex baselines captured and independently graded under revision 2. Original captures remain preserved. Task 12 retains candidate comparisons and acceptance.
 
@@ -78,19 +78,19 @@ Task 1 is complete. These are loading probes only, with unchanged baseline bytes
 
 ### Execution context — 2026-10-08
 
-Observed evidence: [Task 2 verification](verification/task2/README.md), [frozen inputs](verification/task2-frozen.json), [grading procedure](verification/task2-rubric.md), and [independent review](verification/task2/review.md). Final seeds use review IDs 6/7 and implement IDs 8/9; no fixture or rubric changed after freeze. Real before/after reproductions and local R3 release history match the declared oracle. Codex copies regenerated without drift; no operative instructions changed.
+Observed evidence: [Task 2 verification](../../../archives/feature-evidence/functional-review.md "Archive member: payload/docs/feat/wip/functional-review/verification/task2/README.md"), [frozen inputs](../../../archives/feature-evidence/functional-review.md "Archive member: payload/docs/feat/wip/functional-review/verification/task2-frozen.json"), [grading procedure](../../../archives/feature-evidence/functional-review.md "Archive member: payload/docs/feat/wip/functional-review/verification/task2-rubric.md"), and [independent review](../../../archives/feature-evidence/functional-review.md "Archive member: payload/docs/feat/wip/functional-review/verification/task2/review.md"). Final seeds use review IDs 6/7 and implement IDs 8/9; no fixture or rubric changed after freeze. Real before/after reproductions and local R3 release history match the declared oracle. Codex copies regenerated without drift; no operative instructions changed.
 
 Captured 12 Claude baseline workflows (all six seed/mode pairs twice) and four Codex baselines (R1 standard/I1 plan twice), all against immutable c2d28c9e in fresh workspaces with empty run-local knowledge. Capy 0.16.8 was declared before capture and passed fresh isolation probes. Traces retain permission denials, actual dispatches/results, payload artifacts and initial/final files; capture completion is not behavioral acceptance. Three failed controller attempts remain retained. Fifteen controller tests, all nine shell suites and plugin graph checks passed; corrected capture code passed independent review.
 
 **Capture disposition at 2026-10-08 — superseded for sequencing by the decision below.** Codex R3 isolated and I2 standalone remained **UNRUN**, two repetitions each. Public app-server history and separately trusted observation hooks omitted/encrypted submitted reviewer messages; a final claim could not satisfy exact-handoff evidence. The original contract held Task 3 until plaintext capture was established. Temporary Codex trust/hook/plugin registrations were removed. These observations did not establish behavioral acceptance.
 
-**Capture note from Task 1 — owner: implementing agent.** Codex CLI JSON omits some child events; persisted parent/child runtime records expose them. The parent dispatch's message field is encrypted. Before any later exact-handoff assertion is captured, retain plaintext at submission or use another supported trace surface alongside the encrypted record. Task 1's role bytes/read results prove loading, not exact plaintext handoff content; ciphertext alone cannot pass that later assertion. See [completed probe evidence and limits](verification/README.md#completed-probes-after-login-refresh).
+**Capture note from Task 1 — owner: implementing agent.** Codex CLI JSON omits some child events; persisted parent/child runtime records expose them. The parent dispatch's message field is encrypted. Before any later exact-handoff assertion is captured, retain plaintext at submission or use another supported trace surface alongside the encrypted record. Task 1's role bytes/read results prove loading, not exact plaintext handoff content; ciphertext alone cannot pass that later assertion. See [completed probe evidence and limits](../../../archives/feature-evidence/functional-review.md "Archive member: payload/docs/feat/wip/functional-review/verification/README.md#completed-probes-after-login-refresh").
 
 ### Accepted sequencing decision — 2026-10-09
 
 The user approved separating implementation readiness from full verification, one bounded capture investigation, and a conditional fallback to observable reviewer receipt/use if plaintext remains unavailable. Gate 2A is satisfied by the frozen fixtures and retained captures; Task 3 may start. Gate 2B remains owned by the implementing agent and blocks Task 12 and feature completion, not Tasks 3–11. The immutable baseline can be launched after candidate development without using candidate instructions.
 
-Subtasks 2.5–2.6 own the deferred capture work because the tested Codex surfaces cannot expose the required messages. Follow the [run-contract amendment](verification/run-contract-2026-10-09.md) and record the bounded investigation's outcome before choosing the evidence path. No new probe, rubric revision, capture or behavioral grade is claimed by this documentation update. Existing captures, manifests, frozen rubric and assertions remain unchanged; a fallback requires a separately versioned contract applied to both sides. Provider coverage and the two-run candidate threshold remain required.
+Subtasks 2.5–2.6 own the deferred capture work because the tested Codex surfaces cannot expose the required messages. Follow the [run-contract amendment](../../../archives/feature-evidence/functional-review.md "Archive member: payload/docs/feat/wip/functional-review/verification/run-contract-2026-10-09.md") and record the bounded investigation's outcome before choosing the evidence path. No new probe, rubric revision, capture or behavioral grade is claimed by this documentation update. Existing captures, manifests, frozen rubric and assertions remain unchanged; a fallback requires a separately versioned contract applied to both sides. Provider coverage and the two-run candidate threshold remain required.
 
 ### Gate 2B execution context — 2026-10-10
 
@@ -98,9 +98,9 @@ Subtasks 2.5–2.6 own the deferred capture work because the tested Codex surfac
 
 **Bounded investigation:** installed Codex is 0.162.1 (retained runs used 0.161.0); this host is Linux with Python 3.12.11 available for the controller. The public collaboration prompt remains optional. `debug prompt-input` accepts an optional new prompt but no recorded thread/child selector; it cannot establish an actual submitted child message. Hook documentation supplies child IDs but no submitted-message field. No viable materially different plaintext surface was found; no further plaintext marker probe is warranted. Proceed with a separately frozen receipt/use contract. Runtime binding/receipt and state-isolation checks are still required before measurement.
 
-**Superseding completion:** [revision-2 contract and evidence](verification/task2b/README.md) record the selected fallback before measurement, unchanged subject files/prompts, grader pin/calibration, and all four fresh Codex baselines. Final independent grades are **21 PASS / 9 FAIL / 0 PARTIAL**. Changed assertions in retained Claude traces yield six demonstrable FAILs without a PARTIAL requiring baseline recapture for this rubric change. Original evidence and grades are preserved. Missing exact prompts and some child verification-result receipt remain unknown; independently observed false components establish baseline failures without pretending those positive components were seen.
+**Superseding completion:** [revision-2 contract and evidence](../../../archives/feature-evidence/functional-review.md "Archive member: payload/docs/feat/wip/functional-review/verification/task2b/README.md") record the selected fallback before measurement, unchanged subject files/prompts, grader pin/calibration, and all four fresh Codex baselines. Final independent grades are **21 PASS / 9 FAIL / 0 PARTIAL**. Changed assertions in retained Claude traces yield six demonstrable FAILs without a PARTIAL requiring baseline recapture for this rubric change. Original evidence and grades are preserved. Missing exact prompts and some child verification-result receipt remain unknown; independently observed false components establish baseline failures without pretending those positive components were seen.
 
-**Review and checks:** [independent review](verification/task2b/review.md) approved capture completion after correcting a premeasurement staging-validator mismatch and replacing insufficient PAL history markers with successful-read/format/inclusion evidence. All four graders reassessed the stronger sealed packages. Twenty-three new controller/adapter tests, 15 retained tests, all ten shell suites (644 assertions), Go/graph checks and repeated generation pass. The host-Python generation failure is retained; the declared Python 3.12 rerun passed with identical bytes across 892 generated files. All temporary trust entries and the evaluation plugin/cache were removed.
+**Review and checks:** [independent review](../../../archives/feature-evidence/functional-review.md "Archive member: payload/docs/feat/wip/functional-review/verification/task2b/review.md") approved capture completion after correcting a premeasurement staging-validator mismatch and replacing insufficient PAL history markers with successful-read/format/inclusion evidence. All four graders reassessed the stronger sealed packages. Twenty-three new controller/adapter tests, 15 retained tests, all ten shell suites (644 assertions), Go/graph checks and repeated generation pass. The host-Python generation failure is retained; the declared Python 3.12 rerun passed with identical bytes across 892 generated files. All temporary trust entries and the evaluation plugin/cache were removed.
 
 **Gate 2B is closed; Task 2 is done.** Task 12 is next and must use matching declared configurations and consistent grader pins, regrade or recapture affected pairs where necessary, and establish every required candidate component twice. Task 13 and feature acceptance remain pending.
 
@@ -145,11 +145,11 @@ Review: /kk:review-code:isolated's independent code-reviewer inspected the diff 
 
 Implemented the shared change context (573 words), common functional method (877 words), standard instruction/routing/investigation sequence, historical-evidence and verdict guidance, and shared task-scope clarification. The canonical review-code link has the required relative target; generated consumer copies, including review-spec's existing scope protocol, are refreshed. No skill description or dependency changed. Profile detection activated `skill-md`; all three applicable implement/review checklists were loaded, with the accepted Task 3 routing exception taking precedence over older absolute checklist wording.
 
-[Local verification](verification/task4/checks.json): all nine shell suites passed (640 assertions, no skips); five disposable mutation checks rejected regular-file replacement, wrong/broken targets and either word-budget overflow. `make generate-kodex`, a second-generation hash comparison across 684 files, `make plugin-graph`, Bash syntax and whitespace checks passed. The graph's cycle warning is retained in its log. Independent code review found no substantiated defects, while the required R1/ordering behavioral evidence remains Unknown.
+[Local verification](../../../archives/feature-evidence/functional-review.md "Archive member: payload/docs/feat/wip/functional-review/verification/task4/checks.json"): all nine shell suites passed (640 assertions, no skips); five disposable mutation checks rejected regular-file replacement, wrong/broken targets and either word-budget overflow. `make generate-kodex`, a second-generation hash comparison across 684 files, `make plugin-graph`, Bash syntax and whitespace checks passed. The graph's cycle warning is retained in its log. Independent code review found no substantiated defects, while the required R1/ordering behavioral evidence remains Unknown.
 
-**Verification completed after user approval.** The user authorized the prepared Claude/PAL checks. The [run contract](verification/task4/run-contract.md) and [verification record](verification/task4/README.md) retain the original approval rejection, an incomplete binding attempt, its successful fresh retry, and candidate1's failed ordering trace. Candidate1 read the diff before Python checklists. The correction adds a returned-content loading ledger/checkpoint and explicit profile enumeration. Final candidate `d0ab5f0122724c050c2ecbd4563bb6e6fce2b68c` passed binding; its fresh ordinary-prompt R1 run loaded the common method and all applicable Python checklists before investigation, inspected the unchanged consumers and README, ran the two passing existing tests, and reproduced failed-A cleanup deleting successful B's association. It recommended the ownership check and returned REQUEST_CHANGES. Final generation, graph and 684-file freshness checks passed; capture and source-manifest hashes verified. Fixtures, rubric, model, permission policy and baseline were unchanged.
+**Verification completed after user approval.** The user authorized the prepared Claude/PAL checks. The [run contract](../../../archives/feature-evidence/functional-review.md "Archive member: payload/docs/feat/wip/functional-review/verification/task4/run-contract.md") and [verification record](../../../archives/feature-evidence/functional-review.md "Archive member: payload/docs/feat/wip/functional-review/verification/task4/README.md") retain the original approval rejection, an incomplete binding attempt, its successful fresh retry, and candidate1's failed ordering trace. Candidate1 read the diff before Python checklists. The correction adds a returned-content loading ledger/checkpoint and explicit profile enumeration. Final candidate `d0ab5f0122724c050c2ecbd4563bb6e6fce2b68c` passed binding; its fresh ordinary-prompt R1 run loaded the common method and all applicable Python checklists before investigation, inspected the unchanged consumers and README, ran the two passing existing tests, and reproduced failed-A cleanup deleting successful B's association. It recommended the ownership check and returned REQUEST_CHANGES. Final generation, graph and 684-file freshness checks passed; capture and source-manifest hashes verified. Fixtures, rubric, model, permission policy and baseline were unchanged.
 
-Independent source review and execution-evidence audit approved the Task 4 slice with no actionable source findings. PAL returned two native LOW wording suggestions; its zero embedded-file count and retained earlier review context leave coverage/isolation unverified, so it is not corroboration. Details and author context are in [review.md](verification/task4/review.md). No systemic P0/P1 implementation finding required indexing.
+Independent source review and execution-evidence audit approved the Task 4 slice with no actionable source findings. PAL returned two native LOW wording suggestions; its zero embedded-file count and retained earlier review context leave coverage/isolation unverified, so it is not corroboration. Details and author context are in [review.md](../../../archives/feature-evidence/functional-review.md "Archive member: payload/docs/feat/wip/functional-review/verification/task4/review.md"). No systemic P0/P1 implementation finding required indexing.
 
 **Deferred verification — owner: implementing agent, Task 12.** Candidate2 skipped the full known-profile detection enumeration and `kk:lang-idioms` lookup; these remain failed procedural observations. Its P0 severity is not validated by this audit and differs from the fixture's suggested P1/justified P2. Re-run the existing routing controls, check the omitted procedure steps and grade severity against supported impact under the pinned Task 8 grader before final acceptance; fix and recapture affected cases if required. One intermediate dry-run is not a paired matrix pass. Task 2 gate 2B, Task 12's two-run threshold and feature completion remain open; Task 4 completion waives none of them.
 
@@ -173,11 +173,11 @@ Independent source review and execution-evidence audit approved the Task 4 slice
 
 Implemented the approved isolated-review slice in the workflow, code-reviewer agent, shared PAL protocol and command wrapper. Both reviewers receive the common method, factual context, all resolved criteria and historical source with provenance. The parent resolves named local baselines before declaring them unavailable, handles additional-evidence requests through continuation/reinvocation, and checks criteria/receipt before qualified reporting. The document-review PAL branch preserves its existing caller. No dependency, model, tool permission or requirement changed.
 
-[Verification](verification/task5/README.md): all nine shell suites passed (640 assertions, no skips after environment-limited retries). Generation, plugin/Codex structure tests, plugin graph validation and second-generation comparison across 684 generated files passed. Current canonical/generated/agent contents match frozen candidate `33ba4a2697cdfcb5f48a701f39e45bf347e08c53` across 1,379 source entries. Original seed/rubric hashes remain unchanged. Initial generator wording failures, sandbox-limited checks and all failed actor attempts are retained rather than relabeled.
+[Verification](../../../archives/feature-evidence/functional-review.md "Archive member: payload/docs/feat/wip/functional-review/verification/task5/README.md"): all nine shell suites passed (640 assertions, no skips after environment-limited retries). Generation, plugin/Codex structure tests, plugin graph validation and second-generation comparison across 684 generated files passed. Current canonical/generated/agent contents match frozen candidate `33ba4a2697cdfcb5f48a701f39e45bf347e08c53` across 1,379 source entries. Original seed/rubric hashes remain unchanged. Initial generator wording failures, sandbox-limited checks and all failed actor attempts are retained rather than relabeled.
 
-The ordinary-prompt R3 isolated run loaded all eight detection rules and applicable common/Python criteria before investigation, resolved the released provider from local Git, delivered the actual source and all eight criteria to both reviewers, and identified the flag-off incompatibility with REQUEST_CHANGES. Its provenance manifest still contained a command placeholder for the blob hash. The [declared supplemental review](verification/task5/run-contract.md) exercised the additional-evidence path: actual Git lookup/hash results matched, a corrected manifest preserved the original, and both reviewers received and used the correction. The expired PAL continuation was explicitly replaced by a fresh two-step review carrying only PAL's own prior findings. The first supplement's command denial is retained; its retry used directly permitted Git commands without changing policy. All completed captures retain ordered public events and hashes; subject files and actor bundles stayed unchanged.
+The ordinary-prompt R3 isolated run loaded all eight detection rules and applicable common/Python criteria before investigation, resolved the released provider from local Git, delivered the actual source and all eight criteria to both reviewers, and identified the flag-off incompatibility with REQUEST_CHANGES. Its provenance manifest still contained a command placeholder for the blob hash. The [declared supplemental review](../../../archives/feature-evidence/functional-review.md "Archive member: payload/docs/feat/wip/functional-review/verification/task5/run-contract.md") exercised the additional-evidence path: actual Git lookup/hash results matched, a corrected manifest preserved the original, and both reviewers received and used the correction. The expired PAL continuation was explicitly replaced by a fresh two-step review carrying only PAL's own prior findings. The first supplement's command denial is retained; its retry used directly permitted Git commands without changing policy. All completed captures retain ordered public events and hashes; subject files and actor bundles stayed unchanged.
 
-[Independent review and evidence audit](verification/task5/review.md): source findings were corrected and re-reviewed. The final audit returned APPROVE scoped to Task 5, with no remaining hard slice blocker or systemic P0/P1 implementation finding to index. The initial run's missing provenance is not retroactively a pass; the supplement is not a fresh matrix repetition. This took more iteration than source checks suggested: actual traces exposed early diff reads, incomplete criteria manifests and unsupported absence/receipt assumptions. Explicit loading/manifest checks and named-baseline lookups address those observed paths.
+[Independent review and evidence audit](../../../archives/feature-evidence/functional-review.md "Archive member: payload/docs/feat/wip/functional-review/verification/task5/review.md"): source findings were corrected and re-reviewed. The final audit returned APPROVE scoped to Task 5, with no remaining hard slice blocker or systemic P0/P1 implementation finding to index. The initial run's missing provenance is not retroactively a pass; the supplement is not a fresh matrix repetition. This took more iteration than source checks suggested: actual traces exposed early diff reads, incomplete criteria manifests and unsupported absence/receipt assumptions. Explicit loading/manifest checks and named-baseline lookups address those observed paths.
 
 **Deferred acceptance — owner: implementing agent, Tasks 8/12.** Pin and apply the workflow grader, run all required fresh baseline/candidate pairs and routing/reporting controls, and calibrate severity against supported impact. Every required assertion must pass twice under the selected contract; the preserved failed attempts and supplemental repair do not waive that threshold or establish model reliability. Task 2 gate 2B remains open. Task 5 is complete as an implementation/integration slice; Task 6 is next and the feature remains in progress.
 
@@ -205,14 +205,14 @@ The ordinary-prompt R3 isolated run loaded all eight detection rules and applica
 
 **Instruction loading:** all eight installed detection rules were read. `skill-md` activates through implement/SKILL.md and sibling adjacency; its universal, Claude Code and kk-plugin implement guidance loaded. Provider guidance is selected by the plugin's hooks/commands/agents directories; kk guidance by canonical klaude-plugin paths. No dependency change. Verification and review are pending; no behavioral acceptance is claimed.
 
-**Initial verification and source review:** [643 shell assertions](verification/task6/check-summary.json) pass with no skips; Go tests, plugin graph and [685-file regeneration freshness](verification/task6/freshness.json) pass. Initial environment-limited attempts are retained. The independent review identified a pre-profile requirement-read exemption; the corrected candidate moves full requirements/knowledge lookup after profiles and has no remaining source findings. PAL also found no source defects, with actual file embedding recorded. See [review](verification/task6/review.md).
+**Initial verification and source review:** [643 shell assertions](../../../archives/feature-evidence/functional-review.md "Archive member: payload/docs/feat/wip/functional-review/verification/task6/check-summary.json") pass with no skips; Go tests, plugin graph and [685-file regeneration freshness](../../../archives/feature-evidence/functional-review.md "Archive member: payload/docs/feat/wip/functional-review/verification/task6/freshness.json") pass. Initial environment-limited attempts are retained. The independent review identified a pre-profile requirement-read exemption; the corrected candidate moves full requirements/knowledge lookup after profiles and has no remaining source findings. PAL also found no source defects, with actual file embedding recorded. See [review](../../../archives/feature-evidence/functional-review.md "Archive member: payload/docs/feat/wip/functional-review/verification/task6/review.md").
 
-**Earlier slice gate — subsequently completed below:** complete the frozen I1/I2 mode dry-runs and independent execution-evidence audit under [the Task 6 run contract](verification/task6/run-contract.md), then verify subtask outcomes before marking done. Automatic approval review initially rejected the external launch; the user explicitly approved these Claude/PAL runs. The first binding probe did not observe the shell root; a fresh retry uses the directly allowed command. Full matrix acceptance and Task 2 gate 2B remain open.
+**Earlier slice gate — subsequently completed below:** complete the frozen I1/I2 mode dry-runs and independent execution-evidence audit under [the Task 6 run contract](../../../archives/feature-evidence/functional-review.md "Archive member: payload/docs/feat/wip/functional-review/verification/task6/run-contract.md"), then verify subtask outcomes before marking done. Automatic approval review initially rejected the external launch; the user explicitly approved these Claude/PAL runs. The first binding probe did not observe the shell root; a fresh retry uses the directly allowed command. Full matrix acceptance and Task 2 gate 2B remain open.
 
 
-**Superseding completion — 2026-10-09:** final candidate `10463ff31d654520b5712f1dc053407fccf48e9b` implements the shared context, metadata-first mode entry, one common investigation phase, explicit requirement-decision boundary, refreshed actual review evidence and accurate completion/follow-up gates. [Final verification](verification/task6/README.md) records the approved Claude/PAL runs, failed attempts, frozen identities and [candidate6 freshness](verification/task6/freshness-candidate6.json). All 643 shell assertions, Go tests, structure and graph checks pass; 685 generated files remain unchanged on second generation and 1,381 source entries match the final candidate.
+**Superseding completion — 2026-10-09:** final candidate `10463ff31d654520b5712f1dc053407fccf48e9b` implements the shared context, metadata-first mode entry, one common investigation phase, explicit requirement-decision boundary, refreshed actual review evidence and accurate completion/follow-up gates. [Final verification](../../../archives/feature-evidence/functional-review.md "Archive member: payload/docs/feat/wip/functional-review/verification/task6/README.md") records the approved Claude/PAL runs, failed attempts, frozen identities and [candidate6 freshness](../../../archives/feature-evidence/functional-review.md "Archive member: payload/docs/feat/wip/functional-review/verification/task6/freshness-candidate6.json"). All 643 shell assertions, Go tests, structure and graph checks pass; 685 generated files remain unchanged on second generation and 1,381 source entries match the final candidate.
 
-**Observed integration and independent review:** I1 records the contradictory outcomes and proposals, requests a real decision and changes only task observations; client/provider/tests/design/implementation remain unchanged. I2 inspects callers before editing, passes six focused tests, rejects stale scratch evidence before review and sends current source plus all eight criteria to both independent reviewers. Its PAL payload contains no child conclusions and precedes the child final report. The [independent source/evidence audit](verification/task6/review.md#final-disposition) returns **APPROVE scoped to Task 6**, with no remaining hard slice blocker. Native PAL source results remain attributed opinions, not runtime guarantees. No systemic P0/P1 implementation findings or new project conventions require indexing.
+**Observed integration and independent review:** I1 records the contradictory outcomes and proposals, requests a real decision and changes only task observations; client/provider/tests/design/implementation remain unchanged. I2 inspects callers before editing, passes six focused tests, rejects stale scratch evidence before review and sends current source plus all eight criteria to both independent reviewers. Its PAL payload contains no child conclusions and precedes the child final report. The [independent source/evidence audit](../../../archives/feature-evidence/functional-review.md "Archive member: payload/docs/feat/wip/functional-review/verification/task6/review.md#final-disposition") returns **APPROVE scoped to Task 6**, with no remaining hard slice blocker. Native PAL source results remain attributed opinions, not runtime guarantees. No systemic P0/P1 implementation findings or new project conventions require indexing.
 
 **Deferred acceptance — owner: implementing agent, Tasks 8/12:** formal per-assertion grading, fresh repeated comparisons, existing routing/pre-write controls and I3/I4 remain open. The final I2 run is bounded integration evidence, not a pristine matrix run: it saw a previous scratch patch before rejecting/replacing it. Also retain metadata overfetch, broad/late or omitted knowledge lookup and copied-diff context-space loss. Next actions: ensure fresh run-owned scratch evidence and exact diff materialization, tighten metadata/knowledge procedure execution, then grade/recapture affected cases under the pinned contract. Verification condition: every required assertion passes twice with fresh inputs and actual handoff evidence; failed/unknown observations never count as PASS. Task 2 gate 2B still blocks Task 12 and feature completion.
 
@@ -242,9 +242,9 @@ The ordinary-prompt R3 isolated run loaded all eight detection rules and applica
 
 **Superseding completion — 2026-10-09:** the helper now stages complete before/after trees, optional ordered historical commits/tags and legacy flat fixtures in fresh owned destinations. It preserves hidden/unchanged context, stages deletions, isolates Git configuration and rejects unsafe snapshot paths, links, metadata and refs before staging. `HEAD` and `eval-base` identify the review base. The harness playbook and generated Codex copies reflect the staging contract.
 
-[Verification](verification/task7/README.md): all ten shell suites passed (644 helper assertions, no skips), including 20 staging integration tests. Actual R1/R3 and all five legacy review fixtures stage correctly; R3's released source is reachable through its tag and absent from base/candidate files and the PR diff. All 51 frozen R1/R3/I1/I2 file hashes remain unchanged. Go tests, graph validation, shell syntax, structure checks and [685-file regeneration freshness](verification/task7/freshness.json) passed. Environment-limited and mistaken-path attempts are retained with their successful corrections.
+[Verification](../../../archives/feature-evidence/functional-review.md "Archive member: payload/docs/feat/wip/functional-review/verification/task7/README.md"): all ten shell suites passed (644 helper assertions, no skips), including 20 staging integration tests. Actual R1/R3 and all five legacy review fixtures stage correctly; R3's released source is reachable through its tag and absent from base/candidate files and the PR diff. All 51 frozen R1/R3/I1/I2 file hashes remain unchanged. Go tests, graph validation, shell syntax, structure checks and [685-file regeneration freshness](../../../archives/feature-evidence/functional-review.md "Archive member: payload/docs/feat/wip/functional-review/verification/task7/freshness.json") passed. Environment-limited and mistaken-path attempts are retained with their successful corrections.
 
-[Independent review](verification/task7/review.md) returned **APPROVE scoped to Task 7** after fixing a reserved `eval-base/` tag-namespace conflict. A focused reproduction and regression verify rejection before any Git operation. PAL returned no actionable findings, but zero embedded/examined files leave its coverage unverified; it is not corroboration. No systemic P0/P1 findings or new project conventions require indexing.
+[Independent review](../../../archives/feature-evidence/functional-review.md "Archive member: payload/docs/feat/wip/functional-review/verification/task7/review.md") returned **APPROVE scoped to Task 7** after fixing a reserved `eval-base/` tag-namespace conflict. A focused reproduction and regression verify rejection before any Git operation. PAL returned no actionable findings, but zero embedded/examined files leave its coverage unverified; it is not corroboration. No systemic P0/P1 findings or new project conventions require indexing.
 
 **Evidence limits:** these are offline staging checks, not actor behavioral acceptance. Task 2 gate 2B and Tasks 8–13 retain their existing owners, next actions and verification requirements. Task 8 is next; the feature remains in progress. No requirement, fixture, model, capture contract or acceptance threshold changed.
 
@@ -272,9 +272,9 @@ The ordinary-prompt R3 isolated run loaded all eight detection rules and applica
 
 **Instruction loading:** all eight installed detection rules loaded. `skill-md` activates through harness/implementation-eval adjacency to their skill roots; universal, Claude Code and kk-plugin implement guidance loaded. Provider directories and canonical paths satisfy both conditional predicates. The accepted bounded-routing convention takes precedence over older absolute wording. No new dependency or live deployment action is needed. Verification, calibration and isolated review are pending.
 
-**Superseding completion — 2026-10-09:** explicit workflow grading now uses sealed manifests, completed instruction reads, actual dispatches and resulting files; omitted mode preserves component text grading. Both harness playbooks document actor/grader isolation and versioned evidence contracts. [Verification](verification/task8/README.md) retains seven accepted calibration controls, two superseded component input-shape attempts and all 16 baseline grades under the [pinned grader/revision-1 rubric](verification/task8/inputs/pin.json): **51 PASS / 44 FAIL / 11 PARTIAL across 106 assertions**. Both Codex R1 standard baselines pass every assertion; no candidate comparison or model-reliability claim follows.
+**Superseding completion — 2026-10-09:** explicit workflow grading now uses sealed manifests, completed instruction reads, actual dispatches and resulting files; omitted mode preserves component text grading. Both harness playbooks document actor/grader isolation and versioned evidence contracts. [Verification](../../../archives/feature-evidence/functional-review.md "Archive member: payload/docs/feat/wip/functional-review/verification/task8/README.md") retains seven accepted calibration controls, two superseded component input-shape attempts and all 16 baseline grades under the [pinned grader/revision-1 rubric](../../../archives/feature-evidence/functional-review.md "Archive member: payload/docs/feat/wip/functional-review/verification/task8/inputs/pin.json"): **51 PASS / 44 FAIL / 11 PARTIAL across 106 assertions**. Both Codex R1 standard baselines pass every assertion; no candidate comparison or model-reliability claim follows.
 
-**Checks and review:** all ten shell suites pass (644 helper assertions), eight evidence-adapter tests pass, Go/graph checks pass and second generation preserves 725 files. Frozen seed/rubric bytes remain unchanged. [Independent review](verification/task8/review.md) returns **APPROVE scoped to Task 8** after restricting event/oracle imports to original seals and correcting trusted-root alias handling. The corrected adapter reproduces all 611 graded evidence files unchanged; original preparation source and failed attempts remain retained. Native PAL findings and zero-file coverage are disclosed; they do not establish corroboration. No new project convention or systemic P0/P1 implementation finding requires indexing.
+**Checks and review:** all ten shell suites pass (644 helper assertions), eight evidence-adapter tests pass, Go/graph checks pass and second generation preserves 725 files. Frozen seed/rubric bytes remain unchanged. [Independent review](../../../archives/feature-evidence/functional-review.md "Archive member: payload/docs/feat/wip/functional-review/verification/task8/review.md") returns **APPROVE scoped to Task 8** after restricting event/oracle imports to original seals and correcting trusted-root alias handling. The corrected adapter reproduces all 611 graded evidence files unchanged; original preparation source and failed attempts remain retained. Native PAL findings and zero-file coverage are disclosed; they do not establish corroboration. No new project convention or systemic P0/P1 implementation finding requires indexing.
 
 **Deferred acceptance — owner: implementing agent, Tasks 2 gate 2B and 12:** four Codex captures remain UNRUN; candidate comparisons and intermediate Task 4–6 recapture/grade obligations remain open. Follow the bounded capture investigation and record any fallback before measurement; if selected, add receipt/use calibration and regrade affected baseline/candidate evidence, recapturing both sides where insufficient. Every required candidate assertion must pass twice. The grader runtime used fresh default agents loading pinned bytes, with a read-only command adapter; exact service-model identity and OS confinement are not claimed. Future comparisons must use a consistent declared grading runtime or regrade both sides under a new pin. Task 9 is next; feature completion remains open.
 
@@ -300,9 +300,9 @@ The ordinary-prompt R3 isolated run loaded all eight detection rules and applica
 
 **Instruction loading:** all eight installed detection rules loaded. Planned `.py` files activate `python`; fixture adjacency to `review-code/SKILL.md` activates `skill-md`. Loaded Python core idiom/type/error guidance (no async constructs planned) and universal/provider/kk implement guidance (provider directories and canonical paths satisfy both conditionals). The repository's bounded-routing convention takes precedence over older absolute wording. Test guidance includes Python testing and validator protocols; `skill-md` has no test-phase index. Verification and isolated review remain pending.
 
-**Superseding completion — 2026-10-09:** four final scenario directories (review IDs 8–11) now provide R2, R4 and both R9 variants, with 24 required assertions, complete paired snapshots and separate oracles. [Verification](verification/task9/README.md) records eight passing snapshot suites (18 tests), eight deterministic reproduction groups, exact staged diffs and 51 unchanged frozen seed files. All ten shell suites pass (644 helper assertions), Go/graph checks pass, and 785 generated files remain stable after repeated generation. Corrected attempts and final logs are retained; no fixture actor run or behavioral acceptance is claimed.
+**Superseding completion — 2026-10-09:** four final scenario directories (review IDs 8–11) now provide R2, R4 and both R9 variants, with 24 required assertions, complete paired snapshots and separate oracles. [Verification](../../../archives/feature-evidence/functional-review.md "Archive member: payload/docs/feat/wip/functional-review/verification/task9/README.md") records eight passing snapshot suites (18 tests), eight deterministic reproduction groups, exact staged diffs and 51 unchanged frozen seed files. All ten shell suites pass (644 helper assertions), Go/graph checks pass, and 785 generated files remain stable after repeated generation. Corrected attempts and final logs are retained; no fixture actor run or behavioral acceptance is claimed.
 
-**Review:** [independent source review](verification/task9/review.md) approved Task 9 after tightening R2's verdict/remedy assertions and verifier path/encoding handling. The initial P2 finding is resolved. Native PAL feedback and zero/one-file embedding limits remain disclosed; they do not establish corroboration. No systemic P0/P1 findings or new project conventions require indexing.
+**Review:** [independent source review](../../../archives/feature-evidence/functional-review.md "Archive member: payload/docs/feat/wip/functional-review/verification/task9/review.md") approved Task 9 after tightening R2's verdict/remedy assertions and verifier path/encoding handling. The initial P2 finding is resolved. Native PAL feedback and zero/one-file embedding limits remain disclosed; they do not establish corroboration. No systemic P0/P1 findings or new project conventions require indexing.
 
 **Deferred acceptance — owner: implementing agent, Task 12:** after Task 2 gate 2B and Tasks 10–11, freeze these new fixture/rubric hashes and run both standard and actual isolated baseline/candidate comparisons with fresh inputs, twice per required pair. Grade sealed traces under the selected evidence contract; every required candidate assertion must pass twice. Authoring, staging and source review do not waive missing captures or failed/partial grades. Task 10 is next; the feature remains in progress.
 
@@ -326,9 +326,9 @@ The ordinary-prompt R3 isolated run loaded all eight detection rules and applica
 
 **Before edits:** clean base `4c91bc9e`; review eval IDs end at 11. All eight installed profile detection rules were read. Planned Python fixtures/verifier activate `python`; eval adjacency to `review-code/SKILL.md` activates `skill-md`. Python core implement/test guidance and universal/provider/kk implement guidance are loaded. Provider directories and canonical paths satisfy the skill conditionals; no async constructs are planned. The repository's bounded-routing convention takes precedence over older absolute wording. Knowledge searches found the existing staging-isolation convention; no new dependencies are planned. Verification and independent review are pending.
 
-**Superseding completion — 2026-10-10:** five final scenario directories (IDs 12–16) provide R5/R6/R7 and both R8 variants with **29 required assertions** and sibling grader-only oracles. [Verification](verification/task10/README.md) records six passing snapshot suites (18 tests), eight reproduction groups, all 16 review worktrees validated, R3's historical-only provider and 51 unchanged frozen seed files. R8 inputs differ only in the synthetic PAL result; patch applicability and the fixed independent finding are checked. All ten shell suites pass (644 helper assertions), Go/graph checks pass, and 851 generated files remain stable across repeated generation. Failed attempts and corrected checks are retained. No actor run or behavioral acceptance is claimed.
+**Superseding completion — 2026-10-10:** five final scenario directories (IDs 12–16) provide R5/R6/R7 and both R8 variants with **29 required assertions** and sibling grader-only oracles. [Verification](../../../archives/feature-evidence/functional-review.md "Archive member: payload/docs/feat/wip/functional-review/verification/task10/README.md") records six passing snapshot suites (18 tests), eight reproduction groups, all 16 review worktrees validated, R3's historical-only provider and 51 unchanged frozen seed files. R8 inputs differ only in the synthetic PAL result; patch applicability and the fixed independent finding are checked. All ten shell suites pass (644 helper assertions), Go/graph checks pass, and 851 generated files remain stable across repeated generation. Failed attempts and corrected checks are retained. No actor run or behavioral acceptance is claimed.
 
-**Review:** [independent source review](verification/task10/review.md) returned APPROVE after correcting the summary count from 27 to 29; no fixture assertion changed. PAL returned no actionable findings but reported zero embedded files, so its source coverage remains unverified and is not corroboration. No systemic P0/P1 findings or new project conventions require indexing.
+**Review:** [independent source review](../../../archives/feature-evidence/functional-review.md "Archive member: payload/docs/feat/wip/functional-review/verification/task10/review.md") returned APPROVE after correcting the summary count from 27 to 29; no fixture assertion changed. PAL returned no actionable findings but reported zero embedded files, so its source coverage remains unverified and is not corroboration. No systemic P0/P1 findings or new project conventions require indexing.
 
 **Deferred acceptance — owner: implementing agent, Task 12:** after gate 2B and Task 11, freeze these fixtures/rubric and run the required fresh baseline/candidate comparisons twice, including both R8 report-phase replays and separate actual PAL smoke coverage. Grade sealed evidence; every required candidate assertion must pass twice. Preserve earlier recapture obligations and failures/partial results. Task 11 is next; the feature remains in progress and Task 13 retains final documentation/verification.
 
@@ -352,9 +352,9 @@ The ordinary-prompt R3 isolated run loaded all eight detection rules and applica
 
 **Before edits:** clean base `4bd5c532`. Existing implement IDs end at 9, with the documented duplicate 4 in two legacy directories. All eight installed detection rules were read; Python fixture/verifier filenames activate `python` and implement/SKILL.md adjacency activates `skill-md`. Previously loaded Python core implement/test and universal/provider/kk guidance applies; provider directories and canonical paths satisfy both skill conditionals. No async constructs or dependencies are planned. Knowledge searches confirm actor staging must be outside any SKILL.md ancestor. The proposed resume fixture uses a read-only code/test request so stale completion claims cannot be masked by changing the implementation; its independent external activation prerequisite remains explicitly permitted by the supplied design. Verification and independent review are pending.
 
-**Superseding completion — 2026-10-10:** two final scenario directories (implement IDs 10–11) provide I3 and I4 with **15 required assertions** and sibling grader-only oracles. [Verification](verification/task11/README.md) records three passing existing specimen tests, probes for the exact typo correction and legacy/mixed-record failure, all 12 implementation fixtures staged as clean repositories, and 51 unchanged frozen seed files. Composite identity checks preserve the legacy duplicate ID 4 across 73 implement assertions and 175 combined implement/review assertions. All ten shell suites pass (644 helper assertions), Go/graph checks pass, and 871 generated files remain identical across repeated generation. No actor workflow run or behavioral grade is claimed.
+**Superseding completion — 2026-10-10:** two final scenario directories (implement IDs 10–11) provide I3 and I4 with **15 required assertions** and sibling grader-only oracles. [Verification](../../../archives/feature-evidence/functional-review.md "Archive member: payload/docs/feat/wip/functional-review/verification/task11/README.md") records three passing existing specimen tests, probes for the exact typo correction and legacy/mixed-record failure, all 12 implementation fixtures staged as clean repositories, and 51 unchanged frozen seed files. Composite identity checks preserve the legacy duplicate ID 4 across 73 implement assertions and 175 combined implement/review assertions. All ten shell suites pass (644 helper assertions), Go/graph checks pass, and 871 generated files remain identical across repeated generation. No actor workflow run or behavioral grade is claimed.
 
-**Review:** [independent source review](verification/task11/review.md) returned APPROVE with no findings. PAL returned no actionable findings but zero embedded files; its coverage is unverified and its broad readiness claims are not adopted. No systemic P0/P1 findings or new project conventions require indexing.
+**Review:** [independent source review](../../../archives/feature-evidence/functional-review.md "Archive member: payload/docs/feat/wip/functional-review/verification/task11/review.md") returned APPROVE with no findings. PAL returned no actionable findings but zero embedded files; its coverage is unverified and its broad readiness claims are not adopted. No systemic P0/P1 findings or new project conventions require indexing.
 
 **Deferred acceptance — owner: implementing agent, Task 12:** after gate 2B, freeze final fixtures/rubric and run the declared fresh baseline/candidate comparisons twice. Grade actual instruction/tool events and resulting task/spec files; every required candidate assertion must pass twice. Keep I4's hard requirement, stale observations and permitted external prerequisite distinct, and preserve all earlier recapture obligations. Gate 2B is the remaining prerequisite before Task 12; Task 13 retains final documentation/verification and the feature remains in progress.
 
@@ -368,20 +368,20 @@ The ordinary-prompt R3 isolated run loaded all eight detection rules and applica
 
 ### Subtasks
 
-- [x] 12.1 Run all declared case/mode pairs using two fresh baseline and candidate sessions per pair → verify: identical fixtures/rubric/model configuration, filtered revision-bound actor bundles, fresh writable state and identical initial knowledge seeds with the declared unavailable-vault policy. The user-expanded scope covers both providers fully: [192 completed sessions](verification/task12/opus55/README.md).
+- [x] 12.1 Run all declared case/mode pairs using two fresh baseline and candidate sessions per pair → verify: identical fixtures/rubric/model configuration, filtered revision-bound actor bundles, fresh writable state and identical initial knowledge seeds with the declared unavailable-vault policy. The user-expanded scope covers both providers fully: [192 completed sessions](../../../archives/feature-evidence/functional-review.md "Archive member: payload/docs/feat/wip/functional-review/verification/task12/opus55/README.md").
 - [x] 12.2 Dispose of R8/PAL/legacy coverage under the 2026-10-20 policy → R8 complete; PAL remains user-deferred and unverified; blanket legacy actor reruns retired as an acceptance gate, not claimed executed.
 - [x] 12.3 Grade sealed packages and reassess acceptance → all 192 packages are graded. The all-rows-pass-twice gate is retired; Task 12.25 completes the material assessment with exact-prompt, execution/recovery and other coverage limits preserved.
-- [x] 12.4 Retain failures, fixes and unrun gates with owner/reason/next action → verify: baseline comparisons are not cherry-picked and no statistical reliability or untested-provider parity is claimed. See [the latest matrix record](verification/task12/opus55/README.md) and [historical stop record](verification/task12/README.md); retained observations do not complete the other gates.
+- [x] 12.4 Retain failures, fixes and unrun gates with owner/reason/next action → verify: baseline comparisons are not cherry-picked and no statistical reliability or untested-provider parity is claimed. See [the latest matrix record](../../../archives/feature-evidence/functional-review.md "Archive member: payload/docs/feat/wip/functional-review/verification/task12/opus55/README.md") and [historical stop record](../../../archives/feature-evidence/functional-review.md "Archive member: payload/docs/feat/wip/functional-review/verification/task12/README.md"); retained observations do not complete the other gates.
 
 ### Execution context — 2026-10-10
 
 **Authority:** the user requested the next task through /kk:implement after gate 2B closed. Task 12 is selected; Task 13 remains pending. Preserve baseline `c2d28c9e3064a0a71a0e5ac3748a9616c794eb61`, all earlier evidence and the revision-2 receipt/use limits. Candidate 1 is committed source `4fb1941779f6b24dbed4440c288f1d901f0c4609`.
 
-**Before execution:** installed Claude 2.1.272, Codex 0.162.1, Capy 0.16.8, controller Python 3.12.11 and actor-test Python 3.10.12 differ from the original macOS batch. Declare fresh matching pairs in [the Task 12 run contract](verification/task12/run-contract.md); do not pool historical runs with this configuration. Python controller paths activate `python`; core guidance is loaded, with async guidance conservatively loaded before controller inspection. Any operative skill correction also requires `skill-md` guidance, which is loaded. No new dependency or actor model substitution is planned. New artifacts remain controller-only. Required runtime binding, measurement, grading and review are pending.
+**Before execution:** installed Claude 2.1.272, Codex 0.162.1, Capy 0.16.8, controller Python 3.12.11 and actor-test Python 3.10.12 differ from the original macOS batch. Declare fresh matching pairs in [the Task 12 run contract](../../../archives/feature-evidence/functional-review.md "Archive member: payload/docs/feat/wip/functional-review/verification/task12/run-contract.md"); do not pool historical runs with this configuration. Python controller paths activate `python`; core guidance is loaded, with async guidance conservatively loaded before controller inspection. Any operative skill correction also requires `skill-md` guidance, which is loaded. No new dependency or actor model substitution is planned. New artifacts remain controller-only. Required runtime binding, measurement, grading and review are pending.
 
 **Accepted temporary exception:** after the standalone PAL launcher failed with missing API configuration, the user instructed “ignore pal-based verification for now.” Defer PAL-dependent receipt/use, corroboration and live-integration verification; continue other verification. Owner: implementing agent when PAL verification resumes. Next action: restore the declared launcher's API configuration, validate startup, then rerun affected baseline/candidate pairs and grade the deferred components. Verification condition: actual PAL receipt/use and integration evidence under matching configuration. Preserve original assertion results; this exception does not turn missing PAL evidence into PASS or claim full two-reviewer acceptance. The named independent reviewer and all other behavioral obligations remain in scope.
 
-**Execution result:** 42 measured Claude captures and their isolated grades are retained in [the Task 12 record](verification/task12/README.md). The latest candidate's R1–R6 standard runs have 57 PASS / 19 FAIL; no case passes every required assertion twice. Mandatory ordering, lifecycle coverage and proportionate recommendations still fail. Earlier candidate results remain visible; two candidate-1 isolated runs are invalid for acceptance because they shared temporary evidence paths. The user exception also defers R8 PAL-report replays. No Task 12 Codex, legacy actor-control or full latest-source isolated/implementation matrix is claimed.
+**Execution result:** 42 measured Claude captures and their isolated grades are retained in [the Task 12 record](../../../archives/feature-evidence/functional-review.md "Archive member: payload/docs/feat/wip/functional-review/verification/task12/README.md"). The latest candidate's R1–R6 standard runs have 57 PASS / 19 FAIL; no case passes every required assertion twice. Mandatory ordering, lifecycle coverage and proportionate recommendations still fail. Earlier candidate results remain visible; two candidate-1 isolated runs are invalid for acceptance because they shared temporary evidence paths. The user exception also defers R8 PAL-report replays. No Task 12 Codex, legacy actor-control or full latest-source isolated/implementation matrix is claimed.
 
 **Stopped on repeated verification failure:** /kk:implement requires stopping when “Verification fails repeatedly.” No further actors were launched after candidate 4. A workflow redesign or explicit continuation decision is pending. Source amendments and generated counterparts remain an unaccepted draft. Static checks pass (ten shell suites, Go tests, graph validation, generation freshness and twelve controller tests), while the final independent controller review retains three open subprocess/finalization findings. Owner: implementing agent. Before resuming, resolve the behavioral approach and runner findings, freeze any successor source, then rerun affected comparisons and complete material-access audits. Task 12 remains in-progress and Task 13 pending; no acceptance threshold is waived.
 
@@ -411,18 +411,18 @@ Neither profile contributes design guidance. No package dependency or model
 change is planned. New runtime helpers use Python 3.12's existing standard
 library; signal/subprocess semantics were checked against versioned docs.
 
-**Source/runner checkpoint:** [the rework record](verification/task12/rework/README.md)
+**Source/runner checkpoint:** [the rework record](../../../archives/feature-evidence/functional-review.md "Archive member: payload/docs/feat/wip/functional-review/verification/task12/rework/README.md")
 retains approved independent helper/driver and packet-source reviews. All eleven
 shell suites, Go/graph checks, twelve historical controller tests, nine packet
 tests and eighteen successor/evidence tests pass; 902 generated files remain
 stable. Candidate `be1a283cf872ec97fe569c9fd481bbe623cc8214` and its final successor
-capture freeze are declared before binding in [candidate 5](verification/task12/candidate5/run-contract.md).
+capture freeze are declared before binding in [candidate 5](../../../archives/feature-evidence/functional-review.md "Archive member: payload/docs/feat/wip/functional-review/verification/task12/candidate5/run-contract.md").
 The earlier unmeasured preflight freeze/source remain retained. Both binding
 probes now pass: candidate packet Reads return all six parts and fifteen source
 bodies exactly; parent/child model and bundle identity match. The reported alias
 discrepancy is an expected symlink, verified against actual bytes.
 
-**Diagnostic completed; gate failed:** [candidate-5 results](verification/task12/candidate5/results.md)
+**Diagnostic completed; gate failed:** [candidate-5 results](../../../archives/feature-evidence/functional-review.md "Archive member: payload/docs/feat/wip/functional-review/verification/task12/candidate5/results.md")
 retain all twelve fresh captures and eighty independent assertion grades.
 Candidate: **37 PASS / 3 FAIL**; baseline: **20 PASS / 18 FAIL / 2 PARTIAL**.
 R1 and R3 pass every assertion twice. R5 repetition 1 reads task requirements
@@ -471,12 +471,12 @@ freeze a separately identified candidate, and run only R5 in this follow-up.
 with no findings. All eleven shell suites, Go/graph checks and generation
 freshness pass (902 generated files). Candidate
 `ab7daa7f2833abefc64dedc08e8e44790ce5a0ee` is frozen under
-[the candidate-6 declaration](verification/task12/candidate6/run-contract.md).
+[the candidate-6 declaration](../../../archives/feature-evidence/functional-review.md "Archive member: payload/docs/feat/wip/functional-review/verification/task12/candidate6/run-contract.md").
 Its binding probe returned all six complete packets containing fifteen original
 instruction sources, with matching parent/child model and bundle identity.
 The unchanged runner completed all four fresh R5-standard comparisons.
 
-**Follow-up completed; gate failed:** [candidate-6 results](verification/task12/candidate6/results.md)
+**Follow-up completed; gate failed:** [candidate-6 results](../../../archives/feature-evidence/functional-review.md "Archive member: payload/docs/feat/wip/functional-review/verification/task12/candidate6/results.md")
 retain all four captures and twenty-four independent assertion grades. Candidate:
 **11 PASS / 1 FAIL**; baseline: **4 PASS / 6 FAIL / 2 PARTIAL**. Both candidates
 avoid unnecessary recommendations and approve the scoped increment. Repetition 1
@@ -544,13 +544,13 @@ authorizes measurement without actor changes. The user upgraded Claude Code to
 2.1.296 after 2.1.272 rejected Opus 5.5. Preserve that failed probe and all prior
 captures. Baseline remains c2d28c9e; candidate is immutable 581dd0e1.
 
-[The new run contract](verification/task12/opus55/run-contract.md) declares
+[The new run contract](../../../archives/feature-evidence/functional-review.md "Archive member: payload/docs/feat/wip/functional-review/verification/task12/opus55/run-contract.md") declares
 192 fresh core sessions, unchanged fixtures/assertions/revision-2 grading, and
 separate R8 synthetic replays. PAL-dependent acceptance stays incomplete.
-[Runner review](verification/task12/opus55/review.md) approves the controller after
+[Runner review](../../../archives/feature-evidence/functional-review.md "Archive member: payload/docs/feat/wip/functional-review/verification/task12/opus55/review.md") approves the controller after
 two cleanup fixes; offline regressions and all ten fresh
-[grader controls](verification/task12/opus55/calibration.md) pass. Both providers
-and sides pass binding. [The completed execution record](verification/task12/opus55/README.md)
+[grader controls](../../../archives/feature-evidence/functional-review.md "Archive member: payload/docs/feat/wip/functional-review/verification/task12/opus55/calibration.md") pass. Both providers
+and sides pass binding. [The completed execution record](../../../archives/feature-evidence/functional-review.md "Archive member: payload/docs/feat/wip/functional-review/verification/task12/opus55/README.md")
 retains **192/192 captures and independent grades**, with no unrun core cells or
 measured transport/finalization failures. No actor instructions, fixtures or
 assertion thresholds changed during this comparison.
@@ -563,7 +563,7 @@ R5 standard and both synthetic R8 replays pass twice on both providers; R6
 inherited-defect coverage/follow-up remains a gap, alongside other ordering,
 reporting and evidence failures. Required PAL omissions remain visible.
 
-**Integrity and cleanup:** [the final audit](verification/task12/opus55/audit.md#final-batch-audit)
+**Integrity and cleanup:** [the final audit](../../../archives/feature-evidence/functional-review.md "Archive member: payload/docs/feat/wip/functional-review/verification/task12/opus55/audit.md#final-batch-audit")
 verifies every capture, actor bundle, runtime configuration, Git reference and
 grading package. All 1,216 required assertion observations are present exactly
 once per run; grader/rubric pins are unchanged. No evaluator access was observed
@@ -715,23 +715,23 @@ conditional. /kk:dependency-handling checked path substitution against official
 documentation after Context7 lacked the exact runtime version. Existing capture
 APIs and transport are reused; no dependency or actor permission changed.
 
-The [comparison contract](verification/task12/entry-path/run-contract.md) and
-[temporary candidate provenance](verification/task12/entry-path/source-provenance.json)
+The [comparison contract](../../../archives/feature-evidence/functional-review.md "Archive member: payload/docs/feat/wip/functional-review/verification/task12/entry-path/run-contract.md") and
+[temporary candidate provenance](../../../archives/feature-evidence/functional-review.md "Archive member: payload/docs/feat/wip/functional-review/verification/task12/entry-path/source-provenance.json")
 declare the selected 12 Claude isolated sessions, plus separate loading probes,
 and retain PAL deferral. Repository suites, graph/Go checks, 19 existing capture
 regressions, three adapter controls and fresh Capy state-isolation checks pass.
 Independent source review, actual command-path loading and measured outcomes
 remain pending; static checks establish no behavioral improvement.
 
-**Source checkpoint and runtime observation:** [independent review](verification/task12/entry-path/review.md)
+**Source checkpoint and runtime observation:** [independent review](../../../archives/feature-evidence/functional-review.md "Archive member: payload/docs/feat/wip/functional-review/verification/task12/entry-path/review.md")
 approved the source/adapter with no findings. The initial candidate loading probe
 completed and retained the substituted command and intended instruction reads,
 but PAL unexpectedly connected under the unchanged launcher. No PAL tool call
 occurred and no measured workflow started. Preserve the initial freeze/probe;
-[the runtime-change record](verification/task12/entry-path/runtime-change.md)
+[the runtime-change record](../../../archives/feature-evidence/functional-review.md "Archive member: payload/docs/feat/wip/functional-review/verification/task12/entry-path/runtime-change.md")
 explains why it cannot establish continuing PAL unavailability.
 
-**Required successor configuration:** [the revised declaration](verification/task12/entry-path-no-pal/run-contract.md)
+**Required successor configuration:** [the revised declaration](../../../archives/feature-evidence/functional-review.md "Archive member: payload/docs/feat/wip/functional-review/verification/task12/entry-path-no-pal/run-contract.md")
 keeps the same candidate and all grading obligations but explicitly excludes PAL
 from the launched run-local MCP configuration on both sides. Original controller
 bytes/configuration and evidence remain retained. Four successor adapter controls
@@ -739,15 +739,15 @@ pass; independent review and fresh binding under this configuration precede all
 twelve measurements. This enforces the existing user deferral without changing
 normal user settings, ordinary prompts or the actor's tool permission policy.
 
-**Successor ready for measurement:** [independent review](verification/task12/entry-path-no-pal/review.md)
+**Successor ready for measurement:** [independent review](../../../archives/feature-evidence/functional-review.md "Archive member: payload/docs/feat/wip/functional-review/verification/task12/entry-path-no-pal/review.md")
 approved the configuration successor. Its separately frozen baseline/candidate
-probes both pass [the binding audit](verification/task12/entry-path-no-pal/binding-audit.json):
+probes both pass [the binding audit](../../../archives/feature-evidence/functional-review.md "Archive member: payload/docs/feat/wip/functional-review/verification/task12/entry-path-no-pal/binding-audit.json"):
 Capy connected, PAL absent, Opus 5.5 for both parent/child, complete returned
 instruction content, selected-root identities and unchanged subjects. Candidate
 command delivery includes both substituted paths directly. Measured results
 remain pending; these loading observations do not establish functional improvement.
 
-**Completed comparison; keep decision:** [all twelve captures and independent grades](verification/task12/entry-path-no-pal/README.md)
+**Completed comparison; keep decision:** [all twelve captures and independent grades](../../../archives/feature-evidence/functional-review.md "Archive member: payload/docs/feat/wip/functional-review/verification/task12/entry-path-no-pal/README.md")
 are complete under the successor declaration, with no measured transport failures.
 Baseline: **20 PASS / 20 FAIL / 0 PARTIAL**; candidate: **32 PASS / 8 FAIL / 0
 PARTIAL**. Both candidate repetitions meet all non-PAL diagnostic conditions for
@@ -756,16 +756,16 @@ failures. All eight candidate FAILs retain the required absent-PAL component.
 **Keep the two-word entry-path correction.** This does not waive full-feature
 acceptance or establish broader provider/mode reliability.
 
-[The integrity audit](verification/task12/entry-path-no-pal/audit.json) verifies
+[The integrity audit](../../../archives/feature-evidence/functional-review.md "Archive member: payload/docs/feat/wip/functional-review/verification/task12/entry-path-no-pal/audit.json") verifies
 582 capture files, 1,835 grading files, all 80 assertion identities, frozen inputs,
 bundles, runtime configurations, Git refs and unchanged subjects. All 534 tool
 requests and 93 shell requests were inspected. One baseline globally listed
 external instruction filenames; no evaluator file-content read was observed,
-and OS confinement is not claimed. [Cleanup](verification/task12/entry-path-no-pal/cleanup.json)
+and OS confinement is not claimed. [Cleanup](../../../archives/feature-evidence/functional-review.md "Archive member: payload/docs/feat/wip/functional-review/verification/task12/entry-path-no-pal/cleanup.json")
 retains and verifies contents before removing 21 proven-owned directories and
 six newly created files; a denied write's pre-existing destination stays untouched.
 Exact source archives and runtime inputs are retained for future release archiving.
-[Final independent review](verification/task12/entry-path-no-pal/completion-review.md)
+[Final independent review](../../../archives/feature-evidence/functional-review.md "Archive member: payload/docs/feat/wip/functional-review/verification/task12/entry-path-no-pal/completion-review.md")
 approves the completion record and bounded keep decision with no findings. It
 independently reconciled all grade rows/counts and inspected selected sealed
 receipts, runtime records and cleanup provenance. All documentation links and
@@ -781,7 +781,7 @@ iteration is selected; R7 unsupported-claim investigation retains next priority.
 - **Size:** S for operative wording; 48-session comparison under the existing contract
 - **Owner:** implementing agent
 - **Disposition:** reject and revert the candidate; R7 remains unresolved
-- **Docs:** [R7 disposition](follow-up.md#unsupported-compatibility-claims), [slice](implementation.md#r7-conclusion-consistency--task-1213), [results](verification/task12/r7-conclusions/results.md)
+- **Docs:** [R7 disposition](follow-up.md#unsupported-compatibility-claims), [slice](implementation.md#r7-conclusion-consistency--task-1213), [results](../../../archives/feature-evidence/functional-review.md "Archive member: payload/docs/feat/wip/functional-review/verification/task12/r7-conclusions/results.md")
 
 The user selected Unknown plus a concrete next check until missing compatibility
 evidence is supplied and assessed. The candidate replaced three existing common
@@ -795,7 +795,7 @@ scoped code approval without adding a checklist, report section or workflow phas
 
 #### Outcome — 2026-10-13
 
-[The frozen contract](verification/task12/r7-conclusions/run-contract.md) required
+[The frozen contract](../../../archives/feature-evidence/functional-review.md "Archive member: payload/docs/feat/wip/functional-review/verification/task12/r7-conclusions/run-contract.md") required
 both R7 candidate repetitions in every provider/mode to meet 14.1–14.6. Both
 Claude standard repetitions still fail 14.3/14.4: unsupported provider claims and
 conditional deployment approval survive the new wording. **Reject.** All Codex
@@ -808,7 +808,7 @@ omit it, so no incremental regression is established.
 Effective candidate totals are **147 PASS / 21 FAIL / 0 PARTIAL**; baseline totals
 are **95 PASS / 72 FAIL / 1 PARTIAL**. Sixteen candidate failures are required PAL
 omissions, four are Claude R7 target failures, and one is the R3 reporting gap.
-[Two independent grader corrections](verification/task12/r7-conclusions/grade-corrections/README.md)
+[Two independent grader corrections](../../../archives/feature-evidence/functional-review.md "Archive member: payload/docs/feat/wip/functional-review/verification/task12/r7-conclusions/grade-corrections/README.md")
 fix grading-display truncation errors; original grades and sealed captures remain
 unchanged. Exact Codex prompts remain unverified and the existing receipt/use
 exception is not expanded. A pre-feature baseline and two repetitions do not
@@ -816,14 +816,14 @@ isolate incremental causality or establish reliability.
 
 The canonical and generated operative files match starting
 `cc07a614a999e8f35e2f408a505546077154031f`; the prior Task 12.12 correction stays.
-[The rejected patch](verification/task12/r7-conclusions/candidate-method.patch)
+[The rejected patch](../../../archives/feature-evidence/functional-review.md "Archive member: payload/docs/feat/wip/functional-review/verification/task12/r7-conclusions/candidate-method.patch")
 and candidate `bf873de63369662ebe3b0cde4226dbda1c16104b` remain archived.
-[Integrity checks](verification/task12/r7-conclusions/integrity-audit.json)
+[Integrity checks](../../../archives/feature-evidence/functional-review.md "Archive member: payload/docs/feat/wip/functional-review/verification/task12/r7-conclusions/integrity-audit.json")
 verify frozen inputs, all 48 bundles, subjects/Git refs, 2,001 capture files,
-5,350 grading files and every assertion identity. [Access inspection](verification/task12/r7-conclusions/access-audit.json)
+5,350 grading files and every assertion identity. [Access inspection](../../../archives/feature-evidence/functional-review.md "Archive member: payload/docs/feat/wip/functional-review/verification/task12/r7-conclusions/access-audit.json")
 covers 1,782 tool/lifecycle records, including 914 shell requests; no evaluator
 content read is observed, without claiming OS-wide confinement.
-[Cleanup](verification/task12/r7-conclusions/cleanup.json) preserves temporary
+[Cleanup](../../../archives/feature-evidence/functional-review.md "Archive member: payload/docs/feat/wip/functional-review/verification/task12/r7-conclusions/cleanup.json") preserves temporary
 evidence before removing proven-owned paths; temporary plugin/trust entries are
 absent. Exact runtime inputs and source archives are retained.
 
@@ -831,17 +831,17 @@ The initial external loading command was rejected before launch by automatic
 approval review. The user then explicitly authorized the synthetic fixture and
 filtered-instruction transfer to authenticated Claude/Codex for probes and all
 48 sessions, with PAL excluded. That block was resolved before execution. The
-[verification record](verification/task12/r7-conclusions/README.md) retains the
+[verification record](../../../archives/feature-evidence/functional-review.md "Archive member: payload/docs/feat/wip/functional-review/verification/task12/r7-conclusions/README.md") retains the
 prospective declaration, source/runtime changes, original and corrected freeze,
 binding receipts, grades and local check limitations.
 
 No successor wording or actor iteration is selected. R7, Task 12 acceptance,
 other assigned dispositions, live PAL, legacy controls and Task 13 remain open.
 
-[Independent completion review](verification/task12/r7-conclusions/completion-review.md)
+[Independent completion review](../../../archives/feature-evidence/functional-review.md "Archive member: payload/docs/feat/wip/functional-review/verification/task12/r7-conclusions/completion-review.md")
 approves this experiment's completion/rejection record with no current findings;
 it independently reconciles every assertion and both corrections, while attributing
-execution/hash verification to the root. [Final workspace cleanup](verification/task12/r7-conclusions/workspace-cleanup.json)
+execution/hash verification to the root. [Final workspace cleanup](../../../archives/feature-evidence/functional-review.md "Archive member: payload/docs/feat/wip/functional-review/verification/task12/r7-conclusions/workspace-cleanup.json")
 rechecks all archived runtime inputs and final subject snapshots before removing
 the 52 proven-owned actor workspaces. **Task 12.13 is complete as a rejected
 experiment, not an accepted R7 fix.**
@@ -886,7 +886,7 @@ Python core and universal/provider/kk implementation guidance are loaded.
 Existing staging-isolation knowledge was consulted. No operative instruction
 change or new package dependency was introduced.
 
-**Observed result:** [Task 12.14 verification](verification/task12/r7-validity/README.md)
+**Observed result:** [Task 12.14 verification](../../../archives/feature-evidence/functional-review.md "Archive member: payload/docs/feat/wip/functional-review/verification/task12/r7-validity/README.md")
 retains separately identified evals 19/R7M and 20/R7B, prospective examples/rubric,
 independent premeasurement validity/source reviews, frozen source/runtime inputs,
 binding/state probes, all four fresh Claude standard captures and independent
@@ -917,7 +917,7 @@ durable evidence does not depend on them.
 diagnostic and no-change disposition, with the 19.2 failure and broader gates
 unchanged. Its one P3 calibration-path metadata finding was corrected and
 independently rechecked; no open in-scope source finding remains. See the
-[completion review](verification/task12/r7-validity/completion-review.md).
+[completion review](../../../archives/feature-evidence/functional-review.md "Archive member: payload/docs/feat/wip/functional-review/verification/task12/r7-validity/completion-review.md").
 **Task 12.14 is done.** This does not close Task 12 acceptance or Task 13.
 
 ### Next-session handoff — remaining Task 12 issues
@@ -996,7 +996,7 @@ supports a smaller next experiment without pretending the original gate passed.
 - **Depends on:** Task 12.15 (done)
 - **Owner:** implementing agent
 - **Size:** M
-- **Docs:** [assessment](r6-assessment.md#bounded-next-task-and-completion-boundary), [authoring/verification record](verification/task12/r6-validity/README.md), [rubric](verification/task12/r6-validity/rubric.md)
+- **Docs:** [assessment](r6-assessment.md#bounded-next-task-and-completion-boundary), [authoring/verification record](../../../archives/feature-evidence/functional-review.md "Archive member: payload/docs/feat/wip/functional-review/verification/task12/r6-validity/README.md"), [rubric](../../../archives/feature-evidence/functional-review.md "Archive member: payload/docs/feat/wip/functional-review/verification/task12/r6-validity/rubric.md")
 - **Authority:** on 2026-10-17 the user accepted the proposed next step: author and
   independently review the two fixtures and grading criteria, verify them locally,
   and review the optional-discovery rule explicitly. Actor measurements and
@@ -1024,7 +1024,7 @@ PAL stays user-deferred, and no actor configuration or measurement is selected.
 material default-exposure case and dormant label-only control. The rubric includes
 separate evidence mappings and pre-run examples; conditional absence is recorded
 without claiming exercised discovery or follow-up. The explicit optional-discovery
-scope decision applies only to R6D. [Independent review](verification/task12/r6-validity/review.md)
+scope decision applies only to R6D. [Independent review](../../../archives/feature-evidence/functional-review.md "Archive member: payload/docs/feat/wip/functional-review/verification/task12/r6-validity/review.md")
 approves source and evaluation validity with no findings. No operative instruction
 or original fixture/assertion/grade changed.
 
@@ -1033,7 +1033,7 @@ or original fixture/assertion/grade changed.
 files; structure, Go tests and graph validation pass. Eleven shell suites pass
 686 assertions without skips. The twelfth has a pre-existing hook-fixture mismatch,
 reproduced with unchanged committed inputs and durably assigned with its next
-action in the [verification record](verification/task12/r6-validity/README.md#environment-attempts-and-unrelated-test-follow-up).
+action in the [verification record](../../../archives/feature-evidence/functional-review.md "Archive member: payload/docs/feat/wip/functional-review/verification/task12/r6-validity/README.md#environment-attempts-and-unrelated-test-follow-up").
 The initial protected-path generation failure and Python/TOML environment failures
 are recorded with their successful recovery. No full-repository-green claim is made.
 
@@ -1056,7 +1056,7 @@ an unexercised advisory path for successful follow-up.
   R6M/R6D × Claude/Codex standard review × two fresh repetitions, after grader
   calibration and input freezing. Independent grading and accurate trigger
   accounting are required; no operative patch or broader batch is selected.
-- **Docs:** [rubric](verification/task12/r6-validity/rubric.md), [diagnostic record](verification/task12/r6-validity/diagnostic/README.md), [results](verification/task12/r6-validity/diagnostic/results.json)
+- **Docs:** [rubric](../../../archives/feature-evidence/functional-review.md "Archive member: payload/docs/feat/wip/functional-review/verification/task12/r6-validity/rubric.md"), [diagnostic record](../../../archives/feature-evidence/functional-review.md "Archive member: payload/docs/feat/wip/functional-review/verification/task12/r6-validity/diagnostic/README.md"), [results](../../../archives/feature-evidence/functional-review.md "Archive member: payload/docs/feat/wip/functional-review/verification/task12/r6-validity/diagnostic/results.json")
 
 - [x] 12.17.1 Calibrate the pinned independent grader on ordering, report meaning and conditional-trigger controls → verify: expected PASS/FAIL/PARTIAL results and present/absent/unobservable conditions match without exposing expected answers.
 - [x] 12.17.2 Review the capture adapter, declare/freeze source, fixtures, rubric, grader and runtime; prove binding and state isolation → verify: unchanged HEAD instructions, filtered bundles and fresh per-run state; actual selected runtime and configuration are recorded.
@@ -1091,13 +1091,13 @@ no isolated/PAL coverage. The full diagnostic pass condition is unmet.
 18 inherited runtime and six matrix tests pass. Both binding and both state probes
 pass. All capture seals, 700 grading-file hashes and 75 archived runtime files
 verify; frozen inputs and subjects remain unchanged. Temporary Codex registration
-and trust entries are gone. [Independent completion review](verification/task12/r6-validity/diagnostic/completion-review.md)
+and trust entries are gone. [Independent completion review](../../../archives/feature-evidence/functional-review.md "Archive member: payload/docs/feat/wip/functional-review/verification/task12/r6-validity/diagnostic/completion-review.md")
 approves with no findings; it reconciles reports/grades/manifests while attributing
 execution/hash checks to the parent. The unrelated hook-test failure remains
 assigned, with no full-repository-green claim.
 
 **Disposition:** no broader discovery rule or operative patch. The
-[diagnostic follow-up](verification/task12/r6-validity/diagnostic/README.md#disposition-and-concrete-follow-up)
+[diagnostic follow-up](../../../archives/feature-evidence/functional-review.md "Archive member: payload/docs/feat/wip/functional-review/verification/task12/r6-validity/diagnostic/README.md#disposition-and-concrete-follow-up")
 assigns bounded advisory-closure investigation and defers extra trace prose pending
 demonstrated practical value; both retain concrete next actions and verification
 conditions. No further batch is automatically selected. Original R6/R7 acceptance,
@@ -1177,7 +1177,7 @@ PAL, original acceptance and Task 13 remain open.
 - **Authority:** on 2026-10-17 the user selected the first next step: freeze the
   candidate and write an independently reviewed run contract with explicit
   keep/reject criteria. Actor execution and adoption are not selected.
-- **Docs:** [run contract](verification/task12/advisory-closure/run-contract.md)
+- **Docs:** [run contract](../../../archives/feature-evidence/functional-review.md "Archive member: payload/docs/feat/wip/functional-review/verification/task12/advisory-closure/run-contract.md")
 
 - [x] 12.19.1 Preserve the exact reviewed operative candidate and immutable baseline → verify: archived source and filtered-bundle identities, only the four expected closure files differ from the parent, and no branch/index/cache registration changes.
 - [x] 12.19.2 Pin the 64-session matrix, fixtures, ordinary prompts, grading inputs and runtime declaration → verify: same inputs per side, explicit conditional-trigger evidence and separate prelaunch calibration/binding gates.
@@ -1199,7 +1199,7 @@ activate `skill-md`; declaration files outside skill roots do not. Python guidan
 is loaded for any necessary preparation helper, with no async constructs planned.
 Use the existing offline bundle builder; no dependency or operative edit is needed.
 
-**Outcome:** [preparation record](verification/task12/advisory-closure/README.md)
+**Outcome:** [preparation record](../../../archives/feature-evidence/functional-review.md "Archive member: payload/docs/feat/wip/functional-review/verification/task12/advisory-closure/README.md")
 retains candidate `4b69421465131e2e9e497f200ec9ddbdb439ac83`, baseline source and
 filtered actor archives, 159 evaluation-input files, 17 existing controller files,
 all 64 ordinary prompts/jobs and 464 original assertion rows. Only the four
@@ -1238,7 +1238,7 @@ adoption, a change to historical grades or completion of broader acceptance.
 - **Authority:** on 2026-10-17 the user requested execution-adapter preparation,
   independent review/freezing and fresh calibration. Binding/state probes and the
   64 measured actor sessions remain unselected.
-- **Docs:** [frozen contract](verification/task12/advisory-closure/run-contract.md)
+- **Docs:** [frozen contract](../../../archives/feature-evidence/functional-review.md "Archive member: payload/docs/feat/wip/functional-review/verification/task12/advisory-closure/run-contract.md")
 
 - [x] 12.20.1 Implement a successor adapter using the frozen source/criteria and existing transports → verify: exact matrix/prompt identity, per-case rubric routing, fresh inputs, refusal of overwrite/reuse and preflight gates.
 - [x] 12.20.2 Verify offline controls and obtain independent source review before freezing → verify: frozen-input drift, preparation/capture failure and interruption cannot silently pass; historical files and preparation seal remain unchanged.
@@ -1257,7 +1257,7 @@ checklists are loaded. No async constructs or new dependency are planned.
 Existing skill-md guidance remains loaded for the retained candidate changes.
 PAL remains deferred. Only independent calibration graders may be launched here.
 
-**Outcome:** the [execution record](verification/task12/advisory-closure-execution/README.md)
+**Outcome:** the [execution record](../../../archives/feature-evidence/functional-review.md "Archive member: payload/docs/feat/wip/functional-review/verification/task12/advisory-closure-execution/README.md")
 retains the successor adapter and execution freeze
 `edc9cc7798bc3b2f7759a0c707db26abe2ead848bf51b6ec9de8535497a5dd85`.
 All 25 fresh calibration controls matched: 69 assertion verdicts and 11 explicit
@@ -1269,7 +1269,7 @@ No binding/state probe, measured actor, PAL call or runtime registration occurre
 dispatch validation, frozen-expectation verification and mandatory Plugin Root
 delivery. Calibration review resolved one P1 inconsistency in absent-advisory
 controls before freeze, retaining unchanged expected outcomes. Final validity is
-SOUND; [completion review](verification/task12/advisory-closure-execution/review/completion-review.md)
+SOUND; [completion review](../../../archives/feature-evidence/functional-review.md "Archive member: payload/docs/feat/wip/functional-review/verification/task12/advisory-closure-execution/review/completion-review.md")
 approves with no findings. Twenty-one new offline tests, 19 inherited runtime
 tests and six matrix tests pass. Parent verification checks the 26 preparation
 files, five execution dependencies and 203 calibration inputs against their hashes;
@@ -1301,7 +1301,7 @@ result checks now tie every observation to frozen inputs and a distinct request.
   probes, two Capy state probes and independent review/sealing. This selects
   those model probes and their owned temporary runtime setup/cleanup, not the
   64 measured sessions or PAL resumption.
-- **Docs:** [preflight declaration](verification/task12/advisory-closure-execution/preflight-contract.md)
+- **Docs:** [preflight declaration](../../../archives/feature-evidence/functional-review.md "Archive member: payload/docs/feat/wip/functional-review/verification/task12/advisory-closure-execution/preflight-contract.md")
 
 - [x] 12.21.1 Verify unchanged source/execution/calibration identities and run four fresh binding probes → verify: both providers and both source sides receive their own selected instructions/models/roles; no evaluator material, mixed installation or PAL launch. Final Claude successors resolve the earlier effort/loading gaps; approved Codex/state reuse retains its original identity.
 - [x] 12.21.2 Run two independent Capy state probes → verify: empty distinct stores, successful index/search, foreign marker absent and private vault unavailable; retain raw evidence.
@@ -1318,7 +1318,7 @@ state-probe helper; preserve every attempt and all previous seals. Python/core
 test/review guidance and the shared protocols remain loaded for any audit helper;
 no operative edit, new dependency or async construct is planned. PAL stays excluded.
 
-**Outcome:** [all four bindings and two state probes](verification/task12/advisory-closure-execution/preflight-result.md)
+**Outcome:** [all four bindings and two state probes](../../../archives/feature-evidence/functional-review.md "Archive member: payload/docs/feat/wip/functional-review/verification/task12/advisory-closure-execution/preflight-result.md")
 completed. Full side-specific instruction bytes, named children/model identities,
 unchanged subjects, working isolated Capy state and no observed evaluator/PAL/app
 access are supported. Both temporary Codex plugin/trust entries are absent after
@@ -1329,7 +1329,7 @@ was rejected by automatic approval review; local auditing completed that work.
 
 **Blocked readiness:** Claude parent `--effort high` does not establish child
 effort when the candidate definition declares xhigh. The launcher records model
-overrides but no effort override/receipt. [Official precedence and bounded lookup](verification/task12/advisory-closure-execution/claude-effort-assessment.md)
+overrides but no effort override/receipt. [Official precedence and bounded lookup](../../../archives/feature-evidence/functional-review.md "Archive member: payload/docs/feat/wip/functional-review/verification/task12/advisory-closure-execution/claude-effort-assessment.md")
 leave effective Claude child effort unverified. Independent review confirms
 COMMENT / BLOCKED preflight. No PASS attestation, replacement attempt or measured
 session is claimed; 12.21.4 stays open.
@@ -1363,7 +1363,7 @@ included for inherited transports. No dependency/version upgrade is selected.
 The environment setting is checked through /kk:dependency-handling against
 official documentation and the installed 2.1.296 binary before use.
 
-**Outcome:** the [reviewed correction](verification/task12/advisory-closure-execution/high-effort-host/README.md)
+**Outcome:** the [reviewed correction](../../../archives/feature-evidence/functional-review.md "Archive member: payload/docs/feat/wip/functional-review/verification/task12/advisory-closure-execution/high-effort-host/README.md")
 pins high in the actual Claude subprocess environment and its command receipt,
 for both sides and binding/measured launch paths. Nine successor tests and 26
 predecessor adapter/receipt regressions pass. Independent source review approves;
@@ -1398,7 +1398,7 @@ named reviewers/models, roots and successful hooks/Capy startup are observed.
 The previous effort launch-evidence gap is addressed, without claiming internal
 service telemetry.
 
-The [retained result](verification/task12/advisory-closure-execution/high-effort-host/preflight-result.md)
+The [retained result](../../../archives/feature-evidence/functional-review.md "Archive member: payload/docs/feat/wip/functional-review/verification/task12/advisory-closure-execution/high-effort-host/preflight-result.md")
 keeps readiness BLOCKED: baseline satisfies the original receipt audit, while
 candidate returns seven parent methodology and five child sources but omits all
 eight required profile-detection files. The final report explicitly confirms
@@ -1429,7 +1429,7 @@ Task 12 acceptance and Task 13 remain open.
 The user selected the first priority: reconcile the binding prompt's stopping
 point with bootstrap loading, review the correction, rerun affected captures and
 assess 12.21.4. The separately identified
-[successor declaration](verification/task12/advisory-closure-execution/bootstrap-loading/run-contract.md)
+[successor declaration](../../../archives/feature-evidence/functional-review.md "Archive member: payload/docs/feat/wip/functional-review/verification/task12/advisory-closure-execution/bootstrap-loading/run-contract.md")
 preserves frozen actor sources, measured prompts, original failures and the
 receipt-recomputing guard. Both Claude binding probes use the same corrected
 prompt, with fresh owned workspaces and unchanged high-effort host configuration.
@@ -1441,7 +1441,7 @@ guidance are loaded with test/review checklists. Archived inputs were restored
 and the original guarded launcher verifies against the pinned runtimes. No new
 dependency, operative skill edit or generation is needed.
 
-**Outcome:** [source review](verification/task12/advisory-closure-execution/bootstrap-loading/source-review.md)
+**Outcome:** [source review](../../../archives/feature-evidence/functional-review.md "Archive member: payload/docs/feat/wip/functional-review/verification/task12/advisory-closure-execution/bootstrap-loading/source-review.md")
 approves the prompt/launcher and limited calibration/Codex/state reuse. Its P2
 historical-evidence integrity gap was fixed and regression-tested before freeze;
 eight new, fourteen predecessor and twenty-six original adapter/receipt tests
@@ -1456,13 +1456,13 @@ this new request. No bypass, retry, candidate request or capture followed.
 Owner: implementing agent after explicit approval of both frozen bindings with
 normal host access, isolated Capy and PAL excluded. Then reverify, capture/audit
 serially, retain evidence, obtain independent completion review and pass the strict
-guard. [Current handoff](verification/task12/advisory-closure-execution/bootstrap-loading/preflight-result.md).
+guard. [Current handoff](../../../archives/feature-evidence/functional-review.md "Archive member: payload/docs/feat/wip/functional-review/verification/task12/advisory-closure-execution/bootstrap-loading/preflight-result.md").
 That record predates the explicit approval and completed probes below.
 
 #### Completed bootstrap bindings and strict preflight — 2026-10-18
 
 The user answered **"proceed"** to the concrete two-probe payload/destination
-request. [Authorization](verification/task12/advisory-closure-execution/bootstrap-loading/authorization.md)
+request. [Authorization](../../../archives/feature-evidence/functional-review.md "Archive member: payload/docs/feat/wip/functional-review/verification/task12/advisory-closure-execution/bootstrap-loading/authorization.md")
 resolved the launch blocker. Both fresh Claude bindings completed once with exit 0,
 unchanged subjects, expected roots/models and high-effort launch settings.
 All eight candidate detection files and all five required child sources returned
@@ -1477,9 +1477,9 @@ never count as Reads. Twelve new verifier tests pass, including the corrected
 normalized-alias review finding. Original failure, captures and baseline audit
 bytes remain preserved. No further actor was run.
 
-[Independent final evidence review](verification/task12/advisory-closure-execution/bootstrap-loading/capture-review.md)
+[Independent final evidence review](../../../archives/feature-evidence/functional-review.md "Archive member: payload/docs/feat/wip/functional-review/verification/task12/advisory-closure-execution/bootstrap-loading/capture-review.md")
 approves the scoped preflight with no findings. The
-[attestation](verification/task12/advisory-closure-execution/bootstrap-loading/preflight.json)
+[attestation](../../../archives/feature-evidence/functional-review.md "Archive member: payload/docs/feat/wip/functional-review/verification/task12/advisory-closure-execution/bootstrap-loading/preflight.json")
 binds execution freeze `4a0c926f6af7a70e5b12fc175e670b7d68715ccb0295d8a94b8ba2dd7ebecdec`,
 verifier freeze `4659cc668c11a7ff81f44afa735c5523250f3a1aa609987e96ac11a6fe0a457b`,
 all four binding manifests, calibration, state, runtime retention and review.
@@ -1502,8 +1502,8 @@ Codex child prompts, internal effort telemetry and OS confinement remain unclaim
   batch, required temporary runtime setup/cleanup, independent grading and bounded
   disposition. PAL remains excluded. No source, fixture, model, rubric or threshold
   change is selected.
-- **Docs:** [comparison contract](verification/task12/advisory-closure/run-contract.md),
-  [execution record](verification/task12/advisory-closure-execution/bootstrap-loading/comparison.md)
+- **Docs:** [comparison contract](../../../archives/feature-evidence/functional-review.md "Archive member: payload/docs/feat/wip/functional-review/verification/task12/advisory-closure/run-contract.md"),
+  [execution record](../../../archives/feature-evidence/functional-review.md "Archive member: payload/docs/feat/wip/functional-review/verification/task12/advisory-closure-execution/bootstrap-loading/comparison.md")
 
 - [x] 12.22.1 Reverify frozen inputs, calibration and strict preflight; prepare all 64 fresh declared inputs before capture. All 64 individual launch validations pass.
 - [x] 12.22.2 Capture the complete serial matrix, preserving order and every attempt; stop on setup/integrity/runtime failure without retry, skipping or overwrite. All 64 captures completed successfully without replacement.
@@ -1518,13 +1518,13 @@ batch request was rejected by automatic approval review before process creation
 because it requires explicit authorization for repository-derived instruction and
 fixture transfers to authenticated Anthropic Claude and OpenAI Codex for all
 64 sessions. No measured run, temporary registration, bypass or retry followed.
-The [execution record](verification/task12/advisory-closure-execution/bootstrap-loading/comparison.md)
+The [execution record](../../../archives/feature-evidence/functional-review.md "Archive member: payload/docs/feat/wip/functional-review/verification/task12/advisory-closure-execution/bootstrap-loading/comparison.md")
 retains exact approval scope and resume steps. Owner: implementing agent after
 explicit approval. Reverify and run the already prepared batch; do not prepare
 again or overwrite inputs. Grading, disposition and completion review remain open.
 
 The user subsequently answered **"yes"** to the concrete 64-session payload and
-destination request. [Batch authorization](verification/task12/advisory-closure-execution/bootstrap-loading/comparison-authorization.md)
+destination request. [Batch authorization](../../../archives/feature-evidence/functional-review.md "Archive member: payload/docs/feat/wip/functional-review/verification/task12/advisory-closure-execution/bootstrap-loading/comparison-authorization.md")
 resolved the blocker; the serial batch launched after another successful strict
 preflight. Fresh independent graders process completed sealed captures while
 execution continues. Exact dispatches and original returns are retained beside
@@ -1540,13 +1540,13 @@ Eight same-packet clarifications preserve original tables and yield seven effect
 grade corrections. Original totals are baseline 158 PASS / 61 FAIL / 13 PARTIAL
 and candidate 200 / 31 / 1; effective totals are 163 / 57 / 12 and 202 / 30 / 0.
 The reviewed retainer archives 480 runtime files and verifies owned Codex cleanup
-for all 32 jobs. [The result report](verification/task12/advisory-closure-execution/bootstrap-loading/comparison-result.md)
+for all 32 jobs. [The result report](../../../archives/feature-evidence/functional-review.md "Archive member: payload/docs/feat/wip/functional-review/verification/task12/advisory-closure-execution/bootstrap-loading/comparison-result.md")
 records REJECT under the frozen criteria: an inaccurate evidence claim
 and speculative remediation. The initially graded instruction truncation was
 independently traced to the grader's viewing tool and corrected to PASS, preserving
 the original table and first audit. Advisory follow-up
 is exercised in seven of eight candidate final reports.
-[Independent completion review](verification/task12/advisory-closure-execution/bootstrap-loading/comparison-completion-review.md)
+[Independent completion review](../../../archives/feature-evidence/functional-review.md "Archive member: payload/docs/feat/wip/functional-review/verification/task12/advisory-closure-execution/bootstrap-loading/comparison-completion-review.md")
 approves the bounded completion record with no outstanding findings. Task 12.22
 is complete. Recommend reverting only the closure candidate when selected;
 no rollback or next experiment occurs automatically. Full Task 12 and Task 13
@@ -1558,7 +1558,7 @@ remain open.
 - **Depends on:** Task 12.22 (done, candidate REJECT)
 - **Owner:** implementing agent
 - **Authority:** user explicitly requested “revert the closure candidate.”
-- **Docs:** [rollback record](verification/task12/advisory-closure-revert/README.md)
+- **Docs:** [rollback record](../../../archives/feature-evidence/functional-review.md "Archive member: payload/docs/feat/wip/functional-review/verification/task12/advisory-closure-revert/README.md")
 
 - [x] 12.23.1 Verify current candidate bytes against the frozen four-file patch and preserve completion-time handoff documents before updating live tracking.
 - [x] 12.23.2 Restore only the canonical standard/isolated closing wording from source parent `11b2c6efb0638605bb6acd3eb184edb9abd10f56` and regenerate Codex copies.
@@ -1571,7 +1571,7 @@ This reverses only the closure candidate, not the broader functional-review
 implementation or the pre-feature baseline. Frozen source, criteria, original
 grades and comparison artifacts stay unchanged. The comparison seal's four live
 handoff targets were archived byte-for-byte before these updates; their historical
-hashes resolve through [handoff provenance](verification/task12/advisory-closure-revert/handoff-provenance.json).
+hashes resolve through [handoff provenance](../../../archives/feature-evidence/functional-review.md "Archive member: payload/docs/feat/wip/functional-review/verification/task12/advisory-closure-revert/handoff-provenance.json").
 All four operative files match the source parent. A second generation preserves
 all 958 generated file/link hashes; generator tests, 252 structure assertions,
 graph tests/validation and patch replay checks pass. Independent review approves.
@@ -1654,7 +1654,7 @@ no findings. No operative source, frozen evidence or historical grade changed.
 
 ## Task 13: Document and verify the complete feature
 
-- **Status:** in-progress — feature verification complete; human-owned release housekeeping remains
+- **Status:** done — feature verification, archive upload and maintainer cleanup verified; draft promotion separate
 - **Depends on:** Task 1, Task 2, Task 3, Task 4, Task 5, Task 6, Task 7, Task 8, Task 9, Task 10, Task 11, Task 12
 - **Size:** M
 - **Can run in parallel with:** —
@@ -1668,7 +1668,7 @@ no findings. No operative source, frozen evidence or historical grade changed.
 - [x] 13.4 Reconcile material outcomes, evidence limits and shared-consumer checks under the current evaluation policy → verify: /kk:review-spec and /kk:review-design retain their contracts; retired historical grade gates are not reinstated.
 - [x] 13.5 Run /kk:review-code with actual profiles and /kk:review-spec against design.md, implementation.md, evaluation.md and tasks.md → verify: findings are resolved or durably assigned without waiving required acceptance.
 - [x] 13.6 Record feature verification completion after 13.1–13.5 and current material acceptance are verified → verify: no unresolved hard constraint or essential unverified claim is represented as complete. Disclose other coverage limits without reinstating retired gates. Track release housekeeping in 13.7 separately; Task 13 remains open until both are complete.
-- [ ] 13.7 **AI-assisted local preparation, human cleanup/release:** retain the compact record/tooling, create and verify an ignored local archive, then remove the archived evidence from the repository and its history; attach/verify the assets after the release exists → verify: follow the accepted local-first retention plan below; record local integrity, retained-content checks, human cleanup and later release attachment separately.
+- [x] 13.7 **AI-assisted local preparation, human cleanup/release:** retain the compact record/tooling, create and verify an ignored local archive, then remove the archived evidence from the repository and its history; attach/verify the assets after the release exists → verify: follow the accepted local-first retention plan below and subsequent user-selected draft upload; record local integrity, retained-content checks, human cleanup and release attachment separately.
 
 ### Execution context — 2026-10-20
 
@@ -1748,7 +1748,8 @@ provider configuration, model run or operative skill change is introduced.
   inputs as recovered.
 - [x] Local checksum and extracted-member verification; record local asset paths
   in the summary/handoff.
-- [ ] Human reference repair, evidence removal and history cleanup.
+- [x] Maintainer evidence removal, history rewrite/push, reflog expiry and GC.
+- [x] Final archive-reference repair and documentation closure.
 - [x] User-selected draft release upload/download verification and actual asset
   URLs; draft publication was not requested.
 
@@ -1756,7 +1757,7 @@ At the initial preparation checkpoint, historical captures/grades/source files
 and distributed plugin output were unchanged; no archive had been created,
 uploaded or removed and no history had been rewritten. Source review supported tooling preparation, not archive
 completeness. The initial source-recovery gate was superseded by the accepted
-retention decision below. Task 13.7 stays open for human release housekeeping.
+retention decision below. Task 13.7 was still open at that preparation checkpoint.
 
 ### Accepted retention decision — 2026-10-20
 
@@ -1811,24 +1812,50 @@ remote size/state/digest checks. Fresh downloads matched all original SHA-256
 values; all nine downloaded archives passed complete extracted-member verification.
 Actual asset IDs/API/download URLs are retained in the
 [release receipt](../../../archives/feature-evidence/release-assets.json).
-The draft remains unpublished. No source evidence was removed and no history was
-rewritten. Task 13.7 stays open for human reference repair/removal/history cleanup;
-upload verification is complete and is not an outstanding gate.
+At that upload checkpoint the draft remained unpublished and no source history
+had been rewritten. The subsequent maintainer cleanup is recorded below; upload
+verification is complete and is not an outstanding gate.
+
+### Maintainer cleanup — verified 2026-10-20
+
+After merging, the maintainer ran the prepared filter against master
+`d447d5c3017fce7a16858f6153c193dd9213be57`. Rewritten master is
+`723d6940026291cfe3ac10a2bb0bb91cf36c1ac7`. The saved-tree comparison and ordinary
+remote/local diff confirm exactly 78,623 intended removals, no added/modified
+kept paths, and 2,323 retained paths with identical modes/blob IDs.
+
+The maintainer's atomic push with ten explicit leases updated master, gh-pages
+and eight tags; all ten remote refs were verified. The local-only claude_settings
+branch was not published. Its stale index was aligned without changing working
+files or its existing .gitignore edit. Reflog expiry and GC leave 14,335 packed
+objects in one 6.11 MiB pack, zero loose objects and zero garbage. The kept master
+tree is unchanged after GC. All 27 uploaded asset IDs/digests remain intact.
+
+The [cleanup record](../../../archives/feature-evidence/cleanup-completion.md)
+retains the full commit/ref maps and observed comparisons. Documentation closure
+redirects 549 removed-evidence links to archive notes with exact member titles.
+Historical findings/grades and operative plugin/tool code remain unchanged.
+Link/member checks, strict documentation build and all 15 portable tooling tests
+pass after cleanup. [Independent closure review](reviews/archive-cleanup-review.md)
+supports completion without findings. Task 13.7 and Task 13 are complete; retained
+feature documents move to `docs/feat/done/functional-review/`. Original archive
+member prefixes remain unchanged. The user-selected draft attachment satisfies
+the upload requirement; v0.24.0 publication is a separate release action.
 
 ### 13.7 Evidence retention and release archive
 
-**Owner:** AI-assisted local archive creation/verification is authorized by the
-user's local-first instruction. The human executes repository removal, history
-rewriting, reflog expiry, garbage collection and later release upload. A later
-/kk:implement session must not execute those cleanup/publication actions
-automatically.
+**Owner and completion:** the user authorized AI-assisted local archiving and
+later upload to the selected draft. The human performed repository removal,
+history rewriting, reflog expiry and garbage collection. All are now verified.
+A later /kk:implement session must not repeat destructive cleanup or publish the
+draft automatically.
 
-**Sequencing:** prepare after 13.1–13.6 and the final evidence are complete.
-Create and verify the ignored project-local archive first, then perform human
-cleanup, then create the release and attach/verify the assets. Record the tag and
-URL when they exist; neither is a prerequisite for local work. Feature verification
-is complete, while 13.7 and Task 13 remain explicitly open. Verify the local
-archive before removing repository evidence or purging history.
+**Sequencing:** the original local-first plan required verified local retention
+before human cleanup, with release attachment afterward. The user subsequently
+selected the existing draft for upload before cleanup and specified v0.24.0 as
+the publication target. Local and downloaded archives were verified before
+removal; the observed draft identity and future canonical URLs remain distinct.
+All completion checks below are satisfied under that accepted ordering.
 
 | Keep in Git | Required content and disposition |
 | --- | --- |

@@ -14,18 +14,18 @@ otherwise supported increment unsafe. A review with no supported issue or requir
 check still closes without new work. This is a candidate for measurement, not an
 accepted behavioral fix or a broader discovery obligation.
 
-The [R6 diagnostic](verification/task12/r6-validity/diagnostic/README.md) retained
+The [R6 diagnostic](../../../archives/feature-evidence/functional-review.md "Archive member: payload/docs/feat/wip/functional-review/verification/task12/r6-validity/diagnostic/README.md") retained
 four 22.6 failures. All four complete R6D reports describe the inherited
 empty-detailed-input exception, approve the label change correctly, and omit a
 next action. The evidence is independently graded under the unchanged
-[rubric](verification/task12/r6-validity/rubric.md); no reinterpretation is needed.
+[rubric](../../../archives/feature-evidence/functional-review.md "Archive member: payload/docs/feat/wip/functional-review/verification/task12/r6-validity/rubric.md"); no reinterpretation is needed.
 
 | Final report | Relevant observation |
 | --- | --- |
-| [Claude 1](verification/task12/r6-validity/diagnostic/grading/claude-candidate-R6D-standard-1/captured/report.md) | Reports the defect under coverage limits, explicitly excludes it from Findings, and states no changes are recommended. |
-| [Claude 2](verification/task12/r6-validity/diagnostic/grading/claude-candidate-R6D-standard-2/captured/report.md) | Explains the inherited trigger and disabled default; ends with no changes recommended for this increment, without separate advice. |
-| [Codex 1](verification/task12/r6-validity/diagnostic/grading/codex-candidate-R6D-standard-1/captured/report.md) | Compares successful outputs and inherited exceptions, then reports no actionable findings and no changes recommended. |
-| [Codex 2](verification/task12/r6-validity/diagnostic/grading/codex-candidate-R6D-standard-2/captured/report.md) | Likewise demonstrates unchanged exceptional behavior without a follow-up. |
+| [Claude 1](../../../archives/feature-evidence/functional-review.md "Archive member: payload/docs/feat/wip/functional-review/verification/task12/r6-validity/diagnostic/grading/claude-candidate-R6D-standard-1/captured/report.md") | Reports the defect under coverage limits, explicitly excludes it from Findings, and states no changes are recommended. |
+| [Claude 2](../../../archives/feature-evidence/functional-review.md "Archive member: payload/docs/feat/wip/functional-review/verification/task12/r6-validity/diagnostic/grading/claude-candidate-R6D-standard-2/captured/report.md") | Explains the inherited trigger and disabled default; ends with no changes recommended for this increment, without separate advice. |
+| [Codex 1](../../../archives/feature-evidence/functional-review.md "Archive member: payload/docs/feat/wip/functional-review/verification/task12/r6-validity/diagnostic/grading/codex-candidate-R6D-standard-1/captured/report.md") | Compares successful outputs and inherited exceptions, then reports no actionable findings and no changes recommended. |
+| [Codex 2](../../../archives/feature-evidence/functional-review.md "Archive member: payload/docs/feat/wip/functional-review/verification/task12/r6-validity/diagnostic/grading/codex-candidate-R6D-standard-2/captured/report.md") | Likewise demonstrates unchanged exceptional behavior without a follow-up. |
 
 The practical loss is actionability, not a wrong verdict or demonstrated incident.
 Claude 2 already scopes its closing sentence correctly: merely appending "for this
@@ -84,13 +84,13 @@ the existing rubric and fixtures; interpret each complete report, not keywords.
 **Rollback complete — 2026-10-18:** the user requested reverting this candidate.
 The exact pre-candidate standard/isolated closing wording is restored in canonical
 and generated files; verification passes and independent review approves in
-[Task 12.23](verification/task12/advisory-closure-revert/README.md). The proposal
+[Task 12.23](../../../archives/feature-evidence/functional-review.md "Archive member: payload/docs/feat/wip/functional-review/verification/task12/advisory-closure-revert/README.md"). The proposal
 below and its rejected comparison remain historical evidence, not adopted policy.
 
 **Measured comparison complete — 2026-10-18:** all 64 sessions
 completed successfully and all 464 original assertion rows are retained, with
 independently reviewed same-packet clarifications separately recorded. The
-[result report](verification/task12/advisory-closure-execution/bootstrap-loading/comparison-result.md)
+[result report](../../../archives/feature-evidence/functional-review.md "Archive member: payload/docs/feat/wip/functional-review/verification/task12/advisory-closure-execution/bootstrap-loading/comparison-result.md")
 records **REJECT** under the frozen criteria: an inaccurate evidence claim
 and speculative refactor advice. An initially graded ordering failure was corrected
 after distinguishing grader display truncation from complete actor reads.
@@ -100,7 +100,7 @@ retention pass; independent completion review approves. Recommend reverting only
 this closure candidate when selected; no automatic next experiment or acceptance
 waiver follows. Earlier preparation checkpoints below remain historical.
 
-**Runtime preflight passed 2026-10-18:** [Task 12.21.4](verification/task12/advisory-closure-execution/bootstrap-loading/preflight-result.md)
+**Runtime preflight passed 2026-10-18:** [Task 12.21.4](../../../archives/feature-evidence/functional-review.md "Archive member: payload/docs/feat/wip/functional-review/verification/task12/advisory-closure-execution/bootstrap-loading/preflight-result.md")
 is complete after explicit approval, both corrected Claude bindings, full receipt
 audits, independent evidence review and a successful strict guard. A separately
 reviewed verifier recognizes two permitted instruction-filename listings without
@@ -110,7 +110,7 @@ No measured comparison or adoption decision occurred; the following dated entrie
 preserve the earlier preparation sequence and superseded blockers.
 
 **Corrected probes completed 2026-10-17:** after explicit host/API approval,
-[both fresh Claude bindings](verification/task12/advisory-closure-execution/high-effort-host/preflight-result.md)
+[both fresh Claude bindings](../../../archives/feature-evidence/functional-review.md "Archive member: payload/docs/feat/wip/functional-review/verification/task12/advisory-closure-execution/high-effort-host/preflight-result.md")
 completed with verified high-effort launch configuration. Baseline satisfies the
 receipt audit; candidate omits all eight required detection-file reads. Readiness
 stays BLOCKED, confirmed by independent completion review. Its guard finding is
@@ -118,28 +118,28 @@ resolved in a separately reviewed/frozen receipt-verification layer; five new
 tests pass and the actual incomplete candidate is rejected.
 No additional actor, measurement, adoption or operative instruction change follows.
 
-**Effort correction reviewed 2026-10-17:** the [launcher successor](verification/task12/advisory-closure-execution/high-effort-host/README.md)
+**Effort correction reviewed 2026-10-17:** the [launcher successor](../../../archives/feature-evidence/functional-review.md "Archive member: payload/docs/feat/wip/functional-review/verification/task12/advisory-closure-execution/high-effort-host/README.md")
 enforces/records high and passes nine new plus 26 predecessor tests. Independent
 source review approves; frozen actor instructions remain unchanged. Corrected
 host bindings are unrun because automatic approval review requires explicit
 private-payload authorization to authenticated Claude/API. The earlier sandboxed
 startup failure is preserved. Preflight and behavioral adoption remain open.
 
-**Preflight executed 2026-10-17:** [Task 12.21's result](verification/task12/advisory-closure-execution/preflight-result.md)
+**Preflight executed 2026-10-17:** [Task 12.21's result](../../../archives/feature-evidence/functional-review.md "Archive member: payload/docs/feat/wip/functional-review/verification/task12/advisory-closure-execution/preflight-result.md")
 records four binding and two state probes, but readiness is BLOCKED by unverified
 Claude child effort against the declared high setting. Source/model receipts and
 state checks remain supported; the effort assessment owns the concrete successor
 launcher/fresh-binding proposal. No measured comparison or adoption follows yet.
 
-**Adapter/calibration completed 2026-10-17:** [Task 12.20](verification/task12/advisory-closure-execution/README.md)
+**Adapter/calibration completed 2026-10-17:** [Task 12.20](../../../archives/feature-evidence/functional-review.md "Archive member: payload/docs/feat/wip/functional-review/verification/task12/advisory-closure-execution/README.md")
 adds the independently reviewed execution adapter and freeze. Twenty-five fresh
 calibration sessions match all 69 assertion judgments and 11 trigger values.
 Binding/state probes, reviewed preflight, actor measurement and adoption remain
 unrun; these are calibration results, not evidence of improved review behavior.
 
-**Preparation completed 2026-10-17:** [Task 12.19's record](verification/task12/advisory-closure/README.md)
+**Preparation completed 2026-10-17:** [Task 12.19's record](../../../archives/feature-evidence/functional-review.md "Archive member: payload/docs/feat/wip/functional-review/verification/task12/advisory-closure/README.md")
 now preserves the candidate and inputs. Its independently reviewed
-[run contract](verification/task12/advisory-closure/run-contract.md) is authoritative
+[run contract](../../../archives/feature-evidence/functional-review.md "Archive member: payload/docs/feat/wip/functional-review/verification/task12/advisory-closure/run-contract.md") is authoritative
 for the concrete 64-session declaration and bounded disposition criteria. The
 proposal below records the prior scope/cost reasoning. Execution, preflight and
 adoption remain unrun; no historical assertion grade or feature gate is waived.
@@ -192,7 +192,7 @@ Local checks on 2026-10-17, using installed Python 3.12.11:
 - All twelve repository shell suites were attempted: eleven pass;
   `test/test-codex-hooks.sh` reproduces the pre-existing "Legacy: curl is denied"
   fixture mismatch. Its unchanged inputs, owner, cause and next action remain
-  documented in the [R6 authoring record](verification/task12/r6-validity/README.md#environment-attempts-and-unrelated-test-follow-up).
+  documented in the [R6 authoring record](../../../archives/feature-evidence/functional-review.md "Archive member: payload/docs/feat/wip/functional-review/verification/task12/r6-validity/README.md#environment-attempts-and-unrelated-test-follow-up").
   No full-repository-green claim is made.
 - Local file links in all four changed feature documents resolve;
   `git diff --check` passes. Each review mode retains its single post-instruction

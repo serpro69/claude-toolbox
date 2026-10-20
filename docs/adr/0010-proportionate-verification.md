@@ -18,7 +18,7 @@ bug lacked follow-up. R7's revised, clearer fixtures elicited the intended
 compatibility decisions without a skill change. Neither example establishes
 general reliability or proves every original test invalid. Both show why a
 rubric failure and a product failure need separate assessment. The
-[acceptance reassessment](../feat/wip/functional-review/acceptance-reassessment.md)
+[acceptance reassessment](../feat/done/functional-review/acceptance-reassessment.md)
 links the concrete reports and retained grades.
 
 The testing skill also instructed agents to cover all branches and always run
@@ -53,7 +53,7 @@ adequate evidence. A serious demonstrated failure may justify stopping even
 without a reliability estimate.
 
 Operative guidance lives in
-[`verification-policy.md`](../../klaude-plugin/skills/_shared/verification-policy.md),
+[`verification-policy.md`](https://github.com/serpro69/claude-toolbox/blob/master/klaude-plugin/skills/_shared/verification-policy.md),
 loaded by `/kk:design`, `/kk:review-design` (including its isolated reviewers)
 and `/kk:test`. Existing testing guidance is replaced rather than supplemented
 with a competing checklist. Grading instructions retain strict observation

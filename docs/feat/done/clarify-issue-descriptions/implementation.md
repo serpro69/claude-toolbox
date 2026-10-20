@@ -8,7 +8,7 @@
 
 Tasks 1–3 progress and executed evidence are recorded in [verification.md](verification.md).
 The complete candidate and its measured 1,297-word ceiling are recorded in the
-[budget decision](verification/budget/decision.md). Task 2 applies the prepared
+[budget decision](../../../archives/feature-evidence/clarify-issue-descriptions.md "Archive member: payload/docs/feat/done/clarify-issue-descriptions/verification/budget/decision.md"). Task 2 applies the prepared
 proposal guidance, verifies scenarios 18/19 and PR regressions 11/13, and clarifies
 the existing PR validation-outcome rule after a preserved regression failure.
 Task 2's 25 final assertions pass. Task 3 applies the remaining 49-word gap

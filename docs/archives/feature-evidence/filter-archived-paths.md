@@ -1,5 +1,9 @@
 # Filter archived captures from Git history
 
+**Completed 2026-10-20:** the maintainer ran this filter after merging.
+See [cleanup-completion.md](cleanup-completion.md) for verified results and maps.
+The preparation instructions below are retained as the executed procedure.
+
 Prepared against `90e0e25a` after archive upload/download verification. Run this
 after merging the branch into `master`. This file supplies the command; no
 rewrite, merge or push was executed while preparing it.

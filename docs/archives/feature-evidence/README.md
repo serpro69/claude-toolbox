@@ -6,13 +6,15 @@ The [release asset receipt](release-assets.json) records the 27 exact filenames,
 asset IDs, API/download URLs and SHA-256 values. All downloaded files match the
 originals and all nine downloaded archives pass full extracted-member verification.
 The canonical links target v0.24.0 after promotion. The receipt retains the actual
-draft upload identity separately. Publication, evidence removal and history
-cleanup were not performed.
+draft upload identity separately. **The maintainer's history cleanup is now
+verified**; [the completion record](cleanup-completion.md) retains the tree/ref
+checks and rewrite maps. Publication remains separate.
 
 Prepared 2026-10-20 from `3339e897dfad6bd32a6e7e47533bd53cc1510a72`.
 The user requested the same local preservation/archive treatment for other
-features, assessing each individually. Completed feature directories remain
-frozen; these retention records live outside `docs/feat/done/`.
+features, assessing each individually. Historical findings and grades remain
+unchanged; subsequent reference-only repairs redirect removed capture links.
+These retention records live outside `docs/feat/done/`.
 
 ## Scope and decisions
 
@@ -92,7 +94,8 @@ not rerun, since no executable code or operative instruction changed.
 
 Archives contain the retention notes as they stood at assembly time. This final
 register and completion receipt are retained separately in Git. All original
-feature trees, the related consolidation tree and maintained plugin/tool/test
+feature trees and consolidation tree were unchanged during archiving; their
+selected capture paths have now been filtered from Git. Maintained plugin/tool/test
 files remain unchanged. All archive assets are excluded by the existing ignore
 rule; staging and extraction copies remain alongside them for inspection.
 
@@ -102,12 +105,14 @@ records; archive-byte verification and extraction comparisons above were perform
 by the parent session. Local-link, JSON and authored-document whitespace checks
 also pass. No runtime behavior or historical acceptance was reassessed.
 
-Original evidence removal, link repair, Git-history cleanup and later publication
-are separate work. This operation creates local archives and durable retention
-records; it does not remove source directories or rewrite history.
+Archiving and the subsequent maintainer-executed rewrite have separate records.
+Tracked evidence removal and history cleanup are verified; reference-only repairs
+keep the original archive member in each redirected link title. Publication
+remains a separate user action.
 The [prepared filter-repo command](filter-archived-paths.md) covers archived capture
 and session paths across their historical names, preserves this retention map,
-and records read-only path-match validation. It has not been executed.
+and records the original read-only path-match validation. The maintainer executed
+it after merging; the completion record above describes the verified result.
 
 For retrieval, use the release asset filename/URL from `release-assets.json`,
 then the original repository-relative member path under `payload/`. The local

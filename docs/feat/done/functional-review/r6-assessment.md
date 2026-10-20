@@ -3,7 +3,7 @@
 > Date: 2026-10-17
 > Task: [12.15](tasks.md#task-1215-assess-r6-evaluation-validity-and-review-scope)
 > Scope: assessment and proposed successor criteria; no actor measurement or instruction change
-> Evidence: historical [matrix contract](verification/task12/opus55/run-contract.md), candidate `581dd0e1`, baseline `c2d28c9e`
+> Evidence: historical [matrix contract](../../../archives/feature-evidence/functional-review.md "Archive member: payload/docs/feat/wip/functional-review/verification/task12/opus55/run-contract.md"), candidate `581dd0e1`, baseline `c2d28c9e`
 
 ## Decision
 
@@ -50,19 +50,19 @@ The historical candidate observations separate as follows:
 
 | Observation and exact grades | Practical meaning |
 | --- | --- |
-| Codex standard [1](verification/task12/opus55/grades/codex-candidate-R6-standard-1.md), [2](verification/task12/opus55/grades/codex-candidate-R6-standard-2.md): 13.3/13.4 FAIL, 13.2/13.5 PASS. Matching baselines also fail 13.3/13.4. | Both reports inspect the relevant caller/configuration and correctly approve the label change, but omit inherited discovery and its reachability distinction. Four failed rows describe two missed reports, not four independent defects or a candidate regression. |
-| Claude standard [1](verification/task12/opus55/grades/claude-candidate-R6-standard-1.md), [2](verification/task12/opus55/grades/claude-candidate-R6-standard-2.md): 13.3/13.4 PASS, 13.5 FAIL. Matching baselines pass. | Both find and correctly attribute the bug, but omit a bounded next action. This is an observed follow-up regression under the pinned contract. |
-| Codex isolated [1](verification/task12/opus55/grades/codex-candidate-R6-isolated-1.md): 13.3/13.4 PASS, 13.5 FAIL; [2](verification/task12/opus55/grades/codex-candidate-R6-isolated-2.md): all three PASS. | Repetition 1 surfaces the advisory without a next action. In repetition 2 the child identifies it but the final report omits it, so conditional 13.5 passes. This does not establish better final-report follow-up. |
-| Claude isolated [1](verification/task12/opus55/grades/claude-candidate-R6-isolated-1.md): 13.2/13.5 FAIL; [2](verification/task12/opus55/grades/claude-candidate-R6-isolated-2.md): both PASS. | Repetition 1 lacks the actual diff and withholds approval. That acquisition failure is distinct from dormant-defect scope or missing advice. |
+| Codex standard [1](../../../archives/feature-evidence/functional-review.md "Archive member: payload/docs/feat/wip/functional-review/verification/task12/opus55/grades/codex-candidate-R6-standard-1.md"), [2](../../../archives/feature-evidence/functional-review.md "Archive member: payload/docs/feat/wip/functional-review/verification/task12/opus55/grades/codex-candidate-R6-standard-2.md"): 13.3/13.4 FAIL, 13.2/13.5 PASS. Matching baselines also fail 13.3/13.4. | Both reports inspect the relevant caller/configuration and correctly approve the label change, but omit inherited discovery and its reachability distinction. Four failed rows describe two missed reports, not four independent defects or a candidate regression. |
+| Claude standard [1](../../../archives/feature-evidence/functional-review.md "Archive member: payload/docs/feat/wip/functional-review/verification/task12/opus55/grades/claude-candidate-R6-standard-1.md"), [2](../../../archives/feature-evidence/functional-review.md "Archive member: payload/docs/feat/wip/functional-review/verification/task12/opus55/grades/claude-candidate-R6-standard-2.md"): 13.3/13.4 PASS, 13.5 FAIL. Matching baselines pass. | Both find and correctly attribute the bug, but omit a bounded next action. This is an observed follow-up regression under the pinned contract. |
+| Codex isolated [1](../../../archives/feature-evidence/functional-review.md "Archive member: payload/docs/feat/wip/functional-review/verification/task12/opus55/grades/codex-candidate-R6-isolated-1.md"): 13.3/13.4 PASS, 13.5 FAIL; [2](../../../archives/feature-evidence/functional-review.md "Archive member: payload/docs/feat/wip/functional-review/verification/task12/opus55/grades/codex-candidate-R6-isolated-2.md"): all three PASS. | Repetition 1 surfaces the advisory without a next action. In repetition 2 the child identifies it but the final report omits it, so conditional 13.5 passes. This does not establish better final-report follow-up. |
+| Claude isolated [1](../../../archives/feature-evidence/functional-review.md "Archive member: payload/docs/feat/wip/functional-review/verification/task12/opus55/grades/claude-candidate-R6-isolated-1.md"): 13.2/13.5 FAIL; [2](../../../archives/feature-evidence/functional-review.md "Archive member: payload/docs/feat/wip/functional-review/verification/task12/opus55/grades/claude-candidate-R6-isolated-2.md"): both PASS. | Repetition 1 lacks the actual diff and withholds approval. That acquisition failure is distinct from dormant-defect scope or missing advice. |
 
 All isolated candidate 13.6 results remain FAIL with PAL unavailable; Codex
 isolated repetition 1 also retains a 13.1 receipt PARTIAL. Neither is evidence
 for broader bug discovery. These are earlier-revision observations, not a fresh
 test of current skills or an estimate of model reliability.
 
-The [Claude repetition 2 report](verification/task12/opus55/grading/claude-candidate-R6-standard-2/captured/report.md)
+The [Claude repetition 2 report](../../../archives/feature-evidence/functional-review.md "Archive member: payload/docs/feat/wip/functional-review/verification/task12/opus55/grading/claude-candidate-R6-standard-2/captured/report.md")
 clearly describes the inherited failure and scoped approval, then closes without
-any next action. Its [baseline](verification/task12/opus55/grading/claude-baseline-R6-standard-2/captured/report.md)
+any next action. Its [baseline](../../../archives/feature-evidence/functional-review.md "Archive member: payload/docs/feat/wip/functional-review/verification/task12/opus55/grading/claude-baseline-R6-standard-2/captured/report.md")
 offers a separate follow-up, alongside a lengthy remediation menu. Retaining a
 useful advisory does not require restoring that menu. Current
 [standard](../../../../klaude-plugin/skills/review-code/review-process.md#10-close-the-review-or-handle-required-next-steps)

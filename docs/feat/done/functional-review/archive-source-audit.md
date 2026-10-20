@@ -3,7 +3,7 @@
 > Assessed: 2026-10-20 at `73c8b69ad5bea7bffff7d4d60f4e6a67072d83b0`
 > Scope: Task 13.7 preparation; original evidence unchanged
 > Current disposition: unavailable temporary inputs accepted as an exact-replay limitation; recovery gate retired
-> Owner: human maintainer for remaining cleanup; local preparation and user-requested draft upload are verified
+> Owner: maintainer cleanup verified; local preparation and user-requested draft upload are verified
 
 ## Accepted retention decision — 2026-10-20
 
@@ -18,7 +18,9 @@ the missing early inputs as unavailable; do not claim recovery or exact
 reproducibility. No search of the old host or reconstruction is required.
 Archive checksum/member verification remains required before cleanup; the later
 local-first decision selects an ignored project-local archive for that check.
-Task 13.7 stays open for that human work, not for temporary-input recovery.
+Those checks and maintainer cleanup are now verified in the
+[completed handoff](release-archive-handoff.md); temporary-input recovery remains
+outside the accepted scope.
 
 The inventory and missing-hash findings below remain historical observations.
 
@@ -112,7 +114,8 @@ The retained evidence and available core export have been locally archived and
 verified, with this limitation documented. The subsequent user-requested draft
 release upload and downloaded checksum/member verification are also complete;
 see the [handoff](release-archive-handoff.md). Do not require missing temporary
-inputs to appear in the archive. The remaining work is reference repair and
-human evidence/history cleanup; publication of the draft was not performed.
+inputs to appear in the archive. The maintainer's evidence/history cleanup is now
+verified, with original IDs retained in the rewrite maps. Publication of the draft
+was not performed.
 The decision changes retention requirements, not historical grades or feature
 behavioral acceptance.

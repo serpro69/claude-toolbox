@@ -2,13 +2,16 @@
 
 > Prepared: 2026-10-20 after feature verification and final reviews
 > Owner: human maintainer, AI-guided Task 13.7
-> Status: local and uploaded draft-release archives verified; human reference repair and cleanup remain
+> Status: done — archive, maintainer cleanup and documentation closure verified
 
-[Feature verification](verification-summary.md) is complete. Task 13 stays open
-because its release-housekeeping step explicitly assigns execution to the human
-maintainer. The user authorized local archive preparation in the project before
-cleanup; no release or tag is required at this stage. The feature remains under
-`docs/feat/wip/` until its remaining housekeeping closes.
+[Feature verification](verification-summary.md) and Task 13.7 are complete.
+The maintainer's history operations and reference repairs are verified in the
+[cleanup record](../../../archives/feature-evidence/cleanup-completion.md).
+The user authorized local archive preparation before cleanup and later selected
+the existing draft for upload. Retained feature documents now live under
+`docs/feat/done/functional-review/`; original archive member prefixes stay unchanged.
+The sequences below preserve the preparation plan and subsequent observations.
+Promoting the v0.24.0 draft remains a separate release action.
 
 ## Accepted local-first sequence — 2026-10-20
 
@@ -46,8 +49,9 @@ The `.local-archives/` preparation layout is not needed for retrieval.
 Canonical release/download links target v0.24.0 after promotion. While it remains
 a draft, use authenticated asset API URLs/IDs or the recorded draft prefix.
 Upload and retrieval checks were completed against the draft assets; the final
-URLs are not claimed live yet. Source removal, reference repair and history
-cleanup remain pending.
+URLs are not claimed live yet. Tracked source removal and history cleanup are
+verified. Evidence links now point to retained archive notes with exact member
+paths in their titles; final documentation checks are in progress.
 
 ## Verified local archive — 2026-10-20
 
@@ -77,8 +81,8 @@ subsequent audit wording correction; the retained live documents carry the curre
 local-first sequence. Original evidence bytes are unchanged.
 
 All three assets are ignored by Git. The staging copy is in `payload/` and the
-verified extraction in `extracted/` beside them. No release asset was uploaded;
-no repository evidence was removed and no history was rewritten. The local
+verified extraction in `extracted/` beside them. At that local checkpoint no
+release asset had been uploaded and no history had been rewritten. The local
 archive prerequisite is complete. Independent documentation review approves the
 sequence; archive verification above is parent-executed evidence.
 
@@ -158,8 +162,9 @@ search. On 2026-10-20 the user accepted that these temporary inputs are unavaila
 and approved archiving the retained material with this exact-replay limitation.
 Recovery is no longer a prerequisite. Keep the audit findings and original
 identities; do not represent the missing inputs as recovered. The still-available
-core export remains part of archive assembly. The evidence tree and original Git
-history remain intact.
+core export was included and verified. The original evidence now resides in the
+verified release assets; selected tracked capture paths and their Git history
+have been removed by the maintainer.
 
 ## Human execution sequence
 
@@ -199,7 +204,7 @@ been executed as part of preparing that guidance.
    record the actual tag/URL. Then close 13.7/Task 13 and move the feature docs
    to `docs/feat/done/`, updating local links.
 
-## Completion record to fill with observed values
+## Completion record
 
 | Field | Current value |
 | --- | --- |
@@ -210,7 +215,11 @@ been executed as part of preparing that guidance.
 | Archive SHA-256 and exclusion list | Recorded above and in the manifest; only cache directories excluded |
 | Local extraction/member verification | Passed, including direct original-evidence comparison |
 | Release upload/download verification | Completed against draft release `418689774`; all 27 files and nine extracted archives verified |
-| Evidence removal and history cleanup confirmation | Pending |
+| Evidence removal and history cleanup confirmation | Verified: 78,623 intended paths removed, 2,323 retained unchanged; ten remote refs match; local pack 6.11 MiB after GC |
+| Reference repair and documentation closure | 549 archive links verified; local-link checks, portable tooling tests and strict docs build pass; independent review reports no findings |
 
-These pending fields are release housekeeping. They do not reinstate retired
-LLM grading gates or invalidate the completed feature verification.
+Full rewrite maps and tree/ref comparisons are in the
+[cleanup record](../../../archives/feature-evidence/cleanup-completion.md).
+Task 13.7 and Task 13 are complete. The draft is not promoted yet; the user-selected
+draft attachment satisfies the upload requirement. Publication does not reinstate
+retired LLM grading gates or invalidate the completed feature verification.

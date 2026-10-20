@@ -3,7 +3,7 @@
 > Design: [design.md](design.md)
 > Implementation: [implementation.md](implementation.md)
 > Tasks: [tasks.md](tasks.md)
-> Status: feature verification complete with disclosed limits; human-owned Task 13.7 remains
+> Status: done with disclosed evidence limits; archive/cleanup verified, draft promotion separate
 > Revised: 2026-10-20; [current reassessment](acceptance-reassessment.md)
 > Reviewed claims: [consolidated disposition](reviews/design-review-consolidation.md)
 
@@ -76,10 +76,10 @@ proposes a material-dependency case, benign control and pre-run report examples.
 Task 12.14 implementation began on 2026-10-14. Successor evals 19 (R7M,
 `functional-material-provider-unknown`) and 20 (R7B,
 `functional-benign-provider-contract`) have separate identities. The
-[validity audit](verification/task12/r7-validity/audit.md) and
-[prospective rubric/examples/mapping](verification/task12/r7-validity/rubric.md)
+[validity audit](../../../archives/feature-evidence/functional-review.md "Archive member: payload/docs/feat/wip/functional-review/verification/task12/r7-validity/audit.md") and
+[prospective rubric/examples/mapping](../../../archives/feature-evidence/functional-review.md "Archive member: payload/docs/feat/wip/functional-review/verification/task12/r7-validity/rubric.md")
 explain the material distinction and meaning-based grading. Independent validity
-review and the four-session diagnostic are complete: [results and disposition](verification/task12/r7-validity/README.md)
+review and the four-session diagnostic are complete: [results and disposition](../../../archives/feature-evidence/functional-review.md "Archive member: payload/docs/feat/wip/functional-review/verification/task12/r7-validity/README.md")
 record 23 PASS / 1 FAIL / 0 PARTIAL. All target compatibility conclusions pass
 twice; one report-trace omission remains failed. Existing pinned contracts and grades are
 unchanged. This diagnostic does not replace historical R7 or amend the feature
@@ -97,7 +97,7 @@ On 2026-10-17 the user selected [Task 12.16](tasks.md#task-1216-author-and-revie
 author and independently review the material-exposure and dormant-control pair
 proposed by the [R6 assessment](r6-assessment.md), with local fixture verification
 before any actor measurement. Separately identified evals 21/R6M and 22/R6D use
-the [prospective rubric](verification/task12/r6-validity/rubric.md).
+the [prospective rubric](../../../archives/feature-evidence/functional-review.md "Archive member: payload/docs/feat/wip/functional-review/verification/task12/r6-validity/rubric.md").
 
 The explicit successor scope decision is that R6D may approve its label-only
 increment without discovering the unchanged dormant bug; any discovered defect
@@ -108,20 +108,20 @@ and conditional triggers are tracked separately. This changes only the new
 control's coverage; it does not reinterpret original 13.3/13.4 or replace R6 for
 feature acceptance. Independent validity review precedes any future measurement.
 
-The [authoring record](verification/task12/r6-validity/README.md) contains offline
+The [authoring record](../../../archives/feature-evidence/functional-review.md "Archive member: payload/docs/feat/wip/functional-review/verification/task12/r6-validity/README.md") contains offline
 checks and review status. No actor batch, runtime/model change, operative patch,
 regrading or acceptance waiver is selected here. Historical contracts, two-run
 acceptance, receipt/use limits and PAL deferral remain unchanged.
 
 The user subsequently authorized Task 12.17's separately
-[declared eight-session diagnostic](verification/task12/r6-validity/diagnostic/run-contract.md).
+[declared eight-session diagnostic](../../../archives/feature-evidence/functional-review.md "Archive member: payload/docs/feat/wip/functional-review/verification/task12/r6-validity/diagnostic/run-contract.md").
 Calibration matched 33 expected judgments before freezing. Both providers ran R6M
 and R6D standard review twice on unchanged instructions; all eight captures are
 graded, **58 PASS / 10 FAIL / 0 PARTIAL**. All scoped verdicts are correct, while
 advisory follow-up and report-detail failures remain. All four dormant discovery
 and final-advisory triggers are present; none of those passes relies on absent
 triggers. Standard dispatch conditions remain absent. The
-[results and dispositions](verification/task12/r6-validity/diagnostic/README.md)
+[results and dispositions](../../../archives/feature-evidence/functional-review.md "Archive member: payload/docs/feat/wip/functional-review/verification/task12/r6-validity/diagnostic/README.md")
 do not substitute for original acceptance or establish reliability/improvement.
 
 ### Codex handoff capture resolution
@@ -133,11 +133,11 @@ do not substitute for original acceptance or establish reliability/improvement.
 3. **Version before measuring.** Record the probe outcome and selected path in a new run-contract amendment. If falling back, preserve the original assertion/oracle bytes at a recorded immutable revision or archive, create `verification/task2-rubric-v2.md` and `verification/task2-frozen-v2.json`, and update the final R3/I2 eval definitions and generated copies with a precise old-to-new assertion mapping. Keep subject fixtures and ordinary prompts unchanged. Both providers and both comparison sides use the same revised behavioral assertions; retain raw dispatch evidence wherever available. Do not overwrite the original freeze, rubric, capture manifests or grades. Apply the selected rubric to both sides; regrade retained evidence where sufficient and recapture both affected sides where it is not. Runtime, model, permission-policy or material capture-configuration changes require a revised declaration and fresh affected baseline/candidate comparisons under matching conditions.
 4. **Close capture, then grade.** Complete the four missing baseline runs and any required baseline recaptures with sufficient evidence to grade the selected assertions; candidate counterparts remain Task 12 work. Observed baseline failures are data and do not prevent capture completion. Gate 2B closes when its investigation, contract selection and baseline captures are recorded; Task 12 still requires every candidate assertion to pass twice. The fallback supports reviewer receipt/use, with exact submitted prompt content explicitly unverified. It does not certify byte-for-byte prompt parity or private inherited context. If receipt/use evidence is also unavailable, 2B remains open with the concrete missing capability; do not waive the runs or mark the feature complete.
 
-The [dated run-contract amendment](verification/run-contract-2026-10-09.md) supersedes the original stop-development instruction. It changes no captured result and starts no probe. The capture failure is deferred from implementation readiness because the immutable baseline can still be launched later, not because incomplete evidence counts as acceptance.
+The [dated run-contract amendment](../../../archives/feature-evidence/functional-review.md "Archive member: payload/docs/feat/wip/functional-review/verification/run-contract-2026-10-09.md") supersedes the original stop-development instruction. It changes no captured result and starts no probe. The capture failure is deferred from implementation readiness because the immutable baseline can still be launched later, not because incomplete evidence counts as acceptance.
 
-**Completed selection — 2026-10-10.** The [bounded investigation](verification/task2b/capture-investigation.md) found no viable materially different plaintext surface. The [revision-2 rubric](verification/task2-rubric-v2.md), [freeze](verification/task2-frozen-v2.json), [mapping](verification/task2b/assertion-mapping.json) and [run contract](verification/task2b/run-contract.md) were recorded before the four new Codex measurements. Subject bytes and ordinary prompts stayed unchanged. Calibration passed; the new baselines have 21 PASS / 9 FAIL / 0 PARTIAL, and changed-assertion regrading of retained Claude traces establishes six FAILs without requiring baseline recapture for this contract change. [Independent review](verification/task2b/review.md) approved capture completion. Exact prompts and some child verification-result receipt remain unknown; observable false components establish baseline failures without certifying those unknown positives.
+**Completed selection — 2026-10-10.** The [bounded investigation](../../../archives/feature-evidence/functional-review.md "Archive member: payload/docs/feat/wip/functional-review/verification/task2b/capture-investigation.md") found no viable materially different plaintext surface. The [revision-2 rubric](../../../archives/feature-evidence/functional-review.md "Archive member: payload/docs/feat/wip/functional-review/verification/task2-rubric-v2.md"), [freeze](../../../archives/feature-evidence/functional-review.md "Archive member: payload/docs/feat/wip/functional-review/verification/task2-frozen-v2.json"), [mapping](../../../archives/feature-evidence/functional-review.md "Archive member: payload/docs/feat/wip/functional-review/verification/task2b/assertion-mapping.json") and [run contract](../../../archives/feature-evidence/functional-review.md "Archive member: payload/docs/feat/wip/functional-review/verification/task2b/run-contract.md") were recorded before the four new Codex measurements. Subject bytes and ordinary prompts stayed unchanged. Calibration passed; the new baselines have 21 PASS / 9 FAIL / 0 PARTIAL, and changed-assertion regrading of retained Claude traces establishes six FAILs without requiring baseline recapture for this contract change. [Independent review](../../../archives/feature-evidence/functional-review.md "Archive member: payload/docs/feat/wip/functional-review/verification/task2b/review.md") approved capture completion. Exact prompts and some child verification-result receipt remain unknown; observable false components establish baseline failures without certifying those unknown positives.
 
-PAL history-inclusion markers can also describe formatted read errors. The [successful-read supplement](verification/task2b/pal-receipts-v2/source-semantics.md) therefore binds successful read, formatting and inclusion to the actual call and sealed source snapshots; a nonempty return or file counter alone is insufficient. All four graders reassessed that evidence. Future candidate PASSes require affirmative receipt/use for every required component. The new Linux/Codex 0.162.1 batch and older macOS/Codex 0.161.0 captures are distinct runtime declarations; Task 12 must match configurations and grader pins or repeat affected pairs, preserving all earlier records.
+PAL history-inclusion markers can also describe formatted read errors. The [successful-read supplement](../../../archives/feature-evidence/functional-review.md "Archive member: payload/docs/feat/wip/functional-review/verification/task2b/pal-receipts-v2/source-semantics.md") therefore binds successful read, formatting and inclusion to the actual call and sealed source snapshots; a nonempty return or file counter alone is insufficient. All four graders reassessed that evidence. Future candidate PASSes require affirmative receipt/use for every required component. The new Linux/Codex 0.162.1 batch and older macOS/Codex 0.161.0 captures are distinct runtime declarations; Task 12 must match configurations and grader pins or repeat affected pairs, preserving all earlier records.
 
 ## Bind the actual instructions
 
@@ -169,7 +169,7 @@ A local marketplace can load an installed cache copy. After installation/refresh
 
 Keep runner-owned .agents/plugin metadata, .codex configuration and mounted plugin bytes outside the evaluated diff using the staging repository's local exclude metadata. They must not contain assertions, oracles or expected findings. They are identical infrastructure on each side except for selected actor revision. Invoke the registered kk skill normally; do not substitute a pasted SKILL.md or only inject a root into a default agent.
 
-Record any client-specific installation steps in the run contract. Task 1's [completed probes](verification/README.md#completed-probes-after-login-refresh) established revision-bound Codex loading; exact reviewer handoff capture remains unresolved. Loading must still be verified for the runtime/bundle used by each batch; unavailable or incompatible clients produce an unrun result, not a mixed-version fallback.
+Record any client-specific installation steps in the run contract. Task 1's [completed probes](../../../archives/feature-evidence/functional-review.md "Archive member: payload/docs/feat/wip/functional-review/verification/README.md#completed-probes-after-login-refresh") established revision-bound Codex loading; exact reviewer handoff capture remains unresolved. Loading must still be verified for the runtime/bundle used by each batch; unavailable or incompatible clients produce an unrun result, not a mixed-version fallback.
 
 ## Per-run state isolation
 

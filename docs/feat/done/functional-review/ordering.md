@@ -3,19 +3,19 @@
 > Status: deferred by Task 12.11 assessment; no guard or runtime probe implemented
 > Authority: the user agreed to scope instruction ordering after candidate 6
 > Parent: [design](design.md), [implementation](implementation.md), [Task 12](tasks.md#task-12-execute-and-assess-the-full-comparison-matrix)
-> Evidence: [candidate-6 results](verification/task12/candidate6/results.md)
+> Evidence: [candidate-6 results](../../../archives/feature-evidence/functional-review.md "Archive member: payload/docs/feat/wip/functional-review/verification/task12/candidate6/results.md")
 > Owner: implementing agent, Task 12
 
 ## Current disposition — 2026-10-11
 
-The [full matrix](verification/task12/opus55/README.md) passes R5 standard twice
+The [full matrix](../../../archives/feature-evidence/functional-review.md "Archive member: payload/docs/feat/wip/functional-review/verification/task12/opus55/README.md") passes R5 standard twice
 on both providers. Its remaining confirmed Codex I4 sequencing failure concerns
 context loading before source investigation, after instruction preparation; this
 guard may not address that dependency. The user also requires severity to be
 weighed against added instruction and workflow burden.
 
 The [Task 12.11 assessment](follow-up.md#context-ordering) defers 12.10. Task 12.12's
-[bounded comparison](verification/task12/entry-path-no-pal/README.md) supports keeping
+[bounded comparison](../../../archives/feature-evidence/functional-review.md "Archive member: payload/docs/feat/wip/functional-review/verification/task12/entry-path-no-pal/README.md") supports keeping
 its isolated-command entry-path correction without adding an ordering guard.
 Revisit this experiment
 only on evidence of a material preparation-order failure it actually addresses,

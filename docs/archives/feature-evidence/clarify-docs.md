@@ -42,3 +42,15 @@ is no reusable standalone runner to extract. Archive failed retries and all
 snapshot/protocol material, including the separate consolidation evidence.
 Locators are `payload/docs/feat/done/clarify-docs/verification/` and
 `payload/docs/feat/reviews/clarify-docs-consolidation/`.
+
+## Open archived evidence
+
+[Download the clarify-docs archive](https://github.com/serpro69/claude-toolbox/releases/download/v0.24.0/clarify-docs-evidence-20261020T172123Z-3339e897.tar.gz).
+The canonical link targets v0.24.0 after promotion; authenticated draft asset
+API URLs/IDs are in [release-assets.json](release-assets.json).
+
+Retained evidence links point here and carry an `Archive member: payload/...`
+title. Hover the link or read its Markdown source for the exact member path,
+then open that path in the extracted archive. A trailing `#...` identifies the
+original Markdown section. The member paths remain those of the original
+snapshot, even after feature documents or Git revisions move.

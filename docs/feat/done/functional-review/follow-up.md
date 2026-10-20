@@ -1,10 +1,10 @@
 # Functional review: next-session handoff
 
 > Updated: 2026-10-20
-> Status: feature verification complete; human-owned Task 13.7 release housekeeping remains
-> Owner: human maintainer for Task 13.7, AI-guided
+> Status: done; Tasks 1–13 complete with recorded evidence limits
+> Owner: human maintainer for the separate v0.24.0 draft promotion
 > Next-session starting point: [verification summary](verification-summary.md) and [archive handoff](release-archive-handoff.md)
-> Evidence: [completed matrix](verification/task12/opus55/README.md), [Claude](verification/task12/opus55/claude-results.md), [Codex](verification/task12/opus55/codex-results.md)
+> Evidence: [completed matrix](../../../archives/feature-evidence/functional-review.md "Archive member: payload/docs/feat/wip/functional-review/verification/task12/opus55/README.md"), [Claude](../../../archives/feature-evidence/functional-review.md "Archive member: payload/docs/feat/wip/functional-review/verification/task12/opus55/claude-results.md"), [Codex](../../../archives/feature-evidence/functional-review.md "Archive member: payload/docs/feat/wip/functional-review/verification/task12/opus55/codex-results.md")
 
 ## Start here
 
@@ -14,11 +14,15 @@ skips), Go/graph checks and repeated generation pass, and independent source/spe
 reviews return APPROVE/CONFORMANT without findings. The pre-existing hook-test
 fixture now uses an explicit toolbox-only configuration.
 
-The only remaining task is [13.7's human-owned handoff](release-archive-handoff.md):
-finalize retained tooling, archive/upload the evidence, verify retrieval, then
-perform evidence/history cleanup. The inventory and guidance are prepared; none
-of those actions is claimed completed. Keep the evidence tree and feature in WIP
-until that task closes. No new actor evaluation or skill change is selected.
+**Archive and cleanup complete — 2026-10-20:** [Task 13.7's handoff](release-archive-handoff.md)
+records retained tooling, verified local/downloaded archives and the maintainer's
+evidence/history cleanup. The 549 capture links now identify exact archive members;
+rewrite maps are retained in Git. All 15 portable tooling tests pass after cleanup,
+the strict docs build passes, and independent closure review reports no findings.
+Task 13.7 and the feature are done, with retained documents under `docs/feat/done/`.
+The remaining release action is promoting the existing v0.24.0 draft after these
+documentation updates are committed and pushed. No new actor evaluation or skill
+change is selected.
 
 **Current decision — 2026-10-20:** the user authorized replacing the
 all-assertions-pass-twice gate with proportionate acceptance. Read
@@ -40,7 +44,7 @@ harmful resulting patch justifies another correction or batch.
 Task 13's documentation, repository checks and source/spec review are now complete.
 The [completion summary](verification-summary.md) carries the limitation; it does not claim the old
 I2 workflows completed verification or that autonomous recovery is reliable.
-Release evidence archiving remains human-owned. No reviewer simplification or
+Release evidence archiving and maintainer cleanup are verified. No reviewer simplification or
 closure-wording restoration is selected.
 
 [Completion review](reviews/verification-policy-review.md) approves with no
@@ -75,7 +79,7 @@ All 64 inputs are prepared and individually validated, with strict preflight and
 runtime identities still passing. Automatic approval review rejected the batch
 launch before process creation and requires explicit approval of the 64-session
 instruction/fixture transfer to authenticated Anthropic Claude and OpenAI Codex.
-No measured actor ran. [Task 12.22's execution record](verification/task12/advisory-closure-execution/bootstrap-loading/comparison.md)
+No measured actor ran. [Task 12.22's execution record](../../../archives/feature-evidence/functional-review.md "Archive member: payload/docs/feat/wip/functional-review/verification/task12/advisory-closure-execution/bootstrap-loading/comparison.md")
 specifies the approval scope and resume command. After approval, reverify and run
 the existing prepared batch; do not rerun preparation or overwrite inputs.
 Independent grading, bounded disposition and completion review remain pending.
@@ -87,7 +91,7 @@ auditor rejected two permitted instruction-filename listings; a separately
 reviewed/frozen verifier now validates their narrow scope without counting them
 as Reads. Twelve verifier tests pass. Original captures/failures and operative
 skill bytes stay unchanged. Independent evidence review approves, and the strict
-guard passes. [Task 12.21.4 is complete](verification/task12/advisory-closure-execution/bootstrap-loading/preflight-result.md).
+guard passes. [Task 12.21.4 is complete](../../../archives/feature-evidence/functional-review.md "Archive member: payload/docs/feat/wip/functional-review/verification/task12/advisory-closure-execution/bootstrap-loading/preflight-result.md").
 
 The next item is the frozen 64-session advisory-closure comparison when selected.
 Use `verification/task12/advisory-closure-execution/bootstrap-loading/listing_guard.py`
@@ -99,7 +103,7 @@ The entries below retain the earlier sequence and superseded blockers.
 **Corrected bindings completed — 2026-10-17:** explicit user approval resolved
 the host/API authorization blocker. Both Claude probes completed once with high
 in their actual launch/command records, expected models/roots and unchanged
-subjects. The [result](verification/task12/advisory-closure-execution/high-effort-host/preflight-result.md)
+subjects. The [result](../../../archives/feature-evidence/functional-review.md "Archive member: payload/docs/feat/wip/functional-review/verification/task12/advisory-closure-execution/high-effort-host/preflight-result.md")
 keeps preflight BLOCKED: baseline passes, but candidate explicitly skips all eight
 profile-detection files required by bootstrap/fallback loading. Independent
 review confirms the failure. Its P2 guard finding is fixed in a separately
@@ -110,7 +114,7 @@ before another affected capture. No operative skill change, additional actor or
 measured comparison is selected; original acceptance and Task 13 remain open.
 
 **Effort correction prepared — 2026-10-17:** the user selected the next step.
-The [successor](verification/task12/advisory-closure-execution/high-effort-host/README.md)
+The [successor](../../../archives/feature-evidence/functional-review.md "Archive member: payload/docs/feat/wip/functional-review/verification/task12/advisory-closure-execution/high-effort-host/README.md")
 enforces and records Claude high effort without changing actor instructions.
 Nine successor tests and 26 predecessor regressions pass; independent review
 approves the launcher and calibration/Codex/state reuse under original identities.
@@ -127,7 +131,7 @@ all broader acceptance gates retain their status.
 [Task 12.21](tasks.md#task-1221-run-and-independently-review-runtime-preflight).
 Four binding probes and two Capy state probes completed, with full instruction
 receipts, expected model identities, unchanged subjects and owned cleanup. The
-[result](verification/task12/advisory-closure-execution/preflight-result.md) and
+[result](../../../archives/feature-evidence/functional-review.md "Archive member: payload/docs/feat/wip/functional-review/verification/task12/advisory-closure-execution/preflight-result.md") and
 independent review retain one blocker: Claude child effort is not established at
 the declared high value, and the candidate definition specifies xhigh. Prepare a
 reviewed successor launcher that enforces/records high, then fresh affected Claude
@@ -136,7 +140,7 @@ made. Earlier calibration and all historical grades remain unchanged.
 
 **Completed adapter and calibration — 2026-10-17:** the user selected
 [Task 12.20](tasks.md#task-1220-prepare-the-execution-adapter-and-run-fresh-calibration).
-The [execution record](verification/task12/advisory-closure-execution/README.md)
+The [execution record](../../../archives/feature-evidence/functional-review.md "Archive member: payload/docs/feat/wip/functional-review/verification/task12/advisory-closure-execution/README.md")
 retains the reviewed/frozen adapter and 25 fresh grader sessions. All 69 assertion
 judgments and 11 conditional-trigger values match; expected FAIL/PARTIAL controls
 remain visible. Completion review approves with no findings. No binding/state
@@ -146,7 +150,7 @@ acceptance, other assigned investigations and Task 13 remain open.
 
 **Completed freeze and declaration — 2026-10-17:** the user selected
 [Task 12.19](tasks.md#task-1219-freeze-the-closure-candidate-and-review-its-comparison-contract).
-The [preparation record](verification/task12/advisory-closure/README.md) preserves
+The [preparation record](../../../archives/feature-evidence/functional-review.md "Archive member: payload/docs/feat/wip/functional-review/verification/task12/advisory-closure/README.md") preserves
 the exact source/filtered bundles, 64-session matrix, grading inputs and reviewed
 KEEP / REJECT / INCONCLUSIVE contract. Both independent reviews approve after one
 22.4 component-mapping clarification; archive, source-delta and checksum checks pass.
@@ -171,7 +175,7 @@ completed calibration, freezing, binding/state probes and all eight captures wit
 independent grading: **58 PASS / 10 FAIL / 0 PARTIAL**. Every scoped verdict is
 correct. All four dormant reports surface the old defect but omit a separate next
 action; Codex also omits required trace/reachability details. The
-[diagnostic record](verification/task12/r6-validity/diagnostic/README.md) preserves
+[diagnostic record](../../../archives/feature-evidence/functional-review.md "Archive member: payload/docs/feat/wip/functional-review/verification/task12/r6-validity/diagnostic/README.md") preserves
 the evidence and independently approved dispositions: investigate bounded
 advisory closure, defer additional trace prose pending value, and add no broader
 discovery obligation. Original acceptance, higher-impact implementation verification,
@@ -180,8 +184,8 @@ PAL, legacy controls and Task 13 stay open. No patch or further batch is selecte
 **Completed continuation — 2026-10-17:** the user accepted the proposed fixture
 and rubric authoring step. [Task 12.16](tasks.md#task-1216-author-and-review-r6-material-exposure-and-dormant-control-evaluations)
 authored evals 21/R6M and 22/R6D, verified them offline and obtained independent
-validity/source approval with no findings. The [authoring record](verification/task12/r6-validity/README.md)
-and [prospective rubric](verification/task12/r6-validity/rubric.md) record the
+validity/source approval with no findings. The [authoring record](../../../archives/feature-evidence/functional-review.md "Archive member: payload/docs/feat/wip/functional-review/verification/task12/r6-validity/README.md")
+and [prospective rubric](../../../archives/feature-evidence/functional-review.md "Archive member: payload/docs/feat/wip/functional-review/verification/task12/r6-validity/rubric.md") record the
 optional-discovery decision for the new dormant control. The possible next step
 is a separately declared bounded diagnostic on unchanged instructions after
 grading calibration; no run is selected automatically. A pre-existing hook-test
@@ -198,7 +202,7 @@ The assessment proposes fixture/rubric authoring next; that subsequent task is
 not automatically selected. Other report-detail and implementation-verification
 investigations retain the assignments below.
 
-**Current outcome — 2026-10-14:** [Task 12.14's four-session diagnostic](verification/task12/r7-validity/README.md)
+**Current outcome — 2026-10-14:** [Task 12.14's four-session diagnostic](../../../archives/feature-evidence/functional-review.md "Archive member: payload/docs/feat/wip/functional-review/verification/task12/r7-validity/README.md")
 is captured and independently graded: 23 PASS / 1 FAIL / 0 PARTIAL. Both material
 cases retain Unknown target readiness, and both benign controls give justified
 scoped approval. One report omits the explicit endpoint in its behavior trace;
@@ -235,7 +239,7 @@ was consequential. Separately identified material-dependency and benign cases,
 with explicit contracts and pre-run report examples, elicited appropriate
 compatibility conclusions twice each using unchanged skill instructions. Overall
 grading remained 23 PASS / 1 FAIL: one report omitted the endpoint from its trace.
-The [results](verification/task12/r7-validity/README.md) support no further R7
+The [results](../../../archives/feature-evidence/functional-review.md "Archive member: payload/docs/feat/wip/functional-review/verification/task12/r7-validity/README.md") support no further R7
 instruction change for this slice. They do not prove the old test invalid or the
 skill reliable, and they do not replace original R7 for feature acceptance.
 
@@ -252,9 +256,9 @@ were written but no successful test execution occurred. One trace never invokes
 the tests; the other attempts a denied Capy execution tool. That denial is not
 evidence that the permitted Python shell command was unavailable. In a typo-only
 I3 run, the independent reviewer received no actual diff. Some I4 verification
-also remains source-only. See [I2 repetition 1](verification/task12/opus55/grades/claude-candidate-I2-standalone-1.md),
-[I2 repetition 2](verification/task12/opus55/grades/claude-candidate-I2-standalone-2.md)
-and [I3's missing diff](verification/task12/opus55/grades/claude-candidate-I3-standalone-1.md).
+also remains source-only. See [I2 repetition 1](../../../archives/feature-evidence/functional-review.md "Archive member: payload/docs/feat/wip/functional-review/verification/task12/opus55/grades/claude-candidate-I2-standalone-1.md"),
+[I2 repetition 2](../../../archives/feature-evidence/functional-review.md "Archive member: payload/docs/feat/wip/functional-review/verification/task12/opus55/grades/claude-candidate-I2-standalone-2.md")
+and [I3's missing diff](../../../archives/feature-evidence/functional-review.md "Archive member: payload/docs/feat/wip/functional-review/verification/task12/opus55/grades/claude-candidate-I3-standalone-1.md").
 
 **Why it matters:** code inspection and written tests do not provide executed
 verification. A reviewer without the diff cannot establish change attribution.
@@ -283,7 +287,7 @@ Codex standard misses that old defect in both candidate and baseline runs.
 The [eval](../../../../klaude-plugin/skills/review-code/evals/functional-inherited-conditional-defect/eval.json)
 requires discovery and attribution despite the narrow review prompt. Other reports
 surface it but omit the bounded follow-up required by assertion 13.5; the
-[Claude report](verification/task12/opus55/grading/claude-candidate-R6-standard-2/captured/report.md)
+[Claude report](../../../archives/feature-evidence/functional-review.md "Archive member: payload/docs/feat/wip/functional-review/verification/task12/opus55/grading/claude-candidate-R6-standard-2/captured/report.md")
 approves the label change, explains the inherited bug, and ends “No changes recommended.”
 
 **Question to settle:** does safe review of this increment reasonably require
@@ -302,12 +306,12 @@ dispositions until a prospective decision is made.
 
 ### C. Correct outcomes with missing report details
 
-**Observed:** [R2](verification/task12/opus55/grades/codex-candidate-R2-standard-2.md)
+**Observed:** [R2](../../../archives/feature-evidence/functional-review.md "Archive member: payload/docs/feat/wip/functional-review/verification/task12/opus55/grades/codex-candidate-R2-standard-2.md")
 finds both retry defects, gives justified REQUEST_CHANGES and useful fixes, but
 does not explain why the existing green tests missed them. Some I4 reports
 correctly identify mixed-format incompatibility, preserve the hard requirement
 and reopen the task, but omit the required final qualification that production
-state was not verified. In one [Codex I4 run](verification/task12/opus55/grades/codex-candidate-I4-plan-2.md)
+state was not verified. In one [Codex I4 run](../../../archives/feature-evidence/functional-review.md "Archive member: payload/docs/feat/wip/functional-review/verification/task12/opus55/grades/codex-candidate-I4-plan-2.md")
 that qualification exists in task context but not the final response. These
 observations do not establish false task completion.
 
@@ -319,7 +323,7 @@ the user's understanding; avoid inventing a required phrase or extra report
 section to obtain a clean score. Record any proposed change to the existing
 final-response requirement explicitly before applying it.
 
-The [R1 scenario-order failure](verification/task12/opus55/grades/claude-candidate-R1-standard-1.md)
+The [R1 scenario-order failure](../../../archives/feature-evidence/functional-review.md "Archive member: payload/docs/feat/wip/functional-review/verification/task12/opus55/grades/claude-candidate-R1-standard-1.md")
 needs a distinct semantic check: the report finds cleanup corruption but reverses
 part of the required event sequence. That is not merely missing wording; assess
 whether its described execution actually supports the claimed consequence.
@@ -344,7 +348,7 @@ and I2 9.5. Missing evidence stays missing under the existing contract.
 
 ### E. One context/source read overlapped by 49 milliseconds
 
-**Observed:** [Codex I4 repetition 1](verification/task12/opus55/grades/codex-candidate-I4-plan-1.md)
+**Observed:** [Codex I4 repetition 1](../../../archives/feature-evidence/functional-review.md "Archive member: payload/docs/feat/wip/functional-review/verification/task12/opus55/grades/codex-candidate-I4-plan-1.md")
 starts a full source read 49 ms before task/design/implementation loading completes.
 The later outcome correctly refreshes stale context, finds the incompatibility
 and keeps acceptance open. This is a demonstrated ordering violation; no harmful
@@ -411,7 +415,7 @@ tested the user-approved bounded wording replacement in all 48 declared sessions
 Both Claude standard R7 reports still overclaim provider/deployment compatibility,
 so the candidate is rejected and the operative changes are reverted. All 336
 assertion rows, integrity checks and cleanup are recorded; [independent completion
-review](verification/task12/r7-conclusions/completion-review.md) approves the rejection
+review](../../../archives/feature-evidence/functional-review.md "Archive member: payload/docs/feat/wip/functional-review/verification/task12/r7-conclusions/completion-review.md") approves the rejection
 record with no findings. All 52 actor workspaces were removed after archive checks.
 The user explicitly authorized the external transfer and comparison after the
 initial launch rejection; no authorization block remains for that completed
@@ -495,7 +499,7 @@ applicable case/mode combinations, baseline and candidate, twice each. Baseline
 is `c2d28c9e3064a0a71a0e5ac3748a9616c794eb61`; candidate is
 `581dd0e11455398cb73e3d6ae5542854c016fe7f`. Claude Code 2.1.296 used Opus 5.5/high;
 Codex 0.162.1 used gpt-6-astra/xhigh with gpt-6.1-sol/xhigh as named reviewer.
-The [frozen contract](verification/task12/opus55/run-contract.md) is authoritative
+The [frozen contract](../../../archives/feature-evidence/functional-review.md "Archive member: payload/docs/feat/wip/functional-review/verification/task12/opus55/run-contract.md") is authoritative
 for the complete configuration.
 
 Both candidates improve overall assertion counts, but acceptance remains unmet.
@@ -641,18 +645,18 @@ diff attribution, historical comparison or executed verification, and sometimes
 withholds otherwise supportable approval. The two R3-isolated candidates each
 make one shell request containing broad instruction discovery; its denial is
 followed by a blanket shell-unavailable conclusion. The second stops before
-investigation. See their actual [first request](verification/task12/opus55/grading/claude-candidate-R3-isolated-1/events/0003.json),
-[second-run request](verification/task12/opus55/grading/claude-candidate-R3-isolated-2/events/0003.json),
-[denial](verification/task12/opus55/grading/claude-candidate-R3-isolated-2/events/0004.json)
-and [stopped report](verification/task12/opus55/grading/claude-candidate-R3-isolated-2/captured/report.md).
-Their [launch policy](verification/task12/opus55/grading/claude-candidate-R3-isolated-2/captured/command.json)
+investigation. See their actual [first request](../../../archives/feature-evidence/functional-review.md "Archive member: payload/docs/feat/wip/functional-review/verification/task12/opus55/grading/claude-candidate-R3-isolated-1/events/0003.json"),
+[second-run request](../../../archives/feature-evidence/functional-review.md "Archive member: payload/docs/feat/wip/functional-review/verification/task12/opus55/grading/claude-candidate-R3-isolated-2/events/0003.json"),
+[denial](../../../archives/feature-evidence/functional-review.md "Archive member: payload/docs/feat/wip/functional-review/verification/task12/opus55/grading/claude-candidate-R3-isolated-2/events/0004.json")
+and [stopped report](../../../archives/feature-evidence/functional-review.md "Archive member: payload/docs/feat/wip/functional-review/verification/task12/opus55/grading/claude-candidate-R3-isolated-2/captured/report.md").
+Their [launch policy](../../../archives/feature-evidence/functional-review.md "Archive member: payload/docs/feat/wip/functional-review/verification/task12/opus55/grading/claude-candidate-R3-isolated-2/captured/command.json")
 lists Git/Python tools; neither run separately attempts the needed Git operation.
 This establishes an unsupported generalization, not proof that every alternative
 command would have succeeded.
 
 Successful R6/R9-recovery isolated repetitions start from the resolved helper
-path and later obtain diffs; the [R9 helper call](verification/task12/opus55/grading/claude-candidate-R9-recovery-isolated-2/events/0009.json)
-and [Git call](verification/task12/opus55/grading/claude-candidate-R9-recovery-isolated-2/events/0043.json)
+path and later obtain diffs; the [R9 helper call](../../../archives/feature-evidence/functional-review.md "Archive member: payload/docs/feat/wip/functional-review/verification/task12/opus55/grading/claude-candidate-R9-recovery-isolated-2/events/0009.json")
+and [Git call](../../../archives/feature-evidence/functional-review.md "Archive member: payload/docs/feat/wip/functional-review/verification/task12/opus55/grading/claude-candidate-R9-recovery-isolated-2/events/0043.json")
 illustrate the available route. This contrast is a hypothesis, not a controlled
 test of the entry text. The command currently names the workflow without its
 resolved location. Replacing that reference with plugin-root paths has a smaller
@@ -673,7 +677,7 @@ is not selected.
 ### PAL deferral
 
 **Defer; no actor fix.** All 44 affected assertions retain FAIL because an
-explicitly required reviewer was absent. The [run contract](verification/task12/opus55/run-contract.md)
+explicitly required reviewer was absent. The [run contract](../../../archives/feature-evidence/functional-review.md "Archive member: payload/docs/feat/wip/functional-review/verification/task12/opus55/run-contract.md")
 declared that absence. User-visible single-reviewer limits generally remain
 disclosed; absence is not evidence that the functional method failed. No extra
 runtime words or workflow steps are justified. Revisit when the user authorizes
@@ -683,7 +687,7 @@ do not substitute for those checks.
 
 ### Unsupported compatibility claims
 
-**Current disposition — 2026-10-14:** [Task 12.14](verification/task12/r7-validity/README.md)
+**Current disposition — 2026-10-14:** [Task 12.14](../../../archives/feature-evidence/functional-review.md "Archive member: payload/docs/feat/wip/functional-review/verification/task12/r7-validity/README.md")
 is complete. The clearer material/benign cases preserve appropriate compatibility
 conclusions twice each; one endpoint-trace omission remains failed. Select no
 further operative instruction change for this concern. Original R7 acceptance
@@ -708,11 +712,11 @@ meet the local target rows. R5's candidate non-PAL rows pass. Codex candidate R3
 isolated repetition 1 identifies the incompatibility but omits explicit Blocked
 classification in its final parent report; this also occurs in the baseline.
 Effective candidate totals are 147 PASS / 21 FAIL / 0 PARTIAL, with 16 required
-PAL omissions retained as FAIL. [Results and corrected grading provenance](verification/task12/r7-conclusions/results.md)
+PAL omissions retained as FAIL. [Results and corrected grading provenance](../../../archives/feature-evidence/functional-review.md "Archive member: payload/docs/feat/wip/functional-review/verification/task12/r7-conclusions/results.md")
 remain separate from the historical full matrix.
 
 The 28-word increase and generated copy are reverted. Source checks passing did
-not establish the desired behavior. [The verification record](verification/task12/r7-conclusions/README.md)
+not establish the desired behavior. [The verification record](../../../archives/feature-evidence/functional-review.md "Archive member: payload/docs/feat/wip/functional-review/verification/task12/r7-conclusions/README.md")
 retains the rejected patch, immutable candidate, captures and grades. R7 remains
 unresolved; no further wording or actor iteration is selected automatically.
 
@@ -720,8 +724,8 @@ unresolved; no further wording or actor iteration is selected automatically.
 observations (four FAIL, one PARTIAL) mix unavailable provider/deployment evidence
 with supported-server or safe-to-deploy language. This can mislead a release
 decision; confidence is high for the explicit claims and lower for the ambiguous
-isolated report. In [standard repetition 1](verification/task12/opus55/grading/claude-candidate-R7-standard-1/captured/report.md)
-and [repetition 2](verification/task12/opus55/grading/claude-candidate-R7-standard-2/captured/report.md),
+isolated report. In [standard repetition 1](../../../archives/feature-evidence/functional-review.md "Archive member: payload/docs/feat/wip/functional-review/verification/task12/opus55/grading/claude-candidate-R7-standard-1/captured/report.md")
+and [repetition 2](../../../archives/feature-evidence/functional-review.md "Archive member: payload/docs/feat/wip/functional-review/verification/task12/opus55/grading/claude-candidate-R7-standard-2/captured/report.md"),
 an earlier Unknown does not qualify the later deployment assurance sufficiently.
 These standard runs already obtained the diff and ran tests, so missing shell
 access is not a sufficient explanation.
@@ -756,7 +760,7 @@ next action after surfacing a known inherited defect: both Claude standard runs
 regress from passing baselines, and one Codex isolated candidate also omits the
 next action. That Codex baseline never surfaced the defect; its conditional
 assertion PASS is not evidence of better follow-up. The
-[Claude report](verification/task12/opus55/grading/claude-candidate-R6-standard-2/captured/report.md)
+[Claude report](../../../archives/feature-evidence/functional-review.md "Archive member: payload/docs/feat/wip/functional-review/verification/task12/opus55/grading/claude-candidate-R6-standard-2/captured/report.md")
 both describes the defect and says no changes are recommended. This is lost
 actionability, not an incorrect approval of the label change. Confidence in the
 omission is high; the clean-closure rule's causal role remains an inference.
@@ -799,7 +803,7 @@ a trivial edit to obtain a cleaner score.
 ### Context ordering
 
 **Defer a local sequencing correction; P2.** One Codex I4 run begins reading
-source 49 ms before the feature-document read completes; the [original grade](verification/task12/opus55/grades/codex-candidate-I4-plan-1.md)
+source 49 ms before the feature-document read completes; the [original grade](../../../archives/feature-evidence/functional-review.md "Archive member: payload/docs/feat/wip/functional-review/verification/task12/opus55/grades/codex-candidate-I4-plan-1.md")
 links both timestamps. Subsequent output refreshes the handoff and preserves the
 hard requirement, so harmful downstream reasoning is not demonstrated. This is
 a real dependency-order violation with high evidential confidence, not missing
@@ -870,7 +874,7 @@ Task 12.11 execution context.
 
 ## Task 12.12 outcome — 2026-10-11
 
-[Twelve fresh Claude isolated comparisons](verification/task12/entry-path-no-pal/README.md)
+[Twelve fresh Claude isolated comparisons](../../../archives/feature-evidence/functional-review.md "Archive member: payload/docs/feat/wip/functional-review/verification/task12/entry-path-no-pal/README.md")
 are captured and independently graded. Candidate totals are **32 PASS / 8 FAIL /
 0 PARTIAL**, versus baseline **20 / 20 / 0**. Both repetitions satisfy the local
 R3 acquisition/history/ordering requirements and preserve R5 clean approval and
@@ -895,5 +899,5 @@ The implementing agent still owns the remaining dispositions and acceptance
 obligations above. Reassess R7's fixture and grading validity next under Task 12.14,
 applying the existing cost/benefit constraint before selecting any new
 operative slice. Live PAL remains user-deferred; legacy controls and Task 13
-remain pending. [Final independent review](verification/task12/entry-path-no-pal/completion-review.md)
+remain pending. [Final independent review](../../../archives/feature-evidence/functional-review.md "Archive member: payload/docs/feat/wip/functional-review/verification/task12/entry-path-no-pal/completion-review.md")
 approved the completion record and bounded keep decision with no findings.

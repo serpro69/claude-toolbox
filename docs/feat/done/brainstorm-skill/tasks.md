@@ -14,7 +14,7 @@
 - **Size:** M
 - **Can run in parallel with:** —
 - **Docs:** [Complete conversational path](implementation.md#complete-conversational-path), [Manual runbook contract](implementation.md#manual-runbook-contract), [Interaction contract](design.md#interaction-contract)
-- **Verification:** [Task 1 evidence](verification/task-1/README.md) — six accepted runs; two invalid originals retained; source review and final evidence audit approved.
+- **Verification:** [Task 1 evidence](../../../archives/feature-evidence/brainstorm-skill.md "Archive member: payload/docs/feat/done/brainstorm-skill/verification/task-1/README.md") — six accepted runs; two invalid originals retained; source review and final evidence audit approved.
 
 ### Subtasks
 
@@ -36,7 +36,7 @@ Size M covers the core workflow and three baseline scenarios. Moves, symlinks, a
 - **Size:** M
 - **Can run in parallel with:** —
 - **Docs:** [Scenario matrix](implementation.md#scenario-matrix), [Research facts](design.md#research-facts), [Interview and challenge](design.md#interview-and-challenge)
-- **Verification:** [Task 2 evidence](verification/task-2/README.md) — eight accepted runs, 44 passing assertions, stable generation, and independent source/evidence review approved; no operative instruction changes or Task 1 reruns needed.
+- **Verification:** [Task 2 evidence](../../../archives/feature-evidence/brainstorm-skill.md "Archive member: payload/docs/feat/done/brainstorm-skill/verification/task-2/README.md") — eight accepted runs, 44 passing assertions, stable generation, and independent source/evidence review approved; no operative instruction changes or Task 1 reruns needed.
 
 ### Subtasks
 
@@ -53,7 +53,7 @@ Size M is bounded to four evidence/revision behaviors and their manual verificat
 - **Size:** M
 - **Can run in parallel with:** —
 - **Docs:** [Entry and instruction loading](design.md#entry-and-instruction-loading), [Behavioral evaluations](implementation.md#behavioral-evaluations)
-- **Verification:** [Task 3 evidence](verification/task-3/README.md) — all 18 current pairs and 74 assertions pass after the approved confirmation-enforcement fix. Forty-four attempts are retained, including the original failure. Structural checks pass and [independent review approved](verification/task-3/enforcement-review.md).
+- **Verification:** [Task 3 evidence](../../../archives/feature-evidence/brainstorm-skill.md "Archive member: payload/docs/feat/done/brainstorm-skill/verification/task-3/README.md") — all 18 current pairs and 74 assertions pass after the approved confirmation-enforcement fix. Forty-four attempts are retained, including the original failure. Structural checks pass and [independent review approved](../../../archives/feature-evidence/brainstorm-skill.md "Archive member: payload/docs/feat/done/brainstorm-skill/verification/task-3/enforcement-review.md").
 
 ### Subtasks
 
@@ -73,7 +73,7 @@ Size M covers five routing scenarios plus bounded runbook preparation and execut
 - **Size:** M
 - **Can run in parallel with:** —
 - **Docs:** [Documentation and final verification](implementation.md#documentation-and-final-verification), [Evaluation and acceptance](design.md#evaluation-and-acceptance)
-- **Verification:** [Final evidence](verification/task-4/README.md) — nine documentation pages updated; 15-skill counts reconciled; 32 accepted pairs and 146 passing assertions remain applicable; full shell suite, generation stability and graph validation pass; independent code/spec reviews approved without findings.
+- **Verification:** [Final evidence](../../../archives/feature-evidence/brainstorm-skill.md "Archive member: payload/docs/feat/done/brainstorm-skill/verification/task-4/README.md") — nine documentation pages updated; 15-skill counts reconciled; 32 accepted pairs and 146 passing assertions remain applicable; full shell suite, generation stability and graph validation pass; independent code/spec reviews approved without findings.
 
 ### Subtasks
 

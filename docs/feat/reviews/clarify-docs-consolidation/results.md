@@ -11,7 +11,7 @@ and rejects merely relocating obsolete narrative. Source fixtures are unchanged.
 
 ## Behavioral evidence
 
-The [protocol](protocol.md), [requests](requests.json), [manifest](manifest.json),
+The [protocol](protocol.md), [requests](../../../archives/feature-evidence/clarify-docs.md "Archive member: payload/docs/feat/reviews/clarify-docs-consolidation/requests.json"), [manifest](../../../archives/feature-evidence/clarify-docs.md "Archive member: payload/docs/feat/reviews/clarify-docs-consolidation/manifest.json"),
 instruction snapshots and filtered traces record the initial trials. Editors and
 readers used fresh sessions with `gpt-6-astra` / `max`; the build and sampling
 temperature were not exposed. Readers received only their document(s) and fixed
@@ -27,27 +27,27 @@ This is audited shared-filesystem access, not operating-system isolation.
 | Source disagreement | 4 PASS, 1 PARTIAL |
 | Cross-file preservation | 5 PASS |
 
-The [long-guide grading](grading-long.md) found both artifacts faithful and well
+The [long-guide grading](../../../archives/feature-evidence/clarify-docs.md "Archive member: payload/docs/feat/reviews/clarify-docs-consolidation/grading-long.md") found both artifacts faithful and well
 consolidated. The original had 2,062 words, baseline output 1,602, and candidate
 output 1,616. These counts are descriptive; this trial demonstrates no candidate
 advantage in artifact quality. The checklist produced a more visible verification
 record, but its last two checks lacked supporting locations. Baseline verification
 also had observable-record gaps, assessed under its own instructions.
 
-The [regression grading](grading-regressions.md) found that the source-disagreement
+The [regression grading](../../../archives/feature-evidence/clarify-docs.md "Archive member: payload/docs/feat/reviews/clarify-docs-consolidation/grading-regressions.md") found that the source-disagreement
 guide preserved the accepted requirement, implementation mismatch and owner, but
 its next action was only a generic reconciliation objective. The other two cases
 passed without loss of task state, links, scope or no-op behavior.
 
 The next wording specified a result/evidence format for all five checks and a
 concrete next action for unresolved disagreements. The focused
-[source-disagreement rerun](grading-followup-disagreement.md) passed all five
-assertions. The [long-guide rerun](grading-followup-long.md) passed all content
+[source-disagreement rerun](../../../archives/feature-evidence/clarify-docs.md "Archive member: payload/docs/feat/reviews/clarify-docs-consolidation/grading-followup-disagreement.md") passed all five
+assertions. The [long-guide rerun](../../../archives/feature-evidence/clarify-docs.md "Archive member: payload/docs/feat/reviews/clarify-docs-consolidation/grading-followup-long.md") passed all content
 checks but again left generic categories in its last two verification notes.
 
 The final wording defines a location as an exact heading, anchor or line reference,
 distinguishing it from a preservation claim. The
-[final fresh long-guide trial](grading-precise-long.md) passed all seven assertions,
+[final fresh long-guide trial](../../../archives/feature-evidence/clarify-docs.md "Archive member: payload/docs/feat/reviews/clarify-docs-consolidation/grading-precise-long.md") passed all seven assertions,
 including all five location-supported verification records. Its 1,575 words are
 descriptive only. These trials supplement, not replace, the initial results. The
 already-clear and cross-file runs apply to the initial candidate; later instruction

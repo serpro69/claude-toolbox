@@ -14,8 +14,10 @@ retains all 1,216 assertion outcomes across 192 sessions without copying reports
 The source for a cell is
 `verification/task12/opus55/grades/{provider}-{side}-{case}-{mode}-{repetition}.md`.
 Numeric assertion IDs are scoped to the case and mode; they are not globally
-unique. Original tables and initial-return/correction records remain in the
-evidence tree. After archiving, use that same member path in the release archive.
+unique. Original tables and initial-return/correction records are in the release
+archive under `payload/docs/feat/wip/functional-review/` followed by that path.
+The [archive note](../../../archives/feature-evidence/functional-review.md) and
+asset receipt provide retrieval details; no original grade changed.
 
 | Case | Mode | Assertion IDs | Claude baseline | Claude candidate | Codex baseline | Codex candidate |
 | --- | --- | --- | --- | --- | --- | --- |

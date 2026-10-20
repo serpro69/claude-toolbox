@@ -127,7 +127,7 @@ nine shell suites and Go packages passing, graph validation, and two generations
 without output drift. Task 4's 87 assertion passes and 70 revised-reader answer
 passes remain applicable; no behavioral reruns were needed. Independent code and
 spec reviews approve, with limits and one optional cosmetic advisory durably
-recorded in the [review report](verification/task5-20260930/review.md).
+recorded in the [review report](../../../archives/feature-evidence/clarify-docs.md "Archive member: payload/docs/feat/done/clarify-docs/verification/task5-20260930/review.md").
 
 **Documentation follow-up resolved:** Task 5 repaired relocated links in all three
 archived design-review documents, including their assessment links and source

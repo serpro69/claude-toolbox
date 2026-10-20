@@ -47,7 +47,7 @@ Tests use shared utilities from `test/helpers.sh`:
 - `print_summary` — final pass/fail count
 
 Test fixtures live in `test/fixtures/`.
-The [retained functional-review utilities](../../scripts/functional-review-evals/README.md)
+The [retained functional-review utilities](https://github.com/serpro69/claude-toolbox/blob/master/scripts/functional-review-evals/README.md)
 own small synthetic fixtures within their tests. Set `FUNCTIONAL_REVIEW_PYTHON`
 to an explicit Python 3.11+ interpreter when the default `python3` is older.
 Codex hook cases derive from `toolbox-only-hooks.json`, so the legacy case stays

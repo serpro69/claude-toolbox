@@ -1,7 +1,7 @@
 # Functional and operational review
 
 > Issue: [#166](https://github.com/serpro69/claude-toolbox/issues/166)
-> Status: feature verification complete with disclosed limits; human-owned Task 13.7 remains
+> Status: done with disclosed evidence limits; archive/cleanup verified, draft promotion separate
 > Revised: 2026-10-20; [verification summary](verification-summary.md)
 > Review disposition: [Consolidated assessment](reviews/design-review-consolidation.md)
 > Evaluation contract: [evaluation.md](evaluation.md)
@@ -58,7 +58,7 @@ Tasks 13.1–13.6 are now verified, with independent source/spec review complete
 The [summary](verification-summary.md) records results and limits; only the
 separate [human release handoff](release-archive-handoff.md) remains under Task 13.
 
-The user-approved [2026-10-09 amendment](verification/run-contract-2026-10-09.md) separates implementation readiness from final verification. Both Task 2 gates are now complete: the [2026-10-10 gate 2B record](verification/task2b/README.md) preserves the bounded investigation, selected revision-2 receipt/use contract and four new Codex baselines against the immutable actor revision. Exact submitted prompt content remains unverified. Tasks 1–11 are complete. Task 12's [full core matrix](verification/task12/opus55/README.md) is captured and graded; candidate acceptance and Task 13's final verification remain pending. Capture completion does not establish behavioral acceptance.
+The user-approved [2026-10-09 amendment](../../../archives/feature-evidence/functional-review.md "Archive member: payload/docs/feat/wip/functional-review/verification/run-contract-2026-10-09.md") separates implementation readiness from final verification. Both Task 2 gates are now complete: the [2026-10-10 gate 2B record](../../../archives/feature-evidence/functional-review.md "Archive member: payload/docs/feat/wip/functional-review/verification/task2b/README.md") preserves the bounded investigation, selected revision-2 receipt/use contract and four new Codex baselines against the immutable actor revision. Exact submitted prompt content remains unverified. Tasks 1–11 are complete. Task 12's [full core matrix](../../../archives/feature-evidence/functional-review.md "Archive member: payload/docs/feat/wip/functional-review/verification/task12/opus55/README.md") is captured and graded; candidate acceptance and Task 13's final verification remain pending. Capture completion does not establish behavioral acceptance.
 
 ## Scope and ownership
 
@@ -170,7 +170,7 @@ Task 12.13 tested three common-method wording replacements for this requirement.
 The candidate failed the predeclared keep criterion and its operative wording was
 reverted. The evidence boundary above remains the desired behavior; it is not a
 claim that the current instructions reliably enforce it. See the
-[retained experiment](verification/task12/r7-conclusions/README.md).
+[retained experiment](../../../archives/feature-evidence/functional-review.md "Archive member: payload/docs/feat/wip/functional-review/verification/task12/r7-conclusions/README.md").
 
 The subsequent discussion questioned whether R7 makes the missing provider
 evidence materially relevant enough to justify its grading of conditional advice.
@@ -178,7 +178,7 @@ evidence materially relevant enough to justify its grading of conditional advice
 now reassesses the evaluation before further skill changes. The whitespace
 example does not establish a provider defect. This is a prospective test-validity
 investigation; it does not silently amend the verdict table or historical grades.
-The [2026-10-14 diagnostic](verification/task12/r7-validity/README.md) now supplies
+The [2026-10-14 diagnostic](../../../archives/feature-evidence/functional-review.md "Archive member: payload/docs/feat/wip/functional-review/verification/task12/r7-validity/README.md") now supplies
 four unchanged-skill observations: both material-uncertainty and benign-approval
 conclusions pass twice. Overall grading is 23 PASS / 1 FAIL; a missing endpoint
 in one behavior report remains failed. The selected disposition is no further
@@ -285,7 +285,7 @@ behavioral, reporting and evidence gaps remain. The user directed that remaining
 fixes be assessed for severity and their possible negative effect on the skills
 as a whole. [Task 12.11's assessment](follow-up.md#assessment--2026-10-11) accounts
 for every remaining candidate observation and selected Task 12.12: explicit
-instruction paths in the isolated-review command. Its [bounded comparison](verification/task12/entry-path-no-pal/README.md)
+instruction paths in the isolated-review command. Its [bounded comparison](../../../archives/feature-evidence/functional-review.md "Archive member: payload/docs/feat/wip/functional-review/verification/task12/entry-path-no-pal/README.md")
 now meets the non-PAL diagnostic requirements twice in all three selected Claude
 isolated cases; retain the two-word correction. Composite PAL assertions remain
 FAIL, and no broader mode/provider acceptance or causal isolation is claimed.

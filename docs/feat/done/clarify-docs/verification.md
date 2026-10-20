@@ -39,7 +39,7 @@ repository shell suite retains two pre-existing hook-test failures described bel
   `98f4ff1b26b41620ba6f52cdf1a2855fa58015f02aa000e583036812f1c3cbbd`.
 - All ten eval definitions parse and their declared fixture paths exist. The
   instruction-order dedup check found a single post-load source-reading phase.
-- [Isolated code review](verification/task1-20260929/review.md): no code-reviewer
+- [Isolated code review](../../../archives/feature-evidence/clarify-docs.md "Archive member: payload/docs/feat/done/clarify-docs/verification/task1-20260929/review.md"): no code-reviewer
   findings; the external review's one LOW coverage finding was fixed by adding
   `clarify-docs` to the reference-check regex. The structure rerun passed all 184
   assertions. No P0/P1 systemic findings to index.
@@ -57,22 +57,22 @@ synthetic source. Running it prints `{'new_lookup': 20, 'old_order': 15}` and ex
 0. It retains the same questions, expected answers and assertions as retry1 and
 uses another fresh editor/reader pair. Its independent grade is **5/5 assertions
 PASS and 5/5 revised-reader answers PASS**, including an independent execution of
-the stronger example. [Final source-disagreement verdict](verification/task1-20260929-retry2/source-disagreement/verdicts.md).
+the stronger example. [Final source-disagreement verdict](../../../archives/feature-evidence/clarify-docs.md "Archive member: payload/docs/feat/done/clarify-docs/verification/task1-20260929-retry2/source-disagreement/verdicts.md").
 This pass applies to the stronger current fixture; neither earlier PARTIAL is
 reclassified as a pass.
 
 | Scenario | Latest applicable assertions | Comprehension: original → revised | Evidence |
 | --- | --- | --- | --- |
-| Dense source | 5/5 PASS | 5/5 → 5/5; orientation defects repaired | [Verdicts and artifacts](verification/task1-20260929/dense-source/verdicts.md) |
-| Source disagreement | 5/5 PASS, retry2 | Baseline omits implementation mismatch → 5/5 | [Final verdict and artifacts](verification/task1-20260929-retry2/source-disagreement/verdicts.md); [first PARTIAL](verification/task1-20260929/source-disagreement/verdicts.md); [second PARTIAL](verification/task1-20260929-retry1/source-disagreement/verdicts.md) |
-| Missing context | 5/5 PASS | 2 PASS, 2 PARTIAL, 1 FAIL → 5/5 | [Verdicts and artifacts](verification/task1-20260929/missing-context/verdicts.md) |
-| Cross-file preservation | 5/5 PASS | 5/5 → 5/5; jargon/planned status repaired | [Verdicts and artifacts](verification/task1-20260929/cross-file-preservation/verdicts.md) |
-| Already clear | 4/4 PASS | 5/5 → 5/5; all files byte-identical | [Verdicts and artifacts](verification/task1-20260929/already-clear/verdicts.md) |
-| Clear factual error | 4/4 PASS | 5/5 → 5/5; only 60→90 reference repair | [Verdicts and artifacts](verification/task1-20260929/clear-factual-error/verdicts.md) |
-| Skill instruction target | 3/3 PASS | N/A — routing | [Verdicts and artifacts](verification/task1-20260929/skill-instruction-target/verdicts.md) |
-| Agent instruction target | 3/3 PASS | N/A — routing | [Verdicts and artifacts](verification/task1-20260929/agent-instruction-target/verdicts.md) |
-| Code non-trigger | 3/3 PASS | N/A — routing | [Verdicts and artifacts](verification/task1-20260929/code-non-trigger/verdicts.md) |
-| Brevity non-trigger | 3/3 PASS | N/A — routing | [Verdicts and artifacts](verification/task1-20260929/brevity-non-trigger/verdicts.md) |
+| Dense source | 5/5 PASS | 5/5 → 5/5; orientation defects repaired | [Verdicts and artifacts](../../../archives/feature-evidence/clarify-docs.md "Archive member: payload/docs/feat/done/clarify-docs/verification/task1-20260929/dense-source/verdicts.md") |
+| Source disagreement | 5/5 PASS, retry2 | Baseline omits implementation mismatch → 5/5 | [Final verdict and artifacts](../../../archives/feature-evidence/clarify-docs.md "Archive member: payload/docs/feat/done/clarify-docs/verification/task1-20260929-retry2/source-disagreement/verdicts.md"); [first PARTIAL](../../../archives/feature-evidence/clarify-docs.md "Archive member: payload/docs/feat/done/clarify-docs/verification/task1-20260929/source-disagreement/verdicts.md"); [second PARTIAL](../../../archives/feature-evidence/clarify-docs.md "Archive member: payload/docs/feat/done/clarify-docs/verification/task1-20260929-retry1/source-disagreement/verdicts.md") |
+| Missing context | 5/5 PASS | 2 PASS, 2 PARTIAL, 1 FAIL → 5/5 | [Verdicts and artifacts](../../../archives/feature-evidence/clarify-docs.md "Archive member: payload/docs/feat/done/clarify-docs/verification/task1-20260929/missing-context/verdicts.md") |
+| Cross-file preservation | 5/5 PASS | 5/5 → 5/5; jargon/planned status repaired | [Verdicts and artifacts](../../../archives/feature-evidence/clarify-docs.md "Archive member: payload/docs/feat/done/clarify-docs/verification/task1-20260929/cross-file-preservation/verdicts.md") |
+| Already clear | 4/4 PASS | 5/5 → 5/5; all files byte-identical | [Verdicts and artifacts](../../../archives/feature-evidence/clarify-docs.md "Archive member: payload/docs/feat/done/clarify-docs/verification/task1-20260929/already-clear/verdicts.md") |
+| Clear factual error | 4/4 PASS | 5/5 → 5/5; only 60→90 reference repair | [Verdicts and artifacts](../../../archives/feature-evidence/clarify-docs.md "Archive member: payload/docs/feat/done/clarify-docs/verification/task1-20260929/clear-factual-error/verdicts.md") |
+| Skill instruction target | 3/3 PASS | N/A — routing | [Verdicts and artifacts](../../../archives/feature-evidence/clarify-docs.md "Archive member: payload/docs/feat/done/clarify-docs/verification/task1-20260929/skill-instruction-target/verdicts.md") |
+| Agent instruction target | 3/3 PASS | N/A — routing | [Verdicts and artifacts](../../../archives/feature-evidence/clarify-docs.md "Archive member: payload/docs/feat/done/clarify-docs/verification/task1-20260929/agent-instruction-target/verdicts.md") |
+| Code non-trigger | 3/3 PASS | N/A — routing | [Verdicts and artifacts](../../../archives/feature-evidence/clarify-docs.md "Archive member: payload/docs/feat/done/clarify-docs/verification/task1-20260929/code-non-trigger/verdicts.md") |
+| Brevity non-trigger | 3/3 PASS | N/A — routing | [Verdicts and artifacts](../../../archives/feature-evidence/clarify-docs.md "Archive member: payload/docs/feat/done/clarify-docs/verification/task1-20260929/brevity-non-trigger/verdicts.md") |
 
 All editor and reader sessions used `gpt-6-astra`, reasoning `xhigh`, with
 `fork_turns="none"`. The runtime supplies no immutable model build identifier or
@@ -90,7 +90,7 @@ run. All authored Task 1 cases were executed; no authored-but-unrun Task 1 scena
 is counted as passing. Later-task PR and workflow-integration scenarios remain
 outside this slice.
 
-Supporting artifacts are stored under [verification/task1-20260929](verification/task1-20260929/).
+Supporting artifacts are stored under [verification/task1-20260929](../../../archives/feature-evidence/clarify-docs.md "Archive member: payload/docs/feat/done/clarify-docs/verification/task1-20260929").
 Raw tool events are extracted from session transcripts, with original timestamps,
 call arguments and outputs retained. System instructions and unrelated session
 content are not copied. Manifests record staged hashes and session identifiers.
@@ -151,13 +151,13 @@ source-access limits and publication boundaries. No dependency or profile was ad
 
 | Scenario | Latest verdict | Evidence |
 | --- | --- | --- |
-| Contract-only PR | 5/5 PASS; readers 1/5 → 5/5 | [Final verdicts](verification/task2-20260929-retry1/contract-only-pr/verdicts.md); [first PARTIAL](verification/task2-20260929/contract-only-pr/verdicts.md) |
-| Runtime PR and draft collision | 6/6 PASS; readers 0/5 → 5/5 | [Verdicts](verification/task2-20260929/runtime-pr/verdicts.md) |
-| Destination visibility and clear-prose repair | 6/6 PASS; readers 5/5 → 5/5 | [Verdicts](verification/task2-20260929/destination-visibility/verdicts.md) |
-| Missing destination/source | 3/3 PASS; readers N/A | [Verdicts](verification/task2-20260929/pr-missing-context/verdicts.md) |
-| Unavailable source with authorized destination | 4/4 PASS; readers 4/5 → 5/5 | [Final verdicts](verification/task2-20260929-retry1/pr-unavailable-source/verdicts.md); [first PARTIAL](verification/task2-20260929/pr-unavailable-source/verdicts.md) |
+| Contract-only PR | 5/5 PASS; readers 1/5 → 5/5 | [Final verdicts](../../../archives/feature-evidence/clarify-docs.md "Archive member: payload/docs/feat/done/clarify-docs/verification/task2-20260929-retry1/contract-only-pr/verdicts.md"); [first PARTIAL](../../../archives/feature-evidence/clarify-docs.md "Archive member: payload/docs/feat/done/clarify-docs/verification/task2-20260929/contract-only-pr/verdicts.md") |
+| Runtime PR and draft collision | 6/6 PASS; readers 0/5 → 5/5 | [Verdicts](../../../archives/feature-evidence/clarify-docs.md "Archive member: payload/docs/feat/done/clarify-docs/verification/task2-20260929/runtime-pr/verdicts.md") |
+| Destination visibility and clear-prose repair | 6/6 PASS; readers 5/5 → 5/5 | [Verdicts](../../../archives/feature-evidence/clarify-docs.md "Archive member: payload/docs/feat/done/clarify-docs/verification/task2-20260929/destination-visibility/verdicts.md") |
+| Missing destination/source | 3/3 PASS; readers N/A | [Verdicts](../../../archives/feature-evidence/clarify-docs.md "Archive member: payload/docs/feat/done/clarify-docs/verification/task2-20260929/pr-missing-context/verdicts.md") |
+| Unavailable source with authorized destination | 4/4 PASS; readers 4/5 → 5/5 | [Final verdicts](../../../archives/feature-evidence/clarify-docs.md "Archive member: payload/docs/feat/done/clarify-docs/verification/task2-20260929-retry1/pr-unavailable-source/verdicts.md"); [first PARTIAL](../../../archives/feature-evidence/clarify-docs.md "Archive member: payload/docs/feat/done/clarify-docs/verification/task2-20260929/pr-unavailable-source/verdicts.md") |
 
-The [first run](verification/task2-20260929/summary.md) had 21/24 assertion passes
+The [first run](../../../archives/feature-evidence/clarify-docs.md "Archive member: payload/docs/feat/done/clarify-docs/verification/task2-20260929/summary.md") had 21/24 assertion passes
 and three PARTIALs. The contract editor chose a valid 20-minute example, while the
 oracle required 15 without supplying that example to the editor. The current base
 and head requirements now explicitly provide the 15-minute example; the assertion
@@ -167,13 +167,13 @@ and ownership; that expectation moved from answer five to answer three, preservi
 all protected claims. Both cases received fresh editors and original/revised
 readers after those refinements. Operative skill instructions stayed unchanged.
 Earlier PARTIALs are not reclassified as passes.
-The [retry grade](verification/task2-20260929-retry1/summary.md) confirms 9/9
+The [retry grade](../../../archives/feature-evidence/clarify-docs.md "Archive member: payload/docs/feat/done/clarify-docs/verification/task2-20260929-retry1/summary.md") confirms 9/9
 assertions and 10/10 revised answers for those two cases. These are refined-input
 runs, not repeated trials on identical conditions or changed skill instructions.
 
-[Independent code review](verification/task2-20260929/code-reviewer.md) found no
+[Independent code review](../../../archives/feature-evidence/clarify-docs.md "Archive member: payload/docs/feat/done/clarify-docs/verification/task2-20260929/code-reviewer.md") found no
 P0–P3 defects, including a follow-up review of the final fixture refinements.
-[External review](verification/task2-20260929/external-review.md) reported two LOW
+[External review](../../../archives/feature-evidence/clarify-docs.md "Archive member: payload/docs/feat/done/clarify-docs/verification/task2-20260929/external-review.md") reported two LOW
 items: finish task tracking after grading, and correct a temporary diff capture
 that omitted added files. The capture was corrected before the code reviewer
 finished; its 97-file review included all added fixtures and generated counterparts.
@@ -211,7 +211,7 @@ no additional project convention was established.
   passes. The ten Task 1 scenarios were not rerun for this slice; their historical
   results do not certify the final combined feature revision. Task 4 owns that run.
 
-Raw [check logs](verification/task2-20260929/checks/) retain initial failures and
+Raw [check logs](../../../archives/feature-evidence/clarify-docs.md "Archive member: payload/docs/feat/done/clarify-docs/verification/task2-20260929/checks") retain initial failures and
 successful retries. Behavioral evidence records source/instruction hashes, actual
 Git refs/diffs, original/revised artifacts, prompts, tool calls/results, reader
 answers and independent per-assertion grades. Remote reads are simulated by declared
@@ -252,7 +252,7 @@ task state and links remain protected. The existing `/kk:implement` call chain i
 unchanged: plan completion invokes documentation; standalone completion does not.
 The user guide explains each entry point and its review limit.
 
-Five new consumer evals ran in fresh sessions. The [first grade](verification/task3-20260929/verdicts.md)
+Five new consumer evals ran in fresh sessions. The [first grade](../../../archives/feature-evidence/clarify-docs.md "Archive member: payload/docs/feat/done/clarify-docs/verification/task3-20260929/verdicts.md")
 records **19 PASS / 2 PARTIAL**, with all ordering, file-boundary, pass-count and
 artifact-preservation assertions passing. The partials concern omitted reporting:
 the document response did not state its in-session review limit, and the route
@@ -261,16 +261,16 @@ remain preserved.
 
 The document consumer now explicitly requires the review-limit statement in its
 change report. The routing prompt now asks about a separate documentation request;
-its assertions are unchanged. [Focused reruns](verification/task3-20260929-retry1/run.md)
-use fresh sessions and separate evidence. Their [independent grade](verification/task3-20260929-retry1/verdicts.md)
+its assertions are unchanged. [Focused reruns](../../../archives/feature-evidence/clarify-docs.md "Archive member: payload/docs/feat/done/clarify-docs/verification/task3-20260929-retry1/run.md")
+use fresh sessions and separate evidence. Their [independent grade](../../../archives/feature-evidence/clarify-docs.md "Archive member: payload/docs/feat/done/clarify-docs/verification/task3-20260929-retry1/verdicts.md")
 records **9/9 PASS**, bringing the latest applicable results to **21/21 PASS**.
 The three design cases remain applicable because their instructions and inputs did
 not change in this correction.
 
-The [independent code review and follow-up](verification/task3-20260929/code-reviewer.md)
-found no P0–P3 issues. A [fresh external review](verification/task3-20260929/external-review-fresh.md)
+The [independent code review and follow-up](../../../archives/feature-evidence/clarify-docs.md "Archive member: payload/docs/feat/done/clarify-docs/verification/task3-20260929/code-reviewer.md")
+found no P0–P3 issues. A [fresh external review](../../../archives/feature-evidence/clarify-docs.md "Archive member: payload/docs/feat/done/clarify-docs/verification/task3-20260929/external-review-fresh.md")
 returned no actionable findings. The first external submission disclosed the code
-reviewer's approval; its [independence limitation](verification/task3-20260929/external-review.md)
+reviewer's approval; its [independence limitation](../../../archives/feature-evidence/clarify-docs.md "Archive member: payload/docs/feat/done/clarify-docs/verification/task3-20260929/external-review.md")
 is preserved, and the fresh review omitted that information. Its sole LOW tracker
 observation is addressed by finalizing Task 3 after grading. No systemic P0/P1
 finding or new project convention needed indexing.
@@ -282,7 +282,7 @@ finding or new project convention needed indexing.
   `.codex/agents`; authorized generation with a temporary Go cache succeeded.
   The checks used the existing Python 3.12 through a temporary PATH shim.
 - Final repeated generation: PASS, no further generated changes. The aggregate
-  checksum is recorded in [additional checks](verification/task3-20260929/checks/fixture-validation.md).
+  checksum is recorded in [additional checks](../../../archives/feature-evidence/clarify-docs.md "Archive member: payload/docs/feat/done/clarify-docs/verification/task3-20260929/checks/fixture-validation.md").
 - `make plugin-graph`: PASS; no broken edges or orphans. The existing cycle warning
   remains advisory. Deliberately partial fixture links remain unchanged.
 - All nine shell suites ran; **eight pass**. Two schema suites initially failed
@@ -296,7 +296,7 @@ finding or new project convention needed indexing.
 - The mandatory shared procedure remains **1,000 words**. Skill descriptions,
   dependencies and implementation completion instructions did not change.
 
-The [run manifest](verification/task3-20260929/run.md) and retry manifest record
+The [run manifest](../../../archives/feature-evidence/clarify-docs.md "Archive member: payload/docs/feat/done/clarify-docs/verification/task3-20260929/run.md") and retry manifest record
 requests, instruction/input hashes, drafts, final outputs and tool traces. Editors
 used `gpt-6-astra` / `xhigh`, `fork_turns="none"`; model build and temperature are
 not exposed. The independent grader used the same model/settings. Allowed-file
@@ -319,14 +319,14 @@ No assigned scenario remains authored-but-unrun. Task 5 stays pending.
 
 Date: 2026-09-29. Starting revision:
 `9a7ad32eef89a3b8c9b366292ac1f4776c7d005f`.
-The [run record](verification/task4-20260929/run.md) identifies instruction revisions,
+The [run record](../../../archives/feature-evidence/clarify-docs.md "Archive member: payload/docs/feat/done/clarify-docs/verification/task4-20260929/run.md") identifies instruction revisions,
 staged hashes, exact requests, artifacts, traces, session metadata and verdicts.
 
 | Group | Applicable assertions | Revised-reader answers | Evidence |
 | --- | --- | --- | --- |
-| Local documents and routing: ten cases | 40/40 PASS | 30/30 PASS | [Local run](verification/task4-20260929/local/run.md) |
-| PR drafts and visibility: five cases | 26/26 PASS | 20/20 PASS | [PR run](verification/task4-20260929/pr/run.md) |
-| Writing consumers: five cases | 21/21 PASS | 20/20 PASS | [Consumer run](verification/task4-20260929/consumers/run.md) |
+| Local documents and routing: ten cases | 40/40 PASS | 30/30 PASS | [Local run](../../../archives/feature-evidence/clarify-docs.md "Archive member: payload/docs/feat/done/clarify-docs/verification/task4-20260929/local/run.md") |
+| PR drafts and visibility: five cases | 26/26 PASS | 20/20 PASS | [PR run](../../../archives/feature-evidence/clarify-docs.md "Archive member: payload/docs/feat/done/clarify-docs/verification/task4-20260929/pr/run.md") |
+| Writing consumers: five cases | 21/21 PASS | 20/20 PASS | [Consumer run](../../../archives/feature-evidence/clarify-docs.md "Archive member: payload/docs/feat/done/clarify-docs/verification/task4-20260929/consumers/run.md") |
 
 ### Corrections and preserved attempts
 
@@ -336,10 +336,10 @@ exclude absolute workspace paths and restricted facts. Assertion 13.7 tests the
 exception explicitly. The final shared procedure is **1,000 words**, with no added
 mandatory linked instructions.
 
-The [initial PR grade](verification/task4-20260929/pr/grading/verdicts.md) records
+The [initial PR grade](../../../archives/feature-evidence/clarify-docs.md "Archive member: payload/docs/feat/done/clarify-docs/verification/task4-20260929/pr/grading/verdicts.md") records
 24 PASS / 1 PARTIAL. Runtime answer 12.1 omitted the newly added tests, although
 their cases and validation limits survived. Explicit increment guidance fixed this;
-a [fresh runtime retry](verification/task4-20260929/pr/runtime-pr/retry-1/run.md)
+a [fresh runtime retry](../../../archives/feature-evidence/clarify-docs.md "Archive member: payload/docs/feat/done/clarify-docs/verification/task4-20260929/pr/runtime-pr/retry-1/run.md")
 passes all six assertions and five revised-reader answers with unchanged inputs.
 
 Making validation outcomes explicit exposed another gap: two visibility reruns
@@ -348,21 +348,21 @@ compliance by naming the check without its result in the destination draft.
 Both are preserved. The final rule distinguishes passed, failed or unavailable
 from a method name. Assertion 13.8 and its baseline defect were added before the
 next editor; questions, original assertions, source and user prompt stayed intact.
-The [final visibility grade](verification/task4-20260929/pr/destination-visibility/retry-3/grading/verdicts.md)
+The [final visibility grade](../../../archives/feature-evidence/clarify-docs.md "Archive member: payload/docs/feat/done/clarify-docs/verification/task4-20260929/pr/destination-visibility/retry-3/grading/verdicts.md")
 passes all eight assertions and procedure/fidelity/visibility/isolation checks,
 and independently retains the other four latest PR results.
 
-The [initial consumer grade](verification/task4-20260929/consumers/grading/verdicts.json)
+The [initial consumer grade](../../../archives/feature-evidence/clarify-docs.md "Archive member: payload/docs/feat/done/clarify-docs/verification/task4-20260929/consumers/grading/verdicts.json")
 records 20 PASS / 1 FAIL: an unchanged resume named Task 2 but omitted
 `/kk:implement`. The WIP process now requires that handoff when the caller asks
-to stop. [Fresh WIP retries](verification/task4-20260929/consumers/retry-handoff/run.md)
+to stop. [Fresh WIP retries](../../../archives/feature-evidence/clarify-docs.md "Archive member: payload/docs/feat/done/clarify-docs/verification/task4-20260929/consumers/retry-handoff/run.md")
 pass seven assertions and ten revised-reader answers. The other fourteen consumer
 assertions retain independently assessed applicability.
 
-[Isolated code review](verification/task4-20260929/review.md) identified two
+[Isolated code review](../../../archives/feature-evidence/clarify-docs.md "Archive member: payload/docs/feat/done/clarify-docs/verification/task4-20260929/review.md") identified two
 low-severity oracle issues: cross-scenario citations/irrelevant clauses and
 inconsistent baseline-defect field shapes. Both were fixed. The
-[final consumer audit](verification/task4-20260929/consumers/final-applicability/run.md)
+[final consumer audit](../../../archives/feature-evidence/clarify-docs.md "Archive member: payload/docs/feat/done/clarify-docs/verification/task4-20260929/consumers/final-applicability/run.md")
 rechecked all forty preserved WIP answer verdicts against the local-source
 corrections, verified text-preserving array normalization, and confirmed final
 instruction applicability. Earlier snapshots and failures remain unchanged.
@@ -370,13 +370,13 @@ Applicability checks are identified separately from fresh executions.
 
 ### Checks and limits
 
-[Repository checks](verification/task4-20260929/checks.md) pass generation,
+[Repository checks](../../../archives/feature-evidence/clarify-docs.md "Archive member: payload/docs/feat/done/clarify-docs/verification/task4-20260929/checks.md") pass generation,
 generation stability, graph validation and both structure suites. All nine shell
 suites ran; eight pass. The two unchanged `node_modules` / `.log` hook assertions
 still fail, with the repository-maintainer follow-up retained. This is not a fully
 green repository suite. A directory-name hook blocked one initial routing attempt;
 its valid replacement used a wholly restaged fixture with matching bytes. The
-blocked attempt and [matcher follow-up](verification/task4-20260929/checks.md#tooling-follow-up-outside-task-4)
+blocked attempt and [matcher follow-up](../../../archives/feature-evidence/clarify-docs.md "Archive member: payload/docs/feat/done/clarify-docs/verification/task4-20260929/checks.md#tooling-follow-up-outside-task-4")
 remain recorded.
 
 Editors and paired readers used fresh general-purpose sessions with no inherited
@@ -403,7 +403,7 @@ Status: complete. Independent code and spec reviews approve; all five tasks are 
 All nine repository shell suites pass, including the repaired hook expectations.
 All Go packages pass, graph validation reports no broken edges or orphans, and
 two Codex generations produce no tracked output changes. The existing graph-cycle
-warning remains advisory. [Final check record and logs](verification/task5-20260930/checks.md)
+warning remains advisory. [Final check record and logs](../../../archives/feature-evidence/clarify-docs.md "Archive member: payload/docs/feat/done/clarify-docs/verification/task5-20260930/checks.md")
 distinguish these new checks from the earlier behavioral executions.
 
 Task 4's **87/87 applicable assertions** and **70/70 revised-reader answers** remain
@@ -419,11 +419,11 @@ prerequisites, audience restrictions, local output, and each entry point's revie
 limits. All seven maintained inventories still match 14 skills; no cosmetic rewrite
 was needed. Relocated links in the three archived design-review documents were
 repaired without changing their findings. The documentation clarity/fidelity pass
-was performed in-session; the [independent review report](verification/task5-20260930/review.md)
+was performed in-session; the [independent review report](../../../archives/feature-evidence/clarify-docs.md "Archive member: payload/docs/feat/done/clarify-docs/verification/task5-20260930/review.md")
 records their scope, findings and inspection limits separately.
 
 The stale hook-test follow-up is resolved using the explicit policy in commit
-`3b08e13`. The [build-directory substring matcher follow-up](verification/task4-20260929/checks.md#tooling-follow-up-outside-task-4)
+`3b08e13`. The [build-directory substring matcher follow-up](../../../archives/feature-evidence/clarify-docs.md "Archive member: payload/docs/feat/done/clarify-docs/verification/task4-20260929/checks.md#tooling-follow-up-outside-task-4")
 remains owned by the repository maintainer, with its concrete next step unchanged.
 The [optional runtime verifier and future PR integration](implementation.md#deferred-work)
 remain excluded from v1 acceptance. AI-reader observations do not establish human

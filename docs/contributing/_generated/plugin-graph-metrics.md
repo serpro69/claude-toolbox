@@ -2,94 +2,128 @@
 
 ```text
 NAME                   FAN-OUT  FAN-IN  DEPTH  TRANSITIVE
-model                  12       0       -1     24
-merge-docs             2        0       -1     19
-review-architecture    6        6       -1     19
-design                 15       8       -1     18
-document               2        6       -1     18
-implement              9        10      -1     18
-review-code            8        25      -1     18
-review-design          5        3       -1     18
-review-spec            8        13      -1     18
-test                   2        9       -1     18
+merge-docs             2        0       -1     31
+brainstorm             10       2       -1     30
+clarify-docs           2        5       -1     30
+design                 32       15      -1     30
+document               3        8       -1     30
+implement              12       16      -1     30
+model                  12       2       -1     30
+review-architecture    6        6       -1     30
+review-code            9        32      -1     30
+review-design          6        6       -1     30
+review-spec            8        17      -1     30
+test                   3        15      -1     30
 chain-of-verification  3        3       1      2
-dependency-handling    1        11      1      1
+dependency-handling    1        16      1      1
 diff-skill             1        0       1      1
 
-Hotspots (25):
-  skills/review-code/  (fan-in 25)
-  skills/review-spec/  (fan-in 13)
+Hotspots (36):
+  skills/review-code/  (fan-in 32)
+  skills/review-spec/  (fan-in 17)
+  skills/dependency-handling/  (fan-in 16)
+  skills/implement/  (fan-in 16)
+  skills/design/  (fan-in 15)
+  skills/test/  (fan-in 15)
   skills/_shared/capy-knowledge-protocol.md  (fan-in 12)
-  skills/dependency-handling/  (fan-in 11)
-  skills/implement/  (fan-in 10)
-  skills/test/  (fan-in 9)
-  skills/design/  (fan-in 8)
+  skills/document/  (fan-in 8)
   skills/_shared/profile-detection.md  (fan-in 6)
-  skills/document/  (fan-in 6)
   skills/review-architecture/  (fan-in 6)
+  skills/review-design/  (fan-in 6)
   commands/chain-of-verification/  (fan-in 5)
+  skills/clarify-docs/  (fan-in 5)
+  commands/review-code/  (fan-in 4)
+  profiles/twelve-factor/design/  (fan-in 3)
+  skills/_shared/verification-policy.md  (fan-in 3)
   skills/chain-of-verification/  (fan-in 3)
-  skills/review-design/  (fan-in 3)
-  commands/review-code/  (fan-in 2)
+  commands/review-spec/  (fan-in 2)
+  profiles/js_ts/  (fan-in 2)
+  skills/_shared/change-context.md  (fan-in 2)
+  skills/_shared/idea-refinement-criteria.md  (fan-in 2)
+  skills/_shared/ideation-frameworks.md  (fan-in 2)
   skills/_shared/pal-codereview-invocation.md  (fan-in 2)
   skills/_shared/review-scope-protocol.md  (fan-in 2)
-  agents/code-reviewer.md  (fan-in 1)
+  skills/brainstorm/  (fan-in 2)
+  skills/model/  (fan-in 2)
   agents/design-reviewer.md  (fan-in 1)
   agents/spec-reviewer.md  (fan-in 1)
-  commands/review-spec/  (fan-in 1)
   profiles/k8s/  (fan-in 1)
+  profiles/python/implement/  (fan-in 1)
+  profiles/python/test/  (fan-in 1)
   skills/_shared/contact-ratio-guard.md  (fan-in 1)
+  skills/_shared/document-clarity.md  (fan-in 1)
   skills/_shared/fact-flip-propagation.md  (fan-in 1)
   skills/_shared/open-question-pass.md  (fan-in 1)
   skills/_shared/requirements-harvesting.md  (fan-in 1)
 
-Coupling (45):
-  skills/merge-docs/ <-> skills/model/  (19 shared)
-  skills/merge-docs/ <-> skills/review-architecture/  (19 shared)
-  skills/model/ <-> skills/review-architecture/  (19 shared)
-  skills/design/ <-> skills/merge-docs/  (18 shared)
-  skills/design/ <-> skills/model/  (18 shared)
-  skills/design/ <-> skills/review-architecture/  (18 shared)
-  skills/document/ <-> skills/merge-docs/  (18 shared)
-  skills/document/ <-> skills/model/  (18 shared)
-  skills/document/ <-> skills/review-architecture/  (18 shared)
-  skills/implement/ <-> skills/merge-docs/  (18 shared)
-  skills/implement/ <-> skills/model/  (18 shared)
-  skills/implement/ <-> skills/review-architecture/  (18 shared)
-  skills/merge-docs/ <-> skills/review-code/  (18 shared)
-  skills/merge-docs/ <-> skills/review-design/  (18 shared)
-  skills/merge-docs/ <-> skills/review-spec/  (18 shared)
-  skills/merge-docs/ <-> skills/test/  (18 shared)
-  skills/model/ <-> skills/review-code/  (18 shared)
-  skills/model/ <-> skills/review-design/  (18 shared)
-  skills/model/ <-> skills/review-spec/  (18 shared)
-  skills/model/ <-> skills/test/  (18 shared)
-  skills/review-architecture/ <-> skills/review-code/  (18 shared)
-  skills/review-architecture/ <-> skills/review-design/  (18 shared)
-  skills/review-architecture/ <-> skills/review-spec/  (18 shared)
-  skills/review-architecture/ <-> skills/test/  (18 shared)
-  skills/design/ <-> skills/document/  (17 shared)
-  skills/design/ <-> skills/implement/  (17 shared)
-  skills/design/ <-> skills/review-code/  (17 shared)
-  skills/design/ <-> skills/review-design/  (17 shared)
-  skills/design/ <-> skills/review-spec/  (17 shared)
-  skills/design/ <-> skills/test/  (17 shared)
-  skills/document/ <-> skills/implement/  (17 shared)
-  skills/document/ <-> skills/review-code/  (17 shared)
-  skills/document/ <-> skills/review-design/  (17 shared)
-  skills/document/ <-> skills/review-spec/  (17 shared)
-  skills/document/ <-> skills/test/  (17 shared)
-  skills/implement/ <-> skills/review-code/  (17 shared)
-  skills/implement/ <-> skills/review-design/  (17 shared)
-  skills/implement/ <-> skills/review-spec/  (17 shared)
-  skills/implement/ <-> skills/test/  (17 shared)
-  skills/review-code/ <-> skills/review-design/  (17 shared)
-  skills/review-code/ <-> skills/review-spec/  (17 shared)
-  skills/review-code/ <-> skills/test/  (17 shared)
-  skills/review-design/ <-> skills/review-spec/  (17 shared)
-  skills/review-design/ <-> skills/test/  (17 shared)
-  skills/review-spec/ <-> skills/test/  (17 shared)
+Coupling (66):
+  skills/brainstorm/ <-> skills/merge-docs/  (30 shared)
+  skills/clarify-docs/ <-> skills/merge-docs/  (30 shared)
+  skills/design/ <-> skills/merge-docs/  (30 shared)
+  skills/document/ <-> skills/merge-docs/  (30 shared)
+  skills/implement/ <-> skills/merge-docs/  (30 shared)
+  skills/merge-docs/ <-> skills/model/  (30 shared)
+  skills/merge-docs/ <-> skills/review-architecture/  (30 shared)
+  skills/merge-docs/ <-> skills/review-code/  (30 shared)
+  skills/merge-docs/ <-> skills/review-design/  (30 shared)
+  skills/merge-docs/ <-> skills/review-spec/  (30 shared)
+  skills/merge-docs/ <-> skills/test/  (30 shared)
+  skills/brainstorm/ <-> skills/clarify-docs/  (29 shared)
+  skills/brainstorm/ <-> skills/design/  (29 shared)
+  skills/brainstorm/ <-> skills/document/  (29 shared)
+  skills/brainstorm/ <-> skills/implement/  (29 shared)
+  skills/brainstorm/ <-> skills/model/  (29 shared)
+  skills/brainstorm/ <-> skills/review-architecture/  (29 shared)
+  skills/brainstorm/ <-> skills/review-code/  (29 shared)
+  skills/brainstorm/ <-> skills/review-design/  (29 shared)
+  skills/brainstorm/ <-> skills/review-spec/  (29 shared)
+  skills/brainstorm/ <-> skills/test/  (29 shared)
+  skills/clarify-docs/ <-> skills/design/  (29 shared)
+  skills/clarify-docs/ <-> skills/document/  (29 shared)
+  skills/clarify-docs/ <-> skills/implement/  (29 shared)
+  skills/clarify-docs/ <-> skills/model/  (29 shared)
+  skills/clarify-docs/ <-> skills/review-architecture/  (29 shared)
+  skills/clarify-docs/ <-> skills/review-code/  (29 shared)
+  skills/clarify-docs/ <-> skills/review-design/  (29 shared)
+  skills/clarify-docs/ <-> skills/review-spec/  (29 shared)
+  skills/clarify-docs/ <-> skills/test/  (29 shared)
+  skills/design/ <-> skills/document/  (29 shared)
+  skills/design/ <-> skills/implement/  (29 shared)
+  skills/design/ <-> skills/model/  (29 shared)
+  skills/design/ <-> skills/review-architecture/  (29 shared)
+  skills/design/ <-> skills/review-code/  (29 shared)
+  skills/design/ <-> skills/review-design/  (29 shared)
+  skills/design/ <-> skills/review-spec/  (29 shared)
+  skills/design/ <-> skills/test/  (29 shared)
+  skills/document/ <-> skills/implement/  (29 shared)
+  skills/document/ <-> skills/model/  (29 shared)
+  skills/document/ <-> skills/review-architecture/  (29 shared)
+  skills/document/ <-> skills/review-code/  (29 shared)
+  skills/document/ <-> skills/review-design/  (29 shared)
+  skills/document/ <-> skills/review-spec/  (29 shared)
+  skills/document/ <-> skills/test/  (29 shared)
+  skills/implement/ <-> skills/model/  (29 shared)
+  skills/implement/ <-> skills/review-architecture/  (29 shared)
+  skills/implement/ <-> skills/review-code/  (29 shared)
+  skills/implement/ <-> skills/review-design/  (29 shared)
+  skills/implement/ <-> skills/review-spec/  (29 shared)
+  skills/implement/ <-> skills/test/  (29 shared)
+  skills/model/ <-> skills/review-architecture/  (29 shared)
+  skills/model/ <-> skills/review-code/  (29 shared)
+  skills/model/ <-> skills/review-design/  (29 shared)
+  skills/model/ <-> skills/review-spec/  (29 shared)
+  skills/model/ <-> skills/test/  (29 shared)
+  skills/review-architecture/ <-> skills/review-code/  (29 shared)
+  skills/review-architecture/ <-> skills/review-design/  (29 shared)
+  skills/review-architecture/ <-> skills/review-spec/  (29 shared)
+  skills/review-architecture/ <-> skills/test/  (29 shared)
+  skills/review-code/ <-> skills/review-design/  (29 shared)
+  skills/review-code/ <-> skills/review-spec/  (29 shared)
+  skills/review-code/ <-> skills/test/  (29 shared)
+  skills/review-design/ <-> skills/review-spec/  (29 shared)
+  skills/review-design/ <-> skills/test/  (29 shared)
+  skills/review-spec/ <-> skills/test/  (29 shared)
 
 Diagnostics (1):
-  cycle detected affecting: README.md, agents/architecture-reviewer.md, agents/profile-resolver.md, agents/spec-reviewer.md, profiles/go/review-code/, profiles/java/, profiles/java/review-code/, profiles/js_ts/, profiles/js_ts/review-code/, profiles/k8s-operator/design/, profiles/k8s/design/, profiles/k8s/document/, profiles/k8s/implement/, profiles/k8s/review-code/, profiles/k8s/review-spec/, profiles/k8s/test/, profiles/kotlin/, profiles/kotlin/review-code/, profiles/python/, profiles/python/review-code/, profiles/skill-md/review-code/, skills/_shared/profile-detection.md, skills/_shared/review-scope-protocol.md, skills/design/, skills/document/, skills/implement/, skills/merge-docs/, skills/model/, skills/review-architecture/, skills/review-code/, skills/review-design/, skills/review-spec/, skills/test/
+  cycle detected affecting: README.md, agents/architecture-reviewer.md, agents/profile-resolver.md, agents/spec-reviewer.md, commands/review-code/, profiles/go/review-code/, profiles/java/, profiles/java/review-code/, profiles/js_ts/, profiles/js_ts/implement/, profiles/js_ts/review-code/, profiles/js_ts/test/, profiles/k8s-operator/design/, profiles/k8s/design/, profiles/k8s/document/, profiles/k8s/implement/, profiles/k8s/review-code/, profiles/k8s/review-spec/, profiles/k8s/test/, profiles/kotlin/, profiles/kotlin/review-code/, profiles/python/, profiles/python/implement/, profiles/python/review-code/, profiles/python/test/, profiles/skill-md/review-code/, profiles/twelve-factor/, profiles/twelve-factor/design/, skills/_shared/pal-codereview-invocation.md, skills/_shared/profile-detection.md, skills/_shared/review-scope-protocol.md, skills/brainstorm/, skills/clarify-docs/, skills/design/, skills/document/, skills/implement/, skills/merge-docs/, skills/model/, skills/review-architecture/, skills/review-code/, skills/review-design/, skills/review-spec/, skills/test/
 ```

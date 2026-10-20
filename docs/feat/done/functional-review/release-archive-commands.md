@@ -9,7 +9,10 @@ examples alone are not completion evidence. The retained tools have offline test
 See the [handoff](release-archive-handoff.md#user-selected-draft-upload--completed-2026-10-20)
 and [asset receipt](../../../archives/feature-evidence/release-assets.json).
 Commands below are reference guidance; do not rerun them against existing output
-directories/assets. Human evidence/reference/history cleanup remains pending.
+directories/assets. The maintainer has also completed the path filter, remote
+rewrite and local GC; the [cleanup record](../../../archives/feature-evidence/cleanup-completion.md)
+contains the observed results and retained mappings. These are historical command
+examples, not remaining cleanup work.
 The canonical release and asset links target `v0.24.0` after promotion; the
 receipt keeps the observed draft identity and authenticated asset API URLs.
 

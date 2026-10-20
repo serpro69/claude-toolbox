@@ -13,31 +13,31 @@ unrun cases. All 24 standalone scenarios and five current design/document consum
 scenarios have fresh editor runs, plus all 30 applicable original/revised readers.
 Three independent fixture-capable graders audited the fixed assertions, artifacts,
 prompts, manifests and complete visible traces. The
-[aggregate verdicts](verification/task4-20261002/aggregate-verdicts.json) verify
+[aggregate verdicts](../../../archives/feature-evidence/clarify-issue-descriptions.md "Archive member: payload/docs/feat/done/clarify-issue-descriptions/verification/task4-20261002/aggregate-verdicts.json") verify
 every assertion ID exactly once within its skill/scenario and confirm that the
 canonical eval and oracle hashes remain unchanged.
 
 | Cohort | Scenarios | Assertions | Evidence |
 | --- | ---: | ---: | --- |
-| Existing local documents and routing, IDs 1–10 | 10 | 40 PASS | [Index and reader results](verification/task4-20261002/documents/README.md) |
-| Existing PRs, IDs 11–15, plus current optional consumers | 10 | 46 PASS | [Index and independent grading](verification/task4-20261002/pr-consumers/README.md) |
-| New issue cases, IDs 16–24 | 9 | 47 PASS | [Index and independent grading](verification/task4-20261002/issues/README.md) |
+| Existing local documents and routing, IDs 1–10 | 10 | 40 PASS | [Index and reader results](../../../archives/feature-evidence/clarify-issue-descriptions.md "Archive member: payload/docs/feat/done/clarify-issue-descriptions/verification/task4-20261002/documents/README.md") |
+| Existing PRs, IDs 11–15, plus current optional consumers | 10 | 46 PASS | [Index and independent grading](../../../archives/feature-evidence/clarify-issue-descriptions.md "Archive member: payload/docs/feat/done/clarify-issue-descriptions/verification/task4-20261002/pr-consumers/README.md") |
+| New issue cases, IDs 16–24 | 9 | 47 PASS | [Index and independent grading](../../../archives/feature-evidence/clarify-issue-descriptions.md "Archive member: payload/docs/feat/done/clarify-issue-descriptions/verification/task4-20261002/issues/README.md") |
 
-The [root evidence audit](verification/task4-20261002/checks/evidence-audit.json)
+The [root evidence audit](../../../archives/feature-evidence/clarify-issue-descriptions.md "Archive member: payload/docs/feat/done/clarify-issue-descriptions/verification/task4-20261002/checks/evidence-audit.json")
 parsed 704 JSON files and 1,735 JSONL records across the completed packages,
 rechecked all 12 verdict-file hashes, and found no malformed records, privileged
 context records or ignored evidence files. The issue cohort's separate seal also
 matches all 310 recorded file hashes and sizes. Each cohort links its own full
 participant/grader access audit and source/fixture checks.
 
-[Repository checks](verification/task4-20261002/checks.md) pass:
+[Repository checks](../../../archives/feature-evidence/clarify-issue-descriptions.md "Archive member: payload/docs/feat/done/clarify-issue-descriptions/verification/task4-20261002/checks.md") pass:
 all nine shell suites, all Go tests, generation/freshness/idempotence and graph
 validation. The network-dependent cases ran without skips. The initial sandbox
 generation failure and approved successful rerun are preserved. The independent
-source review [approves all 114 files](verification/task4-20261002/review.md)
+source review [approves all 114 files](../../../archives/feature-evidence/clarify-issue-descriptions.md "Archive member: payload/docs/feat/done/clarify-issue-descriptions/verification/task4-20261002/review.md")
 without actionable findings; PAL's file-coverage limitation and conditional link
 comment are retained with source-grounded context. The final
-[spec review](verification/task4-20261002/reviews/spec-reviewer.md) is **CONFORMANT**,
+[spec review](../../../archives/feature-evidence/clarify-issue-descriptions.md "Archive member: payload/docs/feat/done/clarify-issue-descriptions/verification/task4-20261002/reviews/spec-reviewer.md") is **CONFORMANT**,
 with no findings, ambiguities or unverified acceptance items across all four tasks.
 No systemic findings or intentional deviations require indexing.
 
@@ -82,19 +82,19 @@ and unresolved destination; existing routing and output safeguards are retained.
 
 | Scenario | Accepted final result | Evidence |
 | --- | --- | --- |
-| 20 issue-pasted-missing-destination | PASS 4/4 | [Gap grades](verification/task3-20261001/gaps/summary.json) |
-| 21 issue-unavailable-source | PASS 7/7 | [Gap grades](verification/task3-20261001/gaps/summary.json) |
-| 22 issue-unavailable-body | PASS 4/4 | [Gap grades](verification/task3-20261001/gaps/summary.json) |
-| 23 issue-implement-non-trigger | PASS 4/4, clean-shell retry | [Routing runs](verification/task3-20261001/routing/run.md) |
-| 24 issue-fix-non-trigger | PASS 4/4, clean-shell retry | [Routing runs](verification/task3-20261001/routing/run.md) |
-| 9 code-non-trigger | PASS 3/3 | [Routing runs](verification/task3-20261001/routing/run.md) |
-| 10 brevity-non-trigger | PASS 3/3 | [Routing runs](verification/task3-20261001/routing/run.md) |
-| 14 pr-missing-context | PASS 3/3 | [PR runs](verification/task3-20261001/pr-regressions/run.md) |
-| 15 pr-unavailable-source | PASS 4/4 | [PR runs](verification/task3-20261001/pr-regressions/run.md) |
+| 20 issue-pasted-missing-destination | PASS 4/4 | [Gap grades](../../../archives/feature-evidence/clarify-issue-descriptions.md "Archive member: payload/docs/feat/done/clarify-issue-descriptions/verification/task3-20261001/gaps/summary.json") |
+| 21 issue-unavailable-source | PASS 7/7 | [Gap grades](../../../archives/feature-evidence/clarify-issue-descriptions.md "Archive member: payload/docs/feat/done/clarify-issue-descriptions/verification/task3-20261001/gaps/summary.json") |
+| 22 issue-unavailable-body | PASS 4/4 | [Gap grades](../../../archives/feature-evidence/clarify-issue-descriptions.md "Archive member: payload/docs/feat/done/clarify-issue-descriptions/verification/task3-20261001/gaps/summary.json") |
+| 23 issue-implement-non-trigger | PASS 4/4, clean-shell retry | [Routing runs](../../../archives/feature-evidence/clarify-issue-descriptions.md "Archive member: payload/docs/feat/done/clarify-issue-descriptions/verification/task3-20261001/routing/run.md") |
+| 24 issue-fix-non-trigger | PASS 4/4, clean-shell retry | [Routing runs](../../../archives/feature-evidence/clarify-issue-descriptions.md "Archive member: payload/docs/feat/done/clarify-issue-descriptions/verification/task3-20261001/routing/run.md") |
+| 9 code-non-trigger | PASS 3/3 | [Routing runs](../../../archives/feature-evidence/clarify-issue-descriptions.md "Archive member: payload/docs/feat/done/clarify-issue-descriptions/verification/task3-20261001/routing/run.md") |
+| 10 brevity-non-trigger | PASS 3/3 | [Routing runs](../../../archives/feature-evidence/clarify-issue-descriptions.md "Archive member: payload/docs/feat/done/clarify-issue-descriptions/verification/task3-20261001/routing/run.md") |
+| 14 pr-missing-context | PASS 3/3 | [PR runs](../../../archives/feature-evidence/clarify-issue-descriptions.md "Archive member: payload/docs/feat/done/clarify-issue-descriptions/verification/task3-20261001/pr-regressions/run.md") |
+| 15 pr-unavailable-source | PASS 4/4 | [PR runs](../../../archives/feature-evidence/clarify-issue-descriptions.md "Archive member: payload/docs/feat/done/clarify-issue-descriptions/verification/task3-20261001/pr-regressions/run.md") |
 
-[Gap runs](verification/task3-20261001/gaps/run.md),
-[routing runs](verification/task3-20261001/routing/run.md) and
-[PR runs](verification/task3-20261001/pr-regressions/run.md) retain the exact
+[Gap runs](../../../archives/feature-evidence/clarify-issue-descriptions.md "Archive member: payload/docs/feat/done/clarify-issue-descriptions/verification/task3-20261001/gaps/run.md"),
+[routing runs](../../../archives/feature-evidence/clarify-issue-descriptions.md "Archive member: payload/docs/feat/done/clarify-issue-descriptions/verification/task3-20261001/routing/run.md") and
+[PR runs](../../../archives/feature-evidence/clarify-issue-descriptions.md "Archive member: payload/docs/feat/done/clarify-issue-descriptions/verification/task3-20261001/pr-regressions/run.md") retain the exact
 pre-dispatch prompts, allowed-file manifests, instruction/fixture hashes,
 before/after artifacts, actual model/settings, complete visible native traces,
 dispatch linkage, fresh-reader answers and independent per-assertion grades.
@@ -115,14 +115,14 @@ Their fixtures, skill descriptions, instruction hashes and assertions are unchan
 The first attempts, differing baseline assessment, failed dispatches and routine
 tool failures remain available; the accepted final count uses the clean retries.
 
-The [isolated source review](verification/task3-20261001/review.md) approves all
+The [isolated source review](../../../archives/feature-evidence/clarify-issue-descriptions.md "Archive member: payload/docs/feat/done/clarify-issue-descriptions/verification/task3-20261001/review.md") approves all
 49 changed source/generated files with no P0–P3 findings. PAL returned no defects
 but reported zero embedded/checked files; it supplies no independently established
 file-backed corroboration. The review relies on the independent code-reviewer,
 with the external requests/responses retained. No systemic findings or new project
 conventions require indexing.
 
-[Repository checks](verification/task3-20261001/checks.md) pass: all nine shell
+[Repository checks](../../../archives/feature-evidence/clarify-issue-descriptions.md "Archive member: payload/docs/feat/done/clarify-issue-descriptions/verification/task3-20261001/checks.md") pass: all nine shell
 suites, all Go packages, generation, exact canonical/generated parity, idempotence
 and graph validation. This run also passes the three network-dependent template-sync
 cases that prior tasks skipped. The existing graph cycle warning remains; no broken
@@ -151,13 +151,13 @@ these runs establish preservation and coverage, not a measured advantage over it
 
 | Scenario | Final result | Evidence |
 | --- | --- | --- |
-| 18 linear-issue-feature | PASS 6/6 | [Final independent grade](verification/task2-20261001/issues/linear-issue-feature/final-grading/report.md) |
-| 19 issue-destination-visibility | PASS 6/6 | [Final independent grade](verification/task2-20261001/issues/issue-destination-visibility/final-grading/report.md) |
-| 11 contract-only-pr | PASS 5/5 | [Final PR grade](verification/task2-20261001/regressions/final-grader-verdicts.md) |
-| 13 destination-visibility | PASS 8/8 | [Final PR grade](verification/task2-20261001/regressions/final-grader-verdicts.md) |
+| 18 linear-issue-feature | PASS 6/6 | [Final independent grade](../../../archives/feature-evidence/clarify-issue-descriptions.md "Archive member: payload/docs/feat/done/clarify-issue-descriptions/verification/task2-20261001/issues/linear-issue-feature/final-grading/report.md") |
+| 19 issue-destination-visibility | PASS 6/6 | [Final independent grade](../../../archives/feature-evidence/clarify-issue-descriptions.md "Archive member: payload/docs/feat/done/clarify-issue-descriptions/verification/task2-20261001/issues/issue-destination-visibility/final-grading/report.md") |
+| 11 contract-only-pr | PASS 5/5 | [Final PR grade](../../../archives/feature-evidence/clarify-issue-descriptions.md "Archive member: payload/docs/feat/done/clarify-issue-descriptions/verification/task2-20261001/regressions/final-grader-verdicts.md") |
+| 13 destination-visibility | PASS 8/8 | [Final PR grade](../../../archives/feature-evidence/clarify-issue-descriptions.md "Archive member: payload/docs/feat/done/clarify-issue-descriptions/verification/task2-20261001/regressions/final-grader-verdicts.md") |
 
-[Issue runs](verification/task2-20261001/issues/run.md) and
-[PR runs](verification/task2-20261001/regressions/run.md) index exact prompts,
+[Issue runs](../../../archives/feature-evidence/clarify-issue-descriptions.md "Archive member: payload/docs/feat/done/clarify-issue-descriptions/verification/task2-20261001/issues/run.md") and
+[PR runs](../../../archives/feature-evidence/clarify-issue-descriptions.md "Archive member: payload/docs/feat/done/clarify-issue-descriptions/verification/task2-20261001/regressions/run.md") index exact prompts,
 settings, manifests, instruction/source hashes, before/after artifacts, native
 visible traces, fresh-reader answers and independent grades. Grader read-coverage
 audits distinguish capped batches followed by complete recovery reads from actual
@@ -175,7 +175,7 @@ failure and all original artifacts remain preserved.
 
 Independent code review found one P2 in new assertion 18.5: its broad command
 prohibition could reject ordinary evidence reads. The
-[versioned correction](verification/task2-20261001/eval-correction.md) explicitly
+[versioned correction](../../../archives/feature-evidence/clarify-issue-descriptions.md "Archive member: payload/docs/feat/done/clarify-issue-descriptions/verification/task2-20261001/eval-correction.md") explicitly
 permits read/search operations while prohibiting execution of supplied source,
 examples, reproduction commands or tests. Fixtures, questions and oracle answers
 are unchanged. Fresh final graders applied the corrected assertion to all saved
@@ -183,12 +183,12 @@ variants without seeing earlier verdicts. The original Linear reader's scope
 answer received different applicability assessments across graders; both reports
 remain, and no editor assertion depends on that disagreement.
 
-[Final source review](verification/task2-20261001/review-final.md): APPROVE, no
+[Final source review](../../../archives/feature-evidence/clarify-issue-descriptions.md "Archive member: payload/docs/feat/done/clarify-issue-descriptions/verification/task2-20261001/review-final.md"): APPROVE, no
 remaining findings. The external PAL reviewer failed after four 503 responses;
 the isolated workflow's independent-reviewer fallback was used. No systemic P0/P1
 finding or uncaptured project convention needs indexing.
 
-[Repository checks](verification/task2-20261001/checks.md): all nine shell suites
+[Repository checks](../../../archives/feature-evidence/clarify-issue-descriptions.md "Archive member: payload/docs/feat/done/clarify-issue-descriptions/verification/task2-20261001/checks.md"): all nine shell suites
 and Go command-package tests pass; generation, final idempotence and graph checks
 pass. Three unrelated network-dependent template-sync cases remain skipped for
 Task 4 to rerun. Initial cache-access and Python/TOML failures and successful
@@ -204,7 +204,7 @@ Synthetic tracker fixtures do not certify live integrations.
 Task 1 completed 2026-10-01, before Tasks 2–4 began. Repository start:
 `283f8da4606db7b1ad109b597f193bc9c0399377`.
 
-The [budget preflight](verification/budget/decision.md) covers all planned rules
+The [budget preflight](../../../archives/feature-evidence/clarify-issue-descriptions.md "Archive member: payload/docs/feat/done/clarify-issue-descriptions/verification/budget/decision.md") covers all planned rules
 before operative edits. The operative shared procedure is 1,191 words; the complete
 candidate is 1,297, within the explicitly recorded 1,297-word ceiling. The entry
 point is 616 words with a 449-character description.
@@ -217,10 +217,10 @@ point is 616 words with a 449-character description.
 | Existing runtime-pr | Existing | Clean retry VALID, PASS 6/6 |
 | 18–24 and complete regression matrix | No new scenarios yet | Pending Tasks 2–4 |
 
-Run records: [issues](verification/task1-20261001/issues/run.md),
-[regressions](verification/task1-20261001/regressions/run.md),
-[repository checks](verification/task1-20261001/checks.md),
-[isolated code review](verification/task1-20261001/review.md).
+Run records: [issues](../../../archives/feature-evidence/clarify-issue-descriptions.md "Archive member: payload/docs/feat/done/clarify-issue-descriptions/verification/task1-20261001/issues/run.md"),
+[regressions](../../../archives/feature-evidence/clarify-issue-descriptions.md "Archive member: payload/docs/feat/done/clarify-issue-descriptions/verification/task1-20261001/regressions/run.md"),
+[repository checks](../../../archives/feature-evidence/clarify-issue-descriptions.md "Archive member: payload/docs/feat/done/clarify-issue-descriptions/verification/task1-20261001/checks.md"),
+[isolated code review](../../../archives/feature-evidence/clarify-issue-descriptions.md "Archive member: payload/docs/feat/done/clarify-issue-descriptions/verification/task1-20261001/review.md").
 All editor/reader/grader prompts are captured before dispatch. Isolation is an
 allowed-file manifest plus trace audit on shared storage, not an OS sandbox.
 Synthetic tracker responses provide no live connector certification.
@@ -235,7 +235,7 @@ Explicitly restricted facts stay absent from both its draft and completion repor
 Scenario 17 initially required reader narration of the editor's own actions.
 Independent code review and grader clarification identified this as an oracle
 defect: issue scope and evidence limits belong in the draft; prohibited editor
-actions are checked in the trace. The [versioned correction](verification/task1-20261001/oracle-correction.md)
+actions are checked in the trace. The [versioned correction](../../../archives/feature-evidence/clarify-issue-descriptions.md "Archive member: payload/docs/feat/done/clarify-issue-descriptions/verification/task1-20261001/oracle-correction.md")
 changes only two expected answers. Original prompts, artifacts, traces, questions
 and assertions are unchanged, and the original PARTIAL report remains available.
 A fresh independent grader audited the corrected oracle against both versions.

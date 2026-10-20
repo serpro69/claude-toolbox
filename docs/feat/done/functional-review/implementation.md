@@ -4,8 +4,8 @@
 > Evaluation: [evaluation.md](evaluation.md)
 > Tasks: [tasks.md](tasks.md)
 > Review disposition: [consolidated assessment](reviews/design-review-consolidation.md)
-> Status: feature verification complete; human-owned Task 13.7 remains
-> Revised: 2026-10-20; Tasks 13.1–13.6 complete
+> Status: done; archive/cleanup verified, draft promotion separate
+> Revised: 2026-10-20; Tasks 1–13 complete
 > Next-session handoff: [follow-up.md](follow-up.md)
 
 ## Starting points
@@ -14,9 +14,10 @@ The [current acceptance reassessment](acceptance-reassessment.md) supersedes the
 blanket thresholds and old open-gate statements in the historical slices below.
 Task 12.25's [completed assessment](implementation-verification-assessment.md)
 closes Task 12 with a documented execution/recovery limitation. No additional
-skill patch or actor batch is selected. Task 13.1–13.6 finalization is complete;
+skill patch or actor batch is selected. Task 13 finalization is complete;
 [the summary](verification-summary.md) records checks/reviews and
-[the archive handoff](release-archive-handoff.md) owns the remaining human work.
+[the archive handoff](release-archive-handoff.md) records completed retention,
+draft upload and maintainer cleanup. Release promotion remains separate.
 Historical I2 verification remains incomplete and no autonomous-recovery guarantee is made.
 
 Canonical changes belong under klaude-plugin/. Current entry points are review-code/SKILL.md, review-process.md and review-isolated.md; agents/code-reviewer.md; implement/SKILL.md, plan-mode.md and standalone-mode.md. Shared review-scope-protocol.md also serves /kk:review-spec; pal-codereview-invocation.md also serves /kk:review-design. Preserve those consumers.
@@ -40,9 +41,9 @@ Use source-relative links and local shared symlinks. Distributed instructions ex
 
 Task 1 establishes the revision-bound launch probes and run contract. It builds filtered actor bundles, scans bundles/cache copies for evaluator material, and proves per-run Capy/fixture isolation before any measured run. Operative files retain their original bytes; normal plugin distribution is unchanged. Task 2 owns the final seed fixtures R1/R3/I1/I2. It creates their complete eval.json, paired snapshot layout where applicable, and separate oracle directories before capturing standard, isolated, plan and standalone runs. The source/fixture identity and provider-specific launch probes are defined in [evaluation.md](evaluation.md#comparison-identity-and-acceptance).
 
-The user-approved [2026-10-09 amendment](verification/run-contract-2026-10-09.md) separates implementation readiness from capture completion. Both gates are now done. The [gate 2B completion record](verification/task2b/README.md) retains four new Codex captures, independent grades and the revised evidence contract. Task 12 is next; observed baseline failures are data, not candidate passes.
+The user-approved [2026-10-09 amendment](../../../archives/feature-evidence/functional-review.md "Archive member: payload/docs/feat/wip/functional-review/verification/run-contract-2026-10-09.md") separates implementation readiness from capture completion. Both gates are now done. The [gate 2B completion record](../../../archives/feature-evidence/functional-review.md "Archive member: payload/docs/feat/wip/functional-review/verification/task2b/README.md") retains four new Codex captures, independent grades and the revised evidence contract. Task 12 is next; observed baseline failures are data, not candidate passes.
 
-The implementing agent completed [the resolution procedure](evaluation.md#codex-handoff-capture-resolution): no viable supported plaintext alternative was found, so revision 2 selected observable reviewer receipt/use before measurement. The fallback narrows the claim about prompt content; it retains both reviewers, all required behavior and the two-run candidate threshold. [The run contract](verification/task2b/run-contract.md) records the selected path, assertion mapping and configuration. Future comparisons must match that declaration or recapture affected pairs under a new one.
+The implementing agent completed [the resolution procedure](evaluation.md#codex-handoff-capture-resolution): no viable supported plaintext alternative was found, so revision 2 selected observable reviewer receipt/use before measurement. The fallback narrows the claim about prompt content; it retains both reviewers, all required behavior and the two-run candidate threshold. [The run contract](../../../archives/feature-evidence/functional-review.md "Archive member: payload/docs/feat/wip/functional-review/verification/task2b/run-contract.md") records the selected path, assertion mapping and configuration. Future comparisons must match that declaration or recapture affected pairs under a new one.
 
 Capture raw execution evidence; the workflow grader introduced later grades the preserved package. Preserve the original rubric, freeze and sealed records. Pin any successor rubric and the concrete grader implementation before grading either side. A rubric change requires regrading both sides, and recapturing both if saved evidence is insufficient. A runtime/model/tool-policy change requires a revised run contract and fresh affected baseline/candidate comparisons under the same configuration; developing the candidate does not change the identity of the preserved baseline.
 
@@ -125,7 +126,7 @@ Task 12 waits for Task 2 gate 2B, producer, isolated consumers, staging, grading
 Review R3's historical-source handoff, R3/R7's verdict mapping, I4's resulting document state, and the grader calibration controls explicitly. Compare every candidate against the immutable actor baseline using the same fixture and grading revisions. An unavailable runtime or source capture yields an unrun gate with an owner/next action; it does not waive acceptance.
 
 The user subsequently expanded coverage to both providers' complete applicable
-matrix. [All 192 sessions and grades](verification/task12/opus55/README.md) are
+matrix. [All 192 sessions and grades](../../../archives/feature-evidence/functional-review.md "Archive member: payload/docs/feat/wip/functional-review/verification/task12/opus55/README.md") are
 complete. Required acceptance remains unmet; preserve PAL deferral and the
 separate legacy/final gates. The bounded entry-path comparison below is complete;
 no automatic full rerun follows.
@@ -200,7 +201,7 @@ deferred requirements remain open.
 Task 12.12's
 [bounded plan](tasks.md#task-1212-resolve-isolated-review-instructions-at-entry)
 replaces the isolated command's ambiguous instruction location with explicit
-plugin-root paths, adding two words. [All twelve declared Claude comparisons](verification/task12/entry-path-no-pal/README.md)
+plugin-root paths, adding two words. [All twelve declared Claude comparisons](../../../archives/feature-evidence/functional-review.md "Archive member: payload/docs/feat/wip/functional-review/verification/task12/entry-path-no-pal/README.md")
 are captured and graded; both repetitions meet the R3 non-PAL conditions and
 R5/R9-recovery controls, supporting the keep decision. Common instructions and
 generated Codex bytes are unchanged. An unexpected PAL connection in the initial
@@ -236,7 +237,7 @@ full-feature acceptance remains separate.
 **Disposition: reject the candidate.** Both Claude standard R7 repetitions still
 overclaim provider/deployment compatibility. The three operative replacements
 and generated counterpart are reverted; the source archive and patch remain in
-the [verification record](verification/task12/r7-conclusions/README.md). R7 stays
+the [verification record](../../../archives/feature-evidence/functional-review.md "Archive member: payload/docs/feat/wip/functional-review/verification/task12/r7-conclusions/README.md"). R7 stays
 unresolved and no successor wording or actor iteration is selected. Source checks
 passing did not establish the required behavioral result.
 
@@ -254,7 +255,7 @@ under separate identities; preserve historical results and explicitly document
 any contract amendment. After review, a prospectively declared four-session
 Claude standard diagnostic uses the unchanged current skill on both cases.
 It is not the required baseline/candidate acceptance comparison. The
-[completed four-session diagnostic](verification/task12/r7-validity/README.md)
+[completed four-session diagnostic](../../../archives/feature-evidence/functional-review.md "Archive member: payload/docs/feat/wip/functional-review/verification/task12/r7-validity/README.md")
 records 23 PASS / 1 FAIL / 0 PARTIAL, with both target compatibility conclusions
 passing twice and one retained report-trace omission. The disposition is no
 further operative skill change for this R7 concern. Historical R7 and all broader
@@ -277,7 +278,7 @@ Use separately identified evals 21/R6M and 22/R6D; preserve all original R6 file
 Both cases share a small reporting implementation whose detailed mean has a
 visible consumer. R6M enables that mode by default while requiring empty-batch
 success; R6D changes only the count label and leaves detailed mode disabled.
-The [prospective rubric](verification/task12/r6-validity/rubric.md) makes dormant
+The [prospective rubric](../../../archives/feature-evidence/functional-review.md "Archive member: payload/docs/feat/wip/functional-review/verification/task12/r6-validity/rubric.md") makes dormant
 discovery optional only in R6D, retains attribution and surfaced-advisory follow-up,
 and separates final-report evidence from child discovery. This is the explicit
 successor scope decision under the authoring request, not an old-grade amendment.
@@ -286,7 +287,7 @@ Verify complete snapshot manifests, intended diff boundaries, actual outcomes,
 passing supplied tests with the intended coverage gap, and evaluator-free staging
 through the existing helper. Generate Codex counterparts and run relevant
 structure/staging/graph checks. Independent review must assess fixture validity
-and criteria before measurement. The [authoring record](verification/task12/r6-validity/README.md)
+and criteria before measurement. The [authoring record](../../../archives/feature-evidence/functional-review.md "Archive member: payload/docs/feat/wip/functional-review/verification/task12/r6-validity/README.md")
 retains checks and findings. This task ends at reviewed assets; a later bounded
 diagnostic requires its own declaration. Operative instructions, historical
 acceptance, PAL deferral, other investigations and Task 13 remain unchanged.
@@ -295,7 +296,7 @@ acceptance, PAL deferral, other investigations and Task 13 remain unchanged.
 
 After authoring, the user authorized eight fresh standard reviews: R6M/R6D,
 Claude/Codex, twice each, with unchanged operative instructions. The
-[diagnostic declaration](verification/task12/r6-validity/diagnostic/run-contract.md)
+[diagnostic declaration](../../../archives/feature-evidence/functional-review.md "Archive member: payload/docs/feat/wip/functional-review/verification/task12/r6-validity/diagnostic/run-contract.md")
 pins its distinct runtime and evidence boundaries. Grader calibration, source
 review, immutable freezing and both provider binding/state checks preceded
 measurement. All eight captures are independently graded: **58 PASS / 10 FAIL /
@@ -303,7 +304,7 @@ measurement. All eight captures are independently graded: **58 PASS / 10 FAIL /
 trace/reachability omissions remain failed. All four final dormant advisories
 triggered the follow-up requirement; none received the required next action.
 
-The [record](verification/task12/r6-validity/diagnostic/README.md) assigns bounded
+The [record](../../../archives/feature-evidence/functional-review.md "Archive member: payload/docs/feat/wip/functional-review/verification/task12/r6-validity/diagnostic/README.md") assigns bounded
 advisory-closure investigation and defers added trace instructions pending value.
 No operative patch or broader batch is selected. Original R6/R7 acceptance, PAL,
 legacy actor controls, implementation-verification concerns and Task 13 remain
@@ -328,10 +329,10 @@ comparison, adoption and all existing acceptance gates remain separate.
 ### Advisory-closure freeze and declaration — Task 12.19
 
 The user selected source/criteria preparation before measurement. The
-[record](verification/task12/advisory-closure/README.md) retains candidate
+[record](../../../archives/feature-evidence/functional-review.md "Archive member: payload/docs/feat/wip/functional-review/verification/task12/advisory-closure/README.md") retains candidate
 `4b69421465131e2e9e497f200ec9ddbdb439ac83`, the immutable baseline, complete
 source/filtered archives, evaluation/controller inputs and a 64-session matrix.
-The [contract](verification/task12/advisory-closure/run-contract.md) defines bounded
+The [contract](../../../archives/feature-evidence/functional-review.md "Archive member: payload/docs/feat/wip/functional-review/verification/task12/advisory-closure/run-contract.md") defines bounded
 KEEP / REJECT / INCONCLUSIVE outcomes separately from all original assertion grades
 and full feature acceptance. Both independent reviews approve after clarifying
 22.4's tolerated omission; archive recovery, source delta and final seal pass.
@@ -345,7 +346,7 @@ identified successor. PAL, original acceptance and Task 13 retain their status.
 ### Advisory-closure adapter and calibration — Task 12.20
 
 The user selected execution-adapter preparation and fresh calibration. The
-[execution record](verification/task12/advisory-closure-execution/README.md)
+[execution record](../../../archives/feature-evidence/functional-review.md "Archive member: payload/docs/feat/wip/functional-review/verification/task12/advisory-closure-execution/README.md")
 preserves the reviewed adapter, checked archived dependencies, per-case rubric
 routing, no-overwrite/serial-stop guards and exact frozen dispatch plans.
 The preparation seal and operative candidate remain unchanged.
@@ -363,7 +364,7 @@ measured execution/adoption and broader acceptance are separate.
 ### Advisory-closure runtime preflight — Task 12.21
 
 The user selected the four binding probes, two Capy state probes and independent
-review. The [retained result](verification/task12/advisory-closure-execution/preflight-result.md)
+review. The [retained result](../../../archives/feature-evidence/functional-review.md "Archive member: payload/docs/feat/wip/functional-review/verification/task12/advisory-closure-execution/preflight-result.md")
 supports instruction/model/role loading, state isolation, unchanged subjects and
 owned cleanup, but does not establish the declared Claude child high effort.
 Candidate frontmatter specifies xhigh; the parent high flag and model override
@@ -375,7 +376,7 @@ effort pin/receipt, its runtime/calibration identity and fresh affected Claude
 bindings. No original requirement, historical grade, actor source or measured
 comparison was changed. Task 12.21's PASS gate remains open.
 
-The user selected the launcher correction. The [reviewed successor](verification/task12/advisory-closure-execution/high-effort-host/README.md)
+The user selected the launcher correction. The [reviewed successor](../../../archives/feature-evidence/functional-review.md "Archive member: payload/docs/feat/wip/functional-review/verification/task12/advisory-closure-execution/high-effort-host/README.md")
 now supplies/records high at the actual Claude launch boundary for both source
 sides and binding/measured paths; actor bytes remain unchanged. Nine new and 26
 predecessor tests pass. Calibration, Codex and state reuse preserves original
@@ -387,7 +388,7 @@ retention, independent evidence review and successful guard remain outstanding.
 No measured execution, adoption or original-acceptance change follows.
 
 The user subsequently explicitly approved both host/API bindings. The
-[completed corrected probes](verification/task12/advisory-closure-execution/high-effort-host/preflight-result.md)
+[completed corrected probes](../../../archives/feature-evidence/functional-review.md "Archive member: payload/docs/feat/wip/functional-review/verification/task12/advisory-closure-execution/high-effort-host/preflight-result.md")
 verify the high-effort launch mapping and both unchanged subjects. Baseline meets
 the receipt inventory; candidate omits all eight bootstrap detection files and
 expressly reports that omission. Keep 12.21.4 open. Reconcile the binding prompt's
@@ -404,7 +405,7 @@ candidate and the attestation stays BLOCKED. Use that guarded entry for later
 preparation/measurement; the original frozen launcher remains historical.
 
 The user selected that loading follow-up on 2026-10-18. The
-[bootstrap successor](verification/task12/advisory-closure-execution/bootstrap-loading/preflight-result.md)
+[bootstrap successor](../../../archives/feature-evidence/functional-review.md "Archive member: payload/docs/feat/wip/functional-review/verification/task12/advisory-closure-execution/bootstrap-loading/preflight-result.md")
 clarifies the probe-only stopping boundary while preserving source-specific
 instruction requirements, measured prompts, runtime policy and strict receipt
 recomputation. Independent source review approves after correcting historical
@@ -440,7 +441,7 @@ were independently graded. Original returns and eight same-packet clarifications
 are retained separately; the strict audit passes. Runtime retention preserves
 480 configuration files and confirms removal of owned Codex entries for 32 jobs.
 
-[The result report](verification/task12/advisory-closure-execution/bootstrap-loading/comparison-result.md)
+[The result report](../../../archives/feature-evidence/functional-review.md "Archive member: payload/docs/feat/wip/functional-review/verification/task12/advisory-closure-execution/bootstrap-loading/comparison-result.md")
 records **REJECT** under the unchanged contract: an inaccurate evidence
 claim and speculative refactor advice each fail a candidate decision check.
 The initially graded truncation was traced to the grader's viewing tool and
@@ -458,7 +459,7 @@ Codex copies, matching source parent `11b2c6efb0638605bb6acd3eb184edb9abd10f56`.
 The broader functional-review implementation remains in place. Preserve the
 comparison's original evidence and completion seal, with its four historical
 handoff targets archived before live tracking updates. The
-[rollback record](verification/task12/advisory-closure-revert/README.md) retains
+[rollback record](../../../archives/feature-evidence/functional-review.md "Archive member: payload/docs/feat/wip/functional-review/verification/task12/advisory-closure-revert/README.md") retains
 scope, passing verification, provenance and independent review APPROVE. Task 12.23
 is complete. No actor rerun, new wording
 experiment, PAL resumption or acceptance claim follows from this rollback.
@@ -500,13 +501,14 @@ repository evidence and purges its history. Create the release and attach/verify
 the assets afterward; a release/tag is not needed for the local archive.
 The user's subsequent explicit request selected an existing draft release for
 upload before cleanup. That upload and downloaded-asset/member verification are
-now complete; the handoff records actual asset URLs. Human reference repair and
-history cleanup remain, with no draft publication performed.
+now complete; the handoff records actual asset URLs. The subsequent maintainer
+history cleanup and archive-reference repair are verified, completing the final
+documentation closure. No draft publication was performed.
 The user accepted unavailable historical temporary inputs on 2026-10-20: preserve
 their original identities and disclose exact-replay limits without requiring
 recovery. Include still-available inputs such as the known core source export.
 Feature verification and this release follow-up have separate completion records;
-Task 13 stays open until both are done.
+Both are now complete, closing Task 13.
 
 This handoff revision changes documentation only. Earlier completed slices and
 sealed evidence retain their status; the selected and deferred follow-ups

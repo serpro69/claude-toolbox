@@ -37,3 +37,15 @@ are fixture snapshots. The maintained generic tools are already under
 Primary locator:
 `payload/docs/feat/done/clarify-issue-descriptions/verification/task4-20261002/`.
 The full `verification/` tree is a later cleanup candidate, after reference repair.
+
+## Open archived evidence
+
+[Download the clarify-issue-descriptions archive](https://github.com/serpro69/claude-toolbox/releases/download/v0.24.0/clarify-issue-descriptions-evidence-20261020T172123Z-3339e897.tar.gz).
+The canonical link targets v0.24.0 after promotion; authenticated draft asset
+API URLs/IDs are in [release-assets.json](release-assets.json).
+
+Retained evidence links point here and carry an `Archive member: payload/...`
+title. Hover the link or read its Markdown source for the exact member path,
+then open that path in the extracted archive. A trailing `#...` identifies the
+original Markdown section. The member paths remain those of the original
+snapshot, even after feature documents or Git revisions move.
