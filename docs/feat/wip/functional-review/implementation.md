@@ -4,16 +4,18 @@
 > Evaluation: [evaluation.md](evaluation.md)
 > Tasks: [tasks.md](tasks.md)
 > Review disposition: [consolidated assessment](reviews/design-review-consolidation.md)
-> Status: acceptance reset implemented; material-verification assessment and finalization remain
-> Revised: 2026-10-20; Task 12.24
+> Status: Task 12 complete with disclosed execution/recovery limits; Task 13 finalization pending
+> Revised: 2026-10-20; Task 12.25
 > Next-session handoff: [follow-up.md](follow-up.md)
 
 ## Starting points
 
 The [current acceptance reassessment](acceptance-reassessment.md) supersedes the
 blanket thresholds and old open-gate statements in the historical slices below.
-Tasks 12.22/12.23 are complete; no comparison is running. Task 12.25 owns the one
-remaining material-verification assessment before Task 13 finalization.
+Task 12.25's [completed assessment](implementation-verification-assessment.md)
+closes Task 12 with a documented execution/recovery limitation. No additional
+skill patch or actor batch is selected. Task 13 finalization is next; historical
+I2 verification remains incomplete and no autonomous-recovery guarantee is made.
 
 Canonical changes belong under klaude-plugin/. Current entry points are review-code/SKILL.md, review-process.md and review-isolated.md; agents/code-reviewer.md; implement/SKILL.md, plan-mode.md and standalone-mode.md. Shared review-scope-protocol.md also serves /kk:review-spec; pal-codereview-invocation.md also serves /kk:review-design. Preserve those consumers.
 

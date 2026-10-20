@@ -7,9 +7,9 @@
 > Issue: [#166](https://github.com/serpro69/claude-toolbox/issues/166)
 > Status: in-progress
 > Created: 2026-10-07
-> Revised: 2026-10-20 with user-authorized acceptance reset and durable verification guidance
-> Next-session handoff: [current acceptance reassessment](acceptance-reassessment.md)
-> Current slice: Task 12.24 complete — next is Task 12.25's bounded material-verification assessment
+> Revised: 2026-10-20 with completed implementation-verification assessment and scoped Task 12 acceptance
+> Next-session handoff: [completed assessment and limits](implementation-verification-assessment.md)
+> Current slice: Task 12 complete — Task 13 finalization is next
 > Not Doing: new review skill, whole-system audits, mandatory production access, deployments, generic release engine, new models/dependencies, profile redesign
 > Delivery: preserve existing invocations/shared consumers; regenerate Codex artifacts with every operative slice.
 
@@ -23,9 +23,11 @@ Parallel markers do not authorize delegation; serialize generation.
 [reassessment](acceptance-reassessment.md). Older execution-context entries below
 retain original thresholds as history. Retired R6/R7/report/receipt gates, deferred
 PAL and blanket legacy actor coverage no longer keep acceptance open. No old FAIL
-is changed to PASS. Tasks 12.22/12.23 are complete. After Task 12.24, only the
-bounded material-verification assessment in Task 12.25 remains under Task 12;
-Task 13 retains applicable finalization and human-owned release housekeeping.
+is changed to PASS. Task 12.25 has now completed the remaining bounded assessment
+with independent approval: accept the local functional-review increment with the
+documented execution/recovery limitation. Task 12 is done; Task 13 retains actual
+finalization and human-owned release housekeeping. Historical I2 execution is
+still incomplete, not retrospectively passed.
 
 ## Task 1: Prove revision-bound evaluation loading
 
@@ -358,7 +360,7 @@ The ordinary-prompt R3 isolated run loaded all eight detection rules and applica
 
 ## Task 12: Execute and assess the full comparison matrix
 
-- **Status:** in-progress
+- **Status:** done — assessed under the revised acceptance policy, with disclosed execution/recovery limits
 - **Depends on:** Task 2 gate 2B, Task 9, Task 10, Task 11 (all complete)
 - **Size:** M
 - **Can run in parallel with:** —
@@ -368,7 +370,7 @@ The ordinary-prompt R3 isolated run loaded all eight detection rules and applica
 
 - [x] 12.1 Run all declared case/mode pairs using two fresh baseline and candidate sessions per pair → verify: identical fixtures/rubric/model configuration, filtered revision-bound actor bundles, fresh writable state and identical initial knowledge seeds with the declared unavailable-vault policy. The user-expanded scope covers both providers fully: [192 completed sessions](verification/task12/opus55/README.md).
 - [x] 12.2 Dispose of R8/PAL/legacy coverage under the 2026-10-20 policy → R8 complete; PAL remains user-deferred and unverified; blanket legacy actor reruns retired as an acceptance gate, not claimed executed.
-- [x] 12.3 Grade sealed packages and reassess acceptance → all 192 packages are graded. The all-rows-pass-twice gate is retired; material completion is assessed separately in Task 12.25, with exact-prompt and other coverage limits preserved.
+- [x] 12.3 Grade sealed packages and reassess acceptance → all 192 packages are graded. The all-rows-pass-twice gate is retired; Task 12.25 completes the material assessment with exact-prompt, execution/recovery and other coverage limits preserved.
 - [x] 12.4 Retain failures, fixes and unrun gates with owner/reason/next action → verify: baseline comparisons are not cherry-picked and no statistical reliability or untested-provider parity is claimed. See [the latest matrix record](verification/task12/opus55/README.md) and [historical stop record](verification/task12/README.md); retained observations do not complete the other gates.
 
 ### Execution context — 2026-10-10
@@ -1613,19 +1615,42 @@ the remaining material-verification assessment; retired gates stay retired.
 
 ### Task 12.25: Assess the remaining material implementation-verification gap
 
-- **Status:** pending
+- **Status:** done
 - **Depends on:** Task 12.24
 - **Owner:** next implementing agent
 - **Size:** S
 - **Can run in parallel with:** —
 - **Docs:** [remaining work and stopping condition](acceptance-reassessment.md#remaining-work-and-stopping-condition)
 
-- [ ] Inspect retained I2/I3/I4 denied commands, available routes, diff delivery and completion claims against current instructions; distinguish available required verification left undone from genuine environment limits.
-- [ ] Record a bounded disposition: close Task 12 if only disclosed nonmaterial/coverage limitations remain, or identify the concrete consequential gap and smallest next action. Do not reopen retired gates or launch a full matrix by default.
+- [x] Inspect retained I2/I3/I4 denied commands, available routes, diff delivery and completion claims against current instructions; distinguish available required verification left undone from genuine environment limits.
+- [x] Record a bounded disposition: close Task 12 if only disclosed nonmaterial/coverage limitations remain, or identify the concrete consequential gap and smallest next action. Do not reopen retired gates or launch a full matrix by default.
 
-This assessment remains open because the policy change does not execute missing
-checks or prove a workflow repair. It selects no live actor batch or permission
-change. The optional 12.10 guard and PAL deferral do not block it.
+The [completed assessment](implementation-verification-assessment.md) closes
+Task 12 with the disclosed execution/recovery limitation. It does not complete
+the historical I2 verification, prove a workflow repair or select another batch.
+The optional 12.10 guard and PAL deferral do not block Task 13.
+
+#### Execution context — 2026-10-20
+
+The user selected this bounded assessment. Start from clean commit `c4e4c027`;
+reuse the loaded plan/shared instructions and detection rules. Targets are
+repository assessment/tracking documents, outside skill roots; no profile or
+dependency change applies. Inspect retained commands, results and reports before
+choosing a disposition. No model batch, permission change or runtime repair is
+selected; independent source/evidence review follows the assessment.
+
+**Completed:** direct-command successes in I2 baselines/I4 establish that a denied
+compound request does not imply universal shell denial. I2 candidates never tried
+direct Python, disclosed unrun tests and missing diffs, and made no runtime-pass
+claim. I3's exact edits and I4's incomplete hard-requirement status are supported.
+No additional instruction defect is established; retain the limitation and its
+revisit conditions for Task 13 reporting, without another acceptance gate.
+
+Both saved I2 patches pass their test suites locally (6/6 and 5/5, Python 3.10.12).
+All 1,430 manifest-listed files across eight packages still match. These checks
+do not retroactively execute the old workflows. Documentation checks pass and
+[independent review](reviews/implementation-verification-review.md) approves with
+no findings. No operative source, frozen evidence or historical grade changed.
 
 ## Task 13: Document and verify the complete feature
 

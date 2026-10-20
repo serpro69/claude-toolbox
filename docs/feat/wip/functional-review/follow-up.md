@@ -1,9 +1,9 @@
 # Functional review: next-session handoff
 
 > Updated: 2026-10-20
-> Status: Task 12.24 complete and independently approved; material-verification assessment and finalization remain
-> Owner: implementing agent, Task 12.25
-> Next-session starting point: [current acceptance reassessment](acceptance-reassessment.md)
+> Status: Tasks 12.25 and 12 complete with independent approval; Task 13 finalization pending
+> Owner: implementing agent, Task 13; release archiving remains human-owned
+> Next-session starting point: [completed assessment and limits](implementation-verification-assessment.md)
 > Evidence: [completed matrix](verification/task12/opus55/README.md), [Claude](verification/task12/opus55/claude-results.md), [Codex](verification/task12/opus55/codex-results.md)
 
 ## Start here
@@ -17,11 +17,19 @@ all-eight advisory coverage, deferred PAL and blanket legacy actor runs no longe
 block local functional-review acceptance. Their old grades remain unchanged.
 Earlier paragraphs retaining those gates are historical and superseded.
 
-Next: Task 12.25 assesses the retained implementation-mode verification/diff
-acquisition gap using existing evidence and current instructions. No new actor
-batch, reviewer simplification or closure-wording restoration is selected.
-Task 13 then owns final docs/checks and human-owned archive work. The ADR and
-shared design/test/review guidance make this lesson durable for future work.
+**Task 12.25 complete:** [the assessment](implementation-verification-assessment.md)
+and [independent review](reviews/implementation-verification-review.md) support
+closing Task 12 with a known execution/recovery limitation. Both I2 candidates
+left tests unrun and overstated shell unavailability; their reports disclosed
+nonexecution. Both saved patches pass local regression checks. I3's exact edits
+and I4's hard-requirement incompleteness are supported. No missing instruction or
+harmful resulting patch justifies another correction or batch.
+
+Next: Task 13's final documentation, applicable repository checks and source/spec
+review. Carry the limitation into the completion summary; do not claim the old
+I2 workflows completed verification or that autonomous recovery is reliable.
+Release evidence archiving remains human-owned. No reviewer simplification or
+closure-wording restoration is selected.
 
 [Completion review](reviews/verification-policy-review.md) approves with no
 findings. Generator/graph checks, 259 structure assertions and repeat-generation
