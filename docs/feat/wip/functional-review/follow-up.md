@@ -1,12 +1,24 @@
 # Functional review: next-session handoff
 
 > Updated: 2026-10-20
-> Status: Tasks 12.25 and 12 complete with independent approval; Task 13 finalization pending
-> Owner: implementing agent, Task 13; release archiving remains human-owned
-> Next-session starting point: [completed assessment and limits](implementation-verification-assessment.md)
+> Status: feature verification complete; human-owned Task 13.7 release housekeeping remains
+> Owner: human maintainer for Task 13.7, AI-guided
+> Next-session starting point: [verification summary](verification-summary.md) and [archive handoff](release-archive-handoff.md)
 > Evidence: [completed matrix](verification/task12/opus55/README.md), [Claude](verification/task12/opus55/claude-results.md), [Codex](verification/task12/opus55/codex-results.md)
 
 ## Start here
+
+**Final verification complete — 2026-10-20:** Tasks 13.1–13.6 are done.
+Documentation is current; all 12 shell suites pass (757 helper assertions, zero
+skips), Go/graph checks and repeated generation pass, and independent source/spec
+reviews return APPROVE/CONFORMANT without findings. The pre-existing hook-test
+fixture now uses an explicit toolbox-only configuration.
+
+The only remaining task is [13.7's human-owned handoff](release-archive-handoff.md):
+finalize retained tooling, archive/upload the evidence, verify retrieval, then
+perform evidence/history cleanup. The inventory and guidance are prepared; none
+of those actions is claimed completed. Keep the evidence tree and feature in WIP
+until that task closes. No new actor evaluation or skill change is selected.
 
 **Current decision — 2026-10-20:** the user authorized replacing the
 all-assertions-pass-twice gate with proportionate acceptance. Read
@@ -25,8 +37,8 @@ nonexecution. Both saved patches pass local regression checks. I3's exact edits
 and I4's hard-requirement incompleteness are supported. No missing instruction or
 harmful resulting patch justifies another correction or batch.
 
-Next: Task 13's final documentation, applicable repository checks and source/spec
-review. Carry the limitation into the completion summary; do not claim the old
+Task 13's documentation, repository checks and source/spec review are now complete.
+The [completion summary](verification-summary.md) carries the limitation; it does not claim the old
 I2 workflows completed verification or that autonomous recovery is reliable.
 Release evidence archiving remains human-owned. No reviewer simplification or
 closure-wording restoration is selected.

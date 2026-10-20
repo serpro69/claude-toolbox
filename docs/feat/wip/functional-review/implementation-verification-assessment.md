@@ -113,3 +113,7 @@ Tasks 12.25 and 12 are complete as an assessed local functional-review increment
 with these limits. Task 13 retains actual final documentation/checks/review and the separate
 human-owned release archive. Historical failures remain inspectable and are not
 renamed PASS.
+
+Tasks 13.1–13.6 subsequently completed their checks and independent reviews; the
+[final summary](verification-summary.md) retains this assessment's limits.
+Human-owned Task 13.7 is still open.

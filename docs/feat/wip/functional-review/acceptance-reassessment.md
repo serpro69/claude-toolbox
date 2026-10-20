@@ -69,6 +69,11 @@ review and the separately human-owned release archive. Its evidence reconciliati
 uses this policy; obsolete grade gates cannot block it again. No full-feature
 completion or improved actor reliability is claimed by Task 12.24.
 
+**Subsequent completion:** Tasks 13.1–13.6 now pass their final checks and independent
+reviews; see [verification-summary.md](verification-summary.md). Only the
+human-owned release/tooling/archive work in Task 13.7 remains, with no new actor
+performance claim.
+
 ## Policy checks for this change
 
 The following retained examples check the decision rule without new model runs:

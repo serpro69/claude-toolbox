@@ -7,9 +7,9 @@
 > Issue: [#166](https://github.com/serpro69/claude-toolbox/issues/166)
 > Status: in-progress
 > Created: 2026-10-07
-> Revised: 2026-10-20 with completed implementation-verification assessment and scoped Task 12 acceptance
-> Next-session handoff: [completed assessment and limits](implementation-verification-assessment.md)
-> Current slice: Task 12 complete — Task 13 finalization is next
+> Revised: 2026-10-20 with final feature verification and human-owned release handoff
+> Next-session handoff: [verification summary](verification-summary.md) and [archive handoff](release-archive-handoff.md)
+> Current slice: Tasks 13.1–13.6 complete — human-owned Task 13.7 release housekeeping remains
 > Not Doing: new review skill, whole-system audits, mandatory production access, deployments, generic release engine, new models/dependencies, profile redesign
 > Delivery: preserve existing invocations/shared consumers; regenerate Codex artifacts with every operative slice.
 
@@ -1654,7 +1654,7 @@ no findings. No operative source, frozen evidence or historical grade changed.
 
 ## Task 13: Document and verify the complete feature
 
-- **Status:** pending
+- **Status:** in-progress — feature verification complete; human-owned release housekeeping remains
 - **Depends on:** Task 1, Task 2, Task 3, Task 4, Task 5, Task 6, Task 7, Task 8, Task 9, Task 10, Task 11, Task 12
 - **Size:** M
 - **Can run in parallel with:** —
@@ -1662,13 +1662,60 @@ no findings. No operative source, frozen evidence or historical grade changed.
 
 ### Subtasks
 
-- [ ] 13.1 Use /kk:document to update README.md, docs/user-guide/skills.md and docs/contributing/testing.md → verify: behavior, evidence limits, fixture staging and grading contracts are accurately described.
-- [ ] 13.2 Run /kk:test over all test/test-*.sh suites, make plugin-graph and go test ./... → verify: structural/plumbing checks pass with environment failures explicitly reported.
-- [ ] 13.3 Run make generate-kodex and confirm a second generation introduces no drift → verify: canonical/generated parity including agent definitions.
-- [ ] 13.4 Reconcile material outcomes, evidence limits and shared-consumer checks under the current evaluation policy → verify: /kk:review-spec and /kk:review-design retain their contracts; retired historical grade gates are not reinstated.
-- [ ] 13.5 Run /kk:review-code with actual profiles and /kk:review-spec against design.md, implementation.md, evaluation.md and tasks.md → verify: findings are resolved or durably assigned without waiving required acceptance.
-- [ ] 13.6 Record feature verification completion after 13.1–13.5 and current material acceptance are verified → verify: no unresolved hard constraint or essential unverified claim is represented as complete. Disclose other coverage limits without reinstating retired gates. Track release housekeeping in 13.7 separately; Task 13 remains open until both are complete.
+- [x] 13.1 Use /kk:document to update README.md, docs/user-guide/skills.md and docs/contributing/testing.md → verify: behavior, evidence limits, fixture staging and grading contracts are accurately described.
+- [x] 13.2 Run /kk:test over all test/test-*.sh suites, make plugin-graph and go test ./... → verify: structural/plumbing checks pass with environment failures explicitly reported.
+- [x] 13.3 Run make generate-kodex and confirm a second generation introduces no drift → verify: canonical/generated parity including agent definitions.
+- [x] 13.4 Reconcile material outcomes, evidence limits and shared-consumer checks under the current evaluation policy → verify: /kk:review-spec and /kk:review-design retain their contracts; retired historical grade gates are not reinstated.
+- [x] 13.5 Run /kk:review-code with actual profiles and /kk:review-spec against design.md, implementation.md, evaluation.md and tasks.md → verify: findings are resolved or durably assigned without waiving required acceptance.
+- [x] 13.6 Record feature verification completion after 13.1–13.5 and current material acceptance are verified → verify: no unresolved hard constraint or essential unverified claim is represented as complete. Disclose other coverage limits without reinstating retired gates. Track release housekeeping in 13.7 separately; Task 13 remains open until both are complete.
 - [ ] 13.7 **Human-executed, AI-guided:** retain the compact verification record and reusable tooling, archive the full evidence as assets of the GitHub release containing this feature, then remove the archived evidence from the repository and its history → verify: follow the retention plan below; the human confirms archive retrieval/integrity, retained-content checks and history cleanup before closing this subtask.
+
+### Execution context — 2026-10-20
+
+The user selected the next task after commit `70180071`. Tasks 1–12 are complete
+under the revised acceptance policy. Documentation targets are outside skill
+roots and activate no profile; previously loaded implementation/document/testing
+instructions apply. Run the explicitly required repository suites and final
+source/spec reviews. Preserve historical evidence and the known execution/recovery
+limitation. Task 13.7 remains human-executed; prepare its inventory/handoff after
+feature verification, without uploading, removing evidence or rewriting history.
+
+**Documentation and checks:** README, skill guide and contributing tests guide
+now describe the functional behavior, current verification policy and evaluation
+boundaries. [The compact summary](verification-summary.md) and
+[per-assertion results](verification-results.md) retain the core comparison and
+later dispositions outside the archive tree. All 1,216 compact outcomes match
+their 192 original grade files.
+
+All 12 shell suites pass: 757 helper assertions, zero failures and zero skips.
+`go test ./...`, graph tests/validation and repeated generation pass; generated
+skills/agents remain identical to HEAD. The graph's existing cycle warning is
+nonfatal. No new model batch or live PAL run occurred.
+
+**Resolved test issue:** the legacy Codex hook fixture read live `.codex/hooks.json`,
+which already included Capy registrations. It now reads the explicit
+`test/fixtures/toolbox-only-hooks.json`; the unchanged suite verifies all legacy,
+registered, malformed/missing and per-event cases (64 assertions). This closes
+the unrelated fixture follow-up recorded during R6 authoring without changing
+production hooks or live settings.
+
+Initial test PATH omitted installed `yq`; reruns preserved the normal PATH with
+Python 3.12.11 prepended. Cache/network sandbox limits affected schema/upstream
+checks, and temporary Git fixtures inherited commit signing. Authorized reruns
+used the existing offline uv cache and public upstream refs, with signing disabled
+only through the test-process environment. No dependency or persistent setting
+changed; only affected/failed/skipped suites were repeated.
+
+[Independent source review](reviews/final-source-review.md) approves and
+[spec review](reviews/final-spec-review.md) is conformant, both without findings.
+Tasks 13.1–13.6 are complete; no intentional deviations require indexing.
+
+After verification, [the release handoff](release-archive-handoff.md) records the
+73,099-file/66-symlink inventory, proposed keep/archive map, tooling extraction
+prerequisite and human execution sequence. No release tag/URL or archive checksum
+is invented. Tool extraction, archive/upload, retrieval and cleanup remain
+unperformed under 13.7; no evidence or history was removed. The feature stays
+in WIP until the human-owned step is complete.
 
 ### 13.7 Evidence retention and release archive
 

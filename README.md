@@ -82,9 +82,16 @@ For an optional conversation first, use `/kk:brainstorm` to think through a tech
 
 2. **Review the design.** Run `/kk:review-design your-feature` to catch gaps before writing code.
 
-3. **Build it.** Type `/kk:implement` — Claude executes the task list with code review checkpoints between batches.
+3. **Build it.** Type `/kk:implement` — Claude establishes the task's behavior and compatibility constraints, implements it, and supplies current evidence to independent review. Standalone fixes also work without design documents.
 
-4. **Review the code.** `/kk:review-code` checks for SOLID violations, security risks, and quality issues. Use `/kk:review-code:isolated` for independent sub-agent reviewers with zero authorship bias.
+4. **Review the code.** `/kk:review-code` traces intended behavior, unchanged callers and affected compatibility contracts alongside SOLID, security and quality checks. Use `/kk:review-code:isolated` for independent review without the implementation conversation.
+
+Reviews distinguish current regressions from inherited issues and code support
+from deployment readiness. Missing evidence stays explicit; green tests support
+the paths exercised. Verification is proportionate to the change, while explicit
+repository and release checks remain required. See
+[functional review and implementation](docs/user-guide/skills.md#functional-review-and-implementation)
+for examples and limits.
 
 This is the core loop. See the [Skills documentation](https://serpro69.github.io/claude-toolbox/latest/user-guide/skills/) for all available skills and the full workflow pipeline.
 
