@@ -3,7 +3,7 @@
 > Design: [design.md](design.md)
 > Implementation: [implementation.md](implementation.md)
 > Tasks: [tasks.md](tasks.md)
-> Status: Task 12 assessed and accepted with disclosed execution limits; Task 13 finalization pending
+> Status: feature verification complete with disclosed limits; human-owned Task 13.7 remains
 > Revised: 2026-10-20; [current reassessment](acceptance-reassessment.md)
 > Reviewed claims: [consolidated disposition](reviews/design-review-consolidation.md)
 
@@ -44,7 +44,9 @@ is made. Retired R6/R7/report gates, transport-receipt perfection, all-eight adv
 coverage, deferred PAL and blanket legacy actor reruns no longer block local
 functional-review acceptance. Live PAL/two-reviewer and unmeasured behavior claims
 remain unverified. Task 13 retains applicable final checks and human-owned release
-housekeeping.
+housekeeping. Tasks 13.1–13.6 are now complete; [the summary](verification-summary.md)
+records final repository checks and independent source/spec review. Task 13.7
+remains open for human release execution, without new behavioral gates.
 
 ### Historical capture contract
 

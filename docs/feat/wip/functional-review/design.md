@@ -1,8 +1,8 @@
 # Functional and operational review
 
 > Issue: [#166](https://github.com/serpro69/claude-toolbox/issues/166)
-> Status: Task 12 accepted with disclosed execution/recovery limits; Task 13 finalization pending
-> Revised: 2026-10-20; [completed material assessment](implementation-verification-assessment.md)
+> Status: feature verification complete with disclosed limits; human-owned Task 13.7 remains
+> Revised: 2026-10-20; [verification summary](verification-summary.md)
 > Review disposition: [Consolidated assessment](reviews/design-review-consolidation.md)
 > Evaluation contract: [evaluation.md](evaluation.md)
 > Implementation: [implementation.md](implementation.md)
@@ -53,6 +53,10 @@ closes Task 12 with a documented execution/recovery limitation; it does not
 complete the old actors' unexecuted tests. Task 13 owns final checks/documentation
 and separate release housekeeping. No reviewer wording change or new actor batch
 is selected.
+
+Tasks 13.1–13.6 are now verified, with independent source/spec review complete.
+The [summary](verification-summary.md) records results and limits; only the
+separate [human release handoff](release-archive-handoff.md) remains under Task 13.
 
 The user-approved [2026-10-09 amendment](verification/run-contract-2026-10-09.md) separates implementation readiness from final verification. Both Task 2 gates are now complete: the [2026-10-10 gate 2B record](verification/task2b/README.md) preserves the bounded investigation, selected revision-2 receipt/use contract and four new Codex baselines against the immutable actor revision. Exact submitted prompt content remains unverified. Tasks 1–11 are complete. Task 12's [full core matrix](verification/task12/opus55/README.md) is captured and graded; candidate acceptance and Task 13's final verification remain pending. Capture completion does not establish behavioral acceptance.
 

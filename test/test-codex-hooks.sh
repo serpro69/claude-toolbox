@@ -13,8 +13,9 @@ REPO_ROOT="$(cd "$SCRIPT_DIR/.." && pwd)"
 # Fixtures
 # =============================================================================
 
-# The template's own hooks.json: toolbox entries only, no capy entries.
-TOOLBOX_HOOKS=$(cat "$REPO_ROOT/.codex/hooks.json")
+# Explicit legacy fixture: the live repository may already have Capy installed.
+# Derive registered/partial cases from this fixture, never the user's setup.
+TOOLBOX_HOOKS=$(cat "$SCRIPT_DIR/fixtures/toolbox-only-hooks.json")
 
 # A realistic capy entry. `capy setup --platform codex` (capy >= v0.17.1) writes
 # a `bash -c` wrapper whose body invokes `capy codex-launch`; that token is what

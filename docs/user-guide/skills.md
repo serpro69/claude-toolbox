@@ -12,9 +12,9 @@ Use `/kk:brainstorm` when you want to think through a technical idea in conversa
 
 1. **/kk:design** — turns an idea into design docs, an implementation plan, and a task list
 2. **/kk:review-design** — evaluates design docs for completeness and technical soundness
-3. **/kk:implement** — executes tasks with review checkpoints between batches
-4. **/kk:review-code** — reviews code for SOLID violations, security risks, and quality issues
-5. **/kk:test** — generates tests and runs the full suite
+3. **/kk:implement** — establishes behavior and constraints, executes tasks and hands current evidence to review
+4. **/kk:review-code** — reviews functional behavior, compatibility, SOLID, security and quality
+5. **/kk:test** — selects meaningful coverage, runs relevant checks and honors required repository/release suites
 6. **/kk:document** — updates architecture docs and records ADRs
 
 ## Skill Reference
@@ -23,10 +23,10 @@ Use `/kk:brainstorm` when you want to think through a technical idea in conversa
 |-------|-------------|
 | **/kk:brainstorm** | Interviews anyone exploring a technical idea or decision, adapting depth to the next decision. Asks one question at a time and closes with decisions, rationale, and open assumptions in chat; creates no files. |
 | **/kk:design** | Turns an idea into design docs, an implementation plan, and a task list in `docs/feat/wip/`. Asks refinement questions, then documents everything a developer needs to start coding. |
-| **/kk:implement** | Executes a task list from `docs/feat/wip/` with batched steps and code review checkpoints between batches. Updates task status as it goes. |
-| **/kk:test** | Generates tests following project conventions: table-driven, integration, mocking, property-based. Runs the full suite and reports coverage. |
+| **/kk:implement** | Executes a feature plan or standalone fix after establishing intended behavior, affected callers and delivery constraints. Refreshes evidence for independent review and distinguishes code completion from external release prerequisites. |
+| **/kk:test** | Reuses or adds meaningful coverage, runs relevant checks and required repository/release suites, and reports actual results and limits. Chooses testing techniques to suit the requirement. |
 | **/kk:document**  | Updates project documentation and records ADRs for non-obvious decisions made during implementation.                                                                     |
-| **/kk:review-code** | Reviews git changes for SOLID violations, security risks, and code quality. Domain-specific checklists for Go, Java, JS/TS, Kotlin, Python, Kubernetes, K8s Operator, and agent skills. Standard and isolated modes. |
+| **/kk:review-code** | Traces changed behavior and affected contracts, including unchanged callers and relevant historical sources, alongside SOLID/security/quality checks. Domain-specific guidance covers Go, Java, JS/TS, Kotlin, Python, Kubernetes, K8s Operator and agent skills. Standard and isolated modes. |
 | **/kk:review-design** | Pre-implementation review gate. Evaluates design docs for completeness, internal consistency, and technical soundness before code is written. |
 | **/kk:review-spec** | Compares implemented code against design/implementation docs. Finds spec deviations, missing implementations, and outdated docs — in both directions. |
 | **/kk:model** | Produces or updates a domain-reference kit — a durable glossary + divergences/traps page pair per bounded context, with concept-to-code bindings. Its primary output is a decision queue of precise, role-tagged questions only a human can close. Runs upstream of `/kk:design` as the first producer of the architecture flow. |
@@ -43,12 +43,55 @@ Commands are skill variants invoked with explicit mode selection:
 
 | Command | Invocation | Description |
 |---------|-----------|-------------|
-| Code Review (isolated) | `/kk:review-code:isolated` | SOLID code review with independent sub-agents |
+| Code Review (isolated) | `/kk:review-code:isolated` | Functional, compatibility and quality review with independent reviewers |
 | CoVe (standard) | `/kk:chain-of-verification:default [question]` | Chain-of-Verification with prompt-based isolation |
 | CoVe (isolated) | `/kk:chain-of-verification:isolated [--explore] [--haiku] [question]` | CoVe with true sub-agent isolation |
 | Spec Review | `/kk:review-spec:default [feature]` | Verify code matches design/implementation docs |
 | Spec Review (isolated) | `/kk:review-spec:isolated [feature]` | Spec conformance review with independent sub-agent |
 | Template Sync | `/kk:template:sync [--version vX.Y.Z] [--dry-run]` | Sync repo with upstream template |
+
+## Functional review and implementation
+
+Use `/kk:review-code` for an ordinary change review; functional reasoning is part
+of the existing invocation. The reviewer establishes the requested increment and
+review baseline, traces changed behavior through relevant unchanged callers, and
+checks meaningful success, boundary and failure scenarios. A specification helps,
+but the reviewer can use repository contracts and label inferred intent when
+formal design documents are absent.
+
+For example, renaming a report label can be approved while an unchanged,
+disabled calculation has an inherited bug. Enabling that calculation by default
+is a different change: if valid empty input now crashes, the increment needs a
+fix. A feature flag only supports a compatibility claim when the affected paths
+actually obey it.
+
+The report explains consequential findings, assessed paths and evidence limits.
+Compatibility can be **Supported**, **Blocked**, **Unknown** or **Not applicable**
+for the named baseline and scenarios. Missing deployment information does not
+automatically block a scoped code review; it does prevent certifying a deployment
+when that evidence is essential. Local tests and released-source inspection do
+not verify a live environment.
+
+`/kk:review-code:isolated` prepares the relevant diff, current/historical source,
+task scope and review criteria for a named reviewer and PAL. If an external
+reviewer is unavailable or receives insufficient source, the report retains the
+available findings and discloses the lost coverage. Independent review does not
+guarantee correctness.
+
+`/kk:implement` applies the same behavioral context before editing, runs
+appropriate verification, and refreshes the evidence supplied to review. Use
+`/kk:implement Fix the empty-note update while preserving omitted settings` for
+a standalone change, or name a feature task to use its design and task records.
+A known unmet hard requirement keeps the task open. External activation work can
+remain separate when the agreed delivery contract permits it.
+
+Testing focuses on agreed outcomes and consequential risks. Optional advice or
+minor report variation is not automatically a failure; an accurately explained
+inherited bug can be useful without prescribing its next action. Required checks
+still need actual execution. A denied compound command does not establish that
+every tool is unavailable: use an authorized direct route when appropriate, or
+report the specific unresolved check. Inspect that limit before treating a change
+as verified; the skills do not guarantee autonomous recovery in every session.
 
 ## Utility Skills
 
