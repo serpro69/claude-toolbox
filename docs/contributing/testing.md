@@ -35,6 +35,7 @@ Run a single suite:
 | `test-codex-hooks.sh` | Codex hook scripts — `session-start.sh` and `pretooluse-bash.sh` with and without capy's own Codex hooks registered in `hooks.json` (legacy injection/denials, per-event handoff to capy, denylist and provider/extras preservation) |
 | `test-review-eval-staging.sh` | Fresh before/after/history and legacy fixture staging, path safety and evaluator-material exclusion |
 | `test-review-instructions.sh` | Instruction-packet source completeness, routing inputs and path boundaries; does not establish actor compliance |
+| `test-functional-review-tools.sh` | Extracted bundle/capture/receipt/grading utilities and archive inventory; runs from a temporary copy without historical evidence, using Python 3.11+ |
 
 ## Test Infrastructure
 
@@ -46,6 +47,9 @@ Tests use shared utilities from `test/helpers.sh`:
 - `print_summary` — final pass/fail count
 
 Test fixtures live in `test/fixtures/`.
+The [retained functional-review utilities](../../scripts/functional-review-evals/README.md)
+own small synthetic fixtures within their tests. Set `FUNCTIONAL_REVIEW_PYTHON`
+to an explicit Python 3.11+ interpreter when the default `python3` is older.
 Codex hook cases derive from `toolbox-only-hooks.json`, so the legacy case stays
 independent of Capy registrations in the developer's live `.codex/hooks.json`.
 

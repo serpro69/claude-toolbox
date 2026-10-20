@@ -9,7 +9,7 @@
 > Created: 2026-10-07
 > Revised: 2026-10-20 with final feature verification and human-owned release handoff
 > Next-session handoff: [verification summary](verification-summary.md) and [archive handoff](release-archive-handoff.md)
-> Current slice: Tasks 13.1–13.6 complete — human-owned Task 13.7 release housekeeping remains
+> Current slice: Tasks 13.1–13.6 complete; 13.7 tooling prepared — source-input recovery and human release housekeeping remain
 > Not Doing: new review skill, whole-system audits, mandatory production access, deployments, generic release engine, new models/dependencies, profile redesign
 > Delivery: preserve existing invocations/shared consumers; regenerate Codex artifacts with every operative slice.
 
@@ -1716,6 +1716,42 @@ prerequisite and human execution sequence. No release tag/URL or archive checksu
 is invented. Tool extraction, archive/upload, retrieval and cleanup remain
 unperformed under 13.7; no evidence or history was removed. The feature stays
 in WIP until the human-owned step is complete.
+
+### 13.7 preparation — 2026-10-20
+
+The user explicitly selected **complete tooling extraction and preparation**.
+Starting revision: `73c8b69ad5bea7bffff7d4d60f4e6a67072d83b0`; worktree was clean.
+Python guidance applies to the extracted modules; no new external dependency,
+provider configuration, model run or operative skill change is introduced.
+
+- [x] Retain the minimal runnable helper set under
+  `scripts/functional-review-evals/`, with original-path/hash provenance and
+  explicit inputs replacing frozen-directory assumptions. Keep dated launchers
+  and old originals in the archive.
+- [x] Verify independence from `verification/`: all 15 offline tests pass from
+  temporary copies outside the repository on Python 3.11.13 and 3.12.11.
+  All 13 repository shell suites pass (758 helper assertions, zero failures).
+- [x] Complete [independent source review](reviews/retained-tooling-review.md).
+  Initial P2 corrected: preserve fetched history before supplementary metadata
+  retrieval; regression test and targeted re-review pass. Final verdict APPROVE.
+- [x] Recompute the unchanged evidence inventory and write
+  [source audit](archive-source-audit.md), [updated handoff](release-archive-handoff.md)
+  and [human command guidance](release-archive-commands.md).
+- [ ] Human archive assembly: export the hash-verified core candidate from Git;
+  recover early source inputs. Fifteen temporary identities lack their original
+  tar/commit here; 18 of 845 distinct source-file hashes are unmatched in loose
+  evidence and retained archive members. The audit records exact hashes and
+  recovery sources. Owner: maintainer with AI assistance; verify every original
+  manifest entry, or explicitly decide a preservation exception if recovery
+  proves impossible. This session cannot retrieve the old host's temporary repos.
+- [ ] Human upload/retrieval verification, reference repair, evidence removal and
+  history cleanup, with actual release assets and confirmation recorded.
+
+Historical captures/grades/source files and distributed plugin output are
+unchanged. No release archive file was created, uploaded or removed; no Git
+history was rewritten. Source review supports tooling preparation, not archive
+completeness. The source-retention gap blocks cleanup under the existing retention
+contract; it does not reopen feature behavioral acceptance. Task 13.7 stays open.
 
 ### 13.7 Evidence retention and release archive
 

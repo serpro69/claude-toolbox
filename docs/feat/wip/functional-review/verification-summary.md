@@ -122,6 +122,20 @@ evidence tree currently remains in `verification/`; no files or Git history have
 been removed. [The release handoff](release-archive-handoff.md) records the
 inventory, proposed retention map and human execution sequence.
 
+Task 13.7 preparation has now extracted the reusable tools to
+[`scripts/functional-review-evals/`](../../../../scripts/functional-review-evals/README.md).
+All 15 offline checks pass on Python 3.11.13 and 3.12.11 from copies outside the
+repository; all 13 shell suites pass. Independent source review approves after
+fixing a receipt-retention regression. These are tooling checks, not new actor
+evaluations or completed release housekeeping.
+
+[The source-input audit](archive-source-audit.md) identifies a recoverable core
+source export and early inputs that still need recovery: 18 distinct source
+hashes remain unmatched in the examined evidence files/archive members. The
+maintainer owns recovery and original-hash verification before cleanup.
+[Command guidance](release-archive-commands.md) stops at that prerequisite.
+No preservation exception has been accepted.
+
 Release tag/URL, archive name, archive SHA-256, manifest and retrieval verification
 are **pending**, not placeholders for a completed upload. Record those actual
 values here when the feature's release exists. Task 13.7 prevents removing the
