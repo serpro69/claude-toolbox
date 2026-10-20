@@ -157,12 +157,15 @@ Local archive and retained-tooling prerequisites are complete. The user then
 selected an existing draft release for immediate upload before cleanup.
 
 All three functional-review assets are now attached to
-[v0.24.0-draft](https://github.com/serpro69/claude-toolbox/releases/tag/untagged-c0a403db0376380a3b00)
+[v0.24.0](https://github.com/serpro69/claude-toolbox/releases/tag/v0.24.0), currently a draft
 (release ID `418689774`), along with the eight other feature archive sets.
 All 27 downloaded files match their original checksums, and all nine downloaded
 archives pass extracted-member verification. The
 [asset receipt](../../../archives/feature-evidence/release-assets.json) supplies
 exact filenames, asset IDs and download/API URLs; member paths above are unchanged.
-The release remains an authenticated-access draft, with no tag assigned by this
-operation. Human reference repair, evidence removal and history cleanup remain.
+The user specified v0.24.0 as the publication target, so canonical release/asset
+links use that tag. Verification was performed against the existing draft;
+its observed identity and authenticated asset API URLs remain in the receipt.
+No release promotion or remote tag change was performed. Human reference repair,
+evidence removal and history cleanup remain.
 No cleanup, history rewrite or draft publication has been performed.

@@ -1,12 +1,13 @@
 # Feature evidence archive register
 
 **Upload verified, 2026-10-20:** all eight feature asset sets, plus functional-review,
-are attached to [v0.24.0-draft](https://github.com/serpro69/claude-toolbox/releases/tag/untagged-c0a403db0376380a3b00).
+are attached to the draft for [v0.24.0](https://github.com/serpro69/claude-toolbox/releases/tag/v0.24.0).
 The [release asset receipt](release-assets.json) records the 27 exact filenames,
 asset IDs, API/download URLs and SHA-256 values. All downloaded files match the
 originals and all nine downloaded archives pass full extracted-member verification.
-The release remains a draft; publication, evidence removal and history cleanup
-were not performed.
+The canonical links target v0.24.0 after promotion. The receipt retains the actual
+draft upload identity separately. Publication, evidence removal and history
+cleanup were not performed.
 
 Prepared 2026-10-20 from `3339e897dfad6bd32a6e7e47533bd53cc1510a72`.
 The user requested the same local preservation/archive treatment for other
@@ -108,9 +109,10 @@ records; it does not remove source directories or rewrite history.
 For retrieval, use the release asset filename/URL from `release-assets.json`,
 then the original repository-relative member path under `payload/`. The local
 paths in `archives.json` preserve preparation provenance; they are not required
-to retrieve uploaded evidence. Draft access is authenticated. Refresh observed
-release/download URLs when the draft is published or renamed; asset IDs/API URLs
-are also recorded.
+to retrieve uploaded evidence. The release/download URLs already target v0.24.0,
+as specified by the user. Until promotion, use authenticated asset API URLs/IDs
+or the receipt's upload-observation draft prefix. Verification applies to those
+observed draft assets, not a claim that the final URLs are already live.
 
 The two copied JSON records are byte-identical historical records. Their internal
 relative paths retain their original interpretation, documented in the feature
