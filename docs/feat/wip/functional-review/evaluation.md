@@ -3,7 +3,7 @@
 > Design: [design.md](design.md)
 > Implementation: [implementation.md](implementation.md)
 > Tasks: [tasks.md](tasks.md)
-> Status: acceptance reset approved; remaining material verification is tracked in Task 12.25
+> Status: Task 12 assessed and accepted with disclosed execution limits; Task 13 finalization pending
 > Revised: 2026-10-20; [current reassessment](acceptance-reassessment.md)
 > Reviewed claims: [consolidated disposition](reviews/design-review-consolidation.md)
 
@@ -37,8 +37,10 @@ comparison must apply consistently to both sides; new captures are needed only
 when retained evidence cannot support that new comparison. No aggregate score
 can waive an explicit consequential requirement.
 
-Task 12 now owns the bounded implementation-verification assessment in Task
-12.25. Retired R6/R7/report gates, transport-receipt perfection, all-eight advisory
+Task 12.25's [completed assessment](implementation-verification-assessment.md)
+closes Task 12 with a disclosed execution/recovery limitation: historical I2
+tests were not run by the actors, and no claim of reliable autonomous recovery
+is made. Retired R6/R7/report gates, transport-receipt perfection, all-eight advisory
 coverage, deferred PAL and blanket legacy actor reruns no longer block local
 functional-review acceptance. Live PAL/two-reviewer and unmeasured behavior claims
 remain unverified. Task 13 retains applicable final checks and human-owned release

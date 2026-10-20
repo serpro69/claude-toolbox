@@ -40,7 +40,7 @@ convert any red row into a veto.
 | [R1 sequence](verification/task12/opus55/grades/claude-candidate-R1-standard-1.md), [R2 detail](verification/task12/opus55/grades/codex-candidate-R2-standard-2.md) and [I4 report](verification/task12/opus55/grades/claude-candidate-I4-plan-1.md) | Supported defects and justified verdicts survive sequence/detail omissions. I4 keeps the hard requirement open and does not claim test execution. | Retire exact-report-detail gates for these observations. No need to reproduce a runtime failure just to reject an already demonstrated broken implementation. Incorrect causal claims or false completion remain material. |
 | [Observation ledger](assessment-observations.md): context ordering, entry/handoff and pre-edit receipts | Procedural deviations and missing transport evidence do not alone establish harmful reasoning. Required instruction order is still operative; observed receipt is not proof of exact prompt parity. | Retain limits without an automatic acceptance veto. No new narration, transport probe or ordering guard solely to clear historical rows. |
 | [Entry-path correction](verification/task12/entry-path-no-pal/README.md) | Targeted acquisition checks improved; other modes are not thereby certified. | Keep the correction. Do not describe all historical acquisition misses as fixed. |
-| [I2 repetition 1](verification/task12/opus55/grades/claude-candidate-I2-standalone-1.md), [repetition 2](verification/task12/opus55/grades/claude-candidate-I2-standalone-2.md) and [acquisition assessment](follow-up.md#acquisition) | Tests were written but not executed; denial of one tool did not establish every permitted route unavailable. Implementation-mode diff acquisition also remains uncertain. | Keep one bounded material-verification question open, as specified below. Accurate disclosure is useful but does not establish completed required verification. |
+| [I2 repetition 1](verification/task12/opus55/grades/claude-candidate-I2-standalone-1.md), [repetition 2](verification/task12/opus55/grades/claude-candidate-I2-standalone-2.md) and [acquisition assessment](follow-up.md#acquisition) | Tests were written but not executed; denial of one tool did not establish every permitted route unavailable. Implementation-mode diff acquisition also remains limited. | [Task 12.25](implementation-verification-assessment.md) completes the assessment: retain the disclosed execution/recovery limitation without another feature gate. Historical I2 verification remains incomplete; no runtime pass is invented. |
 | User-deferred PAL and unrun legacy actor controls | PAL coverage is unavailable by decision; replay/source checks cannot certify live transport. Unrun controls are coverage limits, not demonstrated regressions. | Remove their blanket veto on local functional-review acceptance. Keep live two-reviewer claims unverified. Select future controls only for affected behavior or a concrete risk. |
 
 These are dispositions, not replacement PASS/FAIL tables. Counts from different
@@ -49,21 +49,20 @@ pre-feature comparisons cannot isolate the effect of a later wording change.
 
 ## Remaining work and stopping condition
 
-**Task 12 remains open only for the material implementation-verification
-assessment**, not R6/R7 report obligations, receipt perfection, all-eight advisory
-coverage or deferred PAL. Owner: next implementing agent, Task 12.25.
+**Task 12.25 is complete and Task 12 is closed** under the revised policy.
+The [completed assessment](implementation-verification-assessment.md) retains the
+real I2 execution shortfall and inaccurate blanket shell-unavailability inference.
+The reports disclose unrun checks, saved patches pass retrospective tests, I3's
+edits are exact and I4 keeps its hard requirement open. Independent review finds
+no additional instruction defect or harmful resulting patch requiring a new
+correction or batch. This accepts the feature with a documented recovery
+limitation; it does not complete historical actor verification.
 
-Inspect the retained I2/I3/I4 command-denial, attempted-command, diff-delivery and
-completion evidence to decide whether current instructions leave a consequential
-gap in completing available required verification. This is deferred from the
-policy change because no workflow repair or live measurement is selected here.
-Start with existing captures and current source; do not assume a permitted
-alternative would have succeeded or convert disclosed nonexecution into passing
-tests. If the remaining evidence supports only an environment/coverage limit,
-record a bounded disposition and close Task 12 without inventing an actor fix.
-If a material issue remains, identify the smallest correction or exact unresolved
-question. Any later diagnostic must name that question and use an immediate-
-predecessor comparison for a targeted change; a new full matrix is not required.
+Task 13's implementing agent owns carrying that limitation into the final summary.
+Revisit only when consequential new evidence or changed verification/recovery
+instructions make it decision-relevant. Any later diagnostic must name that
+question and use an immediate-predecessor comparison for a targeted change.
+Retired R6/R7, report-detail and receipt gates remain retired.
 
 Task 13 retains final documentation, applicable repository checks, source/spec
 review and the separately human-owned release archive. Its evidence reconciliation
