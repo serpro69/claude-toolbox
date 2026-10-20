@@ -2,7 +2,7 @@
 
 > Prepared: 2026-10-20 after feature verification and final reviews
 > Owner: human maintainer, AI-guided Task 13.7
-> Status: inventory/guidance prepared; tooling extraction, archive/upload, retrieval and cleanup unperformed
+> Status: tooling extracted/tested/reviewed; source-input recovery required; archive/upload, retrieval and cleanup unperformed
 
 [Feature verification](verification-summary.md) is complete. Task 13 stays open
 because its release-housekeeping step explicitly assigns execution to the human
@@ -35,8 +35,10 @@ when packaging; do not assume a later tree is identical.
   `evals/_harness/setup.sh`, `scripts/prepare_instructions.py`,
   `test/test-review-eval-staging.sh`, `test/test-review-instructions.sh`,
   `test/review_instructions_test.py`, and related packaging checks.
-- The minimal selected capture/grading tooling and its tests after extraction
-  from the historical tree. That extraction is still pending.
+- [Retained capture/grading tooling](../../../../scripts/functional-review-evals/README.md),
+  its provenance record, synthetic tests and `test/test-functional-review-tools.sh`.
+- [Source retention audit](archive-source-audit.md), including the exact recovery
+  gap that must be resolved before evidence removal.
 
 **Archive outside Git:** the complete retained `verification/` tree, including
 unfavorable attempts and original source/configuration inputs. Preserve original
@@ -44,32 +46,56 @@ commit IDs and hashes even if history is later rewritten. Existing evidence is
 redacted; do not add authentication files, live stores or private vault history.
 Only regenerable cache exclusions are permitted, with their scope recorded.
 
-## Tooling extraction prerequisite
+## Tooling extraction — completed preparation
 
 The historical runners are not portable standalone scripts. Copying only the
 entry file and deleting the evidence tree would break imports and frozen inputs.
-Before removal, select the reusable execution scope, relocate its full dependency
-closure (for example under `scripts/functional-review-evals/`), and prove its
-offline tests work without the historical tree.
+The selected reusable scope now lives under `scripts/functional-review-evals/`.
+Its dependency closure is standard library plus sibling modules. The test wrapper
+copies it outside the repository and runs isolated imports; no historical tree,
+account configuration, live model or network service is needed.
 
-| Starting point | Dependency/portability work to resolve |
+| Starting point | Retained disposition |
 | --- | --- |
-| `task12/opus55/matrix.py` | Imports `task12/rework/driver.py` and `runtime.py`; loads `task2b/controller.py` through the controller's verification root; uses dated run directories and declared snapshots. |
-| `task12/rework/{capture,driver,runtime,probe_pal}.py` | Capture/driver load `task12/controller.py`; the PAL helper also loads its historical predecessor. Retain relevant runtime tests and replace history-dependent fixtures with small owned fixtures. |
-| `task12/controller.py` and root capture/bundle helpers | Resolve repository-root assumptions, `capture-seeds.py`, `prepare-bundles.py`, rubric/grader paths and the declared dependency lists. Separate reusable execution from historical source pins. |
-| `task2b/controller.py` | Retain the selected Codex receipt adapter and its actual dependencies/tests; do not imply exact prompt capture where only receipt/use is available. |
-| `task8/prepare_grading.py` | Currently binds to Task 2 capture indexes, frozen inputs and a fixed verification-root layout. Extract only reusable packaging logic with explicit inputs and its tests. |
+| `task12/opus55/matrix.py` | Archive the dated matrix/registrations/snapshots. Do not retain its import chain as a new general runner. |
+| `task12/rework/{capture,driver,runtime,probe_pal}.py` | Retain `runtime.py` byte-identically with synthetic lifecycle tests; archive launch policies and historical PAL transport. |
+| `task12/controller.py` and root capture/bundle helpers | Retain `prepare-bundles.py` as byte-identical `bundles.py`; canonical `setup.sh` continues to own fixture staging. Archive dated controllers. |
+| `task2b/controller.py` and `capture-codex.py` | Extract public sanitization and paginated child-history collection into `receipts.py`, with explicit client/credentials and no account lookup. Exact prompt capture remains unverified. |
+| `task8/prepare_grading.py` | Extract sealed event/fixture/rubric/grader packaging into `grading.py` with explicit inputs; preserve original seals and source identity. |
 
-This is the assessed starting map, not a completed extraction manifest. Keep the
-tree until the maintainer has selected and validated the retained tool set.
-Historical variants and unused experiment-specific adapters remain in the archive.
-No general evaluation framework or new live batch is required for this cleanup.
+[Extraction provenance](../../../../scripts/functional-review-evals/provenance.json)
+records original paths and SHA-256 values. All **15 offline tests pass on Python
+3.11.13 and 3.12.11**, including execution from outside the checkout. All **13
+repository shell suites pass**; the focused suite was rerun after the review fix.
+[Independent source review](reviews/retained-tooling-review.md) approves after
+restoring history persistence before supplementary metadata retrieval. Live
+provider behavior remains untested; no new experiment was run.
+
+`inventory.py` supplies manifest creation/verification for the human archive
+step. It records regular-file hashes/modes, symlink targets, directory membership
+and explicit cache exclusions. It does not prove external-input completeness.
+
+## Source preservation prerequisite — open
+
+[The source audit](archive-source-audit.md) finds one core candidate archive that
+must be exported from Git and fifteen early temporary source identities missing
+from this checkout. Most early content exists elsewhere in the retained evidence;
+18 of 845 distinct source hashes remain unmatched by the bounded file/archive
+search. Recover and verify these inputs, or obtain an explicit preservation
+decision if recovery is impossible. No exception is implied by the tooling tests.
+The evidence tree and original Git history remain intact.
 
 ## Human execution sequence
 
+[Concrete command guidance](release-archive-commands.md) covers staging,
+the known core source export, inventory, upload and downloaded-member checks.
+Its source-recovery stopping point is mandatory; no command has been executed
+as part of preparing that guidance.
+
 1. **Choose the release and finish retention.** Use the release that contains the
-   merged feature. Its tag and URL are not yet assigned here. Complete the tooling
-   extraction above and retain the compact records before removing any evidence.
+   merged feature. Its tag and URL are not yet assigned here. Tooling extraction
+   is complete; resolve the source-input audit and retain the compact records
+   before removing any evidence.
 2. **Package outside the checkout.** Archive the whole relative
    `docs/feat/wip/functional-review/verification/` tree (or its actual location
    after an explicitly chosen move), preserving symlinks and member paths.
@@ -105,7 +131,8 @@ No general evaluation framework or new live batch is required for this cleanup.
 | Field | Current value |
 | --- | --- |
 | Release tag and URL | Pending |
-| Retained tooling destination and offline verification | Pending |
+| Retained tooling destination and offline verification | `scripts/functional-review-evals/`; 15 tests pass on Python 3.11.13/3.12.11 outside checkout; source review APPROVE |
+| Original source-input completeness | Open: core export plus early-source recovery; see source audit |
 | Archive, checksum and manifest asset names | Pending |
 | Archive SHA-256 and exclusion list | Pending |
 | Download/member verification | Pending |
