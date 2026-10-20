@@ -2,7 +2,7 @@
 
 > Prepared: 2026-10-20 after feature verification and final reviews
 > Owner: human maintainer, AI-guided Task 13.7
-> Status: local archive created and verified; human cleanup and later release upload remain
+> Status: local and uploaded draft-release archives verified; human reference repair and cleanup remain
 
 [Feature verification](verification-summary.md) is complete. Task 13 stays open
 because its release-housekeeping step explicitly assigns execution to the human
@@ -19,6 +19,31 @@ cleanup. The human then performs reference repair and history cleanup, creates
 the release, and attaches the verified assets. Release creation, a tag and upload
 are not prerequisites for local preparation or cleanup. Preserve the ignored
 archive if cleanup uses a fresh clone or removes ignored files.
+
+## User-selected draft upload — completed 2026-10-20
+
+The user subsequently requested uploading all nine archive sets to the existing
+[v0.24.0-draft release](https://github.com/serpro69/claude-toolbox/releases/tag/untagged-c0a403db0376380a3b00),
+before cleanup. That explicit instruction supersedes the earlier upload ordering.
+Release ID: `418689774`; it remains a draft with an empty `tag_name`. No tag or
+publication was created by this upload.
+
+All 27 existing assets uploaded without overwriting anything: nine `.tar.gz`,
+nine `.manifest.json` and nine `.sha256` files, totaling 227,326,167 bytes.
+Remote names, sizes, uploaded states and reported digests matched the originals.
+Fresh downloads of all 27 files match the original SHA-256 values; all nine
+downloaded archives were extracted and passed complete member-manifest verification.
+
+[The release receipt](../../../archives/feature-evidence/release-assets.json)
+records actual asset IDs and download/API URLs, including this feature's three
+assets. Retrieve the named archive, then locate members under `payload/`; the
+original evidence subtree remains
+`payload/docs/feat/wip/functional-review/verification/`.
+The `.local-archives/` preparation layout is not needed for retrieval.
+
+Draft access remains authenticated. Refresh the observed release/download URLs
+if its name/tag changes during publication. Upload and retrieval checks are now
+complete; source removal, reference repair and Git-history cleanup remain pending.
 
 ## Verified local archive — 2026-10-20
 
@@ -174,13 +199,13 @@ been executed as part of preparing that guidance.
 
 | Field | Current value |
 | --- | --- |
-| Release tag and URL | Later, after cleanup; not needed for local archive |
+| Release tag and URL | User-selected draft URL above; actual `tag_name` is empty |
 | Retained tooling destination and offline verification | `scripts/functional-review-evals/`; 15 tests pass on Python 3.11.13/3.12.11 outside checkout; source review APPROVE |
 | Original source-input disposition | Early temporary inputs accepted as unavailable; core export remains part of assembly |
 | Local archive, checksum and manifest paths | Recorded above; all ignored by Git |
 | Archive SHA-256 and exclusion list | Recorded above and in the manifest; only cache directories excluded |
 | Local extraction/member verification | Passed, including direct original-evidence comparison |
-| Release upload/download verification | Later, after cleanup and release creation |
+| Release upload/download verification | Completed against draft release `418689774`; all 27 files and nine extracted archives verified |
 | Evidence removal and history cleanup confirmation | Pending |
 
 These pending fields are release housekeeping. They do not reinstate retired

@@ -4,6 +4,13 @@ These commands describe Task 13.7's local archive preparation and later
 maintainer release upload. Actual execution is recorded in the handoff; command
 examples alone are not completion evidence. The retained tools have offline tests.
 
+**Current status:** local preparation and the user-requested upload to release
+`418689774` are complete, including downloaded checksum/member verification.
+See the [handoff](release-archive-handoff.md#user-selected-draft-upload--completed-2026-10-20)
+and [asset receipt](../../../archives/feature-evidence/release-assets.json).
+Commands below are reference guidance; do not rerun them against existing output
+directories/assets. Human evidence/reference/history cleanup remains pending.
+
 **The [temporary-input limitation](archive-source-audit.md) is accepted.**
 Archive the retained material and available core source export; recovery of
 missing scratch inputs is not required. No release or tag is needed to prepare

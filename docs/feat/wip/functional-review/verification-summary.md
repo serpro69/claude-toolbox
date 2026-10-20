@@ -3,7 +3,7 @@
 > Updated: 2026-10-20 · feature verification complete (Tasks 13.1–13.6)
 > Current source base: `70180071` plus Task 13 documentation/test-fixture changes
 > Acceptance: Task 12 complete with disclosed limits; source review APPROVE and spec review CONFORMANT
-> Archive: local copy created and verified; human cleanup and later release upload remain under Task 13.7
+> Archive: local and draft-release copies verified; human reference repair and cleanup remain under Task 13.7
 
 ## What is implemented
 
@@ -153,6 +153,16 @@ Checksum and complete extracted-member verification pass: 73,126 regular files,
 original evidence inventory entry, with only recorded cache exclusions.
 The [handoff](release-archive-handoff.md#verified-local-archive--2026-10-20)
 retains detailed hashes, provenance and the assembly-time document-snapshot limit.
-Local archive and retained-tooling prerequisites are complete. Human reference
-repair, evidence removal and history cleanup remain; release tag/URL and uploaded-
-asset verification follow later. No cleanup or upload has been performed.
+Local archive and retained-tooling prerequisites are complete. The user then
+selected an existing draft release for immediate upload before cleanup.
+
+All three functional-review assets are now attached to
+[v0.24.0-draft](https://github.com/serpro69/claude-toolbox/releases/tag/untagged-c0a403db0376380a3b00)
+(release ID `418689774`), along with the eight other feature archive sets.
+All 27 downloaded files match their original checksums, and all nine downloaded
+archives pass extracted-member verification. The
+[asset receipt](../../../archives/feature-evidence/release-assets.json) supplies
+exact filenames, asset IDs and download/API URLs; member paths above are unchanged.
+The release remains an authenticated-access draft, with no tag assigned by this
+operation. Human reference repair, evidence removal and history cleanup remain.
+No cleanup, history rewrite or draft publication has been performed.
