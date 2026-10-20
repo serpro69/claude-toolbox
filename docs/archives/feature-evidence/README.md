@@ -105,6 +105,9 @@ also pass. No runtime behavior or historical acceptance was reassessed.
 Original evidence removal, link repair, Git-history cleanup and later publication
 are separate work. This operation creates local archives and durable retention
 records; it does not remove source directories or rewrite history.
+The [prepared filter-repo command](filter-archived-paths.md) covers archived capture
+and session paths across their historical names, preserves this retention map,
+and records read-only path-match validation. It has not been executed.
 
 For retrieval, use the release asset filename/URL from `release-assets.json`,
 then the original repository-relative member path under `payload/`. The local
