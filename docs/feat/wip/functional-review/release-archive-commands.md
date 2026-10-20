@@ -1,40 +1,38 @@
 # Maintainer archive commands
 
-These commands are guidance for the human-owned portion of Task 13.7. They have
-not been executed by the preparation session. The retained tools have offline
-tests; upload/download syntax was checked against installed `gh` help.
+These commands describe Task 13.7's local archive preparation and later
+maintainer release upload. Actual execution is recorded in the handoff; command
+examples alone are not completion evidence. The retained tools have offline tests.
 
-**Resolve [the source-input audit](archive-source-audit.md) before packaging.**
-The old host's missing inputs cannot be replaced by current files with different
-hashes. Choose the actual release containing this feature, commit retained tooling
-and records, and use a fresh absolute output directory outside the checkout.
+**The [temporary-input limitation](archive-source-audit.md) is accepted.**
+Archive the retained material and available core source export; recovery of
+missing scratch inputs is not required. No release or tag is needed to prepare
+and verify the archive. Save it under the project's ignored `.local-archives/`
+directory; it must never be staged or committed. Release upload follows cleanup.
 Use Bash and Python 3.11+; retain the same shell variables across the blocks.
 
 ## Assemble outside Git
 
-Fill in `TAG` and `OUT`. This block intentionally stops when they are empty.
+Use a fresh date/revision-based directory and filename:
 
 ```bash
 set -euo pipefail
 REPO=$(git rev-parse --show-toplevel)
 TREE=docs/feat/wip/functional-review/verification
-TAG=''
-OUT=''
-: "${TAG:?Set the actual release tag}"
-: "${OUT:?Set a fresh absolute directory outside the repository}"
-case "$OUT" in
-  /*) ;;
-  *) printf 'OUT must be absolute\n' >&2; exit 1 ;;
-esac
+RUN="$(date -u +%Y%m%dT%H%M%SZ)-$(git rev-parse --short HEAD)"
+BASE="functional-review-evidence-$RUN"
+git -C "$REPO" check-ignore -q .local-archives/functional-review/probe
+mkdir -p "$REPO/.local-archives/functional-review"
+OUT="$REPO/.local-archives/functional-review/$RUN"
 mkdir "$OUT"
-OUT=$(cd "$OUT" && pwd -P)
-case "$OUT/" in
-  "$REPO/"*) printf 'OUT must be outside the checkout\n' >&2; exit 1 ;;
-esac
-BASE="functional-review-evidence-${TAG//\//-}"
 STAGE="$OUT/payload"
 mkdir -p "$STAGE/$(dirname "$TREE")" "$STAGE/original-inputs"
 cp -a "$REPO/$TREE" "$STAGE/$TREE"
+cp "$REPO/$(dirname "$TREE")/"*.md "$STAGE/$(dirname "$TREE")/"
+cp -a "$REPO/$(dirname "$TREE")/reviews" "$STAGE/$(dirname "$TREE")/"
+git -C "$REPO" diff HEAD --binary -- docs/feat/wip/functional-review \
+  scripts/functional-review-evals/README.md \
+  > "$STAGE/original-inputs/preparation.patch"
 git -C "$REPO" archive 581dd0e11455398cb73e3d6ae5542854c016fe7f \
   klaude-plugin kodex-plugin .codex/agents \
   > "$STAGE/original-inputs/core-candidate-source.tar"
@@ -43,18 +41,17 @@ printf '%s  %s\n' \
   "$STAGE/original-inputs/core-candidate-source.tar" | sha256sum -c -
 ```
 
-Add verified early source inputs beneath `payload/original-inputs/`, with their
-original revision/path/hash mapping. Check every original source-manifest entry.
-Include this feature's compact records and recovery disposition in the payload
-if useful for interpretation. **Stop here until that recovery is complete or
-the maintainer has explicitly recorded a preservation exception.**
+The staged feature documents include the compact records, source audit and
+accepted limitation. Keep the unavailable inputs' original identities and hashes;
+do not substitute current files or claim exact replay of those older runs.
+Proceed with the retained material after the core export checksum passes.
 
 If the feature has moved to `done/`, set `TREE` to its real location before
 assembly and preserve that member path in the retained summary.
 
-## Package, upload and retrieve
+## Package and verify locally
 
-After source completeness is resolved, run:
+After assembly, run:
 
 ```bash
 python3 -B "$REPO/scripts/functional-review-evals/inventory.py" create \
@@ -65,6 +62,41 @@ tar --exclude='*/__pycache__' -C "$OUT" -czf "$OUT/$BASE.tar.gz" payload
   cd "$OUT"
   sha256sum "$BASE.tar.gz" "$BASE.manifest.json" > "$BASE.sha256"
 )
+(
+  cd "$OUT"
+  sha256sum -c "$BASE.sha256"
+  mkdir extracted
+  tar --no-same-owner -xzf "$BASE.tar.gz" -C extracted
+)
+python3 -B "$REPO/scripts/functional-review-evals/inventory.py" verify \
+  "$OUT/extracted/payload" "$OUT/$BASE.manifest.json"
+```
+
+The inventory is built before packaging and checked against an extraction of the
+actual compressed archive. Locate representative successful/failed captures,
+corrected grades, original contracts and available source inputs there. Record
+the local paths, archive checksum and member prefix `payload/` in the summary.
+That verified local copy satisfies the archive prerequisite for cleanup.
+
+## Cleanup remains a separate human action
+
+Only after local checksum/member verification is confirmed: repair
+retained references, remove the archived tree, and choose the refs and historical
+paths for history cleanup. Check feature docs and `docs/reviews/` references;
+preserve original evidence identities and any old-to-new commit map. Reflog
+expiry and garbage collection require the maintainer's selected scope; no generic
+destructive command is supplied here. Preserve `.local-archives/` through cleanup:
+ignored files are not carried into a fresh clone and can be removed by an ignored-
+file cleanup. Keep this local copy available until release upload is verified.
+
+## Upload after cleanup and release creation
+
+Once the release exists, use its actual tag. Reuse the verified filenames; no
+renaming to include a tag is needed. This is later work, not a cleanup gate.
+
+```bash
+TAG=''
+: "${TAG:?Set the tag of the now-created release}"
 gh release upload "$TAG" --repo serpro69/claude-toolbox \
   "$OUT/$BASE.tar.gz" "$OUT/$BASE.manifest.json" "$OUT/$BASE.sha256"
 RETRIEVED="$OUT/retrieved"
@@ -83,19 +115,6 @@ python3 -B "$REPO/scripts/functional-review-evals/inventory.py" verify \
   "$RETRIEVED/extracted/payload" "$RETRIEVED/$BASE.manifest.json"
 ```
 
-No overwrite flags are used: an existing asset/destination requires inspection.
-The inventory is built before packaging, then checked against the actual
-downloaded copy. Locate representative successful/failed captures, corrected
-grades, original contracts, actor inputs and recovered source members there.
-Record the release URL, all asset names, archive checksum and member prefix
-`payload/` in `verification-summary.md`.
-
-## Cleanup remains a separate human action
-
-Only after retrieval/integrity and source completeness are confirmed: repair
-retained references, remove the archived tree, and choose the refs and historical
-paths for history cleanup. Check feature docs and `docs/reviews/` references;
-preserve original evidence identities and any old-to-new commit map. Reflog
-expiry and garbage collection require the maintainer's selected scope; no generic
-destructive command is supplied here. Recheck release accessibility after ref/tag
-changes. Record observed completion before closing 13.7 or moving the feature.
+Record the actual release URL/assets and download verification separately.
+Close 13.7 only after its local verification, human cleanup and later release
+attachment are observed; no proposed command sequence counts as completion.

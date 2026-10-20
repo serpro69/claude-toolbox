@@ -9,7 +9,7 @@
 > Created: 2026-10-07
 > Revised: 2026-10-20 with final feature verification and human-owned release handoff
 > Next-session handoff: [verification summary](verification-summary.md) and [archive handoff](release-archive-handoff.md)
-> Current slice: Tasks 13.1–13.6 complete; 13.7 tooling prepared — source-input recovery and human release housekeeping remain
+> Current slice: Tasks 13.1–13.6 complete; 13.7 local archive verified, temporary-input limitation accepted — cleanup then release upload remain
 > Not Doing: new review skill, whole-system audits, mandatory production access, deployments, generic release engine, new models/dependencies, profile redesign
 > Delivery: preserve existing invocations/shared consumers; regenerate Codex artifacts with every operative slice.
 
@@ -1668,7 +1668,7 @@ no findings. No operative source, frozen evidence or historical grade changed.
 - [x] 13.4 Reconcile material outcomes, evidence limits and shared-consumer checks under the current evaluation policy → verify: /kk:review-spec and /kk:review-design retain their contracts; retired historical grade gates are not reinstated.
 - [x] 13.5 Run /kk:review-code with actual profiles and /kk:review-spec against design.md, implementation.md, evaluation.md and tasks.md → verify: findings are resolved or durably assigned without waiving required acceptance.
 - [x] 13.6 Record feature verification completion after 13.1–13.5 and current material acceptance are verified → verify: no unresolved hard constraint or essential unverified claim is represented as complete. Disclose other coverage limits without reinstating retired gates. Track release housekeeping in 13.7 separately; Task 13 remains open until both are complete.
-- [ ] 13.7 **Human-executed, AI-guided:** retain the compact verification record and reusable tooling, archive the full evidence as assets of the GitHub release containing this feature, then remove the archived evidence from the repository and its history → verify: follow the retention plan below; the human confirms archive retrieval/integrity, retained-content checks and history cleanup before closing this subtask.
+- [ ] 13.7 **AI-assisted local preparation, human cleanup/release:** retain the compact record/tooling, create and verify an ignored local archive, then remove the archived evidence from the repository and its history; attach/verify the assets after the release exists → verify: follow the accepted local-first retention plan below; record local integrity, retained-content checks, human cleanup and later release attachment separately.
 
 ### Execution context — 2026-10-20
 
@@ -1737,41 +1737,84 @@ provider configuration, model run or operative skill change is introduced.
 - [x] Recompute the unchanged evidence inventory and write
   [source audit](archive-source-audit.md), [updated handoff](release-archive-handoff.md)
   and [human command guidance](release-archive-commands.md).
-- [ ] Human archive assembly: export the hash-verified core candidate from Git;
-  recover early source inputs. Fifteen temporary identities lack their original
+- [x] Authorized local archive assembly: export the hash-verified core candidate from Git;
+  package all retained evidence with the accepted temporary-input limitation.
+  Fifteen temporary identities lack their original
   tar/commit here; 18 of 845 distinct source-file hashes are unmatched in loose
   evidence and retained archive members. The audit records exact hashes and
-  recovery sources. Owner: maintainer with AI assistance; verify every original
-  manifest entry, or explicitly decide a preservation exception if recovery
-  proves impossible. This session cannot retrieve the old host's temporary repos.
-- [ ] Human upload/retrieval verification, reference repair, evidence removal and
-  history cleanup, with actual release assets and confirmation recorded.
+  original locations. The user accepted their unavailability on 2026-10-20;
+  recovery is not required. Owner: maintainer with AI assistance; verify the
+  archived retained content against the new inventory without relabeling missing
+  inputs as recovered.
+- [x] Local checksum and extracted-member verification; record local asset paths
+  in the summary/handoff.
+- [ ] Human reference repair, evidence removal and history cleanup.
+- [ ] Later release creation, upload/download verification and actual asset URLs.
 
-Historical captures/grades/source files and distributed plugin output are
-unchanged. No release archive file was created, uploaded or removed; no Git
-history was rewritten. Source review supports tooling preparation, not archive
-completeness. The source-retention gap blocks cleanup under the existing retention
-contract; it does not reopen feature behavioral acceptance. Task 13.7 stays open.
+At the initial preparation checkpoint, historical captures/grades/source files
+and distributed plugin output were unchanged; no archive had been created,
+uploaded or removed and no history had been rewritten. Source review supported tooling preparation, not archive
+completeness. The initial source-recovery gate was superseded by the accepted
+retention decision below. Task 13.7 stays open for human release housekeeping.
+
+### Accepted retention decision — 2026-10-20
+
+The user challenged the requirement to recover explicitly temporary snapshots,
+confirmed they are unavailable, and approved removing that gate. Preserve the
+retained evidence and record the limitation on exact replay of older experiments.
+No old source hash, assertion result or feature-acceptance decision changes.
+Include the still-available core source export. Archive integrity and member
+verification remain required before evidence removal and history cleanup; the
+subsequent local-first decision selects the local copy for that prerequisite.
+The [source audit](archive-source-audit.md) retains the original observations;
+its former recovery obligation is retired, not left as an open follow-up.
+The seven-file documentation update passes independent review (APPROVE, no
+findings), local-link checks, shell-block syntax checks and `git diff --check`.
+No executable code or frozen evidence changed; no archive command was run.
+
+### Accepted local-first sequence — 2026-10-20
+
+The user specified that release/tag creation follows cleanup and authorized
+saving the archive in the local project directory for now. Prepare it under
+`.local-archives/functional-review/`, which the existing `.gitignore` excludes.
+No release tag, upload or external location is required before local preparation
+and cleanup. Verify the compressed archive's checksum and extracted members,
+record its paths/checksum, and preserve it through cleanup. Human reference
+repair, evidence removal and history rewriting remain separate actions. Attach
+and verify the same archive/checksum/manifest after the release is created.
+Task 13.7 remains open until those separately recorded steps are observed.
+
+**Local execution:** the authorized archive is saved under ignored
+`.local-archives/functional-review/20261020T171149Z-9fa9906a/`; full filenames,
+SHA-256 values and provenance are in the [handoff](release-archive-handoff.md).
+The 188,522,487-byte compressed archive and its manifest pass checksum validation.
+A fresh extraction passes all 73,126 regular-file, 66-symlink and 9,544-directory
+manifest entries. Its evidence subtree also matches the original tree directly,
+including file hashes/modes and link targets. The core export checksum matches
+its original identity. Only recorded cache directories are excluded.
+All assets are ignored by Git; original evidence and history remain intact.
+Independent documentation review approves the sequence; local link/syntax checks
+pass. Cleanup and later release upload remain pending.
 
 ### 13.7 Evidence retention and release archive
 
-**Owner:** human maintainer; AI supplies the inventory, proposed keep/archive
-mapping, command guidance and verification interpretation. The human executes
-archiving/upload, repository removal, history rewriting, reflog expiry and garbage
-collection. A later /kk:implement session must not execute these actions
+**Owner:** AI-assisted local archive creation/verification is authorized by the
+user's local-first instruction. The human executes repository removal, history
+rewriting, reflog expiry, garbage collection and later release upload. A later
+/kk:implement session must not execute those cleanup/publication actions
 automatically.
 
 **Sequencing:** prepare after 13.1–13.6 and the final evidence are complete.
-Use the GitHub release that includes the feature as the archive destination;
-record its actual tag and URL when known. This is release housekeeping, not a
-new behavioral acceptance gate: feature verification can finish before the
-release exists, while 13.7 and Task 13 remain explicitly open. Verify the uploaded
+Create and verify the ignored project-local archive first, then perform human
+cleanup, then create the release and attach/verify the assets. Record the tag and
+URL when they exist; neither is a prerequisite for local work. Feature verification
+is complete, while 13.7 and Task 13 remain explicitly open. Verify the local
 archive before removing repository evidence or purging history.
 
 | Keep in Git | Required content and disposition |
 | --- | --- |
 | Compact verification record outside `verification/` | Create `verification-summary.md` at the feature-document root, retained when the feature moves to `docs/feat/done/`. Include final baseline/candidate results for both providers and modes, two-run coverage, material failures/regressions, evidence limits, acceptance disposition, accepted exceptions and unresolved follow-up. Preserve the lessons from failed iterations without copying their transcripts. |
-| Small result and provenance records | Retain a compact per-case/mode/repetition/assertion result table, in Markdown or JSON, linked by the summary. Record original source, fixture and grader identities; model/runtime/permission configuration; rubric/evidence-contract version and amendments. Record the release URL, asset names, archive SHA-256, manifest and archive-member paths needed to retrieve supporting evidence. Existing detailed grades may be consolidated; their originals remain in the archive. |
+| Small result and provenance records | Retain a compact per-case/mode/repetition/assertion result table, in Markdown or JSON, linked by the summary. Record original source, fixture and grader identities; model/runtime/permission configuration; rubric/evidence-contract version and amendments. Record local archive paths, SHA-256, manifest and member paths first; add the release URL and asset names after upload. Existing detailed grades may be consolidated; their originals remain in the archive. |
 | Durable design and regression assets | Keep feature design/implementation/task decisions and any still-relevant follow-up. Keep canonical eval definitions, fixtures, oracles, harness documentation and regression tests under `klaude-plugin/`, with their generated counterparts; these are maintained test assets, not disposable captures. |
 | Reusable execution tooling and tests | Extract the minimal runnable set into a repository tooling location such as `scripts/functional-review-evals/`, with tests and usage instructions. Assess `verification/task12/opus55/matrix.py`, `task12/rework/`, and the capture/grading helpers under `verification/`, `task2b/` and `task8/`. Resolve their existing cross-directory imports and frozen-path assumptions before removing the old tree. Retain only helpers/dependencies needed for future runs; archive historical variants. This cleanup does not require a new general-purpose evaluation framework. |
 
@@ -1781,17 +1824,20 @@ location, before removing it. Include all candidates and unsuccessful attempts,
 raw run/protocol transcripts, initial/final workspace and actor-bundle snapshots,
 copied grading inputs, detailed grades and corrections, manifests/freezes,
 contracts/rubrics, binding/calibration/audit/review records, controller versions,
-and startup/administrative logs. Include any exact source/fixture/grader inputs
-required by the frozen contracts that are not already sealed in that tree.
+and startup/administrative logs. Include still-available source/fixture/grader
+inputs needed for interpretation, including the known core source export.
+The user-approved limitation above permits unavailable historical temporary
+inputs to remain missing; retain their original identities and disclose the
+resulting exact-replay limits rather than requiring recovery.
 The archive must remain interpretable after original Git commits are purged;
 preserve original IDs and content hashes rather than relabeling old evidence
 with rewritten commit IDs. Only regenerable local caches such as `__pycache__/`
 may be omitted, with exclusions recorded in the manifest.
 
-Attach a compressed archive (for example,
-`functional-review-evidence-<release-tag>.tar.zst`), its SHA-256 file and an
-inventory manifest to the feature's GitHub release. Keep these assets outside
-the Git object database. The manifest records original relative paths, file
+Create a compressed archive with a date/revision-based name, its SHA-256 file and
+inventory manifest under ignored `.local-archives/functional-review/`. Attach
+these same assets to the feature's GitHub release after cleanup and release
+creation. Keep them outside the Git object database. The manifest records original relative paths, file
 counts/hashes, exclusions and source provenance; the retained summary provides
 the lookup instructions. Do not preserve only successful runs or rely on an
 old commit URL as the archive.
@@ -1801,23 +1847,24 @@ old commit URL as the archive.
 1. Finalize the keep/archive mapping and extract retained records/tooling
    → verify: future evaluation inputs and required helper imports are accounted
    for; retained tooling tests pass independently of the evidence directory.
-2. Create and upload the archive, checksum and manifest; download and extract
-   the uploaded copy outside the checkout → verify: its SHA-256 and manifest
-   match, and representative captures, grades and pinned inputs can be located.
+2. Create the local archive, checksum and manifest; extract the compressed copy
+   into a fresh directory → verify: its SHA-256 and manifest match, and
+   representative captures, grades and available pinned inputs can be located.
 3. Remove the archived repository tree and repair references, including links
    from feature documents and `docs/reviews/` → verify: retained links resolve
-   to the compact record or a release asset with an explicit member path;
+   to the compact record/local archive locator with an explicit member path;
    canonical fixtures/tests remain intact. The entire `verification/` directory
    can go once the keep list has been relocated.
 4. Perform the maintainer's chosen history cleanup with `git filter-repo`,
    `git reflog expire` and `git gc --prune`, including the relevant refs and
    historical evidence paths → verify: archived evidence is absent from the
-   intended retained history, kept files still exist, and the release/archive
-   remains accessible after any tag/ref changes. Retain any old-to-new revision
+   intended retained history, kept files still exist, and the ignored local archive
+   remains accessible after cleanup. Retain any old-to-new revision
    mapping needed to interpret the summary without modifying sealed evidence.
-5. Record the actual release assets, checksums, retained destinations and human
-   confirmation in the summary/task → verify: 13.7 closes only on observed
-   completion, not on a proposed command sequence or a locally prepared archive.
+5. After release creation, upload the archive/checksum/manifest, download and
+   verify them, and add the actual tag/URL. Record checksums, retained destinations
+   and human cleanup confirmation → verify: 13.7 closes only on observed completion
+   of local verification, cleanup and later attachment, not a proposed sequence.
 
 ## Dependency Graph
 

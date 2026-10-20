@@ -2,8 +2,25 @@
 
 > Assessed: 2026-10-20 at `73c8b69ad5bea7bffff7d4d60f4e6a67072d83b0`
 > Scope: Task 13.7 preparation; original evidence unchanged
-> Disposition: source preservation is incomplete; do not remove evidence or purge history
-> Owner: human maintainer, with AI assistance for recovery and hash verification
+> Current disposition: unavailable temporary inputs accepted as an exact-replay limitation; recovery gate retired
+> Owner: AI-assisted local preparation; human maintainer for cleanup and later release upload
+
+## Accepted retention decision — 2026-10-20
+
+The user confirmed that the temporary workspaces are unavailable and approved
+archiving the retained evidence with that limitation documented. The initial
+audit made recovery a cleanup prerequisite without establishing a material need
+for exact replay of these older experiments. That prerequisite is retired.
+
+Preserve all retained attempts, grades, decisions, manifests and original
+identities. Export the still-available core source input described below. Record
+the missing early inputs as unavailable; do not claim recovery or exact
+reproducibility. No search of the old host or reconstruction is required.
+Archive checksum/member verification remains required before cleanup; the later
+local-first decision selects an ignored project-local archive for that check.
+Task 13.7 stays open for that human work, not for temporary-input recovery.
+
+The inventory and missing-hash findings below remain historical observations.
 
 The full evidence tree is present: **73,099 regular files, 66 symlinks,
 9,537 directories, 730,127,674 regular-file bytes**, excluding five cache
@@ -25,12 +42,13 @@ A read-only `git archive` stream over `klaude-plugin`, `kodex-plugin` and
 
 `c7e56b46c89b28f6ae0c9cca42e4997e2e8acd7a238709de1489de957b032765`.
 
-The maintainer must export those bytes outside Git and include them in the release
-assets before purging the original history. The command sequence in
+Export those bytes outside Git tracking and include them in the locally verified
+archive before purging the original history; attach that archive to the later
+release. The command sequence in
 [the handoff](release-archive-handoff.md) includes this export. No archive file was
 created by this assessment.
 
-## Early inputs requiring recovery
+## Unavailable early inputs — retained audit findings
 
 Paths below are relative to the historical `verification/` tree. Each identity
 record has its original revision/archive checksum, a sibling
@@ -90,17 +108,11 @@ Some hashes serve more than one generated/shared path; each original
 
 ## Next action and completion condition
 
-Retrieve original snapshots from the recorded host/controller locations or
-backups; alternatively reconstruct their files from retained patches and known
-source bytes. Check **every original manifest entry**, including symlink target
-bytes, against its original hash. Store recovered inputs with original identity
-and path provenance as supplementary archive members. A reconstructed archive
-may have different packaging bytes; distinguish that from verified source-file
-identity and never rewrite the original archive checksum.
-
-The core export and early-source recovery belong to the human archive assembly
-step. This session cannot retrieve the old host's temporary repositories.
-If recovery is impossible, the maintainer must explicitly decide how to record
-and accept that preservation limitation before cleanup; no such exception has
-been accepted. Keep Task 13.7 open. This is a retention constraint, not a reopened
-behavioral acceptance gate.
+Assemble the retained evidence plus the still-available core source export in
+the project's ignored local archive directory. No release/tag is required.
+Include this accepted limitation with the archive provenance. Verify an
+extraction of the local archive against its checksum and member manifest; do not
+require missing temporary inputs to appear in it. Then complete the reference-
+repair and human history-cleanup steps; upload to the later release separately.
+The decision changes retention requirements, not historical grades or feature
+behavioral acceptance.
