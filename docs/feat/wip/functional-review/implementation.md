@@ -4,15 +4,25 @@
 > Evaluation: [evaluation.md](evaluation.md)
 > Tasks: [tasks.md](tasks.md)
 > Review disposition: [consolidated assessment](reviews/design-review-consolidation.md)
-> Status: Tasks 1–11 and core matrix capture/grading complete; acceptance and final verification pending
-> Revised: 2026-10-18; preflight complete; explicitly authorized comparison capture and independent grading underway
+> Status: acceptance reset implemented; material-verification assessment and finalization remain
+> Revised: 2026-10-20; Task 12.24
 > Next-session handoff: [follow-up.md](follow-up.md)
 
 ## Starting points
 
+The [current acceptance reassessment](acceptance-reassessment.md) supersedes the
+blanket thresholds and old open-gate statements in the historical slices below.
+Tasks 12.22/12.23 are complete; no comparison is running. Task 12.25 owns the one
+remaining material-verification assessment before Task 13 finalization.
+
 Canonical changes belong under klaude-plugin/. Current entry points are review-code/SKILL.md, review-process.md and review-isolated.md; agents/code-reviewer.md; implement/SKILL.md, plan-mode.md and standalone-mode.md. Shared review-scope-protocol.md also serves /kk:review-spec; pal-codereview-invocation.md also serves /kk:review-design. Preserve those consumers.
 
-The immutable actor baseline is c2d28c9e (v0.23.0), resolved to a full commit when runs are prepared. Task 2 gate 2A preserves the final seed fixtures, frozen inputs and 16 baseline captures from before operative changes. Gate 2B adds four fresh Codex baselines against that same preserved actor revision under the selected revision-2 contract. The installed normal cache and an intermediate Task 4 working tree are not valid substitutes. [Evaluation binding](evaluation.md#bind-the-actual-instructions) specifies entry-point, runtime-root and agent loading.
+The historical pre-feature actor baseline is c2d28c9e (v0.23.0); preserve its
+captures and identities. Future targeted comparisons use an immutable immediate
+predecessor under the [current policy](evaluation.md#comparison-identity-and-acceptance).
+An installed normal cache or mutable working tree is not a substitute for a
+declared source revision. [Evaluation binding](evaluation.md#bind-the-actual-instructions)
+specifies entry-point, runtime-root and agent loading.
 
 ## Delivery and verification rules
 
@@ -449,14 +459,29 @@ scope, passing verification, provenance and independent review APPROVE. Task 12.
 is complete. No actor rerun, new wording
 experiment, PAL resumption or acceptance claim follows from this rollback.
 
-### Task 13 finalization
+### Verification-policy correction — Task 12.24
+
+The user approved reassessing existing evidence and making the learning durable.
+Record ADR 0010 and the repository guidance; share one self-contained policy
+among design, test and design review, including isolated reviewers. Replace
+blanket all-branches/all-tests guidance and separate grader observations from
+adoption. Update current evaluation, design, task and handoff criteria so retired
+gates actually stop blocking. Preserve all frozen evals/captures and the closure
+rollback; reviewer simplification remains a separate decision.
+
+Verify against the retained R6/R7 examples and a material-regression counterexample,
+then check source consistency, symlinks, generated parity and plugin structure/graph.
+Obtain independent review. This establishes integration, not improved actor
+behavior; no live evaluation batch is needed for this policy correction.
+
+### Task 13 finalization under the revised policy
 
 Task 13 updates README.md and docs/user-guide/skills.md through /kk:document, and docs/contributing/testing.md for staging and grading. Then:
 
 - Run /kk:test with every test/test-*.sh suite, including staging.
 - Run make generate-kodex and a second-generation freshness check.
 - Run make plugin-graph and go test ./....
-- Reconcile all behavioral assertions and existing routing/pre-write controls with the run contract.
+- Reconcile material outcomes and evidence limits under the current policy. Select legacy controls only for affected behavior or a concrete unresolved risk; retired gates do not require new actor passes.
 - Verify /kk:review-spec task-scope and /kk:review-design PAL input compatibility.
 - Run /kk:review-code with the actual detected profiles and /kk:review-spec against this complete design package.
 - Resolve findings or record permitted follow-up; do not mark required unrun/failed acceptance items complete.

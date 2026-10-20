@@ -63,7 +63,7 @@ Evaluate the proposed architecture:
 - **Edge cases and failure modes** — What unaddressed scenarios could break the implementation?
 - **Trade-offs** — Are trade-offs explicitly stated? Are they well-reasoned? Are there simpler alternatives not considered?
 - **Scalability** — Does the design consider growth? Are there bottlenecks?
-- **Testing strategy** — Does the plan account for how the feature will be tested?
+- **Testing strategy** — Apply the loaded verification policy: do checks establish agreed behavior, distinguish material failures from quality observations and evidence limits, and stop at sufficient evidence? Challenge unjustified exhaustive coverage or perfect LLM compliance gates as well as missing consequential checks.
 - **Migration and rollback** — If the feature changes existing behavior, is there a migration path? Can it be rolled back?
 - **Cross-reference with codebase** — When the design references existing code, patterns, or files, verify they exist and the references are accurate. Use Grep/Glob for this.
 - **Assumptions testability** (only when design.md Assumptions section is in scope) — Verify assumptions are specific enough to be testable or falsifiable. "We assume the API is fast enough" → `AMBIGUOUS`. "We assume the external API responds within 200ms at p99 under expected load" → pass.

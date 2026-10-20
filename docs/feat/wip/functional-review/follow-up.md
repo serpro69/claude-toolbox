@@ -1,12 +1,33 @@
 # Functional review: next-session handoff
 
-> Updated: 2026-10-18
-> Status: Tasks 12.21–12.23 complete; rejected closure candidate reverted and independently reviewed
-> Owner: implementing agent, [remaining Task 12 work](tasks.md#task-12-execute-and-assess-the-full-comparison-matrix)
-> Next-session starting point: [closure rollback record](verification/task12/advisory-closure-revert/README.md)
+> Updated: 2026-10-20
+> Status: Task 12.24 complete and independently approved; material-verification assessment and finalization remain
+> Owner: implementing agent, Task 12.25
+> Next-session starting point: [current acceptance reassessment](acceptance-reassessment.md)
 > Evidence: [completed matrix](verification/task12/opus55/README.md), [Claude](verification/task12/opus55/claude-results.md), [Codex](verification/task12/opus55/codex-results.md)
 
 ## Start here
+
+**Current decision — 2026-10-20:** the user authorized replacing the
+all-assertions-pass-twice gate with proportionate acceptance. Read
+[the reassessment](acceptance-reassessment.md) and
+[evaluation policy](evaluation.md#comparison-identity-and-acceptance) first.
+Original R6/R7, optional follow-up/report details, perfect transport receipts,
+all-eight advisory coverage, deferred PAL and blanket legacy actor runs no longer
+block local functional-review acceptance. Their old grades remain unchanged.
+Earlier paragraphs retaining those gates are historical and superseded.
+
+Next: Task 12.25 assesses the retained implementation-mode verification/diff
+acquisition gap using existing evidence and current instructions. No new actor
+batch, reviewer simplification or closure-wording restoration is selected.
+Task 13 then owns final docs/checks and human-owned archive work. The ADR and
+shared design/test/review guidance make this lesson durable for future work.
+
+[Completion review](reviews/verification-policy-review.md) approves with no
+findings. Generator/graph checks, 259 structure assertions and repeat-generation
+freshness pass. This verifies policy integration; no new actor batch was run.
+
+## Historical checkpoints
 
 **Closure rollback complete — 2026-10-18:** the user explicitly requested the
 rollback. The canonical standard/isolated closing instructions and generated

@@ -1,8 +1,8 @@
 # Functional and operational review
 
 > Issue: [#166](https://github.com/serpro69/claude-toolbox/issues/166)
-> Status: implementation slices and full core comparison complete; candidate acceptance and final verification pending
-> Revised: 2026-10-11 with the bounded entry-path comparison complete
+> Status: acceptance policy reset; material implementation-verification assessment and finalization remain
+> Revised: 2026-10-20; [current acceptance disposition](acceptance-reassessment.md)
 > Review disposition: [Consolidated assessment](reviews/design-review-consolidation.md)
 > Evaluation contract: [evaluation.md](evaluation.md)
 > Implementation: [implementation.md](implementation.md)
@@ -39,7 +39,18 @@ After this change:
 4. Missing documents or production access narrow the conclusions; they do not disable functional review or create an automatic access/approval ceremony.
 5. Evidence-based findings explain a trigger, affected path and consequence. A clean review identifies inspected paths and important limits.
 
-Acceptance uses the scenarios in [Evaluation](#evaluation) and the binding/grading rules in [evaluation.md](evaluation.md). Every assertions[] entry in a new full-workflow eval is required; optional observations live outside that array. Predeclare model, modes and fixture revisions, then run two independent fresh sessions per baseline/candidate case and mode. All required candidate assertions must pass in both runs; a missing trace is not a pass. Retain failures and report observed results without claiming statistical reliability. There is no promise of zero missed bugs, no target finding count, and no claim that static structure tests establish behavioral quality.
+Acceptance follows the user-authorized [2026-10-20 reassessment](acceptance-reassessment.md)
+and [current evaluation policy](evaluation.md#comparison-identity-and-acceptance).
+Material failures, quality observations and evidence limits have different
+consequences. The former all-assertions-pass-twice threshold is retired; missing
+optional follow-up or redundant report detail does not block acceptance.
+Requirements protecting correct behavior and truthful material conclusions remain.
+Historical grades are unchanged and do not estimate model reliability.
+
+This decision supersedes acceptance obligations retained in the dated experiment
+narrative below. Task 12.25 owns the remaining implementation-verification question;
+Task 13 owns final checks/documentation and separate release housekeeping. No
+reviewer wording change or new actor batch is selected by the policy reset.
 
 The user-approved [2026-10-09 amendment](verification/run-contract-2026-10-09.md) separates implementation readiness from final verification. Both Task 2 gates are now complete: the [2026-10-10 gate 2B record](verification/task2b/README.md) preserves the bounded investigation, selected revision-2 receipt/use contract and four new Codex baselines against the immutable actor revision. Exact submitted prompt content remains unverified. Tasks 1–11 are complete. Task 12's [full core matrix](verification/task12/opus55/README.md) is captured and graded; candidate acceptance and Task 13's final verification remain pending. Capture completion does not establish behavioral acceptance.
 
@@ -61,7 +72,7 @@ Functional review applies to all changes, including libraries, CLIs, infrastruct
 - A new opt-in review skill: the user needs this reasoning in existing invocations.
 - Whole-system audits or exhaustive exploration of unrelated code: investigation follows the affected behavior.
 - Mandatory live production access, deployments, migrations or activation: review does not grant those permissions.
-- A redesign of /kk:design, /kk:test or /kk:review-spec: this feature improves execution and code review.
+- A general redesign of /kk:design, /kk:test or /kk:review-spec. The accepted verification-policy correction updates existing design/test guidance and design review, without new workflow phases.
 - A generic CI release-enforcement engine, new models or additional reviewer services: existing capabilities remain.
 - Automatic compatibility frameworks, feature flags or concurrency machinery: choose mechanisms only for demonstrated requirements.
 - A rewrite of profile detection or every language checklist: functional reasoning is a common layer supplemented by existing profiles.
@@ -240,10 +251,10 @@ operation/transition, expected result, candidate result and evidence. Use it for
 the final coverage assessment; this connects the stated requirement to the
 demonstrated path without adding fixture-specific hints or exhaustive categories.
 
-Classify evaluation failures as procedure, behavioral correctness, or report
-precision/recommendation quality for diagnosis. Keep all existing assertions
-required. Classification does not alter their PASS/FAIL/PARTIAL semantics, so
-the pinned rubric and both sides' prior grades remain valid.
+The historical rework classified procedure, behavioral correctness and report
+precision while retaining every assertion as required. Historical grades remain
+valid under that rubric; current acceptance uses the superseding impact-based
+policy above.
 
 ### Proposed ordering feasibility — after candidate 6
 
@@ -345,6 +356,7 @@ The product requirements remain approved. The ordering mechanism in
 [the scoped follow-up](ordering.md) remains a feasibility question; no hard
 cross-provider enforcement guarantee is established. The original two supplied
 reviews were assessed in [the consolidated disposition](reviews/design-review-consolidation.md).
-The ordering proposal and post-matrix handoff have not received independent
-design review. Any failed or unrun acceptance scenario stays explicitly open in
-tasks.md with its reason and next action; it is not silently treated as passed.
+The ordering proposal remains deferred. Current open work is enumerated in
+[the reassessment](acceptance-reassessment.md#remaining-work-and-stopping-condition),
+with an owner and next action. Retired gates are closed as requirements, not
+relabeled passing observations.

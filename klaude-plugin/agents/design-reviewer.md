@@ -23,6 +23,7 @@ The spawning workflow injects these into your prompt:
 
 - **Document paths**: absolute paths to `design.md`, `implementation.md`, and/or `tasks.md` for the feature
 - **Review scope**: which documents to review (may be a subset)
+- **Verification policy**: resolved absolute path to `klaude-plugin/skills/_shared/verification-policy.md`
 - **Read/Grep/Glob access** to the repository for cross-referencing when designs mention existing code
 - **Capy read access** for project-specific context via `capy_search`
 
@@ -79,7 +80,7 @@ Each finding gets a confidence score (1-10) with **mandatory reasoning** explain
 
 ### Mandatory ordering — methodology before evaluation
 
-The steps below are strictly sequential. **Do not evaluate document quality, technical soundness, or cross-document consistency until you have read every document provided in your prompt and completed any capy searches for prior context.** Payload delivery order (the spawning skill attaching document paths in the same prompt) is not sufficient — you must read-before-evaluate on your own side.
+The steps below are strictly sequential. Read the supplied verification policy before subject documents; if its path is missing, request it before proceeding. Then read every in-scope document and complete available prior-context searches before evaluation. Payload delivery order alone does not establish instruction loading.
 
 ### 1) Read Provided Documents
 
@@ -115,7 +116,7 @@ Evaluate the proposed architecture:
 - **Edge cases and failure modes** — What unaddressed scenarios could break the implementation?
 - **Trade-offs** — Are trade-offs explicitly stated? Are they well-reasoned? Are there simpler alternatives not considered?
 - **Scalability** — Does the design consider growth? Are there bottlenecks?
-- **Testing strategy** — Does the plan account for how the feature will be tested?
+- **Testing strategy** — Apply the loaded verification policy to coverage, acceptance gates, comparisons and stopping conditions. Challenge disproportionate verification as well as missing consequential checks.
 - **Migration and rollback** — If the feature changes existing behavior, is there a migration path? Can it be rolled back?
 - **Assumptions testability** (only when design.md Assumptions section is in scope) — Verify assumptions are specific enough to be testable or falsifiable. Vague assumptions ("the API is fast enough") → `AMBIGUOUS`. Specific assumptions ("external API responds within 200ms at p99") → pass.
 - **Not Doing validity** (only when design.md Not Doing section is in scope) — Verify exclusions are genuine scope decisions, not deferred critical requirements. If a Not Doing item would block the feature from being usable → `TECH_RISK`.

@@ -10,6 +10,7 @@
 2. **Review context** — Read the linked `design.md` and `implementation.md` to understand the full picture. Also check any relevant contributing guidelines and documentation. **Capy search:** Search `kk:arch-decisions` and `kk:project-conventions` for context relevant to the feature being resumed. Audit the design against the already-loaded profile sections, including designs authored before the rubric existed.
 
 3. **Assess readiness:**
+   - Apply the loaded verification policy to existing acceptance gates; distinguish justified requirements from overstrict evaluation preferences. Record an authorized criterion change explicitly in live task status while retaining historical results.
    - **If tasks are well-documented and clear** → proceed to implement using the `/kk:implement` skill.
    - **If tasks need refinement** (missing details, unclear subtasks, gaps in the plan) → refine `tasks.md` and/or design/implementation docs using the drafting guidelines and task-format example loaded during entry. Use the existing decisions and loaded profile guidance; do not restart fresh-idea sub-phases.
 

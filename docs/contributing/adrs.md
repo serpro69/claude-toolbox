@@ -13,6 +13,7 @@ Architecture decisions that span more than one feature are recorded as ADRs usin
 | [0005](../adr/0005-codex-hook-enforcement-gap.md) | Codex Hook Enforcement Gap | Accepted |
 | [0006](../adr/0006-composite-artifact-acceptance.md) | Composite-Artifact Acceptance for Domain-Reference Kits | Accepted |
 | [0007](../adr/0007-failure-citing-defaults.md) | Producer Rules Are Failure-Citing, Falsifiable Defaults | Accepted |
+| [0010](../adr/0010-proportionate-verification.md) | Proportionate Verification and Agent Evaluation | Accepted |
 
 ## Location
 

@@ -112,6 +112,20 @@ for skill in brainstorm design; do
   done
 done
 
+log_test "Verification policy has valid links in its consuming skills"
+assert_file_exists "$REPO_ROOT/klaude-plugin/skills/_shared/verification-policy.md" \
+  "Shared verification policy exists"
+for skill in design test review-design; do
+  policy_link="$REPO_ROOT/klaude-plugin/skills/$skill/shared-verification-policy.md"
+  if [[ -L "$policy_link" ]]; then
+    assert_equals "../_shared/verification-policy.md" "$(readlink "$policy_link")" \
+      "Verification-policy target for $skill"
+    assert_file_exists "$policy_link" "Verification-policy link resolves for $skill"
+  else
+    log_fail "Not a symlink: $policy_link"
+  fi
+done
+
 # Functional-review packaging: only register consumers that already exist.
 CHANGE_CONTEXT_CONSUMERS=(review-code implement)
 

@@ -12,6 +12,7 @@ description: |
 ## Conventions
 
 - **Read capy knowledge base conventions** at [shared-capy-knowledge-protocol.md](shared-capy-knowledge-protocol.md).
+- **Read verification policy** at [shared-verification-policy.md](shared-verification-policy.md) before choosing checks or acceptance criteria.
 - **Read profile detection** at [shared-profile-detection.md](shared-profile-detection.md). When an active profile contributes a `design/` subdirectory (e.g., `${TOOLBOX_PLUGIN_ROOT}/profiles/k8s/design/`), its `questions.md` feeds the idea-refinement question pool and its `sections.md` lists required sections the design document must cover. Both the idea-to-design and continue-WIP flows consult the shared procedure; see each flow's workflow file for the specific integration points.
 
 For fresh ideas, two reference files provide methodology and evaluation rubric: [shared-ideation-frameworks.md](shared-ideation-frameworks.md) (ideation lenses for the diverge phase) and [shared-idea-refinement-criteria.md](shared-idea-refinement-criteria.md) (evaluation dimensions and MVP scoping for the converge phase). These are loaded during the instruction-load step and consumed by idea-process.md Step 3 sub-phases.

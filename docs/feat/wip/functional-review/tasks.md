@@ -7,13 +7,25 @@
 > Issue: [#166](https://github.com/serpro69/claude-toolbox/issues/166)
 > Status: in-progress
 > Created: 2026-10-07
-> Revised: 2026-10-18 with completed corrected bindings, independent evidence approval and passing strict preflight
-> Next-session handoff: [completed runtime preflight and comparison boundary](verification/task12/advisory-closure-execution/bootstrap-loading/preflight-result.md)
-> Current slice: Task 12.22 in progress — explicit approval received; serial measured capture and independent grading underway
+> Revised: 2026-10-20 with user-authorized acceptance reset and durable verification guidance
+> Next-session handoff: [current acceptance reassessment](acceptance-reassessment.md)
+> Current slice: Task 12.24 complete — next is Task 12.25's bounded material-verification assessment
 > Not Doing: new review skill, whole-system audits, mandatory production access, deployments, generic release engine, new models/dependencies, profile redesign
 > Delivery: preserve existing invocations/shared consumers; regenerate Codex artifacts with every operative slice.
 
-Scope and direction are approved; the reviews have been assessed and the detailed plan revised. Tasks 1–11 are done, including Task 2 gates 2A and 2B. Task 12's full core matrix is captured and graded; acceptance remains incomplete. **Task 12.12 is done:** keep the entry-path correction after its bounded diagnostic comparison. Remaining acceptance gates and dispositions stay open; Task 12.14's evaluation-validity reassessment is done: both target conclusions pass twice, one report-trace assertion remains failed, and no further R7 instruction change is selected. Task 13 retains final feature documentation and verification. The [gate 2B completion record](verification/task2b/README.md) documents the selected receipt/use contract, four new baselines and evidence limits. Exact submitted prompts remain unverified, and capture completion is not candidate acceptance. Earlier six-task numbering is superseded by this sequence; no completed work was renumbered. Size includes authored reasoning complexity; mechanical copies/symlinks/generated files are excluded. Parallel markers permit compatible work only and do not authorize delegation. Serialize generation if tasks run concurrently.
+Tasks 1–11 and the full core matrix capture/grading are complete. Keep Task 12.12's
+entry-path correction; Tasks 12.14–12.23 retain their recorded outcomes. Exact
+submitted prompts remain unverified. Current acceptance follows the decision
+below. Size excludes mechanical copies, links, generated files and status updates.
+Parallel markers do not authorize delegation; serialize generation.
+
+**Superseding acceptance decision — 2026-10-20:** the user approved the
+[reassessment](acceptance-reassessment.md). Older execution-context entries below
+retain original thresholds as history. Retired R6/R7/report/receipt gates, deferred
+PAL and blanket legacy actor coverage no longer keep acceptance open. No old FAIL
+is changed to PASS. Tasks 12.22/12.23 are complete. After Task 12.24, only the
+bounded material-verification assessment in Task 12.25 remains under Task 12;
+Task 13 retains applicable finalization and human-owned release housekeeping.
 
 ## Task 1: Prove revision-bound evaluation loading
 
@@ -355,8 +367,8 @@ The ordinary-prompt R3 isolated run loaded all eight detection rules and applica
 ### Subtasks
 
 - [x] 12.1 Run all declared case/mode pairs using two fresh baseline and candidate sessions per pair → verify: identical fixtures/rubric/model configuration, filtered revision-bound actor bundles, fresh writable state and identical initial knowledge seeds with the declared unavailable-vault policy. The user-expanded scope covers both providers fully: [192 completed sessions](verification/task12/opus55/README.md).
-- [ ] 12.2 Run R8 phase replays, real PAL integration smoke and legacy routing/pre-write controls → verify: replay success is not reported as transport coverage and missing integration remains explicit. R8 complete; live PAL user-deferred; legacy actor controls unrun.
-- [ ] 12.3 Grade sealed execution packages, including R3 history, R3/R7 verdicts and I4 resulting task/spec state → verify: every required candidate assertion passes twice under the selected versioned contract; contrary or missing evidence cannot pass, and any receipt/use fallback explicitly leaves exact prompt content unverified. All 192 packages are graded; required acceptance remains unmet.
+- [x] 12.2 Dispose of R8/PAL/legacy coverage under the 2026-10-20 policy → R8 complete; PAL remains user-deferred and unverified; blanket legacy actor reruns retired as an acceptance gate, not claimed executed.
+- [x] 12.3 Grade sealed packages and reassess acceptance → all 192 packages are graded. The all-rows-pass-twice gate is retired; material completion is assessed separately in Task 12.25, with exact-prompt and other coverage limits preserved.
 - [x] 12.4 Retain failures, fixes and unrun gates with owner/reason/next action → verify: baseline comparisons are not cherry-picked and no statistical reliability or untested-provider parity is claimed. See [the latest matrix record](verification/task12/opus55/README.md) and [historical stop record](verification/task12/README.md); retained observations do not complete the other gates.
 
 ### Execution context — 2026-10-10
@@ -384,10 +396,11 @@ explicit continuation supersedes the stop above for the bounded work below.
 - [x] 12.6 Implement consolidated instruction preparation and contract-driven
   scenario reporting; remove conflicting speculative-suggestion cues → verify
   packet integrity/path boundaries, source review and generated parity.
-- [ ] 12.7 Freeze a twelve-run diagnostic R1/R3/R5 standard comparison, including
+- [x] 12.7 Freeze a twelve-run diagnostic R1/R3/R5 standard comparison, including
   fresh baseline pairs under the successor capture configuration → verify each
   candidate assertion twice using the unchanged rubric, classify failures, and
-  expand only after this checkpoint passes.
+  expand only after this checkpoint passes. Execution is complete; its old
+  all-rows gate is retired by Task 12.24, not converted into a passing diagnostic.
 
 All eight installed profile rules were read before investigation. Python and
 skill-md activate; their core implement/test guidance and both provider/plugin
@@ -432,10 +445,12 @@ be committed first. Commit `17344213` preserves candidate 5 and its failures;
 the follow-up edits begin afterward. This supersedes the prior stop only for
 the bounded R5 work. PAL remains deferred.
 
-- [ ] 12.8 Separate early Git-diff selection from task-scope investigation and
+- [x] 12.8 Separate early Git-diff selection from task-scope investigation and
   close clean reviews without a remediation menu or invented follow-up work
   → verify: source review, generated parity and two fresh R5-standard candidate
   PASSes against matching fresh baseline repetitions under the unchanged rubric.
+  Implementation and measurement are complete; the remaining historical
+  two-pass gate is retired by Task 12.24.
 
 The observed causes are a mandatory Next Steps menu even when no issue exists,
 and an early phase named scope that can be confused with reading task scope.
@@ -492,7 +507,7 @@ production hook integration. Historical 12.7/12.8 results remain unchanged.
   → verify: [ordering.md](ordering.md) ties the proposal to candidate-6 events,
   evaluates alternatives, identifies runtime uncertainties, defines a bounded
   GO / NO-GO experiment and preserves the original acceptance requirements.
-- [ ] 12.10 Prove or reject the proposed guard's runtime feasibility
+- [ ] 12.10 Optional deferred experiment, **not an acceptance prerequisite**: prove or reject the proposed guard's runtime feasibility
   → verify: complete [the bounded slice](ordering.md#bounded-feasibility-slice)
   with a frozen probe contract, offline receipt/state controls, at most two
   fresh top-level sessions per provider, sealed actual tool events and an
@@ -1562,6 +1577,56 @@ Its saved-patch context-line finding was corrected without changing restored sou
 No new actor batch, wording experiment, acceptance waiver or PAL resumption is
 selected. Original Task 12 acceptance and Task 13 remain open.
 
+### Task 12.24: Reset acceptance and establish proportionate verification
+
+- **Status:** done
+- **Depends on:** Task 12.23
+- **Owner:** implementing agent
+- **Size:** M
+- **Can run in parallel with:** —
+- **Authority:** user approved the acceptance reassessment and durable guidance proposal, “OK, proceed with that.”
+- **Docs:** [reassessment](acceptance-reassessment.md), [ADR 0010](../../../adr/0010-proportionate-verification.md)
+
+- [x] 12.24.1 Reassess retained R6/R7 and other failure groups by material consequence; supersede retired gates in live docs without rewriting historical evidence.
+- [x] 12.24.2 Record the learning in AGENTS/ADR and shared design/test/design-review guidance; replace conflicting blanket instructions and separate grading from adoption.
+- [x] 12.24.3 Check retained semantic examples, source consistency, shared links, generated parity and relevant structural/graph checks.
+- [x] 12.24.4 Obtain independent review, resolve material findings and record the precise remaining feature work.
+
+#### Execution context — 2026-10-20
+
+The approved scope is a policy correction, not a new actor comparison or reviewer
+rewrite. `skill-md` guidance loaded before edits; no dependency or description
+change. Historical freezes, grades and closure rollback stay unchanged. Capy is
+unavailable; repository guidance is the durable learning, with no knowledge-store
+claim. [Verification and independent review](reviews/verification-policy-review.md)
+are complete: 259 structure assertions, generator/graph tests and link checks
+pass; 964 generated files/links remain identical on repeated generation.
+Independent review approves with no findings. A small future-use eval records
+the optional-advice regression control, wrong-approval counterexample and
+unexecuted-test distinction; no new model batch was run.
+
+The substantive correction includes replacing the test skill's exhaustive
+instructions and its design-task example, carrying the policy into isolated
+design review, and separating harness/grader scores from adoption. These
+integration checks do not establish changed actor behavior. Task 12.25 retains
+the remaining material-verification assessment; retired gates stay retired.
+
+### Task 12.25: Assess the remaining material implementation-verification gap
+
+- **Status:** pending
+- **Depends on:** Task 12.24
+- **Owner:** next implementing agent
+- **Size:** S
+- **Can run in parallel with:** —
+- **Docs:** [remaining work and stopping condition](acceptance-reassessment.md#remaining-work-and-stopping-condition)
+
+- [ ] Inspect retained I2/I3/I4 denied commands, available routes, diff delivery and completion claims against current instructions; distinguish available required verification left undone from genuine environment limits.
+- [ ] Record a bounded disposition: close Task 12 if only disclosed nonmaterial/coverage limitations remain, or identify the concrete consequential gap and smallest next action. Do not reopen retired gates or launch a full matrix by default.
+
+This assessment remains open because the policy change does not execute missing
+checks or prove a workflow repair. It selects no live actor batch or permission
+change. The optional 12.10 guard and PAL deferral do not block it.
+
 ## Task 13: Document and verify the complete feature
 
 - **Status:** pending
@@ -1575,9 +1640,9 @@ selected. Original Task 12 acceptance and Task 13 remain open.
 - [ ] 13.1 Use /kk:document to update README.md, docs/user-guide/skills.md and docs/contributing/testing.md → verify: behavior, evidence limits, fixture staging and grading contracts are accurately described.
 - [ ] 13.2 Run /kk:test over all test/test-*.sh suites, make plugin-graph and go test ./... → verify: structural/plumbing checks pass with environment failures explicitly reported.
 - [ ] 13.3 Run make generate-kodex and confirm a second generation introduces no drift → verify: canonical/generated parity including agent definitions.
-- [ ] 13.4 Reconcile matrix evidence and shared-consumer checks → verify: all required declared coverage passes; /kk:review-spec and /kk:review-design retain their contracts.
+- [ ] 13.4 Reconcile material outcomes, evidence limits and shared-consumer checks under the current evaluation policy → verify: /kk:review-spec and /kk:review-design retain their contracts; retired historical grade gates are not reinstated.
 - [ ] 13.5 Run /kk:review-code with actual profiles and /kk:review-spec against design.md, implementation.md, evaluation.md and tasks.md → verify: findings are resolved or durably assigned without waiving required acceptance.
-- [ ] 13.6 Record feature verification completion after 13.1–13.5 and required acceptance are verified → verify: no unresolved hard constraint, unrun gate or unreviewed requirement change is represented as complete. Track release housekeeping in 13.7 separately; Task 13 remains open until both are complete.
+- [ ] 13.6 Record feature verification completion after 13.1–13.5 and current material acceptance are verified → verify: no unresolved hard constraint or essential unverified claim is represented as complete. Disclose other coverage limits without reinstating retired gates. Track release housekeeping in 13.7 separately; Task 13 remains open until both are complete.
 - [ ] 13.7 **Human-executed, AI-guided:** retain the compact verification record and reusable tooling, archive the full evidence as assets of the GitHub release containing this feature, then remove the archived evidence from the repository and its history → verify: follow the retention plan below; the human confirms archive retrieval/integrity, retained-content checks and history cleanup before closing this subtask.
 
 ### 13.7 Evidence retention and release archive

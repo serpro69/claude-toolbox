@@ -63,7 +63,7 @@
 - **Can run in parallel with:** —
 
 ### Subtasks
-- [ ] 5.1 Run `/kk:test` skill to verify all tasks — full test suite, integration tests, edge cases
+- [ ] 5.1 Run `/kk:test` for login, refresh/reuse, protected-route and password-migration behavior, plus required repository checks; broaden if shared middleware changes affect other endpoints
 - [ ] 5.2 Run `/kk:document` skill to update any relevant docs
 - [ ] 5.3 Run `/kk:review-code` skill with the project language input to review the implementation
 - [ ] 5.4 Run `/kk:review-spec` skill to verify implementation matches design and implementation docs

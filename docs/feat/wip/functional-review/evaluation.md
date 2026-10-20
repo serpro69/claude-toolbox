@@ -3,21 +3,64 @@
 > Design: [design.md](design.md)
 > Implementation: [implementation.md](implementation.md)
 > Tasks: [tasks.md](tasks.md)
-> Status: seed baseline capture complete under the selected revision-2 receipt/use contract; candidate acceptance remains pending
-> Revised: 2026-10-10; [gate 2B completion](verification/task2b/README.md)
+> Status: acceptance reset approved; remaining material verification is tracked in Task 12.25
+> Revised: 2026-10-20; [current reassessment](acceptance-reassessment.md)
 > Reviewed claims: [consolidated disposition](reviews/design-review-consolidation.md)
 
 ## Comparison identity and acceptance
 
-Use one immutable pre-feature actor baseline: c2d28c9e (v0.23.0), resolved to its full commit ID when preparing runs. Every later baseline run uses this same actor revision, never the working tree after an earlier feature task.
+The user-approved [acceptance reassessment](acceptance-reassessment.md) supersedes
+the blanket all-assertions-pass-twice gate and pre-feature-only baseline rule.
+It governs current completion, including older task entries that retain those
+rules as history. Original captures, assertions, rubrics and grades are unchanged.
+
+Separate **material failures**, **quality observations** and **evidence limits**.
+Blocking criteria must protect an agreed outcome or consequential requirement.
+An accurately explained inherited bug need not prescribe follow-up. Report-detail
+omissions, optional advisory discovery and harmless alternative procedures are
+not automatic vetoes. A demonstrated wrong approval, harmful correction or
+materially unsupported claim still needs resolution. Unknown evidence essential
+to a claimed result remains unknown.
+
+For future targeted instruction changes, freeze the immediate predecessor and
+candidate under matching fixture/runtime conditions. The preserved c2d28c9e
+pre-feature revision remains useful for broader feature comparisons, not causal
+claims about later wording. Declare meaningful decision criteria and bounded
+sampling before new measurement; report variability and uncertainty. Neither two
+successes nor one failure establishes reliability or regression. Expand only
+for a named uncertainty that could change the decision, not to clear every row.
+
+Retain strict observation grades independently of adoption. A recorded FAIL is
+not renamed PASS when its gate is retired. Reassess retained evidence first;
+changing acceptance policy alone does not require replaying actors. A new rubric
+comparison must apply consistently to both sides; new captures are needed only
+when retained evidence cannot support that new comparison. No aggregate score
+can waive an explicit consequential requirement.
+
+Task 12 now owns the bounded implementation-verification assessment in Task
+12.25. Retired R6/R7/report gates, transport-receipt perfection, all-eight advisory
+coverage, deferred PAL and blanket legacy actor reruns no longer block local
+functional-review acceptance. Live PAL/two-reviewer and unmeasured behavior claims
+remain unverified. Task 13 retains applicable final checks and human-owned release
+housekeeping.
+
+### Historical capture contract
+
+The following seed and dated experiment records preserve their original evidence
+requirements. Their old acceptance thresholds do not override the policy above.
 
 Task 2 gate 2A preserves the final R1, R3, I1 and I2 fixture directories, frozen inputs and 16 captured baselines from before operative edits. Gate 2B is now complete with four additional Codex baselines against the preserved actor revision, under the separately frozen revision-2 contract. Tasks 1–11 are complete; Task 12 owns candidate comparisons and Task 13 final verification. Later cases likewise run against the preserved revision after their fixtures exist. Capture baseline and candidate on identical fixture bytes; a substantive fixture correction invalidates the comparison and requires both sides to rerun. The grading procedure/rubric is pinned before capture. Pin the concrete grader implementation before grading either side and hold it constant across the comparison; baseline traces can be captured before that implementation exists.
 
 Write a run-contract.md under verification/ before the first measured baseline run. Record the full baseline revision and hashes, fixture hashes, exact runtime version, all main/reviewer/PAL model identifiers and reasoning settings, tools, permission policy, prompt, declared modes, grading procedure, repetition count and acceptance threshold. The candidate revision is pending until code exists; freeze and record its source/generated hashes before each candidate batch. A later fix creates a new identified candidate, never a mutable alias for earlier results. Launch probes may use a second baseline copy to validate the candidate loading location, but that is not a behavioral candidate result. The primary provider runs the complete matrix; the other distributed provider runs binding and representative R1 standard, R3 isolated, I1 plan and I2 standalone checks. Select and record the primary provider before observing results. Report full-matrix and representative coverage separately; do not claim full behavioral parity from generated-file checks or selected cases.
 
-All assertions[] entries in new full-workflow evals are required; no schema extension or required flag is needed. Put optional cost/latency observations in the run summary, outside assertions[]. Run two independent fresh sessions on each side for every required case/mode in its declared coverage. Candidate acceptance requires PASS on every assertion in both sessions. FAIL, PARTIAL and unavailable evidence never count as PASS. This is a conservative observed-twice gate, not an estimate of model reliability. Retain all attempts; after a fix, rerun the affected pair using the new candidate revision. If the baseline already passes, report that fact without inventing an improvement.
+The historical experiments graded every assertions[] entry and required all
+candidate rows to pass twice. That rule remains part of their frozen records,
+but is retired for current acceptance. Preserve attempts and matched results;
+baseline failures do not prove candidate improvement.
 
-Do not lower the threshold, switch the primary provider or replace a fixture after seeing failures without recording a revised run contract and repeating the affected baseline/candidate comparison.
+Any future change to measurement configuration or criteria requires an explicit
+successor declaration; never silently alter historical evidence or retry for a
+desired result. Apply the current comparison rules above.
 
 ### Planned R7 validity reassessment
 
