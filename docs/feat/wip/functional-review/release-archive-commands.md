@@ -10,6 +10,8 @@ See the [handoff](release-archive-handoff.md#user-selected-draft-upload--complet
 and [asset receipt](../../../archives/feature-evidence/release-assets.json).
 Commands below are reference guidance; do not rerun them against existing output
 directories/assets. Human evidence/reference/history cleanup remains pending.
+The canonical release and asset links target `v0.24.0` after promotion; the
+receipt keeps the observed draft identity and authenticated asset API URLs.
 
 **The [temporary-input limitation](archive-source-audit.md) is accepted.**
 Archive the retained material and available core source export; recovery of
@@ -98,12 +100,11 @@ file cleanup. Keep this local copy available until release upload is verified.
 
 ## Upload after cleanup and release creation
 
-Once the release exists, use its actual tag. Reuse the verified filenames; no
+The publication target is `v0.24.0`. Reuse the verified filenames; no
 renaming to include a tag is needed. This is later work, not a cleanup gate.
 
 ```bash
-TAG=''
-: "${TAG:?Set the tag of the now-created release}"
+TAG='v0.24.0'
 gh release upload "$TAG" --repo serpro69/claude-toolbox \
   "$OUT/$BASE.tar.gz" "$OUT/$BASE.manifest.json" "$OUT/$BASE.sha256"
 RETRIEVED="$OUT/retrieved"

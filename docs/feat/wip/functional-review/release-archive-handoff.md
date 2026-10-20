@@ -23,10 +23,12 @@ archive if cleanup uses a fresh clone or removes ignored files.
 ## User-selected draft upload — completed 2026-10-20
 
 The user subsequently requested uploading all nine archive sets to the existing
-[v0.24.0-draft release](https://github.com/serpro69/claude-toolbox/releases/tag/untagged-c0a403db0376380a3b00),
+draft for [v0.24.0](https://github.com/serpro69/claude-toolbox/releases/tag/v0.24.0),
 before cleanup. That explicit instruction supersedes the earlier upload ordering.
-Release ID: `418689774`; it remains a draft with an empty `tag_name`. No tag or
-publication was created by this upload.
+Release ID: `418689774`. The user specified v0.24.0 as the publication target;
+canonical links use that tag now, while the receipt retains the actual temporary
+draft URL and empty tag field observed during upload. No release promotion or
+remote tag change was performed.
 
 All 27 existing assets uploaded without overwriting anything: nine `.tar.gz`,
 nine `.manifest.json` and nine `.sha256` files, totaling 227,326,167 bytes.
@@ -41,9 +43,11 @@ original evidence subtree remains
 `payload/docs/feat/wip/functional-review/verification/`.
 The `.local-archives/` preparation layout is not needed for retrieval.
 
-Draft access remains authenticated. Refresh the observed release/download URLs
-if its name/tag changes during publication. Upload and retrieval checks are now
-complete; source removal, reference repair and Git-history cleanup remain pending.
+Canonical release/download links target v0.24.0 after promotion. While it remains
+a draft, use authenticated asset API URLs/IDs or the recorded draft prefix.
+Upload and retrieval checks were completed against the draft assets; the final
+URLs are not claimed live yet. Source removal, reference repair and history
+cleanup remain pending.
 
 ## Verified local archive — 2026-10-20
 
@@ -199,7 +203,7 @@ been executed as part of preparing that guidance.
 
 | Field | Current value |
 | --- | --- |
-| Release tag and URL | User-selected draft URL above; actual `tag_name` is empty |
+| Release tag and URL | [v0.24.0](https://github.com/serpro69/claude-toolbox/releases/tag/v0.24.0), currently a draft awaiting promotion |
 | Retained tooling destination and offline verification | `scripts/functional-review-evals/`; 15 tests pass on Python 3.11.13/3.12.11 outside checkout; source review APPROVE |
 | Original source-input disposition | Early temporary inputs accepted as unavailable; core export remains part of assembly |
 | Local archive, checksum and manifest paths | Recorded above; all ignored by Git |

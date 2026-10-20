@@ -1799,10 +1799,13 @@ pass. Cleanup and later release upload remain pending.
 
 ### User-selected draft upload — 2026-10-20
 
-The user explicitly requested uploading all archive sets to
-`https://github.com/serpro69/claude-toolbox/releases/tag/untagged-c0a403db0376380a3b00`,
-superseding the earlier cleanup-before-upload ordering. The selected release is
-`v0.24.0-draft`, ID `418689774`, with an empty actual tag field. All 27 assets
+The user explicitly requested uploading all archive sets to the existing draft
+for [v0.24.0](https://github.com/serpro69/claude-toolbox/releases/tag/v0.24.0),
+superseding the earlier cleanup-before-upload ordering. Release ID `418689774`
+and its temporary draft URL/empty tag field are retained as upload observations.
+The user then specified that durable release and download links should target
+v0.24.0, which will be promoted later. Those links are publication targets, not
+claims that promotion or post-promotion URL verification has occurred. All 27 assets
 (nine archives, manifests and checksum files) uploaded successfully and matched
 remote size/state/digest checks. Fresh downloads matched all original SHA-256
 values; all nine downloaded archives passed complete extracted-member verification.
