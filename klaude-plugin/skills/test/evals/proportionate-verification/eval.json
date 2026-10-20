@@ -1,0 +1,27 @@
+{
+  "id": 7,
+  "name": "proportionate-verification",
+  "description": "Distinguish acceptable review variation, a consequential wrong approval and unexecuted verification without launching more model runs.",
+  "skills": ["test"],
+  "prompt": "Use `/kk:test` to assess the retained verification results in verification.md. Which outcomes should prevent completion, and is further verification needed? Do not launch model runs.",
+  "trap": "The agent either turns missing optional follow-up into a hard failure or overcorrects by accepting a demonstrated regression and treating unrun tests as passed.",
+  "files": ["test-files/verification.md"],
+  "assertions": [
+    {
+      "id": "7.1",
+      "text": "Accepts the scoped label review without requiring a separate follow-up for its accurately identified inherited bug; does not demand an additional model run just to obtain advice."
+    },
+    {
+      "id": "7.2",
+      "text": "Identifies the default-change approval as a material review failure because the changed entry point violates the explicit empty-batch requirement, even though the arithmetic predates the change."
+    },
+    {
+      "id": "7.3",
+      "text": "Distinguishes written tests from executed tests, retains the unverified status of the settings fix and identifies the permitted focused test command as the relevant next check rather than expanding to every suite."
+    },
+    {
+      "id": "7.4",
+      "text": "Does not launch model runs, claim statistically established reliability from these individual reports, or silently relabel the recorded historical grade."
+    }
+  ]
+}

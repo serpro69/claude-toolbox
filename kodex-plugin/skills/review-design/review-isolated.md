@@ -14,6 +14,9 @@ Isolated Design Review Progress:
 
 ## Step 1: Prepare Artifacts
 
+Load the skill, this process and its shared protocols before subject documents.
+Resolve the shared verification policy from this skill's directory for both reviewers.
+
 ### 1a) Read documents
 
 Parse the invocation arguments using the same logic as standard mode Step 1:
@@ -46,6 +49,7 @@ Assemble the file list that will be passed to pal codereview via `relevant_files
 
 1. **Document files** — the absolute paths of every in-scope document from Step 1a (`design.md`, `implementation.md`, `tasks.md` as determined by scope resolution). These are the primary review targets.
 2. **Related source files** — if the design docs reference specific source files (e.g., files to be created or modified), include those paths when they exist on disk. These give pal implementation context to validate the design against.
+3. **Review criteria** — the resolved `shared-verification-policy.md`; identify it as methodology, not a document under review.
 
 Store this list for use in Step 2 (Reviewer B).
 
@@ -70,6 +74,10 @@ Spawn using the Agent tool:
 ```
 You are reviewing the design documents for the "{feature_name}" feature. Apply your full review workflow.
 
+## Verification Policy
+
+{resolved absolute path to shared-verification-policy.md; read before subject documents}
+
 ## Feature Directory
 
 {absolute path to /docs/feat/wip/[feature]/}
@@ -89,8 +97,8 @@ Follow the invocation protocol in [shared-pal-codereview-invocation.md](shared-p
 
 **`step` parameter (step 1):** Keep lean — framing + file manifest only:
 
-1. Framing: "The following files are design documents (markdown), not source code. Review them for technical soundness, completeness, internal consistency, and whether they provide sufficient detail for implementation. Focus on: edge cases, failure modes, missing constraints, and ambiguities that would block an implementer."
-2. File manifest — categorized list of paths in `relevant_files` so pal knows each file's role (see [shared-pal-codereview-invocation.md](shared-pal-codereview-invocation.md) §`step` content for format). Categories for design review: "Documents" (the review targets) and "Related source" (existing code for context).
+1. Framing: "The following documents are design documents (markdown), not source code. Review them for technical soundness, completeness, internal consistency, and sufficient implementation detail. Apply the supplied verification policy as criteria, including proportionality of testing and acceptance gates. Focus on consequential edge cases, missing constraints, and ambiguities that would block an implementer."
+2. File manifest — categorize `relevant_files` as "Documents" (review targets), "Related source" (existing code) and "Review criteria" (verification policy). See [shared-pal-codereview-invocation.md](shared-pal-codereview-invocation.md) for the call sequence.
 
 Do NOT inline document contents into `step`.
 

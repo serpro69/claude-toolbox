@@ -169,7 +169,7 @@ When adding a new eval under `klaude-plugin/skills/review-code/evals/`:
 
 ### 1. Freeze inputs and isolate actors
 
-Before measured runs, record the immutable baseline, fixture/metadata/oracle hashes, exact ordinary prompt, providers, runtime/model/reasoning settings, modes, tools/permissions, rubric and repetition/acceptance rules. Freeze each candidate separately. Do not switch configuration or thresholds after seeing results without versioning the contract and repeating affected comparisons. Pin the concrete grader instruction bytes/hash before grading either side, even if capture predates the grader.
+Before measured runs, record the immutable baseline, fixture/metadata/oracle hashes, exact ordinary prompt, providers, runtime/model/reasoning settings, modes, tools/permissions, rubric and repetition/acceptance rules. For a targeted instruction change use its immediate predecessor; label a pre-feature baseline as a broader comparison. Freeze each candidate separately. Keep historical grades when an authorized successor policy retires an unjustified gate; regrade both sides consistently if rubric semantics change, and recapture only if the new comparison needs evidence the retained runs cannot supply. Pin the grader instruction bytes/hash before grading either side.
 
 Stage fresh subject repositories outside any ancestor with `SKILL.md`, using the snapshot contract above. For each actor revision/provider, prepare and verify a filtered instruction bundle/cache that retains operative bytes but excludes every `evals/` subtree and controller results. Keep source, exclusion and retained-file manifests. Verify actual entry-point, agent and runtime-root binding to that revision; a root mentioned in a prompt is insufficient.
 
@@ -229,3 +229,10 @@ Observed contrary behavior is FAIL. An omitted required action visible in a comp
 Run [the grading controls](grading-fixtures/README.md) before baseline/candidate grading. Check early-edit/false-report FAIL, missing-events PARTIAL and complete ordering PASS, plus omitted/explicit component-mode compatibility. Recalibrate any changed evidence contract, including receipt/use fallback negatives and positives.
 
 Retain all attempts and distinguish captured, graded and accepted. Aggregate by composite assertion identity plus provider, workflow mode, repetition and grader/rubric version. Apply the same pinned grader/rubric to both comparison sides. Neither FAIL nor PARTIAL satisfies a required PASS; report missing captures as UNRUN rather than synthesizing grades. Record owner, reason, next action and verification condition for deferred work. A report-phase replay with labeled synthetic PAL output measures reporting only; live integration requires separate actual calls/source coverage.
+
+Do not equate every scored assertion with a release gate. Declare which outcomes
+are material, which are quality observations and which need more evidence.
+Validate fixtures/graders against useful semantic outcomes before adding actor
+instructions. Report variability; a small sample does not establish reliability.
+Bound further runs to an unresolved question that could change adoption, rather
+than retrying for a perfect score.

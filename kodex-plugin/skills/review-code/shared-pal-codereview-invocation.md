@@ -27,6 +27,7 @@ For $kk:review-design, document inputs remain sufficient. No Git diff, code-revi
 
 - **Documents:** every in-scope design, implementation or task document; these are the review targets.
 - **Related source:** existing files the design references, where available, for technical context.
+- **Review criteria:** the caller's resolved verification policy, supplied as methodology rather than a review target.
 
 Frame the review around technical soundness, completeness, consistency, edge cases, failure modes, constraints and ambiguity. Preserve the caller's document scope; do not treat planned code as a missing current implementation. Use its own review criteria. The common call sequence below remains identical.
 
@@ -43,7 +44,7 @@ Frame the review around technical soundness, completeness, consistency, edge cas
 | `thinking_mode` | `"max"` |
 | `review_type` | `"full"` |
 | `findings` | `"Initial submission for review. No findings yet."` |
-| `relevant_files` | Code review: selected diff file only. Document review: in-scope documents and related source as supplied by the caller |
+| `relevant_files` | Code review: selected diff file only. Document review: in-scope documents, related source and review criteria as supplied by the caller |
 | `confidence` | `"exploring"` |
 
 #### `step` content
@@ -65,7 +66,7 @@ Keep framing lean; file contents belong in `relevant_files`, not pasted into `st
    - Intent/context: /project/docs/feat/wip/settings/design.md, ...
    ```
 
-Document callers use **Documents** and **Related source** instead. Paths sent are not proof of source receipt: retain actual embedding/read evidence returned by the tool and distinguish it from requested coverage.
+Document callers use **Documents**, **Related source** and **Review criteria** instead. Paths sent are not proof of source receipt: retain actual embedding/read evidence returned by the tool and distinguish it from requested coverage.
 
 ### Step 2 — continuation call
 

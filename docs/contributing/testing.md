@@ -42,6 +42,13 @@ Test fixtures live in `test/fixtures/`.
 
 ## Writing Tests
 
+Follow [proportionate verification](../../klaude-plugin/skills/_shared/verification-policy.md)
+when choosing coverage and acceptance criteria; [ADR 0010](../adr/0010-proportionate-verification.md)
+records the rationale. Deterministic tests protect software contracts. Agent
+evaluations measure semantic outcomes with variability and evidence limits;
+each assertion is not automatically a release gate. Keep required repository
+checks, and expand verification only for a concrete risk or unresolved decision.
+
 - Add tests to the appropriate existing suite when possible
 - New suites follow the same pattern: source `helpers.sh`, use `log_section`/`log_test`/`assert_*`, end with `print_summary`
 - Structure tests check file existence and content invariants, not runtime behavior

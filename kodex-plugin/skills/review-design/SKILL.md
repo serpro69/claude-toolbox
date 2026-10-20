@@ -11,6 +11,7 @@ description: |
 ## Conventions
 
 - **Read capy knowledge base conventions** at [shared-capy-knowledge-protocol.md](shared-capy-knowledge-protocol.md).
+- **Read verification policy** at [shared-verification-policy.md](shared-verification-policy.md).
 
 ## Overview
 
@@ -59,7 +60,7 @@ See [review-isolated.md](./review-isolated.md) for the isolated workflow.
 
 ## Workflow
 
-**Mandatory order — methodology before evaluation.** The flow below is strictly sequential. Do not evaluate document quality, assess technical soundness, or form findings until this SKILL.md and the process file are fully loaded. The design documents are both instruction context (they define what the feature is) and subject matter (they are what you evaluate) — but the review methodology and rubric must be loaded first.
+**Mandatory order — methodology before evaluation.** The flow below is strictly sequential. Load this SKILL.md, the selected process file and shared protocols before reading or evaluating subject documents. Only bounded inspection for a declared routing predicate may precede remaining instruction loads. The review methodology and rubric precede the design documents they assess.
 
 **Phases:**
 
