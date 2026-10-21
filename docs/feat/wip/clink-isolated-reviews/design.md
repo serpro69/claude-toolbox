@@ -1,6 +1,6 @@
 # Clink fallback for isolated reviews
 
-> Status: design documented from the user-approved direction; independent review and implementation pending
+> Status: design reviewed and findings addressed; Task 0 verification and implementation pending
 > Created: 2026-10-11
 > Issue: [claude-toolbox #168](https://github.com/serpro69/claude-toolbox/issues/168)
 > Implementation: [implementation.md](implementation.md)
@@ -27,6 +27,10 @@ The user explicitly chose:
 6. Clink only when API review is unavailable at discovery. Runtime fallback was rejected because it adds too many branches for the main agent.
 
 The shared instruction organization and checks below implement that direction. They are proposed requirements, not claims that PAL's pending features or this integration already work.
+
+### Review corrections (2026-10-21)
+
+After requesting revalidation and fixes for all valid review findings, the user authorized these corrections. C7 now verifies honest coverage classification rather than requiring PAL to expose read telemetry; absent telemetry limits review claims without blocking the feature. The no-edit contract requires reviewer behavior and `allow_edits=false` on every request, while preserving native permission settings; it does not promise an enforced filesystem sandbox. These corrections supersede the original C7 telemetry prerequisite and C4/C5 permission wording. Task 0 remains mandatory, and no unrun check is considered passed.
 
 ## Existing mechanisms and provenance
 
@@ -110,6 +114,8 @@ Each clink reviewer gets a new conversation and the same relevant evidence as th
 
 Use the review role verified in Task 0; the current `codereviewer` preset alone is not sufficient methodology. The prompt must direct the CLI to perform the review itself, avoid recursive isolated-review invocations, make no project-file edits, and return findings and coverage. Use `allow_edits=false` on every request, including follow-ups. Missing read permissions stay visible; do not enable edits or bypass controls to make a review work.
 
+This is a no-edit behavior contract, not a guarantee of enforced read-only access. Some clients, including `agy`, preserve native permissions when `allow_edits=false`. Record and disclose that limitation; inherited permissions alone do not exclude a client. Do not change user permissions. C4 verifies access and unchanged fixture files during the tested review, without claiming that writes were impossible. Any observed project-file modification violates the contract. C5 verifies that a prior request's edit opt-in is not reused; it does not require erasing the operator's native permission policy.
+
 Do not copy entire agent definitions, including their host-specific tool/model declarations, into external prompts. Reuse actual methodology files and add only transport-specific instructions. Preserve native external severity and formatting; internal-agent output formats remain unchanged.
 
 ### Code review
@@ -151,11 +157,13 @@ Task 0 is a development prerequisite, not an extra procedure performed before ev
 | C1 | Provider-free startup and discovery; API available/unavailable/unknown distinction | Recorded PAL revision, actual tool schemas and representative discovery responses; tool omission and empty API catalog cases |
 | C2 | Executable availability, review roles and provider identity | Eligible/excluded roster examples, including author exclusion, unknown identity and duplicate-provider configuration; authentication remains unverified until use |
 | C3 | Configured review models | Effective review-role configuration and returned identity behavior; no invented per-call model field or configuration mutation |
-| C4 | Read-only instruction/evidence access | Live disposable fixture with plugin criteria, project files and outside-worktree snapshots; verify reads and unchanged fixture files under effective working-directory policy |
-| C5 | Fresh conversations and provider-free continuation | Independent initial requests and a context-dependent follow-up; no cross-review history, inherited edit permission or API-provider context requirement |
+| C4 | Instruction/evidence access and no-edit behavior | Live disposable fixture with plugin criteria, project files and outside-worktree snapshots; demonstrate access using file-only fixture content or observed read events, verify unchanged fixture files, and record effective working-directory and native permission behavior without inferring enforcement from an unchanged fixture |
+| C5 | Fresh conversations and provider-free continuation | Independent initial requests and a context-dependent follow-up; no cross-review history, reuse of a prior request's edit opt-in or API-provider context requirement; `allow_edits=false` on every request |
 | C6 | Failure and output semantics | Missing executable, authentication/error result, permission-denied partial result, timeout and truncation/summary cases stay distinguishable from an adequately sourced review |
-| C7 | Observable instruction/source coverage | Identify actual returned or controller-observed read evidence; demonstrate how unknown coverage prevents false corroboration; missing required observability is an upstream gap |
+| C7 | Accurate instruction/source coverage reporting | Record available returned or controller-observed read evidence, including its absence; demonstrate that unverified receipt preserves useful attributed findings but cannot establish corroboration or broad approval |
 | C8 | Complete multi-provider run | Internal-review payload parity plus every eligible external provider once; record attempted/successful/failed coverage, with no authoring-provider or API substitution |
+
+C7 tests reporting behavior, not telemetry availability. A client with no exposed read telemetry can pass that check when receipt stays unverified and the report respects the resulting limits; it does not thereby pass a source-read check. C4 still requires live evidence of access and no-edit behavior for its fixture. File-only fixture content must not be supplied in the prompt, and its return demonstrates only that tested access, not complete receipt in later reviews. Missing or skipped live checks remain unverified.
 
 Record concurrent isolation separately. A failed concurrent check fixes scheduling to sequential until verified; all C1–C8 requirements still apply. This avoids making the whole reliability roadmap a dependency.
 
@@ -165,8 +173,8 @@ Task 0 must record exact schemas, supported role/model configuration and a repro
 
 - The new PAL build supports both initial and follow-up CLI-only reviews without API credentials; verify C1/C5.
 - Provider identity and configured review models can be established without guessing or inspecting credentials; verify C2/C3. The inspected plans do not establish a universal identity API.
-- The CLI can read criteria and evidence outside its working directory while respecting review-only operation; verify C4.
-- Required read-receipt evidence is observable or can be supplied by an upstream change; verify C7. Planned conversation transcripts alone are not proof of child file reads.
+- The CLI can read criteria and evidence outside its working directory and obey no-edit instructions with `allow_edits=false`; verify C4. Native permissions may remain inherited, so enforced read-only access is not assumed.
+- Read-receipt telemetry may be unavailable. Verify honest coverage reporting under C7; planned conversation transcripts and reviewer-authored file lists alone do not prove child file reads.
 - Multiple independent requests can be scheduled safely; verify concurrent isolation or choose sequential dispatch in Task 0.
 - Existing generation preserves shared-file links and reviewer instructions for both hosts; verify generated output and structure tests during implementation.
 
@@ -195,6 +203,6 @@ Task 0 must record exact schemas, supported role/model configuration and a repro
 
 Task 0 proves the PAL boundary. Behavioral evals then prove instruction routing, scope, independence and reporting under controlled responses. Run both supported host variants; include a live code fixture and scoped document fixture against the verified PAL build. Structural checks establish packaging/link integrity, not review behavior.
 
-Update user-facing isolated-mode documentation with discovery-only routing, variable reviewer count, configured model ownership, cost implications and minimum PAL requirement. Generate Codex output from canonical sources after each implementation slice. Rollback removes the new routing/clink integration and regenerates; it restores the existing API-only isolated workflows without changing user PAL configuration.
+Update user-facing isolated-mode documentation with discovery-only routing, variable reviewer count, configured model ownership, cost implications, minimum PAL requirement and the limits of no-edit controls and source-receipt evidence. Generate Codex output from canonical sources after each implementation slice. Rollback removes the new routing/clink integration and regenerates; it restores the existing API-only isolated workflows without changing user PAL configuration.
 
-No PAL execution, live contract verification, skill implementation or independent design review has been performed as part of writing these documents. The implementation plan records the pending work and its acceptance checks.
+The design review corrections are recorded in [Review corrections](#review-corrections-2026-10-21). No live Task 0 acceptance run or skill implementation has been performed; the implementation plan records that pending work and its acceptance checks.

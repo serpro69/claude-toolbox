@@ -9,6 +9,8 @@
 
 The user-approved scope covers both isolated review skills, every eligible non-authoring provider and configured review models. **Task 0 must pass before any plugin instruction authoring starts.** All implementation and verification work below is pending; writing these documents completes none of these tasks.
 
+The [2026-10-21 review corrections](design.md#review-corrections-2026-10-21) apply to these gates: C7 requires accurate reporting when telemetry is absent, not telemetry availability; C4/C5 require no-edit behavior and per-request controls without claiming an enforced sandbox or changing native permissions.
+
 ## Task 0: Verify the new PAL review contract
 
 - **Status:** pending
@@ -22,10 +24,10 @@ The user-approved scope covers both isolated review skills, every eligible non-a
 
 - [ ] 0.1 Inspect implemented PAL discovery, schemas, review-role configuration and revision; create `verification/pal-contract.md` → verify: C1–C8 each have a result and evidence reference, with planned behavior distinguished from observed behavior.
 - [ ] 0.2 Verify API available/unavailable/unknown states, client launchability, provider identity, author exclusion and configured models → verify: C1–C3 yield a deterministic eligible roster without guessed parameters, credentials or duplicate-provider counts.
-- [ ] 0.3 Run disposable live code/document review and provider-free continuation fixtures through MCP, including plugin criteria and outside-worktree snapshots → verify: C4–C5 demonstrate file access, unchanged fixture contents, fresh conversations and per-request `allow_edits=false`.
-- [ ] 0.4 Exercise semantic errors, permission-denied partial output, timeout and truncation/summary handling; identify observable read receipts → verify: C6–C7 distinguish usable review from diagnostic output or unverified coverage.
+- [ ] 0.3 Run disposable live code/document review and provider-free continuation fixtures through MCP, including plugin criteria and outside-worktree snapshots → verify: C4–C5 demonstrate access through file-only content absent from the prompt or observed reads, unchanged fixture contents, fresh conversations and per-request `allow_edits=false` without reusing an earlier edit opt-in; record inherited native permissions without claiming enforced read-only access.
+- [ ] 0.4 Exercise semantic errors, permission-denied partial output, timeout, truncation/summary and absent read telemetry → verify: C6–C7 distinguish diagnostics from useful attributed results, keep unknown receipt explicit and prohibit unsupported corroboration or broad approval; absent telemetry alone does not fail C7.
 - [ ] 0.5 Verify complete multi-provider execution and test concurrent isolation → verify: C8 covers every eligible provider once; record parallel or sequential scheduling without changing the roster.
-- [ ] 0.6 Record the minimum verified PAL revision, exact integration contract and any gaps → verify: every required row passes before Task 1 starts; otherwise set this task blocked with observed behavior, required upstream change, owner and next action.
+- [ ] 0.6 Record the minimum verified PAL revision, exact integration contract and any gaps → verify: every required check passes before Task 1 starts; unknown receipt may remain a disclosed limit after C7 passes. For an unmet required check, keep this task blocked with observed behavior, required correction, owner and next action; no unrun check is passed.
 
 ## Task 1: Deliver discovery-only clink code review
 
@@ -71,10 +73,10 @@ The user-approved scope covers both isolated review skills, every eligible non-a
 ### Subtasks
 
 - [ ] 3.1 Run `/kk:test`, the full repository shell suites, generator checks and `make plugin-graph` → verify: tests pass and repeated generation leaves identical generated content.
-- [ ] 3.2 Complete the behavioral matrix for both skills and supported hosts, plus live code/document smoke reviews → verify: final instructions satisfy discovery-only selection, configured models, provider exclusion, scope, read evidence and independent continuation against the verified PAL build.
-- [ ] 3.3 Run `/kk:document` and update plugin/root user guidance where isolated review is described → verify: minimum PAL contract, reviewer count/cost, model ownership and failure behavior are clear, with no toolbox-only documentation dependencies inside plugin files.
+- [ ] 3.2 Complete the behavioral matrix for both skills and supported hosts, plus live code/document smoke reviews → verify: final instructions satisfy discovery-only selection, configured models, provider exclusion, scope, honest receipt reporting, no-edit behavior and independent continuation against the verified PAL build.
+- [ ] 3.3 Run `/kk:document` and update plugin/root user guidance where isolated review is described → verify: minimum PAL contract, reviewer count/cost, model ownership, failure behavior and permission/receipt limits are clear, with no toolbox-only documentation dependencies inside plugin files.
 - [ ] 3.4 Run `/kk:review-code` with the `skill-md` domain and relevant fixture languages → verify: instruction ordering, shared-file reuse, routing simplicity and regressions are reviewed; unresolved findings have durable reasons and concrete next actions.
-- [ ] 3.5 Run `/kk:review-spec` against design, implementation, tasks and final instructions → verify: implementation matches all confirmed choices and no required Task 0 row was waived.
+- [ ] 3.5 Run `/kk:review-spec` against design, implementation, tasks and final instructions → verify: implementation matches all confirmed choices and every Task 0 check under the corrected acceptance contract passed; superseded telemetry and sandbox interpretations are not reintroduced as gates.
 - [ ] 3.6 Write `verification/final.md` with actual commands, eval outcomes, live evidence and remaining limits → verify: skipped checks remain explicit and completion is claimed only after required work passes.
 
 ## Dependency Graph
