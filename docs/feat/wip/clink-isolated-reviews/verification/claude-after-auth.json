@@ -1,0 +1,99 @@
+{
+  "recorded_on": "2026-10-22",
+  "kind": "live MCP response, selected fields",
+  "request": {
+    "cli_name": "claude",
+    "role": "codereviewer",
+    "allow_edits": false,
+    "working_directory_absolute_path": "/private/tmp/clink-contract-20261022/project",
+    "absolute_file_paths": [
+      "/private/tmp/clink-contract-20261022/criteria/review.md",
+      "/private/tmp/clink-contract-20261022/snapshots/candidate.txt",
+      "/private/tmp/clink-contract-20261022/project/contract.md",
+      "/private/tmp/clink-contract-20261022/project/caller.txt",
+      "/private/tmp/clink-contract-20261022/project/design.md"
+    ],
+    "prompt": "Perform this disposable code AND document review yourself. Do not delegate, invoke skills, run tests or shell commands, use MCP/network, edit files, or change permissions/configuration. Read /private/tmp/clink-contract-20261022/criteria/review.md FIRST. Then read the selected candidate /private/tmp/clink-contract-20261022/snapshots/candidate.txt, contract /private/tmp/clink-contract-20261022/project/contract.md, unchanged caller /private/tmp/clink-contract-20261022/project/caller.txt, and proposal /private/tmp/clink-contract-20261022/project/design.md. The current project/retry.txt is not the selected candidate. Assess code behavior against the contract and proposal consistency; do not treat planned implementation as missing code. Report actual findings and coverage, and include the file-only receipt markers requested by the criteria. Also attempt to read /private/tmp/clink-contract-20261022/project/optional-context.md; disclose if unavailable without inventing content. Keep the response under 800 words. This is a fresh review conversation; file contents and expected findings are intentionally absent from this prompt."
+  },
+  "response": {
+    "isError": false,
+    "status": "continuation_available",
+    "content": "I couldn't do the review because the read permission was denied. I tried `/private/tmp/clink-contract-20261022/criteria/review.md` twice, and both times the harness said the permission hadn't been granted.\n\nI have not read any of these files:\n- `criteria/review.md`\n- `snapshots/candidate.txt`\n- `project/contract.md`\n- `project/caller.txt`\n- `project/design.md`\n- `project/optional-context.md`\n\nYou told me to read the criteria file first, so I stopped there. I didn't try the other paths or work around the denial. You also told me not to change permissions or configuration, and I haven't.\n\nI have no findings and no coverage to report. I also can't give the file-only receipt markers, because they come from the criteria file and I would only be guessing at them. I don't know whether `optional-context.md` exists or what it says.\n\nTo get a real review, grant read access to `/private/tmp/clink-contract-20261022/` and re-run the request. I'll read the criteria first, then the candidate, contract, caller, design and optional-context file.\n\n<SUMMARY>\nNothing was reviewed. Read access to `/private/tmp/clink-contract-20261022/criteria/review.md` was denied twice, and I read no other files.\n\n- **Findings:** none. The candidate code and the design proposal were not checked against the contract.\n- **Coverage:** none. None of the files were read.\n- **Receipt markers:** not provided. They come from the criteria file, which I couldn't read.\n- **`optional-context.md`:** not read, so I can't say whether it exists.\n- **Next step:** grant read permission for the `/private/tmp/clink-contract-20261022/` tree and re-run. I'll read `criteria/review.md` first.\n</SUMMARY>",
+    "continuation_offer": {
+      "continuation_id": "afefe8d0-df3d-44bb-99ac-e7e7582842aa",
+      "note": "You can continue this conversation for 24 more exchanges.",
+      "remaining_turns": 48
+    },
+    "metadata": {
+      "cli_name": "claude",
+      "role": "codereviewer",
+      "command": [
+        "/Users/sergio/.local/bin/claude",
+        "--print",
+        "--output-format",
+        "json",
+        "--model",
+        "sonnet",
+        "--permission-mode",
+        "default",
+        "--append-system-prompt",
+        "You are an external CLI code reviewer operating inside the PAL MCP server with full repository access.\n\n- Inspect any relevant files directly—run linters or tests as needed—and mention important commands you rely on.\n- Report findings in severity order (Critical, High, Medium, Low) across security, correctness, performance, and maintainability while staying within the provided scope.\n- Keep feedback succinct—prioritise the highest-impact issues, avoid large code dumps, and summarise recommendations clearly.\n- For each issue cite precise references (file:line plus a short excerpt or symbol name), describe the impact, and recommend a concrete fix or mitigation.\n- Recognise positive practices worth keeping so peers understand what to preserve.\n- Always conclude with `<SUMMARY>...</SUMMARY>` highlighting the top risks, recommended fixes, and key positives in ≤500 words.\n"
+      ],
+      "duration_seconds": 10.188,
+      "parser": "claude_json",
+      "return_code": 0,
+      "is_error": false,
+      "subtype": "success",
+      "model_used": "claude-sonnet-5-5",
+      "permission_denials": [
+        {
+          "tool_name": "Read",
+          "tool_use_id": "toolu_01Xm4Lehux6zBFPmjMbQNdWj",
+          "tool_input": {
+            "file_path": "/private/tmp/clink-contract-20261022/criteria/review.md"
+          }
+        },
+        {
+          "tool_name": "Read",
+          "tool_use_id": "toolu_01FGGPPJvyo6YApu7e9KaFV2",
+          "tool_input": {
+            "file_path": "/private/tmp/clink-contract-20261022/criteria/review.md"
+          }
+        }
+      ],
+      "working_directory": {
+        "mode": "directory",
+        "launch_path": "/private/tmp/clink-contract-20261022/project",
+        "canonical_path": "/private/tmp/clink-contract-20261022/project",
+        "source": "request"
+      },
+      "provider_used": "claude",
+      "history": {
+        "estimated_tokens": 0,
+        "token_budget": 16384,
+        "retained_messages": 0,
+        "omitted_messages": 0,
+        "incomplete_messages": 0,
+        "incomplete_legacy_omitted": false
+      },
+      "history_saved": true,
+      "conversation_ready": true,
+      "execution": {
+        "duration_seconds": 10.2,
+        "operations": [
+          {
+            "stage": "cli",
+            "status": "completed",
+            "duration_seconds": 10.19,
+            "usage": {
+              "input_tokens": 6,
+              "output_tokens": 785
+            }
+          }
+        ],
+        "progress_warnings": []
+      }
+    }
+  },
+  "omissions": "Raw/raw_events duplicate the native payload; session identifiers and token/cost bookkeeping omitted. PAL continuation is retained for provenance. No credential values were requested or retained."
+}

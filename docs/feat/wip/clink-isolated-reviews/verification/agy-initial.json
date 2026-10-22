@@ -1,0 +1,50 @@
+{
+  "recorded_on": "2026-10-22",
+  "kind": "live MCP response, selected fields",
+  "request": {
+    "cli_name": "agy",
+    "role": "codereviewer",
+    "allow_edits": false,
+    "working_directory_absolute_path": "/private/tmp/clink-contract-20261022/project",
+    "absolute_file_paths": [
+      "/private/tmp/clink-contract-20261022/criteria/review.md",
+      "/private/tmp/clink-contract-20261022/snapshots/candidate.txt",
+      "/private/tmp/clink-contract-20261022/project/contract.md",
+      "/private/tmp/clink-contract-20261022/project/caller.txt",
+      "/private/tmp/clink-contract-20261022/project/design.md"
+    ],
+    "prompt": "Perform this disposable code AND document review yourself. Do not delegate, invoke skills, run tests or shell commands, use MCP/network, edit files, or change permissions/configuration. Read /private/tmp/clink-contract-20261022/criteria/review.md FIRST. Then read the selected candidate /private/tmp/clink-contract-20261022/snapshots/candidate.txt, contract /private/tmp/clink-contract-20261022/project/contract.md, unchanged caller /private/tmp/clink-contract-20261022/project/caller.txt, and proposal /private/tmp/clink-contract-20261022/project/design.md. The current project/retry.txt is not the selected candidate. Assess code behavior against the contract and proposal consistency; do not treat planned implementation as missing code. Report actual findings and coverage, and include the file-only receipt markers requested by the criteria. Also attempt to read /private/tmp/clink-contract-20261022/project/optional-context.md; disclose if unavailable without inventing content. Keep the response under 800 words. This is a fresh review conversation; file contents and expected findings are intentionally absent from this prompt."
+  },
+  "response": {
+    "isError": true,
+    "status": "error",
+    "content": "CLI 'agy' execution failed: Failed to parse output from CLI 'agy': agy returned an empty response after headless mode auto-denied: read_file (ReadFile). PAL cannot grant native agy permissions; add a matching allow-rule under permissions.allow in ~/.gemini/antigravity-cli/settings.json (for example command(git)) and retry.\njetski: no output produced — a tool required the \"read_file\" permission that headless mode cannot prompt for, so it was auto-denied. Add an allow-rule under permissions.allow in settings.json (e.g. read_file(<target>)). Alternatively, re-run with --dangerously-skip-permissions to auto-approve all tools.",
+    "content_type": "text",
+    "metadata": {
+      "cli_name": "agy",
+      "return_code": 0,
+      "stderr": "jetski: no output produced — a tool required the \"read_file\" permission that headless mode cannot prompt for, so it was auto-denied. Add an allow-rule under permissions.allow in settings.json (e.g. read_file(<target>)). Alternatively, re-run with --dangerously-skip-permissions to auto-approve all tools.",
+      "tool_name": "clink",
+      "working_directory": {
+        "mode": "directory",
+        "launch_path": "/private/tmp/clink-contract-20261022/project",
+        "canonical_path": "/private/tmp/clink-contract-20261022/project",
+        "source": "request"
+      },
+      "execution": {
+        "duration_seconds": 10.42,
+        "operations": [
+          {
+            "stage": "cli",
+            "status": "failed",
+            "duration_seconds": 10.416,
+            "usage": null
+          }
+        ],
+        "progress_warnings": []
+      }
+    },
+    "continuation_offer": null
+  },
+  "omissions": "No raw stdout was returned; no file-read receipt or model identity was returned. Native permission guidance is retained as diagnostic text, not acted on."
+}

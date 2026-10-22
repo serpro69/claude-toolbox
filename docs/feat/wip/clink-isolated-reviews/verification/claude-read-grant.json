@@ -1,0 +1,63 @@
+{
+  "recorded_on": "2026-10-22",
+  "kind": "direct Claude CLI permission probe; not an MCP call",
+  "authorization": "User proposed --allowedTools Read(*) and then said 'try that'; used the documented bare Read rule. This authorizes this process-local read grant, not persistent configuration changes.",
+  "request": {
+    "cli_name": "claude",
+    "role": "codereviewer",
+    "allow_edits": false,
+    "working_directory_absolute_path": "/private/tmp/clink-contract-20261022/project",
+    "absolute_file_paths": [
+      "/private/tmp/clink-contract-20261022/criteria/review.md",
+      "/private/tmp/clink-contract-20261022/snapshots/candidate.txt",
+      "/private/tmp/clink-contract-20261022/project/contract.md",
+      "/private/tmp/clink-contract-20261022/project/caller.txt",
+      "/private/tmp/clink-contract-20261022/project/design.md"
+    ],
+    "prompt": "Perform this disposable code AND document review yourself. Do not delegate, invoke skills, run tests or shell commands, use MCP/network, edit files, or change permissions/configuration. Read /private/tmp/clink-contract-20261022/criteria/review.md FIRST. Then read the selected candidate /private/tmp/clink-contract-20261022/snapshots/candidate.txt, contract /private/tmp/clink-contract-20261022/project/contract.md, unchanged caller /private/tmp/clink-contract-20261022/project/caller.txt, and proposal /private/tmp/clink-contract-20261022/project/design.md. The current project/retry.txt is not the selected candidate. Assess code behavior against the contract and proposal consistency; do not treat planned implementation as missing code. Report actual findings and coverage, and include the file-only receipt markers requested by the criteria. Also attempt to read /private/tmp/clink-contract-20261022/project/optional-context.md; disclose if unavailable without inventing content. Keep the response under 800 words. This is a fresh review conversation; file contents and expected findings are intentionally absent from this prompt."
+  },
+  "launch": {
+    "cwd": "/private/tmp/clink-contract-20261022/project",
+    "argv": [
+      "/Users/sergio/.local/bin/claude",
+      "--print",
+      "--output-format",
+      "json",
+      "--model",
+      "sonnet",
+      "--permission-mode",
+      "default",
+      "--append-system-prompt-file",
+      "/Users/sergio/Projects/personal/pal-mcp-server/systemprompts/clink/default_codereviewer.txt",
+      "--allowedTools",
+      "Read"
+    ],
+    "stdin": "/private/tmp/clink-contract-20261022/read-grant-prompt.txt",
+    "exit_code": 0
+  },
+  "result": {
+    "type": "result",
+    "subtype": "success",
+    "is_error": false,
+    "result": "**Review result: the candidate fails the contract, and the proposal contradicts the contract.**\n\n**Receipts read:** `COPPER-LANTERN-317` (criteria), `VIOLET-COMET-951` (candidate), `MOSS-HARBOR-826` (contract), `SILVER-BIRCH-462` (design). `caller.txt` has no receipt marker.\n\n## Findings\n\n**High: the candidate breaks the attempt-zero contract.**\n- `snapshots/candidate.txt:2-3` is `def retry_delay(attempt): return 10`.\n- `contract.md:5` requires attempt zero to return 5 and later attempts to return 10.\n- The candidate returns 10 for every attempt.\n- The unchanged caller, `caller.txt:1-2`, does `result = retry_delay(0)` and then `assert result == 5`.\n- With the candidate, that assert fails with an `AssertionError`.\n- Fix: `return 5 if attempt == 0 else 10`.\n\n**High: the proposal contradicts the contract it says it keeps.**\n- `design.md:5` says \"The public retry contract is unchanged.\" The same sentence says the planned implementation returns 10 seconds \"for every nonnegative attempt, including the initial attempt zero.\"\n- Those two statements conflict.\n- `contract.md:7` says the proposal must retain the contract.\n- The proposal also breaks the existing caller, which passes zero and expects 5.\n- I reviewed the stated behavior, not whether the code exists yet.\n- Fix: say that attempt 0 returns 5 and later attempts return 10. Or, if the change to 10 is intended, say it is a breaking contract change, and update the contract and the caller together.\n\n**Medium: the candidate does nothing to enforce the \"nonnegative integer attempts\" input rule.**\n- `contract.md:5` says the function accepts nonnegative integer attempts.\n- The candidate ignores `attempt` entirely, so negative, non-integer and other invalid values return 10 instead of being rejected.\n- The contract does not say what should happen with invalid input, so I rate this lower.\n- Decide whether to validate or leave it undefined, and say which in the contract.\n\n**Low: the proposal does not show the change is compatible with the caller.**\n- It never mentions the existing caller that depends on 5.\n- It also has no test or acceptance criterion for attempt 0.\n\n## Coverage\n\n- **Read in full:** the criteria, candidate, contract, caller and design. All are very short.\n- **Not read:** `project/optional-context.md` does not exist (the read returned \"File does not exist\"). I am treating that as a coverage limit and have not assumed anything about its contents.\n- **Not read by instruction:** `project/retry.txt`. It is a different worktree version and not the selected candidate.\n- **Not done:** I ran no tests or commands, as instructed. The failing assert is my reading of the code, not an executed result.\n\n## Positives\n- The contract is short and unambiguous.\n- The caller works as a regression check for attempt zero.\n- The design says clearly that it describes future work.\n\n<SUMMARY>\nCandidate `retry_delay` always returns 10, which violates the contract's attempt-zero value of 5 (`contract.md:5`). The unchanged caller's `assert result == 5` would fail (High). The design proposal says the contract is unchanged but plans 10 seconds for attempt zero, which contradicts the contract and the caller (High). Smaller issues: nothing enforces or specifies the nonnegative-integer input rule (Medium), and the proposal has no compatibility note or attempt-zero acceptance test (Low).\n\nRecommended fixes: implement `5 if attempt == 0 else 10`, and correct the proposal so attempt zero returns 5. If 10 is really intended, document it as a breaking change and update the contract and caller together.\n\nCoverage: all five required files were read. Receipts read: COPPER-LANTERN-317, VIOLET-COMET-951, MOSS-HARBOR-826, SILVER-BIRCH-462. `optional-context.md` was unavailable and is a coverage limit. No tests or commands were run. I do not approve the candidate or the proposal as written.\n\nPositives: the contract is clear, the caller makes a useful regression check, and the proposal is explicitly framed as future work.\n</SUMMARY>",
+    "permission_denials": []
+  },
+  "observed_models": [
+    "claude-sonnet-5-5"
+  ],
+  "fixture_sha256_before_and_after": {
+    "criteria/review.md": "9c3f4ef3612433661142576a6cc2cd10ee97c265b4afd98f0255c3b78c1a00d5",
+    "project/caller.txt": "9f175f0e8a632e0124e6a5c3dac93a24e4cbf85fee63670ddedd9bc4e8695d62",
+    "project/contract.md": "30cfef2c117e07e2328355d7d85f677515033fedd5286f7d9931fef73d3af9d3",
+    "project/design.md": "74bfca12737fc470dd32e99075a57205d77c64c06ef70f74028135f3bc711d11",
+    "project/retry.txt": "60243b157b16c5c696b4023161013c1db824d848411c801ec802069ebf9ebbb5",
+    "snapshots/candidate.txt": "01d4113a3d367373bfdd1d5a318cca7af5023361c311a5fd79561ae5ef1aeda7"
+  },
+  "limits": [
+    "File-only markers and quoted caller content demonstrate access to this fixture; they do not prove general review coverage or instruction read ordering.",
+    "Unchanged file hashes demonstrate no edits to the six fixture files, not enforced filesystem read-only access.",
+    "Direct CLI launch does not satisfy the required MCP integration check.",
+    "Native output is retained, including extra input-validation advice: the contract does not require rejecting invalid inputs, so that advice is not an additional acceptance requirement."
+  ],
+  "omissions": "Native session identifiers, startup inventories and usage/cost bookkeeping omitted."
+}

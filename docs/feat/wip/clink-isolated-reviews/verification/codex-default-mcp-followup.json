@@ -1,0 +1,94 @@
+{
+  "recorded_on": "2026-10-22",
+  "kind": "live MCP/clink Codex integration verification",
+  "authorization": "User explicitly requested Codex clink verification. This is transport acceptance, not an independent external review of OpenAI-authored changes.",
+  "request": {
+    "continuation_id": "77e8e3f2-a90f-4fa2-ab59-38a2013591ce",
+    "allow_edits": false,
+    "prompt": "Continue only your own preceding review. Do not call tools, reread files, run commands, edit files or change permissions. Using the preceding exchange alone, name the two material defects, quote the four receipt markers you obtained, and identify the unavailable optional file. Say which claims were inferred from reading rather than executed tests. Keep this follow-up concise."
+  },
+  "response": {
+    "isError": false,
+    "status": "continuation_available",
+    "content": "The preceding review identified two material defects:\n\n- **Code:** Selected `candidate.txt` returns `10` for `retry_delay(0)`; the contract requires `5`, so the unchanged caller assertion would fail.\n- **Document:** `design.md` proposes `10` seconds for every attempt, including zero, while claiming the public contract remains unchanged.\n\nReceipt markers:\n\n- Criteria: `COPPER-LANTERN-317`\n- Selected candidate: `VIOLET-COMET-951`\n- Project: `MOSS-HARBOR-826`\n- Document: `SILVER-BIRCH-462`\n\nUnavailable optional file: `/private/tmp/clink-codex-contract-20261022/project/optional-context.md` — previously reported “No such file or directory.”\n\n<SUMMARY>The zero-attempt defect, predicted caller assertion failure, positive-attempt compliance, and proposal inconsistency were conclusions from static reading. No tests were executed; no tools were called for this follow-up.</SUMMARY>",
+    "continuation_offer": {
+      "continuation_id": "77e8e3f2-a90f-4fa2-ab59-38a2013591ce",
+      "note": "You can continue this conversation for 23 more exchanges.",
+      "remaining_turns": 46
+    },
+    "metadata": {
+      "cli_name": "codex",
+      "role": "default",
+      "command": [
+        "/Users/sergio/.nvm/versions/node/v24.14.0/bin/codex",
+        "exec",
+        "--json",
+        "--enable",
+        "web_search_request"
+      ],
+      "duration_seconds": 41.43,
+      "parser": "codex_jsonl",
+      "return_code": 0,
+      "stderr": "Reading prompt from stdin...",
+      "tool_name": "clink",
+      "working_directory": {
+        "mode": "directory",
+        "launch_path": "/private/tmp/clink-codex-contract-20261022/project",
+        "canonical_path": "/private/tmp/clink-codex-contract-20261022/project",
+        "source": "conversation"
+      },
+      "events_removed_for_normal": true,
+      "provider_used": "codex",
+      "history": {
+        "estimated_tokens": 1087,
+        "token_budget": 16384,
+        "retained_messages": 2,
+        "omitted_messages": 0,
+        "incomplete_messages": 0,
+        "incomplete_legacy_omitted": false
+      },
+      "history_saved": true,
+      "conversation_ready": true,
+      "execution": {
+        "duration_seconds": 41.441,
+        "operations": [
+          {
+            "stage": "cli",
+            "status": "completed",
+            "duration_seconds": 41.431,
+            "usage": {
+              "input_tokens": 17931,
+              "output_tokens": 969,
+              "cached_input_tokens": 12160
+            }
+          }
+        ],
+        "progress_warnings": []
+      }
+    }
+  },
+  "configuration": {
+    "cli_version": "0.163.0",
+    "configured_model": "gpt-6-astra",
+    "configured_reasoning_effort": "max",
+    "observed_model": null,
+    "user_codex_manifest_override": false,
+    "configuration_changed": false
+  },
+  "fixture_sha256_before_and_after": {
+    "criteria/review.md": "3f96330fd885fd469a0faa378f08520a957e810e3f970c374890097b96f96282",
+    "project/caller.txt": "9f175f0e8a632e0124e6a5c3dac93a24e4cbf85fee63670ddedd9bc4e8695d62",
+    "project/contract.md": "30cfef2c117e07e2328355d7d85f677515033fedd5286f7d9931fef73d3af9d3",
+    "project/design.md": "74bfca12737fc470dd32e99075a57205d77c64c06ef70f74028135f3bc711d11",
+    "project/retry.txt": "60243b157b16c5c696b4023161013c1db824d848411c801ec802069ebf9ebbb5",
+    "snapshots/candidate.txt": "01d4113a3d367373bfdd1d5a318cca7af5023361c311a5fd79561ae5ef1aeda7"
+  },
+  "limits": [
+    "The Codex fixture permits read-only shell commands; the earlier Claude fixture prohibited shell commands. All five target/caller/worktree file contents are identical; criteria wording differs. This is not a controlled model-quality comparison.",
+    "Project directory was initialized as a disposable Git repository before the request, preserving the native repository check.",
+    "PAL reports events_removed_for_normal=true and returns no detailed read trace. File-only markers demonstrate tested fixture access; instruction read ordering and general receipt remain unverified.",
+    "The follow-up's claim of no tools is self-reported; its detailed trace is also unavailable.",
+    "No source edits were observed in the six fixtures; allow_edits=false and absence of edit arguments do not prove enforced read-only access.",
+    "Useful findings are retained with attribution. This same-provider integration check does not establish independent corroboration or broad approval."
+  ]
+}
