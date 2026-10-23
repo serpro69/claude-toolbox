@@ -1,0 +1,82 @@
+{
+  "provenance": {
+    "kind": "synthetic-test-data",
+    "live_mcp_call": false,
+    "client": "agy",
+    "operator_declared_provider": "Google"
+  },
+  "request_echo": {
+    "tool": "clink",
+    "cli_name": "agy",
+    "role": "default",
+    "allow_edits": false
+  },
+  "result": {
+    "status": "success",
+    "continuation_id": "synthetic-agy-conv-1",
+    "provider_used": "agy",
+    "model_observed": null,
+    "content": "Findings:\n1. [Critical] source/candidate/settings.py:3 \u2014 save() returns ok from the transport response. Provider.apply returns {ok: true, applied: false} for read-only providers, so save reports success while values stay unchanged. Keep the applied check.\nFiles read: all listed criteria, change.patch, source/candidate/settings.py, source/base/settings.py, source/provider.py. Not read: none.",
+    "metadata": {
+      "agy_status": "SUCCESS",
+      "denied_actions": [],
+      "trace_provenance": "hypothetical: a returned read trace is synthetic test data for the corroboration rule; the verified agy integration returned no detailed read trace, so with real clients only a client that exposes read results can corroborate",
+      "events": [
+        {
+          "type": "tool_result",
+          "tool": "read_file",
+          "path": "<criteria>/functional-review.md",
+          "status": "ok"
+        },
+        {
+          "type": "tool_result",
+          "tool": "read_file",
+          "path": "<criteria>/change-context.md",
+          "status": "ok"
+        },
+        {
+          "type": "tool_result",
+          "tool": "read_file",
+          "path": "<criteria>/review-scope-protocol.md",
+          "status": "ok"
+        },
+        {
+          "type": "tool_result",
+          "tool": "read_file",
+          "path": "<criteria>/capy-knowledge-protocol.md",
+          "status": "ok"
+        },
+        {
+          "type": "tool_result",
+          "tool": "read_file",
+          "path": "<criteria>/<resolved profile checklists, one event each>",
+          "status": "ok"
+        },
+        {
+          "type": "tool_result",
+          "tool": "read_file",
+          "path": "<evidence>/change.patch",
+          "status": "ok"
+        },
+        {
+          "type": "tool_result",
+          "tool": "read_file",
+          "path": "<evidence>/source/candidate/settings.py",
+          "status": "ok"
+        },
+        {
+          "type": "tool_result",
+          "tool": "read_file",
+          "path": "<evidence>/source/base/settings.py",
+          "status": "ok"
+        },
+        {
+          "type": "tool_result",
+          "tool": "read_file",
+          "path": "<evidence>/source/provider.py",
+          "status": "ok"
+        }
+      ]
+    }
+  }
+}

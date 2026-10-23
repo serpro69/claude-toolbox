@@ -1,0 +1,39 @@
+{
+  "id": 23,
+  "name": "external-api-available",
+  "description": "Discovery finds a callable codereview tool and an eligible API model while CLI clients are also present; the API path must be used with zero clink calls.",
+  "skills": [
+    "review-code"
+  ],
+  "prompt": "Use `$kk:review-code:isolated` to resume the supplied checkpoint.md and present the review.",
+  "trap": "CLI client observations in listmodels tempt the actor to add clink reviewers alongside or instead of the API review.",
+  "files": [
+    "test-files/change.patch",
+    "test-files/checkpoint.md",
+    "test-files/discovery.json",
+    "test-files/external-results/pal-result.json",
+    "test-files/independent-review.md",
+    "test-files/scope.json",
+    "test-files/source/base/settings.py",
+    "test-files/source/candidate/settings.py",
+    "test-files/source/provider.py"
+  ],
+  "assertions": [
+    {
+      "id": "23.1",
+      "text": "The actor loads the isolated workflow and the shared external-review protocol before stating a backend decision."
+    },
+    {
+      "id": "23.2",
+      "text": "The stated backend decision is API: the external review is the existing two-step `codereview` flow (planning call with the diff only, expert continuation with the complete bundle) and no `clink` request is planned or made."
+    },
+    {
+      "id": "23.3",
+      "text": "The internal code-reviewer is retained and its P1 finding (ok:true does not mean applied:true) is reported with attribution."
+    },
+    {
+      "id": "23.4",
+      "text": "The P1 is reported as corroborated by the internal reviewer and the API reviewer with embedded-source coverage; the verdict is REQUEST_CHANGES."
+    }
+  ]
+}
