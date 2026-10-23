@@ -2,7 +2,7 @@
 
 > Design: [design.md](design.md)
 > Tasks: [tasks.md](tasks.md)
-> Status: pending; Task 0 must pass before plugin instruction authoring
+> Status: Task 0 verified against the recorded corrected PAL build; Task 1 code complete (2026-10-23); Tasks 2–3 pending
 
 ## Repository orientation
 
@@ -26,7 +26,7 @@ Preserve the existing API transport in `skills/_shared/pal-codereview-invocation
 
 Do not run a paid/login-dependent probe silently while claiming it is a static check. Use already authorized test accounts and disposable fixtures, and follow the execution environment's approval rules. Never install CLIs, initiate login or rewrite user model configuration as a workaround. The selected providers' full live acceptance coverage must be stated; a skipped provider is not a passed contract.
 
-The evidence record is deliberately absent until execution. Creating this plan does not satisfy Task 0. PAL plans at the design-time revision are inputs to verification, not a release pin or implementation evidence.
+Execution evidence now lives in [verification/pal-contract.md](verification/pal-contract.md), with [Linux revalidation, the resolved discovery gap and exact corrected build](verification/linux-20261023/README.md). Task 0 passed for that local candidate; the installed/released PAL must contain the correction before relying on API-mode clink discovery. Creating this plan did not satisfy Task 0. PAL plans at the design-time revision are inputs to verification, not a release pin or implementation evidence.
 
 ## Task 1: Code review with discovery-only clink selection
 
@@ -98,16 +98,19 @@ There is no general built-in runner. Use the repository's scenario convention an
 
 Run both host variants for discovery-only routing, author exclusion, instruction ordering and scope. Exercise the complete remaining matrix at least once per affected skill. Record fixture identity, host/model, expected assertions, actual result and limits. Behavioral outcomes cannot be inferred solely from keyword/structure tests.
 
+**Superseded 2026-10-23 (user-approved criterion change, recorded in tasks.md Task 1 execution context):** the matrix above is the design-time inventory of concerns, not a one-scenario-per-row authoring or completion requirement. Ship only decision-relevant scenarios (several rows share one decision-table branch and are covered together), grade semantic outcomes rather than wording or layout, and apply the bounded gate in Task 3.2 instead of exercising every row on every host.
+
 ## Task 3: Final verification and documentation
 
 1. Run `/kk:test` over the changed skill instructions and fixtures, the repository shell suites, `make generate-kodex`, `make plugin-graph`, and the affected generator tests → verify: all required checks pass; intentionally partial eval links remain untouched; a second generation produces identical generated file content.
-2. Complete and record the behavioral matrix plus live code/document smoke reviews against the Task 0 PAL build → verify: author exclusion, discovery-only selection, configured model use, honest receipt reporting, no-edit behavior and independent continuation survive the final integrated instructions. Recheck affected contracts if PAL changed since Task 0.
+2. Run the bounded behavioral verification (see Task 3.2 in tasks.md; supersedes the complete-matrix wording) plus live code/document smoke reviews against the Task 0 PAL build → verify: author exclusion, discovery-only selection, configured model use, honest receipt reporting, no-edit behavior and independent continuation survive the final integrated instructions. Recheck affected contracts if PAL changed since Task 0.
 3. Run `/kk:document` and update `klaude-plugin/README.md`, relevant user-facing skill guidance, and root `README.md` where it describes isolated review → verify: users can find the minimum verified PAL requirement, configured model ownership, discovery-only behavior, provider count/cost, partial-failure reporting and the limits of no-edit controls and source-receipt evidence. Plugin prose contains no links back to toolbox-only feature documents.
 4. Run `/kk:review-code` with the `skill-md` domain and relevant fixture languages, then `/kk:review-spec` over all three feature documents and final instructions → verify: findings are fixed or recorded with concrete reasons and next actions; the agreed discovery policy and Task 0 gate have not drifted.
 5. Record commands, eval outcomes, live evidence and outstanding limitations in `verification/final.md` → verify: no skipped live prerequisite is called passed and no pending implementation is marked done. Apply the repository's feature-completion convention only after the work is actually complete.
+6. Reduce `verification/` to compact records before merge (Task 3.7): retain summaries and final.md, move raw captures to the ignored local archive with a hashed inventory → verify: no capture files remain in the feature tree and retained links resolve.
 
 ## Deferred verification and upstream gaps
 
-Task 0 remains pending until C1–C8 are exercised against a recorded candidate build; an upstream implementation or discovery observation alone does not satisfy it. Provider identity must be established reliably through PAL/operator configuration. If a required capability is missing, record the exact gap in `verification/pal-contract.md` with owner and next action, and keep downstream authoring blocked. Missing read telemetry instead remains a per-reviewer coverage limit under C7, without requiring a new PAL tracing feature. Native permission inheritance is documented under C4/C5, not deferred sandbox work.
+Task 0 is complete for the exact base-plus-patch candidate recorded in [verification/pal-contract.md](verification/pal-contract.md); publication and installation activation remain separate. Provider identity must still be established reliably through PAL/operator configuration. If later verification finds a required capability missing, record the exact gap with owner and next action, and keep dependent work blocked. Missing read telemetry remains a per-reviewer coverage limit under C7, without requiring a new PAL tracing feature. Native permission inheritance is documented under C4/C5, not deferred sandbox work.
 
 No old-PAL shim, automatic model selector or runtime backend switch is a deferred task: those are explicit exclusions. Concurrent dispatch is conditional on verified isolation; sequential dispatch remains a complete supported execution strategy.

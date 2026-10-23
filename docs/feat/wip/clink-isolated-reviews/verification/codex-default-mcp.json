@@ -1,0 +1,103 @@
+{
+  "recorded_on": "2026-10-22",
+  "kind": "live MCP/clink Codex integration verification",
+  "authorization": "User explicitly requested Codex clink verification. This is transport acceptance, not an independent external review of OpenAI-authored changes.",
+  "request": {
+    "cli_name": "codex",
+    "role": "default",
+    "allow_edits": false,
+    "working_directory_absolute_path": "/private/tmp/clink-codex-contract-20261022/project",
+    "absolute_file_paths": [
+      "/private/tmp/clink-codex-contract-20261022/criteria/review.md",
+      "/private/tmp/clink-codex-contract-20261022/snapshots/candidate.txt",
+      "/private/tmp/clink-codex-contract-20261022/project/contract.md",
+      "/private/tmp/clink-codex-contract-20261022/project/caller.txt",
+      "/private/tmp/clink-codex-contract-20261022/project/design.md"
+    ],
+    "prompt": "Perform this disposable code AND document review yourself. Do not delegate, invoke skills, run tests, use MCP/network, edit files, or change permissions/configuration. Native file-read tools and read-only shell commands are permitted. Read /private/tmp/clink-codex-contract-20261022/criteria/review.md FIRST. Then read the selected candidate /private/tmp/clink-codex-contract-20261022/snapshots/candidate.txt, contract /private/tmp/clink-codex-contract-20261022/project/contract.md, unchanged caller /private/tmp/clink-codex-contract-20261022/project/caller.txt, and proposal /private/tmp/clink-codex-contract-20261022/project/design.md. The current project/retry.txt is not the selected candidate. Assess code behavior against the contract and proposal consistency; do not treat planned implementation as missing code. Report actual findings and coverage, and include the file-only receipt markers requested by the criteria. Also attempt to read /private/tmp/clink-codex-contract-20261022/project/optional-context.md; disclose if unavailable without inventing content. Keep the response under 800 words. This is a fresh review conversation; file contents and expected findings are intentionally absent from this prompt."
+  },
+  "response": {
+    "isError": false,
+    "status": "continuation_available",
+    "content": "I’ll read the review criteria first, then inspect the selected candidate, contract, caller, proposal, and optional context using read-only shell commands. I’ll keep this to a static review without tests, skills, delegation, or network access.\n\nTwo findings:\n\n1. **P2 — Candidate breaks the zero-attempt contract.** [candidate.txt:3](/private/tmp/clink-codex-contract-20261022/snapshots/candidate.txt:3) always returns `10`. The [contract](/private/tmp/clink-codex-contract-20261022/project/contract.md:5) requires `retry_delay(0)` to return `5`, so the unchanged [caller assertion](/private/tmp/clink-codex-contract-20261022/project/caller.txt:2) would fail. Return `5` for zero and `10` for positive attempts.\n\n2. **P2 — Proposal contradicts its compatibility claim.** [design.md:5](/private/tmp/clink-codex-contract-20261022/project/design.md:5) claims the public contract is unchanged while proposing `10` seconds for every attempt, including zero. This also violates the [requirement to retain the contract](/private/tmp/clink-codex-contract-20261022/project/contract.md:7). Revise the proposed behavior to preserve the initial `5`-second delay. This is a specification inconsistency; future implementation is not missing code.\n\nCoverage: Read the criteria first, then the complete selected candidate, contract, unchanged caller, and proposal. Positive integer attempts satisfy the timing contract by inspection. The unselected `project/retry.txt` was not reviewed. Attempting to read `/private/tmp/clink-codex-contract-20261022/project/optional-context.md` returned “No such file or directory”; its contents remain unreviewed. No tests, edits, skills, delegation, MCP calls, or network access were used.\n\nReceipt markers actually read:\n\n- Criteria: `COPPER-LANTERN-317`\n- Selected candidate: `VIOLET-COMET-951`\n- Project: `MOSS-HARBOR-826`\n- Document: `SILVER-BIRCH-462`\n\n<SUMMARY>Two P2 findings: the candidate returns the wrong delay for attempt zero, and the proposal contradicts the retained contract. Correct both to specify 5 seconds initially and 10 thereafter. Review was static; optional context was unavailable.</SUMMARY>",
+    "continuation_offer": {
+      "continuation_id": "77e8e3f2-a90f-4fa2-ab59-38a2013591ce",
+      "note": "You can continue this conversation for 24 more exchanges.",
+      "remaining_turns": 48
+    },
+    "metadata": {
+      "cli_name": "codex",
+      "role": "default",
+      "command": [
+        "/Users/sergio/.nvm/versions/node/v24.14.0/bin/codex",
+        "exec",
+        "--json",
+        "--enable",
+        "web_search_request"
+      ],
+      "duration_seconds": 52.171,
+      "parser": "codex_jsonl",
+      "return_code": 0,
+      "stderr": "Reading prompt from stdin...",
+      "tool_name": "clink",
+      "working_directory": {
+        "mode": "directory",
+        "launch_path": "/private/tmp/clink-codex-contract-20261022/project",
+        "canonical_path": "/private/tmp/clink-codex-contract-20261022/project",
+        "source": "request"
+      },
+      "events_removed_for_normal": true,
+      "provider_used": "codex",
+      "history": {
+        "estimated_tokens": 0,
+        "token_budget": 16384,
+        "retained_messages": 0,
+        "omitted_messages": 0,
+        "incomplete_messages": 0,
+        "incomplete_legacy_omitted": false
+      },
+      "history_saved": true,
+      "conversation_ready": true,
+      "execution": {
+        "duration_seconds": 52.183,
+        "operations": [
+          {
+            "stage": "cli",
+            "status": "completed",
+            "duration_seconds": 52.172,
+            "usage": {
+              "input_tokens": 53716,
+              "output_tokens": 1451,
+              "cached_input_tokens": 46848
+            }
+          }
+        ],
+        "progress_warnings": []
+      }
+    }
+  },
+  "configuration": {
+    "cli_version": "0.163.0",
+    "configured_model": "gpt-6-astra",
+    "configured_reasoning_effort": "max",
+    "observed_model": null,
+    "user_codex_manifest_override": false,
+    "configuration_changed": false
+  },
+  "fixture_sha256_before_and_after": {
+    "criteria/review.md": "3f96330fd885fd469a0faa378f08520a957e810e3f970c374890097b96f96282",
+    "project/caller.txt": "9f175f0e8a632e0124e6a5c3dac93a24e4cbf85fee63670ddedd9bc4e8695d62",
+    "project/contract.md": "30cfef2c117e07e2328355d7d85f677515033fedd5286f7d9931fef73d3af9d3",
+    "project/design.md": "74bfca12737fc470dd32e99075a57205d77c64c06ef70f74028135f3bc711d11",
+    "project/retry.txt": "60243b157b16c5c696b4023161013c1db824d848411c801ec802069ebf9ebbb5",
+    "snapshots/candidate.txt": "01d4113a3d367373bfdd1d5a318cca7af5023361c311a5fd79561ae5ef1aeda7"
+  },
+  "limits": [
+    "The Codex fixture permits read-only shell commands; the earlier Claude fixture prohibited shell commands. All five target/caller/worktree file contents are identical; criteria wording differs. This is not a controlled model-quality comparison.",
+    "Project directory was initialized as a disposable Git repository before the request, preserving the native repository check.",
+    "PAL reports events_removed_for_normal=true and returns no detailed read trace. File-only markers demonstrate tested fixture access; instruction read ordering and general receipt remain unverified.",
+    "The follow-up's claim of no tools is self-reported; its detailed trace is also unavailable.",
+    "No source edits were observed in the six fixtures; allow_edits=false and absence of edit arguments do not prove enforced read-only access.",
+    "Useful findings are retained with attribution. This same-provider integration check does not establish independent corroboration or broad approval."
+  ]
+}

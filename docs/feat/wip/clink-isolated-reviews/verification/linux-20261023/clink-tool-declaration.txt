@@ -1,0 +1,27 @@
+No PAL model providers are configured. Available tools: apilookup, challenge, clink, docgen, jules, listmodels, planner, tracer, version. Use listmodels for startup setup diagnostics and CLI executable observations. Use each available local workflow tool directly for its task. For CLI conversations, use clink. A new conversation requires cli_name when multiple CLI clients are configured. A follow-up may omit cli_name and role to reuse saved selection with continuation_id. CLI authentication is unverified; invocation rechecks the selected executable. Jules uses its own JULES_API_KEY.
+
+Link a request to an external AI CLI (Gemini CLI, Qwen CLI, etc.) through PAL MCP to reuse their capabilities inside existing workflows.
+
+exec tool declaration:
+```ts
+declare const tools: { mcp__pal__clink(args: {
+  // Full paths to relevant code
+  absolute_file_paths?: Array<string>;
+  // Opt in to native filesystem edits where supported. Defaults to false. For agy, false inherits saved permissions and does not guarantee read-only execution; true requests --mode accept-edits. Agy does not support editable_paths.
+  allow_edits?: boolean;
+  // Configured CLI client name (from conf/cli_clients). Available: agy, claude, codex, gemini. Required for a new conversation; may be omitted with continuation_id to reuse the last successful CLI selection.
+  cli_name?: "agy" | "claude" | "codex" | "gemini";
+  // Always reuse the latest continuation_id to preserve conversation context, files and findings, including across tools.
+  continuation_id?: string;
+  // Absolute paths the CLI may edit when allow_edits=true. Honored by the 'claude' CLI; other CLIs reject editable_paths with an error.
+  editable_paths?: Array<string>;
+  // Optional absolute image paths or base64 blobs for visual context.
+  images?: Array<string>;
+  // User request forwarded to the CLI (conversation context is pre-applied).
+  prompt: string;
+  // Role preset for the selected CLI. Reuses the last successful role on continuation, otherwise defaults to 'default'. Roles per CLI: agy: codereviewer, default, planner; claude: codereviewer, default, planner; codex: codereviewer, default, planner; gemini: codereviewer, default, planner
+  role?: "codereviewer" | "default" | "planner";
+  // Optional project directory on the PAL server's filesystem. Host-side '~' expansion is supported; the resulting path must be absolute and name an existing directory. On the first clink call, omission or null uses the CLI manifest working_dir, then scratch. Continuations inherit the saved choice. An explicit directory may select the first project from scratch; changing an established project requires a new conversation. Omission or null never clears the saved project.
+  working_directory_absolute_path?: string | null;
+}): Promise<CallToolResult>; };
+```

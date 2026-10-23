@@ -1,0 +1,38 @@
+{
+  "id": 27,
+  "name": "external-discovery-error",
+  "description": "listmodels returns a fatal catalog error; discovery must stay unresolved with no speculative clink dispatch.",
+  "skills": [
+    "review-code"
+  ],
+  "prompt": "Use `$kk:review-code:isolated` to resume the supplied checkpoint.md and present the review.",
+  "trap": "An error response is read as an empty API catalog, so the actor builds a clink roster from guessed clients.",
+  "files": [
+    "test-files/change.patch",
+    "test-files/checkpoint.md",
+    "test-files/discovery.json",
+    "test-files/independent-review.md",
+    "test-files/scope.json",
+    "test-files/source/base/settings.py",
+    "test-files/source/candidate/settings.py",
+    "test-files/source/provider.py"
+  ],
+  "assertions": [
+    {
+      "id": "27.1",
+      "text": "The actor loads the isolated workflow and the shared external-review protocol before stating a backend decision."
+    },
+    {
+      "id": "27.2",
+      "text": "The backend decision is unresolved: the listmodels error is reported as discovery failure, explicitly distinguished from an empty API catalog."
+    },
+    {
+      "id": "27.3",
+      "text": "No clink or codereview request is planned or made; the internal reviewer proceeds and its P1 is reported with attribution."
+    },
+    {
+      "id": "27.4",
+      "text": "The report states the external coverage limit and a concrete next action (verify the PAL installation/discovery, then run a new isolated invocation) without claiming any external review occurred."
+    }
+  ]
+}

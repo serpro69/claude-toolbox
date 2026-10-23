@@ -1,0 +1,39 @@
+{
+  "date": "2026-10-23",
+  "candidate": "d25c2d029a5d157935aa9bb836c18e9725969b8f plus pal-discovery.patch (see pal-fix-validation.json)",
+  "capy_run_id": "9ca9e010-6d72-4819-9ee2-8737ab4f9f9a",
+  "command": "PYTHONDONTWRITEBYTECODE=1 /home/sergio/.virtualenvs/pal/bin/python -m pytest tests/test_task0_empty_catalog.py -s",
+  "setup": "Same disposable isolated-startup probe as empty-api-discovery.json, now against corrected source. No inference/network call; all fake CLI paths absent.",
+  "response": {
+    "status": "success",
+    "content": "# Available AI Models\n\n## Google Gemini ❌\n**Status**: Not configured (set GEMINI_[REDACTED_SECRET])\n\n## OpenAI ❌\n**Status**: Not configured (set OPENAI_[REDACTED_SECRET])\n\n## Azure OpenAI ❌\n**Status**: Not configured (set AZURE_OPENAI_[REDACTED_SECRET]and AZURE_OPENAI_ENDPOINT)\n\n## X.AI (Grok) ❌\n**Status**: Not configured (set XAI_[REDACTED_SECRET])\n\n## AI DIAL ❌\n**Status**: Not configured (set DIAL_[REDACTED_SECRET])\n\n## Custom/Local API ✅\n**Status**: Configured and available\n\n*No models are currently allowed by restriction policy.*\n\n## OpenCode Go ❌\n**Status**: Not configured (set OPENCODE_GO_[REDACTED_SECRET])\n\n## OpenRouter ❌\n**Status**: Not configured (set OPENROUTER_[REDACTED_SECRET])\n**Note**: Provides access to GPT-5, O3, Mistral, and many more\n\n## Summary\n**Configured Providers**: 1\n**Total Available Models**: 0\n\n**Usage Tips**:\n- Use model aliases (e.g., 'flash', 'gpt5', 'opus') for convenience\n- In auto mode, the CLI Agent will select the best model for each task\n- Custom models are only available when CUSTOM_API_URL is set\n- OpenRouter provides access to many cloud models with one API key",
+    "content_type": "text",
+    "metadata": {
+      "tool_name": "listmodels",
+      "configured_providers": 1,
+      "cli_clients_observed_at": "startup",
+      "cli_clients": [
+        {
+          "name": "claude",
+          "executable_found": false,
+          "authentication": "unverified"
+        },
+        {
+          "name": "codex",
+          "executable_found": false,
+          "authentication": "unverified"
+        },
+        {
+          "name": "gemini",
+          "executable_found": false,
+          "authentication": "unverified"
+        }
+      ]
+    },
+    "continuation_offer": null
+  },
+  "test_summary": "1 passed in 0.21s",
+  "api_catalog_content_matches_before": true,
+  "interpretation": "Existing CLI startup observations are now returned even with a configured API provider and zero eligible models. The API catalog text is unchanged. Added production regression separately checks mixed present/missing executables and disabled review.",
+  "sanitization": "Capy redacts API-key variable-name fragments; no key values supplied."
+}

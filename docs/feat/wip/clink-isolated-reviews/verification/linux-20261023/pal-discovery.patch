@@ -1,0 +1,120 @@
+diff --git a/docs/tools/listmodels.md b/docs/tools/listmodels.md
+index 93b0cc8..08c972a 100644
+--- a/docs/tools/listmodels.md
++++ b/docs/tools/listmodels.md
+@@ -40,6 +40,11 @@ The tool displays:
+ - Models with largest context windows
+ - Fastest models for quick tasks
+ 
++**CLI availability metadata:**
++- In both API-backed and provider-free modes, `metadata.cli_clients` lists each configured client with `name`, `executable_found`, and `authentication: "unverified"`.
++- `metadata.cli_clients_observed_at: "startup"` identifies when those executable observations were taken. This does not timestamp the API model catalog or verify CLI login; invocation checks the selected executable again.
++- CLI observations remain available when an API provider is configured but restrictions leave no eligible models, or when the API review tool is disabled. Client names are not model-provider identities.
++
+ ## Example Output
+ 
+ ```
+@@ -102,4 +107,4 @@ This tool requires no parameters - it simply queries the server configuration an
+ - **Use `listmodels`** for: Understanding available options and model capabilities
+ - **Use `chat`** for: General discussions about which model to use for specific tasks
+ - **Use `version`** for: Server configuration and version information
+-- **Use other tools** for: Actual analysis, debugging, or development work
+\ No newline at end of file
++- **Use other tools** for: Actual analysis, debugging, or development work
+diff --git a/tests/test_cli_only_startup.py b/tests/test_cli_only_startup.py
+index 1c6b484..2e1f126 100644
+--- a/tests/test_cli_only_startup.py
++++ b/tests/test_cli_only_startup.py
+@@ -151,6 +151,53 @@ def test_api_mode_uses_registration_despite_empty_restricted_catalog(isolated_st
+     assert not snapshot.provider_free  # Environment edits do not change the startup mode.
+ 
+ 
++@pytest.mark.parametrize(
++    "catalog_state,disable_review",
++    [("provider-free", False), ("available", False), ("empty", False), ("available", True)],
++)
++@pytest.mark.asyncio
++async def test_listmodels_exposes_cli_observations_in_every_mode(
++    isolated_startup, monkeypatch, tmp_path, catalog_state, disable_review
++):
++    manifests, _ = isolated_startup
++    capture = install_fake_cli(manifests, tmp_path, name="claude")
++    if catalog_state != "provider-free":
++        path = tmp_path / "custom.json"
++        path.write_text(
++            json.dumps({"models": [{"model_name": "local", "context_window": 10000, "max_output_tokens": 1000}]})
++        )
++        monkeypatch.setenv("CUSTOM_API_URL", "http://localhost:11434/v1")
++        monkeypatch.setenv("CUSTOM_MODELS_CONFIG_PATH", str(path))
++        monkeypatch.setenv("CUSTOM_ALLOWED_MODELS", "unavailable-model" if catalog_state == "empty" else "local")
++    if disable_review:
++        monkeypatch.setattr(server, "TOOLS", server.apply_tool_filter(server.ALL_TOOLS, {"codereview"}))
++    snapshot = server.initialize_runtime()
++    assert snapshot.provider_free is (catalog_state == "provider-free")
++    assert ("codereview" in snapshot.available_tools) is (catalog_state != "provider-free" and not disable_review)
++
++    blocked = Mock(side_effect=AssertionError("Listing must use startup observations without launching a CLI"))
++    monkeypatch.setattr(asyncio, "create_subprocess_exec", blocked)
++    monkeypatch.setattr("clink.availability.resolve_executable", blocked)
++    response = json.loads((await server.handle_call_tool("listmodels", {}))[0].text)
++    assert response["status"] == "success"
++    assert response["metadata"]["cli_clients"] == [
++        {"name": "claude", "executable_found": True, "authentication": "unverified"},
++        {"name": "codex", "executable_found": False, "authentication": "unverified"},
++        {"name": "gemini", "executable_found": False, "authentication": "unverified"},
++    ]
++    assert response["metadata"]["cli_clients_observed_at"] == "startup"
++    if catalog_state == "provider-free":
++        assert response["metadata"]["mode"] == "provider-free"
++        assert response["metadata"]["observed_at"] == "startup"
++        assert response["metadata"]["configured_providers"] == 0
++    else:
++        assert response["metadata"]["configured_providers"] == 1
++        expected_count = 0 if catalog_state == "empty" else 1
++        assert f"**Total Available Models**: {expected_count}" in response["content"]
++    blocked.assert_not_called()
++    assert not capture.exists()
++
++
+ def test_opencode_registration_with_other_partial_settings_remains_api_mode(isolated_startup, monkeypatch):
+     monkeypatch.setenv("OPENCODE_GO_API_KEY", "synthetic")
+     monkeypatch.setenv("CUSTOM_API_KEY", "private")
+diff --git a/tools/listmodels.py b/tools/listmodels.py
+index 886fd5a..7b7d82d 100644
+--- a/tools/listmodels.py
++++ b/tools/listmodels.py
+@@ -362,6 +362,7 @@ class ListModelsTool(BaseTool):
+             metadata={
+                 "tool_name": self.name,
+                 "configured_providers": configured_count,
++                **self._cli_observations(runtime),
+             },
+         )
+ 
+@@ -426,14 +427,22 @@ class ListModelsTool(BaseTool):
+                 "observed_at": "startup",
+                 "available_tools": sorted(runtime.available_tools),
+                 "provider_setup": setup,
+-                "cli_clients": [
+-                    {"name": cli.name, "executable_found": cli.executable_found, "authentication": "unverified"}
+-                    for cli in runtime.cli_statuses
+-                ],
++                **self._cli_observations(runtime),
+             },
+         )
+         return [TextContent(type="text", text=output.model_dump_json())]
+ 
++    @staticmethod
++    def _cli_observations(runtime: RuntimeCapabilities) -> dict[str, Any]:
++        """Expose the same CLI startup snapshot in both discovery modes."""
++        return {
++            "cli_clients_observed_at": "startup",
++            "cli_clients": [
++                {"name": cli.name, "executable_found": cli.executable_found, "authentication": "unverified"}
++                for cli in runtime.cli_statuses
++            ],
++        }
++
+     def get_model_category(self) -> ToolModelCategory:
+         """Return the model category for this tool."""
+         return ToolModelCategory.FAST_RESPONSE  # Simple listing, no AI needed
