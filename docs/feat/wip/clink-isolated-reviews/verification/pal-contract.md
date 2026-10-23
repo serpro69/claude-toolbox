@@ -1,4 +1,16 @@
-# PAL contract verification — partial
+# PAL contract verification
+
+**Current result, 2026-10-23:** Task 0 passed for PAL revision
+`c73dab7d8cf9d791961b84614a0e082b74ee5569`, whose diff from
+`d25c2d029a5d157935aa9bb836c18e9725969b8f` exactly matches the
+[verified discovery correction](linux-20261023/pal-discovery.patch).
+The [Linux record](linux-20261023/README.md) contains C1–C8 results, independent
+review, the content-addressed build identity and deployment limits. Unmodified
+1.4.2 and the currently connected server are not certified to contain this fix.
+
+## Historical partial verification — macOS, 2026-10-22
+
+The record below preserves the earlier host's evidence and status at that time.
 
 Date: 2026-10-22. Task 0 is incomplete; this record does not authorize Task 1.
 Requirements remain the corrected [C1–C8 contract](../design.md#task-0-acceptance-contract).
