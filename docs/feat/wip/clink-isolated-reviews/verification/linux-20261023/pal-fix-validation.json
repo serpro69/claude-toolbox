@@ -1,0 +1,51 @@
+{
+  "date": "2026-10-23",
+  "repository": "serpro69/pal-mcp-server",
+  "base_revision": "d25c2d029a5d157935aa9bb836c18e9725969b8f",
+  "candidate": "committed_revision; identical to the tested base_revision plus pal-discovery.patch, not a released version",
+  "committed_revision": "c73dab7d8cf9d791961b84614a0e082b74ee5569",
+  "commit_reconciliation": "The committed diff SHA-256 matches patch_sha256 and all three committed files match files_sha256. No source changes were introduced while committing.",
+  "patch": "pal-discovery.patch",
+  "patch_sha256": "b8de8e14faea5b87c242b20342a32481b5d056029ab07127b170f73f2c098475",
+  "files_sha256": {
+    "tools/listmodels.py": "60d416c231d7d7d6b4f0e83d74e9c00ec9a38f1700e5dcb7d5ba43d86f92683e",
+    "tests/test_cli_only_startup.py": "8baf2c5eb5f1650bfedb90af22986343844451a691992470184b4a365a30ed6a",
+    "docs/tools/listmodels.md": "9222da96048a2fe8eaac68507b2dada012129beb5992d57ad04b2d8f1b1cd4cb"
+  },
+  "execution": {
+    "cwd": "/tmp/clink-pal-fix-20261023",
+    "python": "/home/sergio/.virtualenvs/pal/bin/python (3.10.12)",
+    "quality_command": "export VIRTUAL_ENV=/home/sergio/.virtualenvs/pal\nexport PATH=\"$VIRTUAL_ENV/bin:$PATH\"\nexport PYTHONDONTWRITEBYTECODE=1\n./code_quality_checks.sh",
+    "baseline": {
+      "run_id": "1c3a4477-f433-4e59-997d-068cb2b5bfa3",
+      "exit_code": 0,
+      "result": "3445 passed, 17 skipped, 26 deselected, 19 subtests passed in 129.54s",
+      "lint_format_imports": "passed"
+    },
+    "regression_before_fix": {
+      "run_id": "6bac9f76-3963-4e26-a5c6-257291a5c691",
+      "exit_code": 1,
+      "result": "4 failed, 54 deselected",
+      "cause": "API-mode cases raise KeyError: cli_clients; provider-free control lacks the newly introduced cli_clients_observed_at field",
+      "command": "python -m pytest tests/test_cli_only_startup.py -k listmodels_exposes_cli_observations_in_every_mode"
+    },
+    "targeted_after_fix": {
+      "run_id": "feee90b7-f579-40d1-bc1e-5a47a8d2b044",
+      "exit_code": 0,
+      "result": "74 passed in 9.61s",
+      "command": "python -m pytest tests/test_cli_only_startup.py tests/test_listmodels.py tests/test_listmodels_restrictions.py tests/test_cli_only_mcp.py"
+    },
+    "full_after_fix": {
+      "run_id": "4a086a9c-987c-4709-b4ea-1ba77dfdfaa6",
+      "exit_code": 0,
+      "result": "3449 passed, 17 skipped, 26 deselected, 19 subtests passed in 123.13s",
+      "lint_format_imports": "passed; 345 files left unchanged by Black"
+    }
+  },
+  "application": "Copied only the three reviewed files into the clean sibling worktree after checking its HEAD and scoped diff. Final file hashes match tested files.",
+  "limits": [
+    "Connected PAL process was not restarted or reconfigured; activation/release is separate.",
+    "Earlier live C3-C8 evidence is retained for unchanged clink execution, parsers, conversation code and native configuration; this fix changes only listmodels metadata.",
+    "Default git diff --check flags Python indentation because user-wide core.whitespace includes indent-with-non-tab. The project formatter accepts spaces. Command-local git -c core.whitespace=trailing-space,space-before-tab diff --check passed; saved Git configuration unchanged."
+  ]
+}

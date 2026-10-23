@@ -1,0 +1,39 @@
+{
+  "date": "2026-10-23",
+  "pal_revision": "d25c2d029a5d157935aa9bb836c18e9725969b8f",
+  "capy_run_id": "9d34be67-c67e-4552-9c94-1225560af1af",
+  "command": "PYTHONDONTWRITEBYTECODE=1 /home/sergio/.virtualenvs/pal/bin/python -m pytest tests/test_task0_empty_catalog.py -s",
+  "setup": "Temporary probe reuses upstream isolated_startup fixture. Registers a synthetic Custom/Local provider catalog with one local model and restricts it to unavailable-model. No inference/network call. All fake CLI paths are absent.",
+  "runtime_assertions": [
+    "provider_free is false",
+    "codereview and clink are available tools",
+    "restricted available model catalog is empty"
+  ],
+  "response": {
+    "status": "success",
+    "content": "# Available AI Models\n\n## Google Gemini ❌\n**Status**: Not configured (set GEMINI_[REDACTED_SECRET])\n\n## OpenAI ❌\n**Status**: Not configured (set OPENAI_[REDACTED_SECRET])\n\n## Azure OpenAI ❌\n**Status**: Not configured (set AZURE_OPENAI_[REDACTED_SECRET]and AZURE_OPENAI_ENDPOINT)\n\n## X.AI (Grok) ❌\n**Status**: Not configured (set XAI_[REDACTED_SECRET])\n\n## AI DIAL ❌\n**Status**: Not configured (set DIAL_[REDACTED_SECRET])\n\n## Custom/Local API ✅\n**Status**: Configured and available\n\n*No models are currently allowed by restriction policy.*\n\n## OpenCode Go ❌\n**Status**: Not configured (set OPENCODE_GO_[REDACTED_SECRET])\n\n## OpenRouter ❌\n**Status**: Not configured (set OPENROUTER_[REDACTED_SECRET])\n**Note**: Provides access to GPT-5, O3, Mistral, and many more\n\n## Summary\n**Configured Providers**: 1\n**Total Available Models**: 0\n\n**Usage Tips**:\n- Use model aliases (e.g., 'flash', 'gpt5', 'opus') for convenience\n- In auto mode, the CLI Agent will select the best model for each task\n- Custom models are only available when CUSTOM_API_URL is set\n- OpenRouter provides access to many cloud models with one API key",
+    "content_type": "text",
+    "metadata": {
+      "tool_name": "listmodels",
+      "configured_providers": 1
+    },
+    "continuation_offer": null
+  },
+  "internal_cli_observations": [
+    {
+      "name": "claude",
+      "executable_found": false
+    },
+    {
+      "name": "codex",
+      "executable_found": false
+    },
+    {
+      "name": "gemini",
+      "executable_found": false
+    }
+  ],
+  "test_summary": "1 passed in 0.21s",
+  "interpretation": "The probe passed its setup/response assertions; it confirms an unmet integration requirement, not a successful C1/C2 acceptance. Discovery response exposes configured_providers only, not CLI executable observations retained inside the server.",
+  "sanitization": "Capy redacted API-key variable-name fragments; no key values were supplied."
+}

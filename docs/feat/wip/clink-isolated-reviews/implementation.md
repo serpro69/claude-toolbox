@@ -2,7 +2,7 @@
 
 > Design: [design.md](design.md)
 > Tasks: [tasks.md](tasks.md)
-> Status: pending; Task 0 must pass before plugin instruction authoring
+> Status: Task 0 verified against the recorded corrected PAL build; Tasks 1–3 pending
 
 ## Repository orientation
 
@@ -26,7 +26,7 @@ Preserve the existing API transport in `skills/_shared/pal-codereview-invocation
 
 Do not run a paid/login-dependent probe silently while claiming it is a static check. Use already authorized test accounts and disposable fixtures, and follow the execution environment's approval rules. Never install CLIs, initiate login or rewrite user model configuration as a workaround. The selected providers' full live acceptance coverage must be stated; a skipped provider is not a passed contract.
 
-The evidence record is deliberately absent until execution. Creating this plan does not satisfy Task 0. PAL plans at the design-time revision are inputs to verification, not a release pin or implementation evidence.
+Execution evidence now lives in [verification/pal-contract.md](verification/pal-contract.md), with [Linux revalidation, the resolved discovery gap and exact corrected build](verification/linux-20261023/README.md). Task 0 passed for that local candidate; the installed/released PAL must contain the correction before relying on API-mode clink discovery. Creating this plan did not satisfy Task 0. PAL plans at the design-time revision are inputs to verification, not a release pin or implementation evidence.
 
 ## Task 1: Code review with discovery-only clink selection
 
@@ -108,6 +108,6 @@ Run both host variants for discovery-only routing, author exclusion, instruction
 
 ## Deferred verification and upstream gaps
 
-Task 0 remains pending until C1–C8 are exercised against a recorded candidate build; an upstream implementation or discovery observation alone does not satisfy it. Provider identity must be established reliably through PAL/operator configuration. If a required capability is missing, record the exact gap in `verification/pal-contract.md` with owner and next action, and keep downstream authoring blocked. Missing read telemetry instead remains a per-reviewer coverage limit under C7, without requiring a new PAL tracing feature. Native permission inheritance is documented under C4/C5, not deferred sandbox work.
+Task 0 is complete for the exact base-plus-patch candidate recorded in [verification/pal-contract.md](verification/pal-contract.md); publication and installation activation remain separate. Provider identity must still be established reliably through PAL/operator configuration. If later verification finds a required capability missing, record the exact gap with owner and next action, and keep dependent work blocked. Missing read telemetry remains a per-reviewer coverage limit under C7, without requiring a new PAL tracing feature. Native permission inheritance is documented under C4/C5, not deferred sandbox work.
 
 No old-PAL shim, automatic model selector or runtime backend switch is a deferred task: those are explicit exclusions. Concurrent dispatch is conditional on verified isolation; sequential dispatch remains a complete supported execution strategy.
