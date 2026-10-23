@@ -1,6 +1,6 @@
 # Clink fallback for isolated reviews
 
-> Status: design reviewed and findings addressed; Task 0 verification and implementation pending
+> Status: design reviewed; Task 0 verified against the recorded corrected PAL build; implementation pending
 > Created: 2026-10-11
 > Issue: [claude-toolbox #168](https://github.com/serpro69/claude-toolbox/issues/168)
 > Implementation: [implementation.md](implementation.md)
@@ -205,4 +205,4 @@ Task 0 proves the PAL boundary. Behavioral evals then prove instruction routing,
 
 Update user-facing isolated-mode documentation with discovery-only routing, variable reviewer count, configured model ownership, cost implications, minimum PAL requirement and the limits of no-edit controls and source-receipt evidence. Generate Codex output from canonical sources after each implementation slice. Rollback removes the new routing/clink integration and regenerates; it restores the existing API-only isolated workflows without changing user PAL configuration.
 
-The design review corrections are recorded in [Review corrections](#review-corrections-2026-10-21). No live Task 0 acceptance run or skill implementation has been performed; the implementation plan records that pending work and its acceptance checks.
+The design review corrections are recorded in [Review corrections](#review-corrections-2026-10-21). Task 0 passed for the corrected local PAL candidate recorded in [verification/pal-contract.md](verification/pal-contract.md); [the Linux record](verification/linux-20261023/README.md) preserves the original discovery gap, its verified fix and deployment limits. Skill implementation remains pending and may use that verified contract.
