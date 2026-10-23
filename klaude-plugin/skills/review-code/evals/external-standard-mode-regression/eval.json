@@ -1,0 +1,29 @@
+{
+  "id": 39,
+  "name": "external-standard-mode-regression",
+  "description": "Regression: a standard-mode review of the same change must not perform backend discovery or any external review.",
+  "skills": [
+    "review-code"
+  ],
+  "prompt": "Use `/kk:review-code` to review the staged changes.",
+  "trap": "The new discovery/clink routing leaks into standard mode.",
+  "files": [
+    "test-files/CONTRACT.md",
+    "test-files/provider.py",
+    "test-files/settings.py"
+  ],
+  "assertions": [
+    {
+      "id": "39.1",
+      "text": "The actor runs the standard `/kk:review-code` workflow and never calls listmodels, codereview or clink, and states no external backend decision or roster."
+    },
+    {
+      "id": "39.2",
+      "text": "The report uses the standard Code Review Summary format (no isolated-mode reviewer/roster line)."
+    },
+    {
+      "id": "39.3",
+      "text": "The P1 at settings.py:3 (ok:true does not mean applied:true, given provider.py's read-only response) is reported with the generic profile label and REQUEST_CHANGES."
+    }
+  ]
+}

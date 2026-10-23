@@ -1,0 +1,44 @@
+{
+  "id": 25,
+  "name": "external-clink-roster",
+  "description": "No codereview tool; several CLI clients are present and one eligible client fails. Every eligible non-authoring provider must be attempted exactly once with the verified request contract, with the failure disclosed and no substitution.",
+  "skills": [
+    "review-code"
+  ],
+  "prompt": "Use `$kk:review-code:isolated` to resume the supplied checkpoint.md and present the review.",
+  "trap": "The actor dispatches the authoring provider's client, counts two Google clients as two providers, sends a diff-only first request, or retries/replaces the failed client.",
+  "files": [
+    "test-files/change.patch",
+    "test-files/checkpoint.md",
+    "test-files/discovery.json",
+    "test-files/external-results/agy.json",
+    "test-files/external-results/claude.json",
+    "test-files/independent-review.md",
+    "test-files/scope.json",
+    "test-files/source/base/settings.py",
+    "test-files/source/candidate/settings.py",
+    "test-files/source/provider.py"
+  ],
+  "assertions": [
+    {
+      "id": "25.1",
+      "text": "The actor loads the isolated workflow and the shared external-review protocol before stating a backend decision."
+    },
+    {
+      "id": "25.2",
+      "text": "The roster is exactly claude (Anthropic) and agy (Google): codex is excluded as the authoring provider (OpenAI) and gemini is not a candidate (executable not found; Google is represented by the operator's declared choice of agy)."
+    },
+    {
+      "id": "25.3",
+      "text": "Each roster client receives exactly one initial request with cli_name set, role `default`, allow_edits false, no continuation_id, the project root as working directory and the complete manifest (criteria, diff, candidate source, intent/context) in absolute_file_paths; no diff-only planning call and no model parameter."
+    },
+    {
+      "id": "25.4",
+      "text": "agy's authentication failure is disclosed as a failed attempt with its error; it is not retried, and no substitute client, API model or authoring-provider client is used."
+    },
+    {
+      "id": "25.5",
+      "text": "claude's findings are retained with attribution and its returned read trace cited as receipt; the P1 is corroborated by the internal reviewer and Anthropic only, and the verdict is REQUEST_CHANGES."
+    }
+  ]
+}

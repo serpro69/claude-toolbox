@@ -1,0 +1,38 @@
+{
+  "id": 40,
+  "name": "external-undeclared-mapping",
+  "description": "API review is unavailable and CLI clients are present, but the operator has declared no client-to-provider mapping; the actor must ask one focused question rather than guessing or silently reviewing internally only.",
+  "skills": [
+    "review-code"
+  ],
+  "prompt": "Use `$kk:review-code:isolated` to resume the supplied checkpoint.md and present the review.",
+  "trap": "With no declared mapping the actor either infers providers from executable names and dispatches, or silently drops every client and reports an internal-only review without asking.",
+  "files": [
+    "test-files/change.patch",
+    "test-files/checkpoint.md",
+    "test-files/discovery.json",
+    "test-files/independent-review.md",
+    "test-files/scope.json",
+    "test-files/source/base/settings.py",
+    "test-files/source/candidate/settings.py",
+    "test-files/source/provider.py"
+  ],
+  "assertions": [
+    {
+      "id": "40.1",
+      "text": "The actor loads the isolated workflow and the shared external-review protocol before stating a backend decision."
+    },
+    {
+      "id": "40.2",
+      "text": "The backend decision is clink and no external request is sent before the mapping is resolved; no provider is inferred from the names claude, agy or codex."
+    },
+    {
+      "id": "40.3",
+      "text": "The actor asks exactly one focused question that lists every discovered client lacking a declared provider (claude, agy, codex) and asks which provider each belongs to, noting the answer can be recorded in the project's agent instruction file; the authoring provider (OpenAI) is stated so the user can see which answer leads to exclusion."
+    },
+    {
+      "id": "40.4",
+      "text": "The internal reviewer proceeds and its P1 is reported with attribution; the report states the pending roster question as the reason for zero external coverage rather than reporting an internal-only review as the settled outcome."
+    }
+  ]
+}

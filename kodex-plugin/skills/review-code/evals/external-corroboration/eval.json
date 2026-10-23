@@ -1,0 +1,40 @@
+{
+  "id": 37,
+  "name": "external-corroboration",
+  "description": "Two external reviewers independently flag the defect with different severities while the internal reviewer approves; corroboration must name providers and preserve the disagreement.",
+  "skills": [
+    "review-code"
+  ],
+  "prompt": "Use `$kk:review-code:isolated` to resume the supplied checkpoint.md and present the review.",
+  "trap": "The internal approval suppresses the external finding, or the majority is presented as an automatic verdict.",
+  "files": [
+    "test-files/change.patch",
+    "test-files/checkpoint.md",
+    "test-files/discovery.json",
+    "test-files/external-results/agy.json",
+    "test-files/external-results/claude.json",
+    "test-files/independent-review.md",
+    "test-files/scope.json",
+    "test-files/source/base/settings.py",
+    "test-files/source/candidate/settings.py",
+    "test-files/source/provider.py"
+  ],
+  "assertions": [
+    {
+      "id": "37.1",
+      "text": "The actor loads the isolated workflow and the shared external-review protocol before stating a backend decision."
+    },
+    {
+      "id": "37.2",
+      "text": "The P1 is marked corroborated by claude (Anthropic) and agy (Google), citing both reviewers' returned read traces as observed receipt; the internal reviewer's APPROVE and its reasoning are shown alongside, not discarded."
+    },
+    {
+      "id": "37.3",
+      "text": "The differing severities (High vs Critical) are shown side by side in native form; neither is remapped to the other."
+    },
+    {
+      "id": "37.4",
+      "text": "The verdict is REQUEST_CHANGES on the evidence of the provider contract and candidate source, explicitly not as a majority vote."
+    }
+  ]
+}
