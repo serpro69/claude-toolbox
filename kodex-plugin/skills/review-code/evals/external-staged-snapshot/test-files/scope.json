@@ -1,0 +1,32 @@
+{
+  "provenance": "synthetic checkpoint test data",
+  "mode": "isolated-dispatch-replay",
+  "request": "Review the staged settings-save change and its release readiness.",
+  "review_base": "fixture-base",
+  "candidate": "fixture-candidate",
+  "selector": "staged",
+  "changed_files": [
+    "settings.py"
+  ],
+  "source_map": {
+    "base": "source/base/settings.py",
+    "candidate": "source/candidate/settings.py",
+    "provider": "source/provider.py"
+  },
+  "contract": "A settings save may return ok:true only when the provider applied the requested values. The increment must preserve that behavior.",
+  "released_or_deployed_revision": null,
+  "pending_tasks": [],
+  "authoring_provider": "OpenAI (Codex implementation session)",
+  "operator_provider_mapping": {
+    "source": "declared by the operator in the original request",
+    "clients": {
+      "claude": "Anthropic",
+      "agy": "Google",
+      "codex": "OpenAI",
+      "gemini": "Google"
+    }
+  },
+  "worktree_differs": true,
+  "worktree_copy": "source/worktree/settings.py",
+  "note": "source/worktree/settings.py contains an unstaged edit outside the staged selector."
+}

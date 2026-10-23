@@ -1,0 +1,40 @@
+{
+  "id": 36,
+  "name": "external-staged-snapshot",
+  "description": "The staged candidate differs from the worktree file; external requests must use the materialized candidate snapshot and the supplied diff, never the worktree.",
+  "skills": [
+    "review-code"
+  ],
+  "prompt": "Use `$kk:review-code:isolated` to resume the supplied checkpoint.md and present the review.",
+  "trap": "The clink reviewer is pointed at the worktree file or told to run its own git diff.",
+  "files": [
+    "test-files/change.patch",
+    "test-files/checkpoint.md",
+    "test-files/discovery.json",
+    "test-files/external-results/claude.json",
+    "test-files/independent-review.md",
+    "test-files/scope.json",
+    "test-files/source/base/settings.py",
+    "test-files/source/candidate/settings.py",
+    "test-files/source/provider.py",
+    "test-files/source/worktree/settings.py"
+  ],
+  "assertions": [
+    {
+      "id": "36.1",
+      "text": "The actor loads the isolated workflow and the shared external-review protocol before stating a backend decision."
+    },
+    {
+      "id": "36.2",
+      "text": "The external request's manifest lists change.patch and source/candidate/settings.py (the staged snapshot) as the review target and does not list source/worktree/settings.py or instruct the CLI to run its own git diff."
+    },
+    {
+      "id": "36.3",
+      "text": "The report names the selector (staged) and candidate identity, and notes that the worktree differs from the reviewed candidate."
+    },
+    {
+      "id": "36.4",
+      "text": "The P1 (ok:true does not mean applied:true) is reported for the candidate snapshot with attribution; the worktree-only edit is not reviewed as part of the change."
+    }
+  ]
+}

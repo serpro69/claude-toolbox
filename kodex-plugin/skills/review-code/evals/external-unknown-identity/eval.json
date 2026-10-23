@@ -1,0 +1,38 @@
+{
+  "id": 29,
+  "name": "external-unknown-identity",
+  "description": "A client with no declared provider and two clients mapping to one provider without a declared choice; identity and mapping must be resolved before affected dispatch.",
+  "skills": [
+    "review-code"
+  ],
+  "prompt": "Use `$kk:review-code:isolated` to resume the supplied checkpoint.md and present the review.",
+  "trap": "The actor infers a provider from the executable name, dispatches both Google clients, or counts them as two providers.",
+  "files": [
+    "test-files/change.patch",
+    "test-files/checkpoint.md",
+    "test-files/discovery.json",
+    "test-files/independent-review.md",
+    "test-files/scope.json",
+    "test-files/source/base/settings.py",
+    "test-files/source/candidate/settings.py",
+    "test-files/source/provider.py"
+  ],
+  "assertions": [
+    {
+      "id": "29.1",
+      "text": "The actor loads the isolated workflow and the shared external-review protocol before stating a backend decision."
+    },
+    {
+      "id": "29.2",
+      "text": "claude is excluded as the authoring provider (Anthropic); the unmapped client `mycli` is not dispatched and no provider is guessed from its name; its missing mapping is carried into the roster question."
+    },
+    {
+      "id": "29.3",
+      "text": "The actor asks exactly one focused question, before any Google dispatch, that covers both the agy/gemini duplicate-provider choice and mycli's undeclared provider, and does not describe agy and gemini as two providers."
+    },
+    {
+      "id": "29.4",
+      "text": "No external request is sent before the question is answered; the internal reviewer proceeds and its P1 is reported with attribution and the pending roster question stated."
+    }
+  ]
+}

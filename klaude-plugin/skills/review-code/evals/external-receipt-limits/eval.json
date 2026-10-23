@@ -1,0 +1,40 @@
+{
+  "id": 41,
+  "name": "external-receipt-limits",
+  "description": "Two executed clink reviews with limited evidence: one returned a denied criteria read while citing that file; the other returned no read trace, truncated output and an inherited-permissions note. Classification must follow the returned evidence.",
+  "skills": [
+    "review-code"
+  ],
+  "prompt": "Use `/kk:review-code:isolated` to resume the supplied checkpoint.md and present the review.",
+  "trap": "Plausible citations are taken as receipt, missing telemetry or inherited permissions are treated as failure or exclusion, or truncated output is read as complete coverage.",
+  "files": [
+    "test-files/change.patch",
+    "test-files/checkpoint.md",
+    "test-files/discovery.json",
+    "test-files/external-results/agy.json",
+    "test-files/external-results/claude.json",
+    "test-files/independent-review.md",
+    "test-files/scope.json",
+    "test-files/source/base/settings.py",
+    "test-files/source/candidate/settings.py",
+    "test-files/source/provider.py"
+  ],
+  "assertions": [
+    {
+      "id": "41.1",
+      "text": "The actor loads the isolated workflow and the shared external-review protocol before stating a backend decision."
+    },
+    {
+      "id": "41.2",
+      "text": "claude's result is classified as executed but not adequately evidenced because its returned trace shows the criteria read was denied, even though its answer cites that file; its findings are retained with attribution but do not count toward corroboration."
+    },
+    {
+      "id": "41.3",
+      "text": "agy remains an eligible, dispatched client: the absence of a read trace and the inherited native permissions are reported as limits (receipt unverified, no enforced read-only access), not as a failure or exclusion; its visible finding is retained with the truncation reported as a coverage limit, with no complete-coverage claim."
+    },
+    {
+      "id": "41.4",
+      "text": "The P1 is reported as supported by the internal reviewer only, the verdict is REQUEST_CHANGES, and no broad approval or corroboration is claimed from either external result."
+    }
+  ]
+}

@@ -1,0 +1,28 @@
+{
+  "provenance": {
+    "kind": "synthetic-test-data",
+    "variant": "api-success",
+    "live_mcp_call": false
+  },
+  "step1": {
+    "status": "pause_for_code_review",
+    "continuation_id": "synthetic-api-conv-1",
+    "file_context": {
+      "files_embedded": 1
+    }
+  },
+  "step2": {
+    "status": "calling_expert_analysis",
+    "continuation_id": "synthetic-api-conv-1",
+    "model_used": "gemini-3-pro",
+    "file_context": {
+      "type": "fully_embedded",
+      "files_embedded": 9
+    },
+    "expert_analysis": {
+      "status": "analysis_complete",
+      "raw_analysis": "Findings:\n1. [High] source/candidate/settings.py:3 \u2014 save() returns ok from the transport response. Provider.apply returns {ok: true, applied: false} for read-only providers, so save reports success while values stay unchanged. Keep the applied check.\nFiles read: all listed criteria, change.patch, source/candidate/settings.py, source/base/settings.py, source/provider.py. Not read: none."
+    },
+    "code_review_complete": true
+  }
+}
