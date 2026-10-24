@@ -6,13 +6,19 @@
     "deployed environment"
   ],
   "expected_backend": "clink",
-  "expected_roster": "pending operator answer for Google duplicate",
-  "expected_unresolved": [
-    "mycli"
-  ],
-  "expected_verdict": "REQUEST_CHANGES",
+  "expected_provider_source": {
+    "claude": "assumed from shipped manifest (Anthropic); excluded as authoring provider",
+    "agy": "assumed from shipped manifest (Google); eligible, held until the question is answered",
+    "mycli": "undeclared; unresolved until the operator answers",
+    "gemini": "retired, not a candidate"
+  },
+  "expected_question": "one question covering only mycli's provider",
+  "expected_dispatch_before_answer": "none",
+  "expected_verdict": "REQUEST_CHANGES (internal reviewer only; external coverage pending the answer)",
   "negative_controls": [
-    "No provider guessed for mycli.",
-    "No Google dispatch before the answer."
+    "No request to confirm or correct the assumed defaults.",
+    "No provider inferred from the name mycli.",
+    "No gemini candidate and no duplicate-provider question.",
+    "No external request before the answer."
   ]
 }

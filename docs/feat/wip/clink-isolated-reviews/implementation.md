@@ -2,7 +2,7 @@
 
 > Design: [design.md](design.md)
 > Tasks: [tasks.md](tasks.md)
-> Status: Task 0 verified against the recorded corrected PAL build; Task 1 code complete (2026-10-23); Task 2 code complete (2026-10-24); Task 3 pending
+> Status: Task 0 verified against the recorded corrected PAL build; Task 1 code complete (2026-10-23); Task 2 code complete (2026-10-24); Task 2b code complete (2026-10-24); Task 3 pending
 
 ## Repository orientation
 
@@ -100,17 +100,32 @@ Run both host variants for discovery-only routing, author exclusion, instruction
 
 **Superseded 2026-10-23 (user-approved criterion change, recorded in tasks.md Task 1 execution context):** the matrix above is the design-time inventory of concerns, not a one-scenario-per-row authoring or completion requirement. Ship only decision-relevant scenarios (several rows share one decision-table branch and are covered together), grade semantic outcomes rather than wording or layout, and apply the bounded gate in Task 3.2 instead of exercising every row on every host.
 
+## Task 2b: Default provider mapping for shipped clients
+
+Authorized 2026-10-24 after Task 2 (design.md [Review corrections (2026-10-24)](design.md#review-corrections-2026-10-24)). Deliver the default mapping and the provider-source label in one slice, before Task 3 documents the behavior.
+
+Primary files:
+
+- `klaude-plugin/skills/_shared/external-review-invocation.md` (roster rule, reviewer record, aggregation/report).
+- `klaude-plugin/skills/review-code/review-isolated.md`, `review-code/SKILL.md`, `review-design/review-isolated.md`, `review-design/SKILL.md` (discovery sentence, roster report line, mode description).
+- Code-review eval 40, rewritten from "undeclared mapping asks a question" to "shipped names get assumed defaults and no question"; eval 29 covers the custom-name question with assumed defaults present and an advertised retired gemini.
+
+1. In the shared protocol, resolve each candidate's provider in order: operator declaration (`declared`), shipped-name default (`assumed from shipped manifest`), otherwise undeclared. State the three shipped names (`claude`, `codex`, `agy`) and their defaults in the protocol itself, and that `gemini` is retired and never a candidate, and keep the rules that a declaration overrides a default, that a mapping introduced by the reviewed diff is not a declaration, and that a custom name is never guessed → verify: eval 40's clients resolve without a question and eval 29's `mycli` still does not.
+2. Carry the provider source into the reviewer record, the roster line of both report templates and the corroboration rule (a corroboration resting on an assumed provider is labeled) → verify: the report shows `declared` or `assumed` per external reviewer.
+3. Update both SKILL.md isolated-mode descriptions so consumers learn that shipped clients work without configuration and that a declaration overrides or extends the defaults → verify: no remaining "must be declared" wording for shipped clients.
+4. Rewrite eval 40 (rename to `external-default-mapping`), run it and eval 29 once in component mode, regenerate Codex output and run the structure/graph checks → verify: eval 40 shows assumed labels, codex excluded by default, no question; eval 29 still asks for `mycli` only and reports gemini as retired.
+
 ## Task 3: Final verification and documentation
 
 1. Run `/kk:test` over the changed skill instructions and fixtures, the repository shell suites, `make generate-kodex`, `make plugin-graph`, and the affected generator tests → verify: all required checks pass; intentionally partial eval links remain untouched; a second generation produces identical generated file content.
 2. Run the bounded behavioral verification (see Task 3.2 in tasks.md; supersedes the complete-matrix wording) plus live code/document smoke reviews against the Task 0 PAL build → verify: author exclusion, discovery-only selection, configured model use, honest receipt reporting, no-edit behavior and independent continuation survive the final integrated instructions. Recheck affected contracts if PAL changed since Task 0.
-3. Run `/kk:document` and update `klaude-plugin/README.md`, relevant user-facing skill guidance, and root `README.md` where it describes isolated review → verify: users can find the minimum verified PAL requirement, configured model ownership, discovery-only behavior, provider count/cost, partial-failure reporting and the limits of no-edit controls and source-receipt evidence. Plugin prose contains no links back to toolbox-only feature documents.
+3. Run `/kk:document` and update `klaude-plugin/README.md`, relevant user-facing skill guidance, and root `README.md` where it describes isolated review → verify: users can find the minimum verified PAL requirement, configured model ownership, discovery-only behavior, provider count/cost, partial-failure reporting and the limits of no-edit controls and source-receipt evidence. Include the shipped-client provider defaults, the assumed label, how a `CLAUDE.md`/`AGENTS.md` declaration overrides them and when one is required (Task 2b). Plugin prose contains no links back to toolbox-only feature documents.
 4. Run `/kk:review-code` with the `skill-md` domain and relevant fixture languages, then `/kk:review-spec` over all three feature documents and final instructions → verify: findings are fixed or recorded with concrete reasons and next actions; the agreed discovery policy and Task 0 gate have not drifted.
 5. Record commands, eval outcomes, live evidence and outstanding limitations in `verification/final.md` → verify: no skipped live prerequisite is called passed and no pending implementation is marked done. Apply the repository's feature-completion convention only after the work is actually complete.
 6. Reduce `verification/` to compact records before merge (Task 3.7): retain summaries and final.md, move raw captures to the ignored local archive with a hashed inventory → verify: no capture files remain in the feature tree and retained links resolve.
 
 ## Deferred verification and upstream gaps
 
-Task 0 is complete for the exact base-plus-patch candidate recorded in [verification/pal-contract.md](verification/pal-contract.md); publication and installation activation remain separate. Provider identity must still be established reliably through PAL/operator configuration. If later verification finds a required capability missing, record the exact gap with owner and next action, and keep dependent work blocked. Missing read telemetry remains a per-reviewer coverage limit under C7, without requiring a new PAL tracing feature. Native permission inheritance is documented under C4/C5, not deferred sandbox work.
+Task 0 is complete for the exact base-plus-patch candidate recorded in [verification/pal-contract.md](verification/pal-contract.md); publication and installation activation remain separate. Provider identity comes from an operator declaration or, for PAL's shipped client names, the labeled defaults introduced by Task 2b; custom names still need a declaration. If later verification finds a required capability missing, record the exact gap with owner and next action, and keep dependent work blocked. Missing read telemetry remains a per-reviewer coverage limit under C7, without requiring a new PAL tracing feature. Native permission inheritance is documented under C4/C5, not deferred sandbox work.
 
 No old-PAL shim, automatic model selector or runtime backend switch is a deferred task: those are explicit exclusions. Concurrent dispatch is conditional on verified isolation; sequential dispatch remains a complete supported execution strategy.

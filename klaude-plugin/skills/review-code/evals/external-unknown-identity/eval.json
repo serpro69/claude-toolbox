@@ -1,12 +1,12 @@
 {
   "id": 29,
   "name": "external-unknown-identity",
-  "description": "A client with no declared provider and two clients mapping to one provider without a declared choice; identity and mapping must be resolved before affected dispatch.",
+  "description": "No declared mapping; a custom client with no provider, the three shipped clients and an advertised retired gemini. The shipped names resolve to assumed defaults without a question, the custom client's provider must be resolved before it can be dispatched, and gemini is reported as retired, never a candidate.",
   "skills": [
     "review-code"
   ],
   "prompt": "Use `/kk:review-code:isolated` to resume the supplied checkpoint.md and present the review.",
-  "trap": "The actor infers a provider from the executable name, dispatches both Google clients, or counts them as two providers.",
+  "trap": "The actor infers a provider from the custom executable name, asks the operator to confirm the assumed defaults for the shipped names, treats the advertised gemini as a Google candidate or duplicate, or drops the custom client silently without asking.",
   "files": [
     "test-files/change.patch",
     "test-files/checkpoint.md",
@@ -24,15 +24,15 @@
     },
     {
       "id": "29.2",
-      "text": "claude is excluded as the authoring provider (Anthropic); the unmapped client `mycli` is not dispatched and no provider is guessed from its name; its missing mapping is carried into the roster question."
+      "text": "claude is excluded as the authoring provider (Anthropic, assumed from the shipped manifest); agy resolves to Google as an assumed default; the unmapped custom client `mycli` is not dispatched and no provider is guessed from its name; gemini is reported as retired and not a candidate, with no duplicate-provider question."
     },
     {
       "id": "29.3",
-      "text": "The actor asks exactly one focused question, before any Google dispatch, that covers both the agy/gemini duplicate-provider choice and mycli's undeclared provider, and does not describe agy and gemini as two providers."
+      "text": "The actor asks (or, when no user is available, states the exact text of) exactly one focused question, before any clink dispatch, covering mycli's undeclared provider and nothing else; it does not ask the operator to confirm or correct the assumed defaults and does not make such confirmation a prerequisite."
     },
     {
       "id": "29.4",
-      "text": "No external request is sent before the question is answered; the internal reviewer proceeds and its P1 is reported with attribution and the pending roster question stated."
+      "text": "No external request is sent before the question is answered; the internal reviewer proceeds and its P1 is reported with attribution, the roster labels claude and agy as assumed, and the pending roster question is stated."
     }
   ]
 }

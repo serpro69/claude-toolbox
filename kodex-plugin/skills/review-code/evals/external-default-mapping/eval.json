@@ -1,0 +1,40 @@
+{
+  "id": 40,
+  "name": "external-default-mapping",
+  "description": "API review is unavailable, CLI clients are present and the operator has declared no client-to-provider mapping. PAL's shipped client names must resolve to their default providers, labeled as assumed, with no roster question; the authoring provider's client is excluded by that default.",
+  "skills": [
+    "review-code"
+  ],
+  "prompt": "Use `$kk:review-code:isolated` to resume the supplied checkpoint.md and present the review.",
+  "trap": "The actor either asks the operator to declare providers for shipped client names, or dispatches codex (OpenAI) because the exclusion was not applied to an assumed provider, or presents assumed providers as declared facts in the report.",
+  "files": [
+    "test-files/change.patch",
+    "test-files/checkpoint.md",
+    "test-files/discovery.json",
+    "test-files/external-results/agy.json",
+    "test-files/external-results/claude.json",
+    "test-files/independent-review.md",
+    "test-files/scope.json",
+    "test-files/source/base/settings.py",
+    "test-files/source/candidate/settings.py",
+    "test-files/source/provider.py"
+  ],
+  "assertions": [
+    {
+      "id": "40.1",
+      "text": "The actor loads the isolated workflow and the shared external-review protocol before stating a backend decision."
+    },
+    {
+      "id": "40.2",
+      "text": "The backend decision is clink; claude, agy and codex resolve to Anthropic, Google and OpenAI as defaults from PAL's shipped manifest with no roster question asked; codex is excluded as the authoring provider (OpenAI)."
+    },
+    {
+      "id": "40.3",
+      "text": "claude and agy each receive exactly one request with role `default`, allow_edits false, no continuation_id, no model parameter and the complete manifest; the report's roster labels each client's provider as assumed from the shipped manifest, not declared, and notes that an operator declaration in the project's agent instruction file would override the defaults."
+    },
+    {
+      "id": "40.4",
+      "text": "The internal reviewer's P1 is reported with attribution; where claude's returned read trace supports corroboration, the corroboration names Anthropic as an assumed provider; agy's findings are retained with unverified receipt and do not corroborate; the verdict is REQUEST_CHANGES."
+    }
+  ]
+}
