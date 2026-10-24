@@ -70,11 +70,32 @@ driver, live clink responses) were never in Git; they live in
 `.local-archives/feature-evidence/clink-isolated-reviews-task3-20261024/` with
 `inventory.sha256`.
 
+## Uploaded release assets (2026-10-24)
+
+Six assets were uploaded to the draft release `v0.24.1` (release id 422965673,
+currently `untagged-3c1ce457aa2285079e49`); every download was re-hashed and
+matches. The second archive packages the session raw outputs of Tasks 1, 2, 2b and
+3 (eval actor outputs, grader verdicts, Codex event logs and driver, live clink
+responses; 110 members), which were never tracked in Git. Exact IDs, API and
+download URLs: [clink-isolated-reviews-release-assets.json](clink-isolated-reviews-release-assets.json).
+
+| Asset | ID | Bytes | SHA-256 |
+| --- | ---: | ---: | --- |
+| `clink-isolated-reviews-evidence-20261024T202514Z-46b31187.manifest.json` | 673245715 | 15025 | `dd8b05c66d67abc0…` |
+| `clink-isolated-reviews-evidence-20261024T202514Z-46b31187.sha256` | 673245730 | 269 | `c3c0bc4786556169…` |
+| `clink-isolated-reviews-evidence-20261024T202514Z-46b31187.tar.gz` | 673245756 | 106842 | `5495a5fff62c7ced…` |
+| `clink-isolated-reviews-sessions-evidence-20261024T202514Z-46b31187.manifest.json` | 673245781 | 28779 | `dc31bd09ad10578f…` |
+| `clink-isolated-reviews-sessions-evidence-20261024T202514Z-46b31187.sha256` | 673245809 | 287 | `35ee725e271aace4…` |
+| `clink-isolated-reviews-sessions-evidence-20261024T202514Z-46b31187.tar.gz` | 673245828 | 507511 | `a1e131bfe6ad3614…` |
+
+For retrieval use the asset API URL (`repos/serpro69/claude-toolbox/releases/assets/<id>`
+with `Accept: application/octet-stream`) until the release is tagged; the browser
+download URLs embed the untagged slug and will change on publication.
+
 **Limits and maintainer actions.** The captures remain in the branch's history;
 only a squash merge or a history filter keeps them out of `master` (the
-2026-10-20 batch used the prepared filter-repo procedure). Registering this
-archive in `archives.json`, uploading it as a release asset and running the
-filter are maintainer actions, as for the earlier batch. The PAL fix evidence
+2026-10-20 batch used the prepared filter-repo procedure). Upload is done (above); registering this batch in `archives.json` and running the
+history filter remain maintainer actions, as for the earlier batch. The PAL fix evidence
 (`pal-discovery.patch`, `pal-fix-validation.json`) is also reproducible from PAL
 commit `c73dab7d8cf9d791961b84614a0e082b74ee5569`, whose diff from
 `d25c2d029a5d157935aa9bb836c18e9725969b8f` is the retained patch.
