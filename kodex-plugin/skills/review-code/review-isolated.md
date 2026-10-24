@@ -63,7 +63,7 @@ Prepare one categorized manifest for every reviewer, with absolute paths:
 1. **Instructions:** shared change context, common functional method, scope/knowledge protocols and all resolved profile checklists. These are criteria, not review targets.
 2. **Review evidence:** selected diff, changed candidate source (mark deletions), unchanged entry points, dependencies, consumers, state contracts and relevant delivery configuration. Ten surrounding files is an initial selection budget only. Follow identified contract questions through focused additions or name the uncovered boundary; do not scan the whole repository.
 3. **Historical evidence:** actual source files plus provenance manifest, distinct from candidate source.
-4. **Intent/context:** applicable specification files, Task Scope and factual change-context record. The record may be inlined into both prompts or placed in a readable file provided to both; a filename alone is insufficient evidence of receipt.
+4. **Intent/context:** applicable specification files, Task Scope and factual change-context record. The record may be inlined into every reviewer's prompt or placed in a readable file provided to every reviewer; a filename alone is insufficient evidence of receipt.
 
 Use these same material facts and source artifacts for every reviewer. The external backend is not chosen here; Step 6 discovers it once.
 
@@ -75,7 +75,7 @@ The required criteria set has **four common files plus every resolved profile fi
 
 ### External backend discovery
 
-Run the shared external-review protocol's discovery exactly once, now: inspect the advertised PAL tool surface and call `listmodels`, then record the frozen decision — **API** (resolve the most capable available model with reasoning support, per the PAL protocol), **clink** (build the roster: candidates, authoring provider, each client's provider with its source — declared, or assumed from PAL's shipped manifest — exclusions, one client per provider), **unresolved** or **none**. One focused roster question, covering whatever is unresolved (authoring provider, undeclared providers for clients outside the shipped set, duplicate-provider choice), is asked before any clink dispatch and only when something is unresolved; it never asks the operator to confirm an assumed default; the internal reviewer does not wait for it. The decision never changes within this invocation: an API runtime failure stays an API failure and does not re-open discovery.
+Run the shared external-review protocol's discovery exactly once, now: inspect the advertised PAL tool surface and call `listmodels`, then record the frozen decision — **API** (resolve the most capable available model with reasoning support, per the PAL protocol), **clink** (build the roster: candidates, authoring provider, each client's provider with its source — declared, observed from a configured or returned model, or assumed from PAL's shipped manifest — exclusions, one client per provider), **unresolved** or **none**. One focused roster question, covering whatever is unresolved (authoring provider, undeclared providers for clients outside the shipped set, duplicate-provider choice), is asked before any clink dispatch and only when something is unresolved; it never asks the operator to confirm an assumed default; the internal reviewer does not wait for it. The decision never changes within this invocation: an API runtime failure stays an API failure and does not re-open discovery.
 
 Launch the independent `code-reviewer` and the first external request in parallel when supported (clink reviewers run sequentially after that). No reviewer receives implementation conversation history or another reviewer's conclusions.
 
@@ -128,7 +128,8 @@ When discovery selected clink, send each roster client one fresh `clink` request
 Build the `prompt` from this template, with facts only:
 
 ```
-Independent code review. Read the criteria first, in order, then the evidence. Perform the
+Independent code review of intended behavior, preserved contracts, security, architecture and
+code quality under the listed criteria. Read the criteria first, in order, then the evidence. Perform the
 review yourself: do not invoke isolated-review skills or sub-agents. Make no edits to project
 files and run no tests, builds or commands that write files; read-only inspection commands
 are acceptable where you need them to read files. The listed diff and candidate snapshot
@@ -156,7 +157,7 @@ Record configured and observed model identity separately from the response. Pres
 
 ### Outcome records and receipt
 
-Before annotation, record each reviewer's outcome class (requested, attempted, executed, adequately evidenced) and observed source receipt under the shared protocol's reviewer record. For the API path inspect PAL's returned file-context/embedding metadata; for clink inspect returned tool-use/read results and denied-action metadata. Zero or unspecified coverage without other observable receipt evidence stays unverified. Final findings, the parent's `files_checked` list and correct-looking citations cannot establish receipt. Carry that limitation into the report before deciding whether any finding is corroborated.
+Before annotation, record each external reviewer's outcome class (requested, attempted, executed, adequately evidenced) and observed source receipt under the shared protocol's reviewer record. For the API path inspect PAL's returned file-context/embedding metadata; for clink inspect returned tool-use/read results and denied-action metadata. Zero or unspecified coverage without other observable receipt evidence stays unverified. Final findings, the parent's `files_checked` list and correct-looking citations cannot establish receipt. Carry that limitation into the report before deciding whether any finding is corroborated.
 
 ### Additional evidence and continuation
 
@@ -179,7 +180,7 @@ Do not pass one reviewer's findings to another as evidence. Track what was suppl
 
 The parent supplies context, not replacement reviewer judgments. Do not assign dispositions such as Confirmed/Disputed or silently discard findings based on author preference.
 
-- Merge the same logical issue across lenses/reviewers once and list every supporting reviewer. Mark it **corroborated** only when at least two independent reviewers support it with relevant observable evidence; name their actual providers and mark assumed ones, under the shared protocol's independence rule. Two external reviewers may corroborate an issue the code-reviewer missed; a reviewer with unverified receipt or a same-provider duplicate cannot corroborate. Otherwise preserve separate attribution and the coverage gap. Show differing severities side by side; external reviewers keep their native format and severity, and a majority is not a verdict.
+- Merge the same logical issue across lenses/reviewers once and list every supporting reviewer. Mark it **corroborated** only when at least two independent reviewers support it with relevant observable evidence; name their actual providers and mark assumed ones, under the shared protocol's independence rule. Two external reviewers may corroborate an issue the code-reviewer missed; a reviewer that is not adequately evidenced (unverified receipt, or a denied criteria read) or a same-provider duplicate cannot corroborate. Otherwise preserve separate attribution and the coverage gap. Show differing severities side by side; external reviewers keep their native format and severity, and a majority is not a verdict.
 - Add clearly labeled **Author context** where the implementation rationale helps: “I chose X because Y,” not “This finding is invalid.”
 - Label new parent observations **author-sourced**, distinct from independent findings.
 - Use the reviewer's own continuation to clarify ambiguous external findings if needed. Preserve disagreements and provisional findings while awaiting source.

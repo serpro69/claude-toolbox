@@ -84,7 +84,7 @@ For an optional conversation first, use `/kk:brainstorm` to think through a tech
 
 3. **Build it.** Type `/kk:implement` — Claude establishes the task's behavior and compatibility constraints, implements it, and supplies current evidence to independent review. Standalone fixes also work without design documents.
 
-4. **Review the code.** `/kk:review-code` traces intended behavior, unchanged callers and affected compatibility contracts alongside SOLID, security and quality checks. Use `/kk:review-code:isolated` for independent review without the implementation conversation.
+4. **Review the code.** `/kk:review-code` traces intended behavior, unchanged callers and affected compatibility contracts alongside SOLID, security and quality checks. Use `/kk:review-code:isolated` for independent review without the implementation conversation: an internal reviewer plus external review through PAL, using an API model when one is configured and otherwise your installed CLIs from other vendors (see [isolated reviews](docs/user-guide/skills.md#isolated-reviews-and-external-models)).
 
 Reviews distinguish current regressions from inherited issues and code support
 from deployment readiness. Missing evidence stays explicit; green tests support

@@ -11,10 +11,10 @@ approved the discovery correction and final evidence. This record supplements th
 - Original PAL candidate: clean `d25c2d029a5d157935aa9bb836c18e9725969b8f`.
   Tests and the temporary Claude MCP server use a `git archive` of that revision.
   The subsequently authorized correction changes three PAL files, recorded in
-  [pal-fix-validation.json](pal-fix-validation.json). No plugin instructions changed.
+  [pal-fix-validation.json](../../../../../archives/feature-evidence/clink-isolated-reviews.md "archive member payload/docs/feat/wip/clink-isolated-reviews/verification/linux-20261023/pal-fix-validation.json"). No plugin instructions changed.
 - Connected PAL reports 1.4.2, Python 3.12.11, Linux, provider-free mode and zero
-  configured API providers/models. See [version](version.json) and
-  [discovery](discovery.json). Its startup snapshot finds Claude/agy and misses
+  configured API providers/models. See [version](../../../../../archives/feature-evidence/clink-isolated-reviews.md "archive member payload/docs/feat/wip/clink-isolated-reviews/verification/linux-20261023/version.json") and
+  [discovery](../../../../../archives/feature-evidence/clink-isolated-reviews.md "archive member payload/docs/feat/wip/clink-isolated-reviews/verification/linux-20261023/discovery.json"). Its startup snapshot finds Claude/agy and misses
   Codex/Gemini. Presence is not authentication.
 - Three cached 1.4.2 package copies have the same `tools/clink.py` SHA-256 as the
   candidate: `b9b8c9a146680f82e6eed5dadd6f7c7dced692247053c41410cad68f4036cad7`.
@@ -36,7 +36,7 @@ approved the discovery correction and final evidence. This record supplements th
 
 ## Deterministic execution
 
-[Command and result](upstream-tests.json): **829 passed, 11 deselected in 42.82s**,
+[Command and result](../../../../../archives/feature-evidence/clink-isolated-reviews.md "archive member payload/docs/feat/wip/clink-isolated-reviews/verification/linux-20261023/upstream-tests.json"): **829 passed, 11 deselected in 42.82s**,
 exit 0, complete Capy capture `84822d6f-d3db-4f27-b68f-4438fae30b31`.
 
 This is a focused existing upstream suite, not a new plugin implementation or
@@ -85,7 +85,7 @@ not require a new registry/API or invented clink request fields.
 
 ### Original discovery gap and correction
 
-The focused [empty-catalog probe](empty-api-discovery.json) registers one synthetic
+The focused [empty-catalog probe](../../../../../archives/feature-evidence/clink-isolated-reviews.md "archive member payload/docs/feat/wip/clink-isolated-reviews/verification/linux-20261023/empty-api-discovery.json") registers one synthetic
 Custom/Local provider, restricts out its only model, verifies that both
 `codereview` and `clink` remain callable, and executes the real `listmodels` tool.
 Its response reports one configured provider and zero available models, but
@@ -107,7 +107,7 @@ consumer requirement. Initial C1/C2 pass assessments in this session were
 superseded by this observation, without changing the accepted contract.
 
 The user then explicitly authorized the minimal sibling PAL correction and its
-verification. The [retained patch](pal-discovery.patch) exposes the existing
+verification. The [retained patch](../../../../../archives/feature-evidence/clink-isolated-reviews.md "archive member payload/docs/feat/wip/clink-isolated-reviews/verification/linux-20261023/pal-discovery.patch") exposes the existing
 `cli_clients` startup snapshot in both discovery modes and adds
 `cli_clients_observed_at: "startup"`. The latter scopes timing to CLI observations
 without claiming the API model catalog is a startup snapshot. Existing
@@ -117,11 +117,11 @@ executable resolution, authentication probe or configuration change.
 Four regression cases cover provider-free mode, normal API discovery, an empty
 restricted API catalog and disabled `codereview`, with present/missing fake CLIs.
 They failed before the fix and passed afterward. The
-[corrected original probe](empty-api-discovery-fixed.json) now exposes the CLI
+[corrected original probe](../../../../../archives/feature-evidence/clink-isolated-reviews.md "archive member payload/docs/feat/wip/clink-isolated-reviews/verification/linux-20261023/empty-api-discovery-fixed.json") now exposes the CLI
 observations and preserves the API catalog text byte-for-byte in the retained
 sanitized captures. This resolves the recorded gap without weaker eligibility.
 
-[Validation](pal-fix-validation.json) records the exact commands, run IDs and hashes:
+[Validation](../../../../../archives/feature-evidence/clink-isolated-reviews.md "archive member payload/docs/feat/wip/clink-isolated-reviews/verification/linux-20261023/pal-fix-validation.json") records the exact commands, run IDs and hashes:
 
 - Before changes: complete PAL quality checks passed, **3,445 tests passed**.
 - After changes: **74 targeted tests passed**.
@@ -141,14 +141,14 @@ Fixtures were restored from `../fixtures/` under
 the worktree file. No prompt contains fixture contents or receipt markers.
 The absent `optional-context.md` is intentional.
 
-- [Claude initial attempt](claude-initial.json): authenticated as
+- [Claude initial attempt](../../../../../archives/feature-evidence/clink-isolated-reviews.md "archive member payload/docs/feat/wip/clink-isolated-reviews/verification/linux-20261023/claude-initial.json"): authenticated as
   `claude-sonnet-5-5`, but the first criteria read was denied. The native answer
   correctly reports no performed review. Transport continuation availability
   is not evidence of completed review. All six fixture hashes remained unchanged.
-- [agy initial review](agy-initial.json): both intended code/document defects and
+- [agy initial review](../../../../../archives/feature-evidence/clink-isolated-reviews.md "archive member payload/docs/feat/wip/clink-isolated-reviews/verification/linux-20261023/agy-initial.json"): both intended code/document defects and
   all four file-only markers returned. Native `agy_status: SUCCESS`, no denied
   actions metadata. All six hashes remained unchanged.
-- [agy continuation](agy-followup.json): explicit `allow_edits=false`, same PAL
+- [agy continuation](../../../../../archives/feature-evidence/clink-isolated-reviews.md "archive member payload/docs/feat/wip/clink-isolated-reviews/verification/linux-20261023/agy-followup.json"): explicit `allow_edits=false`, same PAL
   conversation, inherited client/role/directory, two retained messages, correct
   recalled defects/markers/selected snapshot and missing optional file. No new
   tools were requested; absence of detailed returned telemetry prevents proving
@@ -157,11 +157,11 @@ The absent `optional-context.md` is intentional.
   criteria and evidence, both defects and all markers returned. Its wrapper
   allows shell-backed read-only file access because that is this host's native
   Read mechanism. No expected answer or other reviewer's findings were supplied.
-- [Claude with approved grant](claude-granted-initial.json): fresh default-role
+- [Claude with approved grant](../../../../../archives/feature-evidence/clink-isolated-reviews.md "archive member payload/docs/feat/wip/clink-isolated-reviews/verification/linux-20261023/claude-granted-initial.json"): fresh default-role
   review on the explicitly sourced temporary PAL server, observed model
   `claude-sonnet-5-5`, five successful reads with criteria first, expected optional
   missing-file result, all four markers and both defects. All six hashes unchanged.
-- [Claude continuation](claude-granted-followup.json): same conversation with
+- [Claude continuation](../../../../../archives/feature-evidence/clink-isolated-reviews.md "archive member payload/docs/feat/wip/clink-isolated-reviews/verification/linux-20261023/claude-granted-followup.json"): same conversation with
   two retained messages, inherited directory/client/role and explicit
   `allow_edits=false`; recalled defects/markers/snapshot/absence with no returned
   tool calls. All six hashes unchanged.
@@ -221,9 +221,9 @@ not fail C7 or require a PAL tracing feature.
 
 Minimum verified **revision**: PAL
 `c73dab7d8cf9d791961b84614a0e082b74ee5569`. Its diff from base
-`d25c2d029a5d157935aa9bb836c18e9725969b8f` exactly matches [pal-discovery.patch](pal-discovery.patch),
+`d25c2d029a5d157935aa9bb836c18e9725969b8f` exactly matches [pal-discovery.patch](../../../../../archives/feature-evidence/clink-isolated-reviews.md "archive member payload/docs/feat/wip/clink-isolated-reviews/verification/linux-20261023/pal-discovery.patch"),
 SHA-256 `b8de8e14faea5b87c242b20342a32481b5d056029ab07127b170f73f2c098475`.
-[pal-fix-validation.json](pal-fix-validation.json) pins all three changed files.
+[pal-fix-validation.json](../../../../../archives/feature-evidence/clink-isolated-reviews.md "archive member payload/docs/feat/wip/clink-isolated-reviews/verification/linux-20261023/pal-fix-validation.json") pins all three changed files.
 The tested source was committed without code changes; this is not a published
 release, and unmodified 1.4.2 does not satisfy C1/C2. To reproduce, check out the
 verified revision (or apply the retained patch to its base) and use the recorded

@@ -27,7 +27,7 @@ Use `/kk:brainstorm` when you want to think through a technical idea in conversa
 | **/kk:test** | Reuses or adds meaningful coverage, runs relevant checks and required repository/release suites, and reports actual results and limits. Chooses testing techniques to suit the requirement. |
 | **/kk:document**  | Updates project documentation and records ADRs for non-obvious decisions made during implementation.                                                                     |
 | **/kk:review-code** | Traces changed behavior and affected contracts, including unchanged callers and relevant historical sources, alongside SOLID/security/quality checks. Domain-specific guidance covers Go, Java, JS/TS, Kotlin, Python, Kubernetes, K8s Operator and agent skills. Standard and isolated modes. |
-| **/kk:review-design** | Pre-implementation review gate. Evaluates design docs for completeness, internal consistency, and technical soundness before code is written. |
+| **/kk:review-design** | Pre-implementation review gate. Evaluates design docs for completeness, internal consistency, and technical soundness before code is written. Standard and isolated modes. |
 | **/kk:review-spec** | Compares implemented code against design/implementation docs. Finds spec deviations, missing implementations, and outdated docs — in both directions. |
 | **/kk:model** | Produces or updates a domain-reference kit — a durable glossary + divergences/traps page pair per bounded context, with concept-to-code bindings. Its primary output is a decision queue of precise, role-tagged questions only a human can close. Runs upstream of `/kk:design` as the first producer of the architecture flow. |
 | **/kk:review-architecture** | Reviews a written architecture artifact (ADR, architecture doc, a design doc's architecture section, or a domain-reference kit — glossary + traps pages reviewed as one composite artifact) against the system it describes. Claim-driven: extracts an inspectable claim-set, verifies mechanism existence/topology across seven dimensions, and grades decision soundness, reversibility, and provenance (self-certification of reverse-engineered claims). Security architecture is delegated to PAL `secaudit`. |
@@ -76,7 +76,8 @@ not verify a live environment.
 task scope and review criteria for a named reviewer and PAL. If an external
 reviewer is unavailable or receives insufficient source, the report retains the
 available findings and discloses the lost coverage. Independent review does not
-guarantee correctness.
+guarantee correctness. See [Isolated reviews and external models](#isolated-reviews-and-external-models)
+for how the external reviewers are chosen and what the report can claim.
 
 `/kk:implement` applies the same behavioral context before editing, runs
 appropriate verification, and refreshes the evidence supplied to review. Use
@@ -92,6 +93,60 @@ still need actual execution. A denied compound command does not establish that
 every tool is unavailable: use an authorized direct route when appropriate, or
 report the specific unresolved check. Inspect that limit before treating a change
 as verified; the skills do not guarantee autonomous recovery in every session.
+
+## Isolated reviews and external models
+
+`/kk:review-code:isolated` and `/kk:review-design:isolated` run one internal
+sub-agent (`code-reviewer` or `design-reviewer`) plus external review through
+[PAL](mcp-servers.md#pal). Standard mode never calls PAL.
+
+**Discovery-only selection.** Once per review, before any external call, the
+skill checks PAL's tools and `listmodels`. With an eligible API model it runs
+the existing `pal codereview` flow. Without one, and with `clink` available, it
+runs one `pal clink` CLI review per eligible provider. If discovery fails or the
+PAL build does not expose CLI metadata, there is no external review and the
+report says so. The decision is frozen for that review: an API failure is
+reported as a failure and never switches to clink.
+
+**Roster.** Candidates are PAL's configured CLI clients whose executable was
+found. The provider that authored the change (or, for design review, the
+documents) is excluded, one client per provider is attempted once, and a failed
+client is disclosed rather than retried or replaced. Provider identity is
+**declared** (in the request, the project's `CLAUDE.md`/`AGENTS.md`, or client
+configuration you name), **observed** when a shipped client's configured or returned model shows another
+vendor, **assumed from shipped manifest** for PAL's shipped
+names (`claude` → Anthropic, `codex` → OpenAI, `agy` → Google; the report labels
+these and notes a declaration overrides them), or **undeclared** for any other
+name, which triggers one question before dispatch. `gemini` is retired and never
+a candidate. Cost scales with the roster: three shipped clients and a
+Claude-authored change give two CLI reviews.
+
+**Models and permissions stay yours.** On the API branch the skill selects the
+most capable available model from PAL's catalog; on the clink branch it names no
+model, and each CLI review uses the model configured in the CLI or its PAL client
+manifest. Every request carries `allow_edits=false` and a no-edit prompt, which
+is a behavior contract, not an enforced sandbox; some CLIs keep their native
+permissions, and the report says so. CLIs must be able to read the plugin
+installation and the temp directory `mktemp` uses (`$TMPDIR`, otherwise `/tmp`),
+where criteria and evidence live; a
+denied read is reported as lost coverage, never bypassed. Per-CLI setup is in
+[MCP Servers → Pal](mcp-servers.md#pal).
+
+**What the report claims.** Each external reviewer is classified as requested,
+attempted, executed and adequately evidenced. Only observable read evidence
+counts as receipt; of the verified clients only Claude returns one, so `codex`
+and `agy` findings are kept with receipt unverified and cannot corroborate. A
+finding is corroborated only when two independent reviewers support it: an
+external reviewer counts only with observable receipt, the internal sub-agent
+counts through its source-tied report, and a corroboration resting on an assumed
+provider is labeled. Isolated design review is invoked as described in the
+`/kk:review-design` skill (`/kk:review-design:isolated [feature] [scope]`); it is a
+skill mode, not a separate command file. If every reviewer fails, the skill reports that isolated review did not
+complete and suggests standard mode instead of running it.
+
+**Minimum PAL.** The clink path needs a PAL build whose `listmodels` returns
+`cli_clients` in every mode (commit `c73dab7d`, 2026-10-23, or a release that
+contains it). Restart PAL after changing provider or CLI configuration.
 
 ## Utility Skills
 

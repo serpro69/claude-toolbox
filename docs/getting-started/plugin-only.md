@@ -34,7 +34,7 @@ The plugin gives you:
 
 - **15 workflow and utility skills** — `/kk:design`, `/kk:implement`, `/kk:review-code`, `/kk:clarify-docs`, etc.
 - **Language profiles** — Go, Java, JS/TS, Kotlin, Kubernetes, Python
-- **Commands** — isolated variants for code review, CoVe, spec review, design review
+- **Commands** — isolated variants for code review, CoVe and spec review
 - **Hooks** — Bash validation (Claude Code only)
 - **Sub-agents** — independent reviewers (Claude Code only)
 

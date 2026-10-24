@@ -5,7 +5,7 @@ MCP servers are configured at the user level (not in the repo) to keep API keys 
 You don't need all servers to get started. Add them incrementally:
 
 1. **[Context7](https://context7.com/)** (needs API key) — up-to-date library documentation and code examples
-2. **[Pal](https://github.com/serpro69/pal-mcp-server)** (needs API key) — multi-model AI integration for code review, debugging, planning, and security audit
+2. **[Pal](https://github.com/serpro69/pal-mcp-server)** (API key optional) — multi-model AI integration for code review, debugging, planning, and security audit; without an API key, isolated reviews use your installed CLIs through `clink`
 3. **[Capy](https://github.com/serpro69/capy)** (optional, auto-configured by bootstrap) — persistent knowledge base across sessions. Install with `brew install serpro69/tap/capy`.
 
 | Server | Purpose |
@@ -111,7 +111,24 @@ Fetches current documentation for any library, framework, or SDK. Used by the **
 
 ### Pal
 
-Multi-model AI integration. Powers the **/kk:review-code** skill's independent reviewer sub-agents — your code gets reviewed by Gemini (or other models) in addition to Claude, catching blind spots neither model would find alone. Also provides: `debug`, `planner`, `secaudit`, `testgen`, and more.
+Multi-model AI integration. Powers the external reviewers of **/kk:review-code:isolated** and **/kk:review-design:isolated** — your change gets a second, independent review from an external model (another vendor's where the roster allows) in addition to the internal reviewer. Also provides: `debug`, `planner`, `secaudit`, `testgen`, and more.
+
+The isolated review skills choose their external backend once per review from what Pal advertises (see [Isolated reviews and external models](skills.md#isolated-reviews-and-external-models)):
+
+- **API model configured** (for example a Gemini key as above) → `pal codereview`.
+- **No API model** → `pal clink`, one review per installed CLI from a vendor other than the author's. Pal ships client manifests for `claude`, `codex`, `agy` and `gemini`; the plugin treats the first three as default providers and never uses `gemini`. This needs a Pal build whose `listmodels` returns CLI metadata in every mode: commit `c73dab7d` (2026-10-23) or a release containing it. The `uvx --from git+…` launch above installs current `main`.
+
+Pal observes CLI executables at startup and caches its client registry: restart it after changing providers or client manifests.
+
+**CLI read access.** Clink runs each CLI in your project root, but review criteria live in the plugin installation and the review bundle in the directory `mktemp` uses (`$TMPDIR` when set, otherwise `/tmp`; on macOS usually `/var/folders/...`). Denied reads are reported as lost coverage, never bypassed, so grant them once:
+
+| CLI | Setup verified with the plugin |
+| --- | --- |
+| Claude Code | Override the client manifest at `~/.pal/cli_clients/claude.json`. The override replaces the whole definition: keep `name` and `command`, add `additional_args` such as `["--allowedTools", "Read,Glob,Grep"]` or a path-scoped rule covering that temp directory (`Read(//tmp/**)` on Linux). Restart Pal afterwards. |
+| Antigravity (`agy`) | Where its mode does not already permit reads, add `"permissions": {"allow": ["read_file(/tmp)"]}` (or your `$TMPDIR`, plus the plugin cache path) to `~/.gemini/antigravity-cli/settings.json`. No restart needed. |
+| Codex | Shipped manifest worked unchanged in the verified setup; whether reads are sandboxed depends on your Codex configuration (not verified). Allow several minutes per CLI review and check `tool_timeout_sec` for long MCP calls. |
+
+Models stay configured where they are: Pal's model policy for API reviews, each CLI or client manifest for CLI reviews. To map a custom client name to its vendor, or to override the shipped defaults, declare it in the project's `CLAUDE.md`/`AGENTS.md` (for example `- \`mycli\` → Anthropic`).
 
 ### Capy (Knowledge Base)
 
