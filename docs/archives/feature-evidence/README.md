@@ -130,4 +130,4 @@ notes; they must not be resolved relative to the new `records/` directory.
 
 | Feature | Batch | Disposition |
 | --- | --- | --- |
-| [clink-isolated-reviews](clink-isolated-reviews.md) | `20261024T202514Z-46b31187` (local only; not yet registered in `archives.json`, uploaded or filtered) | Entire feature directory archived during Task 3.7; 37 raw captures removed from the working tree, compact records kept; see the note for limits and maintainer actions. |
+| [clink-isolated-reviews](clink-isolated-reviews.md) | `20261024T202514Z-46b31187` (uploaded to the v0.24.1 draft release, see [the asset receipt](clink-isolated-reviews-release-assets.json); not yet registered in `archives.json` or filtered) | Entire feature directory archived during Task 3.7; 37 raw captures removed from the working tree, compact records kept; see the note for limits and maintainer actions. |
