@@ -1,6 +1,6 @@
 # Clink fallback for isolated reviews
 
-> Status: design reviewed; Task 0 verified against the recorded corrected PAL build; Task 1 (code review path) implemented 2026-10-23; Task 2 (design review path) implemented 2026-10-24; Task 3 pending
+> Status: design reviewed; Task 0 verified against the recorded corrected PAL build; Task 1 (code review path) implemented 2026-10-23; Task 2 (design review path) implemented 2026-10-24; Task 2b (shipped-client provider defaults) implemented 2026-10-24; Task 3 pending
 > Created: 2026-10-11
 > Issue: [claude-toolbox #168](https://github.com/serpro69/claude-toolbox/issues/168)
 > Implementation: [implementation.md](implementation.md)
@@ -31,6 +31,12 @@ The shared instruction organization and checks below implement that direction. T
 ### Review corrections (2026-10-21)
 
 After requesting revalidation and fixes for all valid review findings, the user authorized these corrections. C7 now verifies honest coverage classification rather than requiring PAL to expose read telemetry; absent telemetry limits review claims without blocking the feature. The no-edit contract requires reviewer behavior and `allow_edits=false` on every request, while preserving native permission settings; it does not promise an enforced filesystem sandbox. These corrections supersede the original C7 telemetry prerequisite and C4/C5 permission wording. Task 0 remains mandatory, and no unrun check is considered passed.
+
+### Review corrections (2026-10-24)
+
+After Task 2 the user authorized a change to the roster's provider-identity rule. Requiring every consumer repository to declare the provider of PAL's four shipped clients was opt-in ceremony for the common case, while the guarantee it protected (no same-provider "independent" review) is only weakened, not broken, by a wrong default, provided the report says which providers were assumed. Therefore: for PAL's shipped client names (`claude`, `codex`, `agy`) the protocol applies a default provider mapping (Anthropic, OpenAI, Google) when no operator declaration exists, and labels each roster entry's provider source as **declared** or **assumed from shipped manifest**. An operator declaration (request, project agent instruction file, identified client configuration) overrides a default. Any other client name still has no provider until declared and remains part of the single roster question. C2's prohibition on guessing a provider from a custom name is retained; the one-client-per-provider rule still asks for a choice when an operator declares two clients for one provider. Corroboration that rests on an assumed provider is reported as such. This supersedes the "declare or ask" wording in §Discovery and reviewer selection, rules 3–4.
+
+The user also retired the `gemini` CLI client in the same decision: it is obsolete tooling that nobody uses, `agy` is the Google client, and a `gemini` entry advertised by PAL is never a candidate. This removes the agy-versus-gemini duplicate case from the roster entirely; Task 0's historical gemini observations stay as recorded.
 
 ## Existing mechanisms and provenance
 
@@ -100,7 +106,7 @@ For the clink roster:
 
 1. Use PAL-discovered, executable-present, review-capable clients. Authentication is attempted through the review request, not a separate login or inference probe.
 2. Resolve the authoring provider from explicit authorship/session context. The host CLI of a later review session is not proof of who authored the target. If the authoring provider cannot be established, ask one focused question before clink dispatch; the internal review can still proceed.
-3. Exclude the authoring provider. Provider denotes the model provider, not merely the executable name. Task 0 must establish how PAL/operator configuration makes that identity reliable. Unknown client identity is reported as ineligible until resolved; do not guess from a custom name.
+3. Exclude the authoring provider. Provider denotes the model provider, not merely the executable name. Task 0 must establish how PAL/operator configuration makes that identity reliable. Unknown client identity is reported as ineligible until resolved; do not guess from a custom name. _Amended 2026-10-24 (see [Review corrections](#review-corrections-2026-10-24)): PAL's shipped client names receive a default provider when undeclared, labeled as assumed in the report; custom names still require a declaration._
 4. Select one configured reviewer client per remaining provider. If several clients map to the same provider and there is no declared review choice, ask for that mapping rather than silently selecting or counting duplicate providers as additional diversity.
 5. Attempt every eligible provider. Freeze the roster for this invocation; disclose exclusions and failures. Do not fall back to the authoring provider, substitute another model, or repeatedly retry a failed client.
 

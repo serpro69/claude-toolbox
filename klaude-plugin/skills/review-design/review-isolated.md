@@ -50,7 +50,7 @@ Record the requested-but-missing documents and the planned files alongside the m
 
 ### External backend discovery
 
-Run the shared external-review protocol's discovery exactly once, now: inspect the advertised PAL tool surface and call `listmodels`, then record the frozen decision — **API** (resolve the most capable available model with reasoning support, per the PAL protocol), **clink** (build the roster: candidates, authoring provider, declared provider mapping, exclusions, one client per provider), **unresolved** or **none**. For document review the authoring provider is the provider that produced the reviewed documents, resolved from explicit authorship or from this session's context when it produced them; the host CLI of a later, separate review session is not evidence. One focused roster question, covering whatever is unresolved (authoring provider, undeclared client-to-provider mappings, duplicate-provider choice), is asked before any clink dispatch; the internal reviewer does not wait for it. The decision never changes within this invocation: an API runtime failure stays an API failure and does not re-open discovery.
+Run the shared external-review protocol's discovery exactly once, now: inspect the advertised PAL tool surface and call `listmodels`, then record the frozen decision — **API** (resolve the most capable available model with reasoning support, per the PAL protocol), **clink** (build the roster: candidates, authoring provider, each client's provider with its source — declared, or assumed from PAL's shipped manifest — exclusions, one client per provider), **unresolved** or **none**. For document review the authoring provider is the provider that produced the reviewed documents, resolved from explicit authorship or from this session's context when it produced them; the host CLI of a later, separate review session is not evidence. One focused roster question, covering whatever is unresolved (authoring provider, undeclared providers for clients outside the shipped set, duplicate-provider choice), is asked before any clink dispatch and only when something is unresolved; it never asks the operator to confirm an assumed default; the internal reviewer does not wait for it. The decision never changes within this invocation: an API runtime failure stays an API failure and does not re-open discovery.
 
 Launch the independent `design-reviewer` and the first external request in parallel when supported (clink reviewers run sequentially after that). No reviewer receives the design conversation history or another reviewer's conclusions.
 
@@ -145,7 +145,7 @@ For any reviewer's evidence request (a referenced source file, a document sectio
 
 The main agent supplies context, not replacement reviewer judgments. Do not assign dispositions such as Confirmed/Disputed; the user is the final arbiter.
 
-- **Duplicate merging.** Merge the same logical issue (same document section, same concern) across reviewers once and list every supporting reviewer. Mark it **corroborated** only when at least two independent reviewers support it with relevant observable evidence; name their actual providers. Two external reviewers may corroborate an issue the design-reviewer missed; a reviewer with unverified receipt or a same-provider duplicate cannot corroborate. Severity stays as the design-reviewer assessed it; external reviewers keep their native format and implied urgency side by side. Do not map native output to P0–P3, and a majority is not a verdict.
+- **Duplicate merging.** Merge the same logical issue (same document section, same concern) across reviewers once and list every supporting reviewer. Mark it **corroborated** only when at least two independent reviewers support it with relevant observable evidence; name their actual providers and mark assumed ones, under the shared protocol's independence rule. Two external reviewers may corroborate an issue the design-reviewer missed; a reviewer with unverified receipt or a same-provider duplicate cannot corroborate. Severity stays as the design-reviewer assessed it; external reviewers keep their native format and implied urgency side by side. Do not map native output to P0–P3, and a majority is not a verdict.
 - **Planned work.** An external finding that treats planned implementation as missing code is kept with its attribution and annotated as planned work; it is not promoted to a corroborated defect.
 - **Author context.** Where the design session adds relevant information, add a clearly labeled **Author context** annotation: "We chose X because Y" is context; "This finding is invalid" is not.
 - **Author-sourced findings.** Label new observations made during this close re-reading **author-sourced**, distinct from independent findings.
@@ -162,7 +162,7 @@ Index confirmed `TECH_RISK` findings that reveal non-obvious architectural const
 
 **Reviewers**: design-reviewer ([actual model]); external backend [API / clink / unresolved / none] —
   per external reviewer: client/provider, configured vs observed model, outcome class, receipt
-**Roster**: eligible providers attempted; excluded (authoring provider, duplicates, unknown identity); failures
+**Roster**: eligible providers attempted and exclusions (authoring provider, duplicates, unknown identity), each with its provider source (declared / assumed from shipped manifest / observed) and any retired client; failures
 **Documents reviewed**: in-scope documents; requested documents that were missing; related source supplied
 **Coverage**: per reviewer, files actually read versus supplied, and receipt limits
 
@@ -170,7 +170,7 @@ Index confirmed `TECH_RISK` findings that reveal non-obvious architectural const
 
 ### Corroborated Findings
 
-- **[doc:section]** Brief title ⟨corroborated: {supporting reviewers with providers}⟩
+- **[doc:section]** Brief title ⟨corroborated: {supporting reviewers with providers, marking assumed ones}⟩
   - design-reviewer: Type: [finding_type] | Severity: P[0-3] | Confidence: [N]/10 — [reasoning];
     description, evidence, recommendation
   - {external reviewer, client/provider}: [native finding]

@@ -41,7 +41,7 @@ Reviews code in the main conversation context. Fast, single-pass review using th
 
 ### Isolated Mode (`/kk:review-code:isolated`)
 
-Delegates detection to independent reviewers that did not write the code, then annotates their findings with author context. One internal `code-reviewer` sub-agent plus external review chosen **once at discovery**: `pal codereview` when an API model is available, otherwise one `pal clink` CLI review per eligible non-authoring provider using its configured model (variable count; on the clink roster the authoring provider is excluded and each client's provider must be declared by the operator, for example in the project's `CLAUDE.md`). Produces a report organized by agreement level with corroborated findings highlighted.
+Delegates detection to independent reviewers that did not write the code, then annotates their findings with author context. One internal `code-reviewer` sub-agent plus external review chosen **once at discovery**: `pal codereview` when an API model is available, otherwise one `pal clink` CLI review per eligible non-authoring provider using its configured model (variable count; on the clink roster the authoring provider is excluded; PAL's shipped clients get default provider mappings that the report labels as assumed, and an operator declaration, for example in the project's `CLAUDE.md` or `AGENTS.md`, overrides them and is required for any other client name). Produces a report organized by agreement level with corroborated findings highlighted.
 
 - **Cost**: Higher (sub-agent + one or more external reviews + annotation); clink cost scales with the roster size
 - **Isolation**: True — reviewers have zero authorship bias or session context; each external reviewer gets a fresh conversation

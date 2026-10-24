@@ -1,0 +1,79 @@
+{
+  "provenance": {
+    "kind": "synthetic-test-data",
+    "live_mcp_call": false,
+    "client": "claude",
+    "operator_declared_provider": null
+  },
+  "request_echo": {
+    "tool": "clink",
+    "cli_name": "claude",
+    "role": "default",
+    "allow_edits": false
+  },
+  "result": {
+    "status": "success",
+    "continuation_id": "synthetic-claude-conv-1",
+    "provider_used": "claude",
+    "model_observed": "claude-sonnet-5-5",
+    "content": "Findings:\n1. [High] source/candidate/settings.py:3 — save() returns ok from the transport response. Provider.apply returns {ok: true, applied: false} for read-only providers, so save reports success while values stay unchanged. Keep the applied check.\nFiles read: all listed criteria, change.patch, source/candidate/settings.py, source/base/settings.py, source/provider.py. Not read: none.",
+    "metadata": {
+      "events": [
+        {
+          "type": "tool_result",
+          "tool": "Read",
+          "path": "<criteria>/functional-review.md",
+          "status": "ok"
+        },
+        {
+          "type": "tool_result",
+          "tool": "Read",
+          "path": "<criteria>/change-context.md",
+          "status": "ok"
+        },
+        {
+          "type": "tool_result",
+          "tool": "Read",
+          "path": "<criteria>/review-scope-protocol.md",
+          "status": "ok"
+        },
+        {
+          "type": "tool_result",
+          "tool": "Read",
+          "path": "<criteria>/capy-knowledge-protocol.md",
+          "status": "ok"
+        },
+        {
+          "type": "tool_result",
+          "tool": "Read",
+          "path": "<criteria>/<resolved profile checklists, one event each>",
+          "status": "ok"
+        },
+        {
+          "type": "tool_result",
+          "tool": "Read",
+          "path": "<evidence>/change.patch",
+          "status": "ok"
+        },
+        {
+          "type": "tool_result",
+          "tool": "Read",
+          "path": "<evidence>/source/candidate/settings.py",
+          "status": "ok"
+        },
+        {
+          "type": "tool_result",
+          "tool": "Read",
+          "path": "<evidence>/source/base/settings.py",
+          "status": "ok"
+        },
+        {
+          "type": "tool_result",
+          "tool": "Read",
+          "path": "<evidence>/source/provider.py",
+          "status": "ok"
+        }
+      ]
+    }
+  }
+}

@@ -75,7 +75,7 @@ The required criteria set has **four common files plus every resolved profile fi
 
 ### External backend discovery
 
-Run the shared external-review protocol's discovery exactly once, now: inspect the advertised PAL tool surface and call `listmodels`, then record the frozen decision — **API** (resolve the most capable available model with reasoning support, per the PAL protocol), **clink** (build the roster: candidates, authoring provider, declared provider mapping, exclusions, one client per provider), **unresolved** or **none**. One focused roster question, covering whatever is unresolved (authoring provider, undeclared client-to-provider mappings, duplicate-provider choice), is asked before any clink dispatch; the internal reviewer does not wait for it. The decision never changes within this invocation: an API runtime failure stays an API failure and does not re-open discovery.
+Run the shared external-review protocol's discovery exactly once, now: inspect the advertised PAL tool surface and call `listmodels`, then record the frozen decision — **API** (resolve the most capable available model with reasoning support, per the PAL protocol), **clink** (build the roster: candidates, authoring provider, each client's provider with its source — declared, or assumed from PAL's shipped manifest — exclusions, one client per provider), **unresolved** or **none**. One focused roster question, covering whatever is unresolved (authoring provider, undeclared providers for clients outside the shipped set, duplicate-provider choice), is asked before any clink dispatch and only when something is unresolved; it never asks the operator to confirm an assumed default; the internal reviewer does not wait for it. The decision never changes within this invocation: an API runtime failure stays an API failure and does not re-open discovery.
 
 Launch the independent `code-reviewer` and the first external request in parallel when supported (clink reviewers run sequentially after that). No reviewer receives implementation conversation history or another reviewer's conclusions.
 
@@ -179,7 +179,7 @@ Do not pass one reviewer's findings to another as evidence. Track what was suppl
 
 The parent supplies context, not replacement reviewer judgments. Do not assign dispositions such as Confirmed/Disputed or silently discard findings based on author preference.
 
-- Merge the same logical issue across lenses/reviewers once and list every supporting reviewer. Mark it **corroborated** only when at least two independent reviewers support it with relevant observable evidence; name their actual providers. Two external reviewers may corroborate an issue the code-reviewer missed; a reviewer with unverified receipt or a same-provider duplicate cannot corroborate. Otherwise preserve separate attribution and the coverage gap. Show differing severities side by side; external reviewers keep their native format and severity, and a majority is not a verdict.
+- Merge the same logical issue across lenses/reviewers once and list every supporting reviewer. Mark it **corroborated** only when at least two independent reviewers support it with relevant observable evidence; name their actual providers and mark assumed ones, under the shared protocol's independence rule. Two external reviewers may corroborate an issue the code-reviewer missed; a reviewer with unverified receipt or a same-provider duplicate cannot corroborate. Otherwise preserve separate attribution and the coverage gap. Show differing severities side by side; external reviewers keep their native format and severity, and a majority is not a verdict.
 - Add clearly labeled **Author context** where the implementation rationale helps: “I chose X because Y,” not “This finding is invalid.”
 - Label new parent observations **author-sourced**, distinct from independent findings.
 - Use the reviewer's own continuation to clarify ambiguous external findings if needed. Preserve disagreements and provisional findings while awaiting source.
@@ -197,7 +197,7 @@ Apply the common method's verdict mapping; keep code correctness, increment comp
 
 **Reviewers**: code-reviewer ([actual model]); external backend [API / clink / unresolved / none] —
   per external reviewer: client/provider, configured vs observed model, outcome class, receipt
-**Roster**: eligible providers attempted; excluded (authoring provider, duplicates, unknown identity); failures
+**Roster**: eligible providers attempted and exclusions (authoring provider, duplicates, unknown identity), each with its provider source (declared / assumed from shipped manifest / observed) and any retired client; failures
 **Files reviewed**: actual inspected coverage per reviewer, distinct from files supplied
 **Overall assessment**: APPROVE / REQUEST_CHANGES / COMMENT, with scope
 **Intent and scope**: requirement source, task/request, diff selector and candidate state
@@ -208,7 +208,7 @@ Inspected paths/scenarios, Supported / Blocked / Unknown / Not applicable conclu
 source references and limits. Attribute author results and inherited issues.
 
 ### Corroborated Findings
-- **[file:line]** Title ⟨corroborated: {supporting reviewers with providers}⟩
+- **[file:line]** Title ⟨corroborated: {supporting reviewers with providers, marking assumed ones}⟩
   - Profile: {profile} · Checklist: {checklist} · Triggered by: {signal}
   - code-reviewer: [P0–P3, confidence/reasoning, trigger/path, expected/actual, consequence, correction]
   - {external reviewer, client/provider}: [native finding]
