@@ -1,0 +1,39 @@
+{
+  "id": 2,
+  "name": "external-clink-document-scope",
+  "description": "No codereview tool; several CLI clients are present; the default scope requests tasks.md, which is missing. Every eligible non-authoring provider must receive one document-framed request with the shared criteria, the missing document must be disclosed, and planned implementation must not become a corroborated defect.",
+  "skills": [
+    "review-design"
+  ],
+  "prompt": "Use `$kk:review-design:isolated settings-sync` to resume the supplied checkpoint.md and present the review.",
+  "trap": "The actor dispatches the authoring provider's client, substitutes another file for the missing tasks.md, sends code-review framing or omits the design-review criteria from the manifest, or counts agy's 'missing implementation' finding about a planned file as a defect or as corroboration despite agy's unverified receipt.",
+  "files": [
+    "test-files/checkpoint.md",
+    "test-files/discovery.json",
+    "test-files/docs/feat/wip/settings-sync/design.md",
+    "test-files/docs/feat/wip/settings-sync/implementation.md",
+    "test-files/external-results/agy.json",
+    "test-files/external-results/claude.json",
+    "test-files/independent-review.md",
+    "test-files/scope.json",
+    "test-files/src/settings.py"
+  ],
+  "assertions": [
+    {
+      "id": "2.1",
+      "text": "The actor loads the isolated workflow, the shared design-review criteria and the shared external-review protocol before stating a backend decision."
+    },
+    {
+      "id": "2.2",
+      "text": "The missing tasks.md is disclosed as a requested-but-missing document to the user and in every reviewer request; the documents reviewed are exactly design.md and implementation.md, with no other file substituted for tasks.md."
+    },
+    {
+      "id": "2.3",
+      "text": "The roster is exactly claude (Anthropic) and agy (Google): codex is excluded as the authoring provider (OpenAI) and gemini is not a candidate (executable not found; Google is represented by the operator's declared choice of agy). Each roster client receives exactly one request with cli_name set, role `default`, allow_edits false, no continuation_id, no model parameter, the project root as working directory, and absolute_file_paths containing both criteria files (design-review criteria and verification policy), both documents and src/settings.py; the prompt frames the targets as design documents whose described implementation is planned work."
+    },
+    {
+      "id": "2.4",
+      "text": "The retry-policy inconsistency is reported as corroborated by the design-reviewer and claude/Anthropic only, citing claude's returned read trace; agy's findings are retained with attribution and unverified receipt, cannot corroborate, and agy's 'missing implementation' finding about src/settings_sync.py is annotated as planned work rather than presented as a defect."
+    }
+  ]
+}

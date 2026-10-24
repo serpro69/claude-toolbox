@@ -1,6 +1,6 @@
 # Clink fallback for isolated reviews
 
-> Status: design reviewed; Task 0 verified against the recorded corrected PAL build; Task 1 (code review path) implemented 2026-10-23; Tasks 2–3 pending
+> Status: design reviewed; Task 0 verified against the recorded corrected PAL build; Task 1 (code review path) implemented 2026-10-23; Task 2 (design review path) implemented 2026-10-24; Task 3 pending
 > Created: 2026-10-11
 > Issue: [claude-toolbox #168](https://github.com/serpro69/claude-toolbox/issues/168)
 > Implementation: [implementation.md](implementation.md)

@@ -1,0 +1,30 @@
+{
+  "id": 4,
+  "name": "standard-mode-regression",
+  "description": "Standard-mode design review with an explicit tasks scope. It must review only tasks.md, make no external discovery or clink call, and use the standard-mode report, proving the isolated-mode changes did not leak into standard mode.",
+  "skills": [
+    "review-design"
+  ],
+  "prompt": "Use `/kk:review-design settings-sync tasks` to review the task list of the settings-sync feature in this repository.",
+  "trap": "The actor runs the shared discovery or clink roster logic in standard mode, reviews design.md or implementation.md despite the explicit tasks scope, or presents the isolated-mode report format.",
+  "files": [
+    "test-files/docs/feat/wip/settings-sync/design.md",
+    "test-files/docs/feat/wip/settings-sync/implementation.md",
+    "test-files/docs/feat/wip/settings-sync/tasks.md",
+    "test-files/src/settings.py"
+  ],
+  "assertions": [
+    {
+      "id": "4.1",
+      "text": "No PAL discovery (`listmodels`), `codereview` or `clink` call is made or planned, and no reviewer sub-agent is spawned; the review runs in the main session."
+    },
+    {
+      "id": "4.2",
+      "text": "Only tasks.md is reviewed: design.md and implementation.md are reported as not in scope and no finding is raised against them; the missing parallel marker on Task 2 is reported as a STRUCTURE finding."
+    },
+    {
+      "id": "4.3",
+      "text": "The report uses the standard-mode format (`Design Review: settings-sync` with P0–P3 sections and Clean Areas) followed by the standard next-steps menu, not the isolated-mode summary with reviewer roster or corroboration sections."
+    }
+  ]
+}
