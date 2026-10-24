@@ -59,9 +59,9 @@ preserves API catalog/provider-free behavior, and identifies CLI-specific timing
 Four dispatcher-level regression cases cover the missing branch and supported
 controls without launching/resolving a CLI during listing.
 
-The reviewer subsequently inspected [pal-fix-validation.json](pal-fix-validation.json),
-[pal-discovery.patch](pal-discovery.patch) and the
-[corrected probe](empty-api-discovery-fixed.json). It confirmed **C1/C2 resolved
+The reviewer subsequently inspected [pal-fix-validation.json](../../../../../archives/feature-evidence/clink-isolated-reviews.md "archive member payload/docs/feat/wip/clink-isolated-reviews/verification/linux-20261023/pal-fix-validation.json"),
+[pal-discovery.patch](../../../../../archives/feature-evidence/clink-isolated-reviews.md "archive member payload/docs/feat/wip/clink-isolated-reviews/verification/linux-20261023/pal-discovery.patch") and the
+[corrected probe](../../../../../archives/feature-evidence/clink-isolated-reviews.md "archive member payload/docs/feat/wip/clink-isolated-reviews/verification/linux-20261023/empty-api-discovery-fixed.json"). It confirmed **C1/C2 resolved
 for the precisely identified local candidate** and issued **APPROVE**, with no
 remaining evidence requests or material findings. The retained patch SHA-256 is
 `b8de8e14faea5b87c242b20342a32481b5d056029ab07127b170f73f2c098475`.

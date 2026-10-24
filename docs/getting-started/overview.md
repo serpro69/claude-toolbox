@@ -68,7 +68,7 @@ for destinations, missing context and sharing boundaries.
 ### API Keys
 
 - [Context7](https://context7.com/) API key — for library documentation lookups
-- Gemini API key for [Pal](https://github.com/serpro69/pal-mcp-server) (or [any other provider](https://github.com/serpro69/pal-mcp-server/blob/main/docs/getting-started.md)) — for multi-model code review
+- Gemini API key for [Pal](https://github.com/serpro69/pal-mcp-server) (or [any other provider](https://github.com/serpro69/pal-mcp-server/blob/main/docs/getting-started.md)) — for multi-model code review through API models. Optional: without one, isolated reviews use your installed CLIs (Claude Code, Codex, Antigravity) through Pal's `clink`; see [MCP Servers → Pal](../user-guide/mcp-servers.md#pal)
 
 ## Examples
 

@@ -125,3 +125,9 @@ observed draft assets, not a claim that the final URLs are already live.
 The two copied JSON records are byte-identical historical records. Their internal
 relative paths retain their original interpretation, documented in the feature
 notes; they must not be resolved relative to the new `records/` directory.
+
+## Later batches
+
+| Feature | Batch | Disposition |
+| --- | --- | --- |
+| [clink-isolated-reviews](clink-isolated-reviews.md) | `20261024T202514Z-46b31187` (local only; not yet registered in `archives.json`, uploaded or filtered) | Entire feature directory archived during Task 3.7; 37 raw captures removed from the working tree, compact records kept; see the note for limits and maintainer actions. |

@@ -15,7 +15,7 @@ description: |
 
 ## Overview
 
-Pre-implementation review gate that evaluates design documents produced by `$kk:design` before code is written. Sits between `$kk:design` (creates docs) and `$kk:implement` (executes them). Reviews tree distinct dimensions
+Pre-implementation review gate that evaluates design documents produced by `$kk:design` before code is written. Sits between `$kk:design` (creates docs) and `$kk:implement` (executes them). Reviews three distinct dimensions
 
 - document quality/structure (completeness, internal consistency, clarity, convention adherence)
 - technical soundness (architectural viability, edge cases, failure modes, trade-off analysis)
@@ -34,7 +34,7 @@ Delegates detection to independent reviewers that did not participate in the des
 - **Cost**: Higher (sub-agent + one or more external reviews + annotation); clink cost scales with the roster size
 - **Isolation**: True — reviewers have zero authorship bias or session context; each external reviewer gets a fresh conversation
 - **Degradation**: Graceful — a failed reviewer is disclosed and the others proceed; an API runtime failure never switches to clink; if every reviewer fails, suggests standard mode fallback
-- **Requires**: a PAL build whose `listmodels` exposes CLI client observations in every mode for the clink path; unresolved discovery keeps the internal review with an explicit external coverage limit
+- **Requires**: a PAL build whose `listmodels` exposes CLI client observations in every mode for the clink path; unresolved discovery keeps the internal review with an explicit external coverage limit. Operator setup (the minimum PAL build, CLI read access outside the project, provider declarations) is described in the plugin README under "Isolated reviews with external models"
 - **Scope**: the same default all-documents scope and explicit `design` / `implementation` / `tasks` subsets as standard mode; missing requested documents are disclosed, not substituted
 - **Best for**: When extra rigor is worth the cost (before starting implementation of high-stakes features)
 

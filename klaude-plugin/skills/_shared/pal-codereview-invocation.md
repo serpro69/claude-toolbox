@@ -27,7 +27,7 @@ For /kk:review-design, document inputs remain sufficient. No Git diff, code-revi
 
 - **Documents:** every in-scope design, implementation or task document; these are the review targets.
 - **Related source:** existing files the design references, where available, for technical context.
-- **Review criteria:** the caller's resolved verification policy, supplied as methodology rather than a review target.
+- **Review criteria:** the caller's resolved review criteria (for /kk:review-design, the shared design-review criteria and the verification policy), supplied as methodology rather than a review target.
 
 Frame the review around technical soundness, completeness, consistency, edge cases, failure modes, constraints and ambiguity. Preserve the caller's document scope; do not treat planned code as a missing current implementation. Use its own review criteria. The common call sequence below remains identical.
 
