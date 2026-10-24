@@ -28,14 +28,16 @@ Reviews design documents in the main conversation context. Fast, single-pass rev
 
 ### Isolated Mode (`/kk:review-design:isolated`)
 
-Delegates detection to independent reviewers that did not participate in the design, then annotates their findings with author context. Two parallel reviewers: a `design-reviewer` sub-agent and `pal codereview` (external model in native format). Produces a report organized by agreement level with corroborated findings highlighted.
+Delegates detection to independent reviewers that did not participate in the design, then annotates their findings with author context. One internal `design-reviewer` sub-agent plus external review chosen **once at discovery**: `pal codereview` (document-review branch) when an API model is available, otherwise one `pal clink` CLI review per eligible non-authoring provider using its configured model (variable count; on the clink roster the provider that authored the documents is excluded and each client's provider must be declared by the operator, for example in the project's `CLAUDE.md`). Every reviewer applies the same shared design-review criteria and verification policy, framed as document review so planned implementation is not reported as missing code. Produces a report organized by agreement level with corroborated findings highlighted.
 
-- **Cost**: Higher (sub-agent + external model + annotation)
-- **Isolation**: True — reviewers have zero authorship bias or session context
-- **Degradation**: Graceful — if one reviewer fails, proceeds with the other; if both fail, suggests standard mode fallback
+- **Cost**: Higher (sub-agent + one or more external reviews + annotation); clink cost scales with the roster size
+- **Isolation**: True — reviewers have zero authorship bias or session context; each external reviewer gets a fresh conversation
+- **Degradation**: Graceful — a failed reviewer is disclosed and the others proceed; an API runtime failure never switches to clink; if every reviewer fails, suggests standard mode fallback
+- **Requires**: a PAL build whose `listmodels` exposes CLI client observations in every mode for the clink path; unresolved discovery keeps the internal review with an explicit external coverage limit
+- **Scope**: the same default all-documents scope and explicit `design` / `implementation` / `tasks` subsets as standard mode; missing requested documents are disclosed, not substituted
 - **Best for**: When extra rigor is worth the cost (before starting implementation of high-stakes features)
 
-See [review-isolated.md](./review-isolated.md) for the isolated workflow.
+See [review-isolated.md](./review-isolated.md) for the isolated workflow; it replaces the standard-mode process file in that mode and is the only place that loads the isolated-only shared files (the design-review criteria, the PAL codereview protocol and the external-review protocol). Standard mode does not read them.
 
 ## Finding Types
 

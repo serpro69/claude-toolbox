@@ -1,218 +1,205 @@
 ### Workflow
 
-Copy this checklist and check off items as you complete them:
+**Mandatory ordering — methodology before evaluation.** Follow this workflow strictly in sequence. Load the skill, this process, the shared protocols and the shared design-review criteria before reading, searching or evaluating subject documents. Scope resolution uses invocation arguments and directory listings only; the documents are read once, in Step 3.
 
 ```
 Isolated Design Review Progress:
-- [ ] Step 1: Prepare artifacts
-- [ ] Step 2: Spawn reviewers (parallel)
-- [ ] Step 3: Annotate findings
-- [ ] Step 4: Present report
+- [ ] Step 1: Load instructions
+- [ ] Step 2: Resolve document scope from arguments and listings
+- [ ] Step 3: Read documents and prepare the shared manifest
+- [ ] Step 4: Discover the external backend once, spawn reviewers and resolve evidence requests
+- [ ] Step 5: Annotate findings
+- [ ] Step 6: Index findings
+- [ ] Step 7: Present report and confirm next steps
 ```
 
----
+## Step 1: Load Instructions
 
-## Step 1: Prepare Artifacts
+Read [SKILL.md](SKILL.md), this workflow, [shared-capy-knowledge-protocol.md](shared-capy-knowledge-protocol.md), [shared-verification-policy.md](shared-verification-policy.md), [shared-design-review-criteria.md](shared-design-review-criteria.md) (the checks every reviewer applies), [shared-pal-codereview-invocation.md](shared-pal-codereview-invocation.md) (API transport; use its document-review branch) and [shared-external-review-invocation.md](shared-external-review-invocation.md) (one-time backend discovery, clink roster and reviewer bookkeeping). Already loaded, unchanged instructions need not be read twice.
 
-Load the skill, this process and its shared protocols before subject documents.
-Resolve the shared verification policy from this skill's directory for both reviewers.
+Resolve the absolute paths of the two criteria files, the design-review criteria and the verification policy, from this skill's directory, and the plugin root (parent of `skills/`). Every reviewer receives those two files as methodology, not as review targets; the internal reviewer additionally receives the plugin root.
 
-### 1a) Read documents
+## Step 2: Resolve Document Scope
 
-Parse the invocation arguments using the same logic as standard mode Step 1:
+Parse the invocation arguments:
 
-- Extract feature name and optional scope argument
-- **Argument disambiguation:** if the first argument matches a directory in `/docs/feat/wip/`, treat it as the feature name. If it matches a scope keyword (`design`, `implementation`, `tasks`) and no such feature directory exists, treat it as the scope and prompt the user for the feature name.
-- Locate `/docs/feat/wip/[feature-name]/` directory
-- If feature name is not provided or ambiguous, list `/docs/feat/wip/` contents and ask the user
+- Extract the feature name and the optional scope argument.
+- **Argument disambiguation:** if the first argument matches a directory in `/docs/feat/wip/`, treat it as the feature name. If it matches a scope keyword (`design`, `implementation`, `tasks`) and no such feature directory exists, treat it as the scope and ask the user for the feature name.
+- Locate `/docs/feat/wip/[feature-name]/`. If the feature name is missing or ambiguous, list `/docs/feat/wip/` and ask the user.
 
-Scope resolution:
-
-| Scope arg        | Documents to load                              |
+| Scope arg        | Documents in scope                             |
 | ---------------- | ---------------------------------------------- |
 | _(none)_         | `design.md` + `implementation.md` + `tasks.md` |
 | `design`         | `design.md` only                               |
 | `implementation` | `implementation.md` only                       |
 | `tasks`          | `tasks.md` only                                |
 
-If a requested document is missing, inform the user and proceed with available docs.
+Use a directory listing to decide which in-scope documents exist. A requested document that is missing is disclosed to the user and to every reviewer as a coverage limit; proceed with the available documents. If no in-scope document exists, stop and report that instead of reviewing something else. Do not read documents in this step.
 
-Read the in-scope documents from `/docs/feat/wip/[feature]/`.
+## Step 3: Read Documents and Prepare the Manifest
 
-### 1b) Resolve pal model
+This is the single entry point for subject-matter reading. Read the in-scope documents from the feature directory. Then assemble one categorized manifest, with absolute paths, that every reviewer receives:
 
-Call `pal` `listmodels` to get available models. Select the most capable model (prefer latest generation with thinking/reasoning support) for the `pal codereview` call in Step 2.
+1. **Documents** — the in-scope documents that exist. These are the review targets.
+2. **Related source** — existing files the documents reference as current code (to be modified, depended on or cross-checked), when they exist on disk. Files the documents describe as to-be-created are listed by name as **planned**, not as related source and not as missing evidence.
+3. **Review criteria** — the design-review criteria and the verification policy, identified as methodology to apply, not documents under review.
 
-### 1c) Collect context files for pal
+Record the requested-but-missing documents and the planned files alongside the manifest. Use the same manifest and the same factual framing for every reviewer; the external backend is not chosen here.
 
-Assemble the file list that will be passed to pal codereview via `relevant_files`. All paths must be absolute.
+## Step 4: Discover the Backend, Spawn Reviewers and Resolve Evidence Requests
 
-1. **Document files** — the absolute paths of every in-scope document from Step 1a (`design.md`, `implementation.md`, `tasks.md` as determined by scope resolution). These are the primary review targets.
-2. **Related source files** — if the design docs reference specific source files (e.g., files to be created or modified), include those paths when they exist on disk. These give pal implementation context to validate the design against.
-3. **Review criteria** — the resolved `shared-verification-policy.md`; identify it as methodology, not a document under review.
+### External backend discovery
 
-Store this list for use in Step 2 (Reviewer B).
+Run the shared external-review protocol's discovery exactly once, now: inspect the advertised PAL tool surface and call `listmodels`, then record the frozen decision — **API** (resolve the most capable available model with reasoning support, per the PAL protocol), **clink** (build the roster: candidates, authoring provider, declared provider mapping, exclusions, one client per provider), **unresolved** or **none**. For document review the authoring provider is the provider that produced the reviewed documents, resolved from explicit authorship or from this session's context when it produced them; the host CLI of a later, separate review session is not evidence. One focused roster question, covering whatever is unresolved (authoring provider, undeclared client-to-provider mappings, duplicate-provider choice), is asked before any clink dispatch; the internal reviewer does not wait for it. The decision never changes within this invocation: an API runtime failure stays an API failure and does not re-open discovery.
 
----
+Launch the independent `design-reviewer` and the first external request in parallel when supported (clink reviewers run sequentially after that). No reviewer receives the design conversation history or another reviewer's conclusions.
 
-## Step 2: Spawn Reviewers (Parallel)
+### Reviewer A — design-reviewer
 
-Launch both reviewers in a **single message** so they execute in parallel.
-
-### Reviewer A — `design-reviewer` sub-agent
-
-Spawn using the Agent tool:
-
-| Parameter       | Value                     |
-| --------------- | ------------------------- |
-| `subagent_type` | `kk:design-reviewer`      |
-| `description`   | `Isolated design review`  |
-| `prompt`        | See prompt template below |
-
-**Sub-agent prompt template:**
+Use the Agent tool with `subagent_type: kk:design-reviewer`, description `Isolated design review`, and this payload with every path absolute:
 
 ```
-You are reviewing the design documents for the "{feature_name}" feature. Apply your full review workflow.
+You are reviewing the design documents for the "{feature_name}" feature. Apply your full review workflow: load the review criteria before any document.
 
-## Verification Policy
+## Plugin Root
+{resolved absolute plugin root}
 
-{resolved absolute path to shared-verification-policy.md; read before subject documents}
+## Review Criteria
+- Design-review criteria: {absolute path to shared-design-review-criteria.md}
+- Verification policy: {absolute path to shared-verification-policy.md}
 
 ## Feature Directory
-
 {absolute path to /docs/feat/wip/[feature]/}
 
 ## Documents to Review
+- Design: {absolute path to design.md} (or "Not in scope" / "Requested but missing")
+- Implementation: {absolute path to implementation.md} (or "Not in scope" / "Requested but missing")
+- Tasks: {absolute path to tasks.md} (or "Not in scope" / "Requested but missing")
 
-- Design: {absolute path to design.md} (if in scope, otherwise "Not in scope")
-- Implementation: {absolute path to implementation.md} (if in scope, otherwise "Not in scope")
-- Tasks: {absolute path to tasks.md} (if in scope, otherwise "Not in scope")
+## Related Source
+{absolute paths of existing referenced files, or none; planned files named as planned}
 
 Read the documents yourself using the Read tool. Produce your findings in the output format specified in your agent definition.
 ```
 
-### Reviewer B — `pal codereview`
+### Reviewer B — external review (API branch)
 
-Follow the invocation protocol in [shared-pal-codereview-invocation.md](shared-pal-codereview-invocation.md).
+When discovery selected API, use the shared PAL protocol's two-step external review with the resolved model and its document-review branch. Keep `step` lean:
 
-**`step` parameter (step 1):** Keep lean — framing + file manifest only:
+1. Framing: "The following documents are design documents (markdown), not source code; implementation they describe is planned work, not a missing implementation. Review them for technical soundness, completeness, internal consistency, feature value and sufficient implementation detail. Apply the supplied design-review criteria and verification policy as methodology. Focus on consequential edge cases, missing constraints and ambiguities that would block an implementer."
+2. Scope: the feature name, the requested scope and any requested document that is missing.
+3. The categorized manifest from Step 3 as **Documents**, **Related source** and **Review criteria**, with planned files named as planned.
 
-1. Framing: "The following documents are design documents (markdown), not source code. Review them for technical soundness, completeness, internal consistency, and sufficient implementation detail. Apply the supplied verification policy as criteria, including proportionality of testing and acceptance gates. Focus on consequential edge cases, missing constraints, and ambiguities that would block an implementer."
-2. File manifest — categorize `relevant_files` as "Documents" (review targets), "Related source" (existing code) and "Review criteria" (verification policy). See [shared-pal-codereview-invocation.md](shared-pal-codereview-invocation.md) for the call sequence.
+Pass the manifest through `relevant_files` on the initial call and again on the expert continuation; do not paste document contents into `step`. Immediately before the continuation, verify its `relevant_files` contains every manifest path; a missing path blocks submission until added. Complete the continuation; the initial response is not external findings. Preserve native output and the returned source-coverage evidence; supplying paths does not prove the external reviewer read them.
 
-Do NOT inline document contents into `step`.
+### Reviewers B… — external review (clink branch)
 
-**`relevant_files` parameter:** Use the file list assembled in Step 1c.
+When discovery selected clink, send each roster client one fresh `clink` request under the shared protocol's request contract (`role: default`, `allow_edits: false`, the project root as working directory, no model parameter, no `continuation_id`). Attach the **complete** manifest in `absolute_file_paths` on this first request: criteria, documents and related source. Immediately before each request, verify `absolute_file_paths` contains every manifest path; a missing path blocks that request until added.
 
-**`model` parameter:** Use the model resolved in Step 1b.
+Build the `prompt` from this template, with facts only:
 
-### Parallel execution
+```
+Independent design-document review. The listed documents are feature proposals (markdown),
+not source code: implementation they describe is planned work, so do not report code that
+does not exist yet as a missing implementation. Read the criteria first, in order, then the
+documents, then any related source. Perform the review yourself: do not invoke review skills
+or sub-agents. Make no edits to any file and run no commands that write files; read-only
+inspection commands are acceptable where you need them to read files. Review only the listed
+documents; do not substitute other files from the working directory. Return findings with
+document and section, your native severity, the files you actually read and those you could
+not read, and any evidence requests.
 
-Issue the pal step 1 call and the Agent tool call (Reviewer A) in the **same message** so they execute in parallel. When both return, make the pal step 2 continuation call using the `continuation_id` from step 1.
+## Criteria (apply, do not review)
+{absolute paths: design-review criteria, verification policy}
 
-### Error handling
+## Documents (review targets)
+{absolute paths; requested documents that are missing}
 
-Handle reviewer failures inline as they occur:
+## Related source (existing code the documents reference)
+{absolute paths, or none; planned files named as planned}
 
-- **`pal` failure** (listmodels returns no models, or codereview step 1/2 fails): Note the failure, proceed to Step 3 with design-reviewer findings only.
-- **`design-reviewer` sub-agent failure** (timeout or error): Note the failure, proceed to Step 3 with pal findings only. Suggest `/kk:review-design` (standard mode) as supplement.
-- **Both reviewers fail**: Abort isolated mode. Display message suggesting fallback to `/kk:review-design` (standard mode). Do not proceed to Step 3.
-- **Malformed output**: Attempt best-effort parsing. If completely unparseable, treat as a failure and apply the rules above.
+## Context
+{feature name; requested scope; review purpose}
+```
 
----
+Record configured and observed model identity separately from the response. Preserve native output; do not remap severity.
 
-## Step 3: Annotate Findings
+### Outcome records and receipt
 
-The main agent performs annotation — providing context, not judgment. Do NOT assign dispositions (Confirmed, Disputed, etc.). The user is the final arbiter.
+Before annotation, record each reviewer's outcome class (requested, attempted, executed, adequately evidenced) and observed receipt under the shared protocol's reviewer record. For the API path inspect PAL's returned file-context/embedding metadata; for clink inspect returned tool-use/read results and denied-action metadata. Zero or unspecified coverage without other observable receipt evidence stays unverified. Final findings, correct-looking section citations and a reviewer-authored file list cannot establish receipt. Carry that limitation into the report before deciding whether any finding is corroborated.
 
-### 3a) Duplicate merging
+### Additional evidence and continuation
 
-Compare findings from both reviewers by document section and issue description:
+For any reviewer's evidence request (a referenced source file, a document section, a missing requested document that has since appeared), obtain what is available locally and send equivalent relevant additions to each affected reviewer without sharing any reviewer's conclusions: resume the design-reviewer with its original scope and provisional findings, and use each external reviewer's own continuation (API `continuation_id`, or that clink reviewer's `continuation_id` with `allow_edits: false`). Unavailable material stays an explicit coverage limit with a next action; do not expand reviewer permissions.
 
-- When both flag the same logical issue: merge into one entry, tag as **"corroborated"** — independent confirmation from different models is high signal.
-- Severity stays as the design-reviewer assessed it. If pal's native output implies a different level of urgency, note both perspectives side by side. Do NOT map pal's output to P0-P3 — describe the implied urgency in prose.
-- If only one reviewer flagged an issue, keep it as-is with reviewer attribution.
+### Failure and coverage limits
 
-### 3b) Author context annotations
+- If discovery is unresolved, or an external backend/call fails, retain useful available findings, proceed with the remaining reviewers and disclose the failure. An API failure never triggers clink; a failed clink client is not retried or replaced.
+- If one clink client fails while others succeed, keep every attempted request in the record with its own outcome and attribution.
+- If the design-reviewer fails, retain usable external findings and suggest `/kk:review-design` (standard mode) as a supplement.
+- If every reviewer fails, stop isolated review and suggest `/kk:review-design` (standard mode). Do not imply a completed review or run standard review silently.
+- Attempt best-effort parsing of malformed output; wholly unusable output is a failure.
+- A successful response with zero or unverified receipt cannot establish corroboration; an adequately sourced clean result is not a failure merely because it found nothing.
 
-For each finding, consider whether the design session context adds relevant information:
+## Step 5: Annotate Findings
 
-- If yes: add a clearly-labeled **"Author context"** annotation (e.g., "We discussed this trade-off in Step 3 and chose X because Y").
-- If no: leave the finding as-is — not every finding needs an annotation.
-- Annotations are context, not judgments. "We chose X because Y" is correct. "This finding is invalid" is **not**.
+The main agent supplies context, not replacement reviewer judgments. Do not assign dispositions such as Confirmed/Disputed; the user is the final arbiter.
 
-### 3c) Author-sourced findings
+- **Duplicate merging.** Merge the same logical issue (same document section, same concern) across reviewers once and list every supporting reviewer. Mark it **corroborated** only when at least two independent reviewers support it with relevant observable evidence; name their actual providers. Two external reviewers may corroborate an issue the design-reviewer missed; a reviewer with unverified receipt or a same-provider duplicate cannot corroborate. Severity stays as the design-reviewer assessed it; external reviewers keep their native format and implied urgency side by side. Do not map native output to P0–P3, and a majority is not a verdict.
+- **Planned work.** An external finding that treats planned implementation as missing code is kept with its attribution and annotated as planned work; it is not promoted to a corroborated defect.
+- **Author context.** Where the design session adds relevant information, add a clearly labeled **Author context** annotation: "We chose X because Y" is context; "This finding is invalid" is not.
+- **Author-sourced findings.** Label new observations made during this close re-reading **author-sourced**, distinct from independent findings.
+- **Follow-up.** Clarify an ambiguous external finding through that reviewer's own continuation if needed.
 
-If the close re-reading during annotation triggers new observations, add them:
+## Step 6: Index Findings
 
-- Tag as **"author-sourced"** — clearly distinct from sub-agent findings.
-- The user knows these come from the author and can weight accordingly.
+Index confirmed `TECH_RISK` findings that reveal non-obvious architectural constraints as `kk:arch-decisions`, and confirmed P0/P1 findings that suggest a systemic or structural design pattern as `kk:review-findings`, from any attributed source. Index on first encounter; do not index one-off issues. When none qualify, state "No findings to index."
 
-### 3d) pal follow-up (optional)
-
-If a pal finding is ambiguous or unclear, the main agent MAY use pal's follow-up interaction capability to clarify before presenting to the user.
-
-### 3e) Capy index
-
-**Capy index:** Index any confirmed `TECH_RISK` findings that reveal non-obvious architectural constraints as `kk:arch-decisions`. Index confirmed P0/P1 findings that suggest a systemic or structural design pattern (not isolated one-off issues) as `kk:review-findings`. Index on first encounter — recurrence detection happens on the search side in future reviews. This applies to findings from any source — corroborated, single-reviewer, or author-sourced.
-
----
-
-## Step 4: Present Report
-
-Use this report template, organized by agreement level:
+## Step 7: Present Report and Confirm Next Steps
 
 ```markdown
 ## Design Review Summary (Isolated Mode)
 
-**Reviewers**: design-reviewer (Claude sub-agent), pal codereview ([model name])
-**Documents reviewed**: [list]
+**Reviewers**: design-reviewer ([actual model]); external backend [API / clink / unresolved / none] —
+  per external reviewer: client/provider, configured vs observed model, outcome class, receipt
+**Roster**: eligible providers attempted; excluded (authoring provider, duplicates, unknown identity); failures
+**Documents reviewed**: in-scope documents; requested documents that were missing; related source supplied
+**Coverage**: per reviewer, files actually read versus supplied, and receipt limits
 
 ---
 
 ### Corroborated Findings
 
-(Both reviewers flagged — highest signal)
-
-- **[doc:section]** Brief title ⟨corroborated⟩
-  - Type: [finding_type] | Severity: P[0-3] | Confidence: [N]/10 — [reasoning]
-  - **Description:** [description]
-  - **Evidence:** [doc references]
-  - **Recommendation:** [recommendation]
-  - design-reviewer: [description in structured format]
-  - pal: [description in native format]
+- **[doc:section]** Brief title ⟨corroborated: {supporting reviewers with providers}⟩
+  - design-reviewer: Type: [finding_type] | Severity: P[0-3] | Confidence: [N]/10 — [reasoning];
+    description, evidence, recommendation
+  - {external reviewer, client/provider}: [native finding]
   - Author context: [optional annotation]
 
 ### Design Reviewer Findings
 
-(design-reviewer sub-agent only — P0-P3 format)
-
 - **[doc:section]** Brief title
   - Type: [finding_type] | Severity: P[0-3] | Confidence: [N]/10 — [reasoning]
-  - **Description:** [description]
-  - **Evidence:** [doc references]
-  - **Recommendation:** [recommendation]
+  - **Description:** / **Evidence:** / **Recommendation:**
   - Author context: [optional annotation]
 
 ### External Review Findings
 
-(pal codereview — native format)
-
-- [pal output in native format]
-  - Author context: [optional annotation]
+{one subsection per external reviewer: native output with attribution, receipt/coverage limits,
+planned-work annotations and optional author context}
 
 ### Author-Sourced Findings
 
-(Main agent observations during annotation — weight accordingly)
-
 - **[doc:section]** Brief title ⟨author-sourced⟩
   - [description]
+
+### Outstanding Evidence and Prerequisites
+
+{missing requested documents, unanswered evidence requests, outstanding PAL/roster prerequisites,
+with owner and next action when deferred}
 ```
 
-**Section rules:**
-
-- Omit any section that has no findings (e.g., if no corroborated findings, skip that section).
-- If a reviewer failed and only one reviewer's findings are present, note the failure at the top and present the available findings under the appropriate section.
+Omit empty finding sections, but always report the backend decision, roster, every reviewer's outcome and coverage, and the document scope actually reviewed, even with no findings. If a reviewer failed, note the failure at the top and present the available findings under their sections. Preserve useful findings during external failure or unverified receipt without claiming corroboration from that response.
 
 ### Next steps
 
@@ -223,7 +210,7 @@ After presenting the report, ask the user how to proceed:
 
 ## Next Steps
 
-I found X issues (corroborated: ..., design-reviewer: ..., pal: ..., author-sourced: ...).
+I found X issues (corroborated: ..., design-reviewer: ..., external per reviewer: ..., author-sourced: ...).
 
 **How would you like to proceed?**
 
@@ -237,3 +224,11 @@ Please choose an option or provide specific instructions.
 ```
 
 **Important:** Do NOT update any documents until the user explicitly confirms.
+
+### Verify outputs
+
+- [ ] Backend decision, roster and every reviewer's outcome, receipt and coverage disclosed
+- [ ] Document scope, missing requested documents and planned files reported
+- [ ] Findings annotated without replacing reviewer judgment; corroboration evidence-backed only
+- [ ] Qualifying findings indexed, or "No findings to index" noted
+- [ ] Next steps offered; no document edited before the user confirms

@@ -126,6 +126,34 @@ for skill in design test review-design; do
   fi
 done
 
+log_test "Design-review criteria shared source and consumer links are valid"
+assert_file_exists "$REPO_ROOT/klaude-plugin/skills/_shared/design-review-criteria.md" \
+  "Shared design-review criteria exists"
+for skill in review-design; do
+  criteria_link="$REPO_ROOT/klaude-plugin/skills/$skill/shared-design-review-criteria.md"
+  if [[ -L "$criteria_link" ]]; then
+    assert_equals "../_shared/design-review-criteria.md" "$(readlink "$criteria_link")" \
+      "Design-review criteria target for $skill"
+    assert_file_exists "$criteria_link" "Design-review criteria link resolves for $skill"
+  else
+    log_fail "Not a symlink: $criteria_link"
+  fi
+done
+
+log_test "External-review protocol is linked from both isolated review skills"
+assert_file_exists "$REPO_ROOT/klaude-plugin/skills/_shared/external-review-invocation.md" \
+  "Shared external-review protocol exists"
+for skill in review-code review-design; do
+  external_link="$REPO_ROOT/klaude-plugin/skills/$skill/shared-external-review-invocation.md"
+  if [[ -L "$external_link" ]]; then
+    assert_equals "../_shared/external-review-invocation.md" "$(readlink "$external_link")" \
+      "External-review protocol target for $skill"
+    assert_file_exists "$external_link" "External-review protocol link resolves for $skill"
+  else
+    log_fail "Not a symlink: $external_link"
+  fi
+done
+
 # Functional-review packaging: only register consumers that already exist.
 CHANGE_CONTEXT_CONSUMERS=(review-code implement)
 

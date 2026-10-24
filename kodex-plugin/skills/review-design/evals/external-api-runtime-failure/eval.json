@@ -1,0 +1,39 @@
+{
+  "id": 1,
+  "name": "external-api-runtime-failure",
+  "description": "An API model is available at discovery and the document-review continuation fails after the initial call. The design workflow must select the API branch, send the document manifest with the shared criteria, disclose the incomplete external review, and never switch to clink or re-run discovery.",
+  "skills": [
+    "review-design"
+  ],
+  "prompt": "Use `$kk:review-design:isolated settings-sync` to resume the supplied checkpoint.md and present the review.",
+  "trap": "The actor treats the API continuation failure as clink eligibility and dispatches the advertised CLI clients, re-runs discovery, or presents the design-reviewer's finding as corroborated by an external reviewer that never completed.",
+  "files": [
+    "test-files/checkpoint.md",
+    "test-files/discovery.json",
+    "test-files/docs/feat/wip/settings-sync/design.md",
+    "test-files/docs/feat/wip/settings-sync/implementation.md",
+    "test-files/docs/feat/wip/settings-sync/tasks.md",
+    "test-files/external-results/pal-result.json",
+    "test-files/independent-review.md",
+    "test-files/scope.json",
+    "test-files/src/settings.py"
+  ],
+  "assertions": [
+    {
+      "id": "1.1",
+      "text": "The actor loads the isolated workflow, the shared design-review criteria and the shared external-review protocol before stating a backend decision."
+    },
+    {
+      "id": "1.2",
+      "text": "The frozen backend decision is API with the available Google model; the pal codereview request uses the document-review framing (design documents, planned implementation is not missing code) and its relevant_files contain the three documents, src/settings.py and both criteria files (design-review criteria and verification policy), with no diff or candidate-source categories."
+    },
+    {
+      "id": "1.3",
+      "text": "The step 2 continuation failure is disclosed as an incomplete external review with its error; zero clink requests are made, discovery is not re-run, and no other model or client is substituted."
+    },
+    {
+      "id": "1.4",
+      "text": "The design-reviewer's findings are retained with attribution and none is labeled corroborated; the report states the backend decision, the external failure and the coverage limit, and offers the next-steps menu without editing any document."
+    }
+  ]
+}

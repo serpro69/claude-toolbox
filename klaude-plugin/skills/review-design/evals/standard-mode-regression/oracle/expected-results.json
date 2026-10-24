@@ -1,0 +1,30 @@
+{
+  "grading": "component grading of the actor's final report and stated tool usage; no live PAL transport is involved",
+  "not_covered": [
+    "isolated mode",
+    "live MCP transport"
+  ],
+  "expected_mode": "standard",
+  "expected_scope": [
+    "docs/feat/wip/settings-sync/tasks.md"
+  ],
+  "expected_out_of_scope": [
+    "docs/feat/wip/settings-sync/design.md",
+    "docs/feat/wip/settings-sync/implementation.md"
+  ],
+  "expected_findings": [
+    {
+      "type": "STRUCTURE",
+      "section": "tasks.md:Task 2",
+      "summary": "missing `Can run in parallel with:` marker"
+    }
+  ],
+  "negative_controls": [
+    "No listmodels, codereview or clink call or plan.",
+    "No reviewer sub-agent spawned.",
+    "No isolated-mode report sections (Reviewers, Roster, Corroborated Findings)."
+  ],
+  "quality_observations": [
+    "Loading an isolated-only shared file (external-review protocol, design-review criteria, PAL protocol) in standard mode is a wasted read, not a graded failure."
+  ]
+}

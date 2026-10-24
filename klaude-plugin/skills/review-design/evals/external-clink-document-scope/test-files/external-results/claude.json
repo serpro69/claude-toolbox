@@ -1,0 +1,55 @@
+{
+  "provenance": {
+    "kind": "synthetic-test-data",
+    "live_mcp_call": false,
+    "client": "claude",
+    "operator_declared_provider": "Anthropic"
+  },
+  "request_echo": {
+    "tool": "clink",
+    "cli_name": "claude",
+    "role": "default",
+    "allow_edits": false
+  },
+  "result": {
+    "status": "success",
+    "continuation_id": "synthetic-claude-conv-1",
+    "provider_used": "claude",
+    "model_observed": "claude-sonnet-5-5",
+    "content": "Findings:\n1. [High] design.md Architecture / implementation.md Task 2 — the retry policy is contradictory: the design drops a push after 3 backoff retries, the implementation retries forever with a 30 s sleep. Resolve before implementing.\n2. [Low] design.md Assumptions — 'idempotent for the same key/value pair' is testable; consider naming the provider test that establishes it.\nFiles read: both criteria files, design.md, implementation.md, src/settings.py. Not read: none. tasks.md was listed as missing and not requested.",
+    "metadata": {
+      "events": [
+        {
+          "type": "tool_result",
+          "tool": "Read",
+          "path": "<criteria>/design-review-criteria.md",
+          "status": "ok"
+        },
+        {
+          "type": "tool_result",
+          "tool": "Read",
+          "path": "<criteria>/verification-policy.md",
+          "status": "ok"
+        },
+        {
+          "type": "tool_result",
+          "tool": "Read",
+          "path": "<project>/docs/feat/wip/settings-sync/design.md",
+          "status": "ok"
+        },
+        {
+          "type": "tool_result",
+          "tool": "Read",
+          "path": "<project>/docs/feat/wip/settings-sync/implementation.md",
+          "status": "ok"
+        },
+        {
+          "type": "tool_result",
+          "tool": "Read",
+          "path": "<project>/src/settings.py",
+          "status": "ok"
+        }
+      ]
+    }
+  }
+}

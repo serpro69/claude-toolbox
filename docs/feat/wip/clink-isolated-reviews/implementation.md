@@ -2,7 +2,7 @@
 
 > Design: [design.md](design.md)
 > Tasks: [tasks.md](tasks.md)
-> Status: Task 0 verified against the recorded corrected PAL build; Task 1 code complete (2026-10-23); Tasks 2–3 pending
+> Status: Task 0 verified against the recorded corrected PAL build; Task 1 code complete (2026-10-23); Task 2 code complete (2026-10-24); Task 3 pending
 
 ## Repository orientation
 
