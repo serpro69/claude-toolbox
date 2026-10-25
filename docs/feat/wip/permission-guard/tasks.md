@@ -4,7 +4,7 @@
 > Implementation: [./implementation.md](./implementation.md)
 > Status: pending
 > Created: 2026-10-20
-> Not Doing: context-protection rules, project-data rules, ask/mode-aware destructive decisions, project-level loosening, Grep/Glob content filtering, negation patterns, Codex read_file enforcement (optional stretch only), pre-edit backups, curl-pipe-sh rules, Windows wrapper support, deny ledger
+> Not Doing: context-protection rules, project-data rules, ask/mode-aware destructive decisions, project-level loosening, Grep/Glob content filtering, negation patterns, Codex read_file enforcement (optional stretch only), pre-edit backups, curl-pipe-sh rules, Windows wrapper support, deny ledger, execution channels beyond Bash/apply_patch/capy MCP tools, non-literal `cd` tracking
 
 ## Task 1: Declaration, glob matcher and file-tool secrets check
 - **Status:** pending
@@ -30,8 +30,8 @@
 - **Docs:** [implementation.md#task-2](./implementation.md#task-2-fail-closed-wrapper-and-hook-registration)
 
 ### Subtasks
-- [ ] 2.1 Create `klaude-plugin/scripts/guard/guard.sh`: single stdin read, `tool_name` via parameter expansion (exit 0 only for names outside the matcher set; no read skip path, every matched tool reaches the engine), interpreter list with `KK_GUARD_INTERPRETERS` override, `python3 -I guard.py`, `fail_closed` on every non-0/2 outcome
-- [ ] 2.2 Update `klaude-plugin/hooks/hooks.json`: matcher `Bash|Read|Edit|Write|NotebookEdit|Grep|Glob|mcp__capy__capy_execute|mcp__capy__capy_execute_file|mcp__capy__capy_batch_execute`, command `${CLAUDE_PLUGIN_ROOT}/scripts/guard/guard.sh`, `timeout: 15`, `onFailure: "block"`
+- [ ] 2.1 Create `klaude-plugin/scripts/guard/guard.sh`: single stdin read, no payload parsing (no skip path, no tool-name gate; dispatch is the engine's), interpreter list with `KK_GUARD_INTERPRETERS` override, `python3 -I guard.py`, `fail_closed` on every non-0/2 outcome
+- [ ] 2.2 Update `klaude-plugin/hooks/hooks.json`: matcher `Bash|Read|Edit|Write|NotebookEdit|Grep|Glob|mcp__.+__capy_(execute|execute_file|batch_execute)`, command `${CLAUDE_PLUGIN_ROOT}/scripts/guard/guard.sh`, `timeout: 15`, `onFailure: "block"`
 - [ ] 2.3 Delete `klaude-plugin/scripts/validate-bash.sh`; update `test/test-plugin-structure.sh` Section 5 to assert the `guard/` files and the `onFailure` key
 - [ ] 2.4 Rewrite `test/test-hooks.sh` Sections 1–3: allow cases, deny cases (exit 2, JSON, stderr) including a Read of `.env` with no config files present (plugin-only), fail-closed cases (bad interpreter list, empty rules file, non-JSON payload); keep Section 4
 - [ ] 2.5 Add the file-tool latency measurement (100 Read payloads, p95 always printed, asserted under 60 ms only when `CI` is unset) and record the measured value
@@ -45,7 +45,7 @@
 
 ### Subtasks
 - [ ] 3.1 Port `defang`, `strip_quotes`, `basename`, `command_position_tokens`, wrapper tables, segment/chain splitters and `substitution_bodies` into `guard.py` with attribution; use Claude Code's exact separator set; enforce the order of design §7.3: `extract_bodies` on the original text first, `defang` only for the per-segment prose view, a quote-stripped operand view for all path checks; unit-test `sh -c 'rm -rf x'`, `echo "$(rm x)"` and `cat "/repo with spaces/.env"` survive extraction
-- [ ] 3.2 Implement heredoc handling: quoted delimiter bodies dropped for data-sink consumers; unquoted delimiter bodies have their substitutions extracted first, then dropped; shell/interpreter consumers keep the body; unit-test the commit-message form as allow, `cat <<EOF` with `$(rm -rf x)` as deny (after Task 4), and a `bash <<EOF` body as kept
+- [ ] 3.2 Implement heredoc handling before body extraction: quoted-delimiter bodies are masked from `extract_bodies` and dropped for data-sink consumers; unquoted-delimiter bodies are scanned for substitutions, then dropped for data sinks; shell/interpreter and unknown consumers keep the body; unit-test the commit-message form (including a literal `$(rm -rf x)` line) as allow, `cat <<EOF` with `$(rm -rf x)` as deny (after Task 4), a `bash <<EOF` body as kept, and the unknown-consumer case as the documented deny
 - [ ] 3.3 Implement path-like operand extraction resolved against the execution directory and matched against secrets globs anchored at the project root, raw and resolved; corpus: `cat .env` deny, `cat ../.env` from `cwd: /repo/sub` deny, `cat ../README.md` from the same `cwd` allow, `cat .env.example` allow, `find . -not -path './.git/*'` allow
 - [ ] 3.4 Implement mutation-operand extraction (`>`, `>>`, `tee`, `sed -i`, `dd of=`, last operand of `cp`/`install`, every operand of `mv`, `ln` link name) against selfmod (equal, descendant and ancestor matching) and secrets; corpus: redirect into `.claude/settings.json` deny, `mv .codex/hooks.json /tmp/x` deny, `mv .codex /tmp/` deny, `mv src/a.go src/b.go` allow, `cat .claude/settings.json` allow
 - [ ] 3.5 Implement inline-interpreter write detection; corpus: `python3 -c "open('.claude/settings.json','w')"` deny, read form allow
@@ -77,7 +77,7 @@
 - [ ] 5.2 Implement user-config loading (`KK_GUARD_USER_CONFIG` or `~/.claude/kk-guard.json`): union of the `*` entry and the single longest path-prefix entry for the `realpath`ed project root (shorter prefixes ignored); `disable_categories`; `allow_patterns` tested per simple command (each segment and extracted body) and exempting only that command from destructive rules; `disable_selfmod`
 - [ ] 5.3 Create fixtures under `test/fixtures/guard/project-config/` and `test/fixtures/guard/user-config/`; unit tests for tighten-only enforcement, unknown-key reporting, invalid JSON, category disable scoped by path, `*` plus prefix union with an ignored intermediate prefix, `git clean -nd; rm -rf ./work` denied under `^git clean -n`, allow pattern not touching secrets or selfmod, `disable_selfmod`
 - [ ] 5.4 Emit `{"systemMessage": ...}` as the only stdout key on allowed calls when a config was invalid; assert the field and the absence of `hookSpecificOutput` in `test-hooks.sh`
-- [ ] 5.5 Wrapper test: with a project config present, a Read payload reaches the engine and an added glob is denied
+- [ ] 5.5 Wrapper test: with `KK_GUARD_PROJECT_CONFIG` pointing at a fixture that adds a secrets glob, a matching Read is denied through `guard.sh`; with the override pointing at a nonexistent file, the same Read is allowed
 
 ## Task 6: Generators, parity and freshness
 - **Status:** pending

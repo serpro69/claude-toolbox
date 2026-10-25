@@ -84,7 +84,13 @@ call whose path matches a baseline secrets glob, and allows everything else.
    nothing and exit 0.
 7. Implement `main`: read stdin, parse JSON (invalid JSON denies with the
    `failure` remedy), dispatch file tools, ignore Bash for now (allow).
-8. Add corpus cases for file tools: Read `/repo/.env` deny; Read
+8. Define the corpus row schema (design §13): `tool_name`, `tool_input`,
+   optional `cwd`, `project_root`, `project_config`, `user_config` (fixture
+   paths relative to the corpus file, applied through the `KK_GUARD_*`
+   overrides for that row), optional `pending_task`, `expect` (`allow` or
+   `deny`), `category`, `note`. The replay runner points both config
+   overrides at nonexistent files for rows that omit them. Add corpus cases
+   for file tools: Read `/repo/.env` deny; Read
    `/repo/.env.example` allow; Edit `~/.claude/settings.json` allow in this
    task (selfmod arrives in Task 3) — mark with a `pending_task: 3` field the
    runner skips; Grep with `path: ~/.aws` deny; Read of a symlink under `/tmp`
@@ -118,21 +124,21 @@ closed on every error path.
 **Steps.**
 
 1. Write `guard.sh` modelled on safe-claude-code's `guard.sh`: read stdin
-   once with the trailing-`x` trick; extract `tool_name` with parameter
-   expansion on the raw JSON (`${payload#*\"tool_name\"}` style, tolerant of
-   whitespace) and exit 0 only for a tool name outside the matcher set (no
-   read skip path: design §7.1 explains why plugin-only installs forbid it);
-   interpreter list from `KK_GUARD_INTERPRETERS` or the default absolute list
-   plus `PATH` fallback; run `python3 -I guard.py`; any outcome other than
+   once with the trailing-`x` trick; do not parse the payload (no read skip
+   path and no tool-name gate: design §7.1; dispatch and the unknown-tool
+   allow live in the engine); interpreter list from `KK_GUARD_INTERPRETERS`
+   or the default absolute list plus `PATH` fallback; run
+   `python3 -I guard.py` with the payload on stdin; any outcome other than
    exit 0 or 2 → `fail_closed` which writes stderr, prints a JSON deny, exits
    2.
    → verify: `printf '{"tool_name":"Read","tool_input":{"file_path":"/x"}}' | bash guard.sh; echo $?` prints 0 with no output; the same payload with `file_path` `.env` and `cwd` set exits 2 with no config files present.
 2. Update `hooks.json`: matcher
-   `Bash|Read|Edit|Write|NotebookEdit|Grep|Glob|mcp__capy__capy_execute|mcp__capy__capy_execute_file|mcp__capy__capy_batch_execute`,
-   command `${CLAUDE_PLUGIN_ROOT}/scripts/guard/guard.sh`, `"timeout": 15`,
-   `"onFailure": "block"`. Keep the SessionStart entry untouched. Until Task
-   13 lands, the engine allows the three capy tools (unknown dispatch →
-   allow), so wiring the matcher early is safe.
+   `Bash|Read|Edit|Write|NotebookEdit|Grep|Glob|mcp__.+__capy_(execute|execute_file|batch_execute)`
+   (regex; the server segment is open so a differently named capy server
+   still matches), command `${CLAUDE_PLUGIN_ROOT}/scripts/guard/guard.sh`,
+   `"timeout": 15`, `"onFailure": "block"`. Keep the SessionStart entry
+   untouched. Until Task 13 lands, the engine allows the capy tools (unknown
+   dispatch → allow), so wiring the matcher early is safe.
    → verify: `jq . hooks.json` succeeds; structure test still finds
    `CLAUDE_PLUGIN_ROOT`.
 3. Delete `validate-bash.sh`. Update `test-plugin-structure.sh` Section 5 to
@@ -188,17 +194,22 @@ the false-positive corpus is allowed.
    `echo "$(rm x)"` yields `rm x`; `cat "/repo with spaces/.env"` yields the
    operand `/repo with spaces/.env`; `git commit -m "clean up"` prose view is
    `git commit -m Q`.
-2. Implement heredoc handling (design §7.3 step 2): detect `<<[-]WORD` and
-   whether `WORD` is quoted; find the terminator line. Quoted delimiter: drop
-   the body when the consumer program is `cat`, `tee`, `printf` or a plain
-   redirect. Unquoted delimiter: run `extract_bodies` over the body first
-   (the shell expands `$(...)` before the sink sees it), then drop it under
-   the same consumer rule. Keep the body when the consumer is a shell or
-   interpreter.
+2. Implement heredoc handling (design §7.3 step 1, which runs *before*
+   `extract_bodies`): detect `<<[-]WORD` and whether `WORD` is quoted; find
+   the terminator line; record the span. `extract_bodies` masks
+   quoted-delimiter bodies so a literal `$(...)` inside them is never
+   extracted, and scans unquoted-delimiter bodies normally. After
+   extraction, drop a body whose consumer program is `cat`, `tee`, `printf`
+   or a plain redirect; keep the body (analysed as a script) when the
+   consumer is a shell or interpreter; keep it when the consumer is
+   anything else (the documented false-positive class).
    → verify: unit test with Claude Code's commit-message form
    (`git commit -m "$(cat <<'EOF' ... EOF)"`) allowed even when a body line
-   starts with `rm -rf`; `cat <<EOF\n$(rm -rf x)\nEOF` denied after Task 4;
-   `bash <<'EOF'\nrm -rf x\nEOF` denied after Task 4.
+   starts with `rm -rf` or contains the literal text `$(rm -rf x)`;
+   `cat <<EOF\n$(rm -rf x)\nEOF` denied after Task 4;
+   `bash <<'EOF'\nrm -rf x\nEOF` denied after Task 4;
+   `./scripts/import.sh <<'EOF'\nrm -rf x\nEOF` denied after Task 4 with the
+   row's note naming it the unknown-consumer false positive.
 3. Implement path-like operand extraction per segment on the operand view:
    tokens containing `/`, starting with `~` or `.`, or naming an existing
    file relative to `ctx.exec_dir`. Resolve each against `ctx.exec_dir` and
@@ -223,7 +234,7 @@ the false-positive corpus is allowed.
    (read, not write); `echo x 2>/dev/null` allow.
 5. Implement inline-interpreter write detection: when a segment runs an
    interpreter with `-c`/`-e` or a stdin script, scan the code text for the
-   write-call patterns in design §7.3 step 5 whose argument text contains a
+   write-call patterns in design §7.3 step 6 whose argument text contains a
    protected path.
    → verify: corpus `python3 -c "open('.claude/settings.json','w')"` deny;
    `python3 -c "open('.claude/settings.json').read()"` allow.
@@ -241,8 +252,10 @@ commands are allowed.
 
 **Files.**
 - `klaude-plugin/scripts/guard/guard.py`
-- `klaude-plugin/scripts/guard/guard-rules.json` (only if a rule needs a
-  field the engine cannot express; prefer not to touch)
+- `klaude-plugin/scripts/guard/guard-rules.json` (not touched: the Task 1
+  declaration is the fixture. If the matcher cannot express a rule written
+  there, that is a design gap; stop, amend design §6.3 and the declaration
+  together, and record why)
 - `test/guard/test_guard.py`
 - `test/fixtures/guard/corpus.jsonl`
 
@@ -473,10 +486,13 @@ secrets.
    Update `.codex/hooks.json` deny.
 2. Rewrite `pretooluse-bash.sh`: keep `capy_hook_registered` and the HTTP
    section; replace the `FORBIDDEN_PATTERNS` loop with
-   `KK_GUARD_PROJECT_ROOT="$REPO_ROOT" printf '%s' "$INPUT" | bash "$REPO_ROOT/.codex/scripts/guard/guard.sh"`
-   (export the root: Codex sets no `CLAUDE_PROJECT_DIR` and the engine must
-   not anchor globs to the payload `cwd`); propagate exit 2 and stderr; wrap
-   the whole script so any unexpected failure writes stderr and exits 2.
+   `export KK_GUARD_PROJECT_ROOT="$REPO_ROOT"` followed by
+   `printf '%s' "$INPUT" | bash "$REPO_ROOT/.codex/scripts/guard/guard.sh"`
+   (the variable must reach the right-hand side of the pipe, so export it
+   rather than prefixing `printf`; Codex sets no `CLAUDE_PROJECT_DIR` and the
+   engine must not anchor globs to the payload `cwd`); propagate exit 2 and
+   stderr; wrap the whole script so any unexpected failure writes stderr and
+   exits 2.
    → verify: `test-codex-hooks.sh` Section 3/4 denylist cases now assert
    exit 2, JSON deny and a reason containing `kk guard`; a `cat ../.env`
    payload with `cwd` at a subdirectory of the test repo denies; capy
@@ -631,10 +647,12 @@ from Task 8 step 4). Numbered after Task 12 because it was added by the
    → `language` `shell` runs `code` through the Bash analysis, any other
    language runs `code` through the inline-interpreter write scan (§7.3 step
    6) and the path-like secrets scan; `capy_execute_file` → check `path` as a
-   Read, then `code` as above. `tool_input.cwd`, when present and absolute,
-   is the execution directory for the call; the project root is unchanged.
-   The tool name arrives with the server prefix (`mcp__capy__capy_execute`);
-   match on the suffix after the last `__`.
+   Read, then `code` as above. `tool_input.cwd`, when present, is the
+   execution directory for the call: absolute as given, relative resolved
+   against the project root (capy documents relative `cwd` as
+   project-relative); the project root itself is unchanged. The tool name
+   arrives with the server prefix (`mcp__capy__capy_execute`); match on the
+   suffix after the last `__`.
    → verify: corpus: `capy_execute` shell `cat .env` deny; shell
    `go test ./...` allow; python `open('.env').read()` deny; python
    `print(1)` allow; javascript `fs.writeFileSync('.claude/settings.json',

@@ -125,7 +125,9 @@ instead of merging it (§10).
 
 **Layer 2, plugin hook.** Registered in `klaude-plugin/hooks/hooks.json` with
 matcher
-`Bash|Read|Edit|Write|NotebookEdit|Grep|Glob|mcp__capy__capy_execute|mcp__capy__capy_execute_file|mcp__capy__capy_batch_execute`,
+`Bash|Read|Edit|Write|NotebookEdit|Grep|Glob|mcp__.+__capy_(execute|execute_file|batch_execute)`
+(Claude Code matchers are regexes; the server segment is left open because a
+user may register capy under another server name),
 `onFailure: "block"` and a 15-second timeout. A bash wrapper handles
 fail-closed semantics; a Python engine does the matching (§7). The engine
 reads the same declaration at runtime. Every matched tool reaches the engine;
@@ -275,9 +277,11 @@ Files: `klaude-plugin/scripts/guard/guard.sh` (wrapper),
 ### 7.1 Wrapper
 
 - Reads the payload from stdin once, preserving trailing newlines.
-- Extracts `tool_name` with bash parameter expansion; no fork before the
-  interpreter starts. A tool name outside the matcher set exits 0 (defensive;
-  the matcher should never deliver one).
+- Does not inspect the payload. Dispatch, including "this tool name is not
+  one we handle, allow", is the engine's job; a bash-side parse of
+  `tool_name` bought nothing once the skip path went, and the Codex
+  adapters deliver names (`apply_patch`, MCP tool names) the Claude matcher
+  never sees.
 - **No read skip path.** Every matched tool, including `Read`, `Grep` and
   `Glob`, reaches the engine. An earlier draft exited early for those three
   when no guard config file existed, reasoning that the settings baseline
@@ -299,7 +303,11 @@ Files: `klaude-plugin/scripts/guard/guard.sh` (wrapper),
   stderr reason, a JSON deny on stdout, and exit 2. On Codex this is the only
   fail-closed mechanism (§11), and exit 2 with empty stderr is treated as a
   failure that lets the call through, so every exit-2 path writes stderr
-  first.
+  first. Consequence worth stating: on a machine with no working `python3`,
+  every matched tool (Read included) is blocked until the interpreter is
+  fixed. The failure remedy says exactly that; the alternative, failing open
+  on a Read, would make the secrets guard disappear silently on the machines
+  least likely to notice.
 
 ### 7.2 Engine pipeline
 
@@ -310,9 +318,10 @@ Files: `klaude-plugin/scripts/guard/guard.sh` (wrapper),
      (Codex, §11), else `CLAUDE_PROJECT_DIR`, else the payload `cwd`. It
      anchors every project-relative glob (§7.4) and locates the project
      config (§8.1);
-   - the **execution directory**: the payload `cwd` (or the tool input's own
-     `cwd` for the capy execution tools). Relative arguments resolve against
-     it.
+   - the **execution directory**: the payload `cwd`. For the capy execution
+     tools, a `tool_input.cwd` overrides it: absolute as given, relative
+     resolved against the project root (capy documents relative `cwd` as
+     project-relative). Relative arguments resolve against it.
    Claude Code persists the shell working directory across Bash calls, so the
    payload `cwd` is routinely a subdirectory of the root; anchoring globs to
    it would let `cat ../.env` from `/repo/sub` slip past `./**/.env`.
@@ -320,8 +329,8 @@ Files: `klaude-plugin/scripts/guard/guard.sh` (wrapper),
 3. Load and merge project and user configs (§8).
 4. Dispatch by tool:
    - **Read, Grep, Glob:** candidate path is `file_path` (Read) or `path`
-     (Grep, Glob search root). Expand `~`, resolve relative to `cwd`, then
-     `realpath`. Check both the requested and the resolved path against the
+     (Grep, Glob search root). Expand `~`, resolve relative to the execution
+     directory, then `realpath`. Check both the requested and the resolved path against the
      effective secrets globs; a match on either denies. This mirrors the
      documented behaviour of deny rules, which "apply when either the
      requested path or the file it resolves to matches".
@@ -329,9 +338,11 @@ Files: `klaude-plugin/scripts/guard/guard.sh` (wrapper),
      `notebook_path`), plus the self-modification check.
    - **apply_patch (Codex):** parse `*** Add File:`, `*** Update File:`,
      `*** Delete File:` and `*** Move to:` header lines from the raw patch in
-     `tool_input.command`; resolve each against `cwd`; apply secrets and
-     self-modification checks; treat `Delete File` as `filesystem`-destructive
-     (Claude Code's edit tools cannot delete, so parity says deny).
+     `tool_input.command`; resolve each against the execution directory;
+     apply secrets and self-modification checks (a `Move to:` target is a
+     mutation operand like an `mv` destination); treat `Delete File` as
+     `filesystem`-destructive with the `targets_under_tmp` exemption (Claude
+     Code's edit tools cannot delete, so parity says deny).
    - **Bash:** see 7.3.
    - **capy execution tools:** `capy_batch_execute` runs each
      `commands[].command` through the Bash analysis of 7.3. `capy_execute`
@@ -351,20 +362,26 @@ feeds only the prose-level pattern checks), and an earlier draft of this
 section inverted that and would have turned `sh -c 'rm -rf x'` into
 `sh -c Q` before recursion could see it.
 
-1. **Structural extraction on the original text.** A quote-aware scan finds
-   the bodies of `$(...)`, backticks, `<(...)`, `>(...)`, and the quoted
-   argument of `sh -c`, `bash -c` (and other shells), plus the program run by
-   `xargs`, `env`, `sudo`, `timeout N`, `nohup`. Each body is analysed
-   recursively as a command in its own right, with its original characters,
-   so `sh -c 'rm -rf x'` and `echo "$(rm x)"` are both seen.
-2. **Heredocs.** A heredoc with a quoted delimiter (`<<'EOF'`) is literal:
-   its body is dropped when the consumer is a data sink (`cat`, `tee`,
-   `printf`, a redirect to a file). A heredoc with an unquoted delimiter is
-   expandable: the shell evaluates `$(...)` and backticks inside it before the
-   sink ever sees the text, so those substitutions are extracted by step 1
-   first and only then is the body dropped. Bodies fed to a shell or an
-   interpreter are kept whole. This removes commit-message prose, which
-   Claude Code passes through `git commit -m "$(cat <<'EOF' ... EOF)"`.
+1. **Heredoc spans.** Locate every `<<[-]WORD` and its terminator line
+   first, and classify the span by delimiter quoting and by consumer. A
+   quoted delimiter (`<<'EOF'`) makes the body a literal string: nothing in
+   it is executable, so it is opaque to step 2 (a `$(rm x)` written inside
+   a quoted commit-message heredoc is text, not a command). An unquoted
+   delimiter makes the body expandable: the shell evaluates `$(...)` and
+   backticks inside it before any consumer sees the text, so step 2 scans
+   it. After step 2, a body whose consumer is a data sink (`cat`, `tee`,
+   `printf`, a redirect to a file) is dropped from further analysis; a body
+   fed to a shell or an interpreter is kept whole and analysed as a script.
+   This is what removes commit-message prose, which Claude Code passes
+   through `git commit -m "$(cat <<'EOF' ... EOF)"`.
+2. **Structural extraction on the original text.** A quote-aware scan, with
+   quoted heredoc bodies masked, finds the bodies of `$(...)`, backticks,
+   `<(...)`, `>(...)`, and the quoted argument of `sh -c`, `bash -c` (and
+   other shells). Each body is analysed recursively as a command in its own
+   right, with its original characters, so `sh -c 'rm -rf x'` and
+   `echo "$(rm x)"` are both seen. (Programs run through `xargs`, `env`,
+   `sudo`, `timeout N`, `nohup` are not bodies; wrapper skipping in step 5
+   reaches them.)
 3. **Segmentation.** Split on the separators Claude Code itself recognises:
    `&&`, `||`, `;`, `|`, `|&`, `&`, newline.
 4. **Two views per segment.** The *prose view* is the segment after
@@ -385,7 +402,7 @@ section inverted that and would have turned `sh -c 'rm -rf x'` into
      preceding `cd` segment whose single argument is a literal absolute path
      updates the execution directory for the rest of the command; any other
      `cd`, `pushd`, `popd`, or a wrapper that changes directory (`env -C`,
-     `env --chdir`, `make -C` as a wrapper) marks it uncertain, after which
+     `env --chdir`) marks it uncertain, after which
      relative operands deny and only absolute operands under a `tmp_roots`
      entry are exempt. Without this, `cd /work/project && rm -rf ./work` with
      a payload `cwd` under `/tmp` would resolve `./work` under `/tmp` and be
@@ -409,9 +426,11 @@ section inverted that and would have turned `sh -c 'rm -rf x'` into
    `fs.rm*`) whose argument names a protected file. Documented ceiling: a
    path assembled by concatenation is not detected.
 
-Known false-positive class that remains: a heredoc line fed to a shell that
-begins with a destructive program name. Accepted; the corpus pins the common
-commit-message case as must-allow.
+Known false-positive class that remains: a heredoc whose consumer is neither
+a recognised data sink nor a shell or interpreter (for example piped into a
+project script) keeps its body, so a body line beginning with a destructive
+program name denies. Accepted; the corpus pins the common commit-message
+case as must-allow and one unknown-consumer case as a documented deny.
 
 ### 7.4 Glob matcher
 
@@ -456,7 +475,7 @@ The reason format is `kk guard: <category> — <what matched>. Way through:
 |---|---|
 | secrets | "this path is a secret file; ask the user for the value you need, or for a redacted copy" |
 | destructive | "run it yourself by typing `! <command>` in the prompt; or disable the `<category>` category for this project in `~/.claude/kk-guard.json`" |
-| selfmod | "guard and settings files are protected from agent edits; the user edits them directly" |
+| selfmod | "guard and settings files are protected from agent edits; the user edits them directly, or sets `disable_selfmod: true` for this project in `~/.claude/kk-guard.json`" |
 | failure | "the guard could not run (<cause>); nothing was executed; fix the guard or run the command yourself" |
 
 Allowed calls produce no stdout and exit 0. The hook never emits
@@ -505,7 +524,7 @@ Per-entry keys:
 - `disable_categories`: list of destructive category names to switch off.
 - `allow_patterns`: regexes tested against each normalised **simple command**
   on its own: every segment of §7.3 step 3 and every recursively extracted
-  body of step 1, after wrapper skipping, with the prose view's quoting. A
+  body of step 2, after wrapper skipping, with the prose view's quoting. A
   match exempts that one simple command from destructive rules only. With
   `^git clean -n`, the command `git clean -nd; rm -rf ./work` keeps the dry
   run and still denies the `rm`; a user does not have to anticipate shell
@@ -573,7 +592,7 @@ Structure-test assertions: secrets globs pass the shape lint; destructive
 rules use only the fields of §6.3 and `codex` records appear only on the
 five permitted rules; regenerating into a temporary directory produces no
 diff; the Codex copies compare identical to the plugin files; `hooks.json`
-carries the all-channel matcher (including the three capy execution tools)
+carries the all-channel matcher (including the capy execution-tool regex)
 and `onFailure: "block"`.
 
 `AGENTS.md` moves `.codex/rules/default.rules` from the hand-authored list to
@@ -598,7 +617,7 @@ In `template-sync.sh`:
   staging in `fetch_upstream_templates`.
 - The `.codex/` tree syncs as today. The existing `hooks.json` ownership rule
   (toolbox owns entries whose command runs a script under `.codex/scripts/`)
-  already covers the new patch hook.
+  already covers the new patch and MCP hooks.
 
 Sync never deletes downstream files; this remains true.
 
@@ -692,8 +711,12 @@ loosening file lives outside any clone and is itself write-protected.
 ## 13. Testing strategy
 
 **Corpus.** `test/fixtures/guard/corpus.jsonl`, one case per line: tool
-name, input, optional `cwd`, expected `allow` or `deny`, expected category,
-note. Must-allow: a `find` excluding `.git/`; `cat .env.example`; a heredoc
+name, input, optional `cwd`, optional `project_root`, optional
+`project_config` and `user_config` (paths under `test/fixtures/guard/`
+relative to the corpus file, applied through the §8.4 overrides for that
+row only), optional `pending_task`, expected `allow` or `deny`, expected
+category, note. Rows without config fields run with both overrides pointing
+at nonexistent files, which is the plugin-only condition. Must-allow: a `find` excluding `.git/`; `cat .env.example`; a heredoc
 commit message naming `build/` and `dist/`; reading logs, `node_modules`,
 lockfiles, build output; `rm -rf /tmp/kk-test`; `git branch -d`;
 `git rebase`; `git commit --amend`; `kubectl get`; `terraform plan`.
@@ -718,7 +741,11 @@ neighbour: `cat ../.env` with payload `cwd` at `<root>/sub` (deny) and
 `capy_execute` shell `cat .env` (deny), python `open('.env').read()` (deny),
 `capy_batch_execute` with `go test ./...` (allow), `capy_execute_file` on
 `.env` (deny); `cert.pem` Read (deny, the accepted false positive); a Read of
-`.env` with no project or user config present (deny: the plugin-only case).
+`.env` with no project or user config present (deny: the plugin-only case);
+a quoted-delimiter heredoc to `cat` whose body contains the literal text
+`$(rm -rf x)` (allow: literal, not executable); a heredoc piped into
+`./scripts/import.sh` with a body line `rm -rf x` (deny, the documented
+unknown-consumer false positive).
 
 **Python in-process tests.** `test/guard/test_guard.py` imports the engine
 and replays the corpus; unit tests for the glob matcher (fixture table from
@@ -746,7 +773,7 @@ records the CLI version.
 `test/test-template-sync.sh` adds deny replacement, dropped-entries report,
 allow still unioned, the new exclusion. `test/test-plugin-structure.sh` gains
 shape lint, freshness and copy-identity checks. `test/test-codex-structure.sh`
-checks the generated-file header and the patch hook entry.
+checks the generated-file header and the patch and MCP hook entries.
 
 ## 14. Migration and rollout
 
