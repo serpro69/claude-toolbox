@@ -331,10 +331,13 @@ Files: `klaude-plugin/scripts/guard/guard.sh` (wrapper),
      (Codex, §11), else `CLAUDE_PROJECT_DIR`, else the payload `cwd`. It
      anchors every project-relative glob (§7.4) and locates the project
      config (§8.1);
-   - the **execution directory**: the payload `cwd`. For the capy execution
-     tools, a `tool_input.cwd` overrides it: absolute as given, relative
-     resolved against the project root (capy documents relative `cwd` as
-     project-relative). Relative arguments resolve against it.
+   - the **execution directory**: the payload `cwd` for Bash and file tools.
+     For capy execution tools, omitted `tool_input.cwd` selects the project
+     root; an absolute override is used directly and a relative override is
+     resolved against the project root. Resolve symlinks before collapsing
+     `..`, matching capy. Relative paths in submitted code resolve against
+     this execution directory. The `capy_execute_file.path` input is separate:
+     it always resolves against the project root, regardless of execution cwd.
    Claude Code persists the shell working directory across Bash calls, so the
    payload `cwd` is routinely a subdirectory of the root; anchoring globs to
    it would let `cat ../.env` from `/repo/sub` slip past `./**/.env`.
@@ -361,9 +364,12 @@ Files: `klaude-plugin/scripts/guard/guard.sh` (wrapper),
      `commands[].command` through the Bash analysis of 7.3. `capy_execute`
      with `language` `shell` runs `code` through the same analysis; any other
      language runs `code` through the inline-interpreter write scan (7.3 step
-     6) and the path-like secrets scan. `capy_execute_file` checks `path` as a
-     Read and `code` as above. The tool input's `cwd`, when present, is the
-     execution directory for that call; the project root is unchanged.
+     6) and the path-like secrets scan. `capy_execute_file` checks its
+     project-root-relative `path` with the Read policy and `code` as above.
+     Input path and cwd are literal paths, with no shell-variable or tilde
+     expansion. Each batch command starts in the same execution directory;
+     a `cd` inside one command does not affect the next. The project root is
+     unchanged.
 5. Emit a decision (7.5).
 
 ### 7.3 Bash analysis

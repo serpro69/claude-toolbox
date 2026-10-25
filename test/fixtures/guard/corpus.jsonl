@@ -137,3 +137,15 @@
 {"tool_name":"Bash","tool_input":{"command":"cat .env"},"user_config":"user-config/allow-all.json","expect":"deny","category":"secrets","note":"allow pattern never exempts secrets"}
 {"tool_name":"Bash","tool_input":{"command":"echo x > .claude/settings.json"},"user_config":"user-config/allow-all.json","expect":"deny","category":"selfmod","note":"allow pattern never exempts selfmod"}
 {"tool_name":"Bash","tool_input":{"command":"git clean -fd"},"user_config":"user-config/invalid.json","expect":"deny","category":"destructive","note":"invalid user regex discards all loosening"}
+{"tool_name":"mcp__capy__capy_execute","tool_input":{"language":"shell","code":"cat .env"},"expect":"deny","category":"secrets","note":"capy shell shares Bash secrets policy"}
+{"tool_name":"mcp__renamed__capy_execute","tool_input":{"language":"shell","code":"go test ./..."},"expect":"allow","note":"renamed capy server benign shell code"}
+{"tool_name":"mcp__capy__capy_execute","tool_input":{"language":"python","code":"open('.env').read()"},"expect":"deny","category":"secrets","note":"capy Python literal secret read"}
+{"tool_name":"mcp__capy__capy_execute","tool_input":{"language":"python","code":"print(1)"},"expect":"allow","note":"capy benign Python"}
+{"tool_name":"mcp__capy__capy_execute","tool_input":{"language":"javascript","code":"fs.writeFileSync('.claude/settings.json', 'x')"},"expect":"deny","category":"selfmod","note":"capy JavaScript protected mutation"}
+{"tool_name":"mcp__capy__capy_batch_execute","project_root":"/work/project","tool_input":{"commands":[{"label":"safe","command":"ls"},{"label":"unsafe","command":"rm -rf ."}]},"expect":"deny","category":"selfmod","note":"whole capy batch refuses project removal, which hits protected configuration first"}
+{"tool_name":"mcp__capy__capy_execute_file","tool_input":{"path":".env","language":"python","code":"print(1)"},"expect":"deny","category":"secrets","note":"capy file input uses Read policy"}
+{"tool_name":"mcp__capy__capy_execute_file","tool_input":{"path":"README.md","language":"python","code":"print(1)"},"expect":"allow","note":"capy ordinary file input and benign code"}
+{"tool_name":"mcp__capy__capy_execute","cwd":"{tmp}","tool_input":{"language":"shell","code":"cat .env"},"expect":"deny","category":"secrets","note":"omitted capy cwd means project root, not hook cwd"}
+{"tool_name":"mcp__capy__capy_execute","cwd":"{tmp}","tool_input":{"language":"shell","code":"cat ../.env","cwd":"sub"},"expect":"deny","category":"secrets","note":"relative capy cwd is project-relative"}
+{"tool_name":"mcp__capy__capy_execute_file","tool_input":{"path":".env","language":"python","code":"print(1)","cwd":"{tmp}"},"expect":"deny","category":"secrets","note":"capy file input is independent of execution cwd"}
+{"tool_name":"mcp__capy__capy_execute_file","tool_input":{"path":"README.md","language":"python","code":"print(1)","cwd":"{home}/.ssh"},"expect":"allow","note":"capy file input must not be checked relative to protected execution cwd"}

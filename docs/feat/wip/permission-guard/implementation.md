@@ -651,11 +651,14 @@ from Task 8 step 4). Numbered after Task 12 because it was added by the
    `tool_input.commands[].command` through the Bash analysis; `capy_execute`
    → `language` `shell` runs `code` through the Bash analysis, any other
    language runs `code` through the inline-interpreter write scan (§7.3 step
-   6) and the path-like secrets scan; `capy_execute_file` → check `path` as a
-   Read, then `code` as above. `tool_input.cwd`, when present, is the
-   execution directory for the call: absolute as given, relative resolved
-   against the project root (capy documents relative `cwd` as
-   project-relative); the project root itself is unchanged. The tool name
+   6) and the path-like secrets scan; `capy_execute_file` → check `path` with
+   the Read policy, anchored to the project root independently of execution
+   cwd, then inspect `code` as above. Omitted `tool_input.cwd` selects the
+   project root; an explicit value is absolute as given or relative to the
+   project root, with symlinks resolved before `..`. Input path and cwd are
+   literal paths without shell-variable or tilde expansion. Every batch
+   command starts in that same execution directory. The project root itself
+   is unchanged. The tool name
    arrives with the server prefix (`mcp__capy__capy_execute`); match on the
    suffix after the last `__`.
    → verify: corpus: `capy_execute` shell `cat .env` deny; shell

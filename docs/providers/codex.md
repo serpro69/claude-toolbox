@@ -17,6 +17,7 @@ Codex (OpenAI) is supported as a secondary provider. Skills are generated from t
 | `.codex/rules/default.rules` | Starlark permission rules |
 | `.codex/scripts/session-start.sh` | Behavioral instructions (session startup), plus capy guidance until capy's hooks take over |
 | `.codex/scripts/pretooluse-bash.sh` | File-path denylist on shell commands, plus HTTP routing until capy's hooks take over |
+| `.codex/scripts/guard/` | Generated shared permission-guard engine, declaration and license; adapter wiring is pending |
 | `.codex/agents/*.toml` | Sub-agent definitions (generated) |
 | `kodex-plugin/` | Skills (generated from `klaude-plugin/`) |
 | `AGENTS.md` | Project instructions |
@@ -50,12 +51,20 @@ Older syncs could append an inline `mcp_servers = { ... }` assignment after `[tu
 
 Sync does not run `capy setup`. Preserving existing table text avoids formatting churn when alternating setup and sync. Table extraction uses Python 3's standard library; `yq` validates the extracted registrations and the complete merged MCP map before the candidate file is accepted.
 
+### Shared guard support for capy execution
+
+The shared permission-guard engine recognizes `capy_execute`, `capy_execute_file`, and `capy_batch_execute` under any MCP server name. It checks shell code like Bash, other-language code with its literal-path/write-call scans, and each batch command independently. An execute-file input receives the secrets Read check before its processing code is inspected.
+
+Capy execution defaults to the project root. A supplied cwd is absolute or project-relative; it does not change the project identity or the anchor for `capy_execute_file.path`. The file input always remains project-root-relative. Path parameters are literal, without shell-variable or tilde expansion.
+
+The generated engine is present under `.codex/scripts/guard/`, but the template does not yet wire toolbox's MCP adapter to it. Engine support alone therefore does not enforce toolbox's capy policy on Codex. Capy's own registered hooks remain independent and unchanged.
+
 ## Known Limitations
 
 !!! warning "Current limitations"
 
     - **Plugin-only installs** provide skills and profile content only — hooks, sub-agents, rules, and project config require [template setup](../getting-started/template-setup.md) or [adopting into an existing repo](../getting-started/adopting.md).
-    - **PreToolUse hooks** are only wired for Bash commands. `apply_patch` and MCP tool hooks are documented in [ADR 0005](../adr/0005-codex-hook-enforcement-gap.md) but not yet implemented.
+    - **Toolbox PreToolUse hooks** are only wired for Bash commands. The shared engine supports capy execution payloads, but its MCP adapter and the `apply_patch` adapter are not yet wired. See [ADR 0005](../adr/0005-codex-hook-enforcement-gap.md) for the hook-enforcement background.
     - **MCP servers** (Context7, Pal) must be configured at the user level — they are not packaged in the plugin. See [Codex MCP Setup](../user-guide/mcp-servers.md#codex).
 
 ## Generation Pipeline

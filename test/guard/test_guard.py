@@ -58,7 +58,7 @@ CORPUS = os.path.join(FIXTURES, "corpus.jsonl")
 
 # Tasks whose corpus rows are still pending. Remove a number here when that
 # task lands and its rows must pass.
-PENDING_TASKS = {8, 13}
+PENDING_TASKS = {8}
 
 
 def load_guard():
@@ -956,6 +956,139 @@ class ConfigurationTests(unittest.TestCase):
         with open(user, "w") as handle:
             handle.write("{")
         self.assertTrue(self.check("git clean -fd", "destructive"))
+
+
+class CapyTests(unittest.TestCase):
+    def setUp(self):
+        self.sandbox = Sandbox()
+        self.addCleanup(__import__("shutil").rmtree, self.sandbox.base)
+        self.env = self.sandbox.env()
+
+    def check(self, tool, tool_input, category=None, payload_cwd=None):
+        payload = {"tool_name": tool, "tool_input": tool_input,
+                   "cwd": payload_cwd or self.sandbox.tmp}
+        kind, denied = outcome(guard.decide, json.dumps(payload), self.env)
+        self.assertEqual(kind, "deny" if category else "allow", denied.reason() if denied else payload)
+        if category:
+            self.assertEqual(denied.category, category, denied.reason())
+
+    def test_exact_suffix_with_arbitrary_server_names(self):
+        for server in ("capy", "work_tools", "plugin__capy"):
+            self.check("mcp__%s__capy_execute" % server,
+                       {"language": "shell", "code": "cat .env"}, "secrets")
+        for tool in ("FutureTool", "mcp__capy__capy_runs", "mcp__capy__capy_execute_extra",
+                     "mcp__capy__other_execute", "capy_execute", "mcp__capy_execute"):
+            self.check(tool, {"language": "shell", "code": "cat .env"})
+
+    def test_shell_and_non_shell_checks(self):
+        tool = "mcp__capy__capy_execute"
+        for language, code, category in (
+            ("shell", "go test ./...", None),
+            ("shell", "sh -c 'cat .env'", "secrets"),
+            ("shell", "git clean -fd", "destructive"),
+            ("python", "print(1)", None),
+            ("python", "open('.env').read()", "secrets"),
+            ("javascript", "fs.readFileSync('.env')", "secrets"),
+            ("javascript", "fs.writeFileSync('.claude/settings.json', 'x')", "selfmod"),
+            ("typescript", "fs.writeFileSync('.codex/hooks.json', 'x')", "selfmod"),
+            ("go", 'os.ReadFile(".env")', "secrets"),
+        ):
+            with self.subTest(language=language, code=code):
+                self.check(tool, {"language": language, "code": code}, category)
+
+    def test_cwd_defaults_to_project_and_relative_override_ignores_payload_cwd(self):
+        tool = "mcp__capy__capy_execute"
+        self.check(tool, {"language": "shell", "code": "cat .env"}, "secrets")
+        self.check(tool, {"language": "shell", "code": "cat ../.env", "cwd": "sub"}, "secrets")
+        self.check(tool, {"language": "shell", "code": "cat ../README.md", "cwd": "sub"})
+        self.check(tool, {"language": "shell", "code": "cat .env", "cwd": self.sandbox.tmp})
+        self.check(tool, {"language": "python", "code": "open('../.env').read()", "cwd": "sub"}, "secrets")
+
+    def test_cwd_symlinks_resolve_before_parent_components(self):
+        tool = "mcp__capy__capy_execute"
+        alias = os.path.join(self.sandbox.tmp, "kk-ssh-link")
+        self.check(tool, {"language": "shell", "code": "cat id_rsa", "cwd": alias}, "secrets")
+        self.check(tool, {"language": "shell", "code": "cat .netrc", "cwd": alias + "/.."}, "secrets")
+
+    def test_execute_file_input_and_processing_code_have_separate_anchors(self):
+        tool = "mcp__capy__capy_execute_file"
+        self.check(tool, {"path": ".env", "language": "python", "code": "print(1)",
+                          "cwd": self.sandbox.tmp}, "secrets")
+        self.check(tool, {"path": "README.md", "language": "python", "code": "print(1)",
+                          "cwd": os.path.join(self.sandbox.home, ".ssh")})
+        self.check(tool, {"path": "README.md", "language": "shell", "code": "cat ../.env", "cwd": "sub"}, "secrets")
+        self.check(tool, {"path": "README.md", "language": "shell", "code": "git clean -fd"}, "destructive")
+        self.check(tool, {"path": "README.md", "language": "javascript",
+                          "code": "fs.writeFileSync('.claude/settings.json', 'x')"}, "selfmod")
+        self.check(tool, {"path": os.path.join(self.sandbox.tmp, "kk-secret-link"),
+                          "language": "python", "code": "print(1)"}, "secrets")
+
+    def test_capy_path_parameters_are_literal_not_shell_expansions(self):
+        tool = "mcp__capy__capy_execute"
+        for directory in ("~", "$HOME"):
+            os.makedirs(os.path.join(self.sandbox.root, directory))
+            ctx = guard.context_from_payload({"tool_name": tool,
+                "tool_input": {"language": "shell", "code": "pwd", "cwd": directory}}, self.env)
+            self.assertEqual(ctx.exec_dir, os.path.join(self.sandbox.root, directory))
+        path = os.path.join(self.sandbox.root, "~", ".netrc")
+        with open(path, "w") as handle:
+            handle.write("ordinary project fixture")
+        self.check("mcp__capy__capy_execute_file", {"path": "~/.netrc", "language": "python", "code": "print(1)"})
+
+    def test_batch_checks_every_child_without_carrying_directory_changes(self):
+        tool = "mcp__alternate__capy_batch_execute"
+        self.env = self.sandbox.env(project_root="/work/project")
+        self.check(tool, {"commands": [{"label": "one", "command": "go test ./..."},
+                                       {"label": "two", "command": "git status"}]})
+        for command, category in (("rm -rf ./work", "destructive"), ("rm -rf .", "selfmod"), ("cat .env", "secrets"),
+                                  ("echo x > .claude/settings.json", "selfmod")):
+            self.check(tool, {"commands": [{"label": "safe", "command": "ls"},
+                                           {"label": "unsafe", "command": command}]}, category)
+        self.check(tool, {"commands": [{"command": "cd /tmp && ls"},
+                                       {"command": "rm -rf ./work"}]}, "destructive")
+        self.check(tool, {"cwd": "/work/project/sub", "commands": [{"command": "cat ../.env"}]}, "secrets")
+        self.check(tool, {"cwd": self.sandbox.tmp, "commands": [{"command": "cat .env"}]})
+
+    def test_batch_accepts_backend_compatibility_forms_without_skipping_children(self):
+        tool = "mcp__capy__capy_batch_execute"
+        self.env = self.sandbox.env(project_root="/work/project")
+        for commands, category in (
+            (["go test ./...", {"label": "safe", "command": "ls"}], None),
+            ([{"label": "safe", "command": "ls"}], None),
+            (["ls", "cat .env"], "secrets"),
+            (["ls", {"label": "unsafe", "command": "rm ./work"}], "destructive"),
+            (["ls", 42], "failure"),
+            (["ls", ""], "failure"),
+        ):
+            for value in (commands, json.dumps(commands)):
+                with self.subTest(commands=value):
+                    self.check(tool, {"commands": value}, category)
+        self.check(tool, {"commands": json.dumps({"command": "ls"})}, "failure")
+
+    def test_malformed_supported_payloads_fail_closed(self):
+        tool = "mcp__capy__capy_execute"
+        for key, value in (("language", None), ("language", "bash"), ("language", []),
+                           ("code", None), ("code", []), ("code", ""), ("code", "ls\0"),
+                           ("cwd", None), ("cwd", ""), ("cwd", 3), ("cwd", "bad\0path")):
+            payload = {"language": "shell", "code": "ls"}
+            payload[key] = value
+            with self.subTest(key=key, value=value):
+                self.check(tool, payload, "failure")
+        for path in (None, "", [], "bad\0path"):
+            self.check("mcp__capy__capy_execute_file", {"path": path, "language": "shell", "code": "ls"}, "failure")
+        for commands in (None, [], "ls", [None], [{}], [{"command": 3}], [{"command": ""}]):
+            self.check("mcp__capy__capy_batch_execute", {"commands": commands}, "failure")
+
+    def test_capy_exceptions_keep_project_policy_and_command_boundaries(self):
+        self.env = self.sandbox.env(project_root="/work/ops",
+            project_config=os.path.join(FIXTURES, "project-config", "additions.json"),
+            user_config=os.path.join(FIXTURES, "user-config", "scoped.json"))
+        tool = "mcp__capy__capy_execute"
+        self.check(tool, {"language": "shell", "code": "kubectl delete pod x", "cwd": self.sandbox.tmp})
+        self.check(tool, {"language": "shell", "code": "git clean -nd; rm ./work"}, "destructive")
+        self.check(tool, {"language": "shell", "code": "cat ./private.txt"}, "secrets")
+        self.check("mcp__capy__capy_execute_file", {"path": "private.txt", "language": "python", "code": "print(1)",
+                                                 "cwd": self.sandbox.tmp}, "secrets")
 
 
 class CorpusTests(unittest.TestCase):
