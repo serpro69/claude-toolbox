@@ -113,7 +113,13 @@ The plugin ships two hooks:
 | Hook | Trigger | Description |
 |------|---------|-------------|
 | Plugin root export | `SessionStart` | Exports `TOOLBOX_PLUGIN_ROOT` into the session environment so every Bash call has a reliable path to the plugin installation directory |
-| Bash validation | `PreToolUse` on `Bash` | Blocks commands touching `.env`, `.git/`, `node_modules`, `build/`, `dist/`, `venv/`, and other sensitive paths |
+| Permission guard | `PreToolUse` on `Bash`, file tools, and capy execution tools | Enforces the generated secrets policy, destructive-command rules, and protected configuration paths |
+
+The guard checks `capy_execute`, `capy_execute_file`, and `capy_batch_execute` even when capy is registered under a different MCP server name. Shell code uses the same checks as Bash; other languages use the existing literal-path and write-call scans. Every batch command is checked independently, and one denied command blocks the entire batch before execution.
+
+For capy code, omitted `cwd` means the project root. Relative cwd overrides resolve from that root; absolute overrides select that directory. Each batch command starts in the selected directory. The `capy_execute_file.path` input stays project-root-relative regardless of where its processing code runs. These path parameters are literal paths, without shell-variable or tilde expansion.
+
+Inspection is static: the guard does not execute submitted code or read the contents of an execute-file input. Paths assembled dynamically are outside its detection coverage, and non-shell mutation checks cover the recognized literal write-call forms. Codex delivery currently includes the shared engine; its MCP hook adapter is still pending, as described in [Codex limitations](../providers/codex.md#known-limitations).
 
 ## Statusline
 

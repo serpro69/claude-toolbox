@@ -140,6 +140,40 @@ payload=$(jq -nc --arg cwd "$guard_test_dir/project" \
 run_guard "$payload"
 assert_allow
 
+log_test "Capy shell secret access denies through the wrapper"
+payload=$(jq -nc --arg cwd "$guard_test_dir/project" \
+  '{tool_name:"mcp__capy__capy_execute",tool_input:{language:"shell",code:"cat .env"},cwd:$cwd}')
+run_guard "$payload"
+assert_deny "secrets"
+
+log_test "Benign capy code remains silent"
+payload=$(jq -nc --arg cwd "$guard_test_dir/project" \
+  '{tool_name:"mcp__renamed__capy_execute",tool_input:{language:"shell",code:"go test ./..."},cwd:$cwd}')
+run_guard "$payload"
+assert_allow
+
+log_test "Capy execute-file keeps its input at the project root despite cwd override"
+payload=$(jq -nc --arg cwd "$guard_test_dir" \
+  '{tool_name:"mcp__capy__capy_execute_file",tool_input:{path:".env",language:"python",code:"print(1)",cwd:$cwd},cwd:$cwd}')
+run_guard "$payload"
+assert_deny "secrets"
+
+log_test "Capy batch denies a destructive later child"
+payload=$(jq -nc --arg cwd "$guard_test_dir/project" \
+  '{tool_name:"mcp__capy__capy_batch_execute",tool_input:{commands:[{label:"safe",command:"ls"},{label:"unsafe",command:"git clean -fd"}]},cwd:$cwd}')
+run_guard "$payload"
+assert_deny "destructive"
+
+log_test "Capy legacy JSON batch input still inspects every child"
+payload=$(jq -nc --arg cwd "$guard_test_dir/project" \
+  '{tool_name:"mcp__capy__capy_batch_execute",tool_input:{commands:(["ls","git clean -fd"]|tojson)},cwd:$cwd}')
+run_guard "$payload"
+assert_deny "destructive"
+
+log_test "Malformed capy code fails closed through the wrapper"
+run_guard '{"tool_name":"mcp__capy__capy_execute","tool_input":{"language":"shell","code":[]}}'
+assert_deny "failure"
+
 # =============================================================================
 # Section 3: guard.sh — Fail-closed cases
 # =============================================================================

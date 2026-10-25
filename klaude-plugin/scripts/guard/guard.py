@@ -32,7 +32,10 @@ Two directories are kept distinct and never interchanged:
 
   project root  `KK_GUARD_PROJECT_ROOT`, else `CLAUDE_PROJECT_DIR`, else the
                 payload `cwd`. Anchors every project-relative glob.
-  exec dir      the payload `cwd`. Relative arguments resolve against it.
+  exec dir      the payload `cwd` for ordinary tools. Capy code defaults to
+                the project root; its optional `tool_input.cwd` is absolute
+                or project-relative. Execute-file input paths stay anchored
+                at the project root independently of where code executes.
 
 Claude Code persists the shell working directory across Bash calls, so the
 payload `cwd` is routinely a subdirectory of the root; anchoring globs to it
@@ -64,6 +67,9 @@ import sys
 SUPPORTED_VERSIONS = (1,)
 
 FILE_TOOLS = ("Read", "Grep", "Glob", "Edit", "Write", "NotebookEdit")
+CAPY_TOOL = re.compile(r"mcp__[^\s]+__(capy_execute|capy_execute_file|capy_batch_execute)\Z")
+CAPY_LANGUAGES = {"shell", "python", "javascript", "typescript", "ruby", "go",
+                  "rust", "php", "perl", "r", "elixir"}
 PATH_KEYS = {
     "Read": ("file_path",),
     "Edit": ("file_path",),
@@ -189,6 +195,12 @@ def parse_payload(raw, env, fallback_cwd=None):
     return context_from_payload(payload, env, fallback_cwd)
 
 
+def capy_tool_name(tool_name):
+    """The supported MCP suffix, independent of the registered server name."""
+    match = CAPY_TOOL.fullmatch(tool_name)
+    return match.group(1) if match else None
+
+
 def context_from_payload(payload, env, fallback_cwd=None):
     if not isinstance(payload, dict):
         raise failure("payload is not a JSON object")
@@ -212,6 +224,14 @@ def context_from_payload(payload, env, fallback_cwd=None):
     if not os.path.isabs(project_root):
         raise failure("project root %r is not an absolute path" % project_root)
     project_root = os.path.normpath(project_root)
+
+    if capy_tool_name(tool_name):
+        execution_cwd = tool_input.get("cwd", project_root)
+        if not isinstance(execution_cwd, str) or not execution_cwd or "\0" in execution_cwd:
+            raise failure("capy cwd must be a nonempty directory string without NUL bytes")
+        # Capy uses literal paths, defaults to its selected project, and
+        # resolves symlinks before '..'. Never expand ~ or shell variables.
+        exec_dir = os.path.realpath(os.path.join(project_root, execution_cwd))
 
     mode = payload.get("permission_mode")
     if not isinstance(mode, str):
@@ -1403,6 +1423,54 @@ def check_file_tool(tool_name, tool_input, ctx, policy):
 
 
 # ---------------------------------------------------------------------------
+# Capy execution tools
+# ---------------------------------------------------------------------------
+def capy_text(tool_input, key):
+    value = tool_input.get(key)
+    if not isinstance(value, str) or not value or "\0" in value:
+        raise failure("capy %s must be a nonempty string without NUL bytes" % key)
+    return value
+
+
+def check_capy_tool(tool_name, ctx, policy):
+    """Inspect submitted code and file inputs; never execute or read their data."""
+    tool_input = ctx.tool_input
+    if tool_name == "capy_batch_execute":
+        commands = tool_input.get("commands")
+        # Capy's backend retains these older forms even though its advertised
+        # schema uses object arrays. Normalize once, then inspect every child.
+        if isinstance(commands, str):
+            try:
+                commands = json.loads(commands)
+            except ValueError as exc:
+                raise failure("capy commands must be a JSON array: %s" % exc)
+        if not isinstance(commands, list) or not commands:
+            raise failure("capy commands must be a nonempty list")
+        for entry in commands:
+            if isinstance(entry, str):
+                entry = {"command": entry}
+            if not isinstance(entry, dict):
+                raise failure("each capy batch command must be an object or string")
+            # check_command owns a command-local context, so a child's cd
+            # cannot affect later children (serial or parallel).
+            check_command(capy_text(entry, "command"), ctx, policy)
+        return
+    if tool_name == "capy_execute_file":
+        path = capy_text(tool_input, "path")
+        # Make the literal project-relative path absolute before check_path
+        # can interpret a leading '~' or use the execution directory.
+        check_path(os.path.join(ctx.project_root, path), ctx, policy, "capy file read")
+    language = capy_text(tool_input, "language")
+    if language not in CAPY_LANGUAGES:
+        raise failure("unsupported capy execution language %r" % language)
+    code = capy_text(tool_input, "code")
+    if language == "shell":
+        check_command(code, ctx, policy)
+    else:
+        check_inline_code(code, ctx, policy)
+
+
+# ---------------------------------------------------------------------------
 # Dispatch
 # ---------------------------------------------------------------------------
 def evaluate(ctx, policy):
@@ -1416,9 +1484,12 @@ def evaluate(ctx, policy):
             raise failure("Bash command must be a string")
         check_command(command, ctx, policy)
         return
-    # TODO: apply_patch header parsing and the capy
-    # execution tools are not implemented yet; those calls are currently
-    # allowed. Unknown tools are allowed by design: dispatch is the engine's
+    capy_tool = capy_tool_name(ctx.tool_name)
+    if capy_tool is not None:
+        check_capy_tool(capy_tool, ctx, policy)
+        return
+    # TODO: apply_patch header parsing is not implemented yet; those calls
+    # are currently allowed. Unknown tools are allowed by design: dispatch is the engine's
     # job and the wrapper never filters by tool name.
     return
 
