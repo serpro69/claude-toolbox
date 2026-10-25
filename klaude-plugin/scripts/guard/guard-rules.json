@@ -54,8 +54,8 @@
       },
       {
         "program": "rsync",
-        "flags_any": ["^--delete"],
-        "reason": "rsync --delete removes destination files missing from the source"
+        "flags_any": ["^--del(ete.*)?$"],
+        "reason": "rsync --delete (and its --del alias) removes destination files missing from the source"
       }
     ],
     "git": [
@@ -84,6 +84,12 @@
       },
       {
         "program": "git",
+        "subcommand": "restore",
+        "flags_any": ["^--worktree$", "^-[a-zA-Z]*W[a-zA-Z]*$"],
+        "reason": "git restore --worktree discards uncommitted edits in the working tree even alongside --staged"
+      },
+      {
+        "program": "git",
         "subcommand": "branch",
         "flags_any": ["^-[a-zA-Z]*D[a-zA-Z]*$"],
         "reason": "git branch -D deletes a branch even when it is not merged"
@@ -91,13 +97,13 @@
       {
         "program": "git",
         "subcommand": "branch",
-        "flags_all": ["^--delete$", "^--force$"],
-        "reason": "git branch --delete --force deletes a branch even when it is not merged"
+        "flags_all": ["^(--delete|-[a-zA-Z]*d[a-zA-Z]*)$", "^(--force|-[a-zA-Z]*f[a-zA-Z]*)$"],
+        "reason": "git branch --delete --force (also -d -f and -df) deletes a branch even when it is not merged"
       },
       {
         "program": "git",
         "subcommand": "push",
-        "flags_any": ["^--force$", "^-[a-zA-Z]*f[a-zA-Z]*$", "^--force-with-lease", "^--delete$"],
+        "flags_any": ["^--force$", "^-[a-zA-Z]*f[a-zA-Z]*$", "^--force-with-lease", "^--delete$", "^-[a-zA-Z]*d[a-zA-Z]*$", "^\\+", "^:"],
         "reason": "force pushes and remote deletes rewrite or remove history that may exist only on the remote"
       },
       {
@@ -116,6 +122,12 @@
         "program": "terraform",
         "subcommand": "destroy",
         "reason": "terraform destroy tears down live infrastructure"
+      },
+      {
+        "program": "terraform",
+        "subcommand": "apply",
+        "flags_any": ["^--?destroy(=.*)?$"],
+        "reason": "terraform apply -destroy tears down live infrastructure"
       },
       {
         "program": "kubectl",
@@ -141,6 +153,16 @@
         "program": "docker",
         "subcommand": "rmi",
         "reason": "docker rmi removes images"
+      },
+      {
+        "program": "docker",
+        "subcommand": ["container", "rm"],
+        "reason": "docker container rm removes containers and their writable layers"
+      },
+      {
+        "program": "docker",
+        "subcommand": ["image", "rm"],
+        "reason": "docker image rm removes images"
       },
       {
         "program": "docker",

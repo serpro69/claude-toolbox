@@ -214,16 +214,29 @@ the lint test requires every `-X` rule to ship the cluster form.
 Baseline categories and rules (accepted in Step 4, Section 2):
 
 - `filesystem`: `rm` (exempt `targets_under_tmp`); `shred`; `find` with
-  `flags_any` `-delete`; `rsync` with `flags_any` `--delete*`
+  `flags_any` `-delete`; `rsync` with `flags_any` `--delete*` or its `--del`
+  alias (regex `^--del(ete.*)?$`, so `--delay-updates` stays allowed)
 - `git`: `clean`; `reset` with `flags_any` `--hard`; `checkout` with
-  `flags_any` `--` or `.`; `restore` with `flags_none` `--staged`, `-S`;
-  `branch` with `flags_any` `-D` (cluster form) **or** `flags_all` `--delete`,
-  `--force` (two rules); `push` with `flags_any` `--force`, `-f`,
-  `--force-with-lease`, `--delete`; `["stash", "drop"]`; `["stash", "clear"]`
-- `infra`: `terraform destroy`; `kubectl delete`; `helm uninstall`;
-  `helm delete`; `docker rm`; `docker rmi`; `["system", "prune"]` under
-  `docker`; `["volume", "rm"]` and `["volume", "prune"]` under `docker`
+  `flags_any` `--` or `.`; `restore` with `flags_none` `--staged`, `-S`,
+  **and** `restore` with `flags_any` `--worktree`, `-W` (cluster form; both
+  flags together restore the working tree too); `branch` with `flags_any`
+  `-D` (cluster form) **or** `flags_all` `--delete`/`-d`, `--force`/`-f`
+  (cluster forms, so `-d -f` and `-df` count); `push` with `flags_any`
+  `--force`, `-f`, `--force-with-lease`, `--delete`, `-d`, a refspec
+  starting with `+` (force) or `:` (delete); `["stash", "drop"]`;
+  `["stash", "clear"]`
+- `infra`: `terraform destroy`; `terraform apply` with `flags_any`
+  `-destroy`; `kubectl delete`; `helm uninstall`; `helm delete`;
+  `docker rm`; `docker rmi`; `["container", "rm"]` and `["image", "rm"]`
+  under `docker`; `["system", "prune"]` under `docker`; `["volume", "rm"]`
+  and `["volume", "prune"]` under `docker`
 - `privilege`: `sudo`; `su`; `doas`
+
+The equivalent spellings (`--del`, `restore --worktree`, `branch -d -f`,
+`push -d`/`+ref`/`:ref`, `terraform apply -destroy`, `docker container rm`,
+`docker image rm`) were added on 2026-10-25 after the Task 1 code review
+found them missing; the user accepted all six in the implementing session.
+None carries a `codex` record.
 
 Every predicate the baseline needs (`flags_any`, `flags_all`, `flags_none`,
 ordered `subcommand`) is in the vocabulary above; the lint test fails if a

@@ -31,3 +31,20 @@
 {"tool_name": "Bash", "tool_input": {"command": "cat .env"}, "expect": "deny", "category": "secrets", "pending_task": 3, "note": "Bash channel of the secrets policy arrives in Task 3"}
 {"tool_name": "Bash", "tool_input": {"command": "ls -la"}, "expect": "allow", "note": "Bash is allowed until Task 3 lands; a benign command stays allowed afterwards"}
 {"tool_name": "WebSearch", "tool_input": {"query": "x"}, "expect": "allow", "note": "a tool the engine does not judge is allowed; the wrapper never filters by tool name"}
+{"tool_name": "Bash", "tool_input": {"command": "git push -d origin feature"}, "expect": "deny", "category": "destructive", "pending_task": 4, "note": "-d is the short form of --delete"}
+{"tool_name": "Bash", "tool_input": {"command": "git push origin :feature"}, "expect": "deny", "category": "destructive", "pending_task": 4, "note": "empty-source refspec deletes the remote branch"}
+{"tool_name": "Bash", "tool_input": {"command": "git push origin +main"}, "expect": "deny", "category": "destructive", "pending_task": 4, "note": "leading + forces that ref"}
+{"tool_name": "Bash", "tool_input": {"command": "git push -u origin main:main"}, "expect": "allow", "pending_task": 4, "note": "benign neighbour: an ordinary refspec with a source is not a delete"}
+{"tool_name": "Bash", "tool_input": {"command": "git branch -df topic"}, "expect": "deny", "category": "destructive", "pending_task": 4, "note": "-d plus -f equals -D"}
+{"tool_name": "Bash", "tool_input": {"command": "git branch -d -f topic"}, "expect": "deny", "category": "destructive", "pending_task": 4, "note": "-d plus -f as separate flags"}
+{"tool_name": "Bash", "tool_input": {"command": "git branch -f topic main"}, "expect": "allow", "pending_task": 4, "note": "benign neighbour: -f without -d moves a branch pointer, reflog-recoverable"}
+{"tool_name": "Bash", "tool_input": {"command": "git restore --staged --worktree src/a.go"}, "expect": "deny", "category": "destructive", "pending_task": 4, "note": "--worktree discards working-tree edits even alongside --staged"}
+{"tool_name": "Bash", "tool_input": {"command": "git restore -SW src/a.go"}, "expect": "deny", "category": "destructive", "pending_task": 4, "note": "short cluster of --staged --worktree"}
+{"tool_name": "Bash", "tool_input": {"command": "git restore --staged src/a.go"}, "expect": "allow", "pending_task": 4, "note": "benign neighbour: unstaging only"}
+{"tool_name": "Bash", "tool_input": {"command": "rsync -a --del src/ dst/"}, "expect": "deny", "category": "destructive", "pending_task": 4, "note": "--del is the alias of --delete-during"}
+{"tool_name": "Bash", "tool_input": {"command": "rsync -a --delay-updates src/ dst/"}, "expect": "allow", "pending_task": 4, "note": "benign neighbour: --delay-updates shares the --del prefix"}
+{"tool_name": "Bash", "tool_input": {"command": "docker container rm web"}, "expect": "deny", "category": "destructive", "pending_task": 4, "note": "management-command spelling of docker rm"}
+{"tool_name": "Bash", "tool_input": {"command": "docker image rm nginx:latest"}, "expect": "deny", "category": "destructive", "pending_task": 4, "note": "management-command spelling of docker rmi"}
+{"tool_name": "Bash", "tool_input": {"command": "docker container ls"}, "expect": "allow", "pending_task": 4, "note": "benign neighbour"}
+{"tool_name": "Bash", "tool_input": {"command": "terraform apply -destroy -auto-approve"}, "expect": "deny", "category": "destructive", "pending_task": 4, "note": "plan-and-destroy equivalent of terraform destroy"}
+{"tool_name": "Bash", "tool_input": {"command": "terraform apply plan.tfplan"}, "expect": "allow", "pending_task": 4, "note": "benign neighbour: ordinary apply"}
