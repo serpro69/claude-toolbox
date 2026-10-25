@@ -14,22 +14,24 @@ Codex (OpenAI) is supported as a secondary provider. Skills are generated from t
 |------|---------|
 | `.codex/config.toml` | Main configuration; `capy setup --platform codex` registers capy's MCP server here, template sync preserves it |
 | `.codex/hooks.json` | Session-start and pre-tool-use hooks; `capy setup --platform codex` registers capy's hooks here too, template sync preserves them |
-| `.codex/rules/default.rules` | Starlark permission rules |
-| `.codex/scripts/session-start.sh` | Behavioral instructions (session startup), plus capy guidance until capy's hooks take over |
-| `.codex/scripts/pretooluse-bash.sh` | File-path denylist on shell commands, plus HTTP routing until capy's hooks take over |
-| `.codex/scripts/guard/` | Generated shared permission-guard engine, declaration and license; adapter wiring is pending |
+| `.codex/rules/default.rules` | Generated native forbids for `rm`, `shred`, `sudo`, `su`, `doas` |
+| `.codex/scripts/session-start.sh` | Behavioral instructions and current protected-files advisory, plus capy guidance until capy's hooks take over |
+| `.codex/scripts/pretooluse-bash.sh` | Shared permission guard on shell commands, plus HTTP routing until capy's hooks take over |
+| `.codex/scripts/pretooluse-patch.sh` | Shared guard on `apply_patch`, registered through the `Edit|Write` aliases |
+| `.codex/scripts/pretooluse-mcp.sh` | Shared guard on capy's three MCP execution tools, additive to capy's own hooks |
+| `.codex/scripts/guard/` | Generated shared permission-guard engine, declaration and license |
 | `.codex/agents/*.toml` | Sub-agent definitions (generated) |
 | `kodex-plugin/` | Skills (generated from `klaude-plugin/`) |
 | `AGENTS.md` | Project instructions |
 
 ## Capy Hooks
 
-Out of the box, toolbox's two Codex hooks stand in for capy: `session-start.sh` injects `.capy/AGENTS.md` into the session context, and `pretooluse-bash.sh` denies `curl`, `wget`, and inline HTTP calls so the model routes them through capy's MCP tools.
+Toolbox's session and Bash hooks stand in for capy's guidance and HTTP routing: `session-start.sh` injects `.capy/AGENTS.md` into the session context, and `pretooluse-bash.sh` denies `curl`, `wget`, and inline HTTP calls so the model routes them through capy's MCP tools.
 
 Capy v0.17.1 and later ships its own Codex hooks. Running `capy setup --platform codex` in the project registers them in `.codex/hooks.json` next to toolbox's entries. They deliver availability-aware guidance and HTTP routing (advisory by default, evidence-based redirects, a silent-download exception) that toolbox's unconditional deny would otherwise override. Toolbox detects those entries per event — a registered command that invokes `capy codex-launch` — and steps aside:
 
 - `session-start.sh` replaces the `.capy/AGENTS.md` injection with a one-line note that capy's hooks own guidance and routing. Provider instructions and `.claude/CLAUDE.*.md` extras are still injected.
-- `pretooluse-bash.sh` skips the HTTP denials. The file-path denylist (`.env`, `.terraform/`, `.git/`, …) always applies.
+- `pretooluse-bash.sh` skips the HTTP denials. The shared secrets, destructive-command and self-modification checks always run first. Ordinary reads of build output, `.git/` and `.env.example` are allowed.
 
 The check runs on every session start and every shell call, so there is no flag to flip and nothing to roll back. Remove capy's entries from `hooks.json` and the legacy behavior returns on the next session.
 
@@ -57,14 +59,28 @@ The shared permission-guard engine recognizes `capy_execute`, `capy_execute_file
 
 Capy execution defaults to the project root. A supplied cwd is absolute or project-relative; it does not change the project identity or the anchor for `capy_execute_file.path`. The file input always remains project-root-relative. Path parameters are literal, without shell-variable or tilde expansion.
 
-The generated engine is present under `.codex/scripts/guard/`, but the template does not yet wire toolbox's MCP adapter to it. Engine support alone therefore does not enforce toolbox's capy policy on Codex. Capy's own registered hooks remain independent and unchanged.
+The template registers `pretooluse-mcp.sh` for these three tools, under any MCP server name. Capy's own registered hooks remain independent; a denial from either blocks the call.
+
+## Permission Guard
+
+All three adapters export the repository root before delegating to the generated engine. Relative Bash and patch paths resolve against the hook payload's cwd, while project policy remains anchored at the repository root. The guard inspects patch add, update, delete and move headers, including both sides of a move; it does not interpret patch contents as commands. Deleting a file is filesystem-destructive, with the engine's temporary-directory exemption and user category setting applied after secrets and self-modification checks.
+
+Denials return JSON plus a reason on stderr and exit 2. Adapter errors and missing interpreters also block. Session startup renders a protected-files advisory from the synced declaration, falling back to a static secret-files warning if it is unavailable. See the [guard rules and configuration](../user-guide/configuration.md) for project additions and user exceptions. Regenerate the copied engine with `make generate-guard`; never edit `.codex/scripts/guard/` directly.
+
+The adapter contract targets Codex 0.164.0. The [official hooks reference](https://learn.chatgpt.com/docs/hooks#pretooluse) documents `Edit|Write` aliases, `tool_input.command`, and exit-2 denial with stderr. Hook coverage is a guardrail; specialized paths can bypass it. Live harness validation remains separate from the payload tests.
+
+| Parity gap | Reason | Mitigation |
+|---|---|---|
+| Native `read_file` secrets protection remains advisory | This integration does not register or map native read payloads; earlier Codex versions did not intercept them ([ADR 0005](../adr/0005-codex-hook-enforcement-gap.md)) | Current secrets list in session context; optional sandbox permission profile remains pending |
+| Literal `rm` has no temporary-directory exemption; `rm`, `shred`, `sudo`, `su`, `doas` are not loosenable on Codex through guard user config | Generated native forbids take precedence over user allow rules | Run the operation yourself; repositories needing different native rules can exclude `.codex/rules/default.rules` from template sync and edit it |
+| Specialized/function-style `apply_patch` paths may bypass hooks | Tool hooks are not a complete enforcement boundary | Treat patch enforcement as limited to intercepted calls |
 
 ## Known Limitations
 
 !!! warning "Current limitations"
 
     - **Plugin-only installs** provide skills and profile content only — hooks, sub-agents, rules, and project config require [template setup](../getting-started/template-setup.md) or [adopting into an existing repo](../getting-started/adopting.md).
-    - **Toolbox PreToolUse hooks** are only wired for Bash commands. The shared engine supports capy execution payloads, but its MCP adapter and the `apply_patch` adapter are not yet wired. See [ADR 0005](../adr/0005-codex-hook-enforcement-gap.md) for the hook-enforcement background.
+    - **Toolbox PreToolUse hooks** cover Bash, intercepted `apply_patch` and capy's three execution tools. Native reads, specialized hook-bypassing paths and other execution tools are outside this integration's enforcement; see the parity table above.
     - **MCP servers** (Context7, Pal) must be configured at the user level — they are not packaged in the plugin. See [Codex MCP Setup](../user-guide/mcp-servers.md#codex).
 
 ## Generation Pipeline

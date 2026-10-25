@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# Test suite for the Codex hook scripts — session-start.sh and pretooluse-bash.sh
+# Test suite for the Codex session hook and Bash, patch and MCP adapters.
 # behaviour with and without capy's own Codex hooks registered in hooks.json.
 # See: https://github.com/serpro69/claude-toolbox/issues/170
 set -euo pipefail
@@ -51,9 +51,10 @@ PARTIAL_PT_HOOKS=$(jq --argjson pt "$(capy_entry pretooluse)" \
 make_project() {
   local root
   root=$(create_temp_dir "codex-hooks")
-  mkdir -p "$root/.codex/scripts" "$root/.capy" "$root/.claude"
+  mkdir -p "$root/.codex/scripts" "$root/.capy" "$root/.claude" "$root/home" "$root/sub"
   cp "$REPO_ROOT/.codex/scripts/session-start.sh" \
-    "$REPO_ROOT/.codex/scripts/pretooluse-bash.sh" "$root/.codex/scripts/"
+    "$REPO_ROOT/.codex/scripts/"pretooluse-*.sh "$root/.codex/scripts/"
+  cp -R "$REPO_ROOT/.codex/scripts/guard" "$root/.codex/scripts/"
   echo "capy-agents-marker-content" >"$root/.capy/AGENTS.md"
   echo "extra-marker-content" >"$root/.claude/CLAUDE.extra.md"
   if [[ $# -gt 0 ]]; then
@@ -66,19 +67,26 @@ session_context() {
   bash "$1/.codex/scripts/session-start.sh" </dev/null | jq -r '.hookSpecificOutput.additionalContext'
 }
 
-# run_pretooluse <project_root> <command>
-# Sets PRE_OUTPUT and PRE_EXIT.
-run_pretooluse() {
+# run_adapter <project_root> <adapter> <payload>; inspect, never execute payloads.
+run_adapter() {
   set +e
-  PRE_OUTPUT=$(jq -n --arg c "$2" '{tool_input: {command: $c}}' |
-    bash "$1/.codex/scripts/pretooluse-bash.sh" 2>/dev/null)
+  PRE_OUTPUT=$(printf '%s' "$3" | HOME="$1/home" \
+    KK_GUARD_PROJECT_CONFIG="$1/no-project-config" KK_GUARD_USER_CONFIG="$1/no-user-config" \
+    bash "$1/.codex/scripts/pretooluse-$2.sh" 2>"$1/stderr")
   PRE_EXIT=$?
   set -e
+  PRE_ERROR=$(cat "$1/stderr")
+}
+
+run_pretooluse() {
+  run_adapter "$1" bash "$(jq -n --arg c "$2" --arg cwd "${3:-$1}" \
+    '{tool_name: "Bash", cwd: $cwd, tool_input: {command: $c}}')"
 }
 
 assert_denied() {
   local needle="$1" message="$2"
-  assert_equals "0" "$PRE_EXIT" "$message: exit code is 0"
+  assert_equals "2" "$PRE_EXIT" "$message: exit code is 2"
+  assert_not_equals "" "$PRE_ERROR" "$message: stderr names the reason"
   assert_json_valid "$PRE_OUTPUT" "$message: deny output is valid JSON"
   assert_json_field "$PRE_OUTPUT" '.hookSpecificOutput.permissionDecision' "deny" "$message: permissionDecision is deny"
   local reason
@@ -169,6 +177,11 @@ for root in "$legacy_root" "$capy_root"; do
   else
     log_fail ".claude/CLAUDE.extra.md missing ($(basename "$root"))"
   fi
+  if [[ "$ctx" == *"Protected files:"* && "$ctx" == *"./**/.env"* && "$ctx" == *"~/.ssh/**"* ]]; then
+    log_pass "current secrets declaration in advisory ($(basename "$root"))"
+  else
+    log_fail "protected-files advisory missing ($(basename "$root"))"
+  fi
 done
 
 log_test "Output is valid SessionStart JSON in both modes"
@@ -196,9 +209,9 @@ log_test "Legacy: inline HTTP is denied"
 run_pretooluse "$legacy_root" "python3 -c \"import requests; requests.get('https://example.com')\""
 assert_denied "requests.get(" "legacy inline HTTP"
 
-log_test "Legacy: file-path denylist applies"
+log_test "Legacy: shared guard applies"
 run_pretooluse "$legacy_root" "cat .env"
-assert_denied ".env" "legacy denylist"
+assert_denied "kk guard: secrets" "legacy secrets"
 
 log_test "Legacy: safe command passes through"
 run_pretooluse "$legacy_root" "ls /tmp"
@@ -230,9 +243,9 @@ log_test "Capy PreToolUse entry lets inline HTTP through"
 run_pretooluse "$capy_root" "python3 -c \"import requests; requests.get('https://example.com')\""
 assert_allowed "capy inline HTTP"
 
-log_test "File-path denylist still applies when capy hooks are registered"
+log_test "Shared guard still applies when capy hooks are registered"
 run_pretooluse "$capy_root" "cat .env"
-assert_denied ".env" "capy denylist"
+assert_denied "kk guard: secrets" "capy secrets"
 run_pretooluse "$capy_root" "grep -r secret .terraform/"
 assert_denied ".terraform" "capy denylist terraform"
 
@@ -267,6 +280,97 @@ else
 fi
 run_pretooluse "$partial_pt_root" "curl -s https://example.com"
 assert_allowed "partial-pt curl (capy PreToolUse entry present)"
+
+# =============================================================================
+# Section 6: shared guard channels and failure boundaries
+# =============================================================================
+
+log_section "Section 6: shared guard channels and failure boundaries"
+
+log_test "Subdirectory Bash cwd retains the project policy anchor"
+run_pretooluse "$capy_root" "cat ../.env" "$capy_root/sub"
+assert_denied "kk guard: secrets" "subdirectory secret"
+run_pretooluse "$capy_root" "cat ../README.md" "$capy_root/sub"
+assert_allowed "subdirectory ordinary read"
+
+log_test "Former substring false positives are allowed"
+for command in 'cat .env.example' 'cat build/out.txt' "find . -not -path './.git/*'"; do
+  run_pretooluse "$legacy_root" "$command"
+  assert_allowed "$command"
+done
+
+patch_payload() {
+  jq -n --arg cwd "$1/sub" --arg patch "$2" \
+    '{tool_name: "apply_patch", cwd: $cwd, tool_input: {command: $patch}}'
+}
+
+log_test "Patch checks secrets, ordinary edits and selfmod from a subdirectory"
+run_adapter "$capy_root" patch "$(patch_payload "$capy_root" $'*** Begin Patch\n*** Update File: ../.env\n@@\n-a\n+b\n*** End Patch')"
+assert_denied "kk guard: secrets" "patch secret"
+safe_patch=$(patch_payload "$capy_root" $'*** Begin Patch\n*** Add File: src/a.py\n+print(1)\n*** End Patch')
+run_adapter "$capy_root" patch "$safe_patch"
+assert_allowed "patch ordinary edit"
+run_adapter "$capy_root" patch "$(patch_payload "$capy_root" $'*** Begin Patch\n*** Update File: ../.codex/hooks.json\n@@\n-a\n+b\n*** End Patch')"
+assert_denied "kk guard: selfmod" "patch selfmod"
+
+log_test "MCP code uses the project root independently of hook cwd"
+mcp_payload=$(jq -n --arg cwd "$capy_root/sub" '{tool_name:"mcp__custom__capy_execute", cwd:$cwd, tool_input:{language:"shell",code:"cat .env"}}')
+run_adapter "$capy_root" mcp "$mcp_payload"
+assert_denied "kk guard: secrets" "MCP secret"
+safe_mcp=$(jq '.tool_input.code = "go test ./..."' <<<"$mcp_payload")
+run_adapter "$capy_root" mcp "$safe_mcp"
+assert_allowed "MCP ordinary command"
+run_adapter "$capy_root" mcp "$(jq '.tool_name = "mcp__custom__capy_execute_file" | .tool_input.path = ".env"' <<<"$safe_mcp")"
+assert_denied "kk guard: secrets" "MCP file input"
+run_adapter "$capy_root" mcp "$(jq '.tool_name = "mcp__custom__capy_batch_execute" | .tool_input = {commands:[{command:"ls"},{command:"cat .env"}]}' <<<"$safe_mcp")"
+assert_denied "kk guard: secrets" "MCP later batch command"
+
+safe_bash=$(jq -n --arg cwd "$capy_root" '{tool_name:"Bash",cwd:$cwd,tool_input:{command:"ls"}}')
+log_test "All adapters fail closed without a working interpreter"
+for adapter in bash patch mcp; do
+  case "$adapter" in
+    bash) payload="$safe_bash" ;;
+    patch) payload="$safe_patch" ;;
+    mcp) payload="$safe_mcp" ;;
+  esac
+  KK_GUARD_INTERPRETERS=/nonexistent run_adapter "$capy_root" "$adapter" "$payload"
+  assert_denied "kk guard: failure" "$adapter bad interpreter"
+  run_adapter "$capy_root" "$adapter" 'not JSON'
+  assert_denied "kk guard: failure" "$adapter malformed payload"
+done
+
+log_test "Raw NUL bytes stay invalid through the Bash adapter"
+set +e
+PRE_OUTPUT=$({ printf '%s' "$safe_bash"; printf '\0'; } | \
+  bash "$capy_root/.codex/scripts/pretooluse-bash.sh" 2>"$capy_root/stderr")
+PRE_EXIT=$?
+set -e
+PRE_ERROR=$(cat "$capy_root/stderr")
+assert_denied "kk guard: failure" "raw NUL"
+
+log_test "Missing wrapper and closed stdin block in every adapter"
+missing_root=$(make_project "$TOOLBOX_HOOKS")
+mv "$missing_root/.codex/scripts/guard/guard.sh" "$missing_root/guard.saved"
+for adapter in bash patch mcp; do
+  run_adapter "$missing_root" "$adapter" "$safe_bash"
+  assert_equals "2" "$PRE_EXIT" "$adapter missing wrapper exits 2"
+  assert_not_equals "" "$PRE_ERROR" "$adapter missing wrapper has stderr"
+  set +e
+  bash "$capy_root/.codex/scripts/pretooluse-$adapter.sh" <&- >"$capy_root/out" 2>"$capy_root/stderr"
+  status=$?
+  set -e
+  assert_equals "2" "$status" "$adapter closed stdin exits 2"
+  assert_not_equals "" "$(cat "$capy_root/stderr")" "$adapter closed stdin has stderr"
+done
+
+log_test "Missing declaration retains the static session advisory"
+mv "$missing_root/.codex/scripts/guard/guard-rules.json" "$missing_root/rules.saved"
+ctx=$(session_context "$missing_root")
+if [[ "$ctx" == *"Protected files:"* && "$ctx" == *".env"* ]]; then
+  log_pass "fallback policy advisory present"
+else
+  log_fail "fallback policy advisory missing"
+fi
 
 # =============================================================================
 # Summary

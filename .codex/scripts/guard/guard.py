@@ -1423,6 +1423,49 @@ def check_file_tool(tool_name, tool_input, ctx, policy):
 
 
 # ---------------------------------------------------------------------------
+# Codex patch headers
+# ---------------------------------------------------------------------------
+def check_patch(ctx, policy):
+    """Inspect mutation headers, never added/removed/context text as commands.
+
+    Codex trims hunk headers outside updates, but preserves leading spaces
+    inside updates (a space introduces context). Paths are literal, including
+    a leading '~'. Codex's PathUri::join collapses '..' lexically before the
+    filesystem sees it; normalize that target before following symlinks.
+    Patch syntax/content validation remains the patch tool's responsibility.
+    """
+    patch = ctx.tool_input.get("command")
+    if not isinstance(patch, str) or not patch.strip() or "\0" in patch:
+        raise failure("apply_patch command must be nonempty patch text without NUL bytes")
+    headers = ("Add File", "Update File", "Delete File", "Move to")
+    in_update = False
+    found = False
+    for line in patch.split("\n"):
+        header = line.rstrip() if in_update else line.strip()
+        for kind in headers:
+            prefix = "*** %s: " % kind
+            if not header.startswith(prefix):
+                continue
+            path = header[len(prefix):]
+            if not path:
+                raise failure("apply_patch header has no path")
+            found = True
+            in_update = kind in ("Update File", "Move to")
+            path = os.path.normpath(os.path.join(ctx.exec_dir, path))
+            check_path(path, ctx, policy, "apply_patch %s" % kind, mutation=True)
+            if kind == "Delete File" and "filesystem" in policy.destructive:
+                # Patch filenames have no shell expansion: '$' and '[' are
+                # literal characters, so use containment without shell filters.
+                resolved = os.path.realpath(path)
+                if not any(resolved.startswith(root.rstrip("/") + "/") for root in policy.tmp_roots):
+                    raise Denied("destructive", "filesystem: apply_patch deletes a file", "filesystem")
+            break
+    # An empty patch is a valid no-op; other headerless input cannot be checked.
+    if not found and patch.strip() != "*** Begin Patch\n*** End Patch":
+        raise failure("apply_patch carries no recognized file headers")
+
+
+# ---------------------------------------------------------------------------
 # Capy execution tools
 # ---------------------------------------------------------------------------
 def capy_text(tool_input, key):
@@ -1484,13 +1527,15 @@ def evaluate(ctx, policy):
             raise failure("Bash command must be a string")
         check_command(command, ctx, policy)
         return
+    if ctx.tool_name == "apply_patch":
+        check_patch(ctx, policy)
+        return
     capy_tool = capy_tool_name(ctx.tool_name)
     if capy_tool is not None:
         check_capy_tool(capy_tool, ctx, policy)
         return
-    # TODO: apply_patch header parsing is not implemented yet; those calls
-    # are currently allowed. Unknown tools are allowed by design: dispatch is the engine's
-    # job and the wrapper never filters by tool name.
+    # Unknown tools are allowed by design: dispatch is the engine's job and
+    # the wrapper never filters by tool name.
     return
 
 
