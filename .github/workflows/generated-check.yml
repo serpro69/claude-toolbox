@@ -1,0 +1,43 @@
+---
+name: Generated Artifacts Check
+
+on:
+  pull_request:
+    paths:
+      - '.github/workflows/generated-check.yml'
+      - 'klaude-plugin/**'
+      - 'kodex-plugin/**'
+      - '.codex/agents/**'
+      - '.codex/rules/**'
+      - '.codex/scripts/guard/**'
+      - '.claude/settings.json'
+      - 'cmd/generate-kodex/**'
+      - 'scripts/generate-guard.sh'
+      - 'scripts/kodex-generate-manifest.yml'
+      - 'docs/user-guide/configuration.md'
+      - 'test/**'
+      - 'Makefile'
+  push:
+    branches: [master]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  freshness:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-go@v7
+        with:
+          go-version-file: go.mod
+      - name: Regenerate and check freshness
+        run: |
+          make generate-guard
+          make generate-kodex
+          generated=(.claude/settings.json .codex/rules .codex/scripts/guard docs/user-guide/configuration.md kodex-plugin .codex/agents)
+          git diff --exit-code -- "${generated[@]}"
+          test -z "$(git ls-files --others --exclude-standard -- "${generated[@]}")"
+      - name: Test guard generator
+        run: bash test/test-generate-guard.sh

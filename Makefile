@@ -5,7 +5,7 @@ SHELL      := $(shell which bash)
 VERSION ?=
 REF     ?=
 
-.PHONY: vendor-profiles generate-kodex generate-all test-structure plugin-graph plugin-graph-docs docs-serve docs-build release pre-release
+.PHONY: vendor-profiles generate-kodex generate-guard generate-all test-structure plugin-graph plugin-graph-docs docs-serve docs-build release pre-release
 
 vendor-profiles:
 	go test ./cmd/vendor-profiles/...
@@ -17,7 +17,13 @@ generate-kodex:
 	go run ./cmd/generate-kodex -manifest scripts/kodex-generate-manifest.yml
 	$(MAKE) test-structure
 
-generate-all: vendor-profiles generate-kodex
+generate-guard:
+	bash scripts/generate-guard.sh
+
+generate-all:
+	$(MAKE) generate-guard
+	$(MAKE) vendor-profiles
+	$(MAKE) generate-kodex
 
 test-structure:
 	bash test/test-plugin-structure.sh

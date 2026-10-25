@@ -248,6 +248,51 @@ assert_json_field "$guard_hook" '.matcher' 'Bash|Read|Edit|Write|NotebookEdit|Gr
 assert_json_field "$guard_hook" '.hooks[0].onFailure' "block" "Guard failures block"
 assert_json_field "$guard_hook" '.hooks[0].timeout' "15" "Guard timeout is 15 seconds"
 
+log_test "Guard secrets use explicit permission-glob shapes"
+guard_rules="$REPO_ROOT/klaude-plugin/scripts/guard/guard-rules.json"
+jq -e 'all(.secrets[]; test("^(\\./\\*\\*/|~/|//)"))' "$guard_rules" >/dev/null
+log_pass "Secrets are project, home or absolute globs"
+
+log_test "Destructive rules use the frozen matcher vocabulary"
+jq -e 'all(.destructive[][];
+  (keys - ["program", "subcommand", "flags_any", "flags_all", "flags_none", "exempt", "reason", "codex"] | length) == 0
+)' "$guard_rules" >/dev/null
+log_pass "All destructive fields are supported"
+
+log_test "Codex records belong only to the five accepted native forbids"
+jq -e '
+  [.destructive[][] | select(has("codex")) | .program] | sort == ["doas", "rm", "shred", "su", "sudo"]
+' "$guard_rules" >/dev/null
+log_pass "Only rm, shred, sudo, su and doas have Codex records"
+
+log_test "Generated guard artifacts are fresh"
+guard_generated=$(create_temp_dir "guard-generated")
+TEMP_DIRS+=("$guard_generated")
+bash "$REPO_ROOT/scripts/generate-guard.sh" "$guard_generated"
+for generated in .claude/settings.json .codex/rules/default.rules docs/user-guide/configuration.md \
+  .codex/scripts/guard/guard.sh .codex/scripts/guard/guard.py \
+  .codex/scripts/guard/guard-rules.json .codex/scripts/guard/LICENSE.md; do
+  if cmp -s "$guard_generated/$generated" "$REPO_ROOT/$generated"; then
+    log_pass "Fresh: $generated"
+  else
+    log_fail "Stale or missing: $generated; run make generate-guard"
+  fi
+done
+
+log_test "Codex engine and license are byte-identical to canonical sources"
+for file in guard.sh guard.py guard-rules.json LICENSE.md; do
+  if cmp -s "$REPO_ROOT/klaude-plugin/scripts/guard/$file" "$REPO_ROOT/.codex/scripts/guard/$file"; then
+    log_pass "Canonical copy: $file"
+  else
+    log_fail "Codex guard copy differs: $file"
+  fi
+done
+if [[ -x "$REPO_ROOT/.codex/scripts/guard/guard.sh" ]]; then
+  log_pass "Codex guard wrapper is executable"
+else
+  log_fail "Codex guard wrapper lost executable permission"
+fi
+
 # =============================================================================
 # Section 6: Template is slimmed
 # =============================================================================
