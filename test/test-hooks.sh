@@ -80,6 +80,14 @@ run_guard "$read_payload" KK_GUARD_INTERPRETERS="$INTERPRETER_FIXTURE" GUARD_FIX
 assert_equals "0" "$exit_code" "Warning exits 0"
 assert_equals '{"systemMessage":"invalid test config"}' "$output" "Warning is unchanged"
 
+log_test "Invalid project config warns through the real engine without an allow decision"
+run_guard "$read_payload" KK_GUARD_PROJECT_CONFIG="$REPO_ROOT/test/fixtures/guard/project-config/invalid.json"
+assert_equals "0" "$exit_code" "Invalid optional config does not block a benign read"
+assert_json_valid "$output" "Config warning is valid JSON"
+assert_equals '["systemMessage"]' "$(printf '%s' "$output" | jq -c 'keys')" "Only systemMessage is emitted"
+assert_equals "true" "$(printf '%s' "$output" | jq '.systemMessage | contains("project-config/invalid.json")')" "Warning names invalid config"
+assert_equals "" "$stderr_output" "Warning does not masquerade as a denial"
+
 # =============================================================================
 # Section 2: guard.sh — Deny cases
 # =============================================================================
@@ -87,6 +95,26 @@ log_section "Section 2: guard.sh — Deny cases"
 log_test "Plugin-only Read of .env denies with no settings or guard configs"
 run_guard "$secret_payload"
 assert_deny "secrets"
+
+log_test "Project override adds a secret through the wrapper"
+payload=$(jq -nc --arg cwd "$guard_test_dir/project" \
+  '{tool_name:"Read",tool_input:{file_path:"private.txt"},cwd:$cwd}')
+run_guard "$payload" KK_GUARD_PROJECT_CONFIG="$REPO_ROOT/test/fixtures/guard/project-config/additions.json"
+assert_deny "secrets"
+log_test "Missing project override leaves that ordinary file readable"
+run_guard "$payload" KK_GUARD_PROJECT_CONFIG="$guard_test_dir/no-config.json"
+assert_allow
+
+log_test "Invalid config retains baseline denial and its diagnostic"
+run_guard "$secret_payload" KK_GUARD_PROJECT_CONFIG="$REPO_ROOT/test/fixtures/guard/project-config/invalid.json"
+assert_deny "secrets"
+assert_equals "true" "$(printf '%s' "$output" | jq '.systemMessage | contains("project-config/invalid.json")')" "Deny retains the config diagnostic"
+
+log_test "User override allows only the configured dry run through the wrapper"
+payload=$(jq -nc --arg cwd "$guard_test_dir/project" \
+  '{tool_name:"Bash",tool_input:{command:"git clean -nd"},cwd:$cwd}')
+run_guard "$payload" KK_GUARD_USER_CONFIG="$REPO_ROOT/test/fixtures/guard/user-config/scoped.json"
+assert_allow
 
 log_test "Plugin-only Bash cat .env denies"
 payload=$(jq -nc --arg cwd "$guard_test_dir/project" \
