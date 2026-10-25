@@ -11,7 +11,9 @@ or emits a deny on every channel the harnesses honour:
   stderr  the same reason text
   exit 2
 
-Allowed calls print nothing and exit 0. The engine never emits an allow
+Allowed calls exit 0, normally with no output. Invalid configuration emits
+only a `systemMessage`; a denial carries that diagnostic alongside its decision.
+The engine never emits an allow
 decision: the harness evaluates its own deny rules regardless of hook output,
 so an allow buys nothing and could only mislead.
 
@@ -19,6 +21,12 @@ The policy lives in `guard-rules.json` next to this file (override with
 `KK_GUARD_RULES`). The engine refuses to run against an unknown declaration
 `version` and fails closed, so a schema change can never silently match
 nothing.
+
+Project additions come from `<root>/.claude/kk-guard.json`; user exceptions
+come from `~/.claude/kk-guard.json`. `KK_GUARD_PROJECT_CONFIG` and
+`KK_GUARD_USER_CONFIG` override those paths. Invalid configs are reported and
+ignored independently. Project config only adds protection; user config can
+disable destructive categories or self-modification checks, never secrets.
 
 Two directories are kept distinct and never interchanged:
 
@@ -102,6 +110,7 @@ class Denied(Exception):
         self.category = category
         self.what = what
         self.detail = detail
+        self.messages = []
 
     def reason(self):
         remedy = REMEDIES[self.category]
@@ -372,13 +381,14 @@ def anchor_forms(path):
 class Policy(object):
     """The effective rules for one invocation, with globs compiled."""
 
-    __slots__ = ("secrets", "destructive", "tmp_roots", "selfmod")
+    __slots__ = ("secrets", "destructive", "tmp_roots", "selfmod", "allow_patterns")
 
     def __init__(self, secrets, destructive, tmp_roots, selfmod):
         self.secrets = secrets          # list of (glob, compiled regex)
         self.destructive = destructive  # map category -> rules with compiled predicates
         self.tmp_roots = tmp_roots
         self.selfmod = selfmod          # list of (entry, absolute protected path)
+        self.allow_patterns = []        # compiled regexes, destructive checks only
 
 
 def compile_policy(rules, ctx, env=None):
@@ -445,6 +455,115 @@ def compile_policy(rules, ctx, env=None):
             raise failure("temporary roots must be absolute paths")
         tmp_roots.append(os.path.realpath(root))
     return Policy(secrets, destructive, tmp_roots, selfmod)
+
+
+# ---------------------------------------------------------------------------
+# Configuration: independently validated additions and user exceptions
+# ---------------------------------------------------------------------------
+def config_object(value, allowed, location, messages, version=False):
+    if not isinstance(value, dict):
+        raise ValueError("%s must be an object" % location)
+    if version and (type(value.get("version")) is not int or value["version"] not in SUPPORTED_VERSIONS):
+        raise ValueError("unsupported config version %r" % value.get("version"))
+    for key in sorted(set(value) - set(allowed)):
+        messages.append("%s: unknown key %r ignored" % (location, key))
+
+
+def string_list(value, key):
+    if not isinstance(value, list) or not all(isinstance(item, str) and item for item in value):
+        raise ValueError("%s must be a list of nonempty strings" % key)
+    return value
+
+
+def read_config(path, validate, messages):
+    """Missing is normal. Invalid contents never partially apply a layer."""
+    try:
+        with open(path, "r", encoding="utf-8") as handle:
+            value = json.load(handle)
+    except FileNotFoundError:
+        return None
+    except (OSError, ValueError) as exc:
+        messages.append("%s: %s" % (path, exc))
+        return None
+    notes = []
+    try:
+        result = validate(value, notes)
+    except (ValueError, re.error, Denied) as exc:
+        problem = exc.detail if isinstance(exc, Denied) else str(exc)
+        notes.append(problem)
+        result = None
+    messages.extend("%s: %s" % (path, note) for note in notes)
+    return result
+
+
+def project_policy(value, ctx, messages):
+    config_object(value, {"version", "secrets", "destructive", "selfmod"}, "project config", messages, version=True)
+    secrets = string_list(value.get("secrets", []), "secrets")
+    for glob in secrets:
+        validate_glob(glob)
+        if (not glob.startswith(("./**/", "~/", "//")) or glob.endswith("/")
+                or (glob.startswith("//") and not glob.endswith("/**"))):
+            raise ValueError("secrets glob %r must use ./**/<name>, ~/<path> or //<path>/**" % glob)
+    selfmod = string_list(value.get("selfmod", []), "selfmod")
+    destructive = value.get("destructive", {})
+    if not isinstance(destructive, dict) or not all(category for category in destructive):
+        raise ValueError("destructive must be an object with nonempty category names")
+    return compile_policy({"secrets": secrets, "destructive": destructive,
+                           "selfmod": selfmod, "tmp_roots": []}, ctx, {})
+
+
+def user_exceptions(value, ctx, messages):
+    config_object(value, {"version", "projects"}, "user config", messages, version=True)
+    projects = value.get("projects")
+    if not isinstance(projects, dict):
+        raise ValueError("projects must be an object")
+    entries = {}
+    for path, entry in projects.items():
+        if path != "*" and (not os.path.isabs(path) or "\0" in path):
+            raise ValueError("project key %r must be * or an absolute path" % path)
+        config_object(entry, {"disable_categories", "allow_patterns", "disable_selfmod"},
+                      "projects[%r]" % path, messages)
+        categories = string_list(entry.get("disable_categories", []), "disable_categories")
+        patterns = string_list(entry.get("allow_patterns", []), "allow_patterns")
+        disable_selfmod = entry.get("disable_selfmod", False)
+        if type(disable_selfmod) is not bool:
+            raise ValueError("disable_selfmod must be a boolean")
+        entries[path] = (categories, [re.compile(pattern) for pattern in patterns], disable_selfmod)
+    root = os.path.realpath(ctx.project_root)
+    matches = [path for path in entries if path != "*" and
+               (root == os.path.normpath(path) or root.startswith(os.path.normpath(path).rstrip("/") + "/"))]
+    selected = ["*"]
+    if matches:
+        selected.append(max(matches, key=lambda path: len(os.path.normpath(path))))
+    categories, patterns, disable_selfmod = set(), [], False
+    for path in selected:
+        if path in entries:
+            extra_categories, extra_patterns, extra_selfmod = entries[path]
+            categories.update(extra_categories)
+            patterns.extend(extra_patterns)
+            disable_selfmod = disable_selfmod or extra_selfmod
+    return categories, patterns, disable_selfmod
+
+
+def effective_policy(rules, ctx, env):
+    """Compile the baseline first; configs cannot conceal a broken declaration."""
+    policy = compile_policy(rules, ctx, env)
+    messages = []
+    project_path = env.get("KK_GUARD_PROJECT_CONFIG") or os.path.join(ctx.project_root, ".claude", "kk-guard.json")
+    additions = read_config(project_path, lambda value, notes: project_policy(value, ctx, notes), messages)
+    if additions is not None:
+        policy.secrets.extend(additions.secrets)
+        policy.selfmod.extend(additions.selfmod)
+        for category, entries in additions.destructive.items():
+            policy.destructive.setdefault(category, []).extend(entries)
+    user_path = env.get("KK_GUARD_USER_CONFIG") or os.path.join(ctx.home, ".claude", "kk-guard.json")
+    exceptions = read_config(user_path, lambda value, notes: user_exceptions(value, ctx, notes), messages)
+    if exceptions is not None:
+        categories, policy.allow_patterns, disable_selfmod = exceptions
+        policy.destructive = {key: entries for key, entries in policy.destructive.items() if key not in categories}
+        if disable_selfmod:
+            policy.selfmod = []
+    return policy, messages
 
 
 # ---------------------------------------------------------------------------
@@ -1157,6 +1276,9 @@ def check_destructive(segment, ctx, policy):
     for index in indices:
         program = basename(words[index])
         args = [word if not any(c.isspace() for c in word) else "Q" for word in words[index + 1:]]
+        simple_command = " ".join([program] + args)
+        if any(pattern.search(simple_command) for pattern in policy.allow_patterns):
+            continue
         for category, rules in policy.destructive.items():
             for rule in rules:
                 if not destructive_match(program, args, rule):
@@ -1302,24 +1424,32 @@ def evaluate(ctx, policy):
 
 
 def decide(raw, env, fallback_cwd=None):
-    """Full pipeline from raw stdin text to a decision (None or Denied)."""
+    """Return config diagnostics on allow; raise Denied with them on refusal."""
     ctx = parse_payload(raw, env, fallback_cwd)
     rules = load_rules(rules_path(env))
-    policy = compile_policy(rules, ctx, env)
-    evaluate(ctx, policy)
+    policy, messages = effective_policy(rules, ctx, env)
+    try:
+        evaluate(ctx, policy)
+    except Denied as denied:
+        denied.messages = messages
+        raise
+    return messages
 
 
 # ---------------------------------------------------------------------------
 # Emitter and entry point
 # ---------------------------------------------------------------------------
-def deny_output(reason):
-    return json.dumps({
+def deny_output(reason, messages=()):
+    output = {
         "hookSpecificOutput": {
             "hookEventName": "PreToolUse",
             "permissionDecision": "deny",
             "permissionDecisionReason": reason,
         }
-    })
+    }
+    if messages:
+        output["systemMessage"] = "\n".join(messages)
+    return json.dumps(output)
 
 
 def emit_deny(denied, stdout=None, stderr=None):
@@ -1327,7 +1457,7 @@ def emit_deny(denied, stdout=None, stderr=None):
     stdout = stdout or sys.stdout
     stderr = stderr or sys.stderr
     reason = denied.reason()
-    stdout.write(deny_output(reason) + "\n")
+    stdout.write(deny_output(reason, denied.messages) + "\n")
     stdout.flush()
     stderr.write(reason + "\n")
     stderr.flush()
@@ -1336,7 +1466,9 @@ def emit_deny(denied, stdout=None, stderr=None):
 def main():
     raw = sys.stdin.buffer.read().decode("utf-8", "replace")
     try:
-        decide(raw, os.environ)
+        messages = decide(raw, os.environ)
+        if messages:
+            print(json.dumps({"systemMessage": "\n".join(messages)}))
     except Denied as denied:
         emit_deny(denied)
         return 2

@@ -125,3 +125,15 @@
 {"tool_name":"Bash","tool_input":{"command":"terraform plan"},"expect":"allow","note":"infra plan"}
 {"tool_name":"Bash","tool_input":{"command":"helm list"},"expect":"allow","note":"release inspection"}
 {"tool_name":"Bash","tool_input":{"command":"docker ps"},"expect":"allow","note":"container inspection"}
+{"tool_name":"Read","tool_input":{"file_path":"private.txt"},"project_config":"project-config/additions.json","expect":"deny","category":"secrets","note":"project additions deny matching reads"}
+{"tool_name":"Bash","tool_input":{"command":"deploy prod"},"project_config":"project-config/additions.json","expect":"deny","category":"destructive","note":"project adds a destructive category"}
+{"tool_name":"Edit","tool_input":{"file_path":"policy.json"},"project_config":"project-config/additions.json","expect":"deny","category":"selfmod","note":"project adds a protected mutation target"}
+{"tool_name":"Bash","tool_input":{"command":"git clean -fd"},"project_config":"project-config/unknown-keys.json","expect":"deny","category":"destructive","note":"project cannot disable a category"}
+{"tool_name":"Bash","tool_input":{"command":"cat .env"},"project_config":"project-config/invalid.json","expect":"deny","category":"secrets","note":"invalid project config retains baseline"}
+{"tool_name":"Bash","tool_input":{"command":"kubectl delete pod x"},"project_root":"/work/ops/cluster-a","user_config":"user-config/scoped.json","expect":"allow","note":"longest ops prefix disables infra"}
+{"tool_name":"Bash","tool_input":{"command":"git clean -fd"},"project_root":"/work/ops/cluster-a","user_config":"user-config/scoped.json","expect":"deny","category":"destructive","note":"shorter matching prefix is ignored"}
+{"tool_name":"Bash","tool_input":{"command":"git clean -nd"},"user_config":"user-config/scoped.json","expect":"allow","note":"global dry-run exception"}
+{"tool_name":"Bash","tool_input":{"command":"git clean -nd; rm -rf ./work"},"project_root":"/work/ops/cluster-a","user_config":"user-config/scoped.json","expect":"deny","category":"destructive","note":"dry-run exception does not exempt following command"}
+{"tool_name":"Bash","tool_input":{"command":"cat .env"},"user_config":"user-config/allow-all.json","expect":"deny","category":"secrets","note":"allow pattern never exempts secrets"}
+{"tool_name":"Bash","tool_input":{"command":"echo x > .claude/settings.json"},"user_config":"user-config/allow-all.json","expect":"deny","category":"selfmod","note":"allow pattern never exempts selfmod"}
+{"tool_name":"Bash","tool_input":{"command":"git clean -fd"},"user_config":"user-config/invalid.json","expect":"deny","category":"destructive","note":"invalid user regex discards all loosening"}

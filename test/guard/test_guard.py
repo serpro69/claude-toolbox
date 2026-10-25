@@ -58,7 +58,7 @@ CORPUS = os.path.join(FIXTURES, "corpus.jsonl")
 
 # Tasks whose corpus rows are still pending. Remove a number here when that
 # task lands and its rows must pass.
-PENDING_TASKS = {5, 8, 13}
+PENDING_TASKS = {8, 13}
 
 
 def load_guard():
@@ -779,6 +779,185 @@ class DestructiveTests(unittest.TestCase):
                 self.assertEqual((kind, denied.category), ("deny", "failure"))
 
 
+class ConfigurationTests(unittest.TestCase):
+    def setUp(self):
+        self.sandbox = Sandbox()
+        self.addCleanup(__import__("shutil").rmtree, self.sandbox.base)
+        self.env = self.sandbox.env(project_root="/work/ops/cluster-a")
+
+    def fixture(self, layer, name):
+        self.env["KK_GUARD_%s_CONFIG" % layer.upper()] = os.path.join(FIXTURES, layer + "-config", name + ".json")
+
+    def config(self, layer, value):
+        path = os.path.join(self.sandbox.base, layer + ".json")
+        with open(path, "w", encoding="utf-8") as handle:
+            json.dump(value, handle)
+        self.env["KK_GUARD_%s_CONFIG" % layer.upper()] = path
+
+    def check(self, command, category=None, tool="Bash", cwd=None):
+        payload = {"tool_name": tool, "cwd": cwd or self.env["CLAUDE_PROJECT_DIR"],
+                   "tool_input": {"command" if tool == "Bash" else "file_path": command}}
+        try:
+            messages = guard.decide(json.dumps(payload), self.env)
+        except guard.Denied as denied:
+            self.assertEqual(denied.category, category, denied.reason())
+            return denied.messages
+        self.assertIsNone(category, "unexpected allow: " + command)
+        return messages
+
+    def test_project_additions_preserve_baseline_and_support_new_categories(self):
+        self.fixture("project", "additions")
+        for path in ("private.txt", ".env"):
+            self.assertEqual(self.check(path, "secrets", tool="Read"), [])
+        for command in ("git fetch", "git clean -fd", "deploy prod"):
+            self.check(command, "destructive")
+        for path in ("policy.json", ".claude/settings.json"):
+            self.check(path, "selfmod", tool="Edit")
+        self.check("README.md", tool="Read")
+
+    def test_project_unknown_keys_warn_without_loosening_or_dropping_additions(self):
+        self.fixture("project", "unknown-keys")
+        for command, category, tool in (("git clean -fd", "destructive", "Bash"),
+                                        ("rm ./work", "destructive", "Bash"),
+                                        ("private.txt", "secrets", "Read"),
+                                        (".claude/settings.json", "selfmod", "Edit")):
+            warnings = "\n".join(self.check(command, category, tool))
+            for key in ("disable_categories", "disable_selfmod", "allow_patterns", "tmp_roots"):
+                self.assertIn(key, warnings)
+
+    def test_invalid_project_discards_all_additions_and_reports_problem(self):
+        cases = [[], {"version": True}, {"version": 1.0}, {"version": 99},
+                 {"version": 1, "secrets": ["./**/private.txt", "*.token"]},
+                 {"version": 1, "secrets": ["./**/[a]"]},
+                 {"version": 1, "secrets": ["//etc/passwd"]},
+                 {"version": 1, "secrets": ["./**/private.txt"], "selfmod": [42]},
+                 {"version": 1, "destructive": []},
+                 {"version": 1, "destructive": {"git": [{"program": "git", "reason": "bad", "flags_any": ["["]}]}},
+                 {"version": 1, "destructive": {"git": [{"program": "git", "reason": "bad", "typo": True}]}}]
+        for value in cases:
+            with self.subTest(config=value):
+                self.config("project", value)
+                self.assertTrue(self.check(".env", "secrets", tool="Read"))
+                self.assertTrue(self.check("private.txt", tool="Read"))
+                self.check("git clean -fd", "destructive")
+        self.fixture("project", "invalid")
+        self.assertTrue(self.check("cat .env", "secrets"))
+
+    def test_global_and_longest_prefix_union_is_component_scoped(self):
+        self.fixture("user", "scoped")
+        for command in ("sudo ls", "kubectl delete pod x", "git clean -nd", "git fetch"):
+            self.check(command)
+        for command in ("git clean -fd", "shred file"):
+            self.check(command, "destructive")  # /work contributes nothing
+        self.check(".claude/settings.json", "selfmod", tool="Edit")
+        for root in ("/work/app", "/work/ops-extra", "/work/op"):
+            self.env["CLAUDE_PROJECT_DIR"] = root
+            self.check("kubectl delete pod x", "destructive")
+        self.env["CLAUDE_PROJECT_DIR"] = "/work/ops"
+        self.check("kubectl delete pod x")
+
+    def test_project_root_not_execution_directory_selects_user_entry(self):
+        self.fixture("user", "scoped")
+        self.check("kubectl delete pod x", cwd="/work/app")
+        self.env["CLAUDE_PROJECT_DIR"] = "/work/app"
+        self.check("kubectl delete pod x", "destructive", cwd="/work/ops")
+
+    def test_user_prefix_uses_real_project_root_and_root_prefix(self):
+        self.config("user", {"version": 1, "projects": {
+            "/": {"disable_categories": ["privilege"]},
+            self.sandbox.root: {"disable_categories": ["infra"]}}})
+        self.env["CLAUDE_PROJECT_DIR"] = self.sandbox.root_link
+        self.check("kubectl delete pod x")
+        self.check("sudo ls", "destructive")  # only the longest prefix
+        self.env["CLAUDE_PROJECT_DIR"] = "/unrelated"
+        self.check("sudo ls")
+        self.check("kubectl delete pod x", "destructive")
+
+    def test_allow_patterns_are_local_to_commands_and_extracted_bodies(self):
+        self.fixture("user", "scoped")
+        for command in ("git clean -nd", "env FOO=x timeout 5 /usr/bin/git clean -nd",
+                        "sh -c 'git clean -nd'", 'echo "$(git clean -nd)"'):
+            self.check(command)
+        for command in ("git clean -fd", "git clean -nd; rm -rf ./work",
+                        "git clean -nd && git clean -fd", "git clean -nd | shred file",
+                        'git clean -nd "$(rm ./work)"', "git clean -nd `rm ./work`",
+                        "sh -c 'git clean -nd; rm ./work'", "sudo rm ./work"):
+            self.check(command, "destructive")
+        self.config("user", {"version": 1, "projects": {"*": {"allow_patterns": ["^sh ", "^env "]}}})
+        self.check("sh -c 'rm ./work'", "destructive")
+        self.check("env rm ./work", "destructive")
+
+    def test_allow_patterns_never_disable_secrets_or_selfmod(self):
+        self.fixture("project", "additions")
+        self.fixture("user", "allow-all")
+        self.check("git clean -fd; rm ./work")
+        self.check("deploy prod")
+        for command in ("cat .env", "cat ./private.txt", "git clean -fd .env"):
+            self.check(command, "secrets")
+        for command in ("echo x > .claude/settings.json", "mv policy.json /work/saved",
+                        'python3 -c "open(\'.claude/settings.json\',\'w\')"'):
+            self.check(command, "selfmod")
+
+    def test_disable_selfmod_is_union_scoped_and_never_disables_secrets(self):
+        for entries in ({"*": {"disable_selfmod": True}, "/work/ops": {"disable_selfmod": False}},
+                        {"*": {"disable_selfmod": False}, "/work/ops": {"disable_selfmod": True}}):
+            self.config("user", {"version": 1, "projects": entries})
+            self.fixture("project", "additions")
+            self.check(".claude/settings.json", tool="Edit")
+            self.check("policy.json", tool="Edit")
+            self.check("echo x > .claude/settings.json")
+            self.check(".env", "secrets", tool="Edit")
+            self.check("private.txt", "secrets", tool="Edit")
+        self.env["CLAUDE_PROJECT_DIR"] = "/work/app"
+        self.check(".claude/settings.json", "selfmod", tool="Edit")
+
+    def test_category_disable_covers_project_additions_and_new_categories(self):
+        self.fixture("project", "additions")
+        self.config("user", {"version": 1, "projects": {"*": {"disable_categories": ["git", "release", "secrets", "selfmod"]}}})
+        self.check("git clean -fd")
+        self.check("git fetch")
+        self.check("deploy prod")
+        self.check("private.txt", "secrets", tool="Read")
+        self.check("policy.json", "selfmod", tool="Edit")
+
+    def test_invalid_user_discards_all_loosening_keeps_project_additions(self):
+        self.fixture("project", "additions")
+        for entry in ({"disable_categories": "git"}, {"disable_selfmod": "true"},
+                      {"disable_categories": ["git"], "allow_patterns": ["["]},
+                      {"disable_categories": ["git", None]}, {"allow_patterns": [42]}):
+            self.config("user", {"version": 1, "projects": {"*": entry}})
+            self.assertTrue(self.check("git clean -fd", "destructive"))
+            self.check("private.txt", "secrets", tool="Read")
+            self.check(".claude/settings.json", "selfmod", tool="Edit")
+        for value in ({"version": True, "projects": {}}, {"version": 1, "projects": []},
+                      {"version": 1, "projects": {"relative": {"disable_selfmod": True}}}):
+            self.config("user", value)
+            self.assertTrue(self.check(".claude/settings.json", "selfmod", tool="Edit"))
+
+    def test_invalid_project_does_not_disable_valid_user_config(self):
+        self.fixture("project", "invalid")
+        self.fixture("user", "scoped")
+        self.assertTrue(self.check("kubectl delete pod x"))
+        self.assertTrue(self.check("cat .env", "secrets"))
+
+    def test_default_locations_and_fresh_reload(self):
+        self.env = self.sandbox.env()
+        for layer, base in (("project", self.sandbox.root), ("user", self.sandbox.home)):
+            self.env.pop("KK_GUARD_%s_CONFIG" % layer.upper())
+            os.makedirs(os.path.join(base, ".claude"))
+        project = os.path.join(self.sandbox.root, ".claude", "kk-guard.json")
+        user = os.path.join(self.sandbox.home, ".claude", "kk-guard.json")
+        with open(project, "w") as handle:
+            json.dump(read_json(os.path.join(FIXTURES, "project-config", "additions.json")), handle)
+        with open(user, "w") as handle:
+            json.dump({"version": 1, "projects": {"*": {"disable_categories": ["git"]}}}, handle)
+        self.check("../private.txt", "secrets", tool="Read", cwd=os.path.join(self.sandbox.root, "sub"))
+        self.check("git clean -fd")
+        with open(user, "w") as handle:
+            handle.write("{")
+        self.assertTrue(self.check("git clean -fd", "destructive"))
+
+
 class CorpusTests(unittest.TestCase):
     def test_replay(self):
         sandbox = Sandbox()
@@ -839,6 +1018,22 @@ class ProcessContractTests(unittest.TestCase):
     def test_allow_is_silent(self):
         code, out, err = self.run_engine(self.payload("Read", {"file_path": "README.md"}))
         self.assertEqual((code, out, err), (0, "", ""))
+
+    def test_config_warnings_on_allow_and_deny(self):
+        overrides = {"KK_GUARD_PROJECT_CONFIG": os.path.join(FIXTURES, "project-config", "invalid.json"),
+                     "KK_GUARD_USER_CONFIG": os.path.join(FIXTURES, "user-config", "invalid.json")}
+        for path, expected_code in (("README.md", 0), (".env", 2)):
+            code, out, err = self.run_engine(self.payload("Read", {"file_path": path}), overrides)
+            self.assertEqual(code, expected_code)
+            result = json.loads(out)
+            for config in overrides.values():
+                self.assertIn(config, result["systemMessage"])
+            if code == 0:
+                self.assertEqual(set(result), {"systemMessage"})
+                self.assertEqual(err, "")
+            else:
+                self.assertEqual(result["hookSpecificOutput"]["permissionDecision"], "deny")
+                self.assertIn("secrets", err)
 
     def test_deny_uses_both_channels(self):
         code, out, err = self.run_engine(self.payload("Read", {"file_path": ".env"}))
