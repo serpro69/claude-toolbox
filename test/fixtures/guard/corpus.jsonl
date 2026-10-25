@@ -1,0 +1,33 @@
+{"tool_name": "Read", "tool_input": {"file_path": "{root}/.env"}, "expect": "deny", "category": "secrets", "note": "dotenv file at the project root"}
+{"tool_name": "Read", "tool_input": {"file_path": "{root}/.env.example"}, "expect": "allow", "note": "dotenv example is committed and readable"}
+{"tool_name": "Read", "tool_input": {"file_path": "{root}/.env.production"}, "expect": "allow", "note": "committed environment file; only .env, .env.local and .env.*.local are guarded"}
+{"tool_name": "Read", "tool_input": {"file_path": "{root}/apps/web/.env.local"}, "expect": "deny", "category": "secrets", "note": "nested dotenv local file"}
+{"tool_name": "Edit", "tool_input": {"file_path": "{home}/.claude/settings.json", "old_string": "a", "new_string": "b"}, "expect": "deny", "category": "selfmod", "pending_task": 3, "note": "user settings are write-protected once the selfmod check lands in Task 3"}
+{"tool_name": "Grep", "tool_input": {"pattern": "aws_secret", "path": "~/.aws"}, "expect": "deny", "category": "secrets", "note": "search root inside a credential directory; ~ expanded"}
+{"tool_name": "Grep", "tool_input": {"pattern": "TODO"}, "expect": "allow", "note": "Grep with no search root is allowed; only the root is checked"}
+{"tool_name": "Glob", "tool_input": {"pattern": "**/*.go"}, "expect": "allow", "note": "Glob with no search root is allowed"}
+{"tool_name": "Glob", "tool_input": {"pattern": "*", "path": "{home}/.gnupg"}, "expect": "deny", "category": "secrets", "note": "Glob rooted at a credential directory"}
+{"tool_name": "Read", "tool_input": {"file_path": "{tmp}/kk-secret-link"}, "expect": "deny", "category": "secrets", "note": "symlink under tmp that resolves to ~/.ssh/id_rsa; the resolved path matches"}
+{"tool_name": "Read", "tool_input": {"file_path": "{tmp}/kk-ssh-link/../.netrc"}, "expect": "deny", "category": "secrets", "note": "parent of a symlink to ~/.ssh resolves physically to ~/.netrc; a lexical collapse would land in {tmp}"}
+{"tool_name": "Read", "tool_input": {"file_path": "{tmp}/kk-ssh-link/../notes.txt"}, "expect": "allow", "note": "benign neighbour of the symlink-parent case"}
+{"tool_name": "Read", "tool_input": {"file_path": "{root}/build/out.txt"}, "expect": "allow", "note": "build output is a context concern, not a secret"}
+{"tool_name": "Read", "tool_input": {"file_path": "{root}/app.log"}, "expect": "allow", "note": "logs are readable"}
+{"tool_name": "Read", "tool_input": {"file_path": "{root}/node_modules/foo/index.js"}, "expect": "allow", "note": "node_modules is readable"}
+{"tool_name": "Read", "tool_input": {"file_path": "{root}/package-lock.json"}, "expect": "allow", "note": "lockfiles are readable"}
+{"tool_name": "Read", "tool_input": {"file_path": "{root}/certs/cert.pem"}, "expect": "deny", "category": "secrets", "note": "accepted false positive: *.pem also matches public certificate bundles; ask the user for a redacted copy"}
+{"tool_name": "Read", "tool_input": {"file_path": "{root}/.ssh/id_rsa.pub"}, "expect": "allow", "note": "public key stays readable; private key names are exact"}
+{"tool_name": "Read", "tool_input": {"file_path": "{root}/.ssh/id_rsa"}, "expect": "deny", "category": "secrets", "note": "private key inside the repo"}
+{"tool_name": "Read", "tool_input": {"file_path": "~/.ssh/id_ed25519"}, "expect": "deny", "category": "secrets", "note": "home credential directory via ~"}
+{"tool_name": "Read", "tool_input": {"file_path": "../.env"}, "cwd": "{root}/sub", "expect": "deny", "category": "secrets", "note": "relative path from a subdirectory cwd resolves to <root>/.env; globs anchor at the root, not the cwd"}
+{"tool_name": "Read", "tool_input": {"file_path": "../README.md"}, "cwd": "{root}/sub", "expect": "allow", "note": "benign neighbour of the subdirectory case"}
+{"tool_name": "Read", "tool_input": {"file_path": "{root}/.env"}, "project_config": "nonexistent/project.json", "user_config": "nonexistent/user.json", "expect": "deny", "category": "secrets", "note": "plugin-only condition: no project or user config present, the shipped baseline still denies"}
+{"tool_name": "Read", "tool_input": {"file_path": "{root}/infra/terraform.tfstate"}, "expect": "deny", "category": "secrets", "note": "Terraform state carries provider secrets"}
+{"tool_name": "Read", "tool_input": {"file_path": "{root}/infra/.terraform/providers/x/terraform-provider"}, "expect": "deny", "category": "secrets", "note": "anything beneath .terraform"}
+{"tool_name": "Read", "tool_input": {"file_path": "{root}/infra/service-account-key.json"}, "expect": "deny", "category": "secrets", "note": "GCP service-account key"}
+{"tool_name": "Write", "tool_input": {"file_path": "{root}/.env", "content": "X=1"}, "expect": "deny", "category": "secrets", "note": "writing a secrets file is denied too, mirroring Claude Code where a Read deny blocks Edit and Write"}
+{"tool_name": "Edit", "tool_input": {"file_path": "{root}/src/main.go", "old_string": "a", "new_string": "b"}, "expect": "allow", "note": "ordinary source edit"}
+{"tool_name": "NotebookEdit", "tool_input": {"notebook_path": "{root}/notebooks/analysis.ipynb", "new_source": "print(1)"}, "expect": "allow", "note": "ordinary notebook edit"}
+{"tool_name": "Read", "tool_input": {"file_path": "{root}/docs/env-setup.md"}, "expect": "allow", "note": "a name containing env is not .env"}
+{"tool_name": "Bash", "tool_input": {"command": "cat .env"}, "expect": "deny", "category": "secrets", "pending_task": 3, "note": "Bash channel of the secrets policy arrives in Task 3"}
+{"tool_name": "Bash", "tool_input": {"command": "ls -la"}, "expect": "allow", "note": "Bash is allowed until Task 3 lands; a benign command stays allowed afterwards"}
+{"tool_name": "WebSearch", "tool_input": {"query": "x"}, "expect": "allow", "note": "a tool the engine does not judge is allowed; the wrapper never filters by tool name"}
