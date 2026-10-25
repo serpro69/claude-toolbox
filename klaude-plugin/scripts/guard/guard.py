@@ -123,7 +123,7 @@ class Context(object):
     """What one hook invocation knows. `project_root` and `exec_dir` are
     distinct on purpose; see the module docstring."""
 
-    __slots__ = ("tool_name", "tool_input", "project_root", "exec_dir", "home", "permission_mode")
+    __slots__ = ("tool_name", "tool_input", "project_root", "exec_dir", "home", "permission_mode", "cwd_certain", "other_dirs")
 
     def __init__(self, tool_name, tool_input, project_root, exec_dir, home, permission_mode=""):
         self.tool_name = tool_name
@@ -132,6 +132,24 @@ class Context(object):
         self.exec_dir = exec_dir
         self.home = home
         self.permission_mode = permission_mode
+        self.cwd_certain = True
+        self.other_dirs = ()
+
+
+def command_context(ctx, exec_dir=None, certain=None):
+    """A command-local directory; nested shells never change their parent's cwd."""
+    result = Context(ctx.tool_name, ctx.tool_input, ctx.project_root,
+                     exec_dir if exec_dir is not None else ctx.exec_dir, ctx.home, ctx.permission_mode)
+    result.cwd_certain = ctx.cwd_certain if certain is None else certain
+    result.other_dirs = ctx.other_dirs if exec_dir is None else ()
+    return result
+
+
+def uncertain_context(ctx, *directories):
+    """Keep known possible directories for denies; none justifies an exemption."""
+    result = command_context(ctx, certain=False)
+    result.other_dirs = tuple(dict.fromkeys(ctx.other_dirs + tuple(directories)))
+    return result
 
 
 def home_dir(env):
@@ -358,12 +376,12 @@ class Policy(object):
 
     def __init__(self, secrets, destructive, tmp_roots, selfmod):
         self.secrets = secrets          # list of (glob, compiled regex)
-        self.destructive = destructive  # map category -> rules; matcher not implemented yet
+        self.destructive = destructive  # map category -> rules with compiled predicates
         self.tmp_roots = tmp_roots
         self.selfmod = selfmod          # list of (entry, absolute protected path)
 
 
-def compile_policy(rules, ctx):
+def compile_policy(rules, ctx, env=None):
     """Compile the secrets globs against every anchor form (see
     `anchor_forms`). One glob yields one regex per (root, home) combination
     that differs; `secrets_match` reports the glob, not the regex."""
@@ -387,7 +405,46 @@ def compile_policy(rules, ctx):
         if base.startswith("//"):
             base = base[1:]
         selfmod.extend((entry, path) for path in resolve(base, ctx.project_root, ctx.home))
-    return Policy(secrets, rules["destructive"], rules["tmp_roots"], selfmod)
+    destructive = {}
+    for category, entries in rules["destructive"].items():
+        if not isinstance(entries, list):
+            raise failure("destructive category %r must contain a list" % category)
+        destructive[category] = []
+        for entry in entries:
+            if not isinstance(entry, dict) or not all(isinstance(entry.get(k), str) and entry[k]
+                                                     for k in ("program", "reason")):
+                raise failure("destructive rules require a program and reason")
+            if set(entry) - {"program", "reason", "subcommand", "flags_any", "flags_all", "flags_none", "exempt", "codex"}:
+                raise failure("unknown destructive rule field")
+            rule = dict(entry)
+            sub = rule.get("subcommand", [])
+            rule["subcommand"] = [sub] if isinstance(sub, str) else sub
+            if not isinstance(rule["subcommand"], list) or not all(isinstance(s, str) and s for s in rule["subcommand"]):
+                raise failure("subcommand must be a string or list of strings")
+            if "exempt" in rule and rule["exempt"] != "targets_under_tmp":
+                raise failure("unknown destructive exemption")
+            for key in ("flags_any", "flags_all", "flags_none"):
+                if key not in rule:
+                    continue
+                patterns = rule[key]
+                if not isinstance(patterns, list) or not all(isinstance(p, str) for p in patterns):
+                    raise failure("%s must be a list of regex strings" % key)
+                try:
+                    rule[key] = [re.compile(p) for p in patterns]
+                except re.error as exc:
+                    raise failure("invalid %s regex: %s" % (key, exc))
+            destructive[category].append(rule)
+    env = os.environ if env is None else env
+    tmp_roots = []
+    for root in rules["tmp_roots"]:
+        if root == "$TMPDIR":
+            root = env.get("TMPDIR", "")
+            if not root:
+                continue
+        if not isinstance(root, str) or not os.path.isabs(root):
+            raise failure("temporary roots must be absolute paths")
+        tmp_roots.append(os.path.realpath(root))
+    return Policy(secrets, destructive, tmp_roots, selfmod)
 
 
 # ---------------------------------------------------------------------------
@@ -440,7 +497,8 @@ def selfmod_match(paths, policy):
 
 
 def check_path(path, ctx, policy, action, mutation=False):
-    paths = resolve(path, ctx.exec_dir, ctx.home)
+    paths = [form for directory in (ctx.exec_dir,) + ctx.other_dirs
+             for form in resolve(path, directory, ctx.home)]
     glob = secrets_match(paths, policy)
     if glob:
         raise Denied("secrets", "%s of %s matches %s" % (action, path, glob))
@@ -514,8 +572,8 @@ def is_interpreter(program):
     return program in INTERPRETERS or re.fullmatch(r"python[23](?:\.\d+)?", program) is not None
 
 
-def program_index(words):
-    """Skip assignments, control words and wrappers, including option values."""
+def program_indices(words):
+    """Yield wrappers as well as their program, so sudo cannot disappear."""
     i = 0
     while i < len(words):
         word = words[i]
@@ -523,8 +581,9 @@ def program_index(words):
             i += 1
             continue
         program = basename(word)
+        yield i
         if program not in WRAPPERS:
-            return i
+            return
         i += 1
         takes_arg = WRAPPER_OPTIONS_WITH_ARG.get(program, set())
         while i < len(words) and words[i].startswith("-") and words[i] != "-":
@@ -534,8 +593,22 @@ def program_index(words):
                 break
             if option in takes_arg:
                 i += 1
+            elif not option.startswith("--"):
+                # A value-taking short flag ends the cluster, e.g. -iC /dir.
+                for j, char in enumerate(option[1:], 1):
+                    if "-" + char in takes_arg:
+                        if j == len(option) - 1:
+                            i += 1
+                        break
         i += WRAPPER_POSITIONAL.get(program, 0)
-    return None
+
+
+def program_index(words):
+    """The final command after assignments and wrappers, including option values."""
+    indices = list(program_indices(words))
+    if not indices or basename(words[indices[-1]]) in WRAPPERS:
+        return None
+    return indices[-1]
 
 
 class ShellToken(object):
@@ -546,10 +619,10 @@ class ShellToken(object):
 
 
 class ShellBody(object):
-    __slots__ = ("text", "interpreter")
+    __slots__ = ("text", "interpreter", "position")
 
-    def __init__(self, text, interpreter=False):
-        self.text, self.interpreter = text, interpreter
+    def __init__(self, text, interpreter=False, position=0):
+        self.text, self.interpreter, self.position = text, interpreter, position
 
 
 def split_segments(tokens, separators=SEPARATORS):
@@ -565,7 +638,7 @@ def split_segments(tokens, separators=SEPARATORS):
         yield segment
 
 
-def command_words(tokens):
+def command_tokens(tokens):
     """Remove redirections, their targets and adjacent numeric descriptors."""
     words = []
     i = 0
@@ -575,9 +648,13 @@ def command_words(tokens):
             i += 2
             continue
         if not token.operator:
-            words.append(token.value)
+            words.append(token)
         i += 1
     return words
+
+
+def command_words(tokens):
+    return [token.value for token in command_tokens(tokens)]
 
 
 def command_position_tokens(text):
@@ -715,9 +792,11 @@ def _shell_scan(text, start=0, stop="", depth=0):
                     body = "".join(lines)
                     consumer = _heredoc_consumer(tokens, position)
                     if not quoted:
-                        bodies.extend(_heredoc_substitutions(body, depth))
+                        for nested in _heredoc_substitutions(body, depth):
+                            nested.position = position
+                            bodies.append(nested)
                     if consumer not in DATA_SINKS:
-                        bodies.append(ShellBody(body, is_interpreter(consumer)))
+                        bodies.append(ShellBody(body, is_interpreter(consumer), position))
                 pending = []
             continue
         begin, quote, value = i, "", []
@@ -751,6 +830,7 @@ def _shell_scan(text, start=0, stop="", depth=0):
                                            (not quote and text.startswith(("<(", ">("), i)))
             if expandable:
                 body, i = _substitution(text, i, depth)
+                body.position = len(tokens)
                 bodies.append(body)
                 value.append("Q")
                 continue
@@ -829,7 +909,8 @@ def substitution_bodies(text):
 
 def path_like(word, ctx):
     return bool(word) and ("/" in word or word.startswith(("~", ".")) or
-                           os.path.exists(os.path.join(ctx.exec_dir, word)))
+                           any(os.path.exists(os.path.join(directory, word))
+                               for directory in (ctx.exec_dir,) + ctx.other_dirs))
 
 
 def mutation_operands(segment, words):
@@ -880,7 +961,7 @@ def mutation_operands(segment, words):
         targets.extend(operands)
     elif program == "dd":
         targets.extend(a[3:] for a in args if a.startswith("of="))
-    elif program == "mv":
+    elif program in {"mv", "rm", "shred"}:
         targets.extend(operands)
     elif program in {"cp", "install", "ln"} and operands:
         targets.append(target_dir or operands[-1])
@@ -965,18 +1046,167 @@ def check_inline_code(code, ctx, policy):
         check_path(literal_argument(match.group("path")), ctx, policy, "inline write", mutation=True)
 
 
+# Program-level options whose following token is a value, not a subcommand.
+# Attached short values and --name=value are consumed as a single token.
+GLOBAL_OPTIONS_WITH_ARG = {
+    "git": {"-C", "-c", "--git-dir", "--work-tree", "--namespace", "--config-env", "--super-prefix"},
+    "docker": {"-c", "--context", "-H", "--host", "--config", "--log-level", "-l",
+               "--tlscacert", "--tlscert", "--tlskey"},
+    "terraform": {"-chdir"},
+    "kubectl": {"-n", "--namespace", "--context", "--cluster", "--user", "--kubeconfig",
+                "-s", "--server", "--token", "--certificate-authority", "--client-certificate",
+                "--client-key", "--as", "--as-group", "--as-uid", "--request-timeout", "--v", "-v"},
+    "helm": {"-n", "--namespace", "--kube-context", "--kubeconfig", "--kube-apiserver",
+             "--kube-token", "--kube-ca-file", "--kube-as-user", "--kube-as-group",
+             "--registry-config", "--repository-config", "--repository-cache", "--qps", "--burst-limit"},
+}
+
+
+def skip_global_options(args, program):
+    i = 0
+    takes_arg = GLOBAL_OPTIONS_WITH_ARG.get(program, set())
+    while i < len(args) and args[i].startswith("-"):
+        option = args[i]
+        i += 1
+        if option == "--":
+            break
+        if option in takes_arg:
+            i += 1
+    return args[i:]
+
+
+def destructive_match(program, args, rule):
+    if program != rule["program"]:
+        return False
+    remaining = args
+    for expected in rule["subcommand"]:
+        remaining = skip_global_options(remaining, program)
+        if not remaining or remaining[0] != expected:
+            return False
+        remaining = remaining[1:]
+    hits = lambda patterns: [any(regex.search(arg) for arg in remaining) for regex in patterns]
+    return (("flags_any" not in rule or any(hits(rule["flags_any"])))
+            and all(hits(rule.get("flags_all", [])))
+            and not any(hits(rule.get("flags_none", []))))
+
+
+def targets_under_tmp(tokens, ctx, policy):
+    """Require at least one literal operand and canonical containment for all.
+
+    Never expand shell variables or globs. Test the original spelling as well
+    as the decoded token: command substitution output is represented by Q.
+    """
+    targets, options = [], True
+    for token in tokens:
+        if options and token.value == "--":
+            options = False
+            continue
+        if options and token.value.startswith("-") and token.value != "-":
+            continue
+        if not token.value or any(c in token.raw or c in token.value for c in "$*?[`{}"):
+            return False
+        path = expand_tilde(token.value, ctx.home)
+        if not ctx.cwd_certain and not os.path.isabs(path):
+            return False
+        resolved = resolve(path, ctx.exec_dir, ctx.home)[1]
+        if not any(resolved.startswith(root.rstrip("/") + "/") for root in policy.tmp_roots):
+            return False
+        targets.append(resolved)
+    return bool(targets)
+
+
+def env_options(words):
+    """Yield env's bound option/value pairs, never its child's arguments."""
+    indices = list(program_indices(words))
+    for n, index in enumerate(indices):
+        if basename(words[index]) != "env":
+            continue
+        end = indices[n + 1] if n + 1 < len(indices) else len(words)
+        i = index + 1
+        while i < end:
+            arg = words[i]
+            if arg == "--":
+                break
+            if arg in WRAPPER_OPTIONS_WITH_ARG["env"]:
+                yield arg, words[i + 1] if i + 1 < len(words) else "", i + 2
+                i += 2
+                continue
+            if arg.startswith("--") and "=" in arg:
+                name, value = arg.split("=", 1)
+                yield name, value, i + 1
+            elif arg.startswith("-"):
+                for j, char in enumerate(arg[1:], 1):
+                    if "-" + char in WRAPPER_OPTIONS_WITH_ARG["env"]:
+                        value = arg[j + 1:]
+                        tail = i + 1
+                        if not value and tail < len(words):
+                            value, tail = words[tail], tail + 1
+                            i += 1
+                        yield "-" + char, value, tail
+                        break
+            i += 1
+
+
+def check_destructive(segment, ctx, policy):
+    operands = command_tokens(segment)
+    # The lexer has already decoded glued/ANSI-C quotes. Mask multiword prose
+    # without losing alignment with the original operands used for exemptions.
+    words = [token.value for token in operands]
+    indices = list(program_indices(words))
+    wrappers = {basename(words[i]) for i in indices[:-1]}
+    for index in indices:
+        program = basename(words[index])
+        args = [word if not any(c.isspace() for c in word) else "Q" for word in words[index + 1:]]
+        for category, rules in policy.destructive.items():
+            for rule in rules:
+                if not destructive_match(program, args, rule):
+                    continue
+                # xargs appends unknown operands: a safe explicit prefix does
+                # not establish where all its eventual deletion targets live.
+                if (rule.get("exempt") == "targets_under_tmp" and "xargs" not in wrappers
+                        and targets_under_tmp(operands[index + 1:], ctx, policy)):
+                    continue
+                raise Denied("destructive", "%s: %s" % (category, rule["reason"]), category)
+
+
 def check_command(command, ctx, policy, depth=0):
     if depth > MAX_SHELL_DEPTH:
         raise failure("shell nesting exceeds the inspection limit")
     tokens, bodies, _ = _shell_scan(command)
+    current = command_context(ctx)
+    directory_changed = False
+    has_or_branch = False
+    previous_separator = ""
+    offset = 0
     for segment in split_segments(tokens):
+        start = tokens.index(segment[0], offset)
+        end = start + len(segment)
+        separator = tokens[end].value if end < len(tokens) else ""
+        offset = end
         words = command_words(segment)
+        local = command_context(current)
+        options = list(env_options(words))
+        for name, value, _ in options:
+            if name in {"-C", "--chdir"}:
+                candidates = tuple(path for directory in (local.exec_dir,) + local.other_dirs
+                                   for path in resolve(value, directory, local.home))
+                local = uncertain_context(local, ctx.exec_dir, *ctx.other_dirs, *candidates)
+        segment_bodies = [body for body in bodies if start <= body.position < end]
         shell_code = inline_code(words, shell=True)
         code = inline_code(words)
         if shell_code is not None:
-            bodies.append(ShellBody(shell_code))
+            segment_bodies.append(ShellBody(shell_code))
         if code is not None:
-            check_inline_code(code, ctx, policy)
+            check_inline_code(code, local, policy)
+        for name, value, tail in options:
+            if name in {"-S", "--split-string"}:
+                # env inserts the split string before all remaining argv. Keep
+                # that tail and the env prefix (the string may itself have -C).
+                suffix = " ".join(token.raw for token in command_tokens(segment)[tail:])
+                # xargs may append further unknown targets after that tail;
+                # retain its conservative exemption semantics during recursion.
+                prefix = "xargs env " if any(basename(words[i]) == "xargs" for i in program_indices(words)) else "env "
+                segment_bodies.append(ShellBody(prefix + value + " " + suffix))
         index = program_index(words)
         program = basename(words[index]) if index is not None else ""
         for i, token in enumerate(segment[:-1]):
@@ -984,28 +1214,48 @@ def check_command(command, ctx, policy, depth=0):
                 text = segment[i + 1].value
                 consumer = _heredoc_consumer(tokens, tokens.index(token))
                 if is_interpreter(consumer):
-                    check_inline_code(text, ctx, policy)
+                    check_inline_code(text, local, policy)
                 elif consumer not in DATA_SINKS:
-                    bodies.append(ShellBody(text))
+                    segment_bodies.append(ShellBody(text))
         if program == "dd":
             for arg in words[index + 1:]:
                 if arg.startswith(("if=", "of=")):
-                    check_path(arg[3:], ctx, policy, "Bash")
-        # Prose matching belongs to the destructive tier; path checks always
-        # use these intact operands, never defang's lossy representation.
+                    check_path(arg[3:], local, policy, "Bash")
+        # Secrets and selfmod remain in force even for an exempt cleanup.
         for word in words:
-            if word != code and word != shell_code and path_like(word, ctx):
-                check_path(word, ctx, policy, "Bash")
+            if word != code and word != shell_code and path_like(word, local):
+                check_path(word, local, policy, "Bash")
         for i, token in enumerate(segment[:-1]):
             if token.operator and token.value in REDIRECTIONS - {"<<", "<<-", "<<<", ">&", "<&"}:
-                check_path(segment[i + 1].value, ctx, policy, "Bash redirection")
+                check_path(segment[i + 1].value, local, policy, "Bash redirection")
         for path in mutation_operands(segment, words):
-            check_path(path, ctx, policy, "Bash write", mutation=True)
-    for body in bodies:
-        if body.interpreter:
-            check_inline_code(body.text, ctx, policy)
-        else:
-            check_command(body.text, ctx, policy, depth + 1)
+            check_path(path, local, policy, "Bash write", mutation=True)
+        check_destructive(segment, local, policy)
+        for body in segment_bodies:
+            if body.interpreter:
+                check_inline_code(body.text, local, policy)
+            else:
+                check_command(body.text, local, policy, depth + 1)
+        if program in {"cd", "pushd", "popd"}:
+            args = words[index + 1:]
+            raw_args = command_tokens(segment)[index + 1:]
+            directory_changed = True
+            literal_cd = (program == "cd" and len(args) == 1 and os.path.isabs(args[0])
+                          and not any(c in args[0] or c in raw_args[0].raw for c in "$*?[`{}"))
+            if (literal_cd and index == 0 and separator == "&&" and not has_or_branch
+                    and previous_separator not in {"|", "|&"}):
+                current = command_context(current, os.path.normpath(args[0]), True)
+            else:
+                candidates = (os.path.normpath(args[0]),) if literal_cd else ()
+                current = uncertain_context(current, ctx.exec_dir, *ctx.other_dirs, *candidates)
+        # A failed cd can reach an OR/sequence branch in the old directory;
+        # subshell changes do not propagate back to their parent either.
+        if directory_changed and (separator not in {"", "&&"} or any(t.operator and t.value == ")" for t in segment)):
+            current = uncertain_context(current, ctx.exec_dir, *ctx.other_dirs)
+        has_or_branch = has_or_branch or separator == "||"
+        if separator in {";", "\n", "&"}:
+            has_or_branch = False
+        previous_separator = separator
 
 
 # ---------------------------------------------------------------------------
@@ -1055,7 +1305,7 @@ def decide(raw, env, fallback_cwd=None):
     """Full pipeline from raw stdin text to a decision (None or Denied)."""
     ctx = parse_payload(raw, env, fallback_cwd)
     rules = load_rules(rules_path(env))
-    policy = compile_policy(rules, ctx)
+    policy = compile_policy(rules, ctx, env)
     evaluate(ctx, policy)
 
 

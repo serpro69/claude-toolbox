@@ -100,6 +100,18 @@ payload=$(jq -nc --arg cwd "$guard_test_dir/project" \
 run_guard "$payload"
 assert_deny "selfmod"
 
+log_test "Destructive rule preserves the complete deny transport"
+payload=$(jq -nc --arg cwd "$guard_test_dir/project" \
+  '{tool_name:"Bash",tool_input:{command:"git clean -fd"},cwd:$cwd}')
+run_guard "$payload"
+assert_deny "destructive"
+
+log_test "Literal temporary cleanup stays silent"
+payload=$(jq -nc --arg cwd "$guard_test_dir/project" \
+  '{tool_name:"Bash",tool_input:{command:"rm -rf /tmp/kk-guard-cleanup-probe"},cwd:$cwd}')
+run_guard "$payload"
+assert_allow
+
 # =============================================================================
 # Section 3: guard.sh — Fail-closed cases
 # =============================================================================
