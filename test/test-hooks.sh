@@ -88,10 +88,17 @@ log_test "Plugin-only Read of .env denies with no settings or guard configs"
 run_guard "$secret_payload"
 assert_deny "secrets"
 
-# TODO(Task 3): enable this case when Bash path extraction is implemented.
-# run_guard '{"tool_name":"Bash","tool_input":{"command":"cat .env"}}'
-# assert_deny "secrets"
-log_skip "Bash cat .env denial awaits Task 3"
+log_test "Plugin-only Bash cat .env denies"
+payload=$(jq -nc --arg cwd "$guard_test_dir/project" \
+  '{tool_name:"Bash",tool_input:{command:"cat .env"},cwd:$cwd}')
+run_guard "$payload"
+assert_deny "secrets"
+
+log_test "Bash redirect into settings denies"
+payload=$(jq -nc --arg cwd "$guard_test_dir/project" \
+  '{tool_name:"Bash",tool_input:{command:"echo x > .claude/settings.json"},cwd:$cwd}')
+run_guard "$payload"
+assert_deny "selfmod"
 
 # =============================================================================
 # Section 3: guard.sh — Fail-closed cases

@@ -90,3 +90,10 @@ Every request is sent with `allow_edits=false`, and the prompt forbids edits, te
 Each external reviewer is classified as requested, attempted, executed and adequately evidenced. Receipt of the criteria and source counts only when the CLI returns observable read evidence; of the verified clients only Claude returns a read trace, so `codex` and `agy` findings are kept with receipt unverified and cannot corroborate. A finding is **corroborated** only when two independent reviewers support it: an external reviewer counts only with observable receipt, the internal sub-agent counts through its source-tied report (its reads are never returned to the parent), and a corroboration resting on an assumed provider says so. With a Claude-authored change and the shipped clients no clink finding can be corroborated today: `claude` is excluded and `codex`/`agy` return no trace, so their findings stay attributed but uncorroborated. If every reviewer fails, the skill reports that isolated review did not complete and suggests standard mode instead of running it.
 
 Isolated design review applies the same selection with document framing: every reviewer applies the shared design-review criteria, implementation the documents describe is planned work rather than missing code, and the default all-documents scope and explicit `design` / `implementation` / `tasks` subsets match standard mode.
+
+## Guard attribution
+
+The permission guard adapts tokenizer helpers and wrapper tables from
+safe-claude-code, Copyright 2026 - present; serpro69. The modified engine
+includes attribution, and its [Elastic License 2.0 terms](scripts/guard/LICENSE.md)
+ship with the plugin.
