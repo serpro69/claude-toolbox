@@ -231,13 +231,63 @@ class DeclarationTests(unittest.TestCase):
 
     def test_specific_predicates_the_design_names(self):
         rules = guard.load_rules(RULES)
-        git = {(r["program"], json.dumps(r.get("subcommand"))): r for r in rules["destructive"]["git"]}
-        self.assertIn("flags_none", git[("git", '"restore"')])
+        git = {(r["program"], json.dumps(r.get("subcommand"))) for r in rules["destructive"]["git"]}
+        restore_rules = [r for r in rules["destructive"]["git"] if r.get("subcommand") == "restore"]
+        self.assertTrue(any("flags_none" in r for r in restore_rules))
         branch_rules = [r for r in rules["destructive"]["git"] if r.get("subcommand") == "branch"]
         self.assertTrue(any("flags_all" in r for r in branch_rules))
         self.assertTrue(any("flags_any" in r for r in branch_rules))
         self.assertIn(("git", '["stash", "drop"]'), git)
         self.assertEqual(rules["destructive"]["filesystem"][0]["exempt"], "targets_under_tmp")
+
+    def test_equivalent_destructive_spellings_are_declared(self):
+        # Accepted 2026-10-25: spellings with the same data-losing effect as a
+        # baseline rule. The matcher arrives later; this pins the declaration's
+        # regexes and subcommands so the matcher has something correct to apply.
+        rules = guard.load_rules(RULES)["destructive"]
+
+        def find(category, program, subcommand, key):
+            for rule in rules[category]:
+                if rule["program"] == program and rule.get("subcommand") == subcommand and key in rule:
+                    return [re.compile(p) for p in rule[key]]
+            self.fail("no %s rule for %s %r with %s" % (category, program, subcommand, key))
+
+        def any_hit(regexes, token):
+            return any(r.search(token) for r in regexes)
+
+        push = find("git", "git", "push", "flags_any")
+        for token in ("-d", "-fd", "--delete", "--force", "-f", "+main", "+refs/heads/x:refs/heads/x", ":old-branch"):
+            self.assertTrue(any_hit(push, token), token)
+        for token in ("origin", "main", "main:main", "-u", "-n", "--dry-run", "--tags"):
+            self.assertFalse(any_hit(push, token), token)
+
+        delete_re, force_re = find("git", "git", "branch", "flags_all")
+        for args in (["-d", "-f", "x"], ["-df", "x"], ["--delete", "--force", "x"], ["-fd", "x"]):
+            self.assertTrue(any(delete_re.search(a) for a in args) and any(force_re.search(a) for a in args), args)
+        for args in (["-d", "x"], ["--delete", "x"], ["-f", "new", "start"]):
+            self.assertFalse(any(delete_re.search(a) for a in args) and any(force_re.search(a) for a in args), args)
+
+        restore = find("git", "git", "restore", "flags_any")
+        for token in ("--worktree", "-W", "-SW", "-WS"):
+            self.assertTrue(any_hit(restore, token), token)
+        for token in ("--staged", "-S", "-p", "file.txt"):
+            self.assertFalse(any_hit(restore, token), token)
+
+        rsync = find("filesystem", "rsync", None, "flags_any")
+        for token in ("--del", "--delete", "--delete-after", "--delete-excluded"):
+            self.assertTrue(any_hit(rsync, token), token)
+        for token in ("--delay-updates", "-a", "--dry-run"):
+            self.assertFalse(any_hit(rsync, token), token)
+
+        destroy = find("infra", "terraform", "apply", "flags_any")
+        for token in ("-destroy", "--destroy", "-destroy=true"):
+            self.assertTrue(any_hit(destroy, token), token)
+        for token in ("-auto-approve", "-target=x", "plan.tfplan"):
+            self.assertFalse(any_hit(destroy, token), token)
+
+        docker = {json.dumps(r.get("subcommand")) for r in rules["infra"] if r["program"] == "docker"}
+        self.assertIn('["container", "rm"]', docker)
+        self.assertIn('["image", "rm"]', docker)
 
     def test_unknown_version_fails_closed(self):
         # `True == 1` and `1.0 == 1` in Python; only the integer 1 may pass.

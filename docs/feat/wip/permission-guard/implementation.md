@@ -303,7 +303,12 @@ commands are allowed.
    `privilege` plus the must-allow neighbours: `git branch -d x`,
    `git rebase main`, `git commit --amend`, `git restore --staged f`,
    `git push origin main`, `git stash list`, `kubectl get pods`,
-   `terraform plan`, `helm list`, `docker ps`.
+   `terraform plan`, `helm list`, `docker ps`. The equivalent-spelling rows
+   added during Task 1 (`git push -d`/`:ref`/`+ref`, `git branch -df`,
+   `git restore -SW`, `rsync --del`, `docker container rm`, `docker image
+   rm`, `terraform apply -destroy`, each with a benign neighbour) already
+   exist with `pending_task: 4`; remove `4` from `PENDING_TASKS` in
+   `test_guard.py` to enable them.
    → verify: full corpus replay green.
 5. Confirm the deny reason names the category and the rule's `reason`, and
    the destructive remedy names the category and the user config path.
