@@ -36,6 +36,7 @@ reset_globals() {
   # Reset exclusion tracking arrays
   EXCLUDED_FILES=()
   SYNC_EXCLUSIONS=()
+  DROPPED_DENY_ENTRIES=()
 }
 
 log_test "parse_arguments with --version flag"
@@ -1147,7 +1148,7 @@ assert_equals "Bash(cat:*)" "$(jq -r '.permissions.allow[0]' "$output_dir/claude
 assert_equals "Bash(ls:*)" "$(jq -r '.permissions.allow[1]' "$output_dir/claude/settings.json")" "Second entry from downstream preserved"
 assert_equals "WebSearch" "$(jq -r '.permissions.allow[2]' "$output_dir/claude/settings.json")" "Upstream-only entry appended"
 
-log_test "smart merge: deny list propagation from upstream"
+log_test "smart merge: deny replaced, allow unioned"
 reset_globals
 test_dir=$(create_temp_dir "merge-deny-propagation")
 create_merge_test_manifest "$test_dir/manifest.json"
@@ -1157,7 +1158,8 @@ mkdir -p "$test_dir/templates/claude"
 cat >"$test_dir/templates/claude/settings.json" <<'EOF'
 {
   "permissions": {
-    "deny": ["Bash(rm:*)", "Read(*.log)", "Read(*.pyc)"],
+    "deny": ["Read(./**/.env)", "Read(~/.ssh/**)"],
+    "allow": ["Bash(ls:*)", "WebSearch"],
     "defaultMode": "default"
   },
   "statusLine": { "command": "bash statusline_enhanced.sh" }
@@ -1168,7 +1170,8 @@ mkdir -p "$test_dir/project/.claude"
 cat >"$test_dir/project/.claude/settings.json" <<'EOF'
 {
   "permissions": {
-    "deny": ["Bash(rm:*)", "Read(*.csv)"],
+    "deny": ["Read(*.log)", "Read(~/.ssh/**)", "Read(*.csv)"],
+    "allow": ["Bash(go test *)", "WebSearch"],
     "defaultMode": "default"
   },
   "statusLine": { "command": "bash statusline_enhanced.sh" }
@@ -1180,11 +1183,94 @@ output_dir="$test_dir/output"
 apply_substitutions "$test_dir/templates" "$output_dir" 2>/dev/null
 popd >/dev/null
 
-result=$(jq -r '.permissions.deny | length' "$output_dir/claude/settings.json")
-assert_equals "4" "$result" "Deny list has 4 entries (downstream 2 + upstream 2 new)"
-# Downstream entries first, then upstream additions
-assert_equals "Read(*.csv)" "$(jq -r '.permissions.deny[1]' "$output_dir/claude/settings.json")" "Downstream deny entry preserved"
-assert_equals "Read(*.log)" "$(jq -r '.permissions.deny[2]' "$output_dir/claude/settings.json")" "Upstream deny entry added"
+assert_equals "$(jq -c '.permissions.deny' "$test_dir/templates/claude/settings.json")" \
+  "$(jq -c '.permissions.deny' "$output_dir/claude/settings.json")" "Deny equals upstream exactly, including order"
+assert_equals '["Bash(go test *)","WebSearch","Bash(ls:*)"]' \
+  "$(jq -c '.permissions.allow' "$output_dir/claude/settings.json")" "Allow keeps downstream entries and adds upstream entries once"
+assert_equals "2" "${#DROPPED_DENY_ENTRIES[@]}" "Only downstream-only denies are reported"
+assert_equals "Read(*.log)" "${DROPPED_DENY_ENTRIES[0]}" "Retired log deny reported"
+assert_equals "Read(*.csv)" "${DROPPED_DENY_ENTRIES[1]}" "Project-only deny reported"
+
+log_test "deny removal reports include guidance in terminal, markdown and CI output"
+pushd "$test_dir/project" >/dev/null
+compare_files "$output_dir" 2>/dev/null
+generate_diff_report "$output_dir" >"$test_dir/terminal-report"
+generate_markdown_summary "$output_dir" >"$test_dir/markdown-report"
+CI_MODE=true
+GITHUB_OUTPUT="$test_dir/github-output" generate_diff_report "$output_dir" >"$test_dir/ci-report"
+generate_diff_report "$output_dir" >"$test_dir/ci-stdout-report"
+CI_MODE=false
+popd >/dev/null
+for report in terminal-report markdown-report github-output; do
+  assert_output_contains "Permission deny entries removed" "cat '$test_dir/$report'" "$report names removed denies"
+  assert_output_contains "Read(*.log)" "cat '$test_dir/$report'" "$report lists the dropped entry"
+  assert_output_contains '`.claude/kk-guard.json` under `secrets`' "cat '$test_dir/$report'" "$report explains secrets config"
+  assert_output_contains 'under `destructive`' "cat '$test_dir/$report'" "$report explains destructive config"
+  assert_output_contains '`.claude/settings.json` to `sync_exclusions`' "cat '$test_dir/$report'" "$report explains full settings opt-out"
+done
+for report in github-output ci-stdout-report; do
+  assert_output_contains "dropped_deny_count=2" "cat '$test_dir/$report'" "$report exposes the CI count"
+done
+
+log_test "excluded settings do not report deny removals or change downstream settings"
+SYNC_EXCLUSIONS=(".claude/settings.json")
+pushd "$test_dir/project" >/dev/null
+apply_substitutions "$test_dir/templates" "$test_dir/excluded" 2>/dev/null
+compare_files "$test_dir/excluded" 2>/dev/null
+popd >/dev/null
+assert_equals "0" "${#DROPPED_DENY_ENTRIES[@]}" "Excluded settings have no reported deny removals"
+assert_equals "0" "${#MODIFIED_FILES[@]}" "Excluded settings are not queued for apply"
+assert_equals '["Read(*.log)","Read(~/.ssh/**)","Read(*.csv)"]' \
+  "$(jq -c '.permissions.deny' "$test_dir/project/.claude/settings.json")" "Staging leaves downstream untouched"
+SYNC_EXCLUSIONS=()
+
+log_test "repeated sync clears deny removal tracking and omits empty report sections"
+cp "$output_dir/claude/settings.json" "$test_dir/project/.claude/settings.json"
+DROPPED_DENY_ENTRIES=("stale tracking")
+pushd "$test_dir/project" >/dev/null
+apply_substitutions "$test_dir/templates" "$test_dir/repeated" 2>/dev/null
+compare_files "$test_dir/repeated" 2>/dev/null
+generate_diff_report "$test_dir/repeated" >"$test_dir/terminal-empty"
+generate_markdown_summary "$test_dir/repeated" >"$test_dir/markdown-empty"
+CI_MODE=true
+GITHUB_OUTPUT="$test_dir/github-empty" generate_diff_report "$test_dir/repeated" >"$test_dir/ci-empty"
+CI_MODE=false
+popd >/dev/null
+assert_equals "0" "${#DROPPED_DENY_ENTRIES[@]}" "Repeated sync has no dropped denies"
+assert_equals "0" "${#MODIFIED_FILES[@]}" "Repeated sync is unchanged"
+for report in terminal-empty markdown-empty github-empty; do
+  assert_output_not_contains "Permission deny entries removed" "cat '$test_dir/$report'" "$report omits the empty removals section"
+done
+assert_output_contains "dropped_deny_count=0" "cat '$test_dir/github-empty'" "CI emits zero when no deny entries were dropped"
+
+log_test "empty or missing upstream deny list retires all downstream denies"
+for upstream_permissions in '{"deny":[]}' '{}'; do
+  printf '{"permissions":%s}\n' "$upstream_permissions" >"$test_dir/templates/claude/settings.json"
+  pushd "$test_dir/project" >/dev/null
+  apply_substitutions "$test_dir/templates" "$test_dir/empty-deny" 2>/dev/null
+  popd >/dev/null
+  assert_equals '[]' "$(jq -c '.permissions.deny' "$test_dir/empty-deny/claude/settings.json")" "No upstream denies means an empty baseline"
+  assert_equals "2" "${#DROPPED_DENY_ENTRIES[@]}" "All old denies are reported"
+done
+
+log_test "first sync has no dropped denies and copies the upstream baseline"
+DROPPED_DENY_ENTRIES=("stale tracking")
+printf '{"permissions":{"deny":["Read(./**/.env)"]}}\n' >"$test_dir/templates/claude/settings.json"
+mkdir -p "$test_dir/first-project"
+pushd "$test_dir/first-project" >/dev/null
+apply_substitutions "$test_dir/templates" "$test_dir/first-output" 2>/dev/null
+popd >/dev/null
+assert_equals "0" "${#DROPPED_DENY_ENTRIES[@]}" "First sync clears previous tracking"
+assert_equals '["Read(./**/.env)"]' "$(jq -c '.permissions.deny' "$test_dir/first-output/claude/settings.json")" "First sync retains upstream denies"
+
+log_test "invalid downstream settings retain the existing upstream fallback"
+printf 'invalid JSON\n' >"$test_dir/project/.claude/settings.json"
+pushd "$test_dir/project" >/dev/null
+apply_substitutions "$test_dir/templates" "$test_dir/invalid-output" >"$test_dir/invalid-warning" 2>&1
+popd >/dev/null
+assert_json_valid "$(cat "$test_dir/invalid-output/claude/settings.json")" "Fallback produces valid settings"
+assert_output_contains "Falling back to upstream template" "cat '$test_dir/invalid-warning'" "Invalid settings are reported"
+assert_equals "0" "${#DROPPED_DENY_ENTRIES[@]}" "Invalid settings do not invent removed entries"
 
 log_test "smart merge: nested object merge (env)"
 reset_globals
@@ -1942,6 +2028,60 @@ compare_files "$test_dir/staging" 2>/dev/null
 popd >/dev/null || true
 
 assert_equals "0" "${#DELETED_FILES[@]}" "Built-in excluded files not flagged as deleted"
+
+log_test "project guard config is neither deleted nor replaced by staging"
+reset_globals
+test_dir=$(create_temp_dir "compare-guard-config")
+mkdir -p "$test_dir/project/.claude" "$test_dir/staging/claude"
+printf '{"version":1,"secrets":["./**/private.json"]}\n' >"$test_dir/project/.claude/kk-guard.json"
+pushd "$test_dir/project" >/dev/null
+compare_files "$test_dir/staging" 2>/dev/null
+assert_equals "0" "${#DELETED_FILES[@]}" "Downstream-only guard config is not reported deleted"
+printf '{"version":1}\n' >"$test_dir/staging/claude/kk-guard.json"
+compare_files "$test_dir/staging" 2>/dev/null
+popd >/dev/null
+assert_equals "0" "${#MODIFIED_FILES[@]}" "Staged guard config cannot overwrite downstream policy"
+assert_equals ".claude/kk-guard.json" "${EXCLUDED_FILES[0]}" "Staged guard config is excluded"
+
+log_test "apply_changes honors settings opt-out and built-in guard exclusion"
+create_merge_test_manifest "$test_dir/manifest.json"
+MANIFEST_PATH="$test_dir/manifest.json"
+SYNC_EXCLUSIONS=(".claude/settings.json")
+printf '{"permissions":{"deny":["Read(*.log)"]}}\n' >"$test_dir/project/.claude/settings.json"
+printf '{"permissions":{"deny":[]}}\n' >"$test_dir/staging/claude/settings.json"
+printf 'old\n' >"$test_dir/project/.claude/CLAUDE.extra.md"
+printf 'new\n' >"$test_dir/staging/claude/CLAUDE.extra.md"
+mkdir -p "$test_dir/staging/claude/empty-dir"
+ln -s CLAUDE.extra.md "$test_dir/staging/claude/extra-link"
+cp "$test_dir/project/.claude/settings.json" "$test_dir/settings-before"
+cp "$test_dir/project/.claude/kk-guard.json" "$test_dir/guard-before"
+pushd "$test_dir/project" >/dev/null
+APPLY_MODE=true
+apply_changes "$test_dir/staging" v2.0.0 2>/dev/null
+APPLY_MODE=false
+popd >/dev/null
+assert_exit_code 0 "cmp '$test_dir/settings-before' '$test_dir/project/.claude/settings.json'" "Apply preserves excluded settings byte-for-byte"
+assert_exit_code 0 "cmp '$test_dir/guard-before' '$test_dir/project/.claude/kk-guard.json'" "Apply preserves project guard config byte-for-byte"
+assert_equals "new" "$(cat "$test_dir/project/.claude/CLAUDE.extra.md")" "Apply still updates ordinary files"
+assert_dir_exists "$test_dir/project/.claude/empty-dir" "Apply still creates empty directories"
+assert_equals "CLAUDE.extra.md" "$(readlink "$test_dir/project/.claude/extra-link")" "Apply still preserves symbolic links"
+
+log_test "fetch_upstream_templates strips the upstream project guard config"
+reset_globals
+test_dir=$(create_temp_dir "fetch-guard-config")
+upstream_fixture=$(create_temp_git_repo)
+mkdir -p "$upstream_fixture/.claude"
+printf '{"version":1}\n' >"$upstream_fixture/.claude/kk-guard.json"
+printf '{"permissions":{"deny":[]}}\n' >"$upstream_fixture/.claude/settings.json"
+git -C "$upstream_fixture" add .claude
+git -C "$upstream_fixture" commit -qm "Add upstream configuration fixture"
+# Exercise the real fetch/staging path against a local repository, with no network.
+GIT_CONFIG_COUNT=1 \
+GIT_CONFIG_KEY_0="url.file://$upstream_fixture.insteadOf" \
+GIT_CONFIG_VALUE_0="https://github.com/test/guard-fixture.git" \
+  fetch_upstream_templates HEAD test/guard-fixture "$test_dir/fetch" 2>/dev/null
+assert_file_not_exists "$FETCHED_TEMPLATES_PATH/claude/kk-guard.json" "Upstream project policy is stripped from staging"
+assert_file_exists "$FETCHED_TEMPLATES_PATH/claude/settings.json" "Shared settings remain staged"
 
 log_test "compare_files handles multiple exclusion patterns"
 reset_globals
