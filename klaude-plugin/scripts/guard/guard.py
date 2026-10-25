@@ -39,6 +39,13 @@ The wrapper/engine split, the `-I` interpreter flag, the fail-closed exit
 contract and the deny-message shape that hands the action back to the human
 are borrowed from safe-claude-code (hooks/guard.py). The policy itself,
 the glob matcher and the project-root anchoring are this project's own.
+
+Tokenizer helpers and wrapper tables are adapted from safe-claude-code,
+Copyright 2026 - present; serpro69, Elastic License 2.0 (ELv2). Modified
+here to preserve operand boundaries and executable bodies, handle heredocs,
+and use Claude Code's separator set. License terms accompany this plugin
+in LICENSE.md beside this file. Parsing is static: commands and interpreter
+code are never run.
 """
 
 import json
@@ -353,7 +360,7 @@ class Policy(object):
         self.secrets = secrets          # list of (glob, compiled regex)
         self.destructive = destructive  # map category -> rules; matcher not implemented yet
         self.tmp_roots = tmp_roots
-        self.selfmod = selfmod          # raw entries; check not implemented yet
+        self.selfmod = selfmod          # list of (entry, absolute protected path)
 
 
 def compile_policy(rules, ctx):
@@ -370,7 +377,17 @@ def compile_policy(rules, ctx):
                     secrets.append((glob, glob_to_regex(glob, root, home)))
         except (ValueError, re.error) as exc:
             raise failure("cannot compile secrets glob %r: %s" % (glob, exc))
-    return Policy(secrets, rules["destructive"], rules["tmp_roots"], rules["selfmod"])
+    selfmod = []
+    for entry in rules["selfmod"]:
+        if not isinstance(entry, str) or not entry:
+            raise failure("every selfmod entry must be a nonempty path")
+        base = entry[:-3] if entry.endswith("/**") else entry
+        if any(ch in base for ch in "*?[]"):
+            raise failure("selfmod paths support only a trailing /**: %r" % entry)
+        if base.startswith("//"):
+            base = base[1:]
+        selfmod.extend((entry, path) for path in resolve(base, ctx.project_root, ctx.home))
+    return Policy(secrets, rules["destructive"], rules["tmp_roots"], selfmod)
 
 
 # ---------------------------------------------------------------------------
@@ -412,6 +429,585 @@ def secrets_match(paths, policy):
     return None
 
 
+def selfmod_match(paths, policy):
+    """Protect both sides of a directory move, with path-component boundaries."""
+    for entry, protected in policy.selfmod:
+        for path in paths:
+            if (path == protected or path.startswith(protected.rstrip("/") + "/")
+                    or protected.startswith(path.rstrip("/") + "/")):
+                return entry
+    return None
+
+
+def check_path(path, ctx, policy, action, mutation=False):
+    paths = resolve(path, ctx.exec_dir, ctx.home)
+    glob = secrets_match(paths, policy)
+    if glob:
+        raise Denied("secrets", "%s of %s matches %s" % (action, path, glob))
+    entry = selfmod_match(paths, policy) if mutation else None
+    if entry:
+        raise Denied("selfmod", "%s of %s affects %s" % (action, path, entry))
+
+
+# ---------------------------------------------------------------------------
+# Shell structure. Keep raw spelling and decoded operands separate from prose.
+# ---------------------------------------------------------------------------
+QUOTED = re.compile(r"'[^']*'|\"(?:[^\"\\]|\\.)*\"")
+ASSIGNMENT = re.compile(r"^[A-Za-z_][A-Za-z0-9_]*=")
+SEPARATORS = {"&&", "||", ";", "|", "|&", "&", "\n"}
+CHAIN_SEPARATORS = SEPARATORS - {"|", "|&"}
+REDIRECTIONS = {">", ">>", ">|", "&>", "&>>", "<", "<>", ">&", "<&", "<<", "<<-", "<<<"}
+SHELL_OPERATORS = sorted(SEPARATORS | REDIRECTIONS | {"(", ")"}, key=len, reverse=True)
+WRAPPERS = {
+    "env", "nohup", "time", "nice", "ionice", "caffeinate", "stdbuf", "command",
+    "builtin", "exec", "xargs", "noglob", "nocorrect", "setsid", "flock", "watch",
+    "timeout", "then", "do", "else", "elif", "if", "while", "until", "busybox",
+    "toybox", "sudo",
+}
+WRAPPER_OPTIONS_WITH_ARG = {
+    "timeout": {"-s", "--signal", "-k", "--kill-after"},
+    "nice": {"-n", "--adjustment"},
+    "ionice": {"-c", "--class", "-n", "--classdata", "-p", "--pid"},
+    "env": {"-u", "--unset", "-C", "--chdir", "-S", "--split-string"},
+    "xargs": {"-I", "-i", "-n", "-P", "-d", "-a", "-L", "-s", "-E", "--max-args",
+              "--max-procs", "--delimiter", "--arg-file", "--max-lines", "--max-chars",
+              "--eof", "--replace"},
+    "watch": {"-n", "--interval"},
+    "flock": {"-w", "--timeout", "-E", "--conflict-exit-code"},
+    "stdbuf": {"-i", "-o", "-e", "--input", "--output", "--error"},
+    "caffeinate": {"-t", "-w"},
+    "sudo": {"-u", "--user", "-g", "--group", "-h", "--host", "-p", "--prompt", "-C", "-T"},
+}
+WRAPPER_POSITIONAL = {"timeout": 1, "flock": 1}
+SHELLS = {"sh", "bash", "zsh", "ksh", "dash", "ash", "fish", "csh", "tcsh"}
+INTERPRETERS = {"python", "python2", "python3", "pythonw", "perl", "ruby", "node",
+                "deno", "bun", "osascript", "rscript", "r", "php", "lua", "julia"}
+DATA_SINKS = {"cat", "tee", "printf"}
+MAX_SHELL_DEPTH = 32
+
+
+def defang(text):
+    """Mask multiword quoted prose; retain single words and glued quotes."""
+    text = text.replace("\\", "")
+    out, i = [], 0
+    for match in QUOTED.finditer(text):
+        before = text[match.start() - 1] if match.start() else " "
+        after = text[match.end()] if match.end() < len(text) else " "
+        inner = match.group()[1:-1]
+        glued = not before.isspace() or not after.isspace()
+        out.extend((text[i:match.start()], inner if glued or not any(c.isspace() for c in inner) else "Q"))
+        i = match.end()
+    return "".join(out) + text[i:]
+
+
+def strip_quotes(text):
+    """Decode one shell word without splitting a quoted path at its spaces."""
+    tokens, _, _ = _shell_scan(text)
+    return " ".join(token.value for token in tokens)
+
+
+def basename(token):
+    return token.rsplit("/", 1)[-1]
+
+
+def is_interpreter(program):
+    return program in INTERPRETERS or re.fullmatch(r"python[23](?:\.\d+)?", program) is not None
+
+
+def program_index(words):
+    """Skip assignments, control words and wrappers, including option values."""
+    i = 0
+    while i < len(words):
+        word = words[i]
+        if ASSIGNMENT.match(word) or word in ("!", "{", "}"):
+            i += 1
+            continue
+        program = basename(word)
+        if program not in WRAPPERS:
+            return i
+        i += 1
+        takes_arg = WRAPPER_OPTIONS_WITH_ARG.get(program, set())
+        while i < len(words) and words[i].startswith("-") and words[i] != "-":
+            option = words[i]
+            i += 1
+            if option == "--":
+                break
+            if option in takes_arg:
+                i += 1
+        i += WRAPPER_POSITIONAL.get(program, 0)
+    return None
+
+
+class ShellToken(object):
+    __slots__ = ("value", "raw", "operator")
+
+    def __init__(self, value, raw, operator=False):
+        self.value, self.raw, self.operator = value, raw, operator
+
+
+class ShellBody(object):
+    __slots__ = ("text", "interpreter")
+
+    def __init__(self, text, interpreter=False):
+        self.text, self.interpreter = text, interpreter
+
+
+def split_segments(tokens, separators=SEPARATORS):
+    segment = []
+    for token in tokens:
+        if token.operator and token.value in separators:
+            if segment:
+                yield segment
+            segment = []
+        else:
+            segment.append(token)
+    if segment:
+        yield segment
+
+
+def command_words(tokens):
+    """Remove redirections, their targets and adjacent numeric descriptors."""
+    words = []
+    i = 0
+    while i < len(tokens):
+        token = tokens[i]
+        if token.operator and token.value in REDIRECTIONS:
+            i += 2
+            continue
+        if not token.operator:
+            words.append(token.value)
+        i += 1
+    return words
+
+
+def command_position_tokens(text):
+    tokens, _, _ = _shell_scan(text)
+    for segment in split_segments(tokens):
+        words = command_words(segment)
+        index = program_index(words)
+        if index is not None:
+            yield basename(words[index])
+
+
+def _heredoc_consumer(tokens, position):
+    # Inspect the whole pipeline: `cat <<EOF | ./import.sh` feeds executable
+    # or unknown input even though the first process is a known data sink.
+    start = position
+    while start and not (tokens[start - 1].operator and tokens[start - 1].value in CHAIN_SEPARATORS):
+        start -= 1
+    end = position
+    while end < len(tokens) and not (tokens[end].operator and tokens[end].value in CHAIN_SEPARATORS):
+        end += 1
+    programs = []
+    for segment in split_segments(tokens[start:end]):
+        words = command_words(segment)
+        index = program_index(words)
+        if index is not None:
+            programs.append(basename(words[index]))
+    for program in programs:
+        if program not in DATA_SINKS:
+            return program
+    return "cat"  # all data sinks, or a redirection without a command
+
+
+def _substitution(text, i, depth):
+    """Read one executable body; the recursive lexer respects heredoc spans."""
+    if text.startswith(("$(", "<(", ">("), i):
+        _, _, end = _shell_scan(text, i + 2, ")", depth + 1)
+        return ShellBody(text[i + 2:end]), end + 1
+    if text[i] == "`":
+        j = i + 1
+        while j < len(text):
+            if text[j] == "\\":
+                j += 2
+            elif text[j] == "`":
+                return ShellBody(text[i + 1:j]), j + 1
+            else:
+                j += 1
+        raise failure("unterminated backtick substitution")
+    return None, i
+
+
+def _heredoc_substitutions(text, depth):
+    # Quotes in an expandable heredoc are data, not shell quote delimiters.
+    bodies, i = [], 0
+    while i < len(text):
+        if text[i] == "\\" and i + 1 < len(text) and text[i + 1] in "\\$`\n":
+            i += 2
+            continue
+        if text.startswith("$(", i) or text[i] == "`":
+            body, i = _substitution(text, i, depth)
+            bodies.append(body)
+        else:
+            i += 1
+    return bodies
+
+
+def _ansi_escape(text, i):
+    """Decode an escape inside Bash's $'...' without evaluating shell text."""
+    char = text[i + 1]
+    simple = {"a": "\a", "b": "\b", "e": "\x1b", "E": "\x1b", "f": "\f",
+              "n": "\n", "r": "\r", "t": "\t", "v": "\v", "\\": "\\", "'": "'", '"': '"'}
+    if char in simple:
+        return simple[char], i + 2
+    if char == "c" and i + 2 < len(text):
+        return chr(ord(text[i + 2].upper()) & 31), i + 3
+    if char in "01234567":
+        match = re.match(r"[0-7]{1,3}", text[i + 1:])
+        return chr(int(match.group(), 8) % 256), i + 1 + len(match.group())
+    if char in "xuU":
+        width = {"x": 2, "u": 4, "U": 8}[char]
+        match = re.match(r"[0-9a-fA-F]{1,%d}" % width, text[i + 2:])
+        if match:
+            return chr(int(match.group(), 16)), i + 2 + len(match.group())
+    return "\\" + char, i + 2
+
+
+def _shell_scan(text, start=0, stop="", depth=0):
+    """Quote-aware lexer; consume heredocs before interpreting their contents.
+
+    Returns (tokens, executable bodies, end offset). Substitution output is
+    represented by Q in operand words; its original code is inspected through
+    a separate body. This prevents literal heredoc prose becoming operands.
+    """
+    if depth > MAX_SHELL_DEPTH:
+        raise failure("shell nesting exceeds the inspection limit")
+    tokens, bodies, pending = [], [], []
+    i, group_depth = start, 0
+    while i < len(text):
+        ch = text[i]
+        if stop and ch == stop and group_depth == 0:
+            return tokens, bodies, i
+        if ch in " \t":
+            i += 1
+            continue
+        if ch == "#":
+            end = text.find("\n", i)
+            i = len(text) if end < 0 else end
+            continue
+        operator = next((op for op in SHELL_OPERATORS if text.startswith(op, i)), None)
+        if text.startswith(("$(", "<(", ">("), i):
+            operator = None
+        if operator:
+            if operator == "(":
+                group_depth += 1
+            elif operator == ")":
+                group_depth -= 1
+            # An unquoted descriptor glued to a redirect is syntax, not a file.
+            if operator in REDIRECTIONS and tokens and tokens[-1].raw.isdigit() and i > start and text[i - 1].isdigit():
+                tokens.pop()
+            tokens.append(ShellToken(operator, operator, True))
+            i += len(operator)
+            if operator == "\n":
+                for position, delimiter, quoted, tabs in pending:
+                    lines = []
+                    while i < len(text):
+                        end = text.find("\n", i)
+                        end = len(text) if end < 0 else end
+                        line = text[i:end]
+                        i = min(end + 1, len(text))
+                        line = line.lstrip("\t") if tabs else line
+                        if line == delimiter:
+                            break
+                        lines.append(line + ("\n" if end < len(text) else ""))
+                    else:
+                        raise failure("unterminated heredoc")
+                    body = "".join(lines)
+                    consumer = _heredoc_consumer(tokens, position)
+                    if not quoted:
+                        bodies.extend(_heredoc_substitutions(body, depth))
+                    if consumer not in DATA_SINKS:
+                        bodies.append(ShellBody(body, is_interpreter(consumer)))
+                pending = []
+            continue
+        begin, quote, value = i, "", []
+        while i < len(text):
+            ch = text[i]
+            if not quote and text.startswith(("$'", '$"'), i):
+                quote = "$'" if text[i + 1] == "'" else '"'
+                i += 2
+                continue
+            if ch == "\\" and quote != "'":
+                if i + 1 >= len(text):
+                    raise failure("unterminated shell escape")
+                if quote == "$'":
+                    decoded, i = _ansi_escape(text, i)
+                    value.append(decoded)
+                    continue
+                following = text[i + 1]
+                if quote == '"' and following not in '$`"\\\n':
+                    value.append("\\")
+                    i += 1
+                else:
+                    if following != "\n":
+                        value.append(following)
+                    i += 2
+                continue
+            if ch in "'\"" and (not quote or ch == quote or (quote == "$'" and ch == "'")):
+                quote = "" if quote else ch
+                i += 1
+                continue
+            expandable = quote not in ("'", "$'") and (text.startswith("$(", i) or ch == "`" or
+                                           (not quote and text.startswith(("<(", ">("), i)))
+            if expandable:
+                body, i = _substitution(text, i, depth)
+                bodies.append(body)
+                value.append("Q")
+                continue
+            if not quote and (ch in " \t\n" or any(text.startswith(op, i) for op in SHELL_OPERATORS)):
+                break
+            value.append(ch)
+            i += 1
+        if quote:
+            raise failure("unterminated shell quote")
+        token = ShellToken("".join(value), text[begin:i])
+        if tokens and tokens[-1].operator and tokens[-1].value in ("<<", "<<-"):
+            pending.append((len(tokens) - 1, token.value, any(c in token.raw for c in "'\"\\"), tokens[-1].value == "<<-"))
+        tokens.append(token)
+    if stop or pending:
+        raise failure("unterminated shell substitution or heredoc")
+    return tokens, bodies, i
+
+
+def short_option_argument(word, name, value_options):
+    """Find a short flag in a cluster, stopping at options which consume text."""
+    if not word.startswith("-") or word.startswith("--"):
+        return None
+    for i, char in enumerate(word[1:], 1):
+        if char == name:
+            return word[i + 1:]
+        if char in value_options:
+            break
+    return None
+
+
+def inline_code(words, shell=False):
+    """Return the argument of a shell -c or interpreter -c/-e invocation."""
+    index = program_index(words)
+    if index is None:
+        return None
+    program = basename(words[index])
+    eligible = program in SHELLS if shell else is_interpreter(program)
+    if not eligible:
+        return None
+    flags = {"-c"} if shell else {"-c", "-e", "--eval", "-p", "--print"}
+    for i in range(index + 1, len(words)):
+        word = words[i]
+        if word in flags or (shell and re.fullmatch(r"-[a-zA-Z]*c[a-zA-Z]*", word)):
+            if i + 1 >= len(words):
+                raise failure("inline interpreter option has no code argument")
+            return words[i + 1]
+        if not shell and (word.startswith("--eval=") or word.startswith("--print=")):
+            return word.split("=", 1)[1]
+        if not shell:
+            option = "c" if program.startswith("python") else "e"
+            attached = short_option_argument(word, option, "cWX" if option == "c" else "ep")
+            if attached is not None:
+                if attached:
+                    return attached
+                if i + 1 >= len(words):
+                    raise failure("inline interpreter option has no code argument")
+                return words[i + 1]
+        if not word.startswith("-"):
+            break
+    return None
+
+
+def extract_bodies(text):
+    """Original executable text, before defang; heredoc literals stay opaque."""
+    tokens, bodies, _ = _shell_scan(text)
+    for segment in split_segments(tokens):
+        code = inline_code(command_words(segment), shell=True)
+        if code is not None:
+            bodies.append(ShellBody(code))
+    return bodies
+
+
+def substitution_bodies(text):
+    return [body.text for body in _shell_scan(text)[1]]
+
+
+def path_like(word, ctx):
+    return bool(word) and ("/" in word or word.startswith(("~", ".")) or
+                           os.path.exists(os.path.join(ctx.exec_dir, word)))
+
+
+def mutation_operands(segment, words):
+    """Literal write targets; reads of settings remain permitted."""
+    targets = []
+    for i, token in enumerate(segment[:-1]):
+        if token.operator and token.value in {">", ">>", ">|", "&>", "&>>", "<>", ">&"}:
+            target = segment[i + 1].value
+            if not (token.value == ">&" and (target.isdigit() or target == "-")):
+                targets.append(target)
+    index = program_index(words)
+    if index is None:
+        return targets
+    program, args = basename(words[index]), words[index + 1:]
+    operands, target_dir = [], None
+    options = True
+    i = 0
+    while i < len(args):
+        arg = args[i]
+        if options and arg == "--":
+            options = False
+        elif options and program in {"cp", "mv", "install", "ln"} and arg in {"-t", "--target-directory"}:
+            if i + 1 < len(args):
+                target_dir = args[i + 1]
+                i += 1
+        elif options and program in {"cp", "mv", "install", "ln"} and arg.startswith("--target-directory="):
+            target_dir = arg.split("=", 1)[1]
+        elif options and program in {"cp", "mv", "install", "ln"} and short_option_argument(arg, "t", "tSmog") is not None:
+            target_dir = short_option_argument(arg, "t", "tSmog")
+            if not target_dir and i + 1 < len(args):
+                i += 1
+                target_dir = args[i]
+        elif options and program == "sed" and arg in {"-e", "--expression", "-f", "--file"}:
+            i += 1
+        elif options and program == "sed" and short_option_argument(arg, "i", "efi") == "":
+            # BSD sed consumes a separate backup suffix; the common empty
+            # suffix is not a filename (resolving it would mean project root).
+            if i + 1 < len(args) and args[i + 1] == "":
+                i += 1
+        elif not options or not arg.startswith("-") or arg == "-":
+            operands.append(arg)
+        i += 1
+    if program == "tee":
+        targets.extend(operands)
+    elif program == "sed" and any(a == "--in-place" or a.startswith("--in-place=") or
+                                 short_option_argument(a, "i", "efi") is not None for a in args):
+        # Including the script is conservative; it cannot hide the file operands.
+        targets.extend(operands)
+    elif program == "dd":
+        targets.extend(a[3:] for a in args if a.startswith("of="))
+    elif program == "mv":
+        targets.extend(operands)
+    elif program in {"cp", "install", "ln"} and operands:
+        targets.append(target_dir or operands[-1])
+        if program == "ln" and any(a == "--force" or re.fullmatch(r"-[a-zA-Z]*f[a-zA-Z]*", a) for a in args):
+            targets.extend(operands)
+    if target_dir:
+        targets.append(target_dir)
+    return targets
+
+
+# Literal-only interpreter inspection: never eval the source or expand paths.
+CODE_STRING = re.compile(r"'((?:[^'\\]|\\.)*)'|\"((?:[^\"\\]|\\.)*)\"", re.DOTALL)
+WRITE_CALL = re.compile(r"\b(open|(?:shutil\.)?(?:copy\w*|move)|os\.(?:rename|replace|remove|unlink)|"
+                        r"(?:fs\.)?(?:writeFile\w*|appendFile\w*|rename\w*|rm\w*|unlink\w*))\s*\(")
+PATH_WRITE = re.compile(r"\b(?:pathlib\.)?Path\s*\(\s*(?P<path>'[^']*'|\"[^\"]*\")\s*\)"
+                        r"\s*\.write_\w*\s*\(")
+
+
+def call_arguments(text, start):
+    """Split literal call arguments at top-level commas without executing code."""
+    args, begin, i, nesting, quote = [], start, start, 0, ""
+    while i < len(text):
+        char = text[i]
+        if quote:
+            if char == "\\":
+                i += 2
+                continue
+            if char == quote:
+                quote = ""
+        elif char in "'\"`":
+            quote = char
+        elif char in "([{":
+            nesting += 1
+        elif char == ")" and not nesting:
+            return args + [text[begin:i].strip()]
+        elif char in ")]}":
+            nesting -= 1
+        elif char == "," and not nesting:
+            args.append(text[begin:i].strip())
+            begin = i + 1
+        i += 1
+    return args + [text[begin:].strip()]
+
+
+def literal_argument(argument):
+    argument = re.sub(r"^[A-Za-z_]\w*\s*=\s*", "", argument)
+    match = CODE_STRING.fullmatch(argument)
+    return next((s for s in match.groups() if s is not None), None) if match else None
+
+
+def named_argument(args, name, position, default=None):
+    for arg in args:
+        if re.match(re.escape(name) + r"\s*=", arg):
+            return arg.split("=", 1)[1].strip()
+    positional = [arg for arg in args if not re.match(r"[A-Za-z_]\w*\s*=", arg)]
+    return positional[position] if len(positional) > position else default
+
+
+def check_inline_code(code, ctx, policy):
+    for match in CODE_STRING.finditer(code):
+        path = next(s for s in match.groups() if s is not None)
+        if path_like(path, ctx):
+            check_path(path, ctx, policy, "inline code")
+    for match in WRITE_CALL.finditer(code):
+        name, args = match.group(1), call_arguments(code, match.end())
+        if name == "open":
+            mode = literal_argument(named_argument(args, "mode", 1, "'r'"))
+            selected = [named_argument(args, "file", 0)] if mode is not None and any(c in mode for c in "wax+") else []
+        elif "copy" in name:
+            selected = [named_argument(args, "dst", 1)]
+        elif name in {"move", "shutil.move", "os.rename", "os.replace"} or "rename" in name:
+            selected = [named_argument(args, "src", 0), named_argument(args, "dst", 1)]
+        else:
+            selected = [named_argument(args, "path", 0)]
+        for argument in selected:
+            if argument is None:
+                continue
+            path = literal_argument(argument)
+            if path is not None:
+                check_path(path, ctx, policy, "inline write", mutation=True)
+    for match in PATH_WRITE.finditer(code):
+        check_path(literal_argument(match.group("path")), ctx, policy, "inline write", mutation=True)
+
+
+def check_command(command, ctx, policy, depth=0):
+    if depth > MAX_SHELL_DEPTH:
+        raise failure("shell nesting exceeds the inspection limit")
+    tokens, bodies, _ = _shell_scan(command)
+    for segment in split_segments(tokens):
+        words = command_words(segment)
+        shell_code = inline_code(words, shell=True)
+        code = inline_code(words)
+        if shell_code is not None:
+            bodies.append(ShellBody(shell_code))
+        if code is not None:
+            check_inline_code(code, ctx, policy)
+        index = program_index(words)
+        program = basename(words[index]) if index is not None else ""
+        for i, token in enumerate(segment[:-1]):
+            if token.operator and token.value == "<<<":
+                text = segment[i + 1].value
+                consumer = _heredoc_consumer(tokens, tokens.index(token))
+                if is_interpreter(consumer):
+                    check_inline_code(text, ctx, policy)
+                elif consumer not in DATA_SINKS:
+                    bodies.append(ShellBody(text))
+        if program == "dd":
+            for arg in words[index + 1:]:
+                if arg.startswith(("if=", "of=")):
+                    check_path(arg[3:], ctx, policy, "Bash")
+        # Prose matching belongs to the destructive tier; path checks always
+        # use these intact operands, never defang's lossy representation.
+        for word in words:
+            if word != code and word != shell_code and path_like(word, ctx):
+                check_path(word, ctx, policy, "Bash")
+        for i, token in enumerate(segment[:-1]):
+            if token.operator and token.value in REDIRECTIONS - {"<<", "<<-", "<<<", ">&", "<&"}:
+                check_path(segment[i + 1].value, ctx, policy, "Bash redirection")
+        for path in mutation_operands(segment, words):
+            check_path(path, ctx, policy, "Bash write", mutation=True)
+    for body in bodies:
+        if body.interpreter:
+            check_inline_code(body.text, ctx, policy)
+        else:
+            check_command(body.text, ctx, policy, depth + 1)
+
+
 # ---------------------------------------------------------------------------
 # File tools
 # ---------------------------------------------------------------------------
@@ -431,14 +1027,7 @@ def check_file_tool(tool_name, tool_input, ctx, policy):
         if tool_name in ("Grep", "Glob"):
             return
         raise failure("%s call carries no path" % tool_name)
-    requested, resolved = resolve(path, ctx.exec_dir, ctx.home)
-    glob = secrets_match((requested, resolved), policy)
-    if glob:
-        raise Denied("secrets", "%s of %s matches %s" % (tool_name, path, glob))
-    # TODO: the self-modification check for Edit, Write and NotebookEdit
-    # (requested/resolved path equal to, beneath, or an ancestor of a
-    # `policy.selfmod` entry) is not implemented yet; those edits are
-    # currently allowed.
+    check_path(path, ctx, policy, tool_name, mutation=tool_name in ("Edit", "Write", "NotebookEdit"))
 
 
 # ---------------------------------------------------------------------------
@@ -449,7 +1038,13 @@ def evaluate(ctx, policy):
     if ctx.tool_name in FILE_TOOLS:
         check_file_tool(ctx.tool_name, ctx.tool_input, ctx, policy)
         return
-    # TODO: Bash command analysis, apply_patch header parsing and the capy
+    if ctx.tool_name == "Bash":
+        command = ctx.tool_input.get("command")
+        if not isinstance(command, str):
+            raise failure("Bash command must be a string")
+        check_command(command, ctx, policy)
+        return
+    # TODO: apply_patch header parsing and the capy
     # execution tools are not implemented yet; those calls are currently
     # allowed. Unknown tools are allowed by design: dispatch is the engine's
     # job and the wrapper never filters by tool name.

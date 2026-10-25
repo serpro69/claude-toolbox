@@ -58,7 +58,7 @@ CORPUS = os.path.join(FIXTURES, "corpus.jsonl")
 
 # Tasks whose corpus rows are still pending. Remove a number here when that
 # task lands and its rows must pass.
-PENDING_TASKS = {3, 4, 5, 8, 13}
+PENDING_TASKS = {4, 5, 8, 13}
 
 
 def load_guard():
@@ -436,6 +436,179 @@ class FileToolTests(unittest.TestCase):
         path = os.path.join(self.sandbox.home, ".aws", "cred\nentials")
         kind, denied = outcome(guard.check_file_tool, "Read", {"file_path": path}, self.ctx, self.policy)
         self.assertEqual(kind, "deny")
+
+
+class ShellTests(unittest.TestCase):
+    def setUp(self):
+        self.sandbox = Sandbox()
+        self.addCleanup(__import__("shutil").rmtree, self.sandbox.base)
+        self.ctx = guard.Context("Bash", {}, self.sandbox.root, self.sandbox.root, self.sandbox.home)
+        self.policy = guard.compile_policy(guard.load_rules(RULES), self.ctx)
+
+    def check(self, command, category=None):
+        command = substitute(command, self.sandbox.mapping)
+        kind, denied = outcome(guard.check_command, command, self.ctx, self.policy)
+        self.assertEqual(kind, "deny" if category else "allow", command + ": " + (denied.reason() if denied else "allowed"))
+        if category:
+            self.assertEqual(denied.category, category, denied.reason())
+
+    def test_extraction_preserves_original_bodies_and_quoted_operands(self):
+        for command, body in [("sh -c 'rm -rf x'", "rm -rf x"), ('echo "$(rm x)"', "rm x"),
+                              ("cat <(rm x)", "rm x"), ("cat >('rm' x)", "'rm' x"),
+                              ("echo `rm x`", "rm x")]:
+            with self.subTest(command=command):
+                self.assertIn(body, [b.text for b in guard.extract_bodies(command)])
+        tokens, _, _ = guard._shell_scan('cat "/repo with spaces/.env"')
+        self.assertEqual(guard.command_words(tokens), ["cat", "/repo with spaces/.env"])
+        self.assertEqual(guard.defang('git commit -m "clean up"'), "git commit -m Q")
+        self.assertEqual(guard.defang("r'm' -rf x"), "rm -rf x")
+
+    def test_separators_and_wrapper_option_values(self):
+        for separator in ("&&", "||", ";", "|", "|&", "&", "\n"):
+            with self.subTest(separator=separator):
+                self.check("true " + separator + " cat .env", "secrets")
+        for wrapper in ("A=1", "env A=1", "env -u NAME", "nohup", "timeout -s TERM 5",
+                        "nice -n 10", "sudo -u user", "xargs -I ITEM", "env --"):
+            with self.subTest(wrapper=wrapper):
+                self.check(wrapper + " sh -c 'cat .env'", "secrets")
+                self.assertEqual(list(guard.command_position_tokens(wrapper + " /bin/cat README.md")), ["cat"])
+
+    def test_shell_secret_reads(self):
+        for command in ("cat .env", "/bin/cat ./.env", "c'at' .env", "cat .en\\v",
+                        'cat "{root}/folder with spaces/.env"', "cat ~/.ssh/id_rsa",
+                        "cat {tmp}/kk-secret-link", "cat {tmp}/kk-ssh-link/../.netrc",
+                        "sh -c 'cat .env'", 'echo "$(cat .env)"', "echo `cat .env`",
+                        "cat <(cat .env)", "cat >(cat .env)", "cat < .env",
+                        'sh -c \'echo "$(cat .env)"\''):
+            with self.subTest(command=command):
+                self.check(command, "secrets")
+
+    def test_benign_commands_and_literal_prose(self):
+        for command in ("cat .env.example", 'echo "see .env.example"', "find . -not -path './.git/*'",
+                        "cat .claude/settings.json", "cat build/out.txt", "cat app.log",
+                        "echo x 2>/dev/null", "echo x >&2", "echo '$(cat .env)'",
+                        'echo "literal ; cat .env"', "echo ok # cat .env", "git commit -m 'clean up build/ and dist/'"):
+            with self.subTest(command=command):
+                self.check(command)
+
+    def test_subdirectory_root_is_not_reanchored(self):
+        self.ctx.exec_dir = os.path.join(self.sandbox.root, "sub")
+        self.check("cat ../.env", "secrets")
+        self.check("cat ../README.md")
+        self.check("echo x > ../.claude/settings.json", "selfmod")
+
+    def test_literal_and_expandable_heredocs(self):
+        self.check('git commit -m "$(cat <<\'EOF\'\nrm -rf x\n$(cat .env)\n`cat .env`\nbuild/ dist/\nEOF\n)"')
+        for delimiter in ("'EOF'", '"EOF"', "E'O'F", r"\EOF"):
+            with self.subTest(delimiter=delimiter):
+                self.check("cat <<" + delimiter + "\n$(cat .env)\nEOF\n")
+        self.check("cat <<- 'EOF'\n\t$(cat .env)\n\tEOF\n")
+        self.check("cat <<EOF\n$(cat .env)\nEOF\n", "secrets")
+        self.check("cat <<EOF\n'$(cat .env)'\nEOF\n", "secrets")
+        self.check("cat <<EOF\n`cat .env`\nEOF\n", "secrets")
+        self.check("cat <<EOF\n\\$(cat .env)\nEOF\n")
+        self.check("cat <<'ONE' <<TWO\n$(cat .env)\nONE\n$(cat .env)\nTWO\n", "secrets")
+        self.check("cat <<'EOF' > .claude/settings.json\nordinary data\nEOF\n", "selfmod")
+        self.check("echo 'cat <<EOF'")
+
+    def test_shell_and_unknown_heredoc_consumers_keep_scripts(self):
+        for consumer in ("bash", "./scripts/import.sh", "cat | ./scripts/import.sh"):
+            with self.subTest(consumer=consumer):
+                self.check(consumer + " <<'EOF'\ncat .env\nEOF\n", "secrets")
+        self.check("cat <<'EOF' | ./scripts/import.sh\ncat .env\nEOF\n", "secrets")
+        for consumer in ("bash", "./scripts/import.sh"):
+            bodies = guard.extract_bodies(consumer + " <<'EOF'\nrm -rf x\nEOF\n")
+            self.assertIn("rm -rf x\n", [b.text for b in bodies])
+
+    def test_mutation_targets_and_read_controls(self):
+        for command in ("echo x > .claude/settings.json", 'echo x >>".claude/settings.json"',
+                        "echo x 2>.claude/settings.json", "echo x &>.claude/settings.json",
+                        "tee .claude/kk-guard.json", "sed -i 's/a/b/' ~/.claude/kk-guard.json",
+                        "dd if=README.md of=.codex/hooks.json", "cp x .claude/settings.json",
+                        "install -m 600 x .claude/settings.json", "mv .codex/hooks.json /tmp/saved.json",
+                        "mv .codex /tmp/", "ln -s x .claude/settings.json", "ln -sf .codex/hooks.json /tmp/x",
+                        "cp -t .codex/scripts x", "mv --target-directory=/tmp .codex"):
+            with self.subTest(command=command):
+                self.check(command, "selfmod")
+        for command in ("mv src/a.go src/b.go", "cp .claude/settings.json /tmp/copy.json",
+                        "cat .claude/settings.json", "sed 's/a/b/' .claude/settings.json",
+                        "echo x > .claude/settings.json.bak", "tee .codex-other/hooks.json"):
+            with self.subTest(command=command):
+                self.check(command)
+        for command in ("echo x > .env", "tee .env", "dd of=.env"):
+            with self.subTest(command=command):
+                self.check(command, "secrets")
+
+    def test_selfmod_aliases_and_file_tools(self):
+        os.makedirs(os.path.join(self.sandbox.root, ".codex"))
+        link = os.path.join(self.sandbox.tmp, "codex-link")
+        os.symlink(os.path.join(self.sandbox.root, ".codex"), link)
+        self.check("tee " + link + "/hooks.json", "selfmod")
+        self.check("mv " + link + " /tmp/saved", "selfmod")
+        for tool, key in (("Edit", "file_path"), ("Write", "file_path"), ("NotebookEdit", "notebook_path")):
+            for path in (".claude/settings.json", ".codex", ".codex/scripts/new.py", "~/.claude/plugins/cache/a"):
+                with self.subTest(tool=tool, path=path):
+                    kind, denied = outcome(guard.check_file_tool, tool, {key: path}, self.ctx, self.policy)
+                    self.assertEqual((kind, denied.category), ("deny", "selfmod"))
+        ctx = guard.Context("Edit", {}, self.sandbox.root_link, self.sandbox.root_link, self.sandbox.home_link)
+        policy = guard.compile_policy(guard.load_rules(RULES), ctx)
+        kind, denied = outcome(guard.check_file_tool, "Edit", {"file_path": self.sandbox.root + "/.codex/hooks.json"}, ctx, policy)
+        self.assertEqual((kind, denied.category), ("deny", "selfmod"))
+
+    def test_inline_interpreter_mutations(self):
+        for code in ("open('.claude/settings.json','w')", "open('.claude/settings.json', mode='a')",
+                     "open('.claude/settings.json','r+')", "Path('.claude/settings.json').write_text('x')",
+                     "shutil.copy('x', '.claude/settings.json')", "shutil.move('.codex', '/tmp/x')",
+                     "os.rename('.codex/hooks.json', '/tmp/x')", "os.remove('.claude/settings.json')"):
+            with self.subTest(code=code):
+                self.check('python3 -c "' + code + '"', "selfmod")
+        for code in ("fs.writeFileSync('.claude/settings.json', x)", "fs.renameSync('.codex', '/tmp/x')",
+                     "fs.rmSync('.codex/hooks.json')"):
+            with self.subTest(code=code):
+                self.check('node -e "' + code + '"', "selfmod")
+        self.check('python3 -c "open(\'.env\').read()"', "secrets")
+        self.check('python3 -c "open(\'.claude/settings.json\').read()"')
+        self.check('python3 -c "shutil.copy(\'.claude/settings.json\', \'/tmp/x\')"')
+        self.check("python3 - <<'PY'\nopen('.claude/settings.json', 'w')\nPY\n", "selfmod")
+        self.check("python3 - <<'PY'\nopen('.claude/settings.json').read()\nPY\n")
+
+    def test_malformed_structure_fails_closed(self):
+        for command in ("cat 'unterminated", "echo $(cat README.md", "cat <<EOF\ndata", "cat \\"):
+            with self.subTest(command=command):
+                self.check(command, "failure")
+
+    def test_literal_shell_spellings_and_option_clusters(self):
+        for command in ("cat $'.env'", r"cat $'\x2eenv'", 'cat $".env"', "dd if=.env of=/tmp/out"):
+            with self.subTest(command=command):
+                self.check(command, "secrets")
+        for command in ("echo x > $'.claude/settings.json'", "sed -Ei 's/a/b/' .claude/settings.json",
+                        "cp -t.codex/scripts payload.py", "cp -ft.codex/scripts payload.py",
+                        'python3 -c"open(\'.claude/settings.json\',\'w\')"',
+                        'python3 -Ic "open(\'.claude/settings.json\',\'w\')"',
+                        'python3 -Bc "open(\'.claude/settings.json\',\'w\')"',
+                        'python3 - <<<"open(\'.claude/settings.json\',\'w\')"'):
+            with self.subTest(command=command):
+                self.check(command, "selfmod")
+        for command in ("sed -i '' 's/a/b/' src/file.txt", "sed -Ei '' 's/a/b/' src/file.txt",
+                        "sed -eiscript .claude/settings.json", "cp -t{tmp} payload.py",
+                        "cat $'.env.example'", "cat <<<'$(cat .env)'", "cat file\u00a0name.txt",
+                        "cat file\vname.txt", "cat file\fname.txt", "echo $'$(cat .env)'"):
+            with self.subTest(command=command):
+                self.check(command)
+
+    def test_interpreter_keyword_argument_order(self):
+        for code in ("open(mode='w', file='.claude/settings.json')",
+                     "shutil.copy(dst='.claude/settings.json', src='x')",
+                     "shutil.move(dst='/tmp/x', src='.codex')", "os.remove(path='.claude/settings.json')"):
+            with self.subTest(code=code):
+                self.check('python3 -c "' + code + '"', "selfmod")
+        self.check('python3 -c "open(mode=\'r\', file=\'.claude/settings.json\')"')
+
+    def test_here_string_pipeline_consumers(self):
+        self.check('cat <<<\'open(".claude/settings.json","w")\' | python3', "selfmod")
+        self.check("cat <<<'cat .env' | bash", "secrets")
+        self.check('cat <<<\'open(".claude/settings.json").read()\' | python3')
+        self.check("cat <<<'cat README.md' | bash")
 
 
 class CorpusTests(unittest.TestCase):
