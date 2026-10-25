@@ -58,7 +58,7 @@ CORPUS = os.path.join(FIXTURES, "corpus.jsonl")
 
 # Tasks whose corpus rows are still pending. Remove a number here when that
 # task lands and its rows must pass.
-PENDING_TASKS = {8}
+PENDING_TASKS = set()
 
 
 def load_guard():
@@ -956,6 +956,98 @@ class ConfigurationTests(unittest.TestCase):
         with open(user, "w") as handle:
             handle.write("{")
         self.assertTrue(self.check("git clean -fd", "destructive"))
+
+
+class PatchTests(unittest.TestCase):
+    def setUp(self):
+        self.sandbox = Sandbox()
+        self.addCleanup(__import__("shutil").rmtree, self.sandbox.base)
+
+    def check(self, patch, cwd=None, env=None):
+        return outcome(guard.decide, json.dumps({
+            "tool_name": "apply_patch", "tool_input": {"command": patch},
+            "cwd": cwd or self.sandbox.root,
+        }), env or self.sandbox.env())
+
+    def test_headers_and_multiple_files(self):
+        for header in ("Add File", "Update File", "Delete File", "Move to"):
+            with self.subTest(header=header):
+                patch = "*** Begin Patch\n*** Update File: src/a.py\n*** %s: ../.env\n@@\n-a\n+b\n*** End Patch" % header
+                kind, denied = self.check(patch, os.path.join(self.sandbox.root, "sub"))
+                self.assertEqual(kind, "deny")
+                self.assertEqual(denied.category, "secrets")
+        for path in (".codex/hooks.json", ".claude/settings.json", ".codex"):
+            with self.subTest(path=path):
+                kind, denied = self.check("*** Begin Patch\n*** Update File: %s\n@@\n-a\n+b\n*** End Patch" % path)
+                self.assertEqual(kind, "deny")
+                self.assertEqual(denied.category, "selfmod")
+
+    def test_context_and_added_text_are_not_headers(self):
+        patch = ("*** Begin Patch\n*** Update File: src/main.py\n@@\n"
+                 " *** Delete File: .env\n-*** Update File: .env\n"
+                 "+*** Move to: .codex/hooks.json\n+rm -rf /\n*** End Patch")
+        self.assertEqual(self.check(patch)[0], "allow")
+
+    def test_header_whitespace_matches_codex(self):
+        patch = "  *** Begin Patch\r\n\t*** Add File: .env  \r\n+x\r\n *** End Patch\r\n"
+        self.assertEqual(self.check(patch)[1].category, "secrets")
+        # The extra space after the marker belongs to the literal filename.
+        patch = "*** Begin Patch\n*** Add File:  .env\n+x\n*** End Patch"
+        self.assertEqual(self.check(patch)[0], "allow")
+
+    def test_paths_are_literal_and_follow_symlinks(self):
+        patch = "*** Begin Patch\n*** Add File: ~/.ssh/ordinary.txt\n+x\n*** End Patch"
+        self.assertEqual(self.check(patch)[0], "allow")
+        patch = "*** Begin Patch\n*** Update File: %s\n@@\n-a\n+b\n*** End Patch" % os.path.join(self.sandbox.tmp, "kk-secret-link")
+        self.assertEqual(self.check(patch)[1].category, "secrets")
+
+    def test_delete_policy_and_overrides(self):
+        patch = "*** Begin Patch\n*** Delete File: src/old.py\n*** End Patch"
+        self.assertEqual(self.check(patch, "/work/guard-project")[1].category, "destructive")
+        self.assertEqual(self.check(patch, self.sandbox.tmp)[0], "allow")
+        for filename in ("a[1]", "a$literal", "-file", "two words"):
+            with self.subTest(filename=filename):
+                literal_patch = "*** Begin Patch\n*** Delete File: %s\n*** End Patch" % filename
+                self.assertEqual(self.check(literal_patch, self.sandbox.tmp)[0], "allow")
+                self.assertEqual(self.check(literal_patch, "/work/guard-project")[1].category, "destructive")
+        config = os.path.join(self.sandbox.base, "user.json")
+        with open(config, "w") as handle:
+            json.dump({"version": 1, "projects": {"*": {"disable_categories": ["filesystem"]}}}, handle)
+        self.assertEqual(self.check(patch, "/work/guard-project", self.sandbox.env(user_config=config))[0], "allow")
+        # A temporary path still receives secrets/selfmod checks first.
+        patch = "*** Begin Patch\n*** Delete File: .codex/hooks.json\n*** End Patch"
+        self.assertEqual(self.check(patch)[1].category, "selfmod")
+
+    def test_patch_normalizes_dotdot_before_following_symlinks(self):
+        os.makedirs(os.path.join(self.sandbox.tmp, "inside"))
+        os.symlink(os.path.join(self.sandbox.tmp, "inside"), os.path.join(self.sandbox.root, "link"))
+        os.symlink(os.path.join(self.sandbox.home, ".ssh", "id_rsa"), os.path.join(self.sandbox.root, "alias"))
+        patch = "*** Begin Patch\n*** Update File: link/../alias\n@@\n-a\n+b\n*** End Patch"
+        kind, denied = self.check(patch)
+        self.assertEqual(kind, "deny")
+        self.assertEqual(denied.category, "secrets")
+
+        ctx = guard.context_from_payload({
+            "tool_name": "apply_patch", "cwd": self.sandbox.root,
+            "tool_input": {"command": "*** Begin Patch\n*** Delete File: link/../victim\n*** End Patch"},
+        }, self.sandbox.env())
+        policy = guard.compile_policy(read_json(RULES), ctx)
+        # Isolate the temp exemption even though the entire test sandbox is
+        # physically under /tmp. The project victim is not inside this root.
+        policy.tmp_roots = [self.sandbox.tmp]
+        kind, denied = outcome(guard.evaluate, ctx, policy)
+        self.assertEqual(kind, "deny")
+        self.assertEqual(denied.category, "destructive")
+
+        os.symlink(self.sandbox.root, os.path.join(self.sandbox.tmp, "link"))
+        ctx.exec_dir = self.sandbox.tmp
+        self.assertEqual(outcome(guard.evaluate, ctx, policy)[0], "allow")
+
+    def test_bad_payload_and_empty_patch(self):
+        for patch in (None, [], "", "not a patch", "*** Begin Patch\n\0\n*** End Patch"):
+            with self.subTest(patch=patch):
+                self.assertEqual(self.check(patch)[1].category, "failure")
+        self.assertEqual(self.check("*** Begin Patch\n*** End Patch")[0], "allow")
 
 
 class CapyTests(unittest.TestCase):

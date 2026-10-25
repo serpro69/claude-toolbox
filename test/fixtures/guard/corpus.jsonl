@@ -149,3 +149,11 @@
 {"tool_name":"mcp__capy__capy_execute","cwd":"{tmp}","tool_input":{"language":"shell","code":"cat ../.env","cwd":"sub"},"expect":"deny","category":"secrets","note":"relative capy cwd is project-relative"}
 {"tool_name":"mcp__capy__capy_execute_file","tool_input":{"path":".env","language":"python","code":"print(1)","cwd":"{tmp}"},"expect":"deny","category":"secrets","note":"capy file input is independent of execution cwd"}
 {"tool_name":"mcp__capy__capy_execute_file","tool_input":{"path":"README.md","language":"python","code":"print(1)","cwd":"{home}/.ssh"},"expect":"allow","note":"capy file input must not be checked relative to protected execution cwd"}
+{"tool_name":"apply_patch","tool_input":{"command":"*** Begin Patch\n*** Update File: .env\n@@\n-a\n+b\n*** End Patch"},"expect":"deny","category":"secrets","note":"patch updates cannot expose or replace secrets"}
+{"tool_name":"apply_patch","tool_input":{"command":"*** Begin Patch\n*** Update File: src/main.go\n@@\n-a\n+b\n*** End Patch"},"expect":"allow","note":"ordinary patch update"}
+{"tool_name":"apply_patch","tool_input":{"command":"*** Begin Patch\n*** Delete File: {tmp}/x\n*** End Patch"},"expect":"allow","note":"patch delete temporary file"}
+{"tool_name":"apply_patch","cwd":"/work/guard-project","tool_input":{"command":"*** Begin Patch\n*** Delete File: src/old.go\n*** End Patch"},"expect":"deny","category":"destructive","note":"patch delete outside temporary roots"}
+{"tool_name":"apply_patch","tool_input":{"command":"*** Begin Patch\n*** Update File: .codex/hooks.json\n@@\n-a\n+b\n*** End Patch"},"expect":"deny","category":"selfmod","note":"patch cannot rewrite hook registration"}
+{"tool_name":"apply_patch","tool_input":{"command":"*** Begin Patch\n*** Add File: .env\n+x\n*** End Patch"},"expect":"deny","category":"secrets","note":"patch add is a mutation of secrets"}
+{"tool_name":"apply_patch","tool_input":{"command":"*** Begin Patch\n*** Update File: src/a.py\n*** Move to: .codex/hooks.json\n@@\n-a\n+b\n*** End Patch"},"expect":"deny","category":"selfmod","note":"move destination is checked"}
+{"tool_name":"apply_patch","tool_input":{"command":"*** Begin Patch\n*** Update File: .codex/hooks.json\n*** Move to: saved.json\n@@\n-a\n+b\n*** End Patch"},"expect":"deny","category":"selfmod","note":"move source is checked"}

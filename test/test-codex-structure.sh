@@ -77,6 +77,18 @@ else
   log_fail "hooks.json missing PreToolUse"
 fi
 
+log_test "Toolbox patch and MCP adapters are registered beside capy"
+for entry in 'Edit|Write pretooluse-patch.sh' '^mcp__[^[:space:]]+__capy_(execute|execute_file|batch_execute)$ pretooluse-mcp.sh'; do
+  matcher=${entry% *}
+  script=${entry##* }
+  count=$(jq --arg matcher "$matcher" --arg script "/.codex/scripts/$script" \
+    '[.hooks.PreToolUse[] | select(.matcher == $matcher) | .hooks[] | select(.command | contains($script))] | length' <<<"$hooks_json")
+  assert_equals "1" "$count" "$script registered once with its matcher"
+  assert_file_exists "$REPO_ROOT/.codex/scripts/$script" "$script exists"
+done
+capy_count=$(jq '[.hooks.PreToolUse[].hooks[] | select(.command | contains("capy codex-launch"))] | length' <<<"$hooks_json")
+assert_equals "1" "$capy_count" "capy's existing PreToolUse entry is preserved"
+
 # =============================================================================
 # Section 4: Codex agents
 # =============================================================================
