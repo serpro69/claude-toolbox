@@ -108,16 +108,21 @@ apply run and it expires, inspect `git diff` for partial updates before retrying
 
 **Updated:** `.claude/` (settings, CLAUDE.extra.md, statusline scripts), `.codex/` (config.toml, hooks, rules, scripts, agents), and the sync infrastructure itself (see [Syncing Workflow Files](#syncing-workflow-files) for permission requirements). Skills, commands, and hooks are managed by the plugin system — not template sync.
 
-**Preserved:** Project-specific values (name, language, prompts), `settings.local.json`, gitignored files.
+**Preserved:** Project-specific values (name, language, prompts), `settings.local.json`, `.claude/kk-guard.json`, gitignored files. The project guard config is excluded automatically: sync never copies upstream's file, overwrites yours, or reports yours as deleted.
 
 ### settings.json merge behavior
 
-The sync uses smart-merge semantics — your downstream `settings.json` is "master" and upstream fills gaps:
+The sync preserves downstream settings and fills gaps from upstream, with one policy exception: upstream owns `permissions.deny`.
 
-- **New keys** from upstream are added (e.g., new deny patterns, new env vars)
-- **Existing values** are never overwritten (your customizations are preserved)
-- **Arrays** are concatenated with deduplication (e.g., new upstream deny rules are appended)
+- **`permissions.deny`** is replaced with upstream's array, removing stale and project-only entries. An empty or missing upstream list clears downstream denies.
+- **`permissions.allow` and other arrays** are concatenated with deduplication; downstream entries keep their order and new upstream entries are appended.
+- **New keys** from upstream are added (e.g., new env vars).
+- **Other existing values** are preserved.
 - **Manifest variables** (`CC_MODEL`, `CC_EFFORT_LEVEL`, etc.) still override after the merge — these are your explicit choices
+
+When deny entries are removed, the terminal report and PR summary list them under **Permission deny entries removed**. CI also emits `dropped_deny_count` (including zero). Preview these changes with `--dry-run` before applying them.
+
+Project secrets globs belong in `.claude/kk-guard.json` under `secrets`, and destructive rules under `destructive`; these additions require a plugin version with guard-config support. For full control over the synced settings baseline, add `.claude/settings.json` to [`sync_exclusions`](#sync-exclusions). Excluded settings are not copied from staging and generate no deny-removal report. The legacy plugin-system migration can still update hooks and marketplace registration in those settings; it preserves `permissions.deny`.
 
 ## Sync Exclusions
 

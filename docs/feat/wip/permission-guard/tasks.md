@@ -121,17 +121,28 @@
 - [ ] 6.5 Update `AGENTS.md`: `default.rules` and `.codex/scripts/guard/` are generated; document `make generate-guard`
 
 ## Task 7: Template sync deny replacement and dropped-entry report
-- **Status:** pending
+- **Status:** done
 - **Depends on:** —
 - **Size:** S
 - **Can run in parallel with:** Task 1, Task 2, Task 3, Task 4, Task 5, Task 6
 - **Docs:** [implementation.md#task-7](./implementation.md#task-7-template-sync-deny-replacement-and-dropped-entry-report)
 
 ### Subtasks
-- [ ] 7.1 In `template-sync.sh` settings merge: compute `DROPPED_DENY_ENTRIES`, then set `.permissions.deny` to upstream's array; keep `allow` unioned; test "deny replaced, allow unioned"
-- [ ] 7.2 Add the "Permission deny entries removed" section to the diff report and markdown summary with the guidance text; add `dropped_deny_count` CI output; tests for present and absent cases
-- [ ] 7.3 Add `.claude/kk-guard.json` to `BUILTIN_EXCLUSIONS` and strip it in `fetch_upstream_templates`; test zero deleted files when only downstream has it
-- [ ] 7.4 Update `docs/user-guide/template-sync.md` merge-behavior section
+- [x] 7.1 In `template-sync.sh` settings merge: compute `DROPPED_DENY_ENTRIES`, then set `.permissions.deny` to upstream's array; keep `allow` unioned; test "deny replaced, allow unioned"
+- [x] 7.2 Add the "Permission deny entries removed" section to the diff report and markdown summary with the guidance text; add `dropped_deny_count` CI output; tests for present and absent cases
+- [x] 7.3 Add `.claude/kk-guard.json` to `BUILTIN_EXCLUSIONS` and strip it in `fetch_upstream_templates`; test zero deleted files when only downstream has it
+- [x] 7.4 Update `docs/user-guide/template-sync.md` merge-behavior section
+
+### Execution context
+- 2026-10-25 (observed): task scoped to design §10 and implementation Task 7. Independent worktree `/tmp/claude-toolbox-permission-guard-task7`, branch `feat/permission-guard-task7`, based on `master` at `de00583`. Existing guard work on `feat/permission_guard` is outside this diff. Preserve downstream scalars, allow-list union, manifest overrides, sync exclusions and the existing no-file-deletion contract.
+- 2026-10-25 (implementation decision within requirements): report downstream-only deny entries only when settings are eligible for sync; reset tracking on each substitution pass. Treat an absent upstream deny list as empty. `.claude/kk-guard.json` is excluded on both fetch and comparison paths. Runtime loading of that config remains Task 5; this task does not claim the full guard is ready for release.
+- 2026-10-25 (observed and corrected): `apply_changes` used recursive `cp` without consulting exclusions, so the documented settings opt-out only affected the report. Apply now checks the same exclusion predicate per staged entry; regression coverage checks excluded settings and guard config, an ordinary update, empty directories and symlinks. This adjacent correction is necessary for Task 7's opt-out contract.
+- 2026-10-25 (verified): `bash test/test-template-sync.sh` passes 155 cases / 316 assertions (Capy run `c52f15c8-4463-4866-a1ff-4e5e564210e9`); cleanup and manifest suites and Bash syntax checks passed in batch `178f7c76-0cba-4b51-be05-3dd657e28ec6`. The first sync-suite attempt failed a new test that captured stdout warnings from stderr; corrected the capture, with the warning assertion retained. Git's global `indent-with-non-tab` setting conflicts with this script's existing space indentation; `git -c core.whitespace=space-before-tab,trailing-space diff --check` passes without changing repository or user configuration.
+- 2026-10-25 (verified, broader checks): all 13 `test/test-*.sh` suites passed across the focused and broader runs. Broader run `d48a85ea-28b5-448f-bf5b-a6eddcb7f3fd` exposed environment failures in Codex TOML validation (no parser under default Python 3.10) and functional-review tools (require Python 3.11+). Both passed unchanged using the installed Python 3.11.13 in batch `5b354ff0-3714-4ff4-8b41-b6dec45175cd`; no test assertions were relaxed.
+- 2026-10-25 (isolated internal review): `code-reviewer` (OpenAI GPT-6.1) approved Task 7 with no P0–P3 findings and no evidence requests. Source review covered all four changed files plus unchanged workflow/helpers and task contracts; test execution remained author-attributed. Full guard release readiness and downstream deployment are outside this task. No findings to index.
+- 2026-10-25 (inherited limitation, deferred, owner unassigned): legacy `run_plugin_migration` edits hooks/marketplace registration despite settings copy exclusions; it preserves `permissions.deny`. Kept outside Task 7 because changing legacy migration semantics is separate from deny replacement and staged-file copying. The guide now states this limit. Follow-up: decide whether migration must honor settings exclusions, then add a pre-plugin-upgrade fixture checking excluded settings and required plugin registration together.
+- 2026-10-25 (external review coverage): PAL discovery selected clink (no API models). Eligible clients were `agy` → Google and `claude` → Anthropic, both provider mappings assumed from PAL's shipped manifest; operator declarations override those defaults. Configured/observed external models are unknown. `codex` was unavailable and excluded as the authoring provider (OpenAI); `gemini` was unavailable/retired. Initial egress approval rejections were resolved by the user's explicit external-review approvals, including Claude specifically. Actual `agy` invocation failed when native headless permissions denied `read_file`; actual `claude` invocation timed out at 300 seconds. Neither produced findings or verified source receipt; no external approval or corroboration is claimed. No failed client was retried after execution. Both received the same 14-path manifest (four common criteria, diff, four changed sources, workflow/helpers, design/implementation and factual context); snapshots are retained at `/tmp/permission-guard-task7-review.An5uxY` for the failed-attempt record.
+- 2026-10-25 (completion): isolated internal approval stands after review of the documentation clarification; all four subtasks and verification are complete. External failures are disclosed under `/kk:review-code`'s degraded-review path. No new conventions need indexing. Only Task 7 is done; full guard release readiness remains with the pending feature tasks.
 
 ## Task 8: Codex adapter
 - **Status:** pending
