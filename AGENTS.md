@@ -23,9 +23,13 @@ For API keys and MCP server setup, see the "MCP Server Configuration" section in
 - `kodex-plugin/` — transformed skills for Codex (resolves `${CLAUDE_PLUGIN_ROOT}`, injects headers)
 - `.codex/agents/*.toml` — sub-agent definitions (converted from `klaude-plugin/agents/*.md`)
 
-Hand-authored codex files (not generated): `.codex/config.toml`, `.codex/hooks.json`, `.codex/rules/default.rules`, `.codex/scripts/`, `AGENTS.md`.
+The permission-guard generator (`scripts/generate-guard.sh`) also produces `.codex/rules/default.rules` and `.codex/scripts/guard/` from the canonical guard declaration and engine under `klaude-plugin/scripts/guard/`, including its license. It updates `.claude/settings.json` `permissions.deny` and the marked rules tables in `docs/user-guide/configuration.md`.
+
+Hand-authored codex files (not generated): `.codex/config.toml`, `.codex/hooks.json`, `.codex/scripts/` except `guard/`, and `AGENTS.md`.
 
 **Developer workflow:** After editing skills in `klaude-plugin/`, run `make generate-kodex` to regenerate. CI checks freshness via `make generate-kodex && git diff --exit-code kodex-plugin/ .codex/agents/`.
+
+After editing `klaude-plugin/scripts/guard/`, run `make generate-guard`. CI checks freshness with `make generate-guard && git diff --exit-code .claude/settings.json .codex/rules/ .codex/scripts/guard/ docs/user-guide/configuration.md`. Never edit generated copies directly. `make generate-all` refreshes guard output before the other generators and their structure checks.
 
 ## Testing
 

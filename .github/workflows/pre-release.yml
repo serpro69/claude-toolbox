@@ -140,6 +140,13 @@ jobs:
           echo "" >> "$GITHUB_STEP_SUMMARY"
           echo "Dry run complete. No changes were made."
 
+      - name: Check Guard Artifact Freshness
+        run: |
+          make generate-guard
+          generated=(.claude/settings.json .codex/rules .codex/scripts/guard docs/user-guide/configuration.md)
+          git diff --exit-code -- "${generated[@]}"
+          test -z "$(git ls-files --others --exclude-standard -- "${generated[@]}")"
+
       - name: Regenerate Kodex Artifacts
         if: inputs.dry_run != true
         run: |
