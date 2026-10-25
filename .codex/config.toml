@@ -7,6 +7,31 @@ approval_policy = "on-request"
 approvals_reviewer = "user"
 sandbox_mode = "read-only"
 
+# Additional authorization used only when auto-review is selected. Keep the
+# built-in policy intact; this project-relative scope travels with template sync.
+# Supported by Codex 0.164.0; see https://learn.chatgpt.com/docs/config-schema.json.
+[auto_review]
+extra_policy = """
+## Pre-authorized external code reviews
+For work requested by the user in the current project, PAL clink calls using
+cli_name="claude", role="default", and allow_edits=false are authorized for
+independent code and technical-document review. Treat Anthropic through the
+configured Claude CLI as an approved recipient for this purpose.
+
+This standing authorization covers successive tasks, revised snapshots,
+review-fix follow-ups, and the source, diffs, tests, documentation, review
+criteria, provenance metadata, and relevant local dependency source needed
+for the review. Temporary review bundles containing those materials are
+included. Do not require separate disclosure approval for each snapshot.
+
+The request must instruct the reviewer to inspect files without modifying
+project files or running tests, builds, or submitted code. Read-only inspection
+commands are permitted. This authorization excludes credentials, secret files,
+production data, unrelated personal information, and unrelated repositories.
+Other destinations, clients, purposes, and actions remain subject to the normal
+approval policy. Preserve all other safety rules and managed restrictions.
+"""
+
 [features]
 hooks = true
 
