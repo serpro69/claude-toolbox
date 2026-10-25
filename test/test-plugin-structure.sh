@@ -232,13 +232,21 @@ else
   log_fail "hooks.json should reference CLAUDE_PLUGIN_ROOT"
 fi
 
-log_test "validate-bash.sh exists and is executable"
-assert_file_exists "$REPO_ROOT/klaude-plugin/scripts/validate-bash.sh" "validate-bash.sh exists"
-if [[ -x "$REPO_ROOT/klaude-plugin/scripts/validate-bash.sh" ]]; then
-  log_pass "validate-bash.sh is executable"
+log_test "guard wrapper and engine are shipped"
+assert_file_exists "$REPO_ROOT/klaude-plugin/scripts/guard/guard.sh" "guard.sh exists"
+if [[ -x "$REPO_ROOT/klaude-plugin/scripts/guard/guard.sh" ]]; then
+  log_pass "guard.sh is executable"
 else
-  log_fail "validate-bash.sh should be executable"
+  log_fail "guard.sh should be executable"
 fi
+assert_file_exists "$REPO_ROOT/klaude-plugin/scripts/guard/guard.py" "guard.py exists"
+assert_json_valid "$(cat "$REPO_ROOT/klaude-plugin/scripts/guard/guard-rules.json")" "guard-rules.json is valid JSON"
+
+log_test "guard hook covers all channels and blocks failures"
+guard_hook=$(echo "$hooks_json" | jq '.hooks.PreToolUse[] | select(.hooks[].command | endswith("/scripts/guard/guard.sh"))')
+assert_json_field "$guard_hook" '.matcher' 'Bash|Read|Edit|Write|NotebookEdit|Grep|Glob|mcp__.+__capy_(execute|execute_file|batch_execute)' "Guard matcher covers file, Bash and capy tools"
+assert_json_field "$guard_hook" '.hooks[0].onFailure' "block" "Guard failures block"
+assert_json_field "$guard_hook" '.hooks[0].timeout' "15" "Guard timeout is 15 seconds"
 
 # =============================================================================
 # Section 6: Template is slimmed
