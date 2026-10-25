@@ -71,6 +71,57 @@
 {"tool_name":"Bash","tool_input":{"command":"python3 - <<'PY'\nopen('.claude/settings.json', 'w')\nPY\n"},"expect":"deny","category":"selfmod","note":"interpreter stdin script is inspected for writes"}
 {"tool_name":"Write","tool_input":{"file_path":".codex/scripts/new.py","content":"print(1)"},"expect":"deny","category":"selfmod","note":"protected directory descendants"}
 {"tool_name":"NotebookEdit","tool_input":{"notebook_path":".claude/settings.json","new_source":"x"},"expect":"deny","category":"selfmod","note":"selfmod on every mutating file tool"}
-{"tool_name":"Bash","tool_input":{"command":"cat <<EOF\n$(rm -rf x)\nEOF\n"},"expect":"deny","category":"destructive","pending_task":4,"note":"expandable data heredoc retains destructive substitution for Task 4"}
-{"tool_name":"Bash","tool_input":{"command":"bash <<'EOF'\nrm -rf x\nEOF\n"},"expect":"deny","category":"destructive","pending_task":4,"note":"quoted heredoc delivered to shell is a script"}
-{"tool_name":"Bash","tool_input":{"command":"cat <<'EOF' | ./scripts/import.sh\nrm -rf x\nEOF\n"},"expect":"deny","category":"destructive","pending_task":4,"note":"accepted unknown-consumer heredoc false positive; body retained"}
+{"tool_name":"Bash","tool_input":{"command":"cat <<EOF\n$(rm -rf x)\nEOF\n"},"cwd":"/work/project","expect":"deny","category":"destructive","note":"expandable data heredoc retains destructive substitution outside temporary storage"}
+{"tool_name":"Bash","tool_input":{"command":"bash <<'EOF'\nrm -rf x\nEOF\n"},"cwd":"/work/project","expect":"deny","category":"destructive","note":"quoted heredoc delivered to shell is a script"}
+{"tool_name":"Bash","tool_input":{"command":"cat <<'EOF' | ./scripts/import.sh\nrm -rf x\nEOF\n"},"cwd":"/work/project","expect":"deny","category":"destructive","note":"accepted unknown-consumer heredoc false positive; body retained"}
+{"tool_name":"Bash","tool_input":{"command":"/bin/rm -rf build"},"cwd":"/work/project","expect":"deny","category":"destructive","note":"absolute executable path"}
+{"tool_name":"Bash","tool_input":{"command":"sh -c 'rm -rf x'"},"cwd":"/work/project","expect":"deny","category":"destructive","note":"shell wrapper recursion"}
+{"tool_name":"Bash","tool_input":{"command":"xargs rm"},"expect":"deny","category":"destructive","note":"unknown deletion operands from stdin cannot qualify for exemption"}
+{"tool_name":"Bash","tool_input":{"command":"env rm x"},"cwd":"/work/project","expect":"deny","category":"destructive","note":"environment wrapper"}
+{"tool_name":"Bash","tool_input":{"command":"timeout 5 rm x"},"cwd":"/work/project","expect":"deny","category":"destructive","note":"timeout positional argument"}
+{"tool_name":"Bash","tool_input":{"command":"echo \"$(rm x)\""},"cwd":"/work/project","expect":"deny","category":"destructive","note":"executable substitution survives prose masking"}
+{"tool_name":"Bash","tool_input":{"command":"rm -rf /tmp/kk-test"},"expect":"allow","note":"literal temporary cleanup"}
+{"tool_name":"Bash","tool_input":{"command":"rm /tmp/a /tmp/b"},"expect":"allow","note":"every target is temporary"}
+{"tool_name":"Bash","tool_input":{"command":"cd /tmp/kk-test && rm -rf ./x"},"expect":"allow","note":"literal absolute directory change"}
+{"tool_name":"Bash","tool_input":{"command":"cd /work/project && rm -rf ./work"},"cwd":"{tmp}","expect":"deny","category":"destructive","note":"payload temporary cwd does not survive cd"}
+{"tool_name":"Bash","tool_input":{"command":"env -C /work/project rm -rf ./work"},"cwd":"{tmp}","expect":"deny","category":"destructive","note":"directory-changing wrapper makes relative cleanup uncertain"}
+{"tool_name":"Bash","tool_input":{"command":"cd \"$D\" && rm -rf /tmp/x"},"expect":"allow","note":"absolute temporary operand survives cwd uncertainty"}
+{"tool_name":"Bash","tool_input":{"command":"rm -rf \"$T\""},"expect":"deny","category":"destructive","note":"unresolved variable is never exempt"}
+{"tool_name":"Bash","tool_input":{"command":"rm -rf /tmp/*"},"expect":"deny","category":"destructive","note":"glob is never exempt"}
+{"tool_name":"Bash","tool_input":{"command":"rm -rf /tmp/../etc"},"expect":"deny","category":"destructive","note":"normalization escapes temporary storage"}
+{"tool_name":"Bash","tool_input":{"command":"rm -rf ~"},"expect":"deny","category":"selfmod","note":"home contains protected settings even when test home is temporary"}
+{"tool_name":"Bash","tool_input":{"command":"rm -rf ."},"expect":"deny","category":"selfmod","note":"project root contains protected settings even in a temporary checkout"}
+{"tool_name":"Bash","tool_input":{"command":"shred notes.txt"},"expect":"deny","category":"destructive","note":"filesystem shred rule"}
+{"tool_name":"Bash","tool_input":{"command":"find src -delete"},"expect":"deny","category":"destructive","note":"filesystem find deletion rule"}
+{"tool_name":"Bash","tool_input":{"command":"rsync -a --delete-after src/ dst/"},"expect":"deny","category":"destructive","note":"filesystem rsync deletion rule"}
+{"tool_name":"Bash","tool_input":{"command":"git clean -fd"},"expect":"deny","category":"destructive","note":"untracked work deletion"}
+{"tool_name":"Bash","tool_input":{"command":"git reset --hard HEAD"},"expect":"deny","category":"destructive","note":"working tree reset"}
+{"tool_name":"Bash","tool_input":{"command":"git checkout -- src/a.go"},"expect":"deny","category":"destructive","note":"path checkout discards edits"}
+{"tool_name":"Bash","tool_input":{"command":"git checkout ."},"expect":"deny","category":"destructive","note":"directory checkout discards edits"}
+{"tool_name":"Bash","tool_input":{"command":"git restore src/a.go"},"expect":"deny","category":"destructive","note":"default restore changes working tree"}
+{"tool_name":"Bash","tool_input":{"command":"git branch -D topic"},"expect":"deny","category":"destructive","note":"forced branch deletion"}
+{"tool_name":"Bash","tool_input":{"command":"git branch --delete --force topic"},"expect":"deny","category":"destructive","note":"conjunctive delete and force predicates"}
+{"tool_name":"Bash","tool_input":{"command":"git push --force-with-lease origin main"},"expect":"deny","category":"destructive","note":"forced remote update"}
+{"tool_name":"Bash","tool_input":{"command":"git stash drop"},"expect":"deny","category":"destructive","note":"ordered stash drop subcommands"}
+{"tool_name":"Bash","tool_input":{"command":"git stash clear"},"expect":"deny","category":"destructive","note":"ordered stash clear subcommands"}
+{"tool_name":"Bash","tool_input":{"command":"terraform destroy"},"expect":"deny","category":"destructive","note":"infra teardown"}
+{"tool_name":"Bash","tool_input":{"command":"kubectl delete pod web"},"expect":"deny","category":"destructive","note":"cluster deletion"}
+{"tool_name":"Bash","tool_input":{"command":"helm uninstall web"},"expect":"deny","category":"destructive","note":"release uninstall"}
+{"tool_name":"Bash","tool_input":{"command":"helm delete web"},"expect":"deny","category":"destructive","note":"release deletion alias"}
+{"tool_name":"Bash","tool_input":{"command":"docker rm web"},"expect":"deny","category":"destructive","note":"container removal"}
+{"tool_name":"Bash","tool_input":{"command":"docker rmi web"},"expect":"deny","category":"destructive","note":"image removal"}
+{"tool_name":"Bash","tool_input":{"command":"docker system prune"},"expect":"deny","category":"destructive","note":"system prune"}
+{"tool_name":"Bash","tool_input":{"command":"docker volume rm data"},"expect":"deny","category":"destructive","note":"persistent volume removal"}
+{"tool_name":"Bash","tool_input":{"command":"docker volume prune"},"expect":"deny","category":"destructive","note":"persistent volume pruning"}
+{"tool_name":"Bash","tool_input":{"command":"sudo ls"},"expect":"deny","category":"destructive","note":"privilege rule must run before wrapper disappears"}
+{"tool_name":"Bash","tool_input":{"command":"su admin"},"expect":"deny","category":"destructive","note":"user switching"}
+{"tool_name":"Bash","tool_input":{"command":"doas ls"},"expect":"deny","category":"destructive","note":"alternate privilege escalation"}
+{"tool_name":"Bash","tool_input":{"command":"git branch -d topic"},"expect":"allow","note":"merged branch deletion remains allowed"}
+{"tool_name":"Bash","tool_input":{"command":"git rebase main"},"expect":"allow","note":"rebase intentionally outside baseline"}
+{"tool_name":"Bash","tool_input":{"command":"git commit --amend"},"expect":"allow","note":"amend intentionally outside baseline"}
+{"tool_name":"Bash","tool_input":{"command":"git push origin main"},"expect":"allow","note":"ordinary push"}
+{"tool_name":"Bash","tool_input":{"command":"git stash list"},"expect":"allow","note":"stash inspection"}
+{"tool_name":"Bash","tool_input":{"command":"kubectl get pods"},"expect":"allow","note":"cluster inspection"}
+{"tool_name":"Bash","tool_input":{"command":"terraform plan"},"expect":"allow","note":"infra plan"}
+{"tool_name":"Bash","tool_input":{"command":"helm list"},"expect":"allow","note":"release inspection"}
+{"tool_name":"Bash","tool_input":{"command":"docker ps"},"expect":"allow","note":"container inspection"}

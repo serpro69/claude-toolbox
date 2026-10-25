@@ -58,7 +58,7 @@ CORPUS = os.path.join(FIXTURES, "corpus.jsonl")
 
 # Tasks whose corpus rows are still pending. Remove a number here when that
 # task lands and its rows must pass.
-PENDING_TASKS = {4, 5, 8, 13}
+PENDING_TASKS = {5, 8, 13}
 
 
 def load_guard():
@@ -242,8 +242,8 @@ class DeclarationTests(unittest.TestCase):
 
     def test_equivalent_destructive_spellings_are_declared(self):
         # Accepted 2026-10-25: spellings with the same data-losing effect as a
-        # baseline rule. The matcher arrives later; this pins the declaration's
-        # regexes and subcommands so the matcher has something correct to apply.
+        # baseline rule. This pins the declaration's regexes and subcommands;
+        # the corpus also exercises them through the complete matcher.
         rules = guard.load_rules(RULES)["destructive"]
 
         def find(category, program, subcommand, key):
@@ -470,7 +470,9 @@ class ShellTests(unittest.TestCase):
         for wrapper in ("A=1", "env A=1", "env -u NAME", "nohup", "timeout -s TERM 5",
                         "nice -n 10", "sudo -u user", "xargs -I ITEM", "env --"):
             with self.subTest(wrapper=wrapper):
-                self.check(wrapper + " sh -c 'cat .env'", "secrets")
+                # The privilege rule now denies sudo before inspecting its
+                # shell body; other wrappers still reach the secret check.
+                self.check(wrapper + " sh -c 'cat .env'", "destructive" if wrapper.startswith("sudo ") else "secrets")
                 self.assertEqual(list(guard.command_position_tokens(wrapper + " /bin/cat README.md")), ["cat"])
 
     def test_shell_secret_reads(self):
@@ -609,6 +611,172 @@ class ShellTests(unittest.TestCase):
         self.check("cat <<<'cat .env' | bash", "secrets")
         self.check('cat <<<\'open(".claude/settings.json").read()\' | python3')
         self.check("cat <<<'cat README.md' | bash")
+
+
+class DestructiveTests(unittest.TestCase):
+    def setUp(self):
+        self.sandbox = Sandbox()
+        self.addCleanup(__import__("shutil").rmtree, self.sandbox.base)
+        # Static analysis needs no actual checkout here. The filesystem sandbox
+        # is under /tmp and would deliberately qualify for temporary cleanup.
+        self.ctx = guard.Context("Bash", {}, "/work/project", "/work/project", "/users/guard-test")
+        self.policy = guard.compile_policy(guard.load_rules(RULES), self.ctx, {})
+
+    def check(self, command, category=None):
+        kind, denied = outcome(guard.check_command, command, self.ctx, self.policy)
+        self.assertEqual(kind, "deny" if category else "allow", command + ": " + (denied.reason() if denied else "allowed"))
+        if category:
+            self.assertEqual(denied.category, category, denied.reason())
+        return denied
+
+    def test_predicates_and_global_options(self):
+        denied = ("git restore f", "git branch -D x", "git branch -rfD x",
+                  "git branch --delete --force x", "git stash drop", "docker volume rm v",
+                  "git -C /work/other -c advice.statusHints=false --git-dir=/work/git clean -fd",
+                  "git -C/work/other -cfoo=bar reset --hard", "docker --context remote volume rm v",
+                  "kubectl --context dev -n testing delete pod x", "helm --kube-context dev uninstall x",
+                  "terraform -chdir=/work/infra destroy", 'git "clean" -fd', "g'it' cl'ean' -fd")
+        allowed = ("git restore --staged f", "git restore -S f", "git branch --delete x",
+                   "git branch -d x", "git stash list", "docker volume ls", "git -C /work/other status",
+                   "git -c alias.clean=status status", "docker --context remote ps",
+                   'git commit -m "git clean -fd"', "echo 'rm -rf x'", "printf '%s' 'sudo rm x'")
+        for command in denied:
+            with self.subTest(command=command):
+                self.check(command, "destructive")
+        for command in allowed:
+            with self.subTest(command=command):
+                self.check(command)
+
+    def test_wrappers_and_executable_bodies(self):
+        for command in ("/bin/rm x", "r'm' x", r"r\m x", "'rm' x", "$'rm' x",
+                        '"/tools with spaces/rm" x', "sh -c 'rm -rf x'", 'echo "$(rm x)"',
+                        "echo `rm x`", "cat <(rm x)", "cat >(rm x)", "xargs rm", "xargs -I ITEM rm ITEM",
+                        "env -u NAME A=1 /bin/rm x", "timeout -s TERM 5 rm x", "nohup rm x",
+                        "nice -n 10 env rm x", "sudo -u user ls", "env sudo ls", "command sudo ls",
+                        "timeout -vs TERM 5 rm x", "xargs -rn 1 rm x",
+                        "env -S 'rm -rf x'", "env --split-string='rm -rf x'",
+                        "cat <<EOF\n$(rm -rf x)\nEOF\n", "bash <<'EOF'\nrm -rf x\nEOF\n",
+                        "cat <<<'rm x' | bash", "cat <<'EOF' | ./import.sh\nrm -rf x\nEOF\n"):
+            with self.subTest(command=command):
+                self.check(command, "destructive")
+        for separator in ("&&", "||", ";", "|", "|&", "&", "\n"):
+            self.check("echo ok " + separator + " rm x", "destructive")
+        self.check("cat <<'EOF'\n$(rm x)\nEOF\n")
+
+    def test_temporary_cleanup_boundaries(self):
+        for command in ("rm -rf /tmp/kk-test", "rm /tmp/a /tmp/b", 'rm "/tmp/path with spaces/x"',
+                        "rm -- /tmp/-f", "cd /tmp/kk-test && rm -rf ./x",
+                        'cd "$D" && rm -rf /tmp/x', "cd ../other && rm /tmp/x",
+                        "env -C /work/project rm /tmp/x", "sh -c 'rm /tmp/x'",
+                        "cd /tmp/kk-test && sh -c 'rm x'", 'cd /tmp/kk-test && echo "$(rm x)"',
+                        "cd /tmp/kk-test && bash <<'EOF'\nrm x\nEOF\n"):
+            with self.subTest(command=command):
+                self.check(command)
+        for command in ('rm -rf "$T"', "rm -rf /tmp/*", "rm /tmp/?.txt", "rm /tmp/[ab]",
+                        "rm /tmp/a /work/b", "rm /tmp/../etc", "rm /tmp-other/x", "rm -f", "xargs rm /tmp/a",
+                        "cd /tmp/kk-test || rm ./x", "cd /tmp/kk-test; rm ./x",
+                        "(cd /tmp/kk-test) && rm ./x", "cd /tmp/kk-test | rm ./x",
+                        "cd /tmp/kk-test && false || rm ./x", "rm /tmp/{a,../../work/x}"):
+            with self.subTest(command=command):
+                self.check(command, "destructive")
+        for command in ("rm -rf /", "rm -rf ~", "rm -rf ."):
+            self.check(command, "selfmod")
+
+    def test_directory_changes_do_not_inherit_a_temporary_payload_cwd(self):
+        self.ctx.exec_dir = self.sandbox.tmp
+        for command in ("cd /work/project && rm -rf ./work", "env -C /work/project rm -rf ./work",
+                        "env -C/work/project rm -rf ./work", "env --chdir=/work/project rm -rf ./work",
+                        'cd "$D" && rm ./x', "pushd /work/project && rm ./x", "popd && rm ./x",
+                        "cd .. && rm ./x", 'rm "$(printf /work/x)"',
+                        "cd /work/project && sh -c 'rm x'", 'cd /work/project && echo "$(rm x)"',
+                        "env -C /work/project sh -c 'rm x'"):
+            with self.subTest(command=command):
+                self.check(command, "destructive")
+        self.check("sh -c 'cd /work/project && true' && rm ./x")
+        self.check("cd /work/project && cat .env", "secrets")
+
+    def test_tmpdir_comes_from_the_engine_environment_and_is_canonical(self):
+        rules = guard.load_rules(RULES)
+        rules["tmp_roots"] = ["$TMPDIR"]
+        link = os.path.join(self.sandbox.base, "tmp-link")
+        os.symlink(self.sandbox.tmp, link)
+        self.policy = guard.compile_policy(rules, self.ctx, {"TMPDIR": link})
+        self.check("rm " + self.sandbox.tmp + "/ordinary")
+        self.check("rm " + link + "/ordinary")
+        os.symlink("/work/outside", os.path.join(self.sandbox.tmp, "escape"))
+        self.check("rm " + self.sandbox.tmp + "/escape/file", "destructive")
+        self.check("rm " + self.sandbox.tmp + "/escape/../file", "destructive")
+        self.check("rm " + self.sandbox.tmp + "-sibling/file", "destructive")
+        self.policy = guard.compile_policy(rules, self.ctx, {})
+        self.check("TMPDIR=/work env rm /work/x", "destructive")
+        self.check("rm " + self.sandbox.tmp + "/ordinary", "destructive")
+
+    def test_conditional_and_pipeline_cd_cannot_grant_an_exemption(self):
+        for command in ("true || cd /tmp/kk-safe && rm work", "printf x | cd /tmp/kk-safe && rm work",
+                        "! cd /tmp/kk-safe && rm work", "env cd /tmp/kk-safe && rm work",
+                        "cd /tmp/$(printf ../work/project) && rm valuable"):
+            with self.subTest(command=command):
+                self.check(command, "destructive")
+        self.check("true && cd /tmp/kk-safe && rm work")
+        self.check("true || cd /tmp/kk-safe && rm /tmp/work")
+
+    def test_uncertain_cd_keeps_known_secret_and_mutation_locations(self):
+        for prefix in ("cd /tmp/kk-safe && cd /work/project; ", "cd /tmp/kk-safe && cd /work/project || ",
+                       "cd /tmp/kk-safe && cd /work/project\n"):
+            with self.subTest(prefix=prefix):
+                self.check(prefix + "cat .env", "secrets")
+                self.check(prefix + "printf x > .claude/settings.json", "selfmod")
+                self.check(prefix + "cat README.md")
+        self.check("cd /tmp/kk-safe && cd /work/project/sub; cat ../.env", "secrets")
+        self.check("cd /tmp && env -C ../work/project cat .env", "secrets")
+        self.check("cd /tmp && env -C ../work/project sh -c 'printf x > .claude/settings.json'", "selfmod")
+        self.check("cd /tmp && env -C ../work/project cat README.md")
+
+    def test_env_split_string_preserves_tail_arguments_and_options(self):
+        for command in ("env -S 'rm /tmp/kk-safe' /work/valuable",
+                        "env --split-string='rm /tmp/kk-safe' /work/valuable",
+                        "env -S '-C /work/project rm' valuable",
+                        "env -iS 'rm /tmp/kk-safe' /work/valuable"):
+            with self.subTest(command=command):
+                self.check(command, "destructive")
+        self.check("env -S 'rm /tmp/kk-safe' /tmp/another")
+        self.check("env git log -S 'rm -rf x'")
+        self.ctx.exec_dir = self.sandbox.tmp
+        self.check("env -iC /work/project rm valuable", "destructive")
+        self.check("env -iC /work/project printf ok")
+        self.check("env -iC/work/project sh -c 'rm valuable'", "destructive")
+        self.check("env -S 'rm /tmp/kk-safe' $(printf /work/valuable)", "destructive")
+        self.check("env -S 'rm /tmp/kk-safe' \"/tmp/path with spaces\"")
+        self.check("printf /work/valuable | xargs env -S 'rm /tmp/kk-safe'", "destructive")
+        self.check("printf ok | xargs env -S 'printf %s'")
+
+    def test_temp_exemption_never_overrides_secrets_or_selfmod(self):
+        self.ctx = guard.Context("Bash", {}, self.sandbox.root, self.sandbox.root, self.sandbox.home)
+        self.policy = guard.compile_policy(guard.load_rules(RULES), self.ctx, {})
+        self.check("rm .env", "secrets")
+        self.check("rm -rf .", "selfmod")
+        self.check("rm .claude/settings.json", "selfmod")
+        self.check("rm -rf .codex", "selfmod")
+        self.check("rm " + self.sandbox.tmp + "/kk-secret-link", "secrets")
+        self.check("rm ordinary-build-output")
+
+    def test_reason_names_the_rule_category_and_remedy(self):
+        denied = self.check("git clean -fd", "destructive")
+        self.assertEqual(denied.detail, "git")
+        reason = denied.reason()
+        self.assertIn(guard.load_rules(RULES)["destructive"]["git"][0]["reason"], reason)
+        self.assertIn("`git` category", reason)
+        self.assertIn("! <command>", reason)
+        self.assertIn("~/.claude/kk-guard.json", reason)
+
+    def test_invalid_rule_predicates_fail_closed(self):
+        for update in ({"flags_any": ["["]}, {"flags_all": "--force"}, {"subcommand": 3},
+                       {"unknown": "ignored?"}, {"exempt": "typo"}):
+            rules = guard.load_rules(RULES)
+            rules["destructive"]["git"][0].update(update)
+            with self.subTest(update=update):
+                kind, denied = outcome(guard.compile_policy, rules, self.ctx, {})
+                self.assertEqual((kind, denied.category), ("deny", "failure"))
 
 
 class CorpusTests(unittest.TestCase):
