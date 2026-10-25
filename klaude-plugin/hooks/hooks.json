@@ -12,11 +12,13 @@
     ],
     "PreToolUse": [
       {
-        "matcher": "Bash",
+        "matcher": "Bash|Read|Edit|Write|NotebookEdit|Grep|Glob|mcp__.+__capy_(execute|execute_file|batch_execute)",
         "hooks": [
           {
             "type": "command",
-            "command": "${CLAUDE_PLUGIN_ROOT}/scripts/validate-bash.sh"
+            "command": "${CLAUDE_PLUGIN_ROOT}/scripts/guard/guard.sh",
+            "timeout": 15,
+            "onFailure": "block"
           }
         ]
       }
