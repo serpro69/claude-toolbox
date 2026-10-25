@@ -43,30 +43,41 @@ call whose path matches a baseline secrets glob, and allows everything else.
 **Steps.**
 
 1. Write `guard-rules.json` with `version: 1` and the full baseline from
-   design §6 (secrets, destructive, tmp_roots, selfmod). Destructive rules
-   are data only in this task; the engine ignores them until Task 4.
+   design §6 (secrets, destructive, tmp_roots, selfmod). Write every
+   destructive rule in full now, using only the fields of design §6.3
+   (`program`, string-or-list `subcommand`, `flags_any`, `flags_all`,
+   `flags_none`, `exempt`, `reason`, optional `codex` records with
+   per-record `pattern`/`match`/`not_match`). The schema is frozen against
+   these real entries; Task 4 implements the matcher against them and may not
+   add fields. The engine ignores destructive rules until Task 4.
    → verify: `jq . guard-rules.json` succeeds; every `secrets` entry starts
-   with `./**/`, `~/` or `//`.
+   with `./**/`, `~/` or `//`; `git restore` uses `flags_none`, `git branch
+   --delete --force` uses `flags_all`, `stash drop` uses a list
+   `subcommand`; `codex` records exist only on `rm`, `shred`, `sudo`, `su`,
+   `doas`.
 2. In `guard.py`, structure the module as pure functions plus a thin `main`
    so tests import it in-process (the safe-claude-code `test_guard.py`
    pattern: load via `importlib`, call `check_*` functions, assert a raised
    `Denied` exception or a return). Sections: payload parsing, declaration
    loading with version check, glob translation, path resolution, file-tool
-   dispatch, decision emitter.
-3. Implement `glob_to_regex(pattern, anchor_cwd, home)` per design §7.4.
+   dispatch, decision emitter. Payload parsing yields a `Context` with two
+   distinct fields: `project_root` (`KK_GUARD_PROJECT_ROOT`, else
+   `CLAUDE_PROJECT_DIR`, else payload `cwd`) and `exec_dir` (payload `cwd`).
+   Nothing downstream may use one where the other is meant.
+3. Implement `glob_to_regex(pattern, project_root, home)` per design §7.4.
    Return a compiled regex that matches absolute paths. Write
    `glob-cases.json` from the docs' examples: `./**/.env` matches
-   `<cwd>/a/b/.env` and not `<parent>/.env`; `~/.ssh/**` matches
+   `<root>/a/b/.env` and not `<parent>/.env`; `~/.ssh/**` matches
    `<home>/.ssh/id_rsa`; `//etc/**` matches `/etc/passwd`; `*` does not cross
-   `/`; a bare `.env` matches at any depth under cwd.
+   `/`; a bare `.env` matches at any depth under the root.
    → verify: `python3 -I test/guard/test_guard.py` runs the glob table green.
-4. Implement `resolve(path, cwd)`: expand `~`, join relative paths onto
-   `cwd`, `os.path.realpath`. Return both the normalised requested path and
-   the resolved path.
-5. Implement `check_file_tool(tool_name, tool_input, cwd, policy)`: pick
-   `file_path`, `notebook_path` or `path`; deny if either requested or
-   resolved path matches any secrets glob. Grep and Glob with no `path` are
-   allowed.
+4. Implement `resolve(path, exec_dir)`: expand `~`, join relative paths onto
+   `exec_dir`, `os.path.realpath`. Return both the normalised requested path
+   and the resolved path.
+5. Implement `check_file_tool(tool_name, tool_input, ctx, policy)`: pick
+   `file_path`, `notebook_path` or `path`; resolve against `ctx.exec_dir`;
+   deny if either requested or resolved path matches any secrets glob
+   anchored at `ctx.project_root`. Grep and Glob with no `path` are allowed.
 6. Implement the emitter: build the reason string in the `kk guard:
    <category> — <what>. Way through: <remedy>` format (design §7.5), print
    JSON to stdout, the same text to stderr, exit 2. Allowed calls print
@@ -78,7 +89,13 @@ call whose path matches a baseline secrets glob, and allows everything else.
    task (selfmod arrives in Task 3) — mark with a `pending_task: 3` field the
    runner skips; Grep with `path: ~/.aws` deny; Read of a symlink under `/tmp`
    that resolves to `~/.ssh/id_rsa` deny; Read of `/repo/build/out.txt`
-   allow; Read `/repo/app.log` allow.
+   allow; Read `/repo/app.log` allow; Read `/repo/certs/cert.pem` deny
+   (accepted false positive, noted in the row); Read `/repo/.ssh/id_rsa.pub`
+   allow; Read `../.env` with `cwd: /repo/sub` deny and Read `../README.md`
+   with the same `cwd` allow (root anchoring); Read `/repo/.env` with the
+   `KK_GUARD_PROJECT_CONFIG` and `KK_GUARD_USER_CONFIG` overrides pointing at
+   nonexistent files deny (the plugin-only case: no config, baseline still
+   applies).
    → verify: corpus replay in `test_guard.py` passes for all cases without
    `pending_task`.
 9. Guard against Python-version drift: run the tests once under the oldest
@@ -87,8 +104,9 @@ call whose path matches a baseline secrets glob, and allows everything else.
 
 ## Task 2: Fail-closed wrapper and hook registration
 
-**Goal.** The hook is wired for all channels through a wrapper that is
-sub-millisecond on the skip path and fails closed everywhere else.
+**Goal.** The hook is wired for all channels (file tools, Bash and the capy
+execution tools) through a wrapper that always runs the engine and fails
+closed on every error path.
 
 **Files.**
 - `klaude-plugin/scripts/guard/guard.sh` (new)
@@ -102,17 +120,19 @@ sub-millisecond on the skip path and fails closed everywhere else.
 1. Write `guard.sh` modelled on safe-claude-code's `guard.sh`: read stdin
    once with the trailing-`x` trick; extract `tool_name` with parameter
    expansion on the raw JSON (`${payload#*\"tool_name\"}` style, tolerant of
-   whitespace); skip path for Read, Grep, Glob when
-   `${CLAUDE_PROJECT_DIR:-$PWD}/.claude/kk-guard.json` and
-   `${HOME}/.claude/kk-guard.json` are both absent (honour
-   `KK_GUARD_PROJECT_CONFIG`/`KK_GUARD_USER_CONFIG` overrides); interpreter
-   list from `KK_GUARD_INTERPRETERS` or the default absolute list plus `PATH`
-   fallback; run `python3 -I guard.py`; any outcome other than exit 0 or 2
-   → `fail_closed` which writes stderr, prints a JSON deny, exits 2.
-   → verify: `printf '{"tool_name":"Read","tool_input":{"file_path":"/x"}}' | bash guard.sh; echo $?` prints 0 with no output when no configs exist.
-2. Update `hooks.json`: matcher `Bash|Read|Edit|Write|NotebookEdit|Grep|Glob`,
+   whitespace) and exit 0 only for a tool name outside the matcher set (no
+   read skip path: design §7.1 explains why plugin-only installs forbid it);
+   interpreter list from `KK_GUARD_INTERPRETERS` or the default absolute list
+   plus `PATH` fallback; run `python3 -I guard.py`; any outcome other than
+   exit 0 or 2 → `fail_closed` which writes stderr, prints a JSON deny, exits
+   2.
+   → verify: `printf '{"tool_name":"Read","tool_input":{"file_path":"/x"}}' | bash guard.sh; echo $?` prints 0 with no output; the same payload with `file_path` `.env` and `cwd` set exits 2 with no config files present.
+2. Update `hooks.json`: matcher
+   `Bash|Read|Edit|Write|NotebookEdit|Grep|Glob|mcp__capy__capy_execute|mcp__capy__capy_execute_file|mcp__capy__capy_batch_execute`,
    command `${CLAUDE_PLUGIN_ROOT}/scripts/guard/guard.sh`, `"timeout": 15`,
-   `"onFailure": "block"`. Keep the SessionStart entry untouched.
+   `"onFailure": "block"`. Keep the SessionStart entry untouched. Until Task
+   13 lands, the engine allows the three capy tools (unknown dispatch →
+   allow), so wiring the matcher early is safe.
    → verify: `jq . hooks.json` succeeds; structure test still finds
    `CLAUDE_PLUGIN_ROOT`.
 3. Delete `validate-bash.sh`. Update `test-plugin-structure.sh` Section 5 to
@@ -122,15 +142,19 @@ sub-millisecond on the skip path and fails closed everywhere else.
 4. Rewrite `test-hooks.sh`: allow cases (exit 0, empty stdout) for `ls /tmp`,
    `cat app.log`, `cat node_modules/foo`, `cat build/out.txt`; deny cases
    (exit 2, valid JSON, `permissionDecision` deny, non-empty stderr) for
-   `cat .env` and a Read of `.env`; fail-closed cases: `KK_GUARD_INTERPRETERS=/nonexistent` → exit 2 with stderr mentioning the interpreter;
-   `KK_GUARD_RULES=/dev/null` → exit 2; a payload that is not JSON → exit 2.
+   `cat .env` and a Read of `.env` (the Read case runs with both config
+   overrides pointing at nonexistent files, proving the plugin-only path
+   denies); fail-closed cases: `KK_GUARD_INTERPRETERS=/nonexistent` → exit 2
+   with stderr mentioning the interpreter; `KK_GUARD_RULES=/dev/null` → exit
+   2; a payload that is not JSON → exit 2.
    Note that the Bash deny cases in this task pass only after Task 3; mark
    them with a comment and a skip until then, or land Task 3 before enabling.
    → verify: `bash test/test-hooks.sh` green for the enabled cases.
-5. Add the skip-path latency check: time 100 Read payloads through `guard.sh`
-   with `date +%s%N`; assert total under 200 ms (twice the 100 ms budget).
-   → verify: the printed total on your machine; record it in the test
-   comment.
+5. Add the file-tool latency check: time 100 Read payloads through `guard.sh`
+   with `date +%s%N`, compute p95, always print it; assert under 60 ms (twice
+   the 30 ms budget) only when `CI` is unset, so shared runners never fail
+   on timing.
+   → verify: the printed p95 on your machine; record it in the test comment.
 
 ## Task 3: Bash channel tokenizer, path extraction, secrets and self-modification
 
@@ -151,29 +175,52 @@ the false-positive corpus is allowed.
    (`WRAPPERS`, `WRAPPER_OPTIONS_WITH_ARG`, `WRAPPER_POSITIONAL`), the
    segment and chain splitters, and `substitution_bodies`. Extend the segment
    separators to the exact Claude Code set: `&&`, `||`, `;`, `|`, `|&`, `&`,
-   newline.
-2. Implement heredoc stripping (design §7.3 step 1): detect `<<[-]'?WORD'?`,
-   find the terminator line, and drop the body only when the heredoc's
-   consumer program is `cat`, `tee`, `printf` or a plain redirect. Keep the
-   body when the consumer is a shell or interpreter.
+   newline. **Order of operations is the contract (design §7.3):** a
+   `extract_bodies(original_text)` pass runs first and returns the raw
+   `$(...)`/backtick/`<(...)`/`>(...)` bodies and the quoted argument of
+   `sh -c`/`bash -c` (quote-aware, like `substitution_bodies` in the source);
+   each body is analysed recursively with its original characters. `defang`
+   is applied afterwards, per segment, to produce the prose view used only
+   for program/subcommand/flag matching. A separate operand view
+   (quote-stripped tokens, characters intact) feeds every path and
+   write-target check.
+   → verify: unit tests: `sh -c 'rm -rf x'` yields a body `rm -rf x`;
+   `echo "$(rm x)"` yields `rm x`; `cat "/repo with spaces/.env"` yields the
+   operand `/repo with spaces/.env`; `git commit -m "clean up"` prose view is
+   `git commit -m Q`.
+2. Implement heredoc handling (design §7.3 step 2): detect `<<[-]WORD` and
+   whether `WORD` is quoted; find the terminator line. Quoted delimiter: drop
+   the body when the consumer program is `cat`, `tee`, `printf` or a plain
+   redirect. Unquoted delimiter: run `extract_bodies` over the body first
+   (the shell expands `$(...)` before the sink sees it), then drop it under
+   the same consumer rule. Keep the body when the consumer is a shell or
+   interpreter.
    → verify: unit test with Claude Code's commit-message form
    (`git commit -m "$(cat <<'EOF' ... EOF)"`) allowed even when a body line
-   starts with `rm -rf`; `bash <<'EOF'\nrm -rf x\nEOF` denied after Task 4.
-3. Implement path-like argument extraction per segment: tokens containing
-   `/`, starting with `~` or `.`, or naming an existing file relative to
-   `cwd`. Resolve each and check raw and resolved against secrets globs.
+   starts with `rm -rf`; `cat <<EOF\n$(rm -rf x)\nEOF` denied after Task 4;
+   `bash <<'EOF'\nrm -rf x\nEOF` denied after Task 4.
+3. Implement path-like operand extraction per segment on the operand view:
+   tokens containing `/`, starting with `~` or `.`, or naming an existing
+   file relative to `ctx.exec_dir`. Resolve each against `ctx.exec_dir` and
+   check raw and resolved against secrets globs anchored at
+   `ctx.project_root`.
    → verify: corpus `cat .env` deny; `cat ./.env` deny; `cat /repo/.env`
-   deny; `cat .env.example` allow; `echo "see .env.example"` allow; `find .
+   deny; `cat "/repo with spaces/.env"` deny; `cat ../.env` with `cwd:
+   /repo/sub` deny and `cat ../README.md` with the same `cwd` allow;
+   `cat .env.example` allow; `echo "see .env.example"` allow; `find .
    -not -path './.git/*'` allow.
-4. Implement write-target extraction: `>`/`>>` targets (ignoring `2>`,
-   `&>` to `/dev/null`), `tee` operands, `sed -i` file operands, the last
-   operand of `mv`/`cp`/`ln`/`install`, `dd of=`. Check against the selfmod
-   set and the secrets globs. Writing a secrets file is denied too, matching
+4. Implement mutation-operand extraction (design §7.3 step 5): `>`/`>>`
+   targets (ignoring `2>`, `&>` to `/dev/null`), `tee` operands, `sed -i`
+   file operands, `dd of=`, the last operand of `cp`/`install`, **every**
+   operand of `mv`, the link name of `ln` (and its target with `-f`). Check
+   against the selfmod set with equal/descendant/**ancestor** matching and
+   against the secrets globs. Writing a secrets file is denied too, matching
    Claude Code where a Read deny blocks Edit and Write.
    → verify: corpus `echo x > .claude/settings.json` deny;
    `tee .claude/kk-guard.json` deny; `sed -i 's/a/b/' ~/.claude/kk-guard.json`
-   deny; `cat .claude/settings.json` allow (read, not write);
-   `echo x 2>/dev/null` allow.
+   deny; `mv .codex/hooks.json /tmp/saved.json` deny; `mv .codex /tmp/`
+   deny; `mv src/a.go src/b.go` allow; `cat .claude/settings.json` allow
+   (read, not write); `echo x 2>/dev/null` allow.
 5. Implement inline-interpreter write detection: when a segment runs an
    interpreter with `-c`/`-e` or a stdin script, scan the code text for the
    write-call patterns in design §7.3 step 5 whose argument text contains a
@@ -201,27 +248,44 @@ commands are allowed.
 
 **Steps.**
 
-1. Implement the rule matcher: for each segment, after wrapper skipping,
-   compare the program basename to `program`; if `subcommand` is set, the
-   first non-option argument must equal it; if `flags_any` is set, at least
-   one argument must match one regex. Git global options (`-C dir`, `-c k=v`,
-   `--git-dir`) are skipped before the subcommand, as in safe-claude-code's
-   `GIT` prefix.
-2. Implement recursion into `sh -c`/`bash -c` bodies, `xargs <prog>`,
-   `env <prog>`, `sudo <prog>` (sudo itself denies first), `timeout N <prog>`,
-   `nohup <prog>`, `$(...)`, backticks, `<(...)`.
+1. Implement the rule matcher on the prose view: for each segment, after
+   wrapper skipping, compare the program basename to `program`; skip
+   program-level global options (`git -C dir`, `git -c k=v`, `--git-dir`,
+   `docker --context x`, as in safe-claude-code's `GIT` prefix); if
+   `subcommand` is set, the leading non-option arguments must equal it in
+   order (string or list); `flags_any`: at least one argument matches one
+   regex; `flags_all`: every regex matches some argument; `flags_none`: no
+   regex matches any argument. The declaration from Task 1 is the fixture;
+   no new fields.
+   → verify: unit tests: `git restore f` deny, `git restore --staged f`
+   allow, `git restore -S f` allow; `git branch -D x` deny, `git branch -rfD
+   x` deny (cluster), `git branch --delete --force x` deny, `git branch
+   --delete x` allow, `git branch -d x` allow; `git stash drop` deny, `git
+   stash list` allow; `docker volume rm v` deny, `docker volume ls` allow.
+2. Wire recursion: the bodies returned by Task 3's `extract_bodies` (from
+   the original text) and the programs run by `xargs`, `env`, `sudo` (sudo
+   itself denies first), `timeout N`, `nohup` are each analysed as commands.
    → verify: corpus `/bin/rm -rf build` deny; `sh -c 'rm -rf x'` deny;
    `xargs rm` deny; `env rm x` deny; `timeout 5 rm x` deny;
-   `echo $(rm x)` deny.
-3. Implement `targets_under_tmp`: resolve every non-option argument of the
-   segment; allow only if all resolve under a `tmp_roots` entry (with
-   `$TMPDIR` read from the engine's environment and `realpath`ed); any
-   argument containing `$`, `*`, `?` or `[` denies; `rm -rf /tmp/../home`
-   resolves out of `/tmp` and denies.
+   `echo "$(rm x)"` deny.
+3. Implement `targets_under_tmp` with directory tracking: walk the segments
+   in order keeping an `exec_dir` that starts at `ctx.exec_dir`; a `cd`
+   segment with exactly one literal absolute-path argument updates it; any
+   other `cd`, `pushd`, `popd`, or an `env -C`/`env --chdir` wrapper on the
+   segment sets it to *uncertain*. For the `rm` segment, resolve every
+   non-option operand against `exec_dir` (with `$TMPDIR` read from the
+   engine's environment and `realpath`ed); allow only if all resolve under a
+   `tmp_roots` entry; when `exec_dir` is uncertain only absolute operands can
+   qualify and any relative operand denies; any operand containing `$`, `*`,
+   `?` or `[` denies; `rm -rf /tmp/../home` resolves out of `/tmp` and
+   denies.
    → verify: corpus `rm -rf /tmp/kk-test` allow; `rm /tmp/a /tmp/b` allow;
-   `rm -rf "$T"` deny; `rm -rf /tmp/*` deny; `rm -rf /tmp/../etc` deny;
-   `rm -rf ~` deny; `rm -rf /` deny; `rm -rf .` with `cwd` at the project
-   root deny.
+   `cd /tmp/kk-test && rm -rf ./x` allow; `cd /work/project && rm -rf ./work`
+   with `cwd: /tmp/guard-probe` deny; `env -C /work/project rm -rf ./work`
+   with the same `cwd` deny; `cd "$D" && rm -rf /tmp/x` allow (absolute
+   survives uncertainty); `rm -rf "$T"` deny; `rm -rf /tmp/*` deny;
+   `rm -rf /tmp/../etc` deny; `rm -rf ~` deny; `rm -rf /` deny; `rm -rf .`
+   with `cwd` at the project root deny.
 4. Add the remaining corpus rows for every rule in `git`, `infra`,
    `privilege` plus the must-allow neighbours: `git branch -d x`,
    `git rebase main`, `git commit --amend`, `git restore --staged f`,
@@ -239,8 +303,8 @@ reported without weakening anything.
 
 **Files.**
 - `klaude-plugin/scripts/guard/guard.py`
-- `klaude-plugin/scripts/guard/guard.sh` (skip-path config detection already
-  present; confirm env overrides)
+- `klaude-plugin/scripts/guard/guard.sh` (confirm the `KK_GUARD_*` env
+  overrides pass through to the engine)
 - `test/guard/test_guard.py`
 - `test/fixtures/guard/project-config/*.json`, `test/fixtures/guard/user-config/*.json` (new)
 - `test/test-hooks.sh`
@@ -257,21 +321,32 @@ reported without weakening anything.
    naming the unknown key; fixture with invalid JSON leaves `cat .env` denied
    and returns a `systemMessage`.
 2. Implement user-config loading per design §8.2: path from
-   `KK_GUARD_USER_CONFIG` or `~/.claude/kk-guard.json`; apply `*` then the
-   longest key that is a path prefix of the `realpath`ed project root;
-   `disable_categories`, `allow_patterns`, `disable_selfmod`.
+   `KK_GUARD_USER_CONFIG` or `~/.claude/kk-guard.json`; select the `*` entry
+   and the single longest key that is a path prefix of the `realpath`ed
+   `ctx.project_root`; the effective entry is their union (lists
+   concatenated, `disable_selfmod` true if either is). `allow_patterns` are
+   tested per simple command: each segment and each recursively extracted
+   body, after wrapper skipping, in the prose view; a match exempts that one
+   simple command from destructive rules only.
    → verify: fixture disabling `infra` for `/work/ops` allows
-   `kubectl delete pod x` with `cwd=/work/ops/cluster-a` and still denies it
-   with `cwd=/work/app`; `allow_patterns: ["^git clean -n"]` allows the
-   dry-run and still denies `git clean -fd`; `allow_patterns` never allows
-   `cat .env` or a write to `.claude/settings.json`; `disable_selfmod: true`
-   allows an Edit of `.claude/settings.json`.
-3. Emit `systemMessage` on allowed calls when a config was invalid: top-level
-   key in the stdout JSON alongside an otherwise empty `hookSpecificOutput`.
-   → verify: stdout is valid JSON and `test-hooks.sh` asserts the field.
-4. Add wrapper tests: with `KK_GUARD_PROJECT_CONFIG` pointing at a fixture,
-   a Read payload reaches the engine (no skip) and a Read of the extra glob
-   is denied.
+   `kubectl delete pod x` with project root `/work/ops/cluster-a` and still
+   denies it with root `/work/app`; with `*` disabling `privilege` and
+   `/work/ops` disabling `infra`, root `/work/ops/x` has both disabled
+   (union) and a `/work` entry disabling `git` contributes nothing;
+   `allow_patterns: ["^git clean -n"]` allows `git clean -nd`, still denies
+   `git clean -fd`, and denies `git clean -nd; rm -rf ./work` (the `rm`
+   segment is not exempt); `allow_patterns` never allows `cat .env` or a
+   write to `.claude/settings.json`; `disable_selfmod: true` allows an Edit
+   of `.claude/settings.json`.
+3. Emit `systemMessage` on allowed calls when a config was invalid: stdout is
+   exactly `{"systemMessage": "<file>: <problem>"}` with no
+   `hookSpecificOutput` key, exit 0.
+   → verify: stdout is valid JSON, has only that key, and `test-hooks.sh`
+   asserts the field.
+4. Add wrapper tests: with `KK_GUARD_PROJECT_CONFIG` pointing at a fixture
+   that adds a secrets glob, a Read of a file matching the extra glob is
+   denied through `guard.sh`, and the same Read is allowed when the override
+   points at a nonexistent file.
    → verify: `bash test/test-hooks.sh` green.
 
 ## Task 6: Generators, parity and freshness
@@ -298,29 +373,37 @@ table render from the declaration, and CI refuses drift.
    2-space indentation matches; (b) render `default.rules` with a header
    comment "GENERATED by scripts/generate-guard.sh from
    klaude-plugin/scripts/guard/guard-rules.json — do not edit" followed by
-   one `prefix_rule(...)` per entry in each rule's `codex.prefix`, using the
-   rule's `codex.match`/`codex.not_match` and `reason`; (c) `cp` the three
-   engine files to `.codex/scripts/guard/`; (d) replace the block between
-   the `GUARD-RULES` markers in `configuration.md` with a table of secrets
-   globs and a table of destructive categories and rules.
+   one `prefix_rule(...)` per `codex` record, using that record's `pattern`
+   (a token that is a list renders as a Starlark list, e.g. `["git", "push",
+   ["--force", "-f"]]`), its own `match`/`not_match`, and the rule's
+   `reason`; (c) `cp` the three engine files to `.codex/scripts/guard/`; (d)
+   replace the block between the `GUARD-RULES` markers in `configuration.md`
+   with a table of secrets globs, a table of destructive categories and
+   rules with a column saying whether each is also a Codex forbid, and the
+   one-line `disable_selfmod` example.
    → verify: run twice; the second run produces no diff (`git diff --stat`
    empty).
-2. Populate `codex.prefix`/`match`/`not_match` for every destructive rule in
-   the declaration so the Starlark output is valid. For `rm` the prefix is
-   `["rm"]`; for `git push --force` include both `["git","push","--force"]`
-   and `["git","push","-f"]`, and so on. `match` examples must match the
-   prefix; `not_match` examples must not.
+2. Confirm the `codex` records written in Task 1 render to valid Starlark:
+   records exist only on `rm`, `shred`, `sudo`, `su`, `doas` (design §6.3
+   says why: a repository `forbidden` outranks user rules on Codex, so every
+   loosenable rule stays hook-only there). Each record's `match` examples
+   must match its own `pattern` and `not_match` must not; Codex rejects the
+   file at load otherwise, so two records may never share one example list.
    → verify: if the `codex` CLI is installed,
    `codex execpolicy check --pretty --rules .codex/rules/default.rules -- rm -rf x`
-   reports forbidden; otherwise skip and note it.
+   reports forbidden, `-- ls -la` reports no match, and the file parses;
+   record the CLI version in the test. Otherwise skip and note it.
 3. Add `generate-guard` to the Makefile and to `generate-all`; add the
    freshness step to CI next to the generate-kodex one:
    `make generate-guard && git diff --exit-code .claude/settings.json .codex/rules .codex/scripts/guard docs/user-guide/configuration.md`.
    → verify: CI job definition parses; local `make generate-guard` succeeds.
 4. Structure-test assertions: every secrets glob matches
-   `^(\./\*\*/|~/|//)`; regenerate into a temp copy and diff against the
-   tree; `cmp` each `.codex/scripts/guard/*` with its plugin source;
-   `default.rules` starts with the generated header.
+   `^(\./\*\*/|~/|//)`; every destructive rule uses only the §6.3 field set
+   (`jq` key check); `codex` records appear only on the five permitted rules;
+   regenerate into a temp copy and diff against the tree; `cmp` each
+   `.codex/scripts/guard/*` with its plugin source; `default.rules` starts
+   with the generated header; `hooks.json` matcher names the three capy
+   tools.
    → verify: `bash test/test-plugin-structure.sh` and
    `bash test/test-codex-structure.sh` green.
 5. Update `AGENTS.md`: move `.codex/rules/default.rules` to the generated
@@ -366,12 +449,14 @@ dropped, and never touches `.claude/kk-guard.json`.
 
 ## Task 8: Codex adapter
 
-**Goal.** Codex Bash and `apply_patch` calls are guarded by the shared
-engine; failures block; the session advisory lists the current secrets.
+**Goal.** Codex Bash, `apply_patch` and capy MCP execution calls are guarded
+by the shared engine; failures block; the session advisory lists the current
+secrets.
 
 **Files.**
 - `.codex/scripts/pretooluse-bash.sh`
 - `.codex/scripts/pretooluse-patch.sh` (new)
+- `.codex/scripts/pretooluse-mcp.sh` (new)
 - `.codex/hooks.json`
 - `.codex/scripts/session-start.sh`
 - `klaude-plugin/scripts/guard/guard.py` (apply_patch parsing; regenerate the copy)
@@ -388,28 +473,41 @@ engine; failures block; the session advisory lists the current secrets.
    Update `.codex/hooks.json` deny.
 2. Rewrite `pretooluse-bash.sh`: keep `capy_hook_registered` and the HTTP
    section; replace the `FORBIDDEN_PATTERNS` loop with
-   `printf '%s' "$INPUT" | bash "$REPO_ROOT/.codex/scripts/guard/guard.sh"`;
-   propagate exit 2 and stderr; wrap the whole script so any unexpected
-   failure writes stderr and exits 2.
+   `KK_GUARD_PROJECT_ROOT="$REPO_ROOT" printf '%s' "$INPUT" | bash "$REPO_ROOT/.codex/scripts/guard/guard.sh"`
+   (export the root: Codex sets no `CLAUDE_PROJECT_DIR` and the engine must
+   not anchor globs to the payload `cwd`); propagate exit 2 and stderr; wrap
+   the whole script so any unexpected failure writes stderr and exits 2.
    → verify: `test-codex-hooks.sh` Section 3/4 denylist cases now assert
-   exit 2, JSON deny and a reason containing `kk guard`; capy handoff cases
-   unchanged and green.
-3. Add `pretooluse-patch.sh` (same delegation, no HTTP section) and the
-   `hooks.json` entry with matcher `Edit|Write` running it.
+   exit 2, JSON deny and a reason containing `kk guard`; a `cat ../.env`
+   payload with `cwd` at a subdirectory of the test repo denies; capy
+   handoff cases unchanged and green.
+3. Add `pretooluse-patch.sh` (same delegation and root export, no HTTP
+   section) and the `hooks.json` entry with matcher `Edit|Write` running it.
    → verify: new tests feed an `apply_patch` payload updating `.env` and one
    updating `src/a.py`; first denies, second allows; `test-codex-structure.sh`
    asserts the entry exists.
-4. Fail-open mitigation test: point `KK_GUARD_INTERPRETERS` at a nonexistent
-   path and confirm both adapter scripts exit 2 with non-empty stderr.
+4. Add `pretooluse-mcp.sh` (same delegation and root export) and the
+   `hooks.json` PreToolUse entry with matcher
+   `^mcp__[^[:space:]]+__capy_(execute|execute_file|batch_execute)$` running
+   it. Capy's own entry for these tools stays untouched; the new entry is
+   toolbox-owned under the existing ownership rule because its command runs
+   a script under `.codex/scripts/`. Requires Task 13's engine dispatch.
+   → verify: a `capy_execute` payload with `language: shell` and `code: cat
+   .env` denies; `language: shell`, `code: go test ./...` allows;
+   `test-codex-structure.sh` asserts the entry exists and that capy's entry
+   is still present.
+5. Fail-open mitigation test: point `KK_GUARD_INTERPRETERS` at a nonexistent
+   path and confirm all three adapter scripts exit 2 with non-empty stderr.
    → verify: assertions green.
-5. `session-start.sh`: render a "Protected files" paragraph from
+6. `session-start.sh`: render a "Protected files" paragraph from
    `.codex/scripts/guard/guard-rules.json` with `jq` (fall back to a static
    sentence if the file is missing) stating that reading these paths is
    prohibited by policy.
    → verify: `test-codex-hooks.sh` Section 1/2 assert the paragraph lists
    `.env` in both legacy and capy modes.
-6. Update `docs/providers/codex.md`: hook descriptions, the parity-gap table
-   from design §11.
+7. Update `docs/providers/codex.md`: hook descriptions (three adapters), the
+   parity-gap table from design §11 including the "not loosenable on Codex"
+   row.
    → verify: read-through.
 
 ## Task 9: Assumption closure for latency, bypass mode and Codex cwd
@@ -424,8 +522,8 @@ and recorded.
 **Steps.**
 
 1. Add the Bash-path latency test: run the corpus's Bash cases through
-   `guard.sh`, compute p95, assert under 100 ms (twice the 50 ms budget),
-   print the measured value.
+   `guard.sh`, compute p95, always print it, assert under 100 ms (twice the
+   50 ms budget) only when `CI` is unset.
    → verify: printed p95 on Linux; if a macOS machine is available, record
    that too.
 2. Throwaway bypass check: in a scratch directory with the plugin installed,
@@ -443,7 +541,7 @@ and recorded.
 the decisions are recorded as an ADR.
 
 **Files.**
-- `docs/adr/0010-permission-guard-single-declaration.md` (new)
+- `docs/adr/0012-permission-guard-single-declaration.md` (new; 0010 and 0011 exist, re-check the next free number before creating)
 - `docs/adr/0005-codex-hook-enforcement-gap.md` (dated update)
 - `docs/contributing/adrs.md`
 - `docs/user-guide/configuration.md` (prose around the generated block; hooks table; new config subsection)
@@ -455,21 +553,26 @@ the decisions are recorded as an ADR.
 
 **Steps.**
 
-1. Write ADR 0010 with Nygard's sections. Context: the add-only merge
-   (commit `3b08e134`), substring false positives, three intents. Decision:
+1. Write ADR 0012 with Nygard's sections. Context: the add-only merge
+   (commit `e0036b2`), substring false positives, three intents. Decision:
    one declaration rendered to three channels; tighten-only project config,
    loosen-only user config; flat deny for destructive commands in every
-   mode. Consequences: rejected alternatives (design §18), Codex gaps (design
-   §11), revisit conditions (flat deny too restrictive → mode-aware ask using
-   `permission_mode`). Cite operative files by path.
+   mode; Codex forbids limited to unconditional literals. Consequences:
+   rejected alternatives (design §18), Codex gaps (design §11), the
+   hooks-off `rm` regression (design §14), revisit conditions (flat deny too
+   restrictive → mode-aware ask using `permission_mode`). Cite operative
+   files by path.
    → verify: `plugin-graph validate` still passes (no plugin file links to
    the ADR).
-2. Add the dated update to ADR 0005. Add the 0010 row to `adrs.md`. The
-   index lacks 0008 and 0009 rows; ask the user before adding them.
+2. Add the dated update to ADR 0005. Add the 0012 row to `adrs.md`. The
+   index lacks 0008, 0009 and 0011 rows; ask the user before adding them.
 3. Update the user guide, provider pages, plugin-only page, contributing
    pages, plugin README per design §15. In `plugin-development.md`, replace
    the "Always exit 0" PreToolUse paragraph with the fail-closed contract and
-   add the toolbox-repo `disable_selfmod` note.
+   add the toolbox-repo `disable_selfmod` note. In `configuration.md`, state
+   next to the rules table that selfmod blocks agent edits of
+   `.claude/settings.json` (including adding allow entries) and show the
+   `disable_selfmod` entry that lifts it.
    → verify: `grep -rn "validate-bash" docs/ klaude-plugin/ AGENTS.md` returns
    only historical references under `docs/feat/done/`.
 4. Bump `plugin.json` to the next minor version.
@@ -506,3 +609,41 @@ filesystem permission profiles.
 
 Run `/kk:test`, `/kk:document`, `/kk:review-code` (bash and Python), and
 `/kk:review-spec` against this feature directory.
+
+## Task 13: capy MCP execution channel
+
+**Goal.** A shell program or script submitted to `capy_execute`,
+`capy_execute_file` or `capy_batch_execute` is held to the same policy as a
+Bash call, on both Claude Code (hook matcher from Task 2) and Codex (adapter
+from Task 8 step 4). Numbered after Task 12 because it was added by the
+2026-10-25 reviews; it is not last in execution order (see tasks.md).
+
+**Files.**
+- `klaude-plugin/scripts/guard/guard.py` (dispatch for the three tools)
+- `test/guard/test_guard.py`
+- `test/fixtures/guard/corpus.jsonl`
+- `test/test-hooks.sh`
+
+**Steps.**
+
+1. Implement dispatch per design §7.2: `capy_batch_execute` → run each
+   `tool_input.commands[].command` through the Bash analysis; `capy_execute`
+   → `language` `shell` runs `code` through the Bash analysis, any other
+   language runs `code` through the inline-interpreter write scan (§7.3 step
+   6) and the path-like secrets scan; `capy_execute_file` → check `path` as a
+   Read, then `code` as above. `tool_input.cwd`, when present and absolute,
+   is the execution directory for the call; the project root is unchanged.
+   The tool name arrives with the server prefix (`mcp__capy__capy_execute`);
+   match on the suffix after the last `__`.
+   → verify: corpus: `capy_execute` shell `cat .env` deny; shell
+   `go test ./...` allow; python `open('.env').read()` deny; python
+   `print(1)` allow; javascript `fs.writeFileSync('.claude/settings.json',
+   x)` deny; `capy_batch_execute` with `[{command: "ls"}, {command: "rm -rf
+   ."}]` deny; `capy_execute_file` with `path: .env` deny, `path:
+   README.md` allow.
+2. Add `test-hooks.sh` cases: a `capy_execute` payload through `guard.sh`
+   denies with the secrets reason; a benign one exits 0 with empty stdout.
+   → verify: `bash test/test-hooks.sh` green.
+3. Document the channel in `docs/user-guide/configuration.md` (hooks table)
+   and `docs/providers/codex.md` (adapter list).
+   → verify: read-through.
