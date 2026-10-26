@@ -1522,8 +1522,12 @@ apply_substitutions() {
     codex_model=$(get_manifest_value '.variables.CODEX_MODEL // "gpt-6-astra"')
     codex_approval_policy=$(get_manifest_value '.variables.CODEX_APPROVAL_POLICY // "on-request"')
 
+    # Remove an empty parent before TOML serialization: yq can otherwise emit
+    # it inside the preceding table (usually tui), where later root deletion
+    # cannot find it.
     yq -i -p toml -o toml \
-      ".model = \"$codex_model\" | .approval_policy = \"$codex_approval_policy\" | del(.mcp_servers.capy)" \
+      ".model = \"$codex_model\" | .approval_policy = \"$codex_approval_policy\" |
+       del(.mcp_servers.capy) | with(select(.mcp_servers | length == 0); del(.mcp_servers))" \
       "$codex_config_file"
 
     # Capy's registration belongs to the installation that created it, even

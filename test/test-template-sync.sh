@@ -1037,6 +1037,8 @@ for sync_pass in first repeated; do
   sed -n '/^\[mcp_servers.capy\]/,$p' "$output_dir/codex/config.toml" >"$test_dir/actual-mcp"
   assert_exit_code 0 "cmp -s '$test_dir/expected-mcp' '$test_dir/actual-mcp'" \
     "$sync_pass sync preserves downstream Capy MCP bytes despite upstream Capy"
+  assert_equals 'false' "$(yq -p toml -o json '.tui | has("mcp_servers")' "$output_dir/codex/config.toml")" \
+    "$sync_pass sync leaves no MCP map under TUI settings"
   assert_equals '0123456789abcdef0123456789abcdef' \
     "$(jq -r '[.hooks[][] | .hooks[].command | scan("[0-9a-f]{32}")] | unique | join(",")' "$output_dir/codex/hooks.json")" \
     "$sync_pass sync hooks contain only the downstream owner ID"
@@ -1062,6 +1064,10 @@ for destination in missing empty; do
   )
   assert_equals 'null' "$(yq -p toml -o json '.mcp_servers.capy' "$output_dir/codex/config.toml")" \
     "$destination downstream gets no upstream Capy MCP server"
+  assert_equals 'null' "$(yq -p toml -o json '.mcp_servers' "$output_dir/codex/config.toml")" \
+    "$destination downstream gets no empty root MCP map"
+  assert_equals 'false' "$(yq -p toml -o json '.tui | has("mcp_servers")' "$output_dir/codex/config.toml")" \
+    "$destination downstream gets no empty MCP map under TUI settings"
   assert_equals '0' "$(jq '[.hooks[][] | .hooks[].command | select(contains("capy codex-launch"))] | length' "$output_dir/codex/hooks.json")" \
     "$destination downstream gets no upstream Capy hooks"
 done

@@ -117,6 +117,8 @@ Capy registrations in the toolbox checkout are local to that checkout. Sync
 excludes its MCP server and hooks, preserves the consumer's registrations, and
 leaves `.codex/capy-owner` untouched. Only toolbox script hooks are distributed;
 the legacy `.codex/scripts/capy.sh` hook also remains consumer-owned.
+When removing upstream capy leaves no servers, sync omits the empty MCP map
+before writing TOML so it cannot appear under `[tui]`.
 
 ### 4. Activate the updated guard
 
