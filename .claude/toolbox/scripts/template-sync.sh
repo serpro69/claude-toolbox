@@ -1523,17 +1523,18 @@ apply_substitutions() {
     codex_approval_policy=$(get_manifest_value '.variables.CODEX_APPROVAL_POLICY // "on-request"')
 
     yq -i -p toml -o toml \
-      ".model = \"$codex_model\" | .approval_policy = \"$codex_approval_policy\"" \
+      ".model = \"$codex_model\" | .approval_policy = \"$codex_approval_policy\" | del(.mcp_servers.capy)" \
       "$codex_config_file"
 
-    # MCP servers are registered per project by external tooling, not shipped
-    # by the template: `capy setup --platform codex` writes [mcp_servers.capy]
-    # bound to the project's .codex/capy-owner. Copying the template file
-    # wholesale would drop that entry on every sync. Downstream entries fill
-    # the gaps; a server upstream does ship still wins by name.
+    # Capy's registration belongs to the installation that created it, even
+    # when capy setup has been run in the template repository itself. Exclude
+    # upstream Capy on every path (including first sync and merge fallback).
+    # Other downstream MCP entries fill gaps; template servers win by name.
     local mcp_source=".codex/config.toml"
+    local has_downstream_mcp=true
     if [[ ! -f "$mcp_source" ]]; then
       mcp_source="$template_dir/codex/config.toml"
+      has_downstream_mcp=false
     fi
     local mcp_work_dir
     mcp_work_dir=$(mktemp -d "${TMPDIR:-/tmp}/codex-mcp.XXXXXX")
@@ -1543,9 +1544,11 @@ apply_substitutions() {
     # Read upstream servers from the original template: yq's TOML rewrite
     # during substitutions can lose quoting on dotted server names.
     if yq -p toml -o json '.' "$mcp_source" 2>/dev/null \
-      | jq '(.tui.mcp_servers // {}) + (.mcp_servers // {})' >"$mcp_work_dir/downstream.json" \
+      | jq --argjson downstream "$has_downstream_mcp" \
+        '(.tui.mcp_servers // {}) + (.mcp_servers // {}) | if $downstream then . else del(.capy) end' \
+        >"$mcp_work_dir/downstream.json" \
       && yq -p toml -o json \
-        "load(\"$mcp_work_dir/downstream.json\") * (.mcp_servers // {})" \
+        "load(\"$mcp_work_dir/downstream.json\") * ((.mcp_servers // {}) | del(.capy))" \
         "$template_dir/codex/config.toml" >"$mcp_work_dir/merged.json" 2>/dev/null \
       && yq -p toml -o toml 'del(.mcp_servers)' "$codex_config_file" >"$mcp_work_dir/config.toml" \
       && render_codex_mcp_servers "$mcp_work_dir/merged.json" "$mcp_source" >>"$mcp_work_dir/config.toml" \
@@ -1565,14 +1568,25 @@ apply_substitutions() {
   # --- Codex Hooks (codex/hooks.json) ---
   local codex_hooks_file="$output_dir/codex/hooks.json"
   local downstream_hooks=".codex/hooks.json"
+  # Only toolbox-owned hooks are distributable. In particular, never ship the
+  # template checkout's owner-bound Capy hooks or its legacy Capy wrapper.
+  # Sanitize before the merge so first-sync and fallback paths obey this too.
+  local toolbox_hook_filter='def toolbox_owned:
+    [.hooks[]?.command // empty]
+    | any(contains(".codex/scripts/") and (contains(".codex/scripts/capy.sh") | not));'
+  if [[ -f "$codex_hooks_file" ]]; then
+    jq "$toolbox_hook_filter"'
+      .hooks |= (map_values(map(select(toolbox_owned))) | with_entries(select(.value | length > 0)))
+    ' "$codex_hooks_file" >"${codex_hooks_file}.tmp"
+    mv "${codex_hooks_file}.tmp" "$codex_hooks_file"
+  fi
   if [[ -f "$codex_hooks_file" && -f "$downstream_hooks" ]]; then
-    # Toolbox owns every entry that runs a script under .codex/scripts/; those
+    # Toolbox owns script entries under .codex/scripts/ except capy.sh; those
     # come from upstream verbatim, so a toolbox entry that changed or was
     # removed upstream does not linger. Every other downstream entry (capy's
     # `capy codex-launch` hooks, hand-added hooks) is appended after upstream's
     # entries for its event. Events only downstream knows about are kept whole.
-    if jq --slurpfile upstream "$codex_hooks_file" '
-      def toolbox_owned: [.hooks[]?.command // empty] | any(contains(".codex/scripts/"));
+    if jq --slurpfile upstream "$codex_hooks_file" "$toolbox_hook_filter"'
       (.hooks // {}) as $d
       | $upstream[0]
       | (.hooks // {}) as $u

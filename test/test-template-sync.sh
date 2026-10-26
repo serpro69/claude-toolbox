@@ -1008,6 +1008,64 @@ else
 fi
 assert_file_not_exists "$output_dir/codex/hooks.json.tmp" "No temp file left behind on fallback"
 
+log_test "sync from the real template preserves only the downstream Capy installation"
+reset_globals
+test_dir=$(create_temp_dir "subst-codex-capy-owner")
+create_codex_config_fixture "$test_dir"
+# The template repository itself has Capy installed. Earlier fixtures omitted
+# its registrations, hiding cross-project owner-ID contamination in both files.
+cp "$REPO_ROOT/.codex/config.toml" "$test_dir/templates/codex/config.toml"
+cp "$REPO_ROOT/.codex/hooks.json" "$test_dir/templates/codex/hooks.json"
+cat >"$test_dir/project/.codex/config.toml" <<'EOF'
+[mcp_servers.capy]
+command = "capy"
+args = ["codex-launch","capy-codex-launch-v2","0123456789abcdef0123456789abcdef","serve",""]
+env_vars = ["CAPY_DB_KEY", "CAPY_VAULT_KEY"]
+EOF
+cp "$test_dir/project/.codex/config.toml" "$test_dir/expected-mcp"
+printf '%s\n' 'capy-codex-owner-v1:0123456789abcdef0123456789abcdef' >"$test_dir/project/.codex/capy-owner"
+jq -n --argjson ss "$CAPY_SESSION_START_ENTRY" --argjson pt "$CAPY_PRETOOLUSE_ENTRY" \
+  --argjson se "$CAPY_SESSION_END_ENTRY" \
+  '{hooks: {SessionStart: [$ss], PreToolUse: [$pt], SessionEnd: [$se]}}' \
+  >"$test_dir/project/.codex/hooks.json"
+for sync_pass in first repeated; do
+  output_dir="$test_dir/$sync_pass"
+  (
+    cd "$test_dir/project"
+    apply_substitutions "$test_dir/templates" "$output_dir"
+  )
+  sed -n '/^\[mcp_servers.capy\]/,$p' "$output_dir/codex/config.toml" >"$test_dir/actual-mcp"
+  assert_exit_code 0 "cmp -s '$test_dir/expected-mcp' '$test_dir/actual-mcp'" \
+    "$sync_pass sync preserves downstream Capy MCP bytes despite upstream Capy"
+  assert_equals '0123456789abcdef0123456789abcdef' \
+    "$(jq -r '[.hooks[][] | .hooks[].command | scan("[0-9a-f]{32}")] | unique | join(",")' "$output_dir/codex/hooks.json")" \
+    "$sync_pass sync hooks contain only the downstream owner ID"
+  assert_equals '3' "$(jq '[.hooks[][] | .hooks[].command | select(contains("capy codex-launch"))] | length' "$output_dir/codex/hooks.json")" \
+    "$sync_pass sync preserves each downstream Capy hook once"
+  assert_equals 'true' "$(jq '[.hooks.PreToolUse[].hooks[].command] | any(contains(".codex/scripts/pretooluse-bash.sh"))' "$output_dir/codex/hooks.json")" \
+    "$sync_pass sync still delivers toolbox guard hooks"
+  cp "$output_dir/codex/config.toml" "$output_dir/codex/hooks.json" "$test_dir/project/.codex/"
+done
+
+for destination in missing empty; do
+  log_test "sync does not install upstream Capy into a $destination downstream config"
+  if [[ "$destination" == missing ]]; then
+    rm "$test_dir/project/.codex/config.toml" "$test_dir/project/.codex/hooks.json"
+  else
+    printf '%s\n' 'model = "local"' >"$test_dir/project/.codex/config.toml"
+    printf '%s\n' '{"hooks":{}}' >"$test_dir/project/.codex/hooks.json"
+  fi
+  output_dir="$test_dir/$destination"
+  (
+    cd "$test_dir/project"
+    apply_substitutions "$test_dir/templates" "$output_dir"
+  )
+  assert_equals 'null' "$(yq -p toml -o json '.mcp_servers.capy' "$output_dir/codex/config.toml")" \
+    "$destination downstream gets no upstream Capy MCP server"
+  assert_equals '0' "$(jq '[.hooks[][] | .hooks[].command | select(contains("capy codex-launch"))] | length' "$output_dir/codex/hooks.json")" \
+    "$destination downstream gets no upstream Capy hooks"
+done
+
 # =============================================================================
 # Section 5: Smart Merge Tests
 # =============================================================================

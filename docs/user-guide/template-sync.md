@@ -113,6 +113,11 @@ Consumers receive generated guard artifacts through sync and do not need to run
 `make generate-guard`. Sync preserves existing capy-owned registrations; a normal
 guard upgrade does not require rerunning `capy setup`.
 
+Capy registrations in the toolbox checkout are local to that checkout. Sync
+excludes its MCP server and hooks, preserves the consumer's registrations, and
+leaves `.codex/capy-owner` untouched. Only toolbox script hooks are distributed;
+the legacy `.codex/scripts/capy.sh` hook also remains consumer-owned.
+
 ### 4. Activate the updated guard
 
 - **Claude Code:** restart after the plugin update and any template sync. Check
@@ -128,6 +133,27 @@ guard upgrade does not require rerunning `capy setup`.
   and the [provider guide's version and activation limits](../providers/codex.md#permission-guard).
 
 ## Troubleshooting
+
+### Capy owner mismatch after syncing v0.24.0–v0.25.0
+
+These releases can copy toolbox's capy MCP launch ID and hooks into a consumer
+project even though its `.codex/capy-owner` is preserved. The preservation fix
+depended on upstream having no capy registration; rerunning capy setup in the
+template checkout reintroduced it. The corrected sync excludes that upstream
+installation at substitution time, including when the consumer has no capy.
+
+For an already affected project, restore only `[mcp_servers.capy]` and capy's
+hook entries from a known-good pre-sync revision. Keep the new toolbox guard
+hooks and other intended sync changes. Every capy launch ID must match the
+project's existing `.codex/capy-owner`; do not replace the marker with toolbox's
+ID. The corrected sync preserves downstream registrations, so it does not
+automatically repair a registration already contaminated by an earlier sync.
+Restart Codex after repairing the files.
+
+The correction must be included in the selected upstream version: installing a
+fixed script locally alone is insufficient because sync hands off to the script
+from that version. Until a fixed release is available, avoid syncing to these
+affected releases again.
 
 ### Sync stalls at "Fetching templates"
 
