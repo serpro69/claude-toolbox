@@ -304,13 +304,16 @@ Files: `klaude-plugin/scripts/guard/guard.sh` (wrapper),
   secrets layer on `Read` precisely where the hook is the only layer. The
   file-tool path is a JSON parse plus a handful of regex matches; §13 budgets
   it.
-- **Interpreter selection:** absolute candidates first (`/usr/bin/python3`,
-  `/opt/homebrew/bin/python3`, `/usr/local/bin/python3`), then `python3` on
-  `PATH` as a last resort for pyenv and uv users. Overridable for tests via
-  `KK_GUARD_INTERPRETERS`. This departs from safe-claude-code, which never
-  consults `PATH`; the audience here is developers and `-I` already prevents
-  site-packages injection.
-- Runs `python3 -I guard.py` with the payload on stdin.
+- **Interpreter selection:** absolute candidates first. On macOS prefer
+  `/opt/homebrew/bin/python3`, then `/usr/local/bin/python3`, then
+  `/usr/bin/python3`; other hosts retain the system-first order. `python3`
+  on `PATH` is the final fallback for pyenv and uv users. Overridable for
+  tests via `KK_GUARD_INTERPRETERS`. The macOS preference avoids the measured
+  Command Line Tools interpreter overhead without requiring Homebrew.
+- Runs `python3 -I -S guard.py` with the payload on stdin. `-I` ignores
+  Python environment overrides and user-site imports; `-S` skips unused
+  site initialization for this standard-library-only engine. Payload buffering,
+  interpreter retry and output validation retain their fail-closed contracts.
 - **Fail closed:** a missing or non-working interpreter, an engine crash, an
   exit code other than 0 or 2, or malformed engine output all produce a
   stderr reason, a JSON deny on stdout, and exit 2. On Codex this is the only
@@ -945,6 +948,40 @@ The [Codex hooks reference](https://learn.chatgpt.com/docs/hooks#pretooluse)
 documents canonical `apply_patch` input in `tool_input.command`; its common
 input fields identify `cwd` as the session directory, consistent with the
 explicit-hook observation above.
+
+### Performance follow-up (2026-10-26, Task 12.5)
+
+Comparison baseline: `823e60fa3b27214e5194d12e299ffeb019989514`, using the
+same native macOS hook suite, 100 Read payloads, 104 Bash corpus rows, default
+interpreter selection and unset `CI`. The benchmark invocation and thresholds
+were not changed.
+
+| Candidate | Read p95 | Bash p95 | Result |
+|---|---:|---:|---|
+| Unchanged baseline | 81.27 ms | 81.82 ms | Read gate fails |
+| Wrapper startup simplification | 37.28 ms | 46.55 ms | Both local gates pass; Read target missed |
+| Also pin native macOS utilities (experiment removed) | 36.22 ms | 44.30 ms | Marginal additional gain |
+| Also share glob bodies across anchors, without utility pinning (experiment removed) | 36.18 ms | 45.84 ms | Marginal gain did not justify matcher complexity |
+| Final small wrapper, with missing-capture regressions | **40.92 ms** | **42.13 ms** | 51 cases / 248 assertions pass; Read target remains open |
+
+The retained change prefers an existing Homebrew Python on macOS, adds `-S`
+to isolated Python startup, uses Bash parameter expansion instead of an
+external `dirname`, and skips `cat` for empty captures. It explicitly rejects
+missing/unreadable captures before forwarding. Failure handling, raw payload
+bytes, config reloading, output validation and policy evaluation remain intact;
+the Python engine and declaration are unchanged. No decision or bytecode cache
+was added. System Python and PATH remain fallbacks, and the explicit interpreter
+override still works.
+
+Diagnostics measured system Python engine p95 56.33 ms versus Homebrew 27.00 ms
+with `-I` (30 samples each); `-I -S` measured 56.18 / 23.58 ms. A separate
+invocation probe showed that the PATH-selected Bash is slower than `/bin/bash`,
+but the existing benchmark was retained for a consistent comparison. The small
+wrapper change removes the failed 60 ms gate on this host and meets the 50 ms
+Bash target. **The 30 ms Read target is not met and remains a feature acceptance
+item.** These measurements do not establish performance on other hosts.
+All attempt logs are retained under
+`/private/tmp/kk-permission-performance-20261026/`.
 
 ## 17. Not Doing
 

@@ -1,8 +1,8 @@
 #!/bin/bash
 # Fail-closed entry point, adapted from safe-claude-code's hooks/guard.sh.
 # Dispatch belongs to guard.py: even a read without config must reach it.
-# Python runs isolated from PYTHON* and user site packages. Absolute candidates
-# come first; PATH is the final fallback for pyenv/uv installations.
+# Python runs isolated from PYTHON*, site packages and startup customizations.
+# Absolute candidates come first; PATH is the final fallback for pyenv/uv.
 set -Eeuo pipefail
 set -f
 
@@ -24,7 +24,12 @@ trap 'fail_closed "wrapper interrupted"' HUP INT TERM
 # Bash can reuse it for a substitution's pipe and cat would wait on itself.
 exec 3<&0 || fail_closed "cannot read hook payload"
 
-GUARD_DIR=$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd)
+guard_source=${BASH_SOURCE[0]}
+case "$guard_source" in
+    */*) guard_parent=${guard_source%/*}; guard_parent=${guard_parent:-/} ;;
+    *) guard_parent=. ;;
+esac
+GUARD_DIR=$(cd -- "$guard_parent" && pwd)
 GUARD_PY="$GUARD_DIR/guard.py"
 [[ -f "$GUARD_PY" ]] || fail_closed "guard.py is missing"
 
@@ -40,11 +45,20 @@ exec 3<&-
 
 # Override is a whitespace-separated list of executable names/paths, not shell
 # code. An explicitly empty list means no candidates (useful in failure tests).
-interpreters=${KK_GUARD_INTERPRETERS-'/usr/bin/python3 /opt/homebrew/bin/python3 /usr/local/bin/python3 python3'}
+default_interpreters='/usr/bin/python3 /opt/homebrew/bin/python3 /usr/local/bin/python3 python3'
+case "${OSTYPE:-}" in
+    darwin*)
+        # Prefer native Homebrew Python over the slower Command Line Tools
+        # interpreter, while retaining the system and PATH fallbacks.
+        default_interpreters='/opt/homebrew/bin/python3 /usr/local/bin/python3 /usr/bin/python3 python3'
+        ;;
+esac
+interpreters=${KK_GUARD_INTERPRETERS-"$default_interpreters"}
 IFS=$' \t\n'
 for candidate in $interpreters; do
     command -v -- "$candidate" >/dev/null 2>&1 || continue
-    if { "$candidate" -I "$GUARD_PY" <"$scratch/payload"; } >"$scratch/out" 2>"$scratch/err"; then
+    # The engine uses only the standard library; site initialization is unused.
+    if { "$candidate" -I -S "$GUARD_PY" <"$scratch/payload"; } >"$scratch/out" 2>"$scratch/err"; then
         rc=0
     else
         rc=$?
@@ -70,14 +84,18 @@ for candidate in $interpreters; do
         *)
             # A macOS interpreter shim can exist without working. Retry only
             # when the interpreter itself fails; an engine crash must block.
-            if "$candidate" -I -c 'import sys' >/dev/null 2>&1; then
+            if "$candidate" -I -S -c 'import sys' >/dev/null 2>&1; then
                 fail_closed "guard.py exited unexpectedly with status $rc"
             fi
             continue
             ;;
     esac
-    cat "$scratch/err" >&2
-    cat "$scratch/out"
+    # Missing/unreadable captures must still fail closed. Empty captures need
+    # no subprocess, which is the ordinary allow path for both streams.
+    [[ -f "$scratch/err" && -r "$scratch/err" && -f "$scratch/out" && -r "$scratch/out" ]] ||
+        fail_closed "cannot read engine output"
+    if [[ -s "$scratch/err" ]]; then cat "$scratch/err" >&2; fi
+    if [[ -s "$scratch/out" ]]; then cat "$scratch/out"; fi
     exit "$rc"
 done
 fail_closed "no working Python interpreter; install or repair Python 3.8 or newer"

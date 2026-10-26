@@ -113,6 +113,8 @@ The wrapper suite times 100 Read calls and every active Bash corpus row, includi
 
 The 2026-10-26 macOS arm64 run with the default Apple Python 3.9.6 measured **76.62 ms Read / 76.00 ms Bash** outside the agent sandbox: the Read gate failed and both targets were missed. The performance requirement remains open before feature completion; limits were not relaxed. See the [permission-guard evidence](https://github.com/serpro69/claude-toolbox/blob/master/docs/feat/wip/permission-guard/design.md#16-assumptions) for all attempts and prerequisites.
 
+A later wrapper optimization on the same host prefers an existing Homebrew Python, skips unused site startup and avoids subprocesses for empty output. The final run measured **40.92 ms Read / 42.13 ms Bash**, passing both unchanged local gates and the Bash target. The 30 ms Read target remains open. The benchmark still uses the same invocation and corpus; the earlier failures are retained as historical evidence.
+
 Payload tests establish adapter contracts, not installed hook activation. Live probes must record versions, actual hook inputs/results and benign controls. The Claude bypass probe uses a disposable project outside temporary roots so `rm -rf ./scratch` is not intentionally exempt. Use synthetic files and an absent `.env`, never real credentials. The recorded Claude 2.1.296 probe denied both destructive and secrets access under bypass mode. The Codex 0.164.0 probe verified relative patch paths against cwd with explicit inline hooks; ordinary project-hook discovery was not established and still needs a visible startup/patch-hook check.
 
 ## Agent evaluation
