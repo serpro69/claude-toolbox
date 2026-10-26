@@ -806,9 +806,11 @@ until sync removes them (over-restricted, never under-protected). Sync first:
 trimmed settings run beside the old substring hook until the plugin updates
 (`cat .env` still denied on Bash). Neither order weakens secrets protection.
 
-The plugin version bumps a minor. `validate-bash.sh` is deleted; the structure
-test that asserts its existence is updated to assert the `guard/` files
-instead.
+The release workflow owns the next minor version bump; feature branches retain
+the last released manifest versions until publication. This corrects the earlier
+manual-bump plan under the user's 2026-10-26 instruction. `validate-bash.sh` is
+deleted; the structure test that asserts its existence is updated to assert the
+`guard/` files instead.
 
 One regression is accepted and stated here so the ADR can carry it: a
 consumer who runs with hooks disabled (`disableAllHooks`) keeps the secrets
