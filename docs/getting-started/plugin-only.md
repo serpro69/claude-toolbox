@@ -9,7 +9,9 @@ claude plugin marketplace add serpro69/claude-toolbox
 claude plugin install kk@claude-toolbox
 ```
 
-Skills are available as `/kk:(skill-name)` (annotated with `(kk)` in the slash command menu). The Claude plugin also includes commands, hooks (Bash validation), and sub-agents. See the [kk plugin documentation](https://github.com/serpro69/claude-toolbox/tree/master/klaude-plugin) for details.
+Skills are available as `/kk:(skill-name)` (annotated with `(kk)` in the slash command menu). The Claude plugin also includes commands, sub-agents and the permission guard. The guard protects secrets, destructive operations and configuration on Bash, file tools and capy execution tools without needing template settings or configuration files.
+
+Use Claude Code 2.1.295+, Bash, `jq` and Python 3.8+. Guard failures block matched calls, including reads; repair a missing interpreter rather than expecting the hook to skip it. See [Guard Configuration](../user-guide/configuration.md#guard-configuration) for project additions and user exceptions. Disabling hooks removes plugin-only protection because this installation mode has no native settings baseline.
 
 !!! tip
     Want the full configuration too (settings, statusline, sync infrastructure)? See [Adopting into Existing Repositories](adopting.md).
@@ -35,13 +37,13 @@ The plugin gives you:
 - **15 workflow and utility skills** — `/kk:design`, `/kk:implement`, `/kk:review-code`, `/kk:clarify-docs`, etc.
 - **Language profiles** — Go, Java, JS/TS, Kotlin, Kubernetes, Python
 - **Commands** — isolated variants for code review, CoVe and spec review
-- **Hooks** — Bash validation (Claude Code only)
+- **Hooks** — secrets, destructive-operation and configuration protection across the supported tool channels (Claude Code only)
 - **Sub-agents** — independent reviewers (Claude Code only)
 
 ## What's Not Included
 
 - MCP server configuration (Context7, Pal, Capy)
-- Permission baselines and statusline
+- Native permission-settings baseline and statusline (the Claude guard's runtime baseline is included)
 - Template sync infrastructure
 
 For the full setup, use [Template Setup](template-setup.md) or [Adopt into Existing Repos](adopting.md).

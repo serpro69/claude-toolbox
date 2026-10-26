@@ -2,7 +2,31 @@
 
 ## Status
 
-Accepted — partially superseded (see Updates 2026-04-26 and 2026-10-14)
+Accepted — partially superseded by [ADR 0012](0012-permission-guard-single-declaration.md) and the updates below.
+
+## Update 2026-10-26
+
+The shared permission guard now covers Bash, intercepted `apply_patch`, and
+capy's three execution tools through `.codex/scripts/pretooluse-bash.sh`,
+`pretooluse-patch.sh` and `pretooluse-mcp.sh`, registered in `.codex/hooks.json`.
+The patch/MCP work proposed in the earlier updates is implemented. Adapters
+delegate to the generated engine in `.codex/scripts/guard/`; they export the
+repository root separately from payload cwd and deny failures with exit 2
+and stderr. Capy's own routing hooks remain independent.
+
+`session-start.sh` renders the current secrets advisory from the synced
+declaration. Native reads remain advisory **in this integration**; newer
+Codex hook support for additional function tools does not itself register a
+native-read payload mapping here. Specialized paths can still bypass hooks.
+Generated native forbids cover only `rm`, `shred`, `sudo`, `su` and `doas`,
+and outrank user exceptions. See [Codex](../providers/codex.md#permission-guard)
+for the current parity limits.
+
+A live Codex 0.164.0 probe confirmed relative patch paths against payload cwd
+with explicit inline hooks. Ordinary project-file hook discovery was not
+established by that probe; inspect active sources and trust in `/hooks`
+before relying on registration. The older dated entries and original rationale
+below are retained as history, not as the current implementation checklist.
 
 ## Update 2026-10-14
 

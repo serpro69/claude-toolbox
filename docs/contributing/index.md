@@ -114,11 +114,13 @@ Hook definitions in `klaude-plugin/hooks/hooks.json`:
   "hooks": {
     "PreToolUse": [
       {
-        "matcher": "Bash",
+        "matcher": "Bash|Read|Edit|Write|NotebookEdit|Grep|Glob|mcp__.+__capy_(execute|execute_file|batch_execute)",
         "hooks": [
           {
             "type": "command",
-            "command": "${CLAUDE_PLUGIN_ROOT}/scripts/validate-bash.sh"
+            "command": "${CLAUDE_PLUGIN_ROOT}/scripts/guard/guard.sh",
+            "timeout": 15,
+            "onFailure": "block"
           }
         ]
       }
@@ -127,7 +129,7 @@ Hook definitions in `klaude-plugin/hooks/hooks.json`:
 }
 ```
 
-Hook scripts read JSON from stdin (the `tool_input` object), return structured JSON for deny decisions. Always exit 0 — use `permissionDecision: "deny"` in the JSON output to block a tool call. See `klaude-plugin/scripts/validate-bash.sh` for the pattern.
+The guard consumes the complete hook payload, allows with exit 0 (normally silently), and denies with JSON, a stderr reason and exit 2. The wrapper fails closed on missing interpreters, crashes and malformed output; the registration blocks hook failures/timeouts. See [Plugin Development › Hooks](plugin-development.md#hooks) for the contract, generator ownership and user-level `disable_selfmod` setup needed for agent edits of guard/settings files.
 
 ### Profiles
 
@@ -298,8 +300,8 @@ klaude-plugin/                   # kk plugin — Claude (canonical source of tru
 ├── commands/                    # 4 slash commands
 ├── agents/                      # Sub-agents (code-reviewer, spec-reviewer, design-reviewer, ...)
 ├── profiles/                    # Per-domain content (languages, IaC DSLs)
-├── hooks/hooks.json             # Bash validation hook config
-└── scripts/validate-bash.sh     # Hook script
+├── hooks/hooks.json             # Plugin-root export + permission guard registration
+└── scripts/guard/              # Canonical engine, wrapper, declaration and license
 
 kodex-plugin/                    # kk plugin — Codex (GENERATED from klaude-plugin/)
 ├── .codex-plugin/plugin.json    # Generated plugin manifest
@@ -321,9 +323,9 @@ AGENTS.md                        # Codex project instructions (this repo)
 .codex/
 ├── config.toml                  # Codex settings: model, approval policy, features, MCP
 ├── hooks.json                   # SessionStart + PreToolUse hook definitions
-├── rules/default.rules          # Starlark command policies (ported from Claude deny list)
+├── rules/default.rules          # Generated native forbids from guard-rules.json
 ├── agents/                      # 5 sub-agent TOML files (generated from klaude-plugin/agents/)
-└── scripts/                     # session-start.sh, pretooluse-bash.sh
+└── scripts/                     # Session hook, Bash/patch/MCP adapters, generated guard/
 
 .github/
 ├── scripts/                     # template-cleanup.sh, template-sync.sh, bootstrap.sh

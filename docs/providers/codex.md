@@ -67,7 +67,7 @@ All three adapters export the repository root before delegating to the generated
 
 Denials return JSON plus a reason on stderr and exit 2. Adapter errors and missing interpreters also block. Session startup renders a protected-files advisory from the synced declaration, falling back to a static secret-files warning if it is unavailable. See the [guard rules and configuration](../user-guide/configuration.md) for project additions and user exceptions. Regenerate the copied engine with `make generate-guard`; never edit `.codex/scripts/guard/` directly.
 
-The adapter contract targets Codex 0.164.0. The [official hooks reference](https://learn.chatgpt.com/docs/hooks#pretooluse) documents `Edit|Write` aliases, `tool_input.command`, and exit-2 denial with stderr. Hook coverage is a guardrail; specialized paths can bypass it. Live harness validation remains separate from the payload tests.
+The adapter contract targets Codex 0.164.0. The [official hooks reference](https://learn.chatgpt.com/docs/hooks#pretooluse) documents `Edit|Write` aliases, `tool_input.command`, and exit-2 denial with stderr. Hook coverage is a guardrail; specialized paths can bypass it. A live 0.164.0 probe verified relative patch paths against the session cwd with explicit inline hook registration. That probe did not establish ordinary project-hook discovery: two project-file attempts produced no patch-hook records. After template setup, inspect and trust the entries in `/hooks`; registration alone does not prove the hook ran. Project-local hook sources also require a trusted project layer.
 
 | Parity gap | Reason | Mitigation |
 |---|---|---|

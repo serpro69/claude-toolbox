@@ -11,9 +11,13 @@ klaude-plugin/          (canonical source)
     |
     |-- generate-kodex --> kodex-plugin/      (generated Codex variant)
     |                      .codex/agents/     (generated sub-agents)
+    |-- generate-guard --> .claude/settings.json permissions.deny
+    |                      .codex/rules/default.rules
+    |                      .codex/scripts/guard/
+    |                      docs/user-guide/configuration.md rules tables
     |
 .claude/                (Claude Code config)
-.codex/                 (Codex config — hand-authored)
+.codex/                 (hand-authored config/adapters + generated artifacts)
 .github/                (template sync infrastructure)
 ```
 
@@ -27,8 +31,8 @@ The canonical source of truth for all workflow functionality. Contains:
 - **`commands/`** — Slash commands for isolated/variant invocations
 - **`agents/`** — Sub-agent definitions (code-reviewer, design-reviewer, spec-reviewer, architecture-reviewer, eval-grader, profile-resolver)
 - **`profiles/`** — Per-domain content (Go, Java, JS/TS, Kotlin, K8s, Python) with detection rules, review checklists, implementation gotchas, design prompts, test validators, and doc rubrics
-- **`hooks/`** — Hook definitions (SessionStart plugin-root export, PreToolUse Bash validation)
-- **`scripts/`** — Hook scripts (`set-plugin-root.sh`, `validate-bash.sh`)
+- **`hooks/`** — Hook definitions (SessionStart plugin-root export, PreToolUse permission guard)
+- **`scripts/`** — Plugin-root resolver and canonical `guard/` wrapper, Python engine, policy declaration and license
 
 Skills reference shared instructions via symlinks to `skills/_shared/`. Profiles are referenced via `${CLAUDE_PLUGIN_ROOT}/profiles/` paths (substituted at plugin-load time by the Claude Code harness).
 
@@ -61,6 +65,16 @@ the [Codex custom-agent configuration model](https://learn.chatgpt.com/docs/agen
 The `read_only_tool_guidance` transform removes contradictory Claude-only tool
 claims from generated agents and runtime-read skill procedures. Canonical Claude
 files and profile authoring guidance retain their provider-specific conventions.
+
+### Permission Guard
+
+`klaude-plugin/scripts/guard/guard-rules.json` declares secrets globs, destructive categories, temporary roots and protected configuration paths. The plugin's `guard.sh` invokes `guard.py` with isolated Python and checks its output; failures deny. The engine handles Claude file tools and Bash, Codex patch headers, and capy's three execution tools without executing submitted code. Every channel uses a stable project root for policy; the execution directory is separate.
+
+`scripts/generate-guard.sh` projects the declaration into Claude's native secrets deny list, Codex's five unconditional native forbids, and the marked configuration tables. It copies the engine, wrapper, declaration and license byte-for-byte into `.codex/scripts/guard/`. `make generate-guard` regenerates these artifacts; structure checks and CI freshness checks reject drift. This generator is separate from Codex skill/agent generation.
+
+The Claude plugin loads its own baseline, including on plugin-only installs. Codex receives the engine through template sync; its Bash, patch and MCP adapters export the repository root before delegation. Capy's own hooks retain their registration and routing responsibilities. Project `.claude/kk-guard.json` adds restrictions; user `~/.claude/kk-guard.json` supplies scoped destructive/self-modification exceptions. Neither removes secrets. Native Codex forbids still outrank user exceptions.
+
+Plugin update and template sync are separate delivery channels. Disabling hooks preserves only Claude template users' native secrets baseline, not the hook's destructive or self-modification policy. Codex native reads remain advisory in this integration, and specialized paths can bypass interception. See [ADR 0012](../adr/0012-permission-guard-single-declaration.md) for the decision and trade-offs, [configuration](../user-guide/configuration.md#guard-configuration) for user controls, and [testing](testing.md#permission-guard-verification) for evidence limits.
 
 ### Plugin Graph Analysis (`cmd/plugin-graph/`)
 
@@ -97,8 +111,9 @@ Regenerated from the live plugin on every docs build (`make plugin-graph-docs`),
 
 ### Claude Code Config (`.claude/`)
 
-- **`settings.json`** — Permission baselines (allow/deny lists), env vars, model, plugin marketplace
+- **`settings.json`** — Generated secrets deny list plus allow entries, env vars, model and plugin marketplace settings
 - **`settings.local.json`** — Per-repo overrides (never synced)
+- **`kk-guard.json`** — Optional project-owned policy additions (never synced)
 - **`CLAUDE.extra.md`** — Behavioral instructions (synced downstream)
 - **`scripts/`** — Statusline scripts (basic and enhanced themes)
 
@@ -107,13 +122,17 @@ Regenerated from the live plugin on every docs build (`make plugin-graph-docs`),
 Hand-authored (not generated):
 
 - **`config.toml`** — Model, approval policy, features, MCP server config (capy)
-- **`hooks.json`** — SessionStart (injects context) and PreToolUse (Bash validation) hooks
-- **`rules/default.rules`** — Starlark command policies (ported from Claude deny list)
-- **`scripts/`** — Hook scripts (session-start.sh, pretooluse-bash.sh)
+- **`hooks.json`** — SessionStart and PreToolUse Bash/patch/MCP registrations, alongside downstream-owned hooks
+- **`scripts/` except `guard/`** — Session hook and thin Bash/patch/MCP adapters
 
 Generated (by `cmd/generate-kodex/`):
 
 - **`agents/*.toml`** — Sub-agent definitions
+
+Generated by `scripts/generate-guard.sh`:
+
+- **`rules/default.rules`** — Native forbids for `rm`, `shred`, `sudo`, `su`, `doas`
+- **`scripts/guard/`** — Byte-identical canonical engine, wrapper, declaration and license
 
 ### Documentation Site (`docs/`, `mkdocs.yml`)
 
@@ -183,7 +202,8 @@ Downstream repo triggers sync workflow
   → Reads .github/template-state.json for variables and exclusions
   → Copies .claude/, .codex/ to staging
   → Applies variable substitutions (CC_MODEL, CODEX_MODEL, etc.)
-  → Smart-merges settings.json (new keys added, existing preserved)
+  → Smart-merges settings.json except permissions.deny (replaced from upstream)
+  → Reports removed deny entries; leaves project kk-guard.json alone
   → Creates PR with changes
 ```
 
@@ -226,3 +246,4 @@ Architecture decisions are recorded in `docs/adr/`:
 | [0003](../adr/0003-plugin-root-referenced-content.md) | Plugin-root referenced content (no symlinks into profiles) |
 | [0004](../adr/0004-skill-workflow-ordering.md) | Skill workflow ordering (instructions before action) |
 | [0005](../adr/0005-codex-hook-enforcement-gap.md) | Codex hook enforcement gap (advisory + hook two-layer approach) |
+| [0012](../adr/0012-permission-guard-single-declaration.md) | Single permission declaration, generated projections and scoped guard configuration |

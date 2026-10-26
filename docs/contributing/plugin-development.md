@@ -101,10 +101,12 @@ Hook definitions in `klaude-plugin/hooks/hooks.json`:
       }]
     }],
     "PreToolUse": [{
-      "matcher": "Bash",
+      "matcher": "Bash|Read|Edit|Write|NotebookEdit|Grep|Glob|mcp__.+__capy_(execute|execute_file|batch_execute)",
       "hooks": [{
         "type": "command",
-        "command": "${CLAUDE_PLUGIN_ROOT}/scripts/validate-bash.sh"
+        "command": "${CLAUDE_PLUGIN_ROOT}/scripts/guard/guard.sh",
+        "timeout": 15,
+        "onFailure": "block"
       }]
     }]
   }
@@ -113,7 +115,17 @@ Hook definitions in `klaude-plugin/hooks/hooks.json`:
 
 **SessionStart hook:** Exports `TOOLBOX_PLUGIN_ROOT` into the session via `$CLAUDE_ENV_FILE`. A standalone resolver (`cpr.py`) reads `installed_plugins.json` to find the install that applies to the current project (passed as `$CLAUDE_PROJECT_DIR`); the harness-substituted `${CLAUDE_PLUGIN_ROOT}`, passed as an argument, is the fallback. Once set, every Bash tool call in the session has `${TOOLBOX_PLUGIN_ROOT}` available — this gives LLMs a reliable path to the plugin root without guessing.
 
-**PreToolUse hooks:** Read JSON from stdin (the `tool_input` object), return structured JSON for deny decisions. Always exit 0 — use `permissionDecision: "deny"` in the JSON output to block a tool call. See `klaude-plugin/scripts/validate-bash.sh` for the pattern.
+**Permission guard contract:** Read the complete hook payload from stdin (`tool_name`, `tool_input`, `cwd` and optional `permission_mode`). `scripts/guard/guard.sh` buffers the bytes once and invokes `guard.py` under isolated Python. Ordinary allow is silent with exit 0; config warnings may emit only `systemMessage`. Deny emits `hookSpecificOutput.permissionDecision: "deny"`, its reason on stdout and stderr, and exit 2. Missing interpreters, crashes and invalid engine output must deny. Claude's `onFailure: "block"` handles hook launch failures and timeouts; it requires Claude Code 2.1.295+. See [the configuration guide](../user-guide/configuration.md#hooks) for runtime requirements and supported channels.
+
+The declaration and engine in `klaude-plugin/scripts/guard/` are canonical. Run `make generate-guard` after changing them; never edit `.codex/scripts/guard/`, `.codex/rules/default.rules`, or the marked rules tables directly. The generator also owns `.claude/settings.json`'s `permissions.deny`, leaving other settings unchanged. Keep the copied license with the engine.
+
+To develop this repository with an agent, the user adds a physical checkout path (or a parent covering worktrees) to **`~/.claude/kk-guard.json`**:
+
+```json
+{"version":1,"projects":{"/absolute/path/to/claude-toolbox":{"disable_selfmod":true}}}
+```
+
+Merge that entry into existing user configuration. This permits settings and guard-file edits without disabling secrets checks. The project file can only tighten policy; committing `disable_selfmod` there does not authorize edits. Without the user exception, even adding a permission allow entry to settings is blocked. Destructive operations remain governed by their separate category settings and Codex native rules.
 
 ## Profiles
 
