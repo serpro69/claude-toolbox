@@ -936,7 +936,9 @@ The explicit-registration result establishes the cwd contract but leaves
 automatic project-hook discovery unverified in that CLI setup. Follow-up
 owner: unassigned; inspect effective hook-source loading and reproduce with
 a visible startup hook before claiming ordinary scratch-project discovery
-works. Raw probe evidence is retained under
+works. The follow-up below supersedes this discovery uncertainty for the tested
+normal-config launch while retaining these failed observations. Raw probe
+evidence is retained under
 `/private/tmp/kk-permission-task9-runtime/`; suite logs under
 `/private/tmp/kk-permission-task9-review-20261026/`.
 
@@ -948,6 +950,68 @@ The [Codex hooks reference](https://learn.chatgpt.com/docs/hooks#pretooluse)
 documents canonical `apply_patch` input in `tool_input.command`; its common
 input fields identify `cwd` as the session directory, consistent with the
 explicit-hook observation above.
+
+### Codex project-hook discovery follow-up (2026-10-26, Task 12.6)
+
+**Project-file discovery and invocation passed on Codex 0.164.0, macOS.**
+A read-only app-server diagnostic (`config/read` with `includeLayers: true`,
+then `hooks/list`) found the original Task 9 repository's `.codex/` layer
+and both project hooks, enabled and untrusted, with no loading warnings or
+errors. Its retained failed-run log also confirms the one-invocation hook-trust
+bypass was enabled. Absence of hook records alone did not establish a discovery
+defect.
+
+A fresh Git repository at `/private/tmp/kk-hook-discovery-20261026/project`
+contains `.codex/config.toml` enabling hooks and `.codex/hooks.json` registering
+a startup logger and an `Edit|Write` logger that delegates to the current copied
+patch adapter/engine. Each launch used a fresh child directory, the same prompt
+for two separate native patches (`src/control.txt`, then a synthetic `.env`),
+`--no-daemon exec --ephemeral --sandbox workspace-write`, explicit project trust
+via `-c`, and `--dangerously-bypass-hook-trust`. No inline hooks were supplied.
+
+| Launch | Startup records | Patch records | Actual tool outcome |
+|---|---:|---:|---|
+| `--ignore-user-config` | 0 | 0 | Both patches completed |
+| Normal config loading; unrelated user MCP servers and kk plugin disabled through targeted overrides | 1 | 2 | Benign patch completed; `.env` denied by the secrets rule |
+| `--ignore-user-config` plus `-c 'features.hooks=true'` | 0 additional | 0 additional | Both patches completed |
+
+The successful run's hook payloads identify the child directory as `cwd` and
+retain the literal relative patch headers. The tool error includes the guard's
+`./**/.env` match. Hook logs contain only that successful run's session ID;
+the final isolated run did not append records. These are author-executed runtime
+observations, not a statistical reliability claim. A later direct file-existence
+check was rejected before execution by the active guard; patch outcomes and
+denial claims here rely on the tool events and hook payloads, not that check.
+
+The isolated invocation reproduces the earlier symptom, but the historical
+launch command was not recovered, so it is not attributed as the proven cause
+of both Task 9 attempts. Source inspection also does **not** establish that
+`--ignore-user-config` disables all project layers: versioned
+[`exec/src/lib.rs`](https://github.com/openai/codex/blob/rust-v0.164.0/codex-rs/exec/src/lib.rs)
+passes `ignore_user_config` into loader overrides, while
+[`config/src/loader/mod.rs`](https://github.com/openai/codex/blob/rust-v0.164.0/codex-rs/config/src/loader/mod.rs)
+gates project discovery separately on `ignore_project_config`.
+Use normal config loading for this acceptance check. The internal reason the
+isolated invocation skipped file hooks remains untraced; optional upstream
+diagnostic owner is unassigned, with the concrete next step to inspect its
+in-process app-server config stack against the successful launch. This does not
+block the now-observed normal project-file integration.
+
+The operational prerequisites remain project trust plus enabled, trusted hook
+definitions. The disposable runs bypassed only hook trust for already-inspected
+sources; persisted trust, the interactive `/hooks` flow, other Codex versions
+and other hosts were not exercised. No toolbox registration, guard policy or
+user trust setting changed. See the [official hooks guide](https://learn.chatgpt.com/docs/hooks)
+and [app-server methods](https://learn.chatgpt.com/docs/app-server).
+
+Evidence directory: `/private/tmp/kk-hook-discovery-20261026/`.
+`inspect.py`/`discovery.json` retain fresh-fixture source/trust diagnostics;
+`original-discovery.json` records a repeat inspection of the original fixture
+requested during independent review;
+`{isolated,control,forced}-output.jsonl` and their stderr logs retain all three
+launch outcomes; `start.jsonl` and `patch.jsonl` retain actual hook payloads;
+`prompt.txt`, the scratch hook files and `commands.md` describe the probes.
+Downloaded `codex-*.rs` files are version-matched source evidence only.
 
 ### Performance follow-up (2026-10-26, Task 12.5)
 
