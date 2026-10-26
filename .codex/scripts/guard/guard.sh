@@ -32,6 +32,8 @@ esac
 GUARD_DIR=$(cd -- "$guard_parent" && pwd)
 GUARD_PY="$GUARD_DIR/guard.py"
 [[ -f "$GUARD_PY" ]] || fail_closed "guard.py is missing"
+GUARD_RUNNER="$GUARD_DIR/run-guard.py"
+[[ -f "$GUARD_RUNNER" ]] || fail_closed "run-guard.py is missing"
 
 # A private directory keeps stdout/stderr separate until the exit status and
 # output contract have been checked. Never forward a crashed engine's output.
@@ -58,7 +60,7 @@ IFS=$' \t\n'
 for candidate in $interpreters; do
     command -v -- "$candidate" >/dev/null 2>&1 || continue
     # The engine uses only the standard library; site initialization is unused.
-    if { "$candidate" -I -S "$GUARD_PY" <"$scratch/payload"; } >"$scratch/out" 2>"$scratch/err"; then
+    if { "$candidate" -I -S "$GUARD_RUNNER" <"$scratch/payload"; } >"$scratch/out" 2>"$scratch/err"; then
         rc=0
     else
         rc=$?

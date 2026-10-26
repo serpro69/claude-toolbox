@@ -84,7 +84,7 @@ awk -v block="$stage/table.md" '
   END { if (begins != 1 || ends != 1 || inside) exit 1 }
 ' "$REPO_ROOT/$DOCS" >"$stage/configuration.md"
 
-for file in guard.sh guard.py guard-rules.json LICENSE.md; do
+for file in guard.sh run-guard.py guard.py guard-rules.json LICENSE.md; do
   cp -p "$GUARD_SOURCE/$file" "$stage/$file"
 done
 mkdir -p "$OUTPUT_ROOT/.claude" "$OUTPUT_ROOT/.codex/rules" \
@@ -92,6 +92,6 @@ mkdir -p "$OUTPUT_ROOT/.claude" "$OUTPUT_ROOT/.codex/rules" \
 cp "$stage/settings.json" "$OUTPUT_ROOT/.claude/settings.json"
 cp "$stage/default.rules" "$OUTPUT_ROOT/.codex/rules/default.rules"
 cp "$stage/configuration.md" "$OUTPUT_ROOT/$DOCS"
-for file in guard.sh guard.py guard-rules.json LICENSE.md; do
+for file in guard.sh run-guard.py guard.py guard-rules.json LICENSE.md; do
   cp -p "$stage/$file" "$OUTPUT_ROOT/.codex/scripts/guard/$file"
 done

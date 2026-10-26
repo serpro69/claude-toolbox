@@ -51,6 +51,7 @@ sys.dont_write_bytecode = True
 HERE = os.path.dirname(os.path.abspath(__file__))
 REPO = os.path.dirname(os.path.dirname(HERE))
 GUARD = os.path.join(REPO, "klaude-plugin", "scripts", "guard", "guard.py")
+RUNNER = os.path.join(os.path.dirname(GUARD), "run-guard.py")
 RULES = os.path.join(REPO, "klaude-plugin", "scripts", "guard", "guard-rules.json")
 FIXTURES = os.path.join(REPO, "test", "fixtures", "guard")
 GLOB_CASES = os.path.join(FIXTURES, "glob-cases.json")
@@ -1307,13 +1308,109 @@ class ProcessContractTests(unittest.TestCase):
         self.assertEqual(code, 2, err)
 
 
+class LauncherTests(unittest.TestCase):
+    """Exercise cached loading through the real fail-closed wrapper."""
+
+    @classmethod
+    def setUpClass(cls):
+        # Apple's Command Line Tools Python disables bytecode writes even in
+        # isolated mode. Query the child; this test module disables its own
+        # writes deliberately and therefore cannot supply that runtime fact.
+        probe = subprocess.run([sys.executable, "-I", "-S", "-c",
+                                "import sys; print(int(not sys.dont_write_bytecode))"],
+                               stdout=subprocess.PIPE, check=True)
+        cls.cache_writes = probe.stdout.strip() == b"1"
+
+    def setUp(self):
+        self.sandbox = Sandbox()
+        self.addCleanup(__import__("shutil").rmtree, self.sandbox.base)
+        self.install = os.path.join(self.sandbox.base, "guard")
+        os.mkdir(self.install)
+        for name in ("guard.sh", "run-guard.py", "guard.py", "guard-rules.json"):
+            __import__("shutil").copy2(os.path.join(os.path.dirname(GUARD), name), self.install)
+        self.engine = os.path.join(self.install, "guard.py")
+        self.cache = importlib.util.cache_from_source(self.engine)
+        self.config = os.path.join(self.sandbox.base, "project.json")
+        self.rules = os.path.join(self.install, "guard-rules.json")
+
+    def run_guard(self, path="README.md"):
+        env = self.sandbox.env(project_config=self.config)
+        env.update(PATH=os.environ.get("PATH", ""), KK_GUARD_INTERPRETERS=sys.executable,
+                   KK_GUARD_RULES=self.rules,
+                   PYTHONPATH=self.sandbox.root)
+        payload = json.dumps({"tool_name": "Read", "tool_input": {"file_path": path},
+                              "cwd": self.sandbox.root}).encode()
+        return subprocess.run(["bash", os.path.join(self.install, "guard.sh")],
+                              input=payload, env=env, cwd=self.sandbox.root,
+                              stdout=subprocess.PIPE, stderr=subprocess.PIPE, timeout=15)
+
+    def assert_allow(self, result):
+        self.assertEqual((result.returncode, result.stdout, result.stderr), (0, b"", b""))
+
+    def assert_deny(self, result, category):
+        self.assertEqual(result.returncode, 2, result.stderr)
+        reason = json.loads(result.stdout)["hookSpecificOutput"]["permissionDecisionReason"]
+        self.assertIn("kk guard: " + category, reason)
+        self.assertEqual(result.stderr.decode().strip(), reason)
+
+    def test_calls_reload_policy_files_with_optional_bytecode_cache(self):
+        self.assertFalse(os.path.exists(self.cache))
+        self.assert_allow(self.run_guard("private.txt"))
+        self.assertEqual(os.path.isfile(self.cache), self.cache_writes)
+        self.assert_allow(self.run_guard("private.txt"))
+        with open(self.config, "w") as handle:
+            json.dump({"version": 1, "secrets": ["./**/private.txt"]}, handle)
+        self.assert_deny(self.run_guard("private.txt"), "secrets")
+        with open(self.rules, "w") as handle:
+            handle.write('{"version":99}')
+        self.assert_deny(self.run_guard(), "failure")
+
+    def test_unwritable_cache_still_evaluates_source(self):
+        # A file at the cache-directory path deterministically prevents cache
+        # creation, including in environments running tests as root.
+        with open(os.path.dirname(self.cache), "w") as handle:
+            handle.write("cache directory unavailable")
+        self.assert_allow(self.run_guard())
+        self.assert_deny(self.run_guard(".env"), "secrets")
+
+    def test_cwd_and_pythonpath_cannot_shadow_engine_or_standard_library(self):
+        for name in ("guard.py", "json.py", "sitecustomize.py"):
+            with open(os.path.join(self.sandbox.root, name), "w") as handle:
+                handle.write("raise RuntimeError('project code must not load')\n")
+        self.assert_allow(self.run_guard())
+        self.assert_deny(self.run_guard(".env"), "secrets")
+
+    def test_engine_update_and_missing_source_do_not_reuse_old_cache(self):
+        self.assert_allow(self.run_guard())
+        with open(self.engine, "a") as handle:
+            handle.write("\nraise RuntimeError('updated engine is broken')\n")
+        self.assert_deny(self.run_guard(), "failure")
+        os.unlink(self.engine)
+        self.assert_deny(self.run_guard(), "failure")
+
+    def test_bad_cache_header_recovers_but_broken_code_fails_closed(self):
+        if not self.cache_writes:
+            self.skipTest("this interpreter disables bytecode cache writes")
+        self.assert_allow(self.run_guard())
+        with open(self.cache, "wb") as handle:
+            handle.write(b"invalid bytecode header")
+        self.assert_deny(self.run_guard(".env"), "secrets")
+        # A valid header with an invalid code object raises during loading.
+        # The outer wrapper must turn that failure into a complete denial.
+        with open(self.cache, "r+b") as handle:
+            handle.truncate(16)
+        self.assert_deny(self.run_guard(), "failure")
+
+
 class PythonFloorTests(unittest.TestCase):
     def test_engine_parses_as_python_3_8(self):
-        with open(GUARD, "r", encoding="utf-8") as handle:
-            source = handle.read()
-        ast.parse(source, GUARD, feature_version=(3, 8))
-        self.assertNotIn("removeprefix", source)
-        self.assertNotIn("removesuffix", source)
+        for path in (GUARD, RUNNER):
+            with self.subTest(path=path):
+                with open(path, "r", encoding="utf-8") as handle:
+                    source = handle.read()
+                ast.parse(source, path, feature_version=(3, 8))
+                self.assertNotIn("removeprefix", source)
+                self.assertNotIn("removesuffix", source)
 
 
 if __name__ == "__main__":

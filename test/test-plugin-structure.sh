@@ -240,6 +240,7 @@ else
   log_fail "guard.sh should be executable"
 fi
 assert_file_exists "$REPO_ROOT/klaude-plugin/scripts/guard/guard.py" "guard.py exists"
+assert_file_exists "$REPO_ROOT/klaude-plugin/scripts/guard/run-guard.py" "run-guard.py exists"
 assert_json_valid "$(cat "$REPO_ROOT/klaude-plugin/scripts/guard/guard-rules.json")" "guard-rules.json is valid JSON"
 
 log_test "guard hook covers all channels and blocks failures"
@@ -270,7 +271,7 @@ guard_generated=$(create_temp_dir "guard-generated")
 TEMP_DIRS+=("$guard_generated")
 bash "$REPO_ROOT/scripts/generate-guard.sh" "$guard_generated"
 for generated in .claude/settings.json .codex/rules/default.rules docs/user-guide/configuration.md \
-  .codex/scripts/guard/guard.sh .codex/scripts/guard/guard.py \
+  .codex/scripts/guard/guard.sh .codex/scripts/guard/run-guard.py .codex/scripts/guard/guard.py \
   .codex/scripts/guard/guard-rules.json .codex/scripts/guard/LICENSE.md; do
   if cmp -s "$guard_generated/$generated" "$REPO_ROOT/$generated"; then
     log_pass "Fresh: $generated"
@@ -280,7 +281,7 @@ for generated in .claude/settings.json .codex/rules/default.rules docs/user-guid
 done
 
 log_test "Codex engine and license are byte-identical to canonical sources"
-for file in guard.sh guard.py guard-rules.json LICENSE.md; do
+for file in guard.sh run-guard.py guard.py guard-rules.json LICENSE.md; do
   if cmp -s "$REPO_ROOT/klaude-plugin/scripts/guard/$file" "$REPO_ROOT/.codex/scripts/guard/$file"; then
     log_pass "Canonical copy: $file"
   else

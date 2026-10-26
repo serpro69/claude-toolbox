@@ -8,7 +8,9 @@ fixture=$(create_temp_dir "guard-generator")
 TEMP_DIRS+=("$fixture")
 mkdir -p "$fixture/scripts" "$fixture/klaude-plugin/scripts/guard" "$fixture/.claude" "$fixture/docs/user-guide"
 cp "$REPO_ROOT/scripts/generate-guard.sh" "$fixture/scripts/"
-cp -p "$REPO_ROOT/klaude-plugin/scripts/guard/"* "$fixture/klaude-plugin/scripts/guard/"
+for file in guard.sh run-guard.py guard.py guard-rules.json LICENSE.md; do
+  cp -p "$REPO_ROOT/klaude-plugin/scripts/guard/$file" "$fixture/klaude-plugin/scripts/guard/"
+done
 cp "$REPO_ROOT/.claude/settings.json" "$fixture/.claude/settings.json"
 cp "$REPO_ROOT/docs/user-guide/configuration.md" "$fixture/docs/user-guide/configuration.md"
 
@@ -25,7 +27,7 @@ assert_equals "$(jq -c '.secrets | unique | map("Read(" + . + ")")' "$fixture/kl
 log_test "Generation is idempotent and alternate output leaves inputs alone"
 bash "$fixture/scripts/generate-guard.sh" "$fixture/second"
 for file in .claude/settings.json .codex/rules/default.rules docs/user-guide/configuration.md \
-  .codex/scripts/guard/guard.sh .codex/scripts/guard/guard.py \
+  .codex/scripts/guard/guard.sh .codex/scripts/guard/run-guard.py .codex/scripts/guard/guard.py \
   .codex/scripts/guard/guard-rules.json .codex/scripts/guard/LICENSE.md; do
   cmp "$fixture/$file" "$fixture/second/$file"
   log_pass "Identical second render: $file"
