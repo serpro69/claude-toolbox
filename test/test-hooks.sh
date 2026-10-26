@@ -213,6 +213,16 @@ done
 log_test "Broken interpreter shim falls back to a working interpreter"
 run_guard "$read_payload" KK_GUARD_INTERPRETERS="$INTERPRETER_FIXTURE $TEST_PYTHON" GUARD_FIXTURE_MODE=broken
 assert_allow
+mkdir "$guard_test_dir/capture-loss"
+for stream in out err; do
+  log_test "Missing engine capture $stream must not look like silent allow"
+  run_guard "$read_payload" KK_GUARD_INTERPRETERS="$INTERPRETER_FIXTURE" \
+    GUARD_FIXTURE_MODE=missing-capture GUARD_CAPTURE_STREAM="$stream" \
+    GUARD_CAPTURE_DIR="$guard_test_dir/capture-loss" TMPDIR="$guard_test_dir/capture-loss"
+  # A failed forwarding command may add its own OS diagnostic before the deny.
+  stderr_output=$(tail -n 1 "$guard_test_dir/stderr")
+  assert_deny "failure"
+done
 log_test "Interpreter available only through PATH works"
 run_guard "$read_payload" KK_GUARD_INTERPRETERS=python3
 assert_allow

@@ -128,7 +128,7 @@ closed on every error path.
    path and no tool-name gate: design §7.1; dispatch and the unknown-tool
    allow live in the engine); interpreter list from `KK_GUARD_INTERPRETERS`
    or the default absolute list plus `PATH` fallback; run
-   `python3 -I guard.py` with the payload on stdin; any outcome other than
+   `python3 -I -S guard.py` with the payload on stdin; any outcome other than
    exit 0 or 2 → `fail_closed` which writes stderr, prints a JSON deny, exits
    2.
    → verify: `printf '{"tool_name":"Read","tool_input":{"file_path":"/x"}}' | bash guard.sh; echo $?` prints 0 with no output; the same payload with `file_path` `.env` and `cwd` set exits 2 with no config files present.
