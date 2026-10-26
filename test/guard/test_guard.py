@@ -8,8 +8,8 @@ Most cases call the engine in-process: a check that raises `Denied` refuses
 the call, a check that returns allows it. A small set runs `guard.py` as a
 real process to pin the stdout/stderr/exit-code contract.
 
-Python floor is 3.8. Verified under: Python 3.10.12 (oldest interpreter on
-the authoring machine, 2026-10-25). No 3.8 or 3.9 interpreter was available,
+Python floor is 3.8. Verified under Python 3.9.6 on macOS (2026-10-26) and
+Python 3.10.12 on Linux (2026-10-25). No 3.8 interpreter was available,
 so `test_engine_parses_as_python_3_8` additionally parses the engine with
 `ast.parse(feature_version=(3, 8))`, which rejects syntax newer than 3.8
 that the parser knows about (`match`, parenthesised context managers). It
@@ -110,7 +110,9 @@ class Sandbox(object):
     """Per-run directories the corpus placeholders point at."""
 
     def __init__(self):
-        self.base = tempfile.mkdtemp(prefix="kk-guard-test-")
+        # macOS may return /var/... while realpath resolves /private/var/....
+        # Keep fixture roots physical; explicit *-link fixtures cover aliases.
+        self.base = os.path.realpath(tempfile.mkdtemp(prefix="kk-guard-test-"))
         self.root = os.path.join(self.base, "project")
         self.home = os.path.join(self.base, "home")
         self.tmp = os.path.join(self.base, "tmp")
