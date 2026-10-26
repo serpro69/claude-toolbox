@@ -4,7 +4,7 @@
 > Created: 2026-10-20
 > Implementation plan: [./implementation.md](./implementation.md)
 > Tasks: [./tasks.md](./tasks.md)
-> Related: [ADR 0005](../../../adr/0005-codex-hook-enforcement-gap.md) (Codex hook enforcement gap), ADR 0012 (to be written by this feature; 0010 and 0011 are already allocated)
+> Related: [ADR 0005](../../../adr/0005-codex-hook-enforcement-gap.md) (Codex hook enforcement gap), [ADR 0012](../../../adr/0012-permission-guard-single-declaration.md) (single guard declaration)
 > Reviewed: 2026-10-25, two `/kk:review-design` passes merged and re-verified; all findings applied to this revision (see the git history for the per-finding mapping)
 
 ## 1. Problem
@@ -438,7 +438,12 @@ section inverted that and would have turned `sh -c 'rm -rf x'` into
      exempted while deleting project files;
    - collect path-like operands (contain `/`, start with `~` or `.`, or name
      an existing file) and check each against the secrets globs, raw and
-     resolved;
+     resolved. Retain resolvable literal relative directory changes as
+     additional possible directories for protected-path checks, while keeping
+     the temporary-cleanup exemption uncertain. For unquoted shell wildcards,
+     inspect existing filename matches without reading their contents; quoted
+     and escaped metacharacters remain literal. This does not expand variables,
+     braces or recursive glob patterns;
    - collect **mutation operands** per command and check them against the
      self-modification set and the secrets globs: `>`, `>>`, `tee`, `sed -i`,
      `dd of=` write their target; `cp` and `install` write their last operand;
@@ -452,7 +457,9 @@ section inverted that and would have turned `sh -c 'rm -rf x'` into
    non-shell `capy_execute` code): the text is additionally scanned for a
    write call (`open(..., 'w'|'a'|'x')`, `writeFile*`, `Path(...).write_*`,
    `shutil.copy*`, `shutil.move`, `os.rename`, `os.remove`, `fs.rename*`,
-   `fs.rm*`) whose argument names a protected file. Documented ceiling: a
+   `fs.rm*`) whose argument names a protected file. Decode common literal
+   character escapes before path checks, preserving raw-string spelling;
+   never evaluate expressions. Documented ceiling: a
    path assembled by concatenation is not detected.
 
 Known false-positive class that remains: a heredoc whose consumer is neither
@@ -1087,6 +1094,35 @@ particular, the local Apple Python 3.9.6 disables bytecode writes even under
 `-I -S`, so it receives no persistent-cache speedup. The performance claim
 applies to the measured default interpreter; it is not a guarantee for every
 supported Python or host. The 30 ms Read requirement remains open.
+
+### Final verification corrections (2026-10-26, Task 12)
+
+The full-feature code and specification reviews identified three protected-path
+gaps: literal relative directory changes lost possible path anchors, shell
+wildcards were checked only as literal text, and interpreter string escapes were
+not decoded. Synthetic regressions reproduced all three without executing
+submitted commands or reading real credentials. The corrected engine retains
+relative-directory candidates for denies (never for temporary exemptions),
+checks existing unquoted wildcard matches, and decodes literal character escapes
+without evaluating expressions. Quoted wildcard and raw-string controls remain
+allowed. The Codex engine was regenerated from the canonical source.
+
+| Linux check | Before corrections (`2376845`) | Corrected candidate |
+|---|---:|---:|
+| Read wrapper p95, 100 calls | 23.52 ms | **23.66 ms** |
+| Bash wrapper p95, 104 corpus rows | 40.34 ms | **41.59 ms** |
+| Engine suite, Python 3.10 / 3.12 | 93 tests each | **96 tests each** |
+
+Both measurements use the existing serial wrapper probes and default interpreter
+selection, with no CI timing exemption. Both local gates and both targets pass on
+this Linux host. Captured runs: baseline `db2a0ad9-a28a-4f87-b171-6fd9475e2e54`;
+corrected `30382d77-8dfc-4fb6-a474-8a54216a8c8a`. The unchanged full suites, Go,
+generation and documentation checks are recorded in Task 12's execution context.
+
+The user explicitly selected **"Keep the 30 ms requirement open pending macOS
+verification"**. No current macOS host was available. The preceding macOS result
+of 31.10 ms remains historical evidence, and the corrected engine must be
+remeasured there before Task 12.5 can close. This is not an acceptance waiver.
 
 ## 17. Not Doing
 

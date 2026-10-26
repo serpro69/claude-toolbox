@@ -502,6 +502,33 @@ class ShellTests(unittest.TestCase):
         self.check("cat ../README.md")
         self.check("echo x > ../.claude/settings.json", "selfmod")
 
+    def test_relative_directory_changes_preserve_protected_paths(self):
+        for command in ("cd sub && cat ../.env", "cd sub; cat ../.env",
+                        "cd sub && cd nested && cat ../../.env",
+                        "pushd sub && cat ../.env"):
+            with self.subTest(command=command):
+                self.check(command, "secrets")
+        self.check("cd sub && echo x > ../.claude/settings.json", "selfmod")
+        self.check("cd sub && cat ../README.md")
+
+    def test_shell_globs_check_matched_paths_and_preserve_quoting(self):
+        # Synthetic names only: policy evaluation never reads their contents.
+        for name in (".env", ".env.example", "public.txt"):
+            with open(os.path.join(self.sandbox.root, name), "w") as handle:
+                handle.write("synthetic fixture\n")
+        os.makedirs(os.path.join(self.sandbox.root, ".claude"))
+        with open(os.path.join(self.sandbox.root, ".claude", "settings.json"), "w") as handle:
+            handle.write("{}\n")
+        for command in ("cat .env*", "cat .en?", "cat .[e]nv", "cat '.en'v*",
+                        "cat < .env*", "cd sub && cat ../.env*"):
+            with self.subTest(command=command):
+                self.check(command, "secrets")
+        self.check("tee .claude/set*", "selfmod")
+        for command in ("cat .env.example", "cat '.env*'", 'cat ".env*"',
+                        r"cat .env\*", "cat *.txt", "cat *", "cat '*.env'*.example"):
+            with self.subTest(command=command):
+                self.check(command)
+
     def test_literal_and_expandable_heredocs(self):
         self.check('git commit -m "$(cat <<\'EOF\'\nrm -rf x\n$(cat .env)\n`cat .env`\nbuild/ dist/\nEOF\n)"')
         for delimiter in ("'EOF'", '"EOF"', "E'O'F", r"\EOF"):
@@ -1090,6 +1117,17 @@ class CapyTests(unittest.TestCase):
         ):
             with self.subTest(language=language, code=code):
                 self.check(tool, {"language": language, "code": code}, category)
+
+    def test_inline_escaped_literal_paths(self):
+        tool = "mcp__capy__capy_execute"
+        for code, category in ((r"open('\x2eenv').read()", "secrets"),
+                               (r"open('\u002eenv').read()", "secrets"),
+                               (r"open('\x2eclaude/settings.json','w')", "selfmod"),
+                               (r"Path('\x2eclaude/settings.json').write_text('x')", "selfmod"),
+                               (r"open('\x2eenv.example').read()", None),
+                               (r"open(r'\x2eenv').read()", None)):
+            with self.subTest(code=code):
+                self.check(tool, {"language": "python", "code": code}, category)
 
     def test_cwd_defaults_to_project_and_relative_override_ignores_payload_cwd(self):
         tool = "mcp__capy__capy_execute"

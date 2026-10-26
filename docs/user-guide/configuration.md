@@ -180,6 +180,8 @@ For capy code, omitted `cwd` means the project root. Relative cwd overrides reso
 
 Inspection is static: the guard does not execute submitted code or read the contents of an execute-file input. Paths assembled dynamically are outside its detection coverage, and non-shell mutation checks cover recognized literal write-call forms. Grep/Glob checks cover the search root, not every result's contents. Other execution tools need their own payload mapping. The Codex template supplies Bash, patch and capy adapters; see [Codex limitations](../providers/codex.md#known-limitations).
 
+For shell paths, the guard retains possible directories after literal relative changes and checks existing matches of unquoted filename wildcards. Quoted or escaped wildcard characters remain literal. Interpreter checks decode common character escapes in literal paths while preserving raw strings. These checks inspect filenames and submitted text, without executing code or reading matched file contents.
+
 ## Statusline
 
 Rich statusline with model, context %, git branch, session duration, thinking mode, and rate limits.
