@@ -59,6 +59,7 @@ in LICENSE.md beside this file. Parsing is static: commands and interpreter
 code are never run.
 """
 
+import glob as pathname_glob
 import json
 import os
 import re
@@ -751,10 +752,11 @@ def program_index(words):
 
 
 class ShellToken(object):
-    __slots__ = ("value", "raw", "operator")
+    __slots__ = ("value", "raw", "operator", "pattern")
 
-    def __init__(self, value, raw, operator=False):
+    def __init__(self, value, raw, operator=False, pattern=None):
         self.value, self.raw, self.operator = value, raw, operator
+        self.pattern = pattern
 
 
 class ShellBody(object):
@@ -938,7 +940,7 @@ def _shell_scan(text, start=0, stop="", depth=0):
                         bodies.append(ShellBody(body, is_interpreter(consumer), position))
                 pending = []
             continue
-        begin, quote, value = i, "", []
+        begin, quote, value, pattern, has_glob = i, "", [], [], False
         while i < len(text):
             ch = text[i]
             if not quote and text.startswith(("$'", '$"'), i):
@@ -951,14 +953,17 @@ def _shell_scan(text, start=0, stop="", depth=0):
                 if quote == "$'":
                     decoded, i = _ansi_escape(text, i)
                     value.append(decoded)
+                    pattern.append(pathname_glob.escape(decoded))
                     continue
                 following = text[i + 1]
                 if quote == '"' and following not in '$`"\\\n':
                     value.append("\\")
+                    pattern.append("\\")
                     i += 1
                 else:
                     if following != "\n":
                         value.append(following)
+                        pattern.append(pathname_glob.escape(following))
                     i += 2
                 continue
             if ch in "'\"" and (not quote or ch == quote or (quote == "$'" and ch == "'")):
@@ -972,14 +977,17 @@ def _shell_scan(text, start=0, stop="", depth=0):
                 body.position = len(tokens)
                 bodies.append(body)
                 value.append("Q")
+                pattern.append("Q")
                 continue
             if not quote and (ch in " \t\n" or any(text.startswith(op, i) for op in SHELL_OPERATORS)):
                 break
             value.append(ch)
+            pattern.append(pathname_glob.escape(ch) if quote else ch)
+            has_glob = has_glob or (not quote and ch in "*?[")
             i += 1
         if quote:
             raise failure("unterminated shell quote")
-        token = ShellToken("".join(value), text[begin:i])
+        token = ShellToken("".join(value), text[begin:i], pattern="".join(pattern) if has_glob else None)
         if tokens and tokens[-1].operator and tokens[-1].value in ("<<", "<<-"):
             pending.append((len(tokens) - 1, token.value, any(c in token.raw for c in "'\"\\"), tokens[-1].value == "<<-"))
         tokens.append(token)
@@ -1052,6 +1060,24 @@ def path_like(word, ctx):
                                for directory in (ctx.exec_dir,) + ctx.other_dirs))
 
 
+def shell_glob_paths(token, ctx):
+    """Inspect existing wildcard matches without reading data or running a shell.
+
+    The lexer escapes quoted/escaped metacharacters in the pattern. Keep the
+    absolute directory prefix literal too; checkout names can contain brackets.
+    No variable, brace, or recursive-glob expansion is performed.
+    """
+    if token.pattern is None:
+        return
+    for directory in (ctx.exec_dir,) + ctx.other_dirs:
+        pattern = token.pattern
+        if token.raw.startswith("~/"):
+            pattern = pathname_glob.escape(ctx.home) + pattern[1:]
+        pattern = os.path.join(pathname_glob.escape(directory), pattern)
+        for path in pathname_glob.iglob(pattern):
+            yield path
+
+
 def mutation_operands(segment, words):
     """Literal write targets; reads of settings remain permitted."""
     targets = []
@@ -1112,11 +1138,34 @@ def mutation_operands(segment, words):
 
 
 # Literal-only interpreter inspection: never eval the source or expand paths.
-CODE_STRING = re.compile(r"'((?:[^'\\]|\\.)*)'|\"((?:[^\"\\]|\\.)*)\"", re.DOTALL)
+CODE_STRING = re.compile(r"(?P<prefix>(?<!\w)[rRuUbBfF]{1,2})?"
+                         r"(?:'(?P<single>(?:[^'\\]|\\.)*)'|\"(?P<double>(?:[^\"\\]|\\.)*)\")", re.DOTALL)
 WRITE_CALL = re.compile(r"\b(open|(?:shutil\.)?(?:copy\w*|move)|os\.(?:rename|replace|remove|unlink)|"
                         r"(?:fs\.)?(?:writeFile\w*|appendFile\w*|rename\w*|rm\w*|unlink\w*))\s*\(")
-PATH_WRITE = re.compile(r"\b(?:pathlib\.)?Path\s*\(\s*(?P<path>'[^']*'|\"[^\"]*\")\s*\)"
+PATH_WRITE = re.compile(r"\b(?:pathlib\.)?Path\s*\(\s*(?P<path>[rRuU]?(?:'[^']*'|\"[^\"]*\"))\s*\)"
                         r"\s*\.write_\w*\s*\(")
+
+
+def code_string_value(match):
+    """Decode literal escapes only, never evaluate an interpreter expression."""
+    value = match.group("single") if match.group("single") is not None else match.group("double")
+    if "r" in (match.group("prefix") or "").lower():
+        return value
+    decoded, i = [], 0
+    while i < len(value):
+        if value[i] == "\\" and i + 1 < len(value):
+            if value[i + 1] in "abfnrtv\\'\"01234567xuU":
+                char, i = _ansi_escape(value, i)
+                decoded.append(char)
+                continue
+            if value[i + 1] in "/\n":
+                if value[i + 1] == "/":
+                    decoded.append("/")
+                i += 2
+                continue
+        decoded.append(value[i])
+        i += 1
+    return "".join(decoded)
 
 
 def call_arguments(text, start):
@@ -1148,7 +1197,7 @@ def call_arguments(text, start):
 def literal_argument(argument):
     argument = re.sub(r"^[A-Za-z_]\w*\s*=\s*", "", argument)
     match = CODE_STRING.fullmatch(argument)
-    return next((s for s in match.groups() if s is not None), None) if match else None
+    return code_string_value(match) if match else None
 
 
 def named_argument(args, name, position, default=None):
@@ -1161,7 +1210,7 @@ def named_argument(args, name, position, default=None):
 
 def check_inline_code(code, ctx, policy):
     for match in CODE_STRING.finditer(code):
-        path = next(s for s in match.groups() if s is not None)
+        path = code_string_value(match)
         if path_like(path, ctx):
             check_path(path, ctx, policy, "inline code")
     for match in WRITE_CALL.finditer(code):
@@ -1370,9 +1419,16 @@ def check_command(command, ctx, policy, depth=0):
         for i, token in enumerate(segment[:-1]):
             if token.operator and token.value in REDIRECTIONS - {"<<", "<<-", "<<<", ">&", "<&"}:
                 check_path(segment[i + 1].value, local, policy, "Bash redirection")
-        for path in mutation_operands(segment, words):
+        mutations = mutation_operands(segment, words)
+        for path in mutations:
             check_path(path, local, policy, "Bash write", mutation=True)
         check_destructive(segment, local, policy)
+        # Already-denied commands need no directory scan. In particular an rm
+        # glob never earns the literal-target temporary-cleanup exemption.
+        for token in segment:
+            if not token.operator:
+                for path in shell_glob_paths(token, local):
+                    check_path(path, local, policy, "Bash wildcard", mutation=token.value in mutations)
         for body in segment_bodies:
             if body.interpreter:
                 check_inline_code(body.text, local, policy)
@@ -1382,13 +1438,16 @@ def check_command(command, ctx, policy, depth=0):
             args = words[index + 1:]
             raw_args = command_tokens(segment)[index + 1:]
             directory_changed = True
-            literal_cd = (program == "cd" and len(args) == 1 and os.path.isabs(args[0])
-                          and not any(c in args[0] or c in raw_args[0].raw for c in "$*?[`{}"))
+            literal_target = (program in {"cd", "pushd"} and len(args) == 1
+                              and args[0] != "-" and not args[0].startswith("-")
+                              and not any(c in args[0] or c in raw_args[0].raw for c in "$*?[`{}"))
+            literal_cd = literal_target and program == "cd" and os.path.isabs(args[0])
             if (literal_cd and index == 0 and separator == "&&" and not has_or_branch
                     and previous_separator not in {"|", "|&"}):
                 current = command_context(current, os.path.normpath(args[0]), True)
             else:
-                candidates = (os.path.normpath(args[0]),) if literal_cd else ()
+                candidates = tuple(path for directory in (current.exec_dir,) + current.other_dirs
+                                   for path in resolve(args[0], directory, current.home)) if literal_target else ()
                 current = uncertain_context(current, ctx.exec_dir, *ctx.other_dirs, *candidates)
         # A failed cd can reach an OR/sequence branch in the old directory;
         # subshell changes do not propagate back to their parent either.

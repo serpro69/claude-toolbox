@@ -124,7 +124,8 @@ closed on every error path.
 **Steps.**
 
 1. Write `guard.sh` modelled on safe-claude-code's `guard.sh`: read stdin
-   once with the trailing-`x` trick; do not parse the payload (no read skip
+   once into a private temporary file, preserving every byte including NULs
+   and trailing newlines; do not parse the payload (no read skip
    path and no tool-name gate: design §7.1; dispatch and the unknown-tool
    allow live in the engine); interpreter list from `KK_GUARD_INTERPRETERS`
    or the default absolute list plus `PATH` fallback; run
