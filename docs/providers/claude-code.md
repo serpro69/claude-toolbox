@@ -30,6 +30,11 @@ Claude Code is the primary provider for claude-toolbox. All skills, agents, and 
 
 ## Permission Guard
 
+For an existing installation, follow the
+[permission-guard upgrade checklist](../user-guide/template-sync.md#upgrading-the-permission-guard).
+Template consumers update both the installed plugin and project configuration;
+plugin-only consumers update the plugin. Restart to load the new runtime.
+
 The plugin enforces its shipped baseline without template settings or guard config files. It covers `Bash`, `Read`, `Grep`, `Glob`, `Edit`, `Write`, `NotebookEdit`, and capy's three execution tools. Template installations additionally receive generated `Read(...)` secrets deny rules as a native fallback. Logs, build output, dependencies and `.env.example` are readable under the baseline.
 
 Use Claude Code 2.1.295+ with Bash, `jq` and Python 3.8+. The wrapper denies when it cannot evaluate a call, and the hook registration blocks failures/timeouts. Destructive rules apply in bypass mode too. Turning hooks off removes destructive and self-modification protection; plugin-only installations also lose the hook's secrets protection.

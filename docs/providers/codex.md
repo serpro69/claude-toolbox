@@ -63,9 +63,14 @@ The template registers `pretooluse-mcp.sh` for these three tools, under any MCP 
 
 ## Permission Guard
 
+For an existing installation, follow the
+[permission-guard upgrade checklist](../user-guide/template-sync.md#upgrading-the-permission-guard):
+sync the project, review/trust new or changed hooks, then restart. The Codex
+plugin alone does not deliver this guard runtime.
+
 All three adapters export the repository root before delegating to the generated engine. Relative Bash and patch paths resolve against the hook payload's cwd, while project policy remains anchored at the repository root. The guard inspects patch add, update, delete and move headers, including both sides of a move; it does not interpret patch contents as commands. Deleting a file is filesystem-destructive, with the engine's temporary-directory exemption and user category setting applied after secrets and self-modification checks.
 
-Denials return JSON plus a reason on stderr and exit 2. Adapter errors and missing interpreters also block. Session startup renders a protected-files advisory from the synced declaration, falling back to a static secret-files warning if it is unavailable. See the [guard rules and configuration](../user-guide/configuration.md) for project additions and user exceptions. Regenerate the copied engine with `make generate-guard`; never edit `.codex/scripts/guard/` directly.
+Denials return JSON plus a reason on stderr and exit 2. Adapter errors and missing interpreters also block. Session startup renders a protected-files advisory from the synced declaration, falling back to a static secret-files warning if it is unavailable. See the [guard rules and configuration](../user-guide/configuration.md) for project additions and user exceptions. Maintainers regenerate the copied engine with `make generate-guard`; consumers receive it through template sync. Never edit `.codex/scripts/guard/` directly.
 
 The adapter contract targets Codex 0.164.0. The [official hooks reference](https://learn.chatgpt.com/docs/hooks#pretooluse) documents `Edit|Write` aliases, `tool_input.command`, and exit-2 denial with stderr. Hook coverage is a guardrail; specialized paths can bypass it. A live 0.164.0 probe on 2026-10-26 verified project-file registration from a repository subdirectory: `SessionStart` ran, the patch hook allowed a benign relative path, and the guard denied a synthetic `.env` addition. No inline hook registration was used.
 

@@ -30,6 +30,14 @@ The Codex plugin includes skills and language-specific profile content (review c
 
 For MCP servers (Context7, Pal), see [Codex MCP Setup](../user-guide/mcp-servers.md#codex).
 
+## Upgrading
+
+For Claude Code, update the installed plugin and restart; plugin-only consumers
+do not need template sync. Codex plugin-only installations do not include the
+guard runtime and need template configuration to gain it. Follow the
+[permission-guard upgrade checklist](../user-guide/template-sync.md#upgrading-the-permission-guard)
+for commands, prerequisites and the steps for your installation.
+
 ## What's Included
 
 The plugin gives you:
