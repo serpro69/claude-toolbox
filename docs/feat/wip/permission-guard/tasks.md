@@ -257,7 +257,7 @@
 - [x] 10.2 Add the dated update to ADR 0005; add the 0012 row to `docs/contributing/adrs.md`; ask the user before adding the missing 0008/0009/0011 rows
 - [x] 10.3 Update `docs/user-guide/configuration.md` prose and hooks table (including the capy MCP channel) plus the new config subsection with the selfmod-blocks-settings-edits note and `disable_selfmod` example; `docs/providers/claude-code.md`; `docs/getting-started/plugin-only.md`
 - [x] 10.4 Update `docs/contributing/plugin-development.md` (fail-closed contract, toolbox `disable_selfmod` note), `testing.md`, `architecture.md`, `klaude-plugin/README.md`
-- [x] 10.5 Bump `klaude-plugin/.claude-plugin/plugin.json` minor version; confirm no live reference to `validate-bash` remains outside `docs/feat/done/`
+- [x] 10.5 Leave manifest versions at the last released version; the release workflow owns the next minor bump. Confirm no live reference to `validate-bash` remains outside `docs/feat/done/`. (Version ownership corrected by the user's 2026-10-26 instruction below.)
 
 ### Execution context
 - 2026-10-26 (observed): clean baseline `b32350cd3523c620623de1bca6ce6a3026f4d15c`; Tasks 6–9 are done. Authority: design §15/§18, implementation Task 10 and its subtasks above. Scope: user/provider/contributor documentation, ADR 0012 plus the dated ADR 0005 update/index, canonical plugin version 0.24.1 → 0.25.0 and generated Codex metadata. No runtime-policy change, release, tag or deployment is authorized by this increment. Task 12.5's measured performance shortfall remains open.
@@ -271,16 +271,33 @@
 - 2026-10-26 (completed): Task 10 is done. Canonical/generated plugin metadata is prepared at **0.25.0**; documentation, ADR, focused verification and independent review are complete. No release/tag/deployment or runtime-policy change occurred. Task 12 remains required, including the performance requirement in 12.5 and the documented Codex hook-discovery evidence limit; Task 11 is optional. The sixteen intended files are uncommitted; temporary Capy exceptions and generated-site byproducts leave no checkout diff. Optional prose follow-up suggested: `/kk:clarify-docs docs/user-guide/configuration.md`; it is not an acceptance gate.
 
 ## Task 11: Codex sandbox permission profile (optional)
-- **Status:** pending
+- **Status:** deferred to [GitHub #181](https://github.com/serpro69/claude-toolbox/issues/181), outside this feature's completion criteria
 - **Depends on:** Task 6
 - **Size:** S
 - **Can run in parallel with:** Task 9, Task 10
 - **Docs:** [implementation.md#task-11](./implementation.md#task-11-optional-codex-sandbox-permission-profile)
 
-### Subtasks
-- [ ] 11.1 Confirm the installed Codex version documents `[permissions.<name>.filesystem]` glob denies; stop here if not, recording the version
-- [ ] 11.2 Render the `[permissions.kk-guard.filesystem]` table from project-scope secrets globs in `generate-guard.sh`; verify a scratch `read_file` of `.env` is denied
-- [ ] 11.3 Ensure the sync TOML merge preserves the table and the freshness check covers it
+The optional capability check, generated filesystem profile, native-read probe,
+and sync/freshness coverage are tracked in #181 rather than a second pending
+checklist here. The implementation-plan section remains background for that issue.
+
+## Follow-ups transferred to GitHub (2026-10-26)
+
+The user requested separate issues and links in this task list. These items are
+deferred to the linked issues; they are not pending acceptance work for this
+feature. Historical execution notes below retain their original observations.
+
+| Follow-up | Tracking |
+|---|---|
+| Missing project hooks with `--ignore-user-config` | [#179](https://github.com/serpro69/claude-toolbox/issues/179) |
+| Misleading adapter-failure text after a policy denial | [#180](https://github.com/serpro69/claude-toolbox/issues/180) |
+| Native Codex filesystem protection for secret reads (former Task 11) | [#181](https://github.com/serpro69/claude-toolbox/issues/181) |
+| Interactive hook review, persisted trust, restart and definition updates | [#182](https://github.com/serpro69/claude-toolbox/issues/182) |
+| Settings exclusions during legacy plugin migration | [#183](https://github.com/serpro69/claude-toolbox/issues/183) |
+| External-review approval rejection and Claude CLI timeouts | [#184](https://github.com/serpro69/claude-toolbox/issues/184) |
+
+Task 12.5's performance acceptance remains open; creating these issues does not
+waive the 30 ms Read target.
 
 ## Task 12: Final verification
 - **Status:** in-progress
@@ -295,6 +312,13 @@
 - [ ] 12.4 Run `/kk:review-spec` to verify the implementation matches design.md and implementation.md
 - [ ] 12.5 Complete performance acceptance (owner unassigned): the wrapper improvement now passes the unchanged 60/100 ms local gates and 50 ms Bash target, but Read p95 40.92 ms still misses 30 ms. Optimize and remeasure on supported hosts, or obtain an explicit acceptance-criteria change before feature completion. Preserve the failed Task 9 and comparison results in design §16; measurement completion is not a performance waiver.
 - [x] 12.6 Resolve Codex project-hook discovery: inspect effective config layers and discovered hook sources, reproduce with a visible startup hook, and verify an intercepted patch through project-file registration.
+
+### Merge/release readiness observations (2026-10-26)
+- Final documentation reconciliation (Task 12.2, owner unassigned): `docs/contributing/testing.md` still says ordinary Codex project-hook discovery needs verification. Update that operative guidance to the Task 12.6 result and its normal-config/trust limits; preserve historical probe results. This was noticed during the user's merge/release status request, after the scoped discovery documentation commit.
+- Release-version coordination resolved: the manual `0.25.0` bump would have caused `.github/workflows/release.yml` to reject a `v0.25.0` request as equal to the current manifest version. The user explicitly requested reverting that bump. Canonical and regenerated Codex manifests are restored to the pre-feature `0.24.1`, matching the unchanged marketplace version. The release workflow owns release-time version updates; Task 10.5, implementation Task 10 and design §14 now express that ownership. Earlier execution entries remain historical. No release or tag was created.
+- Verification of the version correction: `make generate-kodex` passed generator Go tests, plugin structure (52 cases / 258 assertions), and Codex structure (19 cases / 41 assertions). Only the generated manifest changed under `kodex-plugin/`; no generated agent or runtime file changed. Capy capture rejected before admission on macOS, so the previously authorized direct-local path used a temporary `Bash(make generate-kodex)` exception, removed after verification. The six follow-up issues were created before the manifest correction, as requested.
+- Independent review: `code-reviewer` (gpt-6.1-sol, OpenAI) **APPROVED** the five-file issue-tracking/version correction against `af5dc563`, including the final implementation file-list caption. No findings or outstanding evidence requests; source and submitted issue bodies inspected, execution and GitHub creation attributed to the author. The earlier external-export rejection remains unresolved under #184 and was not retried. This scoped approval does not close the remaining feature acceptance checks.
+- The 30 ms Read target remains an explicit acceptance requirement under Task 12.5. Moving further optimization to a follow-up issue requires an explicit release acceptance decision and updates to the live criteria; the earlier "Finalize; keep 30 ms open" decision did not waive it. Other follow-ups already recorded here do not become release gates merely because their causes remain unknown.
 
 ### Execution context — Codex hook discovery (12.6)
 - 2026-10-26 (authorized/in-progress): the user requested "Let's work on the codex hook-discovery". Clean baseline `c245a88c`; installed Codex is still 0.164.0. Investigate Task 9's two project-file attempts and close their evidence gap without changing guard policy or the open performance target. Preserve prior failed observations. Scope initially includes scratch diagnostics, provider guidance and these feature records; change shipped registration only if evidence identifies a defect. Verification must distinguish project-layer loading, hook trust and actual invocation. Capy again rejected capture before admission because macOS lacks Linux supervision; the previously recorded direct-local-verification authorization applies. No routine check has run yet.
@@ -352,7 +376,7 @@ Task 2 ────────────────┬───────�
                        │                        ▲      │             │
 Task 6 ────────────────┴────────────────────────┘      ├──► Task 10 ─┘
 Task 7 ────────────────────────────────────────────────┘ (Task 10 only)
-Task 6 ──► Task 11 (optional) ───────────────────────────────────────► (not gating Task 12)
+Task 6 ──► GitHub #181 (former optional Task 11; not gating Task 12)
 ```
 
 Task 9 depends on Tasks 2, 4, 5 and 8; Task 10 on Tasks 6, 7 and 8; Task 8

@@ -570,7 +570,7 @@ the decisions are recorded as an ADR.
 - `docs/getting-started/plugin-only.md`
 - `docs/contributing/plugin-development.md`, `docs/contributing/testing.md`, `docs/contributing/architecture.md`
 - `klaude-plugin/README.md`
-- `klaude-plugin/.claude-plugin/plugin.json` (minor version bump)
+- `klaude-plugin/.claude-plugin/plugin.json` (release metadata; the release workflow owns version bumps)
 
 **Steps.**
 
@@ -596,10 +596,18 @@ the decisions are recorded as an ADR.
    `disable_selfmod` entry that lifts it.
    → verify: `grep -rn "validate-bash" docs/ klaude-plugin/ AGENTS.md` returns
    only historical references under `docs/feat/done/`.
-4. Bump `plugin.json` to the next minor version.
-   → verify: `bash test/test-plugin-structure.sh` green.
+4. Leave plugin manifest versions at the last released version. The release
+   workflow owns the next minor bump, updating both manifests and the marketplace
+   together when publishing. This supersedes the original manual-bump step under
+   the user's 2026-10-26 instruction. Regenerate the Codex manifest from the
+   canonical source after reverting the premature bump.
+   → verify: canonical/generated/marketplace versions agree; `make generate-kodex`
+   passes its tests and structure checks.
 
 ## Task 11 (optional): Codex sandbox permission profile
+
+Deferred to [GitHub #181](https://github.com/serpro69/claude-toolbox/issues/181).
+The following plan is background for that issue, not pending feature work.
 
 **Goal.** Close the `read_file` gap natively where the Codex version supports
 filesystem permission profiles.
