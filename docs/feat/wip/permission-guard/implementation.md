@@ -639,6 +639,15 @@ filesystem permission profiles.
 Run `/kk:test`, `/kk:document`, `/kk:review-code` (bash and Python), and
 `/kk:review-spec` against this feature directory.
 
+Performance increment (2026-10-26): the wrapper now invokes the small
+`klaude-plugin/scripts/guard/run-guard.py` launcher under `-I -S`, importing
+the adjacent engine by absolute filename. The generator copies this launcher
+to Codex too. Standard Python bytecode caching avoids source compilation when
+available; every invocation still reloads the declaration/configs and evaluates
+the payload. No timing thresholds changed. Design §16 retains all measurements
+and the Apple-Python/no-cache limits. This supersedes the direct `guard.py`
+launch in Task 2; the engine remains independently executable for diagnostics.
+
 ## Task 13: capy MCP execution channel
 
 **Goal.** A shell program or script submitted to `capy_execute`,

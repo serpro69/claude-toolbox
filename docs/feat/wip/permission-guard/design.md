@@ -310,7 +310,14 @@ Files: `klaude-plugin/scripts/guard/guard.sh` (wrapper),
   on `PATH` is the final fallback for pyenv and uv users. Overridable for
   tests via `KK_GUARD_INTERPRETERS`. The macOS preference avoids the measured
   Command Line Tools interpreter overhead without requiring Homebrew.
-- Runs `python3 -I -S guard.py` with the payload on stdin. `-I` ignores
+- Runs `python3 -I -S run-guard.py` with the payload on stdin. The small
+  launcher imports the adjacent `guard.py` by absolute filename without
+  adding its directory or the project directory to Python's search path.
+  Python may reuse its interpreter-specific `__pycache__` bytecode beside
+  the engine. Rules, configs and decisions are never cached; the engine
+  evaluates them on every invocation. Missing/unwritable caches fall back
+  to source, and loader failures still reach the wrapper's denial boundary.
+  `-I` ignores
   Python environment overrides and user-site imports; `-S` skips unused
   site initialization for this standard-library-only engine. Payload buffering,
   interpreter retry and output validation retain their fail-closed contracts.
@@ -602,7 +609,7 @@ Projections:
    outranks every user-level rule on Codex and would silently disable §8.2
    loosening there. Codex validates each rule's `match`/`not_match` at load,
    so the examples live in the declaration next to the pattern they prove.
-3. **Codex engine copy.** `guard.sh`, `guard.py` and `guard-rules.json`
+3. **Codex engine copy.** `guard.sh`, `run-guard.py`, `guard.py` and `guard-rules.json`
    copied byte-for-byte to `.codex/scripts/guard/`. The generated Codex
    plugin ships no scripts, so the template is the only delivery path.
 4. **Docs table.** A generated block in `docs/user-guide/configuration.md`
@@ -1048,6 +1055,38 @@ Bash target. **The 30 ms Read target is not met and remains a feature acceptance
 item.** These measurements do not establish performance on other hosts.
 All attempt logs are retained under
 `/private/tmp/kk-permission-performance-20261026/`.
+
+### Second performance pass (2026-10-26, Task 12.5)
+
+Baseline: `fa4589295a8e1c8fd3dfc9b034a4d2e3c082c9fe`, macOS arm64,
+default Homebrew Python 3.15.1, unchanged 100-Read/104-Bash hook benchmark,
+unset `CI`. The user explicitly requested direct tests without Capy.
+Evidence: `/private/tmp/kk-guard-performance2-20261026/`.
+
+| Attempt | Read p95 | Bash p95 | Interpretation |
+|---|---:|---:|---|
+| Initial baseline alongside component profiling | 42.96 ms | 46.50 ms | Retained; excluded from comparison because the probes overlapped |
+| Serial unchanged baseline | 37.27 ms | 42.50 ms | Comparison baseline |
+| Small launcher importing the engine | 31.32 ms | 36.96 ms | Both gates pass; Read target still missed |
+| Also bypass the wrapper's directory subshell | 33.57 ms | 36.18 ms | No consistent additional gain; shortcut removed |
+| Final launcher, after removing the shortcut | **31.10 ms** | **34.75 ms** | 51 cases / 248 assertions pass; Read target remains open |
+
+Component profiling measured about 6.7 ms compiling the engine's source on
+each process start, versus about 3 ms evaluating the policy. The launcher
+uses the standard import loader to avoid repeated source compilation when
+bytecode is available. It does not change the engine or declaration, skip
+checks, cache configuration, or broaden the import search path. The generator
+copies the launcher along with the existing files; caches are local runtime
+artifacts and are not shipped. Python validates ordinary bytecode caches by
+source timestamp and size. Engine/cache directories require the same trust as
+the installed engine itself; existing installed-plugin and Codex script
+self-protection covers both.
+
+Cold starts and installs that cannot write caches still compile source. In
+particular, the local Apple Python 3.9.6 disables bytecode writes even under
+`-I -S`, so it receives no persistent-cache speedup. The performance claim
+applies to the measured default interpreter; it is not a guarantee for every
+supported Python or host. The 30 ms Read requirement remains open.
 
 ## 17. Not Doing
 

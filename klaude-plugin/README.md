@@ -27,7 +27,9 @@ See the [Skills](https://serpro69.github.io/claude-toolbox/latest/user-guide/ski
 
 ## Permission guard
 
-The [shipped declaration](scripts/guard/guard-rules.json), [wrapper](scripts/guard/guard.sh) and [engine](scripts/guard/guard.py) enforce the same baseline even on plugin-only installs. Use Claude Code 2.1.295+, Bash, `jq` and Python 3.8+. The hook covers Bash, Read/Grep/Glob, Edit/Write/NotebookEdit and `capy_execute`, `capy_execute_file`, `capy_batch_execute` under any MCP server name.
+The [shipped declaration](scripts/guard/guard-rules.json), [wrapper](scripts/guard/guard.sh), [launcher](scripts/guard/run-guard.py) and [engine](scripts/guard/guard.py) enforce the same baseline even on plugin-only installs. Use Claude Code 2.1.295+, Bash, `jq` and Python 3.8+. The hook covers Bash, Read/Grep/Glob, Edit/Write/NotebookEdit and `capy_execute`, `capy_execute_file`, `capy_batch_execute` under any MCP server name.
+
+The launcher imports the adjacent engine under isolated Python, allowing Python's normal bytecode cache to reduce startup time. Rules and configuration are reloaded on every call. Caches stay beside the installed engine; cold starts and runtimes that cannot write caches still evaluate source. Unexpected loading failures block through the wrapper.
 
 Secrets are protected across those channels; destructive commands deny even in bypass mode. Literal `rm` cleanup beneath temporary roots is exempt, but secrets and protected configuration still apply. Baseline policy allows logs, dependencies, build output and `.env.example`. Grep/Glob checks only the search root; dynamically assembled interpreter paths and unregistered execution tools are outside complete coverage.
 
