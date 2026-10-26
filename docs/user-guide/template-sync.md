@@ -34,6 +34,99 @@ Repos created from this template can pull configuration updates via the **Templa
 
     Requires `jq`, `git`, `curl`, `yq` ([mikefarah/yq](https://github.com/mikefarah/yq)), and Python 3 (standard library only). Python preserves unchanged Codex MCP table formatting. Review changes with `git diff` before committing.
 
+## Upgrading the permission guard
+
+Claude Code receives the runtime guard through the **kk plugin** and its native
+secrets deny baseline through **template sync**. Codex receives the guard engine,
+adapters, hook registrations and native rules through **template sync**. Updating
+the installed Claude plugin and syncing a project are separate operations.
+
+Use a release containing the permission-guard feature. The commands below follow
+the published marketplace and the sync script's `latest` version; they do not
+install unreleased feature-branch work. To select a particular template release,
+add `--version <release-tag>` to both sync commands. That selects the template
+version only, not the installed plugin version.
+
+| Your installation | Upgrade steps |
+|---|---|
+| Claude Code with template configuration | Update the plugin, sync each project, then restart Claude Code |
+| Claude Code plugin-only | Update the plugin and restart Claude Code; skip template sync |
+| Codex with template configuration | Sync each project, review/trust new or changed hooks, then restart Codex |
+| Codex plugin-only | [Adopt the template configuration](../getting-started/adopting.md) to receive the guard; this repository's Codex plugin supplies skills and profiles only |
+
+### 1. Check prerequisites
+
+The guard needs Bash, `jq` and Python 3.8+. Claude Code also needs version
+2.1.295+ for the configured hook-failure behavior. Template sync has the additional
+tools listed under [Using Template Sync](#using-template-sync). Hooks must remain
+enabled for runtime protection.
+
+If you use sync exclusions for `.claude/settings.json` or `.codex/` files, review
+them before upgrading: excluded files will keep their existing configuration.
+Guard configuration files are optional; the shipped baseline works without them.
+
+### 2. Update the Claude plugin
+
+For Claude Code installations, run these commands in your terminal, from the
+consumer project:
+
+```bash
+claude plugin marketplace update claude-toolbox
+claude plugin update kk@claude-toolbox
+```
+
+The first command refreshes the marketplace listing; the second updates the
+installed plugin. For project/local-scoped installations, repeat in each project
+that has its own installation. See Claude Code's
+[plugin update instructions](https://code.claude.com/docs/en/discover-plugins#update-plugins-now).
+Codex-only consumers skip this step.
+
+### 3. Sync template configuration
+
+For template installations, preview from each consumer project's root:
+
+```bash
+.claude/toolbox/scripts/template-sync.sh --local --dry-run
+```
+
+Review **Permission deny entries removed** before applying. Sync replaces
+`permissions.deny`, including project-only entries. Preserve intentional project
+secrets globs or destructive rules in `.claude/kk-guard.json` using
+[Guard Configuration](configuration.md#guard-configuration); merge into an
+existing file rather than overwriting it. For restrictions outside that schema,
+retain control of the settings file through [sync exclusions](#sync-exclusions).
+Existing `.claude/kk-guard.json` and `settings.local.json` are preserved, and sync
+does not edit user-level settings. Denies in those other settings remain active.
+
+Apply the reviewed changes, then inspect `git diff` before committing:
+
+```bash
+.claude/toolbox/scripts/template-sync.sh --local
+```
+
+The [GitHub Actions or Claude Code sync flows](#using-template-sync) are equivalent
+ways to deliver these files; merge the resulting PR when using Actions.
+Very old sync scripts may need the documented
+[one-time second run](#self-updating-sync-script).
+
+Consumers receive generated guard artifacts through sync and do not need to run
+`make generate-guard`. Sync preserves existing capy-owned registrations; a normal
+guard upgrade does not require rerunning `capy setup`.
+
+### 4. Activate the updated guard
+
+- **Claude Code:** restart after the plugin update and any template sync. Check
+  `/plugin` to confirm that `kk@claude-toolbox` is enabled at the intended version.
+  Updating only the plugin leaves old template denies in place; syncing only the
+  template leaves the installed plugin's old runtime in place. Full template
+  installations need both updates.
+- **Codex:** open the synced project with normal configuration loading, trust the
+  project if needed, and use `/hooks` to review and trust new or changed toolbox
+  hook definitions. Restart after trusting startup hooks. Codex skips untrusted
+  definitions, so copied files alone do not activate protection. See the
+  [official hook-trust instructions](https://learn.chatgpt.com/docs/hooks#review-and-trust-hooks)
+  and the [provider guide's version and activation limits](../providers/codex.md#permission-guard).
+
 ## Troubleshooting
 
 ### Sync stalls at "Fetching templates"
@@ -106,7 +199,7 @@ apply run and it expires, inspect `git diff` for partial updates before retrying
 
 ## What Gets Synced
 
-**Updated:** `.claude/` (settings, CLAUDE.extra.md, statusline scripts), `.codex/` (config.toml, hooks, rules, scripts, agents), and the sync infrastructure itself (see [Syncing Workflow Files](#syncing-workflow-files) for permission requirements). Skills, commands, and hooks are managed by the plugin system — not template sync.
+**Updated:** `.claude/` (settings, CLAUDE.extra.md, statusline scripts), `.codex/` (config.toml, hooks, rules, scripts, agents), and the sync infrastructure itself (see [Syncing Workflow Files](#syncing-workflow-files) for permission requirements). Claude Code's plugin-provided skills, commands, agents and hooks are updated through the plugin system. Codex's guard hooks and runtime are delivered in the synced `.codex/` tree; its plugin supplies skills and profiles. See [Upgrading the permission guard](#upgrading-the-permission-guard) for the complete consumer procedure.
 
 **Preserved:** Project-specific values (name, language, prompts), `settings.local.json`, `.claude/kk-guard.json`, gitignored files. The project guard config is excluded automatically: sync never copies upstream's file, overwrites yours, or reports yours as deleted.
 
