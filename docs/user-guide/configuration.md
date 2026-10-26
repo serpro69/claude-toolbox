@@ -10,11 +10,15 @@ claude-toolbox provides opinionated defaults for permissions, statusline, hooks,
     - **`.claude/settings.json`** — upstream-managed defaults, synced from this template (permissions baseline, env vars, model, plugins, statusline)
     - **`.claude/settings.local.json`** — your per-repo overrides, never synced (hooks, MCP server enables, additional permissions, personal preferences)
 
-    You can edit `settings.json` directly — values will be intelligently merged with upstream settings. But the general advice is to place your customizations in `settings.local.json`. As an added bonus, "Don't ask again" grant prompts in Claude Code sessions land in local settings automatically (as of v2.1.92).
+    Use `settings.local.json` for personal settings. Template sync merges most settings, but replaces `permissions.deny` with the upstream secrets baseline and reports removed entries; `permissions.allow` remains union-merged. The guard protects both settings files from agent edits. A person can edit them directly, or enable the scoped `disable_selfmod` exception described below.
 
 ## Permission Baselines
 
-The permission baseline below is generated from `klaude-plugin/scripts/guard/guard-rules.json` with `make generate-guard`. Template sync replaces `permissions.deny` with this baseline; project additions belong in `.claude/kk-guard.json`. Other settings, including `permissions.allow`, retain their normal merge behavior. Per-repo MCP tool permissions go in `settings.local.json`.
+The permission guard separates secrets, destructive operations and changes to its own configuration. Its baseline allows ordinary logs, dependencies, build output and `.env.example`; projects can add their own restrictions. A settings allow entry cannot override a secrets deny.
+
+The tables below are generated from `klaude-plugin/scripts/guard/guard-rules.json` with `make generate-guard`. Template sync replaces `permissions.deny` with the secrets projection; project additions belong in `.claude/kk-guard.json`. See [template sync](template-sync.md) for dropped-entry reports and the `sync_exclusions` opt-out. Per-repo MCP tool permissions go in `settings.local.json`.
+
+Self-modification protection also blocks an agent from adding an allow entry to `.claude/settings.json` or `.claude/settings.local.json`. The `disable_selfmod` example below lets the user authorize those edits for a chosen project; it does not loosen secrets.
 
 <!-- BEGIN GUARD-RULES -->
 ### Secrets
@@ -106,20 +110,73 @@ Project config may add paths under `selfmod`. To let an agent edit settings or g
 This exception does not allow reading or writing secrets.
 <!-- END GUARD-RULES -->
 
+## Guard Configuration
+
+The baseline ships inside the Claude plugin and runs even when neither configuration file exists. The Codex template carries the same engine and declaration. These files are independent of provider permission settings:
+
+| File | Owner and purpose |
+|------|-------------------|
+| `<project>/.claude/kk-guard.json` | Committed project restrictions; adds secrets globs, destructive rules or protected paths |
+| `~/.claude/kk-guard.json` | Machine owner's exceptions; loosens destructive categories or self-modification protection for selected projects |
+
+### Project restrictions
+
+Project configuration only adds protection. For example:
+
+```json
+{
+  "version": 1,
+  "secrets": ["./**/local-secrets.json"],
+  "selfmod": [".project-policy.json"],
+  "destructive": {
+    "deployment": [
+      {"program": "deploy", "subcommand": "prod", "reason": "deploy prod changes production"}
+    ]
+  }
+}
+```
+
+Secrets globs use `./**/` for project paths, `~/` for home paths, or `//` for absolute paths. They match requested and resolved paths. Project-relative policy stays anchored to the project root even when a shell runs in a subdirectory. Destructive rules use `program`, optional ordered `subcommand`, argument regex lists `flags_any`/`flags_all`/`flags_none`, and a `reason`; use the shipped declaration as the complete rule reference. The only supported named exemption is `targets_under_tmp`. Project config cannot disable categories or remove baseline rules. Template sync leaves this project-owned file alone.
+
+### User exceptions
+
+The user edits this file directly; the guard protects it from agent writes. Merge entries into an existing `projects` object rather than replacing other project entries. For example:
+
+```json
+{
+  "version": 1,
+  "projects": {
+    "*": {"allow_patterns": ["^git clean -n"]},
+    "/absolute/path/to/ops": {"disable_categories": ["infra"]},
+    "/absolute/path/to/claude-toolbox": {"disable_selfmod": true}
+  }
+}
+```
+
+Use physical absolute project paths (`pwd -P`). The engine combines `*` with the single longest matching directory prefix; shorter matching prefixes contribute nothing. Lists are combined, and `disable_selfmod` is enabled if either selected entry enables it. A parent path covers nested repositories and worktrees.
+
+`allow_patterns` applies separately to each normalized simple command, including extracted shell bodies. Thus `^git clean -n` can exempt `git clean -nd`, but not the `rm` in `git clean -nd; rm -rf ./work`. These patterns never exempt secrets or protected configuration. `disable_selfmod` permits settings/guard edits only; it also leaves secrets protected. On Codex, native forbids for `rm`, `shred`, `sudo`, `su` and `doas` still win over guard exceptions.
+
+Missing config files leave the baseline active. Invalid JSON or invalid supported values produce a visible `systemMessage` and skip that file's changes; the other valid layer still applies. Unknown keys are reported and ignored. Secrets are never loosened by user configuration.
+
 ## Hooks
 
-The plugin ships two hooks:
+The Claude plugin ships two hooks. It needs Bash, `jq`, Python 3.8+ and Claude Code 2.1.295+ for the declared [`onFailure: "block"` behavior](https://code.claude.com/docs/en/hooks#block-the-action-when-a-hook-fails).
 
 | Hook | Trigger | Description |
 |------|---------|-------------|
 | Plugin root export | `SessionStart` | Exports `TOOLBOX_PLUGIN_ROOT` into the session environment so every Bash call has a reliable path to the plugin installation directory |
-| Permission guard | `PreToolUse` on `Bash`, file tools, and capy execution tools | Enforces the generated secrets policy, destructive-command rules, and protected configuration paths |
+| Permission guard | `PreToolUse` on `Bash`, `Read`, `Grep`, `Glob`, `Edit`, `Write`, `NotebookEdit`, and capy execution tools | Enforces secrets, destructive-command rules, and protected configuration paths; denies on guard failures |
+
+Ordinary allowed calls produce no output and exit 0; invalid-config warnings may emit `systemMessage`. Denials emit JSON, a reason on stderr, and exit 2. Missing/broken interpreters, a corrupt declaration, crashes and malformed engine output deny the call. Claude also blocks hook failures/timeouts through `onFailure: "block"`. A machine without a working Python interpreter blocks every matched tool, including reads, until repaired.
+
+Destructive operations are denied in every permission mode, including bypass mode. The reason names the matched category and the way through: the user runs the operation directly or configures an applicable exception. Disabling Claude hooks removes destructive and self-modification protection. Template users retain the native secrets settings baseline; plugin-only users have no such fallback.
 
 The guard checks `capy_execute`, `capy_execute_file`, and `capy_batch_execute` even when capy is registered under a different MCP server name. Shell code uses the same checks as Bash; other languages use the existing literal-path and write-call scans. Every batch command is checked independently, and one denied command blocks the entire batch before execution.
 
 For capy code, omitted `cwd` means the project root. Relative cwd overrides resolve from that root; absolute overrides select that directory. Each batch command starts in the selected directory. The `capy_execute_file.path` input stays project-root-relative regardless of where its processing code runs. These path parameters are literal paths, without shell-variable or tilde expansion.
 
-Inspection is static: the guard does not execute submitted code or read the contents of an execute-file input. Paths assembled dynamically are outside its detection coverage, and non-shell mutation checks cover the recognized literal write-call forms. Codex delivery currently includes the shared engine; its MCP hook adapter is still pending, as described in [Codex limitations](../providers/codex.md#known-limitations).
+Inspection is static: the guard does not execute submitted code or read the contents of an execute-file input. Paths assembled dynamically are outside its detection coverage, and non-shell mutation checks cover recognized literal write-call forms. Grep/Glob checks cover the search root, not every result's contents. Other execution tools need their own payload mapping. The Codex template supplies Bash, patch and capy adapters; see [Codex limitations](../providers/codex.md#known-limitations).
 
 ## Statusline
 

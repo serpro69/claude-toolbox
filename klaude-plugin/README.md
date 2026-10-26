@@ -12,7 +12,7 @@ Why `kk`? I have `jj` and `kk` mappings in nvim to go back to normal mode, and i
 /plugin install kk@claude-toolbox
 ```
 
-All skills appear as `/skill-name` in the slash command menu (annotated with `(kk)`). No additional configuration needed.
+All skills appear as `/skill-name` in the slash command menu (annotated with `(kk)`). The permission guard is active without a separate policy file; its runtime requirements and exceptions are described below.
 
 Use `/kk:brainstorm` for an optional conversation about a technical idea or decision. It asks one question at a time, adapts to the clarity you need, and ends with a chat-only recap of decisions, rationale, and open assumptions. Request `/kk:design` when you want written design documents, an implementation plan, and tasks; brainstorming creates no files and does not start that workflow automatically.
 
@@ -20,10 +20,28 @@ Use `/kk:brainstorm` for an optional conversation about a technical idea or deci
 
 - **15 workflow and utility skills** — `/kk:design` → `/kk:review-design` → `/kk:implement` → `/kk:review-code` → `/kk:test` → `/kk:document`, plus utilities including `/kk:clarify-docs` for existing documentation and PR drafts
 - **Commands** — isolated variants for code review, CoVe and spec review
-- **Hooks** — Bash validation (blocks commands touching sensitive paths)
+- **Hooks** — permission guard for secrets, destructive operations and protected configuration on Bash, file tools and capy execution tools
 - **Profiles** — per-domain content (Go, Java, JS/TS, Kotlin, K8s, Python) with review checklists, implementation gotchas, design prompts, test validators, and doc rubrics
 
 See the [Skills](https://serpro69.github.io/claude-toolbox/latest/user-guide/skills/) and [Profiles](https://serpro69.github.io/claude-toolbox/latest/user-guide/profiles/) documentation for details.
+
+## Permission guard
+
+The [shipped declaration](scripts/guard/guard-rules.json), [wrapper](scripts/guard/guard.sh) and [engine](scripts/guard/guard.py) enforce the same baseline even on plugin-only installs. Use Claude Code 2.1.295+, Bash, `jq` and Python 3.8+. The hook covers Bash, Read/Grep/Glob, Edit/Write/NotebookEdit and `capy_execute`, `capy_execute_file`, `capy_batch_execute` under any MCP server name.
+
+Secrets are protected across those channels; destructive commands deny even in bypass mode. Literal `rm` cleanup beneath temporary roots is exempt, but secrets and protected configuration still apply. Baseline policy allows logs, dependencies, build output and `.env.example`. Grep/Glob checks only the search root; dynamically assembled interpreter paths and unregistered execution tools are outside complete coverage.
+
+Guard failures block: missing interpreters, crashes or invalid output do not silently disable it. Ordinary allow is silent with exit 0; denial returns JSON, a reason on stderr and exit 2. The hook registration also blocks launch failures and timeouts. If you disable hooks, this plugin-only installation has no native settings baseline to fall back on.
+
+Project `.claude/kk-guard.json` can add `secrets`, `destructive` rules and `selfmod` paths, with `"version": 1`. Only the user-owned `~/.claude/kk-guard.json` can loosen destructive categories or self-modification protection. Its `projects` object combines `*` with the longest physical absolute project-path prefix. `disable_categories` removes selected destructive categories; `allow_patterns` exempts individual simple commands only. Neither can loosen secrets.
+
+Settings files are protected too: an agent cannot add a permission allow entry without a user exception. To permit settings/guard edits for one checkout, the user merges this entry into their user config:
+
+```json
+{"version":1,"projects":{"/absolute/path/to/repo":{"disable_selfmod":true}}}
+```
+
+This still protects secrets. Invalid configuration is reported through `systemMessage` and does not weaken the baseline. The Codex plugin distributes skills/profiles only; the separate template supplies Codex adapters and native rules, whose unconditional forbids can outrank these user exceptions.
 
 ## Isolated reviews with external models
 

@@ -31,8 +31,10 @@ Run a single suite:
 | `test-manifest-jq.sh` | JSON generation patterns, special character handling, schema validation, round-trip |
 | `test-semver-compare.sh` | Semver comparison logic used by release workflows |
 | `test-cpr.sh` | Claude Plugin Root resolver — exact/fuzzy matching, project-path resolution cascade (project → user → last-installed), install-path validation, env var precedence, error handling |
-| `test-hooks.sh` | Hook script validation (Bash denylist patterns, capy HTTP interception) |
-| `test-codex-hooks.sh` | Codex hook scripts — `session-start.sh` and `pretooluse-bash.sh` with and without capy's own Codex hooks registered in `hooks.json` (legacy injection/denials, per-event handoff to capy, denylist and provider/extras preservation) |
+| `test-guard.sh` | Python engine tests: glob/path semantics, shell parsing, configuration layers, patches, capy inputs and corpus replay |
+| `test-hooks.sh` | Full guard wrapper transport, plugin-only protection, fail-closed cases, capy-wrapper degradation, Read/Bash p95 latency |
+| `test-generate-guard.sh` | Generated settings/rules/docs, output stability, per-rule examples and invalid-marker rejection |
+| `test-codex-hooks.sh` | Bash/patch/MCP adapter delegation, failure denial, protected-files advisory and per-event capy handoff |
 | `test-review-eval-staging.sh` | Fresh before/after/history and legacy fixture staging, path safety and evaluator-material exclusion |
 | `test-review-instructions.sh` | Instruction-packet source completeness, routing inputs and path boundaries; does not establish actor compliance |
 | `test-functional-review-tools.sh` | Extracted bundle/capture/receipt/grading utilities and archive inventory; runs from a temporary copy without historical evidence, using Python 3.11+ |
@@ -90,8 +92,28 @@ across the whole plugin. See [Architecture › Plugin Graph Analysis](architectu
 
 - Every `test/test-*.sh` suite must pass
 - `make generate-kodex` must leave `kodex-plugin/` and `.codex/agents/` clean (`git diff --exit-code`)
+- `make generate-guard` must leave `.claude/settings.json`, `.codex/rules/`, `.codex/scripts/guard/` and `docs/user-guide/configuration.md` clean (`git diff --exit-code`)
 - `make plugin-graph` must pass (Go tests + `validate` exits 0 against `klaude-plugin/`)
 - Go tests must pass (`go test ./...`)
+
+## Permission Guard Verification
+
+Run the engine and wrapper separately when diagnosing a failure:
+
+```bash
+bash test/test-guard.sh
+bash test/test-hooks.sh
+bash test/test-codex-hooks.sh
+bash test/test-generate-guard.sh
+```
+
+`test/guard/test_guard.py` imports the engine and replays `test/fixtures/guard/corpus.jsonl`. Rows carry expected decisions/categories, optional cwd/project roots and per-row configuration fixtures. They use a synthetic home and project; submitted commands are never executed. `KK_GUARD_TEST_PYTHON` selects the engine test interpreter. The Python floor is 3.8, with actual local runs on 3.9.6/macOS and 3.10.12/Linux; the 3.8 syntax check does not replace a 3.8 runtime run.
+
+The wrapper suite times 100 Read calls and every active Bash corpus row, including process startup, validation and cleanup. It always reports both p95 values when the timing probes run. Targets are 30 ms for file tools and 50 ms for Bash; local gates fail at 60/100 ms respectively when `CI` is unset. With `CI` present, timing is reported without enforcement. A CI-mode pass is not evidence that a local latency target passed.
+
+The 2026-10-26 macOS arm64 run with the default Apple Python 3.9.6 measured **76.62 ms Read / 76.00 ms Bash** outside the agent sandbox: the Read gate failed and both targets were missed. The performance requirement remains open before feature completion; limits were not relaxed. See the [permission-guard evidence](https://github.com/serpro69/claude-toolbox/blob/master/docs/feat/wip/permission-guard/design.md#16-assumptions) for all attempts and prerequisites.
+
+Payload tests establish adapter contracts, not installed hook activation. Live probes must record versions, actual hook inputs/results and benign controls. The Claude bypass probe uses a disposable project outside temporary roots so `rm -rf ./scratch` is not intentionally exempt. Use synthetic files and an absent `.env`, never real credentials. The recorded Claude 2.1.296 probe denied both destructive and secrets access under bypass mode. The Codex 0.164.0 probe verified relative patch paths against cwd with explicit inline hooks; ordinary project-hook discovery was not established and still needs a visible startup/patch-hook check.
 
 ## Agent evaluation
 

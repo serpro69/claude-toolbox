@@ -16,6 +16,17 @@ serves all of them. The CLI additionally keeps settings, keybindings, statusline
 
 ## 0. Handoff status and how to resume
 
+**2026-10-26 permission-guard update:** the October 17 source mapping and hook
+sketch below describe the retired substring hook. They are historical input,
+not the current adapter plan. A future Antigravity adapter must map its tool
+payloads to the shared `klaude-plugin/scripts/guard/` engine and translate
+the fail-closed result to the provider's output contract, instead of copying
+`FORBIDDEN_PATTERNS` or the old script. The Claude native settings baseline
+now contains secrets only; destructive policy belongs to the guard. Revalidate
+the Antigravity transport against its supported version during design. This
+note updates the toolbox source assumption without claiming an implemented
+or verified Antigravity adapter.
+
 - This file is the only artifact of the research session. It was written in the git worktree
   `/tmp/tmp.8Gn40NQGDT` on branch `feat/agy` and is **uncommitted**. Commit it (or copy it into the
   main checkout) before that worktree is discarded.
