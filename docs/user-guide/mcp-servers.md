@@ -92,6 +92,7 @@ codex mcp add pal \
     [mcp_servers.pal]
     command = "sh"
     args = ["-c", "$HOME/.local/bin/uvx --from git+https://github.com/serpro69/pal-mcp-server.git pal-mcp-server"]
+    tool_timeout_sec = 1800 # increase timeout for clink-based reviews
 
     [mcp_servers.pal.env]
     DEFAULT_MODEL = "auto"
