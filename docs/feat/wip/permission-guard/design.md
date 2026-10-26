@@ -875,6 +875,77 @@ Each is a testable bet the design depends on:
    commit-message prose without hiding shell bodies. Test: corpus cases for
    both.
 
+### Task 9 evidence (2026-10-26)
+
+The current candidate adds Bash-corpus timing to `test/test-hooks.sh`:
+one complete wrapper invocation per active Bash row, including its declared
+project root, cwd and configuration overrides. The driver validates the
+expected decision/category, uses the nearest-rank p95, and enforces the
+100 ms limit only when `CI` is unset. Payload commands are inspected, never
+executed. The existing 100-Read probe retains its 60 ms local limit.
+
+The user explicitly authorized direct local verification after Capy rejected
+capture on macOS (Linux supervision required) and Docker was unavailable.
+Host: macOS arm64; system Python 3.9.6; PATH Python 3.15.1; Claude Code
+2.1.296; Codex 0.164.0. The wrapper selects system Python by default.
+
+| Check | Observed result | Disposition |
+|---|---|---|
+| Full hook suite inside the agent sandbox | Read p95 **76.76 ms** (100 calls); Bash p95 **77.37 ms** (104 corpus rows) | 235 assertions passed, 1 failed: Read exceeds 60 ms |
+| Full hook suite outside the agent sandbox | Read p95 **76.62 ms**; Bash p95 **76.00 ms** | Same failure; enclosing sandbox overhead does not explain it |
+| `CI=1 bash test/test-hooks.sh` | Read p95 83.76 ms; Bash p95 86.35 ms; 49 cases / 236 assertions passed | Confirms reporting and CI gate exemption, **not** a local latency pass |
+| Engine suite on Python 3.9.6 | 88 tests passed after canonicalizing the fixture's temporary root | The three initial failures compared `/var/...` with `/private/var/...`; explicit symlink fixtures remain |
+| Codex adapter suite | 29 cases / 165 assertions passed | Synthetic adapter transport/contracts verified |
+| Bash syntax and ShellCheck | Passed for `test/test-hooks.sh` | No syntax/lint findings |
+
+Assumptions 1 and 2's **30/50 ms targets are disproved on this host**. The
+100 ms Bash gate passes; the 60 ms Read gate fails. A diagnostic with 20
+samples per component measured system-Python startup p95 25.99 ms and engine
+p95 53.38 ms, versus Homebrew Python startup 12.72 ms and engine 23.90 ms.
+No interpreter-order change or timing-limit relaxation has been made. No new
+Linux measurement was possible. Performance acceptance remains open; these
+measurements must not be represented as a green local suite.
+
+**Claude bypass check: passed.** A session loaded the canonical plugin via
+`--plugin-dir` and used `--dangerously-skip-permissions`. Its disposable
+project was outside the declared temporary roots, with an absent `.env` and
+a synthetic `scratch/keep.txt`. All three recorded Bash payloads carried
+`permission_mode: bypassPermissions`: `printf guard-benign-control` ran;
+`rm -rf ./scratch` was denied as destructive; `cat .env` was denied as
+secrets. Both reasons appeared in actual tool results, and the marker
+survived. Session `0203a585-94fe-448d-8370-765699ba4ea8` verifies the complete
+guard's exit-2/JSON behavior, not exit 2 in isolation.
+
+**Codex cwd check: passed with explicit hook registration.** The session
+started in a scratch repository's `child-inline/` directory, with the real
+copied patch adapter and engine behind an input-recording wrapper. Inline
+`hooks.SessionStart`/`hooks.PreToolUse` configuration and the one-invocation
+hook-trust flag supplied the registrations. Both actual `apply_patch`
+payloads carried that subdirectory as `cwd` and relative header paths:
+`src/a.py` was created under `child-inline/src/`; `.env` was denied by the
+guard and remains absent. No real credential files were read or written.
+
+Two earlier project-file discovery attempts produced no patch-hook records;
+the second also supplied explicit project trust and a startup logger, which
+never ran. Their synthetic `.env` additions succeeded without a guard denial.
+They do not verify enforcement.
+The explicit-registration result establishes the cwd contract but leaves
+automatic project-hook discovery unverified in that CLI setup. Follow-up
+owner: unassigned; inspect effective hook-source loading and reproduce with
+a visible startup hook before claiming ordinary scratch-project discovery
+works. Raw probe evidence is retained under
+`/private/tmp/kk-permission-task9-runtime/`; suite logs under
+`/private/tmp/kk-permission-task9-review-20261026/`.
+
+The current [Claude hooks reference](https://code.claude.com/docs/en/hooks#exit-code-2)
+states that exit 2 blocks and that valid stdout JSON is still processed;
+the older concern that stdout is necessarily ignored is not supported by
+that reference. The live bypass-mode observation is recorded above.
+The [Codex hooks reference](https://learn.chatgpt.com/docs/hooks#pretooluse)
+documents canonical `apply_patch` input in `tool_input.command`; its common
+input fields identify `cwd` as the session directory, consistent with the
+explicit-hook observation above.
+
 ## 17. Not Doing
 
 - Context-protection rules in any layer. Read truncation, Bash output

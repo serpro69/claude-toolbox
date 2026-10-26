@@ -257,7 +257,7 @@ log_test "100 Read calls: always report p95, enforce <60 ms only outside CI"
 # A single timing process works on macOS too (BSD date has no %N). The timing
 # includes the complete wrapper and engine, with no interpreter startup per tick.
 # Linux, 2026-10-25: p95 25.72 ms (100 Read calls, system Python 3.10.12).
-"${guard_env[@]}" "$TEST_PYTHON" -I - "$GUARD" "$read_payload" <<'PY'
+if "${guard_env[@]}" "$TEST_PYTHON" -I - "$GUARD" "$read_payload" <<'PY'
 import os
 import subprocess
 import sys
@@ -276,6 +276,87 @@ print("Read wrapper p95 (100 samples): %.2f ms" % p95, flush=True)
 if "CI" not in os.environ and p95 >= 60:
     sys.exit("Read p95 exceeds the local 60 ms limit")
 PY
-log_pass "Read latency probe passed"
+then
+  log_pass "Read latency probe passed"
+else
+  # Retain the failure while still measuring/reporting the Bash path below.
+  log_fail "Read latency probe failed"
+fi
+
+# =============================================================================
+# Section 6: Bash corpus latency
+# =============================================================================
+log_section "Section 6: Bash corpus latency"
+log_test "Bash corpus: always report p95, enforce <100 ms only outside CI"
+# Reuse the corpus sandbox/substitution contract, including per-row configs.
+# Only guard.sh executes: the commands in the payloads are never run. Timing
+# includes process startup, wrapper validation and cleanup for each active row.
+if "${guard_env[@]}" "$TEST_PYTHON" -I - "$GUARD" "$REPO_ROOT/test/guard/test_guard.py" <<'PY'
+import importlib.util
+import json
+import math
+import os
+import shutil
+import subprocess
+import sys
+import time
+
+sys.dont_write_bytecode = True
+spec = importlib.util.spec_from_file_location("guard_tests", sys.argv[2])
+fixtures = importlib.util.module_from_spec(spec)
+spec.loader.exec_module(fixtures)
+sandbox = fixtures.Sandbox()
+samples = []
+try:
+    for row in fixtures.read_jsonl(fixtures.CORPUS):
+        if row["tool_name"] != "Bash" or row.get("pending_task") in fixtures.PENDING_TASKS:
+            continue
+        row = fixtures.substitute(row, sandbox.mapping)
+        project_root = row.get("project_root") or sandbox.root
+        env = dict(os.environ)
+        env.update(sandbox.env(
+            project_root=project_root,
+            project_config=os.path.join(fixtures.FIXTURES, row["project_config"]) if row.get("project_config") else None,
+            user_config=os.path.join(fixtures.FIXTURES, row["user_config"]) if row.get("user_config") else None,
+        ))
+        # The shell suite exports this higher-priority root override. It must
+        # follow each corpus row, not shadow CLAUDE_PROJECT_DIR from Sandbox.
+        env["KK_GUARD_PROJECT_ROOT"] = project_root
+        payload = json.dumps({"tool_name": "Bash", "tool_input": row["tool_input"],
+                              "cwd": row.get("cwd") or project_root}).encode()
+        start = time.perf_counter()
+        result = subprocess.run(["bash", sys.argv[1]], input=payload, env=env,
+                                stdout=subprocess.PIPE, stderr=subprocess.PIPE, timeout=15)
+        samples.append((time.perf_counter() - start) * 1000)
+        label = "Bash corpus line %d: %s" % (row["_line"], row.get("note", ""))
+        if row["expect"] == "allow":
+            if result.returncode != 0 or result.stdout or result.stderr:
+                sys.exit("%s failed the allow contract: %r" % (label, result))
+        elif row["expect"] == "deny":
+            if result.returncode != 2:
+                sys.exit("%s expected exit 2: %r" % (label, result))
+            decision = json.loads(result.stdout)["hookSpecificOutput"]
+            reason = decision["permissionDecisionReason"]
+            if (decision["hookEventName"] != "PreToolUse" or
+                    decision["permissionDecision"] != "deny" or
+                    not reason.startswith("kk guard: %s — " % row["category"]) or
+                    result.stderr.decode().strip() != reason):
+                sys.exit("%s failed the deny contract: %r" % (label, result))
+        else:
+            sys.exit("%s has an invalid expectation" % label)
+finally:
+    shutil.rmtree(sandbox.base)
+if not samples:
+    sys.exit("Bash latency probe found no active corpus rows")
+p95 = sorted(samples)[math.ceil(len(samples) * 0.95) - 1]
+print("Bash wrapper p95 (%d corpus samples): %.2f ms" % (len(samples), p95), flush=True)
+if "CI" not in os.environ and p95 >= 100:
+    sys.exit("Bash p95 exceeds the local 100 ms limit")
+PY
+then
+  log_pass "Bash corpus latency probe passed"
+else
+  log_fail "Bash corpus latency probe failed"
+fi
 
 print_summary
