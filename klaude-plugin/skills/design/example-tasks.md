@@ -67,6 +67,8 @@
 - [ ] 5.2 Run `/kk:document` skill to update any relevant docs
 - [ ] 5.3 Run `/kk:review-code` skill with the project language input to review the implementation
 - [ ] 5.4 Run `/kk:review-spec` skill to verify implementation matches design and implementation docs
+- [ ] 5.5 In case any outstanding, non-blocking, tasks are present - ask user on how they'd prefer to follow up on those, for example by creating follow-up github issues or recording follow-up in some other way.
+- [ ] 5.6 Move completed feature docs from `docs/feat/wip/` to `docs/feat/done`, updating all the markdown references
 
 ## Dependency Graph
 
