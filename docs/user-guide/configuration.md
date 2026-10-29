@@ -170,6 +170,8 @@ The Claude plugin ships two hooks. It needs Bash, `jq`, Python 3.8+ and Claude C
 
 Ordinary allowed calls produce no output and exit 0; invalid-config warnings may emit `systemMessage`. Denials emit JSON, a reason on stderr, and exit 2. Missing/broken interpreters, a corrupt declaration, crashes and malformed engine output deny the call. Claude also blocks hook failures/timeouts through `onFailure: "block"`. A machine without a working Python interpreter blocks every matched tool, including reads, until repaired.
 
+Codex adapters preserve the guard's denial reason and exit status. A normal policy denial does not mean the hook needs repair; the separate "adapter could not run" diagnostic indicates an adapter failure, such as a missing guard wrapper or unreadable hook input.
+
 The wrapper runs the standard-library-only engine with `-I -S`, isolating Python environment/user-site settings and skipping unused site startup. On macOS it prefers Python at the standard Homebrew locations, then system Python; elsewhere it checks system Python first. PATH lookup remains the final fallback. Homebrew is not required.
 
 Destructive operations are denied in every permission mode, including bypass mode. The reason names the matched category and the way through: the user runs the operation directly or configures an applicable exception. Disabling Claude hooks removes destructive and self-modification protection. Template users retain the native secrets settings baseline; plugin-only users have no such fallback.
