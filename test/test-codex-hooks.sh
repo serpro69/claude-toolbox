@@ -91,6 +91,7 @@ assert_denied() {
   assert_json_field "$PRE_OUTPUT" '.hookSpecificOutput.permissionDecision' "deny" "$message: permissionDecision is deny"
   local reason
   reason=$(echo "$PRE_OUTPUT" | jq -r '.hookSpecificOutput.permissionDecisionReason')
+  assert_equals "$reason" "$PRE_ERROR" "$message: stderr contains only the guard reason"
   if [[ "$reason" == *"$needle"* ]]; then
     log_pass "$message: reason mentions '$needle'"
   else
@@ -102,6 +103,7 @@ assert_allowed() {
   local message="$1"
   assert_equals "0" "$PRE_EXIT" "$message: exit code is 0"
   assert_equals "" "$PRE_OUTPUT" "$message: no stdout (pass-through)"
+  assert_equals "" "$PRE_ERROR" "$message: no stderr (pass-through)"
 }
 
 # =============================================================================
@@ -313,6 +315,11 @@ assert_allowed "patch ordinary edit"
 run_adapter "$capy_root" patch "$(patch_payload "$capy_root" $'*** Begin Patch\n*** Update File: ../.codex/hooks.json\n@@\n-a\n+b\n*** End Patch')"
 assert_denied "kk guard: selfmod" "patch selfmod"
 
+log_test "Patch deletion outside temporary roots reports only the policy denial"
+# Payloads are inspected, never applied; the target need not exist.
+run_adapter "$capy_root" patch "$(patch_payload "$capy_root" $'*** Begin Patch\n*** Delete File: /work/guard-project/src/old.py\n*** End Patch')"
+assert_denied "filesystem: apply_patch deletes a file" "patch deletion"
+
 log_test "MCP code uses the project root independently of hook cwd"
 mcp_payload=$(jq -n --arg cwd "$capy_root/sub" '{tool_name:"mcp__custom__capy_execute", cwd:$cwd, tool_input:{language:"shell",code:"cat .env"}}')
 run_adapter "$capy_root" mcp "$mcp_payload"
@@ -355,12 +362,22 @@ for adapter in bash patch mcp; do
   run_adapter "$missing_root" "$adapter" "$safe_bash"
   assert_equals "2" "$PRE_EXIT" "$adapter missing wrapper exits 2"
   assert_not_equals "" "$PRE_ERROR" "$adapter missing wrapper has stderr"
+  if [[ "$PRE_ERROR" == *"adapter could not run; nothing was executed; repair the hook"* ]]; then
+    log_pass "$adapter missing wrapper reports adapter failure"
+  else
+    log_fail "$adapter missing wrapper should report adapter failure"
+  fi
   set +e
   bash "$capy_root/.codex/scripts/pretooluse-$adapter.sh" <&- >"$capy_root/out" 2>"$capy_root/stderr"
   status=$?
   set -e
   assert_equals "2" "$status" "$adapter closed stdin exits 2"
   assert_not_equals "" "$(cat "$capy_root/stderr")" "$adapter closed stdin has stderr"
+  if [[ "$(cat "$capy_root/stderr")" == *"adapter could not run; nothing was executed; repair the hook"* ]]; then
+    log_pass "$adapter closed stdin reports adapter failure"
+  else
+    log_fail "$adapter closed stdin should report adapter failure"
+  fi
 done
 
 log_test "Missing declaration retains the static session advisory"
