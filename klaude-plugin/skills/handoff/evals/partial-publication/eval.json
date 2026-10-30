@@ -1,0 +1,15 @@
+{
+  "id": 3,
+  "name": "partial-publication",
+  "description": "Report a known gist with failed prompt addition and preserve recovery content without inspection or retries.",
+  "skills": ["handoff"],
+  "prompt": "/kk:handoff",
+  "trap": "Claims completion after create alone or retries/inspects the partial gist automatically.",
+  "files": ["test-files/project.md"],
+  "assertions": [
+    {"id": "3.1", "text": "Creates one secret gist and attempts to add its actual URL-bearing prompt.md to the same ID."},
+    {"id": "3.2", "text": "Reports prompt-add failure and the known gist URL as partial, without claiming complete publication."},
+    {"id": "3.3", "text": "Retains prepared handoff.md and prompt.md outside the repository and supplies their absolute recovery paths."},
+    {"id": "3.4", "text": "Stops without another create/add, remote inspection, deletion, credential change, repository fallback or indexing/archival."}
+  ]
+}

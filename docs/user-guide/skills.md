@@ -1,6 +1,6 @@
 # Skills
 
-The kk plugin ships 15 workflow and utility skills, including a complete development pipeline.
+The kk plugin ships 16 workflow and utility skills, including a complete development pipeline.
 
 ## The Pipeline
 
@@ -35,6 +35,7 @@ Use `/kk:brainstorm` when you want to think through a technical idea in conversa
 | **/kk:diff-skill** | Compares two versions of a skill's markdown instructions to detect degradations and complexity increases. Asymmetric — only regressions count. |
 | **/kk:merge-docs** | Merges two competing design docs for the same feature into one unified document, resolving conflicts and preserving the best of both. |
 | **/kk:clarify-docs** | Improves selected documentation, PR drafts and issue descriptions after understanding requirements and source. Produces local edits, preserves meaning and respects the intended audience's access. |
+| **/kk:handoff** | Explicitly publishes active-task context and a fresh-session starter prompt to a new secret GitHub gist. Uses existing GitHub CLI authentication; never initiates Capy indexing or archival. |
 | **/kk:chain-of-verification** | Makes Claude fact-check its own answers. Standard mode (prompt-based) or isolated mode (independent sub-agents). For high-stakes accuracy. |
 
 ## Commands
@@ -160,6 +161,44 @@ The result is a chat recap of settled decisions and their rationale, open assump
 
 When written planning would help, the skill may suggest `/kk:design`. You choose whether to invoke it; the recap supplies context for its existing confirmations. Brainstorming does not invoke another workflow automatically and is not required before design. For a durable domain glossary and traps pages, use `/kk:model`; for a build or fix, use `/kk:implement`. Nontechnical brainstorming is outside this skill's scope.
 
+### Continue in a fresh session
+
+Invoke `/kk:handoff` in Claude Code or `$kk:handoff` in Codex when you want to
+restart a conversation or move to another provider or machine. **Invocation
+requests publication to GitHub**, using an already installed and authenticated
+`gh` CLI. Both hosts disable implicit selection: an ordinary summary or request
+to refresh review context does not invoke this skill.
+
+Each invocation creates a new secret gist containing `handoff.md` (active-task
+intent, decisions, progress, evidence limits and next action) and `prompt.md`
+(a short starter prompt containing the real gist URL). Secret means unlisted:
+anyone with the link can read it. The agent checks outgoing content and removes
+credentials and unrelated private information before upload. This instruction-based
+check does not guarantee comprehensive detection; a secret gist is not
+access-controlled private storage.
+
+The agent returns the URL and ready-to-paste prompt when both `gh` writes succeed,
+without inspecting the published gist afterward. Paste the prompt into the
+destination session to explicitly load the named handoff, reconcile the current
+project state and continue. No resume skill or automatic discovery is involved.
+Uncommitted changes stay on the source machine: the gist does not transfer your
+worktree, credentials or Capy database.
+
+Existing Capy sources or archived sessions may be referenced only when prior
+indexing or archival of the relevant material is already evidenced. These
+references remain optional; the handoff never initiates indexing, fetch-and-index
+or archival, directly or through another tool, skill, agent or the starter prompt.
+The summary remains useful if the destination cannot open those references.
+
+Preparation uses a unique temporary directory outside the repository. After
+success, the agent removes those files where host policy permits; gists remain
+until you delete them. Publication
+failure or uncertainty preserves local recovery content and reports its absolute
+paths and any known partial gist URL, without automatic retries or remote
+inspection. A local cleanup failure is reported separately from successful
+publication. The skill does not install/authenticate `gh` or switch storage when
+access is unavailable.
+
 ### Other utilities
 
 **/kk:dependency-handling** is pulled in automatically during implementation whenever you touch an external library, SDK, or API — it routes through capy/context7 instead of guessing.
@@ -193,7 +232,7 @@ correction.
 This utility improves existing documentation, PR drafts and issue descriptions,
 saving results locally. It does not change code or configuration, publish externally, or edit
 agent/skill instructions. An explicit `AGENTS.md`, `CLAUDE.md` or `SKILL.md` target receives a suggestion to use
-`/kk:implement`, with no edit or automatic handoff. Generic requests for shorter
+`/kk:implement`, with no edit or invocation of implementation. Generic requests for shorter
 chat answers do not activate it.
 
 The final comprehension and fidelity check runs in the editing session. Normal

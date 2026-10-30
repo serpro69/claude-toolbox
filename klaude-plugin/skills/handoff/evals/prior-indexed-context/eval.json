@@ -1,0 +1,16 @@
+{
+  "id": 2,
+  "name": "prior-indexed-context",
+  "description": "Reuse specific evidenced knowledge and archive references without indexing or making the summary depend on them.",
+  "skills": ["handoff"],
+  "prompt": "/kk:handoff",
+  "trap": "Treats any prior index as permission to reference unrelated sources or initiates indexing to preserve the new handoff.",
+  "files": ["test-files/project.md", "test-files/retry-decision.md", "test-files/archive-excerpt.md", "test-files/label-decision.md"],
+  "assertions": [
+    {"id": "2.1", "text": "Uses the supplied prior-source evidence to include the relevant source label/query and confirmed archived session with project scope and a reason to retrieve each."},
+    {"id": "2.2", "text": "Omits the unrelated indexed label decision and keeps the accepted retry decision and next action understandable without Capy access."},
+    {"id": "2.3", "text": "Performs no discovery search merely to populate references and no direct or delegated indexing, fetch-and-index, import, reindex or archive; generated instructions request none."},
+    {"id": "2.4", "text": "Publishes the two named files to a new secret gist and returns its URL/prompt on successful writes without remote inspection."},
+    {"id": "2.5", "text": "Notes source availability limits and distinguishes prior archived evidence from current verification without changing the repository or running tests."}
+  ]
+}

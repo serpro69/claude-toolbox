@@ -46,10 +46,13 @@ flowchart LR
 	profiles_skill_md_review_code_["profiles/skill-md/review-code/"]
 	profiles_twelve_factor_["profiles/twelve-factor/"]
 	profiles_twelve_factor_design_["profiles/twelve-factor/design/"]
+	scripts_guard_LICENSE_md["scripts/guard/LICENSE.md"]
 	skills__shared_capy_knowledge_protocol_md["skills/_shared/capy-knowledge-protocol.md"]
 	skills__shared_change_context_md["skills/_shared/change-context.md"]
 	skills__shared_contact_ratio_guard_md["skills/_shared/contact-ratio-guard.md"]
+	skills__shared_design_review_criteria_md["skills/_shared/design-review-criteria.md"]
 	skills__shared_document_clarity_md["skills/_shared/document-clarity.md"]
+	skills__shared_external_review_invocation_md["skills/_shared/external-review-invocation.md"]
 	skills__shared_fact_flip_propagation_md["skills/_shared/fact-flip-propagation.md"]
 	skills__shared_idea_refinement_criteria_md["skills/_shared/idea-refinement-criteria.md"]
 	skills__shared_ideation_frameworks_md["skills/_shared/ideation-frameworks.md"]
@@ -66,6 +69,7 @@ flowchart LR
 	skills_design_["skills/design/"]
 	skills_diff_skill_["skills/diff-skill/"]
 	skills_document_["skills/document/"]
+	skills_handoff_["skills/handoff/"]
 	skills_implement_["skills/implement/"]
 	skills_merge_docs_["skills/merge-docs/"]
 	skills_model_["skills/model/"]
@@ -74,10 +78,13 @@ flowchart LR
 	skills_review_design_["skills/review-design/"]
 	skills_review_spec_["skills/review-spec/"]
 	skills_test_["skills/test/"]
+	README_md -->|skill-invocation| commands_review_code_
+	README_md -->|markdown-link| scripts_guard_LICENSE_md
 	README_md -->|skill-invocation| skills_brainstorm_
 	README_md -->|skill-invocation| skills_clarify_docs_
 	README_md -->|skill-invocation| skills_design_
 	README_md -->|skill-invocation| skills_document_
+	README_md -->|skill-invocation| skills_handoff_
 	README_md -->|skill-invocation| skills_implement_
 	README_md -->|skill-invocation| skills_review_code_
 	README_md -->|skill-invocation| skills_review_design_
@@ -89,7 +96,23 @@ flowchart LR
 	commands_review_code_ -->|skill-invocation| skills_review_code_
 	commands_review_code_ -->|template-ref| skills_review_code_
 	profiles_go_ -->|skill-invocation| skills_dependency_handling_
+	profiles_go_design_ -->|markdown-link| profiles_go_implement_
+	profiles_go_design_ -->|markdown-link| profiles_go_test_
+	profiles_go_document_ -->|markdown-link| profiles_go_implement_
+	profiles_go_document_ -->|markdown-link| profiles_go_test_
+	profiles_go_implement_ -->|markdown-link| profiles_go_design_
+	profiles_go_implement_ -->|markdown-link| profiles_go_document_
+	profiles_go_implement_ -->|markdown-link| profiles_go_review_code_
+	profiles_go_implement_ -->|markdown-link| profiles_go_test_
+	profiles_go_review_code_ -->|markdown-link| profiles_go_design_
+	profiles_go_review_code_ -->|markdown-link| profiles_go_document_
+	profiles_go_review_code_ -->|markdown-link| profiles_go_implement_
+	profiles_go_review_code_ -->|markdown-link| profiles_go_test_
 	profiles_go_review_code_ -->|skill-invocation| skills_review_code_
+	profiles_go_test_ -->|markdown-link| profiles_go_design_
+	profiles_go_test_ -->|markdown-link| profiles_go_document_
+	profiles_go_test_ -->|markdown-link| profiles_go_implement_
+	profiles_go_test_ -->|markdown-link| profiles_go_review_code_
 	profiles_java_ -->|skill-invocation| skills_dependency_handling_
 	profiles_java_ -->|skill-invocation| skills_review_code_
 	profiles_java_review_code_ -->|skill-invocation| skills_review_code_
@@ -210,12 +233,14 @@ flowchart LR
 	skills_review_code_ -->|skill-invocation| commands_review_code_
 	skills_review_code_ -->|symlink| skills__shared_capy_knowledge_protocol_md
 	skills_review_code_ -->|symlink| skills__shared_change_context_md
+	skills_review_code_ -->|symlink| skills__shared_external_review_invocation_md
 	skills_review_code_ -->|symlink| skills__shared_pal_codereview_invocation_md
 	skills_review_code_ -->|symlink| skills__shared_profile_detection_md
 	skills_review_code_ -->|symlink| skills__shared_review_scope_protocol_md
 	skills_review_code_ -->|skill-invocation| skills_implement_
-	skills_review_design_ -->|agent-delegation| agents_design_reviewer_md
 	skills_review_design_ -->|symlink| skills__shared_capy_knowledge_protocol_md
+	skills_review_design_ -->|symlink| skills__shared_design_review_criteria_md
+	skills_review_design_ -->|symlink| skills__shared_external_review_invocation_md
 	skills_review_design_ -->|symlink| skills__shared_pal_codereview_invocation_md
 	skills_review_design_ -->|symlink| skills__shared_verification_policy_md
 	skills_review_design_ -->|skill-invocation| skills_design_
@@ -231,9 +256,9 @@ flowchart LR
 	skills_test_ -->|symlink| skills__shared_profile_detection_md
 	skills_test_ -->|symlink| skills__shared_verification_policy_md
 	classDef skill fill:#a6cee3,color:#1a1a1a;
-	class skills_brainstorm_,skills_chain_of_verification_,skills_clarify_docs_,skills_dependency_handling_,skills_design_,skills_diff_skill_,skills_document_,skills_implement_,skills_merge_docs_,skills_model_,skills_review_architecture_,skills_review_code_,skills_review_design_,skills_review_spec_,skills_test_ skill;
+	class skills_brainstorm_,skills_chain_of_verification_,skills_clarify_docs_,skills_dependency_handling_,skills_design_,skills_diff_skill_,skills_document_,skills_handoff_,skills_implement_,skills_merge_docs_,skills_model_,skills_review_architecture_,skills_review_code_,skills_review_design_,skills_review_spec_,skills_test_ skill;
 	classDef shared fill:#ffff99,color:#1a1a1a;
-	class skills__shared_capy_knowledge_protocol_md,skills__shared_change_context_md,skills__shared_contact_ratio_guard_md,skills__shared_document_clarity_md,skills__shared_fact_flip_propagation_md,skills__shared_idea_refinement_criteria_md,skills__shared_ideation_frameworks_md,skills__shared_open_question_pass_md,skills__shared_pal_codereview_invocation_md,skills__shared_profile_detection_md,skills__shared_requirements_harvesting_md,skills__shared_review_scope_protocol_md,skills__shared_verification_policy_md shared;
+	class skills__shared_capy_knowledge_protocol_md,skills__shared_change_context_md,skills__shared_contact_ratio_guard_md,skills__shared_design_review_criteria_md,skills__shared_document_clarity_md,skills__shared_external_review_invocation_md,skills__shared_fact_flip_propagation_md,skills__shared_idea_refinement_criteria_md,skills__shared_ideation_frameworks_md,skills__shared_open_question_pass_md,skills__shared_pal_codereview_invocation_md,skills__shared_profile_detection_md,skills__shared_requirements_harvesting_md,skills__shared_review_scope_protocol_md,skills__shared_verification_policy_md shared;
 	classDef agent fill:#b2df8a,color:#1a1a1a;
 	class agents_architecture_reviewer_md,agents_code_reviewer_md,agents_design_reviewer_md,agents_eval_grader_md,agents_profile_resolver_md,agents_spec_reviewer_md agent;
 	classDef profile fill:#fb9a99,color:#1a1a1a;
@@ -241,7 +266,7 @@ flowchart LR
 	classDef profile_phase fill:#fdbf6f,color:#1a1a1a;
 	class profiles_go_design_,profiles_go_document_,profiles_go_implement_,profiles_go_review_code_,profiles_go_test_,profiles_java_review_code_,profiles_js_ts_implement_,profiles_js_ts_review_code_,profiles_js_ts_test_,profiles_k8s_operator_design_,profiles_k8s_design_,profiles_k8s_document_,profiles_k8s_implement_,profiles_k8s_review_code_,profiles_k8s_review_spec_,profiles_k8s_test_,profiles_kotlin_review_code_,profiles_python_implement_,profiles_python_review_code_,profiles_python_test_,profiles_skill_md_implement_,profiles_skill_md_review_code_,profiles_twelve_factor_design_ profile_phase;
 	classDef content fill:#ffffff,color:#1a1a1a;
-	class README_md content;
+	class README_md,scripts_guard_LICENSE_md content;
 	classDef command fill:#cab2d6,color:#1a1a1a;
 	class commands_chain_of_verification_,commands_migrate_from_taskmaster_,commands_review_code_,commands_review_spec_,commands_template_ command;
 ```

@@ -2,7 +2,7 @@
 
 > Design: [design.md](design.md)
 > Tasks: [tasks.md](tasks.md)
-> Status: pending implementation
+> Status: Task 1 implemented; Task 2 behavioral verification and feature acceptance pending
 
 ## Starting point
 

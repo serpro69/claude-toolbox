@@ -1,6 +1,6 @@
 # Plugin-Only Setup
 
-Already have a project? Install just the plugin to get all 15 workflow and utility skills.
+Already have a project? Install just the plugin to get all 16 workflow and utility skills.
 
 ## Claude Code
 
@@ -42,7 +42,7 @@ for commands, prerequisites and the steps for your installation.
 
 The plugin gives you:
 
-- **15 workflow and utility skills** — `/kk:design`, `/kk:implement`, `/kk:review-code`, `/kk:clarify-docs`, etc.
+- **16 workflow and utility skills** — `/kk:design`, `/kk:implement`, `/kk:review-code`, `/kk:clarify-docs`, etc.
 - **Language profiles** — Go, Java, JS/TS, Kotlin, Kubernetes, Python
 - **Commands** — isolated variants for code review, CoVe and spec review
 - **Hooks** — secrets, destructive-operation and configuration protection across the supported tool channels (Claude Code only)
