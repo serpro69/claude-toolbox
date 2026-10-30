@@ -18,6 +18,8 @@ Commit the fixtures as baseline, then deliver these user turns separately:
    workflow's ambiguous word, with no explicit publication invocation.
 
 Expect a factual review context summary using current repository state. Verify
-no skill load or gist call occurred, rather than grading a yes/no claim that the
-skill should be selected. Explicit activation is separately exercised by the
-active-task scenario in the same host setup.
+that no handoff preparation or publication occurred, rather than grading a
+yes/no claim that the skill should be selected. Reading skill source to assess
+applicability is an observation, not activation of its creation workflow.
+Explicit activation is separately exercised by the active-task scenario in the
+same host setup.

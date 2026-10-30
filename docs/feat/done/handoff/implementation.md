@@ -2,7 +2,7 @@
 
 > Design: [design.md](design.md)
 > Tasks: [tasks.md](tasks.md)
-> Status: Task 1 implemented; Task 2 behavioral verification and feature acceptance pending
+> Status: done; behavioral evidence and review closure recorded alongside this plan
 
 ## Starting point
 

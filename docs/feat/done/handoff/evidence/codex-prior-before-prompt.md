@@ -1,0 +1,1 @@
+Read `handoff.md` at https://gist.github.com/handoff-eval/185eaa1e7bef4b9dba1574d377daf23f, reconcile relevant current project state with its recorded evidence, and continue the Parcel client documentation task. Keep scope to documentation; do not implement or run tests. The handoff is self-contained if the source machine's Capy references or local edit are unavailable.

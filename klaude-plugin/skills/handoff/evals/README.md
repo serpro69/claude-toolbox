@@ -16,9 +16,15 @@ runbook, future messages or assertions in the actor workspace. The executable
    after the handoff turn. Seed turns may establish prior local work.
 2. Load the skill and its invocation metadata through the actual host: canonical
    `SKILL.md` frontmatter in Claude Code; generated skill plus
-   `agents/openai.yaml` in Codex. Mount only operative skill files for the actor,
-   not evaluation oracles. The implicit-selection control must use ordinary
-   discovery without injecting the skill body or an implicitly selectable entry.
+   `agents/openai.yaml` in Codex. Use a session-local plugin or native project
+   skill discovery, preserving the operative files unchanged. Record the
+   registration mode and actual invocation name: a locally staged Codex skill
+   uses `$handoff`, while the installed plugin uses `$kk:handoff`. A local-skill
+   run tests workflow and invocation policy, not namespaced plugin installation.
+   Mount only operative skill files for the actor, not evaluation oracles. The
+   implicit-selection control must use ordinary discovery without injecting the
+   skill body or an implicitly selectable entry. Pair it with explicit activation
+   under the same registration mode and metadata.
 3. Supply a credential-free environment with outbound GitHub and real fetch tools
    blocked. Advertise Capy tools in the relevant cases but block mutations and
    capture attempts. A PATH stub is **not** network/credential isolation. If the
@@ -28,13 +34,16 @@ runbook, future messages or assertions in the actor workspace. The executable
 4. Copy the executable stub into an isolated bin directory first on the PATH
    actually used by the actor shell. Check `command -v gh` in that shell. Set
    `HANDOFF_GH_STATE` to a separate, existing absolute directory. Keep that state,
-   configuration and evaluator evidence inaccessible through actor file tools;
-   expose them only to the stub process using the harness's filesystem boundary.
-   No real `gh` fallback is implemented. Record inability to enforce this boundary.
+   grading oracles and evaluator evidence inaccessible through actor file tools.
+   Prefer exposing state only to the stub process. If the host cannot enforce
+   that separation, record synthetic-state/configuration visibility as an evidence
+   limit, retain snapshots outside the actor's reach, and match every recorded
+   upload to its host trace. Record non-stub reads; non-stub writes invalidate
+   the evidence. No real `gh` fallback is implemented.
 5. Deliver runbook seed turns individually, allowing actual replies and fixture
    reads between them. Do not send a transcript file to summarize. Keep every
    supplied turn, response and tool result. Deliver `eval.json`'s final prompt
-   only after seeding; use the generated `$kk:handoff` spelling for Codex.
+   only after seeding, using the actual registered invocation from step 2.
 
 ## CLI fixture
 
@@ -82,7 +91,8 @@ and rerun the affected scenario before blaming the skill.
   adding the prompt fails.
 - [Unavailable GitHub](unavailable-github/oracle/runbook.md): creation rejects auth.
 - [Manual invocation control](manual-only-invocation/oracle/runbook.md): ordinary
-  review-context request under real host discovery, without loading the skill.
+  review-context request under real host discovery, without starting handoff
+  preparation or publication.
 
 Run once per scenario against each instruction variant in its corresponding host;
 attach the consumer leg below to each successful active-task run. Record unavailable
@@ -109,7 +119,10 @@ prompt and saved uploaded files. Start a fresh session with no source history,
 the destination fixture specified in that runbook, ordinary file tools and the
 same stub state in `consumer` mode. Disable real network fetches. Tell it GitHub
 CLI access is available, without prescribing commands, and ask it to assess state
-and name the next action before making changes.
+and name the next action. Explicitly stop that test turn after the assessment:
+no edits, tests, commits or authentication changes. Merely asking it to state
+an action "before" editing can be satisfied by a progress message followed by
+edits and does not establish a stop condition.
 
 Grade whether the recipient recovers the objective and accepted constraints,
 distinguishes recorded tests from current evidence, notices the deliberate source

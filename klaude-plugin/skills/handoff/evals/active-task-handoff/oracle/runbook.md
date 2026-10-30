@@ -40,7 +40,8 @@ attempts), not the source's uncommitted edit. Start a fresh consumer session wit
 the actual returned prompt and saved stub state in consumer mode, plus:
 
 “GitHub CLI access is available. Assess the current project state and state your
-next action before making any changes.”
+next action. Stop after that assessment: do not edit files, run tests, commit,
+or change authentication in this turn.”
 
 Do not mention the intentional difference or tell it how to fetch the gist. A
 useful result identifies duplicate-request risk, the accepted one-attempt choice,
