@@ -240,7 +240,10 @@ This is particularly useful for integration tests where you want most services t
 
 ## Cross-References
 
+- Related topics: detailed samber/do usage patterns
 - → See [structs-interfaces.md](structs-interfaces.md) for interface design and composition
+- → See [test/testing.md](../test/testing.md) for testing with dependency injection
+- Related topics: DI initialization placement
 
 ## References
 

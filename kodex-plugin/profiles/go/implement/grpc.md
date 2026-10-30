@@ -181,3 +181,5 @@ Most services do not need connection pooling — profile before adding complexit
 
 - → See [context.md](context.md) for deadline and cancellation patterns
 - → See [error-handling.md](error-handling.md) for gRPC error to Go error mapping
+- → See [design/observability.md](../design/observability.md) for gRPC interceptors (logging, tracing, metrics)
+- → See [test/testing.md](../test/testing.md) for gRPC testing with bufconn

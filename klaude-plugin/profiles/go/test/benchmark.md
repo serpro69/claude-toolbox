@@ -2,7 +2,7 @@
 
 Performance improvement does not exist without measures — if you can measure it, you can improve it.
 
-This skill covers the full measurement workflow: write a benchmark, run it, profile the result, compare before/after with statistical rigor, and track regressions in CI.
+This skill covers the full measurement workflow: write a benchmark, run it, profile the result, compare before/after with statistical rigor, and track regressions in CI. For optimization patterns to apply after measurement, → See [review-code/performance.md](../review-code/performance.md). Related topics: pprof setup on running services.
 
 ## Writing Benchmarks
 
@@ -112,4 +112,8 @@ For full pprof CLI reference (all commands, non-interactive mode, profile interp
 
 ## Cross-References
 
+- → See [review-code/performance.md](../review-code/performance.md) for optimization patterns to apply after measuring ("if X bottleneck, apply Y")
+- Related topics: pprof setup on running services (enable, secure, capture), Delve debugger, GODEBUG flags, root cause methodology
+- → See [design/observability.md](../design/observability.md) for everyday always-on monitoring, continuous profiling (Pyroscope), distributed tracing (OpenTelemetry)
 - → See [testing.md](testing.md) for general testing practices
+- Related topics: querying Prometheus runtime metrics in production to validate benchmark findings

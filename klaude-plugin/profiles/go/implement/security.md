@@ -81,7 +81,7 @@ For the full security review checklist organized by domain (input handling, data
 
 ### Static Analysis & Linting
 
-Security-relevant linters: `bodyclose`, `sqlclosecheck`, `nilerr`, `errcheck`, `govet`, `staticcheck`.
+Security-relevant linters: `bodyclose`, `sqlclosecheck`, `nilerr`, `errcheck`, `govet`, `staticcheck`. Related topics: configuration and usage.
 
 For deeper security-specific analysis:
 
@@ -136,7 +136,7 @@ See **Security Architecture** for detailed anti-patterns with Go code examples.
 
 ## Cross-References
 
-See [database.md](database.md).
+See [database.md](database.md), [design/observability.md](../design/observability.md), [document/continuous-integration.md](../document/continuous-integration.md).
 
 ## Additional Resources
 

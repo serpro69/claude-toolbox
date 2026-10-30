@@ -205,6 +205,7 @@ Do not rely on triggers, views, materialized views, stored procedures, or row-le
 - → See [security.md](security.md) for SQL injection prevention patterns
 - → See [context.md](context.md) for context propagation to database operations
 - → See [error-handling.md](error-handling.md) for database error wrapping patterns
+- → See [test/testing.md](../test/testing.md) for database integration test patterns
 
 ## References
 

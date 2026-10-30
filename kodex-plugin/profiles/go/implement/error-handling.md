@@ -38,6 +38,13 @@ When auditing error handling across a large codebase, use up to 5 parallel sub-a
 - Sub-agent 4: Panic/recover — audit `panic` usage, verify recovery at goroutine boundaries
 - Sub-agent 5: Structured logging — verify `slog` usage at error sites, check for PII in error messages
 
+## Cross-References
+
+- Related topics: full samber/oops API, builder patterns, and logger integration
+- → See [design/observability.md](../design/observability.md) for structured logging setup, log levels, and request logging middleware
+- Related topics: nil interface trap and nil error comparison pitfalls
+- → See [review-code/naming.md](../review-code/naming.md) for error naming conventions (ErrNotFound, PathError)
+
 ## References
 
 - [lmittmann/tint](https://github.com/lmittmann/tint)

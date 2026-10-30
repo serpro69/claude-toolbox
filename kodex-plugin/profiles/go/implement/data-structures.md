@@ -1,6 +1,6 @@
 # Go Data Structures
 
-Built-in and standard library data structures: internals, correct usage, and selection guidance. For channels and sync primitives see [concurrency.md](concurrency.md). For string/byte/rune choice see [design-patterns.md](design-patterns.md).
+Built-in and standard library data structures: internals, correct usage, and selection guidance. Related topics: safety pitfalls (nil maps, append aliasing, defensive copies). For channels and sync primitives see [concurrency.md](concurrency.md). For string/byte/rune choice see [design-patterns.md](design-patterns.md).
 
 ## Best Practices Summary
 
@@ -15,7 +15,7 @@ Built-in and standard library data structures: internals, correct usage, and sel
 
 ## Slice Internals
 
-A slice is a 3-word header: pointer, length, capacity. Multiple slices can share a backing array.
+A slice is a 3-word header: pointer, length, capacity. Multiple slices can share a backing array (Related topics: aliasing traps and the header diagram).
 
 ### Capacity Growth
 
@@ -38,7 +38,7 @@ s = slices.Grow(s, additionalNeeded)
 
 ### `slices` Package (Go 1.21+)
 
-Key functions: `Sort`/`SortFunc`, `BinarySearch`, `Contains`, `Compact`, `Grow`.
+Key functions: `Sort`/`SortFunc`, `BinarySearch`, `Contains`, `Compact`, `Grow`. Related topics: `Clone`, `Equal`, `DeleteFunc`.
 
 **Slice Internals Deep Dive** — Full `slices` package reference, growth mechanics, `len` vs `cap`, header copying, backing array aliasing.
 
@@ -60,6 +60,8 @@ m := make(map[string]*User, len(users)) // avoids rehashing during population
 | `Insert` (1.23+)  | Insert entries from iterator |
 | `All` (1.23+)     | Iterator over all entries    |
 | `Keys`, `Values`  | Iterators over keys/values   |
+
+Related topics: `Clone`, `Equal`, sorted iteration.
 
 **Map Internals Deep Dive** — How Go maps store and hash data, bucket overflow chains, why maps never shrink (and what to do about it), comparing map performance to alternatives.
 
@@ -137,9 +139,12 @@ When using third-party libraries, refer to their official documentation and code
 
 ## Cross-References
 
+- → See [review-code/performance.md](../review-code/performance.md) for struct field alignment, memory layout optimization, and cache locality
+- Related topics: nil map/slice pitfalls, append aliasing, defensive copying, `slices.Clone`/`Equal`
 - → See [concurrency.md](concurrency.md) for channels, `sync.Map`, `sync.Pool`, and all sync primitives
 - → See [design-patterns.md](design-patterns.md) for `string` vs `[]byte` vs `[]rune`, iterators, streaming
 - → See [structs-interfaces.md](structs-interfaces.md) for struct composition, embedding, and generics vs `any`
+- → See [review-code/code-style.md](../review-code/code-style.md) for slice/map initialization style
 
 ## Common Mistakes
 

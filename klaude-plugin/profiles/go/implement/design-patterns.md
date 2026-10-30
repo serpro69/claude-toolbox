@@ -15,7 +15,7 @@ Idiomatic Go patterns for production-ready code. For error handling details see 
 9. Every external call SHOULD **have a timeout** — a slow upstream hangs your goroutine indefinitely
 10. **Limit everything** (pool sizes, queue depths, buffers) — unbounded resources grow until they crash
 11. Retry logic MUST **check context cancellation** between attempts
-12. **Use `strings.Builder`** for concatenation in loops
+12. **Use `strings.Builder`** for concatenation in loops → see [review-code/code-style.md](../review-code/code-style.md)
 13. string vs []byte: **use `[]byte` for mutation and I/O**, `string` for display and keys — conversions allocate
 14. Iterators (Go 1.23+): **use for lazy evaluation** — avoid loading everything into memory
 15. **Stream large transfers** — loading millions of rows causes OOM; stream keeps memory constant
@@ -147,7 +147,7 @@ var version string
 
 ## Error Flow Patterns
 
-Error cases MUST be handled first with early return — keep the happy path at minimal indentation.
+Error cases MUST be handled first with early return — keep the happy path at minimal indentation. → See [review-code/code-style.md](../review-code/code-style.md) for the full pattern and examples.
 
 ### When to Panic vs Return Error
 
@@ -245,3 +245,4 @@ Core principles regardless of architecture:
 - → See [structs-interfaces.md](structs-interfaces.md) for interface design and composition
 - → See [concurrency.md](concurrency.md) for goroutine lifecycle and graceful shutdown
 - → See [context.md](context.md) for timeout and cancellation patterns
+- Related topics: architecture and directory structure

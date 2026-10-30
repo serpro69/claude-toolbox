@@ -75,6 +75,8 @@ if !allowed[sortCol] {
 query := fmt.Sprintf("SELECT id, name, email FROM users ORDER BY %s", sortCol)
 ```
 
+For more injection prevention patterns, see [implement/security.md](../implement/security.md).
+
 ## Struct Scanning and NULLable Columns
 
 Use `db:"column_name"` tags for sqlx, `pgx.CollectRows` with `pgx.RowToStructByName` for pgx. Handle NULLable columns with pointer fields (`*string`, `*time.Time`) — they work cleanly with both scanning and JSON marshaling. See Scanning Reference for examples of all approaches.
@@ -154,6 +156,8 @@ db.Query("SELECT ...")
 db.QueryContext(ctx, "SELECT ...")
 ```
 
+For context patterns in depth, see [implement/context.md](../implement/context.md).
+
 ## Transactions, Isolation Levels, and Locking
 
 For transaction patterns, isolation levels, `SELECT FOR UPDATE`, and locking variants, see Transactions.
@@ -195,6 +199,13 @@ Do not rely on triggers, views, materialized views, stored procedures, or row-le
 - **Testing Database Code** — Mock connections, integration tests with containers, fixtures, schema setup/teardown
 - **Database Performance** — Connection pool sizing, batch processing, indexing strategy, query optimization
 - **Struct Scanning** — Struct tags, NULLable column handling, JSON marshaling patterns
+
+## Cross-References
+
+- → See [implement/security.md](../implement/security.md) for SQL injection prevention patterns
+- → See [implement/context.md](../implement/context.md) for context propagation to database operations
+- → See [implement/error-handling.md](../implement/error-handling.md) for database error wrapping patterns
+- → See [test/testing.md](../test/testing.md) for database integration test patterns
 
 ## References
 

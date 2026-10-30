@@ -44,13 +44,23 @@ both plugin variants. Fix transformations in the generator; direct edits to
 vendored output are overwritten on the next refresh.
 
 The generator rewrites relative Markdown links to files vendored into the same
-phase and preserves external URLs. It also converts prose navigation such as
-`` See `samber/cc-skills-golang@golang-naming` skill `` into a local link when the
-referenced skill is vendored from that repository into the same phase. Otherwise
-it removes the navigation clause, preserving the surrounding recommendation.
-Mixed reference lists retain available targets; fenced examples remain unchanged.
-Index descriptions use plain-text link labels before truncation, so previews
-cannot introduce broken links or extra checklist-loading edges.
+phase and preserves external URLs. For prose navigation such as
+`` See `samber/cc-skills-golang@golang-naming` skill ``, it prefers a same-phase
+target, then links to a copy in another packaged phase using `../<phase>/<file>`.
+If several other phases contain the source, the lexically first phase/file path
+wins, independent of manifest order.
+
+A parenthesized filename such as `(testing.md)` after a skill reference selects
+that skill's `references/testing.md`. It links only when that specific file is
+packaged; it does not fall back to the broader skill overview.
+
+When a prose reference has no packaged target, its descriptive text survives as
+plain `Related topics:` guidance. For example, a reference to an unvendored safety
+skill still retains “nil interface trap and nil error comparison pitfalls.” Only
+navigation without descriptive text is removed. Mixed reference lists retain
+available targets and their surrounding description; fenced examples remain
+unchanged. Index descriptions use plain-text link labels before truncation, so
+previews cannot introduce broken links or extra checklist-loading edges.
 
 ### Codex Generation (`cmd/generate-kodex/`)
 

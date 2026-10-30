@@ -54,8 +54,9 @@ func (s *OrderService) Create(ctx context.Context, order Order) error {
 
 - → See [concurrency.md](concurrency.md) for goroutine cancellation patterns using context
 - → See [database.md](database.md) for context-aware database operations (QueryContext, ExecContext)
+- → See [design/observability.md](../design/observability.md) for trace context propagation with OpenTelemetry
 - → See [design-patterns.md](design-patterns.md) for timeout and resilience patterns
 
 ## Enforce with Linters
 
-Many context pitfalls are caught automatically by linters: `govet`, `staticcheck`.
+Many context pitfalls are caught automatically by linters: `govet`, `staticcheck`. Related topics: configuration and usage.

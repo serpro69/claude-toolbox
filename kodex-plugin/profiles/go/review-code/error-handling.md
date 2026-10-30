@@ -40,6 +40,9 @@ When auditing error handling across a large codebase, use up to 5 parallel sub-a
 
 ## Cross-References
 
+- Related topics: full samber/oops API, builder patterns, and logger integration
+- → See [design/observability.md](../design/observability.md) for structured logging setup, log levels, and request logging middleware
+- Related topics: nil interface trap and nil error comparison pitfalls
 - → See [naming.md](naming.md) for error naming conventions (ErrNotFound, PathError)
 
 ## References

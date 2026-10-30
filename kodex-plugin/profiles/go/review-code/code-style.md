@@ -1,6 +1,6 @@
 # Go Code Style
 
-Style rules that require human judgment — linters handle formatting, this skill handles clarity. For naming see [naming.md](naming.md).
+Style rules that require human judgment — linters handle formatting, this skill handles clarity. For naming see [naming.md](naming.md); for design patterns see [implement/design-patterns.md](../implement/design-patterns.md); for struct/interface design see [implement/structs-interfaces.md](../implement/structs-interfaces.md).
 
 > "Clear is better than clever." — Go Proverbs
 
@@ -146,7 +146,7 @@ default:
 ## Function Design
 
 - Functions SHOULD be **short and focused** — one function, one job.
-- Functions SHOULD have **≤4 parameters**. Beyond that, use an options struct.
+- Functions SHOULD have **≤4 parameters**. Beyond that, use an options struct (see [implement/design-patterns.md](../implement/design-patterns.md)).
 - **Parameter order**: `context.Context` first, then inputs, then output destinations.
 - Naked returns help in very short functions (1-3 lines) where return values are obvious, but become confusing when readers must scroll to find what's returned — name returns explicitly in longer functions.
 
@@ -209,3 +209,6 @@ Many rules are enforced automatically: `gofmt`, `gofumpt`, `goimports`, `gocriti
 ## Cross-References
 
 - → See [naming.md](naming.md) for identifier naming conventions
+- → See [implement/structs-interfaces.md](../implement/structs-interfaces.md) for pointer vs value receivers, interface design
+- → See [implement/design-patterns.md](../implement/design-patterns.md) for functional options, builders, constructors
+- Related topics: automated formatting enforcement

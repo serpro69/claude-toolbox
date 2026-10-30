@@ -133,8 +133,10 @@ For complete rules, examples, and rationale, see:
 
 ## Enforce with Linters
 
-Many naming convention issues are caught automatically by linters: `revive`, `predeclared`, `misspell`, `errname`.
+Many naming convention issues are caught automatically by linters: `revive`, `predeclared`, `misspell`, `errname`. Related topics: configuration and usage.
 
 ## Cross-References
 
 - → See [code-style.md](code-style.md) for broader formatting and style decisions
+- → See [implement/structs-interfaces.md](../implement/structs-interfaces.md) for interface naming depth and receiver design
+- Related topics: automated enforcement (revive, predeclared, misspell, errname)

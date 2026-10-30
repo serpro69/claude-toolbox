@@ -92,7 +92,10 @@ When auditing concurrency across a large codebase, use up to 5 parallel sub-agen
 
 ## Cross-References
 
+- -> See [review-code/performance.md](../review-code/performance.md) for false sharing, cache-line padding, `sync.Pool` hot-path patterns
 - -> See [context.md](context.md) for cancellation propagation and timeout patterns
+- Related topics: concurrent map access and race condition prevention
+- Related topics: debugging goroutine leaks and deadlocks
 - -> See [design-patterns.md](design-patterns.md) for graceful shutdown patterns
 
 ## References

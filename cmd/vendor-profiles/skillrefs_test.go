@@ -19,6 +19,16 @@ func TestRewriteSkillReferences(t *testing.T) {
 			want:  "- → See [naming.md](naming.md) for naming conventions",
 		},
 		{
+			name:  "vendored reference file hint",
+			input: "See `samber/cc-skills-golang@golang-security` skill (injection.md) for SQL injection prevention.",
+			want:  "See [security-injection-ref.md](security-injection-ref.md) for SQL injection prevention.",
+		},
+		{
+			name:  "missing reference file does not fall back to skill overview",
+			input: "See `samber/cc-skills-golang@golang-security` skill (testing.md) for security integration test patterns.",
+			want:  "Related topics: security integration test patterns.",
+		},
+		{
 			name:  "mixed reference list",
 			input: "See `samber/cc-skills-golang@golang-safety`, `samber/cc-skills-golang@golang-naming`, `other/repo@golang-security` skills.",
 			want:  "See [naming.md](naming.md).",
@@ -26,7 +36,17 @@ func TestRewriteSkillReferences(t *testing.T) {
 		{
 			name:  "standalone unavailable reference",
 			input: "- -> See `samber/cc-skills-golang@golang-safety` skill for nil pitfalls (maps, slices)",
-			want:  "",
+			want:  "- Related topics: nil pitfalls (maps, slices)",
+		},
+		{
+			name:  "error handling safety reminder",
+			input: "- → See `samber/cc-skills-golang@golang-safety` for nil interface trap and nil error comparison pitfalls",
+			want:  "- Related topics: nil interface trap and nil error comparison pitfalls",
+		},
+		{
+			name:  "data structure safety introduction",
+			input: "Data structures. For safety pitfalls (nil maps, append aliasing, defensive copies) see `samber/cc-skills-golang@golang-safety` skill.",
+			want:  "Data structures. Related topics: safety pitfalls (nil maps, append aliasing, defensive copies).",
 		},
 		{
 			name:  "unavailable parenthetical preserves instruction",
@@ -36,32 +56,32 @@ func TestRewriteSkillReferences(t *testing.T) {
 		{
 			name:  "parenthetical with nested description",
 			input: "Use pprof (→ See `samber/cc-skills-golang@golang-troubleshooting` skill for profiles (CPU, memory)).",
-			want:  "Use pprof.",
+			want:  "Use pprof (Related topics: profiles (CPU, memory)).",
 		},
 		{
 			name:  "multiple sentences preserve recommendation",
 			input: "Use early returns. → See `samber/cc-skills-golang@golang-code-style` for examples. Keep errors clear.",
-			want:  "Use early returns. Keep errors clear.",
+			want:  "Use early returns. Related topics: examples. Keep errors clear.",
 		},
 		{
 			name:  "for introductions and semicolon clauses",
 			input: "Style guidance. For naming see `samber/cc-skills-golang@golang-naming` skill; for design patterns see `samber/cc-skills-golang@golang-design-patterns` skill.",
-			want:  "Style guidance. For naming see [naming.md](naming.md).",
+			want:  "Style guidance. For naming see [naming.md](naming.md); Related topics: design patterns.",
 		},
 		{
 			name:  "middle clause removal retains separator",
 			input: "For naming see `samber/cc-skills-golang@golang-naming` skill; for safety see `samber/cc-skills-golang@golang-safety` skill; for security see `samber/cc-skills-golang@golang-security` skill.",
-			want:  "For naming see [naming.md](naming.md); for security see [security.md](security.md).",
+			want:  "For naming see [naming.md](naming.md); Related topics: safety; for security see [security.md](security.md).",
 		},
 		{
 			name:  "all unavailable introductions",
 			input: "Measurement workflow. For optimizations, → See `samber/cc-skills-golang@golang-performance` skill. For pprof setup, → See `samber/cc-skills-golang@golang-troubleshooting` skill.",
-			want:  "Measurement workflow.",
+			want:  "Measurement workflow. Related topics: optimizations. Related topics: pprof setup.",
 		},
 		{
 			name:  "code spans and following local reference",
 			input: "See `samber/cc-skills-golang@golang-benchmark` for `b.Loop()` (Go 1.24+). See `samber/cc-skills-golang@golang-naming` skill.",
-			want:  "See [naming.md](naming.md).",
+			want:  "Related topics: `b.Loop()` (Go 1.24+). See [naming.md](naming.md).",
 		},
 		{
 			name:  "table cells retain structure",
@@ -99,10 +119,25 @@ func TestRewriteSkillReferences(t *testing.T) {
 	}
 }
 
-func TestRewriteSkillReferences_DoesNotLinkAcrossPhases(t *testing.T) {
-	input := "See `samber/cc-skills-golang@golang-naming` skill."
-	got := RewriteSkillReferences([]byte(input), "samber/cc-skills-golang", "implement", testFiles())
-	if string(got) != "" {
-		t.Errorf("reference to another phase should be removed, got %q", got)
+func TestRewriteSkillReferences_TargetSelection(t *testing.T) {
+	tests := []struct {
+		name  string
+		phase string
+		want  string
+	}{
+		{name: "same phase preferred over earlier manifest entry", phase: "implement", want: "See [security.md](security.md)."},
+		{name: "cross phase fallback", phase: "test", want: "See [implement/security.md](../implement/security.md)."},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			input := "See `samber/cc-skills-golang@golang-security` skill."
+			files := testFiles()
+			for _, order := range [][]*File{files, {files[3], files[2], files[1], files[0]}} {
+				got := RewriteSkillReferences([]byte(input), "samber/cc-skills-golang", tt.phase, order)
+				if string(got) != tt.want {
+					t.Errorf("got %q, want %q", got, tt.want)
+				}
+			}
+		})
 	}
 }

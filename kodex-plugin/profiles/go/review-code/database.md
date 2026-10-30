@@ -156,6 +156,8 @@ db.Query("SELECT ...")
 db.QueryContext(ctx, "SELECT ...")
 ```
 
+For context patterns in depth, see [implement/context.md](../implement/context.md).
+
 ## Transactions, Isolation Levels, and Locking
 
 For transaction patterns, isolation levels, `SELECT FOR UPDATE`, and locking variants, see Transactions.
@@ -201,7 +203,9 @@ Do not rely on triggers, views, materialized views, stored procedures, or row-le
 ## Cross-References
 
 - → See [security.md](security.md) for SQL injection prevention patterns
+- → See [implement/context.md](../implement/context.md) for context propagation to database operations
 - → See [error-handling.md](error-handling.md) for database error wrapping patterns
+- → See [test/testing.md](../test/testing.md) for database integration test patterns
 
 ## References
 

@@ -8,6 +8,8 @@
 
 Interfaces SHOULD have 1-3 methods. Small interfaces are easier to implement, mock, and compose. If you need a larger contract, compose it from small interfaces:
 
+→ See [review-code/naming.md](../review-code/naming.md) for interface naming conventions (method + "-er" suffix, canonical names)
+
 ```go
 type Reader interface {
     Read(p []byte) (n int, err error)
@@ -335,8 +337,10 @@ func process(pool ConnPool) { ... }
 
 ## Cross-References
 
+- → See [review-code/naming.md](../review-code/naming.md) for interface naming conventions (Reader, Closer, Stringer)
 - → See [design-patterns.md](design-patterns.md) for functional options, constructors, and builder patterns
 - → See [dependency-injection.md](dependency-injection.md) for DI patterns using interfaces
+- → See [review-code/code-style.md](../review-code/code-style.md) for value vs pointer function parameters (distinct from receivers)
 
 ## Common Mistakes
 

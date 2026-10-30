@@ -19,7 +19,7 @@ Before optimizing Go code, verify the bottleneck is in your process — if 90% o
 ### The cycle: Define Goals → Benchmark → Diagnose → Improve → Benchmark
 
 1. **Define your metric** — latency, throughput, memory, or CPU? Without a target, optimizations are random
-2. **Write an atomic benchmark** — isolate one function per benchmark to avoid result contamination
+2. **Write an atomic benchmark** — isolate one function per benchmark to avoid result contamination (→ See [test/benchmark.md](../test/benchmark.md))
 3. **Measure baseline** — `go test -bench=BenchmarkMyFunc -benchmem -count=6 ./pkg/... | tee /tmp/report-1.txt`
 4. **Diagnose** — use the **Diagnose** lines in each deep-dive section to pick the right tool
 5. **Improve** — apply ONE optimization at a time with an explanatory comment
@@ -65,9 +65,14 @@ Refer to library documentation for known patterns before inventing custom soluti
 
 ## CI Regression Detection
 
-Automate benchmark comparison in CI to catch regressions before they reach production.
+Automate benchmark comparison in CI to catch regressions before they reach production. → See [test/benchmark.md](../test/benchmark.md) for `benchdiff` and `cob` setup.
 
 ## Cross-References
 
+- → See [test/benchmark.md](../test/benchmark.md) for benchmarking methodology, `benchstat`, and `b.Loop()` (Go 1.24+)
+- Related topics: pprof workflow, escape analysis diagnostics, and performance debugging
+- → See [implement/data-structures.md](../implement/data-structures.md) for slice/map preallocation and `strings.Builder`
 - → See [concurrency.md](concurrency.md) for worker pools, `sync.Pool` API, goroutine lifecycle, and lock contention
+- Related topics: defer in loops, slice backing array aliasing
 - → See [database.md](database.md) for connection pool tuning and batch processing
+- → See [design/observability.md](../design/observability.md) for continuous profiling in production

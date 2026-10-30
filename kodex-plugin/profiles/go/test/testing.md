@@ -333,7 +333,15 @@ For mock patterns, test fixtures, and time mocking, see Mocking.
 
 ## Enforce with Linters
 
-Many test best practices are enforced automatically by linters: `thelper`, `paralleltest`, `testifylint`.
+Many test best practices are enforced automatically by linters: `thelper`, `paralleltest`, `testifylint`. Related topics: configuration and usage.
+
+## Cross-References
+
+- Related topics: detailed testify API (assert, require, mock, suite)
+- Related topics: database integration test patterns
+- -> See [implement/concurrency.md](../implement/concurrency.md) for goroutine leak detection with goleak
+- -> See [document/continuous-integration.md](../document/continuous-integration.md) for CI test configuration and GitHub Actions workflows
+- Related topics: testifylint and paralleltest configuration
 
 ## Quick Reference
 

@@ -64,7 +64,7 @@ Use `-count=1` to disable test caching — cached results can hide flaky service
 
 ### golangci-lint Configuration
 
-Create `.golangci.yml` at the root of the project.
+Create `.golangci.yml` at the root of the project. Related topics: the recommended configuration.
 
 ---
 
@@ -188,3 +188,7 @@ After creating workflow files, ALWAYS tell the developer to configure GitHub rep
 | Not pinning action versions | GitHub Actions MUST use pinned major versions (e.g. `@vN`, not `@master`) |
 | No `permissions` block | Follow least-privilege per job |
 | Ignoring govulncheck findings | Fix or suppress with justification |
+
+## Related Skills
+
+See [implement/security.md](../implement/security.md), [test/testing.md](../test/testing.md).

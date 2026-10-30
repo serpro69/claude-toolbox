@@ -172,3 +172,7 @@ Use `cmd.OutOrStdout()` and `cmd.ErrOrStderr()` in commands (instead of `os.Stdo
 | Not using `PersistentPreRunE` | Config initialization must happen before any subcommand. Use root's `PersistentPreRunE` |
 | Hardcoded version string | Version gets out of sync with tags. Inject via `ldflags` at build time from git tags |
 | Not supporting `--output` format | Scripts can't parse human-readable output. Add JSON/table/plain for machine consumption |
+
+## Related Skills
+
+See [implement/dependency-injection.md](../implement/dependency-injection.md), [test/testing.md](../test/testing.md), [implement/design-patterns.md](../implement/design-patterns.md).

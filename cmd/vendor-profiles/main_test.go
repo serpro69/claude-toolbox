@@ -201,11 +201,17 @@ func TestIntegration_InlineSkillReferences(t *testing.T) {
     - source: skills/errors/SKILL.md
       phase: implement
       as: errors.md
+    - source: skills/naming/SKILL.md
+      phase: review-code
+      as: naming.md
 `)
 	writeFile(t, filepath.Join(fixtureDir, "skills/patterns/SKILL.md"),
 		"# Patterns\n\nFor error handling see `example/skills@errors` skill.\n\n"+
-			"Use `strings.Builder` in loops → see `example/skills@style`\n")
+			"Use `strings.Builder` in loops → see `example/skills@style`\n\n"+
+			"See `example/skills@naming` skill for interface naming conventions.\n"+
+			"See `example/skills@safety` for nil interface trap and nil error comparison pitfalls.\n")
 	writeFile(t, filepath.Join(fixtureDir, "skills/errors/SKILL.md"), "# Errors\n\nCheck errors.\n")
+	writeFile(t, filepath.Join(fixtureDir, "skills/naming/SKILL.md"), "# Naming\n\nUse canonical interface names.\n")
 	targetDir := t.TempDir()
 	if err := run(filepath.Join(fixtureDir, "manifest.yml"), targetDir, false, &LocalFetcher{BaseDir: fixtureDir}); err != nil {
 		t.Fatal(err)
@@ -213,6 +219,15 @@ func TestIntegration_InlineSkillReferences(t *testing.T) {
 	content := readFile(t, filepath.Join(targetDir, "implement/patterns.md"))
 	if !strings.Contains(content, "see [errors.md](errors.md).") || !strings.Contains(content, "Use `strings.Builder` in loops\n") {
 		t.Errorf("navigation cleanup lost local link or guidance: %s", content)
+	}
+	if !strings.Contains(content, "See [review-code/naming.md](../review-code/naming.md) for interface naming conventions.") {
+		t.Errorf("cross-phase reference lost: %s", content)
+	}
+	if _, err := os.Stat(filepath.Join(targetDir, "implement", "../review-code/naming.md")); err != nil {
+		t.Fatalf("cross-phase link target missing: %v", err)
+	}
+	if !strings.Contains(content, "Related topics: nil interface trap and nil error comparison pitfalls.") {
+		t.Errorf("unvendored safety reminder lost: %s", content)
 	}
 	index := readFile(t, filepath.Join(targetDir, "implement/index.md"))
 	if !strings.Contains(index, "For error handling see errors.md.") {

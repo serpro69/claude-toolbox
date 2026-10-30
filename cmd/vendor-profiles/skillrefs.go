@@ -12,12 +12,13 @@ var (
 	skillIDRegex  = regexp.MustCompile(skillIDPattern)
 	skillSeeRegex = regexp.MustCompile(`(?i)\bsee[ \t]+(?:the[ \t]+)?` + skillIDPattern +
 		`(?:,[ \t]*` + skillIDPattern + `)*(?:[ \t]+skills?\b)?`)
+	skillFileHintRegex = regexp.MustCompile(`^[ \t]+\(([a-zA-Z0-9_.-]+\.md)\)`)
 )
 
 // RewriteSkillReferences handles upstream skill navigation written as inline
-// code rather than Markdown links. Like RewriteLinks, it links only to content
-// vendored into the same phase. Unavailable navigation is removed as a clause,
-// keeping the surrounding recommendation rather than leaving a dangling "see".
+// code rather than Markdown links. It prefers same-phase targets, then other
+// packaged phases. Unavailable navigation retains its topic descriptions as
+// plain text instead of directing the reader to an uninstalled skill.
 func RewriteSkillReferences(content []byte, repo, phase string, files []*File) []byte {
 	if !skillSeeRegex.Match(content) {
 		return content
@@ -47,23 +48,30 @@ func RewriteSkillReferences(content []byte, repo, phase string, files []*File) [
 		changed = changed || len(matches) > 0
 		for j := len(matches) - 1; j >= 0; j-- {
 			start, end := matches[j][0], matches[j][1]
+			refs := skillIDRegex.FindAllStringSubmatch(line[start:end], -1)
+			var referenceFile string
+			if hint := skillFileHintRegex.FindStringSubmatch(line[end:]); len(refs) == 1 && hint != nil {
+				referenceFile = hint[1]
+				end += len(hint[0])
+			}
 			var links []string
-			for _, ref := range skillIDRegex.FindAllStringSubmatch(line[start:end], -1) {
+			for _, ref := range refs {
 				if ref[1] != repo {
 					continue
 				}
-				for _, file := range files {
-					if file.Phase == phase && file.Source == path.Join("skills", ref[2], "SKILL.md") {
-						links = append(links, "["+file.As+"]("+file.As+")")
-						break
-					}
+				source := path.Join("skills", ref[2], "SKILL.md")
+				if referenceFile != "" {
+					source = path.Join("skills", ref[2], "references", referenceFile)
+				}
+				if target := localReferenceTarget(source, phase, files); target != "" {
+					links = append(links, "["+strings.TrimPrefix(target, "../")+"]("+target+")")
 				}
 			}
 			if len(links) > 0 {
 				line = line[:start] + line[start:start+3] + " " + strings.Join(links, ", ") + line[end:]
 				continue
 			}
-			line = removeSkillClause(line, start, end)
+			line = rewriteUnavailableSkillClause(line, start, end)
 		}
 		if len(matches) > 0 && line == "" {
 			removedLine = true
@@ -110,9 +118,29 @@ func RewriteSkillReferences(content []byte, repo, phase string, files []*File) [
 	return []byte(result)
 }
 
-func removeSkillClause(line string, start, end int) string {
+// Prefer a same-phase copy, otherwise use the lexical first path so manifest
+// ordering cannot change which packaged copy a reference resolves to.
+func localReferenceTarget(source, phase string, files []*File) string {
+	var target string
+	for _, file := range files {
+		if file.Source != source {
+			continue
+		}
+		if file.Phase == phase {
+			return file.As
+		}
+		candidate := path.Join("..", file.Phase, file.As)
+		if target == "" || candidate < target {
+			target = candidate
+		}
+	}
+	return target
+}
+
+func rewriteUnavailableSkillClause(line string, start, end int) string {
 	// Include an optional arrow and the opening parenthesis of a parenthetical
-	// reference. "For ... see" introductions are navigation too.
+	// reference. Preserve topics both before and after the unavailable identifier.
+	var topics []string
 	prefix := strings.TrimRight(line[:start], " \t")
 	for _, marker := range []string{"→", "->"} {
 		prefix = strings.TrimRight(strings.TrimSuffix(prefix, marker), " \t")
@@ -128,6 +156,8 @@ func removeSkillClause(line string, start, end int) string {
 			}
 		}
 		if strings.HasPrefix(strings.ToLower(strings.TrimSpace(prefix[clauseStart:])), "for ") {
+			topic := strings.TrimSpace(prefix[clauseStart:])[4:]
+			topics = append(topics, strings.TrimRight(topic, ", \t"))
 			prefix = strings.TrimRight(prefix[:clauseStart], " \t")
 		}
 	}
@@ -136,6 +166,9 @@ func removeSkillClause(line string, start, end int) string {
 	// Dots inside code spans (b.Loop(), sync.Pool) are not sentence boundaries.
 	depth := 0
 	inCode := false
+	descriptionStart := end
+	descriptionEnd := end
+	terminator := ""
 	for end < len(line) {
 		c := line[end]
 		if c == '`' {
@@ -146,6 +179,7 @@ func removeSkillClause(line string, start, end int) string {
 				depth++
 			} else if c == ')' {
 				if depth == 0 {
+					descriptionEnd = end
 					if parenthetical {
 						end++
 					}
@@ -154,14 +188,39 @@ func removeSkillClause(line string, start, end int) string {
 				depth--
 			}
 			if depth == 0 && !parenthetical && (c == ';' || c == '.' && (end+1 == len(line) || line[end+1] == ' ')) {
+				descriptionEnd = end
+				terminator = string(c)
 				end++
 				break
 			}
 			if c == '|' {
+				descriptionEnd = end
 				break
 			}
 		}
 		end++
+		descriptionEnd = end
+	}
+	description := strings.TrimSpace(line[descriptionStart:descriptionEnd])
+	if strings.HasPrefix(strings.ToLower(description), "for ") {
+		description = strings.TrimSpace(description[4:])
+	}
+	if description != "" {
+		topics = append(topics, description)
+	}
+	if len(topics) > 0 {
+		topicText := "Related topics: " + strings.Join(topics, "; ")
+		if parenthetical {
+			topicText = "(" + topicText + ")"
+		}
+		if prefix != "" {
+			topicText = prefix + " " + topicText
+		}
+		suffix := line[end:]
+		if strings.HasPrefix(suffix, "|") {
+			suffix = " " + suffix
+		}
+		return topicText + terminator + suffix
 	}
 	prefix = strings.TrimRight(strings.TrimSuffix(prefix, "—"), " \t")
 	if prefix == "-" || prefix == "*" {
