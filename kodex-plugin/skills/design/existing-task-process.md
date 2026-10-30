@@ -14,8 +14,8 @@
    - **If tasks are well-documented and clear** → proceed to implement using the `$kk:implement` skill.
    - **If tasks need refinement** (missing details, unclear subtasks, gaps in the plan) → refine `tasks.md` and/or design/implementation docs using the drafting guidelines and task-format example loaded during entry. Use the existing decisions and loaded profile guidance; do not restart fresh-idea sub-phases.
 
-4. **Recommend next steps before handoff.** If refinement materially changed documents, suggest an optional `$kk:clarify-docs` invocation naming only those paths. Unchanged documents may supply context but are outside the suggested edit scope. An unchanged resume neither rewrites documents nor suggests clarification.
+4. **Recommend next steps before implementation.** If refinement materially changed documents, suggest an optional `$kk:clarify-docs` invocation naming only those paths. Unchanged documents may supply context but are outside the suggested edit scope. An unchanged resume neither rewrites documents nor suggests clarification.
 
-   Present optional clarification before recommending `$kk:review-design <feature>` after refinement, then hand off to `$kk:implement` when ready. These are recommendations, not automatic editing or independent review.
+   Present optional clarification before recommending `$kk:review-design <feature>` after refinement, then recommend `$kk:implement` when ready. These are recommendations, not automatic editing or independent review.
 
-   When the caller asks to stop at the handoff, name the next pending task and the `$kk:implement` invocation in the response, without starting implementation. This applies to both refined and unchanged resumes.
+   When the caller asks to stop before implementation, name the next pending task and the `$kk:implement` invocation in the response, without starting implementation. This applies to both refined and unchanged resumes.

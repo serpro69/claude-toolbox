@@ -1,6 +1,6 @@
 # Getting Started
 
-claude-toolbox gives you two things: an **opinionated configuration** for Claude Code and Codex, and a **structured development pipeline** supported by 15 workflow and utility skills.
+claude-toolbox gives you two things: an **opinionated configuration** for Claude Code and Codex, and a **structured development pipeline** supported by 16 workflow and utility skills.
 
 ## Choose Your Path
 

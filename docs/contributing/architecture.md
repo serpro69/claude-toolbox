@@ -27,7 +27,7 @@ klaude-plugin/          (canonical source)
 
 The canonical source of truth for all workflow functionality. Contains:
 
-- **`skills/`** — 15 workflow and utility skills (/kk:design, /kk:implement, /kk:review-code, /kk:test, /kk:document, /kk:clarify-docs, etc.)
+- **`skills/`** — 16 workflow and utility skills (/kk:design, /kk:implement, /kk:review-code, /kk:test, /kk:document, /kk:clarify-docs, /kk:handoff, etc.)
 - **`commands/`** — Slash commands for isolated/variant invocations
 - **`agents/`** — Sub-agent definitions (code-reviewer, design-reviewer, spec-reviewer, architecture-reviewer, eval-grader, profile-resolver)
 - **`profiles/`** — Per-domain content (Go, Java, JS/TS, Kotlin, K8s, Python) with detection rules, review checklists, implementation gotchas, design prompts, test validators, and doc rubrics
@@ -35,6 +35,13 @@ The canonical source of truth for all workflow functionality. Contains:
 - **`scripts/`** — Plugin-root resolver and canonical `guard/` wrapper, Python engine, policy declaration and license
 
 Skills reference shared instructions via symlinks to `skills/_shared/`. Profiles are referenced via `${CLAUDE_PLUGIN_ROOT}/profiles/` paths (substituted at plugin-load time by the Claude Code harness).
+
+`/kk:handoff` is an explicitly invoked, instructions-only utility that publishes
+active-task context and a starter prompt to a new secret GitHub gist using `gh`.
+It has no runtime helper, lifecycle hook or indexing dependency. Its nested
+`agents/openai.yaml` is Codex invocation metadata copied unchanged by generation,
+not a sub-agent definition. Both hosts disable implicit invocation. The CLI stub
+under its `evals/` directory is offline test support only.
 
 ### Profile Vendoring (`cmd/vendor-profiles/`)
 
@@ -183,7 +190,7 @@ Users interact with claude-toolbox through three distinct modes, each providing 
 
 | What you get                 | Plugin-only | Template / Sync | Full repo checkout |
 | ---------------------------- | :---------: | :-------------: | :----------------: |
-| Skills (15 workflow and utility skills) |      Y      |        Y        |         Y          |
+| Skills (16 workflow and utility skills) |      Y      |        Y        |         Y          |
 | Profiles (language-specific) |      Y      |        Y        |         Y          |
 | Commands                     |  Y (Claude) |    Y (Claude)   |         Y          |
 | Hooks                        |  Y (Claude) |        Y        |         Y          |

@@ -14,7 +14,7 @@ Then open `/plugins` in the Codex TUI, select the **Claude Toolbox** marketplace
 
 ## What's Included
 
-- **15 workflow and utility skills** — the same pipeline as the Claude Code plugin (`$kk:design` → `$kk:review-design` → `$kk:implement` → `$kk:review-code` → `$kk:test` → `$kk:document`, plus utilities)
+- **16 workflow and utility skills** — the same pipeline as the Claude Code plugin (`$kk:design` → `$kk:review-design` → `$kk:implement` → `$kk:review-code` → `$kk:test` → `$kk:document`, plus utilities)
 - **Language-specific profiles** — review checklists, implementation gotchas, design prompts, test validators, and doc rubrics for Go, Java, JS/TS, Kotlin, Kubernetes, and Python
 
 The plugin does **not** include hooks, sub-agents, Starlark rules, or project configuration. For the full Codex experience, use the [template setup](https://serpro69.github.io/claude-toolbox/latest/getting-started/template-setup/) or [adopt into an existing repo](https://serpro69.github.io/claude-toolbox/latest/getting-started/adopting/).

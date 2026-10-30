@@ -73,6 +73,7 @@ EXPECTED_SKILLS=(
   dependency-handling
   diff-skill
   document
+  handoff
   implement
   review-design
   review-spec
@@ -553,6 +554,26 @@ if [[ "$klaude_count" -eq "$kodex_count" && "$klaude_count" -gt 0 ]]; then
 else
   log_fail "Skill count mismatch: klaude=$klaude_count kodex=$kodex_count"
 fi
+
+log_test "Handoff requires explicit invocation in both distributions"
+for plugin in klaude-plugin kodex-plugin; do
+  handoff_dir="$REPO_ROOT/$plugin/skills/handoff"
+  assert_file_exists "$handoff_dir/SKILL.md" "Handoff entry point in $plugin"
+  assert_file_exists "$handoff_dir/agents/openai.yaml" "Handoff Codex policy in $plugin"
+  if [[ -f "$handoff_dir/SKILL.md" && -f "$handoff_dir/agents/openai.yaml" ]]; then
+    claude_manual=$(awk '
+      /^---$/ { delimiters++; next }
+      delimiters == 1 && $1 == "disable-model-invocation:" { print $2 }
+    ' "$handoff_dir/SKILL.md")
+    codex_implicit=$(awk '
+      /^policy:$/ { in_policy = 1; next }
+      /^[^[:space:]#]/ { in_policy = 0 }
+      in_policy && $1 == "allow_implicit_invocation:" { print $2 }
+    ' "$handoff_dir/agents/openai.yaml")
+    assert_equals "true" "$claude_manual" "Handoff disables Claude model invocation in $plugin"
+    assert_equals "false" "$codex_implicit" "Handoff disables Codex implicit invocation in $plugin"
+  fi
+done
 
 log_test "No \${CLAUDE_PLUGIN_ROOT} literals in generated kodex-plugin skills"
 if grep -r 'CLAUDE_PLUGIN_ROOT' "$REPO_ROOT/kodex-plugin/skills/" &>/dev/null; then

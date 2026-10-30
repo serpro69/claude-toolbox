@@ -6,7 +6,7 @@ description: |
   grounded in requirements and source while preserving meaning. Not for requests
   to implement, fix or work on an issue, code, config, generic response brevity,
   or agent instructions. Explicit instruction or SKILL.md targets receive a
-  /kk:implement suggestion without edits or automatic handoff.
+  /kk:implement suggestion without edits or invoking implementation.
 ---
 
 # Clarify Documentation, PR Drafts and Issue Descriptions

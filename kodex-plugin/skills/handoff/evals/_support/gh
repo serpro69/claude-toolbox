@@ -1,0 +1,137 @@
+#!/usr/bin/env python3
+"""Offline gist fixture. Never invokes GitHub or another gh executable."""
+
+import argparse
+import base64
+import json
+import os
+from pathlib import Path
+import re
+import sys
+import uuid
+
+
+def parser_for(command):
+    parser = argparse.ArgumentParser(prog="gh gist " + command, allow_abbrev=False)
+    if command == "create":
+        parser.add_argument("files", nargs="+")
+        parser.add_argument("-d", "--desc", default="")
+        parser.add_argument("-p", "--public", action="store_true")
+    elif command == "edit":
+        parser.add_argument("gist")
+        parser.add_argument("-a", "--add", required=True)
+    else:
+        parser.add_argument("gist")
+        parser.add_argument("-f", "--filename", required=True)
+        parser.add_argument("-r", "--raw", action="store_true")
+    return parser
+
+
+def snapshot(paths):
+    uploads = []
+    for value in paths:
+        path = Path(value)
+        uploads.append({
+            "path": str(path.absolute()),
+            "filename": path.name,
+            "bytes_base64": base64.b64encode(path.read_bytes()).decode("ascii"),
+        })
+    return uploads
+
+
+def gist_path(state, value):
+    # Only our exact synthetic IDs/URLs resolve; never interpret IDs as paths.
+    match = re.fullmatch(r"(?:https://gist\.github\.com/handoff-eval/)?([0-9a-f]{32})", value)
+    if not match:
+        raise ValueError("unknown synthetic gist ID or URL")
+    path = state / (match.group(1) + ".json")
+    if not path.is_file():
+        raise ValueError("unknown synthetic gist")
+    return path
+
+
+def dispatch(args, state, event):
+    mode = os.environ.get("HANDOFF_GH_MODE", "producer")
+    failure = os.environ.get("HANDOFF_GH_FAILURE", "none")
+    if mode not in ("producer", "consumer") or failure not in ("none", "create", "add"):
+        raise ValueError("invalid fixture mode or failure configuration")
+    if args in (["--version"], ["version"]):
+        print("gh version 2.38.0 (2023-11-01)")
+        print("https://github.com/cli/cli/releases/tag/v2.38.0")
+        return 0
+    if args in (["--help"], ["help"], ["gist", "--help"]):
+        print("Usage: gh gist <command> [flags]\nCommands: create, edit, view")
+        return 0
+    if len(args) < 2 or args[0] != "gist" or args[1] not in ("create", "edit", "view"):
+        raise ValueError("unsupported fixture command: " + repr(args))
+    command = args[1]
+    parsed = parser_for(command).parse_args(args[2:])
+    event["command"] = command
+
+    if command == "view":
+        if mode != "consumer":
+            raise ValueError("unexpected producer remote read")
+        gist = json.loads(gist_path(state, parsed.gist).read_text())
+        if parsed.filename not in gist["files"]:
+            raise ValueError("unknown synthetic gist filename")
+        sys.stdout.buffer.write(base64.b64decode(gist["files"][parsed.filename]))
+        return 0
+
+    event["uploads"] = snapshot(parsed.files if command == "create" else [parsed.add])
+    if command == "create":
+        event.update(description=parsed.desc, public=parsed.public)
+    # The final event retains every submitted byte even on configured failures.
+    if mode != "producer":
+        raise ValueError("unexpected consumer mutation")
+    if command == "create" and failure == "create":
+        event["error"] = "HTTP 401: Bad credentials (https://api.github.com/gists)"
+        print(event["error"], file=sys.stderr)
+        return 4
+    if command == "create":
+        identifier = uuid.uuid4().hex
+        path = state / (identifier + ".json")
+        gist = {"id": identifier, "url": "https://gist.github.com/handoff-eval/" + identifier,
+                "description": parsed.desc, "public": parsed.public, "files": {}}
+    else:
+        path = gist_path(state, parsed.gist)
+        gist = json.loads(path.read_text())
+        if failure == "add":
+            event["error"] = "HTTP 503: Service Unavailable (https://api.github.com/gists)"
+            print(event["error"], file=sys.stderr)
+            return 1
+    for upload in event["uploads"]:
+        gist["files"][upload["filename"]] = upload["bytes_base64"]
+    path.write_text(json.dumps(gist, indent=2) + "\n")
+    event["url"] = gist["url"]
+    if command == "create":
+        print(gist["url"])
+    return 0
+
+
+def main():
+    configured = os.environ.get("HANDOFF_GH_STATE")
+    if not configured or not Path(configured).is_absolute() or not Path(configured).is_dir():
+        print("fixture requires HANDOFF_GH_STATE: an existing absolute directory", file=sys.stderr)
+        return 2
+    state = Path(configured)
+    event = {"argv": sys.argv[1:], "cwd": os.getcwd()}
+    # Log receipt first so even interrupted or unimplemented calls remain visible.
+    attempt = uuid.uuid4().hex
+    with (state / "calls.jsonl").open("a") as log:
+        log.write(json.dumps({"attempt": attempt, "phase": "received", **event}) + "\n")
+    try:
+        code = dispatch(sys.argv[1:], state, event)
+    except SystemExit as error:
+        code = error.code
+    except (OSError, ValueError) as error:
+        event["error"] = str(error)
+        print("gh fixture: " + str(error), file=sys.stderr)
+        code = 2
+    with (state / "calls.jsonl").open("a") as log:
+        log.write(json.dumps({"attempt": attempt, "phase": "completed",
+                              **event, "exit_code": code}) + "\n")
+    return code
+
+
+if __name__ == "__main__":
+    sys.exit(main())
