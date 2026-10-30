@@ -176,7 +176,7 @@ For tests that may hang, use a timeout helper that panics with caller location. 
 
 ## Benchmarks
 
-→ See `samber/cc-skills-golang@golang-benchmark` skill for advanced benchmarking: `b.Loop()` (Go 1.24+), `benchstat`, profiling from benchmarks, and CI regression detection.
+→ See [benchmark.md](benchmark.md) for advanced benchmarking: `b.Loop()` (Go 1.24+), `benchstat`, profiling from benchmarks, and CI regression detection.
 
 Write benchmarks to measure performance and detect regressions:
 
@@ -333,15 +333,7 @@ For mock patterns, test fixtures, and time mocking, see Mocking.
 
 ## Enforce with Linters
 
-Many test best practices are enforced automatically by linters: `thelper`, `paralleltest`, `testifylint`. See the `samber/cc-skills-golang@golang-linter` skill for configuration and usage.
-
-## Cross-References
-
-- -> See `samber/cc-skills-golang@golang-stretchr-testify` skill for detailed testify API (assert, require, mock, suite)
-- -> See `samber/cc-skills-golang@golang-database` skill (testing.md) for database integration test patterns
-- -> See `samber/cc-skills-golang@golang-concurrency` skill for goroutine leak detection with goleak
-- -> See `samber/cc-skills-golang@golang-continuous-integration` skill for CI test configuration and GitHub Actions workflows
-- -> See `samber/cc-skills-golang@golang-linter` skill for testifylint and paralleltest configuration
+Many test best practices are enforced automatically by linters: `thelper`, `paralleltest`, `testifylint`.
 
 ## Quick Reference
 

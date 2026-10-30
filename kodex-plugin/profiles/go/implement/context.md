@@ -52,11 +52,10 @@ func (s *OrderService) Create(ctx context.Context, order Order) error {
 
 ## Cross-References
 
-- → See the `samber/cc-skills-golang@golang-concurrency` skill for goroutine cancellation patterns using context
-- → See the `samber/cc-skills-golang@golang-database` skill for context-aware database operations (QueryContext, ExecContext)
-- → See the `samber/cc-skills-golang@golang-observability` skill for trace context propagation with OpenTelemetry
-- → See the `samber/cc-skills-golang@golang-design-patterns` skill for timeout and resilience patterns
+- → See [concurrency.md](concurrency.md) for goroutine cancellation patterns using context
+- → See [database.md](database.md) for context-aware database operations (QueryContext, ExecContext)
+- → See [design-patterns.md](design-patterns.md) for timeout and resilience patterns
 
 ## Enforce with Linters
 
-Many context pitfalls are caught automatically by linters: `govet`, `staticcheck`. → See the `samber/cc-skills-golang@golang-linter` skill for configuration and usage.
+Many context pitfalls are caught automatically by linters: `govet`, `staticcheck`.

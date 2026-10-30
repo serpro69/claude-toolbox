@@ -38,13 +38,6 @@ When auditing error handling across a large codebase, use up to 5 parallel sub-a
 - Sub-agent 4: Panic/recover — audit `panic` usage, verify recovery at goroutine boundaries
 - Sub-agent 5: Structured logging — verify `slog` usage at error sites, check for PII in error messages
 
-## Cross-References
-
-- → See `samber/cc-skills-golang@golang-samber-oops` for full samber/oops API, builder patterns, and logger integration
-- → See `samber/cc-skills-golang@golang-observability` for structured logging setup, log levels, and request logging middleware
-- → See `samber/cc-skills-golang@golang-safety` for nil interface trap and nil error comparison pitfalls
-- → See `samber/cc-skills-golang@golang-naming` for error naming conventions (ErrNotFound, PathError)
-
 ## References
 
 - [lmittmann/tint](https://github.com/lmittmann/tint)

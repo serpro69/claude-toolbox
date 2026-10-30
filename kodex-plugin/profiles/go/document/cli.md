@@ -172,7 +172,3 @@ Use `cmd.OutOrStdout()` and `cmd.ErrOrStderr()` in commands (instead of `os.Stdo
 | Not using `PersistentPreRunE` | Config initialization must happen before any subcommand. Use root's `PersistentPreRunE` |
 | Hardcoded version string | Version gets out of sync with tags. Inject via `ldflags` at build time from git tags |
 | Not supporting `--output` format | Scripts can't parse human-readable output. Add JSON/table/plain for machine consumption |
-
-## Related Skills
-
-See `samber/cc-skills-golang@golang-project-layout`, `samber/cc-skills-golang@golang-dependency-injection`, `samber/cc-skills-golang@golang-testing`, `samber/cc-skills-golang@golang-design-patterns` skills.

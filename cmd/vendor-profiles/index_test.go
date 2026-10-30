@@ -26,6 +26,16 @@ func readFile(t *testing.T, path string) string {
 	return string(data)
 }
 
+func TestExtractDescription_LinkBeforeTruncation(t *testing.T) {
+	file := filepath.Join(t.TempDir(), "patterns.md")
+	prefix := strings.Repeat("a", 110) + " "
+	writeFile(t, file, "# Patterns\n\n"+prefix+"See [errors.md](errors.md) for error handling.\n")
+	got := extractDescription(file, "patterns.md")
+	if got != (prefix + "See errors.md for error handling.")[:120] {
+		t.Errorf("description must strip links before truncation, got %q", got)
+	}
+}
+
 func TestUpdateIndex_NewFile(t *testing.T) {
 	dir := t.TempDir()
 	phase := "implement"

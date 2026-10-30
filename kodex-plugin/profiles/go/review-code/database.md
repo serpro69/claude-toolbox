@@ -75,7 +75,7 @@ if !allowed[sortCol] {
 query := fmt.Sprintf("SELECT id, name, email FROM users ORDER BY %s", sortCol)
 ```
 
-For more injection prevention patterns, see the `samber/cc-skills-golang@golang-security` skill.
+For more injection prevention patterns, see [security.md](security.md).
 
 ## Struct Scanning and NULLable Columns
 
@@ -156,8 +156,6 @@ db.Query("SELECT ...")
 db.QueryContext(ctx, "SELECT ...")
 ```
 
-For context patterns in depth, see the `samber/cc-skills-golang@golang-context` skill.
-
 ## Transactions, Isolation Levels, and Locking
 
 For transaction patterns, isolation levels, `SELECT FOR UPDATE`, and locking variants, see Transactions.
@@ -202,10 +200,8 @@ Do not rely on triggers, views, materialized views, stored procedures, or row-le
 
 ## Cross-References
 
-- → See `samber/cc-skills-golang@golang-security` skill for SQL injection prevention patterns
-- → See `samber/cc-skills-golang@golang-context` skill for context propagation to database operations
-- → See `samber/cc-skills-golang@golang-error-handling` skill for database error wrapping patterns
-- → See `samber/cc-skills-golang@golang-testing` skill for database integration test patterns
+- → See [security.md](security.md) for SQL injection prevention patterns
+- → See [error-handling.md](error-handling.md) for database error wrapping patterns
 
 ## References
 

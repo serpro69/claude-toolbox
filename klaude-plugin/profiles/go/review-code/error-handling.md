@@ -40,10 +40,7 @@ When auditing error handling across a large codebase, use up to 5 parallel sub-a
 
 ## Cross-References
 
-- → See `samber/cc-skills-golang@golang-samber-oops` for full samber/oops API, builder patterns, and logger integration
-- → See `samber/cc-skills-golang@golang-observability` for structured logging setup, log levels, and request logging middleware
-- → See `samber/cc-skills-golang@golang-safety` for nil interface trap and nil error comparison pitfalls
-- → See `samber/cc-skills-golang@golang-naming` for error naming conventions (ErrNotFound, PathError)
+- → See [naming.md](naming.md) for error naming conventions (ErrNotFound, PathError)
 
 ## References
 

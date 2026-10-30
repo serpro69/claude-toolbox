@@ -4,7 +4,7 @@ Dependency injection (DI) means passing dependencies to a component rather than 
 
 This skill is not exhaustive. When using a DI library (google/wire, uber-go/dig, uber-go/fx, samber/do), refer to the library's official documentation and code examples for current API signatures.
 
-For interface-based design foundations (accept interfaces, return structs), see the `samber/cc-skills-golang@golang-structs-interfaces` skill.
+For interface-based design foundations (accept interfaces, return structs), see [structs-interfaces.md](structs-interfaces.md).
 
 ## Best Practices Summary
 
@@ -240,10 +240,7 @@ This is particularly useful for integration tests where you want most services t
 
 ## Cross-References
 
-- → See `samber/cc-skills-golang@golang-samber-do` skill for detailed samber/do usage patterns
-- → See `samber/cc-skills-golang@golang-structs-interfaces` skill for interface design and composition
-- → See `samber/cc-skills-golang@golang-testing` skill for testing with dependency injection
-- → See `samber/cc-skills-golang@golang-project-layout` skill for DI initialization placement
+- → See [structs-interfaces.md](structs-interfaces.md) for interface design and composition
 
 ## References
 

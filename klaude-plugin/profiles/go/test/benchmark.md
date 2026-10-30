@@ -2,7 +2,7 @@
 
 Performance improvement does not exist without measures — if you can measure it, you can improve it.
 
-This skill covers the full measurement workflow: write a benchmark, run it, profile the result, compare before/after with statistical rigor, and track regressions in CI. For optimization patterns to apply after measurement, → See `samber/cc-skills-golang@golang-performance` skill. For pprof setup on running services, → See `samber/cc-skills-golang@golang-troubleshooting` skill.
+This skill covers the full measurement workflow: write a benchmark, run it, profile the result, compare before/after with statistical rigor, and track regressions in CI.
 
 ## Writing Benchmarks
 
@@ -112,8 +112,4 @@ For full pprof CLI reference (all commands, non-interactive mode, profile interp
 
 ## Cross-References
 
-- → See `samber/cc-skills-golang@golang-performance` skill for optimization patterns to apply after measuring ("if X bottleneck, apply Y")
-- → See `samber/cc-skills-golang@golang-troubleshooting` skill for pprof setup on running services (enable, secure, capture), Delve debugger, GODEBUG flags, root cause methodology
-- → See `samber/cc-skills-golang@golang-observability` skill for everyday always-on monitoring, continuous profiling (Pyroscope), distributed tracing (OpenTelemetry)
-- → See `samber/cc-skills-golang@golang-testing` skill for general testing practices
-- → See `samber/cc-skills@promql-cli` skill for querying Prometheus runtime metrics in production to validate benchmark findings
+- → See [testing.md](testing.md) for general testing practices

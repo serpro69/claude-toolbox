@@ -11,7 +11,7 @@ Consumed by the `/kk:review-code` skill. When the `go` profile is active, every 
 ## Always load
 
 - [security.md](security.md) — Security in Go follows the principle of **defense in depth**: protect at multiple layers, validate all inputs, use secur
-- [code-style.md](code-style.md) — Style rules that require human judgment — linters handle formatting, this skill handles clarity. For naming see `sambe
+- [code-style.md](code-style.md) — Style rules that require human judgment — linters handle formatting, this skill handles clarity. For naming see naming
 - [error-handling.md](error-handling.md) — This skill guides the creation of robust, idiomatic error handling in Go applications. Follow these principles to write 
 
 ## Conditional

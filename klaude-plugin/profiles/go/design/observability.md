@@ -20,10 +20,6 @@ When using observability libraries (Prometheus client, OpenTelemetry SDK, vendor
 12. **A feature is not done until it is observable** — declare metrics, add proper logging, create spans
 13. **Use [awesome-prometheus-alerts](https://samber.github.io/awesome-prometheus-alerts/) as a starting point** for infrastructure and dependency alerting — browse by technology, copy rules, customize thresholds
 
-## Cross-References
-
-See `samber/cc-skills-golang@golang-error-handling` skill for the single handling rule. See `samber/cc-skills-golang@golang-troubleshooting` skill for using observability signals to diagnose production issues. See `samber/cc-skills-golang@golang-security` skill for protecting pprof endpoints and avoiding PII in logs. See `samber/cc-skills-golang@golang-context` skill for propagating trace context across service boundaries. See `samber/cc-skills@promql-cli` skill for querying and exploring PromQL expressions against Prometheus from the CLI.
-
 ## The Five Signals
 
 | Signal | Question it answers | Tool | When to use |
