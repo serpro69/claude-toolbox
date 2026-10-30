@@ -1,6 +1,6 @@
 # Go Code Style
 
-Style rules that require human judgment — linters handle formatting, this skill handles clarity. For naming see `samber/cc-skills-golang@golang-naming` skill; for design patterns see `samber/cc-skills-golang@golang-design-patterns` skill; for struct/interface design see `samber/cc-skills-golang@golang-structs-interfaces` skill.
+Style rules that require human judgment — linters handle formatting, this skill handles clarity. For naming see [naming.md](naming.md).
 
 > "Clear is better than clever." — Go Proverbs
 
@@ -146,7 +146,7 @@ default:
 ## Function Design
 
 - Functions SHOULD be **short and focused** — one function, one job.
-- Functions SHOULD have **≤4 parameters**. Beyond that, use an options struct (see `samber/cc-skills-golang@golang-design-patterns` skill).
+- Functions SHOULD have **≤4 parameters**. Beyond that, use an options struct.
 - **Parameter order**: `context.Context` first, then inputs, then output destinations.
 - Naked returns help in very short functions (1-3 lines) where return values are obvious, but become confusing when readers must scroll to find what's returned — name returns explicitly in longer functions.
 
@@ -204,11 +204,8 @@ When reviewing code style across a large codebase, use up to 5 parallel sub-agen
 
 ## Enforce with Linters
 
-Many rules are enforced automatically: `gofmt`, `gofumpt`, `goimports`, `gocritic`, `revive`, `wsl_v5`. → See the `samber/cc-skills-golang@golang-linter` skill.
+Many rules are enforced automatically: `gofmt`, `gofumpt`, `goimports`, `gocritic`, `revive`, `wsl_v5`.
 
 ## Cross-References
 
-- → See the `samber/cc-skills-golang@golang-naming` skill for identifier naming conventions
-- → See the `samber/cc-skills-golang@golang-structs-interfaces` skill for pointer vs value receivers, interface design
-- → See the `samber/cc-skills-golang@golang-design-patterns` skill for functional options, builders, constructors
-- → See the `samber/cc-skills-golang@golang-linter` skill for automated formatting enforcement
+- → See [naming.md](naming.md) for identifier naming conventions

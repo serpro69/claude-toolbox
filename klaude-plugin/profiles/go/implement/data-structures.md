@@ -1,6 +1,6 @@
 # Go Data Structures
 
-Built-in and standard library data structures: internals, correct usage, and selection guidance. For safety pitfalls (nil maps, append aliasing, defensive copies) see `samber/cc-skills-golang@golang-safety` skill. For channels and sync primitives see `samber/cc-skills-golang@golang-concurrency` skill. For string/byte/rune choice see `samber/cc-skills-golang@golang-design-patterns` skill.
+Built-in and standard library data structures: internals, correct usage, and selection guidance. For channels and sync primitives see [concurrency.md](concurrency.md). For string/byte/rune choice see [design-patterns.md](design-patterns.md).
 
 ## Best Practices Summary
 
@@ -15,7 +15,7 @@ Built-in and standard library data structures: internals, correct usage, and sel
 
 ## Slice Internals
 
-A slice is a 3-word header: pointer, length, capacity. Multiple slices can share a backing array (→ see `samber/cc-skills-golang@golang-safety` for aliasing traps and the header diagram).
+A slice is a 3-word header: pointer, length, capacity. Multiple slices can share a backing array.
 
 ### Capacity Growth
 
@@ -38,7 +38,7 @@ s = slices.Grow(s, additionalNeeded)
 
 ### `slices` Package (Go 1.21+)
 
-Key functions: `Sort`/`SortFunc`, `BinarySearch`, `Contains`, `Compact`, `Grow`. For `Clone`, `Equal`, `DeleteFunc` → see `samber/cc-skills-golang@golang-safety` skill.
+Key functions: `Sort`/`SortFunc`, `BinarySearch`, `Contains`, `Compact`, `Grow`.
 
 **Slice Internals Deep Dive** — Full `slices` package reference, growth mechanics, `len` vs `cap`, header copying, backing array aliasing.
 
@@ -60,8 +60,6 @@ m := make(map[string]*User, len(users)) // avoids rehashing during population
 | `Insert` (1.23+)  | Insert entries from iterator |
 | `All` (1.23+)     | Iterator over all entries    |
 | `Keys`, `Values`  | Iterators over keys/values   |
-
-For `Clone`, `Equal`, sorted iteration → see `samber/cc-skills-golang@golang-safety` skill.
 
 **Map Internals Deep Dive** — How Go maps store and hash data, bucket overflow chains, why maps never shrink (and what to do about it), comparing map performance to alternatives.
 
@@ -139,12 +137,9 @@ When using third-party libraries, refer to their official documentation and code
 
 ## Cross-References
 
-- → See `samber/cc-skills-golang@golang-performance` skill for struct field alignment, memory layout optimization, and cache locality
-- → See `samber/cc-skills-golang@golang-safety` skill for nil map/slice pitfalls, append aliasing, defensive copying, `slices.Clone`/`Equal`
-- → See `samber/cc-skills-golang@golang-concurrency` skill for channels, `sync.Map`, `sync.Pool`, and all sync primitives
-- → See `samber/cc-skills-golang@golang-design-patterns` skill for `string` vs `[]byte` vs `[]rune`, iterators, streaming
-- → See `samber/cc-skills-golang@golang-structs-interfaces` skill for struct composition, embedding, and generics vs `any`
-- → See `samber/cc-skills-golang@golang-code-style` skill for slice/map initialization style
+- → See [concurrency.md](concurrency.md) for channels, `sync.Map`, `sync.Pool`, and all sync primitives
+- → See [design-patterns.md](design-patterns.md) for `string` vs `[]byte` vs `[]rune`, iterators, streaming
+- → See [structs-interfaces.md](structs-interfaces.md) for struct composition, embedding, and generics vs `any`
 
 ## Common Mistakes
 

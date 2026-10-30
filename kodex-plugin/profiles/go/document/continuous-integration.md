@@ -64,7 +64,7 @@ Use `-count=1` to disable test caching — cached results can hide flaky service
 
 ### golangci-lint Configuration
 
-Create `.golangci.yml` at the root of the project. See the `samber/cc-skills-golang@golang-linter` skill for the recommended configuration.
+Create `.golangci.yml` at the root of the project.
 
 ---
 
@@ -188,7 +188,3 @@ After creating workflow files, ALWAYS tell the developer to configure GitHub rep
 | Not pinning action versions | GitHub Actions MUST use pinned major versions (e.g. `@vN`, not `@master`) |
 | No `permissions` block | Follow least-privilege per job |
 | Ignoring govulncheck findings | Fix or suppress with justification |
-
-## Related Skills
-
-See `samber/cc-skills-golang@golang-linter`, `samber/cc-skills-golang@golang-security`, `samber/cc-skills-golang@golang-testing`, `samber/cc-skills-golang@golang-dependency-management` skills.

@@ -47,6 +47,7 @@ func run(manifestPath, targetDir string, dryRun bool, fetcher Fetcher) error {
 			}
 
 			transformed = RewriteLinks(transformed, file.Source, file.Phase, upstream.Files)
+			transformed = RewriteSkillReferences(transformed, upstream.Repo, file.Phase, upstream.Files)
 
 			outPath := fmt.Sprintf("%s/%s/%s", targetDir, file.Phase, file.As)
 

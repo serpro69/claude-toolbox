@@ -78,6 +78,9 @@ func extractDescription(contentPath, fallbackName string) string {
 		if trimmed == "" || strings.HasPrefix(trimmed, "#") {
 			continue
 		}
+		// Descriptions are plain previews; truncating a link can leave broken
+		// Markdown or accidentally introduce another checklist-loading edge.
+		trimmed = linkRegex.ReplaceAllString(trimmed, "$1")
 		if len(trimmed) > 120 {
 			return trimmed[:120]
 		}

@@ -1,6 +1,6 @@
 # Go Design Patterns & Idioms
 
-Idiomatic Go patterns for production-ready code. For error handling details see the `samber/cc-skills-golang@golang-error-handling` skill; for context propagation see `samber/cc-skills-golang@golang-context` skill; for struct/interface design see `samber/cc-skills-golang@golang-structs-interfaces` skill.
+Idiomatic Go patterns for production-ready code. For error handling details see [error-handling.md](error-handling.md); for context propagation see [context.md](context.md); for struct/interface design see [structs-interfaces.md](structs-interfaces.md).
 
 ## Best Practices Summary
 
@@ -15,12 +15,12 @@ Idiomatic Go patterns for production-ready code. For error handling details see 
 9. Every external call SHOULD **have a timeout** — a slow upstream hangs your goroutine indefinitely
 10. **Limit everything** (pool sizes, queue depths, buffers) — unbounded resources grow until they crash
 11. Retry logic MUST **check context cancellation** between attempts
-12. **Use `strings.Builder`** for concatenation in loops → see `samber/cc-skills-golang@golang-code-style`
+12. **Use `strings.Builder`** for concatenation in loops
 13. string vs []byte: **use `[]byte` for mutation and I/O**, `string` for display and keys — conversions allocate
 14. Iterators (Go 1.23+): **use for lazy evaluation** — avoid loading everything into memory
 15. **Stream large transfers** — loading millions of rows causes OOM; stream keeps memory constant
 16. `//go:embed` for **static assets** — embeds at compile time, eliminates runtime file I/O errors
-17. **Use `crypto/rand`** for keys/tokens — `math/rand` is predictable → see `samber/cc-skills-golang@golang-security`
+17. **Use `crypto/rand`** for keys/tokens — `math/rand` is predictable → see [security.md](security.md)
 18. Regexp MUST be **compiled once at package level** — compilation is O(n) and allocates
 19. Compile-time interface checks: **`var _ Interface = (*Type)(nil)`**
 20. **A little recode > a big dependency** — each dep adds attack surface and maintenance burden
@@ -143,11 +143,11 @@ var version string
 
 ### Compile-Time Interface Checks
 
-→ See `samber/cc-skills-golang@golang-structs-interfaces` for the `var _ Interface = (*Type)(nil)` pattern.
+→ See [structs-interfaces.md](structs-interfaces.md) for the `var _ Interface = (*Type)(nil)` pattern.
 
 ## Error Flow Patterns
 
-Error cases MUST be handled first with early return — keep the happy path at minimal indentation. → See `samber/cc-skills-golang@golang-code-style` for the full pattern and examples.
+Error cases MUST be handled first with early return — keep the happy path at minimal indentation.
 
 ### When to Panic vs Return Error
 
@@ -206,11 +206,11 @@ resp, err := httpClient.Do(req.WithContext(ctx))
 
 ### Retry & Context Checks
 
-Retry logic MUST check `ctx.Err()` between attempts and use exponential/linear backoff via `select` on `ctx.Done()`. Long loops MUST check `ctx.Err()` periodically. → See `samber/cc-skills-golang@golang-context` skill.
+Retry logic MUST check `ctx.Err()` between attempts and use exponential/linear backoff via `select` on `ctx.Done()`. Long loops MUST check `ctx.Err()` periodically. → See [context.md](context.md).
 
 ## Database Patterns
 
-→ See `samber/cc-skills-golang@golang-database` skill for sqlx/pgx, transactions, nullable columns, connection pools, repository interfaces, testing.
+→ See [database.md](database.md) for sqlx/pgx, transactions, nullable columns, connection pools, repository interfaces, testing.
 
 ## Architecture
 
@@ -221,7 +221,7 @@ Core principles regardless of architecture:
 - **Keep domain pure** — no framework dependencies in the domain layer
 - **Fail fast** — validate at boundaries, trust internal code
 - **Make illegal states unrepresentable** — use types to enforce invariants
-- **Respect 12-factor app** principles — → see `samber/cc-skills-golang@golang-project-layout`
+- **Respect 12-factor app** principles
 
 ## Detailed Guides
 
@@ -240,9 +240,8 @@ Core principles regardless of architecture:
 
 ## Cross-References
 
-- → See `samber/cc-skills-golang@golang-data-structures` skill for data structure selection, internals, and container/ packages
-- → See `samber/cc-skills-golang@golang-error-handling` skill for error wrapping, sentinel errors, and the single handling rule
-- → See `samber/cc-skills-golang@golang-structs-interfaces` skill for interface design and composition
-- → See `samber/cc-skills-golang@golang-concurrency` skill for goroutine lifecycle and graceful shutdown
-- → See `samber/cc-skills-golang@golang-context` skill for timeout and cancellation patterns
-- → See `samber/cc-skills-golang@golang-project-layout` skill for architecture and directory structure
+- → See [data-structures.md](data-structures.md) for data structure selection, internals, and container/ packages
+- → See [error-handling.md](error-handling.md) for error wrapping, sentinel errors, and the single handling rule
+- → See [structs-interfaces.md](structs-interfaces.md) for interface design and composition
+- → See [concurrency.md](concurrency.md) for goroutine lifecycle and graceful shutdown
+- → See [context.md](context.md) for timeout and cancellation patterns

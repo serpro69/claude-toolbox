@@ -179,7 +179,4 @@ Most services do not need connection pooling — profile before adding complexit
 
 ## Cross-References
 
-- → See `samber/cc-skills-golang@golang-context` skill for deadline and cancellation patterns
-- → See `samber/cc-skills-golang@golang-error-handling` skill for gRPC error to Go error mapping
-- → See `samber/cc-skills-golang@golang-observability` skill for gRPC interceptors (logging, tracing, metrics)
-- → See `samber/cc-skills-golang@golang-testing` skill for gRPC testing with bufconn
+- → See [observability.md](observability.md) for gRPC interceptors (logging, tracing, metrics)

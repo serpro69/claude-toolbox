@@ -36,6 +36,22 @@ The canonical source of truth for all workflow functionality. Contains:
 
 Skills reference shared instructions via symlinks to `skills/_shared/`. Profiles are referenced via `${CLAUDE_PLUGIN_ROOT}/profiles/` paths (substituted at plugin-load time by the Claude Code harness).
 
+### Profile Vendoring (`cmd/vendor-profiles/`)
+
+`scripts/go-vendor-manifest.yml` pins upstream Go guidance and maps it into
+profile phases. Run `make vendor-profiles`, then `make generate-kodex` to refresh
+both plugin variants. Fix transformations in the generator; direct edits to
+vendored output are overwritten on the next refresh.
+
+The generator rewrites relative Markdown links to files vendored into the same
+phase and preserves external URLs. It also converts prose navigation such as
+`` See `samber/cc-skills-golang@golang-naming` skill `` into a local link when the
+referenced skill is vendored from that repository into the same phase. Otherwise
+it removes the navigation clause, preserving the surrounding recommendation.
+Mixed reference lists retain available targets; fenced examples remain unchanged.
+Index descriptions use plain-text link labels before truncation, so previews
+cannot introduce broken links or extra checklist-loading edges.
+
 ### Codex Generation (`cmd/generate-kodex/`)
 
 A Go tool that transforms `klaude-plugin/` into Codex-compatible artifacts:

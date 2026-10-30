@@ -133,10 +133,8 @@ For complete rules, examples, and rationale, see:
 
 ## Enforce with Linters
 
-Many naming convention issues are caught automatically by linters: `revive`, `predeclared`, `misspell`, `errname`. See `samber/cc-skills-golang@golang-linter` skill for configuration and usage.
+Many naming convention issues are caught automatically by linters: `revive`, `predeclared`, `misspell`, `errname`.
 
 ## Cross-References
 
-- → See `samber/cc-skills-golang@golang-code-style` skill for broader formatting and style decisions
-- → See `samber/cc-skills-golang@golang-structs-interfaces` skill for interface naming depth and receiver design
-- → See `samber/cc-skills-golang@golang-linter` skill for automated enforcement (revive, predeclared, misspell, errname)
+- → See [code-style.md](code-style.md) for broader formatting and style decisions

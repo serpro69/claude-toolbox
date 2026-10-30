@@ -75,8 +75,6 @@ if !allowed[sortCol] {
 query := fmt.Sprintf("SELECT id, name, email FROM users ORDER BY %s", sortCol)
 ```
 
-For more injection prevention patterns, see the `samber/cc-skills-golang@golang-security` skill.
-
 ## Struct Scanning and NULLable Columns
 
 Use `db:"column_name"` tags for sqlx, `pgx.CollectRows` with `pgx.RowToStructByName` for pgx. Handle NULLable columns with pointer fields (`*string`, `*time.Time`) — they work cleanly with both scanning and JSON marshaling. See Scanning Reference for examples of all approaches.
@@ -156,8 +154,6 @@ db.Query("SELECT ...")
 db.QueryContext(ctx, "SELECT ...")
 ```
 
-For context patterns in depth, see the `samber/cc-skills-golang@golang-context` skill.
-
 ## Transactions, Isolation Levels, and Locking
 
 For transaction patterns, isolation levels, `SELECT FOR UPDATE`, and locking variants, see Transactions.
@@ -199,13 +195,6 @@ Do not rely on triggers, views, materialized views, stored procedures, or row-le
 - **Testing Database Code** — Mock connections, integration tests with containers, fixtures, schema setup/teardown
 - **Database Performance** — Connection pool sizing, batch processing, indexing strategy, query optimization
 - **Struct Scanning** — Struct tags, NULLable column handling, JSON marshaling patterns
-
-## Cross-References
-
-- → See `samber/cc-skills-golang@golang-security` skill for SQL injection prevention patterns
-- → See `samber/cc-skills-golang@golang-context` skill for context propagation to database operations
-- → See `samber/cc-skills-golang@golang-error-handling` skill for database error wrapping patterns
-- → See `samber/cc-skills-golang@golang-testing` skill for database integration test patterns
 
 ## References
 

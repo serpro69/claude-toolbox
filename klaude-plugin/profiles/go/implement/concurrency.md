@@ -92,11 +92,8 @@ When auditing concurrency across a large codebase, use up to 5 parallel sub-agen
 
 ## Cross-References
 
-- -> See `samber/cc-skills-golang@golang-performance` skill for false sharing, cache-line padding, `sync.Pool` hot-path patterns
-- -> See `samber/cc-skills-golang@golang-context` skill for cancellation propagation and timeout patterns
-- -> See `samber/cc-skills-golang@golang-safety` skill for concurrent map access and race condition prevention
-- -> See `samber/cc-skills-golang@golang-troubleshooting` skill for debugging goroutine leaks and deadlocks
-- -> See `samber/cc-skills-golang@golang-design-patterns` skill for graceful shutdown patterns
+- -> See [context.md](context.md) for cancellation propagation and timeout patterns
+- -> See [design-patterns.md](design-patterns.md) for graceful shutdown patterns
 
 ## References
 

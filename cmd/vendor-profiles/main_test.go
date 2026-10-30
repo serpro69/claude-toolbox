@@ -190,6 +190,39 @@ func TestIntegration_Idempotent(t *testing.T) {
 	}
 }
 
+func TestIntegration_InlineSkillReferences(t *testing.T) {
+	fixtureDir := t.TempDir()
+	writeFile(t, filepath.Join(fixtureDir, "manifest.yml"), `- repo: example/skills
+  ref: v1
+  files:
+    - source: skills/patterns/SKILL.md
+      phase: implement
+      as: patterns.md
+    - source: skills/errors/SKILL.md
+      phase: implement
+      as: errors.md
+`)
+	writeFile(t, filepath.Join(fixtureDir, "skills/patterns/SKILL.md"),
+		"# Patterns\n\nFor error handling see `example/skills@errors` skill.\n\n"+
+			"Use `strings.Builder` in loops → see `example/skills@style`\n")
+	writeFile(t, filepath.Join(fixtureDir, "skills/errors/SKILL.md"), "# Errors\n\nCheck errors.\n")
+	targetDir := t.TempDir()
+	if err := run(filepath.Join(fixtureDir, "manifest.yml"), targetDir, false, &LocalFetcher{BaseDir: fixtureDir}); err != nil {
+		t.Fatal(err)
+	}
+	content := readFile(t, filepath.Join(targetDir, "implement/patterns.md"))
+	if !strings.Contains(content, "see [errors.md](errors.md).") || !strings.Contains(content, "Use `strings.Builder` in loops\n") {
+		t.Errorf("navigation cleanup lost local link or guidance: %s", content)
+	}
+	index := readFile(t, filepath.Join(targetDir, "implement/index.md"))
+	if !strings.Contains(index, "For error handling see errors.md.") {
+		t.Errorf("index description should use plain text: %s", index)
+	}
+	if strings.Contains(content+index, "example/skills@") {
+		t.Error("upstream skill identifier leaked into output")
+	}
+}
+
 func TestIntegration_DryRun_NoFilesWritten(t *testing.T) {
 	targetDir := t.TempDir()
 	fixtureDir := "testdata"

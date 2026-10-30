@@ -81,7 +81,7 @@ For the full security review checklist organized by domain (input handling, data
 
 ### Static Analysis & Linting
 
-Security-relevant linters: `bodyclose`, `sqlclosecheck`, `nilerr`, `errcheck`, `govet`, `staticcheck`. See the `samber/cc-skills-golang@golang-linter` skill for configuration and usage.
+Security-relevant linters: `bodyclose`, `sqlclosecheck`, `nilerr`, `errcheck`, `govet`, `staticcheck`.
 
 For deeper security-specific analysis:
 
@@ -136,7 +136,7 @@ See **Security Architecture** for detailed anti-patterns with Go code examples.
 
 ## Cross-References
 
-See `samber/cc-skills-golang@golang-database`, `samber/cc-skills-golang@golang-safety`, `samber/cc-skills-golang@golang-observability`, `samber/cc-skills-golang@golang-continuous-integration` skills.
+See [database.md](database.md).
 
 ## Additional Resources
 
