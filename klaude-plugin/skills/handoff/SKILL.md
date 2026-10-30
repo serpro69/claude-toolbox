@@ -32,8 +32,8 @@ entry point: do not run tests, conduct reviews, finish implementation, scan othe
 worktrees or collect the whole repository for a handoff.
 
 Prepare a concise, self-contained Markdown record using the outline below. Omit
-empty sections and repetition, without discarding context needed for the next
-decision or imposing a word limit.
+empty sections, repetition and unrelated-topic details, including in exclusion
+notes. Preserve context needed for the next decision without imposing a word limit.
 
 | Content | Include when relevant |
 | --- | --- |

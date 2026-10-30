@@ -1,0 +1,1 @@
+Read `handoff.md` at https://gist.github.com/handoff-eval/3474630d03c24a5e8cacfded87965a7d. Reconcile relevant current Parcel project state with the recorded evidence, then continue the pending documentation for the one-attempt retry policy. Retain the 20-second timeout, leave changes uncommitted, do not run tests now, and do not use or change authentication.
