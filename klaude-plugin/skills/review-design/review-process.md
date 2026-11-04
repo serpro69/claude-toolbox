@@ -60,11 +60,12 @@ Evaluate each in-scope document against design expectations:
 Evaluate the proposed architecture:
 
 - **Viability** — Will this design actually work? Are there logical flaws in the approach?
-- **Edge cases and failure modes** — What unaddressed scenarios could break the implementation?
+- **Edge cases and failure modes** — What unaddressed, reachable scenarios could break the implementation?
 - **Trade-offs** — Are trade-offs explicitly stated? Are they well-reasoned? Are there simpler alternatives not considered?
-- **Scalability** — Does the design consider growth? Are there bottlenecks?
+- **Proportionality** — Is the solution sized to the stated problem? Every component, task, option and handled case should trace to the requirement or to a real input, caller or failure that reaches it. Speculative generality, machinery beyond the problem's size or lifetime, or scope beyond the requirement → `TECH_RISK`. Apply this as rigorously as the checks for missing coverage; those alone only ever add scope.
+- **Scalability** — Does the design handle the growth the requirements anticipate? Are there bottlenecks at that scale?
 - **Testing strategy** — Apply the loaded verification policy: do checks establish agreed behavior, distinguish material failures from quality observations and evidence limits, and stop at sufficient evidence? Challenge unjustified exhaustive coverage or perfect LLM compliance gates as well as missing consequential checks.
-- **Migration and rollback** — If the feature changes existing behavior, is there a migration path? Can it be rolled back?
+- **Migration and rollback** — If the feature changes existing behavior, is there a migration path and a way back, proportionate to the blast radius? Rolling back a one-off update to a few records may simply mean re-running it with the old values, captured beforehand.
 - **Cross-reference with codebase** — When the design references existing code, patterns, or files, verify they exist and the references are accurate. Use Grep/Glob for this.
 - **Assumptions testability** (only when design.md Assumptions section is in scope) — Verify assumptions are specific enough to be testable or falsifiable. "We assume the API is fast enough" → `AMBIGUOUS`. "We assume the external API responds within 200ms at p99 under expected load" → pass.
 - **Not Doing validity** (only when design.md Not Doing section is in scope) — Verify exclusions are genuine scope decisions, not deferred critical requirements disguised as non-goals. If a Not Doing item would block the feature from being usable or shippable, it is not a scope exclusion — it is a deferred critical requirement → `TECH_RISK`.

@@ -18,7 +18,7 @@ description: |
 Pre-implementation review gate that evaluates design documents produced by `$kk:design` before code is written. Sits between `$kk:design` (creates docs) and `$kk:implement` (executes them). Reviews three distinct dimensions
 
 - document quality/structure (completeness, internal consistency, clarity, convention adherence)
-- technical soundness (architectural viability, edge cases, failure modes, trade-off analysis)
+- technical soundness (architectural viability, edge cases, failure modes, trade-off analysis, proportionality to the stated problem)
 - feature value (Does the feature improve things for end-users? Is it useful? Is it correct in _how_ it tries to solve the problem?)
 
 ## Review Modes
@@ -46,7 +46,7 @@ See [review-isolated.md](./review-isolated.md) for the isolated workflow; it rep
 | ---------------------- | -------------- | ---------------------------------------------------------------------------------------- |
 | Incomplete Spec        | `INCOMPLETE`   | Section lacks sufficient detail for implementation                                       |
 | Internal Inconsistency | `INCONSISTENT` | Two parts of the docs contradict each other                                              |
-| Technical Risk         | `TECH_RISK`    | Architecture choice has unaddressed failure modes, scalability concerns, or edge cases   |
+| Technical Risk         | `TECH_RISK`    | Architecture choice has unaddressed failure modes, scalability concerns, or edge cases, or is disproportionate to the stated problem |
 | Missing Concern        | `MISSING`      | Cross-cutting concern is absent (error handling, migration, backwards compatibility)     |
 | Ambiguity              | `AMBIGUOUS`    | Requirements can be interpreted multiple ways, likely to cause implementation divergence |
 | Structure Issue        | `STRUCTURE`    | Document doesn't follow project conventions — missing sections, vague subtasks           |
@@ -69,7 +69,7 @@ See [review-isolated.md](./review-isolated.md) for the isolated workflow; it rep
 1. Load documents — parse scope, locate feature directory, read in-scope docs
 2. Capy search — search `kk:arch-decisions` and `kk:review-findings` for prior context
 3. Document quality review — completeness, clarity, consistency, convention adherence
-4. Technical soundness review — viability, edge cases, trade-offs, scalability, testing strategy
+4. Technical soundness review — viability, edge cases, trade-offs, proportionality, scalability, testing strategy
 5. Self-check and confidence assessment — re-read, question assumptions, assign confidence
 6. Present findings with next steps
 

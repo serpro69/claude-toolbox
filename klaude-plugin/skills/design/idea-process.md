@@ -49,7 +49,7 @@ Note: [shared-ideation-frameworks.md](shared-ideation-frameworks.md) and [shared
 
 1. **Who is this for** — specific user, persona, or role. "Everyone" is not an answer.
 2. **What does success look like** — a measurable outcome, not a feature name. "Users can log in" → "Login p99 latency under 500ms with zero-downtime deployment."
-3. **Technical/system constraints** — what existing systems, APIs, data stores, infrastructure, or conventions must be respected. What is off-limits to change.
+3. **Technical/system constraints** — what existing systems, APIs, data stores, infrastructure, or conventions must be respected. What is off-limits to change. Include the problem's actual size and lifetime (records, callers, frequency; one-off or recurring): it sizes the solution and drives the 3c classification.
 
 Use the progress checklist to distinguish known requirements from confirmed choices. Project files can supply candidate foundation answers; confirm each unless a relevant user answer or explicit approval already establishes it. Accepting the HMW framing confirms only that framing and the specific facts the user supplies, not the remaining checkpoints. A request to write documents does not approve unpresented choices. Reuse prior user answers and explicit approvals, including a request that states refinement and design presentation are already approved; do not reopen them.
 
@@ -57,7 +57,7 @@ Do not advance to 3c until all three foundations are confirmed. If a confirmatio
 
 **3c. Explore alternatives.** Select frameworks from the already-loaded [shared-ideation-frameworks.md](shared-ideation-frameworks.md) that fit the idea — pick by "Best for" guidance, never run every framework.
 
-Classify the idea before generating alternatives. **Non-trivial** if it involves architectural choices, multiple valid implementation approaches, or significant unknowns. **Simple** if the implementation path is singular and the main decisions are parameter-level. State which classification and why, then confirm with the user:
+Classify the idea before generating alternatives. **Non-trivial** if it involves architectural choices, multiple valid implementation approaches, or significant unknowns. **Simple** if the implementation path is singular and the main decisions are parameter-level — including a small or one-off change whose domain merely sounds architectural (e.g., adding a field to a handful of existing records). State which classification and why, then confirm with the user:
 
 - **For simple ideas:**
   > "This looks like a straightforward single-path problem — I'll propose the direct approach plus one alternative. Want me to explore more broadly instead?"
@@ -93,7 +93,7 @@ Once you believe you understand what we're trying to achieve, stop and **describ
 
 **Step 5: Document the design**
 
-Document in .md files the entire design and write a comprehensive implementation plan.
+Document in .md files the entire design and write an implementation plan scoped to what the stated requirement needs.
 
 Feel free to break out the design/implementation documents into multi-part files, if necessary.
 
@@ -110,7 +110,8 @@ When creating documentation, follow this approach:
 
 - Assume the developer who is going to implement the feature is an experienced and highly-skilled %LANGUAGE% developer, but has zero context for our codebase, and knows almost nothing about our problem domain. Basically - a first-time contributor with a lot of programming experience in %LANGUAGE%.
 - **Document everything the developer may need to know**: which files to touch for each task, code structure to be aware of, testing approaches, any potential docs they might need to check. Give them the whole plan as bite-sized tasks.
-- **Make sure the plan is unambiguous, detailed and comprehensive** so the developer can adhere to DRY, YAGNI, TDD, atomic/self-contained commits principles when following this plan.
+- **Apply YAGNI to the plan itself.** Plan only what the stated requirement needs, sized to the problem's confirmed size and lifetime (state them in the design document so reviewers can judge proportionality). Every task, component, option and handled case must trace to the requirement or to a real input, caller or failure that reaches it; otherwise leave it out. An over-scoped plan becomes a requirement downstream, so the implementer and reviewers can no longer cut it cheaply.
+- **Make sure the plan is unambiguous and detailed** so the developer needs no further context and can adhere to DRY, YAGNI, TDD, atomic/self-contained commits principles when following this plan. Complete context for the planned scope — not coverage of every conceivable case.
 - **Name proportionate verification.** Use `Step → verify: <check>` for a meaningful test, existing check or observable outcome. Apply the loaded verification policy when selecting blocking criteria; reuse checks that establish the same outcome instead of inventing a test for every instruction branch.
 - **Include an Assumptions section** — carried from Step 3e. List assumptions baked into the design, each specific enough to be validated or invalidated during implementation. Assumptions are not caveats — they are testable bets the design depends on.
 - **Include a Not Doing section** — carried from Step 3e. Explicit scope exclusions with a one-line rationale each. These are genuine scope decisions, not deferred work items. If something is deferred (will be done later), say so in the implementation plan, not in Not Doing.

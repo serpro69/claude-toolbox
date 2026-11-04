@@ -238,7 +238,9 @@ finish with the scoped verdict and coverage; state that no changes are recommend
 Do not append a remediation menu or offer hypothetical future work. Otherwise,
 offer only supported actions. For review-only work, obtain authorization before
 editing; when the invoking implementation request already authorizes fixes,
-follow that scope without asking again. Unverified hard requirements still follow
+follow that scope without asking again, except that a correction removing
+design-requested behavior changes an accepted requirement and needs user
+authorization. Unverified hard requirements still follow
 the common method's conditional verdict rules.
 
 ## Step 10: Verify Outputs

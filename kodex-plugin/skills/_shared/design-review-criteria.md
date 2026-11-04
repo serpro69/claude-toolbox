@@ -4,7 +4,7 @@ Shared checks for reviewing a feature's design documents: `design.md`, `implemen
 
 The documents are proposals. Code they describe as to-be-created or to-be-modified is planned work: assess whether the plan is specific enough, never report that the code does not exist yet. Where a document references code, patterns or files that it says already exist, verify them against the repository with read-only inspection and report inaccurate references.
 
-Finding type codes name the category a check produces: `INCOMPLETE` (insufficient detail), `INCONSISTENT` (documents contradict), `TECH_RISK` (unaddressed failure mode, scalability or edge case), `MISSING` (absent cross-cutting concern), `AMBIGUOUS` (several reasonable readings) and `STRUCTURE` (convention not followed). A reviewer with its own output contract keeps its native format and severity and may cite the code as the category.
+Finding type codes name the category a check produces: `INCOMPLETE` (insufficient detail), `INCONSISTENT` (documents contradict), `TECH_RISK` (unaddressed failure mode, scalability or edge case, or scope disproportionate to the stated problem), `MISSING` (absent cross-cutting concern), `AMBIGUOUS` (several reasonable readings) and `STRUCTURE` (convention not followed). A reviewer with its own output contract keeps its native format and severity and may cite the code as the category.
 
 ### Scope
 
@@ -33,11 +33,12 @@ Evaluate each in-scope document:
 Evaluate the proposed architecture:
 
 - **Viability** — Will the design actually work? Are there logical flaws in the approach?
-- **Edge cases and failure modes** — Which unaddressed scenarios could break the implementation?
+- **Edge cases and failure modes** — Which unaddressed, reachable scenarios could break the implementation?
 - **Trade-offs** — Are trade-offs stated and well reasoned? Are there simpler alternatives not considered?
-- **Scalability** — Does the design consider growth? Are there bottlenecks?
+- **Proportionality** — Is the solution sized to the stated problem? Every component, task, option and handled case should trace to the requirement or to a real input, caller or failure that reaches it. Speculative generality, machinery beyond the problem's size or lifetime, or scope beyond the requirement → `TECH_RISK`. Apply this as rigorously as the checks for missing coverage; those alone only ever add scope.
+- **Scalability** — Does the design handle the growth the requirements anticipate? Are there bottlenecks at that scale?
 - **Testing strategy** — Apply the loaded verification policy to coverage, acceptance gates, comparisons and stopping conditions. Challenge disproportionate verification as well as missing consequential checks.
-- **Migration and rollback** — If the feature changes existing behavior, is there a migration path? Can it be rolled back?
+- **Migration and rollback** — If the feature changes existing behavior, is there a migration path and a way back, proportionate to the blast radius? Rolling back a one-off update to a few records may simply mean re-running it with the old values, captured beforehand.
 - **Assumptions testability** (`design.md` Assumptions) — Are assumptions specific enough to be tested or falsified? "The API is fast enough" → `AMBIGUOUS`; "the external API responds within 200ms at p99" → pass.
 - **Not Doing validity** (`design.md` Not Doing) — Are exclusions genuine scope decisions rather than deferred critical requirements? An exclusion that would block the feature from being usable → `TECH_RISK`.
 
