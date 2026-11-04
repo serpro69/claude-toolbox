@@ -180,7 +180,9 @@ invitations to start pending work. A clean review is a complete result.
 When action is needed, list only substantiated findings and specific required
 evidence or prerequisites. Ask which actions to take only when the current request
 has not already authorized them; an invoking implementation request may already
-cover fixes. Review-only work still does not authorize edits.
+cover fixes. Review-only work still does not authorize edits. A correction that
+removes design-requested behavior changes an accepted requirement: obtain user
+authorization for it even when the implementation request covers fixes.
 
 Apply the same evidence threshold to every suggestion, including optional notes
 and proposed menu choices. A rejected hypothetical concern does not become valid

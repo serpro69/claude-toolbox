@@ -86,7 +86,7 @@ Read the documents yourself using the Read tool. Produce your findings in the ou
 
 When discovery selected API, use the shared PAL protocol's two-step external review with the resolved model and its document-review branch. Keep `step` lean:
 
-1. Framing: "The following documents are design documents (markdown), not source code; implementation they describe is planned work, not a missing implementation. Review them for technical soundness, completeness, internal consistency, feature value and sufficient implementation detail. Apply the supplied design-review criteria and verification policy as methodology. Focus on consequential edge cases, missing constraints and ambiguities that would block an implementer."
+1. Framing: "The following documents are design documents (markdown), not source code; implementation they describe is planned work, not a missing implementation. Review them for technical soundness, completeness, internal consistency, feature value and sufficient implementation detail. Apply the supplied design-review criteria and verification policy as methodology. Focus on consequential edge cases, missing constraints and ambiguities that would block an implementer, and on scope disproportionate to the stated problem."
 2. Scope: the feature name, the requested scope and any requested document that is missing.
 3. The categorized manifest from Step 3 as **Documents**, **Related source** and **Review criteria**, with planned files named as planned.
 

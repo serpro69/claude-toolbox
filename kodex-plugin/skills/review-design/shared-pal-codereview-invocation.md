@@ -29,7 +29,7 @@ For $kk:review-design, document inputs remain sufficient. No Git diff, code-revi
 - **Related source:** existing files the design references, where available, for technical context.
 - **Review criteria:** the caller's resolved review criteria (for $kk:review-design, the shared design-review criteria and the verification policy), supplied as methodology rather than a review target.
 
-Frame the review around technical soundness, completeness, consistency, edge cases, failure modes, constraints and ambiguity. Preserve the caller's document scope; do not treat planned code as a missing current implementation. Use its own review criteria. The common call sequence below remains identical.
+Frame the review around technical soundness, completeness, consistency, edge cases, failure modes, constraints, ambiguity and proportionality to the stated problem. Preserve the caller's document scope; do not treat planned code as a missing current implementation. Use its own review criteria. The common call sequence below remains identical.
 
 ### Step 1 — initial call
 
