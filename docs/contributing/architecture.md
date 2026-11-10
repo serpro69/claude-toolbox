@@ -278,5 +278,6 @@ Architecture decisions are recorded in `docs/adr/`:
 | [0002](../adr/0002-profile-content-organization.md) | Profile content organization (per-phase subdirectories) |
 | [0003](../adr/0003-plugin-root-referenced-content.md) | Plugin-root referenced content (no symlinks into profiles) |
 | [0004](../adr/0004-skill-workflow-ordering.md) | Skill workflow ordering (instructions before action) |
-| [0005](../adr/0005-codex-hook-enforcement-gap.md) | Codex hook enforcement gap (advisory + hook two-layer approach) |
+| [0005](../adr/0005-codex-hook-enforcement-gap.md) | Codex hook enforcement gap (advisory + hook two-layer approach; superseded by 0013) |
 | [0012](../adr/0012-permission-guard-single-declaration.md) | Single permission declaration, generated projections and scoped guard configuration |
+| [0013](../adr/0013-codex-file-access-through-hooked-tools.md) | Codex file access is guarded through hooked tools (exec_command, apply_patch, capy) |

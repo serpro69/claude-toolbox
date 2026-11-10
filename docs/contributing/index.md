@@ -260,7 +260,8 @@ Non-trivial design decisions are recorded as ADRs in `docs/adr/` using [Michael 
 | [0002](../adr/0002-profile-content-organization.md)   | Profile-first layout with index-driven content loading    |
 | [0003](../adr/0003-plugin-root-referenced-content.md) | Plugin-root references instead of cross-boundary symlinks |
 | [0004](../adr/0004-skill-workflow-ordering.md)        | Instructions before action in every skill workflow        |
-| [0005](../adr/0005-codex-hook-enforcement-gap.md)     | Two-layer hook + advisory enforcement for Codex           |
+| [0005](../adr/0005-codex-hook-enforcement-gap.md)     | Two-layer hook + advisory enforcement for Codex (superseded by 0013) |
+| [0013](../adr/0013-codex-file-access-through-hooked-tools.md) | Codex file access is guarded through hooked tools |
 
 ## Documentation Site
 

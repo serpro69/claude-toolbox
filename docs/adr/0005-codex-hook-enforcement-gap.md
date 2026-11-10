@@ -2,7 +2,10 @@
 
 ## Status
 
-Accepted — partially superseded by [ADR 0012](0012-permission-guard-single-declaration.md) and the updates below.
+Superseded by [ADR 0013](0013-codex-file-access-through-hooked-tools.md):
+Codex has no native `read_file` tool; it reads files through `exec_command`,
+which the Bash hook guards. Previously partially superseded by
+[ADR 0012](0012-permission-guard-single-declaration.md) and the updates below.
 
 ## Update 2026-10-26
 
