@@ -484,7 +484,8 @@ class ShellTests(unittest.TestCase):
                         "cat {tmp}/kk-secret-link", "cat {tmp}/kk-ssh-link/../.netrc",
                         "sh -c 'cat .env'", 'echo "$(cat .env)"', "echo `cat .env`",
                         "cat <(cat .env)", "cat >(cat .env)", "cat < .env",
-                        'sh -c \'echo "$(cat .env)"\''):
+                        'sh -c \'echo "$(cat .env)"\'', "cat ./kubeconfig", "cat sub/kubeconfig.yaml",
+                        "cat ./kubeconfig.yml", "cat ./admin.kubeconfig", "cat .kube/config"):
             with self.subTest(command=command):
                 self.check(command, "secrets")
 
@@ -492,7 +493,8 @@ class ShellTests(unittest.TestCase):
         for command in ("cat .env.example", 'echo "see .env.example"', "find . -not -path './.git/*'",
                         "cat .claude/settings.json", "cat build/out.txt", "cat app.log",
                         "echo x 2>/dev/null", "echo x >&2", "echo '$(cat .env)'",
-                        'echo "literal ; cat .env"', "echo ok # cat .env", "git commit -m 'clean up build/ and dist/'"):
+                        'echo "literal ; cat .env"', "echo ok # cat .env", "git commit -m 'clean up build/ and dist/'",
+                        "cat pkg/kubeconfig.go", "cat templates/kubeconfig-secret.yaml"):
             with self.subTest(command=command):
                 self.check(command)
 

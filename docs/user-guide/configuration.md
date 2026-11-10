@@ -27,16 +27,21 @@ These globs generate the Claude settings deny list and apply in the guard. Add p
 
 | Scope | Glob |
 |-------|------|
+| Project | `./**/*.kubeconfig` |
 | Project | `./**/*.pem` |
 | Project | `./**/*.tfstate` |
 | Project | `./**/*.tfstate.backup` |
 | Project | `./**/.env` |
 | Project | `./**/.env.*.local` |
 | Project | `./**/.env.local` |
+| Project | `./**/.kube/**` |
 | Project | `./**/.terraform/**` |
 | Project | `./**/id_ecdsa` |
 | Project | `./**/id_ed25519` |
 | Project | `./**/id_rsa` |
+| Project | `./**/kubeconfig` |
+| Project | `./**/kubeconfig.yaml` |
+| Project | `./**/kubeconfig.yml` |
 | Project | `./**/service-account*.json` |
 | Home | `~/.aws/**` |
 | Home | `~/.claude/.credentials.json` |
