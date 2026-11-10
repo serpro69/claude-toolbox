@@ -4,7 +4,9 @@
 
 Accepted, 2026-10-26. Records the implemented permission-guard decision;
 feature release verification and the measured performance shortfall remain open.
-Partially supersedes [ADR 0005](0005-codex-hook-enforcement-gap.md).
+Partially supersedes [ADR 0005](0005-codex-hook-enforcement-gap.md). The
+"Codex native reads remain advisory" limitation below is superseded by
+[ADR 0013](0013-codex-file-access-through-hooked-tools.md).
 
 ## Context
 
