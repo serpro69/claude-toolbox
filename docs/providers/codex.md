@@ -85,7 +85,7 @@ Sync does not run `capy setup`. Preserving existing table text avoids formatting
 
 ### Shared guard support for capy execution
 
-The shared permission-guard engine recognizes `capy_execute`, `capy_execute_file`, and `capy_batch_execute` under any MCP server name. It checks shell code like Bash, other-language code with its literal-path/write-call scans, and each batch command independently. An execute-file input receives the secrets Read check before its processing code is inspected.
+The shared permission-guard engine recognizes `capy_execute`, `capy_execute_file`, and `capy_batch_execute` under any MCP server name. It checks shell code like Bash, other-language code with its literal-path, write-call and [spawned-command](../user-guide/configuration.md#hooks) scans, and each batch command independently. An execute-file input receives the secrets Read check before its processing code is inspected.
 
 Capy execution defaults to the project root. A supplied cwd is absolute or project-relative; it does not change the project identity or the anchor for `capy_execute_file.path`. The file input always remains project-root-relative. Path parameters are literal, without shell-variable or tilde expansion.
 

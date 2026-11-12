@@ -695,6 +695,45 @@ class DestructiveTests(unittest.TestCase):
             self.check("echo ok " + separator + " rm x", "destructive")
         self.check("cat <<'EOF'\n$(rm x)\nEOF\n")
 
+    def test_interpreter_code_that_spawns_a_destructive_command(self):
+        script = lambda code: "python3 - <<'PY'\n%s\nPY\n" % code
+        for code in ('subprocess.run(["kubectl", "delete", "pod", "x"])',
+                     'subprocess.run(["kubectl", "-n", ns, "delete", "pod", name])',
+                     'cmd = ["git", "-C", repo, "reset", "--hard"]\nsubprocess.run(cmd)',
+                     'os.system("git reset --hard")',
+                     'subprocess.run("cd build && rm -rf out", shell=True)',
+                     'subprocess.run(f"kubectl delete pod {name}", shell=True)',
+                     'subprocess.run(["bash", "-c", "git clean -fd"])',
+                     'subprocess.check_call(["sudo", "systemctl", "restart", "x"])',
+                     'subprocess.run(["rm", "-rf", target])',
+                     'subprocess.run(["rm", "-rf", "/tmp/kk-build", extra])',
+                     'subprocess.run(["rm", "-rf", "kk-build"], cwd="/tmp")',
+                     'subprocess.run(["rm", "-rf", "/tmp/kk-build"] + extra)',
+                     'os.system("rm -rf /tmp/kk-build " + extra)',
+                     'for line in ["git fetch", "git push --force"]:\n    os.system(line)',
+                     # Ordinary layout must not hide the command.
+                     "# don't keep the old build\nsubprocess.run([\"git\", \"clean\", \"-fd\"])\nmode = 'fast'",
+                     'subprocess.run([\n    "git",  # vcs, not hg\n    "clean",\n    "-fd",\n])',
+                     'subprocess.run("""\ncd build\nrm -rf out\n""", shell=True)'):
+            with self.subTest(code=code):
+                self.check(script(code), "destructive")
+        for code in ('subprocess.run(["rm", "-rf", "/tmp/kk-build"])',
+                     'subprocess.run("rm -rf /tmp/kk-build", shell=True)',
+                     'subprocess.run(["git", "status"])',
+                     'subprocess.run(["kubectl", "get", "pods", "-n", ns])',
+                     'subprocess.run(["git", "restore", "--staged", path])',
+                     'subprocess.run(["git", "commit", "-m", "git clean -fd"])',
+                     'subprocess.run(["grep", "-rn", "rm -rf", "docs"])',
+                     # Nothing here starts a process, so literals stay data.
+                     'print("rm -rf is dangerous")',
+                     'locales = ["rm", "ro", "su"]',
+                     'open("notes.txt").read().count("git reset --hard")'):
+            with self.subTest(code=code):
+                self.check(script(code))
+        self.check('python3 -c "import os; os.system(\'git clean -fd\')"', "destructive")
+        self.check("node -e 'require(\"child_process\").execSync(\"git reset --hard\")'", "destructive")
+        self.check("node -e 'require(\"child_process\").execSync(\"git status\")'")
+
     def test_temporary_cleanup_boundaries(self):
         for command in ("rm -rf /tmp/kk-test", "rm /tmp/a /tmp/b", 'rm "/tmp/path with spaces/x"',
                         "rm -- /tmp/-f", "cd /tmp/kk-test && rm -rf ./x",
@@ -1120,6 +1159,28 @@ class CapyTests(unittest.TestCase):
             with self.subTest(language=language, code=code):
                 self.check(tool, {"language": language, "code": code}, category)
 
+    def test_non_shell_code_that_spawns_a_destructive_command(self):
+        tool = "mcp__capy__capy_execute"
+        for language, code, category in (
+            ("python", 'subprocess.run(["kubectl", "delete", "pod", "x"])', "destructive"),
+            ("python", 'subprocess.run(["kubectl", "get", "pods"])', None),
+            ("python", 'print("git reset --hard discards work")', None),
+            ("python", "shutil.rmtree('.codex/scripts')", "selfmod"),
+            ("javascript", 'execSync("git reset --hard")', "destructive"),
+            ("javascript", "execSync(`kubectl delete pod ${name}`)", "destructive"),
+            ("typescript", 'spawnSync("git", ["push", "--force"], {stdio: "inherit"})', "destructive"),
+            ("typescript", 'spawnSync("git", ["push", "origin", branch])', None),
+            ("go", 'exec.Command("docker", "volume", "rm", name).Run()', "destructive"),
+            ("ruby", "`git clean -fd`", "destructive"),
+            ("ruby", 'system("git", "stash", "drop")', "destructive"),
+            ("php", "shell_exec('terraform destroy');", "destructive"),
+        ):
+            with self.subTest(language=language, code=code):
+                self.check(tool, {"language": language, "code": code}, category)
+        # A secret named in prose is not a read, even beside a real spawn.
+        self.check(tool, {"language": "python",
+                          "code": 'subprocess.run(["git", "status"])\nprint("copy env.example to .env first")'})
+
     def test_inline_escaped_literal_paths(self):
         tool = "mcp__capy__capy_execute"
         for code, category in ((r"open('\x2eenv').read()", "secrets"),
@@ -1221,6 +1282,8 @@ class CapyTests(unittest.TestCase):
         tool = "mcp__capy__capy_execute"
         self.check(tool, {"language": "shell", "code": "kubectl delete pod x", "cwd": self.sandbox.tmp})
         self.check(tool, {"language": "shell", "code": "git clean -nd; rm ./work"}, "destructive")
+        self.check(tool, {"language": "python", "code": 'subprocess.run(["kubectl", "delete", "pod", "x"])'})
+        self.check(tool, {"language": "python", "code": 'subprocess.run(["deploy", "prod"])'}, "destructive")
         self.check(tool, {"language": "shell", "code": "cat ./private.txt"}, "secrets")
         self.check("mcp__capy__capy_execute_file", {"path": "private.txt", "language": "python", "code": "print(1)",
                                                  "cwd": self.sandbox.tmp}, "secrets")
