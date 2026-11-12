@@ -1192,6 +1192,19 @@ class CapyTests(unittest.TestCase):
             with self.subTest(code=code):
                 self.check(tool, {"language": "python", "code": code}, category)
 
+    def test_comment_apostrophe_does_not_hide_later_literals(self):
+        tool = "mcp__capy__capy_execute"
+        for language, code, category in (
+            ("python", "# don't print it all\nprint(open(\".env\").read())\nmode = 'fast'", "secrets"),
+            ("python", "# don't print it all\nprint(open(\".env.example\").read())\nmode = 'fast'", None),
+            ("javascript", "// it's local only\nfs.readFileSync(\".env\")\nconst mode = 'fast'", "secrets"),
+            ("python", "# can't be undone\nopen(\".claude/settings.json\", \"w\")\nmode = 'fast'", "selfmod"),
+            ("python", "text = '''\nnotes\n'''\nopen('.env').read()", "secrets"),
+            ("python", "open('''.env''').read()", "secrets"),
+        ):
+            with self.subTest(code=code):
+                self.check(tool, {"language": language, "code": code}, category)
+
     def test_cwd_defaults_to_project_and_relative_override_ignores_payload_cwd(self):
         tool = "mcp__capy__capy_execute"
         self.check(tool, {"language": "shell", "code": "cat .env"}, "secrets")
