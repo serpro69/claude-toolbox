@@ -1151,6 +1151,13 @@ PATH_WRITE = re.compile(r"\b(?:pathlib\.)?Path\s*\(\s*(?P<path>[rRuU]?(?:'[^']*'
 # purpose: it only decides whether the literals are also read as commands.
 SPAWN = re.compile(r"subprocess|child_process|exec|spawn|[Pp]open|proc_open|passthru|Open3|"
                    r"\bsystem2?\b|\bCommand\b|\bqx\b|%x|`|System\.(?:cmd|shell)|\bos\.cmd\b|Port\.open")
+# Calls whose first argument is the command itself, as functions or methods.
+# A plain `.exec(` is left out: on a regex or a database handle it is not one.
+SPAWN_CALL = re.compile(r"(?:\bsubprocess\.\w+|\bos\.(?:exec\w*|spawn\w*|execute|cmd)|\bchild_process\.\w+|"
+                        r"\bOpen3\.\w+|\bcreate_subprocess_(?:exec|shell)|\bexec\.Command|\bCommand::new|"
+                        r"\bSystem\.(?:cmd|shell)|\bDeno\.Command|(?<![\w.])exec|"
+                        r"(?<!\w)(?:exec(?:Sync|File|FileSync)|spawn(?:Sync)?|system2?|[pP]open|check_output|"
+                        r"check_call|shell_exec|passthru|proc_open))\s*\(\s*\[?\s*")
 COMMAND_LITERAL = re.compile(CODE_STRING.pattern + r"|`(?P<tick>(?:[^`\\]|\\.)*)`", re.DOTALL)
 LINE_COMMENT = r"(?:#|//)[^\n]*"
 ARGV_SPACE = r"(?:\s|%s)*" % LINE_COMMENT
@@ -1223,14 +1230,16 @@ def named_argument(args, name, position, default=None):
 
 
 def spawned_commands(code):
-    """Yield shell text for the literal commands in interpreter code.
+    """Yield (shell text, direct) for the literal commands in interpreter code.
 
     Literals separated only by commas and bare names form one run. A run
     led by a single word is an argv, `["git", "-C", repo, "clean"]`, with Q
     for each name. A run led by a phrase is a list of command lines. Text
     that continues past the literals (an unclosed list, a `+`) is one more
     unknown operand, Q, so a partial read never earns the tmp exemption.
+    `direct` marks the command a spawn call receives as its first argument.
     """
+    direct = {match.end() for match in SPAWN_CALL.finditer(code)}
     runs = []
     for match in COMMAND_LITERAL.finditer(code):
         value = match.group("tick")
@@ -1238,17 +1247,17 @@ def spawned_commands(code):
             value = code_string_value(match)
         gap = ARGV_GAP.fullmatch(code, runs[-1][0][-1][1], match.start()) if runs else None
         if gap is None:
-            runs.append(([], []))
+            runs.append(([], [], match.start() in direct))
         else:
             runs[-1][1].extend("Q" * (re.sub(LINE_COMMENT, "", gap.group()).count(",") - 1))
         runs[-1][0].append((value, match.end()))
         runs[-1][1].append("'" + value.replace("'", "'\\''") + "'")
-    for literals, words in runs:
+    for literals, words, called in runs:
         if any(c.isspace() for c in literals[0][0]):
-            for value, end in literals:
-                yield value + (" Q" if CONCATENATED.match(code, end) else "")
+            for i, (value, end) in enumerate(literals):
+                yield value + (" Q" if CONCATENATED.match(code, end) else ""), called and i == 0
         else:
-            yield " ".join(words + ([] if ARGV_END.match(code, literals[-1][1]) else ["Q"]))
+            yield " ".join(words + ([] if ARGV_END.match(code, literals[-1][1]) else ["Q"])), called
 
 
 def check_inline_code(code, ctx, policy):
@@ -1257,15 +1266,16 @@ def check_inline_code(code, ctx, policy):
         if path_like(path, ctx):
             check_path(path, ctx, policy, "inline code")
     if SPAWN.search(code):
-        # Destructive rules only: the path rules saw every literal above, and
-        # rereading prose as shell operands would deny mentions of a secret.
+        # Only a command handed straight to a spawn call gets the path rules:
+        # rereading any other literal as shell operands would deny prose
+        # that mentions a secret. The rest get the destructive rules alone.
         # The child's directory is unknown, so relative targets are not tmp.
         commands = Policy([], policy.destructive, policy.tmp_roots, [])
         commands.allow_patterns = policy.allow_patterns
         local = uncertain_context(ctx)
-        for command in spawned_commands(code):
+        for command, direct in spawned_commands(code):
             try:
-                check_command(command, local, commands)
+                check_command(command, local, policy if direct else commands)
             except Denied as denied:
                 # Most literals are not shell text; only a rule match counts.
                 if denied.category != "failure":
