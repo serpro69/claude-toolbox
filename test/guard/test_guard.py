@@ -784,6 +784,8 @@ class DestructiveTests(unittest.TestCase):
                      "# don't call shutil.rmtree(root) here\nprint(1)", 'print("call os.remove(p) later")',
                      "# equivalent to `rm -rf build`\nprint(1)",
                      'cursor.execute(query)\nprint("sudo is not needed")',
+                     # Strings that mention spawning start nothing.
+                     'notes = "subprocess.run and exec.Command(...) start processes"\nprint("rm -rf build is denied")',
                      'subprocess.run(["ls"])  # then: git clean -fd, or `rm -rf build`'):
             with self.subTest(code=code):
                 self.check(script(code))
@@ -793,6 +795,35 @@ class DestructiveTests(unittest.TestCase):
                      "Path(target).unlink(missing_ok=True)", "rmSync(dir, {recursive: true})"):
             with self.subTest(code=code):
                 self.check(script(code), "destructive")
+
+    def test_spawn_scan_keeps_code_that_only_looks_commented_or_complete(self):
+        script = lambda code: "python3 - <<'PY'\n%s\nPY\n" % code
+        # `#` and `//` glued to code are not comments.
+        for code in ('my @f = (1, 2); print $#f; system("git clean -fd");',
+                     'this.#log(); execSync("git reset --hard");',
+                     'Command::new("sh").arg("-c").arg(r#"git clean -fd"#).status();'):
+            with self.subTest(code=code):
+                kind, denied = outcome(guard.check_inline_code, code, self.ctx, self.policy)
+                self.assertEqual((kind, denied and denied.category), ("deny", "destructive"), code)
+        # A closing bracket must close the command, not one of its elements.
+        for code in ('subprocess.run(["rm", "-rf", ("/tmp/kk-x",), extra])',
+                     'subprocess.run(["rm", "-rf", ("/tmp/kk-x"), extra])',
+                     'subprocess.run(["rm", "rm", "-rf", "/tmp/kk-x"])',
+                     'subprocess.run([sys.executable, "-c", "import shutil; shutil.rmtree(\'/home/me/p\')"])',
+                     'subprocess.run("""rm -rf /tmp/kk-x \\\\\n /home/me/proj\necho "unterminated\n""", shell=True)'):
+            with self.subTest(code=code):
+                self.check(script(code), "destructive")
+        for code in ('exec.Command("rm", "-rf", "/tmp/kk-x", extra).Run()',
+                     'spawnSync("rm -rf /tmp/kk-x", [dir], {shell: true})',
+                     'unlink("/tmp/kk-x", $other);'):
+            with self.subTest(code=code):
+                kind, denied = outcome(guard.check_inline_code, code, self.ctx, self.policy)
+                self.assertEqual((kind, denied and denied.category), ("deny", "destructive"), code)
+        for code in ('exec.Command("rm", "-rf", "/tmp/kk-x").Run()', 'spawnSync("rm", ["-rf", "/tmp/kk-x"], opts)',
+                     'unlink("/tmp/kk-x");'):
+            with self.subTest(code=code):
+                self.assertEqual(outcome(guard.check_inline_code, code, self.ctx, self.policy)[0], "allow", code)
+        self.check(script('subprocess.run([sys.executable, "-c", "print(open(\'.env\').read())"])'), "secrets")
 
     def test_literal_scan_stays_linear_on_comment_banners(self):
         code = 'subprocess.run(["make", "lint"])\nSTEPS = [\n    "lint",\n    %s\n]\nmode = "x"' % ("#" * 30)
@@ -1023,6 +1054,20 @@ class ConfigurationTests(unittest.TestCase):
         self.config("user", {"version": 1, "projects": {"*": {"allow_patterns": ["^sh ", "^env "]}}})
         self.check("sh -c 'rm ./work'", "destructive")
         self.check("env rm ./work", "destructive")
+
+    def test_allow_patterns_see_the_unknown_operand_of_a_partial_spawned_command(self):
+        self.config("user", {"version": 1, "projects": {"*": {"allow_patterns": ["^rm -rf build$"]}}})
+        script = lambda code: "python3 - <<'PY'\n%s\nPY\n" % code
+        self.check("rm -rf build")
+        self.check("rm -rf build $extra", "destructive")
+        for code in ('os.system("rm -rf build")', 'subprocess.run(["rm", "-rf", "build"])',
+                     'cmd = ["rm", "-rf", "build"]\nsubprocess.run(cmd)'):
+            with self.subTest(code=code):
+                self.check(script(code))
+        for code in ('os.system("rm -rf build " + extra)', 'subprocess.run(["rm", "-rf", "build"] + extra)',
+                     'subprocess.run(["rm", "-rf", "build", extra])', 'cmd = "rm -rf build " + extra\nos.system(cmd)'):
+            with self.subTest(code=code):
+                self.check(script(code), "destructive")
 
     def test_allow_patterns_never_disable_secrets_or_selfmod(self):
         self.fixture("project", "additions")
