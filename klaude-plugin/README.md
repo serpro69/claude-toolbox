@@ -115,5 +115,5 @@ Isolated design review applies the same selection with document framing: every r
 
 The permission guard adapts tokenizer helpers and wrapper tables from
 safe-claude-code, Copyright 2026 - present; serpro69. The modified engine
-includes attribution, and its [Elastic License 2.0 terms](scripts/guard/LICENSE.md)
+includes attribution, and its [Apache License 2.0 terms](scripts/guard/LICENSE.md)
 ship with the plugin.

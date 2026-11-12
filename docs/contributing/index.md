@@ -363,4 +363,4 @@ test/
 
 ## License
 
-By contributing, you agree that your contributions will be licensed under the ELv2 License.
+By contributing, you agree that your contributions will be licensed under the Apache License 2.0.

@@ -113,6 +113,6 @@ Contributions are welcome! See the [Contributing guide](https://serpro69.github.
 
 Copyright &copy; 2025 - present, [serpro69](https://github.com/serpro69)
 
-Distributed under the ELv2 License.
+Distributed under the Apache License 2.0.
 
 See [`LICENSE.md`](https://github.com/serpro69/claude-toolbox/blob/master/LICENSE.md) file for more information.

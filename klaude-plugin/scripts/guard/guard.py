@@ -52,10 +52,10 @@ are borrowed from safe-claude-code (hooks/guard.py). The policy itself,
 the glob matcher and the project-root anchoring are this project's own.
 
 Tokenizer helpers and wrapper tables are adapted from safe-claude-code,
-Copyright 2026 - present; serpro69, Elastic License 2.0 (ELv2). Modified
-here to preserve operand boundaries and executable bodies, handle heredocs,
-and use Claude Code's separator set. License terms accompany this plugin
-in LICENSE.md beside this file. Parsing is static: commands and interpreter
+Copyright 2026 - present; serpro69, relicensed here by the copyright holder
+under the Apache License 2.0. Modified here to preserve operand boundaries
+and executable bodies, handle heredocs, and use Claude Code's separator set.
+License terms accompany this plugin in LICENSE.md beside this file. Parsing is static: commands and interpreter
 code are never run.
 """
 
