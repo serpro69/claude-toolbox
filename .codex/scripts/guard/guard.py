@@ -1147,6 +1147,8 @@ WRITE_CALL = re.compile(r"\b(open|(?:shutil\.)?(?:copy\w*|move|rmtree)|os\.(?:re
                         r"(?:fs\.)?(?:writeFile\w*|appendFile\w*|rename\w*|rm\w*|unlink\w*))\s*\(")
 PATH_WRITE = re.compile(r"\b(?:pathlib\.)?Path\s*\(\s*(?P<path>[rRuU]?(?:'[^']*'|\"[^\"]*\"))\s*\)"
                         r"\s*\.write_\w*\s*\(")
+# The WRITE_CALL names that delete. Exact, so `rmse(` is not a deletion.
+DELETE_CALL = re.compile(r"(?:shutil\.)?rmtree|os\.(?:remove|unlink)|(?:fs\.)?(?:rm|rmdir|unlink)(?:Sync)?")
 # Code that can start another process, in any inspected language. Loose on
 # purpose: it only decides whether the literals are also read as commands.
 SPAWN = re.compile(r"subprocess|child_process|exec|spawn|[Pp]open|proc_open|passthru|Open3|"
@@ -1229,6 +1231,10 @@ def named_argument(args, name, position, default=None):
     return positional[position] if len(positional) > position else default
 
 
+def shell_word(value):
+    return "'" + value.replace("'", "'\\''") + "'"
+
+
 def spawned_commands(code):
     """Yield (shell text, direct) for the literal commands in interpreter code.
 
@@ -1251,7 +1257,7 @@ def spawned_commands(code):
         else:
             runs[-1][1].extend("Q" * (re.sub(LINE_COMMENT, "", gap.group()).count(",") - 1))
         runs[-1][0].append((value, match.end()))
-        runs[-1][1].append("'" + value.replace("'", "'\\''") + "'")
+        runs[-1][1].append(shell_word(value))
     for literals, words, called in runs:
         if any(c.isspace() for c in literals[0][0]):
             for i, (value, end) in enumerate(literals):
@@ -1265,14 +1271,15 @@ def check_inline_code(code, ctx, policy):
         path = code_string_value(match)
         if path_like(path, ctx):
             check_path(path, ctx, policy, "inline code")
+    # The destructive rules alone, for text the path rules have already seen.
+    # The child's directory is unknown, so relative targets are not tmp.
+    commands = Policy([], policy.destructive, policy.tmp_roots, [])
+    commands.allow_patterns = policy.allow_patterns
+    local = uncertain_context(ctx)
     if SPAWN.search(code):
         # Only a command handed straight to a spawn call gets the path rules:
         # rereading any other literal as shell operands would deny prose
         # that mentions a secret. The rest get the destructive rules alone.
-        # The child's directory is unknown, so relative targets are not tmp.
-        commands = Policy([], policy.destructive, policy.tmp_roots, [])
-        commands.allow_patterns = policy.allow_patterns
-        local = uncertain_context(ctx)
         for command, direct in spawned_commands(code):
             try:
                 check_command(command, local, policy if direct else commands)
@@ -1297,6 +1304,15 @@ def check_inline_code(code, ctx, policy):
             path = literal_argument(argument)
             if path is not None:
                 check_path(path, ctx, policy, "inline write", mutation=True)
+        if DELETE_CALL.fullmatch(name):
+            # A deletion is `rm` by another name: the same rule decides it, so
+            # the category, exceptions and tmp exemption stay in one place.
+            path = literal_argument(selected[0]) if selected[0] is not None else None
+            try:
+                check_command("rm -- " + ("Q" if path is None else shell_word(path)), local, commands)
+            except Denied as denied:
+                denied.what = "%s() deletes like rm; %s" % (name, denied.what)
+                raise
     for match in PATH_WRITE.finditer(code):
         check_path(literal_argument(match.group("path")), ctx, policy, "inline write", mutation=True)
 
