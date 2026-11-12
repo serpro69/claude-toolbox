@@ -730,6 +730,18 @@ class DestructiveTests(unittest.TestCase):
                      'open("notes.txt").read().count("git reset --hard")'):
             with self.subTest(code=code):
                 self.check(script(code))
+        # Deleting through a library call is rm by another name.
+        for code in ('shutil.rmtree("src")', 'os.remove("notes.txt")', "os.unlink(path)",
+                     "Path(target).unlink()", "shutil.rmtree(os.path.join(tmp, name))"):
+            with self.subTest(code=code):
+                denied = self.check(script(code), "destructive")
+                self.assertIn("() deletes like rm", denied.reason())
+        for code in ('shutil.rmtree("/tmp/kk-build")', 'os.remove("/tmp/kk-build/out.txt")',
+                     "error = rmse(expected, actual)", 'os.path.exists("notes.txt")'):
+            with self.subTest(code=code):
+                self.check(script(code))
+        self.check("node -e 'fs.rmSync(\"dist\", {recursive: true})'", "destructive")
+        self.check("node -e 'fs.rmSync(\"/tmp/kk-dist\", {recursive: true})'")
         self.check('python3 -c "import os; os.system(\'git clean -fd\')"', "destructive")
         self.check("node -e 'require(\"child_process\").execSync(\"git reset --hard\")'", "destructive")
         self.check("node -e 'require(\"child_process\").execSync(\"git status\")'")
