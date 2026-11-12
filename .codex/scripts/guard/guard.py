@@ -1162,6 +1162,7 @@ DELETE_CALL = re.compile(r"(?:shutil\.)?rmtree|os\.(?:remove|unlink)|fs\.(?:rm|r
 SPAWN = re.compile(r"subprocess|child_process|spawn|[Pp]open|proc_open|passthru|Open3|"
                    r"\bexec(?!ut)\w*\s*[('\"]|_exec\b|\bexec\.Command|os/exec|\bos\.execute\b|"
                    r"\bsystem2?\b|\bCommand\b|\bqx\b|%x[(\[{<|/!]|System\.(?:cmd|shell)|\bos\.cmd\b|Port\.open")
+SPAWN_MODULES = ("subprocess", "child_process", "node:child_process", "os/exec")
 # Calls whose first argument is the command itself, as functions or methods.
 # A plain `.exec(` is left out: on a regex or a database handle it is not one.
 SPAWN_CALL = re.compile(r"(?:\bsubprocess\.\w+|\bos\.(?:exec\w*|spawn\w*|execute|cmd)|\bchild_process\.\w+|"
@@ -1319,8 +1320,14 @@ def spawned_commands(code, matches):
         end = literals[-1][1]
         whole = call is not None and closes(code, end, depth + opened, depth + opened == 1)
         partial = not (whole or (call is None and ARGV_END.match(code, end)))
-        if repeats and len(words) > 1 and words[1] == shell_word(basename(literals[0][0])):
-            words = words[1:]  # os.exec*: the path, then argv[0] again
+        if len(words) > 1 and words[1] == shell_word(basename(literals[0][0])):
+            # exec-style calls pass the path, then argv[0] again. os.exec*
+            # is known to; os.spawn* and the like may, so read those both
+            # ways, the shortened one without the tmp exemption.
+            if not repeats:
+                yield " ".join(words[1:]), call is not None, False, partial
+            else:
+                words = words[1:]
         if words[0] in ("'-c'", "'-e'", "'--eval'") and len(words) > 1 and words[1] != "Q":
             # `[sys.executable, "-c", code]`: the program is a name, but
             # what follows the flag is interpreter code all the same.
@@ -1369,10 +1376,15 @@ def check_inline_code(code, ctx, policy):
     text, prose = split_prose(code)
     literals = list(COMMAND_LITERAL.finditer(text))
     # The gate reads code, not what its strings say: a script that only
-    # writes about `subprocess` starts nothing.
-    edges = [0] + [edge for match in literals for edge in match.span()] + [len(text)]
-    bare = '""'.join(text[edges[i]:edges[i + 1]] for i in range(0, len(edges), 2))
-    if SPAWN.search(bare) or any(match.group("tick") is not None for match in literals):
+    # writes about `subprocess` starts nothing. A string that is exactly a
+    # spawn module's name is an import (`require("child_process")`), so it stays.
+    bare, last = [], 0
+    for match in literals:
+        imported = match.group("tick") is None and code_string_value(match) in SPAWN_MODULES
+        bare.append(text[last:match.start()] + (match.group() if imported else '""'))
+        last = match.end()
+    bare.append(text[last:])
+    if SPAWN.search("".join(bare)) or any(match.group("tick") is not None for match in literals):
         # Only a command handed straight to a spawn call gets the path rules:
         # rereading any other literal as shell operands would deny prose
         # that mentions a secret. Only a whole command can show that every

@@ -805,6 +805,16 @@ class DestructiveTests(unittest.TestCase):
             with self.subTest(code=code):
                 kind, denied = outcome(guard.check_inline_code, code, self.ctx, self.policy)
                 self.assertEqual((kind, denied and denied.category), ("deny", "destructive"), code)
+        # A spawn module imported under another name, or named only in an import string.
+        for code in ('import { execSync as sh } from "child_process";\nsh("git reset --hard");',
+                     'const { exec } = require("child_process");\nconst run = promisify(exec);\nrun("git reset --hard");',
+                     '__import__("subprocess").run("git clean -fd", shell=True)',
+                     'os.spawnlp(os.P_WAIT, "git", "git", "clean", "-fd")',
+                     'os.posix_spawn("/usr/bin/git", ["git", "clean", "-fd"], os.environ)',
+                     'os.spawnl(os.P_WAIT, "/bin/sh", "sh", "-c", "git clean -fd")'):
+            with self.subTest(code=code):
+                kind, denied = outcome(guard.check_inline_code, code, self.ctx, self.policy)
+                self.assertEqual((kind, denied and denied.category), ("deny", "destructive"), code)
         # A closing bracket must close the command, not one of its elements.
         for code in ('subprocess.run(["rm", "-rf", ("/tmp/kk-x",), extra])',
                      'subprocess.run(["rm", "-rf", ("/tmp/kk-x"), extra])',
