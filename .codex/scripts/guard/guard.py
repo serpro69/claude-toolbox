@@ -637,6 +637,8 @@ def selfmod_match(paths, policy):
 
 
 def check_path(path, ctx, policy, action, mutation=False):
+    if not policy.secrets and not policy.selfmod:
+        return  # a destructive-only pass: nothing here can match
     paths = [form for directory in (ctx.exec_dir,) + ctx.other_dirs
              for form in resolve(path, directory, ctx.home)]
     glob = secrets_match(paths, policy)
@@ -1141,18 +1143,23 @@ def mutation_operands(segment, words):
 # Plain strings end on their own line, so an apostrophe in a comment cannot
 # pair with a later quote and swallow the literals between them.
 CODE_STRING = re.compile(r"(?P<prefix>(?<!\w)[rRuUbBfF]{1,2})?"
-                         r"(?:\"\"\"(?P<double3>.*?)\"\"\"|'''(?P<single3>.*?)'''|"
+                         r"(?:\"\"\"(?P<double3>(?:(?!\"\"\").)*)\"\"\"|'''(?P<single3>(?:(?!''').)*)'''|"
                          r"'(?P<single>(?:[^'\\\n]|\\.)*)'|\"(?P<double>(?:[^\"\\\n]|\\.)*)\")", re.DOTALL)
 WRITE_CALL = re.compile(r"\b(open|(?:shutil\.)?(?:copy\w*|move|rmtree)|os\.(?:rename|replace|remove|unlink)|"
                         r"(?:fs\.)?(?:writeFile\w*|appendFile\w*|rename\w*|rm\w*|unlink\w*))\s*\(")
 PATH_WRITE = re.compile(r"\b(?:pathlib\.)?Path\s*\(\s*(?P<path>[rRuU]?(?:'[^']*'|\"[^\"]*\"))\s*\)"
                         r"\s*\.write_\w*\s*\(")
-# The WRITE_CALL names that delete. Exact, so `rmse(` is not a deletion.
-DELETE_CALL = re.compile(r"(?:shutil\.)?rmtree|os\.(?:remove|unlink)|(?:fs\.)?(?:rm|rmdir|unlink)(?:Sync)?")
-# Code that can start another process, in any inspected language. Loose on
-# purpose: it only decides whether the literals are also read as commands.
-SPAWN = re.compile(r"subprocess|child_process|exec|spawn|[Pp]open|proc_open|passthru|Open3|"
-                   r"\bsystem2?\b|\bCommand\b|\bqx\b|%x|`|System\.(?:cmd|shell)|\bos\.cmd\b|Port\.open")
+# The WRITE_CALL names that delete files. Exact and qualified: a bare `rm(`
+# clears variables in R, and `rmse(` is arithmetic. `unlink` is decided by
+# its call shape in check_inline_code.
+DELETE_CALL = re.compile(r"(?:shutil\.)?rmtree|os\.(?:remove|unlink)|fs\.(?:rm|rmdir|unlink)(?:Sync)?|"
+                         r"(?:rm|rmdir|unlink)Sync|unlink")
+# Code that can start another process, in any inspected language. It only
+# decides whether the literals are also read as commands; a backtick string
+# opens the same gate. `execute(` is a database call far more often than Lua.
+SPAWN = re.compile(r"subprocess|child_process|spawn|[Pp]open|proc_open|passthru|Open3|"
+                   r"\bexec(?!ut)\w*\s*[('\"]|_exec\b|\bexec\.Command|os/exec|\bos\.execute\b|"
+                   r"\bsystem2?\b|\bCommand\b|\bqx\b|%x[(\[{<|/!]|System\.(?:cmd|shell)|\bos\.cmd\b|Port\.open")
 # Calls whose first argument is the command itself, as functions or methods.
 # A plain `.exec(` is left out: on a regex or a database handle it is not one.
 SPAWN_CALL = re.compile(r"(?:\bsubprocess\.\w+|\bos\.(?:exec\w*|spawn\w*|execute|cmd)|\bchild_process\.\w+|"
@@ -1161,11 +1168,20 @@ SPAWN_CALL = re.compile(r"(?:\bsubprocess\.\w+|\bos\.(?:exec\w*|spawn\w*|execute
                         r"(?<!\w)(?:exec(?:Sync|File|FileSync)|spawn(?:Sync)?|system2?|[pP]open|check_output|"
                         r"check_call|shell_exec|passthru|proc_open))\s*\(\s*\[?\s*")
 COMMAND_LITERAL = re.compile(CODE_STRING.pattern + r"|`(?P<tick>(?:[^`\\]|\\.)*)`", re.DOTALL)
-LINE_COMMENT = r"(?:#|//)[^\n]*"
-ARGV_SPACE = r"(?:\s|%s)*" % LINE_COMMENT
-ARGV_GAP = re.compile(r"\s*,{0}(?:[\[(]{0})?(?:(?:\*{{1,2}}|\.\.\.)?[A-Za-z_$@][\w.$@]*{0},{0})*".format(ARGV_SPACE))
-ARGV_END = re.compile(r"\s*[\])](?!\s*\+)")
-CONCATENATED = re.compile(r"\s*\+")
+# One left-to-right pass tells strings from line comments: a `#` inside a
+# string is not a comment, and a quote inside a comment opens no string.
+PROSE = re.compile(COMMAND_LITERAL.pattern + r"|(?P<comment>(?:#|//)[^\n]*)", re.DOTALL)
+# The patterns below run on text with comments removed. Keep them free of
+# nested repetition: they are matched against arbitrary code on every call.
+ARGV_GAP = re.compile(r"\s*,\s*(?:[\[(]\s*)?(?:(?:\*{1,2}|\.\.\.)?[A-Za-z_$@][\w.$@]*\s*,\s*)*")
+# What must follow the last literal of a spawn call's first argument for it
+# to be the whole command: the list or call closes (a trailing comma aside),
+# or for a command line the next argument starts. Anything else (`+`, `%`,
+# `.`, an adjacent string, another operand) leaves it partial, as does a
+# list that a method (`].concat(`) or a later `+` then extends.
+CLOSED = r"(?:\](?!\s*\.)|\))(?!(?:\s*[)\]])*\s*\+)"
+ARGV_END = re.compile(r"\s*(?:,\s*)?" + CLOSED)
+LINE_END = re.compile(r"\s*(?:,|" + CLOSED + ")")
 
 
 def code_string_value(match):
@@ -1235,19 +1251,24 @@ def shell_word(value):
     return "'" + value.replace("'", "'\\''") + "'"
 
 
-def spawned_commands(code):
-    """Yield (shell text, direct) for the literal commands in interpreter code.
+def without_comments(code):
+    return PROSE.sub(lambda match: "" if match.group("comment") is not None else match.group(), code)
 
+
+def spawned_commands(code, matches):
+    """Yield (shell text, direct, whole) for literal commands in interpreter code.
+
+    `code` has its comments removed and `matches` are its COMMAND_LITERALs.
     Literals separated only by commas and bare names form one run. A run
     led by a single word is an argv, `["git", "-C", repo, "clean"]`, with Q
-    for each name. A run led by a phrase is a list of command lines. Text
-    that continues past the literals (an unclosed list, a `+`) is one more
-    unknown operand, Q, so a partial read never earns the tmp exemption.
-    `direct` marks the command a spawn call receives as its first argument.
+    for each name. A run led by a phrase is a list of command lines.
+    `direct` marks the command a spawn call receives as its first argument;
+    `whole` adds that nothing can extend it before the call runs. A command
+    kept in a variable is never whole: later code may append to it.
     """
     direct = {match.end() for match in SPAWN_CALL.finditer(code)}
     runs = []
-    for match in COMMAND_LITERAL.finditer(code):
+    for match in matches:
         value = match.group("tick")
         if value is None:
             value = code_string_value(match)
@@ -1255,15 +1276,48 @@ def spawned_commands(code):
         if gap is None:
             runs.append(([], [], match.start() in direct))
         else:
-            runs[-1][1].extend("Q" * (re.sub(LINE_COMMENT, "", gap.group()).count(",") - 1))
+            runs[-1][1].extend("Q" * (gap.group().count(",") - 1))
         runs[-1][0].append((value, match.end()))
         runs[-1][1].append(shell_word(value))
     for literals, words, called in runs:
         if any(c.isspace() for c in literals[0][0]):
             for i, (value, end) in enumerate(literals):
-                yield value + (" Q" if CONCATENATED.match(code, end) else ""), called and i == 0
+                first = called and i == 0
+                yield value, first, bool(first and LINE_END.match(code, end))
         else:
-            yield " ".join(words + ([] if ARGV_END.match(code, literals[-1][1]) else ["Q"])), called
+            # exec-style calls name the program twice: path, then argv[0].
+            if len(words) > 1 and words[1] == shell_word(basename(literals[0][0])):
+                words = words[1:]
+            yield " ".join(words), called, bool(called and ARGV_END.match(code, literals[-1][1]))
+
+
+def narrowed(policy, paths, tmp):
+    """The same destructive rules, with the path rules or tmp exemption withheld."""
+    result = Policy(policy.secrets if paths else [], policy.destructive,
+                    policy.tmp_roots if tmp else [], policy.selfmod if paths else [])
+    result.allow_patterns = policy.allow_patterns
+    return result
+
+
+def check_literal_command(command, ctx, policy):
+    """Apply the rules to text that may not be shell at all.
+
+    Most literals are prose, so text the lexer rejects is not a finding by
+    itself. The usual cause is a quote left open around a variable, so read
+    it once more without quotes, a line at a time: one bad line must not
+    hide the others, which a shell would have run first.
+    """
+    try:
+        check_command(command, ctx, policy)
+    except Denied as denied:
+        if denied.category != "failure":
+            raise
+        for line in re.sub("['\"`]", "", command).split("\n"):
+            try:
+                check_command(line, ctx, policy)
+            except Denied as again:
+                if again.category != "failure":
+                    raise
 
 
 def check_inline_code(code, ctx, policy):
@@ -1271,22 +1325,18 @@ def check_inline_code(code, ctx, policy):
         path = code_string_value(match)
         if path_like(path, ctx):
             check_path(path, ctx, policy, "inline code")
-    # The destructive rules alone, for text the path rules have already seen.
     # The child's directory is unknown, so relative targets are not tmp.
-    commands = Policy([], policy.destructive, policy.tmp_roots, [])
-    commands.allow_patterns = policy.allow_patterns
     local = uncertain_context(ctx)
-    if SPAWN.search(code):
+    text = without_comments(code)
+    literals = list(COMMAND_LITERAL.finditer(text))
+    if SPAWN.search(text) or any(match.group("tick") is not None for match in literals):
         # Only a command handed straight to a spawn call gets the path rules:
         # rereading any other literal as shell operands would deny prose
-        # that mentions a secret. The rest get the destructive rules alone.
-        for command, direct in spawned_commands(code):
-            try:
-                check_command(command, local, policy if direct else commands)
-            except Denied as denied:
-                # Most literals are not shell text; only a rule match counts.
-                if denied.category != "failure":
-                    raise
+        # that mentions a secret. Only a whole command can show that every
+        # target is temporary; a partial one never earns that exemption.
+        for command, direct, whole in spawned_commands(text, literals):
+            check_literal_command(command, local, narrowed(policy, paths=direct, tmp=whole))
+    prose = [match.span() for match in PROSE.finditer(code)]
     for match in WRITE_CALL.finditer(code):
         name, args = match.group(1), call_arguments(code, match.end())
         if name == "open":
@@ -1304,12 +1354,19 @@ def check_inline_code(code, ctx, policy):
             path = literal_argument(argument)
             if path is not None:
                 check_path(path, ctx, policy, "inline write", mutation=True)
-        if DELETE_CALL.fullmatch(name):
-            # A deletion is `rm` by another name: the same rule decides it, so
-            # the category, exceptions and tmp exemption stay in one place.
+        # A deletion is `rm` by another name: the same rule decides it, so the
+        # category, exceptions and tmp exemption stay in one place. A call
+        # named in a comment or a string is not made. `.unlink()` with no
+        # operand is pathlib's; with one it is some other object's method.
+        # A target that is one whole literal is known; anything else is Q.
+        start = match.start(1)
+        method = name == "unlink" and code[start - 1:start] == "."
+        if (DELETE_CALL.fullmatch(name) and not any(a <= start < b for a, b in prose)
+                and not (method and selected[0])):
             path = literal_argument(selected[0]) if selected[0] is not None else None
             try:
-                check_command("rm -- " + ("Q" if path is None else shell_word(path)), local, commands)
+                check_command("rm -- " + ("Q" if path is None else shell_word(path)), local,
+                              narrowed(policy, paths=False, tmp=True))
             except Denied as denied:
                 denied.what = "%s() deletes like rm; %s" % (name, denied.what)
                 raise
@@ -1509,7 +1566,7 @@ def check_command(command, ctx, policy, depth=0):
         # Already-denied commands need no directory scan. In particular an rm
         # glob never earns the literal-target temporary-cleanup exemption.
         for token in segment:
-            if not token.operator:
+            if not token.operator and (policy.secrets or policy.selfmod):
                 for path in shell_glob_paths(token, local):
                     check_path(path, local, policy, "Bash wildcard", mutation=token.value in mutations)
         for body in segment_bodies:
