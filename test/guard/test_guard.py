@@ -746,6 +746,60 @@ class DestructiveTests(unittest.TestCase):
         self.check("node -e 'require(\"child_process\").execSync(\"git reset --hard\")'", "destructive")
         self.check("node -e 'require(\"child_process\").execSync(\"git status\")'")
 
+    def test_only_a_whole_spawned_command_earns_the_temporary_exemption(self):
+        script = lambda code: "python3 - <<'PY'\n%s\nPY\n" % code
+        for code in ('subprocess.run(["rm", "-rf", "/tmp/kk-x"], check=True)',
+                     'subprocess.run([\n    "rm",\n    "-rf",\n    "/tmp/kk-x",  # scratch\n])',
+                     'os.system("rm -rf /tmp/kk-x")',
+                     'os.execvp("rm", ["rm", "-rf", "/tmp/kk-x"])',
+                     'subprocess.run(["rm", "-rf", "/tmp/kk-x"]).returncode'):
+            with self.subTest(code=code):
+                self.check(script(code))
+        for code in ('subprocess.run((["rm", "-rf", "/tmp/kk-x"]) + extra)',
+                     'subprocess.run(["rm", "-rf", "/tmp/kk-x", *more])',
+                     'subprocess.run(["rm", "-rf", "/tmp/kk-x" if fast else target])',
+                     'subprocess.run(["rm", "-rf", "/tmp/kk-x", "/home/me/y"])',
+                     'subprocess.run("rm -rf /tmp/kk-x".split() + [target])',
+                     'os.system("rm -rf /tmp/kk-x " "/home/me/y")',
+                     'os.system("rm -rf /tmp/kk-x "\n          "/home/me/y")',
+                     'os.system("rm -rf /tmp/%s" % name)',
+                     'os.system("rm -rf \'/tmp/kk-x " + name + "\'")',
+                     # Held in a variable, a command can still be extended.
+                     'cmd = ["rm", "-rf", "/tmp/kk-x"]\ncmd.append(target)\nsubprocess.run(cmd)',
+                     'fmt = "rm -rf /tmp/%s"\nos.system(fmt % name)',
+                     'shutil.rmtree("""/tmp/x""" + name + """z""")',
+                     'shutil.rmtree("/tmp/" "../home")'):
+            with self.subTest(code=code):
+                self.check(script(code), "destructive")
+        self.check("node -e 'spawnSync(\"rm\", [\"-rf\", \"/tmp/kk-x\"].concat(extra))'", "destructive")
+        for language, code in (("php", 'shell_exec("rm -rf /tmp/kk-x " . $x);'),
+                               ("javascript", "execSync(`rm -rf /tmp/${name}`)")):
+            with self.subTest(code=code):
+                kind, denied = outcome(guard.check_inline_code, code, self.ctx, self.policy)
+                self.assertEqual((kind, denied and denied.category), ("deny", "destructive"), code)
+
+    def test_spawn_scan_reads_code_not_comments_or_unrelated_calls(self):
+        script = lambda code: "python3 - <<'PY'\n%s\nPY\n" % code
+        for code in ("rm(list = ls())", 'cache.unlink("session:42")', "error = rmse(expected, actual)",
+                     "# don't call shutil.rmtree(root) here\nprint(1)", 'print("call os.remove(p) later")',
+                     "# equivalent to `rm -rf build`\nprint(1)",
+                     'cursor.execute(query)\nprint("sudo is not needed")',
+                     'subprocess.run(["ls"])  # then: git clean -fd, or `rm -rf build`'):
+            with self.subTest(code=code):
+                self.check(script(code))
+        for code in ('os.execvp("git", ["git", "clean", "-fd"])',
+                     'subprocess.run(["git", "log", "--format=#%h"]); subprocess.run(["git", "clean", "-fd"])',
+                     'subprocess.run("""\ngit reset --hard origin/main\necho Don\'t forget\n""", shell=True)',
+                     "Path(target).unlink(missing_ok=True)", "rmSync(dir, {recursive: true})"):
+            with self.subTest(code=code):
+                self.check(script(code), "destructive")
+
+    def test_literal_scan_stays_linear_on_comment_banners(self):
+        code = 'subprocess.run(["make", "lint"])\nSTEPS = [\n    "lint",\n    %s\n]\nmode = "x"' % ("#" * 30)
+        started = __import__("time").monotonic()
+        self.check("python3 - <<'PY'\n%s\nPY\n" % code)
+        self.assertLess(__import__("time").monotonic() - started, 2.0)
+
     def test_temporary_cleanup_boundaries(self):
         for command in ("rm -rf /tmp/kk-test", "rm /tmp/a /tmp/b", 'rm "/tmp/path with spaces/x"',
                         "rm -- /tmp/-f", "cd /tmp/kk-test && rm -rf ./x",
