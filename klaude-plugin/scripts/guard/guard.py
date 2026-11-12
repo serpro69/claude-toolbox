@@ -1138,8 +1138,11 @@ def mutation_operands(segment, words):
 
 
 # Literal-only interpreter inspection: never eval the source or expand paths.
+# Plain strings end on their own line, so an apostrophe in a comment cannot
+# pair with a later quote and swallow the literals between them.
 CODE_STRING = re.compile(r"(?P<prefix>(?<!\w)[rRuUbBfF]{1,2})?"
-                         r"(?:'(?P<single>(?:[^'\\]|\\.)*)'|\"(?P<double>(?:[^\"\\]|\\.)*)\")", re.DOTALL)
+                         r"(?:\"\"\"(?P<double3>.*?)\"\"\"|'''(?P<single3>.*?)'''|"
+                         r"'(?P<single>(?:[^'\\\n]|\\.)*)'|\"(?P<double>(?:[^\"\\\n]|\\.)*)\")", re.DOTALL)
 WRITE_CALL = re.compile(r"\b(open|(?:shutil\.)?(?:copy\w*|move|rmtree)|os\.(?:rename|replace|remove|unlink)|"
                         r"(?:fs\.)?(?:writeFile\w*|appendFile\w*|rename\w*|rm\w*|unlink\w*))\s*\(")
 PATH_WRITE = re.compile(r"\b(?:pathlib\.)?Path\s*\(\s*(?P<path>[rRuU]?(?:'[^']*'|\"[^\"]*\"))\s*\)"
@@ -1148,15 +1151,7 @@ PATH_WRITE = re.compile(r"\b(?:pathlib\.)?Path\s*\(\s*(?P<path>[rRuU]?(?:'[^']*'
 # purpose: it only decides whether the literals are also read as commands.
 SPAWN = re.compile(r"subprocess|child_process|exec|spawn|[Pp]open|proc_open|passthru|Open3|"
                    r"\bsystem2?\b|\bCommand\b|\bqx\b|%x|`|System\.(?:cmd|shell)|\bos\.cmd\b|Port\.open")
-# Plain strings end on their own line here, so an apostrophe in a comment
-# cannot pair with a later quote and swallow the commands between them.
-# TODO: CODE_STRING still spans lines, so the same comment apostrophe hides
-# literal secret paths from the path scan above (inherited; found reviewing
-# this scan). Give it this line rule, with corpus rows for both directions.
-COMMAND_LITERAL = re.compile(r"(?P<prefix>(?<!\w)[rRuUbBfF]{1,2})?"
-                             r"(?:\"\"\"(?P<double3>.*?)\"\"\"|'''(?P<single3>.*?)'''|"
-                             r"'(?P<single>(?:[^'\\\n]|\\.)*)'|\"(?P<double>(?:[^\"\\\n]|\\.)*)\")"
-                             r"|`(?P<tick>(?:[^`\\]|\\.)*)`", re.DOTALL)
+COMMAND_LITERAL = re.compile(CODE_STRING.pattern + r"|`(?P<tick>(?:[^`\\]|\\.)*)`", re.DOTALL)
 LINE_COMMENT = r"(?:#|//)[^\n]*"
 ARGV_SPACE = r"(?:\s|%s)*" % LINE_COMMENT
 ARGV_GAP = re.compile(r"\s*,{0}(?:[\[(]{0})?(?:(?:\*{{1,2}}|\.\.\.)?[A-Za-z_$@][\w.$@]*{0},{0})*".format(ARGV_SPACE))
@@ -1166,7 +1161,8 @@ CONCATENATED = re.compile(r"\s*\+")
 
 def code_string_value(match):
     """Decode literal escapes only, never evaluate an interpreter expression."""
-    value = match.group("single") if match.group("single") is not None else match.group("double")
+    value = next(match.group(name) for name in ("single", "double", "single3", "double3")
+                 if match.group(name) is not None)
     if "r" in (match.group("prefix") or "").lower():
         return value
     decoded, i = [], 0
@@ -1237,8 +1233,7 @@ def spawned_commands(code):
     """
     runs = []
     for match in COMMAND_LITERAL.finditer(code):
-        value = next((match.group(name) for name in ("tick", "double3", "single3")
-                      if match.group(name) is not None), None)
+        value = match.group("tick")
         if value is None:
             value = code_string_value(match)
         gap = ARGV_GAP.fullmatch(code, runs[-1][0][-1][1], match.start()) if runs else None
