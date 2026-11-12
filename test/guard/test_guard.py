@@ -1181,6 +1181,27 @@ class CapyTests(unittest.TestCase):
         self.check(tool, {"language": "python",
                           "code": 'subprocess.run(["git", "status"])\nprint("copy env.example to .env first")'})
 
+    def test_command_handed_to_a_spawn_call_gets_the_path_rules(self):
+        tool = "mcp__capy__capy_execute"
+        for language, code, category in (
+            ("python", 'subprocess.run("cat .env", shell=True)', "secrets"),
+            ("python", 'print(subprocess.check_output("cat ~/.ssh/id_rsa", shell=True))', "secrets"),
+            ("python", 'os.system("source .env && ./run.sh")', "secrets"),
+            ("python", 'subprocess.run(["sh", "-c", "cat .env"])', "secrets"),
+            ("python", 'subprocess.run(["cp", "payload", ".claude/settings.json"])', "selfmod"),
+            ("python", 'os.system("echo x > .claude/settings.json")', "selfmod"),
+            ("javascript", 'execSync("cat .env")', "secrets"),
+            ("javascript", 'require("child_process").execSync("cat .env")', "secrets"),
+            ("go", 'exec.Command("sh", "-c", "cat .env").Output()', "secrets"),
+            ("python", 'subprocess.run("cat .env.example", shell=True)', None),
+            ("python", 'subprocess.run(["cat", ".claude/settings.json"])', None),
+            ("python", 'subprocess.run(["ls"])\nlog.info("next: cat .env by hand")', None),
+            ("javascript", 'execSync("ls")\nconsole.log(`loaded .env from ${dir}`)', None),
+            ("javascript", 'execSync("ls")\nconst m = /x/.exec("see .env for details")', None),
+        ):
+            with self.subTest(language=language, code=code):
+                self.check(tool, {"language": language, "code": code}, category)
+
     def test_inline_escaped_literal_paths(self):
         tool = "mcp__capy__capy_execute"
         for code, category in ((r"open('\x2eenv').read()", "secrets"),
