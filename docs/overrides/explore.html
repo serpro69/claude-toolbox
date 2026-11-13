@@ -1,0 +1,114 @@
+{% extends "main.html" %}
+
+{#- Explore: content lives in docs/explore/index.md front matter (page.meta.explore).
+    MkDocs' Jinja environment has autoescape off, so every data value is escaped with `| e`. -#}
+
+{% macro inline(text) -%}
+  {%- for seg in text.split('`') -%}
+    {%- if loop.index is even %}<code>{{ seg | e }}</code>{% else %}{{ seg | e }}{% endif -%}
+  {%- endfor -%}
+{%- endmacro %}
+
+{% macro marked(text) -%}
+  {%- for chunk in text.split('[[') -%}
+    {%- if loop.first -%}{{ chunk | e }}
+    {%- else -%}{%- set parts = chunk.split(']]', 1) -%}<mark>{{ parts[0] | e }}</mark>{{ (parts[1] if parts | length > 1 else '') | e }}
+    {%- endif -%}
+  {%- endfor -%}
+{%- endmacro %}
+
+{% macro first_line(at) -%}{{ (at ~ '').split('-')[0] }}{%- endmacro %}
+{% macro last_line(at) -%}{{ (at ~ '').split('-')[-1] }}{%- endmacro %}
+
+{% block extrahead %}
+{{ super() }}
+<link rel="stylesheet" href="{{ 'assets/stylesheets/explore.css' | url }}">
+<script defer src="{{ 'assets/javascripts/explore.js' | url }}"></script>
+{% endblock %}
+
+{% block tabs %}
+{{ super() }}
+{%- set xp = page.meta.explore -%}
+{%- set total = xp.chapters | length - 1 -%}
+<div class="xp">
+  {%- for ch in xp.chapters %}
+  {%- set number = '%02d' | format(loop.index0) %}
+  <article class="xp-chapter" id="{{ ch.id | e }}" aria-labelledby="{{ ch.id | e }}-title">
+    <div class="xp-copy">
+      <p class="xp-kicker"><span class="xp-num">{{ number }}</span>{% if not loop.first %}<span class="xp-of">/{{ '%02d' | format(total) }}</span>{% endif %} {{ ch.kicker | e }}</p>
+      {%- if loop.first %}
+      <h1 class="xp-headline" id="{{ ch.id | e }}-title">{{ inline(ch.headline) }}</h1>
+      {%- else %}
+      <h2 class="xp-headline" id="{{ ch.id | e }}-title">{{ inline(ch.headline) }}</h2>
+      {%- endif %}
+      {%- for para in ch['copy'] %}
+      <p class="xp-para">{{ inline(para) }}</p>
+      {%- endfor %}
+      <p class="xp-left"><span class="xp-left-label">Left behind</span> {{ inline(ch.left_behind) }}</p>
+      {%- if ch.footnote %}
+      <p class="xp-footnote">{{ inline(ch.footnote) }}</p>
+      {%- endif %}
+    </div>
+
+    <figure class="xp-pane" aria-label="Excerpts from the records behind this chapter">
+      <div class="xp-term">
+        <div class="xp-term-bar" aria-hidden="true">
+          <span class="xp-term-dot xp-dot-red"></span><span class="xp-term-dot xp-dot-yellow"></span><span class="xp-term-dot xp-dot-green"></span>
+          <span class="xp-term-title">~/{{ ch.steps[0].repo | e }}</span>
+        </div>
+        <div class="xp-term-body">
+          {%- for st in ch.steps %}
+          {%- set base = xp.repos[st.repo] ~ st.path %}
+          <div class="xp-step">
+            {%- if st.command %}
+            <p class="xp-cmd"><span class="xp-prompt">$</span> <span class="xp-command">{{ st.command | e }}</span>
+              {%- if st.note or st.inferred %} <span class="xp-comment"{% if st.inferred %} title="The record describes this review but doesn't quote the command."{% endif %}>#
+              {%- if st.note %} {{ st.note | e }}{% if st.inferred %};{% endif %}{% endif %}
+              {%- if st.inferred %} command inferred from the record{% endif %}</span>{% endif %}</p>
+            {%- elif st.note %}
+            <p class="xp-cmd"><span class="xp-comment"># {{ st.note | e }}</span></p>
+            {%- endif %}
+            <p class="xp-src"><a href="{{ base | e }}#L{{ first_line(st.lines[0].at) }}">{% if st.repo != ch.steps[0].repo %}{{ st.repo | e }}/{% endif %}{{ st.path | e }}</a></p>
+            <ol class="xp-lines">
+              {%- for ln in st.lines %}
+              {%- set a = first_line(ln.at) %}{% set b = last_line(ln.at) %}
+              {%- if not loop.first and (a | int) > (last_line(loop.previtem.at) | int) + 1 %}
+              <li class="xp-gap" aria-hidden="true"><span class="xp-ln">⋮</span></li>
+              {%- endif %}
+              <li class="xp-line" style="--i: {{ loop.index0 }}">
+                <a class="xp-ln" href="{{ base | e }}#L{{ a }}{% if a != b %}-L{{ b }}{% endif %}" aria-label="Line {{ ln.at }} on GitHub">{{ a }}</a>
+                <span class="xp-text">{{ marked(ln.text) }}</span>
+              </li>
+              {%- endfor %}
+            </ol>
+          </div>
+          {%- endfor %}
+        </div>
+      </div>
+    </figure>
+  </article>
+  {%- endfor %}
+
+  {%- set close = xp.closing %}
+  <section class="xp-closing" aria-labelledby="xp-closing-title">
+    <h2 class="xp-headline" id="xp-closing-title">{{ inline(close.headline) }}</h2>
+    {%- for para in close['copy'] %}
+    <p class="xp-para">{{ inline(para) }}</p>
+    {%- endfor %}
+    <div class="xp-stats">
+      {%- for s in close.stats %}
+      <div><div class="xp-stat-val">{{ s.value | e }}</div><div class="xp-stat-label">{{ s.label | e }}</div></div>
+      {%- endfor %}
+    </div>
+    <p class="xp-stats-note">{{ close.stats_label | e }}</p>
+    <div class="xp-actions">
+      {%- for l in close.links %}
+      {%- set href = l.href if l.href.startswith('http') else (l.href | url) %}
+      <a class="{{ 'xp-btn-p' if l.primary else 'xp-btn-s' }}" href="{{ href | e }}">{{ l.label | e }}</a>
+      {%- endfor %}
+    </div>
+  </section>
+</div>
+{% endblock %}
+
+{% block content %}{% endblock %}

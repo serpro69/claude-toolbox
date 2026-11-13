@@ -1,0 +1,176 @@
+/* Explore page (docs/overrides/explore.html). Page-local: loaded only by that template.
+   Colours come from tokyonight.css; the terminal window and buttons follow home.html. */
+
+.md-main { display: none; }
+
+.xp {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 48px;
+  color: var(--md-default-fg-color);
+  font-family: var(--md-text-font-family);
+}
+
+/* ── Chapter: copy column + terminal pane ─── */
+.xp-chapter {
+  display: grid;
+  grid-template-columns: minmax(0, 5fr) minmax(0, 7fr);
+  gap: 56px;
+  align-items: start;
+  min-height: calc(100vh - 2.4rem);
+  padding: 72px 0;
+  scroll-margin-top: 2.4rem;
+  border-top: 1px solid rgba(var(--tn-blue-rgb), 0.08);
+}
+.xp-chapter:first-child { border-top: 0; padding-top: 56px; }
+
+/* Whichever column is shorter stays in view while the taller one scrolls. */
+.xp-copy,
+.xp-pane { position: sticky; top: calc(2.4rem + 24px); }
+
+.xp-kicker {
+  font-family: 'Space Mono', monospace; font-size: 12px;
+  letter-spacing: 0.12em; text-transform: uppercase;
+  color: var(--md-typeset-a-color); margin: 0 0 16px;
+}
+.xp-num { font-weight: 700; }
+.xp-of { color: var(--md-default-fg-color--lighter); margin-right: 6px; }
+
+.xp-headline {
+  font-family: 'Space Mono', monospace; font-weight: 700;
+  font-size: clamp(26px, 2.8vw, 38px); line-height: 1.15; letter-spacing: -0.01em;
+  color: var(--md-default-fg-color); margin: 0 0 24px;
+}
+h1.xp-headline { font-size: clamp(34px, 4.4vw, 60px); }
+.xp .xp-headline code { font: inherit; color: var(--md-typeset-a-color); background: none; padding: 0; }
+
+.xp-para {
+  font-size: 16px; line-height: 1.7; margin: 0 0 16px; max-width: 62ch;
+  color: var(--md-default-fg-color);
+}
+.xp code {
+  font-family: 'Space Mono', var(--md-code-font-family), monospace; font-size: 0.86em;
+  padding: 1px 5px; border-radius: 3px; overflow-wrap: anywhere;
+  background: rgba(var(--tn-blue-rgb), 0.12); color: var(--md-default-fg-color);
+}
+
+.xp-left {
+  margin: 24px 0 0; padding: 14px 16px; max-width: 62ch;
+  font-size: 14px; line-height: 1.65;
+  border-left: 3px solid var(--tn-green); background: rgba(var(--tn-green-rgb), 0.06);
+}
+.xp-left-label {
+  display: block; margin-bottom: 4px;
+  font-family: 'Space Mono', monospace; font-size: 11px; letter-spacing: 0.12em;
+  text-transform: uppercase; color: var(--tn-green);
+}
+[data-md-color-scheme="tokyonight:light"] .xp-left { border-left-color: var(--tn-day-green); }
+[data-md-color-scheme="tokyonight:light"] .xp-left-label { color: var(--tn-day-green); }
+
+.xp-footnote { margin: 14px 0 0; font-size: 13px; color: var(--md-default-fg-color--light); max-width: 62ch; }
+
+/* ── Terminal pane (always dark, as on the home page) ─── */
+.xp-pane { margin: 0; }
+.xp-term {
+  background: var(--tn-night); border-radius: 8px; overflow: hidden;
+  border: 1px solid rgba(var(--tn-blue-rgb), 0.1);
+  box-shadow: 0 24px 64px rgba(0, 0, 0, 0.35);
+}
+[data-md-color-scheme="tokyonight:light"] .xp-term {
+  background: #1e2030; box-shadow: 0 18px 48px rgba(var(--tn-day-fg-rgb), 0.2);
+}
+.xp-term-bar {
+  display: flex; align-items: center; gap: 6px; padding: 10px 16px;
+  background: rgba(var(--tn-storm-rgb), 0.8);
+  border-bottom: 1px solid rgba(var(--tn-blue-rgb), 0.06);
+}
+.xp-term-dot { width: 10px; height: 10px; border-radius: 50%; }
+.xp-dot-red { background: var(--tn-red); }
+.xp-dot-yellow { background: var(--tn-yellow); }
+.xp-dot-green { background: var(--tn-green); }
+.xp-term-title { margin-left: 8px; font-family: 'Space Mono', monospace; font-size: 11px; color: var(--tn-comment); }
+
+.xp-term-body {
+  padding: 18px 20px 20px;
+  font-family: 'Space Mono', monospace; font-size: 12.5px; line-height: 1.75; color: var(--tn-fg);
+}
+.xp-step + .xp-step { margin-top: 18px; }
+.xp-cmd, .xp-src { margin: 0 0 6px; }
+.xp-prompt { color: var(--tn-green); }
+.xp-command { color: var(--tn-blue); font-weight: 700; }
+.xp-comment { color: var(--tn-comment); font-style: italic; }
+.xp-src a {
+  color: var(--tn-cyan); text-decoration: none; overflow-wrap: anywhere;
+  border-bottom: 1px dotted rgba(var(--tn-cyan-rgb), 0.45);
+}
+.xp-src a:hover, .xp-src a:focus-visible { border-bottom-style: solid; }
+
+.xp-lines { list-style: none; margin: 0; padding: 0; }
+.xp-line, .xp-gap { display: grid; grid-template-columns: 3.2em minmax(0, 1fr); gap: 12px; }
+.xp-ln { color: var(--tn-comment); text-align: right; text-decoration: none; user-select: none; }
+a.xp-ln:hover, a.xp-ln:focus-visible { color: var(--tn-cyan); }
+.xp-text { white-space: pre-wrap; overflow-wrap: anywhere; color: var(--tn-fg-dark); }
+.xp-text mark {
+  color: #f7e3bd; padding: 0 2px; border-radius: 2px;
+  border-bottom: 2px solid var(--tn-yellow);
+  background: linear-gradient(rgba(var(--tn-yellow-rgb), 0.22), rgba(var(--tn-yellow-rgb), 0.22)) no-repeat;
+  background-size: 100% 100%;
+}
+
+/* ── Reveal: only with JS (explore.js sets .xp-js); without it everything is shown as-is ─── */
+.xp-js .xp-line { opacity: 0.3; transition: opacity 0.5s ease calc(var(--i, 0) * 90ms); }
+.xp-js .xp-chapter.is-active .xp-line { opacity: 1; }
+.xp-js .xp-text mark { background-size: 0% 100%; transition: background-size 0.7s ease 0.45s; }
+.xp-js .xp-chapter.is-active .xp-text mark { background-size: 100% 100%; }
+
+/* ── Closing ─── */
+.xp-closing {
+  padding: 96px 0 120px; text-align: center;
+  border-top: 1px solid rgba(var(--tn-blue-rgb), 0.08);
+}
+.xp-closing .xp-para { margin: 0 auto 16px; }
+.xp-stats { display: flex; gap: 48px; justify-content: center; flex-wrap: wrap; margin: 40px 0 0; }
+.xp-stat-val {
+  font-family: 'Space Mono', monospace; font-size: 32px; font-weight: 700; line-height: 1;
+  color: var(--md-typeset-a-color);
+}
+.xp-stat-label {
+  margin-top: 8px; font-family: 'Space Mono', monospace; font-size: 11px;
+  letter-spacing: 0.1em; text-transform: uppercase; color: var(--md-default-fg-color--light);
+}
+.xp-stats-note { margin: 16px 0 36px; font-size: 12px; color: var(--md-default-fg-color--lighter); }
+.xp-actions { display: flex; gap: 16px; justify-content: center; flex-wrap: wrap; }
+.xp-btn-p, .xp-btn-s {
+  font-family: 'Space Mono', monospace; font-size: 13px; letter-spacing: 0.06em;
+  text-transform: uppercase; text-decoration: none; white-space: nowrap;
+  padding: 12px 28px; border-radius: 3px; transition: all 0.2s;
+}
+.xp-btn-p { font-weight: 700; background: var(--tn-blue); color: var(--tn-night); }
+.xp-btn-p:hover { background: var(--tn-cyan); box-shadow: 0 0 24px rgba(var(--tn-cyan-rgb), 0.25); }
+.xp-btn-s { color: var(--md-typeset-a-color); border: 1px solid currentColor; opacity: 0.8; }
+.xp-btn-s:hover { opacity: 1; }
+
+/* ── Responsive ─── */
+@media (max-width: 960px) {
+  .xp { padding: 0 24px; }
+  .xp-chapter { grid-template-columns: minmax(0, 1fr); gap: 0; min-height: 0; padding: 48px 0; }
+  .xp-chapter:first-child { padding-top: 32px; }
+  /* One column: story, then the excerpt, then what it left behind. */
+  .xp-copy { display: contents; }
+  .xp-pane { position: static; order: 1; margin: 12px 0 0; }
+  .xp-left { order: 2; }
+  .xp-footnote { order: 3; }
+}
+@media (max-width: 540px) {
+  .xp { padding: 0 16px; }
+  .xp-term-body { padding: 14px 12px 16px; font-size: 12px; }
+  .xp-line, .xp-gap { grid-template-columns: 2.6em minmax(0, 1fr); gap: 8px; }
+  .xp-stats { gap: 28px; }
+  .xp-btn-p, .xp-btn-s { white-space: normal; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .xp-js .xp-line { opacity: 1; transition: none; }
+  .xp-js .xp-text mark { background-size: 100% 100%; transition: none; }
+  .xp-btn-p, .xp-btn-s { transition: none; }
+}
