@@ -24,6 +24,25 @@ Codex (OpenAI) is supported as a secondary provider. Skills are generated from t
 | `kodex-plugin/` | Skills (generated from `klaude-plugin/`) |
 | `AGENTS.md` | Project instructions |
 
+## Project instruction budget
+
+Toolbox sets `project_doc_max_bytes = 65536` (64 KiB) in `.codex/config.toml`,
+doubling Codex's default 32 KiB budget for project instructions. The budget is
+shared across loaded project instruction files; when it runs out, Codex
+truncates instructions and warns that it loaded only part of a file.
+
+Existing template consumers receive this setting through template sync unless
+they exclude `.codex/config.toml`. Apply the sync and restart Codex in a trusted
+project to load it. Plugin-only installs do not receive project configuration;
+add `project_doc_max_bytes = 65536` at the top level of `~/.codex/config.toml`
+or the project's `.codex/config.toml`, before any table headers, then restart.
+
+If the loaded instructions still exceed 64 KiB, trim them or choose a larger
+budget. Template sync restores the template's value; to keep a custom project
+value, exclude `.codex/config.toml` from sync, which also stops future config
+updates. See [sync exclusions](../user-guide/template-sync.md#sync-exclusions)
+and [Codex instruction discovery](https://learn.chatgpt.com/docs/agent-configuration/agents-md#how-codex-discovers-guidance).
+
 ## Removed Auto-review settings
 
 Current Codex versions warn that `auto_review.experimental_policy_template`
