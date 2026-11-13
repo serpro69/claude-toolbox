@@ -178,6 +178,32 @@ MkDocs Material site with a custom Tokyo Night color scheme, deployed to GitHub 
 - **`requirements.txt`** — Python deps (mkdocs-material, mike, mkdocs-minify-plugin, mkdocs-panzoom-plugin)
 - **`.github/workflows/docs.yml`** — CI: builds and deploys via mike on master push or version tags
 
+#### Interactive field guide
+
+[Explore](../explore/index.md) shows what the toolbox caught while building
+[capy](https://github.com/serpro69/capy), a project built with it from start to
+finish. Each chapter tells one real catch: a short story, then a terminal pane
+with the `/kk:` command and the exact excerpt from capy's records, with the key
+phrase highlighted and every line number linked to the source on GitHub.
+
+The page is an ordinary MkDocs page with the custom
+`docs/overrides/explore.html` template; there is no frontend build. All content
+is data in the front matter of `docs/explore/index.md` (`explore.chapters` and
+`explore.closing`), rendered server-side by the template, so the page is
+complete without JavaScript. Page-local `explore.css` lays out the copy column
+and the pane (stacked below 960px) in the site's Tokyo Night terminal style;
+`explore.js` only reveals each excerpt as its chapter reaches the middle of the
+viewport and keeps `#<chapter-id>` in the URL. `prefers-reduced-motion` turns
+the reveal off.
+
+To edit or add a chapter, edit the front matter; the comment at its top lists
+the rules. Excerpts must be the record's exact text: mark cuts with `…`, the
+highlight with `[[…]]`, and give the source line or range in `at`, which also
+builds the GitHub link. When a record describes a review but doesn't quote the
+command, set `inferred: true`; the pane says so. The closing figures are a
+snapshot with an as-of date, because the build has no capy checkout. Run
+`make docs-serve` and open `/explore/` to preview it.
+
 ### Template Infrastructure (`.github/`)
 
 - **`template-cleanup.sh`** — Initializes a new repo from the template (interactive or CI)
