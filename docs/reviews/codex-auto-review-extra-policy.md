@@ -1,5 +1,46 @@
 # Codex automatic review extra policy diagnosis
 
+## Current status — 2026-11-13
+
+The reported current-client warning says that both
+`auto_review.experimental_policy_template` and `auto_review.extra_policy`
+are ignored. The locally installed CLI is 0.167.2. The current
+[configuration reference](https://learn.chatgpt.com/docs/config-file/config-reference)
+no longer lists either key. The toolbox template has therefore removed the
+override and extra-policy block; the 0.164.0 investigation below remains a
+historical record, not current setup instructions. This retires the local
+template-removal follow-up below without claiming that the original upstream
+rendering bug was fixed.
+
+The warning directs additional Guardian rules to managed
+`guardian_extra_policy`. No managed policy was installed by this cleanup, and
+automatic authorization for external reviews has not been verified. If that
+authorization is still wanted, the machine/workspace policy owner (unassigned)
+must migrate the scoped text from commit `69d284f9` into an applicable managed
+requirements source, preserve existing restrictions, and verify the effective
+reviewer policy in a fresh session. This remains separate because project
+template sync cannot deliver managed system policy. See the
+[migration guidance](../providers/codex.md#removed-auto-review-settings).
+
+Validation limitation: `codex app-server --print-startup-config --strict-config`
+on this machine exits before validating the project because the user-level
+`~/.codex/config.toml` contains an unsupported `tui.vim_mode_initial_state`.
+That user preference is outside this repository cleanup. Owner: local config
+maintainer (unassigned); review/remove that unsupported preference and rerun
+strict validation before claiming a clean startup across all config layers.
+
+Cleanup verification: template-sync passed 158 cases / 334 assertions;
+Codex structure passed 19 cases / 41 assertions with the installed Python 3.12.
+The initial structure run had seven parser failures because the default Python
+3.10 had neither `tomllib` nor `tomli`; no test assertions were changed.
+Independent `code-reviewer` review approved the three-file cleanup with no
+P0–P3 findings. External PAL Claude review was rejected before execution by
+automatic approval review for missing authorization to export repository
+files, so it supplied no review coverage. A future external review requires
+explicit user approval for that export; no retry was attempted.
+
+## Historical diagnosis — Codex 0.164.0
+
 On 2026-10-26, the external Claude review was rejected because the standing
 authorization added in commit `6af5479a` was absent from the approval reviewer's
 actual instructions. The configuration key is valid and loads correctly. The
