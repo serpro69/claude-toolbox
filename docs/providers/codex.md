@@ -24,6 +24,36 @@ Codex (OpenAI) is supported as a secondary provider. Skills are generated from t
 | `kodex-plugin/` | Skills (generated from `klaude-plugin/`) |
 | `AGENTS.md` | Project instructions |
 
+## Removed Auto-review settings
+
+Current Codex versions warn that `auto_review.experimental_policy_template`
+and `auto_review.extra_policy` are ignored. The toolbox template no longer
+ships the `[auto_review]` block that supplied these settings for Codex 0.164.0.
+Apply template sync to remove it from downstream projects. For an immediate
+manual fix, remove those two keys and their complete multiline values from
+`.codex/config.toml`; remove the table header too if it becomes empty.
+
+The old block supplied a standing authorization for read-only external Claude
+reviews. Removing ignored settings clears the warning; it does not restore
+that authorization. The template still defaults to
+`approvals_reviewer = "user"` with `approval_policy = "on-request"`.
+
+Codex's warning directs additional Guardian rules to the top-level
+`guardian_extra_policy` key in managed `requirements.toml`. On Linux and macOS,
+the system file is `/etc/codex/requirements.toml`; project-local and user-local
+`requirements.toml` files are not documented managed sources. See
+[managed configuration](https://learn.chatgpt.com/docs/enterprise/managed-configuration#understand-policy-scope-and-precedence).
+Template sync manages project files, so it does not install this system policy.
+Any migration must retain the intended review scope and existing managed
+requirements, then verify the effective policy in a fresh session.
+
+`auto_review.policy` remains supported, but it **replaces the entire policy**.
+Putting only the old authorization paragraph there would discard the other
+policy rules. See [Auto-review configuration](https://learn.chatgpt.com/docs/sandboxing/auto-review#configuration).
+
+The [0.164.0 diagnosis](../reviews/codex-auto-review-extra-policy.md) records the
+retired workaround and its evidence.
+
 ## Capy Hooks
 
 Toolbox's session and Bash hooks stand in for capy's guidance and HTTP routing: `session-start.sh` injects `.capy/AGENTS.md` into the session context, and `pretooluse-bash.sh` denies `curl`, `wget`, and inline HTTP calls so the model routes them through capy's MCP tools.
