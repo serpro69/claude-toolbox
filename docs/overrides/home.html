@@ -784,43 +784,47 @@ document.addEventListener('DOMContentLoaded', function() {
 
   // Per-phase terminal content; index aligns with the .lp-pipe-step order in the pipeline.
   // Every output line quotes a capy record that names the command (markdown markup removed);
-  // the last line of each phase links to that record. Keep quotes exact when editing.
+  // the last line of each phase links to those records ([path, line] pairs). Keep quotes exact when editing.
   var CAPY = 'https://github.com/serpro69/capy/blob/master/docs/feat/';
-  function phase(title, cmd, lines, path, line) {
+  function phase(title, cmd, lines, sources) {
     return { title: title, body:
       '<div><span class="prompt">$</span> <span class="cmd">' + cmd + '</span></div>' +
       lines.map(function(l) { return '<div><span class="out">→ ' + l + '</span></div>'; }).join('') +
-      '<div class="src"># <a href="' + CAPY + path + '#L' + line + '">capy: ' + path.split('/').pop() + ':' + line + '</a></div>' };
+      '<div class="src"># capy: ' + sources.map(function(s) {
+        return '<a href="' + CAPY + s[0] + '#L' + s[1] + '">' + s[0].split('/').pop() + ':' + s[1] + '</a>';
+      }).join(' · ') + '</div>' };
   }
   var PHASES = [
     phase('design', '/kk:design', [
       'User selected approach C and requested isolated verification during kk:design.',
       'Method: four independent general-purpose agents, each with no conversation history or proposed answer.'
-    ], 'done/project-db-key-resolution/.reviews/cove-2026-09-30.md', 3),
+    ], [['done/project-db-key-resolution/.reviews/cove-2026-09-30.md', 3]]),
     phase('review-design', '/kk:review-design', [
       'four independent kk:review-design runs (R1–R4)',
       '… fails with "no such column" and every existing vault refuses to open.',
       '… merging any pre-0006 vault silently drops ~1 in 11 sessions.'
-    ], 'done/codex-vault-sessions/design-triage.md', 44),
+    ], [['done/codex-vault-sessions/design-triage.md', 44]]),
+    // One Task 2a run: the profile, the task's own work, then the review checkpoint each task ends with.
     phase('implement', '/kk:implement', [
-      'Workflow: kk:review-code:isolated within kk:implement.',
-      'PAL was unavailable; the workflow continued with one independent reviewer.',
-      'Overall assessment: APPROVE'
-    ], 'done/upstream-sync-v1.0.169/.reviews/task-2a-code-review-2026-10-10.md', 3),
+      'Active profiles: go',
+      '2a.3 Wire the prepared policy into existing direct-file and stale-refresh consumers',
+      'Workflow: kk:review-code:isolated within kk:implement. … Overall assessment: APPROVE'
+    ], [['done/upstream-sync-v1.0.169/.reviews/task-2a-code-review-2026-10-10.md', 3],
+        ['done/upstream-sync-v1.0.169/tasks.md', 46]]),
     phase('review-code', '/kk:review-code:isolated', [
       'P2: existing setup tests inherited global configuration and could chmod a developer&#39;s real absolute key file',
       'PAL reported no issues.',
       'The reviewer rechecked all setup callers and returned APPROVE'
-    ], 'reviews/issue-124-key-file-permissions.md', 28),
+    ], [['reviews/issue-124-key-file-permissions.md', 28]]),
     phase('test', '/kk:test', [
       'go test -tags fts5 -count=1 ./... green across all 16 packages',
       'parity canary 698 compared / 0 mismatches / 2 skipped as live sessions',
       'go test -race -count=1 ./...: no data race anywhere'
-    ], 'done/codex-vault-sessions/tasks.md', 211),
+    ], [['done/codex-vault-sessions/tasks.md', 211]]),
     phase('document', '/kk:document', [
       'Coverage grep of README / architecture / ADR-031 for every Task 8–12 surface found two gaps, both fixed',
       'AGENTS.md § Benchmarks said BASE=main for a repo whose main branch is master'
-    ], 'done/codex-vault-sessions/tasks.md', 213)
+    ], [['done/codex-vault-sessions/tasks.md', 213]])
   ];
 
   var pipelineEl = document.getElementById('lpPipeline');
