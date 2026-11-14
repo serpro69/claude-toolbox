@@ -13,7 +13,7 @@
 
 <div align="center"
   <picture>
-    <img width="1080" alt="image" src="https://github.com/user-attachments/assets/27ef7269-0153-47c0-b07d-ed6a9504a176" />
+    <img width="1080" alt="Terminal view" src="https://github.com/user-attachments/assets/27ef7269-0153-47c0-b07d-ed6a9504a176" />
   </picture>
 </div>
 
@@ -23,12 +23,17 @@
 
 <div align="center">
 
-## [Read the full documentation →](https://serpro69.github.io/claude-toolbox/)
+## [Read the full documentation →](https://serpro69.github.io/claude-toolbox/latest/)
 
-  <a href="https://serpro69.github.io/claude-toolbox/">
-    <img width="1080" alt="image" src="https://github.com/user-attachments/assets/7b735db9-9fa2-425b-8176-0991f6ff64ad" />
+  <a href="https://serpro69.github.io/claude-toolbox/latest/">
+    <img width="1080" alt="Docs landing page" src="https://github.com/user-attachments/assets/f6af0017-7f78-476b-8399-81eda8673d0a" />
   </a>
 
+### [Or explore how claude-toolbox was used in a real project →](https://serpro69.github.io/claude-toolbox/latest/explore/)
+
+  <a href="https://serpro69.github.io/claude-toolbox/latest/explore/">
+    <img width="1080" alt="Explore page" src="https://github.com/user-attachments/assets/1adbbaa6-579c-4f27-94b1-8515cfefc2ec" />
+  </a>
 </div>
 
 ---
