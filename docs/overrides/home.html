@@ -249,6 +249,7 @@
   font-size: 14px; line-height: 1.7;
   color: var(--md-default-fg-color); opacity: 0.6; max-width: 560px;
 }
+.lp-lead a { color: var(--tn-blue); border-bottom: 1px dotted currentColor; }
 
 /* ── Pipeline ─── */
 .lp-pipeline {
@@ -308,12 +309,13 @@
 .lp-term-body {
   padding: 20px 24px; font-family: 'Space Mono', monospace;
   font-size: 13px; line-height: 2; color: var(--tn-fg);
-  min-height: 152px;   /* hold height steady as scroll swaps phase content */
+  min-height: 208px;   /* hold height steady as scroll swaps phase content */
 }
 .lp-term-body .prompt { color: var(--tn-green); }
+.lp-term-body .src { color: var(--tn-comment); font-size: 11px; }
+.lp-term-body .src a { color: var(--tn-cyan); text-decoration: none; border-bottom: 1px dotted rgba(var(--tn-cyan-rgb), 0.45); }
 .lp-term-body .cmd { color: var(--tn-blue); }
-.lp-term-body .flag { color: var(--tn-purple); }
-.lp-term-body .out { color: var(--tn-comment); font-style: italic; }
+.lp-term-body .out { color: var(--tn-fg-dark); }
 /* Re-triggered on every phase swap to fade the new output in */
 .lp-term-body--swap { animation: lpTermSwap 380ms cubic-bezier(0.2, 0.6, 0.2, 1); }
 @keyframes lpTermSwap {
@@ -421,8 +423,11 @@
 @media (max-width: 540px) {
   .lp-footer-grid { grid-template-columns: 1fr; }
   .lp-stats { gap: 24px; }
-  .lp-pipeline { flex-direction: column; align-items: center; }
-  .lp-pipe-arrow { transform: rotate(90deg); }
+  /* The pinned section is one screen tall: wrap the steps in rows so the terminal fits below them. */
+  .lp-pipeline { gap: 6px; margin: 24px 0; }
+  .lp-pipe-arrow { display: none; }
+  .lp-term { margin-top: 20px; }
+  .lp-term-body { padding: 14px 16px; font-size: 11px; line-height: 1.8; min-height: 0; }
 }
 
 @media (prefers-reduced-motion: reduce) {
@@ -480,7 +485,7 @@
     </div>
   </div>
   <div class="lp-stats">
-    <div><div class="lp-stat-val">10</div><div class="lp-stat-label">Skills</div></div>
+    <div><div class="lp-stat-val">16</div><div class="lp-stat-label">Skills</div></div>
     <div><div class="lp-stat-val">6</div><div class="lp-stat-label">Languages</div></div>
     <div><div class="lp-stat-val">2</div><div class="lp-stat-label">Providers</div></div>
   </div>
@@ -491,7 +496,7 @@
   <div class="lp-inner">
     <div class="lp-eyebrow">workflow</div>
     <h2 class="lp-h2">From Idea to <span>Shipped</span></h2>
-    <p class="lp-lead">Ten skills chained into a pipeline. Each step produces artifacts the next step consumes — design docs, task lists, code, reviews, tests, documentation.</p>
+    <p class="lp-lead">Six skills chained into a pipeline. Each step produces artifacts the next step consumes — design docs, task lists, code, reviews, tests, documentation. The terminal quotes what each step recorded while building <a href="{{ config.site_url }}/explore/">capy</a>.</p>
     <div class="lp-pipeline" id="lpPipeline">
       <div class="lp-pipe-step">/kk:design</div>
       <span class="lp-pipe-arrow">→</span>
@@ -510,17 +515,18 @@
         <div class="lp-term-dot" style="background:var(--tn-red)"></div>
         <div class="lp-term-dot" style="background:var(--tn-yellow)"></div>
         <div class="lp-term-dot" style="background:var(--tn-green)"></div>
-        <span class="lp-term-title" id="lpTermTitle">~/project</span>
+        <span class="lp-term-title" id="lpTermTitle">~/capy</span>
       </div>
+      <!-- Shown without JS or with reduced motion; the scroll-driven phases are PHASES in the script below.
+           Every output line quotes capy's records (markdown markup removed). -->
       <div class="lp-term-body" id="lpTermBody">
-        <div><span class="prompt">$</span> <span class="cmd">/kk:design</span> <span class="flag">"add user authentication"</span></div>
-        <div><span class="out">→ Created docs/feat/wip/auth/design.md, tasks.md</span></div>
-        <div><span class="prompt">$</span> <span class="cmd">/kk:implement</span> <span class="flag">"work on task 1"</span></div>
-        <div><span class="out">→ Implementing... running review-code checkpoint</span></div>
+        <div><span class="prompt">$</span> <span class="cmd">/kk:review-design</span></div>
+        <div><span class="out">→ … fails with "no such column" and every existing vault refuses to open.</span></div>
+        <div><span class="prompt">$</span> <span class="cmd">/kk:review-code:isolated</span></div>
+        <div><span class="out">→ P2: existing setup tests inherited global configuration and could chmod a developer's real absolute key file</span></div>
         <div><span class="prompt">$</span> <span class="cmd">/kk:test</span></div>
-        <div><span class="out">→ 14 tests passed, 92% coverage</span></div>
-        <div><span class="prompt">$</span> <span class="cmd">/kk:document</span></div>
-        <div><span class="out">→ Updated docs/architecture.md, recorded ADR-0006</span></div>
+        <div><span class="out">→ parity canary 698 compared / 0 mismatches / 2 skipped as live sessions</span></div>
+        <div class="src"># quoted from <a href="{{ config.site_url }}/explore/">capy's records</a></div>
       </div>
     </div>
   </div>
@@ -539,7 +545,7 @@
       <div class="lp-feat-card">
         <div class="lp-feat-icon" style="background:var(--tn-blue)">kk</div>
         <div class="lp-feat-title">Workflow Plugin</div>
-        <div class="lp-feat-body">10 skills forming a complete development pipeline — from design through implementation, review, testing, to documentation.</div>
+        <div class="lp-feat-body">16 skills — a complete development pipeline from design through implementation, review, testing, to documentation, plus utilities.</div>
         <ul class="lp-feat-list">
           <li>Design docs with task lists</li>
           <li>Implementation with review checkpoints</li>
@@ -777,37 +783,44 @@ document.addEventListener('DOMContentLoaded', function() {
   var pipelineSection = document.querySelector('.lp-pipeline-section');
 
   // Per-phase terminal content; index aligns with the .lp-pipe-step order in the pipeline.
+  // Every output line quotes a capy record that names the command (markdown markup removed);
+  // the last line of each phase links to that record. Keep quotes exact when editing.
+  var CAPY = 'https://github.com/serpro69/capy/blob/master/docs/feat/';
+  function phase(title, cmd, lines, path, line) {
+    return { title: title, body:
+      '<div><span class="prompt">$</span> <span class="cmd">' + cmd + '</span></div>' +
+      lines.map(function(l) { return '<div><span class="out">→ ' + l + '</span></div>'; }).join('') +
+      '<div class="src"># <a href="' + CAPY + path + '#L' + line + '">capy: ' + path.split('/').pop() + ':' + line + '</a></div>' };
+  }
   var PHASES = [
-    { title: 'design', body:
-      '<div><span class="prompt">$</span> <span class="cmd">/kk:design</span> <span class="flag">"add user authentication"</span></div>' +
-      '<div><span class="out">→ Exploring codebase, drafting the PRD...</span></div>' +
-      '<div><span class="out">→ Created docs/feat/wip/auth/design.md</span></div>' +
-      '<div><span class="out">→ Created tasks.md — 4 tasks queued</span></div>' },
-    { title: 'review-design', body:
-      '<div><span class="prompt">$</span> <span class="cmd">/kk:review-design</span></div>' +
-      '<div><span class="out">→ Completeness · consistency · soundness</span></div>' +
-      '<div><span class="out">→ 2 gaps flagged, 1 ambiguity resolved</span></div>' +
-      '<div><span class="out">→ design.md updated — ready to build</span></div>' },
-    { title: 'implement', body:
-      '<div><span class="prompt">$</span> <span class="cmd">/kk:implement</span> <span class="flag">"work on task 1"</span></div>' +
-      '<div><span class="out">→ Profile detected: python</span></div>' +
-      '<div><span class="out">→ Writing src/auth/login.py ...</span></div>' +
-      '<div><span class="out">→ review-code checkpoint: passed</span></div>' },
-    { title: 'review-code', body:
-      '<div><span class="prompt">$</span> <span class="cmd">/kk:review-code</span></div>' +
-      '<div><span class="out">→ SOLID · security · quality lenses</span></div>' +
-      '<div><span class="out">→ 1 SOLID violation, 0 security risks</span></div>' +
-      '<div><span class="out">→ Fix applied, re-reviewed clean</span></div>' },
-    { title: 'test', body:
-      '<div><span class="prompt">$</span> <span class="cmd">/kk:test</span></div>' +
-      '<div><span class="out">→ Generating cases from the spec...</span></div>' +
-      '<div><span class="out">→ 14 tests passed, 92% coverage</span></div>' +
-      '<div><span class="out">→ Edge cases: tokens, expiry, lockout</span></div>' },
-    { title: 'document', body:
-      '<div><span class="prompt">$</span> <span class="cmd">/kk:document</span></div>' +
-      '<div><span class="out">→ Updating the architecture docs...</span></div>' +
-      '<div><span class="out">→ Updated docs/architecture.md</span></div>' +
-      '<div><span class="out">→ Recorded ADR-0006 — auth design</span></div>' }
+    phase('design', '/kk:design', [
+      'User selected approach C and requested isolated verification during kk:design.',
+      'Method: four independent general-purpose agents, each with no conversation history or proposed answer.'
+    ], 'done/project-db-key-resolution/.reviews/cove-2026-09-30.md', 3),
+    phase('review-design', '/kk:review-design', [
+      'four independent kk:review-design runs (R1–R4)',
+      '… fails with "no such column" and every existing vault refuses to open.',
+      '… merging any pre-0006 vault silently drops ~1 in 11 sessions.'
+    ], 'done/codex-vault-sessions/design-triage.md', 44),
+    phase('implement', '/kk:implement', [
+      'Workflow: kk:review-code:isolated within kk:implement.',
+      'PAL was unavailable; the workflow continued with one independent reviewer.',
+      'Overall assessment: APPROVE'
+    ], 'done/upstream-sync-v1.0.169/.reviews/task-2a-code-review-2026-10-10.md', 3),
+    phase('review-code', '/kk:review-code:isolated', [
+      'P2: existing setup tests inherited global configuration and could chmod a developer&#39;s real absolute key file',
+      'PAL reported no issues.',
+      'The reviewer rechecked all setup callers and returned APPROVE'
+    ], 'reviews/issue-124-key-file-permissions.md', 28),
+    phase('test', '/kk:test', [
+      'go test -tags fts5 -count=1 ./... green across all 16 packages',
+      'parity canary 698 compared / 0 mismatches / 2 skipped as live sessions',
+      'go test -race -count=1 ./...: no data race anywhere'
+    ], 'done/codex-vault-sessions/tasks.md', 211),
+    phase('document', '/kk:document', [
+      'Coverage grep of README / architecture / ADR-031 for every Task 8–12 surface found two gaps, both fixed',
+      'AGENTS.md § Benchmarks said BASE=main for a repo whose main branch is master'
+    ], 'done/codex-vault-sessions/tasks.md', 213)
   ];
 
   var pipelineEl = document.getElementById('lpPipeline');
@@ -831,7 +844,7 @@ document.addEventListener('DOMContentLoaded', function() {
       void termBody.offsetWidth;          // force reflow so the swap animation restarts
       termBody.classList.add('lp-term-body--swap');
     }
-    if (termTitle) termTitle.textContent = '~/project · ' + PHASES[i].title;
+    if (termTitle) termTitle.textContent = '~/capy · ' + PHASES[i].title;
   }
 
   if (prefersReduced && pipelineSection) pipelineSection.classList.add('is-revealed');
