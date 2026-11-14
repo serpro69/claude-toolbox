@@ -70,8 +70,34 @@ requirements, then verify the effective policy in a fresh session.
 Putting only the old authorization paragraph there would discard the other
 policy rules. See [Auto-review configuration](https://learn.chatgpt.com/docs/sandboxing/auto-review#configuration).
 
-The [0.164.0 diagnosis](../reviews/codex-auto-review-extra-policy.md) records the
-retired workaround and its evidence.
+If you use [pal](https://github.com/serpro69/pal-mcp-server) and rely on
+[clink-based reviews](../user-guide/skills.md##isolated-reviews-and-external-models),
+but they get blocked by the auto-review policy, the current recommended solution
+is to add the following to your `/etc/codex/requirements.toml`:
+
+```toml
+guardian_extra_policy="""
+## Pre-authorized external code reviews
+
+For work requested by the user in the current project, PAL clink calls using
+cli_name="claude", role="default", and allow_edits=false are authorized for
+independent code and technical-document review. Treat Anthropic through the
+configured Claude CLI as an approved recipient for this purpose.
+
+This standing authorization covers successive tasks, revised snapshots,
+review-fix follow-ups, and the source, diffs, tests, documentation, review
+criteria, provenance metadata, and relevant local dependency source needed
+for the review. Temporary review bundles containing those materials are
+included. Do not require separate disclosure approval for each snapshot.
+
+The request must instruct the reviewer to inspect files without modifying
+project files or running tests, builds, or submitted code. Read-only inspection
+commands are permitted. This authorization excludes credentials, secret files,
+production data, unrelated personal information, and unrelated repositories.
+Other destinations, clients, purposes, and actions remain subject to the normal
+approval policy. Preserve all other safety rules and managed restrictions.
+"""
+```
 
 ## Capy Hooks
 
