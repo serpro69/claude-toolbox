@@ -200,9 +200,19 @@ To edit or add a chapter, edit the front matter; the comment at its top lists
 the rules. Excerpts must be the record's exact text: mark cuts with `…`, the
 highlight with `[[…]]`, and give the source line or range in `at`, which also
 builds the GitHub link. When a record describes a review but doesn't quote the
-command, set `inferred: true`; the pane says so. The closing figures are a
-snapshot with an as-of date, because the build has no capy checkout. Run
-`make docs-serve` and open `/explore/` to preview it.
+command, set `inferred: true`; the pane says so. Run `make docs-serve` and
+open `/explore/` to preview it.
+
+The closing figures (capy's commits, ADRs and finished feature records) are
+counted at deploy time. The docs workflow makes a blob-less clone of capy and
+exports `CAPY_STATS_REPO`; the MkDocs hook `scripts/mkdocs/capy_stats.py` counts
+from it and writes the figures and the build date into the page. Without that
+variable, as in local builds, or when the clone or the counts fail, the page
+shows the snapshot figures and as-of date from the front matter, and CI reports
+the reason as a warning annotation rather than blocking the deploy. Figures
+refresh only when the docs deploy, and each released docs version keeps the
+figures it was built with; the as-of date says which. To try it locally, run
+`CAPY_STATS_REPO=../capy/.git make docs-build`.
 
 ### Template Infrastructure (`.github/`)
 

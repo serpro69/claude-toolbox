@@ -96,11 +96,11 @@
     <p class="xp-para">{{ inline(para) }}</p>
     {%- endfor %}
     <div class="xp-stats">
-      {%- for s in close.stats %}
+      {%- for s in close.stats['items'] %}
       <div><div class="xp-stat-val">{{ s.value | e }}</div><div class="xp-stat-label">{{ s.label | e }}</div></div>
       {%- endfor %}
     </div>
-    <p class="xp-stats-note">{{ close.stats_label | e }}</p>
+    <p class="xp-stats-note">capy, as of {{ close.stats.as_of | e }}</p>
     <div class="xp-actions">
       {%- for l in close.links %}
       {%- set href = l.href if l.href.startswith('http') else (l.href | url) %}

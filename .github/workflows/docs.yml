@@ -19,6 +19,7 @@ on:
       - "klaude-plugin/**"
       - "kodex-plugin/README.md"
       - "cmd/plugin-graph/**"
+      - "scripts/mkdocs/**"
       - "Makefile"
 
 permissions:
@@ -71,6 +72,15 @@ jobs:
           go-version: stable
       - name: Regenerate plugin-graph docs
         run: make plugin-graph-docs
+      # The Explore page's capy figures are counted at build time from this clone
+      # (scripts/mkdocs/capy_stats.py). A failed clone keeps the page's snapshot figures.
+      - name: Fetch capy history for the Explore page
+        run: |
+          if git clone --quiet --bare --filter=blob:none https://github.com/serpro69/capy.git "$RUNNER_TEMP/capy.git"; then
+            echo "CAPY_STATS_REPO=$RUNNER_TEMP/capy.git" >> "$GITHUB_ENV"
+          else
+            echo "::warning title=Explore page figures::Could not clone capy; the Explore page keeps its snapshot figures."
+          fi
       - name: Validate docs build (strict)
         run: mkdocs build --strict --site-dir /tmp/docs-strict-check
       - run: |-
