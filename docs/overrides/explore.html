@@ -9,6 +9,13 @@
   {%- endfor -%}
 {%- endmacro %}
 
+{#- Headlines keep their line breaks (written as a `|-` block in the front matter). -#}
+{% macro headline(text) -%}
+  {%- for line in text.split('\n') -%}
+    {%- if not loop.first %}<br>{% endif -%}{{ inline(line) }}
+  {%- endfor -%}
+{%- endmacro %}
+
 {% macro marked(text) -%}
   {%- for chunk in text.split('[[') -%}
     {%- if loop.first -%}{{ chunk | e }}
@@ -37,9 +44,9 @@
     <div class="xp-copy">
       <p class="xp-kicker"><span class="xp-num">{{ number }}</span>{% if not loop.first %}<span class="xp-of">/{{ '%02d' | format(total) }}</span>{% endif %} {{ ch.kicker | e }}</p>
       {%- if loop.first %}
-      <h1 class="xp-headline" id="{{ ch.id | e }}-title">{{ inline(ch.headline) }}</h1>
+      <h1 class="xp-headline" id="{{ ch.id | e }}-title">{{ headline(ch.headline) }}</h1>
       {%- else %}
-      <h2 class="xp-headline" id="{{ ch.id | e }}-title">{{ inline(ch.headline) }}</h2>
+      <h2 class="xp-headline" id="{{ ch.id | e }}-title">{{ headline(ch.headline) }}</h2>
       {%- endif %}
       {%- for para in ch['copy'] %}
       <p class="xp-para">{{ inline(para) }}</p>
@@ -91,7 +98,7 @@
 
   {%- set close = xp.closing %}
   <section class="xp-closing" aria-labelledby="xp-closing-title">
-    <h2 class="xp-headline" id="xp-closing-title">{{ inline(close.headline) }}</h2>
+    <h2 class="xp-headline" id="xp-closing-title">{{ headline(close.headline) }}</h2>
     {%- for para in close['copy'] %}
     <p class="xp-para">{{ inline(para) }}</p>
     {%- endfor %}
