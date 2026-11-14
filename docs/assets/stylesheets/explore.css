@@ -4,7 +4,7 @@
 .md-main { display: none; }
 
 .xp {
-  max-width: 1200px;
+  max-width: 1280px;
   margin: 0 auto;
   padding: 0 48px;
   color: var(--md-default-fg-color);
@@ -14,7 +14,7 @@
 /* ── Chapter: copy column + terminal pane ─── */
 .xp-chapter {
   display: grid;
-  grid-template-columns: minmax(0, 5fr) minmax(0, 7fr);
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1.2fr);
   gap: 56px;
   align-items: start;
   min-height: calc(100vh - 2.4rem);
@@ -45,7 +45,7 @@ h1.xp-headline { font-size: clamp(34px, 4.4vw, 60px); }
 .xp .xp-headline code { font: inherit; color: var(--md-typeset-a-color); background: none; padding: 0; }
 
 .xp-para {
-  font-size: 16px; line-height: 1.7; margin: 0 0 16px; max-width: 62ch;
+  font-size: 18px; line-height: 1.65; margin: 0 0 18px; max-width: 62ch;
   color: var(--md-default-fg-color);
 }
 .xp code {
@@ -54,9 +54,12 @@ h1.xp-headline { font-size: clamp(34px, 4.4vw, 60px); }
   background: rgba(var(--tn-blue-rgb), 0.12); color: var(--md-default-fg-color);
 }
 
+/* Story code is short (commands, paths); keep each chip whole. "Left behind" has long test names that must wrap. */
+.xp-para code { white-space: nowrap; }
+
 .xp-left {
   margin: 24px 0 0; padding: 14px 16px; max-width: 62ch;
-  font-size: 14px; line-height: 1.65;
+  font-size: 16px; line-height: 1.6;
   border-left: 3px solid var(--tn-green); background: rgba(var(--tn-green-rgb), 0.06);
 }
 .xp-left-label {
@@ -67,7 +70,7 @@ h1.xp-headline { font-size: clamp(34px, 4.4vw, 60px); }
 [data-md-color-scheme="tokyonight:light"] .xp-left { border-left-color: var(--tn-day-green); }
 [data-md-color-scheme="tokyonight:light"] .xp-left-label { color: var(--tn-day-green); }
 
-.xp-footnote { margin: 14px 0 0; font-size: 13px; color: var(--md-default-fg-color--light); max-width: 62ch; }
+.xp-footnote { margin: 14px 0 0; font-size: 14px; color: var(--md-default-fg-color--light); max-width: 62ch; }
 
 /* ── Terminal pane (always dark, as on the home page) ─── */
 .xp-pane { margin: 0; }
@@ -92,7 +95,7 @@ h1.xp-headline { font-size: clamp(34px, 4.4vw, 60px); }
 
 .xp-term-body {
   padding: 18px 20px 20px;
-  font-family: 'Space Mono', monospace; font-size: 12.5px; line-height: 1.75; color: var(--tn-fg);
+  font-family: 'Space Mono', monospace; font-size: 14px; line-height: 1.7; color: var(--tn-fg);
 }
 .xp-step + .xp-step { margin-top: 18px; }
 .xp-cmd, .xp-src { margin: 0 0 6px; }
@@ -109,7 +112,7 @@ h1.xp-headline { font-size: clamp(34px, 4.4vw, 60px); }
 .xp-line, .xp-gap { display: grid; grid-template-columns: 3.2em minmax(0, 1fr); gap: 12px; }
 .xp-ln { color: var(--tn-comment); text-align: right; text-decoration: none; user-select: none; }
 a.xp-ln:hover, a.xp-ln:focus-visible { color: var(--tn-cyan); }
-.xp-text { white-space: pre-wrap; overflow-wrap: anywhere; color: var(--tn-fg-dark); }
+.xp-text { white-space: pre-wrap; overflow-wrap: anywhere; color: var(--tn-fg); }
 .xp-text mark {
   color: #f7e3bd; padding: 0 2px; border-radius: 2px;
   border-bottom: 2px solid var(--tn-yellow);
@@ -163,7 +166,8 @@ a.xp-ln:hover, a.xp-ln:focus-visible { color: var(--tn-cyan); }
 }
 @media (max-width: 540px) {
   .xp { padding: 0 16px; }
-  .xp-term-body { padding: 14px 12px 16px; font-size: 12px; }
+  .xp-para { font-size: 17px; }
+  .xp-term-body { padding: 14px 12px 16px; font-size: 13px; }
   .xp-line, .xp-gap { grid-template-columns: 2.6em minmax(0, 1fr); gap: 8px; }
   .xp-stats { gap: 28px; }
   .xp-btn-p, .xp-btn-s { white-space: normal; }
