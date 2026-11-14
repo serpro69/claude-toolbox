@@ -21,7 +21,7 @@ explore:
 
   chapters:
     - id: shortcut
-      kicker: Cold open
+      kicker: What claude-toolbox caught while building capy
       headline: '"I took the shortcut."'
       copy:
         - >-
