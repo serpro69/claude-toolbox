@@ -71,7 +71,7 @@ Putting only the old authorization paragraph there would discard the other
 policy rules. See [Auto-review configuration](https://learn.chatgpt.com/docs/sandboxing/auto-review#configuration).
 
 If you use [pal](https://github.com/serpro69/pal-mcp-server) and rely on
-[clink-based reviews](../user-guide/skills.md##isolated-reviews-and-external-models),
+[clink-based reviews](../user-guide/skills.md#isolated-reviews-and-external-models),
 but they get blocked by the auto-review policy, the current recommended solution
 is to add the following to your `/etc/codex/requirements.toml`:
 
