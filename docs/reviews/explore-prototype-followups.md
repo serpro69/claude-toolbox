@@ -20,13 +20,18 @@ Known gaps:
   `default-wait` (`/kk:review-spec:isolated`) describe the review or design
   step but don't quote the command. If a record turns up that quotes it, drop
   `inferred: true`.
-- **Closing figures are a snapshot** (capy as of 2026-11-14: 672 commits, 37
-  ADRs, 27 finished feature records). CI has no capy checkout, so they can't be
-  computed at build time. Update the numbers and the date by hand.
+- **Closing figures refresh only on docs deploys.** The docs workflow counts
+  them from a capy clone (`scripts/mkdocs/capy_stats.py`); a released docs
+  version keeps the figures it was built with, dated by its as-of line. The
+  front-matter snapshot (672 commits, 37 ADRs, 27 finished feature records, as
+  of 2026-11-14) is only the fallback; refresh it by hand if a deploy reports
+  "Kept the snapshot capy figures". The hook was exercised locally (snapshot,
+  live counts, missing clone, repo without capy's layout), not yet in CI.
 - **Excerpt fidelity is checked by hand-run script only.** Every excerpt was
   verified against `origin/master` of its repo (30 fragments, 0 mismatches).
-  There's no CI check because CI has no capy checkout; when editing an excerpt,
-  re-check it against the source line by hand.
+  When editing an excerpt, re-check it against the source line by hand. The
+  docs workflow's capy clone could support a CI check (a blob-less clone
+  fetches file contents on demand), but none is built yet.
 - **Independent review is deferred** to the end of prototyping, at the user's
   request.
 

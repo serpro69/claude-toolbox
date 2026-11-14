@@ -329,14 +329,21 @@ explore:
       - >-
         A rule, an invariant, a test, a recorded limit. Every excerpt above is
         the record's own text, and every line number links to it.
-    stats_label: capy, as of 2026-11-14
+    # Snapshot figures. The docs deploy refreshes `value` per `key` and `as_of`
+    # from a capy clone (scripts/mkdocs/capy_stats.py); without one, as here
+    # locally, these are shown as written.
     stats:
-      - value: "672"
-        label: commits since 2026-03-18
-      - value: "37"
-        label: ADRs
-      - value: "27"
-        label: finished feature records
+      as_of: "2026-11-14"
+      items:
+        - key: commits
+          value: "672"
+          label: commits since 2026-03-18
+        - key: adrs
+          value: "37"
+          label: ADRs
+        - key: features
+          value: "27"
+          label: finished feature records
     links:
       - label: Get started
         href: getting-started/
