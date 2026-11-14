@@ -893,6 +893,8 @@ document.addEventListener('DOMContentLoaded', function() {
       }
 
       hero.style.setProperty('--lp-fade', fade.toFixed(3));
+      // The faded hero still sits on top of the pipeline in the pinned stack; let clicks through to it.
+      hero.style.pointerEvents = fade >= 1 ? 'none' : '';
 
       rainIntensity = rain;
       if (canvas) canvas.style.opacity = rain.toFixed(3);
