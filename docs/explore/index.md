@@ -2,12 +2,14 @@
 template: explore.html
 title: Explore the toolbox
 description: >-
-  What claude-toolbox caught while building capy, quoted from capy's own
+  What claude-toolbox caught while AI was building capy, quoted from capy's own
   records: a design review, three code reviews and a spec review.
 
 # Page content. `explore.html` renders everything below; nothing is generated
 # at runtime. Rules for editing:
 # - Copy fields: wrap code in backticks.
+# - Headlines keep line breaks when written as a `|-` block; `>-` folds them
+#   into spaces.
 # - Excerpt `text` must be the record's exact text. Mark cuts with `…` and the
 #   highlighted phrase with `[[…]]`. `at` is the source line or range
 #   ("113-116", joined with spaces); it also builds the GitHub link.
@@ -21,8 +23,10 @@ explore:
 
   chapters:
     - id: shortcut
-      kicker: What claude-toolbox caught while building capy
-      headline: '"I took the shortcut."'
+      kicker: What claude-toolbox caught while AI was building capy
+      headline: |-
+        "I took the shortcut."
+        — your LLM
       copy:
         - >-
           Three `/kk:review-code` runs on the same capy diff. Each time, the
@@ -356,7 +360,7 @@ explore:
 
 # Explore the toolbox
 
-What claude-toolbox caught while building capy, a Go MCP server built from
+What claude-toolbox caught while AI was building capy, a Go MCP server built from
 start to finish with it: an agent that skipped its own review method, a design
 shaped by a recurring bug in capy's knowledge base, an upgrade that would have
 locked every existing vault, a deny-list bypass through a symlinked folder,
