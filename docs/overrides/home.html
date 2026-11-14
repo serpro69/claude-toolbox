@@ -811,11 +811,12 @@ document.addEventListener('DOMContentLoaded', function() {
       'Workflow: kk:review-code:isolated within kk:implement. … Overall assessment: APPROVE'
     ], [['done/upstream-sync-v1.0.169/.reviews/task-2a-code-review-2026-10-10.md', 3],
         ['done/upstream-sync-v1.0.169/tasks.md', 46]]),
-    phase('review-code', '/kk:review-code:isolated', [
-      'P2: existing setup tests inherited global configuration and could chmod a developer&#39;s real absolute key file',
-      'PAL reported no issues.',
-      'The reviewer rechecked all setup callers and returned APPROVE'
-    ], [['reviews/issue-124-key-file-permissions.md', 28]]),
+    // Two reviewers, disjoint findings: the external one caught a HIGH the internal one approved past.
+    phase('review-code', '/kk:review-code', [
+      'code-reviewer: APPROVE, no P0–P2, P3 ×2 … documented at the code rather than changed',
+      'pal: HIGH ×1, applied — the --project filters … still built LIKE &#39;%&#39;+input+&#39;%&#39; unescaped while Task 8 had fixed the same defect in merge.go only',
+      'Not corroborated (disjoint findings)'
+    ], [['done/codex-vault-sessions/tasks.md', 214]]),
     phase('test', '/kk:test', [
       'go test -tags fts5 -count=1 ./... green across all 16 packages',
       'parity canary 698 compared / 0 mismatches / 2 skipped as live sessions',

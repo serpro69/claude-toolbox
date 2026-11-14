@@ -262,7 +262,7 @@ explore:
             - at: 26
               text: >-
                 `kk:review-code:isolated` used a fresh `code-reviewer` agent and
-                two-step PAL `gemini-3.1-pro-preview` review.
+                two-step PAL review.
             - at: 28
               text: >-
                 The code reviewer found **P2: existing setup tests inherited
