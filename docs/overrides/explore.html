@@ -4,9 +4,17 @@
     MkDocs' Jinja environment has autoescape off, so every data value is escaped with `| e`. -#}
 
 {% macro inline(text) -%}
-  {%- for seg in text.split('`') -%}
-    {%- if loop.index is even %}<code>{{ seg | e }}</code>{% else %}{{ seg | e }}{% endif -%}
-  {%- endfor -%}
+  {%- for seg in text.split(' ') %}
+    {% if seg.startswith('`') and seg.endswith('`') %}
+      <code>{{ seg.replace('`', '') | e }}</code>
+    {% else %}
+      {% if 'https://' in seg %}
+        <span class="xp-src">{{ seg | e | urlize }}</span>
+      {% else %}
+        {{ seg | e }}
+      {% endif %}
+    {% endif %}
+  {%- endfor %}
 {%- endmacro %}
 
 {#- Headlines keep their line breaks (written as a `|-` block in the front matter). -#}

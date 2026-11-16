@@ -2,7 +2,7 @@
 template: explore.html
 title: Explore the toolbox
 description: >-
-  What claude-toolbox caught while AI was building capy, quoted from capy's own
+  What claude-toolbox caught while we were building capy, quoted from capy's own
   records: a design review, three code reviews and a spec review.
 
 # Page content. `explore.html` renders everything below; nothing is generated
@@ -23,7 +23,7 @@ explore:
 
   chapters:
     - id: shortcut
-      kicker: What claude-toolbox caught while AI was building capy
+      kicker: What claude-toolbox caught while we were building capy
       headline: |-
         "I took the shortcut."
         — your LLM
@@ -36,12 +36,13 @@ explore:
           The skill itself said to start with the diff, so the fix was to
           change the order, not to write a sterner prompt.
         - >-
-          capy is a local MCP server, written in Go, that keeps large outputs
-          out of a coding agent's context window. It was built from start to
-          finish with claude-toolbox: skills, sub-agents and config for Claude
-          Code and Codex, run as `/kk:` commands from design through review,
-          tests and docs. Below is what they caught along the way, quoted from
-          capy's own records. Nothing is staged.
+          capy (https://github.com/serpro69/capy) is a local MCP server,
+          written in Go, that keeps large outputs out of a coding agent's
+          context window. It was built from start to finish with claude-toolbox:
+          skills, sub-agents and config for Claude Code and Codex, run as `/kk:`
+          commands from design through review, tests and docs. Below is what
+          they caught along the way, quoted from capy's own records.
+          Nothing is staged.
       left_behind: >-
         All 16 skills now load their method before they touch your code. From
         `review-code/SKILL.md`: "The standard workflow below is strictly
@@ -360,7 +361,7 @@ explore:
 
 # Explore the toolbox
 
-What claude-toolbox caught while AI was building capy, a Go MCP server built from
+What claude-toolbox caught while we were building capy, a Go MCP server built from
 start to finish with it: an agent that skipped its own review method, a design
 shaped by a recurring bug in capy's knowledge base, an upgrade that would have
 locked every existing vault, a deny-list bypass through a symlinked folder,
