@@ -69,6 +69,9 @@ This is a recurring cost on a long-lived project. It justifies a real mechanism;
 | Existing repositories migrate once with `kk migrate` | Legacy files cannot be retired by upgrading alone |
 | Retirement is a separate mode of the sync script; ordinary sync never retires, and later releases keep a tombstone at the script's path | Local sync and the downstream workflow both reach the apply path, and neither can check that a replacement guard is ready |
 | Migration first syncs the repository to the retirement release, then removes against that one template | Every repository is compared with the same known template, rendered by the script that shipped with it, whatever version it was on |
+| A repository gives Codex extra instructions through `@` imports in its root `AGENTS.md`; `kk codex` injects them after one confirmation per repository | Codex does not follow imports, a hook for this would sit in a trusted bundle, and a machine-level mechanism must not raise an unreviewed repository's files to developer authority |
+| `kk apply` rewrites the owned Codex files from the override file; the launcher only reports that an edit is waiting | Codex reads its profile and rules from disk, so an override change would otherwise wait for the next release, silently |
+| Migration keeps a repository's Codex sandbox and approval settings | Nothing on the machine replaces them by default, so removing them could loosen a collaborator's sessions unasked |
 
 ## Evidence and provenance
 
@@ -83,6 +86,7 @@ Probes ran on 2026-11-18 against Claude Code 2.1.296 and Codex CLI 0.169.0 in sc
 - Codex: a new plugin hook from a local marketplace was skipped without the trust bypass, and `codex exec` printed nothing about it.
 - Codex: every `*.rules` file in `$CODEX_HOME/rules/` loaded; `forbidden` in one file beat `allow` in another; an invalid file made `codex exec` exit with "Error loading rules".
 - Codex: a profile file `$CODEX_HOME/kk.config.toml` selected with `--profile kk` put its `developer_instructions` into the model-visible prompt as a developer message.
+- Codex: `AGENTS.md` is loaded as a user message, in a repository that is not trusted too. `@path` lines in it are left as literal text and the files they name are not loaded. Developer instructions arrive as a developer message. A `-c developer_instructions=…` argument given together with `--profile kk` replaces the profile's value.
 
 **Documented by the vendor**
 
@@ -134,6 +138,8 @@ adopter machine
     releases/<version>/             immutable payloads, each with its own entry point
     .claude-plugin/marketplace.json local Claude marketplace
     .agents/plugins/marketplace.json  local Codex marketplace
+    codex-instructions.md           the toolbox's Codex instructions as last written to the profile
+    imports/                        one recorded answer per repository for Codex instruction imports
   $CODEX_HOME/kk.config.toml        toolbox-owned Codex profile
   $CODEX_HOME/rules/kk.rules        toolbox-owned native forbids, only when switched on
   $CODEX_HOME/agents/kk-*.toml      toolbox-owned sub-agents
@@ -146,6 +152,8 @@ adopter machine
 
 - Before activation, each destination is checked. A path that exists and is not in the record is a collision. `kk` names it, replaces nothing, and stops before anything on the machine changes.
 - A path is recorded before it is written, so a run interrupted between the two does not meet its own file as a collision when it resumes.
+
+The collision check looks only at `~/.local/bin/kk` itself. A two-letter name may already be an alias or another tool earlier on `PATH`, and then `kk upgrade` would run something else without anyone noticing. The installer therefore warns in one line when `kk` resolves to anything other than its own symlink. The adopter can always call `$KK_HOME/bin/kk` directly.
 - Pruning removes only recorded paths. It never matches by prefix, so an adopter's own `kk-notes.toml` in the agents directory is left alone.
 
 ### Release payload
@@ -164,7 +172,8 @@ The 14 days run from the moment a release was superseded, not from its activatio
 |---|---|
 | `kk upgrade` | Fetch, validate and activate a release. Also the first install. `--check` only reports whether a newer release exists |
 | `kk rollback` | Re-activate the rollback target, offline |
-| `kk status` | Show the active release, per-tool state, pending review and mixed-install findings. `--live` runs one guarded action per tool |
+| `kk apply` | Rewrite the toolbox-owned Codex files for the active release from the current override file, offline |
+| `kk status` | Show the active release, per-tool state, pending review, mixed-install findings and overrides not yet applied. `--live` runs one guarded action per tool |
 | `kk claude`, `kk codex` | Start the vendor CLI with the toolbox layer |
 | `kk migrate` | One-time retirement of legacy template files in the current repository |
 
@@ -198,9 +207,10 @@ The state file records:
 - the active release, and any pending candidate with its phase;
 - the **rollback target**: the most recently active release, other than the active one, on which every installed tool reached *ready* (or *unverified*, on a machine where trust cannot be read). A release whose Codex guard never got past *awaiting review* is skipped. With A reviewed, B active and awaiting review, and then C activated, `kk rollback` from B or from C returns to A, the last release whose guard the adopter actually reviewed. When no retained release qualifies, the target is simply the release that was active before this one, and `kk rollback` says which tool's guard is not reviewed there. That is the normal case for an adopter who has Codex installed and never reviews its hooks; they still get a way back for Claude;
 - when each retained release stopped being active;
+- a hash of the override file as it was when the owned Codex files were last written;
 - the paths installed outside `$KK_HOME`.
 
-Every write to it and to an owned file is a write to a temporary file followed by a rename. That keeps each file readable but does not stop two commands from interleaving: a scheduled upgrade and a manual rollback could leave the marketplaces, the vendor installs and the state file describing different releases. `upgrade`, `rollback` and resumption therefore hold one exclusive lock on `$KK_HOME` for their whole run. A second writer exits at once and names the first. It is an operating-system file lock, released when its holder exits, so a crashed run leaves nothing stale. Launchers and `status` do not take it.
+Every write to it and to an owned file is a write to a temporary file followed by a rename. That keeps each file readable but does not stop two commands from interleaving: a scheduled upgrade and a manual rollback could leave the marketplaces, the vendor installs and the state file describing different releases. `upgrade`, `rollback`, `apply` and resumption therefore hold one exclusive lock on `$KK_HOME` for their whole run. A second writer exits at once and names the first. It is an operating-system file lock, released when its holder exits, so a crashed run leaves nothing stale. Launchers and `status` do not take it.
 
 ### Upgrade flow
 
@@ -252,13 +262,27 @@ If the adopter passes their own `--settings`, a file or inline JSON, the launche
 
 ### Launching Codex
 
-`kk codex` starts `codex --profile kk` with the adopter's arguments. The profile is `$CODEX_HOME/kk.config.toml`, written at upgrade from the baseline and the adopter's overrides. It carries the Codex defaults and the behavioural instructions as developer instructions.
+`kk codex` starts `codex --profile kk` with the adopter's arguments. The profile is `$CODEX_HOME/kk.config.toml`, written from the baseline and the adopter's overrides at upgrade and by `kk apply`. It carries the Codex defaults and the behavioural instructions as developer instructions.
 
 The profile ranks above the base user config and below trusted project config. A repository's deliberate choice therefore wins over the toolbox default; a value in `~/.codex/config.toml` does not. This asymmetry with Claude is a documented consequence of not parsing TOML under Python 3.8: the launcher cannot see what the machine owner set, so it cannot yield to it per key.
 
 For that reason the baseline leaves out the keys that decide what Codex may do without asking: `approval_policy`, `approvals_reviewer` and `sandbox_mode`. A profile carrying them would loosen a stricter owner setting, or tighten a looser one, in every wrapped session without the owner having chosen it. They stay whatever the machine owner set. An adopter who wants the template's former `on-request` and `read-only` posture switches it on in the override file. The remaining keys (model, reasoning effort, context limits, instruction budget, TUI settings) still outrank the base user config, and adopters who want a different value put it in the override file.
 
 Before a non-interactive run (`exec`, `review`) the launcher re-reads trust and enablement for the guard's handlers. It does not rely on the state recorded at upgrade, because the adopter can disable or un-trust a hook at any time afterwards. It refuses when a handler is untrusted or disabled, because Codex would skip it without saying so. In the *unverified* state it warns in one line and proceeds.
+
+### Repository instructions for Codex
+
+A repository often has instructions beyond its `AGENTS.md`: files a tool generates, such as capy's `.capy/AGENTS.md`, and files the adopter keeps separately. Claude loads them through `@` imports. Codex does not follow imports, so today they reach it only through the legacy `SessionStart` hook, which injects every `.claude/CLAUDE.<name>.md` and, when capy's own hooks are absent, `.capy/AGENTS.md`. That hook goes away, and the machine-level profile cannot know one repository's files.
+
+**Declaring them.** A repository lists its extra files as `@path` lines in its root `AGENTS.md`: a line that holds only `@` and a path, outside a code fence. This is the syntax Claude already uses, so where `CLAUDE.md` imports `AGENTS.md`, one line serves both tools and nothing toolbox-specific lives in the repository. A path is relative to the repository root and must resolve to a regular file inside it. Imports inside an imported file are not followed.
+
+**Delivering them.** `kk codex` reads the imports at launch. It appends each file, under a heading naming its path, to the toolbox's own Codex instructions and passes the result as `-c developer_instructions=…`, which replaces the profile's value for that session. With no imports, or none confirmed, it passes nothing and the profile applies as written. The text is fixed when the session starts. A missing file, or a total above the size limit the [probe](#assumptions) establishes, is named in one line and left out; the launch goes on.
+
+**Confirming them.** The legacy hook injected a repository's files only after the adopter had trusted that repository's hooks in Codex. A machine-level launcher has no such gate, and developer instructions carry more authority than `AGENTS.md`, which Codex loads as a user message. Without a gate, running `kk codex` in a freshly cloned repository would hand that repository's files developer authority. So the launcher asks once per repository, showing the files and their sizes, default no. It records the answer with the list of import paths under `$KK_HOME/imports/` and asks again only when the list changes. A non-interactive run never asks: it injects what was confirmed before and otherwise says in one line that imports were left out. `kk status` run in the repository shows the recorded answer and the file that holds it; deleting that file makes the launcher ask again. The guard already keeps agents from writing under `$KK_HOME`, so a session cannot approve its own repository.
+
+Three limits follow. Imports reach wrapped sessions only, as the toolbox's own Codex instructions do. The confirmation covers which files are imported, not what they say later, which is also true of `AGENTS.md` itself. And if a repository sets its own `developer_instructions` in `.codex/config.toml`, the launcher's argument is expected to replace it in a session with confirmed imports.
+
+Toolbox has no capy-specific injection any more. Capy 0.17.1 and later deliver their guidance through the hooks `capy setup --platform codex` registers in the repository, which migration leaves alone. A repository on an older capy, or one that wants the file loaded regardless, imports `.capy/AGENTS.md` like any other file.
 
 ### Overrides
 
@@ -273,6 +297,10 @@ The override file is the adopter's. It can:
 No override, and no settings file named in one, removes a generated secret deny.
 
 Codex overrides are written as JSON and serialised into the profile, so the launcher never needs to read TOML.
+
+The two tools pick up an override change at different moments. `kk claude` composes its layer at every launch, so a Claude override applies to the next session. The Codex profile and rules file are files on disk, written only at upgrade, so a Codex override would otherwise wait for the next release. `kk apply` closes that gap. It rewrites the owned Codex files for the active release from the current override file, through the same path the upgrade uses: the writer lock, the collision check, the two-step rules validation, and recording and pruning by path. It needs no network and does not touch the guard plugin, so it triggers no hook review.
+
+An edit that has not been applied must not stay silent. `kk` records a hash of the override file each time it writes the owned files. When the file no longer matches, `kk codex` and `kk status` say in one line that Codex overrides have changed and that `kk apply` applies them. The launcher only reads and compares; it never writes owned files itself.
 
 ### Update notice
 
@@ -296,13 +324,13 @@ The guard's *identity* is its content: a digest over the path, mode and bytes of
 - For a local checkout, `kk` sets the staged copy's guard version from its identity: the installed guard's version when the identity matches the installed guard, and a digest stamp otherwise. An unchanged guard is then byte-identical to the installed one and is left alone, and edited guard code never reuses a published version.
 - A tagged candidate whose guard carries the installed version with different content fails staging, before anything changes.
 
-There is no Codex `SessionStart` hook. Instructions ride the profile, which avoids a hook whose trust every instruction edit would invalidate.
+There is no Codex `SessionStart` hook. The toolbox's instructions ride the profile, and a repository's own extras are [injected by the launcher](#repository-instructions-for-codex). That avoids a hook whose trust every instruction edit would invalidate.
 
 ### Codex native forbids
 
 `kk.rules` carries the generated native forbids: `rm`, `shred`, `sudo`, `su` and `doas`. Today they live in each templated repository, where a repository can exclude the file from sync and edit it. In `$CODEX_HOME/rules/` they would apply to every Codex session of the account: bare `codex`, repositories that never used the template, and repositories that had excluded the file. A forbid there cannot be loosened by a project's allow rule, and it has no temporary-directory exemption, so an ordinary `rm` is refused everywhere.
 
-That is a wider effect than the per-repository file had, so it is the adopter's choice. The rules file is off by default and switched on in the override file. `kk upgrade` states the effect above when it first installs the file, and removes the file when the switch is turned off.
+That is a wider effect than the per-repository file had, so it is the adopter's choice. The rules file is off by default and switched on in the override file. `kk upgrade` or `kk apply` states the effect above when it first installs the file, and removes the file when the switch is turned off. An adopter who switches it off after finding `rm` refused everywhere runs `kk apply` and does not have to wait for a release.
 
 With the switch off, the hook guard is the only Codex protection on the machine. It already denies destructive commands, with the exemptions and user exceptions the forbids lack. What is given up is the backstop for a session whose hooks are not yet reviewed. A repository that wants to keep its own rules file declines that part of the [migration](#legacy-coexistence-and-migration).
 
@@ -336,7 +364,7 @@ During the transition the generators write both sets, so template sync keeps wor
 - **Plugin-only.** Installing from the Git marketplace keeps working for people who do not want `kk`. They get skills and the Claude guard with vendor-managed updates, and no launcher layer.
 - **Mixed.** A machine with both is ambiguous about which hooks are active. `kk status` reports it, `kk` offers to remove the user-scope Git-marketplace installs through the vendor CLIs, and a tool does not reach *ready* while its active hooks are ambiguous.
 
-The local marketplace is named `toolbox`, distinct from the Git marketplace `claude-toolbox`, so the two can be told apart.
+The local marketplace needs a name of its own, so that its plugin ID can be told apart from the Git marketplace's `kk@claude-toolbox` in mixed-install detection, in the launcher's disablement of the Git copy and in migration. The name is [still open](#open-questions). `toolbox` is the working name and lives in one constant.
 
 ### Legacy coexistence and migration
 
@@ -354,13 +382,12 @@ A repository still on the template keeps working after the machine moves to `kk`
 - **It checks that the replacement guard works now.** State recorded at upgrade is not enough: a hook can be disabled later, and *unverified* was never confirmed. For each tool the repository uses, it re-reads hook trust and enablement where they can be read, asking for this repository when the mechanism takes a workspace, and it runs the [live check](#release-safety). It refuses otherwise. The live check runs in a scratch workspace, not in the repository, for two reasons. In an unmigrated repository the legacy guard and the plugin guard both fire and print the same denial, so a denial seen there could not be credited to the installed handler. And the guard's secret patterns are anchored at the workspace, so the decoy has to sit inside the workspace the session starts in. What the scratch check cannot see is a setting that switches the plugin's hooks off for this one repository; the trust read covers that where Codex reports it per workspace.
 - **It tells the adopter to close older Codex sessions first.** A Codex session in this repository that started before `kk` was installed and its hooks reviewed loaded only the legacy registration. That registration runs a script from the repository on every call. Once migration deletes the script, the hook fails and Codex lets the call through. Open sessions cannot be detected, so `kk migrate` states this and asks, default no. Sessions started after `kk` became *ready* loaded the plugin guard and stay guarded.
 - **It works in two steps, each previewed and confirmed.** First it syncs the repository to the retirement release with an ordinary sync. Then it removes, comparing against that release's template. Declining the second step leaves a repository that is simply up to date and still guarded. The result is left uncommitted.
-- It removes only what the [removal rules](#removal-rules) allow. The adopter can decline individual parts, for example to keep the repository's own Codex rules file, its Codex sandbox and approval settings, or the plugin enablement that a cloud session relies on.
+- It removes only what the [removal rules](#removal-rules) allow. The adopter can decline individual parts, for example to keep the repository's own Codex rules file or the plugin enablement that a cloud session relies on.
 - **The diff states the team-wide effect.** The change is committed, so it reaches everyone who uses the repository:
   - a collaborator without `kk` loses the Codex guard and the deny list in that repository;
   - a host with no `kk` install that relied on the committed plugin enablement, such as a cloud session or a fresh CI runner, no longer gets the plugin at all;
   - installing `kk` alone does not restore native denies to unwrapped Claude sessions;
-  - the repository's Codex native forbids go, and return only on machines that switched on the account-wide rules file;
-  - the repository's Codex sandbox, approval policy and approvals reviewer go with its config. Sessions there then follow each machine's own Codex config, which may be looser than the template's `read-only` and `on-request`. The report states this separately from the diff.
+  - the repository's Codex native forbids go, and return only on machines that switched on the account-wide rules file.
 
 #### Removal rules
 
@@ -376,11 +403,14 @@ The removal logic lives in one final release of the sync script, as a separate m
 
 - **An entry equal to what the retirement template supplies is removed.** A deny entry the template does not ship stays. Hook registrations are compared one handler at a time by exact command string.
 - **A file identical to the retirement template is removed.** After the sync step that is every synced file the adopter has not excluded. A file that still differs is reported and left alone.
-- **A value chosen through a manifest variable is the adopter's.** The Claude model, effort and permission mode, and the Codex model and approval policy, are kept as the repository's own settings and listed in the report, unless the manifest holds no value or the script's built-in default. The report says they will keep outranking the machine defaults. The statusline choice is listed too, but its entry is removed because the script it points at is.
+- **The Codex sandbox and approval settings stay.** `sandbox_mode`, `approval_policy` and `approvals_reviewer` came from the template, but nothing on a machine replaces them by default, because the `kk` profile leaves them out. Removing them could move a collaborator's sessions from a read-only sandbox to something looser without that collaborator having done anything. Every other protection that migration removes has a replacement that `kk migrate` checks first; these have none. They are kept as the repository's own settings and listed in the report, which says that they keep outranking each machine's Codex config in this repository and which three lines to delete to hand that over to the machine.
+- **A value chosen through a manifest variable is the adopter's.** The Claude model, effort and permission mode, and the Codex model, are kept as the repository's own settings and listed in the report, unless the manifest holds no value or the script's built-in default. The report says they will keep outranking the machine defaults. The statusline choice is listed too, but its entry is removed because the script it points at is.
 - **Anything under `sync_exclusions` is not touched,** by either step. The adopter took those files out of the template's hands.
 - **If the template cannot be fetched, nothing is removed** and the run stops.
 
 `kk migrate` is a wrapper around the two steps. It fetches the script and its helper file from the retirement tag into a temporary directory and runs them from there with the script's self-update switched off. It depends on neither the repository's own copy of the script nor the default branch. It checks for `curl` and `yq` first and says they are needed for this step only. The retirement tag is a constant in `kk`, with a command-line override so that the [pilot](#verification) can run against a release candidate.
+
+Hosting the removal step in the script means its code is frozen in a tag, and after retirement the default branch holds only the tombstone. A fix to the retirement script therefore ships as a patch tag cut from a branch at the retirement tag, and the next `kk` release moves its constant to that tag. Nothing else is released from that branch.
 
 #### Ordinary sync and the tombstone
 
@@ -421,7 +451,7 @@ Retirement waits for the [pilot](#verification) of the tagged retirement release
 | Codex native forbids, per repository, with exclusion from sync as the way to change them | Owned rules file for the whole account | **Opt-in**. When on, it also binds bare Codex and unrelated repositories, and no project can loosen it. The per-repository control is replaced by one machine switch, or by keeping the repository's own file at migration |
 | Codex sub-agents | Owned agent files | Moved |
 | Codex model, reasoning effort, limits, TUI defaults | Codex profile | Moved; outranks user config, yields to project config |
-| Codex approval policy, approvals reviewer, sandbox mode | Override file | **Opt-in**; the machine owner's config governs by default. Migration removes them from the repository unless the adopter declines that part, or chose the approval policy in the manifest |
+| Codex approval policy, approvals reviewer, sandbox mode | Override file | **Opt-in** on the machine; the machine owner's config governs by default. A migrated repository keeps its own three lines, so nothing changes there until someone deletes them |
 | Claude native secret denies | Launcher layer | Kept in wrapped sessions, including with the adopter's own `--settings`; **lost in unwrapped sessions** |
 | Claude effort, env | Launcher layer | Kept in wrapped sessions; yields to user values. The baseline is the template default, effort `high` |
 | Claude model | — | Unchanged for default adopters, whose template pinned none. A model chosen in the manifest stays in the repository's settings at migration |
@@ -436,8 +466,8 @@ Retirement waits for the [pilot](#verification) of the tagged retirement release
 | Per-project manifest variables | Override file, or the repository's own settings | Changed; migration keeps non-default choices in the repository and reports them |
 | Version pinning, preview | `kk upgrade` with a version; *staged* state | Changed |
 | Review of config changes by pull request | — | **Dropped**; the adopter reviews the release, not a diff |
-| Per-repository `.claude/CLAUDE.<name>.md` extras injected into Codex | — | **Dropped**, pending the [open question](#open-questions) |
-| Capy guidance injected when capy's hooks are absent | — | **Dropped**, pending the [open question](#open-questions) |
+| Per-repository `.claude/CLAUDE.<name>.md` extras injected into Codex | `@` imports in the root `AGENTS.md`, injected by `kk codex` | Changed; one `@` line per file, one confirmation per repository, wrapped sessions only |
+| Capy guidance injected when capy's hooks are absent | Capy's own hooks, or an import of `.capy/AGENTS.md` | Changed; toolbox no longer checks for capy |
 
 ## Verification
 
@@ -470,17 +500,21 @@ Each is a bet the design depends on, with the check that would confirm or break 
 12. When the script behind a project hook disappears under an open Codex session, the hook fails and the call proceeds unguarded. This is read from source, not probed. If a probe shows the call is blocked instead, the warning before migration becomes a restart notice.
 13. Codex accepts a digest-stamped version string as a plugin version and as a cache directory name. If it does not, local checkouts need another way to keep version and content in step.
 14. Codex accepts re-adding an earlier version of a plugin over a later one, and trust given to a guard bundle is still there when the same bytes come back after another bundle was installed in between. Rollback depends on the first. If the second fails, a rollback across a guard change needs the adopter's review before it counts as recovery, and demonstrations 2 and 4 record that review.
+15. `-c developer_instructions=…` accepts a multi-line value of at least 64 KiB, and it replaces a trusted project's own `developer_instructions` as it replaces the profile's. The first sets the size limit for imports; if the limit is much lower, imports need another channel. The second is only documented, because the launcher cannot read the project's TOML to merge the two.
 
 ## Open questions
 
 These are choices made while writing this document that the maintainer has not confirmed.
 
-1. **Codex loses per-repository instruction extras.** Today's Codex `SessionStart` hook injects every `.claude/CLAUDE.<name>.md` in the repository. A machine-level profile cannot. The alternative is a `SessionStart` hook in the guard plugin whose script is stable and reads instruction text from the workspace, at the cost of putting non-guard behaviour in the trusted bundle.
-2. **Capy's legacy guidance injection goes with that hook.** Capy 0.17.1 and later register their own hooks. Is requiring that version acceptable?
-3. **Migration is hosted in the final sync release,** as a separate mode that runs after a sync to that release. The alternative is new removal logic inside `kk`, which would have to reproduce the sync script's fetch and substitution to compare files exactly.
-4. **Names and locations:** the command `kk`, the marketplace `toolbox`, the home under `~/.local/share/kk`, the override file under `~/.config/kk`.
+1. **The local marketplace's name.** The working name is `toolbox`, which gives `kk@toolbox` beside the Git marketplace's `kk@claude-toolbox`. `kk-local` was proposed because the two differ by one word and `toolbox` is generic enough for another vendor to use. The maintainer will settle it before the first release that installs the marketplace. After that a rename is costly: the plugin ID is written into adopters' settings, and it may change the plugin's identity for Codex hook trust, which has not been checked.
 
-Closed on 2026-11-18 by the maintainer: the Codex profile leaves `approval_policy`, `approvals_reviewer` and `sandbox_mode` out by default, and the Codex native forbids are opt-in. Both are recorded under [accepted decisions](#accepted-decisions).
+Closed on 2026-11-18 by the maintainer, and recorded under [accepted decisions](#accepted-decisions):
+
+- The Codex profile leaves `approval_policy`, `approvals_reviewer` and `sandbox_mode` out by default, and the Codex native forbids are opt-in.
+- Per-repository instruction extras reach Codex through `@` imports in `AGENTS.md`, injected by the launcher after one confirmation per repository. A `SessionStart` hook for this was rejected.
+- Toolbox drops its capy-specific guidance injection. Capy's own hooks deliver it, and an import covers everything else, so no capy version is required.
+- The migration's removal step is hosted in the final release of the sync script. Fixes after retirement ship as a patch tag from a branch at the retirement tag.
+- Names and locations, apart from the local marketplace's name: the command `kk`, the home under `~/.local/share/kk`, the override file under `~/.config/kk`, the Codex guard plugin `kk-guard`, and the `kk` profile, rules file and sub-agent prefix.
 
 ## Not Doing
 
@@ -504,11 +538,17 @@ Closed on 2026-11-18 by the maintainer: the Codex profile leaves `approval_polic
 - **Plugin hooks stepping aside for legacy hooks.** A disabled legacy entry would leave no guard running.
 - **A Git marketplace pinned to a tag.** It is not offline and does not guarantee the validated bytes.
 - **A `SessionStart` hook that writes user-level config.** It applies one session late and needs a merge into user-owned files.
+- **Regenerating the Codex profile at launch when the override file changed.** The launcher would become a writer of owned files, needing the lock, and a failed rules validation would block starting Codex.
+- **A `SessionStart` hook for repository instructions, in the guard plugin or in a plugin of its own.** In the guard plugin, a fix to instruction loading becomes a guard change with a review on every machine. A separate plugin adds a second review and more install and rollback machinery. Either way one machine-wide trust decision would cover every repository.
+- **Keeping the `.claude/CLAUDE.*.md` glob as the way to declare extras.** It cannot name a file outside `.claude/`, such as `.capy/AGENTS.md`, and it is a Claude-named convention for a Codex feature.
+- **Injecting a repository's imports without asking.** A freshly cloned repository's files would get developer authority.
+- **`kk upgrade` as the way to apply an override change.** It starts with a network check, and the name says nothing about configuration.
 - **Keeping template sync, or becoming an orchestrator app.**
 - **Retirement as one more sync migration.** Migrations run on every sync that applies, from a local run and from the downstream workflow, with no check that a replacement guard is ready.
 - **Deleting the sync script after retirement.** Older scripts would then sync against the shrunken tree and strip the legacy guard themselves.
 - **Reusing the three-way settings merge for the removal step.** It replaces the whole deny list and re-applies manifest-controlled keys, so it cannot remove only what the template added.
 - **Removing against the template at each repository's recorded version.** The script has never rendered old template layouts, and a recorded branch name or short SHA cannot be fetched at all. Syncing to the retirement release first gives every repository the same base.
+- **Removal logic inside `kk`.** It would have to reproduce the script's rendering of the template, and it cannot parse the Codex TOML config under Python 3.8, so the script's hardest logic would be written twice. Splitting the work, with the script rendering and `kk` removing, still means redoing the TOML edits that preserve capy's tables.
 - **Running the migration's live check inside the repository.** Both guards fire there with the same denial text, and a decoy outside the workspace does not match the guard's secret patterns.
 - **Rollback driven by the active release.** A fault in that release's dispatcher or rollback code would strand the machine with the previous release intact on disk.
 - **Passing the adopter's `--settings` through unchanged.** A session the adopter thinks of as wrapped would start without the native denies.

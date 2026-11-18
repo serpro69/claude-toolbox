@@ -162,7 +162,7 @@ A fresh read of the three documents on 2026-11-18, checked again against the syn
 2. **Some adopters had no rollback target (finding 5).** Requiring every installed tool to be verified left nothing to roll back to for an adopter who has Codex installed and never reviews its hooks. The target now falls back to the previously active release.
 3. **Rollback dispatch was inconsistent (finding 2).** Rolling back an interrupted upgrade must run the active release's code, not the rollback target's. Older code reading a newer state file also needed a wider guarantee than three frozen fields; the state format is now versioned and additive.
 4. **Task 16 would have broken releases.** `release.yml` and `pre-release.yml` call `semver-compare.sh` under `.claude/toolbox/scripts/`. The file moves to `.github/scripts/` first.
-5. **Migration dropped the repository's Codex sandbox and approval settings without saying so,** a consequence of taking those keys out of the baseline. The team-wide effect statement and the report now name it, and the adopter can decline that part.
+5. **Migration dropped the repository's Codex sandbox and approval settings without saying so,** a consequence of taking those keys out of the baseline. The maintainer decided on 2026-11-18 that migration keeps them as the repository's own settings and the report says how to remove them.
 6. **Task order.** The trust re-read in `kk codex` needed the trust reader from a later task. It moved to Task 10.
 7. **Guard version stamping contradicted byte verification (finding 8).** A local checkout's staged guard version is now set from its identity, so an unchanged guard stays byte-identical to the installed one.
 
@@ -170,12 +170,11 @@ Smaller corrections: four kinds of evidence, not three; the hand-off happens aft
 
 One design decision changed at the maintainer's direction: removal no longer compares against the template at each repository's recorded version. `kk migrate` first syncs the repository to the retirement release and removes against that one template. Two consequences are stated in the design: the sync step overwrites edits to synced files as any sync does, and it needs a switch that merges the deny list three-way so that a deny the adopter added survives to the removal step.
 
+Seven further items were decided by the maintainer on 2026-11-18. Migration keeps the repository's Codex sandbox and approval settings. A new `kk apply` command rewrites the owned Codex files from the override file, and `kk codex` and `kk status` say when an override edit is waiting, because the Codex profile was otherwise written only at upgrade. A repository's extra instructions reach Codex through `@` imports in its root `AGENTS.md`, which `kk codex` injects after one confirmation per repository; a probe on Codex 0.169.0 showed that Codex does not follow imports itself. Toolbox drops its capy-specific guidance injection, so no capy version is required. The last two close the design's former open questions 1 and 2. The migration's removal step stays in the final release of the sync script, with fixes after retirement shipped as a patch tag from a branch at the retirement tag. The remaining names and locations are confirmed, and the installer warns when another `kk` comes first on `PATH`. Tasks 3, 9, 10 and 13 are larger than the task convention suggests; the maintainer chose not to split or renumber them, so each carries a **Parts** line naming the points where a testable path is complete.
+
 Still open, and not addressed by these changes:
 
-- An override change to the Codex profile, including either new opt-in, takes effect only when the profile is next written at upgrade. The design names no way to re-apply it sooner.
-- Open questions 1 to 4 in the design are unconfirmed. Names and locations block Task 3; the per-repository instruction extras affect Tasks 7 and 9.
-- Tasks 3 and 9 are larger than the task convention allows for a single task and should be split before they start.
-- Whether migration should keep the repository's Codex sandbox and approval settings by default, instead of removing them unless declined, is a choice the maintainer has not made.
+- One open question in the design remains: the local marketplace's name. The maintainer settles it before the first release that installs the marketplace; it does not block implementation, because the name lives in one constant.
 
 ## Not changed
 
