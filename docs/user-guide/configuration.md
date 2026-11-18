@@ -10,7 +10,7 @@ claude-toolbox provides opinionated defaults for permissions, statusline, hooks,
     - **`.claude/settings.json`** — upstream-managed defaults, synced from this template (permissions baseline, env vars, model, plugins, statusline)
     - **`.claude/settings.local.json`** — your per-repo overrides, never synced (hooks, MCP server enables, additional permissions, personal preferences)
 
-    Use `settings.local.json` for personal settings. Template sync merges most settings, but replaces `permissions.deny` with the upstream secrets baseline and reports removed entries; `permissions.allow` remains union-merged. The guard protects both settings files from agent edits. A person can edit them directly, or enable the scoped `disable_selfmod` exception described below.
+    Use `settings.local.json` for personal settings. Template sync three-way merges most settings, so entries upstream removes or changes reach your settings unless you customized them; it replaces `permissions.deny` with the upstream secrets baseline and reports removed entries. See [settings.json merge behavior](template-sync.md#settingsjson-merge-behavior). The guard protects both settings files from agent edits. A person can edit them directly, or enable the scoped `disable_selfmod` exception described below.
 
 ## Permission Baselines
 

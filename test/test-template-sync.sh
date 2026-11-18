@@ -37,6 +37,10 @@ reset_globals() {
   EXCLUDED_FILES=()
   SYNC_EXCLUSIONS=()
   DROPPED_DENY_ENTRIES=()
+  SETTINGS_BASE_FILE=""
+  SETTINGS_BASE_WARNING=""
+  SETTINGS_REMOVED_ENTRIES=()
+  SETTINGS_CONFLICT_ENTRIES=()
 }
 
 log_test "parse_arguments with --version flag"
@@ -1335,6 +1339,200 @@ popd >/dev/null
 assert_json_valid "$(cat "$test_dir/invalid-output/claude/settings.json")" "Fallback produces valid settings"
 assert_output_contains "Falling back to upstream template" "cat '$test_dir/invalid-warning'" "Invalid settings are reported"
 assert_equals "0" "${#DROPPED_DENY_ENTRIES[@]}" "Invalid settings do not invent removed entries"
+
+log_test "three-way merge: upstream removals and changes propagate, project values win"
+reset_globals
+test_dir=$(create_temp_dir "merge-three-way")
+create_merge_test_manifest "$test_dir/manifest.json"
+MANIFEST_PATH="$test_dir/manifest.json"
+
+mkdir -p "$test_dir/templates/claude" "$test_dir/project/.claude"
+# Base: upstream settings at the previously synced version
+cat >"$test_dir/base.json" <<'EOF'
+{
+  "model": "old-model",
+  "permissions": {
+    "allow": ["Bash(ls:*)", "Read(${TMPDIR}/**)", "WebSearch"],
+    "deny": ["Read(*.log)", "Read(./**/.env)"],
+    "defaultMode": "default"
+  },
+  "env": { "KEEP": "1", "OLD": "1", "CHANGED": "a", "CUSTOM": "a", "CONFLICT": "a", "DROPPED_CUSTOM": "a" },
+  "enabledPlugins": { "old@market": true, "kk@claude-toolbox": true },
+  "legacy": { "a": 1, "b": 2 },
+  "statusLine": { "command": "bash old.sh" }
+}
+EOF
+cat >"$test_dir/templates/claude/settings.json" <<'EOF'
+{
+  "model": "new-model",
+  "permissions": {
+    "allow": ["Bash(ls:*)", "WebSearch", "Skill(kk:*)"],
+    "deny": ["Read(./**/.env)", "Read(~/.ssh/**)"],
+    "defaultMode": "default"
+  },
+  "env": { "KEEP": "1", "CHANGED": "b", "CUSTOM": "a", "CONFLICT": "b", "NEW": "1" },
+  "enabledPlugins": { "kk@claude-toolbox": true },
+  "statusLine": { "command": "bash new.sh" }
+}
+EOF
+cat >"$test_dir/project/.claude/settings.json" <<'EOF'
+{
+  "model": "old-model",
+  "permissions": {
+    "allow": ["Read(${TMPDIR}/**)", "Bash(go test *)", "WebSearch"],
+    "deny": ["Read(*.log)", "Read(./**/.env)", "Read(*.csv)"],
+    "defaultMode": "default"
+  },
+  "env": { "KEEP": "1", "OLD": "1", "CHANGED": "a", "CUSTOM": "mine", "CONFLICT": "mine", "DROPPED_CUSTOM": "mine", "PROJECT": "1" },
+  "enabledPlugins": { "old@market": true, "kk@claude-toolbox": true },
+  "legacy": { "a": 1, "b": 3 },
+  "statusLine": { "command": "bash custom.sh" }
+}
+EOF
+
+SETTINGS_BASE_FILE="$test_dir/base.json"
+pushd "$test_dir/project" >/dev/null
+apply_substitutions "$test_dir/templates" "$test_dir/output" 2>/dev/null
+compare_files "$test_dir/output" 2>/dev/null
+generate_diff_report "$test_dir/output" >"$test_dir/terminal-report"
+generate_markdown_summary "$test_dir/output" >"$test_dir/markdown-report"
+popd >/dev/null
+merged="$test_dir/output/claude/settings.json"
+
+assert_equals '["Bash(go test *)","WebSearch","Bash(ls:*)","Skill(kk:*)"]' "$(jq -c '.permissions.allow' "$merged")" \
+  "Allow drops the upstream-removed entry, keeps the project entry and re-adds the entry the project lacked"
+assert_equals '{"KEEP":"1","CHANGED":"b","CUSTOM":"mine","CONFLICT":"mine","DROPPED_CUSTOM":"mine","PROJECT":"1","NEW":"1"}' \
+  "$(jq -c '.env' "$merged")" "Env propagates removals and changes of untouched values and keeps project values"
+assert_equals '{"kk@claude-toolbox":true}' "$(jq -c '.enabledPlugins' "$merged")" "Upstream-removed plugin key is removed"
+assert_equals '{"b":3}' "$(jq -c '.legacy' "$merged")" "Removed object keeps only the project-changed sub-key"
+assert_equals '["Read(./**/.env)","Read(~/.ssh/**)"]' "$(jq -c '.permissions.deny' "$merged")" "Deny is still the upstream baseline"
+assert_equals "bash custom.sh" "$(jq -r '.statusLine.command' "$merged")" "Manifest-owned statusLine keeps the project value"
+assert_equals "sonnet" "$(jq -r '.model' "$merged")" "Manifest model still overrides the merge"
+assert_equals $'permissions.allow: Read(${TMPDIR}/**)\nenv.OLD\nenabledPlugins["old@market"]\nlegacy.a' \
+  "$(printf '%s\n' "${SETTINGS_REMOVED_ENTRIES[@]}")" "Applied upstream removals are reported, deny and owned keys excluded"
+assert_equals $'env.CONFLICT: kept "mine", upstream has "b"\nenv.DROPPED_CUSTOM: kept "mine", upstream removed it\nlegacy.b: kept 3, upstream removed it' \
+  "$(printf '%s\n' "${SETTINGS_CONFLICT_ENTRIES[@]}")" "Conflicts are reported; owned keys and unchanged customizations are not"
+assert_equals "2" "${#DROPPED_DENY_ENTRIES[@]}" "Deny removals are reported separately"
+for report in terminal-report markdown-report; do
+  assert_output_contains "Settings entries removed upstream" "cat '$test_dir/$report'" "$report names upstream removals"
+  assert_output_contains 'Read(${TMPDIR}/**)' "cat '$test_dir/$report'" "$report lists the removed allow entry"
+  assert_output_contains "upstream has" "cat '$test_dir/$report'" "$report lists conflicts"
+done
+assert_output_contains "Settings kept with project values" "cat '$test_dir/markdown-report'" "PR summary has a conflicts section"
+
+log_test "three-way merge: excluded settings report nothing"
+SYNC_EXCLUSIONS=(".claude/settings.json")
+pushd "$test_dir/project" >/dev/null
+apply_substitutions "$test_dir/templates" "$test_dir/excluded" 2>/dev/null
+popd >/dev/null
+assert_equals "0" "${#SETTINGS_REMOVED_ENTRIES[@]}" "Excluded settings report no removals"
+assert_equals "0" "${#SETTINGS_CONFLICT_ENTRIES[@]}" "Excluded settings report no conflicts"
+SYNC_EXCLUSIONS=()
+
+log_test "three-way merge: without a base, the union merge keeps upstream-removed entries silently"
+SETTINGS_BASE_FILE=""
+pushd "$test_dir/project" >/dev/null
+apply_substitutions "$test_dir/templates" "$test_dir/no-base" 2>/dev/null
+popd >/dev/null
+assert_equals '["Read(${TMPDIR}/**)","Bash(go test *)","WebSearch","Bash(ls:*)","Skill(kk:*)"]' \
+  "$(jq -c '.permissions.allow' "$test_dir/no-base/claude/settings.json")" "Union keeps every downstream entry"
+assert_equals "a" "$(jq -r '.env.CHANGED' "$test_dir/no-base/claude/settings.json")" "Union keeps downstream scalars"
+assert_equals "0" "${#SETTINGS_REMOVED_ENTRIES[@]}" "Union reports no removals"
+assert_equals "0" "${#SETTINGS_CONFLICT_ENTRIES[@]}" "Union reports no conflicts"
+
+log_test "three-way merge: repeated sync against the new base is stable"
+cp "$test_dir/output/claude/settings.json" "$test_dir/project/.claude/settings.json"
+SETTINGS_BASE_FILE="$test_dir/templates/claude/settings.json"
+pushd "$test_dir/project" >/dev/null
+apply_substitutions "$test_dir/templates" "$test_dir/repeat" 2>/dev/null
+popd >/dev/null
+assert_exit_code 0 "cmp '$test_dir/output/claude/settings.json' '$test_dir/repeat/claude/settings.json'" "Second sync changes nothing"
+assert_equals "0" "${#SETTINGS_REMOVED_ENTRIES[@]}" "Second sync removes nothing"
+assert_equals "0" "${#SETTINGS_CONFLICT_ENTRIES[@]}" "A conflict is not reported again once upstream stops changing it"
+SETTINGS_BASE_FILE=""
+
+log_test "three-way merge: a conflict alone is reported although no file changes"
+reset_globals
+test_dir=$(create_temp_dir "merge-conflict-only")
+create_merge_test_manifest "$test_dir/manifest.json"
+MANIFEST_PATH="$test_dir/manifest.json"
+mkdir -p "$test_dir/templates/claude" "$test_dir/project/.claude"
+printf '{"env":{"X":"old"}}\n' >"$test_dir/base.json"
+printf '{"env":{"X":"new"}}\n' >"$test_dir/templates/claude/settings.json"
+printf '{"env":{"X":"custom"}}\n' >"$test_dir/project/.claude/settings.json"
+SETTINGS_BASE_FILE="$test_dir/base.json"
+pushd "$test_dir/project" >/dev/null
+apply_substitutions "$test_dir/templates" "$test_dir/output" 2>/dev/null
+# Mirror the merge result downstream so the sync itself has no file changes
+cp "$test_dir/output/claude/settings.json" .claude/settings.json
+compare_files "$test_dir/output" 2>/dev/null
+generate_diff_report "$test_dir/output" >"$test_dir/terminal-report"
+popd >/dev/null
+assert_equals "0" "${#MODIFIED_FILES[@]}" "Conflict-only sync changes no file"
+assert_output_contains "No changes detected" "cat '$test_dir/terminal-report'" "Report says nothing changed"
+assert_output_contains 'env.X: kept "custom", upstream has "new"' "cat '$test_dir/terminal-report'" "Report still lists the conflict"
+
+log_test "three-way merge: a base with an unexpected shape falls back to the union merge and is reported"
+printf '{"permissions":"not-an-object"}\n' >"$test_dir/bad-base.json"
+printf '{"permissions":{"allow":["Read(a)"],"defaultMode":"default"},"env":{"X":"new"}}\n' >"$test_dir/templates/claude/settings.json"
+printf '{"permissions":{"allow":["Read(project)"]},"env":{"X":"custom"}}\n' >"$test_dir/project/.claude/settings.json"
+SETTINGS_BASE_FILE="$test_dir/bad-base.json"
+pushd "$test_dir/project" >/dev/null
+apply_substitutions "$test_dir/templates" "$test_dir/bad-output" >"$test_dir/bad-warn" 2>&1
+generate_markdown_summary "$test_dir/bad-output" >"$test_dir/bad-markdown"
+popd >/dev/null
+assert_equals '["Read(project)","Read(a)"]' "$(jq -c '.permissions.allow' "$test_dir/bad-output/claude/settings.json")" \
+  "Project entries survive instead of falling back to the upstream copy"
+assert_equals "custom" "$(jq -r '.env.X' "$test_dir/bad-output/claude/settings.json")" "Project value kept by the union merge"
+assert_output_contains "unexpected shape" "cat '$test_dir/bad-warn'" "Rejected base is logged"
+assert_output_contains "Settings merged without a base" "cat '$test_dir/bad-markdown'" "Rejected base is reported in the PR summary"
+SETTINGS_BASE_FILE=""
+SETTINGS_BASE_WARNING=""
+
+log_test "fetch_settings_base fetches the previous version by tag or full SHA and falls back otherwise"
+reset_globals
+test_dir=$(create_temp_dir "fetch-settings-base")
+upstream_fixture=$(create_temp_git_repo)
+fixture_git() { git -C "$upstream_fixture" -c commit.gpgsign=false -c tag.gpgsign=false "$@"; }
+fixture_git tag v0.0.1
+mkdir -p "$upstream_fixture/.claude"
+printf '{"permissions":{"allow":["Read(old)"]}}\n' >"$upstream_fixture/.claude/settings.json"
+fixture_git add .claude
+fixture_git commit -qm "Old settings"
+fixture_git tag -a v1.0.0 -m "v1.0.0"
+old_sha=$(fixture_git rev-parse HEAD)
+printf '{"permissions":{"allow":["Read(new)"]}}\n' >"$upstream_fixture/.claude/settings.json"
+fixture_git commit -qam "New settings"
+with_fixture() {
+  GIT_CONFIG_COUNT=1 \
+    GIT_CONFIG_KEY_0="url.file://$upstream_fixture.insteadOf" \
+    GIT_CONFIG_VALUE_0="https://github.com/test/base-fixture.git" "$@"
+}
+with_fixture fetch_upstream_templates HEAD test/base-fixture "$test_dir/fetch" 2>/dev/null
+RESOLVED_VERSION="HEAD"
+for version in v1.0.0 "$old_sha"; do
+  with_fixture fetch_settings_base "$version" "$FETCHED_TEMPLATES_PATH" "$test_dir/fetch/upstream" "$test_dir/fetch" 2>/dev/null
+  assert_equals '["Read(old)"]' "$(jq -c '.permissions.allow' "$SETTINGS_BASE_FILE" 2>/dev/null)" "Base for $version is the old upstream settings"
+done
+assert_equals '["Read(new)"]' "$(jq -c '.permissions.allow' "$test_dir/fetch/upstream/.claude/settings.json")" "Base fetch leaves the upstream checkout untouched"
+for version in "${old_sha:0:8}" master v0.0.1 v9.9.9 null ""; do
+  SETTINGS_BASE_FILE="stale"
+  with_fixture fetch_settings_base "$version" "$FETCHED_TEMPLATES_PATH" "$test_dir/fetch/upstream" "$test_dir/fetch" >"$test_dir/warn" 2>&1
+  assert_equals "" "$SETTINGS_BASE_FILE" "No base for '$version'"
+  assert_output_contains "not removed downstream" "cat '$test_dir/warn'" "Missing base for '$version' is reported"
+  assert_output_contains "not removed downstream" "echo '$SETTINGS_BASE_WARNING'" "Missing base for '$version' is kept for the sync report"
+done
+SETTINGS_BASE_WARNING=""
+mkdir -p "$test_dir/no-settings/claude"
+RESOLVED_VERSION="v0.0.1"
+with_fixture fetch_settings_base v0.0.1 "$test_dir/no-settings" "$test_dir/fetch/upstream" "$test_dir/fetch" >"$test_dir/warn" 2>&1
+assert_equals "" "$SETTINGS_BASE_FILE" "Re-sync of a version without settings has no base"
+assert_output_contains "not removed downstream" "cat '$test_dir/warn'" "Re-sync of a version without settings warns instead of aborting"
+RESOLVED_VERSION="v2.0.0"
+with_fixture fetch_settings_base v2.0.0 "$FETCHED_TEMPLATES_PATH" "$test_dir/fetch/upstream" "$test_dir/fetch" 2>/dev/null
+assert_equals '["Read(new)"]' "$(jq -c '.permissions.allow' "$SETTINGS_BASE_FILE")" "Re-sync of the same version uses the fetched settings as base"
+SETTINGS_BASE_FILE=""
+RESOLVED_VERSION=""
 
 log_test "smart merge: nested object merge (env)"
 reset_globals

@@ -233,15 +233,19 @@ apply run and it expires, inspect `git diff` for partial updates before retrying
 
 ### settings.json merge behavior
 
-The sync preserves downstream settings and fills gaps from upstream, with one policy exception: upstream owns `permissions.deny`.
+The sync runs a three-way merge: your settings, the new upstream settings, and upstream's settings at the version you last synced (`template_version`). Comparing against that base tells the sync which values you changed and which ones upstream changed.
 
+- **Removed upstream:** an entry upstream removed is removed from your settings if you had not changed it. If you had, your value is kept and reported. Array elements follow the same rule, so a retired `permissions.allow` entry disappears.
+- **Changed upstream:** a value you had not changed takes upstream's new value. If you had changed it too, your value wins and the conflict is reported.
+- **Added upstream:** new keys and array elements are added; downstream entries keep their order and new upstream elements are appended.
+- **Your own entries** are kept.
+- **Entries you deleted** are added back when upstream still has them. To keep an upstream entry out, exclude the whole file (see below).
 - **`permissions.deny`** is replaced with upstream's array, removing stale and project-only entries. An empty or missing upstream list clears downstream denies.
-- **`permissions.allow` and other arrays** are concatenated with deduplication; downstream entries keep their order and new upstream entries are appended.
-- **New keys** from upstream are added (e.g., new env vars).
-- **Other existing values** are preserved.
-- **Manifest variables** (`CC_MODEL`, `CC_EFFORT_LEVEL`, etc.) still override after the merge — these are your explicit choices
+- **Manifest variables** (`CC_MODEL`, `CC_EFFORT_LEVEL`, etc.) still override after the merge — these are your explicit choices. The keys they control, `statusLine` and the `claude-toolbox` marketplace source keep the previous behavior: your value wins and nothing is reported.
 
-When deny entries are removed, the terminal report and PR summary list them under **Permission deny entries removed**. CI also emits `dropped_deny_count` (including zero). Preview these changes with `--dry-run` before applying them.
+Only removals and changes made after your last synced version propagate; entries upstream retired earlier stay until you remove them. The base is fetched by tag or full commit SHA. When it is unavailable — first sync, a branch name or short SHA in `template_version`, a version from before `.claude/settings.json` existed, or a fetch error — the sync falls back to keeping your values and adding upstream's new entries, without removals, and says so under **Settings merged without a base**.
+
+When deny entries are removed, the terminal report and PR summary list them under **Permission deny entries removed**. CI also emits `dropped_deny_count` (including zero). Applied upstream removals are listed under **Settings entries removed upstream** and kept project values under **Settings kept with project values**. Preview these changes with `--dry-run` before applying them.
 
 Project secrets globs belong in `.claude/kk-guard.json` under `secrets`, and destructive rules under `destructive`; these additions require a plugin version with guard-config support. For full control over the synced settings baseline, add `.claude/settings.json` to [`sync_exclusions`](#sync-exclusions). Excluded settings are not copied from staging and generate no deny-removal report. The legacy plugin-system migration can still update hooks and marketplace registration in those settings; it preserves `permissions.deny`.
 
