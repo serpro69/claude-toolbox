@@ -595,7 +595,7 @@ create_codex_config_fixture() {
 EOF
   mkdir -p "$dir/templates/codex" "$dir/project/.codex"
   cat >"$dir/templates/codex/config.toml" <<'EOF'
-model = "gpt-6-astra"
+model = "gpt-6.2-astra"
 approval_policy = "on-request"
 
 [features]
@@ -611,7 +611,7 @@ reset_globals
 test_dir=$(create_temp_dir "subst-codex-mcp-preserve")
 create_codex_config_fixture "$test_dir"
 cat >"$test_dir/project/.codex/config.toml" <<'EOF'
-model = "gpt-6-astra"
+model = "gpt-6.2-astra"
 approval_policy = "on-request"
 
 [mcp_servers.capy]
@@ -841,7 +841,7 @@ cat >>"$test_dir/templates/codex/config.toml" <<'EOF'
 command = "new"
 EOF
 cat >"$test_dir/project/.codex/config.toml" <<'EOF'
-model = "gpt-6-astra"
+model = "gpt-6.2-astra"
 
 [mcp_servers.shared]
 command = "old"
