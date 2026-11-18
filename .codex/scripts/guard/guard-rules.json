@@ -22,6 +22,8 @@
     "~/.gnupg/**",
     "~/.kube/**",
     "~/.config/gcloud/**",
+    "~/.config/sops/age/**",
+    "~/Library/Application Support/sops/age/**",
     "~/.netrc",
     "~/.pypirc",
     "~/.docker/config.json",
@@ -183,6 +185,33 @@
         "program": "docker",
         "subcommand": ["volume", "prune"],
         "reason": "docker volume prune deletes every unused data volume"
+      }
+    ],
+    "decryption": [
+      {
+        "program": "sops",
+        "flags_any": ["^-[a-zA-Z]*d[a-zA-Z]*$", "^--decrypt(=.*)?$"],
+        "reason": "sops -d (--decrypt) outputs the plaintext of an encrypted secrets file"
+      },
+      {
+        "program": "sops",
+        "subcommand": "decrypt",
+        "reason": "sops decrypt outputs the plaintext of an encrypted secrets file"
+      },
+      {
+        "program": "sops",
+        "subcommand": "exec-env",
+        "reason": "sops exec-env hands decrypted secrets to a command through its environment"
+      },
+      {
+        "program": "sops",
+        "subcommand": "exec-file",
+        "reason": "sops exec-file hands decrypted secrets to a command through a temporary file"
+      },
+      {
+        "program": "sops",
+        "subcommand": "edit",
+        "reason": "sops edit opens the plaintext of an encrypted secrets file in $EDITOR"
       }
     ],
     "privilege": [

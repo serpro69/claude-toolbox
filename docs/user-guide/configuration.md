@@ -46,12 +46,14 @@ These globs generate the Claude settings deny list and apply in the guard. Add p
 | Home | `~/.aws/**` |
 | Home | `~/.claude/.credentials.json` |
 | Home | `~/.config/gcloud/**` |
+| Home | `~/.config/sops/age/**` |
 | Home | `~/.docker/config.json` |
 | Home | `~/.gnupg/**` |
 | Home | `~/.kube/**` |
 | Home | `~/.netrc` |
 | Home | `~/.pypirc` |
 | Home | `~/.ssh/**` |
+| Home | `~/Library/Application Support/sops/age/**` |
 
 ### Destructive commands
 
@@ -85,6 +87,11 @@ Add rules in project config under `destructive`. User config at `~/.claude/kk-gu
 | infra | `docker system prune` | docker system prune removes every unused container, network and image | No |
 | infra | `docker volume rm` | docker volume rm deletes persistent data volumes | No |
 | infra | `docker volume prune` | docker volume prune deletes every unused data volume | No |
+| decryption | `sops` | sops -d (--decrypt) outputs the plaintext of an encrypted secrets file | No |
+| decryption | `sops decrypt` | sops decrypt outputs the plaintext of an encrypted secrets file | No |
+| decryption | `sops exec-env` | sops exec-env hands decrypted secrets to a command through its environment | No |
+| decryption | `sops exec-file` | sops exec-file hands decrypted secrets to a command through a temporary file | No |
+| decryption | `sops edit` | sops edit opens the plaintext of an encrypted secrets file in $EDITOR | No |
 | privilege | `sudo` | sudo runs a command as the administrator | Yes |
 | privilege | `su` | su switches to another user account | Yes |
 | privilege | `doas` | doas runs a command as another user | Yes |
