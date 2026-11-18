@@ -102,6 +102,12 @@ MODIFIED_FILES=()
 DELETED_FILES=()
 UNCHANGED_FILES=()
 DROPPED_DENY_ENTRIES=()
+# Three-way settings merge: upstream settings.json at the last synced version
+# (empty when unavailable) and what the merge removed or kept against upstream
+SETTINGS_BASE_FILE=""
+SETTINGS_BASE_WARNING=""
+SETTINGS_REMOVED_ENTRIES=()
+SETTINGS_CONFLICT_ENTRIES=()
 
 # Exclusion tracking arrays
 EXCLUDED_FILES=()
@@ -1149,6 +1155,76 @@ fetch_upstream_templates() {
   log_success "Fetched config from $upstream @ $version"
 }
 
+# fetch_settings_base()
+# Fetches upstream .claude/settings.json at the previously synced version, the
+# base for the three-way settings merge. Without a base, the merge cannot tell
+# an entry upstream removed from one the project added, so removals never
+# propagate. Failure is non-fatal: the merge falls back to the union merge.
+#
+# Only tags and full commit SHAs identify a fixed base. A branch name or short
+# SHA recorded by an older sync, versions before .claude/settings.json existed,
+# and unreachable refs leave the base unset with a warning.
+#
+# Args:
+#   $1 - Previously synced version (manifest template_version)
+#   $2 - Directory with fetched templates (claude/settings.json is upstream)
+#   $3 - Upstream partial clone created by fetch_upstream_templates
+#   $4 - Work directory for the base file
+#
+# Side effects:
+#   Sets SETTINGS_BASE_FILE to the base file path, or to "" without a base;
+#   then SETTINGS_BASE_WARNING explains why, for the sync report
+fetch_settings_base() {
+  local version="$1"
+  local templates_dir="$2"
+  local upstream_clone="$3"
+  local work_dir="$4"
+  local base_file="$work_dir/settings-base.json"
+  SETTINGS_BASE_FILE=""
+  SETTINGS_BASE_WARNING=""
+
+  if [[ -z "$version" || "$version" == "null" ]]; then
+    settings_base_unavailable "no previous template_version"
+    return 0
+  fi
+
+  if [[ "$version" == "$RESOLVED_VERSION" ]]; then
+    if ! cp "$templates_dir/claude/settings.json" "$base_file" 2>/dev/null; then
+      settings_base_unavailable "no .claude/settings.json at $version"
+      return 0
+    fi
+  else
+    local ref
+    if [[ "$version" =~ ^[0-9a-f]{40}$ ]]; then
+      ref="$version"
+    else
+      ref="refs/tags/$version"
+    fi
+    # The partial clone fetches only the commit and tree; git show pulls the
+    # one blob on demand. FETCH_HEAD is the only ref this touches.
+    if ! git -C "$upstream_clone" fetch --depth 1 --quiet origin "$ref" 2>/dev/null ||
+      ! git -C "$upstream_clone" show "FETCH_HEAD:.claude/settings.json" >"$base_file" 2>/dev/null; then
+      settings_base_unavailable "no .claude/settings.json fetched at $version (it must be a tag or full commit SHA)"
+      rm -f "$base_file"
+      return 0
+    fi
+  fi
+
+  if ! jq -e 'type == "object"' "$base_file" &>/dev/null; then
+    settings_base_unavailable ".claude/settings.json at $version is not a JSON object"
+    rm -f "$base_file"
+    return 0
+  fi
+  SETTINGS_BASE_FILE="$base_file"
+}
+
+# settings_base_unavailable()
+# Records and logs why the three-way settings merge falls back to the union.
+settings_base_unavailable() {
+  SETTINGS_BASE_WARNING="No settings base ($1): settings entries removed upstream were not removed downstream"
+  log_warn "$SETTINGS_BASE_WARNING"
+}
+
 # =============================================================================
 # Self-Update Handoff
 # =============================================================================
@@ -1427,6 +1503,8 @@ apply_substitutions() {
   local template_dir="$1"
   local output_dir="$2"
   DROPPED_DENY_ENTRIES=()
+  SETTINGS_REMOVED_ENTRIES=()
+  SETTINGS_CONFLICT_ENTRIES=()
 
   log_step "Applying substitutions from manifest"
 
@@ -1447,32 +1525,92 @@ apply_substitutions() {
   # --- Claude Code Settings (claude/settings.json) ---
   local cc_settings_file="$output_dir/claude/settings.json"
   if [[ -f "$cc_settings_file" ]]; then
-    # Smart-merge upstream template into downstream's settings.json.
-    # Downstream values win and arrays are unioned, except permissions.deny:
-    # upstream owns that baseline so retired denies do not linger downstream.
+    # Three-way merge of downstream settings (D) with upstream (U), against
+    # upstream at the last synced version (B, from fetch_settings_base):
+    #   - upstream removed an entry: removed if D still equals B, else kept
+    #     and reported (objects recurse, so untouched sub-keys still go)
+    #   - upstream changed a value: taken if D still equals B, else D wins
+    #     and the conflict is reported
+    #   - upstream entries missing downstream are (re-)added; whether the
+    #     project deleted them or never received them is unknowable, because
+    #     template_version advances even when settings were excluded or
+    #     reverted in the sync PR
+    #   - arrays are element sets with the same rules; downstream order kept,
+    #     new upstream elements appended
+    # Without B this is the union merge: D wins, arrays unioned, no reports.
+    # Upstream owns permissions.deny, so retired denies do not linger.
     # Falls back to the upstream template copy for first-time sync.
     local downstream_settings=".claude/settings.json"
     if [[ -f "$downstream_settings" ]]; then
       # $cc_settings_file contains the upstream template copy at this point.
-      # Read downstream as jq input, upstream via --slurpfile.
-      local dropped_deny_json
+      # Read downstream as jq input, upstream and base via --slurpfile.
+      local dropped_deny_json merge_json
       if dropped_deny_json=$(jq -c --slurpfile upstream "$cc_settings_file" '
         (.permissions.deny // []) - ($upstream[0].permissions.deny // [])
-      ' "$downstream_settings") && jq --slurpfile upstream "$cc_settings_file" '
-        def smart_merge($u):
-          if (type == "object") and ($u | type == "object") then
-            reduce ($u | keys[]) as $k (.;
-              if has($k) then .[$k] = (.[$k] | smart_merge($u[$k]))
-              else .[$k] = $u[$k] end)
-          elif (type == "array") and ($u | type == "array") then
-            . as $d | . + [$u[] | select(. as $i | $d | index($i) | not)]
-          else . end;
-        smart_merge($upstream[0])
-        | .permissions.deny = ($upstream[0].permissions.deny // [])
-      ' "$downstream_settings" >"${cc_settings_file}.tmp"; then
+      ' "$downstream_settings") && merge_json=$(jq -c \
+        --slurpfile upstream "$cc_settings_file" \
+        --slurpfile base "${SETTINGS_BASE_FILE:-/dev/null}" '
+        # Overwritten after the merge by manifest substitutions or the deny
+        # baseline. B takes U'"'"'s value there, which keeps D-wins behavior
+        # and reports nothing for them.
+        def owned_paths: [["model"], ["effortLevel"], ["permissions", "defaultMode"],
+          ["permissions", "deny"], ["statusLine"], ["extraKnownMarketplaces", "claude-toolbox", "source"]];
+        def has_path($p): try (getpath($p[:-1]) | type == "object" and has($p[-1])) catch false;
+        def neutralize($u): reduce owned_paths[] as $p (.;
+          if ($u | has_path($p)) then setpath($p; $u | getpath($p))
+          elif has_path($p) then delpaths([$p]) else . end);
+        def has_el($e): any(.[]; . == $e);
+        def child($p; $k):
+          if ($k | test("^[A-Za-z_][A-Za-z0-9_]*$")) then (if $p == "" then $k else "\($p).\($k)" end)
+          else "\($p)[\($k | tojson)]" end;
+        def show: if type == "string" and (test("\n") | not) then . else tojson end;
+        def none: {removed: [], conflicts: []};
+        def plus($r): {removed: (.removed + $r.removed), conflicts: (.conflicts + $r.conflicts)};
+        # . is the D value; $hb: a base exists; $bk: the key is in B with value $b.
+        def m3($u; $hb; $bk; $b; $p):
+          . as $d
+          | if ($d | type) == "object" and ($u | type) == "object" then
+              (if $bk and ($b | type) == "object" then $b else {} end) as $bo
+              | reduce (($d | keys_unsorted) + [($u | keys)[] | select(. as $k | $d | has($k) | not)])[] as $k
+                  ({v: {}, r: none};
+                   child($p; $k) as $kp
+                   | if ($d | has($k)) and ($u | has($k)) then
+                       ($d[$k] | m3($u[$k]; $hb; ($bo | has($k)); $bo[$k]; $kp)) as $m
+                       | .v[$k] = $m.v | .r |= plus($m.r)
+                     elif ($u | has($k)) then .v[$k] = $u[$k]
+                     elif $hb and ($bo | has($k)) then
+                       if $d[$k] == $bo[$k] then .r.removed += [$kp]
+                       elif ($d[$k] | type) == ($bo[$k] | type) and (($d[$k] | type) == "object" or ($d[$k] | type) == "array") then
+                         ($d[$k] | m3(if type == "object" then {} else [] end; true; true; $bo[$k]; $kp)) as $m
+                         | .r |= plus($m.r)
+                         | if ($m.v | length) > 0 then .v[$k] = $m.v else . end
+                       else .v[$k] = $d[$k] | .r.conflicts += ["\($kp): kept \($d[$k] | tojson), upstream removed it"]
+                       end
+                     else .v[$k] = $d[$k] end)
+            elif ($d | type) == "array" and ($u | type) == "array" then
+              (if $hb and $bk and ($b | type) == "array" then $b else [] end) as $ba
+              | [$d[] | select(. as $e | ($ba | has_el($e)) and ($u | has_el($e) | not))] as $gone
+              | {v: ([$d[] | select(. as $e | $gone | has_el($e) | not)]
+                     + [$u[] | select(. as $e | $d | has_el($e) | not)]),
+                 r: {removed: [$gone[] | "\($p): \(show)"], conflicts: []}}
+            elif $d == $u then {v: $d, r: none}
+            elif $hb and $bk and $d == $b then {v: $u, r: none}
+            elif $hb and $bk and $u == $b then {v: $d, r: none}
+            elif $hb then {v: $d, r: {removed: [], conflicts: ["\($p): kept \($d | tojson), upstream has \($u | tojson)"]}}
+            else {v: $d, r: none} end;
+        (if ($base | length) > 0 then (try ($base[0] | neutralize($upstream[0])) catch null) else null end) as $b
+        | m3($upstream[0]; $b != null; $b != null; $b; "")
+        | .v.permissions.deny = ($upstream[0].permissions.deny // [])
+        | .base_rejected = (($base | length) > 0 and $b == null)
+      ' "$downstream_settings") && jq '.v' <<<"$merge_json" >"${cc_settings_file}.tmp"; then
         # Excluded settings are never applied, so report no removals for them.
         if ! is_excluded "$downstream_settings"; then
           mapfile -t DROPPED_DENY_ENTRIES < <(jq -r '.[]' <<<"$dropped_deny_json")
+          mapfile -t SETTINGS_REMOVED_ENTRIES < <(jq -r '.r.removed[]' <<<"$merge_json")
+          mapfile -t SETTINGS_CONFLICT_ENTRIES < <(jq -r '.r.conflicts[]' <<<"$merge_json")
+          if jq -e '.base_rejected' <<<"$merge_json" >/dev/null; then
+            settings_base_unavailable "the base settings have an unexpected shape"
+          fi
         fi
         mv "${cc_settings_file}.tmp" "$cc_settings_file"
       else
@@ -1825,6 +1963,8 @@ generate_diff_report() {
   if ! $has_changes; then
     echo -e "  ${GREEN}No changes detected - templates are up to date${NC}"
     echo ""
+    # A kept project value can be the only outcome of an upstream change
+    print_settings_conflicts
     return
   fi
 
@@ -1904,6 +2044,22 @@ generate_diff_report() {
     echo ""
   fi
 
+  if [[ ${#SETTINGS_REMOVED_ENTRIES[@]} -gt 0 ]]; then
+    echo "  Settings entries removed upstream:"
+    local entry
+    for entry in "${SETTINGS_REMOVED_ENTRIES[@]}"; do
+      printf '    - %s\n' "$entry"
+    done
+    echo ""
+  fi
+
+  print_settings_conflicts
+
+  if [[ -n "$SETTINGS_BASE_WARNING" ]]; then
+    echo "  $SETTINGS_BASE_WARNING"
+    echo ""
+  fi
+
   echo -e "${BOLD}═══════════════════════════════════════════════════════════════${NC}"
   echo ""
 
@@ -1912,6 +2068,17 @@ generate_diff_report() {
     echo -e "  Run without --dry-run to apply these changes"
     echo ""
   fi
+}
+
+# Terminal list of settings values kept over upstream changes or removals.
+print_settings_conflicts() {
+  [[ ${#SETTINGS_CONFLICT_ENTRIES[@]} -gt 0 ]] || return 0
+  echo "  Settings kept with project values (upstream changed or removed them):"
+  local entry
+  for entry in "${SETTINGS_CONFLICT_ENTRIES[@]}"; do
+    printf '    - %s\n' "$entry"
+  done
+  echo ""
 }
 
 # Shared guidance for terminal reports and PR summaries.
@@ -1988,6 +2155,37 @@ generate_markdown_summary() {
     done
     echo ""
     permission_deny_guidance
+    echo ""
+  fi
+
+  if [[ ${#SETTINGS_REMOVED_ENTRIES[@]} -gt 0 ]]; then
+    local entry
+    echo "### Settings entries removed upstream"
+    echo ""
+    echo "_Upstream removed these \`.claude/settings.json\` entries and this project had not changed them. Restore any you still need in this branch._"
+    echo ""
+    for entry in "${SETTINGS_REMOVED_ENTRIES[@]}"; do
+      printf -- '- `%s`\n' "$entry"
+    done
+    echo ""
+  fi
+
+  if [[ ${#SETTINGS_CONFLICT_ENTRIES[@]} -gt 0 ]]; then
+    local entry
+    echo "### Settings kept with project values"
+    echo ""
+    echo "_Upstream changed or removed these \`.claude/settings.json\` values, but this project had customized them, so the project values were kept._"
+    echo ""
+    for entry in "${SETTINGS_CONFLICT_ENTRIES[@]}"; do
+      printf -- '- `%s`\n' "$entry"
+    done
+    echo ""
+  fi
+
+  if [[ -n "$SETTINGS_BASE_WARNING" ]]; then
+    echo "### Settings merged without a base"
+    echo ""
+    echo "$SETTINGS_BASE_WARNING."
     echo ""
   fi
 
@@ -2413,6 +2611,12 @@ main() {
 
   if needs_docs_feat_migration; then
     run_docs_feat_migration
+  fi
+
+  # Excluded or first-time settings are not merged, so they need no base
+  if [[ -f ".claude/settings.json" ]] && ! is_excluded ".claude/settings.json"; then
+    fetch_settings_base "$(get_manifest_value '.template_version')" \
+      "$FETCHED_TEMPLATES_PATH" "$STAGING_DIR/upstream" "$STAGING_DIR"
   fi
 
   # Apply substitutions to fetched templates
