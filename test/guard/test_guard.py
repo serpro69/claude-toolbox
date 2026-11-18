@@ -485,7 +485,9 @@ class ShellTests(unittest.TestCase):
                         "sh -c 'cat .env'", 'echo "$(cat .env)"', "echo `cat .env`",
                         "cat <(cat .env)", "cat >(cat .env)", "cat < .env",
                         'sh -c \'echo "$(cat .env)"\'', "cat ./kubeconfig", "cat sub/kubeconfig.yaml",
-                        "cat ./kubeconfig.yml", "cat ./admin.kubeconfig", "cat .kube/config"):
+                        "cat ./kubeconfig.yml", "cat ./admin.kubeconfig", "cat .kube/config",
+                        "cat ~/.config/sops/age/keys.txt",
+                        "cat '{home}/Library/Application Support/sops/age/keys.txt'"):
             with self.subTest(command=command):
                 self.check(command, "secrets")
 
@@ -675,6 +677,22 @@ class DestructiveTests(unittest.TestCase):
         for command in denied:
             with self.subTest(command=command):
                 self.check(command, "destructive")
+        for command in allowed:
+            with self.subTest(command=command):
+                self.check(command)
+
+    def test_sops_decryption(self):
+        denied = ("sops -d secrets.enc.yaml", "sops --decrypt secrets.enc.yaml",
+                  "sops -i -d secrets.enc.yaml", "sops -id secrets.enc.yaml", "sops --extract '[\"db\"]' -d secrets.enc.yaml",
+                  "sops decrypt secrets.enc.yaml", "sops --config .sops.yaml decrypt secrets.enc.yaml",
+                  "sops --age age1x exec-env secrets.enc.yaml env", "sops exec-file secrets.enc.yaml 'cat {}'",
+                  "EDITOR=cat sops edit secrets.enc.yaml", "/usr/local/bin/sops -d x.yaml")
+        allowed = ("sops -e secrets.yaml", "sops encrypt secrets.yaml", "sops filestatus secrets.enc.yaml",
+                   "sops updatekeys secrets.enc.yaml", "sops --version", "cat secrets.enc.yaml")
+        for command in denied:
+            with self.subTest(command=command):
+                denial = self.check(command, "destructive")
+                self.assertIn("`decryption` category", denial.reason())
         for command in allowed:
             with self.subTest(command=command):
                 self.check(command)

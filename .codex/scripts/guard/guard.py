@@ -1445,6 +1445,15 @@ GLOBAL_OPTIONS_WITH_ARG = {
     "helm": {"-n", "--namespace", "--kube-context", "--kubeconfig", "--kube-apiserver",
              "--kube-token", "--kube-ca-file", "--kube-as-user", "--kube-as-group",
              "--registry-config", "--repository-config", "--repository-cache", "--qps", "--burst-limit"},
+    "sops": {"-k", "--kms", "--aws-profile", "--gcp-kms", "--azure-kv", "--hc-vault-transit",
+             "-p", "--pgp", "-a", "--age", "--extract", "--input-type", "--output-type",
+             "--add-gcp-kms", "--rm-gcp-kms", "--add-azure-kv", "--rm-azure-kv", "--add-kms",
+             "--rm-kms", "--add-hc-vault-transit", "--rm-hc-vault-transit", "--add-age", "--rm-age",
+             "--add-pgp", "--rm-pgp", "--unencrypted-suffix", "--encrypted-suffix",
+             "--unencrypted-regex", "--encrypted-regex", "--unencrypted-comment-regex",
+             "--encrypted-comment-regex", "--config", "--encryption-context", "--set",
+             "--shamir-secret-sharing-threshold", "--indent", "--output", "--filename-override",
+             "--decryption-order", "--keyservice"},
 }
 
 
