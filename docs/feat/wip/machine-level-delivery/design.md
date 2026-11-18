@@ -68,10 +68,11 @@ This is a recurring cost on a long-lived project. It justifies a real mechanism;
 | A launch notice announces newer releases, default on with opt-out | A manual command nobody is reminded to run recreates the original problem |
 | Existing repositories migrate once with `kk migrate` | Legacy files cannot be retired by upgrading alone |
 | Retirement is a separate mode of the sync script; ordinary sync never retires, and later releases keep a tombstone at the script's path | Local sync and the downstream workflow both reach the apply path, and neither can check that a replacement guard is ready |
+| Migration first syncs the repository to the retirement release, then removes against that one template | Every repository is compared with the same known template, rendered by the script that shipped with it, whatever version it was on |
 
 ## Evidence and provenance
 
-Probes ran on 2026-11-18 against Claude Code 2.1.296 and Codex CLI 0.169.0 in scratch directories. Three kinds of evidence back the design, and the difference matters when a claim is load-bearing.
+Probes ran on 2026-11-18 against Claude Code 2.1.296 and Codex CLI 0.169.0 in scratch directories. Four kinds of evidence back the design, and the difference matters when a claim is load-bearing.
 
 **Observed in a probe**
 
@@ -105,10 +106,12 @@ The source-read claims shaped two decisions (the separate guard plugin and the c
 
 **Read from this repository at `9c6bd133`**
 
-- Sync: `--local` and the downstream workflow's `--apply` both reach `apply_changes`. Since v0.21.0 a run hands off to the target version's script before it changes anything, and the downstream workflow fetches that script before running.
+- Sync: `--local` and the downstream workflow's `--apply` both reach `apply_changes`. Since v0.21.0 a run hands off to the target version's script before it changes anything other than its own manifest, where it may first rename the upstream repository and backfill default variables. The downstream workflow has fetched the target version's script before running since v0.5.0.
 - Sync: the settings merge assigns the whole `permissions.deny` list from upstream and re-applies manifest-controlled keys after merging. The hook merge drops every downstream toolbox handler that upstream no longer has.
 - The template's adopter defaults are no pinned Claude model and effort `high`. This repository's own `.claude/settings.json` pins a model and `xhigh`.
 - The legacy Codex registrations run a script from the repository on every call.
+- The guard's project secret patterns, such as `./**/.env`, are anchored at the session's workspace.
+- The release and pre-release workflows call `.claude/toolbox/scripts/semver-compare.sh`.
 
 The direction was pressure-tested in four turns with Codex on `gpt-6.2-astra`, which rejected the first proposal (a launcher shipped inside the plugin and validated at launch) and agreed with this one. It left one recorded disagreement: it would make `Skill(kk:*)` opt-in.
 
@@ -142,6 +145,7 @@ adopter machine
 `$KK_HOME` is toolbox's alone. The symlink and the files under `$CODEX_HOME` sit in directories shared with the adopter, where a name such as `kk.rules` or a `kk-` prefix may already belong to someone else. The state file therefore records the exact path of every file `kk` installs outside `$KK_HOME`:
 
 - Before activation, each destination is checked. A path that exists and is not in the record is a collision. `kk` names it, replaces nothing, and stops before anything on the machine changes.
+- A path is recorded before it is written, so a run interrupted between the two does not meet its own file as a collision when it resumes.
 - Pruning removes only recorded paths. It never matches by prefix, so an adopter's own `kk-notes.toml` in the agents directory is left alone.
 
 ### Release payload
@@ -166,10 +170,12 @@ The 14 days run from the moment a release was superseded, not from its activatio
 
 The entry point `$KK_HOME/bin/kk` is deliberately small. It reads the state file and dispatches to the code of a release. Which release depends on the command:
 
-- **`rollback` runs from the release being restored.** That release's activation code has already activated it on this machine once, and nothing from the active release is loaded. A release that reached *ready* therefore cannot break the way back from itself, even if its own dispatcher or rollback code is faulty.
+- **`rollback` runs from the release it restores.** After an interrupted upgrade that is the release still recorded as active, because the candidate never took over. Otherwise it is the rollback target. Either way that release's activation code has already activated it on this machine once, and nothing from the release being left is loaded. A release that reached *ready* therefore cannot break the way back from itself, even if its own dispatcher or rollback code is faulty.
 - **Everything else runs from the active release,** including `status` and the resumption of an interrupted upgrade. A pending candidate's code runs only its own activation and verification. This is what lets recovery work when a candidate's own code is broken.
 
-A promoted release may replace the stable entry point, so the entry point can be the broken part. Every release carries its own copy for that case: the adopter runs `$KK_HOME/releases/<version>/kk/bin/kk rollback` from the rollback target, and `kk upgrade` prints that command when it finishes. This path depends only on the target's directory and on three state-file fields: the active release, the rollback target and the per-tool phase. A release may add fields to the state file but never renames or reinterprets those three.
+A promoted release may replace the stable entry point, so the entry point can be the broken part. Every release carries its own copy for that case: the adopter runs `$KK_HOME/releases/<version>/kk/bin/kk rollback` from the rollback target, and `kk upgrade` prints that command when it finishes. This path depends only on the target's directory and on the state file.
+
+Running an older release's code for rollback means it reads a state file that a newer release wrote. The state file therefore carries a format version and changes only by addition: a release may add fields, but never renames or reinterprets the active release, the rollback target, the candidate and its phase, the per-tool states, the stop times or the installed-paths record. Code that rewrites the file keeps the fields it does not know. A release that has to break this raises the format version; its upgrade says before activation that earlier releases can no longer be rolled back to, and older code refuses a format version it does not know instead of guessing.
 
 A one-line installer script at the repository root downloads the latest stable release and runs its `kk upgrade`. On a first install no release has reached *ready*, so the installer is also the recovery path: run again, it resumes from the journaled phase when the staged candidate is intact and starts over otherwise. Every activation step is safe to repeat.
 
@@ -190,7 +196,7 @@ One release is active for the whole machine, and both tools run it. A release be
 The state file records:
 
 - the active release, and any pending candidate with its phase;
-- the **rollback target**: the most recent release, other than the active one, on which every installed tool reached *ready* (or *unverified*, on a machine where trust cannot be read). A release whose Codex guard never got past *awaiting review* is skipped. With A reviewed, B active and awaiting review, and then C activated, `kk rollback` from B or from C returns to A, the last release whose guard the adopter actually reviewed;
+- the **rollback target**: the most recently active release, other than the active one, on which every installed tool reached *ready* (or *unverified*, on a machine where trust cannot be read). A release whose Codex guard never got past *awaiting review* is skipped. With A reviewed, B active and awaiting review, and then C activated, `kk rollback` from B or from C returns to A, the last release whose guard the adopter actually reviewed. When no retained release qualifies, the target is simply the release that was active before this one, and `kk rollback` says which tool's guard is not reviewed there. That is the normal case for an adopter who has Codex installed and never reviews its hooks; they still get a way back for Claude;
 - when each retained release stopped being active;
 - the paths installed outside `$KK_HOME`.
 
@@ -201,7 +207,7 @@ Every write to it and to an owned file is a write to a temporary file followed b
 The whole flow runs under the [writer lock](#activation-state).
 
 1. **Fetch and stage.** Download the candidate, extract it to a staging directory, check the payload is complete and that its manifest versions agree. Two checks belong here because they need nothing but the staged files and the state file:
-   - compute the candidate guard's [content identity](#plugins) and fail if it carries the installed guard's version with different content;
+   - compute the candidate guard's [content identity](#plugins). A tagged candidate that carries the installed guard's version with different content fails here. A local checkout has its staged guard version set from the identity instead;
    - check every destination outside `$KK_HOME` for a [collision](#components).
 2. **Validate, with nothing activated.**
    - Run the candidate guard against the self-test cases shipped in the payload, under the machine's own Python. This catches an engine that cannot run here.
@@ -216,7 +222,7 @@ The whole flow runs under the [writer lock](#activation-state).
    - point both local marketplaces at it;
    - on first install, add the marketplaces and install the plugins at user scope;
    - re-add the Codex skills plugin; re-add the Codex guard plugin only when its content identity changed;
-   - write the Codex profile, the sub-agent files and, when switched on, the rules file, recording each path; remove recorded paths the release no longer ships.
+   - write the Codex profile, the sub-agent files and, when switched on, the rules file, recording each path before writing it; remove recorded paths the release no longer ships.
 5. **Verify.** Compare the bytes at the path each vendor reports with the release. Read trust and enablement for each Codex guard handler; if any is untrusted or disabled, the Codex state is *awaiting review* and the adopter is told to review the hooks with `/hooks`.
 6. **Promote.** Record the release as active with each tool's state, stamp the superseded release with the time it stopped being active, recompute the rollback target, and replace the entry point if it changed.
 
@@ -228,7 +234,7 @@ A skills-only release leaves the Codex guard plugin alone: same plugin ID, same 
 
 An upgrade interrupted in *activating* leaves a mixed installation. The next `kk` command reports it and offers two ways out: resume the upgrade, or roll back to the release that is still recorded as active, using that release's code. `kk codex` refuses to start until one of them completes. An interrupted first install has nothing to roll back to; re-running the installer completes it.
 
-Rollback counts as recovery only once verification passes for the restored guard, including Codex trust.
+Rollback counts as recovery for a tool only once verification passes for that tool's restored guard, including Codex trust. Whether trust given to an earlier guard survives a later one being installed is [assumption 14](#assumptions); if it does not, a rollback across a guard change ends in *awaiting review* until the adopter reviews the hooks again.
 
 ### Launching Claude
 
@@ -287,8 +293,8 @@ Codex overrides are written as JSON and serialised into the profile, so the laun
 The guard's *identity* is its content: a digest over the path, mode and bytes of every file in the bundle, leaving out the manifest's version field. `kk` uses that identity, not the version string, to decide whether to reinstall the guard, whether to ask for confirmation, and what a rollback must restore. Codex names the plugin's cache directory after the version, so version and content are kept in step by three rules:
 
 - The release workflows give the guard a new version only when its identity differs from the nearest earlier tag, pre-release or stable. A release candidate and the stable release that follows it share one guard version when the bytes are the same, so candidates are not reviewed twice.
-- For a local checkout, `kk` stamps the staged copy's guard version with the digest. Edited guard code never reuses a published version.
-- A candidate whose guard carries the installed version with different content fails staging, before anything changes.
+- For a local checkout, `kk` sets the staged copy's guard version from its identity: the installed guard's version when the identity matches the installed guard, and a digest stamp otherwise. An unchanged guard is then byte-identical to the installed one and is left alone, and edited guard code never reuses a published version.
+- A tagged candidate whose guard carries the installed version with different content fails staging, before anything changes.
 
 There is no Codex `SessionStart` hook. Instructions ride the profile, which avoids a hook whose trust every instruction edit would invalidate.
 
@@ -345,36 +351,43 @@ A repository still on the template keeps working after the machine moves to `kk`
 
 `kk migrate` retires the legacy files in one repository.
 
-- **It checks that the replacement guard works now, in this repository.** State recorded at upgrade is not enough: a hook can be disabled later, and *unverified* was never confirmed. For each tool the repository uses, it re-reads hook trust and enablement where they can be read, and runs the [live check](#release-safety) from the repository, so a guarded action is seen to be denied by the installed handler. It refuses otherwise.
+- **It checks that the replacement guard works now.** State recorded at upgrade is not enough: a hook can be disabled later, and *unverified* was never confirmed. For each tool the repository uses, it re-reads hook trust and enablement where they can be read, asking for this repository when the mechanism takes a workspace, and it runs the [live check](#release-safety). It refuses otherwise. The live check runs in a scratch workspace, not in the repository, for two reasons. In an unmigrated repository the legacy guard and the plugin guard both fire and print the same denial, so a denial seen there could not be credited to the installed handler. And the guard's secret patterns are anchored at the workspace, so the decoy has to sit inside the workspace the session starts in. What the scratch check cannot see is a setting that switches the plugin's hooks off for this one repository; the trust read covers that where Codex reports it per workspace.
 - **It tells the adopter to close older Codex sessions first.** A Codex session in this repository that started before `kk` was installed and its hooks reviewed loaded only the legacy registration. That registration runs a script from the repository on every call. Once migration deletes the script, the hook fails and Codex lets the call through. Open sessions cannot be detected, so `kk migrate` states this and asks, default no. Sessions started after `kk` became *ready* loaded the plugin guard and stay guarded.
-- It shows the full diff, applies only on confirmation, and leaves the result uncommitted.
-- It removes only what the [removal rules](#removal-rules) allow. The adopter can decline individual parts, for example to keep the repository's own Codex rules file or the plugin enablement that a cloud session relies on.
+- **It works in two steps, each previewed and confirmed.** First it syncs the repository to the retirement release with an ordinary sync. Then it removes, comparing against that release's template. Declining the second step leaves a repository that is simply up to date and still guarded. The result is left uncommitted.
+- It removes only what the [removal rules](#removal-rules) allow. The adopter can decline individual parts, for example to keep the repository's own Codex rules file, its Codex sandbox and approval settings, or the plugin enablement that a cloud session relies on.
 - **The diff states the team-wide effect.** The change is committed, so it reaches everyone who uses the repository:
   - a collaborator without `kk` loses the Codex guard and the deny list in that repository;
   - a host with no `kk` install that relied on the committed plugin enablement, such as a cloud session or a fresh CI runner, no longer gets the plugin at all;
   - installing `kk` alone does not restore native denies to unwrapped Claude sessions;
-  - the repository's Codex native forbids go, and return only on machines that switched on the account-wide rules file.
+  - the repository's Codex native forbids go, and return only on machines that switched on the account-wide rules file;
+  - the repository's Codex sandbox, approval policy and approvals reviewer go with its config. Sessions there then follow each machine's own Codex config, which may be looser than the template's `read-only` and `on-request`. The report states this separately from the diff.
 
 #### Removal rules
 
-The removal logic lives in one final release of the sync script, as a separate mode. It reuses what the script already does well: fetching the template at a repository's recorded version, applying its substitutions, and telling toolbox hook entries from downstream ones.
+The removal logic lives in one final release of the sync script, as a separate mode. It compares the repository with one template only: the retirement release's own, rendered with the repository's manifest by the script that shipped with it. The sync step before it is what makes that enough. Comparing each repository with the template at whatever version it last synced would mean rendering old layouts, from before four migrations, with a script that never produced them.
 
-It does not reuse the three-way settings merge. That merge assigns the whole deny list from upstream and writes the manifest-controlled keys back after merging. Against an empty upstream it would erase denies the adopter added and could not tell an adopter's choice from a template default. Retirement compares each entry with the recorded base and only removes:
+**The sync step** is an ordinary sync to the retirement tag and behaves as one:
 
-- **An entry equal to what the template supplied at the recorded version is removed.** A deny entry the template never shipped stays. Hook registrations are compared one handler at a time by exact command string.
-- **A file identical to the template at the recorded version, with substitutions applied, is removed.** A file the adopter edited is reported and left alone.
+- It runs the script's existing migrations and three-way settings merge, so the repository ends up on the final template with its customisations merged as on any sync.
+- It overwrites edits the adopter made to synced files, as every sync does. The preview lists them as modified. An adopter who wants to keep one copies it out or adds it to `sync_exclusions` before confirming.
+- It differs from an ordinary sync in one respect. A normal sync replaces the whole deny list with the template's, which would drop a deny the adopter added before the removal step could see it. `kk migrate` asks the script to merge the deny list three-way like every other list, so the adopter's own entries survive the step.
+
+**The removal step** does not use the settings merge at all. That merge re-applies the manifest-controlled keys after merging, so against an empty upstream it could not tell an adopter's choice from a template default. Removal compares each entry with the rendered template and only removes:
+
+- **An entry equal to what the retirement template supplies is removed.** A deny entry the template does not ship stays. Hook registrations are compared one handler at a time by exact command string.
+- **A file identical to the retirement template is removed.** After the sync step that is every synced file the adopter has not excluded. A file that still differs is reported and left alone.
 - **A value chosen through a manifest variable is the adopter's.** The Claude model, effort and permission mode, and the Codex model and approval policy, are kept as the repository's own settings and listed in the report, unless the manifest holds no value or the script's built-in default. The report says they will keep outranking the machine defaults. The statusline choice is listed too, but its entry is removed because the script it points at is.
-- **Anything under `sync_exclusions` is not touched.** The adopter took those files out of the template's hands.
-- **Without a base, nothing is removed by comparison.** When the recorded version is a branch name or a short SHA the base cannot be fetched. Only the Git-marketplace enablement and registration, which have fixed names, are removed. Everything else, including the legacy guard, stays and is listed for the adopter to remove by hand.
+- **Anything under `sync_exclusions` is not touched,** by either step. The adopter took those files out of the template's hands.
+- **If the template cannot be fetched, nothing is removed** and the run stops.
 
-`kk migrate` is a wrapper around that mode. It fetches the script and its helper file from the retirement tag into a temporary directory and runs them from there with the script's self-update switched off. It depends on neither the repository's own copy of the script nor the default branch. It checks for `curl` and `yq` first and says they are needed for this step only. Then it previews, asks, and applies.
+`kk migrate` is a wrapper around the two steps. It fetches the script and its helper file from the retirement tag into a temporary directory and runs them from there with the script's self-update switched off. It depends on neither the repository's own copy of the script nor the default branch. It checks for `curl` and `yq` first and says they are needed for this step only. The retirement tag is a constant in `kk`, with a command-line override so that the [pilot](#verification) can run against a release candidate.
 
 #### Ordinary sync and the tombstone
 
 Both ways of running an ordinary sync reach the script's apply path: `--local` on a developer's machine, and the downstream workflow's `--apply`, which opens a pull request. Neither can know whether a replacement guard works on anyone's machine. So removal is never a side effect of syncing:
 
 - **Against the retirement release,** every existing mode behaves as it always has. The legacy installation is brought up to date and the run prints one notice that points at `kk migrate`. Only the separate retirement mode removes anything.
-- **Against later releases,** the script's path holds a tombstone. Sync scripts since v0.21.0 hand over to the target version's script before they change anything, and the downstream workflow fetches that script before it runs. The tombstone explains the migration, changes nothing, and reports no changes in CI, so no pull request is opened.
+- **Against later releases,** the script's path holds a tombstone. Sync scripts since v0.21.0 hand over to the target version's script before they change anything but their own manifest, and the downstream workflow has fetched that script before running since v0.5.0. The tombstone explains the migration, changes nothing, and reports no changes in CI, so no pull request is opened.
 
 The tombstone is why the script is not simply deleted after retirement. With no script to hand over to, an older script would carry on against the shrunken tree, and its own merges would strip the deny list and the legacy Codex guard registrations from a repository nobody had checked. A local run of a script older than v0.21.0 does not hand over and is not protected; the migration guide tells those adopters not to sync past the retirement release.
 
@@ -387,7 +400,7 @@ Retirement waits for the [pilot](#verification) of the tagged retirement release
 - **CI gate.** The guard engine suite, the `kk` tests and the self-test cases run in CI and block a release. Today no workflow runs the engine suite.
 - **Stable by default.** `kk upgrade` and the launch notice consider stable tags only. Pre-releases need an explicit version.
 - **Local validation.** The upgrade flow validates the candidate on the adopter's machine before activation.
-- **Installation-level check.** `kk status --live` runs one non-interactive session per tool that attempts a guarded read of a decoy file and expects the guard's own denial text. CI cannot tell whether a vendor invoked the installed handler; this can. `kk migrate` runs the same check with the session started in the repository being migrated.
+- **Installation-level check.** `kk status --live` runs one non-interactive session per tool that attempts a guarded read of a decoy file and expects the guard's own denial text. CI cannot tell whether a vendor invoked the installed handler; this can. `kk migrate` runs the same check before it removes anything.
 
 ## Protection guarantee
 
@@ -408,7 +421,7 @@ Retirement waits for the [pilot](#verification) of the tagged retirement release
 | Codex native forbids, per repository, with exclusion from sync as the way to change them | Owned rules file for the whole account | **Opt-in**. When on, it also binds bare Codex and unrelated repositories, and no project can loosen it. The per-repository control is replaced by one machine switch, or by keeping the repository's own file at migration |
 | Codex sub-agents | Owned agent files | Moved |
 | Codex model, reasoning effort, limits, TUI defaults | Codex profile | Moved; outranks user config, yields to project config |
-| Codex approval policy, approvals reviewer, sandbox mode | Override file | **Opt-in**; the machine owner's config governs by default |
+| Codex approval policy, approvals reviewer, sandbox mode | Override file | **Opt-in**; the machine owner's config governs by default. Migration removes them from the repository unless the adopter declines that part, or chose the approval policy in the manifest |
 | Claude native secret denies | Launcher layer | Kept in wrapped sessions, including with the adopter's own `--settings`; **lost in unwrapped sessions** |
 | Claude effort, env | Launcher layer | Kept in wrapped sessions; yields to user values. The baseline is the template default, effort `high` |
 | Claude model | — | Unchanged for default adopters, whose template pinned none. A model chosen in the manifest stays in the repository's settings at migration |
@@ -456,6 +469,7 @@ Each is a bet the design depends on, with the check that would confirm or break 
 11. The tag archive can be fetched and extracted with the Python 3.8 standard library, including the plugin's symlinks.
 12. When the script behind a project hook disappears under an open Codex session, the hook fails and the call proceeds unguarded. This is read from source, not probed. If a probe shows the call is blocked instead, the warning before migration becomes a restart notice.
 13. Codex accepts a digest-stamped version string as a plugin version and as a cache directory name. If it does not, local checkouts need another way to keep version and content in step.
+14. Codex accepts re-adding an earlier version of a plugin over a later one, and trust given to a guard bundle is still there when the same bytes come back after another bundle was installed in between. Rollback depends on the first. If the second fails, a rollback across a guard change needs the adopter's review before it counts as recovery, and demonstrations 2 and 4 record that review.
 
 ## Open questions
 
@@ -463,7 +477,7 @@ These are choices made while writing this document that the maintainer has not c
 
 1. **Codex loses per-repository instruction extras.** Today's Codex `SessionStart` hook injects every `.claude/CLAUDE.<name>.md` in the repository. A machine-level profile cannot. The alternative is a `SessionStart` hook in the guard plugin whose script is stable and reads instruction text from the workspace, at the cost of putting non-guard behaviour in the trusted bundle.
 2. **Capy's legacy guidance injection goes with that hook.** Capy 0.17.1 and later register their own hooks. Is requiring that version acceptable?
-3. **Migration is hosted in the final sync release,** as a separate mode. The alternative is new removal logic inside `kk`, which would have to reproduce the sync script's fetch and substitution to compare files exactly.
+3. **Migration is hosted in the final sync release,** as a separate mode that runs after a sync to that release. The alternative is new removal logic inside `kk`, which would have to reproduce the sync script's fetch and substitution to compare files exactly.
 4. **Names and locations:** the command `kk`, the marketplace `toolbox`, the home under `~/.local/share/kk`, the override file under `~/.config/kk`.
 
 Closed on 2026-11-18 by the maintainer: the Codex profile leaves `approval_policy`, `approvals_reviewer` and `sandbox_mode` out by default, and the Codex native forbids are opt-in. Both are recorded under [accepted decisions](#accepted-decisions).
@@ -493,7 +507,9 @@ Closed on 2026-11-18 by the maintainer: the Codex profile leaves `approval_polic
 - **Keeping template sync, or becoming an orchestrator app.**
 - **Retirement as one more sync migration.** Migrations run on every sync that applies, from a local run and from the downstream workflow, with no check that a replacement guard is ready.
 - **Deleting the sync script after retirement.** Older scripts would then sync against the shrunken tree and strip the legacy guard themselves.
-- **Reusing the three-way settings merge for retirement.** It replaces the whole deny list and re-applies manifest-controlled keys, so it cannot remove only what the template added.
+- **Reusing the three-way settings merge for the removal step.** It replaces the whole deny list and re-applies manifest-controlled keys, so it cannot remove only what the template added.
+- **Removing against the template at each repository's recorded version.** The script has never rendered old template layouts, and a recorded branch name or short SHA cannot be fetched at all. Syncing to the retirement release first gives every repository the same base.
+- **Running the migration's live check inside the repository.** Both guards fire there with the same denial text, and a decoy outside the workspace does not match the guard's secret patterns.
 - **Rollback driven by the active release.** A fault in that release's dispatcher or rollback code would strand the machine with the previous release intact on disk.
 - **Passing the adopter's `--settings` through unchanged.** A session the adopter thinks of as wrapped would start without the native denies.
 - **Account-wide native forbids and approval or sandbox defaults for everyone.** They change what Codex does in repositories and sessions that never asked for toolbox.

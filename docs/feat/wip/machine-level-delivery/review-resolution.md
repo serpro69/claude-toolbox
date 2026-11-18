@@ -2,7 +2,7 @@
 
 Responds to [review-design.md](review-design.md). Checked 2026-11-18 against repository revision `9c6bd133`. Each finding was corroborated independently before any document changed. All 16 are valid. None was rejected; three were fixed differently from the review's suggestion, and one turned out to be wider than reported. Those are marked **Differs** and **Wider**.
 
-A ticked box means the named document now says it. Nothing here is implemented; these are changes to [design.md](design.md), [implementation.md](implementation.md) and [tasks.md](tasks.md).
+A ticked box means the named document now says it. A second read on the same day found defects in some of these fixes; they are listed under [Corrections after a second read](#corrections-after-a-second-read) and the checklists below describe the corrected state. Nothing here is implemented; these are changes to [design.md](design.md), [implementation.md](implementation.md) and [tasks.md](tasks.md).
 
 Two product decisions were the maintainer's and were confirmed on 2026-11-18: Codex native forbids are opt-in and off by default, and the Codex profile leaves approval and sandbox keys out by default.
 
@@ -25,7 +25,7 @@ Corroborated in the design text: `rollback` ran "from the last release that reac
 
 The review asked for a separate recovery path. The fix adds no new component: rollback runs from the code of the release being restored, which already activated itself on this machine once, and every release carries its own copy of the entry point for the case where the stable one is broken.
 
-- [x] design: dispatch rule per command; per-release entry point as the recovery path; frozen state fields
+- [x] design: dispatch rule per command, including rollback of an interrupted upgrade; per-release entry point as the recovery path; an additive, versioned state format, because older code now reads a file newer code wrote
 - [x] design: the installer is the recovery path for an interrupted first install
 - [x] design: demonstration 4, rollback after promotion with the promoted CLI unavailable
 - [x] implementation and tasks: Tasks 3, 4 and 10 cover the dispatch, the re-runnable installer and demonstration 4
@@ -37,7 +37,7 @@ The review asked for a separate recovery path. The fix adds no new component: ro
 Corroborated: the launcher and `kk migrate` both read recorded state; `docs/providers/codex.md` already notes that Codex exposes enablement and trust as separate properties of a hook; assumption 7's fallback let an acknowledgement produce *ready*.
 
 - [x] design: trust and enablement are re-read before non-interactive launches and in `kk migrate`
-- [x] design: new *unverified* state, distinct from *ready*; `kk migrate` also requires the live check from the repository
+- [x] design: new *unverified* state, distinct from *ready*; `kk migrate` also requires the live check, run in a scratch workspace
 - [x] implementation and tasks: probe records whether the read reflects a disabled hook, its workspace scope and its cost (Task 1); Tasks 9, 10, 11 and 14 use it
 
 ### 4. Migration can remove the guard an open session loaded — valid
@@ -53,16 +53,16 @@ Corroborated: the legacy registrations in `.codex/hooks.json` run `bash "$(git r
 Corroborated: the design explicitly supports a scheduler line running `kk upgrade`, and nothing serialises it against a manual rollback. Atomic renames protect each file, not the set.
 
 - [x] design: one writer lock for upgrade, rollback and resumption
-- [x] design: one machine-wide active release, per-tool verification state, and a defined rollback target that skips a release never verified for every tool; retention keeps every release that state needs
+- [x] design: one machine-wide active release, per-tool verification state, and a defined rollback target that skips a release never verified for every tool and falls back to the previously active release when none qualifies; retention keeps every release that state needs
 - [x] implementation and tasks: one overlap test (Task 3) and one mixed-tool recovery case (Task 10)
 
 ### 6. The settings merger cannot do a lossless retirement — valid
 
 Corroborated: line 1603 assigns `permissions.deny` from upstream after the merge; lines 1629–1651 re-apply manifest-controlled keys afterwards. With an empty upstream the adopter's own denies are erased and the manifest keys are written back. The design's sentence that the merge "removes exactly what the template added once the upstream side is empty" was false. `docs/user-guide/template-sync.md` calls manifest variables "your explicit choices".
 
-- [x] design: retirement uses a removal-only comparison against the recorded base and does not call the three-way merge
-- [x] design: downstream-only denies, manifest-selected values and `sync_exclusions` are kept; nothing is removed by comparison when the base cannot be fetched
-- [x] implementation and tasks: rules in the Migration section; fixtures for a downstream-only deny, manifest-selected values, an excluded file and an unfetchable base (Task 13)
+- [x] design: migration syncs to the retirement release first, then removes with a removal-only comparison against that release's template; the removal step does not call the three-way merge
+- [x] design: downstream-only denies, manifest-selected values and `sync_exclusions` are kept; the sync step merges the deny list three-way so the adopter's entries reach the removal step
+- [x] implementation and tasks: rules in the Migration section; fixtures for a downstream-only deny, manifest-selected values, an excluded file and a repository several releases behind (Task 13)
 
 ### 7. A reserved-looking filename is not ownership — valid
 
@@ -76,7 +76,7 @@ Corroborated in the design text: sub-agent files were pruned by prefix, and noth
 Corroborated: a local checkout keeps the published manifest version while its guard changes, so "re-add only when the version differs" skips it; comparing each release candidate with the previous stable tag gives identical bytes two versions on the way to stable.
 
 - [x] design: guard identity is a content digest; it drives reinstall, confirmation and rollback
-- [x] design: version changes only against the nearest earlier tag of any kind; local checkouts get a digest-stamped version; same version with different content fails staging
+- [x] design: version changes only against the nearest earlier tag of any kind; a local checkout's guard version is set from its identity; a tagged candidate with the same version and different content fails staging
 - [x] implementation and tasks: identity function (Task 7), activation (Task 10), release rule for pre-releases too (Task 12), version-string probe (Task 1)
 
 ### 9. The parity ledger understates the Codex policy change — valid, decided by the maintainer
@@ -153,6 +153,29 @@ Task 17's parity observation came after the irreversible Task 16.
 - [x] design: a pilot of the tagged payload gates retirement
 - [x] implementation: new "Pilot the tagged release" section
 - [x] tasks: new Task 18, which Task 16 depends on. It is numbered 18 so the task references in the review stay valid.
+
+## Corrections after a second read
+
+A fresh read of the three documents on 2026-11-18, checked again against the sync script, the workflows and the guard rules, found seven defects in the fixes above. All are corrected in the documents.
+
+1. **The migration live check could not work (finding 3).** It was specified to run from the repository being migrated. There the legacy and plugin guards both fire with the same denial text, and a decoy outside the workspace does not match the guard's workspace-anchored secret patterns. It now runs in a scratch workspace, with the trust read asked for the repository.
+2. **Some adopters had no rollback target (finding 5).** Requiring every installed tool to be verified left nothing to roll back to for an adopter who has Codex installed and never reviews its hooks. The target now falls back to the previously active release.
+3. **Rollback dispatch was inconsistent (finding 2).** Rolling back an interrupted upgrade must run the active release's code, not the rollback target's. Older code reading a newer state file also needed a wider guarantee than three frozen fields; the state format is now versioned and additive.
+4. **Task 16 would have broken releases.** `release.yml` and `pre-release.yml` call `semver-compare.sh` under `.claude/toolbox/scripts/`. The file moves to `.github/scripts/` first.
+5. **Migration dropped the repository's Codex sandbox and approval settings without saying so,** a consequence of taking those keys out of the baseline. The team-wide effect statement and the report now name it, and the adopter can decline that part.
+6. **Task order.** The trust re-read in `kk codex` needed the trust reader from a later task. It moved to Task 10.
+7. **Guard version stamping contradicted byte verification (finding 8).** A local checkout's staged guard version is now set from its identity, so an unchanged guard stays byte-identical to the installed one.
+
+Smaller corrections: four kinds of evidence, not three; the hand-off happens after the older script may have rewritten its own manifest; installed paths are recorded before they are written; a probe for re-adding an earlier guard version was added to Task 1 as assumption 14.
+
+One design decision changed at the maintainer's direction: removal no longer compares against the template at each repository's recorded version. `kk migrate` first syncs the repository to the retirement release and removes against that one template. Two consequences are stated in the design: the sync step overwrites edits to synced files as any sync does, and it needs a switch that merges the deny list three-way so that a deny the adopter added survives to the removal step.
+
+Still open, and not addressed by these changes:
+
+- An override change to the Codex profile, including either new opt-in, takes effect only when the profile is next written at upgrade. The design names no way to re-apply it sooner.
+- Open questions 1 to 4 in the design are unconfirmed. Names and locations block Task 3; the per-repository instruction extras affect Tasks 7 and 9.
+- Tasks 3 and 9 are larger than the task convention allows for a single task and should be split before they start.
+- Whether migration should keep the repository's Codex sandbox and approval settings by default, instead of removing them unless declined, is a choice the maintainer has not made.
 
 ## Not changed
 
