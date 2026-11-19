@@ -1,0 +1,41 @@
+== codex codex-cli 0.170.0
+trusted, enabled (baseline)  [0.168s]  (01-trusted-enabled-baseline-.json)
+  repo-a: enabled=true trustStatus=trusted
+  repo-b: enabled=true trustStatus=trusted
+user switched the hook off (hooks.state enabled = false, as /hooks writes it)  [0.165s]  (02-user-switched-the-hook-off-hooks-state-enabled-false-as-hook.json)
+  repo-a: enabled=false trustStatus=trusted
+  repo-b: enabled=false trustStatus=trusted
+guard bytes changed since review (same version re-added)  [0.191s]  (03-guard-bytes-changed-since-review-same-version-re-added-.json)
+  repo-a: enabled=true trustStatus=modified
+  repo-b: enabled=true trustStatus=modified
+original bytes re-added  [0.171s]  (04-original-bytes-re-added.json)
+  repo-a: enabled=true trustStatus=trusted
+  repo-b: enabled=true trustStatus=trusted
+trusted project repo-b sets: [plugins."kkprobe-guard@kkprobe"] enabled = false  [0.176s]  (05-trusted-project-repo-b-sets-plugins-kkprobe-guard-kkprobe-en.json)
+  repo-a: enabled=true trustStatus=trusted
+  repo-b: absent
+trusted project repo-b sets: [features] hooks = false  [0.171s]  (06-trusted-project-repo-b-sets-features-hooks-false.json)
+  repo-a: enabled=true trustStatus=trusted
+  repo-b: absent
+trusted project repo-b sets: [features] plugins = false  [0.172s]  (07-trusted-project-repo-b-sets-features-plugins-false.json)
+  repo-a: enabled=true trustStatus=trusted
+  repo-b: absent
+trusted project repo-b sets: [hooks.state."kkprobe-guard@kkprobe:hooks/hooks.json:pre_tool_use:0:0"] enabled = false  [0.170s]  (08-trusted-project-repo-b-sets-hooks-state-kkprobe-guard-kkprob.json)
+  repo-a: enabled=true trustStatus=trusted
+  repo-b: enabled=true trustStatus=trusted
+app-server -c features.hooks=false  [0.170s]  (09-app-server-c-features-hooks-false.json)
+  repo-a: absent
+  repo-b: absent
+app-server -c 'plugins."kkprobe-guard@kkprobe".enabled=false' (quoted)  [0.175s]  (10-app-server-c-plugins-kkprobe-guard-kkprobe-enabled-false-quo.json)
+  repo-a: enabled=true trustStatus=trusted
+  repo-b: enabled=true trustStatus=trusted
+app-server -c plugins.kkprobe-guard@kkprobe.enabled=false (unquoted)  [0.176s]  (11-app-server-c-plugins-kkprobe-guard-kkprobe-enabled-false-unq.json)
+  repo-a: absent
+  repo-b: absent
+== does a session honour the same keys? (kkprobe-hello skill mentions in codex debug prompt-input)
+  -c none: 1
+  -c plugins."kkprobe-skills@kkprobe".enabled=false: 1
+  -c plugins.kkprobe-skills@kkprobe.enabled=false: 0
+restored  [0.174s]  (12-restored.json)
+  repo-a: enabled=true trustStatus=trusted
+  repo-b: enabled=true trustStatus=trusted
