@@ -1,0 +1,63 @@
+model = "gpt-6.2-sol"
+model_reasoning_effort = "low"
+approval_policy = "never"
+sandbox_mode = "workspace-write"
+
+[tui]
+animations = false
+whimsy = false
+screen_reader_detection_done = true
+
+[tui.model_availability_nux]
+"gpt-6.1-sol" = 4
+
+[projects."/home/sergio/kkprobe-task1/r1/repo-a"]
+trust_level = "trusted"
+
+[projects."/home/sergio/kkprobe-task1/r1/repo-b"]
+trust_level = "trusted"
+
+[marketplaces.kkprobe]
+source_type = "local"
+source = "/home/sergio/kkprobe-task1/r1/mkt"
+
+[marketplaces.kkprobegit]
+source_type = "git"
+source = "http://127.0.0.1:18765/gitmkt.git"
+
+[plugins."kkprobe-skills@kkprobe"]
+enabled = true
+
+[plugins."kkprobe-guard@kkprobe"]
+enabled = true
+
+[plugins."kkprobe-guard@kkprobegit"]
+enabled = true
+
+[plugins."kkprobe-mcpguard@kkprobe"]
+enabled = true
+
+[hooks.state]
+
+[hooks.state."kkprobe-guard@kkprobe:hooks/hooks.json:pre_tool_use:0:0"]
+trusted_hash = "sha256:b46ed8ecc83b4ec8ebc778d5568dda553d4a25f3084217f3ff2e7b4f08374da8"
+trusted_content_hash = "sha256:e06cf7582b3a62cafdacefefa9e2308db9f68618331f64188cf73dd7d763d4f4"
+enabled = true
+
+[hooks.state."kkprobe-guard@kkprobegit:hooks/hooks.json:pre_tool_use:0:0"]
+trusted_hash = "sha256:b46ed8ecc83b4ec8ebc778d5568dda553d4a25f3084217f3ff2e7b4f08374da8"
+trusted_content_hash = "sha256:73d9792ddaeabc5dc18e9dc662812463ccdb623be10e684af046e9c61ef6b32d"
+
+[hooks.state."kkprobe-mcpguard@kkprobe:hooks/hooks.json:pre_tool_use:0:0"]
+trusted_hash = "sha256:ea307f5f334f3badf0706683e626e67d90c91270e550ba3783ebb87e4a08296d"
+trusted_content_hash = "sha256:6e3a029d7d540ee8f8390dfdaca902fba97bb5455241faa64c6382b536e08604"
+
+[hooks.state."/home/sergio/kkprobe-task1/r1/repo-legacy/.codex/hooks.json:pre_tool_use:0:0"]
+trusted_hash = "sha256:338de726623f92723b052056b868ee478b3c9883f9824b60087d5ee3b8f3a1cb"
+
+[mcp_servers.kkprobe]
+command = "python3"
+args = ["-I", "/home/sergio/Projects/personal/claude-toolbox/docs/feat/wip/machine-level-delivery/verification/task-1/harness/mcp-echo-server.py"]
+
+[projects."/home/sergio/kkprobe-task1/r1/repo-legacy"]
+trust_level = "trusted"
