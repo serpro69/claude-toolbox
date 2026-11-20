@@ -38,6 +38,20 @@ log_test "marketplace.json has kk plugin pointing at kodex-plugin"
 mp_path=$(echo "$codex_mp_json" | jq -r '.plugins[0].source.path')
 assert_equals "./kodex-plugin" "$mp_path" "Codex marketplace plugin path"
 
+log_test "The standalone guard is installable beside the skills plugin"
+jq -e '[.plugins[] | select(.name == "kk-guard")] | length == 1 and
+  .[0].source == {source:"local",path:"./kodex-guard"} and .[0].policy.installation == "AVAILABLE"' \
+  "$REPO_ROOT/.agents/plugins/marketplace.json" >/dev/null
+jq -e '.name == "kk-guard" and (.version | type == "string")' \
+  "$REPO_ROOT/kodex-guard/.codex-plugin/plugin.json" >/dev/null
+jq -e --slurpfile template "$REPO_ROOT/.codex/hooks.json" '
+  (.hooks | keys) == ["PreToolUse"] and
+  all(.hooks.PreToolUse[]; (.hooks | length) == 1 and .hooks[0].type == "command") and
+  ([.hooks.PreToolUse[].matcher] | sort) ==
+    ([$template[0].hooks.PreToolUse[] | select(any(.hooks[]; .command | contains("/scripts/pretooluse-"))) | .matcher] | sort)
+' "$REPO_ROOT/kodex-guard/hooks/hooks.json" >/dev/null
+log_pass "Guard ships only the three toolbox PreToolUse matchers"
+
 # =============================================================================
 # Section 2: Codex config
 # =============================================================================

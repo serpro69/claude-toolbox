@@ -7,6 +7,9 @@ on:
       - '.github/workflows/generated-check.yml'
       - 'klaude-plugin/**'
       - 'kodex-plugin/**'
+      - 'kodex-guard/**'
+      - '.agents/plugins/marketplace.json'
+      - 'kk/baseline/codex/kk.rules'
       - '.codex/agents/**'
       - '.codex/rules/**'
       - '.codex/scripts/guard/**'
@@ -37,10 +40,10 @@ jobs:
           go-version-file: go.mod
       - name: Regenerate and check freshness
         run: |
-          make generate-guard
+          make check-guard
           make generate-claude-assets
           make generate-kodex
-          generated=(.claude/settings.json .codex/rules .codex/scripts/guard docs/user-guide/configuration.md kodex-plugin .codex/agents)
+          generated=(kodex-plugin .codex/agents)
           generated+=(.claude/CLAUDE.extra.md .claude/toolbox/CLAUDE.md .claude/toolbox/scripts/statusline{,_enhanced}.sh)
           git diff --exit-code -- "${generated[@]}"
           test -z "$(git ls-files --others --exclude-standard -- "${generated[@]}")"

@@ -1,0 +1,18 @@
+{
+  "hooks": {
+    "PreToolUse": [
+      {
+        "matcher": "Bash",
+        "hooks": [{"type": "command", "command": "bash \"$PLUGIN_ROOT/scripts/pretooluse-bash.sh\""}]
+      },
+      {
+        "matcher": "Edit|Write",
+        "hooks": [{"type": "command", "command": "bash \"$PLUGIN_ROOT/scripts/pretooluse-patch.sh\""}]
+      },
+      {
+        "matcher": "^mcp__[^[:space:]]+__capy_(execute|execute_file|batch_execute)$",
+        "hooks": [{"type": "command", "command": "bash \"$PLUGIN_ROOT/scripts/pretooluse-mcp.sh\""}]
+      }
+    ]
+  }
+}

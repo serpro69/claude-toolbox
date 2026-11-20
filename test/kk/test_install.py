@@ -39,7 +39,7 @@ class InstallFixture(unittest.TestCase):
         # Keep the real guard and registration. Trim unrelated skill content
         # in negative cases; the success case also installs the full checkout.
         for name in ("kk", "klaude-plugin/scripts/guard", "klaude-plugin/.claude-plugin",
-                     "klaude-plugin/hooks", "kodex-plugin/.codex-plugin"):
+                     "klaude-plugin/hooks", "kodex-plugin/.codex-plugin", "kodex-guard"):
             shutil.copytree(ROOT / name, self.checkout / name)
 
     def invoke(self, *args, ok=True, env=None):
@@ -160,6 +160,15 @@ class FirstInstall(InstallFixture):
         self.install()
 
     def test_payload_requires_all_directories_and_matching_versions(self):
+        guard = self.checkout / "kodex-guard"
+        guard.rename(self.root / "held-guard")
+        self.assertIn("missing payload directory", self.install(ok=False).stderr)
+        (self.root / "held-guard").rename(guard)
+        guard_manifest = guard / ".codex-plugin/plugin.json"
+        original = guard_manifest.read_bytes()
+        guard_manifest.write_text("[]")
+        self.assertIn("invalid Codex guard manifest", self.install(ok=False).stderr)
+        guard_manifest.write_bytes(original)
         manifest = self.checkout / "kodex-plugin/.codex-plugin/plugin.json"
         plugin = json.loads(manifest.read_text())
         plugin["version"] = "0.0.0"
@@ -267,6 +276,9 @@ class FirstInstall(InstallFixture):
         installed = self.toolbox / "releases" / self.state()["active"]
         self.assertTrue((installed / "kk/selftest/alias").is_symlink())
         self.assertFalse((installed / "irrelevant").exists())
+        identity = [sys.executable, "-I", "-B", str(installed / "kk/lib/guard_identity.py")]
+        self.assertEqual(self.invoke(*identity, self.checkout / "kodex-guard").stdout,
+                         self.invoke(*identity, installed / "kodex-guard").stdout)
 
     def test_standalone_latest_and_recovery_from_original_fork(self):
         # The actual standalone installer owns argument parsing, extraction and

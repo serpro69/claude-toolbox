@@ -11,7 +11,7 @@ This is a repository providing a complete development environment for agentic to
 Three integrated components:
 
 1. **Claude Code** (`.claude/`): Project settings (`settings.json`), statusline scripts, and sync infrastructure
-2. **Codex** (`.codex/`, `kodex-plugin/`): Codex-equivalent config, hooks, rules, agents, and generated plugin. See §Codex Support below
+2. **Codex** (`.codex/`, `kodex-plugin/`, `kodex-guard/`): Codex-equivalent config, hooks, rules, agents, and separate skills and permission-guard plugins. See §Codex Support below
 3. **kk plugin** (`klaude-plugin/`): Skills, commands, hooks, and utility scripts — the canonical source of truth, distributed via the Claude Code plugin system
 
 For API keys and MCP server setup, see the "MCP Server Configuration" section in `README.md`.
@@ -23,7 +23,7 @@ For API keys and MCP server setup, see the "MCP Server Configuration" section in
 - `kodex-plugin/` — transformed skills for Codex (resolves `${CLAUDE_PLUGIN_ROOT}`, injects headers)
 - `.codex/agents/*.toml` — sub-agent definitions (converted from `klaude-plugin/agents/*.md`)
 
-The permission-guard generator (`scripts/generate-guard.sh`) also produces `.codex/rules/default.rules` and `.codex/scripts/guard/` from the canonical guard declaration and engine under `klaude-plugin/scripts/guard/`, including its license. It updates `.claude/settings.json` `permissions.deny` and the marked rules tables in `docs/user-guide/configuration.md`.
+The permission-guard generator (`scripts/generate-guard.sh`) copies the canonical runtime and license from `klaude-plugin/scripts/guard/` into `.codex/scripts/guard/` and `kodex-guard/scripts/guard/`. It produces both `.codex/rules/default.rules` and `kk/baseline/codex/kk.rules`, updates `.claude/settings.json` `permissions.deny`, and refreshes the marked tables in `docs/user-guide/configuration.md`.
 
 Hand-authored codex files (not generated): `.codex/config.toml`, `.codex/hooks.json`, `.codex/scripts/` except `guard/`, and `AGENTS.md`.
 
@@ -31,7 +31,7 @@ Hand-authored codex files (not generated): `.codex/config.toml`, `.codex/hooks.j
 
 Edit Claude session instructions in `klaude-plugin/instructions/` and statusline scripts in `klaude-plugin/statusline/`. Run `make generate-claude-assets` to refresh their legacy template copies. CI checks all four copies for drift.
 
-After editing `klaude-plugin/scripts/guard/`, run `make generate-guard`. CI checks freshness with `make generate-guard && git diff --exit-code .claude/settings.json .codex/rules/ .codex/scripts/guard/ docs/user-guide/configuration.md`. Never edit generated copies directly. `make generate-all` refreshes guard output before the other generators and their structure checks.
+After editing `klaude-plugin/scripts/guard/`, run `make generate-guard`. CI and both release workflows use `make check-guard` to regenerate every guard projection and check for tracked or untracked differences. Never edit generated copies directly. `make generate-all` refreshes guard output before the other generators and their structure checks.
 
 ## Testing
 

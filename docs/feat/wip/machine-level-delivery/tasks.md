@@ -157,19 +157,27 @@ Task 4 must distinguish interpreter-generated guard bytecode from a changed rele
 - [ ] 6.6 Unit tests for yielding, list composition, each override, the adopter's `--settings` in both forms with the denies intact, an override that tries to empty the deny list, and a malformed override → verify: on a real machine a wrapped session uses the baseline effort level when none is set and the user's when one is; with hooks disabled, a wrapped session started with the adopter's own `--settings` refuses to read a decoy secret
 
 ## Task 7: Codex guard plugin with workspace anchoring
-- **Status:** pending
+- **Status:** done
 - **Depends on:** Task 1
 - **Size:** M
 - **Can run in parallel with:** Task 3, Task 4, Task 5, Task 6, Task 8
 - **Docs:** [implementation.md#codex-guard-plugin](./implementation.md#codex-guard-plugin), [design.md#guard-changes](./design.md#guard-changes)
 
 ### Subtasks
-- [ ] 7.1 Create `kodex-guard/` with a manifest named `kk-guard`, `hooks/hooks.json` with the matchers from `.codex/hooks.json`, and the three adapters ported from `.codex/scripts/`. Add the directory to `kk/payload.json` and test that a payload missing it is rejected (Task 3 decision).
-- [ ] 7.2 Anchor policy to the hook's launch directory (git top level, else the directory); use the payload directory for operands only; read the capy registration from the workspace
-- [ ] 7.3 Add the engine copy `kodex-guard/scripts/guard/` and `kk/baseline/codex/kk.rules` as targets in `scripts/generate-guard.sh`; update the Makefile, `generated-check.yml`, `release.yml`, `test/test-generate-guard.sh` and the generated-files text in `AGENTS.md`
-- [ ] 7.4 Add a `kk-guard` entry to `.agents/plugins/marketplace.json`
-- [ ] 7.5 Port the adapter cases in `test/test-codex-hooks.sh` to the new adapters and add cross-repository anchoring cases; update `test/test-codex-structure.sh` → verify: a live run from a subdirectory enforces a rule from the workspace's `.claude/kk-guard.json`
-- [ ] 7.6 Add `kk/lib/guard_identity.py`, a standalone module: SHA-256 over the sorted path, mode and bytes of every file in a guard bundle, leaving out the manifest's `version` field → verify: bundles differing only in version share an identity; a one-byte change or a changed executable bit changes it
+- [x] 7.1 Create `kodex-guard/` with a manifest named `kk-guard`, `hooks/hooks.json` with the matchers from `.codex/hooks.json`, and the three adapters ported from `.codex/scripts/`. Add the directory to `kk/payload.json` and test that a payload missing it is rejected (Task 3 decision).
+- [x] 7.2 Anchor policy to the hook's launch directory (git top level, else the directory); use the payload directory for operands only; read the capy registration from the workspace
+- [x] 7.3 Add the engine copy `kodex-guard/scripts/guard/` and `kk/baseline/codex/kk.rules` as targets in `scripts/generate-guard.sh`; update the Makefile, `generated-check.yml`, `release.yml`, `test/test-generate-guard.sh` and the generated-files text in `AGENTS.md`
+- [x] 7.4 Add a `kk-guard` entry to `.agents/plugins/marketplace.json`
+- [x] 7.5 Port the adapter cases in `test/test-codex-hooks.sh` to the new adapters and add cross-repository anchoring cases; update `test/test-codex-structure.sh` → verify: a live run from a subdirectory enforces a rule from the workspace's `.claude/kk-guard.json`
+- [x] 7.6 Add `kk/lib/guard_identity.py`, a standalone module: SHA-256 over the sorted path, mode and bytes of every file in a guard bundle, leaving out the manifest's `version` field → verify: bundles differing only in version share an identity; a one-byte change or a changed executable bit changes it
+
+### Execution context
+
+- Baseline `de32b294`. Task 1 established that the hook process starts in the session directory and carries the tool directory in its input. Task 3 settled the fourth required payload directory. This increment ships the guard and its identity function. Task 8 owns the new protected paths and Task 10 owns machine-level activation and trust reporting.
+- 2026-11-20, verified: the two adapter modes, cross-repository policy and routing, generator freshness, and guard identity tests passed. The pre-release three-directory runtime refuses a four-directory candidate before handing off to it. Task 7 tests start with a fresh four-directory installation. [Verification record](verification/task-7/README.md)
+- 2026-11-20, live verification: the maintainer approved normal hook review in a disposable Codex home. Codex 0.171.0 read the control file and blocked the workspace marker when started in a repository subdirectory. All three hooks retained trust and the same bundle hash.
+- Both independent reviewers closed their findings after the mode normalization, fail-closed workspace checks and live vendor probe. The only repository-wide failure was the previously recorded template-sync assertion with jq 1.6.
+- Guard maintenance follow-up (unassigned): the plugin resolves the current Git boundary on each event. Before template retirement, assess how to preserve the selected workspace across repository-boundary changes during an open session. The shared engine also reads a coincident user/project config twice when a non-Git session starts in the home directory. A future shared-engine change should distinguish the two schemas there and verify both the intended restrictions and diagnostics.
 
 ## Task 8: Protect toolbox-owned paths in the guard
 - **Status:** pending

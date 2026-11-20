@@ -21,20 +21,22 @@ Use Claude Code 2.1.295+, Bash, `jq` and Python 3.8+. Guard failures block match
 
 ```bash
 codex plugin marketplace add serpro69/claude-toolbox
+codex plugin add kk@claude-toolbox
 ```
 
 The Codex plugin includes skills and language-specific profile content (review checklists, implementation gotchas, etc.). See [kodex-plugin](https://github.com/serpro69/claude-toolbox/tree/master/kodex-plugin) for details.
 
-!!! note "Codex limitations"
-    The Codex plugin provides **skills and profiles only** — it does not include hooks, sub-agents, Starlark rules, or project configuration. For the full Codex experience (SessionStart/PreToolUse hooks, sub-agents, config, rules), use the [template setup](template-setup.md) or [adopt into an existing repo](adopting.md).
+To install the separate permission guard from a marketplace revision that includes it, run `codex plugin add kk-guard@claude-toolbox`. Review its three `PreToolUse` handlers in `/hooks`. The guard reads project policy from the session workspace.
+
+The [template setup](template-setup.md) also supplies the session-start hook, sub-agents, native rules and project configuration.
 
 For MCP servers (Context7, Pal), see [Codex MCP Setup](../user-guide/mcp-servers.md#codex).
 
 ## Upgrading
 
 For Claude Code, update the installed plugin and restart; plugin-only consumers
-do not need template sync. Codex plugin-only installations do not include the
-guard runtime and need template configuration to gain it. Follow the
+do not need template sync. For Codex, review changed guard hooks after updating
+the separate guard plugin. Follow the
 [permission-guard upgrade checklist](../user-guide/template-sync.md#upgrading-the-permission-guard)
 for commands, prerequisites and the steps for your installation.
 
@@ -45,7 +47,7 @@ The plugin gives you:
 - **16 workflow and utility skills** — `/kk:design`, `/kk:implement`, `/kk:review-code`, `/kk:clarify-docs`, etc.
 - **Language profiles** — Go, Java, JS/TS, Kotlin, Kubernetes, Python
 - **Commands** — isolated variants for code review, CoVe and spec review
-- **Hooks** — secrets, destructive-operation and configuration protection across the supported tool channels (Claude Code only)
+- **Hooks** — permission checks for Claude Code and, with the separate guard plugin, for Codex
 - **Sub-agents** — independent reviewers (Claude Code only)
 
 ## What's Not Included

@@ -125,7 +125,7 @@ The instruction hook reads the Markdown shipped beside it. Edit those files in `
 
 **Permission guard contract:** Read the complete hook payload from stdin (`tool_name`, `tool_input`, `cwd` and optional `permission_mode`). `scripts/guard/guard.sh` buffers the bytes once and invokes `guard.py` under isolated Python. Ordinary allow is silent with exit 0; config warnings may emit only `systemMessage`. Deny emits `hookSpecificOutput.permissionDecision: "deny"`, its reason on stdout and stderr, and exit 2. Missing interpreters, crashes and invalid engine output must deny. Claude's `onFailure: "block"` handles hook launch failures and timeouts; it requires Claude Code 2.1.295+. See [the configuration guide](../user-guide/configuration.md#hooks) for runtime requirements and supported channels.
 
-The declaration and engine in `klaude-plugin/scripts/guard/` are canonical. Run `make generate-guard` after changing them; never edit `.codex/scripts/guard/`, `.codex/rules/default.rules`, or the marked rules tables directly. The generator also owns `.claude/settings.json`'s `permissions.deny`, leaving other settings unchanged. Keep the copied license with the engine.
+The declaration and engine in `klaude-plugin/scripts/guard/` are canonical. Run `make generate-guard` to refresh the two Codex runtime copies, their licenses, both rules projections, Claude’s deny list and the marked documentation tables. `make check-guard` checks freshness in a clean checkout.
 
 To develop this repository with an agent, the user adds a physical checkout path (or a parent covering worktrees) to **`~/.claude/kk-guard.json`**:
 
