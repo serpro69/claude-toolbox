@@ -8,6 +8,17 @@ import sys
 
 args = sys.argv[1:]
 home = Path(os.environ["HOME"])
+if args[:2] == ["--bare", "-p"]:
+    request = json.load(sys.stdin)
+    assert request["request"]["subtype"] == "get_settings"
+    path = Path(args[args.index("--settings") + 1])
+    layer = json.loads(path.read_text())
+    report = {"sources": [{"source": "flagSettings", "settings": layer}]}
+    if isinstance(layer.get("statusLine"), int):
+        report = {"errors": [{"file": str(path), "path": "statusLine"}], "sources": []}
+    print(json.dumps({"type": "control_response", "response": {"subtype": "success",
+                      "request_id": request["request_id"], "response": report}}))
+    sys.exit(0)
 with (home / "calls").open("a") as log:
     print(json.dumps(args), file=log)
 market = home / "market"
@@ -15,7 +26,9 @@ plugin = home / "plugin"
 if args[:2] == ["plugin", "validate"]:
     assert (Path(args[2]) / ".claude-plugin/plugin.json").is_file()
     sys.exit(0)
-if args == ["plugin", "marketplace", "list", "--json"]:
+if args[:1] == ["--settings"]:
+    result = args
+elif args == ["plugin", "marketplace", "list", "--json"]:
     result = [json.loads(market.read_text())] if market.exists() else []
 elif args[:3] == ["plugin", "marketplace", "add"]:
     directory = Path(args[5])

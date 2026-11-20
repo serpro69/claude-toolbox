@@ -21,7 +21,7 @@ generate-guard:
 	bash scripts/generate-guard.sh
 
 GUARD_GENERATED := .claude/settings.json .codex/rules .codex/scripts/guard docs/user-guide/configuration.md \
-	kodex-guard/scripts/guard kk/baseline/codex/kk.rules
+	kodex-guard/scripts/guard kk/baseline/codex/kk.rules kk/baseline/claude/deny.json
 
 check-guard: generate-guard
 	git diff --exit-code -- $(GUARD_GENERATED)

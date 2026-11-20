@@ -11,7 +11,7 @@ import sys
 import tarfile
 import tempfile
 
-from . import claude, payload, state, validation
+from . import claude, claude_launch, payload, state, validation
 from .run import load_cli
 
 
@@ -306,9 +306,13 @@ def main():
         source.add_argument("--version", metavar="TAG")
     commands.add_parser("status")
     commands.add_parser("rollback")
-    args = parser.parse_args()
+    commands.add_parser("claude", help="launch Claude with the active release's settings (--print-layer to inspect)")
     home = state.toolbox_home()
     try:
+        if sys.argv[1:2] == ["claude"]:
+            claude_launch.launch(home, sys.argv[2:])
+            return 0
+        args = parser.parse_args()
         if args.command == "status":
             status(home)
         else:
