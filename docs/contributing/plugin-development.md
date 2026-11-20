@@ -97,14 +97,14 @@ Hook definitions in `klaude-plugin/hooks/hooks.json`:
     "SessionStart": [{
       "hooks": [{
         "type": "command",
-        "command": "bash ${CLAUDE_PLUGIN_ROOT}/scripts/set-plugin-root.sh ${CLAUDE_PLUGIN_ROOT}"
+        "command": "bash \"${CLAUDE_PLUGIN_ROOT}\"/scripts/set-plugin-root.sh \"${CLAUDE_PLUGIN_ROOT}\""
       }]
     }],
     "PreToolUse": [{
       "matcher": "Bash|Read|Edit|Write|NotebookEdit|Grep|Glob|mcp__.+__capy_(execute|execute_file|batch_execute)",
       "hooks": [{
         "type": "command",
-        "command": "${CLAUDE_PLUGIN_ROOT}/scripts/guard/guard.sh",
+        "command": "\"${CLAUDE_PLUGIN_ROOT}\"/scripts/guard/guard.sh",
         "timeout": 15,
         "onFailure": "block"
       }]

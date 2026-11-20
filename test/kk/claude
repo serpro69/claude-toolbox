@@ -1,0 +1,45 @@
+#!/usr/bin/env python3
+"""Stateful stand-in for the vendor CLI. All side effects stay in the test home."""
+import json
+import os
+from pathlib import Path
+import sys
+
+
+args = sys.argv[1:]
+home = Path(os.environ["HOME"])
+with (home / "calls").open("a") as log:
+    print(json.dumps(args), file=log)
+market = home / "market"
+plugin = home / "plugin"
+if args[:2] == ["plugin", "validate"]:
+    assert (Path(args[2]) / ".claude-plugin/plugin.json").is_file()
+    sys.exit(0)
+if args == ["plugin", "marketplace", "list", "--json"]:
+    result = [json.loads(market.read_text())] if market.exists() else []
+elif args[:3] == ["plugin", "marketplace", "add"]:
+    directory = Path(args[5])
+    manifest = json.loads((directory / ".claude-plugin/marketplace.json").read_text())
+    assert args[3:5] == ["--scope", "user"] and not market.exists()
+    result = {"name": manifest["name"], "installLocation": str(directory)}
+    market.write_text(json.dumps(result))
+elif args[:2] == ["plugin", "install"]:
+    assert args[2:4] == ["--scope", "user"] and not plugin.exists()
+    plugin.write_text(args[4])
+    if (home / "interrupt").exists():
+        sys.exit(17)  # Vendor committed its side effect before the command failed.
+    result = {"outcome": "ok"}
+elif args == ["plugin", "list", "--json"]:
+    result = []
+    if plugin.exists():
+        directory = Path(json.loads(market.read_text())["installLocation"])
+        manifest = json.loads((directory / ".claude-plugin/marketplace.json").read_text())
+        source = str(directory / manifest["plugins"][0]["source"])
+        entry = {"id": plugin.read_text(), "scope": "user", "enabled": True,
+                 "installPath": source, "readFromFolder": source}
+        if (home / "list-override").exists():
+            entry.update(json.loads((home / "list-override").read_text()))
+        result = [entry]
+else:
+    raise SystemExit("unexpected Claude arguments: " + repr(args))
+print(json.dumps(result))
