@@ -46,7 +46,7 @@
 - 2026-11-19, done (maintainer): `~/kkprobe-task1/` deleted, including the copied credentials, after the agent stopped the Codex app-server daemon the probe sessions had started from that home; the review's temporary files under `/tmp` deleted too. Closes the entry above.
 
 ## Task 2: Claude vendor probes
-- **Status:** pending
+- **Status:** done
 - **Depends on:** —
 - **Size:** S
 - **Slicing:** Risk-First — activation depends on in-place loading from a local marketplace
@@ -54,11 +54,19 @@
 - **Docs:** [implementation.md#claude-vendor-probes](./implementation.md#claude-vendor-probes)
 
 ### Subtasks
-- [ ] 2.1 With the maintainer's agreement, add a uniquely named local-path marketplace whose plugin entry points at a versioned subdirectory; install at user scope → verify: a plugin hook reports its script path and plugin root inside that subdirectory (assumption 8)
-- [ ] 2.2 Re-point the marketplace entry at a second subdirectory with a session open → verify: the open session keeps the first, a new session uses the second
-- [ ] 2.3 In an untrusted scratch directory pass a settings layer with a deny rule and a statusline; in a trusted project set a project-enabled plugin ID to `false` in the layer → verify: the read is denied with hooks disabled, the statusline renders, the plugin does not load (assumption 9)
-- [ ] 2.4 Optional: route the VS Code extension through a wrapper that adds a settings layer → verify: record whether the layer applies
-- [ ] 2.5 Remove the scratch marketplace and plugin; write results to `verification/task-2/` and update `design.md`
+- [x] 2.1 With the maintainer's agreement, add a uniquely named local-path marketplace whose plugin entry points at a versioned subdirectory; install at user scope → verify: a plugin hook reports its script path and plugin root inside that subdirectory (assumption 8)
+- [x] 2.2 Re-point the marketplace entry at a second subdirectory with a session open → verify: the open session keeps the first, a new session uses the second
+- [x] 2.3 Probe the flag-layer read deny with hooks disabled in a folder without recorded trust, compare the statusline before and after workspace trust, and set a project-enabled plugin ID to `false` in the layer. The deny and plugin override held. The statusline rendered only in the trusted, hooks-enabled control (assumption 9).
+- [ ] 2.4 Optional: route the VS Code extension through a wrapper that adds a settings layer → verify: record whether the layer applies **Skipped** because the VS Code CLI was unavailable.
+- [x] 2.5 Remove the scratch marketplace and plugin; write results to `verification/task-2/` and update `design.md`
+
+### Execution context
+
+- 2026-11-20, accepted by the maintainer in this session: install a uniquely named probe in the logged-in Claude user configuration, run the probes in scratch directories and uninstall it afterwards. Baseline: `bd385a6`, Claude Code 2.1.296 on Linux.
+- 2026-11-20, observed: assumption 8 held across two overlapping sessions. Use `readFromFolder` to verify the Claude release at first install and after a catalog switch (Tasks 3 and 4). Assumption 9 held for native read denial and the flag-layer plugin override. The statusline was absent at the untrusted prompt and in the trusted control with hooks disabled. [Probe results and reproduction](verification/task-2/README.md)
+- 2026-11-20, verified: Claude removed the user plugin and marketplace registrations. The maintainer removed both scratch directories and the vendor-marked orphan cache. All three paths were checked absent.
+- 2026-11-20, verified and reviewed: Bash syntax, ShellCheck, the recorded session comparisons and a symlinked fixture directory passed (captures `3578d1a2-84d4-44d7-80b2-dffdfb34b443` and `c4737db2-4505-4313-939c-f0381615c657`). The isolated code reviewer approved the revised task. The external Claude Opus 5.5 reviewer closed its five findings on provenance, activation verification, hook registration coverage, reload behavior and reproducibility. Both reviewed the saved evidence.
+- 2026-11-20, review housekeeping: automatic approval rejected recursive deletion of `/tmp/kk-task2-review-9rDg8SDN` and `/tmp/kk-review-instructions-8bbx6buc`. These hold review inputs and a synthetic fixture. The maintainer can remove both directories and confirm the paths are absent.
 
 ## Task 3: First install for Claude
 - **Status:** pending
@@ -73,7 +81,7 @@
 - [ ] 3.2 Create the state module in `kk/lib/`: a format version, one active release, per-tool state, rollback target with its fallback to the previously active release, candidate phase, the time each release stopped being active, the installed-paths record (a path is recorded before it is written), atomic read-modify-write that keeps unknown fields, and the exclusive writer lock on `$KK_HOME/lock` → verify: a failed rename leaves the previous state file intact; a second writer exits at once and changes nothing; an unknown field survives a rewrite; a higher format version is refused and the file left untouched
 - [ ] 3.3 Create the payload module: fetch from a tag archive or a local checkout, extract only payload directories, reject absolute paths, parent traversal and escaping symlinks → verify: crafted archives are rejected; the plugin's relative symlinks survive
 - [ ] 3.4 Create `kk/selftest/guard-cases.json` and the validation module: payload completeness, guard self-test against the candidate engine, one event through the Claude guard handler as the staged `hooks/hooks.json` registers it, `claude plugin validate` → verify: a candidate with a broken engine fails and the state file is unchanged; so does one whose hook registration names a script missing from the payload
-- [ ] 3.5 Create Claude activation: write the local marketplace manifest, add the marketplace, install the plugin at user scope, verify the load path through `claude plugin list --json`; stop without replacing anything when `~/.local/bin/kk` exists and is not in the installed-paths record; keep the local marketplace's name in one constant (working value `toolbox`)
+- [ ] 3.5 Create Claude activation: write the local marketplace manifest, add the marketplace, install the plugin at user scope, verify that `readFromFolder` on the matching user-scope `claude plugin list --json` entry resolves to the candidate plugin directory; stop without replacing anything when `~/.local/bin/kk` exists and is not in the installed-paths record; keep the local marketplace's name in one constant (working value `toolbox`)
 - [ ] 3.6 Add `kk upgrade` for the first-install path, `kk status`, and `install.sh` at the repository root; running the installer again after an interrupted first install resumes from the journaled phase or starts over; the installer warns in one line when `kk` on `PATH` resolves to something other than its own symlink
 - [ ] 3.7 Add `test/kk/` and `test/test-kk.sh` with stub vendor CLIs covering first install, an interrupted first install completed by a second installer run, failed validation, a colliding symlink and two overlapping writers → verify: the suite passes under isolated Python 3.8 syntax checks
 - [ ] 3.8 Do not tag a release that ships `kk` until the maintainer has settled the local marketplace's name ([design.md#open-questions](./design.md#open-questions)); change the constant then
