@@ -93,9 +93,13 @@ Probes ran on 2026-11-18 against Claude Code 2.1.296 and Codex CLI 0.169.0 in sc
 - Claude settings precedence: managed, then `--settings`, then local, project, user. Lists merge.
 - Claude: a plugin manifest has no field for permissions, env, model or statusline; a plugin-root `CLAUDE.md` is not loaded; a plugin `bin/` is on `PATH` only inside sessions.
 - Claude: a plugin from a local-path marketplace loads in place, and refresh is skipped for local sources. `--plugin-dir` silently replaces a same-named installed plugin. Earlier cached versions are kept for 14 days.
-- Claude: `claude plugin list --json` always reports `installPath`. `claude plugin validate` checks a plugin directory.
+- Claude records `installPath` for its fetched copy. Task 2 measured where the session loaded a local plugin. `claude plugin validate` checks a plugin directory. [Claude plugin loading reference](https://code.claude.com/docs/en/plugins/loading#check-which-stage-a-plugin-reached)
 - Claude: `managed-settings.d/` fragments apply to the terminal, the IDE extensions and the desktop app's Code tab.
 - Codex: `codex plugin add --json` reports `installedPath`. The cache layout is `plugins/cache/<marketplace>/<plugin>/<version>/`. Sub-agents load from `~/.codex/agents/`.
+
+**Observed in Task 2 on Claude Code 2.1.296, Linux, 2026-11-20**
+
+The session hooks ran from the selected local release. The CLI exposed that source in `readFromFolder` at first install and after a catalog switch. This field name is an observation about this version. The native read deny, workspace trust dialog, statusline controls and project plugin override were exercised separately. [Task 2 observations](verification/task-2/README.md)
 
 **Read from Codex source at `rust-v0.169.0`, then observed on 0.170.0 in Task 1**
 
@@ -245,7 +249,7 @@ The whole flow runs under the [writer lock](#activation-state).
    - on first install, add the marketplaces and install the plugins at user scope;
    - re-add the Codex skills plugin; re-add the Codex guard plugin only when its content identity changed;
    - write the Codex profile, the sub-agent files and, when switched on, the rules file, recording each path before writing it; remove recorded paths the release no longer ships.
-5. **Verify.** Compare the bytes at the path each vendor reports with the release. Read trust and enablement for each Codex guard handler with the [trust reader](#activation-state); if any is not effective, the Codex state is *awaiting review* and the adopter is told what to do for each handler: review an untrusted or changed one with `/hooks`, switch a disabled one back on there, and, for one that is absent, which configuration removed it, since `/hooks` cannot list it.
+5. **Verify.** On Claude, check that the user-scope plugin’s `readFromFolder` resolves to the validated plugin directory in the candidate release. A missing or different source path fails verification. On Codex, compare the installed plugin bytes with the release. Read trust and enablement for each Codex guard handler with the [trust reader](#activation-state); if any is not effective, the Codex state is *awaiting review* and the adopter is told what to do for each handler: review an untrusted or changed one with `/hooks`, switch a disabled one back on there, and, for one that is absent, which configuration removed it, since `/hooks` cannot list it.
 6. **Promote.** Record the release as active with each tool's state, stamp the superseded release with the time it stopped being active, recompute the rollback target, and replace the entry point if it changed.
 
 A skills-only release leaves the Codex guard plugin alone: same plugin ID, same version, same cache directory. That is what keeps an open Codex session enforcing through it, and it applies to rollback as well.
@@ -268,7 +272,7 @@ Rollback counts as recovery for a tool only once verification passes for that to
 - **Disablement of the Git-marketplace copy** of the plugin, so a wrapped session in an unmigrated repository loads exactly one `kk` plugin.
 - **The adopter's overrides**, applied last. They set or replace preference keys and add to permission lists.
 
-The statusline entry points at the script inside the active release. A session keeps the release it started with, so its hooks, its statusline and its read grant stay consistent across an upgrade.
+The layer pins the statusline and read grant to the launch release. In Task 2, the open session kept running hooks from that release across a catalog switch. A manual `/reload-plugins` can reload plugins in place while the layer still names the launch release. The overlap probe used normal session startup and exit. Claude rendered the statusline in the trusted interactive control with hooks enabled. Its native read deny also applied in print mode without recorded workspace trust. [Claude plugin loading reference](https://code.claude.com/docs/en/plugins/loading#in-place-and-copied-plugins)
 
 If the adopter passes their own `--settings`, a file or inline JSON, the launcher reads it and composes it as the top of the same layer under the same rule: its keys win, its permission entries are added, and the generated denies stay. A value that cannot be read or parsed stops the launch. There is no pass-through. A wrapped session always carries the denies; an adopter who wants Claude without the toolbox layer runs `claude` directly, which is an unwrapped session and is described as one.
 
@@ -476,7 +480,7 @@ Retirement waits for the [pilot](#verification) of the tagged retirement release
 | Claude effort, env | Launcher layer | Kept in wrapped sessions; yields to user values. The baseline is the template default, effort `high` |
 | Claude model | — | Unchanged for default adopters, whose template pinned none. A model chosen in the manifest stays in the repository's settings at migration |
 | Plugin enabled by committed project settings, reaching hosts with no local install | — | **Dropped** at migration unless the adopter declines that part |
-| Statusline and themes | Plugin scripts plus launcher layer | Kept in wrapped sessions |
+| Statusline and themes | Plugin scripts plus launcher layer | Kept in trusted interactive wrapped sessions with hooks enabled |
 | Behavioural instructions, Claude | Plugin `SessionStart` | Kept everywhere the plugin loads |
 | Behavioural instructions, Codex | Codex profile | Kept in wrapped sessions |
 | `Skill(kk:*)`, read of plugin files | Launcher layer | Kept, with opt-out |
@@ -504,7 +508,7 @@ Deterministic behaviour is covered by tests: layer composition, per-key yielding
 
 ## Assumptions
 
-Each is a bet the design depends on, with the check that would confirm or break it. Results for the Codex assumptions are from Task 1 on Codex 0.170.0, recorded in [verification/task-1/](verification/task-1/README.md).
+Each is a bet the design depends on, with the check that would confirm or break it. Results for the Codex assumptions are from Task 1 on Codex 0.170.0, recorded in [verification/task-1/](verification/task-1/README.md). Task 2 tested the Claude assumptions on 2.1.296. [Claude probe evidence](verification/task-2/README.md)
 
 1. A separate Codex guard plugin keeps its trust and stays loaded when only the skills plugin is re-added. This is the central promise; demonstration 1 tests it. **Holds:** the guard plugin was not re-added, and an open session kept denying.
 2. An open Codex session loses the guard after a guard-plugin upgrade. If a probe shows it stays guarded or blocks all guarded calls until restart, the confirmation becomes unnecessary or becomes a restart notice. **Holds:** the hook fails with "plugin contents changed; hook approval required" and the call runs. The confirmation stays.
@@ -513,8 +517,8 @@ Each is a bet the design depends on, with the check that would confirm or break 
 5. `codex --profile kk` ranks below trusted project config, and the profile accepts every baseline key. **Precedence holds,** for `developer_instructions` too. Every baseline key loads, but an unknown key or invalid enum string would load as well, so effects were observed only for model, reasoning effort, sandbox, approval policy and developer instructions.
 6. Codex loads sub-agents from `$CODEX_HOME/agents/`, and the capy MCP matcher works from a plugin hook. **Holds.**
 7. Codex hook trust and per-hook enablement can be read from outside a session, quickly enough to do before each non-interactive launch, and the result reflects a hook the adopter disabled after trusting it. If it cannot be read, the adopter's acknowledgement moves the tool to *unverified*, never to *ready*. **Holds:** app-server `hooks/list` per workspace, under half a second. A repository that switches the guard off for itself shows up as a missing handler, not a disabled one.
-8. Claude loads a local-marketplace plugin in place from the release directory, picks up a re-pointed marketplace at the next session start, and runs hook scripts from that directory.
-9. Claude honours the statusline and the deny list from `--settings`, including in an untrusted workspace, and a `false` for a plugin ID in the flag layer disables a project-enabled plugin.
+8. Claude loads a local-marketplace plugin in place from the release directory, picks up a re-pointed marketplace at the next session start, and runs hook scripts from that directory. **Holds.** After the catalog switch the first session’s exit hook still ran from release 1, and a fresh session’s start hook ran from release 2.
+9. Claude honours the statusline and the deny list from `--settings`, including in an untrusted workspace, and a `false` for a plugin ID in the flag layer disables a project-enabled plugin. **The deny and plugin override hold. The pre-trust statusline fails.** The untrusted TUI stopped at the trust dialog. The same marker rendered in the trusted control with hooks enabled.
 10. A Git-marketplace source behaves like the local one for Codex hook trust. **Holds,** probed with a Git repository served over plain HTTP on the local machine; `file://` URLs are rejected.
 11. The tag archive can be fetched and extracted with the Python 3.8 standard library, including the plugin's symlinks.
 12. When the script behind a project hook disappears under an open Codex session, the hook fails and the call proceeds unguarded. If a probe shows the call is blocked instead, the warning before migration becomes a restart notice. **Holds:** "hook exited with code 127", then the call ran. The warning before migration stays a warning about unguarded sessions.
