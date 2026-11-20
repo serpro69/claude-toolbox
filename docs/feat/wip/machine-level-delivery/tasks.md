@@ -121,19 +121,25 @@ Task 4 must distinguish interpreter-generated guard bytecode from a changed rele
 - 2026-11-20, reviewed: the isolated code reviewer and external Claude reviewer closed the tagged retry and dispatcher recovery findings. Final tests cover interruptions before and after dispatcher publication, restoration through a damaged stable symlink, and validation against the journaled dispatcher digest. The template-sync assertion remains the previously recorded repository-wide failure.
 
 ## Task 5: Claude plugin instructions, statusline and plugin root
-- **Status:** pending
+- **Status:** done
 - **Depends on:** —
 - **Size:** M
 - **Can run in parallel with:** Task 1, Task 2, Task 3, Task 4, Task 7, Task 8
 - **Docs:** [implementation.md#claude-plugin-changes](./implementation.md#claude-plugin-changes), [design.md#plugins](./design.md#plugins)
 
 ### Subtasks
-- [ ] 5.1 Create `klaude-plugin/instructions/behavior.md` from `.claude/CLAUDE.extra.md`; make the latter a generated copy with a freshness check → verify: `test/test-claude-extra.sh` passes and the copy is byte-identical
-- [ ] 5.2 Move the plugin-root override text from `.claude/toolbox/CLAUDE.md` into a plugin instruction file used only for plugin-only installs
-- [ ] 5.3 Add a `SessionStart` hook script and its registration in `klaude-plugin/hooks/hooks.json` for start, resume, clear and compaction; skip behavioural instructions when the project has `.claude/CLAUDE.extra.md`; honour the override file's switch → verify: `test/test-hooks.sh` covers both the legacy-file and the clean-project fixture
-- [ ] 5.4 Move the statusline scripts to `klaude-plugin/statusline/`; keep the `.claude/toolbox/scripts/` copies identical until retirement
-- [ ] 5.5 In `klaude-plugin/scripts/set-plugin-root.sh`, use the script's parent directory when it sits under the toolbox home's `releases/` → verify: `test/test-cpr.sh` passes with a new case for that branch
-- [ ] 5.6 Run `make generate-kodex` and `test/test-plugin-structure.sh`
+- [x] 5.1 Create `klaude-plugin/instructions/behavior.md` from `.claude/CLAUDE.extra.md`; make the latter a generated copy with a freshness check → verify: `test/test-claude-extra.sh` passes and the copy is byte-identical
+- [x] 5.2 Move the plugin-root override text from `.claude/toolbox/CLAUDE.md` into a plugin instruction file used only for plugin-only installs
+- [x] 5.3 Add a `SessionStart` hook script and its registration in `klaude-plugin/hooks/hooks.json` for start, resume, clear and compaction; skip behavioural instructions when the project has `.claude/CLAUDE.extra.md`; honour the override file's switch → verify: `test/test-hooks.sh` covers both the legacy-file and the clean-project fixture
+- [x] 5.4 Move the statusline scripts to `klaude-plugin/statusline/`; keep the `.claude/toolbox/scripts/` copies identical until retirement
+- [x] 5.5 In `klaude-plugin/scripts/set-plugin-root.sh`, use the script's parent directory when it sits under the toolbox home's `releases/` → verify: `test/test-cpr.sh` passes with a new case for that branch
+- [x] 5.6 Run `make generate-kodex` and `test/test-plugin-structure.sh`
+
+### Execution context
+
+- Baseline `6c315da9`. Use the running hook’s physical plugin directory to identify a managed release. Preserve template imports during coexistence. The hook reads the boolean `claude.instructions` switch from the adopter’s override file. An absent switch enables plugin-supplied context.
+- 2026-11-20, verified on Linux: the generator, structure, graph and focused shell checks passed. The real Claude Code 2.1.296 startup probe confirmed full instruction receipt and the exported plugin root in four cases. The repository-wide run had the same single template-sync failure documented in Task 3. [Verification record](verification/task-5/README.md)
+- Review closed the custom-home, asset graph, exit-status and path portability findings. When documenting the first release in Task 15, call out that plugin-only users now receive the behavioral instructions by default and can disable the hook through `claude.instructions`.
 
 ## Task 6: Claude launch layer and overrides
 - **Status:** pending

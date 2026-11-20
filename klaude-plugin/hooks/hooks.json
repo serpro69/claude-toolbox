@@ -8,6 +8,15 @@
             "command": "bash \"${CLAUDE_PLUGIN_ROOT}\"/scripts/set-plugin-root.sh \"${CLAUDE_PLUGIN_ROOT}\""
           }
         ]
+      },
+      {
+        "matcher": "startup|resume|clear|compact",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "bash \"${CLAUDE_PLUGIN_ROOT}\"/scripts/session-instructions.sh"
+          }
+        ]
       }
     ],
     "PreToolUse": [
