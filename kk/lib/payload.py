@@ -33,10 +33,22 @@ def layout_at(path):
     return manifest
 
 
-def fingerprint(root):
-    """Bind the journal to the validated tree, including relative link targets."""
+GUARD_CACHE = Path("klaude-plugin/scripts/guard/__pycache__")
+GUARD_BYTECODE = re.compile(r"guard\.[\w-]+(?:\.opt-[0-9]+)?\.pyc(?:\.[0-9]+)?")
+
+
+def fingerprint(root, *, legacy=False):
+    """Bind all shipped files and link targets. Task 3 journals also hashed bytecode."""
     digest = hashlib.sha256()
+    cache = root / GUARD_CACHE
     for path in sorted(root.rglob("*")):
+        if not legacy and not path.is_symlink():
+            if path == cache and path.is_dir():
+                continue
+            # CPython publishes its cache by renaming a .pyc.<number>
+            # temporary file. Either name can appear or disappear mid-walk.
+            if path.parent == cache and GUARD_BYTECODE.fullmatch(path.name) and (path.is_file() or not path.exists()):
+                continue
         if path.is_symlink():
             identity = ["link", os.readlink(path)]
         elif path.is_dir():
@@ -51,6 +63,26 @@ def fingerprint(root):
             raise ValueError("unexpected file type in candidate: {}".format(path))
         digest.update(json.dumps([path.relative_to(root).as_posix(), identity]).encode() + b"\n")
     return digest.hexdigest()
+
+
+def verify_saved(root, saved):
+    if not root.is_dir() or root.is_symlink():
+        raise ValueError("journaled payload is missing: {}".format(root))
+    if "digest_format" in saved:
+        if type(saved["digest_format"]) is not int or saved["digest_format"] != 2:
+            raise ValueError("unsupported release digest format")
+    if not saved.get("digest") and ("digest_format" in saved or "source" in saved):
+        raise ValueError("missing journaled release digest")
+    if saved.get("digest") and fingerprint(root, legacy="digest_format" not in saved) != saved["digest"]:
+        raise ValueError("journaled payload changed: {}".format(root))
+    # Re-derive executable cache bytes from the verified source before
+    # exercising the registered handler; an open interpreter can recreate them.
+    cache = root / GUARD_CACHE
+    if cache.is_dir() and cache.resolve() == cache:
+        for path in cache.glob("*.pyc"):
+            if GUARD_BYTECODE.fullmatch(path.name) and not path.is_symlink() and path.is_file():
+                path.unlink(missing_ok=True)
+    validate_layout(root, root.name)
 
 
 def tag_name(value):

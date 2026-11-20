@@ -191,7 +191,7 @@ The 14 days run from the moment a release was superseded, not from its activatio
 
 The entry point `$KK_HOME/bin/kk` is deliberately small. It reads the state file and dispatches to the code of a release. Which release depends on the command:
 
-- **`rollback` runs from the release it restores.** After an interrupted upgrade that is the release still recorded as active, because the candidate never took over. Otherwise it is the rollback target. Either way that release's activation code has already activated it on this machine once, and nothing from the release being left is loaded. A release that reached *ready* therefore cannot break the way back from itself, even if its own dispatcher or rollback code is faulty.
+- **`rollback` runs from the release it restores.** During an interrupted rollback, retry selects the restore target already in the journal. During an upgrade in *activating*, it selects the release still recorded as active. Before activation begins and after promotion, it selects the recorded rollback target. The previous stable dispatcher stays in place throughout mixed activation. The target’s own dispatcher also works if the stable copy is damaged.
 - **Everything else runs from the active release,** including `status` and the resumption of an interrupted upgrade. A pending candidate's code runs only its own activation and verification. This is what lets recovery work when a candidate's own code is broken.
 
 A promoted release may replace the stable entry point, so the entry point can be the broken part. Every release carries its own copy for that case: the adopter runs `$KK_HOME/releases/<version>/kk/bin/kk rollback` from the rollback target, and `kk upgrade` prints that command when it finishes. This path depends only on the target's directory and on the state file.
@@ -225,6 +225,10 @@ The state file records:
 - when each retained release stopped being active;
 - a hash of the override file as it was when the owned Codex files were last written;
 - the paths installed outside `$KK_HOME`.
+
+For Claude activation, the candidate records its local or tagged `source`, validated `digest`, `digest_format`, phase and current `step`. A rollback sets `operation` to `rollback` and records any `abandoned` candidate version. Placed releases retain their source and digest so a later tag retry can identify and verify the directory. Format 2 fingerprints exclude only the guard interpreter’s derived bytecode and its temporary cache writes. Task 3 pending journals used a full-tree digest. An unknown digest format stops verification.
+
+Promotion commits the active version and rollback target before publishing a changed stable dispatcher. The `pending_entry` and `pending_entry_sha256` fields name the promoted release and the validated dispatcher bytes until publication completes. A plain `kk upgrade` finishes the write offline after an interruption. Rollback can restore its target instead.
 
 Every write to it and to an owned file is a write to a temporary file followed by a rename. That keeps each file readable but does not stop two commands from interleaving: a scheduled upgrade and a manual rollback could leave the marketplaces, the vendor installs and the state file describing different releases. `upgrade`, `rollback`, `apply` and resumption therefore hold one exclusive lock on `$KK_HOME` for their whole run. A second writer exits at once and names the first. It is an operating-system file lock, released when its holder exits, so a crashed run leaves nothing stale. Launchers and `status` do not take it.
 

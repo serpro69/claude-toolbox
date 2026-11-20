@@ -96,7 +96,7 @@
 - 2026-11-20, baseline issue (unassigned): 16 of 17 repository suites passed using Python 3.11 for the TOML checks. The template-sync suite’s “Rejected base is logged” assertion also failed on unmodified `60661249` with jq 1.6. Investigate the malformed-base logging case in `test/test-template-sync.sh` separately and verify the expected diagnostic on that jq version.
 
 ## Task 4: Upgrade, rollback and recovery for Claude
-- **Status:** pending
+- **Status:** done
 - **Depends on:** Task 3
 - **Size:** M
 - **Can run in parallel with:** Task 5, Task 7, Task 8
@@ -107,11 +107,18 @@ Task 4 pruning must account for unpromoted directories retained under `releases/
 Task 4 must distinguish interpreter-generated guard bytecode from a changed release when checking a previously placed candidate. The first-install fingerprint covers the full tree. A second interpreter writing its cache can therefore trigger a conservative rebuild on retry. Verify the policy with an open session before extending it to active-release upgrades.
 
 ### Subtasks
-- [ ] 4.1 Implement the hand-off: fetch, staging and validation from the active release's code; activation and verification from the candidate's; rollback from the code of the release it restores (the active release after an interrupted upgrade, the rollback target otherwise); status and resumption from the active release
-- [ ] 4.2 Journal the candidate's phase before each activation step and implement resumption of an interrupted upgrade
-- [ ] 4.3 Implement `kk rollback` to the rollback target, the recovery command `kk upgrade` prints, and pruning of releases that are not active, not the rollback target, and stopped being active more than 14 days ago
-- [ ] 4.4 Extend the stub-based suite: upgrade, interruption at each activation step followed by resume and by rollback, pruning with a release that was active for a month and superseded yesterday → verify: after every interruption case `kk status` reports the mixed state and both ways out work; the month-old release is kept
-- [ ] 4.5 Add the post-promotion case: promote a release, make its `kk/lib` unreadable, then break the stable entry point too → verify: the previous release is restored through the stable entry point in the first state and through the copy inside the rollback target in the second
+- [x] 4.1 Implement the hand-off: fetch, staging and validation from the active release's code; activation and verification from the candidate's; rollback from the code of the release it restores (the active release after an interrupted upgrade, the rollback target otherwise); status and resumption from the active release
+- [x] 4.2 Journal the candidate's phase before each activation step and implement resumption of an interrupted upgrade
+- [x] 4.3 Implement `kk rollback` to the rollback target, the recovery command `kk upgrade` prints, and pruning of releases that are not active, not the rollback target, and stopped being active more than 14 days ago
+- [x] 4.4 Extend the stub-based suite: upgrade, interruption at each activation step followed by resume and by rollback, pruning with a release that was active for a month and superseded yesterday → verify: after every interruption case `kk status` reports the mixed state and both ways out work; the month-old release is kept
+- [x] 4.5 Add the post-promotion case: promote a release, make its `kk/lib` unreadable, then break the stable entry point too → verify: the previous release is restored through the stable entry point in the first state and through the copy inside the rollback target in the second
+
+### Execution context
+
+- 2026-11-20, baseline `fecd2a3e`. Task 3 provides the three-directory Claude payload, first-install journal and dispatcher. This task adds the active-release writer paths and retains the first-install contracts. The Codex guard and the first public tag remain later work.
+- 2026-11-20, implemented: the active release owns preparation and resumption. The selected candidate or rollback target owns activation. The journal names each step before its side effects, including the target of an interrupted rollback. Successfully verified releases and abandoned tagged candidates retain their source and digest. Pruning uses the time a release stopped serving new sessions.
+- 2026-11-20, verified: 25 tests passed on CPython 3.8.20 and 3.10.12. In a disposable Claude Code 2.1.296 session, a second interpreter generated guard bytecode without invalidating the candidate. The same session successfully ran its read hook before resumption, after promotion and after rollback. [Verification record](verification/task-4/README.md)
+- 2026-11-20, reviewed: the isolated code reviewer and external Claude reviewer closed the tagged retry and dispatcher recovery findings. Final tests cover interruptions before and after dispatcher publication, restoration through a damaged stable symlink, and validation against the journaled dispatcher digest. The template-sync assertion remains the previously recorded repository-wide failure.
 
 ## Task 5: Claude plugin instructions, statusline and plugin root
 - **Status:** pending
