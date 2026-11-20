@@ -108,6 +108,8 @@ Retention starts when a release stops serving new sessions. A placed directory w
 5. In `klaude-plugin/scripts/set-plugin-root.sh`, use the script's parent directory as the plugin root when it sits under the toolbox home's `releases/`; otherwise keep the resolver. → verify: `test/test-cpr.sh` passes and a new case covers the toolbox-home branch.
 6. Run `make generate-kodex` and the structure tests. Plugin prose must not reference repository documents.
 
+The instruction switch is the boolean `claude.instructions` in `${XDG_CONFIG_HOME:-~/.config}/kk/config.json` and defaults to `true`. It controls the context supplied by the plugin hook. Existing project imports still load through Claude. The plugin files are canonical, and `make generate-claude-assets` keeps the four regular files used by template sync current until retirement.
+
 ## Claude launch layer
 
 1. Create `kk/baseline/claude.json`: preferences (effort level, environment variables), the statusline script's path relative to the release, the default allow entries with a placeholder for the release directory, and the opt-in catalogue. Use the template's adopter defaults, not this repository's settings: `.github/scripts/template-cleanup.sh` run with no options removes the `model` key and sets effort `high`, so the baseline has no `model` and has `effortLevel: high`. Take the environment variables from `.claude/settings.json`. Do not copy its pinned model or `xhigh`; they are the maintainer's.

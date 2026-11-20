@@ -173,11 +173,12 @@ Missing config files leave the baseline active. Invalid JSON or invalid supporte
 
 ## Hooks
 
-The Claude plugin ships two hooks. It needs Bash, `jq`, Python 3.8+ and Claude Code 2.1.295+ for the declared [`onFailure: "block"` behavior](https://code.claude.com/docs/en/hooks#block-the-action-when-a-hook-fails).
+The Claude plugin ships three hook handlers. It needs Bash, `jq`, Python 3.8+ and Claude Code 2.1.295+ for the declared [`onFailure: "block"` behavior](https://code.claude.com/docs/en/hooks#block-the-action-when-a-hook-fails).
 
 | Hook | Trigger | Description |
 |------|---------|-------------|
 | Plugin root export | `SessionStart` | Exports `TOOLBOX_PLUGIN_ROOT` into the session environment so every Bash call has a reliable path to the plugin installation directory |
+| Session instructions | `SessionStart` on startup, resume, clear and compaction | Supplies the plugin’s behavioral instructions. Git-marketplace installs also supply plugin-root guidance. Each legacy project instruction file takes precedence over the corresponding hook text. |
 | Permission guard | `PreToolUse` on `Bash`, `Read`, `Grep`, `Glob`, `Edit`, `Write`, `NotebookEdit`, and capy execution tools | Enforces secrets, destructive-command rules, and protected configuration paths; denies on guard failures |
 
 Ordinary allowed calls produce no output and exit 0; invalid-config warnings may emit `systemMessage`. Denials emit JSON, a reason on stderr, and exit 2. Missing/broken interpreters, a corrupt declaration, crashes and malformed engine output deny the call. Claude also blocks hook failures/timeouts through `onFailure: "block"`. A machine without a working Python interpreter blocks every matched tool, including reads, until repaired.
@@ -252,6 +253,14 @@ Rich statusline with model, context %, git branch, session duration, thinking mo
     ```
 
 ## Project Instructions
+
+To turn off the Claude plugin’s instruction hook, set `claude.instructions` to `false` in `${XDG_CONFIG_HOME:-~/.config}/kk/config.json`.
+
+```json
+{"claude": {"instructions": false}}
+```
+
+The default is `true`. Plugin-only projects receive the toolbox’s behavioral guidance, including its task-tracking and commit-message conventions. The hook reads the switch at each matching session event. An invalid value fails the instruction hook with a diagnostic naming the configuration file. Claude still loads any instruction files that your project imports.
 
 - `CLAUDE.md` — project-specific instructions for Claude Code (checked into the repo)
 - `.claude/CLAUDE.extra.md` — behavioral instructions (independent thinking, fail-loud, assumptions)

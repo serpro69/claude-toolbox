@@ -20,6 +20,7 @@ Use `/kk:brainstorm` for an optional conversation about a technical idea or deci
 
 - **16 workflow and utility skills** — `/kk:design` → `/kk:review-design` → `/kk:implement` → `/kk:review-code` → `/kk:test` → `/kk:document`, plus utilities including `/kk:clarify-docs` for existing documentation and PR drafts, and manual `/kk:handoff` publication of task context to a secret GitHub gist
 - **Commands** — isolated variants for code review, CoVe and spec review
+- **Session instructions** — Claude receives the packaged guidance at startup, resume, clear and compaction. Git-marketplace installs also receive help locating skill files. [Behavioral instructions](instructions/behavior.md) · [Plugin-root guidance](instructions/plugin-root.md)
 - **Hooks** — permission guard for secrets, destructive operations and protected configuration on Bash, file tools and capy execution tools
 - **Profiles** — per-domain content (Go, Java, JS/TS, Kotlin, K8s, Python) with review checklists, implementation gotchas, design prompts, test validators, and doc rubrics
 

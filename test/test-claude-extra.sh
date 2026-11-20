@@ -37,6 +37,19 @@ FIXTURES_DIR="$SCRIPT_DIR/fixtures"
 
 log_section "Section 1: File Existence"
 
+assert_same_asset() {
+  if cmp -s "$REPO_ROOT/klaude-plugin/$1" "$REPO_ROOT/.claude/$2"; then
+    log_pass "$2 matches the shipped plugin asset"
+  else
+    log_fail "$2 is stale or missing; run make generate-claude-assets"
+  fi
+}
+assert_same_asset instructions/behavior.md CLAUDE.extra.md
+assert_same_asset instructions/plugin-root.md toolbox/CLAUDE.md
+for script in statusline.sh statusline_enhanced.sh; do
+  assert_same_asset "statusline/$script" "toolbox/scripts/$script"
+done
+
 log_test "CLAUDE.extra.md exists"
 assert_file_exists "$REPO_ROOT/.claude/CLAUDE.extra.md" "CLAUDE.extra.md should exist"
 

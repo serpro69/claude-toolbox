@@ -54,6 +54,71 @@ assert_deny() {
 }
 
 # =============================================================================
+# SessionStart instruction delivery
+# =============================================================================
+log_section "SessionStart instruction delivery"
+instructions_dir=$(create_temp_dir "kk-session-instructions")
+TEMP_DIRS+=("$instructions_dir")
+project="$instructions_dir/project"
+plugin="$REPO_ROOT/klaude-plugin"
+kk_home="$instructions_dir/data/kk"
+release="$kk_home/releases/v1.0.0/klaude-plugin"
+config="$instructions_dir/config/kk/config.json"
+mkdir -p "$project/src" "$release/scripts" "$(dirname "$config")" "$instructions_dir/home"
+git init -q "$project"
+cp -R "$plugin/instructions" "$release/"
+cp "$plugin/scripts/"{session-instructions,release-plugin}.sh "$release/scripts/"
+
+session_context() {
+  local root=$1 event=$2 command payload
+  command=$(jq -er --arg event "$event" '.hooks.SessionStart[] | (.matcher // ".*") as $pattern
+    | select($event | test($pattern)) | .hooks[] | select(.type == "command")
+    | .command | select(endswith("/scripts/session-instructions.sh"))' "$plugin/hooks/hooks.json") || return 1
+  payload=$(jq -nc --arg source "$event" --arg cwd "$project/src" '{hook_event_name:"SessionStart",source:$source,cwd:$cwd}')
+  env CLAUDE_PROJECT_DIR="${3:-}" HOME="$instructions_dir/home" KK_HOME="$kk_home" \
+    XDG_CONFIG_HOME="$instructions_dir/config" CLAUDE_PLUGIN_ROOT="$root" bash -c "$command" <<<"$payload"
+}
+
+for event in startup resume clear compact; do
+  output=$(session_context "$plugin" "$event")
+  if jq -e --rawfile behavior "$plugin/instructions/behavior.md" --rawfile hint "$plugin/instructions/plugin-root.md" '
+      .hookSpecificOutput | .hookEventName == "SessionStart" and
+      (.additionalContext | contains($behavior) and contains($hint))' <<<"$output" >/dev/null; then
+    log_pass "$event sends both packaged instructions for a clean plugin-only project"
+  else
+    log_fail "$event plugin-only instruction delivery"
+  fi
+done
+output=$(session_context "$release" startup)
+assert_equals "$(cat "$release/instructions/behavior.md")" "$(jq -r '.hookSpecificOutput.additionalContext' <<<"$output")" \
+  "A managed release sends just its behavior"
+mkdir -p "$instructions_dir/other-project/.claude"
+touch "$instructions_dir/other-project/.claude/CLAUDE.extra.md"
+output=$(session_context "$release" startup "$instructions_dir/other-project")
+assert_equals "" "$output" "The explicit Claude project directory takes precedence over the event cwd"
+mkdir -p "$project/.claude/toolbox"
+touch "$project/.claude/CLAUDE.extra.md"
+output=$(session_context "$release" compact)
+assert_equals "" "$output" "Legacy behavior suppresses the managed hook, even from a subdirectory"
+output=$(session_context "$plugin" resume)
+assert_equals "$(cat "$plugin/instructions/plugin-root.md")" "$(jq -r '.hookSpecificOutput.additionalContext' <<<"$output")" \
+  "The legacy behavior file suppresses just that section on a plugin-only install"
+touch "$project/.claude/toolbox/CLAUDE.md"
+output=$(session_context "$plugin" clear)
+assert_equals "" "$output" "Existing legacy instructions both stay under project control"
+mv "$project/.claude" "$instructions_dir/legacy"
+printf '%s\n' '{"claude":{"instructions":false}}' >"$config"
+output=$(session_context "$plugin" startup)
+assert_equals "" "$output" "The adopter can turn off plugin instruction injection"
+printf '%s\n' '{"claude":{"instructions":"false"}}' >"$config"
+if session_context "$release" startup >"$instructions_dir/out" 2>"$instructions_dir/err"; then
+  log_fail "An invalid instruction switch should identify the configuration problem"
+else
+  assert_equals "" "$(cat "$instructions_dir/out")" "Invalid override emits no instructions"
+  assert_output_contains "$config" "cat '$instructions_dir/err'" "Invalid override names the affected file"
+fi
+
+# =============================================================================
 # Section 1: guard.sh — Allow cases
 # =============================================================================
 log_section "Section 1: guard.sh — Allow cases"

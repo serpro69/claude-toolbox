@@ -31,7 +31,9 @@ The canonical source of truth for all workflow functionality. Contains:
 - **`commands/`** — Slash commands for isolated/variant invocations
 - **`agents/`** — Sub-agent definitions (code-reviewer, design-reviewer, spec-reviewer, architecture-reviewer, eval-grader, profile-resolver)
 - **`profiles/`** — Per-domain content (Go, Java, JS/TS, Kotlin, K8s, Python) with detection rules, review checklists, implementation gotchas, design prompts, test validators, and doc rubrics
-- **`hooks/`** — Hook definitions (SessionStart plugin-root export, PreToolUse permission guard)
+- **`hooks/`** — Session instructions and plugin-root export at `SessionStart`, permission guard at `PreToolUse`
+- **`instructions/`** — Behavioral instructions and the Git-marketplace plugin-root guidance
+- **`statusline/`** — Basic and enhanced Claude statusline scripts
 - **`scripts/`** — Plugin-root resolver and canonical `guard/` wrapper, Python engine, policy declaration and license
 
 Skills reference shared instructions via symlinks to `skills/_shared/`. Profiles are referenced via `${CLAUDE_PLUGIN_ROOT}/profiles/` paths (substituted at plugin-load time by the Claude Code harness).
@@ -147,8 +149,8 @@ Regenerated from the live plugin on every docs build (`make plugin-graph-docs`),
 - **`settings.json`** — Generated secrets deny list plus allow entries, env vars, model and plugin marketplace settings
 - **`settings.local.json`** — Per-repo overrides (never synced)
 - **`kk-guard.json`** — Optional project-owned policy additions (never synced)
-- **`CLAUDE.extra.md`** — Behavioral instructions (synced downstream)
-- **`scripts/`** — Statusline scripts (basic and enhanced themes)
+- **`CLAUDE.extra.md`** and **`toolbox/CLAUDE.md`** — Generated instruction copies for existing project imports
+- **`toolbox/scripts/statusline*.sh`** — Generated basic and enhanced statusline copies for template settings
 
 ### Codex Config (`.codex/`)
 

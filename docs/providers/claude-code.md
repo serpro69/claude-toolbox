@@ -16,7 +16,7 @@ Claude Code is the primary provider for claude-toolbox. All skills, agents, and 
 | `.claude/kk-guard.json` | Optional project additions to the permission guard; never replaced by sync |
 | `~/.claude/kk-guard.json` | User-owned, project-scoped destructive/self-modification exceptions |
 | `CLAUDE.md` | Project instructions (checked into repo) |
-| `.claude/CLAUDE.extra.md` | Behavioral instructions |
+| `klaude-plugin/instructions/behavior.md` | Behavioral instructions supplied at session start, with a legacy copy in `.claude/CLAUDE.extra.md` |
 | `klaude-plugin/` | Skills, commands, agents, hooks, profiles |
 
 ## Features

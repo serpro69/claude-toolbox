@@ -99,6 +99,12 @@ Hook definitions in `klaude-plugin/hooks/hooks.json`:
         "type": "command",
         "command": "bash \"${CLAUDE_PLUGIN_ROOT}\"/scripts/set-plugin-root.sh \"${CLAUDE_PLUGIN_ROOT}\""
       }]
+    }, {
+      "matcher": "startup|resume|clear|compact",
+      "hooks": [{
+        "type": "command",
+        "command": "bash \"${CLAUDE_PLUGIN_ROOT}\"/scripts/session-instructions.sh"
+      }]
     }],
     "PreToolUse": [{
       "matcher": "Bash|Read|Edit|Write|NotebookEdit|Grep|Glob|mcp__.+__capy_(execute|execute_file|batch_execute)",
@@ -113,7 +119,9 @@ Hook definitions in `klaude-plugin/hooks/hooks.json`:
 }
 ```
 
-**SessionStart hook:** Exports `TOOLBOX_PLUGIN_ROOT` into the session via `$CLAUDE_ENV_FILE`. A standalone resolver (`cpr.py`) reads `installed_plugins.json` to find the install that applies to the current project (passed as `$CLAUDE_PROJECT_DIR`); the harness-substituted `${CLAUDE_PLUGIN_ROOT}`, passed as an argument, is the fallback. Once set, every Bash tool call in the session has `${TOOLBOX_PLUGIN_ROOT}` available — this gives LLMs a reliable path to the plugin root without guessing.
+The root export writes `TOOLBOX_PLUGIN_ROOT` to `CLAUDE_ENV_FILE`. A machine-managed hook takes the physical root of its own release. A Git-marketplace hook uses `cpr.py` to find the project’s installed version and falls back to the root supplied by Claude.
+
+The instruction hook reads the Markdown shipped beside it. Edit those files in `klaude-plugin/instructions/` and the statusline scripts in `klaude-plugin/statusline/`. Run `make generate-claude-assets` to refresh the regular files that template sync still distributes.
 
 **Permission guard contract:** Read the complete hook payload from stdin (`tool_name`, `tool_input`, `cwd` and optional `permission_mode`). `scripts/guard/guard.sh` buffers the bytes once and invokes `guard.py` under isolated Python. Ordinary allow is silent with exit 0; config warnings may emit only `systemMessage`. Deny emits `hookSpecificOutput.permissionDecision: "deny"`, its reason on stdout and stderr, and exit 2. Missing interpreters, crashes and invalid engine output must deny. Claude's `onFailure: "block"` handles hook launch failures and timeouts; it requires Claude Code 2.1.295+. See [the configuration guide](../user-guide/configuration.md#hooks) for runtime requirements and supported channels.
 

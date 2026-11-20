@@ -11,6 +11,9 @@ on:
       - '.codex/rules/**'
       - '.codex/scripts/guard/**'
       - '.claude/settings.json'
+      - '.claude/CLAUDE.extra.md'
+      - '.claude/toolbox/CLAUDE.md'
+      - '.claude/toolbox/scripts/statusline*.sh'
       - 'cmd/generate-kodex/**'
       - 'scripts/generate-guard.sh'
       - 'scripts/kodex-generate-manifest.yml'
@@ -35,8 +38,10 @@ jobs:
       - name: Regenerate and check freshness
         run: |
           make generate-guard
+          make generate-claude-assets
           make generate-kodex
           generated=(.claude/settings.json .codex/rules .codex/scripts/guard docs/user-guide/configuration.md kodex-plugin .codex/agents)
+          generated+=(.claude/CLAUDE.extra.md .claude/toolbox/CLAUDE.md .claude/toolbox/scripts/statusline{,_enhanced}.sh)
           git diff --exit-code -- "${generated[@]}"
           test -z "$(git ls-files --others --exclude-standard -- "${generated[@]}")"
       - name: Test guard generator
