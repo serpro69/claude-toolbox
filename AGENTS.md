@@ -23,7 +23,7 @@ For API keys and MCP server setup, see the "MCP Server Configuration" section in
 - `kodex-plugin/` — transformed skills for Codex (resolves `${CLAUDE_PLUGIN_ROOT}`, injects headers)
 - `.codex/agents/*.toml` — sub-agent definitions (converted from `klaude-plugin/agents/*.md`)
 
-The permission-guard generator (`scripts/generate-guard.sh`) copies the canonical runtime and license from `klaude-plugin/scripts/guard/` into `.codex/scripts/guard/` and `kodex-guard/scripts/guard/`. It produces both `.codex/rules/default.rules` and `kk/baseline/codex/kk.rules`, updates `.claude/settings.json` `permissions.deny`, and refreshes the marked tables in `docs/user-guide/configuration.md`.
+The permission-guard generator (`scripts/generate-guard.sh`) copies the canonical runtime and license from `klaude-plugin/scripts/guard/` into `.codex/scripts/guard/` and `kodex-guard/scripts/guard/`. It produces both `.codex/rules/default.rules` and `kk/baseline/codex/kk.rules`, writes the same Claude deny list to `.claude/settings.json` and `kk/baseline/claude/deny.json`, and refreshes the marked tables in `docs/user-guide/configuration.md`.
 
 Hand-authored codex files (not generated): `.codex/config.toml`, `.codex/hooks.json`, `.codex/scripts/` except `guard/`, and `AGENTS.md`.
 

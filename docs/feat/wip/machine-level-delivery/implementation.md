@@ -120,6 +120,34 @@ The instruction switch is the boolean `claude.instructions` in `${XDG_CONFIG_HOM
 
 → verify: unit tests for yielding per key and per variable, list composition, each override, the adopter's `--settings` in both forms with the denies intact, an override that tries to empty the deny list, and a malformed override file. → verify: on a real machine, a wrapped session uses the baseline effort level when none is set and the user's when one is; and with hooks disabled, a wrapped session started with the adopter's own `--settings` still refuses to read a decoy secret.
 
+### Claude override format
+
+All fields in `${XDG_CONFIG_HOME:-~/.config}/kk/config.json` are optional. For example, this configuration disables the standing skill grant, enables web search and adds a personal settings file.
+
+```json
+{
+  "claude": {
+    "defaults": {"skills": false},
+    "optIn": {"webSearch": true},
+    "settings": {"env": {"CLAUDE_STATUSLINE_THEME": "nord"}},
+    "settingsFile": "personal.json"
+  }
+}
+```
+
+| Field | Behavior |
+| --- | --- |
+| `claude.defaults` | Boolean switches for `effortLevel`, `env`, `statusLine`, `skills` and `readRelease`. Each defaults to true. |
+| `claude.optIn` | Boolean switches for `mkdir` and `webSearch`. Each defaults to false. |
+| `claude.instructions` | Boolean, enabled by default. The plugin hook reads this switch directly. |
+| `claude.settings` | Claude settings object. Its preferences override toolbox defaults, its environment merges per variable and its permission lists add entries. |
+| `claude.settingsFile` | Path to another Claude settings object, applied after `claude.settings`. Relative paths resolve from the override file's directory. A command-line `--settings` applies last and resolves from the launch directory. |
+| `launchNotice` | Shared boolean switch, enabled by default. Task 11 delivers the update notice. |
+
+Run `kk claude --print-layer` in the intended workspace to inspect the composed settings. A single leading slash in a file permission rule anchors at the directory of its input settings file, or the launch directory for inline command-line JSON. When user, project or local settings enable the Git-marketplace copy, the wrapper supplies a disablement before applying the adopter’s explicit overrides. Claude validates custom settings through a local `get_settings` control request before the interactive or print session starts.
+
+The wrapper yields to a top-level user `effortLevel` wherever it is present. Claude decides which models honor that legacy user key. For models that ignore it, save the per-model level with `/effort`. [Claude effort settings](https://code.claude.com/docs/en/settings-reference#effortlevel)
+
 ## Codex guard plugin
 
 1. Create `kodex-guard/` with a legacy-format manifest named `kk-guard`, `hooks/hooks.json`, and the three adapters ported from `.codex/scripts/`. Copy the matchers from `.codex/hooks.json`. Hook commands locate their scripts through the plugin-root variable Codex provides.

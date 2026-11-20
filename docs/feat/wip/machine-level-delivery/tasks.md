@@ -142,19 +142,25 @@ Task 4 must distinguish interpreter-generated guard bytecode from a changed rele
 - Review closed the custom-home, asset graph, exit-status and path portability findings. When documenting the first release in Task 15, call out that plugin-only users now receive the behavioral instructions by default and can disable the hook through `claude.instructions`.
 
 ## Task 6: Claude launch layer and overrides
-- **Status:** pending
+- **Status:** done
 - **Depends on:** Task 3, Task 5
 - **Size:** M
 - **Can run in parallel with:** Task 7, Task 8, Task 9
 - **Docs:** [implementation.md#claude-launch-layer](./implementation.md#claude-launch-layer), [design.md#launching-claude](./design.md#launching-claude)
 
 ### Subtasks
-- [ ] 6.1 Create `kk/baseline/claude.json`: preferences from the template's adopter defaults as `.github/scripts/template-cleanup.sh` renders them with no options (no `model` key, `effortLevel: high`), environment variables from `.claude/settings.json`, statusline path, default allow entries, opt-in catalogue; do not copy this repository's pinned model or `xhigh`
-- [ ] 6.2 Add `kk/baseline/claude/deny.json` as a target in `scripts/generate-guard.sh` and in every freshness list
-- [ ] 6.3 Implement layer composition: yield per key and per environment variable to the user, project and local settings; always include denies, which nothing composed later can remove; add default allows; disable the Git-marketplace plugin ID only where it is enabled
-- [ ] 6.4 Implement the override file: schema, named settings file, default switches, opt-in grants; overrides set or replace preference keys and add to permission lists; a malformed file stops the launch with a message
-- [ ] 6.5 Implement `kk claude` with `--print-layer`; when the adopter supplies `--settings` as a path or inline JSON, compose it as the top of the layer and pass the one composed file; stop the launch when it cannot be read or parsed
-- [ ] 6.6 Unit tests for yielding, list composition, each override, the adopter's `--settings` in both forms with the denies intact, an override that tries to empty the deny list, and a malformed override → verify: on a real machine a wrapped session uses the baseline effort level when none is set and the user's when one is; with hooks disabled, a wrapped session started with the adopter's own `--settings` refuses to read a decoy secret
+- [x] 6.1 Create `kk/baseline/claude.json`: preferences from the template's adopter defaults as `.github/scripts/template-cleanup.sh` renders them with no options (no `model` key, `effortLevel: high`), environment variables from `.claude/settings.json`, statusline path, default allow entries, opt-in catalogue; do not copy this repository's pinned model or `xhigh`
+- [x] 6.2 Add `kk/baseline/claude/deny.json` as a target in `scripts/generate-guard.sh` and in every freshness list
+- [x] 6.3 Implement layer composition: yield per key and per environment variable to the user, project and local settings; always include denies, which nothing composed later can remove; add default allows; disable the Git-marketplace plugin ID only where it is enabled
+- [x] 6.4 Implement the override file: schema, named settings file, default switches, opt-in grants; overrides set or replace preference keys and add to permission lists; a malformed file stops the launch with a message
+- [x] 6.5 Implement `kk claude` with `--print-layer`; when the adopter supplies `--settings` as a path or inline JSON, compose it as the top of the layer and pass the one composed file; stop the launch when it cannot be read or parsed
+- [x] 6.6 Unit tests for yielding, list composition, each override, the adopter's `--settings` in both forms with the denies intact, an override that tries to empty the deny list, and a malformed override → verify: on a real machine a wrapped session uses the baseline effort level when none is set and the user's when one is; with hooks disabled, a wrapped session started with the adopter's own `--settings` refuses to read a decoy secret
+
+### Execution context
+
+- 2026-11-20, observed at `7d6630b3`. The dispatcher selects the active release and the Task 5 hook already reads `claude.instructions`. The new launcher must use that release’s assets and compose one private settings file per launch without taking the activation lock.
+- 2026-11-20, verified on Linux with Claude Code 2.1.296. Wrapped sessions used the baseline and saved effort levels, including per-model settings. With hooks off and an adopter settings file, the public Read succeeded and the decoy Read was denied. All 36 `kk` tests, generator checks and plugin structure checks passed. The full repository run reproduced the pre-existing template-sync diagnostic failure. [Verification record](verification/task-6/README.md)
+- The isolated code reviewer and Claude Opus 5.5 approved the corrected launcher. Review changes included vendor validation of the composed flag source, effective settings-source selection, per-model effort, and preservation of anchored permission rules. The [override format](implementation.md#claude-override-format) documents how Claude interprets legacy top-level user effort for each model.
 
 ## Task 7: Codex guard plugin with workspace anchoring
 - **Status:** done
@@ -346,6 +352,7 @@ _Runs before Task 16. It was added after the design review and is numbered 18 so
 - [ ] 17.1a Run the Task 1 probe 1.9 (`-c developer_instructions=…` size limit) on macOS, deferred from Task 1 by the maintainer on 2026-11-19 → verify: the macOS limit is recorded in `verification/task-1/` beside the Linux one, with the environment size at the time (on macOS the limit covers arguments and environment together), and the import cap in `design.md` follows its rule: 122,880 bytes, or the lower measured limit less 8 KiB if that is smaller
 - [ ] 17.2 Confirm the pilot record covers every parity-ledger row marked kept or moved, and observe again any row touched by a change made after the pilot
 - [ ] 17.3 Run `/kk:document` to update any remaining docs
+  - Document why the usage is within Anthropic's ToS (see https://github.com/storytold/craft-anything/blob/main/docs/claude-code.md#why-this-is-within-anthropics-terms-as-published-october-2026 as example)
 - [ ] 17.4 Run `/kk:review-code` with bash and python as the language input
 - [ ] 17.5 Run `/kk:review-spec` to verify the implementation matches the design and implementation docs
 - [ ] 17.6 If any non-blocking items remain, ask the maintainer how to follow up, for example with GitHub issues
