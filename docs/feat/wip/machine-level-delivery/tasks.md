@@ -69,7 +69,7 @@
 - 2026-11-20, review housekeeping: automatic approval rejected recursive deletion of `/tmp/kk-task2-review-9rDg8SDN` and `/tmp/kk-review-instructions-8bbx6buc`. These hold review inputs and a synthetic fixture. The maintainer can remove both directories and confirm the paths are absent.
 
 ## Task 3: First install for Claude
-- **Status:** pending
+- **Status:** done
 - **Depends on:** Task 2
 - **Size:** M
 - **Can run in parallel with:** Task 5, Task 7, Task 8
@@ -77,14 +77,23 @@
 
 - **Parts:** 3a — 3.2 to 3.4, stage and validate a release as far as *staged*; 3b — 3.1 and 3.5 to 3.8, first install. The tests in 3.7 grow with each part.
 ### Subtasks
-- [ ] 3.1 Create `kk/bin/kk` (entry point: resolve the toolbox home, read the active release, the rollback target and the candidate's phase with `jq`; for `rollback` run the CLI of the release being restored, which is the active release when a candidate is pending in *activating* and the rollback target otherwise; for everything else run the active release's; all under isolated Python) and `kk/payload.json` (layout version and required directories)
-- [ ] 3.2 Create the state module in `kk/lib/`: a format version, one active release, per-tool state, rollback target with its fallback to the previously active release, candidate phase, the time each release stopped being active, the installed-paths record (a path is recorded before it is written), atomic read-modify-write that keeps unknown fields, and the exclusive writer lock on `$KK_HOME/lock` → verify: a failed rename leaves the previous state file intact; a second writer exits at once and changes nothing; an unknown field survives a rewrite; a higher format version is refused and the file left untouched
-- [ ] 3.3 Create the payload module: fetch from a tag archive or a local checkout, extract only payload directories, reject absolute paths, parent traversal and escaping symlinks → verify: crafted archives are rejected; the plugin's relative symlinks survive
-- [ ] 3.4 Create `kk/selftest/guard-cases.json` and the validation module: payload completeness, guard self-test against the candidate engine, one event through the Claude guard handler as the staged `hooks/hooks.json` registers it, `claude plugin validate` → verify: a candidate with a broken engine fails and the state file is unchanged; so does one whose hook registration names a script missing from the payload
-- [ ] 3.5 Create Claude activation: write the local marketplace manifest, add the marketplace, install the plugin at user scope, verify that `readFromFolder` on the matching user-scope `claude plugin list --json` entry resolves to the candidate plugin directory; stop without replacing anything when `~/.local/bin/kk` exists and is not in the installed-paths record; keep the local marketplace's name in one constant (working value `toolbox`)
-- [ ] 3.6 Add `kk upgrade` for the first-install path, `kk status`, and `install.sh` at the repository root; running the installer again after an interrupted first install resumes from the journaled phase or starts over; the installer warns in one line when `kk` on `PATH` resolves to something other than its own symlink
-- [ ] 3.7 Add `test/kk/` and `test/test-kk.sh` with stub vendor CLIs covering first install, an interrupted first install completed by a second installer run, failed validation, a colliding symlink and two overlapping writers → verify: the suite passes under isolated Python 3.8 syntax checks
-- [ ] 3.8 Do not tag a release that ships `kk` until the maintainer has settled the local marketplace's name ([design.md#open-questions](./design.md#open-questions)); change the constant then
+- [x] 3.1 Create `kk/bin/kk` (entry point: resolve the toolbox home, read the active release, the rollback target and the candidate's phase with `jq`; for `rollback` run the CLI of the release being restored, which is the active release when a candidate is pending in *activating* and the rollback target otherwise; for everything else run the active release's; all under isolated Python) and `kk/payload.json` (layout version and required directories)
+- [x] 3.2 Create the state module in `kk/lib/`: a format version, one active release, per-tool state, rollback target with its fallback to the previously active release, candidate phase, the time each release stopped being active, the installed-paths record (a path is recorded before it is written), atomic read-modify-write that keeps unknown fields, and the exclusive writer lock on `$KK_HOME/lock` → verify: a failed rename leaves the previous state file intact; a second writer exits at once and changes nothing; an unknown field survives a rewrite; a higher format version is refused and the file left untouched
+- [x] 3.3 Create the payload module: fetch from a tag archive or a local checkout, extract only payload directories, reject absolute paths, parent traversal and escaping symlinks → verify: crafted archives are rejected; the plugin's relative symlinks survive
+- [x] 3.4 Create `kk/selftest/guard-cases.json` and the validation module: payload completeness, guard self-test against the candidate engine, one event through the Claude guard handler as the staged `hooks/hooks.json` registers it, `claude plugin validate` → verify: a candidate with a broken engine fails and the state file is unchanged; so does one whose hook registration names a script missing from the payload
+- [x] 3.5 Create Claude activation: write the local marketplace manifest, add the marketplace, install the plugin at user scope, verify that `readFromFolder` on the matching user-scope `claude plugin list --json` entry resolves to the candidate plugin directory; stop without replacing anything when `~/.local/bin/kk` exists and is not in the installed-paths record; keep the local marketplace's name in one constant (working value `toolbox`)
+- [x] 3.6 Add `kk upgrade` for the first-install path, `kk status`, and `install.sh` at the repository root; running the installer again after an interrupted first install resumes from the journaled phase or starts over; the installer warns in one line when `kk` on `PATH` resolves to something other than its own symlink
+- [x] 3.7 Add `test/kk/` and `test/test-kk.sh` with stub vendor CLIs covering first install, an interrupted first install completed by a second installer run, failed validation, a colliding symlink and two overlapping writers → verify: the suite passes under isolated Python 3.8 syntax checks
+- [ ] 3.8 Do not tag a release that ships `kk` until the maintainer has settled the local marketplace's name ([design.md#open-questions](./design.md#open-questions)); change the constant then **Open pre-tag decision.**
+
+### Execution context
+
+- 2026-11-20, accepted by the maintainer: Task 3 requires `kk/`, `klaude-plugin/` and `kodex-plugin/`. Task 7 adds `kodex-guard/` to the required payload when it introduces the plugin. This makes first install testable from the current checkout. The final release requires all four directories.
+- 2026-11-20, implemented on base `60661249`: a standalone installer and checkout entry point, private staging, guard and dispatcher preflight, an atomic journal with a nonblocking writer lock, user-scope Claude activation, path ownership checks and recovery after interruption. A different explicit source can replace a pending candidate. A retained tag directory belonging to another source is a collision.
+- 2026-11-20, verified on Linux: all 18 first-install tests passed on CPython 3.10.12 and 3.8.20. Claude Code 2.1.296 installed from this checkout in a disposable configuration, then recovered the same release after a deliberately interrupted vendor operation. [Verification record](verification/task-3/README.md)
+- 2026-11-20, reviewed: the isolated code reviewer approved the recovery changes. External review closed its recovery and housekeeping findings on the corrected worktree. The final review diff includes the same-tag collision guard. The marketplace name remains open for the first tag that ships `kk`.
+- Review scratch remains at `/tmp/kk-review-first-install-iEg4yT1x`, containing review diffs and the baseline checkout. The temporary mount does not support Trash and automatic approval rejected permanent deletion. The maintainer can remove this directory and verify its absence.
+- 2026-11-20, baseline issue (unassigned): 16 of 17 repository suites passed using Python 3.11 for the TOML checks. The template-sync suite’s “Rejected base is logged” assertion also failed on unmodified `60661249` with jq 1.6. Investigate the malformed-base logging case in `test/test-template-sync.sh` separately and verify the expected diagnostic on that jq version.
 
 ## Task 4: Upgrade, rollback and recovery for Claude
 - **Status:** pending
@@ -92,6 +101,10 @@
 - **Size:** M
 - **Can run in parallel with:** Task 5, Task 7, Task 8
 - **Docs:** [implementation.md#kk-foundation](./implementation.md#kk-foundation), [design.md#rollback-and-interrupted-upgrades](./design.md#rollback-and-interrupted-upgrades)
+
+Task 4 pruning must account for unpromoted directories retained under `releases/` after an interrupted first install was superseded. A session may have loaded that directory. Preserve the 14-day support window before removing it and check the launch symlink’s destination as well as its ownership record before replacing it.
+
+Task 4 must distinguish interpreter-generated guard bytecode from a changed release when checking a previously placed candidate. The first-install fingerprint covers the full tree. A second interpreter writing its cache can therefore trigger a conservative rebuild on retry. Verify the policy with an open session before extending it to active-release upgrades.
 
 ### Subtasks
 - [ ] 4.1 Implement the hand-off: fetch, staging and validation from the active release's code; activation and verification from the candidate's; rollback from the code of the release it restores (the active release after an interrupted upgrade, the rollback target otherwise); status and resumption from the active release
@@ -138,7 +151,7 @@
 - **Docs:** [implementation.md#codex-guard-plugin](./implementation.md#codex-guard-plugin), [design.md#guard-changes](./design.md#guard-changes)
 
 ### Subtasks
-- [ ] 7.1 Create `kodex-guard/` with a manifest named `kk-guard`, `hooks/hooks.json` with the matchers from `.codex/hooks.json`, and the three adapters ported from `.codex/scripts/`
+- [ ] 7.1 Create `kodex-guard/` with a manifest named `kk-guard`, `hooks/hooks.json` with the matchers from `.codex/hooks.json`, and the three adapters ported from `.codex/scripts/`. Add the directory to `kk/payload.json` and test that a payload missing it is rejected (Task 3 decision).
 - [ ] 7.2 Anchor policy to the hook's launch directory (git top level, else the directory); use the payload directory for operands only; read the capy registration from the workspace
 - [ ] 7.3 Add the engine copy `kodex-guard/scripts/guard/` and `kk/baseline/codex/kk.rules` as targets in `scripts/generate-guard.sh`; update the Makefile, `generated-check.yml`, `release.yml`, `test/test-generate-guard.sh` and the generated-files text in `AGENTS.md`
 - [ ] 7.4 Add a `kk-guard` entry to `.agents/plugins/marketplace.json`

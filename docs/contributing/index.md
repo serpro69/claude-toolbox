@@ -118,7 +118,7 @@ Hook definitions in `klaude-plugin/hooks/hooks.json`:
         "hooks": [
           {
             "type": "command",
-            "command": "${CLAUDE_PLUGIN_ROOT}/scripts/guard/guard.sh",
+            "command": "\"${CLAUDE_PLUGIN_ROOT}\"/scripts/guard/guard.sh",
             "timeout": 15,
             "onFailure": "block"
           }

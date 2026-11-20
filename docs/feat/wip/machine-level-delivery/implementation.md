@@ -85,6 +85,12 @@ Deliver one complete path for Claude: a first install on a clean machine, an upg
 
 → verify: with stub vendor CLIs, the suite covers first install, an interrupted first install completed by running the installer again, upgrade, failed validation, interruption at each activation step followed by resume and by rollback, two overlapping writers, and pruning. The pruning case keeps a release that was active for a month and superseded yesterday. A rollback case promotes a release, makes its `kk/lib` unreadable, and restores the previous one twice: through the stable entry point, and through the copy inside the rollback target after the stable entry point has been broken too.
 
+### Running the Claude first-install increment
+
+From this checkout, `./install.sh --local .` installs the working tree. `~/.local/bin/kk status` shows the promoted release and Claude’s state. If installation stops partway, run the installer again. It verifies the journaled candidate, resumes an intact copy locally and rebuilds an incomplete copy from its recorded source. `KK_HOME` selects the toolbox directory. The stable symlink lives in `~/.local/bin/`.
+
+With no source argument, a fresh install selects the latest stable GitHub release. `--version vX.Y.Z` selects a tag and `KK_REPOSITORY=owner/repo` selects a fork. A tag needs to contain this installer and the declared payload. The marketplace name must be settled before publishing the first such tag. Task 3 requires the three directories in `kk/payload.json`. Task 7 adds the fourth when it creates the Codex guard.
+
 ## Claude plugin changes
 
 1. Create `klaude-plugin/instructions/behavior.md` from `.claude/CLAUDE.extra.md` and make it the single source. Until the template is retired, `.claude/CLAUDE.extra.md` becomes a generated copy with a freshness check, so template sync keeps delivering it. → verify: `test/test-claude-extra.sh` still passes, and the copy is byte-identical.
