@@ -26,7 +26,13 @@ assert_equals "$(jq -c '.secrets | unique | map("Read(" + . + ")")' "$fixture/kl
 
 log_test "Generation is idempotent and alternate output leaves inputs alone"
 bash "$fixture/scripts/generate-guard.sh" "$fixture/second"
+cmp "$fixture/kk/baseline/codex/kk.rules" "$fixture/.codex/rules/default.rules"
+for file in guard.sh run-guard.py guard.py guard-rules.json LICENSE.md; do
+  cmp "$fixture/klaude-plugin/scripts/guard/$file" "$fixture/kodex-guard/scripts/guard/$file"
+done
+log_pass "Release rules, engine and license match the canonical projections"
 for file in .claude/settings.json .codex/rules/default.rules docs/user-guide/configuration.md \
+  kk/baseline/codex/kk.rules kodex-guard/scripts/guard/{guard.sh,run-guard.py,guard.py,guard-rules.json,LICENSE.md} \
   .codex/scripts/guard/guard.sh .codex/scripts/guard/run-guard.py .codex/scripts/guard/guard.py \
   .codex/scripts/guard/guard-rules.json .codex/scripts/guard/LICENSE.md; do
   cmp "$fixture/$file" "$fixture/second/$file"

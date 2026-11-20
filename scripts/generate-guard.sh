@@ -88,10 +88,13 @@ for file in guard.sh run-guard.py guard.py guard-rules.json LICENSE.md; do
   cp -p "$GUARD_SOURCE/$file" "$stage/$file"
 done
 mkdir -p "$OUTPUT_ROOT/.claude" "$OUTPUT_ROOT/.codex/rules" \
-  "$OUTPUT_ROOT/.codex/scripts/guard" "$OUTPUT_ROOT/docs/user-guide"
+  "$OUTPUT_ROOT/.codex/scripts/guard" "$OUTPUT_ROOT/docs/user-guide" \
+  "$OUTPUT_ROOT/kodex-guard/scripts/guard" "$OUTPUT_ROOT/kk/baseline/codex"
 cp "$stage/settings.json" "$OUTPUT_ROOT/.claude/settings.json"
 cp "$stage/default.rules" "$OUTPUT_ROOT/.codex/rules/default.rules"
+cp "$stage/default.rules" "$OUTPUT_ROOT/kk/baseline/codex/kk.rules"
 cp "$stage/configuration.md" "$OUTPUT_ROOT/$DOCS"
 for file in guard.sh run-guard.py guard.py guard-rules.json LICENSE.md; do
   cp -p "$stage/$file" "$OUTPUT_ROOT/.codex/scripts/guard/$file"
+  cp -p "$stage/$file" "$OUTPUT_ROOT/kodex-guard/scripts/guard/$file"
 done

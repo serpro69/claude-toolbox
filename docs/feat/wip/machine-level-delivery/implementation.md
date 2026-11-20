@@ -124,13 +124,15 @@ The instruction switch is the boolean `claude.instructions` in `${XDG_CONFIG_HOM
 
 1. Create `kodex-guard/` with a legacy-format manifest named `kk-guard`, `hooks/hooks.json`, and the three adapters ported from `.codex/scripts/`. Copy the matchers from `.codex/hooks.json`. Hook commands locate their scripts through the plugin-root variable Codex provides.
 2. Change the adapters' anchoring per [Guard changes](design.md#guard-changes): policy root from the hook's launch directory, payload directory for operands only. The capy registration check reads the workspace's `.codex/hooks.json`. Use the result of the launch-directory probe.
-3. Extend `scripts/generate-guard.sh` with three targets: the engine copy in `kodex-guard/scripts/guard/`, `kk/baseline/codex/kk.rules`, and the deny list above. Keep the legacy targets. Update every freshness list that names generated paths: the Makefile, `generated-check.yml`, `release.yml`, `test/test-generate-guard.sh` and the generated-files section of `AGENTS.md`.
+3. Task 7 adds the engine copy in `kodex-guard/scripts/guard/` and the native rules in `kk/baseline/codex/kk.rules` to `scripts/generate-guard.sh`. Task 6 adds the Claude deny list. Keep the legacy targets. CI and both release workflows use the Makefile’s `check-guard` freshness target.
 4. Extend the guard's protected paths with the toolbox home, the override file, the owned files under the Codex home, and Codex's plugin cache. Add path tokens for the three home directories the way the temp-directory token works, with tests in `test/guard/test_guard.py`. Regenerate the documentation table.
 5. Add a `kk-guard` entry to the repository's Codex marketplace manifest so plugin-only Codex users can install the guard too.
 6. Port the adapter cases from `test/test-codex-hooks.sh` to the new adapters and add anchoring cases: launch directory in one repository, payload directory in another, policy from the first. Update `test/test-codex-structure.sh`.
 7. Add the guard identity function as a standalone module, `kk/lib/guard_identity.py`: a SHA-256 over the sorted relative path, the mode and the bytes of every file under a guard bundle, with the manifest's `version` field removed before hashing. It must not import the rest of `kk/lib/`, because the release workflow calls it too. → verify: two bundles that differ only in the manifest version share an identity; a one-byte change in an adapter, or a changed executable bit, changes it.
 
 → verify: the ported suite passes against the new adapters; a live run from a subdirectory enforces a rule added in the workspace's `.claude/kk-guard.json`.
+
+Run `python3 -I kk/lib/guard_identity.py kodex-guard` to print the guard SHA-256. The hash covers each relative path, its release-archive mode and its contents. A regular file with any execute permission has mode 0755 in a release archive; other regular files have mode 0644. Local umask differences therefore leave the identity stable. A relative link inside the bundle contributes its target text. Only the top-level manifest version value is masked, so formatting elsewhere in the manifest still counts.
 
 ## Codex baseline and launch
 

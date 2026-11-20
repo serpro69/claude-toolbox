@@ -5,7 +5,7 @@ SHELL      := $(shell which bash)
 VERSION ?=
 REF     ?=
 
-.PHONY: vendor-profiles generate-kodex generate-guard generate-claude-assets generate-all test-structure plugin-graph plugin-graph-docs docs-serve docs-build release pre-release
+.PHONY: vendor-profiles generate-kodex generate-guard check-guard generate-claude-assets generate-all test-structure plugin-graph plugin-graph-docs docs-serve docs-build release pre-release
 
 vendor-profiles:
 	go test ./cmd/vendor-profiles/...
@@ -19,6 +19,13 @@ generate-kodex:
 
 generate-guard:
 	bash scripts/generate-guard.sh
+
+GUARD_GENERATED := .claude/settings.json .codex/rules .codex/scripts/guard docs/user-guide/configuration.md \
+	kodex-guard/scripts/guard kk/baseline/codex/kk.rules
+
+check-guard: generate-guard
+	git diff --exit-code -- $(GUARD_GENERATED)
+	test -z "$$(git ls-files --others --exclude-standard -- $(GUARD_GENERATED))"
 
 generate-claude-assets:
 	mkdir -p .claude/toolbox/scripts

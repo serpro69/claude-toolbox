@@ -195,7 +195,8 @@ def validate_layout(root, version):
         if directory.is_symlink() or not directory.is_dir():
             raise ValueError("missing payload directory: {}".format(name))
     for name in ("bin/kk", "lib/run.py", "lib/cli.py", "lib/state.py", "lib/claude.py",
-                 "lib/payload.py", "lib/validation.py", "selftest/guard-cases.json"):
+                 "lib/payload.py", "lib/validation.py", "lib/guard_identity.py", "selftest/guard-cases.json",
+                 "baseline/codex/kk.rules"):
         if not (root / "kk" / name).is_file():
             raise ValueError("missing release file: kk/{}".format(name))
     versions = []
@@ -206,3 +207,9 @@ def validate_layout(root, version):
         versions.append(tag_name("v" + plugin["version"]))
     if versions[0] != versions[1] or (TAG.fullmatch(version) and versions[0] != version):
         raise ValueError("release tag and plugin manifest versions disagree")
+    guard = read_json(root / "kodex-guard/.codex-plugin/plugin.json")
+    if not isinstance(guard, dict) or guard.get("name") != "kk-guard" or not isinstance(guard.get("version"), str):
+        raise ValueError("invalid Codex guard manifest")
+    tag_name("v" + guard["version"])  # The guard version is independent of the skills release.
+    if not (root / "kodex-guard/hooks/hooks.json").is_file():
+        raise ValueError("missing release file: kodex-guard/hooks/hooks.json")
