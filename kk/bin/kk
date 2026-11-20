@@ -17,13 +17,15 @@ if [[ -f "$state" ]]; then
     version=$(jq -er --arg command "${1:-}" '
         if .format_version != 1 then error("unsupported kk state format")
         elif $command == "rollback" then
-            if .candidate.phase == "activating" then .active else .rollback_target end
+            if .candidate.operation == "rollback" then .candidate.version
+            elif .candidate.phase == "activating" then .active else .rollback_target end
         else .active // .candidate.version end
         | if type == "string" and test("^(v[0-9][0-9A-Za-z.+-]*|local-[a-f0-9]{32})$") then .
           else error("no release available for this command") end
     ' "$state")
     release=$root/releases/$version
-    if [[ ! -d "$release" && -d "$root/staging/$version" ]]; then
+    if [[ ! -d "$release" && -d "$root/staging/$version" && "${1:-}" != rollback ]] &&
+            jq -e '.active == null' "$state" >/dev/null; then
         release=$root/staging/$version
     fi
     exec python3 -I -B "$release/kk/lib/run.py" "$@"

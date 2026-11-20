@@ -4,9 +4,13 @@ import fcntl
 import json
 import os
 from pathlib import Path
+import shutil
+import sys
 import tempfile
 from contextlib import contextmanager
-from datetime import datetime, timezone
+from datetime import datetime, timedelta, timezone
+
+from .payload import release_id
 
 
 def toolbox_home():
@@ -77,3 +81,60 @@ def promote(state, version):
     release["superseded_at"] = None
     state["active"] = version
     state["candidate"] = None
+
+
+def rollback_version(record):
+    candidate = record["candidate"] or {}
+    if candidate.get("operation") == "rollback":
+        return candidate["version"]
+    if candidate.get("phase") == "activating":
+        return record["active"]
+    return record["rollback_target"]
+
+
+def checkpoint(home, record, step):
+    record["candidate"].update(phase="activating", step=step)
+    write_json(home / "state.json", record)
+
+
+def remember_candidate(record, candidate):
+    entry = record["releases"].setdefault(candidate["version"], {})
+    for key in ("source", "digest", "digest_format"):
+        if key in candidate:
+            entry[key] = candidate[key]
+
+
+def remember_placed(home, record, abandoned):
+    """Start the retention clock now for directories whose earlier use is unknown."""
+    now = datetime.now(timezone.utc).isoformat()
+    for path in (home / "releases").iterdir():
+        if path.is_symlink() or not path.is_dir() or path.name == record["active"]:
+            continue
+        try:
+            release_id(path.name)
+        except ValueError:
+            continue
+        entry = record["releases"].setdefault(path.name, {})
+        if path.name == abandoned or not entry.get("superseded_at"):
+            entry["superseded_at"] = now
+
+
+def prune(home, record, now=None):
+    cutoff = (now or datetime.now(timezone.utc)) - timedelta(days=14)
+    keep = {record["active"], record["rollback_target"], (record["candidate"] or {}).get("version")}
+    for version, release in list(record["releases"].items()):
+        since = release.get("superseded_at")
+        if version in keep or not since or datetime.fromisoformat(since) >= cutoff:
+            continue
+        try:
+            path = home / "releases" / release_id(version)
+            if path.is_symlink():
+                raise ValueError("refusing to prune a symlink: {}".format(path))
+            if path.exists():
+                shutil.rmtree(path)
+        except (OSError, ValueError) as exc:
+            print("kk: {} remains active; pruning {} deferred: {}".format(record["active"], version, exc),
+                  file=sys.stderr)
+            continue
+        del record["releases"][version]
+        write_json(home / "state.json", record)

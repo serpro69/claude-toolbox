@@ -53,6 +53,10 @@ def install(home, args):
     if record and (type(record.get("format_version")) is not int or record["format_version"] != 1):
         raise ValueError("unsupported kk state format")
     if record.get("active"):
+        if record.get("pending_entry"):
+            raise ValueError("dispatcher publication pending; run kk upgrade to finish or kk rollback to restore")
+        if record.get("candidate"):
+            raise ValueError("mixed installation; run kk status for recovery commands")
         print("Already installed:", record["active"])
         return
 

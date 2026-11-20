@@ -21,7 +21,7 @@ spec.loader.exec_module(loader)
 cli = loader.load_cli(ROOT / "kk/lib", "_kk_tests")
 
 
-class FirstInstall(unittest.TestCase):
+class InstallFixture(unittest.TestCase):
     def setUp(self):
         temporary = tempfile.TemporaryDirectory()
         self.addCleanup(temporary.cleanup)
@@ -54,6 +54,8 @@ class FirstInstall(unittest.TestCase):
     def state(self):
         return json.loads(self.state_file.read_text())
 
+
+class FirstInstall(InstallFixture):
     def test_first_install_full_checkout_and_dispatch(self):
         self.invoke(ROOT / "install.sh", "--local", ROOT)
         state = self.state()
