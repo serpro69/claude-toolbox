@@ -112,6 +112,14 @@ The guard blocks mutations of these paths, including moving their parent directo
 - `.codex/rules/**`
 - `.codex/scripts/**`
 - `~/.claude/plugins/**`
+- `$KK_HOME/**`
+- `$XDG_CONFIG_HOME/kk/config.json`
+- Each path recorded in `$KK_HOME/state.json` under `installed_paths`, including the `~/.local/bin/kk` launcher, the installed Codex profile, the opt-in rules file and toolbox sub-agents.
+- `$CODEX_HOME/plugins/cache/**`
+
+The toolbox home defaults to `${XDG_DATA_HOME:-~/.local/share}/kk`. The configuration and Codex homes default to `~/.config` and `~/.codex`. A file in a shared directory becomes protected when the installer records its exact path. Reads still follow the secrets policy.
+
+When copying an unrelated executable into `~/.local/bin/`, name its destination file explicitly. A directory-only destination is checked as a parent of the protected `kk` launcher.
 
 Project config may add paths under `selfmod`. To let an agent edit settings or guard files for one checkout, the user can add this entry to `~/.claude/kk-guard.json` (substitute the absolute project path):
 
@@ -167,7 +175,7 @@ The user edits this file directly; the guard protects it from agent writes. Merg
 
 Use physical absolute project paths (`pwd -P`). The engine combines `*` with the single longest matching directory prefix; shorter matching prefixes contribute nothing. Lists are combined, and `disable_selfmod` is enabled if either selected entry enables it. A parent path covers nested repositories and worktrees.
 
-`allow_patterns` applies separately to each normalized simple command, including extracted shell bodies. Thus `^git clean -n` can exempt `git clean -nd`, but not the `rm` in `git clean -nd; rm -rf ./work`. These patterns never exempt secrets or protected configuration. `disable_selfmod` permits settings/guard edits only; it also leaves secrets protected. On Codex, native forbids for `rm`, `shred`, `sudo`, `su` and `doas` still win over guard exceptions.
+`allow_patterns` applies separately to each normalized simple command, including extracted shell bodies. Thus `^git clean -n` can exempt `git clean -nd`, but not the `rm` in `git clean -nd; rm -rf ./work`. These patterns never exempt secrets or protected configuration. For sessions in the selected project, `disable_selfmod` permits edits to every path listed under **Protected configuration**, including the machine installation and plugin cache. The secrets policy still applies. On Codex, native forbids for `rm`, `shred`, `sudo`, `su` and `doas` still win over guard exceptions.
 
 Missing config files leave the baseline active. Invalid JSON or invalid supported values produce a visible `systemMessage` and skip that file's changes; the other valid layer still applies. Unknown keys are reported and ignored. Secrets are never loosened by user configuration.
 

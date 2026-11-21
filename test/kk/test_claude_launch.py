@@ -149,6 +149,19 @@ class ClaudeLaunch(unittest.TestCase):
         self.assertFalse(path.exists())
         self.assertEqual(json.loads(live.read_text()), before)
 
+    def test_child_hooks_keep_launcher_homes_after_chdir(self):
+        vendor = self.workspace / "bin" / "claude"
+        vendor.parent.mkdir()
+        vendor.write_text('#!/bin/sh\ncd /\nprintf "%s\\n" "$KK_HOME" "$XDG_CONFIG_HOME" "$CODEX_HOME"\n')
+        vendor.chmod(0o755)
+        self.env.update(PATH=str(vendor.parent) + os.pathsep + self.env["PATH"],
+                        KK_HOME=os.path.relpath(self.toolbox, self.workspace),
+                        XDG_CONFIG_HOME="../config", CODEX_HOME="../codex")
+        homes = self.run_kk("-p").stdout.splitlines()
+        self.assertTrue(all(os.path.isabs(path) for path in homes), homes)
+        self.assertEqual([Path(path).resolve() for path in homes],
+                         [self.toolbox, self.root / "config", self.root / "codex"])
+
     def test_invalid_inputs_stop_before_exec(self):
         for value, diagnostic in (([], "object"), ({"claude": {"instructions": None}}, "boolean"),
                                   ({"claude": {"optIn": {"mkdir": "yes"}}}, "boolean"),

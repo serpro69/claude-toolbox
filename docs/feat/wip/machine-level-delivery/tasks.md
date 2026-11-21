@@ -186,17 +186,25 @@ Task 4 must distinguish interpreter-generated guard bytecode from a changed rele
 - Guard maintenance follow-up (unassigned): the plugin resolves the current Git boundary on each event. Before template retirement, assess how to preserve the selected workspace across repository-boundary changes during an open session. The shared engine also reads a coincident user/project config twice when a non-Git session starts in the home directory. A future shared-engine change should distinguish the two schemas there and verify both the intended restrictions and diagnostics.
 
 ## Task 8: Protect toolbox-owned paths in the guard
-- **Status:** pending
+- **Status:** done
 - **Depends on:** —
 - **Size:** S
 - **Can run in parallel with:** Task 1, Task 2, Task 3, Task 4, Task 5, Task 7
 - **Docs:** [implementation.md#codex-guard-plugin](./implementation.md#codex-guard-plugin), [design.md#guard-changes](./design.md#guard-changes)
 
 ### Subtasks
-- [ ] 8.1 Add path tokens for the toolbox home, the override directory and the Codex home to `klaude-plugin/scripts/guard/guard.py`, following the temp-directory token
-- [ ] 8.2 Add the toolbox home, the override file, the owned files under the Codex home and Codex's plugin cache to `selfmod` in `guard-rules.json`
-- [ ] 8.3 Add cases to `test/guard/test_guard.py` for each new path, including a non-default home → verify: an agent edit to each path is denied and a read is not
-- [ ] 8.4 Run `make generate-guard` and confirm the documentation table updates
+- [x] 8.1 Add path tokens for the toolbox home, the override directory and the Codex home to `klaude-plugin/scripts/guard/guard.py`, following the temp-directory token
+- [x] 8.2 Add the toolbox home, the override file, the owned files under the Codex home and Codex's plugin cache to `selfmod` in `guard-rules.json`
+- [x] 8.3 Add cases to `test/guard/test_guard.py` for each new path, including a non-default home → verify: an agent edit to each path is denied and a read is not
+- [x] 8.4 Run `make generate-guard` and confirm the documentation table updates
+
+### Execution context
+
+- At baseline `f2717da7` on 2026-11-21, the guard already checked mutations against logical paths, resolved paths and their ancestors. Task 9 installs the Codex profile, optional rules and shipped sub-agents.
+- Review on 2026-11-21 identified an exact-name collision in the first candidate. An adopter can own `rules/kk.rules` even when that name appears in the list of install destinations. The revised declaration reads the installer's `state.json` ownership record, so protection follows publication and pruning. For unwrapped sessions, the in-place Claude release or the recorded dispatcher identifies a custom installation. Relative home settings resolve from the launch directory.
+- Verification on 2026-11-21 passed all 112 guard tests, all 37 installer and launcher tests, the Codex adapter suite and the generator suite. `make generate-guard` updated the runtime copies and configuration guide. `make check-guard` passed against a staged copy of the candidate in a disposable checkout.
+- `make test-structure` passed with Python 3.12. The initial run used a Python interpreter without the TOML parser required by the structure suite.
+- Both independent source reviews closed their functional findings. The configuration guide now explains how to copy an unrelated binary alongside the recorded dispatcher. The guard fails closed on an unreadable or unsupported ownership record in a known installation. A future state-format migration needs to verify older guard processes against the new journal while their sessions remain open.
 
 ## Task 9: Codex baseline, owned files and `kk codex`
 - **Status:** pending

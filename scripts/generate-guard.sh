@@ -59,7 +59,11 @@ jq -r '
   "\nThe hook exempts literal `rm` targets strictly beneath its temporary roots: " + (.tmp_roots | map(code) | join(", ")) + ". Secrets and protected configuration still apply. Codex native rules forbid `rm` even for temporary targets.\n",
   "### Protected configuration\n",
   "The guard blocks mutations of these paths, including moving their parent directories:\n",
-  (.selfmod[] | "- " + code),
+  (.selfmod[] | if . == "$KK_HOME/state.json#installed_paths" then
+    "- Each path recorded in `$KK_HOME/state.json` under `installed_paths`, including the `~/.local/bin/kk` launcher, the installed Codex profile, the opt-in rules file and toolbox sub-agents."
+    else "- " + code end),
+  "\nThe toolbox home defaults to `${XDG_DATA_HOME:-~/.local/share}/kk`. The configuration and Codex homes default to `~/.config` and `~/.codex`. A file in a shared directory becomes protected when the installer records its exact path. Reads still follow the secrets policy.",
+  "\nWhen copying an unrelated executable into `~/.local/bin/`, name its destination file explicitly. A directory-only destination is checked as a parent of the protected `kk` launcher.",
   "\nProject config may add paths under `selfmod`. To let an agent edit settings or guard files for one checkout, the user can add this entry to `~/.claude/kk-guard.json` (substitute the absolute project path):\n",
   "```json", "{\"version\":1,\"projects\":{\"/absolute/path/to/repo\":{\"disable_selfmod\":true}}}", "```",
   "\nThis exception does not allow reading or writing secrets."
