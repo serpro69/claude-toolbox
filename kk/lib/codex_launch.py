@@ -6,13 +6,12 @@ import json
 import os
 from pathlib import Path
 import re
-import shutil
 import stat
 import subprocess
 import sys
 from contextlib import ExitStack
 
-from . import codex_profile, payload, state
+from . import codex_plugins, codex_profile, codex_trust, payload, state
 
 
 ARG_LIMIT = 122880  # Linux per-argument limit less 8 KiB, including TOML escaping.
@@ -31,6 +30,7 @@ def display(value):
 def launch_options(args):
     directory = Path.cwd()
     profile = command = None
+    trust_flags = []
     dynamic_workspace = False
     it = iter(args)
     for arg in it:
@@ -52,6 +52,8 @@ def launch_options(args):
                 profile = value
             elif key == "--remote":
                 dynamic_workspace = True
+            elif key in ("-c", "--config", "--enable", "--disable"):
+                trust_flags.extend([key, value])
         elif arg == "--worktree":
             dynamic_workspace = True
         elif command is None and not arg.startswith("-"):
@@ -59,7 +61,7 @@ def launch_options(args):
             dynamic_workspace = dynamic_workspace or command in ("resume", "fork", "agents")
         elif command in ("exec", "e") and arg in ("resume", "fork"):
             dynamic_workspace = True
-    return None if dynamic_workspace else directory.resolve(), profile, command in ("exec", "e", "review")
+    return None if dynamic_workspace else directory.resolve(), profile, command in ("exec", "e", "review"), trust_flags
 
 
 def workspace_root(directory):
@@ -228,7 +230,7 @@ def report_imports(home):
 
 
 def launch(home, args):
-    directory, explicit, batch = launch_options(args)
+    directory, explicit, batch, trust_flags = launch_options(args)
     record = state.load(home)
     if (record.get("candidate") or {}).get("phase") == "activating" or record.get("codex_write_pending"):
         raise ValueError("Codex files are changing; finish kk apply, upgrade or rollback before launching")
@@ -237,17 +239,34 @@ def launch(home, args):
         raise ValueError("no active release; finish installing kk first")
     if Path(__file__).resolve().parents[2] != (home / "releases" / payload.release_id(active)).resolve():
         raise ValueError("active release changed; rerun kk codex")
-    phase = record["releases"][active].get("tools", {}).get("codex")
+    saved = record["releases"][active]
+    phase = saved.get("tools", {}).get("codex")
     if phase not in ("ready", "unverified", "awaiting review"):
-        raise ValueError("Codex is not configured for the active release; run kk apply")
-    if phase == "awaiting review" and batch:
-        raise ValueError("Codex guard awaiting review; use an interactive session to review the hooks")
-    if phase == "unverified" and batch:
-        print("kk: Codex guard is unverified for this run.", file=sys.stderr)
+        raise ValueError("Codex is not configured for the active release; " + codex_plugins.activation_hint(saved))
+    executable = codex_plugins.executable()
+    if batch:
+        if directory is None or explicit not in (None, "kk"):
+            raise ValueError("cannot verify the Codex guard for this session's workspace or named profile; "
+                             "use an interactive session or select a local directory with the kk profile")
+        release = home / "releases" / active
+        codex_home = codex_profile.codex_home()
+        profile = codex_home / "kk.config.toml"
+        snapshot = saved["codex_snapshot"]
+        if (str(codex_home) != snapshot["directory"] or profile.is_symlink() or not profile.is_file()
+                or profile.read_bytes() != codex_profile.compose(release, snapshot["settings"])[0]):
+            raise ValueError("cannot verify the managed Codex profile in this CODEX_HOME; run kk apply")
+        if not codex_plugins.receipt(record, codex_home, "kk-guard"):
+            raise ValueError("Codex guard is not installed in this CODEX_HOME; " + codex_plugins.activation_hint(saved))
+        phase, issues = codex_trust.check(release, codex_home, directory, trust_flags,
+                                          acknowledged=phase == "unverified", executable=executable)
+        if phase == "awaiting review":
+            raise ValueError("Codex guard awaiting review for {}: {}".format(display(directory), "; ".join(issues)))
+        if phase == "unverified":
+            print("kk: Codex guard is unverified for this run.", file=sys.stderr)
+    elif not codex_plugins.receipt(record, codex_profile.codex_home(), "kk-guard"):
+        print("kk: Codex guard is not installed in this CODEX_HOME; " + codex_plugins.activation_hint(saved),
+              file=sys.stderr)
     codex_profile.report_drift(record)
-    executable = shutil.which("codex")
-    if not executable:
-        raise ValueError("codex executable not found on PATH")
     flags = []
     if explicit is None:
         profile_path = codex_profile.codex_home() / "kk.config.toml"
