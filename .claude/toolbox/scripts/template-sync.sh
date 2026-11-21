@@ -69,17 +69,19 @@ set -euo pipefail
 # Source semver comparison (provides compare() function).
 # Bootstrap: downstream repos may not have this file yet if they haven't synced
 # since it was introduced — fetch from upstream so the script stays self-contained.
-# shellcheck source=semver-compare.sh
-_semver_path="$(dirname "${BASH_SOURCE[0]}")/semver-compare.sh"
-if [[ ! -f "$_semver_path" ]]; then
-  curl -fsSL "https://raw.githubusercontent.com/serpro69/claude-toolbox/master/.claude/toolbox/scripts/semver-compare.sh" \
-    -o "$_semver_path" 2>/dev/null || {
-    echo "Failed to fetch semver-compare.sh" >&2
-    exit 1
-  }
+load_semver() {
+  local helper
+  helper="$(dirname "${BASH_SOURCE[0]}")/semver-compare.sh"
+  if [[ ! -f "$helper" ]]; then
+    curl -fsSL "https://raw.githubusercontent.com/serpro69/claude-toolbox/master/.claude/toolbox/scripts/semver-compare.sh" \
+      -o "$helper" 2>/dev/null || { echo "Failed to fetch semver-compare.sh" >&2; exit 1; }
+  fi
+  # shellcheck source=semver-compare.sh
+  source "$helper"
+}
+if [[ ${BASH_SOURCE[0]} != "$0" ]]; then
+  load_semver
 fi
-source "$_semver_path"
-unset _semver_path
 
 # =============================================================================
 # Global Configuration
@@ -106,6 +108,7 @@ DROPPED_DENY_ENTRIES=()
 # (empty when unavailable) and what the merge removed or kept against upstream
 SETTINGS_BASE_FILE=""
 SETTINGS_BASE_WARNING=""
+CODEX_BASE_DIR=""
 SETTINGS_REMOVED_ENTRIES=()
 SETTINGS_CONFLICT_ENTRIES=()
 
@@ -139,6 +142,7 @@ APPLY_MODE=false
 
 # Local mode: fetch + compare + apply in a single invocation
 LOCAL_MODE=false
+RETIRE_MODE=false
 
 # Entry-point flag: true only when this file is the process' main script (set
 # by the guard at the bottom of the file), false when sourced — e.g. by the
@@ -233,6 +237,16 @@ cleanup_on_exit() {
 is_excluded() {
   local path="$1"
   local pattern
+  # A symlink in the destination is adopter-owned. In particular a linked
+  # config directory must never redirect migration writes outside the repo.
+  if $RETIRE_MODE || [[ ${TEMPLATE_SYNC_MERGE_DENY:-0} == 1 ]]; then
+    local entry=$path
+    while [[ -n $entry && $entry != / ]]; do
+      [[ ! -L $entry ]] || return 0
+      [[ $entry == */* ]] || break
+      entry=${entry%/*}
+    done
+  fi
 
   # Check built-in exclusions first (per-repo files stripped from staging)
   for pattern in "${BUILTIN_EXCLUSIONS[@]}"; do
@@ -246,6 +260,11 @@ is_excluded() {
 
   # Check user-configured exclusions from manifest
   for pattern in "${SYNC_EXCLUSIONS[@]}"; do
+    if $RETIRE_MODE || [[ ${TEMPLATE_SYNC_MERGE_DENY:-0} == 1 ]]; then
+      pattern=${pattern%/}
+      # A directory excluded from retirement also protects its children.
+      case "$path" in $pattern/*) return 0 ;; esac
+    fi
     case "$path" in
     $pattern)
       return 0 # Excluded
@@ -254,6 +273,25 @@ is_excluded() {
   done
 
   return 1 # Not excluded
+}
+
+# Older migrations operate on whole directories. During migration sync, keep
+# a tree intact if moving or deleting it would also move an excluded child.
+migration_excluded() {
+  [[ ${TEMPLATE_SYNC_MERGE_DENY:-0} == 1 ]] || return 1
+  local entry destination
+  if is_excluded "$1"; then log_info "Excluded: $1"; return 0; fi
+  if [[ -n ${2:-} ]] && is_excluded "$2"; then log_info "Excluded: $2"; return 0; fi
+  if [[ -d $1 && ! -L $1 ]]; then
+    while IFS= read -r -d '' entry; do
+      if is_excluded "$entry"; then log_info "Keep $1 (excluded: $entry)"; return 0; fi
+      if [[ -n ${2:-} ]]; then
+        destination="$2/${entry#"$1/"}"
+        if is_excluded "$destination"; then log_info "Keep $1 (excluded: $destination)"; return 0; fi
+      fi
+    done < <(find "$1" -mindepth 1 -print0)
+  fi
+  return 1
 }
 
 # sed_inplace()
@@ -632,6 +670,7 @@ run_plugin_migration() {
 
   # Track and optionally remove directories
   for dir in "${dirs_to_remove[@]}"; do
+    if migration_excluded "$dir"; then continue; fi
     if [[ -d "$dir" ]]; then
       DELETED_FILES+=("$dir/")
       if $APPLY_MODE; then
@@ -645,6 +684,7 @@ run_plugin_migration() {
 
   # Track and optionally remove individual files
   for file in "${files_to_remove[@]}"; do
+    if migration_excluded "$file"; then continue; fi
     if [[ -f "$file" ]]; then
       DELETED_FILES+=("$file")
       if $APPLY_MODE; then
@@ -663,7 +703,9 @@ run_plugin_migration() {
 
     # Update settings.json: remove hooks, add marketplace and plugin config
     local settings_file=".claude/settings.json"
-    if [[ -f "$settings_file" ]]; then
+    # Migration sync staged the individual legacy-handler update. Resetting
+    # hooks and marketplaces here would discard adopter registrations.
+    if [[ -f "$settings_file" && ${TEMPLATE_SYNC_MERGE_DENY:-0} != 1 ]]; then
       if json_update "$settings_file" \
         'del(.hooks) |
          .extraKnownMarketplaces = {
@@ -726,7 +768,7 @@ run_serena_removal() {
   log_step "Removing Serena artifacts (no longer in upstream defaults)"
 
   # Respect sync_exclusions — if .serena/ is excluded, skip directory removal
-  if is_excluded ".serena/project.yml"; then
+  if is_excluded ".serena/project.yml" || migration_excluded ".serena"; then
     log_info "Skipping .serena/ removal (matched sync_exclusions)"
   else
     if [[ -d ".serena" ]]; then
@@ -740,7 +782,7 @@ run_serena_removal() {
     fi
 
     # Remove !.serena from .gitignore if present
-    if [[ -f ".gitignore" ]] && grep -q '^!\.serena' .gitignore; then
+    if [[ -f ".gitignore" ]] && ! migration_excluded .gitignore && grep -q '^!\.serena' .gitignore; then
       MODIFIED_FILES+=(".gitignore")
       if $APPLY_MODE; then
         sed_inplace '/^!\.serena$/d' .gitignore
@@ -752,7 +794,7 @@ run_serena_removal() {
 
     # Remove mcp__serena__* from settings.local.json permissions if present
     local local_settings=".claude/settings.local.json"
-    if [[ -f "$local_settings" ]] && jq -e '.permissions.allow | any(startswith("mcp__serena__"))' "$local_settings" &>/dev/null 2>&1; then
+    if [[ -f "$local_settings" ]] && ! migration_excluded "$local_settings" && jq -e '.permissions.allow | any(startswith("mcp__serena__"))' "$local_settings" &>/dev/null 2>&1; then
       if $APPLY_MODE; then
         if json_update "$local_settings" '.permissions.allow |= map(select(startswith("mcp__serena__") | not))'; then
           MODIFIED_FILES+=("$local_settings")
@@ -829,6 +871,7 @@ run_script_consolidation() {
   )
 
   for file in "${files_to_remove[@]}"; do
+    if migration_excluded "$file"; then continue; fi
     if [[ -f "$file" ]]; then
       DELETED_FILES+=("$file")
       if $APPLY_MODE; then
@@ -907,7 +950,7 @@ run_docs_feat_migration() {
     [[ -d "$src" ]] || continue
 
     # Respect sync_exclusions — if the source tree is excluded, leave it alone
-    if is_excluded "$src"; then
+    if is_excluded "$src" || migration_excluded "$src" "$dst"; then
       log_info "Skipping $src/ relocation (matched sync_exclusions)"
       continue
     fi
@@ -1339,10 +1382,12 @@ handoff_to_upstream_script() {
 # registrations. The scanner finds source spans, while yq remains the TOML
 # parser and checks whether each server's source matches its merged value.
 # Embedded to keep self-update handoff compatible with older sync scripts.
-render_codex_mcp_servers() {
-  python3 - "$1" "$2" <<'PY'
+codex_toml() {
+  python3 -I - "$@" <<'PY'
+import copy
 import json
 from pathlib import Path
+import re
 import subprocess
 import sys
 
@@ -1352,65 +1397,176 @@ def parse_toml(data):
         ["yq", "-p", "toml", "-o", "json", "."],
         input=data, stdout=subprocess.PIPE, check=True, timeout=30,
     )
-    return json.loads(result.stdout)
+    # yq represents an empty or comment-only TOML document as JSON null.
+    return json.loads(result.stdout) or {}
 
 
-def table_spans(data):
-    """Locate real table headers, skipping strings, comments and array values."""
-    headers = []
-    trivia_lines = set()
-    i = line_start = depth = 0
-    while i < len(data):
-        char = data[i:i + 1]
+ABSENT = object()
+POLICIES = {"sandbox_mode", "approval_policy", "approvals_reviewer"}
+
+
+def same(left, right):
+    if left is ABSENT or right is ABSENT:
+        return left is right
+    return json.dumps(left, sort_keys=True) == json.dumps(right, sort_keys=True)
+
+
+def compare_config(local, template, base, retire, keep, path=()):
+    if path in keep and local is not ABSENT:
+        return local
+    if same(local, template):
+        return ABSENT if retire else local
+    if isinstance(local, dict) and (isinstance(template, dict) or template is ABSENT):
+        result = {}
+        upstream = {} if template is ABSENT else template
+        before = base if isinstance(base, dict) else {}
+        for key in dict.fromkeys([*local, *upstream]):
+            value = compare_config(local.get(key, ABSENT), upstream.get(key, ABSENT),
+                                   before.get(key, ABSENT), retire, keep, path + (key,))
+            if value is not ABSENT:
+                result[key] = value
+        return result if result or not local else ABSENT
+    if retire:
+        return local
+    if local is ABSENT or same(local, base):
+        return template
+    return local
+
+
+def lookup(obj, path):
+    for key in path:
+        if not isinstance(obj, dict) or key not in obj:
+            return ABSENT
+        obj = obj[key]
+    return obj
+
+
+def toml_value(value):
+    if isinstance(value, dict):
+        return "{ " + ", ".join(json.dumps(k, ensure_ascii=False) + " = " + toml_value(v)
+                                 for k, v in value.items()) + " }"
+    if isinstance(value, list):
+        return "[" + ", ".join(map(toml_value, value)) + "]"
+    return json.dumps(value, ensure_ascii=False)
+
+
+KEY = re.compile(rb"""\s*((?:"(?:\\.|[^"\\])*"|'[^']*'|[^="'\n])+?)\s*=""")
+
+
+def assignment_path(key):
+    probe = parse_toml(key + b" = true")
+    path = []
+    while isinstance(probe, dict):
+        name, probe = next(iter(probe.items()))
+        path.append(name)
+    return tuple(path)
+
+
+def string_end(data, start):
+    char = data[start:start + 1]
+    delim = char * 3 if data.startswith(char * 3, start) else char
+    pos = start + len(delim)
+    while pos < len(data):
+        if data.startswith(delim, pos):
+            pos += len(delim)
+            if len(delim) == 3:
+                while data[pos:pos + 1] == char:
+                    pos += 1
+            return pos
+        pos += 2 if char == b'"' and data[pos:pos + 1] == b"\\" else 1
+    raise ValueError("unterminated TOML string")
+
+
+def rewrite_value(raw, old, new):
+    """Edit members of an inline table without respelling its surviving siblings."""
+    start = len(raw) - len(raw.lstrip())
+    if not (isinstance(old, dict) and isinstance(new, dict) and raw[start:start+1] == b"{"):
+        return b" " + toml_value(new).encode() + (b"\n" if raw.endswith(b"\n") else b"")
+    fields = []
+    remaining = copy.deepcopy(new)
+    pos = begin = start + 1
+    depth = 0
+    while pos < len(raw):
+        char = raw[pos:pos+1]
+        if char in (b"'", b'"'):
+            pos = string_end(raw, pos)
+            continue
         if char == b"#":
-            if not data[line_start:i].strip():
-                trivia_lines.add(line_start)
-            end = data.find(b"\n", i)
-            i = len(data) if end < 0 else end
-            continue
+            pos = raw.find(b"\n", pos)
+            if pos < 0:
+                break
+        elif depth == 0 and char in (b",", b"}"):
+            member = raw[begin:pos]
+            if member.strip():
+                key = KEY.match(member)
+                if key is None:
+                    raise ValueError("cannot identify inline TOML member")
+                path = assignment_path(key[1])
+                value = lookup(new, path)
+                if value is not ABSENT:
+                    previous = lookup(old, path)
+                    fields.append(member if same(previous, value) else
+                                  member[:key.end()] + rewrite_value(member[key.end():], previous, value))
+                    lookup(remaining, path[:-1]).pop(path[-1], None)
+            begin = pos + 1
+            if char == b"}":
+                def additions(items, prefix=()):
+                    for key, value in items.items():
+                        path = prefix + (key,)
+                        if isinstance(value, dict) and isinstance(lookup(old, path), dict):
+                            yield from additions(value, path)
+                        else:
+                            name = ".".join(json.dumps(k, ensure_ascii=False) for k in path)
+                            yield (" " + name + " = " + toml_value(value)).encode()
+                fields.extend(additions(remaining))
+                return raw[:start + 1] + b",".join(fields) + raw[pos:]
+        elif char in (b"{", b"["):
+            depth += 1
+        elif char in (b"}", b"]"):
+            depth -= 1
+        pos += 1
+    raise ValueError("unterminated inline TOML table")
+
+def statements(data):
+    """Yield complete TOML statements, including original terminators and trivia."""
+    start = pos = depth = 0
+    while pos < len(data):
+        char = data[pos:pos + 1]
         if char in (b'"', b"'"):
-            delimiter = char * 3 if data.startswith(char * 3, i) else char
-            i += len(delimiter)
-            while i < len(data):
-                if data.startswith(delimiter, i):
-                    i += len(delimiter)
-                    # Multiline strings can end with four or five quotes.
-                    if len(delimiter) == 3:
-                        while data[i:i + 1] == char:
-                            i += 1
-                    break
-                i += 2 if char == b'"' and data[i:i + 1] == b"\\" else 1
-            else:
-                raise ValueError("unterminated TOML string")
+            pos = string_end(data, pos)
             continue
-        if char == b"[" and depth == 0 and not data[line_start:i].strip():
-            end = data.find(b"\n", i)
-            if end < 0:
-                end = len(data)
-            start = line_start
-            # Associate adjacent full-line comments and blank lines with the
-            # following table. Only lexically recognized trivia qualifies:
-            # a multiline string's closing line can itself start with '#'.
-            while start > 0:
-                previous = data.rfind(b"\n", 0, start - 1) + 1
-                if previous not in trivia_lines:
-                    break
-                start = previous
-            headers.append((start, data[line_start:end]))
-            i = end
+        if char == b"#":
+            newline = data.find(b"\n", pos)
+            pos = len(data) if newline < 0 else newline
             continue
         if char in (b"[", b"{"):
             depth += 1
         elif char in (b"]", b"}"):
             depth -= 1
-        elif char == b"\n":
-            if not data[line_start:i].strip():
-                trivia_lines.add(line_start)
-            line_start = i + 1
-        i += 1
-    for index, (start, header) in enumerate(headers):
-        end = headers[index + 1][0] if index + 1 < len(headers) else len(data)
-        yield header, data[start:end]
+        elif char == b"\n" and depth == 0:
+            yield data[start:pos + 1]
+            start = pos + 1
+        pos += 1
+    if start < len(data):
+        yield data[start:]
+
+
+def table_spans(data):
+    header, body, trivia = None, [], []
+    for statement in statements(data):
+        if not statement.strip() or statement.lstrip().startswith(b"#"):
+            trivia.append(statement)
+            continue
+        if statement.lstrip().startswith(b"["):
+            if header is not None:
+                yield header, b"".join(body)
+            header = statement.rstrip(b"\r\n")
+            body = []
+        body.extend(trivia)
+        body.append(statement)
+        trivia = []
+    if header is not None:
+        yield header, b"".join(body + trivia)
 
 
 def table_path(header):
@@ -1472,10 +1628,324 @@ def render(merged, source):
     return output
 
 
-if __name__ == "__main__":
-    merged = json.loads(Path(sys.argv[1]).read_bytes())
-    source = Path(sys.argv[2]).read_bytes()
-    sys.stdout.buffer.write(render(merged, source))
+def edit_config(source, desired):
+    """Retain original TOML statements, quoting and comments for surviving values."""
+    original = parse_toml(source)
+    if same(original, desired):
+        return source
+    remaining = copy.deepcopy(desired)
+    sections = list(table_spans(source))
+    preamble = source[:len(source) - sum(len(block) for _, block in sections)]
+    rendered = []
+    insertions = {}
+
+    def consume(path):
+        parent = lookup(remaining, path[:-1])
+        if isinstance(parent, dict):
+            parent.pop(path[-1], None)
+
+    for header, block in [(None, preamble), *sections]:
+        table = tuple(table_path(header)) if header is not None else ()
+        # Array tables and their subtables form one value. Leave the entire
+        # original sequence in place if it survives unchanged.
+        array = next((table[:i] for i in range(1, len(table) + 1)
+                      if isinstance(lookup(original, table[:i]), list)), None)
+        if array is not None:
+            if same(lookup(original, array), lookup(desired, array)):
+                rendered.append(block)
+                consume(array)
+            continue
+        if not isinstance(lookup(desired, table), dict):
+            continue
+        out = bytearray()
+        lines = statements(block)
+        if header is not None:
+            for line in lines:
+                out.extend(line)
+                if line.rstrip(b"\r\n") == header.rstrip(b"\r"):
+                    break
+        for line in lines:
+            if not line.strip() or line.lstrip().startswith(b"#"):
+                out.extend(line)
+                continue
+            # Ask the TOML parser to decode dotted and quoted keys. The value
+            # can span several physical lines (arrays and multiline strings).
+            key = KEY.match(line)
+            if key is None:
+                raise ValueError("cannot identify TOML assignment: " + repr(line))
+            raw_key = key[1]
+            path = table + assignment_path(raw_key)
+            value = lookup(desired, path)
+            if value is not ABSENT:
+                if same(lookup(original, path), value):
+                    out.extend(line)
+                else:
+                    out.extend(line[:key.end()] +
+                               rewrite_value(line[key.end():], lookup(original, path), value))
+                consume(path)
+        rendered.append(out)
+        insertions[table] = out
+
+    # Add incoming keys to their original enclosing table. Never repeat an
+    # explicit header or redefine a dotted key's implicit parent.
+    def add(node, prefix=()):
+        for key, value in node.items():
+            path = prefix + (key,)
+            if isinstance(value, dict) and (isinstance(lookup(original, path), dict)
+                                            or path in insertions):
+                add(value, path)
+                continue
+            parent = prefix
+            while parent not in insertions:
+                parent = parent[:-1]
+            out = insertions[parent]
+            if out and not out.endswith(b"\n"):
+                out.extend(b"\n")
+            name = ".".join(json.dumps(k, ensure_ascii=False) for k in path[len(parent):])
+            out.extend((name + " = " + toml_value(value) + "\n").encode())
+    add(remaining)
+    output = b"".join(rendered)
+    if not same(parse_toml(output), desired):
+        raise ValueError("could not preserve the repository's TOML settings")
+    return output
+
+
+if sys.argv[1] == "servers":
+    output = render(json.loads(Path(sys.argv[2]).read_bytes()), Path(sys.argv[3]).read_bytes())
+else:
+    mode, source_file, template_file, base_file, model = sys.argv[1:]
+    source = Path(source_file).read_bytes()
+    local = parse_toml(source)
+    template = parse_toml(Path(template_file).read_bytes())
+    base = parse_toml(Path(base_file).read_bytes()) if base_file else {}
+    keep = {(key,) for key in POLICIES}
+    if mode == "retire" and model not in ("", "gpt-6.2-astra"):
+        keep.add(("model",))
+    # Evaluate top-level keys individually so whole-document equality cannot
+    # remove policy fields or an explicitly selected model.
+    desired = {}
+    for key in dict.fromkeys([*local, *template]):
+        item = compare_config(local.get(key, ABSENT), template.get(key, ABSENT),
+                              base.get(key, ABSENT), mode == "retire", keep, (key,))
+        if item is not ABSENT:
+            desired[key] = item
+    if mode == "retire":
+        for key, value in desired.items():
+            label = " = " + toml_value(value) if key in POLICIES or key == "model" else ""
+            print("Keep Codex {}{}".format(key, label), file=sys.stderr)
+    output = edit_config(source, desired) if desired or not local else b""
+sys.stdout.buffer.write(output)
+PY
+}
+
+render_codex_mcp_servers() { codex_toml servers "$@"; }
+
+# Keep this editor inside the sync script: older handoffs and kk migrate
+# download just template-sync.sh and semver-compare.sh.
+migration_json() {
+  python3 -I - "$@" <<'PY'
+import json
+from pathlib import Path
+import shlex
+import sys
+
+mode, source, template, manifest, base = sys.argv[1:]
+text = Path(source).read_bytes().decode("utf-8")
+
+
+def unique_object(pairs):
+    obj = dict(pairs)
+    if len(obj) != len(pairs):
+        raise ValueError("ambiguous duplicate JSON member in " + source)
+    return obj
+
+
+local = json.loads(text, object_pairs_hook=unique_object)
+up = json.loads(Path(template).read_bytes())
+variables = json.loads(Path(manifest).read_bytes())["variables"]
+missing = object()
+origins = {}
+
+
+def identity(value):
+    return json.dumps(value, sort_keys=True, ensure_ascii=False)
+
+
+def legacy_statusline(command):
+    try:
+        words = shlex.split(command)
+    except ValueError:
+        return False
+    if words and Path(words[0]).name in ("bash", "sh"):
+        words = words[1:]
+    if not words:
+        return False
+    scripts = {".claude/toolbox/scripts/statusline.sh", ".claude/toolbox/scripts/statusline_enhanced.sh"}
+    return any(words[0] == prefix + script for script in scripts for prefix in (
+        "", "./", "$CLAUDE_PROJECT_DIR/", "${CLAUDE_PROJECT_DIR}/", str(Path.cwd()) + "/"))
+
+
+def subtract(value, reference, path=()):
+    if path in keep or reference is missing:
+        return value
+    if path == ("statusLine",):
+        if (isinstance(value, dict) and isinstance(value.get("command"), str)
+                and (value == reference or legacy_statusline(value["command"]))):
+            return missing
+        return value
+    if isinstance(value, dict) and isinstance(reference, dict):
+        result = {}
+        for key, item in value.items():
+            rest = subtract(item, reference.get(key, missing), path + (key,))
+            if rest is not missing:
+                result[key] = rest
+        if result or (not value and reference):
+            return result
+        return missing
+    if isinstance(value, list) and isinstance(reference, list):
+        owned = {identity(item) for item in reference}
+        result = [item for item in value if identity(item) not in owned]
+        return result if result else missing
+    return missing if identity(value) == identity(reference) else value
+
+
+def filter_hooks(document, upstream, previous=None, extra_commands=()):
+    owned = {h["command"] for groups in upstream.values() for g in groups for h in g["hooks"]
+             if isinstance(h.get("command"), str)}
+    owned.update(extra_commands)
+    if previous:
+        for groups in json.loads(Path(previous).read_bytes()).get("hooks", {}).values():
+            for group in groups:
+                for handler in group["hooks"]:
+                    cmd = handler.get("command", "")
+                    if ".codex/scripts/" in cmd and ".codex/scripts/capy.sh" not in cmd:
+                        owned.add(cmd)
+    events = {}
+    for name, groups in document.get("hooks", {}).items():
+        remaining = []
+        for group in groups:
+            handlers = [h for h in group["hooks"] if h.get("command") not in owned]
+            if handlers or not group["hooks"]:
+                retained = dict(group, hooks=handlers)
+                origins[id(retained)] = group
+                remaining.append(retained)
+        if remaining or not groups:
+            events[name] = remaining
+    if mode == "hooks-sync":
+        for name, groups in upstream.items():
+            events[name] = groups + events.get(name, [])
+    result = dict(document)
+    if events:
+        result["hooks"] = events
+    else:
+        result.pop("hooks", None)
+    return result
+
+
+def preserve_spelling(desired):
+    # Bind source slices to their locations. Equal commands in different
+    # events may have different escaping, spacing, or key order.
+    decoder = json.JSONDecoder()
+    spans, prefixes, locations = {}, {}, {}
+
+    def whitespace(pos):
+        while pos < len(text) and text[pos] in " \r\n\t":
+            pos += 1
+        return pos
+
+    def read(value, path, start):
+        pos = start
+        if isinstance(value, (dict, list)):
+            locations[id(value)] = path
+            pos = whitespace(pos + 1)
+            entries = value.items() if isinstance(value, dict) else enumerate(value)
+            for key, child in entries:
+                if isinstance(value, dict):
+                    member = pos
+                    _, end = decoder.raw_decode(text, pos)
+                    pos = whitespace(whitespace(end) + 1)
+                    prefixes[path + (key,)] = text[member:pos]
+                pos = whitespace(read(child, path + (key,), pos))
+                if text[pos] == ",":
+                    pos = whitespace(pos + 1)
+            pos += 1
+        else:
+            _, pos = decoder.raw_decode(text, pos)
+        spans[path] = (value, text[start:pos])
+        return pos
+
+    def write(value, path, level):
+        if isinstance(value, (dict, list)):
+            path = locations.get(id(origins.get(id(value), value)), path)
+        old, raw = spans.get(path, (missing, None))
+        if old is not missing and identity(old) == identity(value):
+            return raw
+        if isinstance(value, dict):
+            items = []
+            for key, child in value.items():
+                child_path = None if path is None else path + (key,)
+                prefix = prefixes.get(child_path, json.dumps(key) + ": ")
+                items.append(prefix + write(child, child_path, level + 1))
+            left, right = "{", "}"
+        elif isinstance(value, list):
+            available = list(range(len(old))) if isinstance(old, list) else []
+            items = []
+            for i, child in enumerate(value):
+                match = next((j for j in available if identity(old[j]) == identity(child)), None)
+                if match is not None:
+                    available.remove(match)
+                child_path = None if path is None else path + (match if match is not None else i,)
+                items.append(write(child, child_path, level + 1))
+            left, right = "[", "]"
+        else:
+            return json.dumps(value, ensure_ascii=False)
+        pad = "\n" + "  " * (level + 1)
+        return left + (pad + ("," + pad).join(items) + "\n" + "  " * level if items else "") + right
+
+    if identity(local) == identity(desired):
+        return text
+    read(local, (), whitespace(0))
+    output = write(desired, (), 0) + "\n"
+    if identity(json.loads(output, object_pairs_hook=unique_object)) != identity(desired):
+        raise ValueError("could not preserve repository JSON in " + source)
+    return output
+
+
+if mode.startswith("hooks-"):
+    result = filter_hooks(local, up.get("hooks", {}), base)
+    if mode == "hooks-retire":
+        for event, groups in result.get("hooks", {}).items():
+            for i, group in enumerate(groups):
+                for j, handler in enumerate(group["hooks"]):
+                    print("Keep Codex hooks.{}[{}].hooks[{}] ({})".format(
+                        event, i, j, handler.get("type", "handler")), file=sys.stderr)
+elif mode == "settings-retire":
+    keep = {path for path, name, default in (
+        (("model",), "CC_MODEL", "default"), (("effortLevel",), "CC_EFFORT_LEVEL", "high"),
+        (("permissions", "defaultMode"), "CC_PERMISSION_MODE", "default"),
+    ) if variables.get(name) not in (None, "", default)}
+    result = subtract(local, up)
+    if result is not missing:
+        for key, value in result.items():
+            if key == "permissions" and isinstance(value, dict):
+                for field, entries in value.items():
+                    if field == "deny":
+                        for entry in entries:
+                            print("Keep Claude deny " + json.dumps(entry), file=sys.stderr)
+                    else:
+                        print("Keep Claude permissions." + field, file=sys.stderr)
+            else:
+                print("Keep Claude " + key, file=sys.stderr)
+else:
+    result = up  # Apply the existing settings merge with adopter spelling.
+    if base == "true" and "hooks" in up:
+        # The pre-plugin template supplied this exact Bash handler. Strip it
+        # during staging so both the preview and apply retain its neighbours.
+        text = preserve_spelling(up)
+        local = json.loads(text, object_pairs_hook=unique_object)
+        result = filter_hooks(local, {}, extra_commands=["bash $CLAUDE_PROJECT_DIR/.claude/scripts/validate-bash.sh"])
+if result is not missing and (result or not local or not mode.endswith("-retire")):
+    sys.stdout.write(preserve_spelling(result))
 PY
 }
 
@@ -1541,20 +2011,22 @@ apply_substitutions() {
     # Upstream owns permissions.deny, so retired denies do not linger.
     # Falls back to the upstream template copy for first-time sync.
     local downstream_settings=".claude/settings.json"
-    if [[ -f "$downstream_settings" ]]; then
+    if [[ -f "$downstream_settings" ]] && { [[ ${TEMPLATE_SYNC_MERGE_DENY:-0} != 1 ]] || ! is_excluded "$downstream_settings"; }; then
       # $cc_settings_file contains the upstream template copy at this point.
       # Read downstream as jq input, upstream and base via --slurpfile.
       local dropped_deny_json merge_json
       if dropped_deny_json=$(jq -c --slurpfile upstream "$cc_settings_file" '
         (.permissions.deny // []) - ($upstream[0].permissions.deny // [])
       ' "$downstream_settings") && merge_json=$(jq -c \
+        --arg merge_deny "${TEMPLATE_SYNC_MERGE_DENY:-0}" \
         --slurpfile upstream "$cc_settings_file" \
         --slurpfile base "${SETTINGS_BASE_FILE:-/dev/null}" '
         # Overwritten after the merge by manifest substitutions or the deny
         # baseline. B takes U'"'"'s value there, which keeps D-wins behavior
         # and reports nothing for them.
         def owned_paths: [["model"], ["effortLevel"], ["permissions", "defaultMode"],
-          ["permissions", "deny"], ["statusLine"], ["extraKnownMarketplaces", "claude-toolbox", "source"]];
+          ["statusLine"], ["extraKnownMarketplaces", "claude-toolbox", "source"]]
+          + (if $merge_deny == "1" then [] else [["permissions", "deny"]] end);
         def has_path($p): try (getpath($p[:-1]) | type == "object" and has($p[-1])) catch false;
         def neutralize($u): reduce owned_paths[] as $p (.;
           if ($u | has_path($p)) then setpath($p; $u | getpath($p))
@@ -1598,14 +2070,17 @@ apply_substitutions() {
             elif $hb and $bk and $u == $b then {v: $d, r: none}
             elif $hb then {v: $d, r: {removed: [], conflicts: ["\($p): kept \($d | tojson), upstream has \($u | tojson)"]}}
             else {v: $d, r: none} end;
-        (if ($base | length) > 0 then (try ($base[0] | neutralize($upstream[0])) catch null) else null end) as $b
+        (if ($base | length) > 0 and (($base[0].permissions // {}) | type) == "object"
+         then (try ($base[0] | neutralize($upstream[0])) catch null) else null end) as $b
         | m3($upstream[0]; $b != null; $b != null; $b; "")
-        | .v.permissions.deny = ($upstream[0].permissions.deny // [])
+        | if $merge_deny == "1" then . else .v.permissions.deny = ($upstream[0].permissions.deny // []) end
         | .base_rejected = (($base | length) > 0 and $b == null)
       ' "$downstream_settings") && jq '.v' <<<"$merge_json" >"${cc_settings_file}.tmp"; then
         # Excluded settings are never applied, so report no removals for them.
         if ! is_excluded "$downstream_settings"; then
-          mapfile -t DROPPED_DENY_ENTRIES < <(jq -r '.[]' <<<"$dropped_deny_json")
+          if [[ ${TEMPLATE_SYNC_MERGE_DENY:-0} != 1 ]]; then
+            mapfile -t DROPPED_DENY_ENTRIES < <(jq -r '.[]' <<<"$dropped_deny_json")
+          fi
           mapfile -t SETTINGS_REMOVED_ENTRIES < <(jq -r '.r.removed[]' <<<"$merge_json")
           mapfile -t SETTINGS_CONFLICT_ENTRIES < <(jq -r '.r.conflicts[]' <<<"$merge_json")
           if jq -e '.base_rejected' <<<"$merge_json" >/dev/null; then
@@ -1614,6 +2089,10 @@ apply_substitutions() {
         fi
         mv "${cc_settings_file}.tmp" "$cc_settings_file"
       else
+        if [[ ${TEMPLATE_SYNC_MERGE_DENY:-0} == 1 ]] && ! is_excluded "$downstream_settings"; then
+          log_error "Cannot merge repository settings for migration: $downstream_settings"
+          return 1
+        fi
         log_warn "Smart merge failed — downstream .claude/settings.json may contain invalid JSON"
         log_warn "Falling back to upstream template for settings.json"
         rm -f "${cc_settings_file}.tmp"
@@ -1651,6 +2130,10 @@ apply_substitutions() {
       ' "$cc_settings_file" >"${cc_settings_file}.tmp" && mv "${cc_settings_file}.tmp" "$cc_settings_file"
 
     log_info "Applied Claude Code settings"
+    if [[ ${TEMPLATE_SYNC_MERGE_DENY:-0} == 1 && -f $downstream_settings ]] && ! is_excluded "$downstream_settings"; then
+      migration_json settings-sync "$downstream_settings" "$cc_settings_file" "$MANIFEST_PATH" "$PLUGIN_MIGRATED" >"$cc_settings_file.tmp"
+      mv "$cc_settings_file.tmp" "$cc_settings_file"
+    fi
   fi
 
   # --- Codex Settings (codex/config.toml) ---
@@ -1674,7 +2157,7 @@ apply_substitutions() {
     # Other downstream MCP entries fill gaps; template servers win by name.
     local mcp_source=".codex/config.toml"
     local has_downstream_mcp=true
-    if [[ ! -f "$mcp_source" ]]; then
+    if [[ ! -f "$mcp_source" ]] || { [[ ${TEMPLATE_SYNC_MERGE_DENY:-0} == 1 ]] && is_excluded "$mcp_source"; }; then
       mcp_source="$template_dir/codex/config.toml"
       has_downstream_mcp=false
     fi
@@ -1704,6 +2187,13 @@ apply_substitutions() {
     fi
     rm -rf "$mcp_work_dir"
 
+    if [[ ${TEMPLATE_SYNC_MERGE_DENY:-0} == 1 && -f .codex/config.toml ]] && ! is_excluded .codex/config.toml; then
+      local base_config=""
+      if [[ -n $CODEX_BASE_DIR && -f $CODEX_BASE_DIR/config.toml ]]; then base_config="$CODEX_BASE_DIR/config.toml"; fi
+      codex_toml merge .codex/config.toml "$codex_config_file" "$base_config" "$codex_model" >"$codex_config_file.tmp"
+      mv "$codex_config_file.tmp" "$codex_config_file"
+    fi
+
     log_info "Applied Codex config.toml settings"
   fi
 
@@ -1716,13 +2206,26 @@ apply_substitutions() {
   local toolbox_hook_filter='def toolbox_owned:
     [.hooks[]?.command // empty]
     | any(contains(".codex/scripts/") and (contains(".codex/scripts/capy.sh") | not));'
-  if [[ -f "$codex_hooks_file" ]]; then
+  if [[ -f "$codex_hooks_file" && ( $RETIRE_MODE == true || ${TEMPLATE_SYNC_MERGE_DENY:-0} == 1 ) ]]; then
+    jq '.hooks |= (map_values([.[] | .hooks |= map(select(
+        (.command // "") | contains(".codex/scripts/") and (contains(".codex/scripts/capy.sh") | not)))
+        | select(.hooks | length > 0)]) | with_entries(select(.value | length > 0)))' \
+      "$codex_hooks_file" >"$codex_hooks_file.tmp"
+    mv "$codex_hooks_file.tmp" "$codex_hooks_file"
+  elif [[ -f "$codex_hooks_file" ]]; then
     jq "$toolbox_hook_filter"'
       .hooks |= (map_values(map(select(toolbox_owned))) | with_entries(select(.value | length > 0)))
     ' "$codex_hooks_file" >"${codex_hooks_file}.tmp"
     mv "${codex_hooks_file}.tmp" "$codex_hooks_file"
   fi
-  if [[ -f "$codex_hooks_file" && -f "$downstream_hooks" ]]; then
+  if [[ -f "$codex_hooks_file" && -f "$downstream_hooks" && ${TEMPLATE_SYNC_MERGE_DENY:-0} == 1 ]]; then
+    if ! is_excluded "$downstream_hooks"; then
+      local base_hooks=""
+      if [[ -n $CODEX_BASE_DIR && -f $CODEX_BASE_DIR/hooks.json ]]; then base_hooks="$CODEX_BASE_DIR/hooks.json"; fi
+      migration_json hooks-sync "$downstream_hooks" "$codex_hooks_file" "$MANIFEST_PATH" "$base_hooks" >"$codex_hooks_file.tmp"
+      mv "$codex_hooks_file.tmp" "$codex_hooks_file"
+    fi
+  elif [[ -f "$codex_hooks_file" && -f "$downstream_hooks" ]]; then
     # Toolbox owns script entries under .codex/scripts/ except capy.sh; those
     # come from upstream verbatim, so a toolbox entry that changed or was
     # removed upstream does not linger. Every other downstream entry (capy's
@@ -2241,6 +2744,7 @@ generate_markdown_summary() {
 #   Mutates the working tree's root CLAUDE.md (idempotent — guarded by grep)
 apply_wiring() {
   local staging_dir="$1"
+  if migration_excluded CLAUDE.md; then return 0; fi
 
   # Cleanup obsolete header
   if grep -q '^# Extra Instructions$' CLAUDE.md 2>/dev/null; then
@@ -2330,8 +2834,20 @@ apply_changes() {
   done
 
   # Restore executable permissions on scripts
-  chmod +x .codex/scripts/*.sh 2>/dev/null || true
-  chmod +x .github/scripts/*.sh 2>/dev/null || true
+  if [[ ${TEMPLATE_SYNC_MERGE_DENY:-0} == 1 ]]; then
+    local script
+    for script in "$staging_dir"/codex/scripts/*.sh "$staging_dir"/scripts/*.sh; do
+      [[ -f $script ]] || continue
+      case $script in
+      "$staging_dir"/codex/*) destination=.${script#"$staging_dir/"} ;;
+      *) destination=.github/${script#"$staging_dir/"} ;;
+      esac
+      if ! is_excluded "$destination"; then chmod +x "$destination"; fi
+    done
+  else
+    chmod +x .codex/scripts/*.sh 2>/dev/null || true
+    chmod +x .github/scripts/*.sh 2>/dev/null || true
+  fi
 
   # --- Run migrations ---
   local upstream_dir
@@ -2353,7 +2869,7 @@ apply_changes() {
   fi
 
   # --- Patch .gitignore for .codex ---
-  if [[ -d "$staging_dir/codex" && -f ".gitignore" ]]; then
+  if [[ -d "$staging_dir/codex" && -f ".gitignore" ]] && ! migration_excluded .gitignore; then
     if git check-ignore -q .codex 2>/dev/null; then
       if ! grep -q '^!\.codex' .gitignore; then
         if grep -q '^!\.claude' .gitignore; then
@@ -2391,6 +2907,171 @@ apply_changes() {
 }
 
 # =============================================================================
+# Retirement
+# =============================================================================
+
+retirement_regular_file() {
+  local candidate=$1
+  while [[ $candidate != . ]]; do
+    [[ ! -L $candidate ]] || return 1
+    if [[ $candidate != */* ]]; then break; fi
+    candidate=${candidate%/*}
+  done
+  [[ -f $1 ]]
+}
+
+retire_template() {
+  local upstream manifest stage clean rendered before after model choice
+  local part file target template relative parent key
+  local -a files=() infrastructure=()
+  upstream=$(get_manifest_value '.upstream_repo')
+  manifest="$(pwd -P)/$MANIFEST_PATH"
+  mkdir -p -- "$STAGING_DIR"
+  stage=$(mktemp -d "$(cd "$STAGING_DIR" && pwd -P)/retirement.XXXXXXXX")
+  # When the caller supplied --output-dir, only our private snapshot is ours
+  # to clean up. The ordinary temporary staging root already has an exit trap.
+  if [[ -z $TEMP_DIR ]]; then TEMP_DIR=$stage; fi
+  clean="$stage/empty" rendered="$stage/rendered" before="$stage/before" after="$stage/after"
+  mkdir -p "$clean" "$before" "$after"
+  fetch_upstream_templates "refs/tags/$TARGET_VERSION" "$upstream" "$stage"
+  # Use first-install substitutions. Running from an empty project prevents
+  # local hooks, MCP registrations and settings from becoming deletion evidence.
+  (
+    cd "$clean"
+    MANIFEST_PATH=$manifest apply_substitutions "$FETCHED_TEMPLATES_PATH" "$rendered"
+  )
+  copy_sync_files "$stage/upstream" "$rendered"
+  model=$(get_manifest_value '.variables.CODEX_MODEL // ""')
+  choice=$(get_manifest_value '.variables.CC_STATUSLINE // "enhanced"')
+  log_step "Retirement of the repository template at $TARGET_VERSION"
+  echo "Committing this change affects everyone using this repository. Collaborators without kk lose the Codex guard and the repository deny list."
+  echo "Cloud sessions and CI runners relying on committed plugin enablement lose the plugin. Installing kk alone does not restore native denies to unwrapped Claude sessions."
+  echo "Repository Codex native forbids return only on machines that enabled the account-wide rules file."
+  echo "Kept repository settings outrank machine defaults. To hand Codex sandbox and approvals to the machine, delete the sandbox_mode, approval_policy and approvals_reviewer lines from .codex/config.toml."
+  echo "Manifest statusline choice: $choice."
+  for key in CC_MODEL CC_EFFORT_LEVEL CC_PERMISSION_MODE CODEX_MODEL; do
+    local value
+    value=$(get_manifest_value ".variables.$key // \"\"")
+    case "$key=$value" in *=|CC_MODEL=default|CC_EFFORT_LEVEL=high|CC_PERMISSION_MODE=default|CODEX_MODEL=gpt-6.2-astra) continue ;; esac
+    printf 'Manifest choice: %s = %s (kept when present).\n' "$key" "$value"
+  done
+
+  for file in .claude/CLAUDE.*.md; do
+    if [[ -f $file && $file != .claude/CLAUDE.extra.md ]]; then
+      printf 'Keep %s. Codex stops receiving it unless AGENTS.md contains @%s.\n' "$file" "$file"
+    fi
+  done
+  # Report excluded project-only files too, even if the template contains no
+  # corresponding path. Never follow a link into another checkout.
+  for part in .claude .codex .github CLAUDE.md; do
+    [[ -e $part || -L $part ]] || continue
+    while IFS= read -r -d '' file; do
+      if is_excluded "$file"; then printf 'Excluded: %s\n' "$file"; fi
+    done < <(find "$part" \( -type f -o -type l \) -print0)
+  done
+
+  for part in claude codex workflows; do
+    [[ -d $rendered/$part ]] || continue
+    case "$part" in workflows) target=.github/workflows ;; *) target=.$part ;; esac
+    while IFS= read -r -d '' template; do
+      relative=${template#"$rendered/$part/"}
+      file="$target/$relative"
+      if is_excluded "$file" || [[ ! -e $file && ! -L $file ]]; then continue; fi
+      if ! retirement_regular_file "$file" || [[ -L $template ]]; then
+        printf 'Keep non-regular or linked path: %s\n' "$file"
+        continue
+      fi
+      case "$file" in .claude/CLAUDE.extra.md) ;; .claude/CLAUDE.*.md) continue ;; esac
+      parent=${file%/*}
+      mkdir -p "$before/$parent" "$after/$parent"
+      cp -p -- "$file" "$before/$file"
+      case "$file" in
+      .claude/settings.json)
+        migration_json settings-retire "$file" "$template" "$manifest" "" >"$after/$file" ;;
+      .codex/hooks.json)
+        migration_json hooks-retire "$file" "$template" "$manifest" "" >"$after/$file" ;;
+      .codex/config.toml)
+        codex_toml retire "$file" "$template" "" "$model" >"$after/$file" ;;
+      *)
+        if ! cmp -s "$file" "$template"; then
+          printf 'Keep changed file: %s\n' "$file"
+          continue
+        fi ;;
+      esac
+      if [[ -f $after/$file ]] && cmp -s "$file" "$after/$file"; then continue; fi
+      case "$file" in
+      .github/workflows/template-sync.yml|.claude/toolbox/scripts/template-sync.sh|.claude/toolbox/scripts/semver-compare.sh|.claude/toolbox/scripts/sync-workflow.sh)
+        infrastructure+=("$file") ;;
+      *) files+=("$file") ;;
+      esac
+    done < <(find "$rendered/$part" \( -type f -o -type l \) -print0)
+  done
+
+  if ! is_excluded "$MANIFEST_PATH" && retirement_regular_file "$MANIFEST_PATH"; then
+    mkdir -p "$before/.github"
+    cp -p "$MANIFEST_PATH" "$before/$MANIFEST_PATH"
+    infrastructure+=("$MANIFEST_PATH")
+  fi
+  if retirement_regular_file CLAUDE.md && ! is_excluded CLAUDE.md; then
+    cp -p CLAUDE.md "$before/CLAUDE.md"
+  fi
+  for file in "${files[@]}" "${infrastructure[@]}"; do
+    if [[ ! -s $after/$file ]]; then printf '%s\0' "$file"; fi
+  done >"$stage/removals"
+  python3 -I - "$before/CLAUDE.md" "$after/CLAUDE.md" "$stage/removals" <<'PY'
+import os
+from pathlib import Path
+import sys
+
+source, output, plan = map(Path, sys.argv[1:])
+removed = {Path(os.fsdecode(name)).resolve() for name in plan.read_bytes().split(b"\0") if name}
+lines = source.read_bytes().splitlines(keepends=True) if source.exists() else []
+present = {line.rstrip(b"\r\n") for line in lines}
+drop = set()
+for name in (".claude/CLAUDE.extra.md", ".claude/toolbox/CLAUDE.md"):
+    target = Path(name)
+    line = ("@" + name).encode()
+    if not target.is_file() or target.resolve() in removed:
+        drop.add(line)
+        continue
+    if name == ".claude/CLAUDE.extra.md":
+        print("Keep {}. Codex stops receiving it unless AGENTS.md contains @{}.".format(name, name))
+    if line in present:
+        print("Keep @{} in CLAUDE.md. Claude will continue loading the retained file.".format(name))
+if source.exists():
+    output.write_bytes(b"".join(line for line in lines if line.rstrip(b"\r\n") not in drop))
+PY
+  if [[ -f $before/CLAUDE.md ]] && ! cmp -s "$before/CLAUDE.md" "$after/CLAUDE.md"; then
+    files+=(CLAUDE.md)
+  fi
+
+  # Finish parsing and planning before making any repository change. Apply
+  # configuration edits first; the manifest is the final removal on success.
+  for file in "${files[@]}" "${infrastructure[@]}"; do
+    if [[ -s $after/$file || $file == CLAUDE.md ]]; then
+      printf 'Edit %s\n' "$file"
+      diff -u -- "$before/$file" "$after/$file" || [[ $? == 1 ]]
+    else
+      printf 'Remove %s\n' "$file"
+    fi
+    if $DRY_RUN; then continue; fi
+    if ! retirement_regular_file "$file" || ! cmp -s "$before/$file" "$file"; then
+      log_error "File changed during retirement: $file"
+      return 1
+    fi
+    if [[ -s $after/$file || $file == CLAUDE.md ]]; then
+      local replacement
+      replacement=$(mktemp "$file.XXXXXXXX")
+      cp -p -- "$before/$file" "$replacement"
+      cat "$after/$file" >"$replacement"
+      mv -- "$replacement" "$file"
+    else
+      rm -- "$file"
+    fi
+  done
+}
+
+# =============================================================================
 # Help / Usage
 # =============================================================================
 
@@ -2411,6 +3092,8 @@ Options:
                         - SHA: Specific commit
   --dry-run             Preview changes without applying them
   --local               Fetch, compare, and apply in a single invocation
+  --retire              Compare with the explicit retirement tag and remove template-owned
+                        entries. Use --dry-run to preview. For migration use kk migrate.
   --apply               Apply pre-staged changes to the working tree (CI only)
   --ci                  CI mode: outputs GitHub Actions compatible format
   --output-dir DIR      Directory to stage changes (default: temporary directory)
@@ -2420,6 +3103,9 @@ Environment:
   TEMPLATE_SYNC_NO_HANDOFF=1
                         Run this script as-is instead of handing off to the
                         target version's copy when the two differ
+  TEMPLATE_SYNC_MERGE_DENY=1
+                        Prepare a migration: merge project deny entries and
+                        preserve adopter-owned Codex settings and hook handlers.
 
 Requires: jq, git, curl, yq (mikefarah/yq), python3 (standard library only)
 
@@ -2470,6 +3156,10 @@ parse_arguments() {
       LOCAL_MODE=true
       shift
       ;;
+    --retire)
+      RETIRE_MODE=true
+      shift
+      ;;
     --ci)
       CI_MODE=true
       shift
@@ -2512,6 +3202,14 @@ main() {
 
   # Parse CLI arguments (before dependency check so APPLY_MODE is set)
   parse_arguments "$@"
+  # Retirement uses an explicit tag. Even a standalone preview must not
+  # bootstrap a missing helper into the repository.
+  if ! $RETIRE_MODE; then load_semver; fi
+
+  if $RETIRE_MODE && { $APPLY_MODE || $LOCAL_MODE || [[ ! $TARGET_VERSION =~ ^v[0-9]+\.[0-9]+\.[0-9]+([+-][0-9A-Za-z.+-]+)?$ ]]; }; then
+    log_error "--retire requires --version <retirement-tag> and runs separately from --apply and --local"
+    exit 2
+  fi
 
   # Check dependencies (applies mode-aware checks)
   check_dependencies
@@ -2547,10 +3245,24 @@ main() {
   read_manifest
   validate_manifest
 
+  if $RETIRE_MODE; then
+    retire_template
+    return
+  fi
+  if [[ ${TEMPLATE_SYNC_MERGE_DENY:-0} == 1 ]] && { $DRY_RUN || is_excluded "$MANIFEST_PATH"; }; then
+    if is_excluded "$MANIFEST_PATH"; then log_info "Excluded: $MANIFEST_PATH"; fi
+    mkdir -p "$STAGING_DIR"
+    local scratch_manifest
+    scratch_manifest=$(mktemp "$STAGING_DIR/migration-manifest.XXXXXXXX")
+    cp "$MANIFEST_PATH" "$scratch_manifest"
+    MANIFEST_PATH=$scratch_manifest
+  fi
+
   # Apply mode: skip fetch/compare/report, just apply staged changes.
   # The staged tree may carry a newer sync script — let it do the applying.
   if $APPLY_MODE; then
     handoff_to_upstream_script "$STAGING_DIR/substituted" "$@"
+    log_info "To retire this repository's template after installing kk, run kk migrate."
     apply_changes "$STAGING_DIR/substituted" "$TARGET_VERSION"
     return 0
   fi
@@ -2586,6 +3298,7 @@ main() {
   # drive the rest of the run. Must happen before any migration/compare/apply
   # step so the working tree is still in its pre-sync state for the new script.
   handoff_to_upstream_script "$FETCHED_TEMPLATES_PATH" "$@"
+  log_info "To retire this repository's template after installing kk, run kk migrate."
 
   # Display fetched templates info
   if ! $CI_MODE; then
@@ -2617,6 +3330,26 @@ main() {
   if [[ -f ".claude/settings.json" ]] && ! is_excluded ".claude/settings.json"; then
     fetch_settings_base "$(get_manifest_value '.template_version')" \
       "$FETCHED_TEMPLATES_PATH" "$STAGING_DIR/upstream" "$STAGING_DIR"
+  fi
+
+  if [[ ${TEMPLATE_SYNC_MERGE_DENY:-0} == 1 ]]; then
+    local previous ref item
+    previous=$(get_manifest_value '.template_version')
+    CODEX_BASE_DIR="$STAGING_DIR/codex-base"
+    mkdir -p "$CODEX_BASE_DIR"
+    ref="refs/tags/$previous"
+    if [[ $previous =~ ^[0-9a-f]{40}$ ]]; then ref="$previous"; fi
+    if git -C "$STAGING_DIR/upstream" fetch --quiet --depth 1 origin "$ref" 2>/dev/null; then
+      for item in hooks.json config.toml; do
+        if git -C "$STAGING_DIR/upstream" cat-file -e "FETCH_HEAD:.codex/$item" 2>/dev/null; then
+          git -C "$STAGING_DIR/upstream" show "FETCH_HEAD:.codex/$item" >"$CODEX_BASE_DIR/$item"
+        elif [[ -f .codex/$item ]] && ! is_excluded ".codex/$item"; then
+          log_warn "No previous .codex/$item at $previous; unmatched repository entries will be kept."
+        fi
+      done
+    else
+      log_warn "No Codex base fetched at $previous; unmatched repository settings and hooks will be kept."
+    fi
   fi
 
   # Apply substitutions to fetched templates
