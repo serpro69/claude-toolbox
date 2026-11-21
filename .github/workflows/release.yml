@@ -21,7 +21,17 @@ on:
         type: boolean
 
 jobs:
+  machine-delivery:
+    uses: ./.github/workflows/machine-delivery.yml
+    permissions:
+      contents: read
+
   release:
+    needs: machine-delivery
+    # Fetch the preceding tag after any other publisher has pushed its tag.
+    concurrency:
+      group: toolbox-release-publication
+      queue: max
     name: Release
     runs-on: ubuntu-latest
     if: github.ref == 'refs/heads/master'
@@ -44,9 +54,9 @@ jobs:
 
       - name: Validate Version Format
         id: validate
+        env:
+          VERSION: ${{ inputs.version }}
         run: |
-          VERSION="${{ inputs.version }}"
-
           # Must start with 'v'
           if [[ ! "$VERSION" =~ ^v ]]; then
             echo "::error::Version must start with 'v' prefix (e.g., v1.2.3)"
@@ -104,8 +114,23 @@ jobs:
         with:
           go-version-file: go.mod
 
+      - name: Check Guard Artifact Freshness
+        run: make check-guard
+
+      - name: Select Codex guard version
+        id: guard
+        env:
+          SEMVER: ${{ steps.validate.outputs.semver }}
+          MODE: ${{ inputs.dry_run && '--preview' || '--apply' }}
+        run: |
+          version=$(bash .github/scripts/release-guard-version.sh "$SEMVER" "$MODE")
+          echo "version=$version" >> "$GITHUB_OUTPUT"
+          echo "Codex guard version for this release is $version"
+
       - name: Dry Run Summary
         if: inputs.dry_run == true
+        env:
+          GUARD_VERSION: ${{ steps.guard.outputs.version }}
         run: |
           VERSION="${{ steps.validate.outputs.version }}"
           SEMVER="${{ steps.validate.outputs.semver }}"
@@ -117,6 +142,8 @@ jobs:
           echo "**Version:** $VERSION" >> "$GITHUB_STEP_SUMMARY"
           echo "**Claude Plugin version:** $KLAUDE_CURRENT_VERSION → $SEMVER" >> "$GITHUB_STEP_SUMMARY"
           echo "**Codex Plugin version:** $KODEX_CURRENT_VERSION → $SEMVER" >> "$GITHUB_STEP_SUMMARY"
+          GUARD_CURRENT_VERSION=$(jq -r '.version' kodex-guard/.codex-plugin/plugin.json)
+          echo "**Codex Guard version:** $GUARD_CURRENT_VERSION → $GUARD_VERSION" >> "$GITHUB_STEP_SUMMARY"
           echo "" >> "$GITHUB_STEP_SUMMARY"
           echo "**Actions that would be performed:**" >> "$GITHUB_STEP_SUMMARY"
           echo "1. Regenerate kodex plugin artifacts from klaude-plugin source" >> "$GITHUB_STEP_SUMMARY"
@@ -138,9 +165,6 @@ jobs:
           echo '```' >> "$GITHUB_STEP_SUMMARY"
           echo "" >> "$GITHUB_STEP_SUMMARY"
           echo "Dry run complete. No changes were made."
-
-      - name: Check Guard Artifact Freshness
-        run: make check-guard
 
       - name: Regenerate Kodex Artifacts
         if: inputs.dry_run != true

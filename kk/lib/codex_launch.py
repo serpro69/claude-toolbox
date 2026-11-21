@@ -284,4 +284,6 @@ def launch(home, args):
         env["XDG_CONFIG_HOME"] = str(Path(env["XDG_CONFIG_HOME"]).absolute())
     if not batch:
         notice.on_launch(home, record)
+    if sys.stderr is not None:
+        sys.stderr.flush()
     os.execve(executable, ["codex", *flags, *args], env)

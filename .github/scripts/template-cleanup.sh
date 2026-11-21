@@ -447,6 +447,8 @@ execute_cleanup() {
   rm -f .github/workflows/template-cleanup.yml
   rm -f .github/workflows/pre-release.yml
   rm -f .github/workflows/release.yml
+  rm -f .github/workflows/machine-delivery.yml
+  rm -f .github/scripts/release-guard-version.sh
   rm -f .github/workflows/docs.yml
 
   log_step "Preserving files for restore after cleanup..."
