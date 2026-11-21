@@ -414,6 +414,58 @@ class Policy(object):
         self.partial = False            # the command under check may gain operands
 
 
+def toolbox_home(env, home):
+    # Claude runs its managed plugin in place, even before the dispatcher is
+    # published. Recognize the release-plugin.sh layout in the standalone engine.
+    suffix = "/klaude-plugin/scripts/guard/guard.py"
+    engine = os.path.realpath(__file__)
+    if engine.endswith(suffix):
+        version_dir = engine[:-len(suffix)]
+        releases = os.path.dirname(version_dir)
+        installed = os.path.dirname(releases)
+        if (os.path.basename(releases) == "releases" and os.path.isfile(os.path.join(installed, "state.json"))
+                and os.path.isfile(os.path.join(version_dir, "kk", "payload.json"))):
+            return installed
+    if env.get("KK_HOME"):
+        return env["KK_HOME"]
+    # An unwrapped tool may only have the installer's stable dispatcher link.
+    link = os.path.join(home, ".local", "bin", "kk")
+    if os.path.islink(link):
+        target = os.path.realpath(link)
+        installed = os.path.dirname(os.path.dirname(target))
+        if target == os.path.join(installed, "bin", "kk") and os.path.isfile(os.path.join(installed, "state.json")):
+            # The link lives in a shared directory. A different program can
+            # own this exact name and keep an unrelated journal beside it.
+            try:
+                recorded = installed_paths(installed)
+            except Denied:
+                recorded = ()  # This candidate has no verifiable toolbox identity.
+            link_parent = os.path.realpath(os.path.dirname(link))
+            for path in recorded:
+                if os.path.basename(path) == "kk" and os.path.realpath(os.path.dirname(path)) == link_parent:
+                    return installed
+    data = env.get("XDG_DATA_HOME") or os.path.join(home, ".local", "share")
+    return os.path.join(data, "kk")
+
+
+def installed_paths(home):
+    """Paths recorded before publication, including files in shared Codex directories."""
+    journal = os.path.join(home, "state.json")
+    try:
+        with open(journal, encoding="utf-8") as handle:
+            state = json.load(handle)
+    except FileNotFoundError:
+        return []  # Plugin-only install, or first install before the first state write.
+    except (OSError, ValueError) as exc:
+        raise failure("cannot read toolbox ownership from %s: %s" % (journal, exc))
+    if (not isinstance(state, dict) or type(state.get("format_version")) is not int
+            or state["format_version"] != 1 or not isinstance(state.get("installed_paths"), list)
+            or not all(isinstance(path, str) and os.path.isabs(path) and "\0" not in path
+                       for path in state["installed_paths"])):
+        raise failure("invalid toolbox ownership record in %s" % journal)
+    return state["installed_paths"]
+
+
 def compile_policy(rules, ctx, env=None):
     """Compile the secrets globs against every anchor form (see
     `anchor_forms`). One glob yields one regex per (root, home) combination
@@ -428,14 +480,32 @@ def compile_policy(rules, ctx, env=None):
                     secrets.append((glob, glob_to_regex(glob, root, home)))
         except (ValueError, re.error) as exc:
             raise failure("cannot compile secrets glob %r: %s" % (glob, exc))
+    env = os.environ if env is None else env
+    path_tokens = {
+        "$KK_HOME": toolbox_home(env, ctx.home),
+        "$XDG_CONFIG_HOME": env.get("XDG_CONFIG_HOME") or os.path.join(ctx.home, ".config"),
+        "$CODEX_HOME": env.get("CODEX_HOME") or os.path.join(ctx.home, ".codex"),
+    }
     selfmod = []
     for entry in rules["selfmod"]:
+        if entry == "$KK_HOME/state.json#installed_paths":
+            for owned in installed_paths(path_tokens["$KK_HOME"]):
+                selfmod.extend((owned, path) for path in resolve(owned, ctx.project_root, ctx.home))
+            continue
         if not isinstance(entry, str) or not entry:
             raise failure("every selfmod entry must be a nonempty path")
         base = entry[:-3] if entry.endswith("/**") else entry
         if any(ch in base for ch in "*?[]"):
             raise failure("selfmod paths support only a trailing /**: %r" % entry)
-        if base.startswith("//"):
+        token, _, suffix = base.partition("/")
+        if token in path_tokens:
+            anchor = path_tokens[token]
+            if not os.path.isabs(anchor):
+                # Relative environment paths start in the hook process directory.
+                # A tool's payload cwd can be somewhere else entirely.
+                anchor = os.path.join(os.getcwd(), anchor)
+            base = os.path.join(anchor, suffix)
+        elif base.startswith("//"):
             base = base[1:]
         selfmod.extend((entry, path) for path in resolve(base, ctx.project_root, ctx.home))
     destructive = {}
@@ -467,7 +537,6 @@ def compile_policy(rules, ctx, env=None):
                 except re.error as exc:
                     raise failure("invalid %s regex: %s" % (key, exc))
             destructive[category].append(rule)
-    env = os.environ if env is None else env
     tmp_roots = []
     for root in rules["tmp_roots"]:
         if root == "$TMPDIR":
@@ -519,7 +588,7 @@ def read_config(path, validate, messages):
     return result
 
 
-def project_policy(value, ctx, messages):
+def project_policy(value, ctx, env, messages):
     config_object(value, {"version", "secrets", "destructive", "selfmod"}, "project config", messages, version=True)
     secrets = string_list(value.get("secrets", []), "secrets")
     for glob in secrets:
@@ -532,7 +601,7 @@ def project_policy(value, ctx, messages):
     if not isinstance(destructive, dict) or not all(category for category in destructive):
         raise ValueError("destructive must be an object with nonempty category names")
     return compile_policy({"secrets": secrets, "destructive": destructive,
-                           "selfmod": selfmod, "tmp_roots": []}, ctx, {})
+                           "selfmod": selfmod, "tmp_roots": []}, ctx, env)
 
 
 def user_exceptions(value, ctx, messages):
@@ -573,7 +642,7 @@ def effective_policy(rules, ctx, env):
     policy = compile_policy(rules, ctx, env)
     messages = []
     project_path = env.get("KK_GUARD_PROJECT_CONFIG") or os.path.join(ctx.project_root, ".claude", "kk-guard.json")
-    additions = read_config(project_path, lambda value, notes: project_policy(value, ctx, notes), messages)
+    additions = read_config(project_path, lambda value, notes: project_policy(value, ctx, env, notes), messages)
     if additions is not None:
         policy.secrets.extend(additions.secrets)
         policy.selfmod.extend(additions.selfmod)

@@ -1011,6 +1011,71 @@ class ConfigurationTests(unittest.TestCase):
             self.check(path, "selfmod", tool="Edit")
         self.check("README.md", tool="Read")
 
+    def test_machine_paths_deny_edits_and_allow_reads(self):
+        home = self.sandbox.home
+        for layout in ("default", "custom"):
+            if layout == "default":
+                toolbox = os.path.join(home, ".local", "share", "kk")
+                config = os.path.join(home, ".config")
+                codex = os.path.join(home, ".codex")
+            else:
+                toolbox = os.path.join(home, "custom toolbox")
+                config = os.path.join(home, "config")
+                codex = os.path.join(home, "codex")
+                self.env.update(KK_HOME=toolbox, XDG_CONFIG_HOME=config, CODEX_HOME=codex,
+                                XDG_DATA_HOME=os.path.join(home, "unused"))
+            owned = [os.path.join(codex, "kk.config.toml"), os.path.join(codex, "rules", "kk.rules")]
+            for name in os.listdir(os.path.join(REPO, ".codex", "agents")):
+                if name.endswith(".toml"):
+                    owned.append(os.path.join(codex, "agents", "kk-" + name))
+            for path in owned:
+                self.check(path, tool="Edit")  # Same destination before kk owns it.
+            os.makedirs(toolbox)
+            with open(os.path.join(toolbox, "state.json"), "w") as handle:
+                json.dump({"format_version": 1, "installed_paths": owned}, handle)
+            protected = owned + [
+                toolbox, os.path.join(toolbox, "imports", "answer.json"),
+                os.path.join(config, "kk", "config.json"),
+                os.path.join(codex, "plugins", "cache", "toolbox", "kk-guard", "1", "hook"),
+            ]
+            for path in protected:
+                with self.subTest(layout=layout, path=path):
+                    self.check(path, "selfmod", tool="Edit")
+                    self.check(path, tool="Read")
+            for path in (toolbox + "-notes", os.path.join(config, "kk", "notes.json"),
+                         os.path.join(codex, "config.toml"), os.path.join(codex, "rules", "user.rules"),
+                         os.path.join(codex, "agents", "kk-notes.toml"), os.path.join(codex, "plugins", "other")):
+                with self.subTest(layout=layout, path=path):
+                    self.check(path, tool="Edit")
+
+    def test_data_home_fallback_and_symlinked_homes(self):
+        self.env.update(KK_HOME="", XDG_DATA_HOME=self.sandbox.home_link,
+                        CODEX_HOME=os.path.join(self.sandbox.home_link, "codex"))
+        self.check(os.path.join(self.sandbox.home, "kk", "state.json"), "selfmod", tool="Write")
+        self.check("mv " + os.path.join(self.sandbox.home, "codex", "plugins") + " saved", "selfmod")
+        self.env["KK_HOME"] = os.path.join(self.sandbox.home, "explicit")
+        self.check(os.path.join(self.sandbox.home, "kk", "state.json"), tool="Edit")
+
+    def test_unwrapped_tool_finds_custom_home_from_dispatcher(self):
+        home = os.path.join(self.sandbox.base, "toolbox")
+        bin_dir = os.path.join(self.sandbox.home, ".local", "bin")
+        os.makedirs(bin_dir)
+        os.makedirs(os.path.join(home, "bin"))
+        link = os.path.join(bin_dir, "kk")
+        os.symlink(os.path.join(home, "bin", "kk"), link)
+        with open(os.path.join(home, "state.json"), "w") as handle:
+            json.dump({"other_program": True}, handle)
+        self.check(os.path.join(home, "state.json"), tool="Edit")
+        with open(os.path.join(home, "state.json"), "w") as handle:
+            json.dump({"format_version": 1, "installed_paths": [link]}, handle)
+        self.check(os.path.join(home, "state.json"), "selfmod", tool="Edit")
+
+    def test_corrupt_ownership_record_fails_closed(self):
+        self.env["KK_HOME"] = self.sandbox.tmp
+        with open(os.path.join(self.sandbox.tmp, "state.json"), "w") as handle:
+            json.dump({"format_version": 1, "installed_paths": "broken"}, handle)
+        self.check("policy.toml", "failure", tool="Edit")
+
     def test_project_unknown_keys_warn_without_loosening_or_dropping_additions(self):
         self.fixture("project", "unknown-keys")
         for command, category, tool in (("git clean -fd", "destructive", "Bash"),
@@ -1574,6 +1639,19 @@ class ProcessContractTests(unittest.TestCase):
         code, out, err = self.run_engine(payload)
         self.assertEqual(code, 2, err)
 
+    def test_relative_homes_use_process_directory(self):
+        env = {"KK_HOME": "data", "XDG_CONFIG_HOME": "config", "CODEX_HOME": "codex"}
+        for path in ("data/state.json", "config/kk/config.json", "codex/plugins/cache/entry"):
+            absolute = os.path.join(self.sandbox.root, path)
+            for tool, expected in (("Read", 0), ("Edit", 2)):
+                with self.subTest(path=path, tool=tool):
+                    payload = json.dumps({"tool_name": tool, "tool_input": {"file_path": absolute},
+                                          "cwd": os.path.join(self.sandbox.root, "sub")})
+                    code, _, err = self.run_engine(payload, env)
+                    self.assertEqual(code, expected, err)
+                    if expected:
+                        self.assertIn("selfmod", err)
+
     def test_physical_path_denied_when_roots_are_symlinks(self):
         env = {"HOME": self.sandbox.home_link, "CLAUDE_PROJECT_DIR": self.sandbox.root_link}
         payload = json.dumps({"tool_name": "Read", "tool_input": {"file_path": os.path.join(self.sandbox.root, ".env")}, "cwd": self.sandbox.root_link})
@@ -1609,16 +1687,34 @@ class LauncherTests(unittest.TestCase):
         self.config = os.path.join(self.sandbox.base, "project.json")
         self.rules = os.path.join(self.install, "guard-rules.json")
 
-    def run_guard(self, path="README.md"):
+    def run_guard(self, path="README.md", tool="Read"):
         env = self.sandbox.env(project_config=self.config)
         env.update(PATH=os.environ.get("PATH", ""), KK_GUARD_INTERPRETERS=sys.executable,
                    KK_GUARD_RULES=self.rules,
                    PYTHONPATH=self.sandbox.root)
-        payload = json.dumps({"tool_name": "Read", "tool_input": {"file_path": path},
+        payload = json.dumps({"tool_name": tool, "tool_input": {"file_path": path},
                               "cwd": self.sandbox.root}).encode()
         return subprocess.run(["bash", os.path.join(self.install, "guard.sh")],
                               input=payload, env=env, cwd=self.sandbox.root,
                               stdout=subprocess.PIPE, stderr=subprocess.PIPE, timeout=15)
+
+    def test_managed_claude_protects_custom_home_before_dispatcher_publication(self):
+        toolbox = os.path.join(self.sandbox.base, "managed")
+        version = os.path.join(toolbox, "releases", "v1")
+        scripts = os.path.join(version, "klaude-plugin", "scripts")
+        os.makedirs(scripts)
+        os.makedirs(os.path.join(version, "kk"))
+        with open(os.path.join(version, "kk", "payload.json"), "w") as handle:
+            json.dump({}, handle)
+        with open(os.path.join(toolbox, "state.json"), "w") as handle:
+            json.dump({"format_version": 1, "installed_paths": []}, handle)
+        os.rename(self.install, os.path.join(scripts, "guard"))
+        os.symlink(os.path.join(scripts, "guard"), self.install)
+        target = os.path.join(toolbox, "state.json")
+        self.assert_allow(self.run_guard(target))
+        result = self.run_guard(target, "Edit")
+        self.assertEqual(result.returncode, 2, result.stderr)
+        self.assertIn(b"selfmod", result.stderr)
 
     def assert_allow(self, result):
         self.assertEqual((result.returncode, result.stdout, result.stderr), (0, b"", b""))

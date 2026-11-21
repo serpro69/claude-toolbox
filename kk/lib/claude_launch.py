@@ -307,6 +307,12 @@ def launch(home, argv):
         if print_layer:
             print(json.dumps(layer, indent=2, allow_nan=False))
             return
-        os.execv(claude, ["claude", "--settings", str(path), *forwarded])
+        # Hooks can run after a cwd change. Preserve the homes selected at launch.
+        env = dict(os.environ, KK_HOME=str(home))
+        for key in ("XDG_CONFIG_HOME", "CODEX_HOME"):
+            value = env.get(key)
+            if value and not os.path.isabs(value):
+                env[key] = os.path.join(os.getcwd(), value)
+        os.execve(claude, ["claude", "--settings", str(path), *forwarded], env)
     finally:
         path.unlink(missing_ok=True)  # Preview, validation failure, or failed exec.
