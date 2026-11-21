@@ -218,6 +218,12 @@ Adding Codex to the already active tag is its first installation on that release
 
 ## Notice, mixed installs and live check
 
+An interactive launcher starts a silent, detached stable-release check. Completed lookups are cached per repository for a day. A pending notice survives cache expiry and failed refreshes. The next interactive launch displays the discovered newer version once, before starting the vendor session, even if the machine has since gone offline. Failed offline lookups stay silent. Set `"launchNotice": false` in the shared override file to disable it.
+
+`kk status` lists the Git-marketplace copies with their scope and enablement. `kk status --remove-mixed` asks separately before removing each eligible user-scope copy through its vendor CLI. It retains project installs and the marketplace itself. An enabled Git guard can make a tool await review. The Codex skills-only copy is reported separately from its guard.
+
+`kk status --live` runs a non-interactive vendor session for each managed tool. Each gets a private scratch repository, a harmless canary and a project guard rule covering that filename. It checks Claude’s failed Read tool result and Codex’s hook-router diagnostic. The command exits nonzero if any required check fails. Run it with the vendor credentials or model provider configuration normally used for those sessions.
+
 1. The launch notice per [Update notice](design.md#update-notice). The check must never delay or fail a launch.
 2. Mixed-install detection for both tools from the vendors' plugin listings, reported by `kk status`. Offer removal of user-scope Git-marketplace installs through the vendor CLIs after confirmation. A tool with ambiguous active hooks does not reach *ready*.
 3. `kk status --live`: one non-interactive session per tool attempts to read a decoy secret in a scratch directory. The session starts in the scratch directory and the decoy sits inside it: the guard's secret patterns are anchored at the workspace, and a scratch workspace has no legacy guard that could produce the same denial. `kk migrate` calls this check unchanged. → verify: the output contains the guard's own denial text, not a sandbox or native refusal.

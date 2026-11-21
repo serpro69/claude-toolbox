@@ -18,6 +18,10 @@ def toolbox_home():
     return Path(os.environ.get("KK_HOME") or data / "kk").resolve()
 
 
+def override_path():
+    return Path(os.environ.get("XDG_CONFIG_HOME") or Path.home() / ".config") / "kk/config.json"
+
+
 def atomic_write(path, data, mode=0o600):
     path.parent.mkdir(parents=True, exist_ok=True)
     with tempfile.NamedTemporaryFile(dir=path.parent, delete=False) as output:
@@ -72,7 +76,7 @@ def record_codex_phase(release, phase):
     tools["codex"] = phase
 
 
-def promote(state, version):
+def promote(state, version, claude_phase="ready"):
     previous = state["active"]
     if previous and previous != version:
         old = state["releases"][previous]
@@ -86,7 +90,7 @@ def promote(state, version):
             qualified, key=lambda name: state["releases"][name]["superseded_at"], default=previous
         )
     release = state["releases"].setdefault(version, {})
-    release.setdefault("tools", {})["claude"] = "ready"
+    release.setdefault("tools", {})["claude"] = claude_phase
     release["superseded_at"] = None
     state["active"] = version
     state["candidate"] = None

@@ -1,7 +1,9 @@
 """Register the local marketplace and verify Claude's effective source directory."""
 
 import json
+import os
 from pathlib import Path
+import shutil
 import subprocess
 
 from .state import write_json
@@ -9,11 +11,18 @@ from .state import write_json
 
 MARKETPLACE = "toolbox"
 PLUGIN_ID = "kk@" + MARKETPLACE
+GIT_PLUGIN = "kk@claude-toolbox"
 
 
 def vendor(home, *args):
-    result = subprocess.run(["claude", "plugin", *args, "--json"], cwd=home,
-                            stdout=subprocess.PIPE, text=True, check=True)
+    executable = shutil.which("claude")
+    if executable is None:
+        raise FileNotFoundError("claude executable not found on PATH")
+    env = os.environ.copy()
+    if env.get("CLAUDE_CONFIG_DIR"):
+        env["CLAUDE_CONFIG_DIR"] = os.path.abspath(env["CLAUDE_CONFIG_DIR"])
+    result = subprocess.run([os.path.abspath(executable), "plugin", *args, "--json"], cwd=home, env=env,
+                            stdin=subprocess.DEVNULL, stdout=subprocess.PIPE, text=True, check=True, timeout=60)
     return json.loads(result.stdout)
 
 

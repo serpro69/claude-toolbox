@@ -7,7 +7,7 @@ import subprocess
 import sys
 from threading import Timer
 
-from . import codex_plugins, payload
+from . import claude, codex_plugins, mixed, payload
 from .codex_plugins import GUARD_ID
 
 
@@ -57,6 +57,9 @@ def check(release, directory, workspace, flags=(), *, acknowledged=False, prompt
     try:
         rows = hooks(directory, workspace, flags, executable or codex_plugins.executable())
     except NoTrustMethod:
+        _, issues = mixed.inspect("codex", workspace, directory)
+        if issues:
+            return "awaiting review", issues
         if not acknowledged and prompt and sys.stdin.isatty():
             print("Codex cannot report hook trust. Have you reviewed and enabled all kk-guard hooks "
                   "in /hooks? [y/N] ", end="", file=sys.stderr, flush=True)
@@ -68,6 +71,9 @@ def check(release, directory, workspace, flags=(), *, acknowledged=False, prompt
         return "awaiting review", ["could not verify Codex guard: " + str(exc)]
     listed = {h["key"]: h for h in rows if h.get("pluginId") == GUARD_ID and h.get("source") == "plugin"}
     issues = []
+    if any(h.get("source") == "plugin" and h.get("enabled") is True
+           and h.get("pluginId") in (claude.GIT_PLUGIN, mixed.GIT_GUARD) for h in rows):
+        issues.append("enabled Git-marketplace hooks also apply in this workspace")
     for i, group in enumerate(groups):
         for j, handler in enumerate(group["hooks"]):
             key = "{}:hooks/hooks.json:pre_tool_use:{}:{}".format(GUARD_ID, i, j)
@@ -86,10 +92,17 @@ def check(release, directory, workspace, flags=(), *, acknowledged=False, prompt
     return ("awaiting review" if issues else "ready"), issues
 
 
-def machine(release, saved, *, prompt=False):
+def machine(release, saved, *, prompt=False, inventory_issues=None):
     # A caller's cwd and TMPDIR can both be inside a trusted repository.
-    return check(release, Path(saved["codex_snapshot"]["directory"]), Path("/"),
-                 acknowledged=saved.get("tools", {}).get("codex") == "unverified", prompt=prompt)
+    directory = Path(saved["codex_snapshot"]["directory"])
+    if inventory_issues is None:
+        _, inventory_issues = mixed.inspect("codex", Path("/"), directory)
+    phase, details = check(release, directory, Path("/"),
+                           acknowledged=saved.get("tools", {}).get("codex") == "unverified",
+                           prompt=prompt and not inventory_issues)
+    if inventory_issues:
+        return "awaiting review", list(dict.fromkeys([*inventory_issues, *details]))
+    return phase, details
 
 
 def report(phase, issues):

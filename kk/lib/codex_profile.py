@@ -12,14 +12,11 @@ import tempfile
 
 from . import codex_plugins, payload, state
 from .claude_launch import check_keys, object_value, switches
+from .state import override_path
 
 
 def codex_home():
     return Path(os.environ.get("CODEX_HOME") or Path.home() / ".codex").resolve()
-
-
-def override_path():
-    return Path(os.environ.get("XDG_CONFIG_HOME") or Path.home() / ".config") / "kk/config.json"
 
 
 def override_bytes():

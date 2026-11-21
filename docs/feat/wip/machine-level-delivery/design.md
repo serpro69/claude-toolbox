@@ -333,7 +333,7 @@ An edit that has not been applied must not stay silent. `kk` records a hash of t
 
 ### Update notice
 
-`kk claude` and `kk codex` print one line when a newer stable release exists. The check runs in the background, is cached for a day, prints only to an interactive terminal, and stays silent when offline. It can be switched off.
+`kk claude` and `kk codex` check for stable releases in the background and cache each repository’s result for a day. A failed offline lookup stays silent. The next interactive launch displays a previously discovered update once before handing over the terminal, even offline. The adopter can switch the notice off.
 
 ### Plugins
 

@@ -11,10 +11,10 @@ import sys
 import tempfile
 from uuid import uuid4
 
-from . import payload, state
+from . import notice, payload, state
+from .claude import GIT_PLUGIN
 
 
-GIT_PLUGIN = "kk@claude-toolbox"
 PERMISSION_LISTS = ("allow", "ask", "deny", "additionalDirectories")
 
 
@@ -164,8 +164,7 @@ def baseline_layer(release, baseline, config, existing):
 
 def compose(release, arguments, sources):
     cwd = Path.cwd()
-    config_home = Path(os.environ.get("XDG_CONFIG_HOME") or Path.home() / ".config")
-    config_file = config_home / "kk/config.json"
+    config_file = state.override_path()
     claude_dir = Path(os.environ.get("CLAUDE_CONFIG_DIR") or Path.home() / ".claude")
     baseline_dir = release / "kk/baseline"
     baseline = json_file(baseline_dir / "claude.json")
@@ -313,6 +312,8 @@ def launch(home, argv):
             value = env.get(key)
             if value and not os.path.isabs(value):
                 env[key] = os.path.join(os.getcwd(), value)
+        if "-p" not in forwarded and "--print" not in forwarded:
+            notice.on_launch(home, record)
         os.execve(claude, ["claude", "--settings", str(path), *forwarded], env)
     finally:
         path.unlink(missing_ok=True)  # Preview, validation failure, or failed exec.

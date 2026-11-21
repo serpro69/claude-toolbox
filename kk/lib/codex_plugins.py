@@ -80,7 +80,7 @@ def executable():
 def vendor(home, directory, *args):
     result = subprocess.run([executable(), "plugin", *args, "--json"], cwd=home,
                             env=dict(os.environ, CODEX_HOME=str(directory)), timeout=30,
-                            stdout=subprocess.PIPE, check=True, text=True)
+                            stdin=subprocess.DEVNULL, stdout=subprocess.PIPE, check=True, text=True)
     return json.loads(result.stdout)
 
 
