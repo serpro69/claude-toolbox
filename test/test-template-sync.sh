@@ -30,6 +30,7 @@ reset_globals() {
   TARGET_VERSION="latest"
   APPLY_MODE=false
   LOCAL_MODE=false
+  RETIRE_MODE=false
   IS_ENTRYPOINT=false
   TEMP_DIR=""
   unset TEMPLATE_SYNC_NO_HANDOFF TEMPLATE_SYNC_HANDOFF_CLEANUP
@@ -3791,5 +3792,8 @@ fi
 # =============================================================================
 # Summary
 # =============================================================================
+
+log_section "Tagged template retirement and released client handoff"
+python3 -I -B "$SCRIPT_DIR/template_sync_retirement.py"
 
 print_summary
