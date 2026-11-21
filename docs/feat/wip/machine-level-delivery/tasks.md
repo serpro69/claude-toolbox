@@ -262,17 +262,25 @@ Task 4 must distinguish interpreter-generated guard bytecode from a changed rele
 - The independent code reviewer and the external Claude reviewer approved the revised behavior and closed their follow-up findings on same-tag activation. The final recovery hint directs a conflicting-source retry to `kk status`. The targeted fork/interruption test passed again after that wording change (capture `2b973891-7363-4dbb-8cbf-70a691edcb91`).
 
 ## Task 11: Launch notice, mixed installs and live check
-- **Status:** pending
+- **Status:** done
 - **Depends on:** Task 6, Task 10
 - **Size:** M
 - **Can run in parallel with:** Task 12, Task 13
 - **Docs:** [implementation.md#notice-mixed-installs-and-live-check](./implementation.md#notice-mixed-installs-and-live-check), [design.md#install-modes](./design.md#install-modes)
 
 ### Subtasks
-- [ ] 11.1 Implement the launch notice: background check, one-day cache, terminal-only output, silent offline, switchable off → verify: a launch with the network blocked is not delayed and prints nothing
-- [ ] 11.2 Detect Git-marketplace installs of the plugin for both tools in `kk status`; offer removal of user-scope installs through the vendor CLIs after confirmation; block *ready* while active hooks are ambiguous
-- [ ] 11.3 Implement `kk status --live`: start the session in a scratch directory with the decoy secret inside it, so the workspace-anchored secret patterns match and no legacy guard can produce the same denial → verify: the output contains the guard's own denial text for each tool
-- [ ] 11.4 Tests for the cache, the terminal check and mixed-install detection
+- [x] 11.1 Implement the switchable terminal notice with a background check and a one-day cache. A blocked network never holds up launch. A failed lookup is silent, and the next interactive launch can display a previously cached update once, even offline.
+- [x] 11.2 Detect Git-marketplace installs of the plugin for both tools in `kk status`; offer removal of user-scope installs through the vendor CLIs after confirmation; block *ready* while active hooks are ambiguous
+- [x] 11.3 Implement `kk status --live`: start the session in a scratch directory with the decoy secret inside it, so the workspace-anchored secret patterns match and no legacy guard can produce the same denial → verify: the output contains the guard's own denial text for each tool
+- [x] 11.4 Tests for the cache, the terminal check and mixed-install detection
+
+### Execution context
+
+- 2026-11-21, observed at `0e279f45`. Both launchers, the vendor inventory commands and the workspace-aware Codex trust reader are available. Task 11 covers the stable-release notice, mixed-install reporting and confirmed cleanup, and the scratch-workspace guard check. Task 14 will consume the live result during migration.
+- 2026-11-21, accepted by the maintainer. Deliver a cached newer release on the next interactive launch, even offline. The worker only fetches and caches. The launcher prints the pending notice before starting the vendor and marks it delivered. A failed offline lookup produces no notice.
+- 2026-11-21, verified on the revised code. With the network namespace disconnected, a controlled cached update printed once before Claude’s version output. A repeat launch and a cold offline lookup printed no notice. Both real vendors again returned their own guard denial for the scratch canary (capture `2e03c638-a585-4b5c-ad70-e0c6e92b5ed8`).
+- 2026-11-21, observed on Linux with Claude Code 2.1.296 and Codex CLI 0.171.0. Both real sessions denied their distinct public canaries through the installed guard using loopback model fixtures (capture `1178324c-50f3-4385-86d4-5992f2393cfa`). An offline upgrade from `0e279f45` with an explicit Claude config directory and enabled Git copies completed. Status reported both ambiguous guards, confirmed removal cleared the three user copies, and both managed vendor inventories survived (capture `bea57b5c-a869-4b28-8b32-0116bb11be16`). In a fresh Codex home, the filtered Git-marketplace inventory returned an empty list with exit 0 (capture `e3ee8337-0f4c-4628-b1f2-87bed506dd0d`).
+- Final verification on Linux. `KK_TEST_PYTHON=python3.12 bash test/test-kk.sh` passed all 73 tests (capture `0f55b52d-74bb-40f5-a7b8-c7e9951c7a6e`). The isolated code reviewer and the external Claude reviewer closed their findings. Coverage includes the predecessor staging check, confirmation before guard removal, skipped unmanaged tools, and pending notices that survive a failed refresh.
 
 ## Task 12: CI gate and release workflow
 - **Status:** pending

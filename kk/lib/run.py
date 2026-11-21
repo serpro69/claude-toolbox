@@ -16,4 +16,8 @@ def load_cli(directory, package):
 
 
 if __name__ == "__main__":
-    sys.exit(load_cli(Path(__file__).resolve().parent, "_kk_cli").main())
+    cli = load_cli(Path(__file__).resolve().parent, "_kk_cli")
+    if sys.argv[1:2] == ["--refresh-notice"] and len(sys.argv) == 4:
+        cli.notice.refresh(Path(sys.argv[2]), sys.argv[3])
+    else:
+        sys.exit(cli.main())

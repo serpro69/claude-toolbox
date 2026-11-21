@@ -235,7 +235,7 @@ class CodexActivation(InstallFixture):
             phase, messages = trust.check(self.checkout, self.directory, self.root)
             self.assertEqual(phase, "awaiting review")
             self.assertEqual(len(messages), len(groups))
-        with patch.object(trust, "hooks", side_effect=trust.NoTrustMethod):
+        with patch.object(trust, "hooks", side_effect=trust.NoTrustMethod), patch.object(trust.mixed, "inspect", return_value=([], [])):
             self.assertEqual(trust.check(self.checkout, self.directory, self.root)[0], "awaiting review")
             with patch("sys.stdin.isatty", return_value=True), patch("sys.stdin.readline", return_value="yes\n"):
                 self.assertEqual(trust.check(self.checkout, self.directory, self.root, prompt=True)[0], "unverified")

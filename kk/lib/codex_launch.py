@@ -11,7 +11,7 @@ import subprocess
 import sys
 from contextlib import ExitStack
 
-from . import codex_plugins, codex_profile, codex_trust, payload, state
+from . import codex_plugins, codex_profile, codex_trust, notice, payload, state
 
 
 ARG_LIMIT = 122880  # Linux per-argument limit less 8 KiB, including TOML escaping.
@@ -282,4 +282,6 @@ def launch(home, args):
     env = dict(os.environ, CODEX_HOME=str(codex_profile.codex_home()), KK_HOME=str(home))
     if env.get("XDG_CONFIG_HOME"):
         env["XDG_CONFIG_HOME"] = str(Path(env["XDG_CONFIG_HOME"]).absolute())
+    if not batch:
+        notice.on_launch(home, record)
     os.execve(executable, ["codex", *flags, *args], env)

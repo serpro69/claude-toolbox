@@ -12,6 +12,7 @@ import tarfile
 import tempfile
 
 from . import claude, claude_launch, codex_launch, codex_plugins, codex_profile, codex_trust, payload, state, validation
+from . import live, mixed, notice
 from .run import load_cli
 
 
@@ -115,7 +116,9 @@ def finish_install(home, record, release, codex_plan=...):
     checkpoint("promote")
     pending = record["candidate"]
     state.remember_candidate(record, pending)
-    state.promote(record, release.name)
+    _, issues = mixed.inspect("claude", Path("/"))
+    claude_phase = "awaiting review" if issues else "ready"
+    state.promote(record, release.name, claude_phase)
     state.remember_placed(home, record, pending.get("abandoned"))
     if publication_due:
         record["pending_entry"] = release.name
@@ -124,7 +127,9 @@ def finish_install(home, record, release, codex_plan=...):
         record.pop("pending_entry", None)
         record.pop("pending_entry_sha256", None)
     state.write_json(home / "state.json", record)
-    print("Claude ready:", release.name)
+    print("Claude {}:".format(claude_phase), release.name)
+    for issue in issues:
+        print("  " + issue)
     if record["rollback_target"]:
         print("Recovery command:", recovery_command(home, record["rollback_target"]), flush=True)
     if publication_due:
@@ -250,6 +255,10 @@ def install_locked(home, args, archive_file=None):
         codex_plan = staged_cli.codex_profile.prepare_activation(source, record)
         if record["active"] and record["candidate"]["phase"] == "staged":
             active = record["releases"][record["active"]]
+            if active["tools"].get("claude") == "awaiting review":
+                _, issues = mixed.inspect("claude", Path("/"))
+                if not issues:
+                    active["tools"]["claude"] = "ready"
             if active.get("codex_snapshot") and record.get("codex_plugins"):
                 old = home / "releases" / record["active"]
                 phase, _ = codex_trust.machine(old, active)
@@ -318,21 +327,84 @@ def rollback_locked(home, record):
         shutil.rmtree(staging)
 
 
-def status(home):
+def tool_status(home, record, tool, saved, check_live):
+    workspace = Path.cwd().resolve()
+    directory = codex_profile.codex_home()
+    copies, issues = mixed.inspect(tool, workspace, directory)
+    for entry in copies:
+        print("Git-marketplace {} install: {} ({} scope, {}{})".format(
+            tool, entry.plugin, entry.scope, "enabled" if entry.enabled else "disabled",
+            ", " + entry.project if entry.project else ""))
+    configured = tool in saved["tools"] and (tool == "claude" or codex_plugins.receipt(record, directory, "kk-guard"))
+    if configured and any(i.scope == "user" for i in copies):
+        print("Run kk status --remove-mixed to review user-scope removal.")
+    if not configured:
+        print("{}: managed guard is not installed in this CODEX_HOME; {}".format(tool, codex_plugins.activation_hint(saved)))
+        for issue in issues:
+            print("  " + issue)
+        if check_live and tool not in saved["tools"]:
+            print("{} live: skipped (not managed by this installation)".format(tool))
+        return not check_live or tool not in saved["tools"]
+    phase = "awaiting review" if issues else saved["tools"][tool]
+    changing = (record["candidate"] or {}).get("phase") == "activating" or record.get("codex_write_pending")
+    if tool == "codex" and not changing:
+        if saved.get("codex_snapshot", {}).get("directory") != str(directory):
+            phase = "awaiting review"
+            issues.append("managed guard missing in this CODEX_HOME; " + codex_plugins.activation_hint(saved))
+        else:
+            phase, issues = codex_trust.machine(home / "releases" / record["active"], saved, inventory_issues=issues)
+    elif tool == "claude" and not changing and not issues:
+        phase = "ready"
+    print("{}: {}".format(tool, phase))
+    for issue in issues:
+        print("  " + issue)
+    if check_live:
+        if changing:
+            print("{} live: cannot verify while activation is pending".format(tool))
+            return False
+        try:
+            print("{} live: {}".format(tool, live.run(tool, home)))
+        except (OSError, ValueError, KeyError, subprocess.SubprocessError) as exc:
+            print("{} live: failed: {}".format(tool, exc))
+            return False
+    return True
+
+
+def remove_mixed(home):
+    with state.writer(home):
+        record = state.load(home)
+        if not record["active"] or not record["installed_paths"] or (record["candidate"] or {}).get("phase") == "activating":
+            raise ValueError("finish activation before reviewing Git-marketplace copies")
+        workspace = Path.cwd().resolve()
+        directory = codex_profile.codex_home()
+        release = home / "releases" / record["active"]
+        for tool in record["releases"][record["active"]]["tools"]:
+            if tool == "claude":
+                mixed.remove_user_copies(tool, workspace, directory)
+            elif codex_plugins.receipt(record, directory, "kk-guard"):
+                _, issues = codex_trust.check(release, directory, workspace)
+                mixed.remove_user_copies(tool, workspace, directory, issues)
+
+
+def status(home, check_live=False):
     record = state.load(home)
     active = record["active"]
     print("Active:", active or "none")
-    if active:
+    verified = bool(active)
+    if active and not record["installed_paths"]:
+        # The staging smoke test dispatches through a private journal before
+        # there are any published paths or vendor installations to inspect.
+        for tool, phase in record["releases"][active]["tools"].items():
+            print("Recorded {}: {} (no published installation)".format(tool, phase))
+        verified = False
+    elif active:
         saved = record["releases"][active]
-        has_guard = codex_plugins.receipt(record, codex_profile.codex_home(), "kk-guard")
-        if not has_guard and shutil.which("codex"):
-            print("Codex guard is not installed in this CODEX_HOME; " + codex_plugins.activation_hint(saved))
-        for tool, phase in saved["tools"].items():
-            if (tool == "codex" and saved.get("codex_snapshot") and has_guard
-                    and (record["candidate"] or {}).get("phase") != "activating"):
-                codex_trust.report(*codex_trust.machine(home / "releases" / active, saved))
-                continue
-            print("{}: {}".format(tool, phase))
+        tools = list(saved["tools"])
+        if "codex" not in tools and shutil.which("codex"):
+            tools.append("codex")
+        for tool in tools:
+            if not tool_status(home, record, tool, saved, check_live):
+                verified = False
     codex_profile.report_drift(record)
     if record.get("codex_write_pending"):
         print("Codex file update interrupted. Resume the pending operation.")
@@ -358,6 +430,7 @@ def status(home):
         if candidate.get("step"):
             print("Journaled step:", candidate["step"])
     print("Rollback target:", record["rollback_target"] or "none")
+    return 1 if check_live and not verified else 0
 
 
 def main():
@@ -368,7 +441,9 @@ def main():
         source = action.add_mutually_exclusive_group()
         source.add_argument("--local", type=Path, metavar="CHECKOUT")
         source.add_argument("--version", metavar="TAG")
-    commands.add_parser("status")
+    status_options = commands.add_parser("status").add_mutually_exclusive_group()
+    status_options.add_argument("--live", action="store_true", help="verify each managed guard with a scratch session")
+    status_options.add_argument("--remove-mixed", action="store_true", help="confirm removal of user-scope Git-marketplace copies")
     commands.add_parser("rollback")
     commands.add_parser("apply", help="rewrite the active release's Codex files from current overrides")
     commands.add_parser("codex", help="launch Codex with the managed profile")
@@ -383,7 +458,9 @@ def main():
             return 0
         args = parser.parse_args()
         if args.command == "status":
-            status(home)
+            if args.remove_mixed:
+                remove_mixed(home)
+            return status(home, args.live)
         else:
             with state.writer(home):
                 record = state.load(home)
