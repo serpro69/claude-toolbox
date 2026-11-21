@@ -30,6 +30,7 @@ class InstallFixture(unittest.TestCase):
         self.home.mkdir()
         self.toolbox = self.home / "data" / "kk"
         self.env = dict(os.environ, HOME=str(self.home), KK_HOME=str(self.toolbox),
+                        CODEX_HOME=str(self.home / ".codex"), XDG_CONFIG_HOME=str(self.home / ".config"),
                         PATH=str(ROOT / "test/kk") + os.pathsep + os.environ["PATH"])
         self.link = self.home / ".local/bin/kk"
         self.state_file = self.toolbox / "state.json"
@@ -39,12 +40,12 @@ class InstallFixture(unittest.TestCase):
         # Keep the real guard and registration. Trim unrelated skill content
         # in negative cases; the success case also installs the full checkout.
         for name in ("kk", "klaude-plugin/scripts/guard", "klaude-plugin/.claude-plugin",
-                     "klaude-plugin/hooks", "kodex-plugin/.codex-plugin", "kodex-guard"):
+                     "klaude-plugin/hooks", "klaude-plugin/instructions", "kodex-plugin/.codex-plugin", "kodex-guard"):
             shutil.copytree(ROOT / name, self.checkout / name)
 
     def invoke(self, *args, ok=True, env=None):
         result = subprocess.run(list(map(str, args)), cwd=self.root, env=env or self.env,
-                                capture_output=True, text=True, timeout=45)
+                                stdin=subprocess.DEVNULL, capture_output=True, text=True, timeout=45)
         self.assertEqual(result.returncode == 0, ok, result.stdout + result.stderr)
         return result
 

@@ -196,7 +196,8 @@ def validate_layout(root, version):
             raise ValueError("missing payload directory: {}".format(name))
     for name in ("bin/kk", "lib/run.py", "lib/cli.py", "lib/state.py", "lib/claude.py",
                  "lib/payload.py", "lib/validation.py", "lib/guard_identity.py", "selftest/guard-cases.json",
-                 "baseline/codex/kk.rules", "lib/claude_launch.py", "baseline/claude.json", "baseline/claude/deny.json"):
+                 "baseline/codex/kk.rules", "lib/claude_launch.py", "baseline/claude.json", "baseline/claude/deny.json",
+                 "lib/codex_launch.py", "lib/codex_profile.py", "baseline/codex.json", "baseline/codex/bootstrap.md"):
         if not (root / "kk" / name).is_file():
             raise ValueError("missing release file: kk/{}".format(name))
     versions = []

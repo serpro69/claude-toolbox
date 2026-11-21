@@ -1,0 +1,15 @@
+#!/usr/bin/env python3
+"""Record launcher arguments, and accept the offline profile check in lifecycle fixtures."""
+import json
+import sys
+
+args = sys.argv[1:]
+if args == ["--profile", "kk", "debug", "prompt-input"]:
+    print("[]")
+elif args[:2] == ["execpolicy", "check"]:
+    # Exercise kk's publication flow on CI without Codex. The live CLI test
+    # independently verifies the generated rules, failure controls and syntax.
+    program = args[args.index("--") + 1]
+    print(json.dumps({"decision": "forbidden" if program in ("rm", "shred", "sudo", "su", "doas") else "allow"}))
+else:
+    print(json.dumps(args))
