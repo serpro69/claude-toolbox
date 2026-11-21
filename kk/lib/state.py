@@ -65,14 +65,23 @@ def writer(home):
         yield
 
 
+def record_codex_phase(release, phase):
+    tools = release.setdefault("tools", {})
+    if phase in ("ready", "unverified") or tools.get("codex") in ("ready", "unverified"):
+        release["codex_rollback_eligible"] = True
+    tools["codex"] = phase
+
+
 def promote(state, version):
     previous = state["active"]
     if previous and previous != version:
         old = state["releases"][previous]
         old["superseded_at"] = datetime.now(timezone.utc).isoformat()
         qualified = [name for name, release in state["releases"].items()
-                     if name != version and release.get("superseded_at") and release.get("tools")
-                     and all(status in ("ready", "unverified") for status in release["tools"].values())]
+                     if name != version and release.get("superseded_at")
+                     and release.get("tools", {}).get("claude") == "ready"  # A promoted release.
+                     and all(status in ("ready", "unverified") or (tool == "codex" and release.get("codex_rollback_eligible"))
+                             for tool, status in release["tools"].items())]
         state["rollback_target"] = max(
             qualified, key=lambda name: state["releases"][name]["superseded_at"], default=previous
         )

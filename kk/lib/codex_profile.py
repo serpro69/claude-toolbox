@@ -10,7 +10,7 @@ import subprocess
 import sys
 import tempfile
 
-from . import payload, state
+from . import codex_plugins, payload, state
 from .claude_launch import check_keys, object_value, switches
 
 
@@ -191,6 +191,15 @@ def prepare_activation(release, record):
         saved = candidate["codex_inputs"]
         return None if saved is None else prepare(release, record, snapshot=saved)
     plan = prepare(release, record)
+    if plan:
+        directory = Path(plan[3]["directory"])
+        # A previous release's staging code may predate guard stamping. Its
+        # preflight runs here before the private staging directory is placed.
+        if not candidate.get("codex_guard_staged") and release.parent.name == "staging":
+            codex_plugins.stage_guard(release, record, directory, "local" in candidate["source"])
+            candidate["digest"] = payload.fingerprint(release)
+            candidate["codex_guard_staged"] = True
+        codex_plugins.confirm_change(record, release, directory)
     # The place checkpoint persists exactly the inputs validated at staging.
     candidate["codex_inputs"] = None if plan is None else plan[3]
     return plan

@@ -1,4 +1,4 @@
-"""Exercise the staged engine and its registered Claude adapter on inert events."""
+"""Exercise the staged engine and both vendors' registered adapters on inert events."""
 
 import json
 import os
@@ -25,6 +25,37 @@ def check_event(command, event, expected, workspace, env, timeout=30):
             return
     raise ValueError("guard self-test expected {} for {}, exit {}: {}".format(
         expected, event["tool_name"], result.returncode, result.stderr.strip()))
+
+
+def validate_codex(root, workspace, env):
+    plugin = root / "kodex-guard"
+    groups = read_json(plugin / "hooks/hooks.json")["hooks"]["PreToolUse"]
+    samples = {
+        "Bash": ("Bash", lambda name: {"command": "cat " + name}),
+        "Edit": ("apply_patch", lambda name: {"command": "*** Begin Patch\n*** Add File: " + name
+                                               + "\n+fixture\n*** End Patch"}),
+        "mcp__kk__capy_execute": ("mcp__kk__capy_execute",
+                                   lambda name: {"language": "shell", "code": "cat " + name}),
+    }
+    covered = set()
+    for group in groups:
+        # Codex matchers use POSIX character classes. The shipped MCP matcher
+        # uses [:space:], whose Python equivalent is \s.
+        matcher = group["matcher"].replace("[^[:space:]]", r"[^\s]")
+        names = [name for name in samples if re.fullmatch(matcher, name)]
+        if not names or not group["hooks"]:
+            raise ValueError("no Codex adapter self-test for " + matcher)
+        for name in names:
+            tool, tool_input = samples[name]
+            for hook in group["hooks"]:
+                if hook["type"] != "command":
+                    raise ValueError("unsupported Codex guard handler: " + hook["type"])
+                for path, decision in (("sample.txt", "allow"), (".env", "secrets")):
+                    check_event(["bash", "-c", hook["command"]], {"tool_name": tool, "tool_input": tool_input(path)},
+                                decision, workspace, dict(env, PLUGIN_ROOT=str(plugin)))
+            covered.add(name)
+    if covered != set(samples):
+        raise ValueError("missing Codex adapter registration for " + ", ".join(sorted(set(samples) - covered)))
 
 
 def validate(root):
@@ -61,4 +92,5 @@ def validate(root):
             for hook in handlers:
                 check_event(["bash", "-c", hook["command"]], event, expected, workspace, env,
                             timeout=min(30, hook.get("timeout", 30)))
+        validate_codex(root, workspace, env)
         subprocess.run(["claude", "plugin", "validate", str(plugin)], cwd=workspace, check=True)

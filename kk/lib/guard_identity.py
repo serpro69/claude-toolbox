@@ -11,8 +11,8 @@ import stat
 MANIFEST = Path(".codex-plugin/plugin.json")
 
 
-def _without_version(data):
-    """Mask just the top-level version value, preserving all other UTF-8 bytes."""
+def with_version(data, version):
+    """Replace just the top-level version value, preserving all other UTF-8 bytes."""
     text = data.decode("utf-8")
     manifest = json.loads(text)
     if not isinstance(manifest, dict) or not isinstance(manifest.get("version"), str):
@@ -42,7 +42,7 @@ def _without_version(data):
             break
         pos += 1  # comma
     start, end = span
-    return (text[:start] + '""' + text[end:]).encode("utf-8")
+    return (text[:start] + json.dumps(version) + text[end:]).encode("utf-8")
 
 
 def guard_identity(root: Path) -> str:
@@ -74,7 +74,7 @@ def guard_identity(root: Path) -> str:
             content = hashlib.sha256()
             with path.open("rb") as stream:
                 if relative == MANIFEST:
-                    content.update(_without_version(stream.read()))
+                    content.update(with_version(stream.read(), ""))
                 else:
                     for block in iter(lambda: stream.read(131072), b""):
                         content.update(block)

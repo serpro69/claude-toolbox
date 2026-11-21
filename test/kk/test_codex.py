@@ -69,9 +69,14 @@ class CodexFiles(InstallFixture):
             self.assertIn("awaiting review", self.invoke(self.link, "codex", *args, ok=False).stderr)
         phases["codex"] = "unverified"
         cli.state.write_json(self.state_file, record)
+        no_method = self.codex / "fixture-no-method"
+        no_method.touch()
         self.assertIn("unverified", self.invoke(self.link, "codex", "exec", "hello").stderr)
+        no_method.unlink()
         phases["codex"] = "ready"
         cli.state.write_json(self.state_file, record)
+        version = next((self.codex / "plugins/cache/toolbox/kk-guard").iterdir()).name
+        (self.codex / "fixture-reviewed").write_text(version)
         launch = self.invoke(self.link, "codex", "exec", "hello")
         self.assertEqual(json.loads(launch.stdout), ["--profile", "kk", "exec", "hello"])
         self.assertNotIn("unverified", launch.stderr)
