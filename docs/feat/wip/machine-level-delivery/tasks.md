@@ -283,16 +283,24 @@ Task 4 must distinguish interpreter-generated guard bytecode from a changed rele
 - Final verification on Linux. `KK_TEST_PYTHON=python3.12 bash test/test-kk.sh` passed all 73 tests (capture `0f55b52d-74bb-40f5-a7b8-c7e9951c7a6e`). The isolated code reviewer and the external Claude reviewer closed their findings. Coverage includes the predecessor staging check, confirmation before guard removal, skipped unmanaged tools, and pending notices that survive a failed refresh.
 
 ## Task 12: CI gate and release workflow
-- **Status:** pending
+- **Status:** done
 - **Depends on:** Task 4, Task 7
 - **Size:** S
 - **Can run in parallel with:** Task 9, Task 10, Task 11
 - **Docs:** [implementation.md#ci-gate-and-release-workflow](./implementation.md#ci-gate-and-release-workflow), [design.md#release-safety](./design.md#release-safety)
 
 ### Subtasks
-- [ ] 12.1 Add a CI job running the guard engine suite, the `kk` suite, the Codex adapter suite and the self-test cases on the oldest and newest available Python
-- [ ] 12.2 Make `release.yml` and `pre-release.yml` run that gate before tagging
-- [ ] 12.3 Add the guard plugin version rule to `release.yml` and `pre-release.yml`, comparing identity from `kk/lib/guard_identity.py` with the nearest earlier tag of any kind → verify: a dry run on a skills-only change leaves `kodex-guard`'s manifest untouched; a release candidate with a guard change bumps it; the stable release that follows with the same bytes keeps the candidate's version
+- [x] 12.1 Add a CI job running the guard engine suite, the `kk` suite, the Codex adapter suite and the self-test cases on the oldest and newest available Python
+- [x] 12.2 Make `release.yml` and `pre-release.yml` run that gate before tagging
+- [x] 12.3 Add the guard plugin version rule to `release.yml` and `pre-release.yml`, comparing identity from `kk/lib/guard_identity.py` with the nearest earlier tag of any kind → verify: a dry run on a skills-only change leaves `kodex-guard`'s manifest untouched; a release candidate with a guard change bumps it; the stable release that follows with the same bytes keeps the candidate's version
+
+### Execution context
+
+- 2026-11-21, observed at `dc509d3c`. Both release workflows fetch the tags and run `make check-guard`. The existing installer suite runs the packaged self-tests, and `test/test-codex-hooks.sh` exercises both adapter deliveries. The latest local release tag, `v0.25.4`, predates the guard plugin.
+- 2026-11-21, verified locally on CPython 3.8.20 and 3.15.2. Each passed 112 guard tests and 461 adapter assertions. The 74-test `kk` suite passed on both, with the existing `tomllib` skip on 3.8. The first 3.8 run exposed five missing diagnostics when stderr was redirected. Both launchers now flush before `execve`; batch launches also succeeded with stderr closed. Final suite captures were `6d24136f-9d4a-41ea-97e1-1006ddfff2f3` and `cc07df6a-10b5-409a-8778-120c710a4f6c`.
+- The release fixture exercised a tag predating the guard, a skills-only change, an executable-bit change in an RC and promotion from a separate branch. Both release workflows queue publication before fetching tags. `make check-guard` and downstream cleanup passed in a disposable checkout. Actionlint 1.7.12 reported only the existing summary-redirection style and its unrecognized [GitHub Actions queue option](https://docs.github.com/en/actions/how-tos/write-workflows/choose-when-workflows-run/control-workflow-concurrency#example-queueing-multiple-pending-runs).
+- Task 16 owns the comparator relocation. Include `.github/scripts/release-guard-version.sh` among its callers and rerun the release fixture after moving it. The first hosted RC and pilot remain scheduled for Task 18.
+- The isolated code reviewer and external Claude reviewer approved the code. Both publishers' dry-run shell steps ran in a disposable checkout and preserved the manifest bytes. Hosted Actions execution remains unverified.
 
 ## Task 13: Retirement migration in the sync script
 - **Status:** pending

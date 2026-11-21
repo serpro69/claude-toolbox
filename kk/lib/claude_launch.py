@@ -314,6 +314,8 @@ def launch(home, argv):
                 env[key] = os.path.join(os.getcwd(), value)
         if "-p" not in forwarded and "--print" not in forwarded:
             notice.on_launch(home, record)
+        if sys.stderr is not None:
+            sys.stderr.flush()
         os.execve(claude, ["claude", "--settings", str(path), *forwarded], env)
     finally:
         path.unlink(missing_ok=True)  # Preview, validation failure, or failed exec.
