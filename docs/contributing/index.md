@@ -118,7 +118,7 @@ Hook definitions in `klaude-plugin/hooks/hooks.json`:
         "hooks": [
           {
             "type": "command",
-            "command": "${CLAUDE_PLUGIN_ROOT}/scripts/guard/guard.sh",
+            "command": "\"${CLAUDE_PLUGIN_ROOT}\"/scripts/guard/guard.sh",
             "timeout": 15,
             "onFailure": "block"
           }
@@ -316,10 +316,10 @@ CLAUDE.md                        # Claude project instructions (this repo)
 AGENTS.md                        # Codex project instructions (this repo)
 
 .claude/
-├── CLAUDE.extra.md              # Behavioral instructions (synced downstream)
+├── CLAUDE.extra.md              # Generated from klaude-plugin/instructions/behavior.md
 ├── settings.json                # Upstream-managed: permissions baseline, env, model, plugins
 ├── settings.local.json          # Per-repo: hooks, MCP enables, additional permissions
-└── scripts/                     # statusline.sh, statusline_enhanced.sh
+└── toolbox/scripts/             # Statusline copies generated from klaude-plugin/statusline/
 
 .codex/
 ├── config.toml                  # Codex settings: model, approval policy, features, MCP

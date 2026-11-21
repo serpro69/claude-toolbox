@@ -310,23 +310,54 @@ log_section "Section 6: set-plugin-root.sh"
 
 KK_PATH="$FIXTURE_DIR/cache/claude-toolbox/kk/0.17.3"
 
+exported_root() {
+  env -u TOOLBOX_PLUGIN_ROOT bash -c 'source "$1"; printf "%s" "${TOOLBOX_PLUGIN_ROOT:-}"' _ "$1"
+}
+
 log_test "Writes export line resolved via cpr.py"
 ENV_FILE="$FIXTURE_DIR/env-out-1.sh"
 : > "$ENV_FILE"
 CPR_PLUGINS_FILE="$PLUGINS_JSON" CLAUDE_ENV_FILE="$ENV_FILE" bash "$SET_PLUGIN_ROOT" "" >/dev/null 2>&1
-assert_output_contains "export TOOLBOX_PLUGIN_ROOT=\"$KK_PATH\"" "cat '$ENV_FILE'" "cpr.py-resolved path is exported"
+assert_equals "$KK_PATH" "$(exported_root "$ENV_FILE")" "cpr.py-resolved path is exported"
 
 log_test "Passes \$CLAUDE_PROJECT_DIR through to cpr.py"
 ENV_FILE="$FIXTURE_DIR/env-out-proj.sh"
 : > "$ENV_FILE"
 CPR_PLUGINS_FILE="$CASCADE_JSON" CLAUDE_PROJECT_DIR="/tmp/proj-b" CLAUDE_ENV_FILE="$ENV_FILE" bash "$SET_PLUGIN_ROOT" "" >/dev/null 2>&1
-assert_output_contains "export TOOLBOX_PLUGIN_ROOT=\"$FIXTURE_DIR/cache/proj-b/kk/0.17.3\"" "cat '$ENV_FILE'" "CLAUDE_PROJECT_DIR selects the project-bound install"
+assert_equals "$FIXTURE_DIR/cache/proj-b/kk/0.17.3" "$(exported_root "$ENV_FILE")" "CLAUDE_PROJECT_DIR selects the project-bound install"
 
 log_test "Falls back to \$1 when cpr.py cannot resolve"
 ENV_FILE="$FIXTURE_DIR/env-out-2.sh"
 : > "$ENV_FILE"
 CPR_PLUGINS_FILE="/nonexistent/file.json" CLAUDE_ENV_FILE="$ENV_FILE" bash "$SET_PLUGIN_ROOT" "$FIXTURE_DIR/env-root" >/dev/null 2>&1
-assert_output_contains "export TOOLBOX_PLUGIN_ROOT=\"$FIXTURE_DIR/env-root\"" "cat '$ENV_FILE'" "argument fallback is exported"
+assert_equals "$FIXTURE_DIR/env-root" "$(exported_root "$ENV_FILE")" "argument fallback is exported"
+
+log_test "A managed hook exports its own release even when the registry and argument name other roots"
+release_home="$FIXTURE_DIR/release home"
+release_root="$release_home/releases/v1.0.0/klaude-plugin"
+mkdir -p "$release_root/scripts" "$FIXTURE_DIR/user"
+release_root=$(cd -P -- "$release_root" && pwd -P)
+cp "$SET_PLUGIN_ROOT" "$REPO_ROOT/klaude-plugin/scripts/release-plugin.sh" "$CPR" "$release_root/scripts/"
+ln -s "$release_home" "$FIXTURE_DIR/home-alias"
+ENV_FILE="$FIXTURE_DIR/env-release.sh"
+CPR_PLUGINS_FILE="$PLUGINS_JSON" KK_HOME="$FIXTURE_DIR/home-alias" CLAUDE_ENV_FILE="$ENV_FILE" \
+  bash "$release_root/scripts/set-plugin-root.sh" "$FIXTURE_DIR/env-root"
+assert_equals "$release_root" "$(exported_root "$ENV_FILE")" "Physical plugin root wins across a symlinked KK_HOME"
+
+log_test "An unrelated releases directory still uses the plugin registry"
+env -u KK_HOME HOME="$FIXTURE_DIR/user" XDG_DATA_HOME="$FIXTURE_DIR/user/data" \
+  CPR_PLUGINS_FILE="$PLUGINS_JSON" CLAUDE_ENV_FILE="$FIXTURE_DIR/env-unmanaged.sh" \
+  bash "$release_root/scripts/set-plugin-root.sh" "$FIXTURE_DIR/env-root"
+assert_equals "$KK_PATH" "$(exported_root "$FIXTURE_DIR/env-unmanaged.sh")" "A releases basename alone does not select managed mode"
+
+log_test "A fresh shell identifies an interrupted custom-home install without a dispatcher"
+mkdir -p "$release_home/releases/v1.0.0/kk"
+cp "$REPO_ROOT/kk/payload.json" "$release_home/releases/v1.0.0/kk/payload.json"
+printf '%s\n' '{"format_version":1,"active":null,"candidate":{"phase":"activating","version":"v1.0.0"}}' >"$release_home/state.json"
+env -u KK_HOME HOME="$FIXTURE_DIR/user" XDG_DATA_HOME="$FIXTURE_DIR/user/data" \
+  CPR_PLUGINS_FILE="$PLUGINS_JSON" CLAUDE_ENV_FILE="$FIXTURE_DIR/env-custom.sh" \
+  bash "$release_root/scripts/set-plugin-root.sh" "$FIXTURE_DIR/env-root"
+assert_equals "$release_root" "$(exported_root "$FIXTURE_DIR/env-custom.sh")" "Running custom-home release works without KK_HOME or a stable link"
 
 log_test "Unset CLAUDE_ENV_FILE exits cleanly without error"
 rc=$(set +e; env -u CLAUDE_ENV_FILE CPR_PLUGINS_FILE="$PLUGINS_JSON" bash "$SET_PLUGIN_ROOT" "" >/dev/null 2>&1; echo $?)

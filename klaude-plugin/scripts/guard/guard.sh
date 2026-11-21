@@ -56,11 +56,14 @@ case "${OSTYPE:-}" in
         ;;
 esac
 interpreters=${KK_GUARD_INTERPRETERS-"$default_interpreters"}
+python_flags=(-I -S)
+# The Codex plugin must leave its reviewed bundle byte-identical across calls.
+if [[ ${1:-} == --no-bytecode ]]; then python_flags+=(-B); fi
 IFS=$' \t\n'
 for candidate in $interpreters; do
     command -v -- "$candidate" >/dev/null 2>&1 || continue
     # The engine uses only the standard library; site initialization is unused.
-    if { "$candidate" -I -S "$GUARD_RUNNER" <"$scratch/payload"; } >"$scratch/out" 2>"$scratch/err"; then
+    if { "$candidate" "${python_flags[@]}" "$GUARD_RUNNER" <"$scratch/payload"; } >"$scratch/out" 2>"$scratch/err"; then
         rc=0
     else
         rc=$?

@@ -272,6 +272,7 @@ guard_generated=$(create_temp_dir "guard-generated")
 TEMP_DIRS+=("$guard_generated")
 bash "$REPO_ROOT/scripts/generate-guard.sh" "$guard_generated"
 for generated in .claude/settings.json .codex/rules/default.rules docs/user-guide/configuration.md \
+  kk/baseline/claude/deny.json kk/baseline/codex/kk.rules kodex-guard/scripts/guard/{guard.sh,run-guard.py,guard.py,guard-rules.json,LICENSE.md} \
   .codex/scripts/guard/guard.sh .codex/scripts/guard/run-guard.py .codex/scripts/guard/guard.py \
   .codex/scripts/guard/guard-rules.json .codex/scripts/guard/LICENSE.md; do
   if cmp -s "$guard_generated/$generated" "$REPO_ROOT/$generated"; then

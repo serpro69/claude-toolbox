@@ -7,7 +7,7 @@ claude-toolbox supports two AI coding providers:
 | **Skills**                  | `klaude-plugin/` (authored)         | `kodex-plugin/` (generated)                            |
 | **Sub-agents**              | `klaude-plugin/agents/*.md`         | `.codex/agents/*.toml` (generated)                     |
 | **Project instructions**    | `CLAUDE.md`                         | `AGENTS.md`                                            |
-| **Behavioral instructions** | `.claude/CLAUDE.extra.md`           | `.codex/scripts/session-start.sh`                      |
+| **Behavioral instructions** | Plugin `SessionStart` hook or the legacy `.claude/CLAUDE.extra.md` import | `.codex/scripts/session-start.sh` |
 | **Config**                  | `.claude/settings.json`             | `.codex/config.toml`                                   |
 | **Hooks**                   | `klaude-plugin/hooks/`              | `.codex/hooks.json`                                    |
 | **Rules/Permissions**       | `.claude/settings.json`             | `.codex/rules/default.rules` (Starlark)                |

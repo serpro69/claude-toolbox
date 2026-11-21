@@ -57,6 +57,7 @@ type AgentOverride struct {
 
 type AgentsConfig struct {
 	TargetDir            string            `yaml:"target_dir"`
+	ReleaseDir           string            `yaml:"release_dir"`
 	SandboxMode          string            `yaml:"sandbox_mode"`
 	Model                string            `yaml:"model"`
 	ModelReasoningEffort string            `yaml:"model_reasoning_effort"`

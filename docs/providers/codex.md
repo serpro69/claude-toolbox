@@ -22,6 +22,7 @@ Codex (OpenAI) is supported as a secondary provider. Skills are generated from t
 | `.codex/scripts/guard/` | Generated shared permission-guard engine, declaration and license |
 | `.codex/agents/*.toml` | Sub-agent definitions (generated) |
 | `kodex-plugin/` | Skills (generated from `klaude-plugin/`) |
+| `kodex-guard/` | Standalone permission guard, including workspace-anchored adapters and a generated engine copy |
 | `AGENTS.md` | Project instructions |
 
 ## Project instruction budget
@@ -141,11 +142,11 @@ The template registers `pretooluse-mcp.sh` for these three tools, under any MCP 
 For an existing installation, follow the
 [permission-guard upgrade checklist](../user-guide/template-sync.md#upgrading-the-permission-guard):
 sync the project, review/trust new or changed hooks, then restart. The Codex
-plugin alone does not deliver this guard runtime.
+skills plugin and guard plugin are separate. In a marketplace checkout containing `kodex-guard/`, install the guard with `codex plugin add kk-guard@claude-toolbox` and review its three handlers in `/hooks`.
 
-All three adapters export the repository root before delegating to the generated engine. Relative Bash and patch paths resolve against the hook payload's cwd, while project policy remains anchored at the repository root. The guard inspects patch add, update, delete and move headers, including both sides of a move; it does not interpret patch contents as commands. Deleting a file is filesystem-destructive, with the engine's temporary-directory exemption and user category setting applied after secrets and self-modification checks.
+The guard plugin takes policy from the Git top level of the directory where the hook starts, or from that starting directory outside Git. It checks capy registration in that workspace on every Bash event. The legacy template adapters continue to use their project-relative installation. Relative Bash and patch paths resolve against the hook payload's cwd, while project policy remains anchored at the repository root. The guard inspects patch add, update, delete and move headers, including both sides of a move; it does not interpret patch contents as commands. Deleting a file is filesystem-destructive, with the engine's temporary-directory exemption and user category setting applied after secrets and self-modification checks.
 
-Denials return JSON plus a reason on stderr and exit 2. Adapter errors and missing interpreters also block. Codex reads files by running shell commands through `exec_command`, so the Bash adapter guards reads as well as commands ([ADR 0013](../adr/0013-codex-file-access-through-hooked-tools.md)). Session startup also renders a protected-files advisory from the synced declaration, so the model knows the off-limits paths before it tries one, falling back to a static secret-files warning if it is unavailable. See the [guard rules and configuration](../user-guide/configuration.md) for project additions and user exceptions. Maintainers regenerate the copied engine with `make generate-guard`; consumers receive it through template sync. Never edit `.codex/scripts/guard/` directly.
+Denials return JSON plus a reason on stderr and exit 2. Adapter errors and missing interpreters also block. Codex reads files by running shell commands through `exec_command`, so the Bash adapter guards reads as well as commands ([ADR 0013](../adr/0013-codex-file-access-through-hooked-tools.md)). Session startup also renders a protected-files advisory from the synced declaration, so the model knows the off-limits paths before it tries one, falling back to a static secret-files warning if it is unavailable. See the [guard rules and configuration](../user-guide/configuration.md) for project additions and user exceptions. Maintainers regenerate the copied engine with `make generate-guard`; both the guard plugin and template contain the generated engine. Never edit `.codex/scripts/guard/` directly.
 
 The adapter contract targets Codex 0.164.0. The [official hooks reference](https://learn.chatgpt.com/docs/hooks#pretooluse) documents `Edit|Write` aliases, `tool_input.command`, and exit-2 denial with stderr. Hook coverage is a guardrail; specialized paths can bypass it. A live 0.164.0 probe on 2026-10-26 verified project-file registration from a repository subdirectory: `SessionStart` ran, the patch hook allowed a benign relative path, and the guard denied a synthetic `.env` addition. No inline hook registration was used.
 
@@ -162,7 +163,7 @@ Avoid `codex exec --ignore-user-config` when validating this integration on 0.16
 
 !!! warning "Current limitations"
 
-    - **Plugin-only installs** provide skills and profile content only — hooks, sub-agents, rules, and project config require [template setup](../getting-started/template-setup.md) or [adopting into an existing repo](../getting-started/adopting.md).
+    - **Plugin-only installs** can include the skills plugin and the separate guard plugin. The template still supplies sub-agents, project configuration and the native forbidden-prefix rules.
     - **Toolbox PreToolUse hooks** cover Bash, intercepted `apply_patch` and capy's three execution tools. Codex reads files through `exec_command`, so reads are covered by the Bash hook ([ADR 0013](../adr/0013-codex-file-access-through-hooked-tools.md)). Specialized hook-bypassing paths and other execution tools are outside this integration's enforcement; see the parity table above.
     - **MCP servers** (Context7, Pal) must be configured at the user level — they are not packaged in the plugin. See [Codex MCP Setup](../user-guide/mcp-servers.md#codex).
 

@@ -1,0 +1,158 @@
+== codex codex-cli 0.170.0
+built /home/sergio/kkprobe-task1/cache1/mkt: kkprobe-skills@1.0.0 kkprobe-guard@1.0.0 variant=a
+$ codex plugin add kkprobe-guard@kkprobe --json
+{
+  "pluginId": "kkprobe-guard@kkprobe",
+  "name": "kkprobe-guard",
+  "marketplaceName": "kkprobe",
+  "version": "1.0.0",
+  "installedPath": "/home/sergio/kkprobe-task1/cache1/home/plugins/cache/kkprobe/kkprobe-guard/1.0.0",
+  "authPolicy": "ON_INSTALL"
+}
+exit=0
+-- cache after: first install 1.0.0 (variant a)
+  1.0.0  dir_inode=299391  script_inode=299395  variant=a
+
+== same version, same bytes, re-added
+$ codex plugin add kkprobe-guard@kkprobe --json
+{
+  "pluginId": "kkprobe-guard@kkprobe",
+  "name": "kkprobe-guard",
+  "marketplaceName": "kkprobe",
+  "version": "1.0.0",
+  "installedPath": "/home/sergio/kkprobe-task1/cache1/home/plugins/cache/kkprobe/kkprobe-guard/1.0.0",
+  "authPolicy": "ON_INSTALL"
+}
+exit=0
+-- cache after: re-add unchanged 1.0.0
+  1.0.0  dir_inode=299399  script_inode=299403  variant=a
+
+== same version, changed bytes (variant b), re-added
+$ codex plugin add kkprobe-guard@kkprobe --json
+{
+  "pluginId": "kkprobe-guard@kkprobe",
+  "name": "kkprobe-guard",
+  "marketplaceName": "kkprobe",
+  "version": "1.0.0",
+  "installedPath": "/home/sergio/kkprobe-task1/cache1/home/plugins/cache/kkprobe/kkprobe-guard/1.0.0",
+  "authPolicy": "ON_INSTALL"
+}
+exit=0
+-- cache after: re-add 1.0.0 with variant b bytes
+  1.0.0  dir_inode=299391  script_inode=299395  variant=b
+
+== upgrade to 1.0.1 (variant c)
+$ codex plugin add kkprobe-guard@kkprobe --json
+{
+  "pluginId": "kkprobe-guard@kkprobe",
+  "name": "kkprobe-guard",
+  "marketplaceName": "kkprobe",
+  "version": "1.0.1",
+  "installedPath": "/home/sergio/kkprobe-task1/cache1/home/plugins/cache/kkprobe/kkprobe-guard/1.0.1",
+  "authPolicy": "ON_INSTALL"
+}
+exit=0
+-- cache after: upgrade to 1.0.1
+  1.0.1  dir_inode=299399  script_inode=299403  variant=c
+
+== digest-stamped version: 1.0.1+kk.0123456789ab
+$ codex plugin add kkprobe-guard@kkprobe --json
+{
+  "pluginId": "kkprobe-guard@kkprobe",
+  "name": "kkprobe-guard",
+  "marketplaceName": "kkprobe",
+  "version": "1.0.1+kk.0123456789ab",
+  "installedPath": "/home/sergio/kkprobe-task1/cache1/home/plugins/cache/kkprobe/kkprobe-guard/1.0.1+kk.0123456789ab",
+  "authPolicy": "ON_INSTALL"
+}
+exit=0
+-- cache after: install 1.0.1+kk.0123456789ab
+  1.0.1+kk.0123456789ab  dir_inode=299392  script_inode=299396  variant=d
+
+== digest-stamped version: 1.0.1-kk.0123456789ab
+$ codex plugin add kkprobe-guard@kkprobe --json
+{
+  "pluginId": "kkprobe-guard@kkprobe",
+  "name": "kkprobe-guard",
+  "marketplaceName": "kkprobe",
+  "version": "1.0.1-kk.0123456789ab",
+  "installedPath": "/home/sergio/kkprobe-task1/cache1/home/plugins/cache/kkprobe/kkprobe-guard/1.0.1-kk.0123456789ab",
+  "authPolicy": "ON_INSTALL"
+}
+exit=0
+-- cache after: install 1.0.1-kk.0123456789ab
+  1.0.1-kk.0123456789ab  dir_inode=299399  script_inode=299403  variant=d
+
+== digest-stamped version: 0.0.0-dev.0123456789ab
+$ codex plugin add kkprobe-guard@kkprobe --json
+{
+  "pluginId": "kkprobe-guard@kkprobe",
+  "name": "kkprobe-guard",
+  "marketplaceName": "kkprobe",
+  "version": "0.0.0-dev.0123456789ab",
+  "installedPath": "/home/sergio/kkprobe-task1/cache1/home/plugins/cache/kkprobe/kkprobe-guard/0.0.0-dev.0123456789ab",
+  "authPolicy": "ON_INSTALL"
+}
+exit=0
+-- cache after: install 0.0.0-dev.0123456789ab
+  0.0.0-dev.0123456789ab  dir_inode=299392  script_inode=299396  variant=d
+
+== digest-stamped version: 0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef
+$ codex plugin add kkprobe-guard@kkprobe --json
+{
+  "pluginId": "kkprobe-guard@kkprobe",
+  "name": "kkprobe-guard",
+  "marketplaceName": "kkprobe",
+  "version": "0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef",
+  "installedPath": "/home/sergio/kkprobe-task1/cache1/home/plugins/cache/kkprobe/kkprobe-guard/0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef",
+  "authPolicy": "ON_INSTALL"
+}
+exit=0
+-- cache after: install 0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef
+  0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef  dir_inode=299399  script_inode=299403  variant=d
+
+== digest-stamped version: sha256-0123456789ab
+$ codex plugin add kkprobe-guard@kkprobe --json
+{
+  "pluginId": "kkprobe-guard@kkprobe",
+  "name": "kkprobe-guard",
+  "marketplaceName": "kkprobe",
+  "version": "sha256-0123456789ab",
+  "installedPath": "/home/sergio/kkprobe-task1/cache1/home/plugins/cache/kkprobe/kkprobe-guard/sha256-0123456789ab",
+  "authPolicy": "ON_INSTALL"
+}
+exit=0
+-- cache after: install sha256-0123456789ab
+  sha256-0123456789ab  dir_inode=299392  script_inode=299396  variant=d
+
+== digest-stamped version: local-0123456789ab
+$ codex plugin add kkprobe-guard@kkprobe --json
+{
+  "pluginId": "kkprobe-guard@kkprobe",
+  "name": "kkprobe-guard",
+  "marketplaceName": "kkprobe",
+  "version": "local-0123456789ab",
+  "installedPath": "/home/sergio/kkprobe-task1/cache1/home/plugins/cache/kkprobe/kkprobe-guard/local-0123456789ab",
+  "authPolicy": "ON_INSTALL"
+}
+exit=0
+-- cache after: install local-0123456789ab
+  local-0123456789ab  dir_inode=299399  script_inode=299403  variant=d
+
+== downgrade: re-add 1.0.0 with the original variant a bytes
+$ codex plugin add kkprobe-guard@kkprobe --json
+{
+  "pluginId": "kkprobe-guard@kkprobe",
+  "name": "kkprobe-guard",
+  "marketplaceName": "kkprobe",
+  "version": "1.0.0",
+  "installedPath": "/home/sergio/kkprobe-task1/cache1/home/plugins/cache/kkprobe/kkprobe-guard/1.0.0",
+  "authPolicy": "ON_INSTALL"
+}
+exit=0
+-- cache after: downgrade to 1.0.0
+  1.0.0  dir_inode=299392  script_inode=299396  variant=a
+
+== config.toml plugin entries
+[plugins."kkprobe-guard@kkprobe"]
+enabled = true

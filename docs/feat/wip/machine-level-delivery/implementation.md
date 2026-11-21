@@ -54,7 +54,7 @@ These need a real logged-in configuration, because a scratch configuration direc
 
 1. Add a local-path marketplace whose plugin entry points at a versioned subdirectory, install the plugin at user scope, and start a session. → verify: a hook in the plugin reports its script path and plugin root inside that subdirectory (assumption 8).
 2. Re-point the marketplace entry at a second subdirectory while a session is open. → verify: the open session still uses the first; a new session uses the second.
-3. In an untrusted scratch directory, pass a settings layer with a deny rule and a statusline. → verify: a matching read is denied with hooks disabled, and the statusline renders in an interactive session (assumption 9).
+3. In a scratch directory with no recorded trust, pass a settings layer with a deny rule and a statusline. With hooks disabled, compare a matching read with an allowed control in print mode. In interactive mode, record whether the statusline appears before trust and compare with a trusted workspace using the same layer and hook settings (assumption 9).
 4. Enable a plugin in a trusted project's settings and set the same plugin ID to `false` in the settings layer. → verify: the plugin does not load.
 5. Optional: set the VS Code extension's process wrapper to a script that adds a settings layer. → verify: record whether the layer applies.
 
@@ -64,7 +64,7 @@ Deliver one complete path for Claude: a first install on a clean machine, an upg
 
 **Files to create**
 
-- `kk/bin/kk` — the stable entry point, a short shell script. It resolves the toolbox home, reads the state file, and runs a release's CLI under isolated Python (see [the `kk` command](design.md#the-kk-command)). For `rollback` that is the release being restored: the active release when a candidate is pending in *activating*, the rollback target otherwise. For everything else it is the active release. It contains no upgrade logic. It reads only the active release, the rollback target and the candidate's phase, with `jq`. Because every release ships this file, the copy inside a release directory works as a recovery entry point when the stable one does not.
+- `kk/bin/kk` — the stable entry point, a short shell script. It resolves the toolbox home, reads the state file, and runs a release's CLI under isolated Python (see [the `kk` command](design.md#the-kk-command)). For `rollback` that is the release being restored: the journaled restore target when retrying a rollback, the still-active release during an interrupted upgrade in *activating*, and the recorded rollback target otherwise. For everything else it is the active release. It contains no upgrade logic. It reads the active release, rollback target and candidate journal with `jq`. Because every release ships this file, the copy inside a release directory works as a recovery entry point when the stable one does not.
 - `kk/lib/` — the CLI modules. Keep them few: state, payload, validation, Claude activation, command dispatch.
 - `kk/payload.json` — the payload's layout version and the directories it must contain.
 - `kk/selftest/guard-cases.json` — a small set of guard inputs with expected decisions, covering an allowed command, a secret read, a destructive command and a protected-path edit.
@@ -79,11 +79,25 @@ Deliver one complete path for Claude: a first install on a clean machine, an upg
 4. A version for local-checkout payloads that cannot collide with a tag.
 5. Validation with nothing activated: payload completeness, the guard self-test against the candidate engine, one event through the Claude guard handler as the staged `hooks/hooks.json` registers it (resolve the plugin-root variable to the staged plugin; expect a denial for a secret read and a pass for a harmless command), and `claude plugin validate`. → verify: a candidate with a syntax error in the engine fails validation and leaves the state file unchanged; so does a candidate whose hook registration names a script that is not in the payload.
 6. The state machine in [Activation state](design.md#activation-state): one active release, a per-tool state, the rollback target with its fallback to the previously active release, the time each retained release stopped being active, and the installed-paths record. Journal the candidate's phase before each activation step. The file carries a format version. Rewrites are read-modify-write and keep fields the code does not know, because rollback runs an older release's code against a file a newer one wrote. Code refuses a format version it does not know. → verify: a state file with an unknown field keeps it across a rewrite; a file with a higher format version is refused with a message and left untouched.
-7. Claude activation: write the local marketplace manifest pointing at the release, add the marketplace and install the plugin on first install, then verify through `claude plugin list --json` that the plugin loads from the release directory. Marketplace plugin sources must start with `./`. Before writing the `~/.local/bin/kk` symlink, apply the collision rule in [Components](design.md#components): a path that exists and is not in the installed-paths record stops the install. Record the path before writing it. Keep the local marketplace's name in one constant shared by both tools' activation, mixed-install detection and the launcher. Its working value is `toolbox`; the name is an open question the maintainer settles before the first release that ships `kk`.
-8. Hand-off: fetch, staging and validation run from the active release's code; activation and verification run from the candidate's. Rollback runs from the code of the release it restores: the active release after an interrupted upgrade, the rollback target otherwise. Status and resumption run from the active release. On a first install there is no active release: the installer runs the staged candidate directly, and a second run resumes from the journaled phase or starts over.
+7. Claude activation: write the local marketplace manifest pointing at the release, add the marketplace and install the plugin on first install, then verify that the matching `claude plugin list --json` entry’s `readFromFolder` resolves to the expected release plugin directory. A missing or mismatched `readFromFolder` fails verification. Marketplace plugin sources must start with `./`. Before writing the `~/.local/bin/kk` symlink, apply the collision rule in [Components](design.md#components): a path that exists and is not in the installed-paths record stops the install. Record the path before writing it. Keep the local marketplace's name in one constant shared by both tools' activation, mixed-install detection and the launcher. Its working value is `toolbox`; the name is an open question the maintainer settles before the first release that ships `kk`.
+8. Hand-off: fetch, staging and validation run from the active release's code; activation and verification run from the candidate's. Rollback runs from the code of the release it restores: the journaled target when retrying a rollback, the still-active release during interrupted activation of an upgrade, and the recorded rollback target otherwise. Status and resumption run from the active release. On a first install there is no active release: the installer runs the staged candidate directly, and a second run resumes from the journaled phase or starts over.
 9. `kk rollback` to the rollback target, `kk status`, and pruning. A release is pruned only when it is not active, not the rollback target, and stopped being active more than 14 days ago. `kk upgrade` ends by printing the per-release recovery command.
 
 → verify: with stub vendor CLIs, the suite covers first install, an interrupted first install completed by running the installer again, upgrade, failed validation, interruption at each activation step followed by resume and by rollback, two overlapping writers, and pruning. The pruning case keeps a release that was active for a month and superseded yesterday. A rollback case promotes a release, makes its `kk/lib` unreadable, and restores the previous one twice: through the stable entry point, and through the copy inside the rollback target after the stable entry point has been broken too.
+
+### Running the Claude first-install increment
+
+From this checkout, `./install.sh --local .` installs the working tree. `~/.local/bin/kk status` shows the promoted release and Claude’s state. If installation stops partway, run the installer again. It verifies the journaled candidate, resumes an intact copy locally and rebuilds an incomplete copy from its recorded source. `KK_HOME` selects the toolbox directory. The stable symlink lives in `~/.local/bin/`.
+
+With no source argument, a fresh install selects the latest stable GitHub release. `--version vX.Y.Z` selects a tag and `KK_REPOSITORY=owner/repo` selects a fork. A tag needs to contain this installer and the declared payload. The marketplace name must be settled before publishing the first such tag. Task 3 requires the three directories in `kk/payload.json`. Task 7 adds the fourth when it creates the Codex guard.
+
+### Operating the Claude release lifecycle
+
+After first install, run `kk upgrade` for the latest stable tag, `kk upgrade --version <tag>` for a particular tag, or `kk upgrade --local <checkout>` for a local build. The active CLI stages and validates the release. The candidate runs its own activation and verifies Claude’s source directory. An upgrade with a prior release prints a recovery command pointing to the retained rollback target’s copy of `kk/bin/kk`.
+
+If activation stops, `kk status` shows the active and candidate releases and the last journaled step. Run `kk upgrade` without a source to verify the saved candidate and replay activation, or `kk rollback` to restore the active release offline. After promotion, `kk rollback` restores the recorded rollback target. An interrupted rollback is retried with `kk rollback`. If the stable dispatcher itself is damaged, run the recovery command printed at upgrade time. If restore verification fails, resolve the reported vendor or release error and retry the journaled rollback. A new upgrade waits for that rollback to finish. If only dispatcher publication is pending after promotion, a plain `kk upgrade` publishes the active release’s dispatcher offline.
+
+Retention starts when a release stops serving new sessions. A placed directory with no recorded history receives a conservative timestamp after successful activation. The active release and rollback target are always retained. Generated guard bytecode is cleared and regenerated from verified source on recovery. The live probe and interruption tests are recorded in [Task 4 verification](verification/task-4/README.md).
 
 ## Claude plugin changes
 
@@ -93,6 +107,8 @@ Deliver one complete path for Claude: a first install on a clean machine, an upg
 4. Move the statusline scripts into `klaude-plugin/statusline/`. The copies under `.claude/toolbox/scripts/` stay until retirement and are checked identical.
 5. In `klaude-plugin/scripts/set-plugin-root.sh`, use the script's parent directory as the plugin root when it sits under the toolbox home's `releases/`; otherwise keep the resolver. → verify: `test/test-cpr.sh` passes and a new case covers the toolbox-home branch.
 6. Run `make generate-kodex` and the structure tests. Plugin prose must not reference repository documents.
+
+The instruction switch is the boolean `claude.instructions` in `${XDG_CONFIG_HOME:-~/.config}/kk/config.json` and defaults to `true`. It controls the context supplied by the plugin hook. Existing project imports still load through Claude. The plugin files are canonical, and `make generate-claude-assets` keeps the four regular files used by template sync current until retirement.
 
 ## Claude launch layer
 
@@ -104,11 +120,39 @@ Deliver one complete path for Claude: a first install on a clean machine, an upg
 
 → verify: unit tests for yielding per key and per variable, list composition, each override, the adopter's `--settings` in both forms with the denies intact, an override that tries to empty the deny list, and a malformed override file. → verify: on a real machine, a wrapped session uses the baseline effort level when none is set and the user's when one is; and with hooks disabled, a wrapped session started with the adopter's own `--settings` still refuses to read a decoy secret.
 
+### Claude override format
+
+All fields in `${XDG_CONFIG_HOME:-~/.config}/kk/config.json` are optional. For example, this configuration disables the standing skill grant, enables web search and adds a personal settings file.
+
+```json
+{
+  "claude": {
+    "defaults": {"skills": false},
+    "optIn": {"webSearch": true},
+    "settings": {"env": {"CLAUDE_STATUSLINE_THEME": "nord"}},
+    "settingsFile": "personal.json"
+  }
+}
+```
+
+| Field | Behavior |
+| --- | --- |
+| `claude.defaults` | Boolean switches for `effortLevel`, `env`, `statusLine`, `skills` and `readRelease`. Each defaults to true. |
+| `claude.optIn` | Boolean switches for `mkdir` and `webSearch`. Each defaults to false. |
+| `claude.instructions` | Boolean, enabled by default. The plugin hook reads this switch directly. |
+| `claude.settings` | Claude settings object. Its preferences override toolbox defaults, its environment merges per variable and its permission lists add entries. |
+| `claude.settingsFile` | Path to another Claude settings object, applied after `claude.settings`. Relative paths resolve from the override file's directory. A command-line `--settings` applies last and resolves from the launch directory. |
+| `launchNotice` | Shared boolean switch, enabled by default. Task 11 delivers the update notice. |
+
+Run `kk claude --print-layer` in the intended workspace to inspect the composed settings. A single leading slash in a file permission rule anchors at the directory of its input settings file, or the launch directory for inline command-line JSON. When user, project or local settings enable the Git-marketplace copy, the wrapper supplies a disablement before applying the adopter’s explicit overrides. Claude validates custom settings through a local `get_settings` control request before the interactive or print session starts.
+
+The wrapper yields to a top-level user `effortLevel` wherever it is present. Claude decides which models honor that legacy user key. For models that ignore it, save the per-model level with `/effort`. [Claude effort settings](https://code.claude.com/docs/en/settings-reference#effortlevel)
+
 ## Codex guard plugin
 
 1. Create `kodex-guard/` with a legacy-format manifest named `kk-guard`, `hooks/hooks.json`, and the three adapters ported from `.codex/scripts/`. Copy the matchers from `.codex/hooks.json`. Hook commands locate their scripts through the plugin-root variable Codex provides.
 2. Change the adapters' anchoring per [Guard changes](design.md#guard-changes): policy root from the hook's launch directory, payload directory for operands only. The capy registration check reads the workspace's `.codex/hooks.json`. Use the result of the launch-directory probe.
-3. Extend `scripts/generate-guard.sh` with three targets: the engine copy in `kodex-guard/scripts/guard/`, `kk/baseline/codex/kk.rules`, and the deny list above. Keep the legacy targets. Update every freshness list that names generated paths: the Makefile, `generated-check.yml`, `release.yml`, `test/test-generate-guard.sh` and the generated-files section of `AGENTS.md`.
+3. Task 7 adds the engine copy in `kodex-guard/scripts/guard/` and the native rules in `kk/baseline/codex/kk.rules` to `scripts/generate-guard.sh`. Task 6 adds the Claude deny list. Keep the legacy targets. CI and both release workflows use the Makefile’s `check-guard` freshness target.
 4. Extend the guard's protected paths with the toolbox home, the override file, the owned files under the Codex home, and Codex's plugin cache. Add path tokens for the three home directories the way the temp-directory token works, with tests in `test/guard/test_guard.py`. Regenerate the documentation table.
 5. Add a `kk-guard` entry to the repository's Codex marketplace manifest so plugin-only Codex users can install the guard too.
 6. Port the adapter cases from `test/test-codex-hooks.sh` to the new adapters and add anchoring cases: launch directory in one repository, payload directory in another, policy from the first. Update `test/test-codex-structure.sh`.
@@ -116,7 +160,25 @@ Deliver one complete path for Claude: a first install on a clean machine, an upg
 
 → verify: the ported suite passes against the new adapters; a live run from a subdirectory enforces a rule added in the workspace's `.claude/kk-guard.json`.
 
+Run `python3 -I kk/lib/guard_identity.py kodex-guard` to print the guard SHA-256. The hash covers each relative path, its release-archive mode and its contents. A regular file with any execute permission has mode 0755 in a release archive; other regular files have mode 0644. Local umask differences therefore leave the identity stable. A relative link inside the bundle contributes its target text. Only the top-level manifest version value is masked, so formatting elsewhere in the manifest still counts.
+
 ## Codex baseline and launch
+
+Load-check the candidate with the installed Codex before publishing it. Keep enablement settings for hooks and plugins in native configuration. Resolve imports from the effective `-C` or `--cd` directory.
+
+The override file at `${XDG_CONFIG_HOME:-~/.config}/kk/config.json` accepts a `codex.settings` object with nested profile tables and a `codex.optIn` object with boolean switches. For example, this applies the template's sandbox setting and the account-wide native rules while selecting a reasoning effort:
+
+```json
+{"codex":{"settings":{"model_reasoning_effort":"high"},"optIn":{"sandbox_mode":true,"nativeForbids":true}}}
+```
+
+The other template switches are `approval_policy` and `approvals_reviewer`. Run `kk apply` after changing the file. The installed Codex checks that the candidate loads before publication. It can still accept an unknown key or unsupported value. Use native Codex configuration for hook and plugin enablement. The launcher composes `developer_instructions` from the release and confirmed repository imports.
+
+The launcher skips automatic imports when Codex itself selects a remote, resumed, forked or newly created workspace. Consent recorded for the caller’s repository only applies when the launcher can identify the destination. The same release guard checks locally imported file paths against its secrets policy before the launcher reads them.
+
+The release’s `codex_snapshot` in the private journal holds the applied Codex overrides, their destination home and the hash of the full override file. Rollback can reconstruct that release’s files offline even if an unapplied edit is invalid. Before creating an external file, the writer journals its destination and the identity of a temporary file on the same filesystem. A create-only hard link publishes it. Recovery compares file identities before claiming or pruning a destination after an interruption.
+
+A Claude-only first install skips Codex. Once the journal records managed Codex files, upgrade and `kk apply` need the Codex executable to validate a new profile. If it disappears from `PATH`, restore the executable to `PATH` and retry. Rollback can restore previously validated files without it. If a destination now belongs to the adopter or its directory has been replaced with a symlink, rollback stops and identifies the conflicting path.
 
 1. Create `kk/baseline/codex.json` with the profile keys from `.codex/config.toml`, excluding MCP server entries, and `kk/baseline/codex/bootstrap.md` with the tool-name mapping from `session-start.sh`. Keep `approval_policy`, `approvals_reviewer` and `sandbox_mode` out of the default keys. Put them in the opt-in catalogue with the template's values, next to the switch for the native forbids; both are off unless the override file turns them on.
 2. Make the generated sub-agent definitions available in the payload at `kk/baseline/codex/agents/`, keeping `.codex/agents/` until retirement. Prefer one more target in the generator over a copy step, and extend the freshness check either way.
@@ -131,9 +193,9 @@ Deliver one complete path for Claude: a first install on a clean machine, an upg
 7. `kk codex` adds the profile and replaces itself with `codex`. When the override file's hash differs from the recorded one, it prints one line saying that Codex overrides have changed and that `kk apply` applies them, then launches with the profile as it is. It never writes owned files. `kk status` reports the same. It passes through when the adopter names a profile. It refuses on the states in [Activation state](design.md#activation-state), and treats `exec` and `review` as non-interactive. At this point it decides from the recorded state. The trust re-read before a non-interactive run is added with the trust reader in [Codex activation and trust](#codex-activation-and-trust).
 8. Repository instruction imports, per [Repository instructions for Codex](design.md#repository-instructions-for-codex):
    - **Resolve.** In the workspace root (the git top level of the launch directory, or that directory), read `AGENTS.md` and collect each line that holds only `@` and a path, outside code fences. Resolve each path against the root; keep it only if its real path is a regular file inside the root. Do not follow imports inside imported files.
-   - **Confirm.** Key the decision by the root's real path. Store the answer and the sorted list of import paths in one JSON file per repository under `$KK_HOME/imports/`, written atomically. On an interactive terminal with no stored answer for the current list, show the files and sizes and ask, default no. Without a terminal, never ask.
+   - **Confirm.** Key the decision by the root's real path. Store the answer and the sorted list of import paths in one JSON file per repository under `$KK_HOME/imports/`, written atomically. On an interactive terminal with no stored answer for the current list, show the files and sizes. Explain that injecting these files with the toolbox instructions replaces any repository `developer_instructions` for that session. Ask with a default of no. Without a terminal, never ask.
    - **Inject.** With a stored yes for the current list, build the value from `$KK_HOME/codex-instructions.md` followed by each file under a heading naming its path, serialise it as one TOML string with the existing serialiser, and add `-c developer_instructions=<value>` to the arguments. Otherwise add nothing.
-   - **Report.** Name in one line each import that is missing or that would take the total over the limit from the probe, and leave it out. Say in one line when imports exist but were not injected in a non-interactive run. `kk status` in a repository shows the stored answer and the path of its file.
+   - **Report.** Name in one line each import that is missing or that would take the serialised argument over the cap in [Repository instructions for Codex](design.md#repository-instructions-for-codex), and leave it out. Say in one line when imports exist but were not injected in a non-interactive run. `kk status` in a repository shows the stored answer and the path of its file.
 
 → verify: unit tests for composition (the approval and sandbox keys absent by default and present when switched on), serialisation, each refusal, import resolution (a path escaping the root through `..` or a symlink is refused; a line inside a code fence is ignored; a nested import is not followed), the confirmation (asked once, asked again when the list changes, never asked without a terminal, a declined answer injects nothing), the injected value containing the toolbox instructions followed by each file, `kk apply` installing the rules file after the switch is turned on and removing it after it is turned off with no network, the one-line notice when the override file changed and its absence after `kk apply`, a pre-existing `kk.config.toml` that stops the install untouched, an adopter's own `kk-notes.toml` in the agents directory that survives pruning, a candidate rules file that omits a forbid another file supplies, and the rules file removed when the switch is turned off; `codex --profile kk debug prompt-input` on a real machine shows the instructions as a developer message.
 
@@ -143,7 +205,7 @@ Deliver one complete path for Claude: a first install on a clean machine, an upg
 2. Guard identity at staging: compute the candidate guard's identity with `kk/lib/guard_identity.py` and compare it with the identity recorded for the installed guard. For a local-checkout payload, set the staged guard manifest's version from the identity: the installed guard's version when the identities match, otherwise a digest stamp in the form the probe found Codex accepts. For a tagged payload, fail staging when the candidate carries the installed version with a different identity. Extend validation with one event through each Codex adapter as the staged `hooks/hooks.json` registers it, as Claude validation does for its handler.
 3. Activation: add the marketplace and both plugins on first install; afterwards re-add the skills plugin when its version differs and the guard plugin only when its identity differs. Compare the tree at the reported install path with the release and record the installed guard's identity.
 4. Guard-change confirmation per the [upgrade flow](design.md#upgrade-flow), keyed on identity, defaulting to no without a terminal.
-5. Trust tracking with the mechanism found in the probes: one trust reader that returns trust and enablement for each guard handler, for a given workspace when the mechanism takes one. Use it at verification, in `kk codex` before a non-interactive run (refuse when a handler is untrusted or disabled; one warning line in the *unverified* state), and later in `kk migrate`. Record *awaiting review* while any handler is untrusted or disabled. If no mechanism exists, the adopter's explicit acknowledgement moves Codex to *unverified*, which is reported as such and never as *ready*.
+5. Trust tracking with the mechanism found in the probes ([verification/task-1/](verification/task-1/README.md#reading-hook-trust-assumption-7): app-server `hooks/list` with `cwds`): one trust reader that returns trust and enablement for each guard handler, for a given workspace. A handler is effective only when it is listed for that workspace with `enabled: true` and `trustStatus: trusted`; `untrusted`, `modified`, disabled and absent all count as not effective. Use it at verification, in `kk codex` before a non-interactive run (refuse when a handler is not effective; one warning line in the *unverified* state), and later in `kk migrate`. Record *awaiting review* while any handler is not effective. Use Task 9’s effective launch directory and native enablement settings. Settle the remaining parts of [open question 5](design.md#open-questions) for upgrade verification, repository-local disablement reporting and `managed` handlers. If no mechanism exists, the adopter's explicit acknowledgement moves Codex to *unverified*, which is reported as such and never as *ready*.
 6. Rollback for Codex, including a guard that differs between the two releases, and resumption of an interrupted activation. The rollback target skips a release whose guard never got past *awaiting review*. When no retained release has every tool verified, it falls back to the previously active release and `kk rollback` names the tool whose guard is not reviewed there.
 7. Record the second [demonstration](design.md#verification): interrupt an upgrade during activation, roll back with the network disabled, and show a guarded action denied by the restored guard without a trust bypass.
 8. Record the fourth demonstration: promote a release, make its `kk/lib` unavailable, restore the previous release with the network disabled through the copy of the entry point inside the rollback target, and show a guarded action denied by the restored guard.

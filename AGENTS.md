@@ -11,7 +11,7 @@ This is a repository providing a complete development environment for agentic to
 Three integrated components:
 
 1. **Claude Code** (`.claude/`): Project settings (`settings.json`), statusline scripts, and sync infrastructure
-2. **Codex** (`.codex/`, `kodex-plugin/`): Codex-equivalent config, hooks, rules, agents, and generated plugin. See §Codex Support below
+2. **Codex** (`.codex/`, `kodex-plugin/`, `kodex-guard/`): Codex-equivalent config, hooks, rules, agents, and separate skills and permission-guard plugins. See §Codex Support below
 3. **kk plugin** (`klaude-plugin/`): Skills, commands, hooks, and utility scripts — the canonical source of truth, distributed via the Claude Code plugin system
 
 For API keys and MCP server setup, see the "MCP Server Configuration" section in `README.md`.
@@ -21,15 +21,17 @@ For API keys and MCP server setup, see the "MCP Server Configuration" section in
 `klaude-plugin/` is the canonical source. A Go generation tool (`cmd/generate-kodex/`) produces:
 
 - `kodex-plugin/` — transformed skills for Codex (resolves `${CLAUDE_PLUGIN_ROOT}`, injects headers)
-- `.codex/agents/*.toml` — sub-agent definitions (converted from `klaude-plugin/agents/*.md`)
+- `.codex/agents/*.toml` and `kk/baseline/codex/agents/*.toml` — sub-agent definitions for the template and machine release, converted from `klaude-plugin/agents/*.md`
 
-The permission-guard generator (`scripts/generate-guard.sh`) also produces `.codex/rules/default.rules` and `.codex/scripts/guard/` from the canonical guard declaration and engine under `klaude-plugin/scripts/guard/`, including its license. It updates `.claude/settings.json` `permissions.deny` and the marked rules tables in `docs/user-guide/configuration.md`.
+The permission-guard generator (`scripts/generate-guard.sh`) copies the canonical runtime and license from `klaude-plugin/scripts/guard/` into `.codex/scripts/guard/` and `kodex-guard/scripts/guard/`. It produces both `.codex/rules/default.rules` and `kk/baseline/codex/kk.rules`, writes the same Claude deny list to `.claude/settings.json` and `kk/baseline/claude/deny.json`, and refreshes the marked tables in `docs/user-guide/configuration.md`.
 
 Hand-authored codex files (not generated): `.codex/config.toml`, `.codex/hooks.json`, `.codex/scripts/` except `guard/`, and `AGENTS.md`.
 
-**Developer workflow:** After editing skills in `klaude-plugin/`, run `make generate-kodex` to regenerate. CI checks freshness via `make generate-kodex && git diff --exit-code kodex-plugin/ .codex/agents/`.
+**Developer workflow:** After editing skills or agents in `klaude-plugin/`, run `make generate-kodex` to regenerate. CI checks freshness across `kodex-plugin/`, `.codex/agents/` and `kk/baseline/codex/agents/`, including newly generated files.
 
-After editing `klaude-plugin/scripts/guard/`, run `make generate-guard`. CI checks freshness with `make generate-guard && git diff --exit-code .claude/settings.json .codex/rules/ .codex/scripts/guard/ docs/user-guide/configuration.md`. Never edit generated copies directly. `make generate-all` refreshes guard output before the other generators and their structure checks.
+Edit Claude session instructions in `klaude-plugin/instructions/` and statusline scripts in `klaude-plugin/statusline/`. Run `make generate-claude-assets` to refresh their legacy template copies. CI checks all four copies for drift.
+
+After editing `klaude-plugin/scripts/guard/`, run `make generate-guard`. CI and both release workflows use `make check-guard` to regenerate every guard projection and check for tracked or untracked differences. Never edit generated copies directly. `make generate-all` refreshes guard output before the other generators and their structure checks.
 
 ## Testing
 
@@ -284,7 +286,7 @@ Authoring consequence:
 - In files consumed via `Read` at runtime, **prefer explicit content over tokens**: hard-code the names/paths the procedure needs (e.g., the Known Profiles list in `shared-profile-detection.md`). If the file must describe a plugin-root path, instruct the agent to construct it using the resolved prefix it already knows from the SKILL.md that invoked it — not to forward the literal `${CLAUDE_PLUGIN_ROOT}` token.
 - Never use `Glob` against `${CLAUDE_PLUGIN_ROOT}/…` patterns regardless of substitution: `Glob` is cwd-scoped and returns 0 matches for outside-cwd absolute paths.
 
-**`TOOLBOX_PLUGIN_ROOT` — session-wide runtime alternative.** A `SessionStart` hook in `klaude-plugin/hooks/hooks.json` exports `TOOLBOX_PLUGIN_ROOT` into every Bash call via `$CLAUDE_ENV_FILE`. Unlike `${CLAUDE_PLUGIN_ROOT}` (plugin-load-time only), `${TOOLBOX_PLUGIN_ROOT}` is available in the shell environment throughout the session. Use it in Bash commands when the plugin root is needed at runtime — e.g., `ls ${TOOLBOX_PLUGIN_ROOT}/profiles/`. The hook resolves the path primarily via `klaude-plugin/scripts/cpr.py` (which reads `installed_plugins.json` and returns the versioned `cache/` path); the harness-substituted `${CLAUDE_PLUGIN_ROOT}` passed as the hook's argument is the fallback. Read-only sub-agents (e.g. `code-reviewer`, `profile-resolver`) have no shell to resolve the variable — the spawning skill resolves it and injects the absolute path into their prompt under a `## Plugin Root` heading.
+**`TOOLBOX_PLUGIN_ROOT` — session-wide runtime alternative.** A `SessionStart` hook in `klaude-plugin/hooks/hooks.json` exports `TOOLBOX_PLUGIN_ROOT` into every Bash call via `$CLAUDE_ENV_FILE`. Unlike `${CLAUDE_PLUGIN_ROOT}` (plugin-load-time only), `${TOOLBOX_PLUGIN_ROOT}` is available in the shell environment throughout the session. Use it in Bash commands when the plugin root is needed at runtime — e.g., `ls ${TOOLBOX_PLUGIN_ROOT}/profiles/`. For a machine-managed install, the hook exports the running release’s physical plugin directory. For a Git-marketplace install, it resolves the path via `klaude-plugin/scripts/cpr.py` (which reads `installed_plugins.json` and returns the versioned `cache/` path); the harness-substituted `${CLAUDE_PLUGIN_ROOT}` passed as the hook's argument is the fallback. Read-only sub-agents (e.g. `code-reviewer`, `profile-resolver`) have no shell to resolve the variable — the spawning skill resolves it and injects the absolute path into their prompt under a `## Plugin Root` heading.
 
 Files outside `klaude-plugin/` (this CLAUDE.md, README.md, ADRs under `docs/adr/`) are NOT subject to substitution and may use the brace form freely.
 

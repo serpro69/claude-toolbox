@@ -52,7 +52,7 @@ version only, not the installed plugin version.
 | Claude Code with template configuration | Update the plugin, sync each project, then restart Claude Code |
 | Claude Code plugin-only | Update the plugin and restart Claude Code; skip template sync |
 | Codex with template configuration | Sync each project, review/trust new or changed hooks, then restart Codex |
-| Codex plugin-only | [Adopt the template configuration](../getting-started/adopting.md) to receive the guard; this repository's Codex plugin supplies skills and profiles only |
+| Codex plugin-only | Install the separate `kk-guard@claude-toolbox` plugin and review its handlers. [Plugin-only setup](../getting-started/plugin-only.md#codex) |
 
 ### 1. Check prerequisites
 

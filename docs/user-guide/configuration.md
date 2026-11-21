@@ -112,6 +112,14 @@ The guard blocks mutations of these paths, including moving their parent directo
 - `.codex/rules/**`
 - `.codex/scripts/**`
 - `~/.claude/plugins/**`
+- `$KK_HOME/**`
+- `$XDG_CONFIG_HOME/kk/config.json`
+- Each path recorded in `$KK_HOME/state.json` under `installed_paths`, including the `~/.local/bin/kk` launcher, the installed Codex profile, the opt-in rules file and toolbox sub-agents.
+- `$CODEX_HOME/plugins/cache/**`
+
+The toolbox home defaults to `${XDG_DATA_HOME:-~/.local/share}/kk`. The configuration and Codex homes default to `~/.config` and `~/.codex`. A file in a shared directory becomes protected when the installer records its exact path. Reads still follow the secrets policy.
+
+When copying an unrelated executable into `~/.local/bin/`, name its destination file explicitly. A directory-only destination is checked as a parent of the protected `kk` launcher.
 
 Project config may add paths under `selfmod`. To let an agent edit settings or guard files for one checkout, the user can add this entry to `~/.claude/kk-guard.json` (substitute the absolute project path):
 
@@ -124,7 +132,7 @@ This exception does not allow reading or writing secrets.
 
 ## Guard Configuration
 
-The baseline ships inside the Claude plugin and runs even when neither configuration file exists. The Codex template carries the same engine and declaration. These files are independent of provider permission settings:
+The baseline ships inside the Claude plugin and runs even when neither configuration file exists. The standalone Codex guard plugin and the Codex template carry the same engine and declaration. These files are independent of provider permission settings:
 
 | File | Owner and purpose |
 |------|-------------------|
@@ -167,17 +175,18 @@ The user edits this file directly; the guard protects it from agent writes. Merg
 
 Use physical absolute project paths (`pwd -P`). The engine combines `*` with the single longest matching directory prefix; shorter matching prefixes contribute nothing. Lists are combined, and `disable_selfmod` is enabled if either selected entry enables it. A parent path covers nested repositories and worktrees.
 
-`allow_patterns` applies separately to each normalized simple command, including extracted shell bodies. Thus `^git clean -n` can exempt `git clean -nd`, but not the `rm` in `git clean -nd; rm -rf ./work`. These patterns never exempt secrets or protected configuration. `disable_selfmod` permits settings/guard edits only; it also leaves secrets protected. On Codex, native forbids for `rm`, `shred`, `sudo`, `su` and `doas` still win over guard exceptions.
+`allow_patterns` applies separately to each normalized simple command, including extracted shell bodies. Thus `^git clean -n` can exempt `git clean -nd`, but not the `rm` in `git clean -nd; rm -rf ./work`. These patterns never exempt secrets or protected configuration. For sessions in the selected project, `disable_selfmod` permits edits to every path listed under **Protected configuration**, including the machine installation and plugin cache. The secrets policy still applies. On Codex, native forbids for `rm`, `shred`, `sudo`, `su` and `doas` still win over guard exceptions.
 
 Missing config files leave the baseline active. Invalid JSON or invalid supported values produce a visible `systemMessage` and skip that file's changes; the other valid layer still applies. Unknown keys are reported and ignored. Secrets are never loosened by user configuration.
 
 ## Hooks
 
-The Claude plugin ships two hooks. It needs Bash, `jq`, Python 3.8+ and Claude Code 2.1.295+ for the declared [`onFailure: "block"` behavior](https://code.claude.com/docs/en/hooks#block-the-action-when-a-hook-fails).
+The Claude plugin ships three hook handlers. It needs Bash, `jq`, Python 3.8+ and Claude Code 2.1.295+ for the declared [`onFailure: "block"` behavior](https://code.claude.com/docs/en/hooks#block-the-action-when-a-hook-fails).
 
 | Hook | Trigger | Description |
 |------|---------|-------------|
 | Plugin root export | `SessionStart` | Exports `TOOLBOX_PLUGIN_ROOT` into the session environment so every Bash call has a reliable path to the plugin installation directory |
+| Session instructions | `SessionStart` on startup, resume, clear and compaction | Supplies the plugin’s behavioral instructions. Git-marketplace installs also supply plugin-root guidance. Each legacy project instruction file takes precedence over the corresponding hook text. |
 | Permission guard | `PreToolUse` on `Bash`, `Read`, `Grep`, `Glob`, `Edit`, `Write`, `NotebookEdit`, and capy execution tools | Enforces secrets, destructive-command rules, and protected configuration paths; denies on guard failures |
 
 Ordinary allowed calls produce no output and exit 0; invalid-config warnings may emit `systemMessage`. Denials emit JSON, a reason on stderr, and exit 2. Missing/broken interpreters, a corrupt declaration, crashes and malformed engine output deny the call. Claude also blocks hook failures/timeouts through `onFailure: "block"`. A machine without a working Python interpreter blocks every matched tool, including reads, until repaired.
@@ -252,6 +261,14 @@ Rich statusline with model, context %, git branch, session duration, thinking mo
     ```
 
 ## Project Instructions
+
+To turn off the Claude plugin’s instruction hook, set `claude.instructions` to `false` in `${XDG_CONFIG_HOME:-~/.config}/kk/config.json`.
+
+```json
+{"claude": {"instructions": false}}
+```
+
+The default is `true`. Plugin-only projects receive the toolbox’s behavioral guidance, including its task-tracking and commit-message conventions. The hook reads the switch at each matching session event. An invalid value fails the instruction hook with a diagnostic naming the configuration file. Claude still loads any instruction files that your project imports.
 
 - `CLAUDE.md` — project-specific instructions for Claude Code (checked into the repo)
 - `.claude/CLAUDE.extra.md` — behavioral instructions (independent thinking, fail-loud, assumptions)

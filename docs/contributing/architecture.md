@@ -31,7 +31,9 @@ The canonical source of truth for all workflow functionality. Contains:
 - **`commands/`** — Slash commands for isolated/variant invocations
 - **`agents/`** — Sub-agent definitions (code-reviewer, design-reviewer, spec-reviewer, architecture-reviewer, eval-grader, profile-resolver)
 - **`profiles/`** — Per-domain content (Go, Java, JS/TS, Kotlin, K8s, Python) with detection rules, review checklists, implementation gotchas, design prompts, test validators, and doc rubrics
-- **`hooks/`** — Hook definitions (SessionStart plugin-root export, PreToolUse permission guard)
+- **`hooks/`** — Session instructions and plugin-root export at `SessionStart`, permission guard at `PreToolUse`
+- **`instructions/`** — Behavioral instructions and the Git-marketplace plugin-root guidance
+- **`statusline/`** — Basic and enhanced Claude statusline scripts
 - **`scripts/`** — Plugin-root resolver and canonical `guard/` wrapper, Python engine, policy declaration and license
 
 Skills reference shared instructions via symlinks to `skills/_shared/`. Profiles are referenced via `${CLAUDE_PLUGIN_ROOT}/profiles/` paths (substituted at plugin-load time by the Claude Code harness).
@@ -101,11 +103,11 @@ files and profile authoring guidance retain their provider-specific conventions.
 
 ### Permission Guard
 
-`klaude-plugin/scripts/guard/guard-rules.json` declares secrets globs, destructive categories, temporary roots and protected configuration paths. The plugin's `guard.sh` invokes `run-guard.py` with isolated Python and checks its output; failures deny. The launcher imports the adjacent `guard.py` by absolute path, permitting Python's normal bytecode cache without adding project directories to the import search path. Each call still reloads rules/configs and evaluates the payload. The engine handles Claude file tools and Bash, Codex patch headers, and capy's three execution tools without executing submitted code. Every channel uses a stable project root for policy; the execution directory is separate.
+`klaude-plugin/scripts/guard/guard-rules.json` declares secrets globs, destructive categories, temporary roots and protected configuration paths. The plugin's `guard.sh` invokes `run-guard.py` with isolated Python and checks its output; failures deny. The launcher imports the adjacent `guard.py` by absolute path, permitting Python's normal bytecode cache without adding project directories to the import search path. The standalone Codex adapters pass `--no-bytecode` to the wrapper so running a hook leaves its reviewed bundle unchanged. Each call still reloads rules/configs and evaluates the payload. The engine handles Claude file tools and Bash, Codex patch headers, and capy's three execution tools without executing submitted code. Every channel uses a stable project root for policy; the execution directory is separate.
 
-`scripts/generate-guard.sh` projects the declaration into Claude's native secrets deny list, Codex's five unconditional native forbids, and the marked configuration tables. It copies the engine, launcher, wrapper, declaration and license byte-for-byte into `.codex/scripts/guard/`. `make generate-guard` regenerates these artifacts; structure checks and CI freshness checks reject drift. This generator is separate from Codex skill/agent generation.
+`scripts/generate-guard.sh` projects the declaration into Claude's native secrets deny list, Codex's five unconditional native forbids, and the marked configuration tables. It copies the engine, launcher, wrapper, declaration and license byte-for-byte into `.codex/scripts/guard/` and `kodex-guard/scripts/guard/`. The release payload carries Claude's generated deny list in `kk/baseline/claude/deny.json` and the native Codex rules in `kk/baseline/codex/kk.rules`. `make generate-guard` regenerates these artifacts; structure checks and CI freshness checks reject drift. This generator is separate from Codex skill/agent generation.
 
-The Claude plugin loads its own baseline, including on plugin-only installs. Codex receives the engine through template sync; its Bash, patch and MCP adapters export the repository root before delegation. Capy's own hooks retain their registration and routing responsibilities. Project `.claude/kk-guard.json` adds restrictions; user `~/.claude/kk-guard.json` supplies scoped destructive/self-modification exceptions. Neither removes secrets. Native Codex forbids still outrank user exceptions.
+The Claude plugin loads its own baseline, including on plugin-only installs. Codex receives the shared engine through the standalone guard plugin or the legacy template. The plugin anchors policy to the hook’s working directory, using the Git top level when available. Capy's own hooks retain their registration and routing responsibilities. Project `.claude/kk-guard.json` adds restrictions; user `~/.claude/kk-guard.json` supplies scoped destructive/self-modification exceptions. Neither removes secrets. Native Codex forbids still outrank user exceptions.
 
 Plugin update and template sync are separate delivery channels. Disabling hooks preserves only Claude template users' native secrets baseline, not the hook's destructive or self-modification policy. Codex native reads remain advisory in this integration, and specialized paths can bypass interception. See [ADR 0012](../adr/0012-permission-guard-single-declaration.md) for the decision and trade-offs, [configuration](../user-guide/configuration.md#guard-configuration) for user controls, and [testing](testing.md#permission-guard-verification) for evidence limits.
 
@@ -147,8 +149,8 @@ Regenerated from the live plugin on every docs build (`make plugin-graph-docs`),
 - **`settings.json`** — Generated secrets deny list plus allow entries, env vars, model and plugin marketplace settings
 - **`settings.local.json`** — Per-repo overrides (never synced)
 - **`kk-guard.json`** — Optional project-owned policy additions (never synced)
-- **`CLAUDE.extra.md`** — Behavioral instructions (synced downstream)
-- **`scripts/`** — Statusline scripts (basic and enhanced themes)
+- **`CLAUDE.extra.md`** and **`toolbox/CLAUDE.md`** — Generated instruction copies for existing project imports
+- **`toolbox/scripts/statusline*.sh`** — Generated basic and enhanced statusline copies for template settings
 
 ### Codex Config (`.codex/`)
 
@@ -229,7 +231,7 @@ Users interact with claude-toolbox through three distinct modes, each providing 
 | Skills (16 workflow and utility skills) |      Y      |        Y        |         Y          |
 | Profiles (language-specific) |      Y      |        Y        |         Y          |
 | Commands                     |  Y (Claude) |    Y (Claude)   |         Y          |
-| Hooks                        |  Y (Claude) |        Y        |         Y          |
+| Hooks                        | Claude and optional Codex guard | Y | Y |
 | Sub-agents                   |  Y (Claude) |        Y        |         Y          |
 | Config (settings/rules)      |             |        Y        |         Y          |
 | Statusline                   |             |        Y        |         Y          |
@@ -238,7 +240,7 @@ Users interact with claude-toolbox through three distinct modes, each providing 
 
 **Plugin-only (Claude):** `/plugin install kk@claude-toolbox` — skills, commands, hooks, agents, profiles.
 
-**Plugin-only (Codex):** `codex plugin marketplace add serpro69/claude-toolbox` — skills and profiles only. Hooks, agents, rules, and config require template setup.
+**Plugin-only (Codex)** — The marketplace offers `kk@claude-toolbox` for skills and profiles and `kk-guard@claude-toolbox` for the permission guard. Install and review the guard separately. The template continues to distribute the project configuration and native rules.
 
 **Template / Sync:** Full configuration for both providers, kept in sync with upstream via GitHub Actions.
 

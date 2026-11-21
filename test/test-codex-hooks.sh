@@ -5,9 +5,16 @@
 set -euo pipefail
 
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+case "${1:-}" in
+  "") bash "$SCRIPT_DIR/test-codex-hooks.sh" template; exec bash "$SCRIPT_DIR/test-codex-hooks.sh" plugin ;;
+  template|plugin) delivery=$1 ;;
+  *) echo "Expected template or plugin" >&2; exit 1 ;;
+esac
 source "$SCRIPT_DIR/helpers.sh"
 
 REPO_ROOT="$(cd "$SCRIPT_DIR/.." && pwd)"
+fixture=$(create_temp_dir "codex-adapter-cases")
+TEMP_DIRS+=("$fixture")
 
 # =============================================================================
 # Fixtures
@@ -50,11 +57,13 @@ PARTIAL_PT_HOOKS=$(jq --argjson pt "$(capy_entry pretooluse)" \
 # each injected source, and the given hooks.json content (omit for no file).
 make_project() {
   local root
-  root=$(create_temp_dir "codex-hooks")
+  root=$(mktemp -d "$fixture/workspace.XXXXXXXX")
+  git -C "$root" init -q
   mkdir -p "$root/.codex/scripts" "$root/.capy" "$root/.claude" "$root/home" "$root/sub"
   cp "$REPO_ROOT/.codex/scripts/session-start.sh" \
     "$REPO_ROOT/.codex/scripts/"pretooluse-*.sh "$root/.codex/scripts/"
   cp -R "$REPO_ROOT/.codex/scripts/guard" "$root/.codex/scripts/"
+  cp -R "$REPO_ROOT/kodex-guard" "$root.plugin"
   echo "capy-agents-marker-content" >"$root/.capy/AGENTS.md"
   echo "extra-marker-content" >"$root/.claude/CLAUDE.extra.md"
   if [[ $# -gt 0 ]]; then
@@ -68,14 +77,35 @@ session_context() {
 }
 
 # run_adapter <project_root> <adapter> <payload>; inspect, never execute payloads.
+adapter_dir() {
+  if [[ "$delivery" == plugin ]]; then
+    printf '%s\n' "$1.plugin/scripts"
+  else
+    printf '%s\n' "$1/.codex/scripts"
+  fi
+}
+
 run_adapter() {
+  local root=$1 adapter=$2 payload=$3 scripts command
+  local -a runner
+  scripts=$(adapter_dir "$root")
+  if [[ "$delivery" == plugin ]]; then
+    command=$(jq -er --arg adapter "$adapter" '
+      .hooks.PreToolUse[] | select(.matcher == ({
+        bash:"Bash", patch:"Edit|Write", mcp:"^mcp__[^[:space:]]+__capy_(execute|execute_file|batch_execute)$"
+      }[$adapter])) | .hooks[] | select(.type == "command") | .command
+    ' "$root.plugin/hooks/hooks.json")
+    runner=(env PLUGIN_ROOT="$root.plugin" bash -c "$command")
+  else
+    runner=(bash "$scripts/pretooluse-$adapter.sh")
+  fi
   set +e
-  PRE_OUTPUT=$(printf '%s' "$3" | HOME="$1/home" \
-    KK_GUARD_PROJECT_CONFIG="$1/no-project-config" KK_GUARD_USER_CONFIG="$1/no-user-config" \
-    bash "$1/.codex/scripts/pretooluse-$2.sh" 2>"$1/stderr")
+  PRE_OUTPUT=$(cd -- "${4:-$root/sub}" && env -u KK_GUARD_PROJECT_CONFIG HOME="$root/home" \
+    KK_GUARD_USER_CONFIG="$root/no-user-config" \
+    "${runner[@]}" <<<"$payload" 2>"$root/stderr")
   PRE_EXIT=$?
   set -e
-  PRE_ERROR=$(cat "$1/stderr")
+  PRE_ERROR=$(cat "$root/stderr")
 }
 
 run_pretooluse() {
@@ -197,6 +227,7 @@ done
 # Section 3: pretooluse-bash.sh — legacy (capy hooks not registered)
 # =============================================================================
 
+log_section "Adapter delivery: $delivery"
 log_section "Section 3: pretooluse-bash.sh — legacy (capy hooks not registered)"
 
 log_test "Legacy: curl is denied"
@@ -348,8 +379,9 @@ done
 
 log_test "Raw NUL bytes stay invalid through the Bash adapter"
 set +e
+scripts=$(adapter_dir "$capy_root")
 PRE_OUTPUT=$({ printf '%s' "$safe_bash"; printf '\0'; } | \
-  bash "$capy_root/.codex/scripts/pretooluse-bash.sh" 2>"$capy_root/stderr")
+  (cd "$capy_root/sub" && bash "$scripts/pretooluse-bash.sh") 2>"$capy_root/stderr")
 PRE_EXIT=$?
 set -e
 PRE_ERROR=$(cat "$capy_root/stderr")
@@ -357,7 +389,7 @@ assert_denied "kk guard: failure" "raw NUL"
 
 log_test "Missing wrapper and closed stdin block in every adapter"
 missing_root=$(make_project "$TOOLBOX_HOOKS")
-mv "$missing_root/.codex/scripts/guard/guard.sh" "$missing_root/guard.saved"
+mv "$(adapter_dir "$missing_root")/guard/guard.sh" "$missing_root/guard.saved"
 for adapter in bash patch mcp; do
   run_adapter "$missing_root" "$adapter" "$safe_bash"
   assert_equals "2" "$PRE_EXIT" "$adapter missing wrapper exits 2"
@@ -368,7 +400,7 @@ for adapter in bash patch mcp; do
     log_fail "$adapter missing wrapper should report adapter failure"
   fi
   set +e
-  bash "$capy_root/.codex/scripts/pretooluse-$adapter.sh" <&- >"$capy_root/out" 2>"$capy_root/stderr"
+  (cd "$capy_root/sub" && bash "$scripts/pretooluse-$adapter.sh") <&- >"$capy_root/out" 2>"$capy_root/stderr"
   status=$?
   set -e
   assert_equals "2" "$status" "$adapter closed stdin exits 2"
@@ -387,6 +419,49 @@ if [[ "$ctx" == *"Protected files:"* && "$ctx" == *".env"* ]]; then
   log_pass "fallback policy advisory present"
 else
   log_fail "fallback policy advisory missing"
+fi
+if [[ "$delivery" == template ]]; then
+  print_summary
+  exit
+fi
+
+log_section "Plugin workspace selection"
+other=$(make_project "$CAPY_HOOKS")
+mkdir "$other/sub/protected"
+touch "$other/sub/only-in-other.txt"
+jq -n --arg glob "/$other/sub/protected/**" '{version:1,secrets:[$glob]}' >"$legacy_root/.claude/kk-guard.json"
+printf '%s\n' '{"version":1,"secrets":["./**/only-in-other.txt"]}' >"$other/.claude/kk-guard.json"
+run_pretooluse "$legacy_root" "cat protected/fixture.txt" "$other/sub"
+assert_denied "protected" "Bash resolves operands in the other repo using the launch repo's policy"
+run_pretooluse "$legacy_root" "cat only-in-other.txt" "$other/sub"
+assert_allowed "The operand repo does not supply project policy"
+run_adapter "$legacy_root" patch "$(patch_payload "$other" $'*** Begin Patch\n*** Add File: protected/fixture.txt\n+test\n*** End Patch')"
+assert_denied "protected" "Patch uses launch policy and payload cwd"
+run_adapter "$legacy_root" mcp "$(jq -nc --arg cwd "$other/sub" \
+  '{tool_name:"mcp__test__capy_execute",cwd:$cwd,tool_input:{cwd:$cwd,language:"shell",code:"cat protected/fixture.txt"}}')"
+assert_denied "protected" "Capy uses launch policy and the requested operand directory"
+run_pretooluse "$legacy_root" "curl https://example.com" "$other/sub"
+assert_denied "curl" "Only the launch workspace can delegate HTTP routing"
+run_pretooluse "$other" "curl https://example.com" "$legacy_root/sub"
+assert_allowed "A capy registration in the launch workspace delegates routing"
+
+plain="$fixture/plain"
+mkdir -p "$plain/.claude"
+touch "$plain/plain-marker.txt"
+printf '%s\n' '{"version":1,"secrets":["./**/plain-marker.txt"]}' >"$plain/.claude/kk-guard.json"
+run_adapter "$legacy_root" bash "$(jq -nc --arg cwd "$plain" \
+  '{tool_name:"Bash",cwd:$cwd,tool_input:{command:"cat plain-marker.txt"}}')" "$plain"
+assert_denied "plain-marker.txt" "Outside Git the launch directory anchors policy"
+invalid="$fixture/invalid-worktree"
+mkdir "$invalid"
+printf 'gitdir: ./missing-metadata\n' >"$invalid/.git"
+run_adapter "$legacy_root" bash "$safe_bash" "$invalid"
+assert_equals "2" "$PRE_EXIT" "Indeterminate Git workspace fails closed"
+assert_output_contains "could not run" "cat '$legacy_root/stderr'" "Indeterminate workspace is reported as an adapter failure"
+if [[ -e "$(adapter_dir "$legacy_root")/guard/__pycache__" ]]; then
+  log_fail "Running the plugin modified its guard bundle"
+else
+  log_pass "Hook execution left the plugin bundle free of bytecode"
 fi
 
 # =============================================================================

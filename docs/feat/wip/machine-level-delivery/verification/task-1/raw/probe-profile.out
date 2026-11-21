@@ -1,0 +1,24 @@
+== codex codex-cli 0.170.0
+== plain, no profile
+  exec header:  model: user-model approval: never sandbox: danger-full-access reasoning effort: low 
+  prompt-input: Approval policy is currently never|sandbox_mode` is `danger-full-access`|
+  developer_instructions source: USER-DI 
+== plain, --profile kkp
+  exec header:  model: gpt-6.2-astra approval: never sandbox: read-only reasoning effort: xhigh 
+  prompt-input: sandbox_mode` is `read-only`|To request approval to execute a command that will require escalated privileges|
+  developer_instructions source: PROFILE-DI 
+== untrusted-proj, --profile kkp
+  exec header:  model: gpt-6.2-astra approval: never sandbox: read-only reasoning effort: xhigh 
+  prompt-input: sandbox_mode` is `read-only`|To request approval to execute a command that will require escalated privileges|
+  developer_instructions source: PROFILE-DI 
+== trusted-proj, --profile kkp
+  exec header:  model: project-model approval: never sandbox: workspace-write [workdir, /tmp, $TMPDIR] reasoning effort: medium 
+  prompt-input: sandbox_mode` is `workspace-write`|To request approval to execute a command that will require escalated privileges|
+  developer_instructions source: PROJECT-DI 
+
+== negative controls: does a profile reject bad values?
+  kkp: exit=0 
+  bad1: exit=0 
+  bad2: exit=1 Error: /home/sergio/kkprobe-task1/prof4/home/bad2.config.toml:15:15: invalid type: string "six", expected usize
+  bad3: exit=0 
+  bad1 effective effort: model: gpt-6.2-astra approval: never sandbox: read-only reasoning effort: bogus 
