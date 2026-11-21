@@ -71,10 +71,26 @@ def traced(fn):
         self.assertEqual(self.toolbox / manifest["plugins"][0]["source"], self.release(version) / "klaude-plugin")
         self.assertIn("# fixture release " + label, self.link.read_text())
 
+    def test_upgrade_uses_candidate_composition_and_resumes_validated_inputs(self):
+        profile_module = self.second / "kk/lib/codex_profile.py"
+        profile_module.write_text(profile_module.read_text().replace(
+            'profile = baseline["profile"]', 'profile = dict(baseline["profile"], project_doc_max_bytes=42424)'))
+        config = Path(self.env["XDG_CONFIG_HOME"]) / "kk/config.json"
+        cli.state.write_json(config, {"codex": {"settings": {"model": "validated-draft"}}})
+        self.stop.write_text("codex-files")
+        self.assertEqual(self.upgrade(ok=False).returncode, 79)
+        self.stop.unlink()
+        config.write_text("{broken draft")
+        self.invoke(self.link, "upgrade")
+        profile = (Path(self.env["CODEX_HOME"]) / "kk.config.toml").read_text()
+        self.assertIn("validated-draft", profile)
+        self.assertIn("42424", profile)
+        self.assertIn("kk apply", self.invoke(self.link, "status").stderr)
+
     def test_interrupt_each_activation_step_and_recover(self):
         snapshot = self.root / "snapshot"
         shutil.copytree(self.home, snapshot, symlinks=True)
-        for step in ("place", "marketplace", "register", "install-plugin", "verify", "entry-point", "entry-link", "promote"):
+        for step in ("place", "marketplace", "register", "install-plugin", "verify", "codex-files", "entry-point", "entry-link", "promote"):
             for recovery in ("upgrade", "rollback"):
                 with self.subTest(step=step, recovery=recovery):
                     shutil.rmtree(self.home)

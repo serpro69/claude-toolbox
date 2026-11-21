@@ -11,7 +11,7 @@ import sys
 import tarfile
 import tempfile
 
-from . import claude, claude_launch, payload, state, validation
+from . import claude, claude_launch, codex_launch, codex_profile, payload, state, validation
 from .run import load_cli
 
 
@@ -66,13 +66,23 @@ def complete_publication(home, record):
     state.write_json(home / "state.json", record)
 
 
-def finish_install(home, record, release):
+def finish_install(home, record, release, codex_plan=...):
     """Run in the release being activated, under the caller's writer lock."""
     check_link(home, record)
+    # Pre-Task-9 active releases invoke this entry point without a prepared plan.
+    if codex_plan is ...:
+        codex_plan = codex_profile.prepare_activation(release, record)
     def checkpoint(step):
         state.checkpoint(home, record, step)
 
     claude.activate(home, release, checkpoint)
+    if codex_plan is not None:
+        checkpoint("codex-files")
+        codex_profile.publish(home, record, release.name, codex_plan)
+        # Each activation needs its own guard verification in Task 10.
+        tools = record["releases"][release.name]["tools"]
+        if "codex" in tools:
+            tools["codex"] = "awaiting review"
     checkpoint("entry-point")
     entry = home / "bin/kk"
     draft = home / "bin/.kk-next"
@@ -192,6 +202,7 @@ def prepare(home, record, args, archive_file, work):
 
 def install_locked(home, args, archive_file=None):
     record = state.load(home)
+    codex_profile.reconcile_claim(home, record)
     if record.get("pending_entry"):
         check_link(home, record)
         complete_publication(home, record)
@@ -217,9 +228,12 @@ def install_locked(home, args, archive_file=None):
         version = prepare(home, record, args, archive_file, work)
         if version is None:
             return
-        state.checkpoint(home, record, "place")
         stage = home / "staging" / version
         release = home / "releases" / version
+        source = stage if stage.is_dir() else release
+        staged_cli = load_cli(source / "kk/lib", "_kk_preflight")
+        codex_plan = staged_cli.codex_profile.prepare_activation(source, record)
+        state.checkpoint(home, record, "place")
         if record["active"]:
             print("If activation stops, restore the active release with",
                   recovery_command(home, record["active"]), flush=True)
@@ -235,7 +249,7 @@ def install_locked(home, args, archive_file=None):
         if (home / "staging").is_dir():
             shutil.rmtree(home / "staging")
         candidate = load_cli(release / "kk/lib", "_kk_candidate")
-        candidate.finish_install(home, record, release)
+        candidate.finish_install(home, record, release, codex_plan)
     finally:
         shutil.rmtree(work)
 
@@ -244,6 +258,7 @@ def rollback_locked(home, record):
     target = state.rollback_version(record)
     if not target:
         raise ValueError("no previous release to restore")
+    codex_profile.reconcile_claim(home, record)
     release = home / "releases" / payload.release_id(target)
     check_link(home, record)
     saved = record["releases"][target]
@@ -252,6 +267,7 @@ def rollback_locked(home, record):
             print("Restoring {} with {} previously {}.".format(target, tool, phase))
     payload.verify_saved(release, saved)
     validation.validate(release)
+    plan = codex_profile.prepare(release, record, snapshot=saved.get("codex_snapshot"))
     previous = record["candidate"]
     if not previous or previous.get("operation") != "rollback":
         rollback = {"operation": "rollback", "phase": "activating", "version": target}
@@ -263,7 +279,7 @@ def rollback_locked(home, record):
         record.pop("pending_entry", None)
         record.pop("pending_entry_sha256", None)
     state.checkpoint(home, record, "restore")
-    finish_install(home, record, release)
+    finish_install(home, record, release, plan)
     staging = home / "staging"
     if staging.is_dir():
         shutil.rmtree(staging)
@@ -276,6 +292,11 @@ def status(home):
     if active:
         for tool, phase in record["releases"][active]["tools"].items():
             print("{}: {}".format(tool, phase))
+    codex_profile.report_drift(record)
+    if record.get("codex_write_pending"):
+        print("Codex file update interrupted. Resume the pending operation.")
+    if record.get("codex_paths"):
+        codex_launch.report_imports(home)
     if record.get("pending_entry"):
         print("Dispatcher publication pending. Run kk upgrade to finish, or kk rollback to restore the rollback target.")
     if record["candidate"]:
@@ -306,11 +327,16 @@ def main():
         source.add_argument("--version", metavar="TAG")
     commands.add_parser("status")
     commands.add_parser("rollback")
+    commands.add_parser("apply", help="rewrite the active release's Codex files from current overrides")
+    commands.add_parser("codex", help="launch Codex with the managed profile")
     commands.add_parser("claude", help="launch Claude with the active release's settings (--print-layer to inspect)")
     home = state.toolbox_home()
     try:
         if sys.argv[1:2] == ["claude"]:
             claude_launch.launch(home, sys.argv[2:])
+            return 0
+        if sys.argv[1:2] == ["codex"]:
+            codex_launch.launch(home, sys.argv[2:])
             return 0
         args = parser.parse_args()
         if args.command == "status":
@@ -324,6 +350,13 @@ def main():
                     raise ValueError("release selection changed; rerun kk " + args.command)
                 if args.command == "rollback":
                     rollback_locked(home, record)
+                elif args.command == "apply":
+                    if not owner or (record["candidate"] or {}).get("phase") == "activating" or record.get("pending_entry"):
+                        raise ValueError("finish install, upgrade or rollback before running kk apply")
+                    release = home / "releases" / payload.release_id(owner)
+                    codex_profile.reconcile_claim(home, record)
+                    plan = codex_profile.prepare(release, record, required=True)
+                    codex_profile.publish(home, record, owner, plan)
                 else:
                     install_locked(home, args)
         return 0

@@ -21,13 +21,13 @@ For API keys and MCP server setup, see the "MCP Server Configuration" section in
 `klaude-plugin/` is the canonical source. A Go generation tool (`cmd/generate-kodex/`) produces:
 
 - `kodex-plugin/` — transformed skills for Codex (resolves `${CLAUDE_PLUGIN_ROOT}`, injects headers)
-- `.codex/agents/*.toml` — sub-agent definitions (converted from `klaude-plugin/agents/*.md`)
+- `.codex/agents/*.toml` and `kk/baseline/codex/agents/*.toml` — sub-agent definitions for the template and machine release, converted from `klaude-plugin/agents/*.md`
 
 The permission-guard generator (`scripts/generate-guard.sh`) copies the canonical runtime and license from `klaude-plugin/scripts/guard/` into `.codex/scripts/guard/` and `kodex-guard/scripts/guard/`. It produces both `.codex/rules/default.rules` and `kk/baseline/codex/kk.rules`, writes the same Claude deny list to `.claude/settings.json` and `kk/baseline/claude/deny.json`, and refreshes the marked tables in `docs/user-guide/configuration.md`.
 
 Hand-authored codex files (not generated): `.codex/config.toml`, `.codex/hooks.json`, `.codex/scripts/` except `guard/`, and `AGENTS.md`.
 
-**Developer workflow:** After editing skills in `klaude-plugin/`, run `make generate-kodex` to regenerate. CI checks freshness via `make generate-kodex && git diff --exit-code kodex-plugin/ .codex/agents/`.
+**Developer workflow:** After editing skills or agents in `klaude-plugin/`, run `make generate-kodex` to regenerate. CI checks freshness across `kodex-plugin/`, `.codex/agents/` and `kk/baseline/codex/agents/`, including newly generated files.
 
 Edit Claude session instructions in `klaude-plugin/instructions/` and statusline scripts in `klaude-plugin/statusline/`. Run `make generate-claude-assets` to refresh their legacy template copies. CI checks all four copies for drift.
 

@@ -12,6 +12,7 @@ on:
       - 'kk/baseline/codex/kk.rules'
       - 'kk/baseline/claude/deny.json'
       - '.codex/agents/**'
+      - 'kk/baseline/codex/agents/**'
       - '.codex/rules/**'
       - '.codex/scripts/guard/**'
       - '.claude/settings.json'
@@ -44,7 +45,7 @@ jobs:
           make check-guard
           make generate-claude-assets
           make generate-kodex
-          generated=(kodex-plugin .codex/agents)
+          generated=(kodex-plugin .codex/agents kk/baseline/codex/agents)
           generated+=(.claude/CLAUDE.extra.md .claude/toolbox/CLAUDE.md .claude/toolbox/scripts/statusline{,_enhanced}.sh)
           git diff --exit-code -- "${generated[@]}"
           test -z "$(git ls-files --others --exclude-standard -- "${generated[@]}")"
