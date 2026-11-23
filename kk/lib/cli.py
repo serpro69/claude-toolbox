@@ -12,7 +12,7 @@ import tarfile
 import tempfile
 
 from . import claude, claude_launch, codex_launch, codex_plugins, codex_profile, codex_trust, payload, state, validation
-from . import live, mixed, notice
+from . import live, migrate, mixed, notice
 from .run import load_cli
 
 
@@ -445,6 +445,9 @@ def main():
     status_options.add_argument("--live", action="store_true", help="verify each managed guard with a scratch session")
     status_options.add_argument("--remove-mixed", action="store_true", help="confirm removal of user-scope Git-marketplace copies")
     commands.add_parser("rollback")
+    migration = commands.add_parser("migrate", help="preview and retire the legacy template in this repository")
+    migration.add_argument("--retirement-version", metavar="TAG", default=migrate.RETIREMENT_VERSION,
+                           help="use this retirement release (default: %(default)s)")
     commands.add_parser("apply", help="rewrite the active release's Codex files from current overrides")
     commands.add_parser("codex", help="launch Codex with the managed profile")
     commands.add_parser("claude", help="launch Claude with the active release's settings (--print-layer to inspect)")
@@ -470,6 +473,8 @@ def main():
                     raise ValueError("release selection changed; rerun kk " + args.command)
                 if args.command == "rollback":
                     rollback_locked(home, record)
+                elif args.command == "migrate":
+                    migrate.migrate(home, record, args.retirement_version)
                 elif args.command == "apply":
                     if not owner or (record["candidate"] or {}).get("phase") == "activating" or record.get("pending_entry"):
                         raise ValueError("finish install, upgrade or rollback before running kk apply")

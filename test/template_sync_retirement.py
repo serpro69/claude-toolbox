@@ -119,8 +119,10 @@ class Retirement(unittest.TestCase):
         for name, behind in [("current", False), ("behind", True)]:
             repo = self.project(name, behind)
             args = ["--version", "v3.0.0"]
-            preview = self.sync(repo, "--dry-run", *args, migrate=True)
-            self.assertIn(str(GUARD), preview)
+            outputs = self.tmp / (name + "-outputs")
+            preview = self.sync(repo, "--dry-run", "--ci", *args, migrate=True, env={"GITHUB_OUTPUT": str(outputs)})
+            self.assertEqual(outputs.read_text().splitlines()[0], "has_changes=true")
+            self.assertIn("-edited guard", preview)
             self.assertEqual((repo / GUARD).read_text(), "edited guard\n")
             self.sync(repo, "--local", *args, migrate=True)
             self.assertEqual((repo / GUARD).read_bytes(), (self.up / GUARD).read_bytes())
@@ -175,6 +177,17 @@ class Retirement(unittest.TestCase):
         report = self.sync(direct, "--retire", "--version", "v3.0.0")
         self.assertIn("Keep changed file: " + str(GUARD), report)
         self.assertEqual((direct / GUARD).read_text(), "edited guard\n")
+
+    def test_migration_sync_reports_no_changes_with_project_only_files(self):
+        repo = self.project("retry")
+        args = ["--version", "v3.0.0"]
+        self.sync(repo, "--local", *args, migrate=True)
+        report = self.tmp / "outputs"
+        before = snapshot(repo)
+        self.sync(repo, "--dry-run", "--ci", *args, migrate=True, env={"GITHUB_OUTPUT": str(report)})
+        self.assertEqual(report.read_text().splitlines()[0], "has_changes=false")
+        self.assertEqual(before, snapshot(repo))
+        self.assertIn(EXTRA, before)
 
     def test_mixed_entries_exclusions_and_missing_base(self):
         repo = self.project("mixed", behind=True)

@@ -328,18 +328,27 @@ Task 4 must distinguish interpreter-generated guard bytecode from a changed rele
 - 2026-11-21, explicitly accepted by the user after review. Keep and report either exact toolbox import when the target stays, so customised or excluded instructions continue loading in Claude. Remove the line when its target is removed or already absent. Excluding `CLAUDE.md` itself preserves its contents. The fixture checks both import targets, including linked targets, and both reviewers closed the import finding.
 
 ## Task 14: `kk migrate` and the migration demonstration
-- **Status:** pending
+- **Status:** done
 - **Depends on:** Task 11, Task 13
 - **Size:** M
 - **Can run in parallel with:** —
 - **Docs:** [implementation.md#migration](./implementation.md#migration), [design.md#verification](./design.md#verification)
 
 ### Subtasks
-- [ ] 14.1 Implement the guard check in `kk migrate`: for each tool the repository uses, call the trust reader from Task 10, for this repository when the mechanism takes a workspace, and run `kk status --live` unchanged in its scratch workspace; refuse unless the guard's own denial is seen
-- [ ] 14.2 Implement the preliminaries: check for `curl` and Mike Farah's `yq` with a message that they are needed for this step only; warn about Codex sessions opened before `kk` was installed, worded from the Task 1 deleted-script result, and ask, default no; fetch `template-sync.sh` and `semver-compare.sh` from the retirement tag into a temporary directory, the tag being a constant in `kk` with a `--retirement-version` override
-- [ ] 14.3 Implement the two steps, both with `TEMPLATE_SYNC_NO_HANDOFF=1`: the sync step (`TEMPLATE_SYNC_MERGE_DENY=1`, `--dry-run --version <tag>`; when it reports changes, show them, ask, run `--local --version <tag>`), then the removal step (`--retire --dry-run --version <tag>`, ask, `--retire --version <tag>`); leave the changes uncommitted
-- [ ] 14.4 Tests for the refusal when the trust reader reports a disabled hook despite a recorded *ready*, when the tool is *unverified* and the live check fails, for a missing `yq`, for a sync step with nothing to do, and for each declined confirmation, including a declined removal step that leaves the repository synced and guarded
-- [ ] 14.5 Record demonstration 3 in `verification/task-14/` on one of the maintainer's repositories, with a Codex session opened before `kk` was installed: a guard is active at every point for sessions started after `kk` became ready, what the older session does is recorded, and the diff shows the team-wide effect
+- [x] 14.1 Implement the guard check in `kk migrate`: for each tool the repository uses, call the trust reader from Task 10, for this repository when the mechanism takes a workspace, and run `kk status --live` unchanged in its scratch workspace; refuse unless the guard's own denial is seen
+- [x] 14.2 Implement the preliminaries: check for `curl` and Mike Farah's `yq` with a message that they are needed for this step only; warn about Codex sessions opened before `kk` was installed, worded from the Task 1 deleted-script result, and ask, default no; fetch `template-sync.sh` and `semver-compare.sh` from the retirement tag into a temporary directory, the tag being a constant in `kk` with a `--retirement-version` override
+- [x] 14.3 Implement the two steps, both with `TEMPLATE_SYNC_NO_HANDOFF=1`: the sync step (`TEMPLATE_SYNC_MERGE_DENY=1`, `--dry-run --version <tag>`; when it reports changes, show them, ask, run `--local --version <tag>`), then the removal step (`--retire --dry-run --version <tag>`, ask, `--retire --version <tag>`); leave the changes uncommitted
+- [x] 14.4 Tests for the refusal when the trust reader reports a disabled hook despite a recorded *ready*, when the tool is *unverified* and the live check fails, for a missing `yq`, for a sync step with nothing to do, and for each declined confirmation, including a declined removal step that leaves the repository synced and guarded
+- [x] 14.5 Record demonstration 3 in `verification/task-14/` on a maintainer repository. Show guard continuity for a session started after `kk` became ready and the team-wide migration diff. Use Task 1’s observation for the behavior of a session opened before installation.
+
+### Execution context
+
+- 2026-11-23, observed at `67268cef`. Tasks 11 and 13 supply the scratch guard check, workspace trust reader, sync report and retirement script. The wrapper must check each repository tool even when machine status would skip an unmanaged tool. The maintainer’s `devex-makefile` at `2e578b41` has both legacy configurations. Use a disposable copy for verification.
+- 2026-11-23, explicitly accepted by the maintainer. Pin the default retirement release to `v0.26.0`. The pilot can select a different tag with `--retirement-version`.
+- 2026-11-23, implementation and review. A legacy `.claude` or `.codex` entry requires that tool’s managed guard even on a machine that lacks the corresponding CLI. Claude’s workspace check now reads its effective settings and verifies the managed plugin’s release directory. The isolated live probe checks attribution even when the project still enables the legacy Git plugin. Each confirmation requires an explicit affirmative answer and defaults to no on EOF. OpenAI’s independent code reviewer found no outstanding code defect on the revised diff. The external Claude review covered the initial candidate.
+- 2026-11-23, verified on macOS arm64, Python 3.15.2 and yq 4.54.3. `bash test/test-kk.sh` passed 79 tests (capture `e703e458-0ae6-49af-a88d-6d5d83b9e8c3`). `bash test/test-template-sync.sh` passed 391 shell assertions and eight tagged-repository cases (capture `b898af1c-64b0-4289-84c4-e81f8b991e28`). The latter reproduced a baseline bug that could discard nested MCP settings while regenerating a server’s TOML. Encoding its full table path preserves those settings. The rollback failure fixture now locates the system’s `false` executable on both Linux and macOS.
+- 2026-11-23, observed. A post-readiness Codex session stayed guarded across sync, declined retirement, retry and removal in the disposable clone. Fresh sessions for both tools passed the live check after removal. The pre-install terminal exited before removal. [Demonstration record and diff](./verification/task-14/README.md)
+- 2026-11-23, accepted by the maintainer. Task 1’s observation of the legacy-only Codex session is sufficient for the older-session part of 14.5. Together with the Task 14 migration run, this completes the demonstration. [Task 1 vendor evidence](./verification/task-1/README.md)
 
 ## Task 15: Documentation and ADR
 - **Status:** pending

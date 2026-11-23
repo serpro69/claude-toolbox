@@ -12,7 +12,7 @@ import tempfile
 from uuid import uuid4
 
 from . import notice, payload, state
-from .claude import GIT_PLUGIN
+from .claude import GIT_PLUGIN, settings_report
 
 
 PERMISSION_LISTS = ("allow", "ask", "deny", "additionalDirectories")
@@ -205,32 +205,21 @@ def compose(release, arguments, sources):
 
 def validate_settings(claude, path, layer):
     """Ask this Claude binary whether it accepted the flag file, without a model turn."""
-    request = {"type": "control_request", "request_id": "kk-settings", "request": {"subtype": "get_settings"}}
     with tempfile.TemporaryDirectory(prefix="kk-claude-validate-") as scratch:
         env = dict(PATH=os.environ["PATH"], HOME=scratch, CLAUDE_CONFIG_DIR=scratch,
                    CLAUDE_CODE_DISABLE_NONESSENTIAL_TRAFFIC="1", DISABLE_AUTOUPDATER="1")
-        result = subprocess.run(
-            [claude, "--bare", "-p", "--input-format", "stream-json", "--output-format", "stream-json",
-             "--verbose", "--no-session-persistence", "--strict-mcp-config", "--setting-sources", "",
-             "--settings", str(path)], cwd=scratch, env=env, input=json.dumps(request) + "\n",
-            text=True, capture_output=True, timeout=15)
-    for line in result.stdout.splitlines():
-        event = json.loads(line)
-        response = event.get("response", {}) if event.get("type") == "control_response" else {}
-        if response.get("request_id") != "kk-settings" or response.get("subtype") != "success":
-            continue
-        report = response["response"]
-        for error in report.get("errors", []):
-            if error.get("file") == str(path):
-                raise ValueError("invalid composed Claude settings at {} (check claude.settings, settingsFile or --settings)"
-                                 .format(error.get("path") or "root"))
-        for source in report.get("sources", []):
-            if source["source"] == "flagSettings" and result.returncode == 0:
-                accepted = source["settings"]
-                if "effortLevel" in layer and accepted.get("effortLevel") != layer["effortLevel"]:
-                    raise ValueError("invalid effortLevel in composed Claude settings")
-                if accepted.get("permissions", {}).get("deny") == layer["permissions"]["deny"]:
-                    return
+        code, report = settings_report(claude, scratch, env, "", "--settings", str(path))
+    for error in report.get("errors", []):
+        if error.get("file") == str(path):
+            raise ValueError("invalid composed Claude settings at {} (check claude.settings, settingsFile or --settings)"
+                             .format(error.get("path") or "root"))
+    for source in report.get("sources", []):
+        if source["source"] == "flagSettings" and code == 0:
+            accepted = source["settings"]
+            if "effortLevel" in layer and accepted.get("effortLevel") != layer["effortLevel"]:
+                raise ValueError("invalid effortLevel in composed Claude settings")
+            if accepted.get("permissions", {}).get("deny") == layer["permissions"]["deny"]:
+                return
     raise ValueError("Claude could not confirm the composed --settings deny list")
 
 

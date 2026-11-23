@@ -36,6 +36,28 @@ def marketplace_record(home):
     return None
 
 
+def verify_managed(rows, plugin):
+    entry = next((p for p in rows if p["id"] == PLUGIN_ID and p["scope"] == "user"), {})
+    source = entry.get("readFromFolder")
+    if entry.get("enabled") is not True or not source or Path(source).resolve() != plugin:
+        raise ValueError("Claude did not enable {} from {}; readFromFolder={!r}".format(PLUGIN_ID, plugin, source))
+
+
+def settings_report(executable, workspace, env, sources, *flags):
+    """Read vendor-resolved settings without a model turn or startup hooks."""
+    request = {"type": "control_request", "request_id": "kk-settings", "request": {"subtype": "get_settings"}}
+    result = subprocess.run(
+        [executable, "--bare", "-p", "--input-format", "stream-json", "--output-format", "stream-json",
+         "--verbose", "--no-session-persistence", "--strict-mcp-config", "--setting-sources", sources, *flags],
+        cwd=workspace, env=env, input=json.dumps(request) + "\n", text=True, capture_output=True, timeout=15)
+    for line in result.stdout.splitlines():
+        event = json.loads(line)
+        response = event.get("response", {}) if event.get("type") == "control_response" else {}
+        if response.get("request_id") == "kk-settings" and response.get("subtype") == "success":
+            return result.returncode, response["response"]
+    raise ValueError("Claude could not report settings for " + str(workspace))
+
+
 def activate(home, release, checkpoint):
     registered = marketplace_record(home)
     plugin = release / "klaude-plugin"
@@ -56,7 +78,4 @@ def activate(home, release, checkpoint):
         checkpoint("install-plugin")
         vendor(home, "install", "--scope", "user", PLUGIN_ID)
     checkpoint("verify")
-    entry = user_install()
-    source = (entry or {}).get("readFromFolder")
-    if not entry or entry.get("enabled") is not True or not source or Path(source).resolve() != plugin:
-        raise ValueError("Claude did not enable {} from {}; readFromFolder={!r}".format(PLUGIN_ID, plugin, source))
+    verify_managed(vendor(home, "list"), plugin)
