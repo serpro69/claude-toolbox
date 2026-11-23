@@ -149,7 +149,7 @@ Regenerated from the live plugin on every docs build (`make plugin-graph-docs`),
 
 ### Repository configuration
 
-The project keeps its Claude preferences, Codex approval and sandbox settings, and Capy registrations. Run `kk claude` or `kk codex` for the release instructions and guard. The compatibility notice at `.claude/toolbox/scripts/template-sync.sh` accepts calls from supported legacy clients.
+The project keeps its Claude preferences, Codex approval and sandbox settings, and Capy registrations. Run `kk claude` or `kk codex` for the release instructions and guard. The compatibility notice is available at `.claude/toolbox/scripts/template-sync.sh` and the older CI path `.github/scripts/template-sync.sh`.
 
 ### Documentation Site (`docs/`, `mkdocs.yml`)
 

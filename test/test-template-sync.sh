@@ -3,6 +3,7 @@
 set -euo pipefail
 root=$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")/.." && pwd)
 sync=.claude/toolbox/scripts/template-sync.sh
+old_ci_sync=.github/scripts/template-sync.sh
 fixture=$(mktemp -d)
 trap 'rm -rf -- "$fixture"' EXIT
 cd "$fixture"
@@ -13,6 +14,15 @@ export GIT_COMMITTER_NAME=$GIT_AUTHOR_NAME GIT_COMMITTER_EMAIL=$GIT_AUTHOR_EMAIL
 # The installed notice also works in shallow checkouts with no release tags.
 GITHUB_OUTPUT="$fixture/output" bash "$root/$sync" --apply --ci --version latest | grep -F 'kk migrate'
 test "$(cat "$fixture/output")" = has_changes=false
+
+# Workflows from v0.5.0 through v0.15.x fetch and invoke the old path directly.
+# They can download just this one script, so exercise it without siblings.
+mkdir -p .github/scripts
+cp "$root/$old_ci_sync" "$old_ci_sync"
+chmod +x "$old_ci_sync"
+GITHUB_OUTPUT="$fixture/old-ci-output" "$old_ci_sync" --version latest --ci --output-dir .github/sync-staging | grep -F 'kk migrate'
+test "$(cat "$fixture/old-ci-output")" = has_changes=false
+test ! -e .github/sync-staging
 
 tag=v0.26.0-rc.4
 python3 -I -B "$root/kk/lib/run.py" migrate --help | grep -F "$tag"
@@ -42,12 +52,19 @@ echo 'adopter settings' > keep.txt
 git add .
 git commit -qm 'Existing template checkout'
 
-bash "$sync" --local --version v0.26.0 | grep -F 'kk migrate'
+notice=$(bash "$sync" --local --version v0.26.0)
+printf '%s\n' "$notice" | grep -F 'kk migrate'
+handoff_dir=$(awk '$1 == "Staging" && $2 == "dir:" { print $3 }' <<<"$notice")
+[[ $handoff_dir =~ ^/tmp/template-sync\.[[:alnum:]]{6}$ ]]
+test ! -e "$handoff_dir"
 test -z "$(git status --porcelain)"
 stage="$fixture/stage"
 mkdir -p "$stage/substituted/claude/toolbox/scripts"
 cp "$root/$sync" "$stage/substituted/claude/toolbox/scripts/"
+printf 'caller-owned\n' > "$stage/keep.txt"
 GITHUB_OUTPUT="$fixture/handoff-output" bash "$sync" --apply --ci --version v0.26.0 --output-dir "$stage" | grep -F 'kk migrate'
 test "$(cat "$fixture/handoff-output")" = has_changes=false
+test "$(cat "$stage/keep.txt")" = caller-owned
+test -f "$stage/bin/template-sync.sh"
 test -z "$(git status --porcelain)"
 echo 'Released client handed off in local and staged CI modes.'

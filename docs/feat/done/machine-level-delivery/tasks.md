@@ -2,7 +2,7 @@
 
 > Design: [./design.md](./design.md)
 > Implementation: [./implementation.md](./implementation.md)
-> Status: in-progress. The hosted rename and RC6 pilot passed. Stable `v0.26.0` publication and Task 17 final verification remain. RC4 supplies the migration scripts and template.
+> Status: done. The hosted rename, RC6 pilot and Task 17 verification are complete. Stable `v0.26.0` follows the merge of the completion PR. RC4 supplies the migration scripts and template.
 > Created: 2026-11-18
 > Not Doing: orchestrator features, Go binary or package-manager distribution, built-in unattended upgrades, full parity for IDE/desktop/cloud/CI sessions, merging into user-owned config (migration excepted), general shell-read grants, detection of open Codex sessions, `kk uninstall`, native Windows, per-repository teammate stub, changes to capy's setup, system-level deny fragment (future)
 
@@ -457,7 +457,7 @@ _Runs before Task 16. It was added after the design review and is numbered 18 so
 - [x] 21.2 Publish the next `v0.26.0-rc.N` from the renamed repository. On a clean account, follow the published installer URL with the explicit candidate tag and exercise both vendors. Check the public plugin-only install separately. Record the tag, plugin IDs and managed live guard results.
 - [x] 21.3 On the tagged candidate, verify the documented RC4 transition and rollback, and run the candidate’s plain `kk migrate` in a disposable legacy checkout naming the old upstream. Record trust and guard outcomes in `verification/pilot/`. Keep the RC3/RC4 observations for unchanged behavior.
 
-**Stable publication:** After 21.1–21.3 pass, the maintainer can tag `v0.26.0` from the renamed repository with the compatibility notice. The cleaned machine release obtains its migration scripts and template from RC4.
+**Stable publication:** The maintainer tags `v0.26.0` from the renamed repository with the compatibility notice after Task 17 is complete and the completion PR merges. The machine release obtains its migration scripts and template from RC4.
 
 ### Execution context
 
@@ -494,23 +494,24 @@ _Runs before Task 16. It was added after the design review and is numbered 18 so
 - 2026-11-23, isolated code review approved the corrections to Task Master migration, live freshness commands and the workflow path filter. The external Claude review could not authenticate.
 - 2026-11-23, previously blocked on stable publication. The [RC3 pilot](./verification/pilot/README.md#rc3) passed. GitHub's tag list contained `v0.26.0-rc.1` through `v0.26.0-rc.3` only, and [PR #198](https://github.com/serpro69/claude-toolbox/pull/198) was a draft targeting `master`. The maintainer owns the stable release. Resume 16.1–16.5 once GitHub lists the exact `v0.26.0` tag containing the full retirement sync script.
 - 2026-11-23, the [RC4 pilot](./verification/pilot/README.md#rc4) completed the corrected-candidate prerequisite. Stable `v0.26.0` publication remains the prerequisite for retiring the template.
+- 2026-11-23, superseded gate. The maintainer's cutover decision above allowed retiring the hosted template after the RC4 pilot and before stable publication. The maintainer confirmed that Task 17 and the completion PR precede stable publication.
 
 ## Task 17: Final verification
-- **Status:** pending
+- **Status:** done
 - **Depends on:** Task 1, Task 2, Task 3, Task 4, Task 5, Task 6, Task 7, Task 8, Task 9, Task 10, Task 11, Task 12, Task 13, Task 14, Task 15, Task 16, Task 18, Task 21
 - **Size:** S
 - **Can run in parallel with:** —
 
 ### Subtasks
-- [ ] 17.1 Run `/kk:test` for the shell and Python suites, the Go tool tests and generated-output freshness; confirm the four demonstrations and the pilot are recorded with tool versions; broaden if a probe contradicted the design after dependent tasks finished or a vendor release changed hook, plugin or settings behaviour
+- [x] 17.1 Run `/kk:test` for the shell and Python suites, the Go tool tests and generated-output freshness; confirm the four demonstrations and the pilot are recorded with tool versions; broaden if a probe contradicted the design after dependent tasks finished or a vendor release changed hook, plugin or settings behaviour
 - [x] 17.1a Run the Task 1 probe 1.9 (`-c developer_instructions=…` size limit) on macOS, deferred from Task 1 by the maintainer on 2026-11-19 → verify: the macOS limit is recorded in `verification/task-1/` beside the Linux one, with the environment size at the time (on macOS the limit covers arguments and environment together), and the import cap in `design.md` follows its rule: 122,880 bytes, or the lower measured limit less 8 KiB if that is smaller
-- [ ] 17.2 Confirm the pilot record covers every parity-ledger row marked kept or moved, and observe again any row touched by a change made after the pilot
-- [ ] 17.3 Run `/kk:document` to update any remaining docs
+- [x] 17.2 Confirm the pilot record covers every parity-ledger row marked kept or moved, and observe again any row touched by a change made after the pilot
+- [x] 17.3 Run `/kk:document` to update any remaining docs
   - Document why the usage is within Anthropic's ToS (see https://github.com/storytold/craft-anything/blob/main/docs/claude-code.md#why-this-is-within-anthropics-terms-as-published-october-2026 as example)
-- [ ] 17.4 Run `/kk:review-code` with bash and python as the language input
-- [ ] 17.5 Run `/kk:review-spec` to verify the implementation matches the design and implementation docs
-- [ ] 17.6 If any non-blocking items remain, ask the maintainer how to follow up, for example with GitHub issues
-- [ ] 17.7 Move the feature docs from `docs/feat/wip/` to `docs/feat/done/` and update markdown references
+- [x] 17.4 Run `/kk:review-code` with bash and python as the language input
+- [x] 17.5 Run `/kk:review-spec` to verify the implementation matches the design and implementation docs
+- [x] 17.6 If any non-blocking items remain, ask the maintainer how to follow up, for example with GitHub issues
+- [x] 17.7 Move the feature docs from `docs/feat/wip/` to `docs/feat/done/` and update markdown references
 
 ### Execution context
 
@@ -518,12 +519,19 @@ _Runs before Task 16. It was added after the design review and is numbered 18 so
 - 2026-11-23, accepted by the maintainer during remediation. Protect each managed Codex batch until its vendor exits, even when that delays activation. The first corrected release candidate starts the full-support baseline. RC1–RC3 retain their original launchers and rollback implementation. The [transition instructions](../../../getting-started/template-setup.md#update-and-recover) cover those versions.
 - 2026-11-23, pre-retirement result at `9fa95e0b`: hold the merge. The full suite ran, and the macOS size probe confirms the 122,880-byte import cap. The hosted checks and four tagged demonstrations passed. The independent code and spec reviews found rollback and migration defects. The [verification record](verification/pre-retirement.md) lists the local failures, reviewed findings, and the check needed to close each one. The maintainer owns disposition before stable publication.
 - 2026-11-23, corrective pass. Rollback, batch admission, migration exclusions, readiness and update selection passed local verification. The minimum Python version and the real Codex inventory were exercised. The corrected guard and migration require the tagged repeat in 18.7. [Corrective evidence](verification/pre-retirement.md#evidence-for-the-corrections)
+- 2026-11-23, final pass started at `cba04d22`, with `v0.26.0-rc.6` (`9bd86b7a`) as the latest piloted tag and RC4 as the migration source. The maintainer requested past-tense rename wording and a prominent RC4 pin for repositories using sync scripts older than `v0.21.0`. Both are in the [changelog](../../../about/changelog.md). Stable publication belongs to the maintainer.
+- 2026-11-23, verified. All 14 `test/test-*.sh` suites passed on Linux x86_64 with Python 3.12.11, including 97 kk tests and 112 guard tests. The first local run used Python 3.10.12, which lacks `tomllib` and the review tooling's required Python 3.11 features. The supported test environment resolved those failures. All Go tool tests, plugin graph validation, guard and Codex output freshness, and the strict docs build passed. GitHub also confirmed both Python matrix jobs in the [RC6 publication run](https://github.com/serpro69/agentstakk/actions/runs/45246549711).
+- 2026-11-23, verified. The parity record covers Claude native denies, effort and environment, statusline and themes, Claude and Codex instructions, skill and release-read grants, Codex guard hooks, agents and profile defaults. Both opt-ins were exercised in RC3. RC3 records demonstrations 1, 2 and 4, and RC3 and RC4 record demonstration 3. RC4 repeats the changed guard, batch overlap, rollback and migration cases. The Task 20 and RC6 records cover the changed marketplace paths, live guards, wrapped instructions and preserved preferences. The local vendor versions match the pilots (Claude Code 2.1.296 and Codex CLI 0.171.0). The post-RC6 fixes affect the retired sync entry points and do not change the managed payload. The PAL cache grant has no recorded end-to-end run at the renamed path. [RC3 and RC4 evidence](verification/pilot/README.md#rc3) · [Task 20 evidence](verification/task-20/README.md) · [RC6 evidence](verification/pilot/README.md#rc6-on-agentstakk)
+- 2026-11-23, reviewed and fixed. The independent Bash/Python review found that v0.5.0 through v0.15.x CI workflows could fall back to their legacy updater because they fetch `.github/scripts/template-sync.sh`. That path now has a standalone retirement notice. The maintainer also authorized fixing the temporary directory left by ordinary RC4 handoff. The released-client regression checks both CI paths, removal of automatic staging and preservation of explicit staging. Bash syntax, ShellCheck and both focused re-reviews passed. The post-rename raw URL of the RC6 modern notice returned HTTP 200 under Agentstakk and both former repository names.
+- 2026-11-23, external review attempt. PAL had no API provider and discovered Claude as its only eligible CLI. The read-only Claude clink request for the original cutover diff returned no response after about 12 minutes and the wait was stopped. The focused fixes were approved by the independent code reviewer. There is no external verdict or source-read receipt to add to that evidence.
+- 2026-11-23, reviewed. The independent spec reviewer examined all 20 completed tasks and found documentation drift around workspace status, bootstrap validation, guard output and the migration Bash requirement. Updated the design and implementation plan to match those behaviors. Checked the local Claude Code authentication explanation against Anthropic's current published guidance and clarified the provider page.
+- 2026-11-23, release order confirmed by the maintainer. Complete Task 17 and move the feature record to `docs/feat/done/` in the completion PR. The maintainer publishes stable `v0.26.0` after that PR merges. The released-client regression verifies the historical `.github/scripts/template-sync.sh` entry point locally. Its tagged GitHub raw URL becomes available when the release is published.
 
 ## Dependency Graph
 
 ```
 Task 1 ─┬─→ Task 7 ─┬─→ Task 10 ─┬─→ Task 11 ─→ Task 14 ─┬─→ Task 15 ─┐
-        │           └─→ Task 12  └─→ Task 13 ─→ Task 14  └─→ Task 18 ─┴→ Task 16 → Tasks 19 + 20 → Task 21 → stable v0.26.0 → Task 17
+        │           └─→ Task 12  └─→ Task 13 ─→ Task 14  └─→ Task 18 ─┴→ Task 16 → Tasks 19 + 20 → Task 21 → Task 17 → PR merge → stable v0.26.0
         └─→ Task 9 ─→ Task 10
 Task 2 ─→ Task 3 ─→ Task 4 ─┬─→ Task 9
                    │        └─→ Task 12 ─→ Task 18
