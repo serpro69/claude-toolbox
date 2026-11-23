@@ -2,7 +2,7 @@
 
 > Design: [./design.md](./design.md)
 > Implementation: [./implementation.md](./implementation.md)
-> Status: in-progress. RC4 passed under the pilot names. The Agentstakk repository and marketplace changes are prepared. Task 21 precedes the stable `v0.26.0` tag. Task 16 retires the template before the rename. RC4 supplies the migration scripts and template.
+> Status: in-progress. The hosted rename and RC6 pilot passed. Stable `v0.26.0` publication and Task 17 final verification remain. RC4 supplies the migration scripts and template.
 > Created: 2026-11-18
 > Not Doing: orchestrator features, Go binary or package-manager distribution, built-in unattended upgrades, full parity for IDE/desktop/cloud/CI sessions, merging into user-owned config (migration excepted), general shell-read grants, detection of open Codex sessions, `kk uninstall`, native Windows, per-repository teammate stub, changes to capy's setup, system-level deny fragment (future)
 
@@ -445,7 +445,7 @@ _Runs before Task 16. It was added after the design review and is numbered 18 so
 
 ## Task 21: Rename the hosted repository and pilot the final IDs
 
-- **Status:** in-progress
+- **Status:** done
 - **Depends on:** Task 19, Task 20
 - **Size:** S
 - **Can run in parallel with:** —
@@ -453,9 +453,9 @@ _Runs before Task 16. It was added after the design review and is numbered 18 so
 
 ### Subtasks
 
-- [ ] 21.1 Maintainer: after the combined cleanup and rename changes land on the default branch, rename the existing GitHub repository to `serpro69/agentstakk`, update the checkout remote and confirm the old Git URL reaches the same repository. Verify release workflows still run and the new Pages URL serves the install guide.
-- [ ] 21.2 Publish the next `v0.26.0-rc.N` from the renamed repository. On a clean account, follow the published installer URL with the explicit candidate tag and exercise both vendors. Check the public plugin-only install separately. Record the tag, plugin IDs and managed live guard results.
-- [ ] 21.3 On the tagged candidate, verify the documented RC4 transition and rollback, and run the candidate’s plain `kk migrate` in a disposable legacy checkout naming the old upstream. Record trust and guard outcomes in `verification/pilot/`. Keep the RC3/RC4 observations for unchanged behavior.
+- [x] 21.1 Maintainer: after the combined cleanup and rename changes land on the default branch, rename the existing GitHub repository to `serpro69/agentstakk`, update the checkout remote and confirm the old Git URL reaches the same repository. Verify release workflows still run and the new Pages URL serves the install guide.
+- [x] 21.2 Publish the next `v0.26.0-rc.N` from the renamed repository. On a clean account, follow the published installer URL with the explicit candidate tag and exercise both vendors. Check the public plugin-only install separately. Record the tag, plugin IDs and managed live guard results.
+- [x] 21.3 On the tagged candidate, verify the documented RC4 transition and rollback, and run the candidate’s plain `kk migrate` in a disposable legacy checkout naming the old upstream. Record trust and guard outcomes in `verification/pilot/`. Keep the RC3/RC4 observations for unchanged behavior.
 
 **Stable publication:** After 21.1–21.3 pass, the maintainer can tag `v0.26.0` from the renamed repository with the compatibility notice. The cleaned machine release obtains its migration scripts and template from RC4.
 
@@ -465,9 +465,11 @@ _Runs before Task 16. It was added after the design review and is numbered 18 so
 - 2026-11-23, verified. Both Debian 13 amd64 snapshots booted from fresh overlays. The [pilot record](verification/pilot/README.md#task-21-pre-cutover-snapshots) gives the clean sandbox control, RC4 installer identity, vendor inventories, trust transition, live guard results and restore instructions.
 - 2026-11-23, maintainer decision and result. The maintainer authorized RC5 publication and VM testing on the open PR branch. The [pre-merge RC5 pilot](verification/pilot/README.md#rc5-before-the-hosted-rename) exercised the published payload, managed and public plugin IDs, RC4 upgrade, guard review, offline rollback and return, and legacy migration with a temporary URL mapping. GitHub published `v0.26.0-rc.5` at `a571eaa2`. The default installer and migration fetches both returned HTTP 404 at the future repository name.
 - The maintainer owns the merge of #199 and the template-flag change at merge. After the hosted rename, verify the Git redirect, Pages guide and release workflow, then finish the published-address checks in 21.2–21.3 from fresh snapshot copies. Check tag availability before the post-rename publication. Stable publication remains open.
+- 2026-11-23, verified on `master` at `32d38ac8`. Both Git URLs resolved to the merged commit, the repository retained its ID, the new Pages guide loaded, and the stable release dry run passed. The maintainer moved RC5 to the tree-identical rebased commit `62d6f20e` and authorized publishing and testing RC6 on the renamed repository. [Hosted cutover evidence](verification/pilot/README.md#hosted-rename)
+- 2026-11-23, passed. The renamed repository published `v0.26.0-rc.6` at `9bd86b7a`. Fresh Debian snapshot copies passed the tagged managed install, unpinned public plugin installs, RC4 upgrade, offline rollback and return, and plain migration of the old-name checkout. Both vendors verified their live guards. The maintainer owns stable publication with the compatibility notice. [RC6 pilot](verification/pilot/README.md#rc6-on-agentstakk)
 
 ## Task 16: Retire the template in this repository
-- **Status:** in-progress
+- **Status:** done
 - **Depends on:** Task 15, Task 18
 - **Size:** M
 - **Can run in parallel with:** —
@@ -479,10 +481,11 @@ _Runs before Task 16. It was added after the design review and is numbered 18 so
 - [x] 16.2 Replace the sync script with the tombstone from Task 13 and keep its test; remove the sync workflow, the template cleanup script and workflow, the bootstrap script, the example state file and their tests
 - [x] 16.3 Remove the legacy generator targets and the transition copies (`.claude/CLAUDE.extra.md`, `.claude/toolbox/` except the tombstone, `.codex/scripts/`, `.codex/rules/default.rules`, `.codex/agents/`) and update every freshness list
 - [x] 16.4 Reduce this repository's `.claude/` and `.codex/` to an adopter's footprint and run it on `kk` → verify: all suites pass and a wrapped session in this repository shows the guard and the instructions
-- [ ] 16.5 At merge, the maintainer turns off the repository's template flag and confirms GitHub reports `isTemplate: false`.
+- [x] 16.5 At merge, the maintainer turns off the repository's template flag and confirms GitHub reports `isTemplate: false`.
 
 ### Execution context
 
+- 2026-11-23, verified after merge. [PR #199](https://github.com/serpro69/agentstakk/pull/199) landed on `master` at `32d38ac8`. GitHub returned `is_template: false` for repository ID `1078182326`.
 - 2026-11-23, accepted by the maintainer after the naming decision. Perform cleanup first and rename second in one PR. Pin default migration to published RC4, retain the compatibility script, and pilot the renamed candidate with plain `kk migrate`. This supersedes the two earlier publication prerequisites below. The maintainer explicitly chose to turn off the hosted template flag at merge alongside the hosted cutover. GitHub currently reports `isTemplate: true`.
 - 2026-11-23, verified in the cleanup worktree. The RC4 client handed off locally and from staged CI without changing the downstream tree. The installed CLI reported RC4 as its default migration source. The relocated helper passed the release version comparison and guard-version preview. The Go packages, plugin graph, generated freshness and strict docs build passed. Captures `692fe72f-10b9-4426-b817-95b1a66ddd44`, `08dbefb6-17ed-434e-b14c-ddc78c0b8489`, `f5c77d91-2c71-4225-8ae1-7b579308d945` and `3f88196f-a85f-47a6-bfa7-0ddaa6777247`.
 - 2026-11-23, verified on Linux with a disposable machine install. A wrapped Claude Code 2.1.296 session in this checkout received the exact released behavior instructions and the guard denied a harmless read covered by the probe’s extra project rule. The model transport ran on loopback. Fresh Codex 0.171.0 listed the three managed handlers awaiting review. Captures `b74781e1-3741-4a68-a7af-dea65e067571` and `4ad049dd-a084-40b5-b855-9b6c4a7509a3`.
