@@ -49,7 +49,7 @@
 
 Tools like Claude Code and Codex are powerful on their own, but LLMs don't know your development workflow. This project started as a way for me to streamline claude configurations across all my projects without needing to copy-paste things. With time, patterns and re-curring prompts evolved into skills and agents. Currently, claude-toolbox gives you two things:
 
-**A minimal, opinionated Claude Code and Codex configuration** — sensible permission baselines, a rich statusline, MCP server wiring, and sync infrastructure to keep it all up to date across your projects. Think of it as a dotfiles repo for Claude Code and Codex.
+**A minimal, opinionated Claude Code and Codex configuration** — sensible permission baselines, a rich statusline, MCP server wiring, and a machine-level installation that updates them across projects. Think of it as a dotfiles repo for Claude Code and Codex.
 
 **A structured development pipeline** — 16 workflow and utility skills with explicit multi-language support that take you from idea through design, implementation, code review, testing, to documentation, with persistent knowledge that carries across sessions.
 
@@ -66,16 +66,18 @@ Out of the box you get:
 - **Up-to-date library docs** — always-current documentation lookup via Context7
 - **Battle-tested configuration** — permissions, statusline themes, hooks, sensible defaults
 
-## Choose Your Path
+## Install kk
 
-**Starting a new project?** Use the template — you get the full configuration and plugin pre-wired, plus sync infrastructure to pull future updates.
-→ [Template Setup](https://serpro69.github.io/claude-toolbox/latest/getting-started/template-setup/)
+From a checkout containing the machine installer:
 
-**Existing project, want the full setup?** Adopt the configuration, plugin, and sync infrastructure without creating from the template.
-→ [Adopting into Existing Repositories](https://serpro69.github.io/claude-toolbox/latest/getting-started/adopting/)
+```bash
+./install.sh --local .
+~/.local/bin/kk status
+```
 
-**Just want the skills?** Install the kk plugin — no template needed.
-→ [Plugin-Only Setup](https://serpro69.github.io/claude-toolbox/latest/getting-started/plugin-only/)
+Put `~/.local/bin` on your `PATH`. In any project, run `kk claude` or `kk codex`. In Codex, review the three `kk-guard@toolbox` handlers in `/hooks`. Run `kk status --live` to verify each managed guard. Once the first machine release is published, the installation guide’s one-line installer downloads the latest stable release. The guide also covers version pinning and offline rollback. [Install kk](docs/getting-started/template-setup.md)
+
+If your project contains `.github/template-state.json`, use `kk migrate` when the team is ready to retire the repository copies. For skills managed directly by the vendor, use the Git-marketplace plugin. [Migration guide](docs/user-guide/template-sync.md) · [Plugin-only setup](docs/getting-started/plugin-only.md)
 
 ## Try It
 

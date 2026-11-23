@@ -14,6 +14,8 @@ flowchart LR
 	commands_review_code_["commands/review-code/"]
 	commands_review_spec_["commands/review-spec/"]
 	commands_template_["commands/template/"]
+	instructions_behavior_md["instructions/behavior.md"]
+	instructions_plugin_root_md["instructions/plugin-root.md"]
 	profiles_go_["profiles/go/"]
 	profiles_go_design_["profiles/go/design/"]
 	profiles_go_document_["profiles/go/document/"]
@@ -79,6 +81,8 @@ flowchart LR
 	skills_review_spec_["skills/review-spec/"]
 	skills_test_["skills/test/"]
 	README_md -->|skill-invocation| commands_review_code_
+	README_md -->|markdown-link| instructions_behavior_md
+	README_md -->|markdown-link| instructions_plugin_root_md
 	README_md -->|markdown-link| scripts_guard_LICENSE_md
 	README_md -->|skill-invocation| skills_brainstorm_
 	README_md -->|skill-invocation| skills_clarify_docs_
@@ -266,7 +270,7 @@ flowchart LR
 	classDef profile_phase fill:#fdbf6f,color:#1a1a1a;
 	class profiles_go_design_,profiles_go_document_,profiles_go_implement_,profiles_go_review_code_,profiles_go_test_,profiles_java_review_code_,profiles_js_ts_implement_,profiles_js_ts_review_code_,profiles_js_ts_test_,profiles_k8s_operator_design_,profiles_k8s_design_,profiles_k8s_document_,profiles_k8s_implement_,profiles_k8s_review_code_,profiles_k8s_review_spec_,profiles_k8s_test_,profiles_kotlin_review_code_,profiles_python_implement_,profiles_python_review_code_,profiles_python_test_,profiles_skill_md_implement_,profiles_skill_md_review_code_,profiles_twelve_factor_design_ profile_phase;
 	classDef content fill:#ffffff,color:#1a1a1a;
-	class README_md,scripts_guard_LICENSE_md content;
+	class README_md,instructions_behavior_md,instructions_plugin_root_md,scripts_guard_LICENSE_md content;
 	classDef command fill:#cab2d6,color:#1a1a1a;
 	class commands_chain_of_verification_,commands_migrate_from_taskmaster_,commands_review_code_,commands_review_spec_,commands_template_ command;
 ```

@@ -1,22 +1,48 @@
 # Configuration
 
-claude-toolbox provides opinionated defaults for permissions, statusline, hooks, and project settings.
+The machine installation supplies a Claude launch layer and a named Codex profile. Repositories can keep their own settings, instructions and project guard policy.
 
 ## How Configuration Works
 
-!!! note
-    Claude Code settings are split between two project-scoped files:
+Edit `${XDG_CONFIG_HOME:-$HOME/.config}/kk/config.json` for personal toolbox preferences. All keys are optional. Merge the keys you need into an existing file.
 
-    - **`.claude/settings.json`** — upstream-managed defaults, synced from this template (permissions baseline, env vars, model, plugins, statusline)
-    - **`.claude/settings.local.json`** — your per-repo overrides, never synced (hooks, MCP server enables, additional permissions, personal preferences)
+```json
+{
+  "launchNotice": false,
+  "claude": {
+    "defaults": {"skills": false},
+    "optIn": {"webSearch": true},
+    "settings": {"effortLevel": "medium"}
+  },
+  "codex": {
+    "settings": {"model_reasoning_effort": "high"}
+  }
+}
+```
 
-    Use `settings.local.json` for personal settings. Template sync three-way merges most settings, so entries upstream removes or changes reach your settings unless you customized them; it replaces `permissions.deny` with the upstream secrets baseline and reports removed entries. See [settings.json merge behavior](template-sync.md#settingsjson-merge-behavior). The guard protects both settings files from agent edits. A person can edit them directly, or enable the scoped `disable_selfmod` exception described below.
+**Claude.** Each `kk claude` launch builds a settings layer. The default effort is `high`. Baseline preferences yield to explicit user, project and local values, including individual environment variables. The baseline leaves model selection to Claude or the adopter. You can supply `claude.settings` and a `claude.settingsFile` path (relative to the override file or absolute). The file takes precedence over `claude.settings` for scalar preferences. A caller’s own `--settings` is composed too. The launcher appends the generated native secret denies to the final layer. Inspect it with `kk claude --print-layer`.
+
+| Claude permission or preference | Machine default |
+| --- | --- |
+| `Skill(kk:*)` | Standing authorization for model-initiated calls to every matching skill, **including skills added by future releases**. Set `claude.defaults.skills` to `false` to review skill use individually. |
+| Read access to the active release | Lets skills and reviewers read their bundled criteria. Set `claude.defaults.readRelease` to `false` to opt out. PAL needs a separate grant for its temporary review files. |
+| `Bash(mkdir:*)` and `WebSearch` | Opt in separately with `claude.optIn.mkdir` and `claude.optIn.webSearch`. The legacy grants for `cat`, `grep`, `ls` and `sort` are dropped. |
+| Statusline and instructions | The launcher supplies the statusline in trusted interactive wrapped sessions with hooks enabled. Set `claude.defaults.statusLine` to `false` to opt out. The plugin supplies behavioral instructions at session start and supports `claude.instructions`. |
+
+**Codex.** `kk codex` selects the `kk` profile. It takes precedence over base user configuration and yields to trusted project configuration and explicit CLI flags. `codex.settings` can set profile values. Configure hook and plugin enablement in native Codex settings. After editing overrides, run `kk apply` to regenerate the active release’s owned files offline. `kk status` and `kk codex` report pending edits.
+
+There are two independent opt-ins:
+
+1. **Approval and sandbox defaults.** Enable the values you want under `codex.optIn`: `"approval_policy": true` supplies `on-request`, `"approvals_reviewer": true` supplies `user`, and `"sandbox_mode": true` supplies `read-only`. Otherwise the machine owner’s native settings govern. Migrated repositories keep their existing three project values until someone removes them.
+2. **Account-wide native forbids.** Set `"nativeForbids": true` under `codex.optIn` and run `kk apply` to install `$CODEX_HOME/rules/kk.rules`. Those rules apply to **bare Codex and unrelated repositories** using that Codex home. Project settings and guard exceptions cannot loosen a native forbid. Switch it off and run `kk apply` to remove the toolbox-owned file.
+
+Machine updates replace the previous per-repository sync PRs. Review the chosen release before upgrading. A local user install covers sessions that load its plugin. Hosts without it, including fresh CI runners and cloud sessions, need separate provisioning if migration removes committed plugin enablement. See the [migration guide](template-sync.md) for team-wide effects.
 
 ## Permission Baselines
 
 The permission guard separates secrets, destructive operations and changes to its own configuration. Its baseline allows ordinary logs, dependencies, build output and `.env.example`; projects can add their own restrictions. A settings allow entry cannot override a secrets deny.
 
-The tables below are generated from `klaude-plugin/scripts/guard/guard-rules.json` with `make generate-guard`. Template sync replaces `permissions.deny` with the secrets projection; project additions belong in `.claude/kk-guard.json`. See [template sync](template-sync.md) for dropped-entry reports and the `sync_exclusions` opt-out. Per-repo MCP tool permissions go in `settings.local.json`.
+The tables below are generated from `klaude-plugin/scripts/guard/guard-rules.json` with `make generate-guard`. The hook enforces the shared declaration. Wrapped Claude sessions also receive the native deny list. Project additions belong in `.claude/kk-guard.json`. Keep per-repository MCP tool permissions in `.claude/settings.local.json`.
 
 Self-modification protection also blocks an agent from adding an allow entry to `.claude/settings.json` or `.claude/settings.local.json`. The `disable_selfmod` example below lets the user authorize those edits for a chosen project; it does not loosen secrets.
 
@@ -175,7 +201,7 @@ The user edits this file directly; the guard protects it from agent writes. Merg
 
 Use physical absolute project paths (`pwd -P`). The engine combines `*` with the single longest matching directory prefix; shorter matching prefixes contribute nothing. Lists are combined, and `disable_selfmod` is enabled if either selected entry enables it. A parent path covers nested repositories and worktrees.
 
-`allow_patterns` applies separately to each normalized simple command, including extracted shell bodies. Thus `^git clean -n` can exempt `git clean -nd`, but not the `rm` in `git clean -nd; rm -rf ./work`. These patterns never exempt secrets or protected configuration. For sessions in the selected project, `disable_selfmod` permits edits to every path listed under **Protected configuration**, including the machine installation and plugin cache. The secrets policy still applies. On Codex, native forbids for `rm`, `shred`, `sudo`, `su` and `doas` still win over guard exceptions.
+`allow_patterns` applies separately to each normalized simple command, including extracted shell bodies. Thus `^git clean -n` can exempt `git clean -nd`, but not the `rm` in `git clean -nd; rm -rf ./work`. These patterns never exempt secrets or protected configuration. For sessions in the selected project, `disable_selfmod` permits edits to every path listed under **Protected configuration**, including the machine installation and plugin cache. The secrets policy still applies. On Codex, installed native forbids for `rm`, `shred`, `sudo`, `su` and `doas` still win over guard exceptions.
 
 Missing config files leave the baseline active. Invalid JSON or invalid supported values produce a visible `systemMessage` and skip that file's changes; the other valid layer still applies. Unknown keys are reported and ignored. Secrets are never loosened by user configuration.
 
@@ -195,7 +221,7 @@ Codex adapters preserve the guard's denial reason and exit status. A normal poli
 
 The wrapper runs the standard-library-only engine with `-I -S`, isolating Python environment/user-site settings and skipping unused site startup. On macOS it prefers Python at the standard Homebrew locations, then system Python; elsewhere it checks system Python first. PATH lookup remains the final fallback. Homebrew is not required.
 
-Destructive operations are denied in every permission mode, including bypass mode. The reason names the matched category and the way through: the user runs the operation directly or configures an applicable exception. Disabling Claude hooks removes destructive and self-modification protection. Template users retain the native secrets settings baseline; plugin-only users have no such fallback.
+Destructive operations are denied in every permission mode, including bypass mode. The reason names the matched category and the way through: the user runs the operation directly or configures an applicable exception. Disabling Claude hooks removes destructive and self-modification protection. Wrapped Claude sessions also carry the native secret denies. Bare Claude, the IDE extension and desktop sessions rely on the loaded plugin hook for the toolbox guard after migration.
 
 The guard checks `capy_execute`, `capy_execute_file`, and `capy_batch_execute` even when capy is registered under a different MCP server name. Shell code uses the same checks as Bash; other languages use the literal-path, write-call and spawned-command scans described below. Every batch command is checked independently, and one denied command blocks the entire batch before execution.
 
@@ -213,7 +239,7 @@ Line comments are recognised without knowing the language: `#` or `//` at the st
 
 A command handed directly to a recognised spawn call as its first argument also gets the secrets and protected-configuration rules, as it would in Bash: `subprocess.run("cat .env", shell=True)` and `subprocess.run(["cp", "payload", ".claude/settings.json"])` are denied. Every other literal gets the destructive rules only, so prose that mentions a secret path is not mistaken for a read. A command string that reaches the call through a variable is therefore checked for destructive commands but not for the secret paths inside it; a secret path that is a literal of its own is always checked.
 
-Inspection is static: the guard does not execute submitted code or read the contents of an execute-file input. Paths assembled dynamically are outside its detection coverage, and non-shell mutation checks cover recognized literal write-call forms. Grep/Glob checks cover the search root, not every result's contents. Other execution tools need their own payload mapping. The Codex template supplies Bash, patch and capy adapters; see [Codex limitations](../providers/codex.md#known-limitations).
+Inspection is static: the guard does not execute submitted code or read the contents of an execute-file input. Paths assembled dynamically are outside its detection coverage, and non-shell mutation checks cover recognized literal write-call forms. Grep/Glob checks cover the search root, not every result's contents. Other execution tools need their own payload mapping. The Codex guard plugin supplies Bash, patch and capy adapters; see [Codex limitations](../providers/codex.md#known-limitations).
 
 For shell paths, the guard retains possible directories after literal relative changes and checks existing matches of unquoted filename wildcards. Quoted or escaped wildcard characters remain literal. Interpreter checks decode common character escapes in literal paths while preserving raw strings. These checks inspect filenames and submitted text, without executing code or reading matched file contents.
 
@@ -271,5 +297,5 @@ To turn off the Claude plugin’s instruction hook, set `claude.instructions` to
 The default is `true`. Plugin-only projects receive the toolbox’s behavioral guidance, including its task-tracking and commit-message conventions. The hook reads the switch at each matching session event. An invalid value fails the instruction hook with a diagnostic naming the configuration file. Claude still loads any instruction files that your project imports.
 
 - `CLAUDE.md` — project-specific instructions for Claude Code (checked into the repo)
-- `.claude/CLAUDE.extra.md` — behavioral instructions (independent thinking, fail-loud, assumptions)
+- `.claude/CLAUDE.extra.md` — legacy project instructions retained in some repositories. The machine plugin supplies behavioral instructions when the legacy file is absent.
 - `AGENTS.md` — equivalent instructions for Codex

@@ -1,20 +1,11 @@
 # Providers
 
-claude-toolbox supports two AI coding providers:
+| Machine installation | Claude Code | Codex |
+| --- | --- | --- |
+| Start a wrapped session | `kk claude` | `kk codex` |
+| Skills | `kk@toolbox`, invoked as `/kk:design` | `kk@toolbox`, invoked as `$kk:design` |
+| Guard | Hooks in the Claude plugin | Separate `kk-guard@toolbox` plugin, reviewed in `/hooks` |
+| Defaults | Per-launch settings layer and native secret denies | Named profile and owned agent files. Native forbids are an account-wide opt-in. |
+| Instructions | Plugin session hook and the project’s `CLAUDE.md` | Profile and project `AGENTS.md`. The launcher supports confirmed imports. |
 
-|                             | Claude Code                         | Codex (OpenAI)                                         |
-| --------------------------- | ----------------------------------- | ------------------------------------------------------ |
-| **Skills**                  | `klaude-plugin/` (authored)         | `kodex-plugin/` (generated)                            |
-| **Sub-agents**              | `klaude-plugin/agents/*.md`         | `.codex/agents/*.toml` (generated)                     |
-| **Project instructions**    | `CLAUDE.md`                         | `AGENTS.md`                                            |
-| **Behavioral instructions** | Plugin `SessionStart` hook or the legacy `.claude/CLAUDE.extra.md` import | `.codex/scripts/session-start.sh` |
-| **Config**                  | `.claude/settings.json`             | `.codex/config.toml`                                   |
-| **Hooks**                   | `klaude-plugin/hooks/`              | `.codex/hooks.json`                                    |
-| **Rules/Permissions**       | `.claude/settings.json`             | `.codex/rules/default.rules` (Starlark)                |
-| **Plugin install**          | `/plugin install kk@claude-toolbox` | `codex plugin marketplace add serpro69/claude-toolbox`  |
-| **Template sync**           | Full support                        | `.codex/` synced                                       |
-
-`klaude-plugin/` is the canonical source of truth. The `generate-kodex` tool produces `kodex-plugin/` and `.codex/agents/` with all necessary transformations.
-
-- [Claude Code](claude-code.md) — setup, features, and configuration details
-- [Codex](codex.md) — setup, known limitations, and workarounds
+[Claude Code](claude-code.md) and [Codex](codex.md) describe coverage, configuration precedence and the behavior of unwrapped sessions. For vendor-managed installs, see [plugin-only setup](../getting-started/plugin-only.md).

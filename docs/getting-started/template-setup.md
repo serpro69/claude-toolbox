@@ -1,67 +1,48 @@
-# Template Setup
+# Install kk on your machine
 
-Use the GitHub template to create a new project with the full claude-toolbox configuration pre-wired.
+Install once per user account. You can then start Claude Code or Codex in any repository with the same toolbox release. New projects need no toolbox files.
 
-## Steps
+## Install
 
-1. **Create from template**: [Create a new project from this template](https://github.com/new?template_name=claude-toolbox&template_owner=serpro69) using the **Use this template** button.
+On macOS or Linux, use Bash, Git, `jq`, Python 3.8 or later, and a signed-in Claude Code CLI with plugin support (2.1.295 or later). Install Codex first if you also want its managed profile and plugins. The installer validates the release and registers its local marketplace with each supported CLI it finds. Claude Code is required for this installer.
 
-2. **Initialize the template** — choose one method:
+From a toolbox checkout that contains `install.sh`, run the following from its root. This works before the first machine release is published.
 
-    === "Option A: GitHub Actions (recommended)"
+```bash
+./install.sh --local .
+```
 
-        Go to your new repo's **Actions** tab → **Template Cleanup** → **Run workflow**. Provide:
+Once the first stable machine release (`v0.26.0`) is published, you can install the latest stable version without a checkout:
 
-        - `LANGUAGES` (required) — programming languages, comma-separated (e.g., `python`, `python,typescript`)
-        - Other inputs are optional with sensible defaults
+```bash
+curl -fsSL https://raw.githubusercontent.com/serpro69/claude-toolbox/master/install.sh | bash
+```
 
-    === "Option B: Run locally"
+For a reproducible install, fetch `install.sh` from the chosen tag and pass `--version TAG` to it. For a pre-release, name the full candidate tag rather than selecting the latest stable release.
 
-        ```bash
-        ./.github/scripts/template-cleanup.sh
-        ```
+Put `~/.local/bin` on your shell’s `PATH`. For example, run `export PATH="$HOME/.local/bin:$PATH"` and add that line to your shell profile for future terminals. The installer creates the `kk` entry point there. By default releases live in `${XDG_DATA_HOME:-$HOME/.local/share}/kk`. Set `KK_HOME` before installation to choose another directory. If the first install is interrupted, rerun the installer to resume.
 
-        Interactive mode walks you through each option. Run with `--help` for all flags, or pass them directly:
+## Verify and launch
 
-        ```bash
-        ./.github/scripts/template-cleanup.sh --languages python,typescript -y
-        ```
+```bash
+kk status
+kk claude
+```
 
-3. **Clone your repo** (if using Option A) and **verify MCP servers**:
+For Codex, run `kk codex`, open `/hooks` and review all three `kk-guard@toolbox` handlers. Restart the session after review. If Codex reports that it cannot read hook trust, run `kk apply` interactively and acknowledge the review. That vendor state is recorded as `unverified`. Then run `kk status --live` from your terminal. It starts short vendor sessions in scratch workspaces and checks for a denial from each managed guard. It needs working vendor authentication.
 
-    ```
-    > /mcp
-    ╭────────────────────────────────────────────────────────────────────╮
-    │ Manage MCP servers                                                 │
-    │                                                                    │
-    │ ❯ 1. context7                  ✔ connected · Enter to view details │
-    │   2. pal                       ✔ connected · Enter to view details │
-    ╰────────────────────────────────────────────────────────────────────╯
-    ```
+If you already installed plugins from the Git marketplace, `kk status` lists the copies and their scopes. `kk status --remove-mixed` offers to remove user-scope Git copies with a managed counterpart. Review project-owned registrations in their repository. [Existing repositories](adopting.md)
 
-    The kk plugin (skills, commands, hooks) is available via the claude-toolbox marketplace configured in `.claude/settings.json`.
+## Update and recover
 
-4. **Finalize initialization**:
+```bash
+kk upgrade                      # latest stable machine release
+kk upgrade --version v0.26.0    # choose a published machine release
+kk upgrade --local .            # use the current toolbox checkout
+kk status
+kk rollback                     # restore the recorded target offline
+```
 
-    ```bash
-    chmod +x .github/scripts/bootstrap.sh && ./.github/scripts/bootstrap.sh
-    ```
+After an interrupted upgrade, `kk status` gives the resume or rollback command. Save the recovery command printed during an upgrade. It invokes the retained release’s own dispatcher, so it also works if the newly active command is damaged. Restart long-running sessions within 14 days after their release is superseded.
 
-    This installs the kk plugin, wires up the Capy knowledge base (if installed), and commits the configuration.
-
-5. **Recommended:** Run `/config` in Claude Code and **disable Auto-compact**. This prevents Claude from compacting context mid-task, which degrades quality significantly. See [Recommended Settings](../user-guide/configuration.md#recommended-settings) for the full config.
-
-6. [Try it out!](quickstart.md)
-
-## What You Get
-
-- `.claude/` — settings, statusline, sync infrastructure
-- `.codex/` — Codex-equivalent configuration
-- `CLAUDE.md` / `AGENTS.md` — project instructions
-- Template sync — pull future updates from upstream
-
-## Next Steps
-
-- [Try It](quickstart.md) — run the pipeline in 5 minutes
-- [Template Sync](../user-guide/template-sync.md) — how to receive upstream updates
-- [MCP Servers](../user-guide/mcp-servers.md) — configure Context7, Pal, Capy
+Next, [try the workflow](quickstart.md), [configure your launchers](../user-guide/configuration.md), or [migrate a legacy repository](../user-guide/template-sync.md).

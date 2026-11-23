@@ -351,19 +351,25 @@ Task 4 must distinguish interpreter-generated guard bytecode from a changed rele
 - 2026-11-23, accepted by the maintainer. Task 1’s observation of the legacy-only Codex session is sufficient for the older-session part of 14.5. Together with the Task 14 migration run, this completes the demonstration. [Task 1 vendor evidence](./verification/task-1/README.md)
 
 ## Task 15: Documentation and ADR
-- **Status:** pending
+- **Status:** done
 - **Depends on:** Task 11, Task 14
 - **Size:** M
 - **Can run in parallel with:** Task 18
 - **Docs:** [implementation.md#documentation-and-adr](./implementation.md#documentation-and-adr), [design.md#parity-ledger](./design.md#parity-ledger)
 
 ### Subtasks
-- [ ] 15.1 Write `docs/adr/0014-machine-level-delivery.md` and add it to the ADR table in `docs/contributing/architecture.md`
-- [ ] 15.2 Rewrite `docs/getting-started/` around the install command; keep plugin-only as a mode; turn `docs/user-guide/template-sync.md` into a migration guide that covers the two steps of `kk migrate` (the sync step overwrites edits to synced files as any sync does), ordinary sync never retiring, the tombstone, the 14-day supported session lifetime, and not syncing past the retirement release from a script older than v0.21.0
-- [ ] 15.3 Update `docs/user-guide/configuration.md`: launcher layer, overrides and when they take effect (the next Claude launch; `kk apply` for Codex), parity exceptions, `Skill(kk:*)` as standing authorisation including future skills, the two Codex opt-ins and the account-wide effect of the native forbids
-- [ ] 15.4 Update `docs/providers/codex.md` (guard plugin, hook review, profile precedence, opt-in approval and sandbox defaults, opt-in native forbids, both open-session caveats, `@` imports in `AGENTS.md` with their one-time confirmation, capy guidance from capy's own hooks or an import) and `docs/providers/claude-code.md` (unwrapped-session exception; no coverage for cloud sessions and fresh CI runners from a user-level install)
-- [ ] 15.5 Document PAL's Claude client entry in `docs/user-guide/mcp-servers.md`: it runs `kk claude` and keeps the scoped temp-directory read grant → verify: a review launched through the documented entry reads both its criteria and its diff
-- [ ] 15.6 Update `README.md`, `AGENTS.md`, `docs/contributing/architecture.md`, `docs/contributing/testing.md`, the plugin READMEs and `mkdocs.yml`; record in the architecture page how to patch the retirement script after retirement (patch tag from a branch at the retirement tag, `kk`'s constant moved to it) → verify: `make docs-build` succeeds
+- [x] 15.1 Write `docs/adr/0014-machine-level-delivery.md` and add it to the ADR table in `docs/contributing/architecture.md`
+- [x] 15.2 Rewrite `docs/getting-started/` around the install command; keep plugin-only as a mode; turn `docs/user-guide/template-sync.md` into a migration guide that covers the two steps of `kk migrate` (the sync step overwrites edits to synced files as any sync does), ordinary sync never retiring, the tombstone, the 14-day supported session lifetime, and not syncing past the retirement release from a script older than v0.21.0
+- [x] 15.3 Update `docs/user-guide/configuration.md`: launcher layer, overrides and when they take effect (the next Claude launch; `kk apply` for Codex), parity exceptions, `Skill(kk:*)` as standing authorisation including future skills, the two Codex opt-ins and the account-wide effect of the native forbids
+- [x] 15.4 Update `docs/providers/codex.md` (guard plugin, hook review, profile precedence, opt-in approval and sandbox defaults, opt-in native forbids, both open-session caveats, `@` imports in `AGENTS.md` with their one-time confirmation, capy guidance from capy's own hooks or an import) and `docs/providers/claude-code.md` (unwrapped-session exception; no coverage for cloud sessions and fresh CI runners from a user-level install)
+- [x] 15.5 Document PAL's Claude client entry in `docs/user-guide/mcp-servers.md`: it runs `kk claude` and keeps the scoped temp-directory read grant → verify: a review launched through the documented entry reads both its criteria and its diff
+- [x] 15.6 Update `README.md`, `AGENTS.md`, `docs/contributing/architecture.md`, `docs/contributing/testing.md`, the plugin READMEs and `mkdocs.yml`; record in the architecture page how to patch the retirement script after retirement (patch tag from a branch at the retirement tag, `kk`'s constant moved to it) → verify: `make docs-build` succeeds
+
+### Execution context
+
+- 2026-11-23, observed at `d8b61d6f`. The local installer, launchers and migration are implemented. The hosted release pilot and template retirement are later tasks. Document both the checkout and tagged install paths, and verify the PAL client using an isolated installation.
+- 2026-11-23, verified on macOS with PAL 1.4.2 and Claude Code 2.1.296. A fresh PAL server loaded the documented `kk claude` manifest and issued two read-only clink reviews. One used the installed Claude release’s criteria, the other the managed Codex skills cache. For each, the vendor’s `Read` tool returned the expected criterion text and temporary diff. A loopback model selected the reads and recorded the tool results. Capture `5f773253-ba35-4e98-916b-188715e43413` exited 0.
+- 2026-11-23, verified. `make docs-build` exited 0 after the final edit (capture `6de0d8ed-2152-426d-9076-ab6992dde0af`). The install link resolved in the rendered homepage and the generated guard tables matched the baseline. Independent review found a missing Codex cache read scope, an acknowledgement step for vendors unable to report trust, and a risk of moving the stable release or docs alias when patching migration. The revised instructions and maintenance tag procedure passed re-review. The hosted release pilot is Task 18.
 
 ## Task 18: Pilot the tagged release
 _Runs before Task 16. It was added after the design review and is numbered 18 so that existing references to Tasks 16 and 17 stay valid._

@@ -4,22 +4,25 @@ This document describes how claude-toolbox components fit together. For conventi
 
 ## Overview
 
-claude-toolbox provides a development environment for two AI coding providers (Claude Code and Codex) through three integrated components:
+A release contains `kk/`, the canonical Claude plugin (`klaude-plugin/`), the generated Codex skills plugin (`kodex-plugin/`) and the separate Codex guard (`kodex-guard/`). The root `install.sh` bootstraps the release. Maintainer tools, fixtures and legacy template sources stay in the checkout.
 
-```
-klaude-plugin/          (canonical source)
-    |
-    |-- generate-kodex --> kodex-plugin/      (generated Codex variant)
-    |                      .codex/agents/     (generated sub-agents)
-    |-- generate-guard --> .claude/settings.json permissions.deny
-    |                      .codex/rules/default.rules
-    |                      .codex/scripts/guard/
-    |                      docs/user-guide/configuration.md rules tables
-    |
-.claude/                (Claude Code config)
-.codex/                 (hand-authored config/adapters + generated artifacts)
-.github/                (template sync infrastructure)
-```
+## Machine delivery
+
+The installer writes immutable release directories under `$KK_HOME/releases/` and publishes the stable `~/.local/bin/kk` link to `$KK_HOME/bin/kk`. `kk/lib/payload.py` stages the declared payload, and `validation.py` exercises the dispatchers and registered guard adapters. Activation registers user-scope plugins through the local vendor marketplaces and publishes owned Codex files. The journal in `state.json` records candidate progress, release identities, tool readiness and the rollback target. A single writer lock covers upgrade, rollback, apply and migration.
+
+Claude loads the released plugin directory in place. Codex caches plugins by version. Its skills and guard have separate identities so an ordinary skills release can reuse the reviewed guard. `kk/baseline/` contains launcher defaults, generated agents and the generated native policy projections. `kk apply` validates and writes the owned Codex files from current overrides. Git-marketplace plugin-only installs remain independently managed by the vendors.
+
+Rollback uses the code in the target release. Upgrade prints a recovery command that works even when the active dispatcher is broken. Pruning retains the active release, the rollback target, a pending candidate and recently superseded releases needed by open sessions. The supported window after supersession is 14 days.
+
+## Retirement script maintenance
+
+`kk/lib/migrate.py` pins the retirement script and its sibling `semver-compare.sh` to the same tag. After retirement:
+
+1. Branch **from the retirement tag** so the script, helper and template still match. Apply the migration fix and run `bash test/test-template-sync.sh` on that branch.
+2. Publish just a maintenance Git tag on the tested commit, for example `v0.26.0+retirement.1`. The migration downloader reads Git tags directly. The suffix keeps the tag outside the numeric stable-tag filter that moves the documentation’s `latest` alias. Leave GitHub’s latest release pointing to the current machine release. The normal stable release workflow publishes from `master` and is for releasing kk itself.
+3. On the normal release line, move `RETIREMENT_VERSION` to that maintenance tag for the next kk release. Until then adopters can select the patch with `kk migrate --retirement-version TAG`.
+
+Keep the default branch’s compatibility script in place for old sync clients. The release pilot precedes removal of the legacy generators and workflows. [ADR 0014](../adr/0014-machine-level-delivery.md)
 
 ## Components
 
@@ -76,7 +79,7 @@ previews cannot introduce broken links or extra checklist-loading edges.
 A Go tool that transforms `klaude-plugin/` into Codex-compatible artifacts:
 
 - **`kodex-plugin/`** — Skills with `${CLAUDE_PLUGIN_ROOT}` and `${TOOLBOX_PLUGIN_ROOT}` resolved to relative paths, installed-path root-resolution instructions, injected headers, and copied profiles
-- **`.codex/agents/*.toml`** — Sub-agent markdown converted to TOML format with `developer_instructions`
+- **`kk/baseline/codex/agents/*.toml` and `.codex/agents/*.toml`** — Sub-agent markdown converted to TOML with `developer_instructions` for the release and legacy template
 
 Driven by `scripts/kodex-generate-manifest.yml`. Run via `make generate-kodex`.
 
@@ -107,9 +110,9 @@ files and profile authoring guidance retain their provider-specific conventions.
 
 `scripts/generate-guard.sh` projects the declaration into Claude's native secrets deny list, Codex's five unconditional native forbids, and the marked configuration tables. It copies the engine, launcher, wrapper, declaration and license byte-for-byte into `.codex/scripts/guard/` and `kodex-guard/scripts/guard/`. The release payload carries Claude's generated deny list in `kk/baseline/claude/deny.json` and the native Codex rules in `kk/baseline/codex/kk.rules`. `make generate-guard` regenerates these artifacts; structure checks and CI freshness checks reject drift. This generator is separate from Codex skill/agent generation.
 
-The Claude plugin loads its own baseline, including on plugin-only installs. Codex receives the shared engine through the standalone guard plugin or the legacy template. The plugin anchors policy to the hook’s working directory, using the Git top level when available. Capy's own hooks retain their registration and routing responsibilities. Project `.claude/kk-guard.json` adds restrictions; user `~/.claude/kk-guard.json` supplies scoped destructive/self-modification exceptions. Neither removes secrets. Native Codex forbids still outrank user exceptions.
+The Claude plugin loads its own baseline, including on plugin-only installs. Codex receives the shared engine through the standalone guard plugin or the legacy template. The plugin anchors policy to the hook’s working directory, using the Git top level when available. Capy's own hooks retain their registration and routing responsibilities. Project `.claude/kk-guard.json` adds restrictions; user `~/.claude/kk-guard.json` supplies scoped destructive/self-modification exceptions. Neither removes secrets. When installed, native Codex forbids take precedence over guard exceptions.
 
-Plugin update and template sync are separate delivery channels. Disabling hooks preserves only Claude template users' native secrets baseline, not the hook's destructive or self-modification policy. Codex native reads remain advisory in this integration, and specialized paths can bypass interception. See [ADR 0012](../adr/0012-permission-guard-single-declaration.md) for the decision and trade-offs, [configuration](../user-guide/configuration.md#guard-configuration) for user controls, and [testing](testing.md#permission-guard-verification) for evidence limits.
+Legacy projects may still have both project hooks and plugin hooks. Wrapped Claude carries a native secrets deny list. The Codex guard checks registered shell, patch and capy calls, including file reads through the shell. See [ADR 0012](../adr/0012-permission-guard-single-declaration.md) for the decision and trade-offs, [configuration](../user-guide/configuration.md#guard-configuration) for user controls, and [testing](testing.md#permission-guard-verification) for evidence limits.
 
 ### Plugin Graph Analysis (`cmd/plugin-graph/`)
 
@@ -144,7 +147,7 @@ Regenerated from the live plugin on every docs build (`make plugin-graph-docs`),
 
 --8<-- "contributing/_generated/plugin-graph-metrics.md"
 
-### Claude Code Config (`.claude/`)
+### Legacy Claude Code template (`.claude/`)
 
 - **`settings.json`** — Generated secrets deny list plus allow entries, env vars, model and plugin marketplace settings
 - **`settings.local.json`** — Per-repo overrides (never synced)
@@ -152,7 +155,7 @@ Regenerated from the live plugin on every docs build (`make plugin-graph-docs`),
 - **`CLAUDE.extra.md`** and **`toolbox/CLAUDE.md`** — Generated instruction copies for existing project imports
 - **`toolbox/scripts/statusline*.sh`** — Generated basic and enhanced statusline copies for template settings
 
-### Codex Config (`.codex/`)
+### Legacy Codex template (`.codex/`)
 
 Hand-authored (not generated):
 
@@ -216,7 +219,7 @@ refresh only when the docs deploy, and each released docs version keeps the
 figures it was built with; the as-of date says which. To try it locally, run
 `CAPY_STATS_REPO=../capy/.git make docs-build`.
 
-### Template Infrastructure (`.github/`)
+### Legacy template infrastructure (`.github/`)
 
 - **`template-cleanup.sh`** — Initializes a new repo from the template (interactive or CI)
 - **`template-sync.sh` / `template-sync.yml`** — Pulls upstream config updates into downstream repos via PR
@@ -224,27 +227,13 @@ figures it was built with; the as-of date says which. To try it locally, run
 
 ## Installation Modes
 
-Users interact with claude-toolbox through three distinct modes, each providing a different subset of functionality:
+| Mode | Installation and update owner |
+| --- | --- |
+| Machine-managed | `install.sh` bootstraps kk. `kk upgrade` selects one active release for the account and `kk rollback` restores a retained release. |
+| Plugin-only | The vendor manages the Git-marketplace plugins and the user’s own vendor settings. |
+| Legacy template | Until migration, the repository keeps its committed settings and sync infrastructure. Ordinary sync updates them. Only the explicit retirement step removes them. |
 
-| What you get                 | Plugin-only | Template / Sync | Full repo checkout |
-| ---------------------------- | :---------: | :-------------: | :----------------: |
-| Skills (16 workflow and utility skills) |      Y      |        Y        |         Y          |
-| Profiles (language-specific) |      Y      |        Y        |         Y          |
-| Commands                     |  Y (Claude) |    Y (Claude)   |         Y          |
-| Hooks                        | Claude and optional Codex guard | Y | Y |
-| Sub-agents                   |  Y (Claude) |        Y        |         Y          |
-| Config (settings/rules)      |             |        Y        |         Y          |
-| Statusline                   |             |        Y        |         Y          |
-| Template sync infrastructure |             |        Y        |         Y          |
-| Generation tools / tests     |             |                 |         Y          |
-
-**Plugin-only (Claude):** `/plugin install kk@claude-toolbox` — skills, commands, hooks, agents, profiles.
-
-**Plugin-only (Codex)** — The marketplace offers `kk@claude-toolbox` for skills and profiles and `kk-guard@claude-toolbox` for the permission guard. Install and review the guard separately. The template continues to distribute the project configuration and native rules.
-
-**Template / Sync:** Full configuration for both providers, kept in sync with upstream via GitHub Actions.
-
-**Full repo checkout:** Everything above plus the generation tools (`cmd/`), test suites (`test/`), and maintainer workflows.
+A source checkout is also supported as input to `./install.sh --local .` or `kk upgrade --local .`. It follows the same staging and activation path.
 
 ### Marketplace gotchas
 
@@ -265,7 +254,7 @@ User invokes /kk:review-code
   → Subject-matter action (read diff, produce findings)
 ```
 
-### Template sync
+### Legacy template sync
 
 ```
 Downstream repo triggers sync workflow
@@ -319,3 +308,4 @@ Architecture decisions are recorded in `docs/adr/`:
 | [0005](../adr/0005-codex-hook-enforcement-gap.md) | Codex hook enforcement gap (advisory + hook two-layer approach; superseded by 0013) |
 | [0012](../adr/0012-permission-guard-single-declaration.md) | Single permission declaration, generated projections and scoped guard configuration |
 | [0013](../adr/0013-codex-file-access-through-hooked-tools.md) | Codex file access is guarded through hooked tools (exec_command, apply_patch, capy) |
+| [0014](../adr/0014-machine-level-delivery.md) | Machine-level installation, offline rollback and explicit repository migration |

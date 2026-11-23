@@ -15,7 +15,7 @@ claude-toolbox is a collection of "tools" for all your agentic workflows (**curr
 
 Tools like Claude Code and Codex are powerful on their own, but LLMs don't know your development workflow. This project started as a way to streamline configurations across projects without copy-paste. Over time, recurring patterns evolved into skills and agents.
 
-**A minimal, opinionated configuration** — sensible permission baselines, a rich statusline, MCP server wiring, and sync infrastructure to keep it all up to date across your projects. Think of it as a dotfiles repo for Claude Code and Codex.
+**A minimal, opinionated configuration** — sensible permission baselines, a rich statusline, MCP server wiring, and a launcher that selects the same release across your projects. Think of it as a dotfiles repo for Claude Code and Codex.
 
 **A structured development pipeline** — 16 workflow and utility skills with explicit multi-language support that take you from idea through design, implementation, code review, testing, to documentation, with persistent knowledge that carries across sessions.
 
@@ -46,24 +46,13 @@ uncertainty and respects the readers' access to supporting evidence. Implementin
 an issue uses `/kk:implement`. See [issue-description examples](../user-guide/skills.md#clarify-an-issue-description)
 for destinations, missing context and sharing boundaries.
 
-### Configuration
+### Machine configuration
 
-- **Permission allowlist/denylist** (`.claude/settings.json`) — baseline permissions: auto-approves safe bash commands and WebSearch while blocking dangerous patterns. Per-repo MCP tool permissions go in `settings.local.json`.
-- **Status line** (`.claude/toolbox/scripts/statusline_enhanced.sh`) — rich statusline with model, context %, git branch, session duration, thinking mode, and rate limits. Themes: set `CLAUDE_STATUSLINE_THEME` to `darcula`, `nord`, or `catppuccin`, and `CLAUDE_STATUSLINE_MODE` to `dark` (default) or `light` to match your terminal background.
-
-### Template Infrastructure
-
-- **template-cleanup** — GitHub Action or local CLI script to initialize a new repo from this template
-- **template-sync** — pull upstream configuration updates via PR (workflow) or locally (`/kk:template:sync`)
-- **Sync exclusions** — prevent specific files from being re-added during sync
-- **Test suite** — tests across 8 suites covering plugin structure, codex structure, sync/cleanup infrastructure
+`kk claude` composes Claude preferences, native secret denies and a themed statusline for the session. `kk codex` selects the managed profile, and Codex loads the separately reviewed guard plugin. Your repositories keep their own instructions and settings. See [Configuration](../user-guide/configuration.md).
 
 ## Requirements
 
-- **[Claude Code](https://docs.anthropic.com/en/docs/claude-code)** — the AI coding assistant this toolbox extends
-- **[npm](https://www.npmjs.com/package/npm)** — used by some MCP server installations
-- **[uv](https://docs.astral.sh/uv/)** — Python package runner for Pal MCP server
-- **[jq](https://jqlang.github.io/jq/)** — JSON processor, required for template-cleanup
+The [installation guide](template-setup.md) lists the required tools. MCP integrations are optional. Configure them when you need library documentation, external reviews or persistent project memory. [MCP servers](../user-guide/mcp-servers.md)
 
 ### API Keys
 

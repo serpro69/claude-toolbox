@@ -8,13 +8,15 @@ This is a repository providing a complete development environment for agentic to
 
 ## Architecture
 
-Three integrated components:
+Machine delivery adds `install.sh` and `kk/` to the components below. `kk/lib/` owns staging, activation, launch, offline rollback and repository migration. `kk/baseline/` contains release defaults and generated policy/agent files. Keep `kodex-guard/` separate from the Codex skills plugin to preserve guard trust across skills-only upgrades. The legacy template and its generators remain in this checkout through the retirement pilot. See [ADR 0014](docs/adr/0014-machine-level-delivery.md).
+
+Provider components:
 
 1. **Claude Code** (`.claude/`): Project settings (`settings.json`), statusline scripts, and sync infrastructure
 2. **Codex** (`.codex/`, `kodex-plugin/`, `kodex-guard/`): Codex-equivalent config, hooks, rules, agents, and separate skills and permission-guard plugins. See §Codex Support below
 3. **kk plugin** (`klaude-plugin/`): Skills, commands, hooks, and utility scripts — the canonical source of truth, distributed via the Claude Code plugin system
 
-For API keys and MCP server setup, see the "MCP Server Configuration" section in `README.md`.
+For API keys and MCP server setup, see [MCP servers](docs/user-guide/mcp-servers.md).
 
 ### Codex Support
 
@@ -41,6 +43,8 @@ Tests are in `test/`. Run with:
 for test in test/test-*.sh; do $test; done
 ```
 
+Run `bash test/test-kk.sh` for machine installation, lifecycle, launchers and migration orchestration. `make docs-build` checks the published documentation.
+
 Key test suites: `test-plugin-structure.sh` (klaude-plugin + kodex-plugin generated output), `test-codex-structure.sh` (codex config, hooks, agents, rules), `test-template-sync.sh` (sync infrastructure). Tests use shared utilities from `test/helpers.sh`.
 
 The Go tools under `cmd/` have their own tests: `make generate-kodex` (Codex generation + freshness) and `make plugin-graph` (the `cmd/plugin-graph/` dependency-graph analyzer's tests, plus `plugin-graph validate` against `klaude-plugin/` as a broken-link/orphan gate). See [docs/contributing/architecture.md](docs/contributing/architecture.md) for what `plugin-graph` analyzes.
@@ -49,7 +53,7 @@ The Go tools under `cmd/` have their own tests: `make generate-kodex` (Codex gen
 
 ## Troubleshooting
 
-See `README.md` for detailed troubleshooting of MCP connection issues and template sync problems.
+See the [machine install guide](docs/getting-started/template-setup.md), [MCP setup](docs/user-guide/mcp-servers.md) and [template migration guide](docs/user-guide/template-sync.md).
 
 ## Proportionate verification
 

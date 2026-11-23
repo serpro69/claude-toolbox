@@ -19,7 +19,7 @@ dependency-handling    1        16      1      1
 diff-skill             1        0       1      1
 handoff                0        1       0      0
 
-Hotspots (44):
+Hotspots (46):
   skills/review-code/  (fan-in 32)
   profiles/go/implement/  (fan-in 20)
   skills/review-spec/  (fan-in 17)
@@ -53,6 +53,8 @@ Hotspots (44):
   skills/brainstorm/  (fan-in 2)
   skills/model/  (fan-in 2)
   agents/spec-reviewer.md  (fan-in 1)
+  instructions/behavior.md  (fan-in 1)
+  instructions/plugin-root.md  (fan-in 1)
   profiles/k8s/  (fan-in 1)
   profiles/python/implement/  (fan-in 1)
   profiles/python/test/  (fan-in 1)

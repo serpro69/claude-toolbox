@@ -4,42 +4,25 @@ Claude Code is the primary provider for claude-toolbox. All skills, agents, and 
 
 ## Setup
 
-1. Install [Claude Code](https://docs.anthropic.com/en/docs/claude-code)
-2. Install the plugin: `/plugin install kk@claude-toolbox`
-3. Configure [MCP servers](../user-guide/mcp-servers.md) in `~/.claude.json`
+[Install kk](../getting-started/template-setup.md), then run `kk claude` in your project. For a vendor-managed plugin with your own settings, use the [plugin-only setup](../getting-started/plugin-only.md). Configure [MCP servers](../user-guide/mcp-servers.md) separately.
 
-## Configuration Files
+## Configuration files
 
-| File | Purpose |
-|------|---------|
-| `.claude/settings.json` | Generated secrets deny baseline, allowed commands, settings |
-| `.claude/kk-guard.json` | Optional project additions to the permission guard; never replaced by sync |
-| `~/.claude/kk-guard.json` | User-owned, project-scoped destructive/self-modification exceptions |
-| `CLAUDE.md` | Project instructions (checked into repo) |
-| `klaude-plugin/instructions/behavior.md` | Behavioral instructions supplied at session start, with a legacy copy in `.claude/CLAUDE.extra.md` |
-| `klaude-plugin/` | Skills, commands, agents, hooks, profiles |
+| Location | Purpose |
+| --- | --- |
+| `$KK_HOME/releases/<release>/klaude-plugin/` | The active machine plugin, including skills, agents, commands, guard, behavioral instructions and statusline scripts |
+| `${XDG_CONFIG_HOME:-$HOME/.config}/kk/config.json` | Personal launcher preferences and optional grants, read on the next launch |
+| `.claude/settings.json` and `.claude/settings.local.json` | Team and personal project settings. Explicit preferences take precedence over toolbox defaults. |
+| `CLAUDE.md` | Project instructions. Existing imports continue to work. |
+| `.claude/kk-guard.json` and `~/.claude/kk-guard.json` | Project additions and machine-owner exceptions to the guard policy |
 
-## Features
+## Permission guard
 
-- **Full plugin support** — skills appear as `/skill-name` with `(kk)` annotation
-- **Sub-agents** — `klaude-plugin/agents/*.md` for independent reviewers
-- **Hooks** — `PreToolUse` guard on Bash, file tools and capy execution tools; secrets, destructive operations and protected configuration
-- **Statusline** — rich terminal display with multiple themes
-- **Template sync** — full support for upstream updates
-- **MCP servers** — Context7, Pal, Capy pre-wired
+The user-scope plugin `kk@toolbox` supplies guard hooks wherever Claude loads and enables it. It checks shell calls, Claude file tools and the supported capy execution tools. Use Claude Code 2.1.295+ with Bash, `jq` and Python 3.8+. Start a fresh session after an upgrade. [Guard configuration](../user-guide/configuration.md#guard-configuration)
 
-## Permission Guard
+**Wrapped sessions** also receive the native secret deny list through `kk claude`, including when you supply your own `--settings`. They get the toolbox statusline in trusted interactive sessions with hooks enabled. Inspect the composed settings with `kk claude --print-layer`.
 
-For an existing installation, follow the
-[permission-guard upgrade checklist](../user-guide/template-sync.md#upgrading-the-permission-guard).
-Template consumers update both the installed plugin and project configuration;
-plugin-only consumers update the plugin. Restart to load the new runtime.
-
-The plugin enforces its shipped baseline without template settings or guard config files. It covers `Bash`, `Read`, `Grep`, `Glob`, `Edit`, `Write`, `NotebookEdit`, and capy's three execution tools. Template installations additionally receive generated `Read(...)` secrets deny rules as a native fallback. Logs, build output, dependencies and `.env.example` are readable under the baseline.
-
-Use Claude Code 2.1.295+ with Bash, `jq` and Python 3.8+. The wrapper denies when it cannot evaluate a call, and the hook registration blocks failures/timeouts. Destructive rules apply in bypass mode too. Turning hooks off removes destructive and self-modification protection; plugin-only installations also lose the hook's secrets protection.
-
-Project config can tighten protection; only the user's config can loosen destructive rules or permit settings edits. See [Guard Configuration](../user-guide/configuration.md#guard-configuration) for examples, including the `disable_selfmod` entry needed when an agent edits settings. Secrets remain protected; search-result contents and dynamically constructed interpreter paths are outside complete coverage.
+**Unwrapped sessions** such as bare `claude`, the IDE extension and the desktop app can load the plugin hooks. They do not receive the launcher’s native deny list or statusline. A user-level install on your machine does not reach cloud sessions or fresh CI runners. Provision the plugin on those hosts or retain the relevant committed enablement when migrating.
 
 ## Skills Invocation
 

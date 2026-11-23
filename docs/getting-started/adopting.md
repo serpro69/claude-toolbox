@@ -1,47 +1,13 @@
-# Adopting into Existing Repositories
+# Use kk in an existing repository
 
-You don't need to create a repo from this template to use the full configuration and sync infrastructure. Any existing repo can adopt it.
+[Install kk](template-setup.md) once. In your project, run `kk claude` or `kk codex`. Keep versioned team instructions in `CLAUDE.md` and `AGENTS.md`, project restrictions in `.claude/kk-guard.json`, and your personal launcher preferences in the [machine override file](../user-guide/configuration.md#how-configuration-works).
 
-## Steps
+## Repositories created from the toolbox template
 
-1. **Install the kk plugin** to get all skills, commands, and hooks:
+Look for `.github/template-state.json`. Its presence identifies a repository managed by template sync. Installing kk leaves the repository files in place. Team members can install and verify kk before anyone commits changes.
 
-    ```
-    /plugin install kk@claude-toolbox
-    ```
+When the team is ready, follow the [migration guide](../user-guide/template-sync.md). `kk migrate` verifies the guard for each tool the repository uses, previews an ordinary sync to the retirement release, then previews removal. You decide separately whether to apply each step. Review the uncommitted diff with collaborators, particularly if CI or cloud sessions depend on the committed plugin settings.
 
-2. **Set up sync infrastructure.** Create `.github/template-state.json`:
+## Repositories using plugins directly
 
-    ```json
-    {
-      "schema_version": "1",
-      "upstream_repo": "serpro69/claude-toolbox",
-      "template_version": "v1.0.0",
-      "synced_at": "1970-01-01T00:00:00Z",
-      "variables": {
-        "PROJECT_NAME": "my-cool-project",
-        "LANGUAGES": "go",
-        "CC_MODEL": "default",
-        "CC_EFFORT_LEVEL": "high",
-        "CC_PERMISSION_MODE": "default",
-        "CC_STATUSLINE": "enhanced",
-        "CODEX_MODEL": "gpt-6.2-astra",
-        "CODEX_APPROVAL_POLICY": "on-request",
-        "SKIP_CAPY": "false"
-      }
-    }
-    ```
-
-    Copy `.github/workflows/template-sync.yml` and `.claude/toolbox/scripts/template-sync.sh` from the [template repository](https://github.com/serpro69/claude-toolbox).
-
-3. **Run Template Sync** from your repo's Actions tab to pull in the configuration (settings, statusline, permissions). Review and merge the PR.
-
-!!! tip
-    Step 1 works standalone if you only want the skills. Steps 2-3 add the opinionated configuration and keep it in sync with upstream improvements.
-
-## After Adoption
-
-- Run [template sync](../user-guide/template-sync.md) to verify the setup: `/kk:template:sync --dry-run`
-- Customize `.claude/settings.json` for your project's permission needs
-- Edit `CLAUDE.md` with project-specific instructions
-- See [MCP Servers](../user-guide/mcp-servers.md) for Context7, Pal, and Capy configuration
+The [plugin-only setup](plugin-only.md) remains available. When moving to the managed installation, `kk status` reports Git-marketplace copies. Check the scope before removing one. A project-scoped registration may also serve other developers or CI.

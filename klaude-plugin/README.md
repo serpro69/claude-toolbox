@@ -8,6 +8,8 @@ Why `kk`? I have `jj` and `kk` mappings in nvim to go back to normal mode, and i
 
 ## Installation
 
+For the machine-managed release, install `kk` and launch with `kk claude`. The local marketplace is named `toolbox`. The commands below are for the separate Git-marketplace installation. [Machine installation](https://serpro69.github.io/claude-toolbox/latest/getting-started/template-setup/)
+
 ```
 /plugin install kk@claude-toolbox
 ```
@@ -44,7 +46,7 @@ Settings files are protected too: an agent cannot add a permission allow entry w
 {"version":1,"projects":{"/absolute/path/to/repo":{"disable_selfmod":true}}}
 ```
 
-This still protects secrets. Invalid configuration is reported through `systemMessage` and does not weaken the baseline. The Codex plugin distributes skills/profiles only; the separate template supplies Codex adapters and native rules, whose unconditional forbids can outrank these user exceptions.
+This still protects secrets. Invalid configuration is reported through `systemMessage` and does not weaken the baseline. Codex has separate skills and guard plugins. The managed launcher also supports optional account-wide native forbids, which take precedence over guard exceptions.
 
 ## Isolated reviews with external models
 
@@ -100,7 +102,7 @@ On the API branch the skill selects the most capable available model from PAL's 
 
 Clink launches each CLI with your project root as working directory, but the review criteria live in the plugin installation and the diff/evidence bundle in the directory `mktemp` uses (`$TMPDIR` when set, otherwise `/tmp`; on macOS usually `/var/folders/...`). A CLI that cannot read outside the project denies those reads; the skill then reports that reviewer as not adequately evidenced and qualifies its findings. It never enables edits or bypasses permissions to make a review work. Setups verified with this plugin:
 
-- **Claude Code** — grant reads through a PAL client manifest override at `~/.pal/cli_clients/claude.json`. An override replaces the whole client definition, so it must contain `name`, `command` and your `additional_args`, for example `["--allowedTools", "Read,Glob,Grep"]` or a path-scoped rule covering that temp directory, such as `Read(//tmp/**)` on Linux. PAL caches the client registry: restart PAL after editing the file. Claude Code's permission settings for the project also apply to the launched CLI.
+- **Claude Code** — copy PAL’s shipped Claude client manifest to `~/.pal/cli_clients/claude.json`. For machine installs, set `command` to `kk claude` and keep a temp-scoped read in `additional_args`, for example `["--allowedTools", "Read(//tmp/**)"]` on Linux. Use the physical temp directory that contains the review bundle, preserve the other fields and restart PAL. The launcher grants reads of its active release by default. When Codex initiates the review, add a scoped read for its installed skills plugin as another argument to `--allowedTools` (for example `Read(~/.codex/plugins/cache/toolbox/kk/**)` with the default Codex home). For plugin-only installations, use the physical Git-marketplace plugin directory containing the criteria.
 - **Antigravity (`agy`)** — where its mode does not already permit reads, add a native grant to `~/.gemini/antigravity-cli/settings.json`, for example `"permissions": {"allow": ["read_file(/tmp)"]}` (or your `$TMPDIR`) plus the plugin cache directory. No PAL restart is needed.
 - **Codex** — the shipped manifest worked unchanged in the verified setup (`codex exec`); whether its reads are sandboxed depends on your Codex configuration and was not verified.
 

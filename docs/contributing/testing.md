@@ -39,6 +39,14 @@ Run a single suite:
 | `test-review-instructions.sh` | Instruction-packet source completeness, routing inputs and path boundaries; does not establish actor compliance |
 | `test-functional-review-tools.sh` | Extracted bundle/capture/receipt/grading utilities and archive inventory; runs from a temporary copy without historical evidence, using Python 3.11+ |
 
+## Machine delivery tests
+
+Run `bash test/test-kk.sh` for installer, launchers, lifecycle, guard trust, update notices and migration orchestration. It uses temporary homes and vendor fixtures. Run `bash test/test-template-sync.sh` for real tagged Git fixtures, preservation of adopter settings and hooks, the no-change retry and legacy handoff to the tombstone. The `machine-delivery.yml` CI job also runs the guard and Codex adapter suites on Python 3.8 and the current Python.
+
+For installation evidence, `kk status --live` starts fresh vendor sessions and expects the installed guard’s own denial of a public canary. Open-session behavior needs a session spanning the relevant transition. The tagged pilot also verifies that an ordinary sync still leaves the legacy guard in place before migration. The release workflows run the machine delivery and generated-guard checks before publication.
+
+After documentation changes run `make docs-build` with the packages in `requirements.txt` available. This regenerates the embedded graph and runs strict MkDocs validation. [Machine delivery decision](../adr/0014-machine-level-delivery.md)
+
 ## Test Infrastructure
 
 Tests use shared utilities from `test/helpers.sh`:
