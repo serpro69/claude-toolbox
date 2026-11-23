@@ -254,7 +254,9 @@ def launch(home, args):
         snapshot = saved["codex_snapshot"]
         if (str(codex_home) != snapshot["directory"] or profile.is_symlink() or not profile.is_file()
                 or profile.read_bytes() != codex_profile.compose(release, snapshot["settings"])[0]):
-            raise ValueError("cannot verify the managed Codex profile in this CODEX_HOME; run kk apply")
+            raise ValueError("cannot verify the managed Codex profile in this CODEX_HOME. "
+                             "If you changed folder or hook trust in kk codex, confirm your intended decisions "
+                             "in plain codex (without --profile) first. Then run kk apply to regenerate the profile.")
         if not codex_plugins.receipt(record, codex_home, "kk-guard"):
             raise ValueError("Codex guard is not installed in this CODEX_HOME; " + codex_plugins.activation_hint(saved))
         phase, issues = codex_trust.check(release, codex_home, directory, trust_flags,

@@ -11,6 +11,9 @@ from . import claude, codex_plugins, mixed, payload
 from .codex_plugins import GUARD_ID
 
 
+REVIEW_UI = "/hooks in plain codex (without --profile)"
+
+
 class NoTrustMethod(Exception):
     """The vendor explicitly reported that hooks/list is unavailable."""
 
@@ -62,11 +65,11 @@ def check(release, directory, workspace, flags=(), *, acknowledged=False, prompt
             return "awaiting review", issues
         if not acknowledged and prompt and sys.stdin.isatty():
             print("Codex cannot report hook trust. Have you reviewed and enabled all kk-guard hooks "
-                  "in /hooks? [y/N] ", end="", file=sys.stderr, flush=True)
+                  "in {}? [y/N] ".format(REVIEW_UI), end="", file=sys.stderr, flush=True)
             acknowledged = sys.stdin.readline().strip().lower() in ("y", "yes")
         if acknowledged:
             return "unverified", ["this Codex has no hooks/list method"]
-        return "awaiting review", ["review the guard in /hooks, then run kk apply to acknowledge"]
+        return "awaiting review", ["review the guard in {}, then run kk apply to acknowledge".format(REVIEW_UI)]
     except (OSError, ValueError, KeyError, TypeError) as exc:
         return "awaiting review", ["could not verify Codex guard: " + str(exc)]
     listed = {h["key"]: h for h in rows if h.get("pluginId") == GUARD_ID and h.get("source") == "plugin"}
@@ -83,9 +86,9 @@ def check(release, directory, workspace, flags=(), *, acknowledged=False, prompt
             elif hook.get("matcher") != group["matcher"] or hook.get("command") != handler["command"]:
                 issue = "registration differs from the release; repair the installed guard"
             elif hook.get("enabled") is not True:
-                issue = "disabled; enable it in /hooks"
+                issue = "disabled; enable it in " + REVIEW_UI
             elif hook.get("trustStatus") != "trusted":
-                issue = "{}; review it in /hooks".format(hook.get("trustStatus", "unknown"))
+                issue = "{}; review it in {}".format(hook.get("trustStatus", "unknown"), REVIEW_UI)
             else:
                 continue
             issues.append("{}: {}".format(group["matcher"], issue))

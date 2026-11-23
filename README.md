@@ -75,7 +75,7 @@ From a checkout containing the machine installer:
 ~/.local/bin/kk status
 ```
 
-Put `~/.local/bin` on your `PATH`. In any project, run `kk claude` or `kk codex`. In Codex, review the three `kk-guard@toolbox` handlers in `/hooks`. Run `kk status --live` to verify each managed guard. Once the first machine release is published, the installation guide’s one-line installer downloads the latest stable release. The guide also covers version pinning and offline rollback. [Install kk](docs/getting-started/template-setup.md)
+Put `~/.local/bin` on your `PATH`. In any project, run `kk claude` or `kk codex`. For the initial Codex setup, open plain `codex` without `--profile` in the project and review folder trust and the three `kk-guard@toolbox` handlers in `/hooks`. Run `kk status --live` to verify each managed guard. Once the first machine release is published, the installation guide’s one-line installer downloads the latest stable release. The guide also covers version pinning and offline rollback. [Install kk](docs/getting-started/template-setup.md)
 
 If your project contains `.github/template-state.json`, use `kk migrate` when the team is ready to retire the repository copies. For skills managed directly by the vendor, use the Git-marketplace plugin. [Migration guide](docs/user-guide/template-sync.md) · [Plugin-only setup](docs/getting-started/plugin-only.md)
 
