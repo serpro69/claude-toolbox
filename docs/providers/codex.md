@@ -28,7 +28,7 @@ Approval policy, approval reviewer and sandbox defaults are optional. The separa
 
 Codex 0.171.0 saves interactive hook and folder trust in the active configuration file. Plain `codex` saves those choices in `$CODEX_HOME/config.toml`; `kk codex` selects the generated `$CODEX_HOME/kk.config.toml`. Use plain Codex for machine guard review, including after a guard change, and for the first folder trust decision in each repository. Project restrictions still apply.
 
-If you already made a decision in the wrapped session, exit it and open plain `codex` in the same directory. Confirm the folder and hook choices you actually intend at account scope. Then run `kk apply` to regenerate the owned profile and `kk status --live` to verify. Regeneration replaces profile-local edits. Toolbox never copies a trust decision into another scope.
+If you already made a decision in the wrapped session, exit it and open plain `codex` in the same directory. Confirm the folder and hook choices you actually intend at account scope. Then run `kk apply` to regenerate the owned profile and `kk status --live` to verify. Regeneration replaces profile-local edits. Toolbox never copies a trust decision into another scope. Codex also writes display counters for model tips when its TUI opens. The launcher accepts those counters while continuing to verify the generated settings before batch runs.
 
 ## Repository instructions
 

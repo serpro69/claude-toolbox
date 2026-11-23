@@ -4,6 +4,7 @@ import hashlib
 import json
 import os
 from pathlib import Path
+import re
 import shlex
 import shutil
 import subprocess
@@ -13,6 +14,12 @@ import tempfile
 from . import codex_plugins, payload, state
 from .claude_launch import check_keys, object_value, switches
 from .state import override_path
+
+
+TIP_TABLE = "\n[tui.model_availability_nux]\n"
+# Codex's ModelAvailabilityNuxConfig stores one uint32 per model. Keep the rest of the
+# managed profile byte-exact: it can affect the trust check for batch launches.
+TIP_COUNTER = re.compile(r'([A-Za-z0-9_-]+|"[^"\\\x00-\x1f\x7f]+") = (0|[1-9][0-9]{0,9})')
 
 
 def codex_home():
@@ -56,6 +63,35 @@ def toml_value(value):
     return json.dumps(value, ensure_ascii=False, allow_nan=False).replace(chr(127), r"\u007f")
 
 
+def toml_entries(table):
+    return "".join(toml_value(k) + " = " + toml_value(v) + "\n" for k, v in table.items())
+
+
+def matches_profile(actual, expected):
+    if actual == expected:
+        return True
+    header = TIP_TABLE.encode()
+    prefix = expected.partition(header)[0] + header
+    if not actual.startswith(prefix):
+        return False
+    try:
+        counters = actual[len(prefix):].decode("utf-8")
+    except UnicodeDecodeError:
+        return False
+    models = set()
+    for line in counters.split("\n"):
+        if not line:
+            continue
+        entry = TIP_COUNTER.fullmatch(line)
+        if not entry or int(entry[2]) > 2**32 - 1:
+            return False
+        model = entry[1].strip('"')
+        if model in models:
+            return False
+        models.add(model)
+    return True
+
+
 def overlay(table, overrides):
     for key, value in overrides.items():
         if isinstance(value, dict) and isinstance(table.get(key), dict):
@@ -97,7 +133,15 @@ def compose(release, config):
         release / "kk/baseline/codex/bootstrap.md", release / "klaude-plugin/instructions/behavior.md"
     )] + [advisory]) + "\n"
     profile["developer_instructions"] = instructions
-    rendered = "".join(toml_value(k) + " = " + toml_value(v) + "\n" for k, v in profile.items())
+    # Inline TUI tables get reformatted by Codex on the first interactive
+    # launch. Emit a regular table last so its model-tip counters append cleanly.
+    tui = object_value(profile.pop("tui"), "codex.settings.tui")
+    tips = None
+    if "model_availability_nux" in tui:
+        tips = object_value(tui.pop("model_availability_nux"), "codex.settings.tui.model_availability_nux")
+    rendered = toml_entries(profile) + "\n[tui]\n" + toml_entries(tui)
+    if tips is not None:
+        rendered += TIP_TABLE + toml_entries(tips)
     return rendered.encode(), instructions.encode(), selected.get("nativeForbids", False)
 
 
