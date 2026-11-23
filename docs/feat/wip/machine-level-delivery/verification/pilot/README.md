@@ -1,5 +1,7 @@
 # Tagged retirement release pilot
 
+**Result: `v0.26.0-rc.3` passed the Linux ARM64 tagged pilot.** The two previous candidates exposed separate problems with Codex onboarding and profile verification. Each correction was tested in a fresh user account. Each clean-account pilot used the vendor’s normal hook-review interface. [RC3 observations](#rc3)
+
 ## Environment and preflight
 
 On 2026-11-23 the pilot first tried a fresh non-root account in Docker Desktop 29.9.3 on Linux ARM64. Codex CLI 0.171.0 returned a completed turn, but the harmless shell read failed before execution because Bubblewrap could not create a namespace. This environment did not qualify for the pilot. Capture `de17010e-16d2-437a-af22-4dbd9a549fb2` contains the failed tool result.
@@ -58,3 +60,46 @@ The workflow passed both Python gates and published `v0.26.0-rc.2` at `373fbc0b9
 A local trial changed the serialization to put the TUI table last. The same Codex binary appended only the numeric tip table, preserving every preceding byte. With the matching preflight correction, the first wrapped batch shell read returned the public control file and both actual guards denied the live canaries (capture `fe1e7059-c0e2-4c9b-87fb-f99aa76ab1c8`). A new tagged clean-account pilot is required.
 
 The final checker accepts distinct model keys with unsigned 32-bit counters only. A local TUI-to-batch repeat, both live guards, opt-in parity and confirmed imports all passed (capture `4eab332f-1035-4696-9374-828b97f8e54d`). The 80-test kk suite passed, as did the focused counter-bound regression and strict docs build (captures `859ec0c3-41de-419f-9ccf-e3346391468e`, `baf54348-dadf-4d67-b569-36dd3a46daf6` and `41046138-680a-4182-8ffc-fb7225aa034f`). [Codex configuration schema](https://developers.openai.com/codex/config-schema.json)
+
+## RC3
+
+The candidate source is `6a83a167`. A third clean Debian VM started from the verified base image with an empty account. The vendor versions were unchanged, and the public read succeeded in the normal Codex sandbox before kk installation (capture `1985441e-251b-40c8-9b13-9b823f2a05f0`). The legacy checkout was again at `2e578b41`. The pre-install Codex terminal completed its first text-only turn in thread `01a20813-3b83-7fe0-a9ef-857fd30f1691` (capture `d3e12b93-d68f-4663-8900-210356290657`). [RC3 publication workflow](https://github.com/serpro69/claude-toolbox/actions/runs/45161957767)
+
+Both hosted gates passed and published `v0.26.0-rc.3` at `5ee83cb31dce6c7ed3e7bd91df371178ea58f6d3`. The installer matched the tagged Git blob. Plain Codex persisted the three hook reviews and both folder decisions in the account config. Starting the first wrapped TUI retained the entire generated prefix and wrote only the vendor’s model-tip counter. The next wrapped batch launch succeeded, and both scratch guards returned their own denial before and after `kk apply` (capture `cfd52192-f127-4cc5-8880-8492957e5f4a`). [Published RC3](https://github.com/serpro69/claude-toolbox/releases/tag/v0.26.0-rc.3)
+
+| Parity surface | RC3 evidence |
+| --- | --- |
+| Claude settings | Native secret denies survived an extra caller-supplied settings layer. The launch layer supplied high effort, environment defaults, skill and release-read grants, and yielded to explicit project preferences. |
+| Claude and Codex instructions | Model requests from the real CLIs contained the release’s behavioral instructions. The wrapped Codex request included the import marker after the operator’s one-time approval. |
+| Claude statusline and themes | Trusted wrapped terminals displayed the released statusline. The Nord and Catppuccin scripts produced distinct palette bytes on identical input. |
+| Codex profile and agents | The parsed profile matched the released model, reasoning, context and compaction limits (both 1,000,000), project instruction budget (65,536 bytes), and TUI settings including status line, terminal title and animations. The vendor loaded it. The control selected `gpt-6.2-astra` and the project selected its retained `gpt-6-astra`, both with `xhigh` reasoning in the actual requests. The owned agent files matched the release. |
+| Codex opt-ins | The account started with both opt-ins off. After opt-in and apply, the approval and sandbox values matched the release, and the real policy evaluator applied the account rules. A second apply removed the opt-ins. |
+
+Capture `9dca9c50-6799-4efd-b940-47b4632d0b43` records the parity run.
+
+In a separate workspace, bare Claude listed the installed skills and reviewers, received the release’s behavioral instructions, and returned a plugin guard denial for a public canary. Codex’s vendor inventory reported `kk@toolbox` at `0.26.0-rc.3` and `kk-guard@toolbox` at its unchanged `0.26.0-rc.1` guard version. The named profile’s model-visible agent roster included all six declared role names; the filenames have an additional `kk-` ownership prefix. Captures `0ee55884-18d3-4617-8a3d-b0ca83a3fe05` and `b466f106-19d3-453a-a958-ce5a80e41211`.
+
+### Migration and session lifetimes
+
+The original sync script applied `--local --version v0.26.0-rc.3` and retained both original hook commands and their scripts. `kk migrate --retirement-version v0.26.0-rc.3` then retired the template. The clone kept its original HEAD, had no staged changes, and showed 21 changed tracked files, two insertions and 4,204 deletions. Repository model and sandbox choices survived. The committed hook file, native rules and template manifest were removed. Both fresh scratch sessions returned their guard’s denial after migration.
+
+Two distinct Codex threads supplied the session evidence:
+
+- **Started after readiness.** The same thread, `01a2081a-2aa1-7781-ac43-a450af4aaedc`, received the guard’s denial for the public repository canary before sync, after ordinary sync, after retirement and after the subsequent skills-only upgrade.
+- **Started before installation.** Thread `01a20813-3b83-7fe0-a9ef-857fd30f1691` remained open in the disposable clone, answered a text-only turn after retirement and was then closed. This records session survival. It establishes no post-retirement tool enforcement for that older thread. The separate [legacy-session observation from Task 1](../task-1/README.md) underlies the instruction to close such terminals before a real migration.
+
+The sync and migration capture is `fbe15616-9c55-4d76-9b1f-13bebed36a30`.
+
+### Repeat of demonstrations 1, 2 and 4
+
+| Demonstration | Result |
+| --- | --- |
+| Skills-only upgrade | A local successor built from the RC3 tag changed one skill. Its new marker appeared in the real skills cache. The guard’s manifest kept its inode and digest, and the already-open managed thread again received its guard denial. |
+| Interrupted activation | The real vendor registered a guard bundle with a test-only metadata change. The injected interruption left the journal at `activating / codex-add-kk-guard`. In the loopback-only namespace, rollback restored the shipped RC3 release and the previously reviewed guard. Both vendors denied their scratch canaries and the candidate cleared. |
+| Promoted CLI unavailable | The promoted local successor’s `kk/lib` was moved aside. The recovery command printed at promotion used RC3’s retained dispatcher. Offline recovery restored RC3, both vendors reported ready and returned guard denials, and the candidate cleared. |
+
+Capture `93924cd5-9f9d-4c25-9e6e-e1ce86dcd6aa` records all three demonstrations. The final guest journal named RC3 as active, with both tools ready and no pending candidate. The successor versions were deliberate local fixtures for the lifecycle transitions. The installed and restored release came from the published tag.
+
+This pilot covers the stated Linux and vendor versions. The macOS argument-size check belongs to Task 17. Publishing the stable retirement release and retiring this repository’s template are separate steps.
+
+The source `devex-makefile` checkout remained clean. The VMs were shut down and the temporary disks moved to the macOS Trash. Docker’s pilot container `kk-retirement-pilot-ckxe9ppi` is stopped. The host repository guard blocked its removal; the host operator can remove that stopped container when desired.

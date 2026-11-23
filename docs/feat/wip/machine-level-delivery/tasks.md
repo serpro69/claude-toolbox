@@ -373,7 +373,7 @@ Task 4 must distinguish interpreter-generated guard bytecode from a changed rele
 
 ## Task 18: Pilot the tagged release
 _Runs before Task 16. It was added after the design review and is numbered 18 so that existing references to Tasks 16 and 17 stay valid._
-- **Status:** in-progress
+- **Status:** done
 - **Depends on:** Task 12, Task 14
 - **Size:** S
 - **Slicing:** Risk-First — retirement is not cheaply undone, and scratch plugins are not what adopters install
@@ -382,11 +382,11 @@ _Runs before Task 16. It was added after the design review and is numbered 18 so
 
 ### Subtasks
 - [x] 18.1 Tag a release candidate of the retirement release through the pre-release workflow
-- [ ] 18.2 On a machine or user account with no toolbox state, run the installer at the candidate version → verify: every parity-ledger row marked kept or moved is observed, with both Codex opt-ins switched on and off
+- [x] 18.2 On a machine or user account with no toolbox state, run the installer at the candidate version → verify: every parity-ledger row marked kept or moved is observed, with both Codex opt-ins switched on and off
 - [x] 18.3 In one legacy repository, open a Codex session, then install and review the hooks, then run an ordinary `--local` sync against the candidate → verify: the legacy guard files and hook registrations are intact
-- [ ] 18.4 Run `kk migrate --retirement-version <candidate>` in that repository → verify: a new session is guarded throughout; what the older session does is recorded
+- [x] 18.4 Run `kk migrate --retirement-version <candidate>` in that repository → verify: a new session is guarded throughout; what the older session does is recorded
 - [x] 18.5 Repeat demonstrations 1, 2 and 4 with the shipped guard plugin and the real marketplace names
-- [ ] 18.6 Write the results to `verification/pilot/` with tool versions; fix and re-pilot with a new candidate anything the pilot contradicts before the stable retirement release is tagged
+- [x] 18.6 Write the results to `verification/pilot/` with tool versions; fix and re-pilot with a new candidate anything the pilot contradicts before the stable retirement release is tagged
 
 ### Execution context
 
@@ -397,6 +397,7 @@ _Runs before Task 16. It was added after the design review and is numbered 18 so
 - 2026-11-23, explicitly accepted by the maintainer. Direct account-wide hook review to plain `codex` without a profile. Use the same account scope when first trusting a repository. Keep `kk codex` as the managed launcher and preserve its existing verification checks. The correction requires a new candidate pilot before completion.
 
 - 2026-11-23, RC2 observations. Plain-Codex hook and folder review worked on a pristine guest. The first wrapped TUI then changed only its model-tip counter, causing the next batch launch to refuse. The local correction verifies all generated settings and admits only the vendor’s numeric model-tip table. Its real interactive launch, subsequent batch command and both scratch guard denials passed. RC2 cannot be promoted. [Pilot evidence](./verification/pilot/README.md#rc2)
+- 2026-11-23, verified on the published `v0.26.0-rc.3` at `5ee83cb3`. A pristine Debian ARM64 account passed the corrected onboarding, first interactive-to-batch transition, parity checks with both opt-ins on and off, legacy sync and migration, and demonstrations 1, 2 and 4. The pre-install thread answered a tool-free turn after retirement and was closed. The post-readiness thread returned guard denials across all four phases. Both offline recoveries ended with RC3 active and both tools ready. [Final pilot results](./verification/pilot/README.md#rc3)
 
 ## Task 16: Retire the template in this repository
 - **Status:** pending
