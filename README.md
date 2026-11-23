@@ -1,15 +1,15 @@
 <div align="center">
   <picture>
     <source media="(prefers-color-scheme: dark)" srcset="docs/assets/images/lockup-dark.svg">
-    <img src="docs/assets/images/lockup-light.svg" alt="claude-toolbox" width="720">
+    <img src="docs/assets/images/lockup-light.svg" alt="Agentstakk" width="720">
   </picture>
 </div>
 
-# claude-toolbox
+# Agentstakk
 
-[![GitHub Release](https://img.shields.io/github/v/release/serpro69/claude-toolbox?style=for-the-badge&color=D9683D)](https://github.com/serpro69/claude-toolbox/releases)
+[![GitHub Release](https://img.shields.io/github/v/release/serpro69/agentstakk?style=for-the-badge&color=D9683D)](https://github.com/serpro69/agentstakk/releases)
 [![Mentioned in Awesome Claude Code](https://img.shields.io/badge/Awesome-Claude%20Code-fc60a8?style=for-the-badge&logo=awesomelists&logoColor=white)](https://github.com/hesreallyhim/awesome-claude-code)
-[![Documentation](https://img.shields.io/badge/docs-serpro69.github.io%2Fclaude--toolbox-blue?style=for-the-badge)](https://serpro69.github.io/claude-toolbox/)
+[![Documentation](https://img.shields.io/badge/docs-serpro69.github.io%2Fagentstakk-blue?style=for-the-badge)](https://serpro69.github.io/agentstakk/)
 
 <div align="center"
   <picture>
@@ -17,21 +17,21 @@
   </picture>
 </div>
 
-`claude-toolbox` is a collection of "tools" for all your agentic workflows — pre-configured MCP servers, skills, sub-agents, commands, hooks, statuslines with themes, and more - everything you need for AI-powered development workflows, used and battle-tested daily on many of my own projects.
+Agentstakk is a collection of "tools" for all your agentic workflows — pre-configured MCP servers, skills, sub-agents, commands, hooks, statuslines with themes, and more - everything you need for AI-powered development workflows, used and battle-tested daily on many of my own projects.
 
-**Supported providers:** [Claude Code](https://serpro69.github.io/claude-toolbox/latest/providers/claude-code/) · [Codex](https://serpro69.github.io/claude-toolbox/latest/providers/codex/)
+**Supported providers:** [Claude Code](https://serpro69.github.io/agentstakk/latest/providers/claude-code/) · [Codex](https://serpro69.github.io/agentstakk/latest/providers/codex/)
 
 <div align="center">
 
-## [Read the full documentation →](https://serpro69.github.io/claude-toolbox/latest/)
+## [Read the full documentation →](https://serpro69.github.io/agentstakk/latest/)
 
-  <a href="https://serpro69.github.io/claude-toolbox/latest/">
+  <a href="https://serpro69.github.io/agentstakk/latest/">
     <img width="1080" alt="Docs landing page" src="https://github.com/user-attachments/assets/f6af0017-7f78-476b-8399-81eda8673d0a" />
   </a>
 
-### [Or explore how claude-toolbox was used in a real project →](https://serpro69.github.io/claude-toolbox/latest/explore/)
+### [Or explore how Agentstakk was used in a real project →](https://serpro69.github.io/agentstakk/latest/explore/)
 
-  <a href="https://serpro69.github.io/claude-toolbox/latest/explore/">
+  <a href="https://serpro69.github.io/agentstakk/latest/explore/">
     <img width="1080" alt="Explore page" src="https://github.com/user-attachments/assets/1adbbaa6-579c-4f27-94b1-8515cfefc2ec" />
   </a>
 </div>
@@ -45,9 +45,9 @@
 >
 > That said, if you have any problems with code that is written by AI - you've been warned. But, then again, why would you be interested in AI-related configs and skills in the first place... `¯\_(ツ)_/¯`
 
-## Why claude-toolbox?
+## Why Agentstakk?
 
-Tools like Claude Code and Codex are powerful on their own, but LLMs don't know your development workflow. This project started as a way for me to streamline claude configurations across all my projects without needing to copy-paste things. With time, patterns and re-curring prompts evolved into skills and agents. Currently, claude-toolbox gives you two things:
+Tools like Claude Code and Codex are powerful on their own, but LLMs don't know your development workflow. This project started as a way for me to streamline claude configurations across all my projects without needing to copy-paste things. With time, patterns and re-curring prompts evolved into skills and agents. Currently, Agentstakk gives you two things:
 
 **A minimal, opinionated Claude Code and Codex configuration** — sensible permission baselines, a rich statusline, MCP server wiring, and a machine-level installation that updates them across projects. Think of it as a dotfiles repo for Claude Code and Codex.
 
@@ -75,7 +75,7 @@ From a checkout containing the machine installer:
 ~/.local/bin/kk status
 ```
 
-Put `~/.local/bin` on your `PATH`. In any project, run `kk claude` or `kk codex`. For the initial Codex setup, open plain `codex` without `--profile` in the project and review folder trust and the three `kk-guard@toolbox` handlers in `/hooks`. Run `kk status --live` to verify each managed guard. Once the first machine release is published, the installation guide’s one-line installer downloads the latest stable release. The guide also covers version pinning and offline rollback. [Install kk](docs/getting-started/template-setup.md)
+Put `~/.local/bin` on your `PATH`. In any project, run `kk claude` or `kk codex`. For the initial Codex setup, open plain `codex` without `--profile` in the project and review folder trust and the three managed `kk-guard` handlers in `/hooks` (`@toolbox` through RC4, `@agentstakk-local` in the renamed release). Run `kk status --live` to verify each managed guard. Once the first machine release is published, the installation guide’s one-line installer downloads the latest stable release. The guide also covers version pinning and offline rollback. [Install kk](docs/getting-started/template-setup.md)
 
 If your project contains `.github/template-state.json`, use `kk migrate` when the team is ready to retire the repository copies. For skills managed directly by the vendor, use the Git-marketplace plugin. [Migration guide](docs/user-guide/template-sync.md) · [Plugin-only setup](docs/getting-started/plugin-only.md)
 
@@ -100,7 +100,7 @@ repository and release checks remain required. See
 [functional review and implementation](docs/user-guide/skills.md#functional-review-and-implementation)
 for examples and limits.
 
-This is the core loop. See the [Skills documentation](https://serpro69.github.io/claude-toolbox/latest/user-guide/skills/) for all available skills and the full workflow pipeline.
+This is the core loop. See the [Skills documentation](https://serpro69.github.io/agentstakk/latest/user-guide/skills/) for all available skills and the full workflow pipeline.
 
 To clarify a bug report or feature request, use `/kk:clarify-docs issue-draft.md`
 or supply an issue URL or pasted description with a local destination. The skill
@@ -114,7 +114,7 @@ Examples of actual Claude Code workflows executed using this template's configs,
 
 ## Contributing
 
-Contributions are welcome! See the [Contributing guide](https://serpro69.github.io/claude-toolbox/latest/contributing/) for guidelines, [Architecture](https://serpro69.github.io/claude-toolbox/latest/contributing/architecture/) for how components fit together, and [Testing](https://serpro69.github.io/claude-toolbox/latest/contributing/testing/) for test conventions.
+Contributions are welcome! See the [Contributing guide](https://serpro69.github.io/agentstakk/latest/contributing/) for guidelines, [Architecture](https://serpro69.github.io/agentstakk/latest/contributing/architecture/) for how components fit together, and [Testing](https://serpro69.github.io/agentstakk/latest/contributing/testing/) for test conventions.
 
 ## License
 
@@ -122,4 +122,4 @@ Copyright &copy; 2025 - present, [serpro69](https://github.com/serpro69)
 
 Distributed under the Apache License 2.0.
 
-See [`LICENSE.md`](https://github.com/serpro69/claude-toolbox/blob/master/LICENSE.md) file for more information.
+See [`LICENSE.md`](https://github.com/serpro69/agentstakk/blob/master/LICENSE.md) file for more information.

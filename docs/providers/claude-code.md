@@ -1,6 +1,6 @@
 # Claude Code
 
-Claude Code is the primary provider for claude-toolbox. All skills, agents, and configuration are authored for Claude Code first.
+Claude Code is the primary provider for Agentstakk. All skills, agents, and configuration are authored for Claude Code first.
 
 ## Setup
 

@@ -1,6 +1,6 @@
 # Plugin Development
 
-The kk plugin lives at `klaude-plugin/`. This section covers the practical rules for authoring each component. For the full specification, see [`CLAUDE.md`](https://github.com/serpro69/claude-toolbox/blob/master/CLAUDE.md).
+The kk plugin lives at `klaude-plugin/`. This section covers the practical rules for authoring each component. For the full specification, see [`AGENTS.md`](https://github.com/serpro69/agentstakk/blob/master/AGENTS.md).
 
 ## Skills
 
@@ -130,14 +130,14 @@ The declaration and engine in `klaude-plugin/scripts/guard/` are canonical. Run 
 To develop this repository with an agent, the user adds a physical checkout path (or a parent covering worktrees) to **`~/.claude/kk-guard.json`**:
 
 ```json
-{"version":1,"projects":{"/absolute/path/to/claude-toolbox":{"disable_selfmod":true}}}
+{"version":1,"projects":{"/absolute/path/to/agentstakk":{"disable_selfmod":true}}}
 ```
 
 Merge that entry into existing user configuration. This permits settings and guard-file edits without disabling secrets checks. The project file can only tighten policy; committing `disable_selfmod` there does not authorize edits. Without the user exception, even adding a permission allow entry to settings is blocked. Destructive operations remain governed by their separate category settings and Codex native rules.
 
 ## Profiles
 
-Profiles at `klaude-plugin/profiles/<name>/` provide domain-specific content to every workflow phase. See the [Profile Conventions](https://github.com/serpro69/claude-toolbox/blob/master/CLAUDE.md#profile-conventions) section of CLAUDE.md for the full specification.
+Profiles at `klaude-plugin/profiles/<name>/` provide domain-specific content to every workflow phase. See the [Profile Conventions](https://github.com/serpro69/agentstakk/blob/master/AGENTS.md#profile-conventions) section of `AGENTS.md` for the full specification.
 
 **Required files:**
 

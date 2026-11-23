@@ -11,6 +11,8 @@ from urllib.request import urlopen
 from uuid import uuid4
 
 
+UPSTREAM = "serpro69/agentstakk"
+FORMER_UPSTREAMS = ("serpro69/claude-toolbox", "serpro69/claude-starter-kit")
 TAG = re.compile(r"v[0-9]+\.[0-9]+\.[0-9]+(?:-[0-9A-Za-z.-]+)?(?:\+[0-9A-Za-z.-]+)?")
 LAYOUT = Path(__file__).resolve().parents[1] / "payload.json"
 
@@ -109,8 +111,22 @@ def latest_tag(repo):
         return tag_name(json.load(response)["tag_name"])
 
 
+def canonical_repository(repo):
+    if not isinstance(repo, str):
+        raise ValueError("KK_REPOSITORY must be a GitHub owner/repository")
+    if repo.lower() in (*FORMER_UPSTREAMS, UPSTREAM):
+        return UPSTREAM
+    return repo
+
+
+def canonical_source(source):
+    if source and "repository" in source:
+        return dict(source, repository=canonical_repository(source["repository"]))
+    return source
+
+
 def upgrade_repository():
-    return os.environ.get("KK_REPOSITORY", "serpro69/claude-toolbox")
+    return canonical_repository(os.environ.get("KK_REPOSITORY", UPSTREAM))
 
 
 def check_links(root):

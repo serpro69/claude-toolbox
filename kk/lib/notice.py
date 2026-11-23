@@ -3,7 +3,6 @@
 import fcntl
 from contextlib import contextmanager
 from http.client import HTTPException
-import os
 import subprocess
 import sys
 import time
@@ -17,7 +16,12 @@ DAY = 24 * 60 * 60
 def read_cache(home):
     try:
         cached = payload.read_json(home / "update-notice.json")
-        return cached if isinstance(cached, dict) else {}
+        if not isinstance(cached, dict):
+            return {}
+        for alias in payload.FORMER_UPSTREAMS:
+            if alias in cached:
+                cached.setdefault(payload.UPSTREAM, cached[alias])
+        return cached
     except (OSError, ValueError):
         return {}
 
@@ -101,7 +105,7 @@ def on_launch(home, record):
             return
         active = record["active"]
         source = record["releases"][active].get("source", {})
-        repo = source.get("repository", os.environ.get("KK_REPOSITORY", "serpro69/claude-toolbox"))
+        repo = payload.canonical_repository(source.get("repository", payload.upgrade_repository()))
         release = home / "releases" / payload.release_id(active)
         with cache_lock(home):
             cache = read_cache(home)

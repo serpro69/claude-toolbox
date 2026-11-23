@@ -1,6 +1,6 @@
 # User Guide
 
-Learn how to use claude-toolbox's features effectively.
+Learn how to use Agentstakk's features effectively.
 
 ## Core Concepts
 

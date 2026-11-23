@@ -11,7 +11,6 @@ from . import claude, codex_plugins, codex_profile, codex_trust, live, payload
 
 
 RETIREMENT_VERSION = "v0.26.0-rc.4"
-UPSTREAM = "serpro69/claude-toolbox"
 MANIFEST = ".github/template-state.json"
 
 
@@ -69,6 +68,33 @@ def fetch_scripts(directory, repository, tag):
     return script
 
 
+def route_legacy_upstream(env, upstream, repository, scratch):
+    # RC4 reads the downstream manifest again, and can rewrite starter-kit to
+    # claude-toolbox during sync. Bind those Git fetches to the verified source.
+    if upstream == repository:
+        return
+    def git_url(slug):
+        url = "https://github.com/{}.git".format(slug)
+        # Like RC4's git clone, resolve inherited settings outside the adopter repository.
+        return subprocess.check_output(["git", "ls-remote", "--get-url", url],
+                                       cwd=scratch, env=env, text=True).strip()
+
+    target = git_url(repository)
+    aliases = [upstream]
+    if upstream == "serpro69/claude-starter-kit":
+        aliases.append("serpro69/claude-toolbox")
+    count = int(env.get("GIT_CONFIG_COUNT") or 0)
+    for alias in aliases:
+        env["GIT_CONFIG_KEY_{}".format(count)] = "url.{}.insteadOf".format(target)
+        env["GIT_CONFIG_VALUE_{}".format(count)] = "https://github.com/{}.git".format(alias)
+        count += 1
+        env["GIT_CONFIG_COUNT"] = str(count)
+        # Git keeps the first of equally specific insteadOf rules.
+        if git_url(alias) != target:
+            raise ValueError("conflicting Git URL rewrite for {}; align it with {} before migrating".format(
+                alias, repository))
+
+
 def migrate(home, record, tag):
     tag = payload.tag_name(tag)
     if (not record["active"] or not record["installed_paths"] or record.get("pending_entry")
@@ -79,12 +105,11 @@ def migrate(home, record, tag):
     if not (workspace / MANIFEST).is_file():
         raise ValueError("no legacy {} in {}".format(MANIFEST, workspace))
     saved = record["releases"][record["active"]]
-    repository = saved.get("source", {}).get("repository") or os.environ.get("KK_REPOSITORY", UPSTREAM)
+    source = saved.get("source", {})
+    repository = payload.canonical_repository(source.get("repository", payload.upgrade_repository()))
     payload.api_root(repository)  # Validate the trusted install source before using it in a URL.
     upstream = payload.read_json(workspace / MANIFEST)["upstream_repo"]
-    if upstream == "serpro69/claude-starter-kit":
-        upstream = UPSTREAM
-    if upstream != repository:
+    if payload.canonical_repository(upstream) != repository:
         raise ValueError("the manifest names {}, but the migration scripts would come from {}".format(upstream, repository))
     prerequisites()
     tools = repository_tools(workspace)
@@ -104,6 +129,7 @@ def migrate(home, record, tag):
         env = dict(os.environ, TEMPLATE_SYNC_NO_HANDOFF="1")
         env.pop("TEMPLATE_SYNC_HANDOFF_CLEANUP", None)
         env.pop("TEMPLATE_SYNC_MERGE_DENY", None)
+        route_legacy_upstream(env, upstream, repository, directory)
         sync_env = dict(env, TEMPLATE_SYNC_MERGE_DENY="1")
 
         def run(options, environment):

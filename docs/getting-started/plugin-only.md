@@ -1,12 +1,12 @@
 # Plugin-Only Setup
 
-Already have a project? Install just the plugin to get all 16 workflow and utility skills.
+Install just the plugin to get all 16 workflow and utility skills. The commands below apply once the renamed public marketplace is published. Until then, use `serpro69/claude-toolbox` as the repository and `claude-toolbox` as the marketplace ID.
 
 ## Claude Code
 
 ```
-claude plugin marketplace add serpro69/claude-toolbox
-claude plugin install kk@claude-toolbox
+claude plugin marketplace add serpro69/agentstakk
+claude plugin install kk@agentstakk
 ```
 
 Skills are available as `/kk:(skill-name)` (annotated with `(kk)` in the slash command menu). The Claude plugin also includes commands, sub-agents and the permission guard. The guard protects secrets, destructive operations and configuration on Bash, file tools and capy execution tools without needing template settings or configuration files.
@@ -18,13 +18,13 @@ For launchers, native permission settings and machine-wide updates, use [Install
 ## Codex
 
 ```bash
-codex plugin marketplace add serpro69/claude-toolbox
-codex plugin add kk@claude-toolbox
+codex plugin marketplace add serpro69/agentstakk
+codex plugin add kk@agentstakk
 ```
 
-The Codex plugin includes skills and language-specific profile content (review checklists, implementation gotchas, etc.). See [kodex-plugin](https://github.com/serpro69/claude-toolbox/tree/master/kodex-plugin) for details.
+The Codex plugin includes skills and language-specific profile content (review checklists, implementation gotchas, etc.). See [kodex-plugin](https://github.com/serpro69/agentstakk/tree/master/kodex-plugin) for details.
 
-To install the separate permission guard from a marketplace revision that includes it, run `codex plugin add kk-guard@claude-toolbox`. Review its three `PreToolUse` handlers in `/hooks`. The guard reads project policy from the session workspace.
+To install the separate permission guard from a marketplace revision that includes it, run `codex plugin add kk-guard@agentstakk`. Review its three `PreToolUse` handlers in `/hooks`. The guard reads project policy from the session workspace.
 
 [Machine installation](template-setup.md) also supplies the named Codex profile, owned sub-agent files and optional account-wide rules.
 
@@ -32,7 +32,16 @@ For MCP servers (Context7, Pal), see [Codex MCP Setup](../user-guide/mcp-servers
 
 ## Upgrading
 
-Use the vendor’s marketplace update commands for the Git installation. In Claude Code, refresh the marketplace with `claude plugin marketplace update claude-toolbox`, update `kk@claude-toolbox` with `claude plugin update kk@claude-toolbox`, and start a fresh session. In Codex, review changed guard handlers in `/hooks` before using a new session. Managed installations use `kk upgrade`.
+Use the vendor’s marketplace update commands for the Git installation. In Claude Code, refresh the marketplace with `claude plugin marketplace update agentstakk`, update `kk@agentstakk` with `claude plugin update kk@agentstakk`, and start a fresh session. In Codex, review changed guard handlers in `/hooks` before using a new session. Managed installations use `kk upgrade`.
+
+## Switch an existing Git-marketplace installation
+
+Use these steps **after the public marketplace identifies itself as `agentstakk`**. The old registration is named `claude-toolbox`. The repository address and marketplace ID are separate vendor settings.
+
+1. List the installed plugins and their scopes. Add the new Git marketplace with `claude plugin marketplace add serpro69/agentstakk` or `codex plugin marketplace add serpro69/agentstakk`.
+2. Install the replacement with `claude plugin install kk@agentstakk` or `codex plugin add kk@agentstakk`. If you use the public Codex guard, also run `codex plugin add kk-guard@agentstakk` and review its handlers in plain Codex.
+3. Remove the old copies you own. For a Claude user install, run `claude plugin uninstall --scope user --keep-data kk@claude-toolbox`. For Codex, run `codex plugin remove kk@claude-toolbox` and, if installed, `codex plugin remove kk-guard@claude-toolbox`. Remove the old marketplace with the vendor’s `plugin marketplace remove claude-toolbox` command once nothing else uses it. Update any project-owned enablement in its original scope.
+4. Start a fresh session and check that only the intended guard is enabled.
 
 ## What's Included
 

@@ -25,7 +25,7 @@ class LaunchNotice(InstallFixture):
                 contextlib.redirect_stdout(io.StringIO()) as output, cli.state.writer(self.toolbox):
             os.environ.pop("KK_REPOSITORY", None)
             self.assertEqual(cli.main(), 0)
-            fetch.assert_called_once_with("serpro69/claude-toolbox")
+            fetch.assert_called_once_with("serpro69/agentstakk")
             os.environ["KK_REPOSITORY"] = "new/fork"
             self.assertEqual(cli.main(), 0)
             fetch.assert_called_with("new/fork")
@@ -65,6 +65,23 @@ class LaunchNotice(InstallFixture):
         for latest, installed, expected in (("v1.10.0", "v1.9.0", True), ("v1.9.0", "v1.10.0", False),
                                              ("v2.0.0-rc.1", "v1.0.0", False), ("v1.0.0", "v1.0.0+abc", False)):
             self.assertEqual(cli.notice.newer(latest, installed), expected)
+
+    def test_launch_from_old_upstream_reuses_daily_notice(self):
+        self.toolbox.mkdir(parents=True)
+        old = "serpro69/claude-toolbox"
+        tag = "v1.0.0"
+        source = {"repository": old, "tag": tag}
+        record = {"active": tag, "releases": {tag: {"source": source}}}
+        cli.state.write_json(self.toolbox / "update-notice.json",
+                             {old: {"latest": "v1.1.0", "checked": time.time(), "shown": True}})
+        with patch.dict(os.environ, self.env), patch("sys.stdin.isatty", return_value=True), \
+                patch("sys.stderr.isatty", return_value=True), patch.object(cli.notice.subprocess, "run") as refresh:
+            cli.notice.on_launch(self.toolbox, record)
+            refresh.assert_not_called()
+            self.assertEqual(cli.codex_plugins.activation_hint({"source": source}), "run kk upgrade --version v1.0.0")
+            cli.state.write_json(self.toolbox / "update-notice.json", {})
+            cli.notice.on_launch(self.toolbox, record)
+            self.assertEqual(refresh.call_args.args[0][-1], "serpro69/agentstakk")
 
     def test_terminal_and_opt_out(self):
         self.install()

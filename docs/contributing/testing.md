@@ -54,7 +54,7 @@ Tests use shared utilities from `test/helpers.sh`:
 - `print_summary` — final pass/fail count
 
 Test fixtures live in `test/fixtures/`.
-The [retained functional-review utilities](https://github.com/serpro69/claude-toolbox/blob/master/scripts/functional-review-evals/README.md)
+The [retained functional-review utilities](https://github.com/serpro69/agentstakk/blob/master/scripts/functional-review-evals/README.md)
 own small synthetic fixtures within their tests. Set `FUNCTIONAL_REVIEW_PYTHON`
 to an explicit Python 3.11+ interpreter when the default `python3` is older.
 Codex hook cases derive from `toolbox-only-hooks.json`, so the legacy case stays
@@ -62,7 +62,7 @@ independent of Capy registrations in the developer's live `.codex/hooks.json`.
 
 ## Writing Tests
 
-Follow [proportionate verification](https://github.com/serpro69/claude-toolbox/blob/master/klaude-plugin/skills/_shared/verification-policy.md)
+Follow [proportionate verification](https://github.com/serpro69/agentstakk/blob/master/klaude-plugin/skills/_shared/verification-policy.md)
 when choosing coverage and acceptance criteria; [ADR 0010](../adr/0010-proportionate-verification.md)
 records the rationale. Deterministic tests protect software contracts. Agent
 evaluations measure semantic outcomes with variability and evidence limits;
@@ -116,7 +116,7 @@ bash test/test-generate-guard.sh
 
 The wrapper suite times 100 Read calls and every active Bash corpus row, including process startup, validation and cleanup. It always reports both p95 values when the timing probes run. Targets are 30 ms for file tools and 50 ms for Bash; local gates fail at 60/100 ms respectively when `CI` is unset. With `CI` present, timing is reported without enforcement. A CI-mode pass is not evidence that a local latency target passed.
 
-The 2026-10-26 macOS arm64 run with the default Apple Python 3.9.6 measured **76.62 ms Read / 76.00 ms Bash** outside the agent sandbox: the Read gate failed and both targets were missed. The performance requirement remains open before feature completion; limits were not relaxed. See the [permission-guard evidence](https://github.com/serpro69/claude-toolbox/blob/master/docs/feat/wip/permission-guard/design.md#16-assumptions) for all attempts and prerequisites.
+The 2026-10-26 macOS arm64 run with the default Apple Python 3.9.6 measured **76.62 ms Read / 76.00 ms Bash** outside the agent sandbox: the Read gate failed and both targets were missed. The performance requirement remains open before feature completion; limits were not relaxed. See the [permission-guard evidence](https://github.com/serpro69/agentstakk/blob/master/docs/feat/done/permission-guard/design.md#16-assumptions) for all attempts and prerequisites.
 
 A later wrapper optimization on the same host prefers an existing Homebrew Python, skips unused site startup and avoids subprocesses for empty output. That run measured **40.92 ms Read / 42.13 ms Bash**, passing both unchanged local gates and the Bash target. A second pass imports the engine through a small launcher so Python can reuse compiled bytecode: the unchanged benchmark measured **37.27 → 31.10 ms Read / 42.50 → 34.75 ms Bash** against its immediate predecessor. The 30 ms Read target remains open. Earlier measurements remain historical evidence.
 
@@ -135,7 +135,7 @@ directory. A scenario contains `eval.json`, subject files under `test-files/`
 and optional grader-only expected results under `oracle/`. Regenerate the Codex
 copies with `make generate-kodex`.
 
-The [review harness](https://github.com/serpro69/claude-toolbox/blob/master/klaude-plugin/skills/review-code/evals/_harness/HARNESS.md)
+The [review harness](https://github.com/serpro69/agentstakk/blob/master/klaude-plugin/skills/review-code/evals/_harness/HARNESS.md)
 describes component grading and full-workflow capture. Its `setup.sh` stages flat
 fixtures, complete `before/` and `after/` snapshots, and optional local Git history
 into fresh destinations. Use a workspace outside any `SKILL.md` ancestor so the
@@ -160,7 +160,7 @@ replays test reporting, not live integration. Expand measurement only for a
 concrete uncertainty that could change the decision; structural tests do not
 establish model reliability.
 
-The [functional-review summary](https://github.com/serpro69/claude-toolbox/blob/master/docs/feat/wip/functional-review/verification-summary.md)
+The [functional-review summary](https://github.com/serpro69/agentstakk/blob/master/docs/feat/done/functional-review/verification-summary.md)
 records the retained comparisons, current acceptance and known limits. Detailed
 captures remain in the feature's evidence tree until the human-owned release
 archive is verified.

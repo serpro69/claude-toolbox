@@ -163,11 +163,12 @@ def prepare(home, record, args, archive_file, work):
     candidate = record["candidate"]
     source = {"local": str(args.local.resolve())} if args.local else {
         "tag": args.version, "repository": payload.upgrade_repository()}
+    candidate_source = payload.canonical_source(candidate["source"]) if candidate else None
     if candidate and not args.local and not args.version:
-        source = candidate["source"]
-    if record["active"] and candidate and candidate["phase"] == "activating" and source != candidate["source"]:
+        source = candidate_source
+    if record["active"] and candidate and candidate["phase"] == "activating" and source != candidate_source:
         raise ValueError("upgrade in progress; run kk upgrade without a source to resume, or kk status for recovery options")
-    if candidate and source == candidate["source"]:
+    if candidate and source == candidate_source:
         version = payload.release_id(candidate["version"])
         stage = home / "staging" / version
         existing = stage if stage.is_dir() else home / "releases" / version
@@ -187,7 +188,7 @@ def prepare(home, record, args, archive_file, work):
         version = payload.tag_name(source["tag"]) if source["tag"] else payload.latest_tag(source["repository"])
         source["tag"] = version
         existing = record["releases"].get(version, {})
-        if existing.get("source") == source:
+        if payload.canonical_source(existing.get("source")) == source:
             directory = codex_profile.codex_home()
             needs_codex = shutil.which("codex") and (
                 (existing.get("codex_snapshot") or {}).get("directory") != str(directory)
@@ -201,7 +202,7 @@ def prepare(home, record, args, archive_file, work):
             placed = home / "releases" / version
             payload.verify_saved(placed, existing)
             validation.validate(placed)
-            record["candidate"] = {"version": version, "phase": "staged", "source": source,
+            record["candidate"] = {"version": version, "phase": "staged", "source": existing["source"],
                                    "digest_format": 2, "digest": payload.fingerprint(placed)}
             if version == record["active"]:
                 record["candidate"]["operation"] = "add-codex"
@@ -215,7 +216,7 @@ def prepare(home, record, args, archive_file, work):
             source["tag"] = version
         placed = home / "releases" / version
         if placed.exists() and (record["active"] or not (
-                candidate and candidate["version"] == version and candidate["source"] == source)):
+                candidate and candidate["version"] == version and candidate_source == source)):
             raise ValueError("retained release {} already occupies {}; choose a different tag or --local".format(
                 version, placed))
         codex_plugins.stage_guard(stage, record, codex_profile.codex_home(), local is not None)

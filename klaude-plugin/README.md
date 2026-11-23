@@ -1,17 +1,18 @@
 # kk — Claude Code Plugin
 
-[![Documentation](https://img.shields.io/badge/docs-serpro69.github.io%2Fclaude--toolbox-blue?style=for-the-badge)](https://serpro69.github.io/claude-toolbox/latest/user-guide/skills/)
+[![Documentation](https://img.shields.io/badge/docs-serpro69.github.io%2Fagentstakk-blue?style=for-the-badge)](https://serpro69.github.io/agentstakk/latest/user-guide/skills/)
 
-A development workflow plugin for [Claude Code](https://docs.anthropic.com/en/docs/claude-code) that gives your AI assistant a structured pipeline — from idea through design, implementation, code review, testing, to documentation. Part of the [claude-toolbox](https://github.com/serpro69/claude-toolbox) project.
+A development workflow plugin for [Claude Code](https://docs.anthropic.com/en/docs/claude-code) that gives your AI assistant a structured pipeline — from idea through design, implementation, code review, testing, to documentation. Part of the [Agentstakk](https://github.com/serpro69/agentstakk) project.
 
 Why `kk`? I have `jj` and `kk` mappings in nvim to go back to normal mode, and it seemed like a low-conflict/easy-to-type option for a plugin-prefixed skill names. We can also pretend it's an acronym for "klaude kode", if you need a better reason for the plugin naming.
 
 ## Installation
 
-For the machine-managed release, install `kk` and launch with `kk claude`. The local marketplace is named `toolbox`. The commands below are for the separate Git-marketplace installation. [Machine installation](https://serpro69.github.io/claude-toolbox/latest/getting-started/template-setup/)
+For the machine-managed release, install `kk` and launch with `kk claude`. The commands below apply after the public Agentstakk marketplace is published. Through RC4 the repository is `serpro69/claude-toolbox` and the public marketplace ID is `claude-toolbox`. [Machine installation](https://serpro69.github.io/agentstakk/latest/getting-started/template-setup/)
 
 ```
-/plugin install kk@claude-toolbox
+/plugin marketplace add serpro69/agentstakk
+/plugin install kk@agentstakk
 ```
 
 All skills appear as `/skill-name` in the slash command menu (annotated with `(kk)`). The permission guard is active without a separate policy file; its runtime requirements and exceptions are described below.
@@ -26,7 +27,7 @@ Use `/kk:brainstorm` for an optional conversation about a technical idea or deci
 - **Hooks** — permission guard for secrets, destructive operations and protected configuration on Bash, file tools and capy execution tools
 - **Profiles** — per-domain content (Go, Java, JS/TS, Kotlin, K8s, Python) with review checklists, implementation gotchas, design prompts, test validators, and doc rubrics
 
-See the [Skills](https://serpro69.github.io/claude-toolbox/latest/user-guide/skills/) and [Profiles](https://serpro69.github.io/claude-toolbox/latest/user-guide/profiles/) documentation for details.
+See the [Skills](https://serpro69.github.io/agentstakk/latest/user-guide/skills/) and [Profiles](https://serpro69.github.io/agentstakk/latest/user-guide/profiles/) documentation for details.
 
 ## Permission guard
 

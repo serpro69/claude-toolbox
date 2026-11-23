@@ -1,4 +1,4 @@
-module github.com/serpro69/claude-toolbox
+module github.com/serpro69/agentstakk
 
 go 1.25.2
 

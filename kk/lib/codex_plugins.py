@@ -24,9 +24,9 @@ def receipt(record, directory, name):
 def activation_hint(saved):
     source = saved.get("source", {})
     if "tag" in source:
-        repository = source["repository"]
+        repository = payload.canonical_repository(source["repository"])
         prefix = ("KK_REPOSITORY=" + shlex.quote(repository) + " "
-                  if repository != os.environ.get("KK_REPOSITORY", "serpro69/claude-toolbox") else "")
+                  if repository != payload.upgrade_repository() else "")
         return "run " + prefix + "kk upgrade --version " + source["tag"]
     if "local" in source:
         return "run kk upgrade --local " + shlex.quote(source["local"])
@@ -85,7 +85,7 @@ def vendor(home, directory, *args):
 
 
 def manifest(home, release):
-    return {"name": MARKETPLACE, "interface": {"displayName": "Claude Toolbox"},
+    return {"name": MARKETPLACE, "interface": {"displayName": "Agentstakk"},
             "plugins": [{"name": name, "category": "Productivity",
                          "policy": {"installation": "AVAILABLE", "authentication": "ON_INSTALL"},
                          "source": {"source": "local", "path": "./" + (release / folder).relative_to(home).as_posix()}}
