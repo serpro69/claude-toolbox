@@ -373,7 +373,7 @@ Task 4 must distinguish interpreter-generated guard bytecode from a changed rele
 
 ## Task 18: Pilot the tagged release
 _Runs before Task 16. It was added after the design review and is numbered 18 so that existing references to Tasks 16 and 17 stay valid._
-- **Status:** in-progress
+- **Status:** done
 - **Depends on:** Task 12, Task 14
 - **Size:** S
 - **Slicing:** Risk-First — retirement is not cheaply undone, and scratch plugins are not what adopters install
@@ -387,7 +387,7 @@ _Runs before Task 16. It was added after the design review and is numbered 18 so
 - [x] 18.4 Run `kk migrate --retirement-version <candidate>` in that repository → verify: a new session is guarded throughout; what the older session does is recorded
 - [x] 18.5 Repeat demonstrations 1, 2 and 4 with the shipped guard plugin and the real marketplace names
 - [x] 18.6 Write the results to `verification/pilot/` with tool versions; fix and re-pilot with a new candidate anything the pilot contradicts before the stable retirement release is tagged
-- [ ] 18.7 Publish and pilot the post-review candidate. Verify the changed guard identity and trust, batch launch during activation, rollback to a Claude-only corrected target, and migration with excluded and retained files. Record the tested tags and affected parity observations before stable publication.
+- [x] 18.7 Publish and pilot the post-review candidate. Verify the changed guard identity and trust, batch launch during activation, rollback to a Claude-only corrected target, and migration with excluded and retained files. Record the tested tags and affected parity observations before stable publication.
 
 ### Execution context
 
@@ -399,6 +399,7 @@ _Runs before Task 16. It was added after the design review and is numbered 18 so
 
 - 2026-11-23, RC2 observations. Plain-Codex hook and folder review worked on a pristine guest. The first wrapped TUI then changed only its model-tip counter, causing the next batch launch to refuse. The local correction verifies all generated settings and admits only the vendor’s numeric model-tip table. Its real interactive launch, subsequent batch command and both scratch guard denials passed. RC2 cannot be promoted. [Pilot evidence](./verification/pilot/README.md#rc2)
 - 2026-11-23, verified on the published `v0.26.0-rc.3` at `5ee83cb3`. A pristine Debian ARM64 account passed the corrected onboarding, first interactive-to-batch transition, parity checks with both opt-ins on and off, legacy sync and migration, and demonstrations 1, 2 and 4. The pre-install thread answered a tool-free turn after retirement and was closed. The post-readiness thread returned guard denials across all four phases. Both offline recoveries ended with RC3 active and both tools ready. [Final pilot results](./verification/pilot/README.md#rc3)
+- 2026-11-23, verified on published `v0.26.0-rc.4` at `8457412b`. A fresh Debian ARM64 VM passed the corrected guard review, RC3-to-RC4 trust transition, batch/activation overlap, offline rollback to a Claude-only target and four migration cases. [RC4 pilot results](./verification/pilot/README.md#rc4)
 
 ## Task 16: Retire the template in this repository
 - **Status:** pending
@@ -418,6 +419,7 @@ _Runs before Task 16. It was added after the design review and is numbered 18 so
 ### Execution context
 
 - 2026-11-23, blocked on stable publication. The [RC3 pilot](./verification/pilot/README.md#rc3) passed. GitHub's tag list contained `v0.26.0-rc.1` through `v0.26.0-rc.3` only, and [PR #198](https://github.com/serpro69/claude-toolbox/pull/198) was a draft targeting `master`. The maintainer owns the stable release. Resume 16.1–16.5 once GitHub lists the exact `v0.26.0` tag containing the full retirement sync script.
+- 2026-11-23, the [RC4 pilot](./verification/pilot/README.md#rc4) completed the corrected-candidate prerequisite. Stable `v0.26.0` publication remains the prerequisite for retiring the template.
 
 ## Task 17: Final verification
 - **Status:** pending
