@@ -226,6 +226,9 @@ class CodexActivation(InstallFixture):
         self.assertFalse((self.toolbox / ".agents").exists())
 
     def test_managed_is_not_trusted_and_method_absence_requires_acknowledgement(self):
+        env = patch.dict(os.environ, self.env)
+        env.start()
+        self.addCleanup(env.stop)
         groups = json.loads((self.checkout / "kodex-guard/hooks/hooks.json").read_text())["hooks"]["PreToolUse"]
         hooks = [dict(group["hooks"][0], key="kk-guard@toolbox:hooks/hooks.json:pre_tool_use:{}:0".format(i),
                       pluginId="kk-guard@toolbox", source="plugin", matcher=group["matcher"],
