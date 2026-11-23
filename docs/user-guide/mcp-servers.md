@@ -136,7 +136,7 @@ Copy PAL’s shipped `conf/cli_clients/claude.json` to `~/.pal/cli_clients/claud
 ```json
 {
   "command": "kk claude",
-  "additional_args": ["--allowedTools", "Read(//tmp/**)", "Read(~/.codex/plugins/cache/toolbox/kk/**)"]
+  "additional_args": ["--allowedTools", "Read(//tmp/**)", "Read(~/.codex/plugins/cache/agentstakk-local/kk/**)"]
 }
 ```
 

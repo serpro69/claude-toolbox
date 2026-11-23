@@ -1,6 +1,6 @@
 # Codex
 
-[Install kk](../getting-started/template-setup.md) with Codex on your `PATH`, then start `kk codex` in your project. The managed marketplace provides two plugins. `kk@toolbox` supplies workflow skills and profiles. `kk-guard@toolbox` supplies the guard adapters and runtime, with its own version and trust history. For a Git-marketplace installation, use [plugin-only setup](../getting-started/plugin-only.md).
+[Install kk](../getting-started/template-setup.md) with Codex on your `PATH`, then start `kk codex` in your project. The managed marketplace provides two plugins. `kk@agentstakk-local` supplies workflow skills and profiles. `kk-guard@agentstakk-local` supplies the guard adapters and runtime, with its own version and trust history. For a Git-marketplace installation, use [plugin-only setup](../getting-started/plugin-only.md).
 
 ## Permission guard
 

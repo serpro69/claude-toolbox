@@ -14,7 +14,7 @@ source "$SCRIPT_DIR/release-plugin.sh" || exit 1
 PROJECT_DIR="${CLAUDE_PROJECT_DIR:-$PWD}"
 PLUGIN_ROOT=${SCRIPT_DIR%/*}
 if ! is_release_plugin "$PLUGIN_ROOT"; then
-  PLUGIN_ROOT=$(python3 -I "$SCRIPT_DIR/cpr.py" kk "$PROJECT_DIR" 2>/dev/null)
+  PLUGIN_ROOT=$(python3 -I "$SCRIPT_DIR/cpr.py" kk@agentstakk "$PROJECT_DIR" 2>/dev/null)
   if [ -z "$PLUGIN_ROOT" ] || [ ! -d "$PLUGIN_ROOT" ]; then
     PLUGIN_ROOT="${1:-}"
   fi

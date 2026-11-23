@@ -87,6 +87,12 @@ class ClaudeLaunch(unittest.TestCase):
         overridden = self.layer("--settings", '{"effortLevel":"medium"}')
         self.assertNotIn("effortLevel", overridden.get("modelSettings", {}).get(model, {}))
 
+    def test_launcher_masks_enabled_public_and_pilot_copies(self):
+        copies = {"kk@agentstakk": True, "kk@claude-toolbox": True, "kk@toolbox": True}
+        cli.state.write_json(self.project, {"enabledPlugins": dict(copies, unrelated=True)})
+        self.assertEqual(self.layer()["enabledPlugins"], dict.fromkeys(copies, False))
+        self.assertTrue(json.loads(self.project.read_text())["enabledPlugins"]["kk@toolbox"])
+
     def test_explicit_setting_sources(self):
         cli.state.write_json(self.user, {"effortLevel": "low"})
         cli.state.write_json(self.project, {"enabledPlugins": {"kk@claude-toolbox": True}})

@@ -18,7 +18,7 @@ FIXTURE_DIR="$(create_temp_dir "cpr-test")"
 PLUGINS_JSON="$FIXTURE_DIR/installed_plugins.json"
 
 # Create fake install directories
-mkdir -p "$FIXTURE_DIR/cache/claude-toolbox/kk/0.17.3"
+mkdir -p "$FIXTURE_DIR/cache/agentstakk/kk/0.17.3"
 mkdir -p "$FIXTURE_DIR/cache/cortex-ai/cortex/0.3.0"
 mkdir -p "$FIXTURE_DIR/cache/other-repo/kk-utils/1.0.0"
 mkdir -p "$FIXTURE_DIR/cache/proj-a/kk/0.16.0"
@@ -31,10 +31,10 @@ mkdir -p "$FIXTURE_DIR/env-root"
 cat > "$PLUGINS_JSON" <<EOF
 {
   "plugins": {
-    "kk@claude-toolbox": [
+    "kk@agentstakk": [
       {
         "scope": "user",
-        "installPath": "$FIXTURE_DIR/cache/claude-toolbox/kk/0.17.3",
+        "installPath": "$FIXTURE_DIR/cache/agentstakk/kk/0.17.3",
         "version": "0.17.3",
         "installedAt": "2026-05-28T10:00:00.000Z"
       }
@@ -87,11 +87,11 @@ log_section "Section 1: Exact Matching"
 
 log_test "Exact match on plugin name"
 actual=$(run_cpr "kk")
-assert_equals "$FIXTURE_DIR/cache/claude-toolbox/kk/0.17.3" "$actual" "kk resolves to kk@claude-toolbox"
+assert_equals "$FIXTURE_DIR/cache/agentstakk/kk/0.17.3" "$actual" "kk resolves to kk@agentstakk"
 
 log_test "Exact match is case-insensitive"
 actual=$(run_cpr "KK")
-assert_equals "$FIXTURE_DIR/cache/claude-toolbox/kk/0.17.3" "$actual" "KK matches kk"
+assert_equals "$FIXTURE_DIR/cache/agentstakk/kk/0.17.3" "$actual" "KK matches kk"
 
 log_test "Exact match on different plugin"
 actual=$(run_cpr "cortex")
@@ -99,7 +99,7 @@ assert_equals "$FIXTURE_DIR/cache/cortex-ai/cortex/0.3.0" "$actual" "cortex reso
 
 log_test "No substring false positive: 'kk' does not match 'kk-utils'"
 actual=$(run_cpr "kk")
-assert_equals "$FIXTURE_DIR/cache/claude-toolbox/kk/0.17.3" "$actual" "kk is not kk-utils"
+assert_equals "$FIXTURE_DIR/cache/agentstakk/kk/0.17.3" "$actual" "kk is not kk-utils"
 
 log_test "kk-utils matches its own entry"
 actual=$(run_cpr "kk-utils")
@@ -117,7 +117,7 @@ CASCADE_JSON="$FIXTURE_DIR/cascade.json"
 cat > "$CASCADE_JSON" <<EOF
 {
   "plugins": {
-    "kk@claude-toolbox": [
+    "kk@agentstakk": [
       {
         "scope": "project",
         "projectPath": "/tmp/proj-a",
@@ -165,7 +165,7 @@ LAST_INSTALLED_JSON="$FIXTURE_DIR/last-installed.json"
 cat > "$LAST_INSTALLED_JSON" <<EOF
 {
   "plugins": {
-    "kk@claude-toolbox": [
+    "kk@agentstakk": [
       {
         "scope": "project",
         "projectPath": "/tmp/proj-a",
@@ -279,7 +279,7 @@ FALLTHROUGH_JSON="$FIXTURE_DIR/fallthrough.json"
 cat > "$FALLTHROUGH_JSON" <<EOF
 {
   "plugins": {
-    "kk@claude-toolbox": [
+    "kk@agentstakk": [
       {
         "scope": "project",
         "projectPath": "/tmp/proj-a",
@@ -308,11 +308,16 @@ assert_equals "$FIXTURE_DIR/cache/user/kk/0.10.0" "$actual" "missing tier-1 path
 
 log_section "Section 6: set-plugin-root.sh"
 
-KK_PATH="$FIXTURE_DIR/cache/claude-toolbox/kk/0.17.3"
+KK_PATH="$FIXTURE_DIR/cache/agentstakk/kk/0.17.3"
 
 exported_root() {
   env -u TOOLBOX_PLUGIN_ROOT bash -c 'source "$1"; printf "%s" "${TOOLBOX_PLUGIN_ROOT:-}"' _ "$1"
 }
+
+log_test "A qualified lookup selects the renamed marketplace even with a prior copy"
+mixed_plugins="$FIXTURE_DIR/mixed-plugins.json"
+jq '.plugins = ({"kk@claude-toolbox": .plugins["cortex@cortex-ai"]} + .plugins)' "$PLUGINS_JSON" > "$mixed_plugins"
+assert_equals "$KK_PATH" "$(run_cpr_file "$mixed_plugins" kk@agentstakk)" "qualified ID selects Agentstakk"
 
 log_test "Writes export line resolved via cpr.py"
 ENV_FILE="$FIXTURE_DIR/env-out-1.sh"

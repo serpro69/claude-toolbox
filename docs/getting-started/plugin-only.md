@@ -40,7 +40,7 @@ Use these steps **after the public marketplace identifies itself as `agentstakk`
 
 1. List the installed plugins and their scopes. Add the new Git marketplace with `claude plugin marketplace add serpro69/agentstakk` or `codex plugin marketplace add serpro69/agentstakk`.
 2. Install the replacement with `claude plugin install kk@agentstakk` or `codex plugin add kk@agentstakk`. If you use the public Codex guard, also run `codex plugin add kk-guard@agentstakk` and review its handlers in plain Codex.
-3. Remove the old copies you own. For a Claude user install, run `claude plugin uninstall --scope user --keep-data kk@claude-toolbox`. For Codex, run `codex plugin remove kk@claude-toolbox` and, if installed, `codex plugin remove kk-guard@claude-toolbox`. Remove the old marketplace with the vendor’s `plugin marketplace remove claude-toolbox` command once nothing else uses it. Update any project-owned enablement in its original scope.
+3. Remove the old copies you own. For a Claude user install, run `claude plugin uninstall --scope user --keep-data kk@claude-toolbox`. For Codex, run `codex plugin remove kk@claude-toolbox` and, if installed, `codex plugin remove kk-guard@claude-toolbox`. Once nothing else uses that registration, run `claude plugin marketplace remove --scope user claude-toolbox` or `codex plugin marketplace remove claude-toolbox`. Update any project-owned enablement in its original scope.
 4. Start a fresh session and check that only the intended guard is enabled.
 
 ## What's Included

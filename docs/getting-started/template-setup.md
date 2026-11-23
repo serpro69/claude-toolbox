@@ -30,7 +30,28 @@ After the hosted rename, update the Git remote of a clone that tracks the upstre
 git remote set-url origin https://github.com/serpro69/agentstakk.git
 ```
 
-For a machine running RC4, finish active batches, then run `KK_REPOSITORY=serpro69/agentstakk kk upgrade --version TAG` with the published Agentstakk candidate or stable tag. This also directs the old launcher to the renamed repository. Keep the same `KK_HOME`, overrides and Codex profile. When the release registers `kk-guard@agentstakk-local`, review its three handlers in plain Codex and run `kk status --live`. Rollback uses the retained release and its own marketplace identity. Legacy repository migration still uses the full template at `v0.26.0-rc.4`.
+### RC4 marketplace switch
+
+RC4 registered the directory `KK_HOME` as `toolbox` in both vendors. The renamed release registers that same directory as `agentstakk-local`. Keep your existing `KK_HOME`, Codex home, overrides and profile. Close old sessions and finish batches before removing their registrations. Start new sessions after checking the replacement.
+
+1. Stage the published release with `KK_REPOSITORY=serpro69/agentstakk kk upgrade --version TAG`. Use the exact candidate or stable tag in a terminal. Confirm the guard identity change while the RC4 registrations are still installed. Declining leaves them active. While the pilot catalogs are registered, the new installer leaves the candidate staged and identifies the vendor to switch.
+2. Inspect `claude plugin list --json`, `claude plugin marketplace list --json`, `codex plugin list --json` and `codex plugin marketplace list --json`. The pilot's local marketplace root should be your `KK_HOME`. The following commands apply to its user-scope plugins. Skip entries the vendor inventory shows as absent. Remove a marketplace only after checking that no other plugin or scope uses its registration. Leave project-owned enablement in its original scope. Skip the Codex commands on a Claude-only install. Run the Codex commands with the same `CODEX_HOME` used for installation. If kk identifies another recorded Codex home, inspect it separately.
+
+    ```bash
+    claude plugin uninstall --scope user --keep-data kk@toolbox
+    claude plugin marketplace remove --scope user toolbox
+    codex plugin remove kk@toolbox
+    codex plugin remove kk-guard@toolbox
+    codex plugin marketplace remove toolbox
+    ```
+
+3. Run `kk upgrade` to resume the same staged and confirmed release. In plain Codex, review the three `kk-guard@agentstakk-local` handlers in `/hooks`. Then run `kk apply` and `kk status --live`. The launcher reports pending review until Codex trusts the new identity. An old public plugin still enabled by a project will appear in status. Update that setting in its original scope.
+
+If you stop after removing the pilot registrations while the new release is still **staged**, the RC4 catalogs still exist under `KK_HOME`. To stay on RC4, add that directory back with each vendor’s `plugin marketplace add` command and reinstall the user-scope `kk@toolbox` plugins and Codex’s `kk-guard@toolbox`. Check `kk status` and review any hooks the vendor requests. Once activation has started, use `kk upgrade` to resume. If you choose recovery instead, follow the cross-name cleanup below before invoking the printed rollback command. During an interrupted activation that command restores the still-active release, which can differ from the usual rollback target.
+
+**Offline rollback across the rename.** Check the rollback target in `kk status`. To restore RC4, close sessions and use the five commands above with `agentstakk-local` in place of `toolbox` to remove the departing registrations. Then run `kk rollback`. RC4 runs its own installer and restores `@toolbox` from its retained files. Check both vendor inventories and plain Codex’s hook status before resuming work. RC4 cannot diagnose newer duplicate registrations. To return to a retained renamed release, remove the RC4 registrations as above and run `kk rollback` again when the renamed release is the recorded target. Review any handlers the vendor marks untrusted or modified. A live check requires an available model transport.
+
+Legacy repository migration still uses the full template at `v0.26.0-rc.4`.
 
 For a Git-marketplace installation, follow the [plugin-only switch](plugin-only.md#switch-an-existing-git-marketplace-installation).
 

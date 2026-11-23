@@ -20,7 +20,7 @@ class CodexActivation(InstallFixture):
         self.directory = Path(self.env["CODEX_HOME"])
 
     def guard_version(self):
-        return next((self.directory / "plugins/cache/toolbox/kk-guard").iterdir()).name
+        return next((self.directory / "plugins/cache/agentstakk-local/kk-guard").iterdir()).name
 
     def test_batch_sessions_share_admission_until_vendor_exit(self):
         self.install()
@@ -62,6 +62,17 @@ class CodexActivation(InstallFixture):
         with cli.state.codex_access(self.toolbox):
             self.assertTrue(os.fstat(inherited))
 
+    def test_old_review_and_receipt_do_not_authorize_the_new_guard(self):
+        self.install()
+        record = self.state()
+        record["candidate"] = {"version": record["active"], "phase": "staged"}
+        saved = record["codex_plugins"][str(self.directory)]["kk-guard"]
+        saved["path"] = str(self.directory / "plugins/cache/toolbox/kk-guard" / saved["version"])
+        self.assertFalse(cli.codex_plugins.receipt(record, self.directory, "kk-guard"))
+        with patch("sys.stdin.isatty", return_value=False):
+            with self.assertRaisesRegex(ValueError, "guard change declined"):
+                cli.codex_plugins.confirm_change(record, self.toolbox / "releases" / record["active"], self.directory)
+
     def test_removed_codex_home_is_not_recreated_by_rollback(self):
         directory = str(self.directory)
         record = {"codex_plugins": {directory: {"kk": {}}}, "codex_marketplaces": {directory: True}}
@@ -86,7 +97,7 @@ class CodexActivation(InstallFixture):
         self.invoke(self.link, "upgrade", "--local", self.checkout, ok=False)
         self.assertEqual(self.state()["codex_plugin_pending"], cli.codex_plugins.GUARD_ID)
         self.invoke(self.link, "rollback")
-        self.assertFalse(list((self.directory / "plugins/cache/toolbox").glob("*/*")))
+        self.assertFalse(list((self.directory / "plugins/cache/agentstakk-local").glob("*/*")))
         self.assertNotIn("codex_plugin_pending", self.state())
         interrupted_add.unlink()
         self.invoke(self.link, "upgrade", "--local", self.checkout)
@@ -108,7 +119,7 @@ class CodexActivation(InstallFixture):
         self.assertNotIn(str(another), self.state()["codex_plugins"])
         self.assertFalse((another / "fixture-market").exists())
         self.assertFalse((self.directory / "fixture-market").exists())
-        self.assertFalse(list((self.directory / "plugins/cache/toolbox").glob("*/*")))
+        self.assertFalse(list((self.directory / "plugins/cache/agentstakk-local").glob("*/*")))
         self.assertIn("kk upgrade --version " + tag, self.invoke(self.link, "status").stdout)
         self.invoke(self.link, "upgrade", "--version", tag)
         self.assertIn("codex", self.state()["releases"][tag]["tools"])
@@ -227,7 +238,7 @@ class CodexActivation(InstallFixture):
         self.install()
         guard = self.checkout / "kodex-guard"
         version = self.guard_version()
-        actual = next((self.directory / "plugins/cache/toolbox/kk-guard").iterdir())
+        actual = next((self.directory / "plugins/cache/agentstakk-local/kk-guard").iterdir())
         verified = cli.codex_plugins.verify_tree("kk-guard", guard, self.directory, version, actual)
         self.assertEqual(verified["version"], version)
         manifest = guard / ".codex-plugin/plugin.json"
@@ -255,7 +266,7 @@ class CodexActivation(InstallFixture):
         note.write_text("first")
         self.install()
         first = self.state()["active"]
-        guard = next((self.directory / "plugins/cache/toolbox/kk-guard").iterdir())
+        guard = next((self.directory / "plugins/cache/agentstakk-local/kk-guard").iterdir())
         with (guard / ".codex-plugin/plugin.json").open("rb") as held:
             note.write_text("second")
             tag, archive = self.tagged_archive()
@@ -264,7 +275,7 @@ class CodexActivation(InstallFixture):
                 with archive.open("rb") as stream, patch.object(active.payload, "urlopen", return_value=stream):
                     self.assertEqual(active.main(), 0)
             self.assertTrue(os.path.samestat(os.fstat(held.fileno()), (guard / ".codex-plugin/plugin.json").stat()))
-        cache = self.directory / "plugins/cache/toolbox/kk" / tag[1:]
+        cache = self.directory / "plugins/cache/agentstakk-local/kk" / tag[1:]
         self.assertEqual((cache / "skills/fixture.txt").read_text(), "second")
         self.assertEqual(self.state()["active"], tag)
         self.invoke(self.link, "rollback")
@@ -334,6 +345,26 @@ class CodexActivation(InstallFixture):
         self.invoke(self.link, "rollback")
         self.assertEqual(self.state()["active"], first)
 
+    def test_rollback_restores_files_before_retrying_a_pilot_catalog_check(self):
+        self.install()
+        first = self.state()["active"]
+        (self.checkout / "kk/baseline/codex/agents/eval-grader.toml").unlink()
+        self.invoke(self.link, "upgrade", "--local", self.checkout)
+        pilot = self.toolbox / ".agents/plugins/marketplace.json"
+        previous = json.loads(pilot.read_text())
+        cli.state.write_json(pilot, dict(previous, name="toolbox"))
+        vendor_bin = self.root / "broken-codex"
+        vendor_bin.mkdir()
+        (vendor_bin / "codex").symlink_to(shutil.which("false"))
+        env = dict(self.env, PATH=str(vendor_bin) + os.pathsep + self.env["PATH"])
+        result = self.invoke(self.link, "rollback", env=env, ok=False)
+        self.assertIn("repair the Codex CLI and rerun kk rollback", result.stderr)
+        self.assertTrue((self.directory / "agents/kk-eval-grader.toml").is_file())
+        self.assertEqual(json.loads(pilot.read_text())["name"], "toolbox")
+        self.assertEqual(self.state()["candidate"]["step"], "codex-restore-plugins")
+        self.invoke(self.link, "rollback")
+        self.assertEqual(self.state()["active"], first)
+
     def test_registered_adapter_is_exercised_before_activation(self):
         path = self.checkout / "kodex-guard/hooks/hooks.json"
         hooks = json.loads(path.read_text())
@@ -347,10 +378,17 @@ class CodexActivation(InstallFixture):
         env.start()
         self.addCleanup(env.stop)
         groups = json.loads((self.checkout / "kodex-guard/hooks/hooks.json").read_text())["hooks"]["PreToolUse"]
-        hooks = [dict(group["hooks"][0], key="kk-guard@toolbox:hooks/hooks.json:pre_tool_use:{}:0".format(i),
-                      pluginId="kk-guard@toolbox", source="plugin", matcher=group["matcher"],
+        hooks = [dict(group["hooks"][0], key="kk-guard@agentstakk-local:hooks/hooks.json:pre_tool_use:{}:0".format(i),
+                      pluginId="kk-guard@agentstakk-local", source="plugin", matcher=group["matcher"],
                       enabled=True, trustStatus="managed") for i, group in enumerate(groups)]
         trust = cli.codex_trust
+        reviewed = [dict(h, trustStatus="trusted") for h in hooks]
+        for id_ in ("kk-guard@toolbox", "kk-guard@claude-toolbox", "kk-guard@agentstakk"):
+            with self.subTest(plugin=id_), patch.object(trust, "hooks", return_value=reviewed + [
+                    dict(reviewed[0], pluginId=id_)]):
+                phase, messages = trust.check(self.checkout, self.directory, self.root)
+                self.assertEqual(phase, "awaiting review")
+                self.assertIn("other marketplace hooks", messages[0])
         with patch.object(trust, "hooks", return_value=hooks):
             phase, messages = trust.check(self.checkout, self.directory, self.root)
             self.assertEqual(phase, "awaiting review")

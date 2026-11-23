@@ -25,7 +25,7 @@ KNOWN ISSUES:
         - `claude plugin list` shows the plugin as installed
         - ~/.claude/plugins/installed_plugins.json does not have a project entry for the plugin
       solution:
-        - re-run `claude plugin install kk@claude-toolbox --scope project`
+        - re-run `claude plugin install kk@agentstakk --scope project`
           (or the scope where you have the plugin installed as shown by the `claude plugin list` command)
 """
 
@@ -43,7 +43,7 @@ def similarity(a, b):
 def plugin_name_from_key(key):
     """Extract the plugin name segment from a registry key.
 
-    Keys look like "plugin-name@repo-name" (e.g. "kk@claude-toolbox").
+    Keys look like "plugin-name@repo-name" (e.g. "kk@agentstakk").
     """
     return key.split("@")[0]
 
@@ -98,7 +98,8 @@ def find_plugin_root(plugin_name, project_dir):
     Returns: (plugin_root_path, match_type)
         match_type: 'exact', 'fuzzy', or None
     """
-    plugins_file = Path(os.environ["CPR_PLUGINS_FILE"]) if "CPR_PLUGINS_FILE" in os.environ else Path.home() / ".claude" / "plugins" / "installed_plugins.json"
+    directory = Path(os.environ.get("CLAUDE_CONFIG_DIR") or Path.home() / ".claude")
+    plugins_file = Path(os.environ.get("CPR_PLUGINS_FILE") or directory / "plugins/installed_plugins.json")
 
     if not plugins_file.exists():
         return None, None
@@ -111,6 +112,10 @@ def find_plugin_root(plugin_name, project_dir):
         return None, None
 
     project_dir = _norm(project_dir)
+
+    if "@" in plugin_name:
+        path = _resolve_entries(plugins.get(plugin_name, []), project_dir)
+        return (path, "exact") if path else (None, None)
 
     # Exact match on the plugin name segment (case-insensitive).
     for key, entries in plugins.items():

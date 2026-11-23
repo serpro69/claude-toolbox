@@ -55,10 +55,10 @@ elif args == ["plugin", "list", "--json"]:
         result = [entry]
     if (home / "claude-git").is_file():
         result.extend(json.loads((home / "claude-git").read_text()))
-elif args == ["plugin", "uninstall", "--scope", "user", "--keep-data", "kk@claude-toolbox", "--json"]:
+elif args[:5] == ["plugin", "uninstall", "--scope", "user", "--keep-data"] and args[-1] == "--json":
     path = home / "claude-git"
     rows = json.loads(path.read_text())
-    path.write_text(json.dumps([p for p in rows if (p["id"], p["scope"]) != ("kk@claude-toolbox", "user")]))
+    path.write_text(json.dumps([p for p in rows if (p["id"], p["scope"]) != (args[5], "user")]))
     result = {}
 else:
     raise SystemExit("unexpected Claude arguments: " + repr(args))

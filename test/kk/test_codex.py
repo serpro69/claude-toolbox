@@ -75,7 +75,7 @@ class CodexFiles(InstallFixture):
         no_method.unlink()
         phases["codex"] = "ready"
         cli.state.write_json(self.state_file, record)
-        version = next((self.codex / "plugins/cache/toolbox/kk-guard").iterdir()).name
+        version = next((self.codex / "plugins/cache/agentstakk-local/kk-guard").iterdir()).name
         (self.codex / "fixture-reviewed").write_text(version)
         launch = self.invoke(self.link, "codex", "exec", "hello")
         self.assertEqual(json.loads(launch.stdout), ["--profile", "kk", "exec", "hello"])

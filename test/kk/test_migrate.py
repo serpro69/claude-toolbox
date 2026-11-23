@@ -30,8 +30,9 @@ class Migration(InstallFixture):
         cli.state.write_json(self.manifest, {"upstream_repo": cli.payload.UPSTREAM})
         directory = self.env["CODEX_HOME"]
         self.saved = {"tools": {"codex": "ready"}, "codex_snapshot": {"directory": directory}}
+        guard_path = Path(directory) / "plugins/cache/agentstakk-local/kk-guard/1"
         self.record = {"active": "v1.0.0", "installed_paths": [str(self.link)], "candidate": None,
-                       "releases": {"v1.0.0": self.saved}, "codex_plugins": {directory: {"kk-guard": {"version": "1"}}}}
+                       "releases": {"v1.0.0": self.saved}, "codex_plugins": {directory: {"kk-guard": {"version": "1", "path": str(guard_path)}}}}
         self.addCleanup(os.chdir, Path.cwd())
         os.chdir(self.repo)
         self.enter_patch(patch.dict(os.environ, self.env))
@@ -211,7 +212,7 @@ esac
     def test_cli_refuses_disabled_repository_hook_even_with_recorded_ready(self):
         self.install()
         directory = Path(self.env["CODEX_HOME"])
-        guard = next((directory / "plugins/cache/toolbox/kk-guard").iterdir())
+        guard = next((directory / "plugins/cache/agentstakk-local/kk-guard").iterdir())
         (directory / "fixture-reviewed").write_text(guard.name)
         record = self.state()
         record["releases"][record["active"]]["tools"]["codex"] = "ready"

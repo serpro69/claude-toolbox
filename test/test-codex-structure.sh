@@ -33,6 +33,7 @@ log_test ".agents/plugins/marketplace.json exists and is valid JSON"
 assert_file_exists "$REPO_ROOT/.agents/plugins/marketplace.json" "Codex marketplace exists"
 codex_mp_json=$(cat "$REPO_ROOT/.agents/plugins/marketplace.json")
 assert_json_valid "$codex_mp_json" "Codex marketplace is valid JSON"
+assert_json_field "$codex_mp_json" '.name' "agentstakk" "Codex public marketplace ID"
 
 log_test "marketplace.json has kk plugin pointing at kodex-plugin"
 mp_path=$(echo "$codex_mp_json" | jq -r '.plugins[0].source.path')

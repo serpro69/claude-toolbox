@@ -9,11 +9,11 @@ import sys
 args = sys.argv[1:]
 directory = Path(os.environ["CODEX_HOME"])
 market = directory / "fixture-market"
-cache = directory / "plugins/cache/toolbox"
+cache = directory / "plugins/cache/agentstakk-local"
 
 
 def installed():
-    return [{"pluginId": p.parent.name + "@toolbox", "version": p.name, "enabled": True}
+    return [{"pluginId": p.parent.name + "@agentstakk-local", "version": p.name, "enabled": True}
             for p in sorted(cache.glob("*/*")) if p.is_dir()]
 
 
@@ -33,8 +33,8 @@ def app_server():
                 groups = json.loads((guard / "hooks/hooks.json").read_text())["hooks"]["PreToolUse"]
                 for i, group in enumerate(groups):
                     for j, hook in enumerate(group["hooks"]):
-                        hooks.append(dict(hook, matcher=group["matcher"], source="plugin", pluginId="kk-guard@toolbox",
-                                          key="kk-guard@toolbox:hooks/hooks.json:pre_tool_use:{}:{}".format(i, j),
+                        hooks.append(dict(hook, matcher=group["matcher"], source="plugin", pluginId="kk-guard@agentstakk-local",
+                                          key="kk-guard@agentstakk-local:hooks/hooks.json:pre_tool_use:{}:{}".format(i, j),
                                           enabled=not (directory / ("disabled-" + str(i))).exists(), trustStatus=trust))
             if "features.hooks=false" in args or (Path(cwd) / "fixture-guard-off").exists():
                 hooks = []
@@ -51,21 +51,24 @@ elif args[-2:] == ["exec", "wait-for-test-input"]:
     print("running", flush=True)
     sys.exit(int(input()))
 elif args[:3] == ["plugin", "marketplace", "list"]:
-    print(json.dumps({"marketplaces": [{"name": "toolbox", "root": market.read_text()}] if market.exists() else []}))
+    print(json.dumps({"marketplaces": [{"name": "agentstakk-local", "root": market.read_text()}] if market.exists() else []}))
 elif args[:3] == ["plugin", "marketplace", "add"]:
     directory.mkdir(parents=True, exist_ok=True)
     market.write_text(args[3])
     print("{}")
 elif args[:3] == ["plugin", "marketplace", "remove"]:
-    assert args[3] == "toolbox"
+    assert args[3] == "agentstakk-local"
     market.unlink()
     print("{}")
 elif args[:2] == ["plugin", "list"]:
     path = directory / "codex-git"
-    rows = (json.loads(path.read_text()) if path.is_file() else []) if "claude-toolbox" in args else installed()
+    rows = installed() + (json.loads(path.read_text()) if path.is_file() else [])
+    if "--marketplace" in args:
+        marketplace = args[args.index("--marketplace") + 1]
+        rows = [row for row in rows if row["pluginId"].endswith("@" + marketplace)]
     print(json.dumps({"installed": rows}))
 elif args[:2] == ["plugin", "remove"]:
-    if args[2] in ("kk@toolbox", "kk-guard@toolbox"):
+    if args[2] in ("kk@agentstakk-local", "kk-guard@agentstakk-local"):
         name = args[2].split("@")[0]
         shutil.rmtree(cache / name)
         if (directory / ("interrupt-remove-" + name)).exists():

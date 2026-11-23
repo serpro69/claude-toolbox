@@ -167,6 +167,15 @@ class InstallationStatus(InstallFixture):
         (self.home / "effective-settings").unlink()
         self.assertIn("claude: ready", self.invoke(self.link, "status").stdout)
 
+    def test_project_setting_can_enable_old_id_without_an_inventory_row(self):
+        self.install()
+        for plugin in ("kk@claude-toolbox", "kk@toolbox", "kk@agentstakk"):
+            with self.subTest(plugin=plugin):
+                cli.state.write_json(self.home / "effective-settings", {"enabledPlugins": {plugin: True}})
+                status = self.invoke(self.link, "status").stdout
+                self.assertIn("claude: awaiting review", status)
+                self.assertIn("settings also enable " + plugin, status)
+
     def test_mixed_scope_confirmation_and_readiness(self):
         codex = Path(self.env["CODEX_HOME"])
         codex.mkdir()
@@ -182,7 +191,7 @@ class InstallationStatus(InstallFixture):
         self.install()
         record = self.state()
         self.assertEqual(record["releases"][record["active"]]["tools"], {"claude": "awaiting review", "codex": "awaiting review"})
-        guard = next((codex / "plugins/cache/toolbox/kk-guard").iterdir())
+        guard = next((codex / "plugins/cache/agentstakk-local/kk-guard").iterdir())
         (codex / "fixture-reviewed").write_text(guard.name)
         before = self.state_file.read_bytes()
         status = self.invoke(self.link, "status").stdout
@@ -255,7 +264,7 @@ class InstallationStatus(InstallFixture):
     def test_live_command_tries_both_tools_and_fails_on_missing_evidence(self):
         self.install()
         record = self.state()
-        guard = next((Path(self.env["CODEX_HOME"]) / "plugins/cache/toolbox/kk-guard").iterdir())
+        guard = next((Path(self.env["CODEX_HOME"]) / "plugins/cache/agentstakk-local/kk-guard").iterdir())
         (Path(self.env["CODEX_HOME"]) / "fixture-reviewed").write_text(guard.name)
         run = self.invoke(self.link, "status", "--live", ok=False)
         self.assertIn("codex live: failed", run.stdout)
