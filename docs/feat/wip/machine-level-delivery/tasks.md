@@ -2,7 +2,7 @@
 
 > Design: [./design.md](./design.md)
 > Implementation: [./implementation.md](./implementation.md)
-> Status: in-progress. RC4 passed under the pilot names. The Agentstakk repository changes are prepared. Tasks 20 and 21 precede the stable `v0.26.0` tag. Task 16 retires the template before the rename. RC4 supplies the migration scripts and template.
+> Status: in-progress. RC4 passed under the pilot names. The Agentstakk repository and marketplace changes are prepared. Task 21 precedes the stable `v0.26.0` tag. Task 16 retires the template before the rename. RC4 supplies the migration scripts and template.
 > Created: 2026-11-18
 > Not Doing: orchestrator features, Go binary or package-manager distribution, built-in unattended upgrades, full parity for IDE/desktop/cloud/CI sessions, merging into user-owned config (migration excepted), general shell-read grants, detection of open Codex sessions, `kk uninstall`, native Windows, per-repository teammate stub, changes to capy's setup, system-level deny fragment (future)
 
@@ -424,7 +424,7 @@ _Runs before Task 16. It was added after the design review and is numbered 18 so
 
 ## Task 20: Move plugin installations to the final marketplace IDs
 
-- **Status:** pending
+- **Status:** done
 - **Depends on:** Task 16.1–16.4 (cleanup commit)
 - **Size:** M
 - **Can run in parallel with:** Task 19
@@ -432,9 +432,15 @@ _Runs before Task 16. It was added after the design review and is numbered 18 so
 
 ### Subtasks
 
-- [ ] 20.1 Set both public manifests to `agentstakk` and both generated local catalogs to `agentstakk-local`. Update plugin metadata, launcher settings, cache lookups and read grants, and regenerate affected projections. Verify the `kk` skills and Codex guard resolve under the expected IDs in both modes and the existing `kk` commands work in the managed install.
-- [ ] 20.2 Handle old public `@claude-toolbox` and pilot `@toolbox` installations in the existing inventory, activation, migration and recovery paths. Check that settings enabling an old public copy cannot produce false managed readiness. Exercise a plugin-only switch and an RC4 upgrade with existing user settings. Require Codex review under the new guard ID, and verify one effective guard per tool after the transition.
-- [ ] 20.3 Exercise offline rollback to a retained old-name release and a return to the renamed release. Check actual vendor inventory and hook state against the reported status, including any manual RC recovery steps in the install guide. Preserve the older pilot's recorded behavior and the existing ownership and confirmation rules.
+- [x] 20.1 Set both public manifests to `agentstakk` and both generated local catalogs to `agentstakk-local`. Update plugin metadata, launcher settings, cache lookups and read grants, and regenerate affected projections. Verify the `kk` skills and Codex guard resolve under the expected IDs in both modes and the existing `kk` commands work in the managed install.
+- [x] 20.2 Handle old public `@claude-toolbox` and pilot `@toolbox` installations in the existing inventory, activation, migration and recovery paths. Check that settings enabling an old public copy cannot produce false managed readiness. Exercise a plugin-only switch and an RC4 upgrade with existing user settings. Require Codex review under the new guard ID, and verify one effective guard per tool after the transition.
+- [x] 20.3 Exercise offline rollback to a retained old-name release and a return to the renamed release. Check actual vendor inventory and hook state against the reported status, including any manual RC recovery steps in the install guide. Preserve the older pilot's recorded behavior and the existing ownership and confirmation rules.
+
+### Execution context
+
+- 2026-11-23, started at `90b93c5c`. RC4 writes both vendor catalogs under the same `KK_HOME` later releases use. Check the pilot registrations before changing those catalogs, preserve user/project scope and plugin data, and verify the new Codex hook keys. Rollback across this boundary runs the retained release’s original code.
+
+- 2026-11-23, verified the public Git switch and managed RC4 upgrade with real vendor CLIs. A fresh guard-key review, workspace-only legacy enablement, settings preservation, offline rollback and return all matched observed inventory. The independent reviewer approved the consent ordering and retryable recovery of the owned files if Codex inventory is unavailable. [Environment, results and captures](verification/task-20/README.md)
 
 ## Task 21: Rename the hosted repository and pilot the final IDs
 

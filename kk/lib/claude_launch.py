@@ -12,7 +12,7 @@ import tempfile
 from uuid import uuid4
 
 from . import notice, payload, state
-from .claude import GIT_PLUGIN, settings_report
+from .claude import OTHER_PLUGINS, settings_report
 
 
 PERMISSION_LISTS = ("allow", "ask", "deny", "additionalDirectories")
@@ -178,8 +178,11 @@ def compose(release, arguments, sources):
         paths.extend(local_settings_paths(cwd))
     existing = [json_file(path, optional=True) for path in dict.fromkeys(paths)]
     layer = baseline_layer(release, baseline, config, existing)
-    if any(object_value(s.get("enabledPlugins", {}), "enabledPlugins").get(GIT_PLUGIN) for s in existing):
-        layer["enabledPlugins"] = {GIT_PLUGIN: False}
+    for settings in existing:
+        enabled = object_value(settings.get("enabledPlugins", {}), "enabledPlugins")
+        for plugin in OTHER_PLUGINS:
+            if enabled.get(plugin):
+                layer.setdefault("enabledPlugins", {})[plugin] = False
     overlay(layer, config.get("settings", {}), "claude.settings", config_file.parent)
     if "settingsFile" in config:
         path = config_file.parent / Path(config["settingsFile"]).expanduser()

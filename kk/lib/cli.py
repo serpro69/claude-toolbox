@@ -67,7 +67,7 @@ def complete_publication(home, record):
     state.write_json(home / "state.json", record)
 
 
-def finish_install(home, record, release, codex_plan=...):
+def finish_install(home, record, release, codex_plan=..., *, codex_catalog_error=None):
     """Run in the release being activated, under the caller's writer lock."""
     check_link(home, record)
     # Pre-Task-9 active releases invoke this entry point without a prepared plan.
@@ -84,6 +84,10 @@ def finish_install(home, record, release, codex_plan=...):
             codex_plugins.activate(home, record, release, snapshot["directory"], checkpoint)
         checkpoint("codex-files")
         codex_profile.publish(home, record, release.name, codex_plan)
+        if codex_catalog_error is not None:
+            checkpoint("codex-restore-plugins")
+            raise ValueError("Claude and the owned Codex files were restored. The pilot Codex marketplace "
+                             "could not be inspected; repair the Codex CLI and rerun kk rollback.") from codex_catalog_error
         restore_directory = record["candidate"].get("restore_absent_codex")
         if restore_directory:
             codex_plugins.restore_absent(home, record, restore_directory, checkpoint)
@@ -322,11 +326,21 @@ def rollback_locked(home, record):
     payload.verify_saved(release, saved)
     validation.validate(release)
     plan = codex_profile.prepare(release, record, snapshot=saved.get("codex_snapshot"))
+    snapshot = plan[3] if plan else None
+    mixed.check_claude_pilot(home)
+    codex_catalog_error = None
+    try:
+        mixed.check_codex_pilot(home, record, snapshot["directory"] if snapshot else None)
+    except (OSError, subprocess.SubprocessError) as exc:
+        # The safe file restoration precedes vendor reconciliation on rollback.
+        codex_catalog_error = exc
     previous = record["candidate"]
-    if plan and plan[3]:
-        installed = codex_plugins.receipt(record, Path(plan[3]["directory"]), "kk-guard")
-        if record.get("codex_plugin_pending") == codex_plugins.GUARD_ID or (
-                installed and installed["identity"] != codex_plugins.guard_identity(release / "kodex-guard")):
+    if snapshot:
+        directory = Path(snapshot["directory"])
+        installed = codex_plugins.saved_receipt(record, directory, "kk-guard")
+        if record.get("codex_plugin_pending") in (codex_plugins.GUARD_ID, "kk-guard@" + claude.PILOT_MARKETPLACE) or (
+                installed and (not codex_plugins.receipt(record, directory, "kk-guard") or
+                               installed["identity"] != codex_plugins.guard_identity(release / "kodex-guard"))):
             print("Restoring a different Codex guard. Open sessions may run without protection until "
                   "the restored hooks are reviewed. Continuing offline recovery.", file=sys.stderr, flush=True)
     if not previous or previous.get("operation") != "rollback":
@@ -345,7 +359,7 @@ def rollback_locked(home, record):
         record.pop("pending_entry", None)
         record.pop("pending_entry_sha256", None)
     state.checkpoint(home, record, "restore")
-    finish_install(home, record, release, plan)
+    finish_install(home, record, release, plan, codex_catalog_error=codex_catalog_error)
     staging = home / "staging"
     if staging.is_dir():
         shutil.rmtree(staging)
@@ -357,11 +371,12 @@ def tool_status(home, record, tool, saved, check_live):
     copies, issues = mixed.inspect(tool, workspace, directory,
                                   claude_plugin=home / "releases" / record["active"] / "klaude-plugin")
     for entry in copies:
-        print("Git-marketplace {} install: {} ({} scope, {}{})".format(
-            tool, entry.plugin, entry.scope, "enabled" if entry.enabled else "disabled",
+        origin = "Pilot marketplace" if entry.plugin.endswith("@" + claude.PILOT_MARKETPLACE) else "Git-marketplace"
+        print("{} {} install: {} ({} scope, {}{})".format(
+            origin, tool, entry.plugin, entry.scope, "enabled" if entry.enabled else "disabled",
             ", " + entry.project if entry.project else ""))
     configured = tool in saved["tools"] and (tool == "claude" or codex_plugins.receipt(record, directory, "kk-guard"))
-    if configured and any(i.scope == "user" for i in copies):
+    if configured and any(i.scope == "user" and not i.plugin.endswith("@" + claude.PILOT_MARKETPLACE) for i in copies):
         print("Run kk status --remove-mixed to review user-scope removal.")
     if not configured:
         print("{}: managed guard is not installed in this CODEX_HOME; {}".format(tool, codex_plugins.activation_hint(saved)))
@@ -377,7 +392,8 @@ def tool_status(home, record, tool, saved, check_live):
             phase = "awaiting review"
             issues.append("managed guard missing in this CODEX_HOME; " + codex_plugins.activation_hint(saved))
         else:
-            phase, issues = codex_trust.machine(home / "releases" / record["active"], saved, inventory_issues=issues)
+            phase, issues = codex_trust.machine(home / "releases" / record["active"], saved,
+                                               inventory_issues=issues, workspace=workspace)
     elif tool == "claude" and not changing and not issues:
         phase = "ready"
     print("{}: {}".format(tool, phase))

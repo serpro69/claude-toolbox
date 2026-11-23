@@ -9,9 +9,14 @@ import subprocess
 from .state import write_json
 
 
-MARKETPLACE = "toolbox"
+MARKETPLACE = "agentstakk-local"
+PUBLIC_MARKETPLACE = "agentstakk"
+PILOT_MARKETPLACE = "toolbox"
+FORMER_PUBLIC_MARKETPLACE = "claude-toolbox"
 PLUGIN_ID = "kk@" + MARKETPLACE
-GIT_PLUGIN = "kk@claude-toolbox"
+GIT_PLUGIN = "kk@" + PUBLIC_MARKETPLACE
+PUBLIC_PLUGINS = (GIT_PLUGIN, "kk@" + FORMER_PUBLIC_MARKETPLACE)
+OTHER_PLUGINS = (*PUBLIC_PLUGINS, "kk@" + PILOT_MARKETPLACE)
 
 
 def vendor(home, *args):
@@ -72,6 +77,7 @@ def verify_workspace(rows, plugin, workspace):
         raise ValueError("Claude could not verify the effective hook settings in " + str(workspace))
     if settings.get("disableAllHooks") or settings.get("enabledPlugins", {}).get(PLUGIN_ID) is False:
         raise ValueError("Claude settings disable the managed guard in " + str(workspace))
+    return settings.get("enabledPlugins", {})
 
 
 def activate(home, release, checkpoint):

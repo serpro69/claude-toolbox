@@ -17,8 +17,15 @@ PLUGINS = {"kk": "kodex-plugin", "kk-guard": "kodex-guard"}
 GUARD_ID = "kk-guard@" + MARKETPLACE
 
 
-def receipt(record, directory, name):
+def saved_receipt(record, directory, name):
     return record.get("codex_plugins", {}).get(str(directory), {}).get(name, {})
+
+
+def receipt(record, directory, name):
+    saved = saved_receipt(record, directory, name)
+    if saved and saved.get("path") == str(Path(directory) / "plugins/cache" / MARKETPLACE / name / saved["version"]):
+        return saved
+    return {}
 
 
 def activation_hint(saved):
@@ -49,20 +56,23 @@ def stage_guard(release, record, directory, local):
 
 
 def confirm_change(record, release, directory):
-    installed = receipt(record, directory, "kk-guard")
+    installed = saved_receipt(record, directory, "kk-guard")
     identity = guard_identity(release / PLUGINS["kk-guard"])
     if not installed:
         return
     # A retained tag can be staged again without going through stage_guard.
     version = payload.read_json(release / PLUGINS["kk-guard"] / MANIFEST)["version"]
-    if installed["version"] == version and installed["identity"] != identity:
+    same_market = bool(receipt(record, directory, "kk-guard"))
+    if same_market and installed["version"] == version and installed["identity"] != identity:
         raise ValueError("Codex guard content changed under installed version " + version)
-    if installed["identity"] == identity:
+    if same_market and installed["identity"] == identity:
         return
-    pair = [installed["identity"], identity]
+    pair = [installed["identity"], identity] if same_market else [installed["path"], GUARD_ID, identity]
     candidate = record["candidate"]
     if candidate.get("confirmed_guard_change") == pair:
         return
+    if not same_market:
+        print("Codex requires a fresh review for {} in plain codex.".format(GUARD_ID), file=sys.stderr)
     print("Changing the Codex guard leaves open sessions without its protection at least until "
           "the new hooks are reviewed. Continue? [y/N] ", file=sys.stderr, end="", flush=True)
     if not sys.stdin.isatty() or sys.stdin.readline().strip().lower() not in ("y", "yes"):
@@ -156,7 +166,7 @@ def remove_registrations(home, record, directory, receipts, checkpoint):
     pending = record.get("codex_plugin_pending")
     for name in PLUGINS:
         plugin_id = name + "@" + MARKETPLACE
-        if name in receipts or pending == plugin_id:
+        if receipt(record, directory, name) or pending == plugin_id:
             if plugin_id in installed:
                 vendor(home, directory, "remove", plugin_id)
                 installed.remove(plugin_id)
@@ -164,7 +174,7 @@ def remove_registrations(home, record, directory, receipts, checkpoint):
             if pending == plugin_id:
                 record.pop("codex_plugin_pending", None)
             checkpoint("codex-restored-absent-" + name)
-    if market and record.get("codex_marketplaces", {}).get(directory) and not any(
+    if market and record.get("codex_marketplaces", {}).get(directory) == MARKETPLACE and not any(
             item.endswith("@" + MARKETPLACE) for item in installed):
         vendor(home, directory, "marketplace", "remove", MARKETPLACE)
     return installed
@@ -203,7 +213,7 @@ def activate(home, record, release, directory, checkpoint):
     if offline:
         return
     if market is None:
-        record.setdefault("codex_marketplaces", {})[str(directory)] = True
+        record.setdefault("codex_marketplaces", {})[str(directory)] = MARKETPLACE
         checkpoint("codex-register")
         vendor(home, directory, "marketplace", "add", str(home))
     entries = {p["pluginId"]: p for p in vendor(home, directory, "list", "--marketplace", MARKETPLACE)["installed"]}
@@ -216,7 +226,7 @@ def activate(home, record, release, directory, checkpoint):
         path = None
         if version is not None:
             payload.tag_name("v" + version)
-            saved = receipts.get(name, {})
+            saved = receipt(record, directory, name)
             # list reports the version but only add reports installedPath. If add
             # committed just before interruption, reconcile its versioned cache.
             path = (Path(saved["path"]) if saved.get("version") == version else

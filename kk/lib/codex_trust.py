@@ -75,8 +75,8 @@ def check(release, directory, workspace, flags=(), *, acknowledged=False, prompt
     listed = {h["key"]: h for h in rows if h.get("pluginId") == GUARD_ID and h.get("source") == "plugin"}
     issues = []
     if any(h.get("source") == "plugin" and h.get("enabled") is True
-           and h.get("pluginId") in (claude.GIT_PLUGIN, mixed.GIT_GUARD) for h in rows):
-        issues.append("enabled Git-marketplace hooks also apply in this workspace")
+           and h.get("pluginId") in (*claude.OTHER_PLUGINS, *mixed.OTHER_GUARDS) for h in rows):
+        issues.append("other marketplace hooks also apply in this workspace")
     for i, group in enumerate(groups):
         for j, handler in enumerate(group["hooks"]):
             key = "{}:hooks/hooks.json:pre_tool_use:{}:{}".format(GUARD_ID, i, j)
@@ -95,12 +95,12 @@ def check(release, directory, workspace, flags=(), *, acknowledged=False, prompt
     return ("awaiting review" if issues else "ready"), issues
 
 
-def machine(release, saved, *, prompt=False, inventory_issues=None):
+def machine(release, saved, *, prompt=False, inventory_issues=None, workspace=Path("/")):
     # A caller's cwd and TMPDIR can both be inside a trusted repository.
     directory = Path(saved["codex_snapshot"]["directory"])
     if inventory_issues is None:
-        _, inventory_issues = mixed.inspect("codex", Path("/"), directory)
-    phase, details = check(release, directory, Path("/"),
+        _, inventory_issues = mixed.inspect("codex", workspace, directory)
+    phase, details = check(release, directory, workspace,
                            acknowledged=saved.get("tools", {}).get("codex") == "unverified",
                            prompt=prompt and not inventory_issues)
     if inventory_issues:

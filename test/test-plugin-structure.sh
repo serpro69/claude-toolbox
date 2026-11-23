@@ -49,7 +49,7 @@ marketplace_json=$(cat "$REPO_ROOT/.claude-plugin/marketplace.json")
 assert_json_valid "$marketplace_json" "Marketplace manifest is valid JSON"
 
 log_test "marketplace.json has correct name"
-assert_json_field "$marketplace_json" '.name' "claude-toolbox" "Marketplace name is claude-toolbox"
+assert_json_field "$marketplace_json" '.name' "agentstakk" "Marketplace name is agentstakk"
 
 log_test "marketplace.json plugin source is relative path to klaude-plugin"
 plugin_source=$(echo "$marketplace_json" | jq -r '.plugins[0].source')
@@ -58,6 +58,7 @@ assert_equals "./klaude-plugin" "$plugin_source" "Plugin source is ./klaude-plug
 log_test "marketplace.json plugin name matches plugin.json"
 mp_plugin_name=$(echo "$marketplace_json" | jq -r '.plugins[0].name')
 assert_equals "kk" "$mp_plugin_name" "Marketplace plugin name matches plugin name"
+assert_json_field "$marketplace_json" '.plugins[0].version' "$(jq -r .version <<<"$plugin_json")" "Marketplace and plugin versions match"
 
 # =============================================================================
 # Section 3: Skills

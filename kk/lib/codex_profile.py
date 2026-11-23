@@ -11,7 +11,7 @@ import subprocess
 import sys
 import tempfile
 
-from . import codex_plugins, payload, state
+from . import codex_plugins, mixed, payload, state
 from .claude_launch import check_keys, object_value, switches
 from .state import override_path
 
@@ -228,8 +228,11 @@ def prepare(release, record, *, required=False, snapshot=...):
 
 def prepare_activation(release, record):
     candidate = record["candidate"]
+    home = release.parent.parent
     if candidate["phase"] == "activating" and "codex_inputs" in candidate:
         saved = candidate["codex_inputs"]
+        mixed.check_claude_pilot(home)
+        mixed.check_codex_pilot(home, record, saved["directory"] if saved else None)
         return None if saved is None else prepare(release, record, snapshot=saved)
     plan = prepare(release, record)
     if plan:
@@ -240,7 +243,14 @@ def prepare_activation(release, record):
             codex_plugins.stage_guard(release, record, directory, "local" in candidate["source"])
             candidate["digest"] = payload.fingerprint(release)
             candidate["codex_guard_staged"] = True
+        previous = candidate.get("confirmed_guard_change")
         codex_plugins.confirm_change(record, release, directory)
+        if candidate.get("confirmed_guard_change") != previous:
+            # A pilot still has its working guard here. A confirmed switch may
+            # pause for vendor cleanup; resuming the same change needs no new consent.
+            state.write_json(home / "state.json", record)
+    mixed.check_claude_pilot(home)
+    mixed.check_codex_pilot(home, record, plan[3]["directory"] if plan else None)
     # The place checkpoint persists exactly the inputs validated at staging.
     candidate["codex_inputs"] = None if plan is None else plan[3]
     return plan
