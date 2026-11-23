@@ -180,6 +180,12 @@ class FirstInstall(InstallFixture):
         self.assertFalse(self.state_file.exists())
         self.assertFalse((self.home / "calls").exists())
 
+    def test_non_object_journal_is_preserved(self):
+        self.toolbox.mkdir(parents=True)
+        self.state_file.write_text("[]")
+        self.assertIn("kk: unsupported kk state format", self.install(ok=False).stderr)
+        self.assertEqual(self.state_file.read_text(), "[]")
+
     def test_external_link_collision_and_marketplace_collision(self):
         self.link.parent.mkdir(parents=True)
         self.link.symlink_to(self.root / "absent")

@@ -6,6 +6,7 @@ import json
 import os
 from pathlib import Path
 import re
+import signal
 import stat
 import subprocess
 import sys
@@ -65,7 +66,8 @@ def launch_options(args):
 
 
 def workspace_root(directory):
-    env = {k: v for k, v in os.environ.items() if k not in ("GIT_DIR", "GIT_WORK_TREE", "GIT_COMMON_DIR")}
+    env = {k: v for k, v in os.environ.items()
+           if k not in ("GIT_DIR", "GIT_WORK_TREE", "GIT_COMMON_DIR", "GIT_CEILING_DIRECTORIES")}
     result = subprocess.run(["git", "rev-parse", "--show-toplevel"], cwd=directory,
                             env=dict(env, LC_ALL="C"), capture_output=True)
     if result.returncode == 0:
@@ -231,6 +233,15 @@ def report_imports(home):
 
 def launch(home, args):
     directory, explicit, batch, trust_flags = launch_options(args)
+    if batch and not home.is_dir():
+        raise ValueError("no active release; finish installing kk first")
+    with ExitStack() as stack:
+        lock = stack.enter_context(state.codex_access(home, batch=True)) if batch else None
+        return launch_checked(home, args, directory, explicit, lock, trust_flags)
+
+
+def launch_checked(home, args, directory, explicit, lock, trust_flags):
+    batch = lock is not None
     record = state.load(home)
     if (record.get("candidate") or {}).get("phase") == "activating" or record.get("codex_write_pending"):
         raise ValueError("Codex files are changing; finish kk apply, upgrade or rollback before launching")
@@ -289,4 +300,32 @@ def launch(home, args):
         notice.on_launch(home, record)
     if sys.stderr is not None:
         sys.stderr.flush()
-    os.execve(executable, ["codex", *flags, *args], env)
+    argv = ["codex", *flags, *args]
+    if not batch:
+        os.execve(executable, argv, env)
+    return run_batch(argv, executable, env, lock)
+
+
+def run_batch(argv, executable, env, lock):
+    # Keep an independent holder while the vendor is running, including when
+    # its entry point spawns the native binary or closes inherited descriptors.
+    # The inherited copy also covers the interval if the supervisor is killed.
+    with subprocess.Popen(argv, executable=executable, env=env, pass_fds=(lock.fileno(),)) as child:
+        with ExitStack() as handlers:
+            def forward(number, _frame):
+                # A terminal interrupt reaches the whole foreground group,
+                # even when all standard descriptors have been redirected.
+                if number in (signal.SIGINT, signal.SIGQUIT):
+                    try:
+                        with open("/dev/tty", "rb", buffering=0) as tty:
+                            if os.tcgetpgrp(tty.fileno()) == os.getpgrp():
+                                return
+                    except OSError:
+                        pass  # No controlling terminal; forward the directed signal.
+                child.send_signal(number)
+
+            for sig in (signal.SIGHUP, signal.SIGINT, signal.SIGQUIT, signal.SIGTERM):
+                previous = signal.signal(sig, forward)
+                handlers.callback(signal.signal, sig, previous)
+            status = child.wait()
+    return status if status >= 0 else 128 - status

@@ -40,6 +40,28 @@ def newer(latest, installed):
     return upstream > local or (upstream == local and bool(prerelease))
 
 
+def installed_tag(home, record):
+    active = record["active"]
+    source = record["releases"][active].get("source", {})
+    return source.get("tag") or "v" + payload.read_json(
+        home / "releases" / active / "klaude-plugin/.claude-plugin/plugin.json")["version"]
+
+
+def check(home, record):
+    active = record["active"]
+    if not active:
+        raise ValueError("no active release; finish installing kk first")
+    try:
+        latest = payload.latest_tag(payload.upgrade_repository())
+    except (OSError, HTTPException) as exc:
+        raise ValueError("could not check the latest stable release: {}".format(exc)) from exc
+    installed = installed_tag(home, record)
+    if newer(latest, installed):
+        print("{} is available (installed {}).".format(latest, installed))
+    else:
+        print("No newer stable release (installed {}, latest {}).".format(installed, latest))
+
+
 @contextmanager
 def cache_lock(home):
     with (home / "update-notice.lock").open("a") as lock:
@@ -85,8 +107,7 @@ def on_launch(home, record):
             cache = read_cache(home)
             entry = cache.get(repo, {})
             if isinstance(entry, dict) and entry.get("latest") and not entry.get("shown"):
-                installed = source.get("tag") or "v" + payload.read_json(
-                    release / "klaude-plugin/.claude-plugin/plugin.json")["version"]
+                installed = installed_tag(home, record)
                 if newer(entry["latest"], installed):
                     print("kk: {} is available (installed {}).".format(entry["latest"], installed),
                           file=sys.stderr, flush=True)

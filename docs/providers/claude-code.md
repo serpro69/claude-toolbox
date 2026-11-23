@@ -6,6 +6,12 @@ Claude Code is the primary provider for claude-toolbox. All skills, agents, and 
 
 [Install kk](../getting-started/template-setup.md), then run `kk claude` in your project. For a vendor-managed plugin with your own settings, use the [plugin-only setup](../getting-started/plugin-only.md). Configure [MCP servers](../user-guide/mcp-servers.md) separately.
 
+## Claude Code authentication and terms
+
+`kk claude` starts the Claude Code executable you installed and passes a local settings file with `--settings`. Claude Code loads the toolbox skills and hooks through its plugin system. Sign in through Claude Code using your own account or your organization's configured provider. The launcher leaves authentication and billing with that provider. [Claude Code authentication](https://code.claude.com/docs/en/authentication) · [Claude Code plugins](https://code.claude.com/docs/en/plugins)
+
+This local setup fits Anthropic’s published conditions for running its unmodified CLI with the user’s own credentials. Your plan determines the agreement governing your usage. Anthropic lists consumer terms for individual plans and commercial terms for Team, Enterprise and API use. Offering Claude Code as part of a product or hosted service has additional conditions, including preserving its sign-in methods and direct billing to each end user. [Claude Code legal and compliance](https://code.claude.com/docs/en/legal-and-compliance) · [Consumer terms](https://www.anthropic.com/legal/consumer-terms) · [Commercial terms](https://www.anthropic.com/legal/commercial-terms)
+
 ## Configuration files
 
 | Location | Purpose |

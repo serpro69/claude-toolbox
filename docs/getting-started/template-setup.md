@@ -37,6 +37,7 @@ If you already installed plugins from the Git marketplace, `kk status` lists the
 
 ```bash
 kk upgrade                      # latest stable machine release
+kk upgrade --check              # report availability without changing the installation
 kk upgrade --version v0.26.0    # choose a published machine release
 kk upgrade --local .            # use the current toolbox checkout
 kk status
@@ -44,5 +45,9 @@ kk rollback                     # restore the recorded target offline
 ```
 
 After an interrupted upgrade, `kk status` gives the resume or rollback command. Save the recovery command printed during an upgrade. It invokes the retained release’s own dispatcher, so it also works if the newly active command is damaged. Restart long-running sessions within 14 days after their release is superseded.
+
+Managed Codex batch runs (`kk codex exec` and `kk codex review`) can run concurrently. Each holds its verified installation until the vendor process exits. If a batch is running, an upgrade can stage its release and asks you to retry activation afterward with `kk upgrade`. The same retry applies to `kk apply` and `kk rollback`. To cancel a supervised batch, use Ctrl-C in its terminal or send `SIGTERM`. Killing only the supervisor with `SIGKILL` can leave the vendor running. Interactive sessions continue to use the existing upgrade and hook-review behavior.
+
+**Transition from the pilot releases.** Finish running batches before upgrading from or rolling back to `v0.26.0-rc.1` through `rc.3`. Those releases predate batch coordination. Check the rollback target in `kk status`. If it is a Claude-only pilot release and the departing release added Codex, its recovery code can leave the departing Codex plugins installed. Full batch coordination and automatic removal of those plugins apply when both releases contain the correction.
 
 Next, [try the workflow](quickstart.md), [configure your launchers](../user-guide/configuration.md), or [migrate a legacy repository](../user-guide/template-sync.md).

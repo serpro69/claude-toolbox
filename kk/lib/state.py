@@ -69,6 +69,25 @@ def writer(home):
         yield
 
 
+@contextmanager
+def codex_access(home, *, batch=False):
+    """Share admission among batch sessions, or reserve it to change the installation."""
+    with (home / "codex-activation.lock").open("a") as lock:
+        mode = fcntl.LOCK_SH if batch else fcntl.LOCK_EX
+        try:
+            fcntl.flock(lock, mode | fcntl.LOCK_NB)
+        except BlockingIOError as exc:
+            reason = ("Codex files are changing; retry after activation" if batch else
+                      "a managed Codex batch is running; retry after it finishes")
+            raise ValueError(reason) from exc
+        try:
+            yield lock
+        finally:
+            # Release the shared open-file description once the vendor exits,
+            # even if a vendor subprocess retained a duplicate descriptor.
+            fcntl.flock(lock, fcntl.LOCK_UN)
+
+
 def record_codex_phase(release, phase):
     tools = release.setdefault("tools", {})
     if phase in ("ready", "unverified") or tools.get("codex") in ("ready", "unverified"):

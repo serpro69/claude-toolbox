@@ -150,6 +150,7 @@ adopter machine
     bin/kk                          stable entry point
     state.json                      activation state and installed paths
     lock                            writer lock
+    codex-activation.lock           shared by batch sessions, exclusive during activation
     releases/<version>/             immutable payloads, each with its own entry point
     .claude-plugin/marketplace.json local Claude marketplace
     .agents/plugins/marketplace.json  local Codex marketplace
@@ -205,7 +206,7 @@ A one-line installer script at the repository root downloads the latest stable r
 
 ### Activation state
 
-One release is active for the whole machine, and both tools run it. A release becomes active once its files are in place and their bytes verify. What differs per tool after that is whether its guard is confirmed effective, so that is tracked per tool; an adopter may also have only one vendor CLI.
+One release is active for the whole machine. The installer requires Claude Code and also manages Codex when installed. A release becomes active once its files are in place and their bytes verify. The journal records guard readiness separately for each managed tool.
 
 | State | Meaning | Launcher behaviour |
 |---|---|---|
@@ -236,6 +237,8 @@ Promotion commits the active version and rollback target before publishing a cha
 Every write to it and to an owned file is a write to a temporary file followed by a rename. That keeps each file readable but does not stop two commands from interleaving: a scheduled upgrade and a manual rollback could leave the marketplaces, the vendor installs and the state file describing different releases. `upgrade`, `rollback`, `apply` and resumption therefore hold one exclusive lock on `$KK_HOME` for their whole run. A second writer exits at once and names the first. It is an operating-system file lock, released when its holder exits, so a crashed run leaves nothing stale. Launchers and `status` do not take it.
 
 ### Upgrade flow
+
+Managed Codex batch runs share a separate operating-system lock from the start of verification until the vendor process exits. Activation, rollback, applying overrides and removing mixed installations take it exclusively before changing vendor state. A conflicting operation exits with a retry instruction. Multiple batches can run together, and staging a candidate can finish during a batch. The CLI keeps the lock for the whole batch because starting the executable precedes loading its profile and hooks.
 
 The whole flow runs under the [writer lock](#activation-state).
 
@@ -309,7 +312,7 @@ A repository often has instructions beyond its `AGENTS.md`: files a tool generat
 
 **Delivering them.** `kk codex` reads the imports at launch. It appends each file, under a heading naming its path, to the toolbox's own Codex instructions and passes the result as `-c developer_instructions=…`, which replaces the profile's value for that session. With no imports, or none confirmed, it passes nothing and the profile applies as written. The text is fixed when the session starts. A missing file, or one that would take the argument over the size limit, is named in one line and left out; the launch goes on.
 
-The size limit is the operating system's cap on one command-line argument, which Codex does not lower ([assumption 15](#assumptions)). On Linux that is 131,072 bytes for the whole `developer_instructions=<value>` argument, measured after serialisation, so escaped characters count. Task 1 measured that a 130,682-byte argument passes and a 131,719-byte one fails, which matches Linux's fixed per-argument cap. `kk` caps the serialised argument at 122,880 bytes (120 KiB); the 8 KiB margin is a choice, not a measurement. The macOS limit is still to be measured (Task 17); if it is below 131,072 bytes, the cap becomes the macOS limit less the same margin.
+The cap applies to the entire serialised `developer_instructions=<value>` argument, including escaping. On Linux a 130,682-byte argument passed and a 131,719-byte one failed, consistent with the 131,072-byte per-argument kernel limit. On macOS the native Codex executable accepted 1,046,000 bytes with a 2,265-byte environment. The next byte exceeded the combined allowance for that invocation. The npm launcher also passed the 265,487-byte test case. Linux sets the lower measured limit, so `kk` uses 122,880 bytes (120 KiB), allowing an 8 KiB margin. [Platform measurements](verification/task-1/README.md#developer-instructions-assumption-15)
 
 **Confirming them.** The legacy hook injected a repository's files only after the adopter had trusted that repository's hooks in Codex. A machine-level launcher has no such gate, and developer instructions carry more authority than `AGENTS.md`, which Codex loads as a user message. Without a gate, running `kk codex` in a freshly cloned repository would hand that repository's files developer authority. So the launcher asks once per repository, showing the files and their sizes, default no. It records the answer with the list of import paths under `$KK_HOME/imports/` and asks again only when the list changes. A non-interactive run never asks: it injects what was confirmed before and otherwise says in one line that imports were left out. `kk status` run in the repository shows the recorded answer and the file that holds it; deleting that file makes the launcher ask again. The guard already keeps agents from writing under `$KK_HOME`, so a session cannot approve its own repository.
 
@@ -399,7 +402,7 @@ During the transition the generators write both sets, so template sync keeps wor
 - **Plugin-only.** Installing from the Git marketplace keeps working for people who do not want `kk`. They get skills and the Claude guard with vendor-managed updates, and no launcher layer.
 - **Mixed.** A machine with both is ambiguous about which hooks are active. `kk status` reports it, `kk` offers to remove the user-scope Git-marketplace installs through the vendor CLIs, and a tool does not reach *ready* while its active hooks are ambiguous.
 
-The local marketplace needs a name of its own, so that its plugin ID can be told apart from the Git marketplace's `kk@claude-toolbox` in mixed-install detection, in the launcher's disablement of the Git copy and in migration. The name is [still open](#open-questions). `toolbox` is the working name and lives in one constant.
+The local marketplace needs a name of its own, so that its plugin ID can be told apart from the Git marketplace's `kk@claude-toolbox` in mixed-install detection, in the launcher's disablement of the Git copy and in migration. The name is `toolbox` in both vendors. [Marketplace decision](../../../adr/0014-machine-level-delivery.md)
 
 ### Legacy coexistence and migration
 
@@ -536,13 +539,13 @@ Each is a bet the design depends on, with the check that would confirm or break 
 12. When the script behind a project hook disappears under an open Codex session, the hook fails and the call proceeds unguarded. If a probe shows the call is blocked instead, the warning before migration becomes a restart notice. **Holds:** "hook exited with code 127", then the call ran. The warning before migration stays a warning about unguarded sessions.
 13. Codex accepts a digest-stamped version string as a plugin version and as a cache directory name. If it does not, local checkouts need another way to keep version and content in step. **Holds** for every form tried; `kk` uses `<version>+kk.<12 hex digits>`.
 14. Codex accepts re-adding an earlier version of a plugin over a later one, and trust given to a guard bundle is still there when the same bytes come back after another bundle was installed in between. Rollback depends on the first. If the second fails, a rollback across a guard change needs the adopter's review before it counts as recovery, and demonstrations 2 and 4 record that review. **First part holds. The second fails when the adopter reviewed the bundle in between,** because Codex keeps one trusted hash per handler; it holds when they did not. See [rollback](#rollback-and-interrupted-upgrades).
-15. `-c developer_instructions=…` accepts a multi-line value of at least 64 KiB, and it replaces a trusted project's own `developer_instructions` as it replaces the profile's. The first sets the size limit for imports; if the limit is much lower, imports need another channel. The second is only documented, because the launcher cannot read the project's TOML to merge the two. **Both hold on Linux:** the limit is the 131,072-byte per-argument cap, about 126 KiB of text. macOS is still to be measured (Task 17).
+15. `-c developer_instructions=…` accepts a multi-line value of at least 64 KiB, and it replaces a trusted project's own `developer_instructions` as it replaces the profile's. The first sets the size limit for imports; if the limit is much lower, imports need another channel. The second is only documented, because the launcher cannot read the project's TOML to merge the two. **Both hold on Linux and macOS.** The Linux per-argument limit determines the launcher's cap. The macOS native executable and npm launcher both accepted larger arguments in the measured environments. [Probe results](verification/task-1/README.md#developer-instructions-assumption-15)
 
 ## Open questions
 
 These are choices made while writing this document that the maintainer has not confirmed.
 
-1. **The local marketplace's name.** The working name is `toolbox`, which gives `kk@toolbox` beside the Git marketplace's `kk@claude-toolbox`. `kk-local` was proposed because the two differ by one word and `toolbox` is generic enough for another vendor to use. The maintainer will settle it before the first release that installs the marketplace. After that a rename is costly: the plugin ID is written into adopters' settings, and Codex keys hook trust by plugin ID including the marketplace name (observed in Task 1), so a rename makes every adopter review the guard again.
+1. **Resolved.** The local marketplace is `toolbox`, distinct from the Git marketplace `claude-toolbox`. The published pilot installed `kk@toolbox` and `kk-guard@toolbox`. Renaming it would change the plugin IDs used for settings and Codex hook trust. [Decision](../../../adr/0014-machine-level-delivery.md) · [Pilot inventory](verification/pilot/README.md#rc3)
 2. **Resolved on 2026-11-21.** The maintainer accepted the instruction precedence and import confirmation described under [Launching Codex](#launching-codex).
 3. **Resolved on 2026-11-21.** The maintainer chose a warning and uninterrupted offline recovery when rollback changes the guard. See [Rollback and interrupted upgrades](#rollback-and-interrupted-upgrades).
 4. **Resolved on 2026-11-21.** The maintainer accepted the installed CLI load check described under [Launching Codex](#launching-codex).

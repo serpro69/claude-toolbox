@@ -110,6 +110,66 @@ def verify_tree(name, source, directory, version, path):
     return result
 
 
+def restore_absent(home, record, directory, checkpoint):
+    """Undo kk's registrations when the rollback target had no managed Codex."""
+    receipts = record.get("codex_plugins", {}).get(directory)
+    if receipts is None:
+        return
+    checkpoint("codex-restore-absent")
+    path = Path(directory)
+    if path.resolve() != path:
+        raise ValueError("Codex home has moved; restore its original directory before rollback: " + directory)
+    try:
+        path.stat()
+    except FileNotFoundError:
+        # The adopter removed this home. Starting the vendor could recreate it.
+        installed = set()
+        record.pop("codex_plugin_pending", None)
+    else:
+        if not path.is_dir():
+            raise ValueError("recorded Codex home is not a directory: " + directory)
+        try:
+            installed = remove_registrations(home, record, directory, receipts, checkpoint)
+        except (OSError, subprocess.SubprocessError) as exc:
+            raise ValueError("Claude and the owned Codex files were restored. Codex plugin cleanup is pending "
+                             "in {} ({}); repair the Codex CLI or the reported error and rerun kk rollback."
+                             .format(directory, exc)) from exc
+    if len(record["codex_plugins"]) == 1 and not installed:
+        # Older journals do not prove who registered the marketplace. A
+        # retained registration still needs a catalog without stale B paths.
+        catalog = home / ".agents/plugins/marketplace.json"
+        if catalog.is_file():
+            data = payload.read_json(catalog)
+            data["plugins"] = []
+            state.write_json(catalog, data)
+    record.get("codex_marketplaces", {}).pop(directory, None)
+    del record["codex_plugins"][directory]
+    checkpoint("codex-restored-absent")
+
+
+def remove_registrations(home, record, directory, receipts, checkpoint):
+    markets = vendor(home, directory, "marketplace", "list")["marketplaces"]
+    market = next((m for m in markets if m["name"] == MARKETPLACE), None)
+    if market and Path(market["root"]).resolve() != home:
+        raise ValueError("Codex marketplace {} already belongs to another source".format(MARKETPLACE))
+    installed = {p["pluginId"] for p in vendor(home, directory, "list", "--marketplace", MARKETPLACE)["installed"]}
+    pending = record.get("codex_plugin_pending")
+    for name in PLUGINS:
+        plugin_id = name + "@" + MARKETPLACE
+        if name in receipts or pending == plugin_id:
+            if plugin_id in installed:
+                vendor(home, directory, "remove", plugin_id)
+                installed.remove(plugin_id)
+            receipts.pop(name, None)
+            if pending == plugin_id:
+                record.pop("codex_plugin_pending", None)
+            checkpoint("codex-restored-absent-" + name)
+    if market and record.get("codex_marketplaces", {}).get(directory) and not any(
+            item.endswith("@" + MARKETPLACE) for item in installed):
+        vendor(home, directory, "marketplace", "remove", MARKETPLACE)
+    return installed
+
+
 def activate(home, record, release, directory, checkpoint):
     directory = Path(directory)
     directory.mkdir(mode=0o700, parents=True, exist_ok=True)
@@ -143,6 +203,7 @@ def activate(home, record, release, directory, checkpoint):
     if offline:
         return
     if market is None:
+        record.setdefault("codex_marketplaces", {})[str(directory)] = True
         checkpoint("codex-register")
         vendor(home, directory, "marketplace", "add", str(home))
     entries = {p["pluginId"]: p for p in vendor(home, directory, "list", "--marketplace", MARKETPLACE)["installed"]}

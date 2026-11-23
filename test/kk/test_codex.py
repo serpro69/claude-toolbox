@@ -212,6 +212,10 @@ class CodexFiles(InstallFixture):
         repo.mkdir()
         subprocess.run(["git", "init", "-q", str(repo)], check=True)
         self.assertEqual(cli.codex_launch.workspace_root(repo), repo)
+        sub = repo / "nested" / "work"
+        sub.mkdir(parents=True)
+        with patch.dict(os.environ, GIT_CEILING_DIRECTORIES=str(sub.parent)):
+            self.assertEqual(cli.codex_launch.workspace_root(sub), repo)
 
     def test_size_cap_uses_serialized_utf8_and_keeps_later_imports(self):
         self.install()
