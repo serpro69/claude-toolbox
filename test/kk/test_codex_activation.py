@@ -98,13 +98,18 @@ class CodexActivation(InstallFixture):
         self.assertIn("absent", self.invoke(self.link, "codex", "-cfeatures.hooks=false", "review", ok=False).stderr)
         self.invoke(self.link, "codex", "exec", "hello")
         (self.directory / "disabled-1").touch()
-        self.assertIn("disabled", self.invoke(self.link, "codex", "exec", "hello", ok=False).stderr)
+        refusal = self.invoke(self.link, "codex", "exec", "hello", ok=False).stderr
+        self.assertIn("disabled", refusal)
+        self.assertIn("plain codex", refusal)
         self.assertIn("awaiting review", self.invoke(self.link, "status").stdout)
         self.assertIn("cannot verify", self.invoke(self.link, "codex", "-pother", "exec", ok=False).stderr)
         self.assertIn("cannot verify", self.invoke(self.link, "codex", "exec", "resume", ok=False).stderr)
         with (self.directory / "kk.config.toml").open("a") as profile:
             profile.write("\n[features]\nhooks = false\n")
-        self.assertIn("managed Codex profile", self.invoke(self.link, "codex", "-pkk", "exec", ok=False).stderr)
+        drift = self.invoke(self.link, "codex", "-pkk", "exec", ok=False).stderr
+        self.assertIn("managed Codex profile", drift)
+        self.assertIn("plain codex", drift)
+        self.assertIn("kk apply", drift)
 
     def test_tag_collision_and_same_identity_across_local_and_tagged_versions(self):
         self.install()

@@ -29,7 +29,7 @@ kk status
 kk claude
 ```
 
-For Codex, run `kk codex`, open `/hooks` and review all three `kk-guard@toolbox` handlers. Restart the session after review. If Codex reports that it cannot read hook trust, run `kk apply` interactively and acknowledge the review. That vendor state is recorded as `unverified`. Then run `kk status --live` from your terminal. It starts short vendor sessions in scratch workspaces and checks for a denial from each managed guard. It needs working vendor authentication.
+For Codex, start **plain `codex` without `--profile`** in your project. Review the folder’s trust prompt and the three `kk-guard@toolbox` handlers in `/hooks`. Exit Codex. These decisions are now in your account configuration. Use `kk codex` for daily sessions. When a new project needs a folder trust decision, make it in plain `codex` there first. If Codex reports that it cannot read hook trust, run `kk apply` interactively and acknowledge the review. That vendor state is recorded as `unverified`. Run `kk status --live` from your terminal. It starts short vendor sessions in scratch workspaces and checks for a denial from each managed guard. It needs working vendor authentication.
 
 If you already installed plugins from the Git marketplace, `kk status` lists the copies and their scopes. `kk status --remove-mixed` offers to remove user-scope Git copies with a managed counterpart. Review project-owned registrations in their repository. [Existing repositories](adopting.md)
 

@@ -5,7 +5,7 @@
 ## Before you begin
 
 1. Check for `.github/template-state.json` at the repository root. Review local changes with `git status`. Copy out edits to synced files that you want to keep, or add their paths to the manifest’s `sync_exclusions`.
-2. [Install kk](../getting-started/template-setup.md). For Codex, review all three managed guard hooks in `/hooks`. Run `kk status --live` to check the installed guards. Migration also reads the effective guard configuration **in this repository** for each tool it uses. A scratch workspace prevents a legacy hook from supplying a misleading denial.
+2. [Install kk](../getting-started/template-setup.md). For Codex, open plain `codex` in this repository without a named profile, review folder trust and all three managed guard hooks in `/hooks`, then exit. Run `kk status --live` to check the installed guards. Migration also reads the effective guard configuration **in this repository** for each tool it uses. A scratch workspace prevents a legacy hook from supplying a misleading denial.
 3. Close Codex sessions opened before kk was installed and its hooks reviewed. An older session may lose protection when its legacy scripts disappear. Sessions opened after the machine guard is ready can keep using it. The legacy sync script needs Bash 4 or newer (including on macOS). Put that `bash`, `curl` and Mike Farah’s `yq` on `PATH` for migration.
 
 ## Preview, sync and retire

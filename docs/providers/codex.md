@@ -4,11 +4,11 @@
 
 ## Permission guard
 
-Open `/hooks`, review and enable the three managed PreToolUse handlers (Bash, Edit/Write and capy execution), and start a fresh session. Run `kk status --live` for a scratch-session check. A skills-only upgrade reuses the installed guard when its content is unchanged.
+Start plain `codex` without `--profile`, open `/hooks`, and review the three managed PreToolUse handlers (Bash, Edit/Write and capy execution). Exit and start a fresh `kk codex` session. Run `kk status --live` for a scratch-session check. A skills-only upgrade reuses the installed guard when its content is unchanged.
 
 **Two open-session cases need attention.** Close Codex sessions before confirming a guard-changing upgrade or rollback. An open session can lose protection across the change. Review the replacement hooks and start a fresh session before resuming work. Also close sessions opened in a legacy repository before kk was installed and reviewed: they depend on repository scripts that migration removes. [Migrate a template repository](../user-guide/template-sync.md)
 
-For `exec` and `review`, the launcher reads trust and enablement for the selected workspace. Missing, modified, disabled or untrusted handlers block a batch launch. Batch launches also require a verifiable local workspace and the managed profile. Use an interactive launch to review hooks or select another named profile. If the vendor lacks the trust-reading method, review the hooks and run `kk apply` interactively to acknowledge that review. The recorded state is `unverified`, and batch launches warn. `kk migrate` also requires an attributable live denial.
+For `exec` and `review`, the launcher reads trust and enablement for the selected workspace. Missing, modified, disabled or untrusted handlers block a batch launch. Batch launches also require a verifiable local workspace and the managed profile. Use plain Codex for account-wide hook review. An interactive launch can also select another named profile. If the vendor lacks the trust-reading method, review the hooks and run `kk apply` interactively to acknowledge that review. The recorded state is `unverified`, and batch launches warn. `kk migrate` also requires an attributable live denial.
 
 ## Configuration files
 
@@ -23,6 +23,12 @@ For `exec` and `review`, the launcher reads trust and enablement for the selecte
 `CODEX_HOME` defaults to `~/.codex`. The managed profile supplies model and reasoning defaults, TUI settings and behavioral instructions. Precedence is base user settings, selected profile, trusted project settings, then explicit CLI flags. Bare Codex uses its normal profile selection. The user-scope guard plugin can still run there once trusted. Toolbox checks for collisions before creating owned files.
 
 Approval policy, approval reviewer and sandbox defaults are optional. The separate native-forbids opt-in affects every repository and bare session using this Codex home. Existing project sandbox and approval settings still win after migration. [Override keys and effects](../user-guide/configuration.md#how-configuration-works)
+
+### Where Codex saves trust decisions
+
+Codex 0.171.0 saves interactive hook and folder trust in the active configuration file. Plain `codex` saves those choices in `$CODEX_HOME/config.toml`; `kk codex` selects the generated `$CODEX_HOME/kk.config.toml`. Use plain Codex for machine guard review, including after a guard change, and for the first folder trust decision in each repository. Project restrictions still apply.
+
+If you already made a decision in the wrapped session, exit it and open plain `codex` in the same directory. Confirm the folder and hook choices you actually intend at account scope. Then run `kk apply` to regenerate the owned profile and `kk status --live` to verify. Regeneration replaces profile-local edits. Toolbox never copies a trust decision into another scope.
 
 ## Repository instructions
 

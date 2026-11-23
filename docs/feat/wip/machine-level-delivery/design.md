@@ -211,7 +211,7 @@ One release is active for the whole machine, and both tools run it. A release be
 |---|---|---|
 | *staged* | Candidate fetched and validated; nothing on the machine has changed | Launches the active release |
 | *activating* | Vendor installs or owned files are being written | `kk codex` refuses; `kk claude` warns |
-| *awaiting review* | Activated, but a Codex guard hook is untrusted, changed since review, disabled or missing | `kk codex` starts interactive sessions so the adopter can review, and refuses non-interactive runs |
+| *awaiting review* | Activated, but a Codex guard hook is untrusted, changed since review, disabled or missing | Review in plain `codex` without a named profile. `kk codex` can start interactive sessions and refuses unverified non-interactive runs in this state |
 | *unverified* | Activated; Codex hook trust cannot be read on this machine and the adopter acknowledged reviewing the hooks | `kk codex` starts; non-interactive runs print a one-line warning; `kk migrate` relies on the live check |
 | *ready* | Activated and verified | Normal |
 
@@ -286,6 +286,8 @@ If the adopter passes their own `--settings`, a file or inline JSON, the launche
 ### Launching Codex
 
 `kk codex` starts `codex --profile kk` with the adopter's arguments. The profile is `$CODEX_HOME/kk.config.toml`, written from the baseline and the adopter's overrides at upgrade and by `kk apply`. It carries the Codex defaults and the behavioural instructions as developer instructions.
+
+The RC1 pilot on Codex 0.171.0 established that interactive hook and workspace trust are written to the selected profile. The maintainer chose plain `codex` for account-level trust decisions. For a new repository, review its folder trust there first. A decision made in the managed profile is local to that profile and is replaced by `kk apply`. Establish intended decisions in plain Codex before regenerating the profile. The launcher continues to select the managed profile for daily use.
 
 The profile ranks above the base user config and below trusted project config (observed in Task 1). A repository's deliberate choice therefore wins over the toolbox default; a value in `~/.codex/config.toml` does not. This asymmetry with Claude is a documented consequence of not parsing TOML under Python 3.8: the launcher cannot see what the machine owner set, so it cannot yield to it per key.
 
