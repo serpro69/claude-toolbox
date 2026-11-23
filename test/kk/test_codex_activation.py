@@ -208,7 +208,7 @@ class CodexActivation(InstallFixture):
         self.assertFalse((self.directory / "agents" / agent).exists())
         vendor_bin = self.root / "broken-vendor"
         vendor_bin.mkdir()
-        (vendor_bin / "codex").symlink_to("/bin/false")
+        (vendor_bin / "codex").symlink_to(shutil.which("false"))
         env = dict(self.env, PATH=str(vendor_bin) + os.pathsep + self.env["PATH"])
         result = self.invoke(self.link, "rollback", env=env, ok=False)
         self.assertIn("Codex plugin recovery is pending", result.stderr)

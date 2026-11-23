@@ -1610,13 +1610,14 @@ def render(merged, source):
     for name, value in merged.items():
         if name in preserved:
             continue
+        # TOML child table headers are absolute. Give the encoder their full
+        # path so nested env and http_headers stay inside the named server.
         result = subprocess.run(
-            ["yq", "-p", "json", "-o", "toml", '. | ... style="flow"'],
-            input=json.dumps(value).encode(), stdout=subprocess.PIPE,
+            ["yq", "-p", "json", "-o", "toml", "."],
+            input=json.dumps({"mcp_servers": {name: value}}).encode(), stdout=subprocess.PIPE,
             check=True, timeout=30,
         )
-        header = "\n[mcp_servers.{}]\n".format(json.dumps(name, ensure_ascii=False))
-        fragments.append(header.encode() + result.stdout)
+        fragments.append(b"\n" + result.stdout)
 
     output = bytearray()
     for fragment in fragments:
@@ -2367,7 +2368,9 @@ compare_files() {
 
     # Find deleted files (exist in project but not in staging)
     # Skip for workflows/ — we only sync template-sync.yml, not the entire directory
-    if [[ -d "$project_dir" && "$staging_subdir" != "workflows" ]]; then
+    # Migration sync copies the staged files and runs the named migrations.
+    # Only those migrations actually delete files; their plans are merged below.
+    if [[ -d "$project_dir" && "$staging_subdir" != "workflows" && ${TEMPLATE_SYNC_MERGE_DENY:-0} != 1 ]]; then
       local find_args=("$project_dir" -type f -print0)
 
       while IFS= read -r -d '' project_file; do
@@ -2497,13 +2500,13 @@ generate_diff_report() {
     echo ""
 
     # Show diffs for modified files (limited to first 20 lines each)
-    if ! $CI_MODE; then
+    if ! $CI_MODE || [[ ${TEMPLATE_SYNC_MERGE_DENY:-0} == 1 && $DRY_RUN == true ]]; then
       echo -e "  ${CYAN}Diffs:${NC}"
       for file in "${MODIFIED_FILES[@]}"; do
         local staging_file
         # Map project path back to staging path
-        if [[ "$file" == ".claude/"* ]]; then
-          staging_file="$staging_dir/claude/${file#.claude/}"
+        if [[ "$file" == ".claude/"* || "$file" == ".codex/"* ]]; then
+          staging_file="$staging_dir/${file#.}"
         else
           staging_file="$staging_dir/$file"
         fi
@@ -3292,7 +3295,9 @@ main() {
   log_info "Resolved version: $RESOLVED_VERSION"
 
   # Fetch upstream templates (sets FETCHED_TEMPLATES_PATH)
-  fetch_upstream_templates "$RESOLVED_VERSION" "$upstream_repo" "$STAGING_DIR"
+  local fetch_ref=$RESOLVED_VERSION
+  if [[ ${TEMPLATE_SYNC_MERGE_DENY:-0} == 1 ]]; then fetch_ref="refs/tags/$RESOLVED_VERSION"; fi
+  fetch_upstream_templates "$fetch_ref" "$upstream_repo" "$STAGING_DIR"
 
   # If the fetched version ships a different sync script, let that version
   # drive the rest of the run. Must happen before any migration/compare/apply
