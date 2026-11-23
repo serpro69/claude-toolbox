@@ -2,7 +2,7 @@
 
 > Design: [./design.md](./design.md)
 > Implementation: [./implementation.md](./implementation.md)
-> Status: pending — revised after the [design review](./review-design.md); see the [resolution](./review-resolution.md)
+> Status: in-progress. RC4 passed under the pilot names. Tasks 19–21 block the stable `v0.26.0` tag. Task 16 follows stable publication.
 > Created: 2026-11-18
 > Not Doing: orchestrator features, Go binary or package-manager distribution, built-in unattended upgrades, full parity for IDE/desktop/cloud/CI sessions, merging into user-owned config (migration excepted), general shell-read grants, detection of open Codex sessions, `kk uninstall`, native Windows, per-repository teammate stub, changes to capy's setup, system-level deny fragment (future)
 
@@ -401,13 +401,57 @@ _Runs before Task 16. It was added after the design review and is numbered 18 so
 - 2026-11-23, verified on the published `v0.26.0-rc.3` at `5ee83cb3`. A pristine Debian ARM64 account passed the corrected onboarding, first interactive-to-batch transition, parity checks with both opt-ins on and off, legacy sync and migration, and demonstrations 1, 2 and 4. The pre-install thread answered a tool-free turn after retirement and was closed. The post-readiness thread returned guard denials across all four phases. Both offline recoveries ended with RC3 active and both tools ready. [Final pilot results](./verification/pilot/README.md#rc3)
 - 2026-11-23, verified on published `v0.26.0-rc.4` at `8457412b`. A fresh Debian ARM64 VM passed the corrected guard review, RC3-to-RC4 trust transition, batch/activation overlap, offline rollback to a Claude-only target and four migration cases. [RC4 pilot results](./verification/pilot/README.md#rc4)
 
+## Task 19: Prepare the Agentstakk repository rename
+
+- **Status:** pending
+- **Depends on:** Task 15
+- **Size:** M
+- **Can run in parallel with:** Task 20
+- **Docs:** [Naming and release order](design.md#agentstakk-naming-and-release-order), [cutover plan](implementation.md#agentstakk-cutover)
+
+### Subtasks
+
+- [ ] 19.1 Update the canonical repository in `install.sh`, `kk/lib/{payload,notice,migrate,codex_plugins}.py`, bootstrap and sync defaults, and the Go module and its consumers. Verify fresh release lookup, a saved old upstream and an explicit fork each resolve to the intended repository.
+- [ ] 19.2 Fix the upstream exclusions in `.github/workflows/{template-cleanup,template-sync}.yml` and their script counterparts before the hosted rename. Exercise the legacy upstream migration with an old downstream manifest and verify the retirement script still honors exclusions and preserves custom forks.
+- [ ] 19.3 Update active repository, release, badge, raw installer and documentation URLs, display names and the Pages base path in `mkdocs.yml`, `.github/workflows/docs.yml` and the docs build. Document the new Git remote, plugin-only switch and RC transition in the install guide and release notes. Check remaining old-name references for a compatibility or historical reason and run the relevant structure, sync, freshness and strict docs checks.
+
+## Task 20: Move plugin installations to the final marketplace IDs
+
+- **Status:** pending
+- **Depends on:** Task 18
+- **Size:** M
+- **Can run in parallel with:** Task 19
+- **Docs:** [Cutover plan](implementation.md#agentstakk-cutover)
+
+### Subtasks
+
+- [ ] 20.1 Set both public manifests to `agentstakk` and both generated local catalogs to `agentstakk-local`. Update plugin metadata, launcher settings, cache lookups and read grants, and regenerate affected projections. Verify the `kk` skills and Codex guard resolve under the expected IDs in both modes and the existing `kk` commands work in the managed install.
+- [ ] 20.2 Handle old public `@claude-toolbox` and pilot `@toolbox` installations in the existing inventory, activation, migration and recovery paths. Check that settings enabling an old public copy cannot produce false managed readiness. Exercise a plugin-only switch and an RC4 upgrade with existing user settings. Require Codex review under the new guard ID, and verify one effective guard per tool after the transition.
+- [ ] 20.3 Exercise offline rollback to a retained old-name release and a return to the renamed release. Check actual vendor inventory and hook state against the reported status, including any manual RC recovery steps in the install guide. Preserve the older pilot's recorded behavior and the existing ownership and confirmation rules.
+
+## Task 21: Rename the hosted repository and pilot the final IDs
+
+- **Status:** pending
+- **Depends on:** Task 19, Task 20
+- **Size:** S
+- **Can run in parallel with:** —
+- **Docs:** [Cutover plan](implementation.md#agentstakk-cutover), [existing pilot evidence](verification/pilot/README.md)
+
+### Subtasks
+
+- [ ] 21.1 Maintainer: once the default branch protects the upstream under both names, rename the existing GitHub repository to `serpro69/agentstakk`, update the checkout remote and confirm the old Git URL reaches the same repository. Verify release workflows still run and the new Pages URL serves the install guide.
+- [ ] 21.2 Publish the next `v0.26.0-rc.N` from the renamed repository. On a clean account, follow the published installer URL with the explicit candidate tag and exercise both vendors. Check the public plugin-only install separately. Record the tag, plugin IDs and managed live guard results.
+- [ ] 21.3 On the tagged candidate, verify the documented RC4 transition and rollback, and run `kk migrate --retirement-version <candidate>` in a disposable legacy checkout naming the old upstream. Record trust and guard outcomes in `verification/pilot/`. Keep the RC3/RC4 observations for unchanged behavior.
+
+**Stable publication:** After 21.1–21.3 pass, the maintainer can tag `v0.26.0` from the renamed repository with the full retirement `template-sync.sh` and `semver-compare.sh`. Task 16 begins after publication.
+
 ## Task 16: Retire the template in this repository
 - **Status:** pending
-- **Depends on:** Task 15, Task 18
+- **Depends on:** Task 15, Task 18, Task 21
 - **Size:** M
 - **Can run in parallel with:** —
 - **Docs:** [implementation.md#retire-the-template](./implementation.md#retire-the-template), [design.md#retiring-the-template](./design.md#retiring-the-template)
-- **Blocked until:** the pilot is recorded and the stable retirement release is tagged
+- **Blocked until:** Task 21 records the Agentstakk pilot and the maintainer publishes the stable `v0.26.0` tag with the full retirement script
 
 ### Subtasks
 - [ ] 16.1 Move the current `semver-compare.sh` to `.github/scripts/semver-compare.sh`, replacing the stale copy there, and point `release.yml`, `pre-release.yml` and `test/test-semver-compare.sh` at it → verify: a dry run of the release workflow passes its version check
@@ -448,8 +492,8 @@ _Runs before Task 16. It was added after the design review and is numbered 18 so
 ## Dependency Graph
 
 ```
-Task 1 ─┬─→ Task 7 ─┬─→ Task 10 ─┬─→ Task 11 ─→ Task 14 ─┬─→ Task 15 ─┬─→ Task 16 ─→ Task 17
-        │           └─→ Task 12  └─→ Task 13 ─→ Task 14  └─→ Task 18 ─┘
+Task 1 ─┬─→ Task 7 ─┬─→ Task 10 ─┬─→ Task 11 ─→ Task 14 ─┬─→ Task 15 → Task 19 ─┐
+        │           └─→ Task 12  └─→ Task 13 ─→ Task 14  └─→ Task 18 → Task 20 ─┴→ Task 21 → stable v0.26.0 → Task 16 → Task 17
         └─→ Task 9 ─→ Task 10
 Task 2 ─→ Task 3 ─→ Task 4 ─┬─→ Task 9
                    │        └─→ Task 12 ─→ Task 18

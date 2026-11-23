@@ -402,7 +402,20 @@ During the transition the generators write both sets, so template sync keeps wor
 - **Plugin-only.** Installing from the Git marketplace keeps working for people who do not want `kk`. They get skills and the Claude guard with vendor-managed updates, and no launcher layer.
 - **Mixed.** A machine with both is ambiguous about which hooks are active. `kk status` reports it, `kk` offers to remove the user-scope Git-marketplace installs through the vendor CLIs, and a tool does not reach *ready* while its active hooks are ambiguous.
 
-The local marketplace needs a name of its own, so that its plugin ID can be told apart from the Git marketplace's `kk@claude-toolbox` in mixed-install detection, in the launcher's disablement of the Git copy and in migration. The name is `toolbox` in both vendors. [Marketplace decision](../../../adr/0014-machine-level-delivery.md)
+### Agentstakk naming and release order
+
+**Agentstakk** is the project name for the Claude Code and Codex toolbox. It reads as “agent stack.” Norwegian *stakk* can mean a haystack or a computing stack, and its final `kk` echoes the command people already use. [Bokmålsordboka](https://ordbokene.no/bm/stakk)
+
+The repository and public marketplace share the slug `agentstakk`. The `-local` suffix identifies the validated release on the user's machine. The launcher and migration use these distinct IDs when both installations exist. [Marketplace decision](../../../adr/0014-machine-level-delivery.md)
+
+| Surface | Through RC4 | First stable release |
+| --- | --- | --- |
+| GitHub repository | `serpro69/claude-toolbox` | `serpro69/agentstakk` |
+| Public Git marketplace | `kk@claude-toolbox` | `kk@agentstakk` |
+| Managed local marketplace | `kk@toolbox` | `kk@agentstakk-local` |
+| Codex guard on each marketplace | `kk-guard@claude-toolbox`, `kk-guard@toolbox` | `kk-guard@agentstakk`, `kk-guard@agentstakk-local` |
+
+People continue to type `kk claude`, `kk codex` and `/kk:design` (Codex: `$kk:design`). Existing `$KK_HOME`, overrides and profile names carry forward. Rehearse the transition from the old IDs on a new tagged candidate after the GitHub rename. Publish stable `v0.26.0` with the final names and the full retirement script. Task 16 removes the template on the default branch only after that tag exists. [Cutover plan](implementation.md#agentstakk-cutover)
 
 ### Legacy coexistence and migration
 
@@ -545,7 +558,7 @@ Each is a bet the design depends on, with the check that would confirm or break 
 
 These are choices made while writing this document that the maintainer has not confirmed.
 
-1. **Resolved.** The local marketplace is `toolbox`, distinct from the Git marketplace `claude-toolbox`. The published pilot installed `kk@toolbox` and `kk-guard@toolbox`. Renaming it would change the plugin IDs used for settings and Codex hook trust. [Decision](../../../adr/0014-machine-level-delivery.md) · [Pilot inventory](verification/pilot/README.md#rc3)
+1. **Resolved for stable on 2026-11-23.** The maintainer chose Agentstakk and the public/managed naming pair `agentstakk` and `agentstakk-local`. RC1–RC4 exercised the earlier names. [Naming and release order](#agentstakk-naming-and-release-order) · [Pilot inventory](verification/pilot/README.md#rc3)
 2. **Resolved on 2026-11-21.** The maintainer accepted the instruction precedence and import confirmation described under [Launching Codex](#launching-codex).
 3. **Resolved on 2026-11-21.** The maintainer chose a warning and uninterrupted offline recovery when rollback changes the guard. See [Rollback and interrupted upgrades](#rollback-and-interrupted-upgrades).
 4. **Resolved on 2026-11-21.** The maintainer accepted the installed CLI load check described under [Launching Codex](#launching-codex).
