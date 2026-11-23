@@ -41,7 +41,7 @@ This is a recurring cost on a long-lived project. It justifies a real mechanism;
 - Toolbox writes only files it owns outright. Ownership means `kk` recorded installing that exact path; a filename or prefix that looks reserved does not establish it. The one-time [migration](#legacy-coexistence-and-migration) is the single exception.
 - Vendor trust controls (Codex hook trust, Claude workspace trust) are worked with, never bypassed.
 - Capy's per-repository setup stays capy's. Toolbox hooks keep yielding HTTP routing to capy's hooks when those are registered.
-- Runtime dependencies stay `bash`, `python3` (3.8 or newer, standard library only), `jq` and `git`. The one-time migration also needs `curl` and Mike Farah's `yq`, as the sync script does today.
+- Runtime dependencies stay `bash`, `python3` (3.8 or newer, standard library only), `jq` and `git`. The one-time migration runs the legacy sync script and needs Bash 4 or newer, `curl` and Mike Farah's `yq`.
 - macOS and Linux. Native Windows stays unsupported.
 - `docs/feat/done/**` and the historical `dirs_to_remove` list in the sync script's plugin migration are not edited.
 
@@ -174,7 +174,7 @@ The collision check looks only at `~/.local/bin/kk` itself. A two-letter name ma
 
 ### Release payload
 
-A release is the four directories above, taken from the tag. `kk` fetches the tag archive from the upstream repository, extracts only those directories into a staging directory, and never executes anything from a payload before validating it.
+A release is the four directories above, taken from the tag. `kk` fetches the tag archive from the upstream repository and extracts only those directories into a staging directory. The first-install bootstrap runs installer modules from the selected release. Before activation, validation runs the staged dispatcher against a private journal and exercises the staged guard and vendor adapters.
 
 Two sources are supported: a tag on the upstream repository, and a local checkout given by path. The local source serves tests and lets the maintainer run unreleased work. The upstream repository is configurable so forks work.
 
@@ -220,7 +220,7 @@ One release is active for the whole machine. The installer requires Claude Code 
 
 The **trust reader** asks the Codex app-server's `hooks/list` for the workspace in question and checks every guard handler the release registers. A handler counts as effective only when it is listed for that workspace with `enabled: true` and `trustStatus: trusted`. `untrusted`, `modified` (trusted once, changed since), `enabled: false` and an absent handler all mean *not effective*. Absence matters: a trusted project can switch the guard plugin, plugins or hooks off for itself in its `.codex/config.toml`, and `hooks/list` then omits the handler for that workspace instead of reporting it disabled.
 
-The reader uses the launch directory selected by `-C` or `--cd` and replays explicit configuration and feature flags. Machine verification and `kk status` use a neutral directory. A project that disables the guard affects launches in that project only. A `managed` handler stays *awaiting review* because the vendor probes established enforcement only for enabled, trusted handlers. The generated profile excludes hook and plugin enablement settings. The app-server cannot load an adopter's named profile or resolve a remote, resumed or new-worktree session in advance, so the wrapper refuses batch runs with those unverifiable inputs.
+The reader uses the launch directory selected by `-C` or `--cd` and replays explicit configuration and feature flags. Activation and apply verify machine readiness from a neutral directory. `kk status` checks effective hook trust and enablement in the current workspace. A project that disables the guard affects launches in that project only. A `managed` handler stays *awaiting review* because the vendor probes established enforcement only for enabled, trusted handlers. The generated profile excludes hook and plugin enablement settings. The app-server cannot load an adopter's named profile or resolve a remote, resumed or new-worktree session in advance, so the wrapper refuses batch runs with those unverifiable inputs.
 
 The state file records:
 
@@ -376,7 +376,7 @@ With the switch off, the hook guard is the only Codex protection on the machine.
 
 - **Workspace anchoring.** The Codex adapters anchor policy to the session workspace: the git top level of the directory the hook process starts in, or that directory itself outside a repository. The payload's working directory is used only to resolve tool operands. Today's adapters derive the root from their own location, which would point into the plugin cache.
 - **Self-protection.** The protected-path list gains the toolbox home, the override file, the owned files under `$CODEX_HOME`, and Codex's plugin cache. The rules format already supports a path token for the temp directory; these paths use the same mechanism.
-- **Denial contract.** Unchanged: exit 2 with a reason on stderr, and adapter failures deny.
+- **Denial contract.** The guard exits 2 and writes a structured denial to stdout and the reason to stderr. A Codex adapter that cannot evaluate the hook exits 2 with a reason on stderr.
 - **Capy.** The Bash adapter keeps its legacy HTTP routing and keeps yielding it when capy's own hook is registered in the workspace's `.codex/hooks.json`.
 
 ### Baseline declaration and generation
@@ -415,7 +415,7 @@ The repository and public marketplace share the slug `agentstakk`. The `-local` 
 | Managed local marketplace | `kk@toolbox` | `kk@agentstakk-local` |
 | Codex guard on each marketplace | `kk-guard@claude-toolbox`, `kk-guard@toolbox` | `kk-guard@agentstakk`, `kk-guard@agentstakk-local` |
 
-People continue to type `kk claude`, `kk codex` and `/kk:design` (Codex: `$kk:design`). Existing `$KK_HOME`, overrides and profile names carry forward. Rehearse the transition from the old IDs on a new tagged candidate after the GitHub rename. Task 16 removes the template before the rename in the same PR. Publish stable `v0.26.0` with the final names. Its `kk migrate` uses the scripts and template from `v0.26.0-rc.4`. [Cutover plan](implementation.md#agentstakk-cutover)
+People continue to type `kk claude`, `kk codex` and `/kk:design` (Codex: `$kk:design`). Existing `$KK_HOME`, overrides and profile names carry forward. Rehearse the transition from the old IDs on a new tagged candidate after the GitHub rename. Task 16 removes the template before the rename in the same PR. Stable `v0.26.0` with the final names follows Task 17 and the completion PR merge. Its `kk migrate` uses the scripts and template from `v0.26.0-rc.4`. [Cutover plan](implementation.md#agentstakk-cutover)
 
 ### Legacy coexistence and migration
 
@@ -469,7 +469,7 @@ Hosting the removal step in the script means its code is frozen in a tag, and af
 Both ways of running an ordinary sync reach the script's apply path: `--local` on a developer's machine, and the downstream workflow's `--apply`, which opens a pull request. Neither can know whether a replacement guard works on anyone's machine. So removal is never a side effect of syncing:
 
 - **Against the retirement release,** every existing mode behaves as it always has. The legacy installation is brought up to date and the run prints one notice that points at `kk migrate`. Only the separate retirement mode removes anything.
-- **Against later releases,** the script's path holds a tombstone. Sync scripts since v0.21.0 hand over to the target version's script before they change anything but their own manifest, and the downstream workflow has fetched that script before running since v0.5.0. The tombstone explains the migration, changes nothing, and reports no changes in CI, so no pull request is opened.
+- **Against later releases,** both released script paths hold a standalone tombstone. Downstream workflows from v0.5.0 through v0.15.x fetch `.github/scripts/template-sync.sh`. Workflows from v0.16.0 and local handoff from v0.21.0 fetch `.claude/toolbox/scripts/template-sync.sh`. The tombstone explains the migration, changes nothing, and reports no changes in CI, so no pull request is opened.
 
 The tombstone is why the script is not simply deleted after retirement. With no script to hand over to, an older script would carry on against the shrunken tree, and its own merges would strip the deny list and the legacy Codex guard registrations from a repository nobody had checked. A local run of a script older than v0.21.0 does not hand over and is not protected; the migration guide tells those adopters not to sync past the retirement release.
 
