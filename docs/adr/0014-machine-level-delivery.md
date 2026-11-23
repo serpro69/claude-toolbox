@@ -2,7 +2,7 @@
 
 ## Status
 
-Accepted, 2026-11-23. Template retirement follows the tagged pilot and publication of the stable retirement release.
+Accepted, 2026-11-23. The RC4 pilot established `v0.26.0-rc.4` as the last full template. Cleanup precedes the rename in one PR.
 
 ## Context
 
@@ -20,7 +20,7 @@ Retire an existing template only through an explicit, two-step migration. First 
 
 ## Consequences
 
-RC1–RC4 used the public name `claude-toolbox` and the managed name `toolbox`. Codex keys hook trust by plugin and marketplace. A pilot user moving to `kk-guard@agentstakk-local` must review that identity in plain Codex. Complete the repository rename and pilot a tagged candidate under the final names before tagging stable. The stable tag must still contain the full retirement sync script so existing repositories can migrate.
+RC1–RC4 used the public name `claude-toolbox` and the managed name `toolbox`. Codex keys hook trust by plugin and marketplace. A pilot user moving to `kk-guard@agentstakk-local` must review that identity in plain Codex. Complete the repository rename and pilot a tagged candidate under the final names before tagging stable. Stable `kk migrate` downloads the full sync script, helper and matching template from RC4. Later ordinary syncs hand off to the compatibility script.
 
 One upgrade serves all repositories on the machine. A retained release can restore a broken activation offline. Running sessions have a 14-day supported lifetime after their release is superseded. Guard-changing Codex upgrades and rollbacks can still require hook review and a fresh session. Activation and effective protection in a specific workspace are separate observations.
 

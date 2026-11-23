@@ -271,10 +271,8 @@ log_test "Generated guard artifacts are fresh"
 guard_generated=$(create_temp_dir "guard-generated")
 TEMP_DIRS+=("$guard_generated")
 bash "$REPO_ROOT/scripts/generate-guard.sh" "$guard_generated"
-for generated in .claude/settings.json .codex/rules/default.rules docs/user-guide/configuration.md \
-  kk/baseline/claude/deny.json kk/baseline/codex/kk.rules kodex-guard/scripts/guard/{guard.sh,run-guard.py,guard.py,guard-rules.json,LICENSE.md} \
-  .codex/scripts/guard/guard.sh .codex/scripts/guard/run-guard.py .codex/scripts/guard/guard.py \
-  .codex/scripts/guard/guard-rules.json .codex/scripts/guard/LICENSE.md; do
+for generated in docs/user-guide/configuration.md kk/baseline/claude/deny.json kk/baseline/codex/kk.rules \
+  kodex-guard/scripts/guard/{guard.sh,run-guard.py,guard.py,guard-rules.json,LICENSE.md}; do
   if cmp -s "$guard_generated/$generated" "$REPO_ROOT/$generated"; then
     log_pass "Fresh: $generated"
   else
@@ -284,65 +282,16 @@ done
 
 log_test "Codex engine and license are byte-identical to canonical sources"
 for file in guard.sh run-guard.py guard.py guard-rules.json LICENSE.md; do
-  if cmp -s "$REPO_ROOT/klaude-plugin/scripts/guard/$file" "$REPO_ROOT/.codex/scripts/guard/$file"; then
+  if cmp -s "$REPO_ROOT/klaude-plugin/scripts/guard/$file" "$REPO_ROOT/kodex-guard/scripts/guard/$file"; then
     log_pass "Canonical copy: $file"
   else
     log_fail "Codex guard copy differs: $file"
   fi
 done
-if [[ -x "$REPO_ROOT/.codex/scripts/guard/guard.sh" ]]; then
+if [[ -x "$REPO_ROOT/kodex-guard/scripts/guard/guard.sh" ]]; then
   log_pass "Codex guard wrapper is executable"
 else
   log_fail "Codex guard wrapper lost executable permission"
-fi
-
-# =============================================================================
-# Section 6: Template is slimmed
-# =============================================================================
-
-log_section "Section 6: Config Slimmed Down"
-
-log_test ".claude/ does not have skills directory"
-if [[ -d "$REPO_ROOT/.claude/skills" ]]; then
-  log_fail ".claude/ should not have skills/ directory (moved to plugin)"
-else
-  log_pass "skills/ not in .claude/"
-fi
-
-log_test ".claude/ does not have commands directory"
-if [[ -d "$REPO_ROOT/.claude/commands" ]]; then
-  log_fail ".claude/ should not have commands/ directory (moved to plugin)"
-else
-  log_pass "commands/ not in .claude/"
-fi
-
-log_test ".claude/ does not have validate-bash.sh"
-if [[ -f "$REPO_ROOT/.claude/scripts/validate-bash.sh" ]]; then
-  log_fail ".claude/ should not have validate-bash.sh (moved to plugin)"
-else
-  log_pass "validate-bash.sh not in .claude/"
-fi
-
-log_test "settings.json has no hooks section"
-settings_json=$(cat "$REPO_ROOT/.claude/settings.json")
-if echo "$settings_json" | jq -e '.hooks' &>/dev/null; then
-  log_fail "settings.json should not have hooks section"
-else
-  log_pass "hooks section removed from settings.json"
-fi
-
-log_test "settings.json has marketplace config"
-if echo "$settings_json" | jq -e '.extraKnownMarketplaces' &>/dev/null; then
-  log_pass "settings.json has extraKnownMarketplaces"
-else
-  log_fail "settings.json should have extraKnownMarketplaces"
-fi
-
-log_test "settings.json has enabledPlugins"
-if echo "$settings_json" | jq -e '.enabledPlugins."kk@claude-toolbox"' &>/dev/null; then
-  log_pass "settings.json has kk@claude-toolbox enabled"
-else
-  log_fail "settings.json should have kk@claude-toolbox in enabledPlugins"
 fi
 
 # =============================================================================

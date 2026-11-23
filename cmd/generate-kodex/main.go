@@ -62,18 +62,6 @@ func run(manifestPath, targetOverride string, dryRun bool) error {
 	if err := GenerateAgents(m, dryRun); err != nil {
 		return fmt.Errorf("generating agents: %w", err)
 	}
-	if m.Agents.ReleaseDir != "" {
-		release := *m
-		release.Agents.TargetDir = m.Agents.ReleaseDir
-		if !dryRun {
-			if err := os.RemoveAll(release.Agents.TargetDir); err != nil {
-				return fmt.Errorf("cleaning release agents: %w", err)
-			}
-		}
-		if err := GenerateAgents(&release, dryRun); err != nil {
-			return fmt.Errorf("generating release agents: %w", err)
-		}
-	}
 
 	if err := GeneratePluginManifest(m, dryRun); err != nil {
 		return fmt.Errorf("generating plugin manifest: %w", err)

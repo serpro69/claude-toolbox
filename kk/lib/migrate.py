@@ -10,7 +10,7 @@ import tempfile
 from . import claude, codex_plugins, codex_profile, codex_trust, live, payload
 
 
-RETIREMENT_VERSION = "v0.26.0"
+RETIREMENT_VERSION = "v0.26.0-rc.4"
 UPSTREAM = "serpro69/claude-toolbox"
 MANIFEST = ".github/template-state.json"
 

@@ -6,7 +6,7 @@ description: |
   switching providers or machines; requires the GitHub CLI. Not a local save.
 disable-model-invocation: true
 ---
-<!-- codex: tool-name mapping applied. See .codex/scripts/session-start.sh -->
+<!-- codex: tool-name mapping applied. See the kk Codex bootstrap instructions -->
 
 # Hand off the active task
 

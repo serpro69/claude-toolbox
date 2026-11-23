@@ -4,7 +4,7 @@ description: |
   TRIGGER when: asked to brainstorm, think through, explore, or pressure-test a technical idea or decision through conversation. Interviews adaptively, asks one question at a time, and closes with a chat recap.
   For technical products, architecture, infrastructure, tools, operations, and engineering workflows. Written design/specification and task-list requests belong to $kk:design; durable domain glossary/reference kits to $kk:model; implementation and fixes to $kk:implement. Not for nontechnical brainstorming.
 ---
-<!-- codex: tool-name mapping applied. See .codex/scripts/session-start.sh -->
+<!-- codex: tool-name mapping applied. See the kk Codex bootstrap instructions -->
 
 # Brainstorm a Technical Idea
 

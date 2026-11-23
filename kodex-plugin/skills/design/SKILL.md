@@ -4,7 +4,7 @@ description: |
   TRIGGER when: asked to write or refine a technical design, PRD, specification, implementation plan, or task list, or resume an existing docs/feat/wip feature.
   Turns ideas and requirements into written design documents, implementation plans, and tasks in docs/feat/wip/ before coding. For conversational exploration without written planning, use $kk:brainstorm.
 ---
-<!-- codex: tool-name mapping applied. See .codex/scripts/session-start.sh -->
+<!-- codex: tool-name mapping applied. See the kk Codex bootstrap instructions -->
 
 # Task Analysis Process
 

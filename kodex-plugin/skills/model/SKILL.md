@@ -3,7 +3,7 @@ name: model
 description: |
   Produce or update a domain-reference kit — the durable glossary + divergences/traps pages for a bounded context. Use for domain modelling, information architecture, building a domain glossary or domain model, mapping domain concepts to code (bindings), or surfacing the decidable questions stakeholders must close before design. Runs upstream of feature $kk:design as the first producer of the architecture flow, and emits artifacts $kk:review-architecture verifies. Triggers: "model the domain", "build a glossary", "domain reference", "bounded context", "what are the concepts here". NOT for behavioral code review or writing a feature design doc.
 ---
-<!-- codex: tool-name mapping applied. See .codex/scripts/session-start.sh -->
+<!-- codex: tool-name mapping applied. See the kk Codex bootstrap instructions -->
 
 # Domain Modelling — the steady-state kit
 

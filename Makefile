@@ -5,7 +5,7 @@ SHELL      := $(shell which bash)
 VERSION ?=
 REF     ?=
 
-.PHONY: vendor-profiles generate-kodex generate-guard check-guard generate-claude-assets generate-all test-structure plugin-graph plugin-graph-docs docs-serve docs-build release pre-release
+.PHONY: vendor-profiles generate-kodex generate-guard check-guard generate-all test-structure plugin-graph plugin-graph-docs docs-serve docs-build release pre-release
 
 vendor-profiles:
 	go test ./cmd/vendor-profiles/...
@@ -20,24 +20,15 @@ generate-kodex:
 generate-guard:
 	bash scripts/generate-guard.sh
 
-GUARD_GENERATED := .claude/settings.json .codex/rules .codex/scripts/guard docs/user-guide/configuration.md \
+GUARD_GENERATED := docs/user-guide/configuration.md \
 	kodex-guard/scripts/guard kk/baseline/codex/kk.rules kk/baseline/claude/deny.json
 
 check-guard: generate-guard
 	git diff --exit-code -- $(GUARD_GENERATED)
 	test -z "$$(git ls-files --others --exclude-standard -- $(GUARD_GENERATED))"
 
-generate-claude-assets:
-	mkdir -p .claude/toolbox/scripts
-	install -m 644 klaude-plugin/instructions/behavior.md .claude/CLAUDE.extra.md
-	install -m 644 klaude-plugin/instructions/plugin-root.md .claude/toolbox/CLAUDE.md
-	for name in statusline.sh statusline_enhanced.sh; do
-		install -m 644 "klaude-plugin/statusline/$$name" ".claude/toolbox/scripts/$$name"
-	done
-
 generate-all:
 	$(MAKE) generate-guard
-	$(MAKE) generate-claude-assets
 	$(MAKE) vendor-profiles
 	$(MAKE) generate-kodex
 

@@ -4,7 +4,7 @@ description: |
   Guidelines describing how to test the code.
   Use whenever writing new or updating existing code, for example after implementing a new feature or fixing a bug.
 ---
-<!-- codex: tool-name mapping applied. See .codex/scripts/session-start.sh -->
+<!-- codex: tool-name mapping applied. See the kk Codex bootstrap instructions -->
 
 # Testing & Quality Assurance Process
 

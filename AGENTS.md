@@ -8,11 +8,11 @@ This is a repository providing a complete development environment for agentic to
 
 ## Architecture
 
-Machine delivery adds `install.sh` and `kk/` to the components below. `kk/lib/` owns staging, activation, launch, offline rollback and repository migration. `kk/baseline/` contains release defaults and generated policy/agent files. Keep `kodex-guard/` separate from the Codex skills plugin to preserve guard trust across skills-only upgrades. The legacy template and its generators remain in this checkout through the retirement pilot. See [ADR 0014](docs/adr/0014-machine-level-delivery.md).
+Machine delivery adds `install.sh` and `kk/` to the components below. `kk/lib/` owns staging, activation, launch, offline rollback and repository migration. `kk/baseline/` contains release defaults and generated policy/agent files. Keep `kodex-guard/` separate from the Codex skills plugin to preserve guard trust across skills-only upgrades. `kk migrate` obtains the last full template from `v0.26.0-rc.4`. See [ADR 0014](docs/adr/0014-machine-level-delivery.md).
 
 Provider components:
 
-1. **Claude Code** (`.claude/`): Project settings (`settings.json`), statusline scripts, and sync infrastructure
+1. **Claude Code** (`.claude/`): Repository preferences and Capy setup
 2. **Codex** (`.codex/`, `kodex-plugin/`, `kodex-guard/`): Codex-equivalent config, hooks, rules, agents, and separate skills and permission-guard plugins. See §Codex Support below
 3. **kk plugin** (`klaude-plugin/`): Skills, commands, hooks, and utility scripts — the canonical source of truth, distributed via the Claude Code plugin system
 
@@ -23,15 +23,15 @@ For API keys and MCP server setup, see [MCP servers](docs/user-guide/mcp-servers
 `klaude-plugin/` is the canonical source. A Go generation tool (`cmd/generate-kodex/`) produces:
 
 - `kodex-plugin/` — transformed skills for Codex (resolves `${CLAUDE_PLUGIN_ROOT}`, injects headers)
-- `.codex/agents/*.toml` and `kk/baseline/codex/agents/*.toml` — sub-agent definitions for the template and machine release, converted from `klaude-plugin/agents/*.md`
+- `kk/baseline/codex/agents/*.toml` — sub-agent definitions for the machine release, converted from `klaude-plugin/agents/*.md`
 
-The permission-guard generator (`scripts/generate-guard.sh`) copies the canonical runtime and license from `klaude-plugin/scripts/guard/` into `.codex/scripts/guard/` and `kodex-guard/scripts/guard/`. It produces both `.codex/rules/default.rules` and `kk/baseline/codex/kk.rules`, writes the same Claude deny list to `.claude/settings.json` and `kk/baseline/claude/deny.json`, and refreshes the marked tables in `docs/user-guide/configuration.md`.
+The permission-guard generator (`scripts/generate-guard.sh`) copies the canonical runtime and license from `klaude-plugin/scripts/guard/` into `kodex-guard/scripts/guard/`. It writes `kk/baseline/codex/kk.rules` and `kk/baseline/claude/deny.json`, and refreshes the marked tables in `docs/user-guide/configuration.md`.
 
-Hand-authored codex files (not generated): `.codex/config.toml`, `.codex/hooks.json`, `.codex/scripts/` except `guard/`, and `AGENTS.md`.
+Hand-authored codex files (not generated): `.codex/config.toml`, `.codex/hooks.json`, and `AGENTS.md`.
 
-**Developer workflow:** After editing skills or agents in `klaude-plugin/`, run `make generate-kodex` to regenerate. CI checks freshness across `kodex-plugin/`, `.codex/agents/` and `kk/baseline/codex/agents/`, including newly generated files.
+**Developer workflow:** After editing skills or agents in `klaude-plugin/`, run `make generate-kodex` to regenerate. CI checks freshness across `kodex-plugin/` and `kk/baseline/codex/agents/`, including newly generated files.
 
-Edit Claude session instructions in `klaude-plugin/instructions/` and statusline scripts in `klaude-plugin/statusline/`. Run `make generate-claude-assets` to refresh their legacy template copies. CI checks all four copies for drift.
+Edit Claude session instructions in `klaude-plugin/instructions/` and statusline scripts in `klaude-plugin/statusline/`. Both ship directly in the Claude plugin.
 
 After editing `klaude-plugin/scripts/guard/`, run `make generate-guard`. CI and both release workflows use `make check-guard` to regenerate every guard projection and check for tracked or untracked differences. Never edit generated copies directly. `make generate-all` refreshes guard output before the other generators and their structure checks.
 
@@ -45,7 +45,7 @@ for test in test/test-*.sh; do $test; done
 
 Run `bash test/test-kk.sh` for machine installation, lifecycle, launchers and migration orchestration. `make docs-build` checks the published documentation.
 
-Key test suites: `test-plugin-structure.sh` (klaude-plugin + kodex-plugin generated output), `test-codex-structure.sh` (codex config, hooks, agents, rules), `test-template-sync.sh` (sync infrastructure). Tests use shared utilities from `test/helpers.sh`.
+Key test suites: `test-plugin-structure.sh` (klaude-plugin + kodex-plugin generated output), `test-codex-structure.sh` (codex config, hooks, agents, rules), `test-template-sync.sh` (released client handoff). Tests use shared utilities from `test/helpers.sh`.
 
 The Go tools under `cmd/` have their own tests: `make generate-kodex` (Codex generation + freshness) and `make plugin-graph` (the `cmd/plugin-graph/` dependency-graph analyzer's tests, plus `plugin-graph validate` against `klaude-plugin/` as a broken-link/orphan gate). See [docs/contributing/architecture.md](docs/contributing/architecture.md) for what `plugin-graph` analyzes.
 
@@ -123,7 +123,6 @@ When adding a new shared instruction:
 ### When renaming
 
 - Update `test/test-plugin-structure.sh` `EXPECTED_SKILLS` and `EXPECTED_COMMANDS`.
-- **Don't touch `run_plugin_migration`'s `dirs_to_remove` in `.claude/toolbox/scripts/template-sync.sh`** — those are historical paths for cleaning up pre-v0.5.0 downstream projects. They must stay as the names that existed at migration time.
 - Leave `docs/feat/done/**` untouched — it's frozen history.
 - Watch for substring collisions (e.g., a `design-review` → `/kk:review-design` rename will also hit the `design-reviewer` agent name via simple sed; hand-fix those).
 

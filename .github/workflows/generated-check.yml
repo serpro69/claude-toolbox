@@ -5,20 +5,14 @@ on:
   pull_request:
     paths:
       - '.github/workflows/generated-check.yml'
+      - '.claude/toolbox/scripts/template-sync.sh'
       - 'klaude-plugin/**'
       - 'kodex-plugin/**'
       - 'kodex-guard/**'
       - '.agents/plugins/marketplace.json'
       - 'kk/baseline/codex/kk.rules'
       - 'kk/baseline/claude/deny.json'
-      - '.codex/agents/**'
       - 'kk/baseline/codex/agents/**'
-      - '.codex/rules/**'
-      - '.codex/scripts/guard/**'
-      - '.claude/settings.json'
-      - '.claude/CLAUDE.extra.md'
-      - '.claude/toolbox/CLAUDE.md'
-      - '.claude/toolbox/scripts/statusline*.sh'
       - 'cmd/generate-kodex/**'
       - 'scripts/generate-guard.sh'
       - 'scripts/kodex-generate-manifest.yml'
@@ -37,16 +31,18 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v7
+        with:
+          fetch-depth: 0
+      - name: Verify legacy sync handoff
+        run: bash test/test-template-sync.sh
       - uses: actions/setup-go@v7
         with:
           go-version-file: go.mod
       - name: Regenerate and check freshness
         run: |
           make check-guard
-          make generate-claude-assets
           make generate-kodex
-          generated=(kodex-plugin .codex/agents kk/baseline/codex/agents)
-          generated+=(.claude/CLAUDE.extra.md .claude/toolbox/CLAUDE.md .claude/toolbox/scripts/statusline{,_enhanced}.sh)
+          generated=(kodex-plugin kk/baseline/codex/agents)
           git diff --exit-code -- "${generated[@]}"
           test -z "$(git ls-files --others --exclude-standard -- "${generated[@]}")"
       - name: Test guard generator

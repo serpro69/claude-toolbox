@@ -95,14 +95,14 @@ jobs:
           echo "Kodex Current version: $KODEX_CURRENT_VERSION"
           echo "New version: $NEW_SEMVER"
 
-          RESULT=$(bash .claude/toolbox/scripts/semver-compare.sh "$KLAUDE_CURRENT_VERSION" "$NEW_SEMVER")
+          RESULT=$(bash .github/scripts/semver-compare.sh "$KLAUDE_CURRENT_VERSION" "$NEW_SEMVER")
           case "$RESULT" in
             lt)  echo "Version bump: $KLAUDE_CURRENT_VERSION -> $NEW_SEMVER" ;;
             eq)  echo "::error::New version $NEW_SEMVER is the same as the current version."; exit 1 ;;
             gt)  echo "::error::New version $NEW_SEMVER is not newer than current version $KLAUDE_CURRENT_VERSION."; exit 1 ;;
           esac
 
-          RESULT=$(bash .claude/toolbox/scripts/semver-compare.sh "$KODEX_CURRENT_VERSION" "$NEW_SEMVER")
+          RESULT=$(bash .github/scripts/semver-compare.sh "$KODEX_CURRENT_VERSION" "$NEW_SEMVER")
           case "$RESULT" in
             lt)  echo "Version bump: $KODEX_CURRENT_VERSION -> $NEW_SEMVER" ;;
             eq)  echo "::error::New version $NEW_SEMVER is the same as the current version."; exit 1 ;;
@@ -170,7 +170,7 @@ jobs:
         if: inputs.dry_run != true
         run: |
           go run ./cmd/generate-kodex -manifest scripts/kodex-generate-manifest.yml
-          echo "Regenerated kodex-plugin/ and .codex/agents/ from klaude-plugin source"
+          echo "Regenerated kodex-plugin/ and kk/baseline/codex/agents/ from klaude-plugin source"
 
       - name: Update Plugin Version
         if: inputs.dry_run != true

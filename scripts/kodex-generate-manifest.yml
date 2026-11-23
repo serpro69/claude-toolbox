@@ -12,7 +12,7 @@ skills:
       replacement_base: "../.."
     - type: inject_header
       content: |
-        <!-- codex: tool-name mapping applied. See .codex/scripts/session-start.sh -->
+        <!-- codex: tool-name mapping applied. See the kk Codex bootstrap instructions -->
     - type: skill_prefix_rewrite
       scope: all_md
       from: "/kk:"
@@ -31,8 +31,7 @@ profiles:
       to: "$kk:"
 
 agents:
-  target_dir: ".codex/agents"
-  release_dir: "kk/baseline/codex/agents"
+  target_dir: "kk/baseline/codex/agents"
   sandbox_mode: "read-only"
   model: "gpt-6.2-sol"
   model_reasoning_effort: "xhigh"
@@ -59,9 +58,3 @@ manifest:
   extra_fields:
     skills: "./skills/"
     # mcpServers: "./.mcp.json"
-
-mcp:
-  servers:
-    capy:
-      command: "bash"
-      args: [".codex/scripts/capy.sh", "serve"]

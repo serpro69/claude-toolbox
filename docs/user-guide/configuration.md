@@ -158,7 +158,7 @@ This exception does not allow reading or writing secrets.
 
 ## Guard Configuration
 
-The baseline ships inside the Claude plugin and runs even when neither configuration file exists. The standalone Codex guard plugin and the Codex template carry the same engine and declaration. These files are independent of provider permission settings:
+The baseline ships inside the Claude plugin and runs even when neither configuration file exists. The standalone Codex guard plugin carries the same engine and declaration. These files are independent of provider permission settings:
 
 | File | Owner and purpose |
 |------|-------------------|

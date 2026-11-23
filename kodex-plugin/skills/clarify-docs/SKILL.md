@@ -8,7 +8,7 @@ description: |
   or agent instructions. Explicit instruction or SKILL.md targets receive a
   $kk:implement suggestion without edits or invoking implementation.
 ---
-<!-- codex: tool-name mapping applied. See .codex/scripts/session-start.sh -->
+<!-- codex: tool-name mapping applied. See the kk Codex bootstrap instructions -->
 
 # Clarify Documentation, PR Drafts and Issue Descriptions
 

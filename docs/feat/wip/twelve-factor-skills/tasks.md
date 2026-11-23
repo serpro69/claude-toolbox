@@ -44,7 +44,7 @@
 
 ### Subtasks
 - [ ] 3.1 Run `make generate-kodex`; commit the generated `kodex-plugin/profiles/twelve-factor/`
-- [ ] 3.2 Verify `make generate-kodex && git diff --exit-code kodex-plugin/ .codex/agents/` produces no diff (CI freshness gate)
+- [ ] 3.2 Verify `make generate-kodex && git diff --exit-code -- kodex-plugin/ kk/baseline/codex/agents/` produces no diff (CI freshness gate)
 - [ ] 3.3 Run `make plugin-graph` → `plugin-graph validate` passes with no new broken links or orphans
 
 ## Task 4: Detection dry run

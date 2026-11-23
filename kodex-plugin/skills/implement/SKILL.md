@@ -6,7 +6,7 @@ description: |
   Examples: "work on task 1", "fix this bug", "implement feature X from the issue".
   Provides structured execution with profile detection, dependency handling, review checkpoints.
 ---
-<!-- codex: tool-name mapping applied. See .codex/scripts/session-start.sh -->
+<!-- codex: tool-name mapping applied. See the kk Codex bootstrap instructions -->
 
 # Implementing Work
 

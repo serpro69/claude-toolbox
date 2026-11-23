@@ -415,7 +415,7 @@ The repository and public marketplace share the slug `agentstakk`. The `-local` 
 | Managed local marketplace | `kk@toolbox` | `kk@agentstakk-local` |
 | Codex guard on each marketplace | `kk-guard@claude-toolbox`, `kk-guard@toolbox` | `kk-guard@agentstakk`, `kk-guard@agentstakk-local` |
 
-People continue to type `kk claude`, `kk codex` and `/kk:design` (Codex: `$kk:design`). Existing `$KK_HOME`, overrides and profile names carry forward. Rehearse the transition from the old IDs on a new tagged candidate after the GitHub rename. Publish stable `v0.26.0` with the final names and the full retirement script. Task 16 removes the template on the default branch only after that tag exists. [Cutover plan](implementation.md#agentstakk-cutover)
+People continue to type `kk claude`, `kk codex` and `/kk:design` (Codex: `$kk:design`). Existing `$KK_HOME`, overrides and profile names carry forward. Rehearse the transition from the old IDs on a new tagged candidate after the GitHub rename. Task 16 removes the template before the rename in the same PR. Publish stable `v0.26.0` with the final names. Its `kk migrate` uses the scripts and template from `v0.26.0-rc.4`. [Cutover plan](implementation.md#agentstakk-cutover)
 
 ### Legacy coexistence and migration
 
@@ -460,7 +460,7 @@ The removal logic lives in one final release of the sync script, as a separate m
 - Retirement removes either exact toolbox import line from `CLAUDE.md` when its target is removed or already absent. If the target stays because it was customised or excluded, retirement keeps and reports the import so Claude continues loading the file. Excluding `CLAUDE.md` itself preserves its contents.
 - **If the template cannot be fetched, nothing is removed** and the run stops.
 
-`kk migrate` is a wrapper around the two steps. It fetches the script and its helper file from the retirement tag into a temporary directory and runs them from there with the script's self-update switched off. It depends on neither the repository's own copy of the script nor the default branch. It checks for `curl` and `yq` first and says they are needed for this step only. The retirement tag is a constant in `kk`, with a command-line override so that the [pilot](#verification) can run against a release candidate.
+`kk migrate` is a wrapper around the two steps. It fetches the script and its helper file from the retirement tag into a temporary directory and runs them from there with the script's self-update switched off. It depends on neither the repository's own copy of the script nor the default branch. It checks for `curl` and `yq` first and says they are needed for this step only. The retirement tag is pinned to `v0.26.0-rc.4` in `kk`, with a command-line override so that the [pilot](#verification) can run against a release candidate.
 
 Hosting the removal step in the script means its code is frozen in a tag, and after retirement the default branch holds only the tombstone. A fix to the retirement script therefore ships as a patch tag cut from a branch at the retirement tag, and the next `kk` release moves its constant to that tag. Nothing else is released from that branch.
 

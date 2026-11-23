@@ -34,7 +34,7 @@ class CodexFiles(InstallFixture):
         original = self.profile.read_bytes()
         self.assertNotIn(b"approval_policy", original.split(b'"developer_instructions"')[0])
         self.assertEqual((self.codex / "agents/kk-code-reviewer.toml").read_bytes(),
-                         (ROOT / ".codex/agents/code-reviewer.toml").read_bytes())
+                         (ROOT / "kk/baseline/codex/agents/code-reviewer.toml").read_bytes())
         personal = self.codex / "agents/kk-notes.toml"
         personal.touch()
         self.configure({"optIn": {"approval_policy": True, "sandbox_mode": True, "nativeForbids": True},
@@ -327,10 +327,8 @@ class CodexFiles(InstallFixture):
         profile, instructions, native = cli.codex_profile.compose(ROOT, {})
         values = tomllib.loads(profile.decode())
         self.assertEqual(values.pop("developer_instructions"), instructions.decode())
-        template = tomllib.loads((ROOT / ".codex/config.toml").read_text())
-        for key in ("approval_policy", "approvals_reviewer", "sandbox_mode", "features", "mcp_servers"):
-            template.pop(key, None)
-        self.assertEqual(values, template)
+        baseline = json.loads((ROOT / "kk/baseline/codex.json").read_text())
+        self.assertEqual(values, baseline["profile"])
         self.assertFalse(native)
         notices = {"example.model": 2}
         configured = cli.codex_profile.compose(ROOT, {"settings": {"tui": {"model_availability_nux": notices}}})[0]

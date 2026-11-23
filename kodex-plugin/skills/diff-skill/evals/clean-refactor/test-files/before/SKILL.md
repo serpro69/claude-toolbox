@@ -2,7 +2,7 @@
 name: review-tool
 description: Reviews tool configurations for correctness.
 ---
-<!-- codex: tool-name mapping applied. See .codex/scripts/session-start.sh -->
+<!-- codex: tool-name mapping applied. See the kk Codex bootstrap instructions -->
 
 # Review Tool
 

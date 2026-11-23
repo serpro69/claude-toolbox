@@ -1,15 +1,8 @@
 #!/usr/bin/env bash
-# Test suite for the Codex session hook and Bash, patch and MCP adapters.
-# behaviour with and without capy's own Codex hooks registered in hooks.json.
-# See: https://github.com/serpro69/claude-toolbox/issues/170
+# Test the released Codex guard with and without Capy hooks in a repository.
 set -euo pipefail
 
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
-case "${1:-}" in
-  "") bash "$SCRIPT_DIR/test-codex-hooks.sh" template; exec bash "$SCRIPT_DIR/test-codex-hooks.sh" plugin ;;
-  template|plugin) delivery=$1 ;;
-  *) echo "Expected template or plugin" >&2; exit 1 ;;
-esac
 source "$SCRIPT_DIR/helpers.sh"
 
 REPO_ROOT="$(cd "$SCRIPT_DIR/.." && pwd)"
@@ -53,56 +46,30 @@ PARTIAL_HOOKS=$(jq --argjson ss "$(capy_entry sessionstart)" \
 PARTIAL_PT_HOOKS=$(jq --argjson pt "$(capy_entry pretooluse)" \
   '.hooks.PreToolUse += [$pt]' <<<"$TOOLBOX_HOOKS")
 
-# Build a disposable project root containing both scripts, marker files for
-# each injected source, and the given hooks.json content (omit for no file).
+# Install the guard plugin beside a disposable project with optional hooks.
 make_project() {
   local root
   root=$(mktemp -d "$fixture/workspace.XXXXXXXX")
   git -C "$root" init -q
-  mkdir -p "$root/.codex/scripts" "$root/.capy" "$root/.claude" "$root/home" "$root/sub"
-  cp "$REPO_ROOT/.codex/scripts/session-start.sh" \
-    "$REPO_ROOT/.codex/scripts/"pretooluse-*.sh "$root/.codex/scripts/"
-  cp -R "$REPO_ROOT/.codex/scripts/guard" "$root/.codex/scripts/"
+  mkdir -p "$root/.codex" "$root/.claude" "$root/home" "$root/sub"
   cp -R "$REPO_ROOT/kodex-guard" "$root.plugin"
-  echo "capy-agents-marker-content" >"$root/.capy/AGENTS.md"
-  echo "extra-marker-content" >"$root/.claude/CLAUDE.extra.md"
   if [[ $# -gt 0 ]]; then
     printf '%s\n' "$1" >"$root/.codex/hooks.json"
   fi
   echo "$root"
 }
 
-session_context() {
-  bash "$1/.codex/scripts/session-start.sh" </dev/null | jq -r '.hookSpecificOutput.additionalContext'
-}
-
-# run_adapter <project_root> <adapter> <payload>; inspect, never execute payloads.
-adapter_dir() {
-  if [[ "$delivery" == plugin ]]; then
-    printf '%s\n' "$1.plugin/scripts"
-  else
-    printf '%s\n' "$1/.codex/scripts"
-  fi
-}
-
 run_adapter() {
-  local root=$1 adapter=$2 payload=$3 scripts command
-  local -a runner
-  scripts=$(adapter_dir "$root")
-  if [[ "$delivery" == plugin ]]; then
-    command=$(jq -er --arg adapter "$adapter" '
-      .hooks.PreToolUse[] | select(.matcher == ({
-        bash:"Bash", patch:"Edit|Write", mcp:"^mcp__[^[:space:]]+__capy_(execute|execute_file|batch_execute)$"
-      }[$adapter])) | .hooks[] | select(.type == "command") | .command
-    ' "$root.plugin/hooks/hooks.json")
-    runner=(env PLUGIN_ROOT="$root.plugin" bash -c "$command")
-  else
-    runner=(bash "$scripts/pretooluse-$adapter.sh")
-  fi
+  local root=$1 adapter=$2 payload=$3 command
+  command=$(jq -er --arg adapter "$adapter" '
+    .hooks.PreToolUse[] | select(.matcher == ({
+      bash:"Bash", patch:"Edit|Write", mcp:"^mcp__[^[:space:]]+__capy_(execute|execute_file|batch_execute)$"
+    }[$adapter])) | .hooks[] | select(.type == "command") | .command
+  ' "$root.plugin/hooks/hooks.json")
   set +e
   PRE_OUTPUT=$(cd -- "${4:-$root/sub}" && env -u KK_GUARD_PROJECT_CONFIG HOME="$root/home" \
     KK_GUARD_USER_CONFIG="$root/no-user-config" \
-    "${runner[@]}" <<<"$payload" 2>"$root/stderr")
+    PLUGIN_ROOT="$root.plugin" bash -c "$command" <<<"$payload" 2>"$root/stderr")
   PRE_EXIT=$?
   set -e
   PRE_ERROR=$(cat "$root/stderr")
@@ -137,97 +104,12 @@ assert_allowed() {
 }
 
 # =============================================================================
-# Section 1: session-start.sh — legacy (capy hooks not registered)
-# =============================================================================
-
-log_section "Section 1: session-start.sh — legacy (capy hooks not registered)"
-
-log_test "Toolbox-only hooks.json injects .capy/AGENTS.md"
+# Project configurations for adapter routing
 legacy_root=$(make_project "$TOOLBOX_HOOKS")
-ctx=$(session_context "$legacy_root")
-if [[ "$ctx" == *"capy-agents-marker-content"* ]]; then
-  log_pass ".capy/AGENTS.md is injected"
-else
-  log_fail ".capy/AGENTS.md should be injected when capy hooks are not registered"
-fi
-if [[ "$ctx" != *"Capy guidance and HTTP routing are delivered by the capy hooks"* ]]; then
-  log_pass "deferral note is absent"
-else
-  log_fail "deferral note should not appear when capy hooks are not registered"
-fi
-
-log_test "Missing hooks.json falls back to legacy injection"
-nofile_root=$(make_project)
-ctx=$(session_context "$nofile_root")
-if [[ "$ctx" == *"capy-agents-marker-content"* ]]; then
-  log_pass ".capy/AGENTS.md is injected without hooks.json"
-else
-  log_fail ".capy/AGENTS.md should be injected when hooks.json is absent"
-fi
-
-log_test "Malformed hooks.json falls back to legacy injection"
-broken_root=$(make_project '{"hooks": {"SessionStart": [')
-ctx=$(session_context "$broken_root")
-if [[ "$ctx" == *"capy-agents-marker-content"* ]]; then
-  log_pass ".capy/AGENTS.md is injected with malformed hooks.json"
-else
-  log_fail ".capy/AGENTS.md should be injected when hooks.json is malformed"
-fi
-
-# =============================================================================
-# Section 2: session-start.sh — capy hooks registered
-# =============================================================================
-
-log_section "Section 2: session-start.sh — capy hooks registered"
-
-log_test "Capy SessionStart entry suppresses .capy/AGENTS.md injection"
 capy_root=$(make_project "$CAPY_HOOKS")
-ctx=$(session_context "$capy_root")
-if [[ "$ctx" != *"capy-agents-marker-content"* ]]; then
-  log_pass ".capy/AGENTS.md is not injected"
-else
-  log_fail ".capy/AGENTS.md should not be injected when capy's SessionStart hook is registered"
-fi
+nofile_root=$(make_project)
+broken_root=$(make_project '{"hooks": {"SessionStart": [')
 
-log_test "Deferral note replaces the injection"
-if [[ "$ctx" == *"Capy guidance and HTTP routing are delivered by the capy hooks"* && "$ctx" == *".codex/hooks.json"* ]]; then
-  log_pass "deferral note names hooks.json as the source"
-else
-  log_fail "deferral note should state that capy hooks own guidance and routing"
-fi
-
-log_test "Provider instructions and extras are preserved in both modes"
-for root in "$legacy_root" "$capy_root"; do
-  ctx=$(session_context "$root")
-  if [[ "$ctx" == *"Provider: Codex"* && "$ctx" == *"Tool-Name Mapping"* ]]; then
-    log_pass "provider block present ($(basename "$root"))"
-  else
-    log_fail "provider block missing ($(basename "$root"))"
-  fi
-  if [[ "$ctx" == *"extra-marker-content"* ]]; then
-    log_pass ".claude/CLAUDE.extra.md present ($(basename "$root"))"
-  else
-    log_fail ".claude/CLAUDE.extra.md missing ($(basename "$root"))"
-  fi
-  if [[ "$ctx" == *"Protected files:"* && "$ctx" == *"./**/.env"* && "$ctx" == *"~/.ssh/**"* ]]; then
-    log_pass "current secrets declaration in advisory ($(basename "$root"))"
-  else
-    log_fail "protected-files advisory missing ($(basename "$root"))"
-  fi
-done
-
-log_test "Output is valid SessionStart JSON in both modes"
-for root in "$legacy_root" "$capy_root"; do
-  out=$(bash "$root/.codex/scripts/session-start.sh" </dev/null)
-  assert_json_valid "$out" "session-start.sh output is valid JSON ($(basename "$root"))"
-  assert_json_field "$out" '.hookSpecificOutput.hookEventName' "SessionStart" "hookEventName is SessionStart ($(basename "$root"))"
-done
-
-# =============================================================================
-# Section 3: pretooluse-bash.sh — legacy (capy hooks not registered)
-# =============================================================================
-
-log_section "Adapter delivery: $delivery"
 log_section "Section 3: pretooluse-bash.sh — legacy (capy hooks not registered)"
 
 log_test "Legacy: curl is denied"
@@ -292,25 +174,13 @@ assert_allowed "capy safe command"
 
 log_section "Section 5: per-event detection"
 
-log_test "Capy SessionStart-only entry defers guidance but keeps HTTP routing"
+log_test "A SessionStart registration alone keeps HTTP routing"
 partial_root=$(make_project "$PARTIAL_HOOKS")
-ctx=$(session_context "$partial_root")
-if [[ "$ctx" != *"capy-agents-marker-content"* ]]; then
-  log_pass "guidance deferred (SessionStart entry present)"
-else
-  log_fail "guidance should be deferred when capy's SessionStart entry is present"
-fi
 run_pretooluse "$partial_root" "curl -s https://example.com"
 assert_denied "curl" "partial curl (no capy PreToolUse entry)"
 
-log_test "Capy PreToolUse-only entry defers HTTP routing but keeps guidance injection"
+log_test "A PreToolUse registration defers HTTP routing"
 partial_pt_root=$(make_project "$PARTIAL_PT_HOOKS")
-ctx=$(session_context "$partial_pt_root")
-if [[ "$ctx" == *"capy-agents-marker-content"* ]]; then
-  log_pass "guidance still injected (no capy SessionStart entry)"
-else
-  log_fail "guidance should still be injected when only capy's PreToolUse entry is present"
-fi
 run_pretooluse "$partial_pt_root" "curl -s https://example.com"
 assert_allowed "partial-pt curl (capy PreToolUse entry present)"
 
@@ -379,7 +249,7 @@ done
 
 log_test "Raw NUL bytes stay invalid through the Bash adapter"
 set +e
-scripts=$(adapter_dir "$capy_root")
+scripts="$capy_root.plugin/scripts"
 PRE_OUTPUT=$({ printf '%s' "$safe_bash"; printf '\0'; } | \
   (cd "$capy_root/sub" && bash "$scripts/pretooluse-bash.sh") 2>"$capy_root/stderr")
 PRE_EXIT=$?
@@ -389,7 +259,7 @@ assert_denied "kk guard: failure" "raw NUL"
 
 log_test "Missing wrapper and closed stdin block in every adapter"
 missing_root=$(make_project "$TOOLBOX_HOOKS")
-mv "$(adapter_dir "$missing_root")/guard/guard.sh" "$missing_root/guard.saved"
+mv "$missing_root.plugin/scripts/guard/guard.sh" "$missing_root/guard.saved"
 for adapter in bash patch mcp; do
   run_adapter "$missing_root" "$adapter" "$safe_bash"
   assert_equals "2" "$PRE_EXIT" "$adapter missing wrapper exits 2"
@@ -411,19 +281,6 @@ for adapter in bash patch mcp; do
     log_fail "$adapter closed stdin should report adapter failure"
   fi
 done
-
-log_test "Missing declaration retains the static session advisory"
-mv "$missing_root/.codex/scripts/guard/guard-rules.json" "$missing_root/rules.saved"
-ctx=$(session_context "$missing_root")
-if [[ "$ctx" == *"Protected files:"* && "$ctx" == *".env"* ]]; then
-  log_pass "fallback policy advisory present"
-else
-  log_fail "fallback policy advisory missing"
-fi
-if [[ "$delivery" == template ]]; then
-  print_summary
-  exit
-fi
 
 log_section "Plugin workspace selection"
 other=$(make_project "$CAPY_HOOKS")
@@ -458,7 +315,7 @@ printf 'gitdir: ./missing-metadata\n' >"$invalid/.git"
 run_adapter "$legacy_root" bash "$safe_bash" "$invalid"
 assert_equals "2" "$PRE_EXIT" "Indeterminate Git workspace fails closed"
 assert_output_contains "could not run" "cat '$legacy_root/stderr'" "Indeterminate workspace is reported as an adapter failure"
-if [[ -e "$(adapter_dir "$legacy_root")/guard/__pycache__" ]]; then
+if [[ -e "$legacy_root.plugin/scripts/guard/__pycache__" ]]; then
   log_fail "Running the plugin modified its guard bundle"
 else
   log_pass "Hook execution left the plugin bundle free of bytecode"

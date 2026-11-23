@@ -4,7 +4,7 @@ description: |
   After implementing a new feature or fixing a bug, make sure to document the changes.
   Use when writing documentation, after finishing the implementation phase for a feature or a bug-fix.
 ---
-<!-- codex: tool-name mapping applied. See .codex/scripts/session-start.sh -->
+<!-- codex: tool-name mapping applied. See the kk Codex bootstrap instructions -->
 
 # Documentation Process
 

@@ -1,20 +1,20 @@
 Sync this repository with the upstream claude-toolbox template.
 
-Fetches the latest template version, compares files, and applies updates locally.
+Legacy repositories can sync to the last full template, `v0.26.0-rc.4`. After retirement the compatibility script directs users to `kk migrate`.
 
 Arguments: $ARGUMENTS
 
 ## Process
 
-Run the template-sync script with `--local` to fetch, compare, and apply in a single invocation:
+For a legacy checkout, default to the retirement tag. If the user specifies a version, use their version once. Forward other arguments unchanged.
 
 ```bash
-.claude/toolbox/scripts/template-sync.sh --local $ARGUMENTS
+.claude/toolbox/scripts/template-sync.sh --local --version v0.26.0-rc.4
 ```
 
-`$ARGUMENTS` is forwarded as-is. Common usage:
+Common usage:
 
-- `/kk:template:sync` — sync to latest release
+- `/kk:template:sync` — sync to the last full template
 - `/kk:template:sync --version v1.0.0` — sync to a specific version
 - `/kk:template:sync --dry-run` — preview changes without applying
 

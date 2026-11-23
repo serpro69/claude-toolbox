@@ -5,7 +5,7 @@
 Run all test suites:
 
 Use the project tools on your normal PATH. The structure checks need Python 3.11+
-(`tomllib`) or the documented `tomli` fallback; template suites need Mike Farah's
+(`tomllib`) or the documented `tomli` fallback; the released-client handoff needs Mike Farah's
 `yq` as well as `jq`. When selecting another Python installation, prepend its
 directory instead of replacing PATH and hiding existing tools.
 
@@ -24,24 +24,21 @@ Run a single suite:
 | Suite | What it covers |
 |-------|----------------|
 | `test-plugin-structure.sh` | Plugin/marketplace manifests, skills, commands, hooks, profiles, cross-references, kodex-plugin generated output validation |
-| `test-codex-structure.sh` | Codex marketplace, config.toml, hooks.json, agent TOMLs, Starlark rules, scripts, AGENTS.md |
-| `test-template-sync.sh` | CLI parsing, manifest validation, variable substitution, settings merge, plugin migration, sync exclusions, self-update handoff |
-| `test-template-cleanup.sh` | Manifest generation, variable capture, git tag/SHA detection |
-| `test-claude-extra.sh` | CLAUDE.extra.md headings, CLAUDE.md imports of behavioral and AGENTS.md project instructions, compare_files detection, auto-import |
-| `test-manifest-jq.sh` | JSON generation patterns, special character handling, schema validation, round-trip |
+| `test-codex-structure.sh` | Codex marketplace, project config and hooks, release agent TOMLs and native rules |
+| `test-template-sync.sh` | Compatibility notice and handoff from the released RC4 client in local and staged CI modes |
 | `test-semver-compare.sh` | Semver comparison logic used by release workflows |
 | `test-cpr.sh` | Claude Plugin Root resolver — exact/fuzzy matching, project-path resolution cascade (project → user → last-installed), install-path validation, env var precedence, error handling |
 | `test-guard.sh` | Python engine tests: glob/path semantics, shell parsing, configuration layers, patches, capy inputs and corpus replay |
 | `test-hooks.sh` | Full guard wrapper transport, plugin-only protection, fail-closed cases, capy-wrapper degradation, Read/Bash p95 latency |
 | `test-generate-guard.sh` | Generated settings/rules/docs, output stability, per-rule examples and invalid-marker rejection |
-| `test-codex-hooks.sh` | Bash/patch/MCP adapter delegation, failure denial, protected-files advisory and per-event capy handoff |
+| `test-codex-hooks.sh` | Bash/patch/MCP adapter delegation, failure denial, workspace selection and per-event Capy handoff |
 | `test-review-eval-staging.sh` | Fresh before/after/history and legacy fixture staging, path safety and evaluator-material exclusion |
 | `test-review-instructions.sh` | Instruction-packet source completeness, routing inputs and path boundaries; does not establish actor compliance |
 | `test-functional-review-tools.sh` | Extracted bundle/capture/receipt/grading utilities and archive inventory; runs from a temporary copy without historical evidence, using Python 3.11+ |
 
 ## Machine delivery tests
 
-Run `bash test/test-kk.sh` for installer, launchers, lifecycle, guard trust, update notices and migration orchestration. It uses temporary homes and vendor fixtures. Run `bash test/test-template-sync.sh` for real tagged Git fixtures, preservation of adopter settings and hooks, the no-change retry and legacy handoff to the tombstone. The `machine-delivery.yml` CI job also runs the guard and Codex adapter suites on Python 3.8 and the current Python.
+Run `bash test/test-kk.sh` for installer, launchers, lifecycle, guard trust, update notices and migration orchestration. It uses temporary homes and vendor fixtures. Run `bash test/test-template-sync.sh` for the legacy handoff to the compatibility notice. Fetch `v0.26.0-rc.4` for the released-client cases. The full sync and removal suites remain in that tag. The `machine-delivery.yml` CI job also runs the guard and Codex adapter suites on Python 3.8 and the current Python.
 
 For installation evidence, `kk status --live` starts fresh vendor sessions and expects the installed guard’s own denial of a public canary. Open-session behavior needs a session spanning the relevant transition. The tagged pilot also verifies that an ordinary sync still leaves the legacy guard in place before migration. The release workflows run the machine delivery and generated-guard checks before publication.
 
@@ -99,8 +96,8 @@ across the whole plugin. See [Architecture › Plugin Graph Analysis](architectu
 ## Validation Before Release
 
 - Every `test/test-*.sh` suite must pass
-- `make generate-kodex` must leave `kodex-plugin/` and `.codex/agents/` clean (`git diff --exit-code`)
-- `make generate-guard` must leave `.claude/settings.json`, `.codex/rules/`, `.codex/scripts/guard/` and `docs/user-guide/configuration.md` clean (`git diff --exit-code`)
+- `make generate-kodex` must leave `kodex-plugin/` and `kk/baseline/codex/agents/` clean (`git diff --exit-code`)
+- `make generate-guard` must leave the release deny list and native rules, `kodex-guard/scripts/guard/`, and `docs/user-guide/configuration.md` clean (`git diff --exit-code`)
 - `make plugin-graph` must pass (Go tests + `validate` exits 0 against `klaude-plugin/`)
 - Go tests must pass (`go test ./...`)
 
