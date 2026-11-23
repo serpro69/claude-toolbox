@@ -11,6 +11,11 @@
 [![Mentioned in Awesome Claude Code](https://img.shields.io/badge/Awesome-Claude%20Code-fc60a8?style=for-the-badge&logo=awesomelists&logoColor=white)](https://github.com/hesreallyhim/awesome-claude-code)
 [![Documentation](https://img.shields.io/badge/docs-serpro69.github.io%2Fagentstakk-blue?style=for-the-badge)](https://serpro69.github.io/agentstakk/)
 
+> [!NOTE]
+> **From `claude-toolbox` to `agentstakk`.** I started this project as a template for sharing Claude Code settings across my repositories. It now ships skills, hooks and workflows for both Claude Code and Codex through one `kk` installation. “Agentstakk” reads as “agent stack.” The Norwegian word *stakk* gives the name its double *k*, a nod to the `kk` command.
+>
+> After the rename, point your upstream Git remote at `serpro69/agentstakk`. For versioned docs bookmarks, replace `/claude-toolbox/` with `/agentstakk/` and keep the version and page path. [Update an existing installation](docs/getting-started/template-setup.md#move-an-existing-installation-to-agentstakk) · [Switch a Git marketplace installation](docs/getting-started/plugin-only.md#switch-an-existing-git-marketplace-installation)
+
 <div align="center"
   <picture>
     <img width="1080" alt="Terminal view" src="https://github.com/user-attachments/assets/27ef7269-0153-47c0-b07d-ed6a9504a176" />
