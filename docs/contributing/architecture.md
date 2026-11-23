@@ -1,6 +1,6 @@
 # Architecture
 
-This document describes how claude-toolbox components fit together. For conventions on authoring skills, profiles, and agents, see [`CLAUDE.md`](https://github.com/serpro69/claude-toolbox/blob/master/CLAUDE.md).
+This document describes how Agentstakk components fit together. For conventions on authoring skills, profiles, and agents, see [`AGENTS.md`](https://github.com/serpro69/agentstakk/blob/master/AGENTS.md).
 
 ## Overview
 

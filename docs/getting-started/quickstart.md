@@ -12,7 +12,7 @@ For an optional conversation first, use `/kk:brainstorm` to explore a technical 
 
 4. **Review the code.** `/kk:review-code` checks for SOLID violations, security risks, and quality issues. Use `/kk:review-code:isolated` for independent sub-agent reviewers with zero authorship bias.
 
-This is the core loop. See the [kk plugin README](https://github.com/serpro69/claude-toolbox/tree/master/klaude-plugin) for all available skills and the full workflow pipeline.
+This is the core loop. See the [kk plugin README](https://github.com/serpro69/agentstakk/tree/master/klaude-plugin) for all available skills and the full workflow pipeline.
 
 ## What Just Happened?
 

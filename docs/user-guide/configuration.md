@@ -194,7 +194,7 @@ The user edits this file directly; the guard protects it from agent writes. Merg
   "projects": {
     "*": {"allow_patterns": ["^git clean -n"]},
     "/absolute/path/to/ops": {"disable_categories": ["infra"]},
-    "/absolute/path/to/claude-toolbox": {"disable_selfmod": true}
+    "/absolute/path/to/agentstakk": {"disable_selfmod": true}
   }
 }
 ```

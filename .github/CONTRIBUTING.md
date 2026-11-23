@@ -1,10 +1,10 @@
 # Contributing
 
-Thanks for your interest in contributing to claude-toolbox!
+Thanks for your interest in contributing to Agentstakk!
 
 **The full contributing guide lives in the documentation site:**
 
-👉 **<https://serpro69.github.io/claude-toolbox/latest/contributing/>**
+👉 **<https://serpro69.github.io/agentstakk/latest/contributing/>**
 
 It covers getting started, plugin development (skills, profiles, agents, hooks), the `${CLAUDE_PLUGIN_ROOT}` substitution rules, common pitfalls, and the pull-request checklist.
 

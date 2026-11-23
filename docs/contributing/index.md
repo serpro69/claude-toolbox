@@ -1,6 +1,6 @@
 # Contributing
 
-Thanks for your interest in contributing to claude-toolbox! This guide covers everything you need: getting started, the plugin architecture, authoring conventions, common pitfalls, and the PR checklist.
+Thanks for your interest in contributing to Agentstakk! This guide covers everything you need: getting started, the plugin architecture, authoring conventions, common pitfalls, and the PR checklist.
 
 ## Getting Started
 
@@ -10,13 +10,13 @@ Thanks for your interest in contributing to claude-toolbox! This guide covers ev
 
 ## Development
 
-See [Architecture](architecture.md) for how the components fit together and [Testing](testing.md) for test conventions. The authoritative reference for all conventions is [`CLAUDE.md`](https://github.com/serpro69/claude-toolbox/blob/master/CLAUDE.md) — this guide summarizes the most important rules for quick orientation.
+See [Architecture](architecture.md) for how the components fit together and [Testing](testing.md) for test conventions. The authoritative reference for all conventions is [`AGENTS.md`](https://github.com/serpro69/agentstakk/blob/master/AGENTS.md) — this guide summarizes the most important rules for quick orientation.
 
 ### Key workflows
 
 - **Editing skills:** Edit in `klaude-plugin/skills/`, then run `make generate-kodex` to regenerate the Codex variant.
 - **Editing profiles:** Edit in `klaude-plugin/profiles/`, then run `make generate-kodex`. Vendored profiles (e.g., Go) use `make vendor-go` instead.
-- **Adding a profile:** Follow the "Adding a new profile" checklist in `CLAUDE.md`.
+- **Adding a profile:** Follow the "Adding a new profile" checklist in `AGENTS.md`.
 - **Editing codex config:** Hand-authored files live in `.codex/` (config.toml, hooks.json, rules, scripts). Generated files (agents, kodex-plugin) should not be edited directly.
 
 ### Commit conventions
@@ -27,7 +27,7 @@ See [Architecture](architecture.md) for how the components fit together and [Tes
 
 ## Plugin Development
 
-The kk plugin lives at `klaude-plugin/`. This section covers the practical rules for authoring each component. For the full specification, see [`CLAUDE.md`](https://github.com/serpro69/claude-toolbox/blob/master/CLAUDE.md).
+The kk plugin lives at `klaude-plugin/`. This section covers the practical rules for authoring each component. For the full specification, see [`AGENTS.md`](https://github.com/serpro69/agentstakk/blob/master/AGENTS.md).
 
 ### Skills
 
@@ -133,7 +133,7 @@ The guard consumes the complete hook payload, allows with exit 0 (normally silen
 
 ### Profiles
 
-Profiles at `klaude-plugin/profiles/<name>/` provide domain-specific content to every workflow phase. See the [Profile Conventions](https://github.com/serpro69/claude-toolbox/blob/master/CLAUDE.md#profile-conventions) section of CLAUDE.md for the full specification.
+Profiles at `klaude-plugin/profiles/<name>/` provide domain-specific content to every workflow phase. See the [Profile Conventions](https://github.com/serpro69/agentstakk/blob/master/AGENTS.md#profile-conventions) section of `AGENTS.md` for the full specification.
 
 **Required files:**
 

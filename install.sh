@@ -28,6 +28,18 @@ import tempfile
 from urllib.request import urlopen
 
 
+UPSTREAM = "serpro69/agentstakk"
+
+
+def canonical_repository(repo):
+    # The standalone installer runs before kk/lib is available.
+    if not isinstance(repo, str):
+        raise ValueError("KK_REPOSITORY must be a GitHub owner/repository")
+    if repo.lower() in ("serpro69/claude-toolbox", "serpro69/claude-starter-kit", UPSTREAM):
+        return UPSTREAM
+    return repo
+
+
 def package(root):
     lib = root / "kk/lib"
     return runpy.run_path(str(lib / "run.py"))["load_cli"](lib, "_kk_bootstrap")
@@ -68,11 +80,16 @@ def install(home, args):
     if args.local and (not candidate or {"local": str(args.local.resolve())} != candidate["source"]):
         package(args.local.resolve()).install_locked(home, args)
         return
+    repo = canonical_repository(os.environ.get("KK_REPOSITORY", UPSTREAM))
     if candidate and args.version:
-        requested = {"tag": args.version, "repository": os.environ.get("KK_REPOSITORY", "serpro69/claude-toolbox")}
-        if requested != candidate["source"]:
+        saved = candidate["source"]
+        if saved.get("tag") != args.version or canonical_repository(saved.get("repository", "")) != repo:
             candidate = None
     if candidate:
+        # Older installers compare the saved spelling literally when resuming.
+        if "repository" in candidate["source"]:
+            os.environ["KK_REPOSITORY"] = candidate["source"]["repository"]
+            repo = canonical_repository(candidate["source"]["repository"])
         version = candidate["version"]
         if not re.fullmatch(r"(v[0-9][0-9A-Za-z.+-]*|local-[0-9a-f]{32})", version):
             raise ValueError("invalid candidate in state.json")
@@ -90,9 +107,9 @@ def install(home, args):
                 package(args.local).install_locked(home, args)
                 return
             args.version = source["tag"]
-            os.environ["KK_REPOSITORY"] = source["repository"]
 
-    repo = os.environ.get("KK_REPOSITORY", "serpro69/claude-toolbox")
+    if not candidate:
+        os.environ["KK_REPOSITORY"] = repo
     if not re.fullmatch(r"[A-Za-z0-9_.-]+/[A-Za-z0-9_.-]+", repo) or any(
             part in (".", "..") for part in repo.split("/")):
         raise ValueError("KK_REPOSITORY must be a GitHub owner/repository")

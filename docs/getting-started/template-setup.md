@@ -15,12 +15,24 @@ From a toolbox checkout that contains `install.sh`, run the following from its r
 Once the first stable machine release (`v0.26.0`) is published, you can install the latest stable version without a checkout:
 
 ```bash
-curl -fsSL https://raw.githubusercontent.com/serpro69/claude-toolbox/master/install.sh | bash
+curl -fsSL https://raw.githubusercontent.com/serpro69/agentstakk/master/install.sh | bash
 ```
 
 For a reproducible install, fetch `install.sh` from the chosen tag and pass `--version TAG` to it. For a pre-release, name the full candidate tag rather than selecting the latest stable release.
 
 Put `~/.local/bin` on your shell’s `PATH`. For example, run `export PATH="$HOME/.local/bin:$PATH"` and add that line to your shell profile for future terminals. The installer creates the `kk` entry point there. By default releases live in `${XDG_DATA_HOME:-$HOME/.local/share}/kk`. Set `KK_HOME` before installation to choose another directory. If the first install is interrupted, rerun the installer to resume.
+
+## Move an existing installation to Agentstakk
+
+After the hosted rename, update the Git remote of a clone that tracks the upstream repository. Keep a fork’s `origin` pointing to the fork. If the canonical remote is named `upstream`, use that name instead of `origin`.
+
+```bash
+git remote set-url origin https://github.com/serpro69/agentstakk.git
+```
+
+For a machine running RC4, finish active batches, then run `KK_REPOSITORY=serpro69/agentstakk kk upgrade --version TAG` with the published Agentstakk candidate or stable tag. This also directs the old launcher to the renamed repository. Keep the same `KK_HOME`, overrides and Codex profile. When the release registers `kk-guard@agentstakk-local`, review its three handlers in plain Codex and run `kk status --live`. Rollback uses the retained release and its own marketplace identity. Legacy repository migration still uses the full template at `v0.26.0-rc.4`.
+
+For a Git-marketplace installation, follow the [plugin-only switch](plugin-only.md#switch-an-existing-git-marketplace-installation).
 
 ## Verify and launch
 
@@ -29,7 +41,7 @@ kk status
 kk claude
 ```
 
-For Codex, start **plain `codex` without `--profile`** in your project. Review the folder’s trust prompt and the three `kk-guard@toolbox` handlers in `/hooks`. Exit Codex. These decisions are now in your account configuration. Use `kk codex` for daily sessions. When a new project needs a folder trust decision, make it in plain `codex` there first. If Codex reports that it cannot read hook trust, run `kk apply` interactively and acknowledge the review. That vendor state is recorded as `unverified`. Run `kk status --live` from your terminal. It starts short vendor sessions in scratch workspaces and checks for a denial from each managed guard. It needs working vendor authentication.
+For Codex, start **plain `codex` without `--profile`** in your project. Review the folder’s trust prompt and the three managed `kk-guard` handlers in `/hooks` (`@toolbox` through RC4, `@agentstakk-local` in the renamed release). Exit Codex. These decisions are now in your account configuration. Use `kk codex` for daily sessions. When a new project needs a folder trust decision, make it in plain `codex` there first. If Codex reports that it cannot read hook trust, run `kk apply` interactively and acknowledge the review. That vendor state is recorded as `unverified`. Run `kk status --live` from your terminal. It starts short vendor sessions in scratch workspaces and checks for a denial from each managed guard. It needs working vendor authentication.
 
 If you already installed plugins from the Git marketplace, `kk status` lists the copies and their scopes. `kk status --remove-mixed` offers to remove user-scope Git copies with a managed counterpart. Review project-owned registrations in their repository. [Existing repositories](adopting.md)
 

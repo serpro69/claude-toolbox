@@ -1,10 +1,12 @@
 import io
+import json
 import os
 from pathlib import Path
+import shutil
 import subprocess
 from unittest.mock import patch
 
-from test_install import InstallFixture, cli
+from test_install import InstallFixture, ROOT, cli
 
 
 class Migration(InstallFixture):
@@ -25,7 +27,7 @@ class Migration(InstallFixture):
         self.guard.parent.mkdir()
         self.guard.write_text("old")
         self.manifest = self.repo / cli.migrate.MANIFEST
-        cli.state.write_json(self.manifest, {"upstream_repo": cli.migrate.UPSTREAM})
+        cli.state.write_json(self.manifest, {"upstream_repo": cli.payload.UPSTREAM})
         directory = self.env["CODEX_HOME"]
         self.saved = {"tools": {"codex": "ready"}, "codex_snapshot": {"directory": directory}}
         self.record = {"active": "v1.0.0", "installed_paths": [str(self.link)], "candidate": None,
@@ -44,6 +46,69 @@ class Migration(InstallFixture):
     def migrate(self, answers):
         with patch("sys.stdin", io.StringIO(answers)):
             cli.migrate.migrate(self.toolbox, self.record, self.tag)
+
+    def test_fork_manifest_must_match_install_source(self):
+        fork = "other/claude-toolbox"
+        cli.state.write_json(self.manifest, {"upstream_repo": fork})
+        with self.assertRaisesRegex(ValueError, "manifest names other/claude-toolbox"):
+            self.migrate("yes\n")
+        self.probe.assert_not_called()
+        self.saved["source"] = {"repository": fork, "tag": self.tag}
+        with patch.object(cli.migrate, "fetch_scripts", side_effect=OSError("fixture download")) as fetch:
+            with self.assertRaisesRegex(OSError, "fixture download"):
+                self.migrate("yes\n")
+            self.assertEqual(fetch.call_args.args[1:], (fork, self.tag))
+
+    def test_conflicting_legacy_git_mirror_stops_before_sync(self):
+        old = "serpro69/claude-toolbox"
+        cli.state.write_json(self.manifest, {"upstream_repo": old})
+        env = {"GIT_CONFIG_COUNT": "1", "GIT_CONFIG_KEY_0": "url.file:///other-repo.insteadOf",
+               "GIT_CONFIG_VALUE_0": "https://github.com/" + old + ".git"}
+        with patch.dict(os.environ, env), patch.object(cli.migrate, "fetch_scripts"):
+            with self.assertRaisesRegex(ValueError, "conflicting Git URL rewrite"):
+                self.migrate("yes\n")
+        self.assertTrue(self.guard.is_file())
+
+    def test_rc4_migration_from_old_manifest_preserves_exclusions(self):
+        tag = cli.migrate.RETIREMENT_VERSION
+        template = subprocess.run(["git", "show", tag + ":.github/template-state.example.json"],
+                                  cwd=ROOT, capture_output=True)
+        if template.returncode:
+            self.skipTest("full retirement tag unavailable")
+        search_path = os.pathsep.join(self.env["PATH"].split(os.pathsep)[1:])
+        if not shutil.which("yq", path=search_path):
+            self.skipTest("the released sync client needs Mike Farah yq")
+        manifest = json.loads(template.stdout)
+        manifest.update(upstream_repo="serpro69/claude-starter-kit", template_version=tag,
+                        sync_exclusions=[".github/template-state.json", ".claude", ".codex/rules/default.rules"])
+        cli.state.write_json(self.manifest, manifest)
+        before = self.manifest.read_bytes()
+        rules = self.repo / ".codex/rules/default.rules"
+        rules.parent.mkdir()
+        rules.write_text("# downstream rules\n")
+        self.saved["source"] = {"repository": "serpro69/claude-toolbox", "tag": tag}
+
+        def fetch(directory, repository, version):
+            self.assertEqual((repository, version), ("serpro69/agentstakk", tag))
+            for name in ("template-sync.sh", "semver-compare.sh"):
+                blob = tag + ":.claude/toolbox/scripts/" + name
+                (directory / name).write_bytes(subprocess.check_output(["git", "show", blob], cwd=ROOT))
+            return directory / "template-sync.sh"
+
+        # Only the canonical repository has a reachable mirror. An unredirected
+        # old URL fails here, even if the script gets as far as its second fetch.
+        # git clone ignores the adopter's repository-local URL configuration.
+        subprocess.run(["git", "config", "url.file:///wrong-mirror.insteadOf",
+                        "https://github.com/serpro69/agentstakk.git"], cwd=self.repo, check=True)
+        env = dict(PATH=search_path, GIT_ALLOW_PROTOCOL="file", GIT_CONFIG_COUNT="1",
+                   GIT_CONFIG_KEY_0="url.{}.insteadOf".format(ROOT.as_uri()),
+                   GIT_CONFIG_VALUE_0="https://github.com/serpro69/agentstakk.git")
+        with patch.dict(os.environ, env), patch.object(cli.migrate, "fetch_scripts", side_effect=fetch):
+            self.tag = tag
+            self.migrate("yes\nyes\nyes\n")
+        self.assertEqual(self.manifest.read_bytes(), before)
+        self.assertEqual(rules.read_text(), "# downstream rules\n")
+        self.assertFalse((self.repo / ".claude").exists())
 
     def test_workspace_trust_and_live_refusals(self):
         self.trust.return_value = ("awaiting review", ["disabled; enable it in /hooks"])
@@ -112,7 +177,7 @@ esac
         def run(args, **kwargs):
             if args[0] == "curl":
                 destination = Path(args[args.index("--output") + 1])
-                self.assertEqual(args[-1], "https://raw.githubusercontent.com/serpro69/claude-toolbox/refs/tags/"
+                self.assertEqual(args[-1], "https://raw.githubusercontent.com/serpro69/agentstakk/refs/tags/"
                                  + self.tag + "/.claude/toolbox/scripts/" + destination.name)
                 destination.write_text(source if destination.name == "template-sync.sh" else "# helper")
                 return subprocess.CompletedProcess(args, 0)

@@ -1,6 +1,6 @@
-# claude-toolbox — brand assets
+# Agentstakk — brand assets
 
-A single mark: the Claude spark held inside a hex bolt-head — "a toolbox for Claude."
+The project mark is a spark inside a hex bolt head. The wordmark reads **Agentstakk**.
 Terracotta `#D9683D` on near-black `#1F1B18`.
 
 ## Files
@@ -21,7 +21,7 @@ Wordmark is JetBrains Mono ExtraBold, outlined to vector paths — no font depen
 ```html
 <picture>
   <source media="(prefers-color-scheme: dark)" srcset="lockup-dark.svg">
-  <img src="lockup-light.svg" alt="claude-toolbox" width="420">
+  <img src="lockup-light.svg" alt="Agentstakk" width="420">
 </picture>
 ```
 

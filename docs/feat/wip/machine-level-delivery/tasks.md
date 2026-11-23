@@ -2,7 +2,7 @@
 
 > Design: [./design.md](./design.md)
 > Implementation: [./implementation.md](./implementation.md)
-> Status: in-progress. RC4 passed under the pilot names. Tasks 19–21 block the stable `v0.26.0` tag. Task 16 retires the template before the rename. RC4 supplies the migration scripts and template.
+> Status: in-progress. RC4 passed under the pilot names. The Agentstakk repository changes are prepared. Tasks 20 and 21 precede the stable `v0.26.0` tag. Task 16 retires the template before the rename. RC4 supplies the migration scripts and template.
 > Created: 2026-11-18
 > Not Doing: orchestrator features, Go binary or package-manager distribution, built-in unattended upgrades, full parity for IDE/desktop/cloud/CI sessions, merging into user-owned config (migration excepted), general shell-read grants, detection of open Codex sessions, `kk uninstall`, native Windows, per-repository teammate stub, changes to capy's setup, system-level deny fragment (future)
 
@@ -403,7 +403,7 @@ _Runs before Task 16. It was added after the design review and is numbered 18 so
 
 ## Task 19: Prepare the Agentstakk repository rename
 
-- **Status:** pending
+- **Status:** done
 - **Depends on:** Task 16.1–16.4 (cleanup commit)
 - **Size:** M
 - **Can run in parallel with:** Task 20
@@ -411,9 +411,16 @@ _Runs before Task 16. It was added after the design review and is numbered 18 so
 
 ### Subtasks
 
-- [ ] 19.1 Update the canonical repository in `install.sh`, `kk/lib/{payload,notice,migrate,codex_plugins}.py`, and the Go module and its consumers. Verify fresh release lookup, a saved old upstream and an explicit fork each resolve to the intended repository.
-- [ ] 19.2 Accept old canonical upstream names in downstream manifests when migrating with the pinned RC4 scripts. Verify exclusions and preserve explicit forks.
-- [ ] 19.3 Update active repository, release, badge, raw installer and documentation URLs, display names and the Pages base path in `mkdocs.yml`, `.github/workflows/docs.yml` and the docs build. Document the new Git remote, plugin-only switch and RC transition in the install guide and release notes. Check remaining old-name references for a compatibility or historical reason and run the relevant structure, sync, freshness and strict docs checks.
+- [x] 19.1 Update the canonical repository in `install.sh`, `kk/lib/{payload,notice,migrate,codex_plugins}.py`, and the Go module and its consumers. Verify fresh release lookup, a saved old upstream and an explicit fork each resolve to the intended repository.
+- [x] 19.2 Accept old canonical upstream names in downstream manifests when migrating with the pinned RC4 scripts. Verify exclusions and preserve explicit forks.
+- [x] 19.3 Update active repository, release, badge, raw installer and documentation URLs, display names and the Pages base path in `mkdocs.yml`, `.github/workflows/docs.yml` and the docs build. Document the new Git remote, plugin-only switch and RC transition in the install guide and release notes. Check remaining old-name references for a compatibility or historical reason and run the relevant structure, sync, freshness and strict docs checks.
+
+### Execution context
+
+- 2026-11-23, started on the Task 16 PR branch at `76ea74a5`. Resolve the old canonical repository names during lookup and comparison, preserve explicit fork sources, and keep the full migration template pinned to RC4. The marketplace ID changes and hosted rename remain in Tasks 20 and 21.
+- 2026-11-23, verified the current standalone installer against the published RC4 payload in a disposable account. A first installation interrupted under the old repository name resumed without another download (capture `566ef020-d5ad-4341-85e9-2503a8c459f7`). The installer and launcher tests cover a fresh release lookup, original fork recovery, retained same-tag reuse and daily notices.
+- 2026-11-23, verified real RC4 sync and retirement using a local Git mirror reachable only through the canonical URL. An excluded starter-kit manifest and custom rules kept their bytes, and an excluded provider stayed absent. The wrapper rejects a different fork and conflicting inherited URL rewrites before sync. The tagged integration and conflicting-mirror regression passed (capture `f9594fe3-96da-4d0e-a531-7f5a0e1dfeb5`). Task 21 owns verification from a published renamed candidate.
+- 2026-11-23, the Go tests, plugin graph, release projections, sync handoff and strict docs build passed. The built site uses the Agentstakk base path. Remaining former names identify published history, immutable legacy schema/examples, compatibility aliases, existing marketplace registrations and their fixtures, or externally configured GitHub App variables. The independent code reviewer approved the final changes. External Claude review was unavailable because its OAuth session had expired. Captures `48b8ab1e-0619-4e9e-acfa-94cf67c33e56`, `0fbe9996-99ef-4ee3-a576-ee7fde9e2ea3` and `c7e1f2c6-9357-43d7-b797-28851d28774e`.
 
 ## Task 20: Move plugin installations to the final marketplace IDs
 

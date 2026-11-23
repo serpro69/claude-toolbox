@@ -77,7 +77,7 @@ def verify_workspace(rows, plugin, workspace):
 def activate(home, release, checkpoint):
     registered = marketplace_record(home)
     plugin = release / "klaude-plugin"
-    manifest = {"name": MARKETPLACE, "owner": {"name": "claude-toolbox"},
+    manifest = {"name": MARKETPLACE, "owner": {"name": "Agentstakk"},
                 "plugins": [{"name": "kk", "source": "./" + plugin.relative_to(home).as_posix()}]}
     checkpoint("marketplace")
     write_json(home / ".claude-plugin/marketplace.json", manifest)

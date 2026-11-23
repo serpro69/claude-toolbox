@@ -1,29 +1,29 @@
 # kk — Codex Plugin
 
-[![Documentation](https://img.shields.io/badge/docs-serpro69.github.io%2Fclaude--toolbox-blue?style=for-the-badge)](https://serpro69.github.io/claude-toolbox/latest/providers/codex/)
+[![Documentation](https://img.shields.io/badge/docs-serpro69.github.io%2Fagentstakk-blue?style=for-the-badge)](https://serpro69.github.io/agentstakk/latest/providers/codex/)
 
-Development workflow skills generated from [klaude-plugin/](../klaude-plugin/) (the Claude Code source of truth). Part of the [claude-toolbox](https://github.com/serpro69/claude-toolbox) project.
+Development workflow skills generated from [klaude-plugin/](../klaude-plugin/) (the Claude Code source of truth). Part of the [Agentstakk](https://github.com/serpro69/agentstakk) project.
 
 ## Installation
 
-For the machine-managed release, install `kk` and launch with `kk codex`. The local marketplace is named `toolbox`. The commands below are for the separate Git-marketplace installation. [Machine installation](https://serpro69.github.io/claude-toolbox/latest/getting-started/template-setup/)
+For the machine-managed release, install `kk` and launch with `kk codex`. The commands below apply after the public Agentstakk marketplace is published. Through RC4 the repository is `serpro69/claude-toolbox` and the public marketplace ID is `claude-toolbox`. [Machine installation](https://serpro69.github.io/agentstakk/latest/getting-started/template-setup/)
 
 ```bash
-codex plugin marketplace add serpro69/claude-toolbox
+codex plugin marketplace add serpro69/agentstakk
 ```
 
-Then open `/plugins` in the Codex TUI, select the **Claude Toolbox** marketplace, and install `kk`.
+Then open `/plugins` in the Codex TUI, select the **Agentstakk** marketplace, and install `kk`.
 
 ## What's Included
 
 - **16 workflow and utility skills** — the same pipeline as the Claude Code plugin (`$kk:design` → `$kk:review-design` → `$kk:implement` → `$kk:review-code` → `$kk:test` → `$kk:document`, plus utilities)
 - **Language-specific profiles** — review checklists, implementation gotchas, design prompts, test validators, and doc rubrics for Go, Java, JS/TS, Kotlin, Kubernetes, and Python
 
-This package supplies skills and profiles. A separate package, `kk-guard`, provides the guard hooks. From a Git marketplace revision that includes it, run `codex plugin add kk-guard@claude-toolbox` and review its three handlers in `/hooks`. Machine installation also supplies the profile, sub-agents and optional account-wide native rules.
+This package supplies skills and profiles. A separate package, `kk-guard`, provides the guard hooks. From a Git marketplace revision that includes it, run `codex plugin add kk-guard@agentstakk` and review its three handlers in `/hooks`. Machine installation also supplies the profile, sub-agents and optional account-wide native rules.
 
 Use `$kk:brainstorm` for an optional conversation about a technical idea or decision. It asks one question at a time, adapts to the clarity you need, and ends with a chat-only recap of decisions, rationale, and open assumptions. Request `$kk:design` when you want written design documents, an implementation plan, and tasks; brainstorming creates no files and does not start that workflow automatically.
 
-See the [Codex provider docs](https://serpro69.github.io/claude-toolbox/latest/providers/codex/) for configuration, known limitations, and the generation pipeline.
+See the [Codex provider docs](https://serpro69.github.io/agentstakk/latest/providers/codex/) for configuration, known limitations, and the generation pipeline.
 
 ## Isolated reviews with external models
 

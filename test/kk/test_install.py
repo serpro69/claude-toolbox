@@ -278,7 +278,7 @@ class FirstInstall(InstallFixture):
         with patch.dict(os.environ, self.env), patch.object(sys, "argv", ["kk", "upgrade", "--version", "v" + version]):
             with patch.object(cli.payload, "urlopen", return_value=archive.open("rb")) as download:
                 self.assertEqual(cli.main(), 0)
-            download.assert_called_once_with(cli.payload.api_root(self.env.get("KK_REPOSITORY", "serpro69/claude-toolbox"))
+            download.assert_called_once_with(cli.payload.api_root(self.env.get("KK_REPOSITORY", "serpro69/agentstakk"))
                                              + "/tarball/v" + version, timeout=60)
         installed = self.toolbox / "releases" / self.state()["active"]
         self.assertTrue((installed / "kk/selftest/alias").is_symlink())
@@ -287,10 +287,9 @@ class FirstInstall(InstallFixture):
         self.assertEqual(self.invoke(*identity, self.checkout / "kodex-guard").stdout,
                          self.invoke(*identity, installed / "kodex-guard").stdout)
 
-    def test_standalone_latest_and_recovery_from_original_fork(self):
+    def standalone_downloads(self):
         # The actual standalone installer owns argument parsing, extraction and
         # locking. Substitute only the two GitHub HTTP responses before it runs.
-        self.env["KK_REPOSITORY"] = "example/fork"
         archive = self.root / "source.tar.gz"
         version = "v" + json.loads((self.checkout / "klaude-plugin/.claude-plugin/plugin.json").read_text())["version"]
         with tarfile.open(archive, "w:gz") as tar:
@@ -309,6 +308,7 @@ def download(url, timeout):
     if url.endswith("/releases/latest"):
         return io.BytesIO(json.dumps({"tag_name": os.environ["KK_TEST_TAG"]}).encode())
     return Path(os.environ["KK_TEST_ARCHIVE"]).open("rb")
+sys.dont_write_bytecode = True  # Match the real interpreter's -B during bootstrap.
 sys.argv = sys.argv[3:]
 with patch("urllib.request.urlopen", download):
     exec(compile(sys.stdin.read(), "install.sh", "exec"), {"__name__": "__main__"})
@@ -316,6 +316,11 @@ with patch("urllib.request.urlopen", download):
         python.chmod(0o755)
         env = dict(self.env, PATH=str(self.root) + os.pathsep + self.env["PATH"],
                    KK_TEST_URLS=str(journal), KK_TEST_TAG=version, KK_TEST_ARCHIVE=str(archive))
+        return env, version, journal
+
+    def test_standalone_latest_and_recovery_from_original_fork(self):
+        env, version, journal = self.standalone_downloads()
+        env["KK_REPOSITORY"] = "example/fork"
         (self.home / "interrupt").touch()
         self.invoke(self.standalone, env=env, ok=False)
         self.assertEqual(self.state()["candidate"]["source"], {"tag": version, "repository": "example/fork"})
@@ -332,6 +337,22 @@ with patch("urllib.request.urlopen", download):
             api + "releases/latest", api + "tarball/" + version,
             "https://api.github.com/repos/other/fork/tarball/" + version, api + "tarball/" + version])
         self.assertEqual(self.state()["active"], version)
+
+    def test_standalone_default_and_old_canonical_source(self):
+        env, version, urls = self.standalone_downloads()
+        env.pop("KK_REPOSITORY", None)
+        (self.home / "interrupt").touch()
+        self.invoke(self.standalone, env=env, ok=False)
+        api = "https://api.github.com/repos/serpro69/agentstakk/"
+        self.assertEqual(urls.read_text().splitlines(), [api + "releases/latest", api + "tarball/" + version])
+        record = self.state()
+        self.assertEqual(record["candidate"]["source"]["repository"], "serpro69/agentstakk")
+        record["candidate"]["source"]["repository"] = "serpro69/claude-toolbox"
+        cli.state.write_json(self.state_file, record)
+        (self.home / "interrupt").unlink()
+        self.invoke(self.standalone, "--version", version, env=env)
+        self.assertIn("Already active", self.invoke(self.link, "upgrade", "--version", version, env=env).stdout)
+        self.assertEqual(urls.read_text().splitlines(), [api + "releases/latest", api + "tarball/" + version])
 
     def test_archive_rejects_out_of_bounds_names_and_links(self):
         for name, link in (("/absolute", None), ("release/kk/../other", None),

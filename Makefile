@@ -64,7 +64,7 @@ docs-serve: plugin-graph-docs
 	MKDOCS_SITE_URL=http://localhost:8000 mkdocs serve
 
 docs-build: plugin-graph-docs
-	MKDOCS_SITE_URL=https://serpro69.github.io/claude-toolbox/ mkdocs build --strict
+	MKDOCS_SITE_URL=https://serpro69.github.io/agentstakk/ mkdocs build --strict
 
 # https://stackoverflow.com/a/10858332
 # Check that given variables are set and all have non-empty values,

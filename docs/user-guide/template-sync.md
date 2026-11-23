@@ -16,6 +16,8 @@ From the repository, run:
 kk migrate
 ```
 
+A manifest naming `serpro69/claude-toolbox` or `serpro69/claude-starter-kit` can migrate with the renamed upstream. A fork’s manifest must match the repository that supplied the migration scripts. Sync exclusions still apply. If Git maps a former upstream to a different mirror, align its `insteadOf` rule with the current upstream before retrying migration.
+
 The default retirement tag is `v0.26.0-rc.4`, the last full template. The sync script, its version helper and the template it renders all come from that tag. If you are still running the RC4 or earlier pilot CLI, use `kk migrate --retirement-version v0.26.0-rc.4` explicitly. The same option can select a future retirement maintenance tag.
 
 1. **Sync to the retirement release.** Read the preview before confirming. Like any sync, this step overwrites edits to synced files. Migration preserves adopter-owned settings and hooks during the merge, including custom deny entries. Files under `sync_exclusions` stay untouched. An up-to-date repository skips the sync confirmation.
@@ -43,6 +45,6 @@ Use `--version v0.26.0-rc.4` locally or enter `v0.26.0-rc.4` in the workflow’s
 
 The default branch and releases after RC4 carry a small compatibility script at the old sync path. A supported old client hands control to it. It prints migration guidance, exits successfully and reports `has_changes=false` to CI, so the workflow opens no sync PR. Some clients can backfill their own manifest before handing over.
 
-For maintenance of a repository still using the old updater, the versioned reference covers sync exclusions, GitHub Actions credentials and settings merges. [Legacy template-sync reference at v0.25.4](https://github.com/serpro69/claude-toolbox/blob/v0.25.4/docs/user-guide/template-sync.md)
+For maintenance of a repository still using the old updater, the versioned reference covers sync exclusions, GitHub Actions credentials and settings merges. [Legacy template-sync reference at v0.25.4](https://github.com/serpro69/agentstakk/blob/v0.25.4/docs/user-guide/template-sync.md)
 
 A running session is supported for **14 days after its machine release is superseded**. Restart older sessions within that window. Use `kk rollback` to restore a retained machine release. Repository migration changes have their own history in Git.

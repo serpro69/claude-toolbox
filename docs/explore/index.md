@@ -2,7 +2,7 @@
 template: explore.html
 title: Explore the toolbox
 description: >-
-  What claude-toolbox caught while we were building capy, quoted from capy's own
+  What Agentstakk caught while we were building capy, quoted from capy's own
   records: a design review, three code reviews and a spec review.
 
 # Page content. `explore.html` renders everything below; nothing is generated
@@ -19,11 +19,11 @@ description: >-
 explore:
   repos:
     capy: https://github.com/serpro69/capy/blob/master/
-    claude-toolbox: https://github.com/serpro69/claude-toolbox/blob/master/
+    agentstakk: https://github.com/serpro69/agentstakk/blob/master/
 
   chapters:
     - id: shortcut
-      kicker: What claude-toolbox caught while we were building capy
+      kicker: What Agentstakk caught while we were building capy
       headline: |-
         "I took the shortcut."
         — your LLM
@@ -38,7 +38,7 @@ explore:
         - >-
           capy (https://github.com/serpro69/capy) is a local MCP server,
           written in Go, that keeps large outputs out of a coding agent's
-          context window. It was built from start to finish with claude-toolbox:
+          context window. It was built from start to finish with Agentstakk:
           skills, sub-agents and config for Claude Code and Codex, run as `/kk:`
           commands from design through review, tests and docs. Below is what
           they caught along the way, quoted from capy's own records.
@@ -52,7 +52,7 @@ explore:
       steps:
         - command: /kk:review-code
           note: three runs, same diff
-          repo: claude-toolbox
+          repo: agentstakk
           path: docs/adr/0004-skill-workflow-ordering.md
           lines:
             - at: 15
@@ -71,7 +71,7 @@ explore:
               text: >-
                 This is a workflow-ordering bug, not an agent-discipline bug.
         - note: where the three runs happened
-          repo: claude-toolbox
+          repo: agentstakk
           path: docs/feat/done/kubernetes-support/design.md
           lines:
             - at: 483
@@ -355,13 +355,13 @@ explore:
         primary: true
       - label: capy's feature records ↗
         href: https://github.com/serpro69/capy/tree/master/docs/feat/done
-      - label: claude-toolbox on GitHub ↗
-        href: https://github.com/serpro69/claude-toolbox
+      - label: Agentstakk on GitHub ↗
+        href: https://github.com/serpro69/agentstakk
 ---
 
 # Explore the toolbox
 
-What claude-toolbox caught while we were building capy, a Go MCP server built from
+What Agentstakk caught while we were building capy, a Go MCP server built from
 start to finish with it: an agent that skipped its own review method, a design
 shaped by a recurring bug in capy's knowledge base, an upgrade that would have
 locked every existing vault, a deny-list bypass through a symlinked folder,

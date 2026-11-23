@@ -2,7 +2,7 @@
 
 [![Mentioned in Awesome Claude Code](https://awesome.re/mentioned-badge-flat.svg)](https://github.com/hesreallyhim/awesome-claude-code)
 
-claude-toolbox is a collection of "tools" for all your agentic workflows (**currently supports claude-code and codex!**) — pre-configured MCP servers, skills, sub-agents, commands, hooks, statuslines with themes, and more — everything you need for AI-powered development workflows, used and battle-tested daily on many of my own projects.
+Agentstakk is a collection of "tools" for all your agentic workflows (**currently supports claude-code and codex!**) — pre-configured MCP servers, skills, sub-agents, commands, hooks, statuslines with themes, and more — everything you need for AI-powered development workflows, used and battle-tested daily on many of my own projects.
 
 !!! important
     This project was created with the help of Claude-Code. It is, however, always reviewed, tested, and reworked with a human-in-the-loop.
@@ -11,7 +11,7 @@ claude-toolbox is a collection of "tools" for all your agentic workflows (**curr
 
     That said, if you have any problems with code that is written by AI — you've been warned. But, then again, why would you be interested in AI-related configs and skills in the first place... `¯\_(ツ)_/¯`
 
-## Why claude-toolbox?
+## Why Agentstakk?
 
 Tools like Claude Code and Codex are powerful on their own, but LLMs don't know your development workflow. This project started as a way to streamline configurations across projects without copy-paste. Over time, recurring patterns evolved into skills and agents.
 
@@ -36,7 +36,7 @@ Tools like Claude Code and Codex are powerful on their own, but LLMs don't know 
 
 ### kk Plugin
 
-The **kk** plugin contains all development workflow functionality — 16 skills, 5 commands, and hooks — distributed via the Claude Code plugin system (see [kodex-plugin](https://github.com/serpro69/claude-toolbox/tree/master/kodex-plugin) for the Codex variant). Skills are invoked as `/kk:skill-name`, commands as `/kk:dir:command`.
+The **kk** plugin contains all development workflow functionality — 16 skills, 5 commands, and hooks — distributed via the Claude Code plugin system (see [kodex-plugin](https://github.com/serpro69/agentstakk/tree/master/kodex-plugin) for the Codex variant). Skills are invoked as `/kk:skill-name`, commands as `/kk:dir:command`.
 
 Alongside `skills/`, `commands/`, `agents/`, and `hooks/`, the plugin ships a top-level `profiles/` directory. Each profile (e.g., `go`, `python`, `k8s`) bundles per-domain content — detection rules, review checklists, design prompts, test validators, doc rubrics — that the workflow skills consult when the code under work matches the profile. Profiles are the extension point for new languages and IaC DSLs.
 
@@ -61,4 +61,4 @@ The [installation guide](template-setup.md) lists the required tools. MCP integr
 
 ## Examples
 
-Examples of actual Claude Code workflows executed using this template's configs, skills, and tools: [examples/](https://github.com/serpro69/claude-toolbox/tree/master/examples)
+Examples of actual Claude Code workflows executed using this template's configs, skills, and tools: [examples/](https://github.com/serpro69/agentstakk/tree/master/examples)
