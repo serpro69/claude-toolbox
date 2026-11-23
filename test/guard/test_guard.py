@@ -1025,9 +1025,10 @@ class ConfigurationTests(unittest.TestCase):
                 self.env.update(KK_HOME=toolbox, XDG_CONFIG_HOME=config, CODEX_HOME=codex,
                                 XDG_DATA_HOME=os.path.join(home, "unused"))
             owned = [os.path.join(codex, "kk.config.toml"), os.path.join(codex, "rules", "kk.rules")]
-            for name in os.listdir(os.path.join(REPO, ".codex", "agents")):
-                if name.endswith(".toml"):
-                    owned.append(os.path.join(codex, "agents", "kk-" + name))
+            agents = os.path.join(REPO, "kk", "baseline", "codex", "agents")
+            names = [name for name in os.listdir(agents) if name.endswith(".toml")]
+            self.assertIn("code-reviewer.toml", names)
+            owned.extend(os.path.join(codex, "agents", "kk-" + name) for name in names)
             for path in owned:
                 self.check(path, tool="Edit")  # Same destination before kk owns it.
             os.makedirs(toolbox)
