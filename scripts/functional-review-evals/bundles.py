@@ -15,7 +15,8 @@ import subprocess
 import tarfile
 
 
-TREES = ("klaude-plugin", "kodex-plugin", ".codex/agents")
+TREES = ("klaude-plugin", "kodex-plugin", "kk/baseline/codex/agents")
+LEGACY_AGENTS = ".codex/agents"
 EXCLUDED_PARTS = {"evals", "oracle", "grading-fixtures", "verification", "results", "reports"}
 EXCLUDED_NAMES = {"eval.json", "gold-claims.json", "expected-verdicts.json"}
 
@@ -63,8 +64,12 @@ def build(repo, revision, destination):
     full = subprocess.check_output(
         ["git", "-C", str(repo), "rev-parse", "--verify", revision + "^{commit}"],
         env=git_env, text=True).strip()
+    # Keep bundles of published revisions reproducible across template retirement.
+    legacy = subprocess.check_output(["git", "-C", str(repo), "ls-tree", "-d", full, "--", LEGACY_AGENTS],
+                                     env=git_env)
+    trees = (*TREES[:2], LEGACY_AGENTS) if legacy else TREES
     committed = {}
-    entries = subprocess.check_output(["git", "-C", str(repo), "ls-tree", "-rz", full, "--", *TREES],
+    entries = subprocess.check_output(["git", "-C", str(repo), "ls-tree", "-rz", full, "--", *trees],
                                       env=git_env)
     for entry in entries.split(b"\0"):
         if entry:
@@ -75,7 +80,7 @@ def build(repo, revision, destination):
             committed[path.decode()] = (mode, oid)
     # Refuse reuse even when a previous invocation failed part-way through.
     destination.mkdir(parents=True, exist_ok=False)
-    source = subprocess.check_output(["git", "-C", str(repo), "archive", full, *TREES], env=git_env)
+    source = subprocess.check_output(["git", "-C", str(repo), "archive", full, *trees], env=git_env)
     (destination / "source.tar").write_bytes(source)
     source_records, exclusions = [], []
     with tarfile.open(fileobj=io.BytesIO(source)) as archive:
@@ -120,7 +125,7 @@ def build(repo, revision, destination):
     write_json(destination / "source-manifest.json", source_records)
     write_json(destination / "exclusions.json", exclusions)
     retained = {}
-    for tree in TREES:
+    for tree in trees:
         retained[tree] = manifest(destination / "retained" / tree)
     # Establish byte identity separately from the link-resolution scan.
     for record in source_records:
@@ -149,7 +154,7 @@ def main():
     verify = sub.add_parser("verify")
     verify.add_argument("bundle", type=Path)
     verify.add_argument("manifest", type=Path)
-    verify.add_argument("tree", choices=TREES)
+    verify.add_argument("tree", choices=(*TREES, LEGACY_AGENTS))
     args = parser.parse_args()
     if args.command == "build":
         print(json.dumps(build(args.repo, args.revision, args.destination), sort_keys=True))

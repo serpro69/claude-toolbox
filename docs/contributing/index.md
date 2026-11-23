@@ -229,7 +229,7 @@ Only index non-obvious learnings not derivable from reading the code or git hist
 
 1. **Workflow ordering is the #1 failure mode.** If the agent sees subject matter before methodology, it shortcuts the methodology. Structure every workflow so instructions load first. See [ADR 0004](../adr/0004-skill-workflow-ordering.md).
 
-2. **Forgetting `make generate-kodex`.** After editing anything in `klaude-plugin/`, the Codex variant drifts. CI checks this with `make generate-kodex && git diff --exit-code kodex-plugin/ .codex/agents/`.
+2. **Forgetting `make generate-kodex`.** After editing anything in `klaude-plugin/`, the Codex variant drifts. CI checks this with `make generate-kodex && git diff --exit-code kodex-plugin/ kk/baseline/codex/agents/`.
 
 3. **Orphan files in profile phase directories.** Every `.md` file (except `index.md`) must be referenced by the phase's `index.md`. The bidirectional invariant test catches this.
 
@@ -239,7 +239,7 @@ Only index non-obvious learnings not derivable from reading the code or git hist
 
 6. **Stale Known Profiles list.** When adding a profile, you must update both `EXPECTED_PROFILES` in the test file and the Known Profiles list in `klaude-plugin/skills/_shared/profile-detection.md`. The list is the runtime enumeration — consumers iterate it rather than walking the filesystem.
 
-7. **Renaming skills.** Update `EXPECTED_SKILLS` / `EXPECTED_COMMANDS` in tests. Don't rename agent files. Don't touch `run_plugin_migration`'s `dirs_to_remove` in `.claude/toolbox/scripts/template-sync.sh` (historical cleanup paths). Don't touch `docs/feat/done/` (frozen history). Watch for substring collisions in sed operations.
+7. **Renaming skills.** Update `EXPECTED_SKILLS` / `EXPECTED_COMMANDS` in tests. Don't rename agent files. Don't touch `docs/feat/done/` (frozen history). Watch for substring collisions in sed operations.
 
 8. **Vague `Load if:` clauses.** Conditional entries in profile `index.md` must name concrete diff properties (field values, filenames, directory names) — not vague category labels. Two agents evaluating the same diff must reach the same conclusion.
 
@@ -247,7 +247,7 @@ Only index non-obvious learnings not derivable from reading the code or git hist
 
 - One logical change per PR
 - All test suites must pass: `for test in test/test-*.sh; do $test; done`
-- If you edited `klaude-plugin/`, verify `make generate-kodex && git diff --exit-code kodex-plugin/ .codex/agents/` shows no drift
+- If you edited `klaude-plugin/`, verify `make generate-kodex && git diff --exit-code kodex-plugin/ kk/baseline/codex/agents/` shows no drift
 - Update documentation if your change affects user-facing behavior
 
 ## Architecture Decisions
@@ -315,23 +315,11 @@ kodex-plugin/                    # kk plugin — Codex (GENERATED from klaude-pl
 CLAUDE.md                        # Claude project instructions (this repo)
 AGENTS.md                        # Codex project instructions (this repo)
 
-.claude/
-├── CLAUDE.extra.md              # Generated from klaude-plugin/instructions/behavior.md
-├── settings.json                # Upstream-managed: permissions baseline, env, model, plugins
-├── settings.local.json          # Per-repo: hooks, MCP enables, additional permissions
-└── toolbox/scripts/             # Statusline copies generated from klaude-plugin/statusline/
-
-.codex/
-├── config.toml                  # Codex settings: model, approval policy, features, MCP
-├── hooks.json                   # SessionStart + PreToolUse hook definitions
-├── rules/default.rules          # Generated native forbids from guard-rules.json
-├── agents/                      # 5 sub-agent TOML files (generated from klaude-plugin/agents/)
-└── scripts/                     # Session hook, Bash/patch/MCP adapters, generated guard/
-
-.github/
-├── scripts/                     # template-cleanup.sh, template-sync.sh, bootstrap.sh
-├── workflows/                   # template-cleanup, template-sync, docs
-└── template-state.json          # Sync manifest and variables
+.claude/                          # Repository preferences, Capy setup and sync compatibility notice
+.codex/                           # Repository sandbox, approvals and Capy registrations
+kk/baseline/                      # Machine defaults, generated policies and Codex agents
+kodex-guard/                      # Standalone Codex guard plugin
+.github/                          # Release helpers and workflows for CI, releases and docs
 
 docs/                            # MkDocs site + internal design docs
 ├── overrides/                   # Template overrides (home.html, main.html)

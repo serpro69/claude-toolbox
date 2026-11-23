@@ -4,7 +4,7 @@ description: |
   Compare and merge two design docs for the same feature into a single source of truth.
   Use when you have competing or complementary design/implementation docs (e.g. from separate design runs) that need reconciling into one unified document.
 ---
-<!-- codex: tool-name mapping applied. See .codex/scripts/session-start.sh -->
+<!-- codex: tool-name mapping applied. See the kk Codex bootstrap instructions -->
 
 # Merge Design Documents
 

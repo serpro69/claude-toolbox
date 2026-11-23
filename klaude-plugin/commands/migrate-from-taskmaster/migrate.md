@@ -63,20 +63,9 @@ If `.github/template-state.json` exists, remove these variables from the `variab
 - `TM_APPEND_SYSTEM_PROMPT`
 - `TM_PERMISSION_MODE`
 
-## Step 6: Update template-sync workflow
+## Step 6: Update legacy sync clients
 
-The old template-sync workflow and script contain taskmaster-specific sync logic that will cause issues on future syncs (see https://github.com/serpro69/claude-toolbox/issues/17).
-
-Update by fetching the latest sync infrastructure:
-
-```bash
-VERSION="latest"
-curl -fsSL "https://raw.githubusercontent.com/serpro69/claude-toolbox/master/.github/workflows/template-sync.yml" \
-  -o .github/workflows/template-sync.yml
-curl -fsSL "https://raw.githubusercontent.com/serpro69/claude-toolbox/master/.claude/toolbox/scripts/template-sync.sh" \
-  -o .claude/toolbox/scripts/template-sync.sh
-chmod +x .claude/toolbox/scripts/template-sync.sh
-```
+Skip this step when the project has no `.github/template-state.json`. For a project that still uses template sync, update its client before the next sync so old Task Master settings do not return. Use the `upstream_repo` from its manifest and the last full template tag, `v0.26.0-rc.4`. Fetch `.github/workflows/template-sync.yml`, `.claude/toolbox/scripts/template-sync.sh`, and its sibling `semver-compare.sh` from that same tag into a temporary directory. Fetch all three successfully before replacing the corresponding project files, preserve exclusions, and keep the scripts executable. If a fork lacks that tag, report the missing source and leave the client intact.
 
 ## Step 7: Update MCP config
 

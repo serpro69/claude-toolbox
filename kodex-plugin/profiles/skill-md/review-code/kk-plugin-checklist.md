@@ -31,4 +31,4 @@ Review checks specific to skills within the `klaude-plugin/` directory structure
 - [ ] Is `EXPECTED_COMMANDS` updated for new commands?
 - [ ] Is `EXPECTED_PROFILES` updated for new profiles?
 - [ ] Is the **Known Profiles** list in `klaude-plugin/skills/_shared/profile-detection.md` updated for new profiles?
-- [ ] Does `make generate-kodex && git diff --exit-code kodex-plugin/ .codex/agents/` show no drift?
+- [ ] Does `make generate-kodex && git diff --exit-code -- kodex-plugin/ kk/baseline/codex/agents/` show no drift?

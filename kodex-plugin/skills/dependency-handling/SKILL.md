@@ -3,7 +3,7 @@ name: dependency-handling
 description: |
   TRIGGER when: adding or upgrading any dependency — library, SDK, framework, API, IaC API version (K8s/Terraform/Helm), CRD, or container image. Use BEFORE writing the call. Forces context7/capy lookup instead of guessing.
 ---
-<!-- codex: tool-name mapping applied. See .codex/scripts/session-start.sh -->
+<!-- codex: tool-name mapping applied. See the kk Codex bootstrap instructions -->
 
 # Dependency & External API Handling
 

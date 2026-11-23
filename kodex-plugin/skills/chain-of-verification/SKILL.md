@@ -4,7 +4,7 @@ description: |
   Apply Chain-of-Verification (CoVe) prompting to improve response accuracy through self-verification.
   Use when complex questions require fact-checking, technical accuracy, or multi-step reasoning.
 ---
-<!-- codex: tool-name mapping applied. See .codex/scripts/session-start.sh -->
+<!-- codex: tool-name mapping applied. See the kk Codex bootstrap instructions -->
 
 # Chain-of-Verification (CoVe)
 

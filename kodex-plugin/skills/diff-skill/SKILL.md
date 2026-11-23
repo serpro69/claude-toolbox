@@ -7,7 +7,7 @@ description: |
   Compares HEAD → working tree by default. Walks the full reachable file set from SKILL.md via markdown links.
   Produces a report file under docs/reviews/diff-skill/ and an inline summary.
 ---
-<!-- codex: tool-name mapping applied. See .codex/scripts/session-start.sh -->
+<!-- codex: tool-name mapping applied. See the kk Codex bootstrap instructions -->
 
 # Diff Skill Instructions
 

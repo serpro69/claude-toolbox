@@ -4,7 +4,7 @@ description: |
   Review design, implementation, and task documents produced by design. Evaluates document quality, internal consistency, and technical soundness.
   Use after design completes and before starting implement.
 ---
-<!-- codex: tool-name mapping applied. See .codex/scripts/session-start.sh -->
+<!-- codex: tool-name mapping applied. See the kk Codex bootstrap instructions -->
 
 # Design Review
 

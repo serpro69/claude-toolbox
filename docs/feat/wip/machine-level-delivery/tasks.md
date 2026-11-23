@@ -2,7 +2,7 @@
 
 > Design: [./design.md](./design.md)
 > Implementation: [./implementation.md](./implementation.md)
-> Status: in-progress. RC4 passed under the pilot names. Tasks 19–21 block the stable `v0.26.0` tag. Task 16 follows stable publication.
+> Status: in-progress. RC4 passed under the pilot names. Tasks 19–21 block the stable `v0.26.0` tag. Task 16 retires the template before the rename. RC4 supplies the migration scripts and template.
 > Created: 2026-11-18
 > Not Doing: orchestrator features, Go binary or package-manager distribution, built-in unattended upgrades, full parity for IDE/desktop/cloud/CI sessions, merging into user-owned config (migration excepted), general shell-read grants, detection of open Codex sessions, `kk uninstall`, native Windows, per-repository teammate stub, changes to capy's setup, system-level deny fragment (future)
 
@@ -404,21 +404,21 @@ _Runs before Task 16. It was added after the design review and is numbered 18 so
 ## Task 19: Prepare the Agentstakk repository rename
 
 - **Status:** pending
-- **Depends on:** Task 15
+- **Depends on:** Task 16.1–16.4 (cleanup commit)
 - **Size:** M
 - **Can run in parallel with:** Task 20
 - **Docs:** [Naming and release order](design.md#agentstakk-naming-and-release-order), [cutover plan](implementation.md#agentstakk-cutover)
 
 ### Subtasks
 
-- [ ] 19.1 Update the canonical repository in `install.sh`, `kk/lib/{payload,notice,migrate,codex_plugins}.py`, bootstrap and sync defaults, and the Go module and its consumers. Verify fresh release lookup, a saved old upstream and an explicit fork each resolve to the intended repository.
-- [ ] 19.2 Fix the upstream exclusions in `.github/workflows/{template-cleanup,template-sync}.yml` and their script counterparts before the hosted rename. Exercise the legacy upstream migration with an old downstream manifest and verify the retirement script still honors exclusions and preserves custom forks.
+- [ ] 19.1 Update the canonical repository in `install.sh`, `kk/lib/{payload,notice,migrate,codex_plugins}.py`, and the Go module and its consumers. Verify fresh release lookup, a saved old upstream and an explicit fork each resolve to the intended repository.
+- [ ] 19.2 Accept old canonical upstream names in downstream manifests when migrating with the pinned RC4 scripts. Verify exclusions and preserve explicit forks.
 - [ ] 19.3 Update active repository, release, badge, raw installer and documentation URLs, display names and the Pages base path in `mkdocs.yml`, `.github/workflows/docs.yml` and the docs build. Document the new Git remote, plugin-only switch and RC transition in the install guide and release notes. Check remaining old-name references for a compatibility or historical reason and run the relevant structure, sync, freshness and strict docs checks.
 
 ## Task 20: Move plugin installations to the final marketplace IDs
 
 - **Status:** pending
-- **Depends on:** Task 18
+- **Depends on:** Task 16.1–16.4 (cleanup commit)
 - **Size:** M
 - **Can run in parallel with:** Task 19
 - **Docs:** [Cutover plan](implementation.md#agentstakk-cutover)
@@ -439,35 +439,40 @@ _Runs before Task 16. It was added after the design review and is numbered 18 so
 
 ### Subtasks
 
-- [ ] 21.1 Maintainer: once the default branch protects the upstream under both names, rename the existing GitHub repository to `serpro69/agentstakk`, update the checkout remote and confirm the old Git URL reaches the same repository. Verify release workflows still run and the new Pages URL serves the install guide.
+- [ ] 21.1 Maintainer: after the combined cleanup and rename changes land on the default branch, rename the existing GitHub repository to `serpro69/agentstakk`, update the checkout remote and confirm the old Git URL reaches the same repository. Verify release workflows still run and the new Pages URL serves the install guide.
 - [ ] 21.2 Publish the next `v0.26.0-rc.N` from the renamed repository. On a clean account, follow the published installer URL with the explicit candidate tag and exercise both vendors. Check the public plugin-only install separately. Record the tag, plugin IDs and managed live guard results.
-- [ ] 21.3 On the tagged candidate, verify the documented RC4 transition and rollback, and run `kk migrate --retirement-version <candidate>` in a disposable legacy checkout naming the old upstream. Record trust and guard outcomes in `verification/pilot/`. Keep the RC3/RC4 observations for unchanged behavior.
+- [ ] 21.3 On the tagged candidate, verify the documented RC4 transition and rollback, and run the candidate’s plain `kk migrate` in a disposable legacy checkout naming the old upstream. Record trust and guard outcomes in `verification/pilot/`. Keep the RC3/RC4 observations for unchanged behavior.
 
-**Stable publication:** After 21.1–21.3 pass, the maintainer can tag `v0.26.0` from the renamed repository with the full retirement `template-sync.sh` and `semver-compare.sh`. Task 16 begins after publication.
+**Stable publication:** After 21.1–21.3 pass, the maintainer can tag `v0.26.0` from the renamed repository with the compatibility notice. The cleaned machine release obtains its migration scripts and template from RC4.
 
 ## Task 16: Retire the template in this repository
-- **Status:** pending
-- **Depends on:** Task 15, Task 18, Task 21
+- **Status:** in-progress
+- **Depends on:** Task 15, Task 18
 - **Size:** M
 - **Can run in parallel with:** —
 - **Docs:** [implementation.md#retire-the-template](./implementation.md#retire-the-template), [design.md#retiring-the-template](./design.md#retiring-the-template)
-- **Blocked until:** Task 21 records the Agentstakk pilot and the maintainer publishes the stable `v0.26.0` tag with the full retirement script
+- **Migration source:** `v0.26.0-rc.4`, the last full template.
 
 ### Subtasks
-- [ ] 16.1 Move the current `semver-compare.sh` to `.github/scripts/semver-compare.sh`, replacing the stale copy there, and point `release.yml`, `pre-release.yml` and `test/test-semver-compare.sh` at it → verify: a dry run of the release workflow passes its version check
-- [ ] 16.2 Replace the sync script with the tombstone from Task 13 and keep its test; remove the sync workflow, the template cleanup script and workflow, the bootstrap script, the example state file and their tests
-- [ ] 16.3 Remove the legacy generator targets and the transition copies (`.claude/CLAUDE.extra.md`, `.claude/toolbox/` except the tombstone, `.codex/scripts/`, `.codex/rules/default.rules`, `.codex/agents/`) and update every freshness list
-- [ ] 16.4 Reduce this repository's `.claude/` and `.codex/` to an adopter's footprint and run it on `kk` → verify: all suites pass and a wrapped session in this repository shows the guard and the instructions
-- [ ] 16.5 The maintainer turns off the repository's template flag
+- [x] 16.1 Move the current `semver-compare.sh` to `.github/scripts/semver-compare.sh`, replacing the stale copy there, and point `release.yml`, `pre-release.yml` and `test/test-semver-compare.sh` at it → verify: a dry run of the release workflow passes its version check
+- [x] 16.2 Replace the sync script with the tombstone from Task 13 and keep its test; remove the sync workflow, the template cleanup script and workflow, the bootstrap script, the example state file and their tests
+- [x] 16.3 Remove the legacy generator targets and the transition copies (`.claude/CLAUDE.extra.md`, `.claude/toolbox/` except the tombstone, `.codex/scripts/`, `.codex/rules/default.rules`, `.codex/agents/`) and update every freshness list
+- [x] 16.4 Reduce this repository's `.claude/` and `.codex/` to an adopter's footprint and run it on `kk` → verify: all suites pass and a wrapped session in this repository shows the guard and the instructions
+- [ ] 16.5 At merge, the maintainer turns off the repository's template flag and confirms GitHub reports `isTemplate: false`.
 
 ### Execution context
 
-- 2026-11-23, blocked on stable publication. The [RC3 pilot](./verification/pilot/README.md#rc3) passed. GitHub's tag list contained `v0.26.0-rc.1` through `v0.26.0-rc.3` only, and [PR #198](https://github.com/serpro69/claude-toolbox/pull/198) was a draft targeting `master`. The maintainer owns the stable release. Resume 16.1–16.5 once GitHub lists the exact `v0.26.0` tag containing the full retirement sync script.
+- 2026-11-23, accepted by the maintainer after the naming decision. Perform cleanup first and rename second in one PR. Pin default migration to published RC4, retain the compatibility script, and pilot the renamed candidate with plain `kk migrate`. This supersedes the two earlier publication prerequisites below. The maintainer explicitly chose to turn off the hosted template flag at merge alongside the hosted cutover. GitHub currently reports `isTemplate: true`.
+- 2026-11-23, verified in the cleanup worktree. The RC4 client handed off locally and from staged CI without changing the downstream tree. The installed CLI reported RC4 as its default migration source. The relocated helper passed the release version comparison and guard-version preview. The Go packages, plugin graph, generated freshness and strict docs build passed. Captures `692fe72f-10b9-4426-b817-95b1a66ddd44`, `08dbefb6-17ed-434e-b14c-ddc78c0b8489`, `f5c77d91-2c71-4225-8ae1-7b579308d945` and `3f88196f-a85f-47a6-bfa7-0ddaa6777247`.
+- 2026-11-23, verified on Linux with a disposable machine install. A wrapped Claude Code 2.1.296 session in this checkout received the exact released behavior instructions and the guard denied a harmless read covered by the probe’s extra project rule. The model transport ran on loopback. Fresh Codex 0.171.0 listed the three managed handlers awaiting review. Captures `b74781e1-3741-4a68-a7af-dea65e067571` and `4ad049dd-a084-40b5-b855-9b6c4a7509a3`.
+- 2026-11-23, all 14 remaining shell suites passed in a full run with Python 3.12, including kk lifecycle, guard adapters and the RC4 handoff (capture `e876edca-0626-4e5e-9afe-933aab6d946f`). The CLI default and handoff also passed together in capture `288f883b-c430-4d9c-9c22-09e24e9e8ff7`.
+- 2026-11-23, isolated code review approved the corrections to Task Master migration, live freshness commands and the workflow path filter. The external Claude review could not authenticate.
+- 2026-11-23, previously blocked on stable publication. The [RC3 pilot](./verification/pilot/README.md#rc3) passed. GitHub's tag list contained `v0.26.0-rc.1` through `v0.26.0-rc.3` only, and [PR #198](https://github.com/serpro69/claude-toolbox/pull/198) was a draft targeting `master`. The maintainer owns the stable release. Resume 16.1–16.5 once GitHub lists the exact `v0.26.0` tag containing the full retirement sync script.
 - 2026-11-23, the [RC4 pilot](./verification/pilot/README.md#rc4) completed the corrected-candidate prerequisite. Stable `v0.26.0` publication remains the prerequisite for retiring the template.
 
 ## Task 17: Final verification
 - **Status:** pending
-- **Depends on:** Task 1, Task 2, Task 3, Task 4, Task 5, Task 6, Task 7, Task 8, Task 9, Task 10, Task 11, Task 12, Task 13, Task 14, Task 15, Task 16, Task 18
+- **Depends on:** Task 1, Task 2, Task 3, Task 4, Task 5, Task 6, Task 7, Task 8, Task 9, Task 10, Task 11, Task 12, Task 13, Task 14, Task 15, Task 16, Task 18, Task 21
 - **Size:** S
 - **Can run in parallel with:** —
 
@@ -492,8 +497,8 @@ _Runs before Task 16. It was added after the design review and is numbered 18 so
 ## Dependency Graph
 
 ```
-Task 1 ─┬─→ Task 7 ─┬─→ Task 10 ─┬─→ Task 11 ─→ Task 14 ─┬─→ Task 15 → Task 19 ─┐
-        │           └─→ Task 12  └─→ Task 13 ─→ Task 14  └─→ Task 18 → Task 20 ─┴→ Task 21 → stable v0.26.0 → Task 16 → Task 17
+Task 1 ─┬─→ Task 7 ─┬─→ Task 10 ─┬─→ Task 11 ─→ Task 14 ─┬─→ Task 15 ─┐
+        │           └─→ Task 12  └─→ Task 13 ─→ Task 14  └─→ Task 18 ─┴→ Task 16 → Tasks 19 + 20 → Task 21 → stable v0.26.0 → Task 17
         └─→ Task 9 ─→ Task 10
 Task 2 ─→ Task 3 ─→ Task 4 ─┬─→ Task 9
                    │        └─→ Task 12 ─→ Task 18

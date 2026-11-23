@@ -4,7 +4,7 @@ description: |
   Use after implementing tasks or mid-feature to verify code matches design docs and ensure they are in sync.
   Detects spec deviations, missing implementations, doc inconsistencies, and outdated docs in design and implementation documentation.
 ---
-<!-- codex: tool-name mapping applied. See .codex/scripts/session-start.sh -->
+<!-- codex: tool-name mapping applied. See the kk Codex bootstrap instructions -->
 
 # Implementation Review
 

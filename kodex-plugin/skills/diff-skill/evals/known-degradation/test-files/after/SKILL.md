@@ -2,7 +2,7 @@
 name: example-skill
 description: An example skill for testing diff-skill evaluation.
 ---
-<!-- codex: tool-name mapping applied. See .codex/scripts/session-start.sh -->
+<!-- codex: tool-name mapping applied. See the kk Codex bootstrap instructions -->
 
 # Example Skill
 

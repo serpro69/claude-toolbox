@@ -3,7 +3,7 @@ name: review-architecture
 description: |
   Review a written architecture artifact — an ADR (docs/adr/), a broader architecture doc, the architecture section of a design doc, or a domain-reference kit (glossary + traps pages, reviewed as one composite artifact) — against the system it claims to describe. Verifies the EXISTENCE and TOPOLOGY of declared mechanisms (structural boundaries, data ownership, NFR mechanisms, failure isolation, state consistency, evolution/versioning, domain binding) plus decision soundness, reversibility, and provenance (self-certification of reverse-engineered claims). Use after an ADR, architecture doc, domain glossary, or domain kit is written, before or during implementation. NOT for behavioral/runtime correctness (that is $kk:review-code and $kk:review-spec). Security architecture is out of scope — delegate threat modeling to the PAL secaudit tool (mcp__pal__secaudit).
 ---
-<!-- codex: tool-name mapping applied. See .codex/scripts/session-start.sh -->
+<!-- codex: tool-name mapping applied. See the kk Codex bootstrap instructions -->
 
 # Architecture Review
 

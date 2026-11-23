@@ -48,7 +48,7 @@ After editing anything in `klaude-plugin/`, the Codex variant may drift. Run:
 make generate-kodex
 ```
 
-CI checks freshness via `make generate-kodex && git diff --exit-code kodex-plugin/ .codex/agents/`.
+CI checks freshness via `make generate-kodex && git diff --exit-code -- kodex-plugin/ kk/baseline/codex/agents/`.
 
 ## Agent naming convention
 

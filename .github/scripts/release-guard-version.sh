@@ -11,7 +11,7 @@ release_version='^(0|[1-9][0-9]*)\.(0|[1-9][0-9]*)\.(0|[1-9][0-9]*)(-[0-9A-Za-z.
 [[ $semver =~ $release_version ]] || { echo "Invalid release version: $semver" >&2; exit 2; }
 
 root=$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")/../.." && pwd)
-source "$root/.claude/toolbox/scripts/semver-compare.sh"
+source "$root/.github/scripts/semver-compare.sh"
 
 # A pre-release can be on a different branch, including after a squash merge.
 # Choose the highest preceding SemVer across all release tags. When build

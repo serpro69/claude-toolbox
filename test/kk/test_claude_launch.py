@@ -32,7 +32,7 @@ class ClaudeLaunch(unittest.TestCase):
         self.env = dict(os.environ, HOME=str(self.home), KK_HOME=str(self.toolbox),
                         CLAUDE_CONFIG_DIR=str(self.user.parent), XDG_CONFIG_HOME=str(self.root / "config"),
                         PATH=str(ROOT / "test/kk") + os.pathsep + os.environ["PATH"])
-        self.denies = json.loads((ROOT / ".claude/settings.json").read_text())["permissions"]["deny"]
+        self.denies = json.loads((ROOT / "kk/baseline/claude/deny.json").read_text())
 
     def run_kk(self, *args, ok=True):
         result = subprocess.run([str(ROOT / "kk/bin/kk"), "claude", *map(str, args)],
@@ -47,7 +47,7 @@ class ClaudeLaunch(unittest.TestCase):
         layer = self.layer()
         self.assertEqual(layer["effortLevel"], "high")
         self.assertNotIn("model", layer)
-        self.assertEqual(layer["env"], json.loads((ROOT / ".claude/settings.json").read_text())["env"])
+        self.assertEqual(layer["env"], json.loads((ROOT / "kk/baseline/claude.json").read_text())["preferences"]["env"])
         self.assertEqual(layer["permissions"]["allow"], ["Skill(kk:*)", "Read(/{}/**)".format(self.release)])
         self.assertEqual(layer["permissions"]["deny"], self.denies)
         self.assertNotIn("enabledPlugins", layer)

@@ -16,7 +16,7 @@ From the repository, run:
 kk migrate
 ```
 
-The default retirement tag is `v0.26.0`. For a published pilot or maintenance tag, use `kk migrate --retirement-version TAG`. Both the sync script and its version helper come from that tag. Its template must be available to complete either step.
+The default retirement tag is `v0.26.0-rc.4`, the last full template. The sync script, its version helper and the template it renders all come from that tag. If you are still running the RC4 or earlier pilot CLI, use `kk migrate --retirement-version v0.26.0-rc.4` explicitly. The same option can select a future retirement maintenance tag.
 
 1. **Sync to the retirement release.** Read the preview before confirming. Like any sync, this step overwrites edits to synced files. Migration preserves adopter-owned settings and hooks during the merge, including custom deny entries. Files under `sync_exclusions` stay untouched. An up-to-date repository skips the sync confirmation.
 2. **Retire the legacy files.** The second preview compares the repository with that same tag’s rendered template. It lists matching files and toolbox entries to remove, custom or excluded files to keep, and the effect on collaborators. Decline this step to leave the repository synced with its legacy guard in place. Rerunning `kk migrate` previews the remaining work.
@@ -39,9 +39,9 @@ Migration keeps the legacy scripts together when you exclude `.codex/hooks.json`
 
 Ordinary local and CI syncs to the retirement release still update the legacy template and print migration guidance. Removal requires the separate retirement operation. **A repository using a sync script older than v0.21.0 must not sync past the retirement release.** Use the retirement release as the latest possible sync target until migration. From v0.21.0 onwards, the local script hands control to the target version’s script before applying project changes.
 
-Once the stable tag is published, use `--version v0.26.0` locally or enter `v0.26.0` in the workflow’s version field to sync to the last full template. The retirement script selects the highest stable version for `latest`. Earlier scripts can select a candidate for a newer version. An explicit tag keeps the target fixed across client versions.
+Use `--version v0.26.0-rc.4` locally or enter `v0.26.0-rc.4` in the workflow’s version field to sync to the last full template. If an older local updater reports a missing `semver-compare.sh`, run `kk migrate` for retirement. To continue ordinary sync, restore the helper from the same tag as the installed updater before retrying.
 
-After the tagged pilot and stable release, the project will replace the sync script with a small compatibility script (the tombstone). A supported old client hands control to it. It prints migration guidance, exits successfully and reports `has_changes=false` to CI, so the workflow opens no sync PR. Some clients can backfill their own manifest before handing over.
+The default branch and releases after RC4 carry a small compatibility script at the old sync path. A supported old client hands control to it. It prints migration guidance, exits successfully and reports `has_changes=false` to CI, so the workflow opens no sync PR. Some clients can backfill their own manifest before handing over.
 
 For maintenance of a repository still using the old updater, the versioned reference covers sync exclusions, GitHub Actions credentials and settings merges. [Legacy template-sync reference at v0.25.4](https://github.com/serpro69/claude-toolbox/blob/v0.25.4/docs/user-guide/template-sync.md)
 

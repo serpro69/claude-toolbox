@@ -98,7 +98,7 @@ Run `make generate-kodex`. It copies the profile into
 the `/kk:` → `$kk:` skill-prefix rewrite applied to Markdown
 (`scripts/kodex-generate-manifest.yml`) — so any `/kk:` reference in the profile is
 rewritten; keep such references intentional. Commit the generated files. →
-verify: `make generate-kodex && git diff --exit-code kodex-plugin/ .codex/agents/`
+verify: `make generate-kodex && git diff --exit-code -- kodex-plugin/ kk/baseline/codex/agents/`
 produces no diff (the CI freshness gate).
 
 ### 7. Graph validation
@@ -129,7 +129,7 @@ with the consuming skill (the `design` skill already has an `evals/` directory).
 
 - `bash test/test-plugin-structure.sh` — green.
 - `make plugin-graph` — validate passes.
-- `make generate-kodex && git diff --exit-code kodex-plugin/ .codex/agents/` — no diff.
+- `make generate-kodex && git diff --exit-code -- kodex-plugin/ kk/baseline/codex/agents/` — no diff.
 - Detection evals (`klaude-plugin/skills/design/evals/`) grade pass: positive
   activation + required-section coverage, negative library/CLI regression,
   ambiguous fallback, and k8s co-activation-without-duplication.

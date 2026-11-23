@@ -121,7 +121,7 @@ Hook definitions in `klaude-plugin/hooks/hooks.json`:
 
 The root export writes `TOOLBOX_PLUGIN_ROOT` to `CLAUDE_ENV_FILE`. A machine-managed hook takes the physical root of its own release. A Git-marketplace hook uses `cpr.py` to find the project’s installed version and falls back to the root supplied by Claude.
 
-The instruction hook reads the Markdown shipped beside it. Edit those files in `klaude-plugin/instructions/` and the statusline scripts in `klaude-plugin/statusline/`. Run `make generate-claude-assets` to refresh the regular files that template sync still distributes.
+The instruction hook reads the Markdown shipped beside it. Edit those files in `klaude-plugin/instructions/` and the statusline scripts in `klaude-plugin/statusline/`. Both ship in the Claude plugin.
 
 **Permission guard contract:** Read the complete hook payload from stdin (`tool_name`, `tool_input`, `cwd` and optional `permission_mode`). `scripts/guard/guard.sh` buffers the bytes once and invokes `guard.py` under isolated Python. Ordinary allow is silent with exit 0; config warnings may emit only `systemMessage`. Deny emits `hookSpecificOutput.permissionDecision: "deny"`, its reason on stdout and stderr, and exit 2. Missing interpreters, crashes and invalid engine output must deny. Claude's `onFailure: "block"` handles hook launch failures and timeouts; it requires Claude Code 2.1.295+. See [the configuration guide](../user-guide/configuration.md#hooks) for runtime requirements and supported channels.
 
@@ -237,7 +237,7 @@ Only index non-obvious learnings not derivable from reading the code or git hist
 
 1. **Workflow ordering is the #1 failure mode.** If the agent sees subject matter before methodology, it shortcuts the methodology. Structure every workflow so instructions load first. See [ADR 0004](../adr/0004-skill-workflow-ordering.md).
 
-2. **Forgetting `make generate-kodex`.** After editing anything in `klaude-plugin/`, the Codex variant drifts. CI checks this with `make generate-kodex && git diff --exit-code kodex-plugin/ .codex/agents/`.
+2. **Forgetting `make generate-kodex`.** After editing anything in `klaude-plugin/`, the Codex variant drifts. CI checks this with `make generate-kodex && git diff --exit-code kodex-plugin/ kk/baseline/codex/agents/`.
 
 3. **Orphan files in profile phase directories.** Every `.md` file (except `index.md`) must be referenced by the phase's `index.md`. The bidirectional invariant test catches this.
 
@@ -247,6 +247,6 @@ Only index non-obvious learnings not derivable from reading the code or git hist
 
 6. **Stale Known Profiles list.** When adding a profile, you must update both `EXPECTED_PROFILES` in the test file and the Known Profiles list in `klaude-plugin/skills/_shared/profile-detection.md`. The list is the runtime enumeration — consumers iterate it rather than walking the filesystem.
 
-7. **Renaming skills.** Update `EXPECTED_SKILLS` / `EXPECTED_COMMANDS` in tests. Don't rename agent files. Don't touch `run_plugin_migration`'s `dirs_to_remove` in `.claude/toolbox/scripts/template-sync.sh` (historical cleanup paths). Don't touch `docs/feat/done/` (frozen history). Watch for substring collisions in sed operations.
+7. **Renaming skills.** Update `EXPECTED_SKILLS` / `EXPECTED_COMMANDS` in tests. Don't rename agent files. Don't touch `docs/feat/done/` (frozen history). Watch for substring collisions in sed operations.
 
 8. **Vague `Load if:` clauses.** Conditional entries in profile `index.md` must name concrete diff properties (field values, filenames, directory names) — not vague category labels. Two agents evaluating the same diff must reach the same conclusion.
