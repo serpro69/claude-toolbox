@@ -439,8 +439,9 @@ _Runs before Task 16. It was added after the design review and is numbered 18 so
 ### Execution context
 
 - 2026-11-23, started at `90b93c5c`. RC4 writes both vendor catalogs under the same `KK_HOME` later releases use. Check the pilot registrations before changing those catalogs, preserve user/project scope and plugin data, and verify the new Codex hook keys. Rollback across this boundary runs the retained release’s original code.
-
 - 2026-11-23, verified the public Git switch and managed RC4 upgrade with real vendor CLIs. A fresh guard-key review, workspace-only legacy enablement, settings preservation, offline rollback and return all matched observed inventory. The independent reviewer approved the consent ordering and retryable recovery of the owned files if Codex inventory is unavailable. [Environment, results and captures](verification/task-20/README.md)
+
+- 2026-11-23, verified persisted consent across positive Claude and Codex pilot-catalog checks (capture `c563c2dc-2a50-4f55-a22f-981364af58be`). The full Python 3.12 machine suite passed before that additional case (`26c9afbd-b1f2-47f1-b40d-a4fbc1fde0cb`). Both release workflow version-update steps synchronized the Claude catalog and plugin manifests in a disposable tree (`a04838f5-74a2-484d-9bd7-d0b560faa15b`).
 
 ## Task 21: Rename the hosted repository and pilot the final IDs
 

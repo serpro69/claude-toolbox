@@ -73,6 +73,35 @@ class CodexActivation(InstallFixture):
             with self.assertRaisesRegex(ValueError, "guard change declined"):
                 cli.codex_plugins.confirm_change(record, self.toolbox / "releases" / record["active"], self.directory)
 
+    def test_pilot_consent_survives_catalog_cleanup_before_placement(self):
+        self.install()
+        record = self.state()
+        release = self.toolbox / "releases" / record["active"]
+        record["candidate"] = {"version": release.name, "phase": "staged", "source": {"local": str(self.checkout)}}
+        guard = record["codex_plugins"][str(self.directory)]["kk-guard"]
+        guard["path"] = str(self.directory / "plugins/cache/toolbox/kk-guard" / guard["version"])
+        for relative in (".claude-plugin/marketplace.json", ".agents/plugins/marketplace.json"):
+            cli.state.write_json(self.toolbox / relative, {"name": "toolbox"})
+        market = self.home / "market"
+        cli.state.write_json(market, {"name": "toolbox", "installLocation": str(self.toolbox)})
+        old_catalog = {"marketplaces": [{"name": "toolbox", "root": str(self.toolbox)}]}
+
+        with patch.dict(os.environ, self.env), patch("sys.stdin.isatty", return_value=True), \
+                patch("sys.stdin.readline", return_value="yes\n") as consent:
+            with self.assertRaisesRegex(ValueError, "RC4 Claude marketplace"):
+                cli.codex_profile.prepare_activation(release, record)
+            self.assertTrue(market.is_file())
+            record = self.state()  # Resume from the persisted journal.
+            self.assertEqual(record["candidate"]["phase"], "staged")
+            self.assertTrue(record["candidate"]["confirmed_guard_change"])
+            market.unlink()
+            with patch.object(cli.codex_plugins, "vendor", return_value=old_catalog):
+                with self.assertRaisesRegex(ValueError, "RC4 Codex marketplace"):
+                    cli.codex_profile.prepare_activation(release, record)
+            with patch.object(cli.codex_plugins, "vendor", return_value={"marketplaces": []}):
+                self.assertIsNotNone(cli.codex_profile.prepare_activation(release, record))
+            consent.assert_called_once()
+
     def test_removed_codex_home_is_not_recreated_by_rollback(self):
         directory = str(self.directory)
         record = {"codex_plugins": {directory: {"kk": {}}}, "codex_marketplaces": {directory: True}}
