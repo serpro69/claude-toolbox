@@ -109,6 +109,10 @@ def latest_tag(repo):
         return tag_name(json.load(response)["tag_name"])
 
 
+def upgrade_repository():
+    return os.environ.get("KK_REPOSITORY", "serpro69/claude-toolbox")
+
+
 def check_links(root):
     for directory, directories, files in os.walk(root):
         for name in directories + files:

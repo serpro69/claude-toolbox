@@ -3,6 +3,7 @@ import json
 import os
 from pathlib import Path
 import pty
+import select
 import shutil
 import subprocess
 import sys
@@ -20,6 +21,98 @@ class CodexActivation(InstallFixture):
 
     def guard_version(self):
         return next((self.directory / "plugins/cache/toolbox/kk-guard").iterdir()).name
+
+    def test_batch_sessions_share_admission_until_vendor_exit(self):
+        self.install()
+        (self.directory / "fixture-reviewed").write_text(self.guard_version())
+        previous = self.state()["active"]
+        with cli.state.codex_access(self.toolbox):
+            refused = self.invoke(self.link, "codex", "exec", "hello", ok=False)
+            self.assertIn("files are changing", refused.stderr)
+        processes = []
+        try:
+            for _ in range(2):
+                process = subprocess.Popen([self.link, "codex", "exec", "wait-for-test-input"],
+                                           env=self.env, cwd=self.root, stdin=subprocess.PIPE,
+                                           stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True)
+                processes.append(process)
+                self.assertTrue(select.select([process.stdout], [], [], 15)[0])
+                self.assertEqual(process.stdout.readline().strip(), "running")
+            blocked = self.invoke(self.link, "upgrade", "--local", self.checkout, ok=False)
+            self.assertIn("batch is running", blocked.stderr)
+            self.assertEqual(self.state()["candidate"]["phase"], "staged")
+            self.assertEqual(self.state()["active"], previous)
+            for process in processes:
+                self.assertIn("batch is running", self.invoke(self.link, "apply", ok=False).stderr)
+                process.communicate("23\n", timeout=10)
+                self.assertEqual(process.returncode, 23)
+            self.invoke(self.link, "upgrade")
+            self.assertIsNone(self.state()["candidate"])
+        finally:
+            for process in processes:
+                if process.poll() is None:
+                    process.terminate()
+                    process.communicate(timeout=10)
+
+    def test_batch_exit_releases_lock_with_a_surviving_duplicate(self):
+        self.toolbox.mkdir(parents=True)
+        with cli.state.codex_access(self.toolbox, batch=True) as lock:
+            inherited = os.dup(lock.fileno())
+            self.addCleanup(os.close, inherited)
+        with cli.state.codex_access(self.toolbox):
+            self.assertTrue(os.fstat(inherited))
+
+    def test_removed_codex_home_is_not_recreated_by_rollback(self):
+        directory = str(self.directory)
+        record = {"codex_plugins": {directory: {"kk": {}}}, "codex_marketplaces": {directory: True}}
+        with patch.object(cli.codex_plugins, "vendor") as vendor:
+            cli.codex_plugins.restore_absent(self.toolbox, record, directory, lambda _step: None)
+            vendor.assert_not_called()
+        self.assertFalse(self.directory.exists())
+        self.assertEqual(record, {"codex_plugins": {}, "codex_marketplaces": {}})
+
+    def test_rollback_to_claude_only_then_add_codex_to_same_tag(self):
+        tag, archive = self.tagged_archive()
+        claude_only = self.root / "claude-only"
+        claude_only.mkdir()
+        (claude_only / "claude").symlink_to(Path(__file__).with_name("claude"))
+        (claude_only / "python3").symlink_to(sys.executable)
+        env = dict(self.env, PATH=str(claude_only) + os.pathsep + os.defpath)
+        with patch.dict(os.environ, env), cli.state.writer(self.toolbox):
+            cli.install_locked(self.toolbox, Namespace(command="install", local=None, version=tag), archive_file=archive)
+        self.directory.mkdir(exist_ok=True)
+        interrupted_add = self.directory / "interrupt-add-kk-guard"
+        interrupted_add.touch()
+        self.invoke(self.link, "upgrade", "--local", self.checkout, ok=False)
+        self.assertEqual(self.state()["codex_plugin_pending"], cli.codex_plugins.GUARD_ID)
+        self.invoke(self.link, "rollback")
+        self.assertFalse(list((self.directory / "plugins/cache/toolbox").glob("*/*")))
+        self.assertNotIn("codex_plugin_pending", self.state())
+        interrupted_add.unlink()
+        self.invoke(self.link, "upgrade", "--local", self.checkout)
+        self.assertTrue(self.guard_version())
+        another = self.home / "second-codex"
+        self.invoke(self.link, "upgrade", "--local", self.checkout, env=dict(self.env, CODEX_HOME=str(another)))
+        missing_cli = self.invoke(self.link, "rollback", env=env, ok=False)
+        self.assertIn("rerun kk rollback", missing_cli.stderr)
+        self.assertFalse((another / "kk.config.toml").exists())
+        self.assertEqual(self.state()["candidate"]["operation"], "rollback")
+        interrupt = self.directory / "interrupt-remove-kk-guard"
+        interrupt.touch()
+        self.invoke(self.link, "rollback", ok=False)
+        self.assertEqual(self.state()["candidate"]["operation"], "rollback")
+        interrupt.unlink()
+        self.invoke(self.link, "rollback")
+        self.assertEqual(self.state()["active"], tag)
+        self.assertNotIn(str(self.directory), self.state()["codex_plugins"])
+        self.assertNotIn(str(another), self.state()["codex_plugins"])
+        self.assertFalse((another / "fixture-market").exists())
+        self.assertFalse((self.directory / "fixture-market").exists())
+        self.assertFalse(list((self.directory / "plugins/cache/toolbox").glob("*/*")))
+        self.assertIn("kk upgrade --version " + tag, self.invoke(self.link, "status").stdout)
+        self.invoke(self.link, "upgrade", "--version", tag)
+        self.assertIn("codex", self.state()["releases"][tag]["tools"])
+        self.assertTrue(self.guard_version())
 
     def confirm_upgrade(self, *, ok=True):
         master, slave = pty.openpty()

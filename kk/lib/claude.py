@@ -45,9 +45,12 @@ def verify_managed(rows, plugin):
 
 def settings_report(executable, workspace, env, sources, *flags):
     """Read vendor-resolved settings without a model turn or startup hooks."""
+    executable = shutil.which(executable)
+    if executable is None:
+        raise FileNotFoundError("claude executable not found on PATH")
     request = {"type": "control_request", "request_id": "kk-settings", "request": {"subtype": "get_settings"}}
     result = subprocess.run(
-        [executable, "--bare", "-p", "--input-format", "stream-json", "--output-format", "stream-json",
+        [os.path.abspath(executable), "--bare", "-p", "--input-format", "stream-json", "--output-format", "stream-json",
          "--verbose", "--no-session-persistence", "--strict-mcp-config", "--setting-sources", sources, *flags],
         cwd=workspace, env=env, input=json.dumps(request) + "\n", text=True, capture_output=True, timeout=15)
     for line in result.stdout.splitlines():
@@ -56,6 +59,19 @@ def settings_report(executable, workspace, env, sources, *flags):
         if response.get("request_id") == "kk-settings" and response.get("subtype") == "success":
             return result.returncode, response["response"]
     raise ValueError("Claude could not report settings for " + str(workspace))
+
+
+def verify_workspace(rows, plugin, workspace):
+    verify_managed(rows, plugin)
+    env = os.environ.copy()
+    if env.get("CLAUDE_CONFIG_DIR"):
+        env["CLAUDE_CONFIG_DIR"] = os.path.abspath(env["CLAUDE_CONFIG_DIR"])
+    code, report = settings_report("claude", workspace, env, "user,project,local")
+    settings = report.get("effective")
+    if code or report.get("errors") or not isinstance(settings, dict):
+        raise ValueError("Claude could not verify the effective hook settings in " + str(workspace))
+    if settings.get("disableAllHooks") or settings.get("enabledPlugins", {}).get(PLUGIN_ID) is False:
+        raise ValueError("Claude settings disable the managed guard in " + str(workspace))
 
 
 def activate(home, release, checkpoint):

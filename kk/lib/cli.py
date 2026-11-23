@@ -84,6 +84,15 @@ def finish_install(home, record, release, codex_plan=...):
             codex_plugins.activate(home, record, release, snapshot["directory"], checkpoint)
         checkpoint("codex-files")
         codex_profile.publish(home, record, release.name, codex_plan)
+        restore_directory = record["candidate"].get("restore_absent_codex")
+        if restore_directory:
+            codex_plugins.restore_absent(home, record, restore_directory, checkpoint)
+            # An unreviewed successor can have added Codex in another home
+            # before this Claude-only release was selected as the ready target.
+            # Reconcile the interrupted home first because its install may
+            # have reached the vendor before the per-plugin receipt was saved.
+            for directory in list(record.get("codex_plugins", {})):
+                codex_plugins.restore_absent(home, record, directory, checkpoint)
         if snapshot is not None:
             if restoring:
                 # Recover the previously validated files even if the vendor
@@ -116,7 +125,7 @@ def finish_install(home, record, release, codex_plan=...):
     checkpoint("promote")
     pending = record["candidate"]
     state.remember_candidate(record, pending)
-    _, issues = mixed.inspect("claude", Path("/"))
+    _, issues = mixed.inspect("claude", Path("/"), claude_plugin=release / "klaude-plugin")
     claude_phase = "awaiting review" if issues else "ready"
     state.promote(record, release.name, claude_phase)
     state.remember_placed(home, record, pending.get("abandoned"))
@@ -153,7 +162,7 @@ def replace_pending(source, destination, work):
 def prepare(home, record, args, archive_file, work):
     candidate = record["candidate"]
     source = {"local": str(args.local.resolve())} if args.local else {
-        "tag": args.version, "repository": os.environ.get("KK_REPOSITORY", "serpro69/claude-toolbox")}
+        "tag": args.version, "repository": payload.upgrade_repository()}
     if candidate and not args.local and not args.version:
         source = candidate["source"]
     if record["active"] and candidate and candidate["phase"] == "activating" and source != candidate["source"]:
@@ -179,7 +188,10 @@ def prepare(home, record, args, archive_file, work):
         source["tag"] = version
         existing = record["releases"].get(version, {})
         if existing.get("source") == source:
-            needs_codex = shutil.which("codex") and not codex_plugins.receipt(record, codex_profile.codex_home(), "kk-guard")
+            directory = codex_profile.codex_home()
+            needs_codex = shutil.which("codex") and (
+                (existing.get("codex_snapshot") or {}).get("directory") != str(directory)
+                or not codex_plugins.receipt(record, directory, "kk-guard"))
             if version == record["active"] and not needs_codex:
                 print("Already active:", version)
                 if record["rollback_target"]:
@@ -248,42 +260,47 @@ def install_locked(home, args, archive_file=None):
         version = prepare(home, record, args, archive_file, work)
         if version is None:
             return
-        stage = home / "staging" / version
-        release = home / "releases" / version
-        source = stage if stage.is_dir() else release
-        staged_cli = load_cli(source / "kk/lib", "_kk_preflight")
-        codex_plan = staged_cli.codex_profile.prepare_activation(source, record)
-        if record["active"] and record["candidate"]["phase"] == "staged":
-            active = record["releases"][record["active"]]
-            if active["tools"].get("claude") == "awaiting review":
-                _, issues = mixed.inspect("claude", Path("/"))
-                if not issues:
-                    active["tools"]["claude"] = "ready"
-            if active.get("codex_snapshot") and record.get("codex_plugins"):
-                old = home / "releases" / record["active"]
-                phase, _ = codex_trust.machine(old, active)
-                state.record_codex_phase(active, phase)
-        state.checkpoint(home, record, "place")
-        if record["candidate"].get("operation") == "add-codex":
-            print("Adding Codex to the active release. If interrupted, resume offline with kk upgrade.", flush=True)
-        elif record["active"]:
-            print("If activation stops, restore the active release with",
-                  recovery_command(home, record["active"]), flush=True)
-        if stage.exists():
-            if record["active"]:
-                if release.exists():
-                    raise ValueError("cannot overwrite a placed release: {}".format(release))
-                stage.rename(release)
-            else:
-                replace_pending(stage, release, work)
-        # Staging is private to this writer. Placed releases may already
-        # service hooks in open sessions and follow the retention policy.
-        if (home / "staging").is_dir():
-            shutil.rmtree(home / "staging")
-        candidate = load_cli(release / "kk/lib", "_kk_candidate")
-        candidate.finish_install(home, record, release, codex_plan)
+        with state.codex_access(home):
+            activate_staged(home, record, version, work)
     finally:
         shutil.rmtree(work)
+
+
+def activate_staged(home, record, version, work):
+    stage = home / "staging" / version
+    release = home / "releases" / version
+    source = stage if stage.is_dir() else release
+    staged_cli = load_cli(source / "kk/lib", "_kk_preflight")
+    codex_plan = staged_cli.codex_profile.prepare_activation(source, record)
+    if record["active"] and record["candidate"]["phase"] == "staged":
+        active = record["releases"][record["active"]]
+        old = home / "releases" / record["active"]
+        if active["tools"].get("claude") == "awaiting review":
+            _, issues = mixed.inspect("claude", Path("/"), claude_plugin=old / "klaude-plugin")
+            if not issues:
+                active["tools"]["claude"] = "ready"
+        if active.get("codex_snapshot") and record.get("codex_plugins"):
+            phase, _ = codex_trust.machine(old, active)
+            state.record_codex_phase(active, phase)
+    state.checkpoint(home, record, "place")
+    if record["candidate"].get("operation") == "add-codex":
+        print("Adding Codex to the active release. If interrupted, resume offline with kk upgrade.", flush=True)
+    elif record["active"]:
+        print("If activation stops, restore the active release with",
+              recovery_command(home, record["active"]), flush=True)
+    if stage.exists():
+        if record["active"]:
+            if release.exists():
+                raise ValueError("cannot overwrite a placed release: {}".format(release))
+            stage.rename(release)
+        else:
+            replace_pending(stage, release, work)
+    # Staging is private to this writer. Placed releases may already
+    # service hooks in open sessions and follow the retention policy.
+    if (home / "staging").is_dir():
+        shutil.rmtree(home / "staging")
+    candidate = load_cli(release / "kk/lib", "_kk_candidate")
+    candidate.finish_install(home, record, release, codex_plan)
 
 
 def rollback_locked(home, record):
@@ -313,6 +330,12 @@ def rollback_locked(home, record):
                   "the restored hooks are reviewed. Continuing offline recovery.", file=sys.stderr, flush=True)
     if not previous or previous.get("operation") != "rollback":
         rollback = {"operation": "rollback", "phase": "activating", "version": target}
+        if not saved.get("codex_snapshot"):
+            departing = (previous or {}).get("codex_inputs") or record["releases"][record["active"]].get("codex_snapshot")
+            if departing:
+                rollback["restore_absent_codex"] = departing["directory"]
+                print("Restoring a Claude-only release. Open Codex sessions may lose their managed guard.",
+                      file=sys.stderr, flush=True)
         if previous and previous["version"] != target:
             rollback["abandoned"] = previous["version"]
             if (home / "releases" / payload.release_id(previous["version"])).is_dir():
@@ -330,7 +353,8 @@ def rollback_locked(home, record):
 def tool_status(home, record, tool, saved, check_live):
     workspace = Path.cwd().resolve()
     directory = codex_profile.codex_home()
-    copies, issues = mixed.inspect(tool, workspace, directory)
+    copies, issues = mixed.inspect(tool, workspace, directory,
+                                  claude_plugin=home / "releases" / record["active"] / "klaude-plugin")
     for entry in copies:
         print("Git-marketplace {} install: {} ({} scope, {}{})".format(
             tool, entry.plugin, entry.scope, "enabled" if entry.enabled else "disabled",
@@ -371,7 +395,7 @@ def tool_status(home, record, tool, saved, check_live):
 
 
 def remove_mixed(home):
-    with state.writer(home):
+    with state.writer(home), state.codex_access(home):
         record = state.load(home)
         if not record["active"] or not record["installed_paths"] or (record["candidate"] or {}).get("phase") == "activating":
             raise ValueError("finish activation before reviewing Git-marketplace copies")
@@ -441,6 +465,8 @@ def main():
         source = action.add_mutually_exclusive_group()
         source.add_argument("--local", type=Path, metavar="CHECKOUT")
         source.add_argument("--version", metavar="TAG")
+        if command == "upgrade":
+            source.add_argument("--check", action="store_true", help="report whether a newer stable release exists")
     status_options = commands.add_parser("status").add_mutually_exclusive_group()
     status_options.add_argument("--live", action="store_true", help="verify each managed guard with a scratch session")
     status_options.add_argument("--remove-mixed", action="store_true", help="confirm removal of user-scope Git-marketplace copies")
@@ -457,9 +483,11 @@ def main():
             claude_launch.launch(home, sys.argv[2:])
             return 0
         if sys.argv[1:2] == ["codex"]:
-            codex_launch.launch(home, sys.argv[2:])
-            return 0
+            return codex_launch.launch(home, sys.argv[2:])
         args = parser.parse_args()
+        if args.command == "upgrade" and args.check:
+            notice.check(home, state.load(home))
+            return 0
         if args.command == "status":
             if args.remove_mixed:
                 remove_mixed(home)
@@ -472,25 +500,31 @@ def main():
                     # The lock may have changed hands since the shell read state.
                     raise ValueError("release selection changed; rerun kk " + args.command)
                 if args.command == "rollback":
-                    rollback_locked(home, record)
+                    with state.codex_access(home):
+                        rollback_locked(home, record)
                 elif args.command == "migrate":
                     migrate.migrate(home, record, args.retirement_version)
                 elif args.command == "apply":
-                    if not owner or (record["candidate"] or {}).get("phase") == "activating" or record.get("pending_entry"):
-                        raise ValueError("finish install, upgrade or rollback before running kk apply")
-                    release = home / "releases" / payload.release_id(owner)
-                    codex_profile.reconcile_claim(home, record)
-                    plan = codex_profile.prepare(release, record, required=True)
-                    codex_profile.publish(home, record, owner, plan)
-                    saved = record["releases"][owner]
-                    if record.get("codex_plugins") and saved.get("codex_snapshot"):
-                        phase, issues = codex_trust.machine(release, saved, prompt=True)
-                        state.record_codex_phase(saved, phase)
-                        state.write_json(home / "state.json", record)
-                        codex_trust.report(phase, issues)
+                    with state.codex_access(home):
+                        apply_locked(home, record, owner)
                 else:
                     install_locked(home, args)
         return 0
     except (OSError, ValueError, KeyError, tarfile.TarError, subprocess.SubprocessError) as exc:
         print("kk:", exc, file=sys.stderr)
         return 1
+
+
+def apply_locked(home, record, owner):
+    if not owner or (record["candidate"] or {}).get("phase") == "activating" or record.get("pending_entry"):
+        raise ValueError("finish install, upgrade or rollback before running kk apply")
+    release = home / "releases" / payload.release_id(owner)
+    codex_profile.reconcile_claim(home, record)
+    plan = codex_profile.prepare(release, record, required=True)
+    codex_profile.publish(home, record, owner, plan)
+    saved = record["releases"][owner]
+    if record.get("codex_plugins") and saved.get("codex_snapshot"):
+        phase, issues = codex_trust.machine(release, saved, prompt=True)
+        state.record_codex_phase(saved, phase)
+        state.write_json(home / "state.json", record)
+        codex_trust.report(phase, issues)

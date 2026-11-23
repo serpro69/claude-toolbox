@@ -478,6 +478,15 @@ def compile_policy(rules, ctx, env=None):
             for root in roots:
                 for home in homes:
                     secrets.append((glob, glob_to_regex(glob, root, home)))
+            # Absolute directory rules may use a platform alias such as /tmp.
+            # Capy supplies the physical cwd, so retain both directory spellings.
+            if glob.startswith("//") and glob.endswith("/**"):
+                directory = glob[1:-3]
+                if not pathname_glob.has_magic(directory):
+                    physical = os.path.realpath(directory)
+                    if physical != directory:
+                        prefix = re.escape(physical.rstrip("/"))
+                        secrets.append((glob, re.compile(prefix + r"(?:/.*)?\Z", re.DOTALL)))
         except (ValueError, re.error) as exc:
             raise failure("cannot compile secrets glob %r: %s" % (glob, exc))
     env = os.environ if env is None else env

@@ -23,6 +23,8 @@ The default retirement tag is `v0.26.0`. For a published pilot or maintenance ta
 
 Inspect `git diff` and `git status` before committing. You can keep individual changes out of the migration commit, for example the project rules file or a plugin registration used by CI. Preserve the files or marketplace definitions that a retained registration needs.
 
+Migration keeps the legacy scripts together when you exclude `.codex/hooks.json` or a retained handler names the `.codex/scripts` directory. If your hook delegates to a separate program that depends on those scripts, exclude the script directory explicitly. Excluding an absent provider directory keeps it absent during migration sync.
+
 ## What changes for the team
 
 | Repository change | Effect after the commit |
@@ -36,6 +38,8 @@ Inspect `git diff` and `git status` before committing. You can keep individual c
 ## Ordinary sync and the retirement boundary
 
 Ordinary local and CI syncs to the retirement release still update the legacy template and print migration guidance. Removal requires the separate retirement operation. **A repository using a sync script older than v0.21.0 must not sync past the retirement release.** Use the retirement release as the latest possible sync target until migration. From v0.21.0 onwards, the local script hands control to the target version’s script before applying project changes.
+
+Once the stable tag is published, use `--version v0.26.0` locally or enter `v0.26.0` in the workflow’s version field to sync to the last full template. The retirement script selects the highest stable version for `latest`. Earlier scripts can select a candidate for a newer version. An explicit tag keeps the target fixed across client versions.
 
 After the tagged pilot and stable release, the project will replace the sync script with a small compatibility script (the tombstone). A supported old client hands control to it. It prints migration guidance, exits successfully and reports `has_changes=false` to CI, so the workflow opens no sync PR. Some clients can backfill their own manifest before handing over.
 

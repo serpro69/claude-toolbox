@@ -1002,9 +1002,7 @@ resolve_version() {
 
   case "$target" in
   latest)
-    # Find highest version tag using semver comparison (source: semver-compare.sh).
-    # git's --sort=-v:refname is broken for pre-releases: it ranks v1.0.0-rc.1
-    # above v1.0.0. We iterate all tags and compare properly instead.
+    # Ordinary sync follows stable releases. An explicit tag selects a pilot.
     local tags
     tags=$(git ls-remote --tags "$repo_url" 2>/dev/null |
       { grep -v '\^{}' || true; } |
@@ -1014,8 +1012,7 @@ resolve_version() {
     while IFS= read -r tag; do
       [[ -z "$tag" ]] && continue
       local stripped="${tag#v}"
-      # Skip non-semver tags
-      [[ "$stripped" =~ ^[0-9]+\.[0-9]+\.[0-9]+ ]] || continue
+      [[ "$stripped" =~ ^(0|[1-9][0-9]*)\.(0|[1-9][0-9]*)\.(0|[1-9][0-9]*)(\+[0-9A-Za-z.-]+)?$ ]] || continue
       if [[ -z "$resolved" ]]; then
         resolved="$tag"
       else
@@ -1028,6 +1025,10 @@ resolve_version() {
 
     # If no tags exist, resolve default branch to SHA
     if [[ -z "$resolved" ]]; then
+      if [[ -n "$tags" ]]; then
+        log_error "No stable release tag found. Choose an explicit tag or branch with --version." >&2
+        return 1
+      fi
       log_warn "No tags found in upstream repository, using default branch" >&2
       resolved=$(git ls-remote "$repo_url" HEAD 2>/dev/null | cut -f1)
       if [[ -z "$resolved" ]]; then
@@ -2815,7 +2816,6 @@ apply_changes() {
     local source="$staging_dir/$staging_subdir"
     local target="${dir_map[$staging_subdir]}"
     [[ ! -d "$source" ]] && continue
-    mkdir -p "$target"
     # Comparison exclusions must also govern apply (including CI's separate
     # --apply invocation). Copy entries individually so excluded descendants
     # cannot slip through a recursive directory copy.
@@ -3010,6 +3010,31 @@ retire_template() {
     done < <(find "$rendered/$part" \( -type f -o -type l \) -print0)
   done
 
+  # Plan from the registrations that will survive, independent of find order.
+  # Keep the runtime together because its handlers source sibling scripts.
+  local hooks=.codex/hooks.json keep_runtime=false
+  if [[ -e $hooks || -L $hooks ]]; then
+    if is_excluded "$hooks" || ! retirement_regular_file "$hooks"; then
+      keep_runtime=true
+    else
+      local remaining=$after/$hooks
+      [[ -f $remaining ]] || remaining=$hooks
+      if [[ -s $remaining ]]; then
+        keep_runtime=$(jq -r 'any(.hooks[]?[]?.hooks[]?; (.command? // "") | test("[.]codex/scripts([^[:alnum:]_.-]|$)"))' "$remaining")
+      fi
+    fi
+  fi
+  if [[ $keep_runtime == true ]]; then
+    local -a filtered=()
+    for file in "${files[@]}"; do
+      if [[ $file == .codex/scripts/* ]]; then
+        printf 'Keep %s for retained %s\n' "$file" "$hooks"
+      else
+        filtered+=("$file")
+      fi
+    done
+    files=("${filtered[@]}")
+  fi
   if ! is_excluded "$MANIFEST_PATH" && retirement_regular_file "$MANIFEST_PATH"; then
     mkdir -p "$before/.github"
     cp -p "$MANIFEST_PATH" "$before/$MANIFEST_PATH"

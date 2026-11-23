@@ -84,7 +84,7 @@
 - [x] 3.5 Create Claude activation: write the local marketplace manifest, add the marketplace, install the plugin at user scope, verify that `readFromFolder` on the matching user-scope `claude plugin list --json` entry resolves to the candidate plugin directory; stop without replacing anything when `~/.local/bin/kk` exists and is not in the installed-paths record; keep the local marketplace's name in one constant (working value `toolbox`)
 - [x] 3.6 Add `kk upgrade` for the first-install path, `kk status`, and `install.sh` at the repository root; running the installer again after an interrupted first install resumes from the journaled phase or starts over; the installer warns in one line when `kk` on `PATH` resolves to something other than its own symlink
 - [x] 3.7 Add `test/kk/` and `test/test-kk.sh` with stub vendor CLIs covering first install, an interrupted first install completed by a second installer run, failed validation, a colliding symlink and two overlapping writers → verify: the suite passes under isolated Python 3.8 syntax checks
-- [ ] 3.8 Do not tag a release that ships `kk` until the maintainer has settled the local marketplace's name ([design.md#open-questions](./design.md#open-questions)); change the constant then **Open pre-tag decision.**
+- [x] 3.8 Settle the local marketplace name. [ADR 0014](../../../adr/0014-machine-level-delivery.md) records `toolbox`, and the [RC3 pilot](./verification/pilot/README.md#rc3) verified the published IDs.
 
 ### Execution context
 
@@ -373,7 +373,7 @@ Task 4 must distinguish interpreter-generated guard bytecode from a changed rele
 
 ## Task 18: Pilot the tagged release
 _Runs before Task 16. It was added after the design review and is numbered 18 so that existing references to Tasks 16 and 17 stay valid._
-- **Status:** done
+- **Status:** in-progress
 - **Depends on:** Task 12, Task 14
 - **Size:** S
 - **Slicing:** Risk-First — retirement is not cheaply undone, and scratch plugins are not what adopters install
@@ -387,6 +387,7 @@ _Runs before Task 16. It was added after the design review and is numbered 18 so
 - [x] 18.4 Run `kk migrate --retirement-version <candidate>` in that repository → verify: a new session is guarded throughout; what the older session does is recorded
 - [x] 18.5 Repeat demonstrations 1, 2 and 4 with the shipped guard plugin and the real marketplace names
 - [x] 18.6 Write the results to `verification/pilot/` with tool versions; fix and re-pilot with a new candidate anything the pilot contradicts before the stable retirement release is tagged
+- [ ] 18.7 Publish and pilot the post-review candidate. Verify the changed guard identity and trust, batch launch during activation, rollback to a Claude-only corrected target, and migration with excluded and retained files. Record the tested tags and affected parity observations before stable publication.
 
 ### Execution context
 
@@ -414,6 +415,10 @@ _Runs before Task 16. It was added after the design review and is numbered 18 so
 - [ ] 16.4 Reduce this repository's `.claude/` and `.codex/` to an adopter's footprint and run it on `kk` → verify: all suites pass and a wrapped session in this repository shows the guard and the instructions
 - [ ] 16.5 The maintainer turns off the repository's template flag
 
+### Execution context
+
+- 2026-11-23, blocked on stable publication. The [RC3 pilot](./verification/pilot/README.md#rc3) passed. GitHub's tag list contained `v0.26.0-rc.1` through `v0.26.0-rc.3` only, and [PR #198](https://github.com/serpro69/claude-toolbox/pull/198) was a draft targeting `master`. The maintainer owns the stable release. Resume 16.1–16.5 once GitHub lists the exact `v0.26.0` tag containing the full retirement sync script.
+
 ## Task 17: Final verification
 - **Status:** pending
 - **Depends on:** Task 1, Task 2, Task 3, Task 4, Task 5, Task 6, Task 7, Task 8, Task 9, Task 10, Task 11, Task 12, Task 13, Task 14, Task 15, Task 16, Task 18
@@ -422,7 +427,7 @@ _Runs before Task 16. It was added after the design review and is numbered 18 so
 
 ### Subtasks
 - [ ] 17.1 Run `/kk:test` for the shell and Python suites, the Go tool tests and generated-output freshness; confirm the four demonstrations and the pilot are recorded with tool versions; broaden if a probe contradicted the design after dependent tasks finished or a vendor release changed hook, plugin or settings behaviour
-- [ ] 17.1a Run the Task 1 probe 1.9 (`-c developer_instructions=…` size limit) on macOS, deferred from Task 1 by the maintainer on 2026-11-19 → verify: the macOS limit is recorded in `verification/task-1/` beside the Linux one, with the environment size at the time (on macOS the limit covers arguments and environment together), and the import cap in `design.md` follows its rule: 122,880 bytes, or the lower measured limit less 8 KiB if that is smaller
+- [x] 17.1a Run the Task 1 probe 1.9 (`-c developer_instructions=…` size limit) on macOS, deferred from Task 1 by the maintainer on 2026-11-19 → verify: the macOS limit is recorded in `verification/task-1/` beside the Linux one, with the environment size at the time (on macOS the limit covers arguments and environment together), and the import cap in `design.md` follows its rule: 122,880 bytes, or the lower measured limit less 8 KiB if that is smaller
 - [ ] 17.2 Confirm the pilot record covers every parity-ledger row marked kept or moved, and observe again any row touched by a change made after the pilot
 - [ ] 17.3 Run `/kk:document` to update any remaining docs
   - Document why the usage is within Anthropic's ToS (see https://github.com/storytold/craft-anything/blob/main/docs/claude-code.md#why-this-is-within-anthropics-terms-as-published-october-2026 as example)
@@ -430,6 +435,13 @@ _Runs before Task 16. It was added after the design review and is numbered 18 so
 - [ ] 17.5 Run `/kk:review-spec` to verify the implementation matches the design and implementation docs
 - [ ] 17.6 If any non-blocking items remain, ask the maintainer how to follow up, for example with GitHub issues
 - [ ] 17.7 Move the feature docs from `docs/feat/wip/` to `docs/feat/done/` and update markdown references
+
+### Execution context
+
+- 2026-11-23, maintainer requested two verification passes. The first covers PR #198 before retirement. Task 16 and the feature-wide repeat, including the archive move, stay in the follow-up PR.
+- 2026-11-23, accepted by the maintainer during remediation. Protect each managed Codex batch until its vendor exits, even when that delays activation. The first corrected release candidate starts the full-support baseline. RC1–RC3 retain their original launchers and rollback implementation. The [transition instructions](../../../getting-started/template-setup.md#update-and-recover) cover those versions.
+- 2026-11-23, pre-retirement result at `9fa95e0b`: hold the merge. The full suite ran, and the macOS size probe confirms the 122,880-byte import cap. The hosted checks and four tagged demonstrations passed. The independent code and spec reviews found rollback and migration defects. The [verification record](verification/pre-retirement.md) lists the local failures, reviewed findings, and the check needed to close each one. The maintainer owns disposition before stable publication.
+- 2026-11-23, corrective pass. Rollback, batch admission, migration exclusions, readiness and update selection passed local verification. The minimum Python version and the real Codex inventory were exercised. The corrected guard and migration require the tagged repeat in 18.7. [Corrective evidence](verification/pre-retirement.md#evidence-for-the-corrections)
 
 ## Dependency Graph
 

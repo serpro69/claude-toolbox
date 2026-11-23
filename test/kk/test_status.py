@@ -13,6 +13,27 @@ from test_install import InstallFixture, cli
 
 
 class LaunchNotice(InstallFixture):
+    def test_explicit_upgrade_check_is_read_only(self):
+        self.install()
+        installed = self.state()
+        installed["releases"][installed["active"]]["source"] = {"tag": "v1.0.0", "repository": "old/fork"}
+        cli.state.write_json(self.state_file, installed)
+        record = self.state_file.read_bytes()
+        since = self.state_file.stat().st_mtime_ns
+        with patch.dict(os.environ, self.env), patch("sys.argv", ["kk", "upgrade", "--check"]), \
+                patch.object(cli.payload, "latest_tag", return_value="v77.0.0") as fetch, \
+                contextlib.redirect_stdout(io.StringIO()) as output, cli.state.writer(self.toolbox):
+            os.environ.pop("KK_REPOSITORY", None)
+            self.assertEqual(cli.main(), 0)
+            fetch.assert_called_once_with("serpro69/claude-toolbox")
+            os.environ["KK_REPOSITORY"] = "new/fork"
+            self.assertEqual(cli.main(), 0)
+            fetch.assert_called_with("new/fork")
+        self.assertIn("v77.0.0 is available", output.getvalue())
+        self.assertEqual(self.state_file.read_bytes(), record)
+        self.assertEqual(self.state_file.stat().st_mtime_ns, since)
+        self.assertFalse((self.toolbox / "update-notice.json").exists())
+
     def test_check_is_daily_stable_only_and_silent_offline(self):
         self.toolbox.mkdir(parents=True)
         repo = "example/toolbox"
@@ -119,6 +140,16 @@ class LaunchNotice(InstallFixture):
 
 
 class InstallationStatus(InstallFixture):
+    def test_claude_readiness_requires_source_and_effective_settings(self):
+        self.install()
+        cli.state.write_json(self.home / "list-override", {"readFromFolder": str(self.root)})
+        self.assertIn("claude: awaiting review", self.invoke(self.link, "status").stdout)
+        (self.home / "list-override").unlink()
+        cli.state.write_json(self.home / "effective-settings", {"disableAllHooks": True})
+        self.assertIn("settings disable the managed guard", self.invoke(self.link, "status").stdout)
+        (self.home / "effective-settings").unlink()
+        self.assertIn("claude: ready", self.invoke(self.link, "status").stdout)
+
     def test_mixed_scope_confirmation_and_readiness(self):
         codex = Path(self.env["CODEX_HOME"])
         codex.mkdir()

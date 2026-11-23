@@ -36,13 +36,19 @@ def claude_managed(rows):
     return any(p["id"] == claude.PLUGIN_ID and p["scope"] == "user" and p.get("enabled") is True for p in rows)
 
 
-def inspect(tool, workspace, directory=None):
+def inspect(tool, workspace, directory=None, *, claude_plugin=None):
     try:
         rows = inventory(tool, workspace, directory)
         installs = git_copies(tool, rows)
         issues = []
-        if tool == "claude" and not claude_managed(rows):
-            issues.append("managed user-scope plugin {} is missing or disabled".format(claude.PLUGIN_ID))
+        if tool == "claude":
+            if not claude_managed(rows):
+                issues.append("managed user-scope plugin {} is missing or disabled".format(claude.PLUGIN_ID))
+            elif claude_plugin is not None:
+                try:
+                    claude.verify_workspace(rows, claude_plugin, workspace)
+                except (ValueError, OSError, subprocess.SubprocessError) as exc:
+                    issues.append(str(exc))
         guard = claude.GIT_PLUGIN if tool == "claude" else GIT_GUARD
         for entry in installs:
             if entry.plugin != guard or not entry.enabled:

@@ -168,7 +168,9 @@ From [`raw/probe-devinstr.out`](raw/probe-devinstr.out), with `--profile kkp` in
 
 - A 130,682-byte `developer_instructions=<serialised TOML string>` argument (126 KiB of text) was accepted and shown in full; a 131,719-byte one failed in `execve` with "Argument list too long". Codex added no limit of its own below that. The boundary lies between those two sizes, which is consistent with Linux's fixed per-argument cap (`MAX_ARG_STRLEN`, 32 pages = 131,072 bytes on 4 KiB pages); the exact byte was not bisected. The limit applies to the serialised value, so escaping counts.
 - `-c developer_instructions=…` replaced both the profile's and the trusted project's value.
-- macOS not probed; deferred to Task 17 (17.1a) by the maintainer. There the limit is the total `ARG_MAX` for arguments and environment rather than a per-argument cap.
+On 2026-11-23 the same harness ran on macOS 27.2.1 ARM64 (Darwin 27.2.0, Codex CLI 0.171.0). With the trusted project registered under its physical path, the project marker won with the profile alone and the command-line marker won with `-c`. All nine sizes passed through the npm launcher, up to a 265,487-byte serialised argument. [macOS harness output](raw/probe-devinstr-macos.out)
+
+A follow-up measured the native executable shipped with that npm package. It ran `--profile kkp debug prompt-input -c <argument> hi` with five environment entries totalling 2,265 bytes including separators and NULs. With `ARG_MAX=1048576`, the final marker reached the developer message at 1,046,000 argument bytes. At 1,046,001 bytes the OS returned `E2BIG`. This boundary depends on the entire argument list and environment. Above the published harness range the Node 24.14.0 launcher also hit a stack limit during exploratory sizing. The native boundary applies only to the direct executable. Both entry points clear the Linux-derived 122,880-byte launcher cap. Native boundary capture `768be1dc-3061-491d-b65a-dcc706a7f180`.
 
 ### Other observations
 
@@ -178,7 +180,6 @@ From [`raw/probe-devinstr.out`](raw/probe-devinstr.out), with `--profile kkp` in
 
 ## Not covered
 
-- macOS for probe 1.9 (deferred, Task 17.1a).
 - Git marketplace over HTTPS or SSH from a real host; the probe used plain HTTP on 127.0.0.1, which exercises the same Git-source path but not authentication.
 - Effects of the `agents`, `tui`, `features.hooks`, context-limit and `project_doc_max_bytes` profile keys (type-checked only).
 - The `managed` trust status.

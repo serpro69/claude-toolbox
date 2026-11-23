@@ -49,9 +49,13 @@ def intact(directory, candidate):
 
 def install(home, args):
     journal = home / "state.json"
-    record = json.loads(journal.read_bytes()) if journal.exists() else {}
-    if record and (type(record.get("format_version")) is not int or record["format_version"] != 1):
-        raise ValueError("unsupported kk state format")
+    try:
+        record = json.loads(journal.read_bytes())
+    except FileNotFoundError:
+        record = {}
+    else:
+        if not isinstance(record, dict) or type(record.get("format_version")) is not int or record["format_version"] != 1:
+            raise ValueError("unsupported kk state format")
     if record.get("active"):
         if record.get("pending_entry"):
             raise ValueError("dispatcher publication pending; run kk upgrade to finish or kk rollback to restore")

@@ -11,9 +11,9 @@ home = Path(os.environ["HOME"])
 if args[:2] == ["--bare", "-p"]:
     request = json.load(sys.stdin)
     assert request["request"]["subtype"] == "get_settings"
-    path = Path(args[args.index("--settings") + 1])
-    layer = json.loads(path.read_text())
-    report = {"sources": [{"source": "flagSettings", "settings": layer}]}
+    path = Path(args[args.index("--settings") + 1]) if "--settings" in args else home / "effective-settings"
+    layer = json.loads(path.read_text()) if path.exists() else {}
+    report = {"effective": layer, "sources": [{"source": "flagSettings", "settings": layer}]}
     if isinstance(layer.get("statusLine"), int):
         report = {"errors": [{"file": str(path), "path": "statusLine"}], "sources": []}
     print(json.dumps({"type": "control_response", "response": {"subtype": "success",

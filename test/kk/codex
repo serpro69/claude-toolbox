@@ -46,20 +46,34 @@ def app_server():
 
 if args[-1:] == ["app-server"]:
     app_server()
+elif args[-2:] == ["exec", "wait-for-test-input"]:
+    os.closerange(3, 256)
+    print("running", flush=True)
+    sys.exit(int(input()))
 elif args[:3] == ["plugin", "marketplace", "list"]:
     print(json.dumps({"marketplaces": [{"name": "toolbox", "root": market.read_text()}] if market.exists() else []}))
 elif args[:3] == ["plugin", "marketplace", "add"]:
     directory.mkdir(parents=True, exist_ok=True)
     market.write_text(args[3])
     print("{}")
+elif args[:3] == ["plugin", "marketplace", "remove"]:
+    assert args[3] == "toolbox"
+    market.unlink()
+    print("{}")
 elif args[:2] == ["plugin", "list"]:
     path = directory / "codex-git"
     rows = (json.loads(path.read_text()) if path.is_file() else []) if "claude-toolbox" in args else installed()
     print(json.dumps({"installed": rows}))
 elif args[:2] == ["plugin", "remove"]:
-    path = directory / "codex-git"
-    rows = json.loads(path.read_text())
-    path.write_text(json.dumps([p for p in rows if p["pluginId"] != args[2]]))
+    if args[2] in ("kk@toolbox", "kk-guard@toolbox"):
+        name = args[2].split("@")[0]
+        shutil.rmtree(cache / name)
+        if (directory / ("interrupt-remove-" + name)).exists():
+            sys.exit(17)
+    else:
+        path = directory / "codex-git"
+        rows = json.loads(path.read_text())
+        path.write_text(json.dumps([p for p in rows if p["pluginId"] != args[2]]))
     print("{}")
 elif args[:2] == ["plugin", "add"]:
     name = args[2].split("@")[0]

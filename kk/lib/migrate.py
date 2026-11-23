@@ -43,16 +43,7 @@ def verify_workspace(tool, home, record, workspace):
     if tool not in saved["tools"]:
         raise ValueError("this repository uses {}, but its managed guard is not installed".format(tool))
     if tool == "claude":
-        claude.verify_managed(claude.vendor(workspace, "list"), release / "klaude-plugin")
-        env = os.environ.copy()
-        if env.get("CLAUDE_CONFIG_DIR"):
-            env["CLAUDE_CONFIG_DIR"] = os.path.abspath(env["CLAUDE_CONFIG_DIR"])
-        code, report = claude.settings_report("claude", workspace, env, "user,project,local")
-        settings = report.get("effective")
-        if code or report.get("errors") or not isinstance(settings, dict):
-            raise ValueError("Claude could not verify the effective hook settings in " + str(workspace))
-        if settings.get("disableAllHooks") or settings.get("enabledPlugins", {}).get(claude.PLUGIN_ID) is False:
-            raise ValueError("Claude settings disable the managed guard in " + str(workspace))
+        claude.verify_workspace(claude.vendor(workspace, "list"), release / "klaude-plugin", workspace)
         return
     directory = codex_profile.codex_home()
     if (saved.get("codex_snapshot", {}).get("directory") != str(directory)

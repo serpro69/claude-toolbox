@@ -137,7 +137,8 @@ class Retirement(unittest.TestCase):
                 self.assertIn(required, report)
             self.sync(repo, "--retire", *args)
             result = snapshot(repo)
-            for removed in (GUARD, WORKFLOW, MANIFEST, SYNC):
+            self.assertIn(GUARD, result)  # The retained audit hook takes this script as input.
+            for removed in (WORKFLOW, MANIFEST, SYNC):
                 self.assertNotIn(removed, result)
             self.assertEqual(result[EXCLUDED], (b"my rule\n", 0o640))
             self.assertEqual(result[Path("CLAUDE.md")][0], b"@other\r\n keep")
@@ -170,6 +171,7 @@ class Retirement(unittest.TestCase):
         before = snapshot(repo)
         self.sync(repo, "--retire", "--version", "v9.9.9", ok=False)
         self.assertEqual(snapshot(repo), before)
+        put(repo, HOOKS, (self.up / HOOKS).read_bytes())
         self.sync(repo, "--retire", "--version", "v3.0.0")
         self.assertFalse((repo / GUARD).exists())
         self.assertNotIn(TOOL, (repo / HOOKS).read_text() if (repo / HOOKS).exists() else "")
@@ -252,6 +254,26 @@ class Retirement(unittest.TestCase):
         after = snapshot(repo)
         for path in (SETTINGS, HOOKS, MANIFEST, Path("CLAUDE.md")):
             self.assertEqual(before[path], after[path])
+        self.assertIn(GUARD, after)
+
+    def test_migration_sync_does_not_create_an_excluded_provider_root(self):
+        repo = self.project("claude-only", behind=True)
+        (repo / ".codex").rename(self.tmp / "unused")
+        manifest = json.loads((repo / MANIFEST).read_bytes())
+        manifest["sync_exclusions"] = [".codex"]
+        put(repo, MANIFEST, manifest)
+        self.sync(repo, "--local", "--version", "v3.0.0", migrate=True)
+        self.assertFalse((repo / ".codex").exists())
+        self.assertEqual(json.loads((repo / MANIFEST).read_bytes())["template_version"], "v3.0.0")
+
+    def test_latest_sync_selects_stable_and_explicit_tag_selects_candidate(self):
+        put(self.up, ".claude/README.md", "candidate")
+        self.tag("v4.0.0-rc.1")
+        repo = self.project("stable-only", behind=True)
+        self.sync(repo, "--local", "--version", "latest", migrate=True)
+        self.assertEqual(json.loads((repo / MANIFEST).read_bytes())["template_version"], "v3.0.0")
+        self.sync(repo, "--local", "--version", "v4.0.0-rc.1", migrate=True)
+        self.assertEqual(json.loads((repo / MANIFEST).read_bytes())["template_version"], "v4.0.0-rc.1")
 
     def test_links_and_comment_only_config(self):
         repo = self.project("links")
@@ -291,6 +313,7 @@ class Retirement(unittest.TestCase):
 
         links = self.project("unresolvable-imports")
         put(links, GUARD, (self.up / GUARD).read_bytes())
+        put(links, HOOKS, (self.up / HOOKS).read_bytes())
         (links / filename).symlink_to("missing-file")
         (links / other).parent.mkdir(exist_ok=True)
         (links / other).symlink_to(links / GUARD)
