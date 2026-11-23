@@ -111,6 +111,25 @@ class CodexActivation(InstallFixture):
         self.assertIn("plain codex", drift)
         self.assertIn("kk apply", drift)
 
+    def test_vendor_model_tip_update_preserves_batch_checks(self):
+        self.install()
+        (self.directory / "fixture-reviewed").write_text(self.guard_version())
+        self.invoke(self.link, "apply")
+        profile = self.directory / "kk.config.toml"
+        original = profile.read_bytes()
+        # The actual Linux TUI appends this table, including the blank line.
+        vendor_update = b'\n[tui.model_availability_nux]\n"gpt-6.1-sol" = 4\n'
+        profile.write_bytes(original + vendor_update)
+        self.invoke(self.link, "codex", "exec", "hello")
+        self.assertEqual(profile.read_bytes(), original + vendor_update)
+        (self.directory / "disabled-1").touch()
+        self.assertIn("disabled", self.invoke(self.link, "codex", "exec", "hello", ok=False).stderr)
+        for extra in (b'\n[projects."/repo"]\ntrust_level = "trusted"\n',
+                      b'\n[tui]\nanimations = true\n', b'"gpt-6.1-sol" = 2\n', b'other = 4294967296\n'):
+            with self.subTest(extra=extra):
+                profile.write_bytes(original + vendor_update + extra)
+                self.assertIn("managed Codex profile", self.invoke(self.link, "codex", "exec", ok=False).stderr)
+
     def test_tag_collision_and_same_identity_across_local_and_tagged_versions(self):
         self.install()
         guard = self.checkout / "kodex-guard"

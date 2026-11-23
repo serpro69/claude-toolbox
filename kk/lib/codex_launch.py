@@ -253,7 +253,8 @@ def launch(home, args):
         profile = codex_home / "kk.config.toml"
         snapshot = saved["codex_snapshot"]
         if (str(codex_home) != snapshot["directory"] or profile.is_symlink() or not profile.is_file()
-                or profile.read_bytes() != codex_profile.compose(release, snapshot["settings"])[0]):
+                or not codex_profile.matches_profile(
+                    profile.read_bytes(), codex_profile.compose(release, snapshot["settings"])[0])):
             raise ValueError("cannot verify the managed Codex profile in this CODEX_HOME. "
                              "If you changed folder or hook trust in kk codex, confirm your intended decisions "
                              "in plain codex (without --profile) first. Then run kk apply to regenerate the profile.")

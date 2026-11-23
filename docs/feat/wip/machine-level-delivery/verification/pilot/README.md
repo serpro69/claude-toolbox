@@ -44,3 +44,17 @@ The offline checks ran as the ordinary pilot user in a network namespace contain
 ### RC1 disposition
 
 RC1 is unsuitable for stable promotion. The maintainer chose account-level review in plain `codex`. A separate new-project control also confirmed that accepting folder trust from the wrapped TUI changed the generated profile and blocked the next wrapped batch launch (capture `f4ca638d-a222-4000-8425-62abf6577b3c`). The next candidate must exercise the corrected onboarding from a clean account.
+
+## RC2
+
+Correction `ad7e7f13` directs persistent hook and folder decisions to plain Codex and explains how to recover a modified generated profile. The three focused diagnostic tests passed, the full `test/test-kk.sh` suite passed 79 tests, and the strict documentation build passed (captures `3d0727de-abd3-479f-87d7-43dd5bbed2be`, `34830d0f-f1a7-46d5-84ab-d7905dbd73d6` and `fe78c8fd-66c9-412d-9c7b-a6f953eb5462`). [RC2 publication workflow](https://github.com/serpro69/claude-toolbox/actions/runs/45159643630)
+
+The repeat uses a fresh disposable Debian disk, the same vendor binaries and the same legacy Git revision. The pre-install terminal completed a text-only turn in thread `01a20807-fa9a-7e21-b9ec-9c3da007ed18`. The harmless shell control returned its expected contents under the normal Codex sandbox. The account had no kk installation or journal (captures `1a7ed424-8e7f-48a0-8922-45900c3fc5a8` and `82569d03-4197-4afa-8df3-211f1531dc4c`).
+
+The workflow passed both Python gates and published `v0.26.0-rc.2` at `373fbc0b99ae2eb4ae3d9193de9b5d90b36d429c`. The public installer matched the tag. Review in plain Codex saved all three managed hook decisions and both tested workspace decisions in the account configuration. The generated profile was byte-identical before and after these reviews, and both live scratch checks passed.
+
+**RC2 is unsuitable for stable promotion.** The next ordinary `kk codex` TUI launch in an already trusted workspace persisted its model-tip counter in the named profile. Parsing the before/after TOML found one added integer at `tui.model_availability_nux."gpt-6.1-sol"`. Codex also reformatted the inline TUI table. The account config remained intact, but a wrapped batch command refused the regenerated-profile mismatch (capture `15f39659-0de0-49e3-8c42-5aae81cb3681`). Repeating account-level review would not repair that routine UI write.
+
+A local trial changed the serialization to put the TUI table last. The same Codex binary appended only the numeric tip table, preserving every preceding byte. With the matching preflight correction, the first wrapped batch shell read returned the public control file and both actual guards denied the live canaries (capture `fe1e7059-c0e2-4c9b-87fb-f99aa76ab1c8`). A new tagged clean-account pilot is required.
+
+The final checker accepts distinct model keys with unsigned 32-bit counters only. A local TUI-to-batch repeat, both live guards, opt-in parity and confirmed imports all passed (capture `4eab332f-1035-4696-9374-828b97f8e54d`). The 80-test kk suite passed, as did the focused counter-bound regression and strict docs build (captures `859ec0c3-41de-419f-9ccf-e3346391468e`, `baf54348-dadf-4d67-b569-36dd3a46daf6` and `41046138-680a-4182-8ffc-fb7225aa034f`). [Codex configuration schema](https://developers.openai.com/codex/config-schema.json)

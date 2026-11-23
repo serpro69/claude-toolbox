@@ -396,6 +396,8 @@ _Runs before Task 16. It was added after the design review and is numbered 18 so
 - 2026-11-23, observed on the published RC1. Tagged installation, both live guards after account-scope review, ordinary sync, migration, continuous-session enforcement and both offline recovery demonstrations ran in the guest. The documented profiled hook review did not establish account trust. Accepting a new folder in the profiled TUI also modified the generated file, and the subsequent wrapped batch launch refused it (capture `f4ca638d-a222-4000-8425-62abf6577b3c`).
 - 2026-11-23, explicitly accepted by the maintainer. Direct account-wide hook review to plain `codex` without a profile. Use the same account scope when first trusting a repository. Keep `kk codex` as the managed launcher and preserve its existing verification checks. The correction requires a new candidate pilot before completion.
 
+- 2026-11-23, RC2 observations. Plain-Codex hook and folder review worked on a pristine guest. The first wrapped TUI then changed only its model-tip counter, causing the next batch launch to refuse. The local correction verifies all generated settings and admits only the vendor’s numeric model-tip table. Its real interactive launch, subsequent batch command and both scratch guard denials passed. RC2 cannot be promoted. [Pilot evidence](./verification/pilot/README.md#rc2)
+
 ## Task 16: Retire the template in this repository
 - **Status:** pending
 - **Depends on:** Task 15, Task 18

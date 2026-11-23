@@ -328,5 +328,10 @@ class CodexFiles(InstallFixture):
             template.pop(key, None)
         self.assertEqual(values, template)
         self.assertFalse(native)
+        notices = {"example.model": 2}
+        configured = cli.codex_profile.compose(ROOT, {"settings": {"tui": {"model_availability_nux": notices}}})[0]
+        self.assertEqual(tomllib.loads(configured.decode())["tui"]["model_availability_nux"], notices)
+        updated = configured.replace(b'"example.model" = 2\n', b'"example.model" = 1\n')
+        self.assertTrue(cli.codex_profile.matches_profile(updated, configured))
         data = {"key.with.dots": [{"quoted": '😀\n"\\\x7f'}]}
         self.assertEqual(tomllib.loads("sample = " + cli.codex_profile.toml_value(data))["sample"], data)
