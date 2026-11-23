@@ -1,69 +1,63 @@
 # Codex
 
-Codex (OpenAI) is supported as a secondary provider. Skills are generated from the canonical `klaude-plugin/` source via the `generate-kodex` tool.
+[Install kk](../getting-started/template-setup.md) with Codex on your `PATH`, then start `kk codex` in your project. The managed marketplace provides two plugins. `kk@toolbox` supplies workflow skills and profiles. `kk-guard@toolbox` supplies the guard adapters and runtime, with its own version and trust history. For a Git-marketplace installation, use [plugin-only setup](../getting-started/plugin-only.md).
 
-## Setup
+## Permission guard
 
-1. Install [Codex](https://openai.com/index/codex/)
-2. Install the plugin: `codex plugin marketplace add serpro69/claude-toolbox`
-3. Configure [MCP servers](../user-guide/mcp-servers.md#codex) at the user level
+Open `/hooks`, review and enable the three managed PreToolUse handlers (Bash, Edit/Write and capy execution), and start a fresh session. Run `kk status --live` for a scratch-session check. A skills-only upgrade reuses the installed guard when its content is unchanged.
 
-## Configuration Files
+**Two open-session cases need attention.** Close Codex sessions before confirming a guard-changing upgrade or rollback. An open session can lose protection across the change. Review the replacement hooks and start a fresh session before resuming work. Also close sessions opened in a legacy repository before kk was installed and reviewed: they depend on repository scripts that migration removes. [Migrate a template repository](../user-guide/template-sync.md)
 
-| File | Purpose |
-|------|---------|
-| `.codex/config.toml` | Main configuration; `capy setup --platform codex` registers capy's MCP server here, template sync preserves it |
-| `.codex/hooks.json` | Session-start and pre-tool-use hooks; `capy setup --platform codex` registers capy's hooks here too, template sync preserves them |
-| `.codex/rules/default.rules` | Generated native forbids for `rm`, `shred`, `sudo`, `su`, `doas` |
-| `.codex/scripts/session-start.sh` | Behavioral instructions and current protected-files advisory, plus capy guidance until capy's hooks take over |
-| `.codex/scripts/pretooluse-bash.sh` | Shared permission guard on shell commands, plus HTTP routing until capy's hooks take over |
-| `.codex/scripts/pretooluse-patch.sh` | Shared guard on `apply_patch`, registered through the `Edit|Write` aliases |
-| `.codex/scripts/pretooluse-mcp.sh` | Shared guard on capy's three MCP execution tools, additive to capy's own hooks |
-| `.codex/scripts/guard/` | Generated shared permission-guard engine, declaration and license |
-| `.codex/agents/*.toml` | Sub-agent definitions (generated) |
-| `kodex-plugin/` | Skills (generated from `klaude-plugin/`) |
-| `kodex-guard/` | Standalone permission guard, including workspace-anchored adapters and a generated engine copy |
-| `AGENTS.md` | Project instructions |
+For `exec` and `review`, the launcher reads trust and enablement for the selected workspace. Missing, modified, disabled or untrusted handlers block a batch launch. Batch launches also require a verifiable local workspace and the managed profile. Use an interactive launch to review hooks or select another named profile. If the vendor lacks the trust-reading method, review the hooks and run `kk apply` interactively to acknowledge that review. The recorded state is `unverified`, and batch launches warn. `kk migrate` also requires an attributable live denial.
+
+## Configuration files
+
+| Location | Purpose |
+| --- | --- |
+| `$CODEX_HOME/kk.config.toml` | Named profile selected by `kk codex` |
+| `$CODEX_HOME/agents/kk-*.toml` | Owned sub-agent definitions |
+| `$CODEX_HOME/rules/kk.rules` | Optional account-wide native forbids |
+| Project `.codex/config.toml`, `.codex/hooks.json`, `AGENTS.md` | Adopter-owned settings, hooks and instructions |
+| `${XDG_CONFIG_HOME:-$HOME/.config}/kk/config.json` | Machine overrides. Run `kk apply` after edits. |
+
+`CODEX_HOME` defaults to `~/.codex`. The managed profile supplies model and reasoning defaults, TUI settings and behavioral instructions. Precedence is base user settings, selected profile, trusted project settings, then explicit CLI flags. Bare Codex uses its normal profile selection. The user-scope guard plugin can still run there once trusted. Toolbox checks for collisions before creating owned files.
+
+Approval policy, approval reviewer and sandbox defaults are optional. The separate native-forbids opt-in affects every repository and bare session using this Codex home. Existing project sandbox and approval settings still win after migration. [Override keys and effects](../user-guide/configuration.md#how-configuration-works)
+
+## Repository instructions
+
+Codex loads the root `AGENTS.md`. For an extra file to reach a wrapped session, add a repository-relative path on its own line outside a code fence, for example:
+
+```text
+@.claude/CLAUDE.team.md
+@.capy/AGENTS.md
+```
+
+On an interactive launch, `kk codex` shows the eligible paths and sizes and asks once per repository and path list. A changed list requires a new decision. Approved imports are reread on launch and added to the toolbox’s developer instructions for that session, replacing any repository-level `developer_instructions` value. Without prior approval, non-interactive launches skip the imports. The wrapper expands one level of imports. Bare Codex does not expand these references. Missing, protected, oversized or outside-repository files are skipped with a diagnostic.
 
 ## Project instruction budget
 
-Toolbox sets `project_doc_max_bytes = 65536` (64 KiB) in `.codex/config.toml`,
-doubling Codex's default 32 KiB budget for project instructions. The budget is
-shared across loaded project instruction files; when it runs out, Codex
-truncates instructions and warns that it loaded only part of a file.
-
-Existing template consumers receive this setting through template sync unless
-they exclude `.codex/config.toml`. Apply the sync and restart Codex in a trusted
-project to load it. Plugin-only installs do not receive project configuration;
-add `project_doc_max_bytes = 65536` at the top level of `~/.codex/config.toml`
-or the project's `.codex/config.toml`, before any table headers, then restart.
-
-If the loaded instructions still exceed 64 KiB, trim them or choose a larger
-budget. Template sync restores the template's value; to keep a custom project
-value, exclude `.codex/config.toml` from sync, which also stops future config
-updates. See [sync exclusions](../user-guide/template-sync.md#sync-exclusions)
-and [Codex instruction discovery](https://learn.chatgpt.com/docs/agent-configuration/agents-md#how-codex-discovers-guidance).
+The managed profile sets `project_doc_max_bytes = 65536` for native project instructions. Set a different budget in `codex.settings` and run `kk apply`. The launcher separately limits its serialized import argument to 120 KiB including toolbox text and escaping.
 
 ## Removed Auto-review settings
 
 Current Codex versions warn that `auto_review.experimental_policy_template`
 and `auto_review.extra_policy` are ignored. The toolbox template no longer
 ships the `[auto_review]` block that supplied these settings for Codex 0.164.0.
-Apply template sync to remove it from downstream projects. For an immediate
+Check older template repositories for these obsolete entries. For an immediate
 manual fix, remove those two keys and their complete multiline values from
 `.codex/config.toml`; remove the table header too if it becomes empty.
 
 The old block supplied a standing authorization for read-only external Claude
 reviews. Removing ignored settings clears the warning; it does not restore
-that authorization. The template still defaults to
-`approvals_reviewer = "user"` with `approval_policy = "on-request"`.
+that authorization. Approval and sandbox defaults in the machine profile are separate opt-ins.
 
 Codex's warning directs additional Guardian rules to the top-level
 `guardian_extra_policy` key in managed `requirements.toml`. On Linux and macOS,
 the system file is `/etc/codex/requirements.toml`; project-local and user-local
 `requirements.toml` files are not documented managed sources. See
 [managed configuration](https://learn.chatgpt.com/docs/enterprise/managed-configuration#understand-policy-scope-and-precedence).
-Template sync manages project files, so it does not install this system policy.
+The machine installer leaves this system policy to administrators.
 Any migration must retain the intended review scope and existing managed
 requirements, then verify the effective policy in a fresh session.
 
@@ -100,85 +94,14 @@ approval policy. Preserve all other safety rules and managed restrictions.
 """
 ```
 
-## Capy Hooks
+## Capy hooks
 
-Toolbox's session and Bash hooks stand in for capy's guidance and HTTP routing: `session-start.sh` injects `.capy/AGENTS.md` into the session context, and `pretooluse-bash.sh` denies `curl`, `wget`, and inline HTTP calls so the model routes them through capy's MCP tools.
+Run `capy setup --platform codex` in a repository using capy and review its registrations in `/hooks`. Capy supplies guidance and HTTP routing through its own hooks. To load its written guidance in a wrapped session, you can also import `@.capy/AGENTS.md`. The machine guard checks supported capy execution calls independently. [Codex MCP setup](../user-guide/mcp-servers.md#codex)
 
-Capy v0.17.1 and later ships its own Codex hooks. Running `capy setup --platform codex` in the project registers them in `.codex/hooks.json` next to toolbox's entries. They deliver availability-aware guidance and HTTP routing (advisory by default, evidence-based redirects, a silent-download exception) that toolbox's unconditional deny would otherwise override. Toolbox detects those entries per event — a registered command that invokes `capy codex-launch` — and steps aside:
+## Known limitations
 
-- `session-start.sh` replaces the `.capy/AGENTS.md` injection with a one-line note that capy's hooks own guidance and routing. Provider instructions and `.claude/CLAUDE.*.md` extras are still injected.
-- `pretooluse-bash.sh` skips the HTTP denials. The shared secrets, destructive-command and self-modification checks always run first. Ordinary reads of build output, `.git/` and `.env.example` are allowed.
+Guard coverage depends on the vendor loading the reviewed handlers for the current workspace. The registered channels are shell commands, intercepted patches and supported capy execution tools. MCP server registration is a separate setup step. [Codex file-access decision](../adr/0013-codex-file-access-through-hooked-tools.md)
 
-The check runs on every session start and every shell call, so there is no flag to flip and nothing to roll back. Remove capy's entries from `hooks.json` and the legacy behavior returns on the next session.
+## Generation pipeline
 
-!!! warning "Remove capy's entries, don't disable them"
-
-    Codex trusts hooks individually through `/hooks`, and capy's setup never changes trust. A capy entry that is present but disabled still makes toolbox step aside, so the project ends up with no capy guidance and no HTTP routing at all. To switch capy's Codex hooks off, delete its entries from `.codex/hooks.json`. After running setup, review and trust the new entries in `/hooks`; registration alone does not execute them.
-
-### Template sync and capy's entries
-
-Template sync does not own capy's registration. The template ships no `[mcp_servers]` table in `config.toml` and only toolbox's own entries in `hooks.json`; on every sync the downstream copies of both files are merged rather than replaced:
-
-- `config.toml`: toolbox substitutes `model` and `approval_policy` from the manifest, then keeps every `mcp_servers.*` entry the project has that the template does not ship. A server the template does ship wins by name. Existing explicit server tables whose values are unchanged are preserved byte-for-byte, including comments, ordering, quoting, nested tables, and whitespace. Only changed or repaired registrations are rendered as new explicit root-level tables, which `capy setup` can update.
-- `hooks.json`: toolbox owns every entry whose command runs a script under `.codex/scripts/`, and those come from the template verbatim, so a toolbox entry that changed or was removed upstream does not linger. Every other entry the project has (capy's `capy codex-launch` hooks, hand-added hooks) is appended after toolbox's entries for its event.
-- `.codex/capy-owner`: a built-in sync exclusion, never reported as deleted or removed. Capy refuses to regenerate a lost marker, so keep it committed alongside `hooks.json` and `config.toml` as capy's setup instructs.
-
-The merge is stateless and derived from the project's files on every run. If either downstream file fails to parse, sync warns and falls back to the template copy for that file, which drops capy's entries; rerun `capy setup --platform codex` after fixing the file.
-
-Older syncs could append an inline `mcp_servers = { ... }` assignment after `[tui]`, making it part of the TUI settings instead of a root-level registration. Sync now recovers those misplaced servers into root-level tables. If `capy setup` has already added a valid root-level entry, that whole entry takes precedence over the misplaced copy. Applying sync removes the stray TUI assignment; no manual cleanup is needed.
-
-Sync does not run `capy setup`. Preserving existing table text avoids formatting churn when alternating setup and sync. Table extraction uses Python 3's standard library; `yq` validates the extracted registrations and the complete merged MCP map before the candidate file is accepted.
-
-### Shared guard support for capy execution
-
-The shared permission-guard engine recognizes `capy_execute`, `capy_execute_file`, and `capy_batch_execute` under any MCP server name. It checks shell code like Bash, other-language code with its literal-path, write-call and [spawned-command](../user-guide/configuration.md#hooks) scans, and each batch command independently. An execute-file input receives the secrets Read check before its processing code is inspected.
-
-Capy execution defaults to the project root. A supplied cwd is absolute or project-relative; it does not change the project identity or the anchor for `capy_execute_file.path`. The file input always remains project-root-relative. Path parameters are literal, without shell-variable or tilde expansion.
-
-The template registers `pretooluse-mcp.sh` for these three tools, under any MCP server name. Capy's own registered hooks remain independent; a denial from either blocks the call.
-
-## Permission Guard
-
-For an existing installation, follow the
-[permission-guard upgrade checklist](../user-guide/template-sync.md#upgrading-the-permission-guard):
-sync the project, review/trust new or changed hooks, then restart. The Codex
-skills plugin and guard plugin are separate. In a marketplace checkout containing `kodex-guard/`, install the guard with `codex plugin add kk-guard@claude-toolbox` and review its three handlers in `/hooks`.
-
-The guard plugin takes policy from the Git top level of the directory where the hook starts, or from that starting directory outside Git. It checks capy registration in that workspace on every Bash event. The legacy template adapters continue to use their project-relative installation. Relative Bash and patch paths resolve against the hook payload's cwd, while project policy remains anchored at the repository root. The guard inspects patch add, update, delete and move headers, including both sides of a move; it does not interpret patch contents as commands. Deleting a file is filesystem-destructive, with the engine's temporary-directory exemption and user category setting applied after secrets and self-modification checks.
-
-Denials return JSON plus a reason on stderr and exit 2. Adapter errors and missing interpreters also block. Codex reads files by running shell commands through `exec_command`, so the Bash adapter guards reads as well as commands ([ADR 0013](../adr/0013-codex-file-access-through-hooked-tools.md)). Session startup also renders a protected-files advisory from the synced declaration, so the model knows the off-limits paths before it tries one, falling back to a static secret-files warning if it is unavailable. See the [guard rules and configuration](../user-guide/configuration.md) for project additions and user exceptions. Maintainers regenerate the copied engine with `make generate-guard`; both the guard plugin and template contain the generated engine. Never edit `.codex/scripts/guard/` directly.
-
-The adapter contract targets Codex 0.164.0. The [official hooks reference](https://learn.chatgpt.com/docs/hooks#pretooluse) documents `Edit|Write` aliases, `tool_input.command`, and exit-2 denial with stderr. Hook coverage is a guardrail; specialized paths can bypass it. A live 0.164.0 probe on 2026-10-26 verified project-file registration from a repository subdirectory: `SessionStart` ran, the patch hook allowed a benign relative path, and the guard denied a synthetic `.env` addition. No inline hook registration was used.
-
-After template setup, trust the project, then inspect and trust the hook definitions in `/hooks`. These are separate checks: a trusted project makes its `.codex/` layer eligible for loading; hook trust permits the discovered handlers to run. Restart after trusting startup hooks. For diagnostics, the app-server's `config/read` and `hooks/list` methods expose config layers, hook source paths, enabled state, trust status and loading errors. Check invocation evidence as well as registration. The live probe used the one-invocation `--dangerously-bypass-hook-trust` flag for vetted scratch hooks; it did not verify the interactive trust workflow or change persisted trust.
-
-Avoid `codex exec --ignore-user-config` when validating this integration on 0.164.0. In the tested scratch setup, that launch produced no project startup or patch-hook records, even with explicit project trust and `-c 'features.hooks=true'`; normal config loading invoked both hooks. This is an observed limitation of that invocation, not a claim that the flag universally disables project config. Isolate unrelated MCP servers or plugins with targeted overrides instead, retaining normal config loading.
-
-| Parity gap | Reason | Mitigation |
-|---|---|---|
-| Literal `rm` has no temporary-directory exemption; `rm`, `shred`, `sudo`, `su`, `doas` are not loosenable on Codex through guard user config | Generated native forbids take precedence over user allow rules | Run the operation yourself; repositories needing different native rules can exclude `.codex/rules/default.rules` from template sync and edit it |
-| Specialized/function-style `apply_patch` paths may bypass hooks | Tool hooks are not a complete enforcement boundary | Treat patch enforcement as limited to intercepted calls |
-
-## Known Limitations
-
-!!! warning "Current limitations"
-
-    - **Plugin-only installs** can include the skills plugin and the separate guard plugin. The template still supplies sub-agents, project configuration and the native forbidden-prefix rules.
-    - **Toolbox PreToolUse hooks** cover Bash, intercepted `apply_patch` and capy's three execution tools. Codex reads files through `exec_command`, so reads are covered by the Bash hook ([ADR 0013](../adr/0013-codex-file-access-through-hooked-tools.md)). Specialized hook-bypassing paths and other execution tools are outside this integration's enforcement; see the parity table above.
-    - **MCP servers** (Context7, Pal) must be configured at the user level — they are not packaged in the plugin. See [Codex MCP Setup](../user-guide/mcp-servers.md#codex).
-
-## Generation Pipeline
-
-`klaude-plugin/` is the single source of truth. The generation tool:
-
-1. Reads `klaude-plugin/` skills and agents
-2. Applies Codex-specific transformations (resolves `${CLAUDE_PLUGIN_ROOT}`, injects headers)
-3. Produces `kodex-plugin/` (skills) and `.codex/agents/*.toml` (sub-agents)
-
-After editing skills in `klaude-plugin/`, regenerate with:
-
-```bash
-make generate-kodex
-```
-
-CI checks freshness via `make generate-kodex && git diff --exit-code kodex-plugin/ .codex/agents/`.
+Edit skills and agents in `klaude-plugin/` and run `make generate-kodex` to refresh the Codex plugin and agent definitions. The guard engine is projected by `make generate-guard`. [Contributor architecture](../contributing/architecture.md)

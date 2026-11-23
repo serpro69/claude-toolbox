@@ -10,7 +10,7 @@ Learn how to use claude-toolbox's features effectively.
 | [Profiles](profiles.md) | Per-domain content for Go, Java, JS/TS, Kotlin, K8s, K8s Operator, Python, and agent-skill authoring |
 | [MCP Servers](mcp-servers.md) | Context7, Pal, and Capy — the knowledge stack |
 | [Configuration](configuration.md) | Settings, permissions, statusline, and hooks |
-| [Template Sync](template-sync.md) | Receiving upstream updates and managing sync |
+| [Template migration](template-sync.md) | Previewing sync and retirement of a legacy repository |
 
 ## The Pipeline
 

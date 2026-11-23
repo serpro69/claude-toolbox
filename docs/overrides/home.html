@@ -479,7 +479,7 @@
       <span class="lp-badge" style="color:var(--tn-green);border-color:rgba(158,206,106,0.35)">Codex</span>
     </div>
     <div class="lp-actions">
-      <a href="{{ config.site_url }}/getting-started/overview/" class="lp-btn-p">Get Started</a>
+      <a href="{{ 'getting-started/template-setup/' | url }}" class="lp-btn-p">Install kk</a>
       <a href="{{ config.site_url }}/explore/" class="lp-btn-s">See it work</a>
       <a href="{{ config.repo_url }}" target="_blank" class="lp-btn-s">GitHub ↗</a>
     </div>
@@ -540,7 +540,7 @@
   <div class="lp-inner">
     <div class="lp-eyebrow">batteries included</div>
     <h2 class="lp-h2">Everything You <span>Need</span></h2>
-    <p class="lp-lead">An opinionated setup that works out of the box. Install the plugin or adopt the full template — either way, you're productive in minutes.</p>
+    <p class="lp-lead">Install kk once for Claude Code and Codex across your repositories, or install just the workflow plugin.</p>
     <div class="lp-features">
       <div class="lp-feat-card">
         <div class="lp-feat-icon" style="background:var(--tn-blue)">kk</div>
@@ -556,18 +556,18 @@
       <div class="lp-feat-card">
         <div class="lp-feat-icon" style="background:var(--tn-purple)">⚙</div>
         <div class="lp-feat-title">Configuration</div>
-        <div class="lp-feat-body">Sensible permission baselines, a rich statusline with themes, hooks for safety, and sync infrastructure to keep it all current.</div>
+        <div class="lp-feat-body">Sensible permission baselines, a rich statusline with themes, hooks for safety, and launchers that select the active release.</div>
         <ul class="lp-feat-list">
           <li>Permission guardrails for sensitive paths</li>
           <li>Statusline with multiple themes</li>
-          <li>Template sync for upstream updates</li>
+          <li>Per-machine upgrades and offline rollback</li>
           <li>Codex config generation</li>
         </ul>
       </div>
       <div class="lp-feat-card">
         <div class="lp-feat-icon" style="background:var(--tn-cyan)">◈</div>
         <div class="lp-feat-title">Knowledge Stack</div>
-        <div class="lp-feat-body">MCP servers pre-wired for persistent knowledge, up-to-date library docs, and multi-model capabilities.</div>
+        <div class="lp-feat-body">Optional MCP servers for persistent knowledge, up-to-date library docs, and multi-model capabilities.</div>
         <ul class="lp-feat-list">
           <li>Capy — persistent knowledge base</li>
           <li>Context7 — library documentation</li>
@@ -610,7 +610,7 @@
     <div>
       <div class="lp-footer-heading">Docs</div>
       <ul>
-        <li><a href="{{ config.site_url }}/getting-started/overview/">Getting Started</a></li>
+        <li><a href="{{ 'getting-started/' | url }}">Getting Started</a></li>
         <li><a href="{{ config.site_url }}/user-guide/skills/">Skills</a></li>
         <li><a href="{{ config.site_url }}/user-guide/mcp-servers/">MCP Servers</a></li>
         <li><a href="{{ config.site_url }}/user-guide/configuration/">Configuration</a></li>
@@ -929,7 +929,7 @@ document.addEventListener('DOMContentLoaded', function() {
     'design.md', 'tasks.md', 'architecture.md',
     '> design → implement → review', '> skills + profiles + hooks',
     'SOLID / security / quality', 'Go / Java / Kotlin / Python / JS',
-    'template-sync --push', 'plugin install kk@claude-toolbox'
+    'kk upgrade', 'plugin install kk@claude-toolbox'
   ];
   var wrap = document.getElementById('lpBackdrop');
   if (wrap && !prefersReduced) {

@@ -1,6 +1,6 @@
 # Try It
 
-After setup, try the core workflow:
+After installation, open a terminal in your project and run `kk claude`. In Codex, use `kk codex` and invoke the same skills as `$kk:design`, `$kk:implement` and so on. The examples below use Claude Code.
 
 For an optional conversation first, use `/kk:brainstorm` to explore a technical idea or decision. The interview adapts to what you need to decide and ends with a chat-only recap of decisions, rationale, and open assumptions. It creates no files and does not start another workflow automatically. Request `/kk:design` when you want written planning.
 

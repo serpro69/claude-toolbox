@@ -6,7 +6,7 @@ You don't need all servers to get started. Add them incrementally:
 
 1. **[Context7](https://context7.com/)** (needs API key) — up-to-date library documentation and code examples
 2. **[Pal](https://github.com/serpro69/pal-mcp-server)** (API key optional) — multi-model AI integration for code review, debugging, planning, and security audit; without an API key, isolated reviews use your installed CLIs through `clink`
-3. **[Capy](https://github.com/serpro69/capy)** (optional, auto-configured by bootstrap) — persistent knowledge base across sessions. Install with `brew install serpro69/tap/capy`.
+3. **[Capy](https://github.com/serpro69/capy)** (optional, configured per project) — persistent knowledge base across sessions. Install with `brew install serpro69/tap/capy`.
 
 | Server | Purpose |
 |--------|---------|
@@ -66,7 +66,7 @@ You don't need all servers to get started. Add them incrementally:
 
 !!! note
     MCP servers are added via `codex mcp add` and stored in `~/.codex/config.toml`.
-    Capy registers itself at the project level: run `capy setup --platform codex` in the project to add its MCP server to `.codex/config.toml` and its own Codex hooks to `.codex/hooks.json`. Toolbox's hooks detect them and hand over guidance and HTTP routing, and template sync preserves both. See [Capy Hooks](../providers/codex.md#capy-hooks).
+    Capy registers itself at the project level: run `capy setup --platform codex` in the project to add its MCP server to `.codex/config.toml` and its own Codex hooks to `.codex/hooks.json`. Capy’s hooks deliver guidance and HTTP routing. The machine guard covers supported capy execution calls. See [Capy Hooks](../providers/codex.md#capy-hooks).
 
 ```bash
 # Context7 — streamable HTTP, no API key env var needed (key is in the URL header)
@@ -125,9 +125,28 @@ Pal observes CLI executables at startup and caches its client registry: restart 
 
 | CLI | Setup verified with the plugin |
 | --- | --- |
-| Claude Code | Override the client manifest at `~/.pal/cli_clients/claude.json`. The override replaces the whole definition: keep `name` and `command`, add `additional_args` such as `["--allowedTools", "Read,Glob,Grep"]` or a path-scoped rule covering that temp directory (`Read(//tmp/**)` on Linux). Restart Pal afterwards. |
+| Claude Code | Use the machine launcher and a scoped read grant for temporary review files. See the client entry below. |
 | Antigravity (`agy`) | Where its mode does not already permit reads, add `"permissions": {"allow": ["read_file(/tmp)"]}` (or your `$TMPDIR`, plus the plugin cache path) to `~/.gemini/antigravity-cli/settings.json`. No restart needed. |
 | Codex | Shipped manifest worked unchanged in the verified setup; whether reads are sandboxed depends on your Codex configuration (not verified). Allow several minutes per CLI review and check `tool_timeout_sec` for long MCP calls. |
+
+#### Claude client for machine installations
+
+Copy PAL’s shipped `conf/cli_clients/claude.json` to `~/.pal/cli_clients/claude.json`, or edit your existing override. PAL replaces the whole client definition. Keep the existing roles, model arguments and permission-mode arguments. Set these two fields in that definition. This Linux example also supports reviews initiated from a managed Codex installation with the default Codex home:
+
+```json
+{
+  "command": "kk claude",
+  "additional_args": ["--allowedTools", "Read(//tmp/**)", "Read(~/.codex/plugins/cache/toolbox/kk/**)"]
+}
+```
+
+PAL splits `command` into the executable and its first argument. Put the directory containing `kk` on **PAL’s** `PATH`, or use the physical absolute path to the dispatcher followed by ` claude`. Keep the real Claude CLI available on that path too. PAL starts a new process for each review, so wrapping your interactive session alone does not apply its settings to the reviewer.
+
+The launcher’s default `readRelease` permission covers criteria loaded from the managed Claude release. Codex can pass criteria from its installed skills cache, so the example grants access to that plugin’s directory too. If `CODEX_HOME` is elsewhere, substitute its physical location. A Git-marketplace installation can have a different plugin directory: use the installed skill’s path to identify it. Scope the read to the skills plugin whose criteria the reviewer needs.
+
+The temp grant covers the directory where the originating review creates its diff with `mktemp`. Substitute that directory’s physical absolute path for `/tmp` when needed. For example, for `TMPDIR=/work/review-tmp` the rule is `Read(//work/review-tmp/**)`. On macOS check `cd "${TMPDIR:-/tmp}" && pwd -P` in the originating shell. Keep a dedicated review directory if other temporary files should stay outside this grant.
+
+Restart PAL after editing the client. In a read-only `clink` review, check that the reviewer can read a criterion at the path supplied by the originating skill and the diff in the selected temporary directory.
 
 Models stay configured where they are: Pal's model policy for API reviews, each CLI or client manifest for CLI reviews. To map a custom client name to its vendor, or to override the shipped defaults, declare it in the project's `CLAUDE.md`/`AGENTS.md` (for example `- \`mycli\` → Anthropic`).
 
@@ -137,6 +156,6 @@ Skills are **knowledge-aware** via Capy. They search for relevant context before
 
 Without Capy, each session starts fresh — all skills still work, they just don't carry learnings forward. Install when you want cross-session memory.
 
-**Installation:** `brew install serpro69/tap/capy` then run `capy setup` in your project directory. The bootstrap script sets up Capy automatically if the binary is on PATH.
+**Installation:** `brew install serpro69/tap/capy` then run `capy setup` in your project directory. Machine installation leaves capy registration to each project.
 
-**Codex:** capy v0.17.1 and later also provides its own Codex hooks. Run `capy setup --platform codex` to register them; toolbox's Codex hooks then stop injecting `.capy/AGENTS.md` and stop blocking HTTP commands, leaving both to capy. See [Capy Hooks](../providers/codex.md#capy-hooks) for the handoff rules.
+**Codex:** Run `capy setup --platform codex` to register its hooks and review them in `/hooks`. Wrapped sessions can also load `.capy/AGENTS.md` through a confirmed import in the root `AGENTS.md`. [Capy hooks](../providers/codex.md#capy-hooks)
