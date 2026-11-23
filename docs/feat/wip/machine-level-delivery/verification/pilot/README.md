@@ -1,6 +1,6 @@
 # Tagged retirement release pilot
 
-**Result: `v0.26.0-rc.3` passed the Linux ARM64 tagged pilot.** The two previous candidates exposed separate problems with Codex onboarding and profile verification. Each correction was tested in a fresh user account. Each clean-account pilot used the vendor’s normal hook-review interface. [RC3 observations](#rc3)
+**RC4 passed the focused Linux ARM64 pilot.** The published installer, changed guard, batch coordination, rollback and migration were exercised in a fresh Debian VM. RC3 records the earlier full parity and lifecycle pilot. [RC4 observations](#rc4) · [RC3 observations](#rc3)
 
 ## Environment and preflight
 
@@ -103,3 +103,27 @@ Capture `93924cd5-9f9d-4c25-9e6e-e1ce86dcd6aa` records all three demonstrations.
 This pilot covers the stated Linux and vendor versions. The macOS argument-size check belongs to Task 17. Publishing the stable retirement release and retiring this repository’s template are separate steps.
 
 The source `devex-makefile` checkout remained clean. The VMs were shut down and the temporary disks moved to the macOS Trash. Docker’s pilot container `kk-retirement-pilot-ckxe9ppi` is stopped. The host repository guard blocked its removal; the host operator can remove that stopped container when desired.
+
+## RC4
+
+On 2026-11-23 the branch pre-release workflow passed both Python jobs and published `v0.26.0-rc.4` at `8457412bc6af18b29807c440f4e3484955daeada`, directly after `8fc81e44`. In the guest, the downloaded installer matched the Git blob in the public tag. Its SHA-256 was `4be48ef6807c04a37512ec165f7cbeb5d92ab2e1a37ac2c8f93eef7114a34c54`. The journal recorded the requested tag and public upstream. [Release](https://github.com/serpro69/claude-toolbox/releases/tag/v0.26.0-rc.4) · [Workflow](https://github.com/serpro69/claude-toolbox/actions/runs/45174190906)
+
+The pilot used a fresh QEMU disk overlay on the checksum-verified Debian 13 ARM64 image, kernel `6.12.117+deb13-cloud-arm64`, Claude Code 2.1.296, Codex CLI 0.171.0 and yq 4.54.3. Separate non-root accounts covered clean installation, offline recovery and upgrade from RC3. The vendor CLIs used a loopback model transport. Codex’s normal read-only sandbox read the public control file before installation. Captures `bf9c370d-522e-4562-99a2-5dd60078c0d8` and `b2132cfe-4f23-47ba-a9d7-a1bc292dd743`.
+
+| Check | Observation |
+| --- | --- |
+| Clean install and hook review | Both Codex plugins reported version `0.26.0-rc.4`. The tagged source, installed release and vendor cache had the same guard content identity, `2c6555684282d00ba6929c1ff7df034fb3e970f4556665a0c74b8f7499146798`. All three handlers began untrusted. Review in plain Codex made all three trusted and enabled. Claude and Codex each denied its own scratch canary. Captures `88df325c-9234-4013-a4f0-1d6ccce6e216` and `172f4dd8-9bec-4a51-9a5e-ecfb9aba7775`. |
+| Upgrade from a reviewed RC3 | The account first reviewed the RC3 guard, version `0.26.0-rc.1`. A noninteractive upgrade left RC3 active and RC4 staged. After confirmation in a terminal, Codex reported all three RC4 handlers as `modified`. Reviewing the new handlers restored ready status and both live denials. Capture `125b6046-b6e6-4e8c-ab98-a0615929cc66`. |
+| Batch and activation overlap | A real `kk codex exec` waited for a model response. Apply and activation refused while it ran, and the local successor remained staged. After batch exit the writer resumed. Pausing that writer at its journaled `place` step let a second batch attempt verify refusal during activation. A batch succeeded after promotion. Rollback restored RC4 and both guards passed their live checks. Capture `726f1618-4e87-4f69-8eaa-34de4468c6ed`. |
+| Rollback to a Claude-only target | A second account installed tagged RC4 with only Claude on its path. A local successor built from the tag added Codex. With only loopback available and no default route, rollback removed both vendor plugins, the managed marketplace, receipts and profile. The exact same-tag command printed by status added Codex back offline. The newly added hooks awaited review. Captures `d11344e4-b509-4b7e-b87c-7ae41df685dd` and `91c9a51d-7993-4379-a2dd-6fc110daf8b7`. |
+| Instructions and directory rules | Both vendors received the release instructions. Codex also received the approved repository import from a nested launch directory. The shipped guard denied a public file covered by an absolute rule naming a symlinked directory when the vendor used its physical path. `kk upgrade --check` left the journal byte-identical. Capture `75a6803f-2034-4aee-b88d-94c6a43b9297`. |
+
+### Migration on RC4
+
+Four disposable checkouts started at `serpro69/devex-makefile@2e578b419f6f75af63c4fa0e2c486b4658ba8cba`. Each ran `kk migrate --retirement-version v0.26.0-rc.4` and kept its original HEAD and an empty staging area.
+
+- **Ordinary migration.** Local sync to RC4 retained both original hook commands and their scripts. The same post-readiness Codex thread, `01a20866-d58f-75b2-bdbd-9ffcebbf2379`, received a guard denial before sync, after sync and after explicit retirement removed the legacy registrations and scripts. The migration changed 21 tracked files, with two insertions and 4,204 deletions. Both fresh scratch checks also passed. Capture `4262b630-54e7-4723-999d-e32547ebe114`.
+- **Absent provider.** A Claude-only checkout excluded its absent `.codex`. Declining retirement after the sync allowed inspection of the intermediate state. The directory remained absent both then and after completing retirement, and migration required only Claude.
+- **Retained dependencies.** One checkout excluded `.codex/hooks.json`. Its checksum, referenced scripts and guard runtime survived, and the retained Bash adapter accepted a harmless request. Another checkout retained a custom hook that named the `.codex/scripts` directory. Its executable dependency survived. Capture for all three exclusion and retention cases `277147fb-02f2-4d66-b036-1b7187de09af`.
+
+The primary account ended on RC4 with both tools ready and no pending candidate. Capture `39b63073-1310-4b63-a015-5635d1dc7a34`. Initial harness attempts stopped early on a folder prompt and on the host-visible interface list in the guest’s sysfs mount. The completed checks used the vendor’s persisted trust state and the network namespace’s own interface and route tables. The guest was shut down after verification.
