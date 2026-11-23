@@ -445,7 +445,7 @@ _Runs before Task 16. It was added after the design review and is numbered 18 so
 
 ## Task 21: Rename the hosted repository and pilot the final IDs
 
-- **Status:** pending
+- **Status:** in-progress
 - **Depends on:** Task 19, Task 20
 - **Size:** S
 - **Can run in parallel with:** —
@@ -458,6 +458,13 @@ _Runs before Task 16. It was added after the design review and is numbered 18 so
 - [ ] 21.3 On the tagged candidate, verify the documented RC4 transition and rollback, and run the candidate’s plain `kk migrate` in a disposable legacy checkout naming the old upstream. Record trust and guard outcomes in `verification/pilot/`. Keep the RC3/RC4 observations for unchanged behavior.
 
 **Stable publication:** After 21.1–21.3 pass, the maintainer can tag `v0.26.0` from the renamed repository with the compatibility notice. The cleaned machine release obtains its migration scripts and template from RC4.
+
+### Execution context
+
+- 2026-11-23, observed before cutover. [PR #199](https://github.com/serpro69/claude-toolbox/pull/199) was a draft at `bf03a0e0` against `master` at `1feaee2f`. All four checks passed and GitHub reported `REVIEW_REQUIRED`. Repository ID `1078182326` still had the old name and its template flag enabled. The latest stable release was `v0.25.4` and the highest published candidate was RC4. The maintainer confirmed that the RC tags moved after merge. The historical branch pilot and today's pre-cutover install therefore have separate commit identities.
+- 2026-11-23, verified. Both Debian 13 amd64 snapshots booted from fresh overlays. The [pilot record](verification/pilot/README.md#task-21-pre-cutover-snapshots) gives the clean sandbox control, RC4 installer identity, vendor inventories, trust transition, live guard results and restore instructions.
+- 2026-11-23, maintainer decision and result. The maintainer authorized RC5 publication and VM testing on the open PR branch. The [pre-merge RC5 pilot](verification/pilot/README.md#rc5-before-the-hosted-rename) exercised the published payload, managed and public plugin IDs, RC4 upgrade, guard review, offline rollback and return, and legacy migration with a temporary URL mapping. GitHub published `v0.26.0-rc.5` at `a571eaa2`. The default installer and migration fetches both returned HTTP 404 at the future repository name.
+- The maintainer owns the merge of #199 and the template-flag change at merge. After the hosted rename, verify the Git redirect, Pages guide and release workflow, then finish the published-address checks in 21.2–21.3 from fresh snapshot copies. Check tag availability before the post-rename publication. Stable publication remains open.
 
 ## Task 16: Retire the template in this repository
 - **Status:** in-progress
