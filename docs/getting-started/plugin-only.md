@@ -22,6 +22,8 @@ codex plugin add kk@agentstakk
 
 Start `codex` and invoke a skill such as `$kk:design`. To add the permission guard, run `codex plugin add kk-guard@agentstakk`, open plain `codex` and review its three handlers in `/hooks`. The guard reads project policy from the session workspace.
 
+The Codex plugin does not include the reviewer sub-agents. `$kk:review-architecture`, the isolated modes of `$kk:review-code`, `$kk:review-design` and `$kk:review-spec`, and the review step of `$kk:implement` delegate to them. The [machine installation](install.md) installs them as `$CODEX_HOME/agents/kk-*.toml`.
+
 ## Switch an existing Git-marketplace installation
 
 In v0.25.x the public plugin was `kk@claude-toolbox`. Its replacement is `kk@agentstakk`. The repository rename changes the download address, but the provider still knows your installation by its old marketplace ID.
@@ -48,7 +50,7 @@ Run `codex plugin marketplace list` and `codex plugin list` from the same projec
 
 ## What's included
 
-Both plugins include the workflow skills and language profiles. Claude also includes the commands, reviewers and guard described above. Codex provides its guard as a separate plugin. [Skill reference](../user-guide/skills.md)
+Both plugins include the workflow skills and language profiles. Claude also includes the commands, reviewers and guard described above. Codex provides its guard as a separate plugin and has no reviewer sub-agents. [Skill reference](../user-guide/skills.md)
 
 ## What's not included
 
