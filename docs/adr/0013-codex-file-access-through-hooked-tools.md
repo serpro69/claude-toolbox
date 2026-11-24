@@ -5,6 +5,8 @@
 Accepted, 2026-11-10. Supersedes [ADR 0005](0005-codex-hook-enforcement-gap.md)
 and the "Codex native reads remain advisory" limitation in
 [ADR 0012](0012-permission-guard-single-declaration.md).
+The probe below used template-era project hooks. Since v0.26.0, the separate
+`kk-guard` plugin registers the adapters. [Machine delivery](0014-machine-level-delivery.md)
 
 ## Context
 

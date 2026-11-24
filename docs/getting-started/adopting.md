@@ -10,4 +10,4 @@ When the team is ready, follow the [migration guide](../user-guide/template-sync
 
 ## Repositories using plugins directly
 
-The [plugin-only setup](plugin-only.md) remains available. When moving to the managed installation, `kk status` reports Git-marketplace copies. Check the scope before removing one. A project-scoped registration may also serve other developers or CI.
+If you use `kk@claude-toolbox` and want to keep the plugin-only setup, [switch the registration to `kk@agentstakk`](plugin-only.md#switch-an-existing-git-marketplace-installation). If you installed the machine launchers, `kk status` reports the old Git-marketplace copies. Check the scope before removing one. A project-scoped registration may also serve other developers or CI.

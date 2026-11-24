@@ -4,9 +4,15 @@ Thanks for your interest in contributing to Agentstakk! This guide covers everyt
 
 ## Getting Started
 
-1. Fork and clone the repo
-2. Run the test suite to make sure everything works: `for test in test/test-*.sh; do $test; done`
-3. Create a feature branch from `master`
+Fork `serpro69/agentstakk`, clone your fork and create a feature branch from `master`. If you already have a clone of claude-toolbox, run `git remote -v` and update only the remote that points to the original upstream. For example, a fork usually keeps its own `origin` and can update its `upstream` remote as follows.
+
+```bash
+git remote set-url upstream https://github.com/serpro69/agentstakk.git
+```
+
+Use `origin` in that command only for a direct clone of the upstream project. Projects created from the template have their own history and follow the [repository migration guide](../user-guide/template-sync.md).
+
+Run the [test suites](testing.md#running-tests) from the checkout. To exercise installer changes, start with `bash test/test-kk.sh`, which uses temporary homes. To activate your checkout on your own account, see [installation modes](architecture.md#installation-modes).
 
 ## Development
 
@@ -15,9 +21,9 @@ See [Architecture](architecture.md) for how the components fit together and [Tes
 ### Key workflows
 
 - **Editing skills:** Edit in `klaude-plugin/skills/`, then run `make generate-kodex` to regenerate the Codex variant.
-- **Editing profiles:** Edit in `klaude-plugin/profiles/`, then run `make generate-kodex`. Vendored profiles (e.g., Go) use `make vendor-go` instead.
+- **Editing profiles.** Edit canonical files in `klaude-plugin/profiles/`. For vendored Go content, update the manifest and run `make vendor-profiles`. Run `make generate-kodex` to refresh the Codex copies.
 - **Adding a profile:** Follow the "Adding a new profile" checklist in `AGENTS.md`.
-- **Editing codex config:** Hand-authored files live in `.codex/` (config.toml, hooks.json, rules, scripts). Generated files (agents, kodex-plugin) should not be edited directly.
+- **Editing Codex configuration.** `.codex/config.toml` and `.codex/hooks.json` configure this repository. Machine defaults live in `kk/baseline/`. Edit agents in `klaude-plugin/agents/` and regenerate them with `make generate-kodex`. For guard changes, edit `klaude-plugin/scripts/guard/` and run `make generate-guard`.
 
 ### Commit conventions
 
@@ -51,7 +57,7 @@ description: |
 
 - Imperative verbs over noun phrases: `design` not `analysis-process`.
 - Family prefixes for grouped skills: `review-code`, `review-design`, `review-spec`.
-- Reference other skills without the `kk:` prefix in prose: write `review-code` not `kk:review-code`.
+- Write skill references as `/kk:review-code` in canonical content. Codex generation rewrites `/kk:` to `$kk:`.
 
 **Description budget:** Claude Code truncates skill descriptions at 1,536 characters per entry. OpenCode's limit is 1,024. Lead with trigger keywords — truncation happens at the tail. Detailed rules, cascades, and examples belong in the SKILL.md body, not the description.
 
@@ -229,7 +235,7 @@ Only index non-obvious learnings not derivable from reading the code or git hist
 
 1. **Workflow ordering is the #1 failure mode.** If the agent sees subject matter before methodology, it shortcuts the methodology. Structure every workflow so instructions load first. See [ADR 0004](../adr/0004-skill-workflow-ordering.md).
 
-2. **Forgetting `make generate-kodex`.** After editing anything in `klaude-plugin/`, the Codex variant drifts. CI checks this with `make generate-kodex && git diff --exit-code kodex-plugin/ kk/baseline/codex/agents/`.
+2. **Stale generated files.** Run `make generate-kodex` after editing canonical skills, profiles or agents. CI checks tracked and untracked changes under `kodex-plugin/` and `kk/baseline/codex/agents/`. Guard changes use `make generate-guard`.
 
 3. **Orphan files in profile phase directories.** Every `.md` file (except `index.md`) must be referenced by the phase's `index.md`. The bidirectional invariant test catches this.
 
@@ -247,7 +253,7 @@ Only index non-obvious learnings not derivable from reading the code or git hist
 
 - One logical change per PR
 - All test suites must pass: `for test in test/test-*.sh; do $test; done`
-- If you edited `klaude-plugin/`, verify `make generate-kodex && git diff --exit-code kodex-plugin/ kk/baseline/codex/agents/` shows no drift
+- Regenerate the affected artifacts and include them in the PR. CI runs `make check-guard` and verifies Codex generation in a clean checkout. [Release checks](testing.md#validation-before-release)
 - Update documentation if your change affects user-facing behavior
 
 ## Architecture Decisions
@@ -288,7 +294,7 @@ make docs-build
 - Mike pushes to the `gh-pages` branch; GitHub Pages serves from there
 - First deploy requires enabling GitHub Pages on the `gh-pages` branch in repo Settings
 
-**Content structure:** Pages live in `docs/` alongside internal design docs (`wip/`, `done/`, `adr/`). Internal dirs are excluded from search via `exclude_docs` in `mkdocs.yml` but remain accessible by direct URL. The landing page is a custom template at `docs/overrides/home.html`.
+**Site content.** Published pages live in `docs/`, including the ADRs in `docs/adr/`. `mkdocs.yml` excludes internal feature and review records from the site build. Their source remains available in the repository. The landing page uses `docs/overrides/home.html`.
 
 **Python deps:** Install via `pip install -r requirements.txt` (mkdocs-material, mike, minify, panzoom).
 
@@ -297,8 +303,8 @@ make docs-build
 ```
 klaude-plugin/                   # kk plugin — Claude (canonical source of truth)
 ├── .claude-plugin/plugin.json   # Plugin manifest
-├── skills/                      # 10 development workflow skills
-├── commands/                    # 4 slash commands
+├── skills/                      # Workflow and utility skills
+├── commands/                    # Claude Code slash commands
 ├── agents/                      # Sub-agents (code-reviewer, spec-reviewer, design-reviewer, ...)
 ├── profiles/                    # Per-domain content (languages, IaC DSLs)
 ├── hooks/hooks.json             # Plugin-root export + permission guard registration
@@ -317,6 +323,8 @@ AGENTS.md                        # Codex project instructions (this repo)
 
 .claude/                          # Repository preferences, Capy setup and sync compatibility notice
 .codex/                           # Repository sandbox, approvals and Capy registrations
+install.sh                        # Bootstrap a machine installation
+kk/lib/                           # Installation, launchers, upgrades, rollback and migration
 kk/baseline/                      # Machine defaults, generated policies and Codex agents
 kodex-guard/                      # Standalone Codex guard plugin
 .github/                          # Release helpers and workflows for CI, releases and docs
@@ -340,12 +348,13 @@ mkdocs.yml                       # MkDocs Material config
 requirements.txt                 # Python deps for docs site
 
 cmd/
+├── plugin-graph/                # Plugin dependency graph and validation
 ├── vendor-profiles/             # Profile vendoring tool
 └── generate-kodex/              # Codex plugin generation tool
 
 test/
 ├── helpers.sh                   # Shared test utilities and assertions
-├── test-*.sh                    # 8 test suites
+├── test-*.sh                    # Shell test suites
 └── fixtures/                    # Test manifests and templates
 ```
 

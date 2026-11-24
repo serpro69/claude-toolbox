@@ -25,6 +25,7 @@ Run a single suite:
 |-------|----------------|
 | `test-plugin-structure.sh` | Plugin/marketplace manifests, skills, commands, hooks, profiles, cross-references, kodex-plugin generated output validation |
 | `test-codex-structure.sh` | Codex marketplace, project config and hooks, release agent TOMLs and native rules |
+| `test-kk.sh` | Machine installer, launchers, upgrades, rollback and repository migration in temporary homes |
 | `test-template-sync.sh` | Compatibility notice and handoff from the released RC4 client in local and staged CI modes |
 | `test-semver-compare.sh` | Semver comparison logic used by release workflows |
 | `test-cpr.sh` | Claude Plugin Root resolver — exact/fuzzy matching, project-path resolution cascade (project → user → last-installed), install-path validation, env var precedence, error handling |
@@ -38,9 +39,9 @@ Run a single suite:
 
 ## Machine delivery tests
 
-Run `bash test/test-kk.sh` for installer, launchers, lifecycle, guard trust, update notices and migration orchestration. It uses temporary homes and vendor fixtures. Run `bash test/test-template-sync.sh` for the legacy handoff to the compatibility notice. Fetch `v0.26.0-rc.4` for the released-client cases. The full sync and removal suites remain in that tag. The `machine-delivery.yml` CI job also runs the guard and Codex adapter suites on Python 3.8 and the current Python.
+Run `bash test/test-kk.sh` for installer, launchers, lifecycle, guard trust, update notices and migration orchestration. It uses temporary homes and vendor fixtures. Run `bash test/test-template-sync.sh` for the legacy handoff to the compatibility notice. The released-client cases read the last full template from `v0.26.0-rc.4`. In a shallow upstream checkout, fetch the tag with `git fetch origin tag v0.26.0-rc.4` to exercise them. The full sync and removal suites remain in that tag. The `machine-delivery.yml` CI job also runs the guard and Codex adapter suites on Python 3.8 and the current Python.
 
-For installation evidence, `kk status --live` starts fresh vendor sessions and expects the installed guard’s own denial of a public canary. Open-session behavior needs a session spanning the relevant transition. The tagged pilot also verifies that an ordinary sync still leaves the legacy guard in place before migration. The release workflows run the machine delivery and generated-guard checks before publication.
+For installation evidence, `kk status --live` starts fresh vendor sessions and expects the installed guard’s own denial of a public canary. Open-session behavior needs a session spanning the relevant transition. The tagged pilot verified that an ordinary sync to the last full template kept the legacy guard in place before migration. The release workflows run the machine delivery and generated-guard checks before publication.
 
 After documentation changes run `make docs-build` with the packages in `requirements.txt` available. This regenerates the embedded graph and runs strict MkDocs validation. [Machine delivery decision](../adr/0014-machine-level-delivery.md)
 

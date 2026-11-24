@@ -14,9 +14,9 @@
 > [!NOTE]
 > **From `claude-toolbox` to `agentstakk`.** I started this project as a template for sharing Claude Code settings across my repositories. It now ships skills, hooks and workflows for both Claude Code and Codex through one `kk` installation. “Agentstakk” reads as “agent stack.” The Norwegian word *stakk* gives the name its double *k*, a nod to the `kk` command.
 >
-> After the rename, point your upstream Git remote at `serpro69/agentstakk`. For versioned docs bookmarks, replace `/claude-toolbox/` with `/agentstakk/` and keep the version and page path. [Update an existing installation](docs/getting-started/template-setup.md#move-an-existing-installation-to-agentstakk) · [Switch a Git marketplace installation](docs/getting-started/plugin-only.md#switch-an-existing-git-marketplace-installation)
+> If your project has `.github/template-state.json`, follow the [template migration guide](docs/user-guide/template-sync.md). If you installed `kk@claude-toolbox` directly and want to keep using the public plugin, follow the [marketplace switch](docs/getting-started/plugin-only.md#switch-an-existing-git-marketplace-installation).
 
-<div align="center"
+<div align="center">
   <picture>
     <img width="1080" alt="Terminal view" src="https://github.com/user-attachments/assets/27ef7269-0153-47c0-b07d-ed6a9504a176" />
   </picture>
@@ -73,16 +73,15 @@ Out of the box you get:
 
 ## Install kk
 
-From a checkout containing the machine installer:
+On macOS or Linux, install the latest stable release once per user account. Have Claude Code 2.1.295 or later, Bash, Git, `curl`, `jq` and Python 3.8+ on your `PATH`. Include Codex on your `PATH` if you use it.
 
 ```bash
-./install.sh --local .
-~/.local/bin/kk status
+curl -fsSL https://raw.githubusercontent.com/serpro69/agentstakk/master/install.sh | bash
+export PATH="$HOME/.local/bin:$PATH"
+kk status
 ```
 
-Put `~/.local/bin` on your `PATH`. In any project, run `kk claude` or `kk codex`. For the initial Codex setup, open plain `codex` without `--profile` in the project and review folder trust and the three managed `kk-guard` handlers in `/hooks` (`@toolbox` through RC4, `@agentstakk-local` in the renamed release). Run `kk status --live` to verify each managed guard. Once the first machine release is published, the installation guide’s one-line installer downloads the latest stable release. The guide also covers version pinning and offline rollback. [Install kk](docs/getting-started/template-setup.md)
-
-If your project contains `.github/template-state.json`, use `kk migrate` when the team is ready to retire the repository copies. For skills managed directly by the vendor, use the Git-marketplace plugin. [Migration guide](docs/user-guide/template-sync.md) · [Plugin-only setup](docs/getting-started/plugin-only.md)
+For Codex, open plain `codex` in your project first, review folder trust and the three managed guard handlers in `/hooks`, then exit. Run `kk status --live` to check your installed guards. Start sessions with `kk claude` or `kk codex`. [Installation and updates](docs/getting-started/template-setup.md) · [Plugin-only setup](docs/getting-started/plugin-only.md)
 
 ## Try It
 

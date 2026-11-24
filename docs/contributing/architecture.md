@@ -8,21 +8,21 @@ A release contains `kk/`, the canonical Claude plugin (`klaude-plugin/`), the ge
 
 ## Machine delivery
 
-The installer writes immutable release directories under `$KK_HOME/releases/` and publishes the stable `~/.local/bin/kk` link to `$KK_HOME/bin/kk`. `kk/lib/payload.py` stages the declared payload, and `validation.py` exercises the dispatchers and registered guard adapters. Activation registers user-scope plugins through the local vendor marketplaces and publishes owned Codex files. The journal in `state.json` records candidate progress, release identities, tool readiness and the rollback target. A single writer lock covers upgrade, rollback, apply and migration.
+The installer writes immutable release directories under `$KK_HOME/releases/` and publishes the stable `~/.local/bin/kk` link to `$KK_HOME/bin/kk`. `kk/lib/payload.py` stages the declared payload, and `validation.py` exercises the dispatchers and registered guard adapters. Activation registers user-scope plugins through the `agentstakk-local` marketplace in each installed CLI and publishes owned Codex files. The journal in `state.json` records candidate progress, release identities, tool readiness and the rollback target. A single writer lock covers upgrade, rollback, apply and migration.
 
-Claude loads the released plugin directory in place. Codex caches plugins by version. Its skills and guard have separate identities so an ordinary skills release can reuse the reviewed guard. `kk/baseline/` contains launcher defaults, generated agents and the generated native policy projections. `kk apply` validates and writes the owned Codex files from current overrides. Git-marketplace plugin-only installs remain independently managed by the vendors.
+Claude loads the released plugin directory in place. Codex caches plugins by version. Its skills and guard have separate identities so an ordinary skills release can reuse the reviewed guard. `kk/baseline/` contains launcher defaults, generated agents and the generated native policy projections. `kk apply` validates and writes the owned Codex files from current overrides. For plugin-only installations, each provider manages `kk@agentstakk` from the public Git marketplace.
 
 Rollback uses the code in the target release. Upgrade prints a recovery command that works even when the active dispatcher is broken. Pruning retains the active release, the rollback target, a pending candidate and recently superseded releases needed by open sessions. The supported window after supersession is 14 days.
 
 ## Retirement script maintenance
 
-`kk/lib/migrate.py` pins the retirement script and its sibling `semver-compare.sh` to the same tag. After retirement:
+`kk/lib/migrate.py` pins the retirement script and its sibling `semver-compare.sh` to the same tag. To patch migration behavior in the last full template, follow these steps.
 
 1. Branch **from the retirement tag** so the script, helper and template still match. Apply the migration fix and run `bash test/test-template-sync.sh` on that branch.
 2. Publish just a maintenance Git tag on the tested commit, for example `v0.26.0+retirement.1`. The migration downloader reads Git tags directly. The suffix keeps the tag outside the numeric stable-tag filter that moves the documentation’s `latest` alias. Leave GitHub’s latest release pointing to the current machine release. The normal stable release workflow publishes from `master` and is for releasing kk itself.
 3. On the normal release line, move `RETIREMENT_VERSION` to that maintenance tag for the next kk release. Until then adopters can select the patch with `kk migrate --retirement-version TAG`.
 
-Keep the default branch’s compatibility script in place for old sync clients. RC4 is the retirement tag used by the first cleaned-up release. [ADR 0014](../adr/0014-machine-level-delivery.md)
+Keep the default branch’s compatibility script in place for old sync clients. Stable kk uses `v0.26.0-rc.4` because it contains both the full template and its retirement logic. [ADR 0014](../adr/0014-machine-level-delivery.md)
 
 ## Components
 
@@ -156,7 +156,7 @@ The project keeps its Claude preferences, Codex approval and sandbox settings, a
 MkDocs Material site with a custom Tokyo Night color scheme, deployed to GitHub Pages via [mike](https://github.com/jimporter/mike) for versioned documentation.
 
 - **`mkdocs.yml`** — Site config: Tokyo Night theme (`tokyonight:dark`/`tokyonight:light`), tabs nav, pymdownx extensions, mike versioning
-- **`docs/`** — Content pages (getting-started, user-guide, providers, contributing, about) alongside internal docs (adr, wip, done — excluded from search)
+- **`docs/`** — Published guides and ADRs alongside internal feature and review records excluded from the site build
 - **`docs/overrides/`** — Template overrides: `main.html` (base with Space Mono font, OG tags), `home.html` (custom landing page with scroll-pinned hero→pipeline transition and matrix rain effect)
 - **`docs/assets/`** — `stylesheets/tokyonight.css` (color scheme), `stylesheets/extra.css` (site-wide tweaks), `javascripts/terminal.js` (placeholder for future non-homepage JS)
 - **`requirements.txt`** — Python deps (mkdocs-material, mike, mkdocs-minify-plugin, mkdocs-panzoom-plugin)
@@ -204,9 +204,9 @@ figures it was built with; the as-of date says which. To try it locally, run
 | --- | --- |
 | Machine-managed | `install.sh` bootstraps kk. `kk upgrade` selects one active release for the account and `kk rollback` restores a retained release. |
 | Plugin-only | The vendor manages the Git-marketplace plugins and the user’s own vendor settings. |
-| Legacy template | Until migration, the repository keeps its committed settings and sync infrastructure. Ordinary sync updates them. Only the explicit retirement step removes them. |
+| Legacy template | Until migration, the repository keeps its committed settings and sync infrastructure. Ordinary sync can update them through the last full template. `kk migrate` previews removal and asks the team to confirm. |
 
-A source checkout is also supported as input to `./install.sh --local .` or `kk upgrade --local .`. It follows the same staging and activation path.
+**Testing a checkout on your account.** From the Agentstakk repository root, use `./install.sh --local .` for a first installation. If kk is already installed, use `kk upgrade --local .`. Both stage and activate the checkout through the same code path as a downloaded release. For testing without changing your active installation, run `bash test/test-kk.sh` with its temporary homes. [Stable release installer](../getting-started/template-setup.md)
 
 ### Marketplace gotchas
 

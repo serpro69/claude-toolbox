@@ -7,6 +7,8 @@ feature release verification and the measured performance shortfall remain open.
 Partially supersedes [ADR 0005](0005-codex-hook-enforcement-gap.md). The
 "Codex native reads remain advisory" limitation below is superseded by
 [ADR 0013](0013-codex-file-access-through-hooked-tools.md).
+The paths and sync behavior below describe template installations. For the current
+machine release, see [guard generation and delivery](../contributing/architecture.md#permission-guard).
 
 ## Context
 
@@ -27,7 +29,7 @@ category. Plugin-only Claude installs also need a baseline: they receive no
 template `permissions` settings.
 
 The approved feature design and per-task decisions are recorded in
-`docs/feat/wip/permission-guard/design.md` and `tasks.md`. This ADR preserves
+the [feature design and tasks](https://github.com/serpro69/agentstakk/tree/master/docs/feat/done/permission-guard). This ADR preserves
 those choices; runtime observations qualify them rather than confer acceptance.
 Task 9's live checks verified Claude bypass denial and Codex relative patch
 resolution with explicit hooks, while exposing a performance shortfall and a
@@ -106,7 +108,7 @@ Accepted costs and limits:
 - No working Python means matched calls, including reads, block until repaired.
 - Codex native reads remain advisory in this integration; specialized paths can
   bypass hooks. Native forbids also prevent the five listed commands from being
-  loosened through guard configuration. See the [parity table](../providers/codex.md#permission-guard).
+  loosened through guard configuration. See the [Codex guard guide](../providers/codex.md#permission-guard).
 - Static inspection cannot cover every dynamically assembled interpreter path,
   search-result contents, or unregistered execution channel. A new channel needs
   a payload mapping and registration before it has guard coverage.

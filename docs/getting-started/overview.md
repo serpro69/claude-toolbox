@@ -36,7 +36,7 @@ Tools like Claude Code and Codex are powerful on their own, but LLMs don't know 
 
 ### kk Plugin
 
-The **kk** plugin contains all development workflow functionality — 16 skills, 5 commands, and hooks — distributed via the Claude Code plugin system (see [kodex-plugin](https://github.com/serpro69/agentstakk/tree/master/kodex-plugin) for the Codex variant). Skills are invoked as `/kk:skill-name`, commands as `/kk:dir:command`.
+The **kk** plugin contains all development workflow functionality — 16 skills, slash commands and hooks — distributed via the Claude Code plugin system (see [kodex-plugin](https://github.com/serpro69/agentstakk/tree/master/kodex-plugin) for the Codex variant). Skills are invoked as `/kk:skill-name`, commands as `/kk:dir:command`.
 
 Alongside `skills/`, `commands/`, `agents/`, and `hooks/`, the plugin ships a top-level `profiles/` directory. Each profile (e.g., `go`, `python`, `k8s`) bundles per-domain content — detection rules, review checklists, design prompts, test validators, doc rubrics — that the workflow skills consult when the code under work matches the profile. Profiles are the extension point for new languages and IaC DSLs.
 
@@ -61,4 +61,4 @@ The [installation guide](template-setup.md) lists the required tools. MCP integr
 
 ## Examples
 
-Examples of actual Claude Code workflows executed using this template's configs, skills, and tools: [examples/](https://github.com/serpro69/agentstakk/tree/master/examples)
+Examples of actual Claude Code workflows executed using the project's configs, skills and tools: [examples/](https://github.com/serpro69/agentstakk/tree/master/examples)

@@ -123,9 +123,9 @@ The root export writes `TOOLBOX_PLUGIN_ROOT` to `CLAUDE_ENV_FILE`. A machine-man
 
 The instruction hook reads the Markdown shipped beside it. Edit those files in `klaude-plugin/instructions/` and the statusline scripts in `klaude-plugin/statusline/`. Both ship in the Claude plugin.
 
-**Permission guard contract:** Read the complete hook payload from stdin (`tool_name`, `tool_input`, `cwd` and optional `permission_mode`). `scripts/guard/guard.sh` buffers the bytes once and invokes `guard.py` under isolated Python. Ordinary allow is silent with exit 0; config warnings may emit only `systemMessage`. Deny emits `hookSpecificOutput.permissionDecision: "deny"`, its reason on stdout and stderr, and exit 2. Missing interpreters, crashes and invalid engine output must deny. Claude's `onFailure: "block"` handles hook launch failures and timeouts; it requires Claude Code 2.1.295+. See [the configuration guide](../user-guide/configuration.md#hooks) for runtime requirements and supported channels.
+**Permission guard contract:** Read the complete hook payload from stdin (`tool_name`, `tool_input`, `cwd` and optional `permission_mode`). `scripts/guard/guard.sh` buffers the bytes and starts `run-guard.py` under isolated Python. The launcher loads the adjacent `guard.py`. Ordinary allow is silent with exit 0; config warnings may emit only `systemMessage`. Deny emits `hookSpecificOutput.permissionDecision: "deny"`, its reason on stdout and stderr, and exit 2. Missing interpreters, crashes and invalid engine output must deny. Claude's `onFailure: "block"` handles hook launch failures and timeouts; it requires Claude Code 2.1.295+. See [the configuration guide](../user-guide/configuration.md#hooks) for runtime requirements and supported channels.
 
-The declaration and engine in `klaude-plugin/scripts/guard/` are canonical. Run `make generate-guard` to refresh the two Codex runtime copies, their licenses, both rules projections, Claude’s deny list and the marked documentation tables. `make check-guard` checks freshness in a clean checkout.
+The declaration and engine in `klaude-plugin/scripts/guard/` are canonical. Run `make generate-guard` to copy the runtime and license into `kodex-guard/scripts/guard/`, generate `kk/baseline/claude/deny.json` and `kk/baseline/codex/kk.rules`, and refresh the marked tables in the configuration guide. `make check-guard` checks freshness in a clean checkout.
 
 To develop this repository with an agent, the user adds a physical checkout path (or a parent covering worktrees) to **`~/.claude/kk-guard.json`**:
 
@@ -237,7 +237,7 @@ Only index non-obvious learnings not derivable from reading the code or git hist
 
 1. **Workflow ordering is the #1 failure mode.** If the agent sees subject matter before methodology, it shortcuts the methodology. Structure every workflow so instructions load first. See [ADR 0004](../adr/0004-skill-workflow-ordering.md).
 
-2. **Forgetting `make generate-kodex`.** After editing anything in `klaude-plugin/`, the Codex variant drifts. CI checks this with `make generate-kodex && git diff --exit-code kodex-plugin/ kk/baseline/codex/agents/`.
+2. **Stale generated files.** Run `make generate-kodex` after editing canonical skills, profiles or agents. CI checks tracked and untracked changes under `kodex-plugin/` and `kk/baseline/codex/agents/`. Guard changes use `make generate-guard`.
 
 3. **Orphan files in profile phase directories.** Every `.md` file (except `index.md`) must be referenced by the phase's `index.md`. The bidirectional invariant test catches this.
 

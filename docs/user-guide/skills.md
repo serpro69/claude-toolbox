@@ -40,7 +40,7 @@ Use `/kk:brainstorm` when you want to think through a technical idea in conversa
 
 ## Commands
 
-Commands are skill variants invoked with explicit mode selection:
+These Claude Code commands select a workflow mode or run a utility.
 
 | Command | Invocation | Description |
 |---------|-----------|-------------|
@@ -49,7 +49,8 @@ Commands are skill variants invoked with explicit mode selection:
 | CoVe (isolated) | `/kk:chain-of-verification:isolated [--explore] [--haiku] [question]` | CoVe with true sub-agent isolation |
 | Spec Review | `/kk:review-spec:default [feature]` | Verify code matches design/implementation docs |
 | Spec Review (isolated) | `/kk:review-spec:isolated [feature]` | Spec conformance review with independent sub-agent |
-| Template Sync | `/kk:template:sync [--version vX.Y.Z] [--dry-run]` | Sync repo with upstream template |
+| Template Sync | `/kk:template:sync [--version vX.Y.Z] [--dry-run]` | Sync a legacy template repository to the last full template. To retire the files, use [`kk migrate`](template-sync.md). |
+| Task Master migration | `/kk:migrate-from-taskmaster:migrate` | Move a project’s Task Master tasks into Markdown task files. |
 
 ## Functional review and implementation
 

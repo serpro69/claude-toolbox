@@ -8,14 +8,14 @@ Why `kk`? I have `jj` and `kk` mappings in nvim to go back to normal mode, and i
 
 ## Installation
 
-For the machine-managed release, install `kk` and launch with `kk claude`. The commands below apply after the public Agentstakk marketplace is published. Through RC4 the repository is `serpro69/claude-toolbox` and the public marketplace ID is `claude-toolbox`. [Machine installation](https://serpro69.github.io/agentstakk/latest/getting-started/template-setup/)
+If you use the machine installer, `kk claude` already loads this plugin. To install just the plugin from the public Git marketplace, use the commands below. [Machine installation](https://serpro69.github.io/agentstakk/latest/getting-started/template-setup/) · [Migrate a plugin from claude-toolbox](https://serpro69.github.io/agentstakk/latest/getting-started/plugin-only/#switch-an-existing-git-marketplace-installation)
 
 ```
 /plugin marketplace add serpro69/agentstakk
 /plugin install kk@agentstakk
 ```
 
-All skills appear as `/skill-name` in the slash command menu (annotated with `(kk)`). The permission guard is active without a separate policy file; its runtime requirements and exceptions are described below.
+Start a fresh Claude Code session and invoke a skill such as `/kk:design`. The permission guard is active without a separate policy file; its runtime requirements and exceptions are described below.
 
 Use `/kk:brainstorm` for an optional conversation about a technical idea or decision. It asks one question at a time, adapts to the clarity you need, and ends with a chat-only recap of decisions, rationale, and open assumptions. Request `/kk:design` when you want written design documents, an implementation plan, and tasks; brainstorming creates no files and does not start that workflow automatically.
 

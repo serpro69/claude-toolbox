@@ -1,29 +1,29 @@
 # Migrate a template repository
 
-`kk migrate` retires the legacy toolbox files in one Git repository. Installing or upgrading kk on a machine leaves those files in place. Run the migration once per repository, after the people who rely on its protections have installed and verified the machine release. The result is an ordinary, uncommitted Git diff.
+Use this guide if your project contains `.github/template-state.json` from claude-toolbox. In v0.25.x, template sync delivered settings and guard scripts as files committed to each project. Starting with v0.26.0, each user installs Agentstakk once. The team then runs `kk migrate` once per repository and decides which changes to commit. If you only installed `kk@claude-toolbox`, use the [plugin-only switch](../getting-started/plugin-only.md#switch-an-existing-git-marketplace-installation).
 
 ## Before you begin
 
-1. Check for `.github/template-state.json` at the repository root. Review local changes with `git status`. Copy out edits to synced files that you want to keep, or add their paths to the manifest’s `sync_exclusions`.
-2. [Install kk](../getting-started/template-setup.md). For Codex, open plain `codex` in this repository without a named profile, review folder trust and all three managed guard hooks in `/hooks`, then exit. Run `kk status --live` to check the installed guards. Migration also reads the effective guard configuration **in this repository** for each tool it uses. A scratch workspace prevents a legacy hook from supplying a misleading denial.
-3. Close Codex sessions opened before kk was installed and its hooks reviewed. An older session may lose protection when its legacy scripts disappear. Sessions opened after the machine guard is ready can keep using it. The legacy sync script needs Bash 4 or newer (including on macOS). Put that `bash`, `curl` and Mike Farah’s `yq` on `PATH` for migration.
+1. **Prepare the machines.** Each person who relies on the repository’s guards should [install kk and verify the guards](../getting-started/template-setup.md). If the project includes `.codex/`, the machine running the migration needs the managed Codex guard as well as folder and hook trust reviewed in plain `codex`. Close Codex sessions opened before that guard was installed and reviewed.
+2. **Check what the team needs to keep.** Review `git status`. Save edits to synced files or list their paths in the manifest’s `sync_exclusions`. Check whether CI, cloud sessions or teammates depend on committed plugin settings before retiring them. [Effects on the team](#what-changes-for-the-team)
+3. **Check the migration tools.** Put Bash 4 or newer (including on macOS), `curl` and Mike Farah’s `yq` on `PATH`, alongside the tools required by the installer. The command downloads the retirement scripts and contacts the providers for a live guard check.
 
 ## Preview, sync and retire
 
-From the repository, run:
+From the repository’s working tree, run the following command.
 
 ```bash
 kk migrate
 ```
 
-A manifest naming `serpro69/claude-toolbox` or `serpro69/claude-starter-kit` can migrate with the renamed upstream. A fork’s manifest must match the repository that supplied the migration scripts. Sync exclusions still apply. If Git maps a former upstream to a different mirror, align its `insteadOf` rule with the current upstream before retrying migration.
+You can migrate directly from v0.25.x. Leave `serpro69/claude-toolbox` or `serpro69/claude-starter-kit` in the manifest. The stable CLI resolves those names to Agentstakk and fetches the scripts and matching template from `v0.26.0-rc.4`, the last full template. If you use a fork, its manifest upstream must match the source of your kk installation. If a Git `insteadOf` rule routes the old and new names to different mirrors, align the rule before retrying.
 
-The default retirement tag is `v0.26.0-rc.4`, the last full template. The sync script, its version helper and the template it renders all come from that tag. If you are still running the RC4 or earlier pilot CLI, use `kk migrate --retirement-version v0.26.0-rc.4` explicitly. The same option can select a future retirement maintenance tag.
+Before changing files, kk checks the managed guard in this repository for each provider it finds and verifies a guard denial in a scratch workspace. After you confirm that you want to continue, it shows two previews.
 
-1. **Sync to the retirement release.** Read the preview before confirming. Like any sync, this step overwrites edits to synced files. Migration preserves adopter-owned settings and hooks during the merge, including custom deny entries. Files under `sync_exclusions` stay untouched. An up-to-date repository skips the sync confirmation.
+1. **Sync to the last full template.** Read the preview before confirming. Like any sync, this step overwrites edits to synced files. Migration preserves adopter-owned settings and hooks during the merge, including custom deny entries. Files under `sync_exclusions` stay untouched. An up-to-date repository skips the sync confirmation.
 2. **Retire the legacy files.** The second preview compares the repository with that same tag’s rendered template. It lists matching files and toolbox entries to remove, custom or excluded files to keep, and the effect on collaborators. Decline this step to leave the repository synced with its legacy guard in place. Rerunning `kk migrate` previews the remaining work.
 
-Inspect `git diff` and `git status` before committing. You can keep individual changes out of the migration commit, for example the project rules file or a plugin registration used by CI. Preserve the files or marketplace definitions that a retained registration needs.
+Inspect `git diff` and `git status` before committing. Share the reviewed diff with your team. After migration, each user updates the machine installation with `kk upgrade`. You can keep individual changes out of the migration commit, for example the project rules file or a plugin registration used by CI. Preserve the files or marketplace definitions that a retained registration needs.
 
 Migration keeps the legacy scripts together when you exclude `.codex/hooks.json` or a retained handler names the `.codex/scripts` directory. If your hook delegates to a separate program that depends on those scripts, exclude the script directory explicitly. Excluding an absent provider directory keeps it absent during migration sync.
 
@@ -47,4 +47,4 @@ The default branch and releases after RC4 carry a small compatibility script at 
 
 For maintenance of a repository still using the old updater, the versioned reference covers sync exclusions, GitHub Actions credentials and settings merges. [Legacy template-sync reference at v0.25.4](https://github.com/serpro69/agentstakk/blob/v0.25.4/docs/user-guide/template-sync.md)
 
-A running session is supported for **14 days after its machine release is superseded**. Restart older sessions within that window. Use `kk rollback` to restore a retained machine release. Repository migration changes have their own history in Git.
+Use Git to revert a committed repository migration. `kk rollback` restores a retained release on one machine. [Machine updates and recovery](../getting-started/template-setup.md#update-and-recover)

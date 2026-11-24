@@ -1,6 +1,6 @@
 # MCP Servers
 
-MCP servers are configured at the user level (not in the repo) to keep API keys safe. These configs are generic enough to reuse across all your projects.
+The kk installer leaves MCP setup to you. Configure shared services such as Context7 and Pal at user scope so you can reuse them across projects and keep API keys out of Git. Register Capy in each project where you want persistent memory.
 
 You don't need all servers to get started. Add them incrementally:
 

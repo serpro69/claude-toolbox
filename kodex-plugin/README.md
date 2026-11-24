@@ -6,20 +6,21 @@ Development workflow skills generated from [klaude-plugin/](../klaude-plugin/) (
 
 ## Installation
 
-For the machine-managed release, install `kk` and launch with `kk codex`. The commands below apply after the public Agentstakk marketplace is published. Through RC4 the repository is `serpro69/claude-toolbox` and the public marketplace ID is `claude-toolbox`. [Machine installation](https://serpro69.github.io/agentstakk/latest/getting-started/template-setup/)
+If you use the machine installer, `kk codex` already loads this plugin. To install just the plugin from the public Git marketplace, use the commands below. [Machine installation](https://serpro69.github.io/agentstakk/latest/getting-started/template-setup/) · [Migrate a plugin from claude-toolbox](https://serpro69.github.io/agentstakk/latest/getting-started/plugin-only/#switch-an-existing-git-marketplace-installation)
 
 ```bash
 codex plugin marketplace add serpro69/agentstakk
+codex plugin add kk@agentstakk
 ```
 
-Then open `/plugins` in the Codex TUI, select the **Agentstakk** marketplace, and install `kk`.
+Start a fresh `codex` session and invoke a skill such as `$kk:design`.
 
 ## What's Included
 
 - **16 workflow and utility skills** — the same pipeline as the Claude Code plugin (`$kk:design` → `$kk:review-design` → `$kk:implement` → `$kk:review-code` → `$kk:test` → `$kk:document`, plus utilities)
 - **Language-specific profiles** — review checklists, implementation gotchas, design prompts, test validators, and doc rubrics for Go, Java, JS/TS, Kotlin, Kubernetes, and Python
 
-This package supplies skills and profiles. A separate package, `kk-guard`, provides the guard hooks. From a Git marketplace revision that includes it, run `codex plugin add kk-guard@agentstakk` and review its three handlers in `/hooks`. Machine installation also supplies the profile, sub-agents and optional account-wide native rules.
+This package supplies skills and profiles. A separate package, `kk-guard`, provides the guard hooks. To install it from the public marketplace, run `codex plugin add kk-guard@agentstakk` and review its three handlers in `/hooks`. Machine installation also supplies the profile, sub-agents and optional account-wide native rules.
 
 Use `$kk:brainstorm` for an optional conversation about a technical idea or decision. It asks one question at a time, adapts to the clarity you need, and ends with a chat-only recap of decisions, rationale, and open assumptions. Request `$kk:design` when you want written design documents, an implementation plan, and tasks; brainstorming creates no files and does not start that workflow automatically.
 
