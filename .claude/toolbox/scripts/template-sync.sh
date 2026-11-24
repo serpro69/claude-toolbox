@@ -1103,7 +1103,7 @@ fetch_upstream_templates() {
 
   # Clone with blob filter for efficiency (with retry logic)
   for ((attempt = 1; attempt <= max_retries; attempt++)); do
-    if git clone --depth 1 --filter=blob:none \
+    if git clone --no-checkout --depth 1 --filter=blob:none \
       "$repo_url" "$work_dir/upstream" --quiet 2>/dev/null; then
       break
     fi
@@ -1121,6 +1121,12 @@ fetch_upstream_templates() {
   done
 
   cd "$work_dir/upstream"
+
+  # Select directories before checking out files. Cone mode also keeps files
+  # at the repository root, including the template's CLAUDE.md.
+  if ! git sparse-checkout set --cone .claude .codex .github/workflows klaude-plugin/.claude-plugin 2>/dev/null; then
+    log_warn "Sparse checkout unavailable, continuing with the full checkout"
+  fi
 
   # For non-default branches/tags, we need to fetch explicitly since we used --depth 1
   # HEAD means use whatever was cloned (default branch)
@@ -1152,14 +1158,8 @@ fetch_upstream_templates() {
         fi
       fi
     fi
-  fi
-
-  # Configure sparse-checkout to fetch config dirs and sync infrastructure
-  if ! git sparse-checkout init --cone --quiet 2>/dev/null; then
-    log_warn "Sparse-checkout init failed, continuing with full checkout"
-  fi
-  if ! git sparse-checkout set .claude .codex .github/workflows/template-sync.yml klaude-plugin/.claude-plugin/plugin.json --quiet 2>/dev/null; then
-    log_warn "Sparse-checkout set failed, config dirs may not exist at this version"
+  else
+    git checkout --quiet HEAD
   fi
 
   cd - >/dev/null

@@ -2333,18 +2333,32 @@ log_test "fetch_upstream_templates strips the upstream project guard config"
 reset_globals
 test_dir=$(create_temp_dir "fetch-guard-config")
 upstream_fixture=$(create_temp_git_repo)
-mkdir -p "$upstream_fixture/.claude"
+mkdir -p "$upstream_fixture/.claude" "$upstream_fixture/unrelated" "$upstream_fixture/.github/workflows"
 printf '{"version":1}\n' >"$upstream_fixture/.claude/kk-guard.json"
 printf '{"permissions":{"deny":[]}}\n' >"$upstream_fixture/.claude/settings.json"
-git -C "$upstream_fixture" add .claude
+touch "$upstream_fixture/unrelated/sample" "$upstream_fixture/.github/workflows/template-sync.yml"
+git -C "$upstream_fixture" add .claude .github/workflows unrelated
 git -C "$upstream_fixture" commit -qm "Add upstream configuration fixture"
 # Exercise the real fetch/staging path against a local repository, with no network.
-GIT_CONFIG_COUNT=1 \
-GIT_CONFIG_KEY_0="url.file://$upstream_fixture.insteadOf" \
-GIT_CONFIG_VALUE_0="https://github.com/test/guard-fixture.git" \
-  fetch_upstream_templates HEAD test/guard-fixture "$test_dir/fetch" 2>/dev/null
+fetch_guard_fixture() {
+  GIT_CONFIG_COUNT=1 \
+  GIT_CONFIG_KEY_0="url.file://$upstream_fixture.insteadOf" \
+  GIT_CONFIG_VALUE_0="https://github.com/test/guard-fixture.git" \
+    fetch_upstream_templates HEAD test/guard-fixture "$1"
+}
+fetch_guard_fixture "$test_dir/fetch" 2>/dev/null
 assert_file_not_exists "$FETCHED_TEMPLATES_PATH/claude/kk-guard.json" "Upstream project policy is stripped from staging"
 assert_file_exists "$FETCHED_TEMPLATES_PATH/claude/settings.json" "Shared settings remain staged"
+assert_file_exists "$test_dir/fetch/upstream/.github/workflows/template-sync.yml" "Sync workflow is available"
+if git -C "$upstream_fixture" sparse-checkout set --cone .claude 2>/dev/null; then
+  assert_file_not_exists "$test_dir/fetch/upstream/unrelated/sample" "Sparse checkout omits unrelated directories"
+fi
+(
+  git() { [[ $1 != sparse-checkout ]] && command git "$@"; }
+  fetch_guard_fixture "$test_dir/full-fetch" 2>/dev/null
+)
+assert_file_exists "$test_dir/full-fetch/fetched/claude/settings.json" "Full checkout fallback stages the template"
+assert_file_exists "$test_dir/full-fetch/upstream/unrelated/sample" "Full checkout fallback populates the working tree"
 
 log_test "compare_files handles multiple exclusion patterns"
 reset_globals
