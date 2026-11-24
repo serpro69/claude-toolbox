@@ -2,6 +2,9 @@
 # Test suite for template-sync.sh functions
 set -euo pipefail
 
+# Only the fixtures testing Actions file output should have an output file.
+unset GITHUB_OUTPUT
+
 # Source shared test helpers
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 source "$SCRIPT_DIR/helpers.sh"
