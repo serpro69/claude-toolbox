@@ -70,7 +70,7 @@ class Migration(InstallFixture):
                 self.migrate("yes\n")
         self.assertTrue(self.guard.is_file())
 
-    def test_rc4_migration_from_old_manifest_preserves_exclusions(self):
+    def test_default_retirement_tag_preserves_old_manifest_exclusions(self):
         tag = cli.migrate.RETIREMENT_VERSION
         template = subprocess.run(["git", "show", tag + ":.github/template-state.example.json"],
                                   cwd=ROOT, capture_output=True)

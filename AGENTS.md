@@ -8,7 +8,7 @@ This is a repository providing a complete development environment for agentic to
 
 ## Architecture
 
-Machine delivery adds `install.sh` and `kk/` to the components below. `kk/lib/` owns staging, activation, launch, offline rollback and repository migration. `kk/baseline/` contains release defaults and generated policy/agent files. Keep `kodex-guard/` separate from the Codex skills plugin to preserve guard trust across skills-only upgrades. `kk migrate` obtains the last full template from `v0.26.0-rc.4`. See [ADR 0014](docs/adr/0014-machine-level-delivery.md).
+Machine delivery adds `install.sh` and `kk/` to the components below. `kk/lib/` owns staging, activation, launch, offline rollback and repository migration. `kk/baseline/` contains release defaults and generated policy/agent files. Keep `kodex-guard/` separate from the Codex skills plugin to preserve guard trust across skills-only upgrades. `kk migrate` obtains the full legacy template and its cleanup scripts from the maintenance tag pinned in `kk/lib/migrate.py`. See [ADR 0014](docs/adr/0014-machine-level-delivery.md).
 
 Provider components:
 

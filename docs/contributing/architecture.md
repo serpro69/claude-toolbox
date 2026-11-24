@@ -22,7 +22,7 @@ Rollback uses the code in the target release. Upgrade prints a recovery command 
 2. Publish just a maintenance Git tag on the tested commit, for example `v0.26.0+retirement.1`. The migration downloader reads Git tags directly. The suffix keeps the tag outside the numeric stable-tag filter that moves the documentation’s `latest` alias. Leave GitHub’s latest release pointing to the current machine release. The normal stable release workflow publishes from `master` and is for releasing kk itself.
 3. On the normal release line, move `RETIREMENT_VERSION` to that maintenance tag for the next kk release. Until then adopters can select the patch with `kk migrate --retirement-version TAG`.
 
-Keep the default branch’s compatibility script in place for old sync clients. Stable kk uses `v0.26.0-rc.4` because it contains both the full template and its retirement logic. [ADR 0014](../adr/0014-machine-level-delivery.md)
+Keep the default branch’s compatibility script in place for old sync clients. The CLI pins both the cleanup scripts and the matching template to a published maintenance tag. The v0.26.0 CLI originally pinned `v0.26.0-rc.4`. [ADR 0014](../adr/0014-machine-level-delivery.md)
 
 ## Components
 

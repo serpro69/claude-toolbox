@@ -36,11 +36,11 @@ jobs:
       - uses: actions/checkout@v7
         with:
           fetch-depth: 0
-      - name: Verify legacy sync handoff and RC4 migration
+      - name: Verify legacy sync handoff and migration with the pinned template
         run: |
           bash test/test-template-sync.sh
           cd test/kk
-          python3 -B -m unittest test_migrate.Migration.test_rc4_migration_from_old_manifest_preserves_exclusions
+          python3 -B -m unittest test_migrate.Migration.test_default_retirement_tag_preserves_old_manifest_exclusions
       - uses: actions/setup-go@v7
         with:
           go-version-file: go.mod

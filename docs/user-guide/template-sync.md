@@ -16,7 +16,7 @@ From the repository’s working tree, run the following command.
 kk migrate
 ```
 
-You can migrate directly from v0.25.x using the stable kk installer. Leave `serpro69/claude-toolbox` or `serpro69/claude-starter-kit` in the manifest. The v0.26.0 CLI resolves those names to Agentstakk and fetches the cleanup scripts and matching template from `v0.26.0-rc.4`. That was the last tag with the full template. The stable tag carries a retirement notice at the old sync path. Your installed kk release stays active throughout migration.
+You can migrate directly from v0.25.x. Leave `serpro69/claude-toolbox` or `serpro69/claude-starter-kit` in the manifest. kk resolves those names to Agentstakk. Each kk release pins the full legacy template and its matching cleanup scripts to one Git tag. Plain `kk migrate` downloads both automatically. Run `kk migrate --help` to see the tag your installation uses.
 
 If you use a fork, its manifest upstream must match the source of your kk installation. If a Git `insteadOf` rule routes the old and new names to different mirrors, align the rule before retrying.
 
