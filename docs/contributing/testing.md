@@ -39,7 +39,7 @@ Run a single suite:
 
 ## Machine delivery tests
 
-Run `bash test/test-kk.sh` for installer, launchers, lifecycle, guard trust, update notices and migration orchestration. It uses temporary homes and vendor fixtures. Run `bash test/test-template-sync.sh` for the legacy handoff to the compatibility notice. The released-client cases read the last full template from `v0.26.0-rc.4`. In a shallow upstream checkout, fetch the tag with `git fetch origin tag v0.26.0-rc.4` to exercise them. The full sync and removal suites remain in that tag. The `machine-delivery.yml` CI job also runs the guard and Codex adapter suites on Python 3.8 and the current Python.
+Run `bash test/test-kk.sh` for installer, launchers, lifecycle, guard trust, update notices and migration orchestration. It uses temporary homes and vendor fixtures. The migration integration test uses the maintenance tag pinned in `kk/lib/migrate.py`. Run `bash test/test-template-sync.sh` for handoff from the original RC4 updater to the compatibility notice. To exercise both cases in a shallow upstream checkout, run `git fetch origin tag v0.26.0-rc.4 tag v0.26.0+retirement.1`. The maintenance tag contains the full sync and removal suites. The `machine-delivery.yml` CI job also runs the guard and Codex adapter suites on Python 3.8 and the current Python.
 
 For installation evidence, `kk status --live` starts fresh vendor sessions and expects the installed guard’s own denial of a public canary. Open-session behavior needs a session spanning the relevant transition. The tagged pilot verified that an ordinary sync to the last full template kept the legacy guard in place before migration. The release workflows run the machine delivery and generated-guard checks before publication.
 

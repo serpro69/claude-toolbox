@@ -24,8 +24,10 @@ GITHUB_OUTPUT="$fixture/old-ci-output" "$old_ci_sync" --version latest --ci --ou
 test "$(cat "$fixture/old-ci-output")" = has_changes=false
 test ! -e .github/sync-staging
 
+python3 -I -B "$root/kk/lib/run.py" migrate --help | grep -F 'v0.26.0+retirement.1'
+
+# Exercise handoff from the original released updater, as installed downstream.
 tag=v0.26.0-rc.4
-python3 -I -B "$root/kk/lib/run.py" migrate --help | grep -F "$tag"
 if ! git -C "$root" rev-parse -q --verify "refs/tags/$tag" >/dev/null; then
   echo "Skipped released-client handoff: fetch tag $tag to exercise it." >&2
   exit 0
