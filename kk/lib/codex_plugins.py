@@ -15,6 +15,8 @@ from .guard_identity import MANIFEST, guard_identity, with_version
 
 PLUGINS = {"kk": "kodex-plugin", "kk-guard": "kodex-guard"}
 GUARD_ID = "kk-guard@" + MARKETPLACE
+# The full inventory may wait for the remote catalog before listing local plugins.
+INVENTORY_TIMEOUT = 120
 
 
 def saved_receipt(record, directory, name):
@@ -87,9 +89,9 @@ def executable():
     return os.path.abspath(found)
 
 
-def vendor(home, directory, *args):
+def vendor(home, directory, *args, timeout=30):
     result = subprocess.run([executable(), "plugin", *args, "--json"], cwd=home,
-                            env=dict(os.environ, CODEX_HOME=str(directory)), timeout=30,
+                            env=dict(os.environ, CODEX_HOME=str(directory)), timeout=timeout,
                             stdin=subprocess.DEVNULL, stdout=subprocess.PIPE, check=True, text=True)
     return json.loads(result.stdout)
 

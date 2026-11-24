@@ -157,6 +157,18 @@ class LaunchNotice(InstallFixture):
 
 
 class InstallationStatus(InstallFixture):
+    def test_slow_codex_inventory_still_checks_all_marketplaces(self):
+        installed = [{"pluginId": "kk-guard@claude-toolbox", "enabled": True}]
+
+        def slow_list(args, **kwargs):
+            self.assertEqual(args[1:], ["plugin", "list", "--json"])
+            if kwargs["timeout"] < 69:
+                raise subprocess.TimeoutExpired(args, kwargs["timeout"])
+            return subprocess.CompletedProcess(args, 0, json.dumps({"installed": installed}))
+
+        with patch.dict(os.environ, self.env), patch.object(cli.codex_plugins.subprocess, "run", side_effect=slow_list):
+            self.assertEqual(cli.mixed.inventory("codex", self.root, self.env["CODEX_HOME"]), installed)
+
     def test_claude_readiness_requires_source_and_effective_settings(self):
         self.install()
         cli.state.write_json(self.home / "list-override", {"readFromFolder": str(self.root)})

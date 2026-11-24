@@ -263,12 +263,19 @@ def launch_checked(home, args, directory, explicit, lock, trust_flags):
         codex_home = codex_profile.codex_home()
         profile = codex_home / "kk.config.toml"
         snapshot = saved["codex_snapshot"]
-        if (str(codex_home) != snapshot["directory"] or profile.is_symlink() or not profile.is_file()
-                or not codex_profile.matches_profile(
-                    profile.read_bytes(), codex_profile.compose(release, snapshot["settings"])[0])):
-            raise ValueError("cannot verify the managed Codex profile in this CODEX_HOME. "
-                             "If you changed folder or hook trust in kk codex, confirm your intended decisions "
-                             "in plain codex (without --profile) first. Then run kk apply to regenerate the profile.")
+        if str(codex_home) != snapshot["directory"]:
+            raise ValueError("the managed Codex profile was installed in a different CODEX_HOME: {}. "
+                             "Use that home, or {}".format(display(snapshot["directory"]),
+                                                          codex_plugins.activation_hint(saved)))
+        if profile.is_symlink() or not profile.is_file():
+            raise ValueError("expected a regular managed Codex profile at {}. Check the path, then run kk apply.".format(
+                display(profile)))
+        expected_profile = codex_profile.compose(release, snapshot["settings"])[0]
+        if not codex_profile.matches_profile(profile.read_bytes(), expected_profile):
+            raise ValueError("the managed Codex profile {} differs from its generated settings. "
+                             "Save preferences you want to keep under codex.settings in {} before running kk apply. "
+                             "Confirm any folder or hook trust choices in plain codex (without --profile).".format(
+                                 display(profile), display(state.override_path())))
         if not codex_plugins.receipt(record, codex_home, "kk-guard"):
             raise ValueError("Codex guard is not installed in this CODEX_HOME; " + codex_plugins.activation_hint(saved))
         phase, issues = codex_trust.check(release, codex_home, directory, trust_flags,

@@ -244,6 +244,21 @@ class CodexActivation(InstallFixture):
         self.assertIn("plain codex", drift)
         self.assertIn("kk apply", drift)
 
+    def test_batch_profile_drift_explains_how_to_preserve_preferences(self):
+        self.install()
+        (self.directory / "fixture-reviewed").write_text(self.guard_version())
+        profile = self.directory / "kk.config.toml"
+        profile.write_bytes(b'service_tier = "default"\n' + profile.read_bytes())
+        overrides = Path(self.env["XDG_CONFIG_HOME"]) / "kk/config.json"
+        drift = self.invoke(self.link, "codex", "exec", ok=False).stderr
+        self.assertIn("differs from", drift)
+        self.assertIn("codex.settings", drift)
+        self.assertIn(str(overrides), drift)
+        self.assertIn("kk apply", drift)
+        cli.state.write_json(overrides, {"codex": {"settings": {"service_tier": "default"}}})
+        self.invoke(self.link, "apply")
+        self.invoke(self.link, "codex", "exec", "hello")
+
     def test_vendor_model_tip_update_preserves_batch_checks(self):
         self.install()
         (self.directory / "fixture-reviewed").write_text(self.guard_version())

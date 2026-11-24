@@ -7,7 +7,7 @@ import re
 import subprocess
 import tempfile
 
-from . import codex_profile, mixed, state
+from . import codex_plugins, codex_profile, mixed, state
 
 
 def claude_errors(stream, canary):
@@ -55,15 +55,19 @@ def run(tool, home):
         _, issues = mixed.inspect(tool, workspace, codex_profile.codex_home())
         if issues:
             raise ValueError("; ".join(issues))
+        session_timeout = 90
         if tool == "claude":
             args = ["-p", "--verbose", "--output-format", "stream-json", "--tools", "Read",
                     "--no-session-persistence", "Use Read once on {}. Then stop.".format(canary)]
         else:
+            # Without hooks/list the batch launcher checks the inventory again
+            # before Codex can start the live model session.
+            session_timeout += codex_plugins.INVENTORY_TIMEOUT
             args = ["exec", "--ephemeral", "--sandbox", "read-only", "--json",
                     "Use the shell tool once to run the following command, then stop.\ncat {}".format(canary.name)]
             env["RUST_LOG"] = "codex_core::tools::router=error"
         result = subprocess.run([str(home / "bin/kk"), tool, *args], cwd=workspace, env=env,
-                                stdin=subprocess.DEVNULL, capture_output=True, text=True, timeout=90)
+                                stdin=subprocess.DEVNULL, capture_output=True, text=True, timeout=session_timeout)
         if result.returncode:
             message = next((line for line in result.stderr.splitlines() if line.startswith("kk: ")), "")
             raise ValueError(message[:500] or "vendor session exited {}; check {} authentication and guard settings".format(

@@ -52,7 +52,7 @@ class Install(NamedTuple):
 def inventory(tool, workspace, directory):
     if tool == "claude":
         return claude.vendor(workspace, "list")
-    return codex_plugins.vendor(workspace, directory, "list")["installed"]
+    return codex_plugins.vendor(workspace, directory, "list", timeout=codex_plugins.INVENTORY_TIMEOUT)["installed"]
 
 
 def other_copies(tool, rows):

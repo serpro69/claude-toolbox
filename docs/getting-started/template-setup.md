@@ -33,7 +33,7 @@ curl -fsSL https://raw.githubusercontent.com/serpro69/agentstakk/v0.26.0/install
 
 - **Repository created from claude-toolbox.** Look for `.github/template-state.json`. After installing kk, run `kk migrate` in that repository to preview the changes. The old upstream name in the manifest is recognized automatically. [Migrate a template repository](../user-guide/template-sync.md)
 - **Plugin installed directly as `kk@claude-toolbox`.** To keep using the public plugin, switch its registration to `kk@agentstakk`. To adopt the machine launchers, follow the install and verification steps above. [Switch a Git-marketplace installation](plugin-only.md#switch-an-existing-git-marketplace-installation)
-- **Clone of the Agentstakk project itself.** Update the remote that points to the old upstream. A repository created from the template keeps its own remote. [Contributor setup](../contributing/index.md#getting-started)
+- **Clone of the Agentstakk project itself.** This is the source repository and has no template manifest. Skip `kk migrate` here. If its Git remote still points to `serpro69/claude-toolbox`, update that remote. [Contributor setup](../contributing/index.md#getting-started)
 
 For versioned documentation bookmarks, replace `/claude-toolbox/` with `/agentstakk/` and keep the version and page path.
 
