@@ -4,7 +4,7 @@ Use this guide if your project contains `.github/template-state.json` from claud
 
 ## Before you begin
 
-1. **Prepare the machines.** Each person who relies on the repository’s guards should [install kk and verify the guards](../getting-started/template-setup.md). If the project includes `.codex/`, the machine running the migration needs the managed Codex guard as well as folder and hook trust reviewed in plain `codex`. Close Codex sessions opened before that guard was installed and reviewed.
+1. **Prepare the machines.** Each person who relies on the repository’s guards should [install kk and verify the guards](../getting-started/install.md). If the project includes `.codex/`, the machine running the migration needs the managed Codex guard as well as folder and hook trust reviewed in plain `codex`. Close Codex sessions opened before that guard was installed and reviewed.
 2. **Check what the team needs to keep.** Review `git status`. Save edits to synced files or list their paths in the manifest’s `sync_exclusions`. Check whether CI, cloud sessions or teammates depend on committed plugin settings before retiring them. [Effects on the team](#what-changes-for-the-team)
 3. **Check the migration tools.** Put Bash 4 or newer (including on macOS), `curl` and Mike Farah’s `yq` on `PATH`, alongside the tools required by the installer. The command downloads the retirement scripts and contacts the providers for a live guard check.
 
@@ -54,4 +54,4 @@ The default branch and releases after RC4 carry a small compatibility script at 
 
 For maintenance of a repository still using the old updater, the versioned reference covers sync exclusions, GitHub Actions credentials and settings merges. [Legacy template-sync reference at v0.25.4](https://github.com/serpro69/agentstakk/blob/v0.25.4/docs/user-guide/template-sync.md)
 
-Use Git to revert a committed repository migration. `kk rollback` restores a retained release on one machine. [Machine updates and recovery](../getting-started/template-setup.md#update-and-recover)
+Use Git to revert a committed repository migration. `kk rollback` restores a retained release on one machine. [Machine updates and recovery](../getting-started/install.md#update-and-recover)

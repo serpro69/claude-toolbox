@@ -8,7 +8,7 @@ Why `kk`? I have `jj` and `kk` mappings in nvim to go back to normal mode, and i
 
 ## Installation
 
-If you use the machine installer, `kk claude` already loads this plugin. To install just the plugin from the public Git marketplace, use the commands below. [Machine installation](https://serpro69.github.io/agentstakk/latest/getting-started/template-setup/) · [Migrate a plugin from claude-toolbox](https://serpro69.github.io/agentstakk/latest/getting-started/plugin-only/#switch-an-existing-git-marketplace-installation)
+If you use the machine installer, `kk claude` already loads this plugin. To install just the plugin from the public Git marketplace, use the commands below. [Machine installation](https://github.com/serpro69/agentstakk/blob/master/docs/getting-started/install.md) · [Migrate a plugin from claude-toolbox](https://serpro69.github.io/agentstakk/latest/getting-started/plugin-only/#switch-an-existing-git-marketplace-installation)
 
 ```
 /plugin marketplace add serpro69/agentstakk

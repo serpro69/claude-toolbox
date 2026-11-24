@@ -52,7 +52,7 @@ for destinations, missing context and sharing boundaries.
 
 ## Requirements
 
-The [installation guide](template-setup.md) lists the required tools. MCP integrations are optional. Configure them when you need library documentation, external reviews or persistent project memory. [MCP servers](../user-guide/mcp-servers.md)
+The [installation guide](install.md) lists the required tools. MCP integrations are optional. Configure them when you need library documentation, external reviews or persistent project memory. [MCP servers](../user-guide/mcp-servers.md)
 
 ### API Keys
 

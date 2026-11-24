@@ -53,7 +53,7 @@ The Go tools under `cmd/` have their own tests: `make generate-kodex` (Codex gen
 
 ## Troubleshooting
 
-See the [machine install guide](docs/getting-started/template-setup.md), [MCP setup](docs/user-guide/mcp-servers.md) and [template migration guide](docs/user-guide/template-sync.md).
+See the [machine install guide](docs/getting-started/install.md), [MCP setup](docs/user-guide/mcp-servers.md) and [template migration guide](docs/user-guide/template-sync.md).
 
 ## Proportionate verification
 

@@ -206,7 +206,7 @@ figures it was built with; the as-of date says which. To try it locally, run
 | Plugin-only | The vendor manages the Git-marketplace plugins and the user’s own vendor settings. |
 | Legacy template | Until migration, the repository keeps its committed settings and sync infrastructure. Ordinary sync can update them through the last full template. `kk migrate` previews removal and asks the team to confirm. |
 
-**Testing a checkout on your account.** From the Agentstakk repository root, use `./install.sh --local .` for a first installation. If kk is already installed, use `kk upgrade --local .`. Both stage and activate the checkout through the same code path as a downloaded release. For testing without changing your active installation, run `bash test/test-kk.sh` with its temporary homes. [Stable release installer](../getting-started/template-setup.md)
+**Testing a checkout on your account.** From the Agentstakk repository root, use `./install.sh --local .` for a first installation. If kk is already installed, use `kk upgrade --local .`. Both stage and activate the checkout through the same code path as a downloaded release. For testing without changing your active installation, run `bash test/test-kk.sh` with its temporary homes. [Stable release installer](../getting-started/install.md)
 
 ### Marketplace gotchas
 

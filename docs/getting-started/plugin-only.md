@@ -1,6 +1,6 @@
 # Plugin-only setup
 
-Use the public `agentstakk` marketplace to add the workflow skills to your existing Claude Code or Codex configuration. Start sessions with the provider’s own CLI. For the `kk claude` and `kk codex` launchers, use the [machine installer](template-setup.md). If you already have `kk@claude-toolbox`, follow the [marketplace switch](#switch-an-existing-git-marketplace-installation).
+Use the public `agentstakk` marketplace to add the workflow skills to your existing Claude Code or Codex configuration. Start sessions with the provider’s own CLI. For the `kk claude` and `kk codex` launchers, use the [machine installer](install.md). If you already have `kk@claude-toolbox`, follow the [marketplace switch](#switch-an-existing-git-marketplace-installation).
 
 ## Claude Code
 
@@ -31,7 +31,7 @@ In v0.25.x the public plugin was `kk@claude-toolbox`. Its replacement is `kk@age
 3. **Remove the old plugin.** For a Claude user installation, run `claude plugin uninstall --scope user --keep-data kk@claude-toolbox`. For Codex, run `codex plugin remove kk@claude-toolbox`. Remove any other old plugin only if the inventory shows it is yours and you have replaced it.
 4. **Retire the old registration.** Once no other installation or scope uses it, run `claude plugin marketplace remove --scope user claude-toolbox` for a Claude user registration or `codex plugin marketplace remove claude-toolbox` for Codex. Start a fresh session and check the plugin list and, if enabled, the guard in `/hooks`.
 
-If you are adopting machine-managed kk instead, the installer registers `agentstakk-local` for you. Use `kk status` to identify duplicate plugins after installation. [Machine installation and verification](template-setup.md#verify-and-launch)
+If you are adopting machine-managed kk instead, the installer registers `agentstakk-local` for you. Use `kk status` to identify duplicate plugins after installation. [Machine installation and verification](install.md#verify-and-launch)
 
 ### Codex warns that the marketplace name does not match
 
@@ -52,4 +52,4 @@ Both plugins include the workflow skills and language profiles. Claude also incl
 
 ## What's not included
 
-Configure [MCP servers](../user-guide/mcp-servers.md) separately. The [machine installation](template-setup.md) supplies the kk launchers, Claude’s native permission settings and statusline, the Codex profile and reviewer files, optional account-wide Codex rules, and offline rollback.
+Configure [MCP servers](../user-guide/mcp-servers.md) separately. The [machine installation](install.md) supplies the kk launchers, Claude’s native permission settings and statusline, the Codex profile and reviewer files, optional account-wide Codex rules, and offline rollback.

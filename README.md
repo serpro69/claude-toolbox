@@ -81,7 +81,7 @@ export PATH="$HOME/.local/bin:$PATH"
 kk status
 ```
 
-For Codex, open plain `codex` in your project first, review folder trust and the three managed guard handlers in `/hooks`, then exit. Run `kk status --live` to check your installed guards. Start sessions with `kk claude` or `kk codex`. [Installation and updates](docs/getting-started/template-setup.md) · [Plugin-only setup](docs/getting-started/plugin-only.md)
+For Codex, open plain `codex` in your project first, review folder trust and the three managed guard handlers in `/hooks`, then exit. Run `kk status --live` to check your installed guards. Start sessions with `kk claude` or `kk codex`. [Installation and updates](docs/getting-started/install.md) · [Plugin-only setup](docs/getting-started/plugin-only.md)
 
 ## Try It
 

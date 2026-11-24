@@ -4,7 +4,7 @@ Claude Code is the primary provider for Agentstakk. All skills, agents, and conf
 
 ## Setup
 
-[Install kk](../getting-started/template-setup.md), then run `kk claude` in your project. For a vendor-managed plugin with your own settings, use the [plugin-only setup](../getting-started/plugin-only.md). Configure [MCP servers](../user-guide/mcp-servers.md) separately.
+[Install kk](../getting-started/install.md), then run `kk claude` in your project. For a vendor-managed plugin with your own settings, use the [plugin-only setup](../getting-started/plugin-only.md). Configure [MCP servers](../user-guide/mcp-servers.md) separately.
 
 ## Claude Code authentication and terms
 

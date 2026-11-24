@@ -1,6 +1,6 @@
 # Use kk in an existing repository
 
-[Install kk](template-setup.md) once. In your project, run `kk claude` or `kk codex`. Keep versioned team instructions in `CLAUDE.md` and `AGENTS.md`, project restrictions in `.claude/kk-guard.json`, and your personal launcher preferences in the [machine override file](../user-guide/configuration.md#how-configuration-works).
+[Install kk](install.md) once. In your project, run `kk claude` or `kk codex`. Keep versioned team instructions in `CLAUDE.md` and `AGENTS.md`, project restrictions in `.claude/kk-guard.json`, and your personal launcher preferences in the [machine override file](../user-guide/configuration.md#how-configuration-works).
 
 ## Repositories created from the toolbox template
 
