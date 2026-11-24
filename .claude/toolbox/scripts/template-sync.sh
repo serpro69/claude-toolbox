@@ -1630,7 +1630,7 @@ def render(merged, source):
     return output
 
 
-def edit_config(source, desired):
+def edit_config(source, desired, retire):
     """Retain original TOML statements, quoting and comments for surviving values."""
     original = parse_toml(source)
     if same(original, desired):
@@ -1666,9 +1666,11 @@ def edit_config(source, desired):
                 out.extend(line)
                 if line.rstrip(b"\r\n") == header.rstrip(b"\r"):
                     break
+        preceding_trivia = b""
         for line in lines:
             if not line.strip() or line.lstrip().startswith(b"#"):
                 out.extend(line)
+                preceding_trivia = line
                 continue
             # Ask the TOML parser to decode dotted and quoted keys. The value
             # can span several physical lines (arrays and multiline strings).
@@ -1678,6 +1680,10 @@ def edit_config(source, desired):
             raw_key = key[1]
             path = table + assignment_path(raw_key)
             value = lookup(desired, path)
+            if (retire and value is ABSENT and path == ("project_doc_max_bytes",)
+                    and preceding_trivia.rstrip(b"\r\n") == b"# Allow larger project instruction chains before truncation."):
+                del out[-len(preceding_trivia):]
+            preceding_trivia = b""
             if value is not ABSENT:
                 if same(lookup(original, path), value):
                     out.extend(line)
@@ -1735,7 +1741,7 @@ else:
         for key, value in desired.items():
             label = " = " + toml_value(value) if key in POLICIES or key == "model" else ""
             print("Keep Codex {}{}".format(key, label), file=sys.stderr)
-    output = edit_config(source, desired) if desired or not local else b""
+    output = edit_config(source, desired, mode == "retire") if desired or not local else b""
 sys.stdout.buffer.write(output)
 PY
 }
@@ -3046,12 +3052,12 @@ retire_template() {
   for file in "${files[@]}" "${infrastructure[@]}"; do
     if [[ ! -s $after/$file ]]; then printf '%s\0' "$file"; fi
   done >"$stage/removals"
-  python3 -I - "$before/CLAUDE.md" "$after/CLAUDE.md" "$stage/removals" <<'PY'
+  python3 -I - "$before/CLAUDE.md" "$after/CLAUDE.md" "$stage/removals" "$stage/upstream/CLAUDE.md" <<'PY'
 import os
 from pathlib import Path
 import sys
 
-source, output, plan = map(Path, sys.argv[1:])
+source, output, plan, template = map(Path, sys.argv[1:])
 removed = {Path(os.fsdecode(name)).resolve() for name in plan.read_bytes().split(b"\0") if name}
 lines = source.read_bytes().splitlines(keepends=True) if source.exists() else []
 present = {line.rstrip(b"\r\n") for line in lines}
@@ -3067,7 +3073,18 @@ for name in (".claude/CLAUDE.extra.md", ".claude/toolbox/CLAUDE.md"):
     if line in present:
         print("Keep @{} in CLAUDE.md. Claude will continue loading the retained file.".format(name))
 if source.exists():
-    output.write_bytes(b"".join(line for line in lines if line.rstrip(b"\r\n") not in drop))
+    # The stock file separates each import with a blank line. In customized
+    # files only the import itself can be attributed to the template.
+    stock_layout = (not template.is_symlink() and template.is_file()
+                    and template.read_bytes().splitlines() == [line.rstrip(b"\r\n") for line in lines])
+    kept = []
+    for line in lines:
+        if line.rstrip(b"\r\n") in drop:
+            if stock_layout and kept and kept[-1] in (b"\n", b"\r\n"):
+                kept.pop()
+        else:
+            kept.append(line)
+    output.write_bytes(b"".join(kept))
 PY
   if [[ -f $before/CLAUDE.md ]] && ! cmp -s "$before/CLAUDE.md" "$after/CLAUDE.md"; then
     files+=(CLAUDE.md)

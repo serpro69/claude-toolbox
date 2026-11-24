@@ -321,6 +321,39 @@ class Retirement(unittest.TestCase):
         self.assertFalse((links / GUARD).exists())
         self.assertEqual((links / "CLAUDE.md").read_bytes(), b"@other\r\n keep")
 
+    def test_retired_import_separators(self):
+        stock = (ROOT / "CLAUDE.md").read_bytes()
+        put(self.up, "CLAUDE.md", stock)
+        self.tag("v3.0.1")
+        repo = self.project("separators")
+        put(repo, "CLAUDE.md", stock.replace(b"\n", b"\r\n"))
+        self.sync(repo, "--retire", "--version", "v3.0.1")
+        self.assertEqual((repo / "CLAUDE.md").read_bytes(), b"@AGENTS.md\r\n\r\n@.capy/AGENTS.md\r\n")
+
+        custom = self.project("custom-spacing")
+        put(custom, ".claude/CLAUDE.extra.md", "project instructions\n")
+        original = b"Team notes\n\n" + stock
+        put(custom, "CLAUDE.md", original)
+        self.sync(custom, "--retire", "--version", "v3.0.1")
+        self.assertEqual((custom / "CLAUDE.md").read_bytes(), original.replace(b"@.claude/toolbox/CLAUDE.md\n", b""))
+
+    def test_retired_instruction_budget_comment(self):
+        comment = b"# Allow larger project instruction chains before truncation.\r\n"
+        budget = b"project_doc_max_bytes = 65536\r\n"
+        put(self.up, CONFIG, comment + budget)
+        self.tag("v3.0.1")
+        for name, before, after in (
+            ("retired", comment + budget, b""),
+            ("custom-limit", comment + b"project_doc_max_bytes = 12345\r\n",
+             comment + b"project_doc_max_bytes = 12345\r\n"),
+            ("custom-note", b"# Team instructions\r\n" + budget, b"# Team instructions\r\n"),
+        ):
+            with self.subTest(name=name):
+                repo = self.project(name)
+                put(repo, CONFIG, before + CUSTOM_TABLE)
+                self.sync(repo, "--retire", "--version", "v3.0.1")
+                self.assertEqual((repo / CONFIG).read_bytes(), after + CUSTOM_TABLE)
+
     def test_predecessor_handoff(self):
         old = subprocess.run(["git", "show", "v0.25.4:" + str(SYNC)], cwd=ROOT, capture_output=True)
         old_script = self.tmp / "previous/template-sync.sh"
