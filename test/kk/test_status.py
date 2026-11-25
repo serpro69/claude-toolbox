@@ -286,12 +286,21 @@ class InstallationStatus(InstallFixture):
         def run(args, **kwargs):
             if args[0] == "git":
                 return subprocess.CompletedProcess(args, 0)
-            return subprocess.CompletedProcess(args, 1, "", "vendor noise\nkk: the guard is awaiting review\n")
+            return subprocess.CompletedProcess(args, 1, "", stderr)
+        refusal = "the guard is awaiting review"
         with patch.object(cli.mixed, "inspect", return_value=([], [])), patch.object(cli.live.subprocess, "run", side_effect=run):
             for tool in ("claude", "codex"):
-                with self.assertRaises(ValueError) as failure:
-                    cli.live.run(tool, self.toolbox)
-                self.assertEqual(str(failure.exception), "the guard is awaiting review")
+                vendor = "vendor session exited 1; check {} authentication and guard settings".format(tool)
+                for stderr, reported in (
+                        ("vendor noise\nkk: " + refusal + "\n", refusal),
+                        # The launcher warns under the same prefix before it refuses.
+                        ("kk: overrides changed. Run kk apply.\nkk: " + refusal + "\n\n", refusal),
+                        # A warning is not the reason a vendor session failed afterwards.
+                        ("kk: overrides changed. Run kk apply.\nERROR: not signed in\n", vendor),
+                        ("kk: \n", vendor), ("", vendor)):
+                    with self.subTest(tool=tool, stderr=stderr), self.assertRaises(ValueError) as failure:
+                        cli.live.run(tool, self.toolbox)
+                    self.assertEqual(str(failure.exception), reported)
 
     def test_live_command_tries_both_tools_and_fails_on_missing_evidence(self):
         self.install()
@@ -302,6 +311,12 @@ class InstallationStatus(InstallFixture):
         self.assertIn("codex live: failed", run.stdout)
         self.assertIn("claude live: failed", run.stdout)
         self.assertEqual(self.state(), record)
+        # The batch launcher warns about a failed origin lookup before it refuses; the refusal is the reason.
+        (Path(self.env["CODEX_HOME"]) / "fixture-no-config-read").touch()
+        (Path(self.env["CODEX_HOME"]) / "disabled-1").touch()
+        refused = self.invoke(self.link, "status", "--live", ok=False).stdout
+        self.assertIn("codex live: failed: Codex guard awaiting review for ", refused)
+        self.assertNotIn("configuration origins", refused)
 
     def test_unmanaged_vendor_is_reported_but_is_not_a_required_live_check(self):
         self.install()

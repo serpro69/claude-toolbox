@@ -69,8 +69,11 @@ def run(tool, home):
         result = subprocess.run([str(home / "bin/kk"), tool, *args], cwd=workspace, env=env,
                                 stdin=subprocess.DEVNULL, capture_output=True, text=True, timeout=session_timeout)
         if result.returncode:
+            # A launcher that refuses prints its reason last. Its warnings carry the same prefix
+            # but come earlier, and a vendor that failed by itself ends on its own output.
+            last = (result.stderr.strip().splitlines() or [""])[-1]
             # Callers print this message behind their own "kk: " or "live: failed: ".
-            message = next((line[4:] for line in result.stderr.splitlines() if line.startswith("kk: ")), "")
+            message = last[4:] if last.startswith("kk: ") else ""
             raise ValueError(message[:500] or "vendor session exited {}; check {} authentication and guard settings".format(
                 result.returncode, tool))
         if tool == "claude":
