@@ -1,7 +1,7 @@
 # Design: Codex launch overrides
 
 > Issue: [#206](https://github.com/serpro69/agentstakk/issues/206) — choices made inside `kk codex` sessions drift the managed profile and break batch launches
-> Status: design approved, 2026-11-24; revised after two design reviews and a consistency pass with further probes, 2026-11-24
+> Status: design approved, 2026-11-24; revised after two design reviews and a consistency pass with further probes, 2026-11-24; empty-value rule limited to arrays after the Task 1 probes, 2026-11-25
 > Evidence: Codex CLI 0.172.0, Linux
 
 ## Problem
@@ -48,7 +48,7 @@ Success:
 | `config/read` origin key names | Canonical, not as written: `agents.max_threads` → `agents.max_concurrent_threads_per_session`, `tui.whimsy` → `tui.effects.starfield`; arrays per element (`tui.status_line.0`, `.1`, …) |
 | Canonical names as `-c` input | Accepted and reported under the same names |
 | Keys Codex does not know (`my_new_preference`, `tui.made_up`) | Reported under the raw name with origin `sessionFlags` |
-| Empty array or table (`tui.status_line = []`), from `-c` or `config.toml` | **No origin reported**; the effective `config` shows the empty value. With nothing set, Codex's own value for kk's array leaves is absent (`config.tui` is `null`) |
+| Empty array or table (`tui.status_line = []`), from `-c` or `config.toml` | **No origin reported**; the effective `config` shows the empty value. With nothing set, Codex's own value for kk's array leaves is absent (`config.tui` is `null`); once another `tui` value is set they stay `null`, while `tui.default_hosts`, `tui.presets` and `tui.model_availability_nux` default to `{}` |
 | Origin types with nothing configured | Only `user` (for `projects.*`); `packagedDefaults` was not observed |
 | `codex -c developer_instructions=… debug prompt-input`, no profile | The value arrives as a `developer` message |
 | `exec`-only flags | `--ignore-user-config` omits `config.toml` from the run; `--trust` writes project trust during the run. `app-server` accepts neither |
@@ -69,7 +69,7 @@ Earlier evidence (machine-level-delivery design): the profile ranks above `confi
 
 Explicit values reproduce the profile's old precedence slot: they beat `config.toml` and yield to a trusted repository. This keeps the documented promises that existing project sandbox and approval settings win after migration and that a trusted repository's own `developer_instructions` win on ordinary launches. Baseline defaults also yield to `config.toml`, so a model chosen there (or saved there by Codex) is used. A `codex.settings` leaf at the same path as a baseline leaf replaces the baseline leaf, as `overlay` does today.
 
-**Origin matching.** The baseline uses Codex's canonical key names (`agents.max_concurrent_threads_per_session`, `tui.effects.starfield`), which Codex accepts as input. A kk leaf counts as set when an origin key equals its dotted path or starts with that path plus `.` (array elements), with an origin type other than `packagedDefaults` (never observed, but defined by the protocol as Codex's own default). Because Codex reports no origin for an empty array or table, a leaf also counts as set when the effective `config` holds an empty array or table at its path; Codex's own value for those leaves is absent, so an empty value can only come from a configuration layer. `kk apply` checks the mapping (section 4), so a future vendor rename or an aliased `codex.settings` key fails loudly instead of silently never yielding.
+**Origin matching.** The baseline uses Codex's canonical key names (`agents.max_concurrent_threads_per_session`, `tui.effects.starfield`), which Codex accepts as input. A kk leaf counts as set when an origin key equals its dotted path or starts with that path plus `.` (array elements), with an origin type other than `packagedDefaults` (never observed, but defined by the protocol as Codex's own default). Because Codex reports no origin for an empty array, a leaf also counts as set when the effective `config` holds an empty array at its path; Codex's own value for kk's array leaves is absent, so an empty array can only come from a configuration layer. An empty table does not count, because Codex fills some tables (`tui.presets`, for example) with `{}` by default. `kk apply` checks the mapping (section 4), so a future vendor rename or an aliased `codex.settings` key fails loudly instead of silently never yielding.
 
 **Model group.** `model`, `model_reasoning_effort`, `model_context_window` and `model_auto_compact_token_limit` are sized together for kk's default model. All four baseline values are dropped when the session's model will not be kk's baseline model: `model` is set elsewhere, supplied by `codex.settings`, switched off in `codex.defaults`, or the command line carries `-m`/`--model` or `--oss`. Otherwise each still yields individually. A `codex.settings` value for one of the other three is explicit and stays. This mirrors `kk claude`'s special-casing of effort.
 
@@ -91,7 +91,7 @@ An explicit `--profile <name>` remains a pass-through with no kk flags and no im
 
 The `initialize` / `initialized` / request plumbing in `codex_trust.hooks` moves to a small shared helper that runs a list of requests in one `app-server` session and returns their results, preserving today's error handling (including `-32601` for a missing method). `hooks/list` and `config/read` both use it.
 
-The origin lookup sends `config/read` with `cwd` set to the lookup directory and returns both `origins` and the effective `config` (needed for empty values). `launch_options` returns that directory separately from the verified workspace: the `-C` target or current directory, even for `resume`, `fork`, `--remote` and `--worktree`, where the verified workspace stays `None`. The lookup's `app-server` process receives only the caller's own `-c`/`--enable`/`--disable` flags in their original order, so a caller `-c model=…` appears as `sessionFlags` and beats kk's default. The interactive lookup has a 5-second kill timer; the batch trust read keeps 10 seconds.
+The origin lookup sends `config/read` with `cwd` set to the lookup directory and returns both `origins` and the effective `config` (needed for empty arrays). `launch_options` returns that directory separately from the verified workspace: the `-C` target or current directory, even for `resume`, `fork`, `--remote` and `--worktree`, where the verified workspace stays `None`. The lookup's `app-server` process receives only the caller's own `-c`/`--enable`/`--disable` flags in their original order, so a caller `-c model=…` appears as `sessionFlags` and beats kk's default. The interactive lookup has a 5-second kill timer; the batch trust read keeps 10 seconds.
 
 For resumed sessions, if the session belongs to another repository, that repository's project values can be shadowed by kk's explicit values for the session. Imports are already skipped in this case; the trade-off is accepted rather than dropping all kk flags for resumed sessions.
 

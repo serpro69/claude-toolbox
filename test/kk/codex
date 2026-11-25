@@ -3,6 +3,7 @@
 import json
 import os
 from pathlib import Path
+import re
 import shutil
 import sys
 
@@ -10,6 +11,9 @@ args = sys.argv[1:]
 directory = Path(os.environ["CODEX_HOME"])
 market = directory / "fixture-market"
 cache = directory / "plugins/cache/agentstakk-local"
+STRING = r'"(?:[^"\\]|\\.)*"'
+KEY = re.compile(STRING + r"|[A-Za-z0-9_-]+")
+SCALAR = re.compile(STRING + r"|true|false|-?[0-9]+(?:\.[0-9]+)?(?:[eE][+-]?[0-9]+)?")
 
 
 def installed():
@@ -17,12 +21,130 @@ def installed():
             for p in sorted(cache.glob("*/*")) if p.is_dir()]
 
 
+def toml_value(text):
+    """Read the values kk's toml_value emits; like Codex, keep anything else as a plain string."""
+    def skip(at):
+        while text[at:at + 1] == " ":
+            at += 1
+        return at
+
+    def token(pattern, at):
+        found = pattern.match(text, at)
+        if not found:
+            raise ValueError(text)
+        bare = pattern is KEY and found[0][0] != '"'
+        return found[0] if bare else json.loads(found[0]), skip(found.end())
+
+    def read(at):
+        at = skip(at)
+        opener = text[at:at + 1]
+        if opener not in ("{", "["):
+            return token(SCALAR, at)
+        value, closer = ({}, "}") if opener == "{" else ([], "]")
+        at = skip(at + 1)
+        while text[at:at + 1] != closer:
+            if opener == "{":
+                key, at = token(KEY, at)
+                if text[at:at + 1] != "=":
+                    raise ValueError(text)
+                value[key], at = read(at + 1)
+            else:
+                item, at = read(at)
+                value.append(item)
+            if text[at:at + 1] == ",":
+                at = skip(at + 1)
+        return value, skip(at + 1)
+
+    try:
+        value, end = read(0)
+        if end != len(text):
+            raise ValueError(text)
+    except ValueError:
+        return text
+    return value
+
+
+def put(table, path, value):
+    for part in path[:-1]:
+        if not isinstance(table.get(part), dict):
+            table[part] = {}
+        table = table[part]
+    table[path[-1]] = value
+
+
+def session_flags(arguments):
+    """Merge configuration flags the way Codex 0.172 builds its session layer.
+
+    Each -c applies in order: a dotted path sets one leaf, splitting on every
+    dot, and an inline table replaces everything under its key. Feature toggles
+    apply after every -c, wherever they appear.
+    """
+    config, toggles = {}, []
+    it = iter(arguments)
+    for arg in it:
+        key, separator, value = arg.partition("=")
+        if arg[:2] == "-c" and len(arg) > 2:
+            key, separator, value = "-c", "attached", arg[3:] if arg[2] == "=" else arg[2:]
+        if key not in ("-c", "--config", "--enable", "--disable"):
+            continue
+        if not separator:
+            value = next(it)
+        if key in ("--enable", "--disable"):
+            toggles.append((["features", value], key == "--enable"))
+        else:
+            path, _, value = value.partition("=")
+            put(config, path.split("."), toml_value(value))
+    for path, value in toggles:
+        put(config, path, value)
+    return config
+
+
+def leaves(table, path=()):
+    for key, value in table.items():
+        if isinstance(value, dict) and value:
+            yield from leaves(value, path + (key,))
+        else:
+            yield path + (key,), value
+
+
+def config_read(flags):
+    def fixture(name):
+        path = directory / name
+        return json.loads(path.read_text()) if path.exists() else {}
+
+    def origin(kind):
+        return {"name": {"type": kind}, "version": "sha256:fixture"}
+
+    aliases = fixture("fixture-aliases.json")
+    origins = {path: origin(kind) for path, kind in fixture("fixture-origins.json").items()}
+    # Codex reports an unset value or table as null.
+    config = dict({"model": None, "agents": None, "tui": None}, **fixture("fixture-config.json"))
+    for path, value in leaves(flags):
+        name = ".".join(path)
+        if name in aliases:
+            name = aliases[name]
+            path = name.split(".")
+        put(config, path, value)
+        # Arrays are reported per element, so an empty array or table has no origin.
+        if isinstance(value, list):
+            keys = [name + "." + str(i) for i in range(len(value))]
+        else:
+            keys = [] if value == {} else [name]
+        origins.update((key, origin("sessionFlags")) for key in keys)
+    return {"config": config, "origins": origins}
+
+
 def app_server():
+    flags = session_flags(args[:-1])
     for line in sys.stdin:
         msg = json.loads(line)
         if msg["method"] == "initialized":
             continue
         reply = {"id": msg["id"], "result": {}}
+        if msg["method"] == "config/read":
+            reply["result"] = config_read(flags)
+            if (directory / "fixture-no-config-read").exists():
+                reply = {"id": msg["id"], "error": {"code": -32601}}
         if msg["method"] == "hooks/list":
             cwd = msg["params"]["cwds"][0]
             hooks = []
@@ -36,7 +158,9 @@ def app_server():
                         hooks.append(dict(hook, matcher=group["matcher"], source="plugin", pluginId="kk-guard@agentstakk-local",
                                           key="kk-guard@agentstakk-local:hooks/hooks.json:pre_tool_use:{}:{}".format(i, j),
                                           enabled=not (directory / ("disabled-" + str(i))).exists(), trustStatus=trust))
-            if "features.hooks=false" in args or (Path(cwd) / "fixture-guard-off").exists():
+            features = flags.get("features")
+            if (isinstance(features, dict) and features.get("hooks") is False
+                    or (Path(cwd) / "fixture-guard-off").exists()):
                 hooks = []
             reply["result"] = {"data": [{"cwd": cwd, "errors": [], "hooks": hooks}]}
             if (directory / "fixture-no-method").exists():

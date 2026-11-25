@@ -1,58 +1,23 @@
 """Read Codex's effective guard handlers for one workspace without changing trust."""
 
-import json
-import os
 from pathlib import Path
-import subprocess
 import sys
-from threading import Timer
 
-from . import claude, codex_plugins, mixed, payload
+from . import claude, codex_app, codex_plugins, mixed, payload
 from .codex_plugins import GUARD_ID
 
 
 REVIEW_UI = "/hooks in plain codex (without --profile)"
-
-
-class NoTrustMethod(Exception):
-    """The vendor explicitly reported that hooks/list is unavailable."""
+NoTrustMethod = codex_app.NoMethod  # hooks/list is the only method the trust read requests.
 
 
 def hooks(directory, workspace, flags, executable):
-    with subprocess.Popen([executable, *flags, "app-server"], cwd=workspace,
-                          env=dict(os.environ, CODEX_HOME=str(directory)), text=True,
-                          stdin=subprocess.PIPE, stdout=subprocess.PIPE, stderr=subprocess.DEVNULL) as proc:
-        timeout = Timer(10, proc.kill)
-        timeout.start()
-
-        def send(message):
-            proc.stdin.write(json.dumps(dict(jsonrpc="2.0", **message)) + "\n")
-            proc.stdin.flush()
-
-        def request(number, method, params):
-            send({"id": number, "method": method, "params": params})
-            for line in proc.stdout:
-                msg = json.loads(line)
-                if msg.get("id") != number:
-                    continue
-                if "error" in msg:
-                    if method == "hooks/list" and msg["error"].get("code") == -32601:
-                        raise NoTrustMethod
-                    raise ValueError("Codex {} failed: {}".format(method, msg["error"]))
-                return msg["result"]
-            raise ValueError("Codex app-server stopped or timed out during " + method)
-
-        try:
-            request(1, "initialize", {"clientInfo": {"name": "kk", "version": "1"}})
-            send({"method": "initialized"})
-            rows = request(2, "hooks/list", {"cwds": [str(workspace)]})["data"]
-            if len(rows) != 1 or rows[0]["cwd"] != str(workspace) or rows[0]["errors"]:
-                raise ValueError("Codex could not list hooks for " + str(workspace))
-            return rows[0]["hooks"]
-        finally:
-            timeout.cancel()
-            proc.kill()
-            proc.wait()
+    result, = codex_app.session(directory, workspace, flags, executable,
+                                [("hooks/list", {"cwds": [str(workspace)]})], 10)
+    rows = result["data"]
+    if len(rows) != 1 or rows[0]["cwd"] != str(workspace) or rows[0]["errors"]:
+        raise ValueError("Codex could not list hooks for " + str(workspace))
+    return rows[0]["hooks"]
 
 
 def check(release, directory, workspace, flags=(), *, acknowledged=False, prompt=False, executable=None):
