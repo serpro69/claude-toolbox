@@ -174,8 +174,11 @@ def validate_files(release, directory, settings, rules, executable):
             """Return the leaves Codex does not report under kk's name, and the other names it reported."""
             try:
                 layers, _ = codex_app.layers(scratch, scratch, config_flags(table), executable, 30)
-            except codex_app.NoMethod as exc:
-                raise ValueError(str(exc)) from exc
+            except (codex_app.NoMethod, ValueError) as exc:
+                # Required, not skipped with a warning: every launch depends on the same request, and
+                # a skipped check would let a misnamed key through after a single timeout.
+                raise ValueError("kk checks setting names through Codex config/read, which failed: {}. Run the command "
+                                 "again; if this Codex CLI has no config/read, update Codex".format(exc)) from exc
             names = {key for key, layer in layers.items() if layer == "sessionFlags"}
             missing = []
             for path, value in leaves(table):

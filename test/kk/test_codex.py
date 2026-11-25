@@ -250,6 +250,15 @@ class CodexFiles(InstallFixture):
         self.assertNotIn(marker, renamed + rejected)
         self.assertEqual(self.state_file.read_bytes(), original)
 
+    def test_apply_needs_codex_to_answer_config_read(self):
+        self.install()
+        original = self.state_file.read_bytes()
+        (self.codex / "fixture-no-config-read").touch()
+        refused = self.invoke(self.link, "apply", ok=False, env=dict(self.env, KK_TEST_CODEX_FIXTURES=str(self.codex)))
+        self.assertIn("config/read, which failed: Codex has no config/read method. Run the command again; "
+                      "if this Codex CLI has no config/read, update Codex", refused.stderr)
+        self.assertEqual(self.state_file.read_bytes(), original)
+
     def test_apply_accepts_empty_values_codex_reports_no_origin_for(self):
         self.install()
         self.configure({"settings": {"tui": {"status_line": []}, "notes": {}}})
