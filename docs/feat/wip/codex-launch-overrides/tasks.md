@@ -7,7 +7,7 @@
 > Not Doing: repository-scoped kk config, carrying choices from the old profile into config.toml, TOML parser or higher Python minimum, diff in the profile-mismatch error, keeping `--profile kk` working, hiding `codex.settings` values from process listings
 
 ## Task 1: App-server client with config/read
-- **Status:** pending
+- **Status:** done
 - **Depends on:** —
 - **Size:** M
 - **Slicing:** Contract-First — the request helper is the boundary both launch paths, the trust read and the apply-time check share
@@ -15,11 +15,32 @@
 - **Docs:** [implementation.md#app-server-client-and-configread](./implementation.md#app-server-client-and-configread)
 
 ### Subtasks
-- [ ] 1.1 Create `kk/lib/codex_app.py`: one `app-server` session running an ordered request list, with a caller-supplied kill timeout, today's error mapping and a distinct exception for `-32601`
-- [ ] 1.2 Rewrite `codex_trust.hooks` as a caller of the helper, keeping `NoTrustMethod` behavior for `check` → verify: existing `test_codex_activation.py` trust tests pass unchanged
-- [ ] 1.3 Add the origin lookup (`config/read` with `cwd`, `includeLayers: false`) returning `origins` and the effective `config`
-- [ ] 1.4 Teach `test/kk/codex` to apply its configuration flags in order in every accepted spelling, derive `features.hooks` from the result, and answer `config/read` like Codex 0.172 (canonical and array-indexed origins, no origin for empty values, effective `config`) with the `fixture-origins.json`, `fixture-config.json`, `fixture-aliases.json` and `fixture-no-config-read` controls
-- [ ] 1.5 Tests for the lookup (user/project/sessionFlags origins, empty values, missing method, timeout) and for the fake's flag order → verify: `bash test/test-kk.sh` passes
+- [x] 1.1 Create `kk/lib/codex_app.py`: one `app-server` session running an ordered request list, with a caller-supplied kill timeout, today's error mapping and a distinct exception for `-32601`
+- [x] 1.2 Rewrite `codex_trust.hooks` as a caller of the helper, keeping `NoTrustMethod` behavior for `check` → verify: existing `test_codex_activation.py` trust tests pass unchanged
+- [x] 1.3 Add the origin lookup (`config/read` with `cwd`, `includeLayers: false`) returning `origins` and the effective `config`
+- [x] 1.4 Teach `test/kk/codex` to apply its configuration flags in order in every accepted spelling, derive `features.hooks` from the result, and answer `config/read` like Codex 0.172 (canonical and array-indexed origins, no origin for empty values, effective `config`) with the `fixture-origins.json`, `fixture-config.json`, `fixture-aliases.json` and `fixture-no-config-read` controls
+- [x] 1.5 Tests for the lookup (user/project/sessionFlags origins, empty values, missing method, timeout) and for the fake's flag order → verify: `bash test/test-kk.sh` passes
+
+### Execution context
+- 2026-11-25, observed (branch `feat/codex_overrides` at 450c0afe, clean tree): `codex_trust.hooks` is the only `app-server` client; its callers are `codex_trust.check` (used by `codex_launch.launch_checked`, `cli.py`, `migrate.verify_workspace`). `test_codex_activation.py` patches `trust.hooks` and raises `trust.NoTrustMethod`, so both names must stay on `codex_trust`.
+- 2026-11-25, observed: today `-32601` raises `NoTrustMethod` only for `hooks/list`; on `initialize` it is a `ValueError`, which `check` reports as "awaiting review" with no acknowledgement path.
+- 2026-11-25, inferred (implementation.md §App-server client says "a distinct exception for `-32601` on any method" and "unchanged in behavior"): the distinct exception covers every method in the caller's request list; the `initialize` handshake keeps its `ValueError`. Otherwise a vendor that rejects the handshake could reach `check`'s "unverified" acknowledgement, which it cannot today.
+- 2026-11-25, observed: kk passes configuration flags to `app-server` only in the separated form (`launch_options` normalizes to `[key, value]`). The fake still accepts the attached spellings, as subtask 1.4 requires.
+- 2026-11-25, observed (Codex CLI 0.172.0, scratch `CODEX_HOME` under `~/.cache`, driven through `codex_app.origins`/`session`; no credentials):
+  - `config/read` answered in about 0.4 s. An origin is `{"name": {"type": …}, "version": "sha256:…"}`; `user` adds `file` and `profile`, `project` adds `dotCodexFolder`. A trusted repository's `.codex/config.toml` reports type `project`.
+  - The effective `config` lists every known key, with `null` for unset scalars and tables (`model`, `agents`, `tui`). Once any `tui` value is set the table is populated with Codex's defaults: `status_line` and `terminal_title` stay `null`, but `default_hosts`, `presets` and `model_availability_nux` are `{}` **without any layer setting them**. `project_doc_max_bytes` is `32768` with no origin. Keys Codex does not know get an origin but are absent from `config`.
+  - **`--enable`/`--disable` apply after every `-c`, wherever they appear**: `--disable hooks -c 'features={shell_snapshot=true}'` leaves `features.hooks=false`, and `--enable hooks -c features.hooks=false` leaves it `true`. implementation.md §App-server client implies argument order for the toggles. The fake follows the vendor: `-c` in order, then toggles. The Task 3 guarantee is unaffected, because the trust read and `exec` receive the same sequence.
+  - **An unknown method returns `-32600`** (`Invalid request: unknown variant`), not `-32601`. No vendor evidence for `-32601` exists in the repository; `fixture-no-method` and `fixture-no-config-read` model it as specified. For the origin lookup both are a lookup failure, so nothing changes. For the trust read it means a Codex without `hooks/list` would be reported as "could not verify" rather than reach the acknowledgement path.
+- 2026-11-25, accepted (maintainer, in the Task 1 session, after seeing the toggle-order observation above): implementation.md §App-server client now states that the fake applies `-c` flags in order and feature toggles after them. Rationale: the document described argument order for toggles, which Codex 0.172 does not follow.
+- 2026-11-25, accepted (maintainer, in the Task 1 session): the empty-value part of set-detection applies to **arrays only**. Source: the `tui` observation above; design.md §1 said an empty array or table "can only come from a configuration layer", which is false for `tui.presets`, `tui.default_hosts` and `tui.model_availability_nux` (`{}` by default once `tui` is populated). Rationale: the only baseline leaves that can be empty-valued are the arrays `tui.status_line` and `tui.terminal_title`, and both stay `null` unless a layer sets them. design.md §1 and its evidence table, implementation.md §Launch flag composition step 2 and subtask 2.3 are updated. Known limit, unchanged by this decision: an empty array has no origin, so the rule protects baseline defaults only; an explicit `codex.settings` array still overrides a repository that sets the same key to `[]`.
+- 2026-11-25, accepted (maintainer, in the Task 1 session): the trust read keeps treating only `-32601` on `hooks/list` as "method unavailable"; `-32600 … unknown variant` stays a "could not verify" refusal. Rationale: widening it would loosen a guard check on the strength of an error message. Follow-up at subtask 8.5 (see Task 8's Execution context).
+- 2026-11-25, accepted within the task's scope: `codex_app.origins` raises `ValueError` when `origins` or `config` is not an object, so a changed vendor answer is a lookup failure instead of an attribute error at launch.
+- 2026-11-25, verification (author-run, Python 3.10.12, fake Codex; real Codex 0.172.0 on `PATH` for the two real-CLI tests): `bash test/test-kk.sh` ran 109 tests, OK, 2 skipped for existing environment reasons (`tomllib unavailable`, `full retirement tag unavailable`); this is the rerun after the review corrections. The 10 new tests are in `test/kk/test_codex_app.py`; `test_codex_activation.py` is unchanged. Limits: Python 3.8 was checked for grammar only (`ast.parse(feature_version=(3, 8))`); no 3.8 interpreter is installed here, so the CI matrix is the runtime check.
+- 2026-11-25, review (`/kk:review-code` isolated; base 450c0afe, candidate the uncommitted tree): the independent `code-reviewer` and an external Codex CLI reviewer (PAL clink, provider assumed OpenAI) both returned APPROVE for the Task 1 code with no P0–P2 findings. The `code-reviewer` raised two P3 items, both corrected and re-reviewed as resolved: `codex_app.session` now turns a reply without `result`, a non-object `error` and non-object lines into `ValueError` or skips them, so its documented exceptions (`NoMethod`, `ValueError`, `OSError`) are complete; the fake's TOML reader accepts decimal and exponent numbers, which `toml_value` can emit. The external reviewer saw the candidate before these corrections and did not read the selected patch in full (it read the candidate files directly).
+- 2026-11-25, deferred, owner: unassigned (inherited, not introduced here; act only if Task 6 timing or a real failure shows it): the kill timer ends only the direct `app-server` child, so a descendant holding stdout could outlive the timeout; and `text=True` decodes with the locale, so non-UTF-8 locales turn unusual `config/read` text into a lookup failure. Next action: pin `encoding="utf-8"` and start the child in its own process group if Task 6 observes either. Verification: the Task 6 lookup timing runs.
+- 2026-11-25, deferred, owner: whoever writes the Task 2–4 tests: the fake keeps stale indexed origins from `fixture-origins.json` when a flag sets a shorter array at the same path, and it places keys Codex does not know in the effective `config` (Codex omits them). Neither affects a Task 1 test. Next action: give such tests consistent `fixture-origins.json` and `fixture-config.json`, or extend the fake when a test needs the vendor behavior.
+- 2026-11-25, prerequisite outside this task: the CI matrix (Python 3.8 and 3.x) has to run `bash test/test-kk.sh`; `kk/lib/codex_app.py` and `test/kk/test_codex_app.py` are new files and must be committed with the task.
+- Preserved: `check`, `machine`, `report` and every existing fixture control (`fixture-reviewed`, `disabled-<n>`, `fixture-no-method`, `fixture-guard-off`). No launch behavior changes in this task; `launch_checked` is untouched until Task 2.
 
 ## Task 2: Interactive launch with origin-checked flags
 - **Status:** pending
@@ -31,10 +52,16 @@
 ### Subtasks
 - [ ] 2.1 Rename the baseline's `agents.max_threads` and `tui.whimsy` to their canonical names in `kk/baseline/codex.json` and in the two `test_codex.py` settings examples; in `codex_profile.py`, accept and validate `codex.defaults`, reject `mcp_servers`, `model_providers` and `shell_environment_policy` in `codex.settings`, and add a launch-inputs function sharing `compose`'s validation that returns baseline and explicit leaves as path tuples, instructions and the native switch
 - [ ] 2.2 Extend `launch_options` to return the lookup directory (also for dynamic workspaces), the caller's configuration flags in order, and the presence of model, sandbox/approval, `--ignore-user-config` and `--trust` flags
-- [ ] 2.3 In `codex_launch.py`, add flag building per implementation.md steps 1–6: set-detection by exact or prefix origin key and by empty effective values, model group, dedicated-flag handling, explicit-over-baseline at the same path, no kk values when the lookup failed, one `-c` per top-level key with inline tables and quoted keys
+- [ ] 2.3 In `codex_launch.py`, add flag building per implementation.md steps 1–6: set-detection by exact or prefix origin key and by empty effective arrays, model group, dedicated-flag handling, explicit-over-baseline at the same path, no kk values when the lookup failed, one `-c` per top-level key with inline tables and quoted keys
 - [ ] 2.4 Make the sidecar instructions an explicit leaf and let approved imports replace them unconditionally, keeping `import_argument`'s consent and size behavior
 - [ ] 2.5 Switch the interactive path in `launch_checked`: shared different-`CODEX_HOME` refusal, sidecar presence check, origin lookup with the caller's flags and lookup directory, one warning line and no kk values on lookup failure, `argv` = kk flags then caller arguments without `--profile`; explicit `--profile` stays a pass-through
 - [ ] 2.6 Update tests that assert the interactive `argv` or the old interactive profile check, and add tests for the cases (a)–(l) in implementation.md §Interactive launch → verify: `bash test/test-kk.sh` passes
+
+### Execution context
+- 2026-11-25, carried from Task 1 (details and evidence in its Execution context):
+  - The lookup-failure handler should catch `codex_app.NoMethod`, `ValueError` and `OSError`; that is everything `codex_app.origins` raises.
+  - Set-detection by an empty effective value applies to arrays only (accepted 2026-11-25): Codex 0.172 reports `{}` for `tui.presets`, `tui.default_hosts` and `tui.model_availability_nux` whenever `tui` is populated. Unset tables and scalars are `null`, not absent.
+  - Codex applies `--enable`/`--disable` after every `-c`, wherever they appear; the fake does the same.
 
 ## Task 3: Batch launch verifies the final flags
 - **Status:** pending
@@ -116,6 +143,9 @@
 - [ ] 8.6 Move the feature docs from `docs/feat/wip/` to `docs/feat/done/`, updating markdown references
 
 Sufficient evidence: green `test/test-kk.sh` with the success-criterion tests, plus the Task 6 real-Codex reproduction. Broaden verification if Task 6 contradicts an assumption, or if the trust session and `exec` disagree on guard state.
+
+### Execution context
+- 2026-11-25, carried from Task 1 for subtask 8.5, owner: maintainer: Codex 0.172 answers an unknown `app-server` method with `-32600`, so the trust read's `-32601` acknowledgement path and the "unverified" state may be unreachable with a real Codex. Decide whether to remove them (this touches `kk status`, `kk apply` and `kk migrate`), for example through a GitHub issue. Evidence so far is one probe with an invented method name; what a Codex without `hooks/list` returns has not been checked.
 
 ## Dependency Graph
 
