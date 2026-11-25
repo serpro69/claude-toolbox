@@ -1,7 +1,7 @@
 # Design: Codex launch overrides
 
 > Issue: [#206](https://github.com/serpro69/agentstakk/issues/206) — choices made inside `kk codex` sessions drift the managed profile and break batch launches
-> Status: design approved, 2026-11-24; revised after two design reviews and a consistency pass with further probes, 2026-11-24; empty-value rule limited to arrays after the Task 1 probes, 2026-11-25
+> Status: design approved, 2026-11-24; revised after two design reviews and a consistency pass with further probes, 2026-11-24; empty-value rule limited to arrays after the Task 1 probes, 2026-11-25; a failed apply-time `config/read` stops `kk apply` (maintainer decision after the Task 4 review), 2026-11-25
 > Evidence: Codex CLI 0.172.0, Linux
 
 ## Problem
@@ -115,7 +115,7 @@ Interactive launches without an explicit profile keep a `CODEX_HOME` gate: the s
 `compose` returns launch inputs (baseline leaves after `codex.defaults`, explicit leaves, instruction text, the `nativeForbids` switch) instead of TOML bytes. `codex_settings` accepts the new `defaults` key. `prepare` stops publishing `kk.config.toml`; it still publishes `agents/kk-*.toml` and the opt-in `rules/kk.rules`. `validate_files`, in its existing scratch home:
 
 1. runs `codex <all candidate -c flags> debug prompt-input`, so a value Codex rejects still stops publication before any owned file changes;
-2. sends `config/read` with the same flags and requires every kk leaf to be reported under a `sessionFlags` origin with a matching key (section 1). Leaves whose value is an empty array or table are skipped, because Codex reports no origin for them. A mismatch names the leaf and the keys Codex reported instead, for example an aliased `codex.settings` name.
+2. sends `config/read` with the same flags and requires every kk leaf to be reported under a `sessionFlags` origin with a matching key (section 1). Leaves whose value is an empty array or table are skipped, because Codex reports no origin for them. A mismatch names the leaf and the keys Codex reported instead, for example an aliased `codex.settings` name. If `config/read` itself fails (missing method, vendor error, timeout), validation fails with a message naming `config/read` and nothing is published; the check is not skipped (see Not Doing).
 
 Validation errors name the operation and the stderr of Codex, never the argument list, so `codex.settings` values are not copied into kk's output.
 
@@ -135,6 +135,7 @@ The snapshot shape and `report_drift` are unchanged.
 2. `config/read` costs about 0.2–0.4 seconds per interactive launch, like `hooks/list` (0.16–0.44 seconds measured).
 3. Without a profile, `/model` and hook approvals either persist to `config.toml` or last only for the session. Either is acceptable; the design records which.
 4. The `config/read` behavior in the evidence table (canonical keys, indexed arrays, unreported empty values, raw unknown keys) holds for the Codex versions kk supports. The apply-time mapping check catches renames; other changes would surface as wrong yielding, not as an error.
+5. Codex keeps the `config/read` method on `app-server`. kk depends on it at every launch and at every `kk apply`. What breaks if it goes away, and where, is recorded under Not Doing.
 
 ## Not Doing
 
@@ -144,6 +145,7 @@ The snapshot shape and `report_drift` are unchanged.
 - **A diff in the profile-mismatch error** — the comparison is removed.
 - **Keeping `--profile kk` working** — an explicit profile becomes a plain pass-through.
 - **Hiding `codex.settings` values from process listings** — credential tables are rejected; remaining preference values are documented as visible.
+- **Skipping the apply-time name check when `config/read` fails** (warn and keep `debug prompt-input` as the only gate) — decided 2026-11-25. `kk apply`, install and upgrade stop instead, and the previous release stays active. Reasons: every launch depends on the same request, so a Codex that cannot answer it gets none of kk's defaults, opt-ins or instructions anyway; and a skip would also cover a transient failure on a working Codex, letting a misnamed key through, which then overrides a repository's value at launch. A skip limited to "the method is missing" is not available without matching error text: Codex 0.172 answers an unknown method with a generic `-32600`. This is not about supporting older Codex versions. It is recorded so the dependency can be traced: **if Codex removes or renames `config/read`**, installs and upgrades stop in `codex_profile.validate_files` with "kk checks setting names through Codex config/read, which failed", and launches print "could not read Codex configuration origins" and pass no kk values (`codex_launch.session_flags`). Skipping the check would then only unblock installation; restoring kk's values needs a replacement for the origin lookup (`codex_app.origins`). To apply the skip: in `validate_files`, the `except` around `codex_app.layers` (inside `unreported`) prints one `kk:` warning that setting names were not checked and why, and reports nothing missing instead of raising, so `debug prompt-input` and the `kk.rules` checks still gate publication; `test_apply_needs_codex_to_answer_config_read` in `test/kk/test_codex.py` then expects a successful apply with that warning; and the Codex provider docs drop the `config/read` requirement. Accept with it that a misnamed `codex.settings` key is no longer caught whenever the lookup fails.
 
 ## Rejected Alternatives
 
