@@ -1,5 +1,6 @@
 """Launch Codex with the managed profile and repository-confirmed instructions."""
 
+from collections import namedtuple
 import hashlib
 import importlib.util
 import json
@@ -12,7 +13,7 @@ import subprocess
 import sys
 from contextlib import ExitStack
 
-from . import codex_plugins, codex_profile, codex_trust, notice, payload, state
+from . import codex_app, codex_plugins, codex_profile, codex_trust, notice, payload, state
 
 
 ARG_LIMIT = 122880  # Linux per-argument limit less 8 KiB, including TOML escaping.
@@ -22,6 +23,21 @@ VALUE_OPTIONS = {
     "--remote-auth-token-env", "--local-provider", "--add-dir", "--thread-source",
     "--cyber-access-program", "--output-schema", "--color", "-o", "--output-last-message",
 }
+# Arguments that change which kk values apply, or what a batch launch can verify.
+NOTED_OPTIONS = {
+    "-m": "model", "--model": "model", "--oss": "model",
+    "-s": "permissions", "--sandbox": "permissions", "-a": "permissions", "--ask-for-approval": "permissions",
+    "--approve-for-me": "permissions", "--dangerously-bypass-approvals-and-sandbox": "permissions",
+    "--yolo": "permissions",  # Codex accepts this alias of the bypass flag without listing it in --help.
+    "--ignore-user-config": "ignore_user_config", "--trust": "trust",
+}
+# workspace is None when Codex selects it; directory is where Codex starts either way.
+# config_flags are the caller's -c, --enable and --disable flags as separated pairs, in order.
+Options = namedtuple("Options", "workspace profile batch config_flags directory "
+                                "model permissions ignore_user_config trust")
+# These are sized for kk's default model, so they apply only when that model runs.
+MODEL_GROUP = ("model", "model_reasoning_effort", "model_context_window", "model_auto_compact_token_limit")
+PERMISSION_KEYS = ("approval_policy", "approvals_reviewer", "sandbox_mode")
 
 
 def display(value):
@@ -32,6 +48,7 @@ def launch_options(args):
     directory = Path.cwd()
     profile = command = None
     trust_flags = []
+    noted = set()
     dynamic_workspace = False
     it = iter(args)
     for arg in it:
@@ -55,14 +72,20 @@ def launch_options(args):
                 dynamic_workspace = True
             elif key in ("-c", "--config", "--enable", "--disable"):
                 trust_flags.extend([key, value])
+            elif key in NOTED_OPTIONS:
+                noted.add(NOTED_OPTIONS[key])
         elif arg == "--worktree":
             dynamic_workspace = True
+        elif arg in NOTED_OPTIONS:
+            noted.add(NOTED_OPTIONS[arg])
         elif command is None and not arg.startswith("-"):
             command = arg
             dynamic_workspace = dynamic_workspace or command in ("resume", "fork", "agents")
         elif command in ("exec", "e") and arg in ("resume", "fork"):
             dynamic_workspace = True
-    return None if dynamic_workspace else directory.resolve(), profile, command in ("exec", "e", "review"), trust_flags
+    directory = directory.resolve()
+    return Options(None if dynamic_workspace else directory, profile, command in ("exec", "e", "review"), trust_flags,
+                   directory, "model" in noted, "permissions" in noted, "ignore_user_config" in noted, "trust" in noted)
 
 
 def workspace_root(directory):
@@ -231,16 +254,117 @@ def report_imports(home):
         print("Codex imports: {} ({})".format({True: "approved", False: "declined", None: "undecided"}[answer], path))
 
 
+def read_origins(codex_home, directory, flags, executable):
+    """Return the layer type that set each origin key, and the effective configuration."""
+    origins, config = codex_app.origins(codex_home, directory, flags, executable, 5)
+    layers = {}
+    for key, origin in origins.items():
+        name = origin.get("name") if isinstance(origin, dict) else None
+        layer = name.get("type") if isinstance(name, dict) else None
+        if not isinstance(layer, str):
+            raise ValueError("Codex config/read returned an unexpected origin for " + key)
+        layers[key] = layer
+    return layers, config
+
+
+def put(table, path, value):
+    for part in path[:-1]:
+        if not isinstance(table.get(part), dict):
+            table[part] = {}
+        table = table[part]
+    # An empty table carries no value of its own, so it must not replace leaves already collected.
+    if value != {} or not isinstance(table.get(path[-1]), dict):
+        table[path[-1]] = value
+
+
+def launch_flags(baseline, explicit, options, lookup, imports):
+    """Return kk's configuration flags for one launch.
+
+    Baseline leaves yield to a value any layer set; explicit leaves yield only to a
+    repository. When the lookup failed nothing is known about other layers, so no leaf
+    is passed. Approved imports replace the instructions in either case.
+    """
+    kept = []
+    if lookup is not None:
+        layers, config = lookup
+
+        def setters(path):
+            # Codex reports array elements separately: tui.status_line.0, tui.status_line.1, ...
+            name = ".".join(path)
+            return {layer for key, layer in layers.items() if key == name or key.startswith(name + ".")}
+
+        def empty_array(path):
+            # An empty array has no origin, and Codex leaves kk's array defaults unset on its own.
+            value = config
+            for part in path:
+                value = value.get(part) if isinstance(value, dict) else None
+            return value == []
+
+        replaced = {path for path, _ in explicit}
+        kept = [(path, value) for path, value in baseline
+                if path not in replaced and not setters(path) - {"packagedDefaults"} and not empty_array(path)]
+        if options.model or all(path != ("model",) for path, _ in kept):
+            kept = [(path, value) for path, value in kept if path[0] not in MODEL_GROUP]
+        kept += [(path, value) for path, value in explicit
+                 if "project" not in setters(path)
+                 and not (options.permissions and path[0] in PERMISSION_KEYS)
+                 and not (imports and path == ("developer_instructions",))]
+    table = {}
+    for path, value in kept:
+        put(table, path, value)
+    # One flag per top-level key: a second inline table for a key would replace the first.
+    flags = [part for key, value in table.items() for part in ("-c", key + "=" + codex_profile.toml_value(value))]
+    return flags + imports
+
+
+def require_applied_home(saved):
+    """kk's saved settings, instructions and guard receipt all describe one CODEX_HOME."""
+    codex_home = codex_profile.codex_home()
+    applied = saved["codex_snapshot"]["directory"]
+    if str(codex_home) != applied:
+        raise ValueError("kk's Codex settings were applied to a different CODEX_HOME: {}. "
+                         "Use that home, or {}".format(display(applied), codex_plugins.activation_hint(saved)))
+    return codex_home
+
+
+def workspace_imports(home, directory, interactive):
+    if directory is None:
+        print("kk: skipping repository imports because Codex selects the session workspace.", file=sys.stderr)
+        return []
+    root = import_workspace(directory)
+    return [] if root is None else import_argument(home, root, interactive)
+
+
+def interactive_flags(home, release, saved, options, executable):
+    codex_home = require_applied_home(saved)
+    try:
+        instructions = (home / "codex-instructions.md").read_text(encoding="utf-8")
+    except FileNotFoundError:
+        raise ValueError("kk's Codex instructions are missing; run kk apply") from None
+    baseline, chosen, _, _ = codex_profile.launch_inputs(release, saved["codex_snapshot"]["settings"])
+    imports = workspace_imports(home, options.workspace, sys.stdin.isatty())
+    try:
+        lookup = read_origins(codex_home, options.directory, options.config_flags, executable)
+    except (codex_app.NoMethod, ValueError, OSError) as exc:
+        lookup = None
+        print("kk: could not read Codex configuration origins ({}); launching without kk {} so repository "
+              "settings keep precedence".format(
+                  display(exc), "defaults and opt-ins" if imports else "defaults, opt-ins and instructions"),
+              file=sys.stderr)
+    return launch_flags(baseline, [*chosen, (("developer_instructions",), instructions)], options, lookup, imports)
+
+
 def launch(home, args):
-    directory, explicit, batch, trust_flags = launch_options(args)
-    if batch and not home.is_dir():
+    options = launch_options(args)
+    if options.batch and not home.is_dir():
         raise ValueError("no active release; finish installing kk first")
     with ExitStack() as stack:
-        lock = stack.enter_context(state.codex_access(home, batch=True)) if batch else None
-        return launch_checked(home, args, directory, explicit, lock, trust_flags)
+        lock = stack.enter_context(state.codex_access(home, batch=True)) if options.batch else None
+        return launch_checked(home, args, options, lock)
 
 
-def launch_checked(home, args, directory, explicit, lock, trust_flags):
+def launch_checked(home, args, options, lock):
+    directory, explicit = options.workspace, options.profile
     batch = lock is not None
     record = state.load(home)
     if (record.get("candidate") or {}).get("phase") == "activating" or record.get("codex_write_pending"):
@@ -260,13 +384,9 @@ def launch_checked(home, args, directory, explicit, lock, trust_flags):
             raise ValueError("cannot verify the Codex guard for this session's workspace or named profile; "
                              "use an interactive session or select a local directory with the kk profile")
         release = home / "releases" / active
-        codex_home = codex_profile.codex_home()
+        codex_home = require_applied_home(saved)
         profile = codex_home / "kk.config.toml"
         snapshot = saved["codex_snapshot"]
-        if str(codex_home) != snapshot["directory"]:
-            raise ValueError("the managed Codex profile was installed in a different CODEX_HOME: {}. "
-                             "Use that home, or {}".format(display(snapshot["directory"]),
-                                                          codex_plugins.activation_hint(saved)))
         if profile.is_symlink() or not profile.is_file():
             raise ValueError("expected a regular managed Codex profile at {}. Check the path, then run kk apply.".format(
                 display(profile)))
@@ -278,7 +398,7 @@ def launch_checked(home, args, directory, explicit, lock, trust_flags):
                                  display(profile), display(state.override_path())))
         if not codex_plugins.receipt(record, codex_home, "kk-guard"):
             raise ValueError("Codex guard is not installed in this CODEX_HOME; " + codex_plugins.activation_hint(saved))
-        phase, issues = codex_trust.check(release, codex_home, directory, trust_flags,
+        phase, issues = codex_trust.check(release, codex_home, directory, options.config_flags,
                                           acknowledged=phase == "unverified", executable=executable)
         if phase == "awaiting review":
             raise ValueError("Codex guard awaiting review for {}: {}".format(display(directory), "; ".join(issues)))
@@ -289,17 +409,14 @@ def launch_checked(home, args, directory, explicit, lock, trust_flags):
               file=sys.stderr)
     codex_profile.report_drift(record)
     flags = []
-    if explicit is None:
+    if explicit is None and batch:
+        # Batch launches keep the managed profile until they verify the final flags instead.
         profile_path = codex_profile.codex_home() / "kk.config.toml"
         if str(profile_path) not in record.get("codex_paths", []) or not profile_path.is_file() or profile_path.is_symlink():
             raise ValueError("managed profile is missing from this CODEX_HOME; run kk apply")
-        flags = ["--profile", "kk"]
-        if directory is None:
-            print("kk: skipping repository imports because Codex selects the session workspace.", file=sys.stderr)
-        else:
-            root = import_workspace(directory)
-            if root is not None:
-                flags += import_argument(home, root, sys.stdin.isatty() and not batch)
+        flags = ["--profile", "kk", *workspace_imports(home, directory, False)]
+    elif explicit is None:
+        flags = interactive_flags(home, home / "releases" / active, saved, options, executable)
     env = dict(os.environ, CODEX_HOME=str(codex_profile.codex_home()), KK_HOME=str(home))
     if env.get("XDG_CONFIG_HOME"):
         env["XDG_CONFIG_HOME"] = str(Path(env["XDG_CONFIG_HOME"]).absolute())

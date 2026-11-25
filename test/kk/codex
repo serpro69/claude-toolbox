@@ -107,16 +107,18 @@ def leaves(table, path=()):
             yield path + (key,), value
 
 
-def config_read(flags):
-    def fixture(name):
-        path = directory / name
+def config_read(flags, cwd):
+    def fixture(name, home=directory):
+        path = home / name
         return json.loads(path.read_text()) if path.exists() else {}
 
     def origin(kind):
         return {"name": {"type": kind}, "version": "sha256:fixture"}
 
     aliases = fixture("fixture-aliases.json")
-    origins = {path: origin(kind) for path, kind in fixture("fixture-origins.json").items()}
+    # A fixture in the requested directory stands for that repository's own configuration.
+    layers = dict(fixture("fixture-origins.json"), **fixture("fixture-origins.json", Path(cwd)))
+    origins = {path: origin(kind) for path, kind in layers.items()}
     # Codex reports an unset value or table as null.
     config = dict({"model": None, "agents": None, "tui": None}, **fixture("fixture-config.json"))
     for path, value in leaves(flags):
@@ -142,7 +144,7 @@ def app_server():
             continue
         reply = {"id": msg["id"], "result": {}}
         if msg["method"] == "config/read":
-            reply["result"] = config_read(flags)
+            reply["result"] = config_read(flags, msg["params"]["cwd"])
             if (directory / "fixture-no-config-read").exists():
                 reply = {"id": msg["id"], "error": {"code": -32601}}
         if msg["method"] == "hooks/list":

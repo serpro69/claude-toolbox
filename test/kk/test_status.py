@@ -147,10 +147,19 @@ class LaunchNotice(InstallFixture):
                 while not cache.exists() and time.monotonic() < deadline:
                     time.sleep(.02)
                 self.assertTrue(cache.is_file())
-                subprocess.run([self.link, "codex", "hello"], cwd=self.root, env=self.env, stdin=slave,
-                               stdout=slave, stderr=slave, timeout=5, check=True)
-                output = os.read(master, 16384)
-                self.assertLess(output.index(b"v1.0.0 is available"), output.index(b"hello"))
+                # The echoed launch flags exceed one terminal read, so drain it while the launcher runs.
+                with subprocess.Popen([self.link, "codex", "hello"], cwd=self.root, env=self.env, stdin=slave,
+                                      stdout=slave, stderr=slave) as launch:
+                    output = b""
+                    deadline = time.monotonic() + 5
+                    try:
+                        while b'"hello"]' not in output and time.monotonic() < deadline:
+                            if select.select([master], [], [], .02)[0]:
+                                output += os.read(master, 16384)
+                        self.assertEqual(launch.wait(timeout=5), 0)
+                    finally:
+                        launch.kill()  # A stalled launcher fails here instead of blocking the suite.
+                self.assertLess(output.index(b"v1.0.0 is available"), output.index(b'"hello"]'))
             finally:
                 os.close(slave)
                 os.close(master)
