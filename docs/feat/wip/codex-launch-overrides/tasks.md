@@ -139,15 +139,28 @@
 - [ ] 4.6 Add tests: aliased `codex.settings` key fails `kk apply` naming the canonical key; an empty-array leaf passes the mapping check; `mcp_servers` rejected; a synthetic marker value never appears in a validation error; upgrade removes an owned, drifted `kk.config.toml` with record cleanup and a single notice → verify: `bash test/test-kk.sh` passes
 
 ## Task 5: Live-check output fixes
-- **Status:** pending
+- **Status:** done
 - **Depends on:** —
 - **Size:** S
 - **Can run in parallel with:** Task 1, Task 2, Task 3, Task 4
 - **Docs:** [design.md#5-output-fixes](./design.md#5-output-fixes), [implementation.md#live-check-output](./implementation.md#live-check-output)
 
 ### Subtasks
-- [ ] 5.1 In `live.run`, strip a leading `kk: ` from the reused vendor stderr line and return `ok (guard denied the canary read)` after the reason pattern matches
-- [ ] 5.2 Update `test_status.py` expectations and assert a failure message has no duplicated prefix → verify: `bash test/test-kk.sh` passes
+- [x] 5.1 In `live.run`, strip a leading `kk: ` from the reused vendor stderr line and return `ok (guard denied the canary read)` after the reason pattern matches
+- [x] 5.2 Update `test_status.py` expectations and assert a failure message has no duplicated prefix → verify: `bash test/test-kk.sh` passes
+
+### Execution context
+- 2026-11-25, observed (worktree branch `task5` at fab6653e, Tasks 1–2 committed, clean tree): `live.run` has three callers, all printing its return value as `<tool> live: <value>`: `cli.py` (`kk status --live`, which prints an exception as `<tool> live: failed: <message>`) and two sites in `migrate.py` (an exception there reaches the dispatcher's own `kk: ` prefix). `test_migrate.py` replaces `live.run` with a stub, so only `test_status.py` asserts its real return value. No file under `docs/` outside `docs/feat/` quotes the live-check output.
+- 2026-11-25, observed (base fab6653e, fake Codex, temporary probe in `test_live_command_tries_both_tools_and_fails_on_missing_evidence`, not kept): with the guard unreviewed, `kk status --live` printed `codex live: failed: kk: Codex guard awaiting review for "/tmp/kk-live-…": …`. That is the duplicated prefix at the dispatcher level. With the guard reviewed, both tools fail with "did not report the installed guard denying the canary read", which carries no prefix, so that test cannot detect the duplication as written.
+- 2026-11-25, accepted within the task's scope:
+  - The 500-character cap applies after the prefix is removed. A stderr line that is exactly `kk: ` falls back to the "vendor session exited" message, as an absent line does.
+  - The success path no longer returns the matched reason text; no caller used it other than to print it.
+  - The duplicated-prefix assertion is a new test on `live.run` (`test_live_failure_reuses_the_launcher_message_without_its_prefix`) with a failing launcher for both tools and one unrelated stderr line before the `kk: ` line. The dispatcher-level reproduction above was not added as a test: it would add a second full `status --live` run (about 2 s) to assert the same string through an unchanged `print`.
+- 2026-11-25, verification (author-run, Python 3.10.12, fake Codex; real Codex on `PATH`): before the `live.py` change, the updated `test_live_requires_tool_evidence_from_each_scratch_workspace` and the new test both failed (`'kk guard: secrets — …' != 'ok (guard denied the canary read)'`, `'kk: the guard is awaiting review' != 'the guard is awaiting review'`). After it, `bash test/test-kk.sh` ran 118 tests, OK, 2 skipped for existing environment reasons (`tomllib unavailable`, `full retirement tag unavailable`). Limits: Python 3.8 was checked for grammar only (`ast.parse(feature_version=(3, 8))`); no real vendor session was run through `kk status --live` (Task 6.2).
+- 2026-11-25, review (`/kk:review-code` isolated; base fab6653e, candidate the uncommitted tree): the independent `code-reviewer` returned APPROVE for the Task 5 code with no P0–P2 findings and one inherited P3, deferred below. It ran no tests. The external review did not happen: the one eligible client (Codex CLI through PAL clink, provider assumed OpenAI) read nothing, because capy's Codex `PreToolUse` hook blocked every command with "overlapping Codex installations share owner ID" for the worktree and the main checkout that contains it (`.claude/worktrees/task5`). The client was not retried. So this task has one independent review, not two.
+- 2026-11-25, deferred, owner: unassigned (inherited from the base, raised by the `code-reviewer` as P3, outside design.md §5): `live.run` reuses the **first** stderr line starting with `kk: `, and the Codex launcher prints warnings with that prefix before it can fail (`codex_launch.py`: "Codex guard is unverified for this run", the skipped-import lines, the origin-lookup line; `codex_profile.report_drift`: "Codex overrides changed"). The dispatcher prints the real error last (`cli.py`, `print("kk:", exc)`), so a failed live check can show a warning as its cause, for example `codex live: failed: Codex overrides changed. Run kk apply to apply them.` Read from source, not reproduced. Next action: reuse the last stderr line when it starts with `kk: `, otherwise the "vendor session exited" message; test with a warning before the fatal line and with vendor output after a warning. Verification: those two tests, or a Task 6.2 failure that shows the wrong line.
+- 2026-11-25, noted by the `code-reviewer`, not acted on: no test feeds `live.run` a denial whose reason fails the pattern (another glob or rule) and expects "did not report"; the base had the same gap and the pattern is unchanged. The success line no longer shows which rule denied the read.
+- Preserved: the reason pattern and its attribution requirement, the "did not report" and "vendor session exited" messages, the scratch-workspace setup, and every caller's output format.
 
 ## Task 6: Real-Codex end-to-end verification
 - **Status:** pending

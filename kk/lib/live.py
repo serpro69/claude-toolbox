@@ -69,7 +69,8 @@ def run(tool, home):
         result = subprocess.run([str(home / "bin/kk"), tool, *args], cwd=workspace, env=env,
                                 stdin=subprocess.DEVNULL, capture_output=True, text=True, timeout=session_timeout)
         if result.returncode:
-            message = next((line for line in result.stderr.splitlines() if line.startswith("kk: ")), "")
+            # Callers print this message behind their own "kk: " or "live: failed: ".
+            message = next((line[4:] for line in result.stderr.splitlines() if line.startswith("kk: ")), "")
             raise ValueError(message[:500] or "vendor session exited {}; check {} authentication and guard settings".format(
                 result.returncode, tool))
         if tool == "claude":
@@ -78,8 +79,6 @@ def run(tool, home):
             errors = (line for line in result.stderr.splitlines()
                       if "codex_core::tools::router: error=Command blocked by PreToolUse hook:" in line)
         reason = re.compile(r"kk guard: secrets — [^\r\n]*? matches " + re.escape(glob) + r"(?=\. Way through:)")
-        for error in errors:
-            match = reason.search(error)
-            if match:
-                return match.group()
+        if any(reason.search(error) for error in errors):
+            return "ok (guard denied the canary read)"
         raise ValueError("the vendor session did not report the installed guard denying the canary read")

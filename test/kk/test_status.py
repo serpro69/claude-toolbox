@@ -275,12 +275,23 @@ class InstallationStatus(InstallFixture):
         with patch.object(cli.mixed, "inspect", return_value=([], [])), patch.object(cli.live.subprocess, "run", side_effect=run):
             for tool in ("claude", "codex"):
                 good = True
-                self.assertIn("kk guard: secrets", cli.live.run(tool, self.toolbox))
+                self.assertEqual(cli.live.run(tool, self.toolbox), "ok (guard denied the canary read)")
                 good = False
                 with self.assertRaisesRegex(ValueError, "did not report"):
                     cli.live.run(tool, self.toolbox)
         self.assertEqual(len({p.parent for p in samples}), 4)
         self.assertTrue(all(not p.parent.exists() for p in samples))
+
+    def test_live_failure_reuses_the_launcher_message_without_its_prefix(self):
+        def run(args, **kwargs):
+            if args[0] == "git":
+                return subprocess.CompletedProcess(args, 0)
+            return subprocess.CompletedProcess(args, 1, "", "vendor noise\nkk: the guard is awaiting review\n")
+        with patch.object(cli.mixed, "inspect", return_value=([], [])), patch.object(cli.live.subprocess, "run", side_effect=run):
+            for tool in ("claude", "codex"):
+                with self.assertRaises(ValueError) as failure:
+                    cli.live.run(tool, self.toolbox)
+                self.assertEqual(str(failure.exception), "the guard is awaiting review")
 
     def test_live_command_tries_both_tools_and_fails_on_missing_evidence(self):
         self.install()
