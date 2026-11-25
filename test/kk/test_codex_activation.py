@@ -133,9 +133,10 @@ class CodexActivation(InstallFixture):
         self.assertTrue(self.guard_version())
         another = self.home / "second-codex"
         self.invoke(self.link, "upgrade", "--local", self.checkout, env=dict(self.env, CODEX_HOME=str(another)))
+        self.assertTrue((another / "agents/kk-code-reviewer.toml").is_file())
         missing_cli = self.invoke(self.link, "rollback", env=env, ok=False)
         self.assertIn("rerun kk rollback", missing_cli.stderr)
-        self.assertFalse((another / "kk.config.toml").exists())
+        self.assertFalse((another / "agents/kk-code-reviewer.toml").exists())
         self.assertEqual(self.state()["candidate"]["operation"], "rollback")
         interrupt = self.directory / "interrupt-remove-kk-guard"
         interrupt.touch()

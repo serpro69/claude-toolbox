@@ -66,3 +66,23 @@ def origins(directory, workspace, flags, executable, timeout):
             and isinstance(result.get("config"), dict)):
         raise ValueError("Codex config/read returned an unexpected result")
     return result["origins"], result["config"]
+
+
+def layers(directory, workspace, flags, executable, timeout):
+    """Return the layer type that set each origin key, and the effective configuration."""
+    found, config = origins(directory, workspace, flags, executable, timeout)
+    types = {}
+    for key, origin in found.items():
+        name = origin.get("name") if isinstance(origin, dict) else None
+        layer = name.get("type") if isinstance(name, dict) else None
+        if not isinstance(layer, str):
+            raise ValueError("Codex config/read returned an unexpected origin for " + key)
+        types[key] = layer
+    return types, config
+
+
+def origin_keys(keys, path):
+    """Return the origin keys that stand for the leaf at a path of key components."""
+    # Codex reports array elements separately: tui.status_line.0, tui.status_line.1, ...
+    name = ".".join(path)
+    return [key for key in keys if key == name or key.startswith(name + ".")]

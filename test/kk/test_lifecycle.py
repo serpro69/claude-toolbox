@@ -82,9 +82,9 @@ def traced(fn):
         self.stop.unlink()
         config.write_text("{broken draft")
         self.invoke(self.link, "upgrade")
-        profile = (Path(self.env["CODEX_HOME"]) / "kk.config.toml").read_text()
-        self.assertIn("validated-draft", profile)
-        self.assertIn("42424", profile)
+        argv = json.loads(self.invoke(self.link, "codex", "hello").stdout)
+        self.assertIn('model="validated-draft"', argv)
+        self.assertIn("project_doc_max_bytes=42424", argv)
         self.assertIn("kk apply", self.invoke(self.link, "status").stderr)
 
     def test_interrupt_each_activation_step_and_recover(self):
