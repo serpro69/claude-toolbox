@@ -38,7 +38,7 @@ class CodexFiles(InstallFixture):
         personal = self.codex / "agents/kk-notes.toml"
         personal.touch()
         self.configure({"optIn": {"approval_policy": True, "sandbox_mode": True, "nativeForbids": True},
-                        "settings": {"agents": {"max_threads": 3}, "my_new_preference": "new"}})
+                        "settings": {"agents": {"max_concurrent_threads_per_session": 3}, "my_new_preference": "new"}})
         self.assertIn("kk apply", self.invoke(self.link, "status").stderr)
         before = self.state_file.read_bytes()
         launch = self.invoke(self.link, "codex", "-p", "personal", "hello")
@@ -89,10 +89,15 @@ class CodexFiles(InstallFixture):
         self.install()
         original = self.profile.read_bytes()
         for settings in ({"features": {"hooks": False}}, {"features": {"plugins": True}},
-                         {"plugins": {"example@local": {"enabled": False}}}, {"hooks": {"state": {}}}):
+                         {"plugins": {"example@local": {"enabled": False}}}, {"hooks": {"state": {}}},
+                         {"mcp_servers": {}}, {"model_providers": {}}, {"shell_environment_policy": {}}):
             self.configure({"settings": settings})
             self.assertIn("native Codex", self.invoke(self.link, "apply", ok=False).stderr)
             self.assertEqual(self.profile.read_bytes(), original)
+        # As a launch flag, Codex would split this key and switch hooks off.
+        self.configure({"settings": {"features.hooks": False}})
+        self.assertIn("not a plain name", self.invoke(self.link, "apply", ok=False).stderr)
+        self.assertEqual(self.profile.read_bytes(), original)
 
     def test_upgrade_prunes_recorded_agent_and_rollback_restores_it(self):
         self.install()
@@ -199,13 +204,17 @@ class CodexFiles(InstallFixture):
         self.assertIn("cannot check override", self.invoke(self.link, "codex", "hello").stderr)
         self.invoke(self.link, "apply", ok=False)
 
-    def test_unowned_profile_in_another_codex_home(self):
+    def test_interactive_launch_needs_the_applied_codex_home_and_instructions(self):
         self.install()
         other = self.root / "other"
         other.mkdir()
-        (other / "kk.config.toml").write_text("adopter profile")
         result = self.invoke(self.link, "codex", "hello", env=dict(self.env, CODEX_HOME=str(other)), ok=False)
-        self.assertIn("managed profile", result.stderr)
+        self.assertIn("different CODEX_HOME: " + json.dumps(str(self.codex)), result.stderr)
+        self.assertIn("kk upgrade --local", result.stderr)
+        named = self.invoke(self.link, "codex", "-p", "personal", "hello", env=dict(self.env, CODEX_HOME=str(other)))
+        self.assertEqual(json.loads(named.stdout), ["-p", "personal", "hello"])
+        (self.toolbox / "codex-instructions.md").unlink()
+        self.assertIn("run kk apply", self.invoke(self.link, "codex", "hello", ok=False).stderr)
 
     def test_workspace_path_preserves_trailing_newline(self):
         repo = self.root / "repo\n"
@@ -227,9 +236,11 @@ class CodexFiles(InstallFixture):
         run = self.invoke(self.link, "codex", "hello")
         args = json.loads(run.stdout)
         self.assertIn("exceeds the import argument limit", run.stderr)
-        self.assertNotIn("# large", args[3])
-        self.assertIn("# small", args[3])
-        self.assertLessEqual(len(args[3].encode()), cli.codex_launch.ARG_LIMIT)
+        self.assertEqual(args[-3], "-c")
+        self.assertTrue(args[-2].startswith("developer_instructions="))
+        self.assertNotIn("# large", args[-2])
+        self.assertIn("# small", args[-2])
+        self.assertLessEqual(len(args[-2].encode()), cli.codex_launch.ARG_LIMIT)
 
     def test_consent_follows_selected_repository_and_list(self):
         self.install()
@@ -257,16 +268,16 @@ class CodexFiles(InstallFixture):
         self.assertNotIn("# fenced", argument)
         self.assertNotIn("private outside file", argument)
         launch = self.invoke(self.link, "codex", "--cd=repo-b/sub", "hello")
-        self.assertEqual(json.loads(launch.stdout)[2:4], flags)
+        self.assertEqual(json.loads(launch.stdout)[-4:-2], flags)
         remote = self.invoke(self.link, "codex", "--cd=repo-b/sub", "--remote", "ws://example.invalid")
-        self.assertNotIn("-c", json.loads(remote.stdout))
+        self.assertNotIn("# notes.md", remote.stdout)
         status = subprocess.run([str(self.link), "status"], env=self.env, cwd=sub, capture_output=True, text=True)
         self.assertIn("imports: approved", status.stdout)
         with agents.open("a") as stream:
             stream.write("@second\n")
         (repo / "second").touch()
         changed = self.invoke(self.link, "codex", "-Crepo-b", "hello")
-        self.assertNotIn("-c", json.loads(changed.stdout))
+        self.assertNotIn("# notes.md", changed.stdout)
         self.assertIn("no stored approval", changed.stderr)
         with patch.dict(os.environ, self.env), patch("sys.stdin", io.StringIO("\n")):
             self.assertEqual(cli.codex_launch.import_argument(self.toolbox, repo, True), [])
@@ -302,7 +313,7 @@ class CodexFiles(InstallFixture):
         self.assertIn("personal.rules", rejected.stderr)
         self.assertEqual(self.profile.read_bytes(), before)
         extra.unlink()
-        self.configure({"settings": {"agents": {"max_threads": "six"}}})
+        self.configure({"settings": {"agents": {"max_concurrent_threads_per_session": "six"}}})
         self.assertIn("Codex rejected", self.invoke(self.link, "apply", ok=False).stderr)
         self.assertEqual(self.profile.read_bytes(), before)
         self.assertTrue(rules.is_file())

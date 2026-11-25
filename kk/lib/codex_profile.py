@@ -20,6 +20,10 @@ TIP_TABLE = "\n[tui.model_availability_nux]\n"
 # Codex's ModelAvailabilityNuxConfig stores one uint32 per model. Keep the rest of the
 # managed profile byte-exact: it can affect the trust check for batch launches.
 TIP_COUNTER = re.compile(r'([A-Za-z0-9_-]+|"[^"\\\x00-\x1f\x7f]+") = (0|[1-9][0-9]{0,9})')
+# Codex splits a -c key on every dot, even inside quotes, so only a plain name can head a launch flag.
+PLAIN_KEY = re.compile(r"[A-Za-z0-9_-]+")
+# These tables carry credentials, and launch flags are readable in process listings.
+CREDENTIAL_TABLES = ("mcp_servers", "model_providers", "shell_environment_policy")
 
 
 def codex_home():
@@ -107,42 +111,80 @@ def codex_settings(raw):
         raise ValueError("invalid JSON in {}: {}".format(override_path(), exc)) from exc
     check_keys(config, ("claude", "codex", "launchNotice", "$schema"), str(override_path()))
     config = object_value(config.get("codex", {}), "codex")
-    check_keys(config, ("settings", "optIn"), "codex")
+    check_keys(config, ("defaults", "settings", "optIn"), "codex")
     return config
 
 
-def compose(release, config):
+def leaves(table, path=()):
+    """Flatten nested tables into (path tuple, value) pairs; an empty table is its own leaf."""
+    for key, value in table.items():
+        if isinstance(value, dict) and value:
+            yield from leaves(value, path + (key,))
+        else:
+            yield path + (key,), value
+
+
+def validated(release, config):
+    """Check the overrides against the release baseline and return the parts every consumer shares."""
     baseline = payload.read_json(release / "kk/baseline/codex.json")
     selected = config.get("optIn", {})
     switches(selected, set(baseline["optIn"]) | {"nativeForbids"}, "codex.optIn")
+    profile = baseline["profile"]
+    defaults = config.get("defaults", {})
+    switches(defaults, set(profile), "codex.defaults")
     settings = object_value(config.get("settings", {}), "codex.settings")
     features = object_value(settings.get("features", {}), "codex.settings.features")
     plugins = object_value(settings.get("plugins", {}), "codex.settings.plugins")
     if ("hooks" in settings or {"hooks", "plugins"} & features.keys()
             or any(isinstance(plugin, dict) and "enabled" in plugin for plugin in plugins.values())):
         raise ValueError("configure hook and plugin enablement in native Codex configuration")
+    for key in CREDENTIAL_TABLES:
+        if key in settings:
+            raise ValueError("configure {} in native Codex configuration".format(key))
     if "developer_instructions" in settings:
         raise ValueError("kk composes developer_instructions; use confirmed AGENTS.md imports for extra text")
-    profile = baseline["profile"]
-    profile.update({k: v for k, v in baseline["optIn"].items() if selected.get(k)})
-    overlay(profile, settings)
+    for key in settings:
+        if not PLAIN_KEY.fullmatch(key):
+            raise ValueError("codex.settings key {} is not a plain name; write a nested table as a JSON object".format(
+                json.dumps(key)))
+    profile = {k: v for k, v in profile.items() if defaults.get(k, True)}
+    opted = {k: v for k, v in baseline["optIn"].items() if selected.get(k)}
     rules = payload.read_json(release / "kodex-guard/scripts/guard/guard-rules.json")
     advisory = ("Protected files: reading paths matching these secrets globs is prohibited by policy: "
                 + ", ".join(rules["secrets"]) + ". Ask the user for the needed value or a redacted copy.")
     instructions = "\n\n".join([p.read_text(encoding="utf-8").rstrip() for p in (
         release / "kk/baseline/codex/bootstrap.md", release / "klaude-plugin/instructions/behavior.md"
     )] + [advisory]) + "\n"
+    return profile, opted, settings, instructions, selected.get("nativeForbids", False)
+
+
+def launch_inputs(release, config):
+    """Return baseline and explicit leaves, the instructions and the native switch.
+
+    Leaves are (path tuple, value) pairs. Baseline leaves are kk's defaults left on by
+    codex.defaults. Explicit leaves are the selected opt-ins followed by codex.settings,
+    so the later of two leaves at one path is the one to use.
+    """
+    profile, opted, settings, instructions, native = validated(release, config)
+    return list(leaves(profile)), [*leaves(opted), *leaves(settings)], instructions, native
+
+
+def compose(release, config):
+    profile, opted, settings, instructions, native = validated(release, config)
+    profile.update(opted)
+    overlay(profile, settings)
     profile["developer_instructions"] = instructions
     # Inline TUI tables get reformatted by Codex on the first interactive
     # launch. Emit a regular table last so its model-tip counters append cleanly.
-    tui = object_value(profile.pop("tui"), "codex.settings.tui")
+    # With the tui defaults switched off this table is the caller's own settings object.
+    tui = dict(object_value(profile.pop("tui", {}), "codex.settings.tui"))
     tips = None
     if "model_availability_nux" in tui:
         tips = object_value(tui.pop("model_availability_nux"), "codex.settings.tui.model_availability_nux")
     rendered = toml_entries(profile) + "\n[tui]\n" + toml_entries(tui)
     if tips is not None:
         rendered += TIP_TABLE + toml_entries(tips)
-    return rendered.encode(), instructions.encode(), selected.get("nativeForbids", False)
+    return rendered.encode(), instructions.encode(), native
 
 
 def validate_files(release, directory, profile, rules, executable):
