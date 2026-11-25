@@ -127,7 +127,7 @@ Pal observes CLI executables at startup and caches its client registry: restart 
 | --- | --- |
 | Claude Code | Use the machine launcher and a scoped read grant for temporary review files. See the client entry below. |
 | Antigravity (`agy`) | Where its mode does not already permit reads, add `"permissions": {"allow": ["read_file(/tmp)"]}` (or your `$TMPDIR`, plus the plugin cache path) to `~/.gemini/antigravity-cli/settings.json`. No restart needed. |
-| Codex | Shipped manifest worked unchanged in the verified setup; whether reads are sandboxed depends on your Codex configuration (not verified). Allow several minutes per CLI review and check `tool_timeout_sec` for long MCP calls. |
+| Codex | Shipped manifest worked unchanged in the verified setup; whether reads are sandboxed depends on your Codex configuration (not verified). Allow several minutes per CLI review and check `tool_timeout_sec` for long MCP calls. See the client entry below. |
 
 #### Claude client for machine installations
 
@@ -147,6 +147,12 @@ The launcher’s default `readRelease` permission covers criteria loaded from th
 The temp grant covers the directory where the originating review creates its diff with `mktemp`. Substitute that directory’s physical absolute path for `/tmp` when needed. For example, for `TMPDIR=/work/review-tmp` the rule is `Read(//work/review-tmp/**)`. On macOS check `cd "${TMPDIR:-/tmp}" && pwd -P` in the originating shell. Keep a dedicated review directory if other temporary files should stay outside this grant.
 
 Restart PAL after editing the client. In a read-only `clink` review, check that the reviewer can read a criterion at the path supplied by the originating skill and the diff in the selected temporary directory.
+
+#### Codex client
+
+Keep PAL’s shipped `codex` client and do not point it at `kk codex`. kk installs the guard hooks and the skills plugin for the Codex account, so the plain `codex` that PAL starts loads them too. The launcher would add only model defaults and instructions that a `clink` reviewer does not use. PAL runs `codex exec`, which `kk codex` treats as a checked batch launch: it refuses whenever the managed profile has drifted, for example after a `/model` switch in a `kk codex` session.
+
+Codex has no per-path read grant like Claude’s `--allowedTools`. Its sandbox configuration decides what the reviewer can read. If a review reports that it could not read criteria or the diff, check that configuration for the plugin path and the temporary directory.
 
 Models stay configured where they are: Pal's model policy for API reviews, each CLI or client manifest for CLI reviews. To map a custom client name to its vendor, or to override the shipped defaults, declare it in the project's `CLAUDE.md`/`AGENTS.md` (for example `- \`mycli\` → Anthropic`).
 

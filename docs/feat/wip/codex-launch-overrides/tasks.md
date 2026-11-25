@@ -98,7 +98,7 @@
 
 ### Subtasks
 - [ ] 7.1 Update `docs/providers/codex.md` per implementation.md §Documentation and ADR, including the Task 6 `/model` and hook-trust observation, batch refusals and argument visibility; simplify the plain-codex review guidance and `codex_trust.REVIEW_UI` if Task 6 showed wrapped sessions save trust to `config.toml`
-- [ ] 7.2 Update `docs/user-guide/configuration.md` (Codex paragraph, `codex.defaults`, canonical default names, `installed_paths` list) and `docs/getting-started/overview.md:51`
+- [ ] 7.2 Update `docs/user-guide/configuration.md` (Codex paragraph, `codex.defaults`, canonical default names, `installed_paths` list) and `docs/getting-started/overview.md:51`; in `docs/user-guide/mcp-servers.md` §Codex client, replace the managed-profile drift reason for not wrapping PAL’s `codex exec` with the remaining batch gates (guard trust read, refused flags)
 - [ ] 7.3 Write `docs/adr/0015-codex-launch-overrides.md` and amend ADR 0014's Status line → verify: `make docs-build` passes
 
 ## Task 8: Final verification
