@@ -78,7 +78,10 @@ class CodexFiles(InstallFixture):
         version = next((self.codex / "plugins/cache/agentstakk-local/kk-guard").iterdir()).name
         (self.codex / "fixture-reviewed").write_text(version)
         launch = self.invoke(self.link, "codex", "exec", "hello")
-        self.assertEqual(json.loads(launch.stdout), ["--profile", "kk", "exec", "hello"])
+        argv = json.loads(launch.stdout)
+        self.assertEqual(argv[-2:], ["exec", "hello"])
+        self.assertNotIn("--profile", argv)
+        self.assertTrue(argv[-3].startswith("developer_instructions="))
         self.assertNotIn("unverified", launch.stderr)
         record["candidate"] = {"phase": "activating"}
         cli.state.write_json(self.state_file, record)
@@ -344,7 +347,5 @@ class CodexFiles(InstallFixture):
         notices = {"example.model": 2}
         configured = cli.codex_profile.compose(ROOT, {"settings": {"tui": {"model_availability_nux": notices}}})[0]
         self.assertEqual(tomllib.loads(configured.decode())["tui"]["model_availability_nux"], notices)
-        updated = configured.replace(b'"example.model" = 2\n', b'"example.model" = 1\n')
-        self.assertTrue(cli.codex_profile.matches_profile(updated, configured))
         data = {"key.with.dots": [{"quoted": '😀\n"\\\x7f'}]}
         self.assertEqual(tomllib.loads("sample = " + cli.codex_profile.toml_value(data))["sample"], data)

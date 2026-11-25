@@ -180,3 +180,75 @@ class CodexLaunchFlags(InstallFixture):
         self.assertEqual(flags.keys(), set(PROFILE) | set(OPT_INS) | {"developer_instructions"})
         self.assertIn("imported text", flags["developer_instructions"])
         self.assertEqual(printed, "")
+
+    def review_guard(self):
+        version = next((self.codex / "plugins/cache/agentstakk-local/kk-guard").iterdir()).name
+        (self.codex / "fixture-reviewed").write_text(version)
+
+    def test_choices_codex_saved_do_not_block_a_batch_launch(self):
+        self.review_guard()
+        # What an interactive session can leave behind: a model switch and a hook approval.
+        saved = 'model = "other"\n\n[hooks.state."repository:hooks.json:pre_tool_use:0:0"]\ntrusted_hash = "sha256:1"\n'
+        (self.codex / "config.toml").write_text(saved)
+        self.layers({"model": "user"})
+        # Sessions of earlier releases saved the same choices in kk's profile, which no launch reads now.
+        with (self.codex / "kk.config.toml").open("a") as profile:
+            profile.write(saved)
+        flags, printed = self.launch("exec", "hello")
+        self.assertEqual(set(PROFILE) - flags.keys(), MODEL_GROUP)
+        self.assertEqual(printed, "")
+        (self.codex / "disabled-1").touch()
+        self.assertIn("disabled", self.invoke(self.link, "codex", "exec", "hello", ok=False).stderr)
+
+    def test_a_caller_flag_that_removes_the_guard_blocks_a_batch_launch(self):
+        self.review_guard()
+        self.apply({"settings": {"features": {"shell_snapshot": True}}})
+        self.assertEqual(self.launch("exec", "hello")[0]["features"], toml({"shell_snapshot": True}))
+        # kk's features table precedes the caller's flag in the check as in the run. In the other
+        # order the table would replace the flag, and the check would see hooks the run does not have.
+        for args in (["-cfeatures.hooks=false", "exec", "hello"], ["exec", "--disable", "hooks", "hello"]):
+            with self.subTest(args=args):
+                refused = self.invoke(self.link, "codex", *args, ok=False)
+                self.assertIn("absent", refused.stderr)
+                self.assertEqual(refused.stdout, "")
+
+    def test_the_guard_check_reads_the_flags_of_the_run_in_order(self):
+        self.review_guard()
+        self.apply({"optIn": OPT_INS, "settings": {"features": {"shell_snapshot": True}}})
+        requests = self.codex / "fixture-requests"
+        requests.touch()
+        args = ["-c", "model=other", "--enable", "a", "exec", "--config=b=1", "--disable=c", "-cd=2", "hello"]
+        caller = ["-c", "model=other", "--enable", "a", "--config", "b=1", "--disable", "c", "-c", "d=2"]
+        argv = json.loads(self.invoke(self.link, "codex", *args).stdout)
+        own = argv[:len(argv) - len(args)]
+        self.assertEqual(argv[len(own):], args)
+        self.assertIn("features=" + toml({"shell_snapshot": True}), own)
+        sessions = [json.loads(line) for line in requests.read_text().splitlines()]
+        # The lookup decides kk's flags from the caller's; the guard check then gets both, kk's first.
+        self.assertEqual([request for request in sessions if request[0] != "initialize"],
+                         [["config/read", caller], ["hooks/list", own + caller]])
+
+    def test_batch_launches_the_guard_check_cannot_reproduce_are_refused(self):
+        self.review_guard()
+        requests = self.codex / "fixture-requests"
+        requests.touch()
+        for args, reason in ((["-pkk", "exec", "hello"], "named profile"),
+                             (["exec", "--ignore-user-config", "hello"], "with --ignore-user-config:"),
+                             (["exec", "--trust", "hello"], "with --trust:")):
+            with self.subTest(args=args):
+                refused = self.invoke(self.link, "codex", *args, ok=False)
+                self.assertIn("cannot verify the Codex guard", refused.stderr)
+                self.assertIn(reason, refused.stderr)
+                self.assertEqual(refused.stdout, "")
+        self.assertEqual(requests.read_text(), "", "no Codex session started")
+
+    def test_a_failed_lookup_omits_kk_values_from_a_batch_launch_but_not_the_guard_check(self):
+        self.review_guard()
+        self.apply({"optIn": OPT_INS})
+        (self.codex / "fixture-no-config-read").touch()
+        run = self.invoke(self.link, "codex", "exec", "hello")
+        self.assertEqual(json.loads(run.stdout), ["exec", "hello"])
+        self.assertEqual(run.stderr.count("could not read Codex configuration origins"), 1)
+        self.assertIn("without kk defaults, opt-ins and instructions so", run.stderr)
+        (self.codex / "disabled-1").touch()
+        self.assertIn("disabled", self.invoke(self.link, "codex", "exec", "hello", ok=False).stderr)
