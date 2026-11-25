@@ -9,6 +9,8 @@ import sys
 
 args = sys.argv[1:]
 directory = Path(os.environ["CODEX_HOME"])
+# kk checks candidate settings in a scratch CODEX_HOME; a test names the home whose controls apply there.
+fixtures = Path(os.environ.get("KK_TEST_CODEX_FIXTURES") or directory)
 market = directory / "fixture-market"
 cache = directory / "plugins/cache/agentstakk-local"
 STRING = r'"(?:[^"\\]|\\.)*"'
@@ -108,7 +110,7 @@ def leaves(table, path=()):
 
 
 def config_read(flags, cwd):
-    def fixture(name, home=directory):
+    def fixture(name, home=fixtures):
         path = home / name
         return json.loads(path.read_text()) if path.exists() else {}
 
@@ -150,7 +152,7 @@ def app_server():
         reply = {"id": msg["id"], "result": {}}
         if msg["method"] == "config/read":
             reply["result"] = config_read(flags, msg["params"]["cwd"])
-            if (directory / "fixture-no-config-read").exists():
+            if (fixtures / "fixture-no-config-read").exists():
                 reply = {"id": msg["id"], "error": {"code": -32601}}
         if msg["method"] == "hooks/list":
             cwd = msg["params"]["cwds"][0]
@@ -224,7 +226,9 @@ elif args[:2] == ["plugin", "add"]:
     if (directory / ("interrupt-add-" + name)).exists():
         sys.exit(17)
     print(json.dumps({"pluginId": args[2], "installedPath": str(destination), "version": version}))
-elif args == ["--profile", "kk", "debug", "prompt-input"]:
+elif args[-2:] == ["debug", "prompt-input"]:
+    if (fixtures / "fixture-rejects-settings").exists():
+        sys.exit("error: invalid configuration")
     print("[]")
 elif args[:2] == ["execpolicy", "check"]:
     # Exercise kk's publication flow on CI without Codex. The live CLI test

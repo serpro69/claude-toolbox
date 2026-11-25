@@ -21,18 +21,27 @@ class CodexFiles(InstallFixture):
     def configure(self, settings):
         cli.state.write_json(self.config, {"codex": settings})
 
+    def flags(self):
+        """The applied settings, as the configuration flags of an interactive launch."""
+        argv = json.loads(self.invoke(self.link, "codex", "hello").stdout)
+        self.assertEqual(argv[:-1:2], ["-c"] * (len(argv) // 2))
+        return argv[1::2]
+
     def test_collision_stops_before_activation(self):
-        self.codex.mkdir()
-        self.profile.write_text("existing")
+        agent = self.codex / "agents/kk-code-reviewer.toml"
+        agent.parent.mkdir(parents=True)
+        agent.write_text("existing")
         self.assertIn("already exists", self.install(ok=False).stderr)
-        self.assertEqual(self.profile.read_text(), "existing")
+        self.assertEqual(agent.read_text(), "existing")
         self.assertFalse((self.home / "market").exists())
-        self.assertNotIn(str(self.profile), self.state()["installed_paths"])
+        self.assertNotIn(str(agent), self.state()["installed_paths"])
 
     def test_apply_drift_opt_ins_and_pruning(self):
         self.install()
-        original = self.profile.read_bytes()
-        self.assertNotIn(b"approval_policy", original.split(b'"developer_instructions"')[0])
+        self.assertFalse(self.profile.exists())
+        self.assertNotIn(str(self.profile), self.state()["installed_paths"])
+        original = self.flags()
+        self.assertFalse([flag for flag in original if flag.startswith(("approval_policy=", "sandbox_mode="))])
         self.assertEqual((self.codex / "agents/kk-code-reviewer.toml").read_bytes(),
                          (ROOT / "kk/baseline/codex/agents/code-reviewer.toml").read_bytes())
         personal = self.codex / "agents/kk-notes.toml"
@@ -45,21 +54,24 @@ class CodexFiles(InstallFixture):
         self.assertIn("kk apply", launch.stderr)
         self.assertEqual(json.loads(launch.stdout), ["-p", "personal", "hello"])
         self.assertEqual(self.state_file.read_bytes(), before)
-        self.assertEqual(self.profile.read_bytes(), original)
+        # A launch uses the settings kk apply saved, not the edited file.
+        self.assertEqual(self.flags(), original)
         calls = (self.home / "calls").read_bytes()
         self.assertIn("every Codex session", self.invoke(self.link, "apply").stdout)
         self.assertTrue((self.codex / "rules/kk.rules").is_file())
         self.assertEqual((self.home / "calls").read_bytes(), calls)
         self.assertNotIn("kk apply", self.invoke(self.link, "status").stderr)
-        self.assertIn('"approval_policy" = "on-request"', self.profile.read_text())
-        self.assertIn('"sandbox_mode" = "read-only"', self.profile.read_text())
-        self.assertIn('"my_new_preference" = "new"', self.profile.read_text())
+        applied = self.flags()
+        for flag in ('approval_policy="on-request"', 'sandbox_mode="read-only"', 'my_new_preference="new"',
+                     'agents={ "max_depth" = 1, "max_concurrent_threads_per_session" = 3 }'):
+            self.assertIn(flag, applied)
+        self.assertFalse(self.profile.exists())
         self.assertTrue(personal.is_file())
         self.config.unlink()
         self.assertIn("kk apply", self.invoke(self.link, "status").stderr)
         self.invoke(self.link, "apply")
         self.assertFalse((self.codex / "rules/kk.rules").exists())
-        self.assertEqual(self.profile.read_bytes(), original)
+        self.assertEqual(self.flags(), original)
 
     def test_refusals_and_ready_states(self):
         self.install()
@@ -90,17 +102,17 @@ class CodexFiles(InstallFixture):
 
     def test_reserved_enablement_settings(self):
         self.install()
-        original = self.profile.read_bytes()
+        original = self.state_file.read_bytes()
         for settings in ({"features": {"hooks": False}}, {"features": {"plugins": True}},
                          {"plugins": {"example@local": {"enabled": False}}}, {"hooks": {"state": {}}},
                          {"mcp_servers": {}}, {"model_providers": {}}, {"shell_environment_policy": {}}):
             self.configure({"settings": settings})
             self.assertIn("native Codex", self.invoke(self.link, "apply", ok=False).stderr)
-            self.assertEqual(self.profile.read_bytes(), original)
+            self.assertEqual(self.state_file.read_bytes(), original)
         # As a launch flag, Codex would split this key and switch hooks off.
         self.configure({"settings": {"features.hooks": False}})
         self.assertIn("not a plain name", self.invoke(self.link, "apply", ok=False).stderr)
-        self.assertEqual(self.profile.read_bytes(), original)
+        self.assertEqual(self.state_file.read_bytes(), original)
 
     def test_upgrade_prunes_recorded_agent_and_rollback_restores_it(self):
         self.install()
@@ -137,7 +149,7 @@ class CodexFiles(InstallFixture):
             self.assertIn("another kk writer", self.invoke(self.link, "apply", ok=False).stderr)
         self.invoke(self.link, "apply")
         self.assertNotIn("codex_write_pending", self.state())
-        self.assertIn("replacement", self.profile.read_text())
+        self.assertIn('model="replacement"', self.flags())
 
     def test_staged_collision_preserves_apply_and_rollback_ignores_invalid_draft(self):
         self.configure({"settings": {"model": "first"}})
@@ -149,7 +161,7 @@ class CodexFiles(InstallFixture):
         self.assertEqual(self.state()["candidate"]["phase"], "staged")
         self.configure({"settings": {"model": "first-applied"}})
         self.invoke(self.link, "apply")
-        self.assertIn("first-applied", self.profile.read_text())
+        self.assertIn('model="first-applied"', self.flags())
         self.assertEqual(collision.read_text(), "personal")
         collision.rename(collision.with_suffix(".saved"))
         self.configure({"settings": {"model": "second"}})
@@ -160,7 +172,7 @@ class CodexFiles(InstallFixture):
         broken.write_text("#!/bin/sh\nexit 17\n")
         broken.chmod(0o755)
         self.invoke(self.link, "rollback", env=dict(self.env, PATH=str(broken.parent) + os.pathsep + self.env["PATH"]))
-        self.assertIn("first-applied", self.profile.read_text())
+        self.assertIn('model="first-applied"', self.flags())
         self.assertIn("kk apply", self.invoke(self.link, "status").stderr)
 
     def test_interrupted_reservation_recognizes_only_its_own_file(self):
@@ -218,6 +230,47 @@ class CodexFiles(InstallFixture):
         self.assertEqual(json.loads(named.stdout), ["-p", "personal", "hello"])
         (self.toolbox / "codex-instructions.md").unlink()
         self.assertIn("run kk apply", self.invoke(self.link, "codex", "hello", ok=False).stderr)
+
+    def test_apply_stops_when_codex_reports_a_value_under_another_name(self):
+        self.install()
+        original = self.state_file.read_bytes()
+        marker = "KK-SYNTHETIC-MARKER"
+        self.configure({"settings": {"agents": {"max_threads": 3}, "note": marker}})
+        (self.codex / "fixture-aliases.json").write_text(
+            json.dumps({"agents.max_threads": "agents.max_concurrent_threads_per_session"}))
+        env = dict(self.env, KK_TEST_CODEX_FIXTURES=str(self.codex))
+        renamed = self.invoke(self.link, "apply", ok=False, env=env).stderr
+        # kk's own default has the name Codex reports, so only the aliased key passed alone reveals it.
+        self.assertIn("does not report agents.max_threads under the name kk passes; it reported "
+                      "agents.max_concurrent_threads_per_session instead.", renamed)
+        (self.codex / "fixture-rejects-settings").touch()
+        rejected = self.invoke(self.link, "apply", ok=False, env=env).stderr
+        self.assertEqual(rejected, "kk: Codex rejected debug prompt-input: error: invalid configuration\n")
+        # Settings travel as arguments; an error repeats what Codex said, never the arguments.
+        self.assertNotIn(marker, renamed + rejected)
+        self.assertEqual(self.state_file.read_bytes(), original)
+
+    def test_apply_accepts_empty_values_codex_reports_no_origin_for(self):
+        self.install()
+        self.configure({"settings": {"tui": {"status_line": []}, "notes": {}}})
+        self.invoke(self.link, "apply")
+        applied = self.flags()
+        self.assertIn("notes={  }", applied)
+        self.assertIn('"status_line" = []', next(flag for flag in applied if flag.startswith("tui=")))
+
+    def test_apply_removes_the_profile_an_earlier_release_owned(self):
+        self.install()
+        self.profile.write_text('model = "saved by Codex"\n')
+        record = self.state()
+        record["installed_paths"].append(str(self.profile))
+        record["codex_paths"].append(str(self.profile))
+        cli.state.write_json(self.state_file, record)
+        notice = "removed the managed Codex profile " + str(self.profile)
+        self.assertEqual(self.invoke(self.link, "apply").stdout.count(notice), 1)
+        self.assertFalse(self.profile.exists())
+        record = self.state()
+        self.assertNotIn(str(self.profile), record["installed_paths"] + record["codex_paths"])
+        self.assertNotIn(notice, self.invoke(self.link, "apply").stdout)
 
     def test_workspace_path_preserves_trailing_newline(self):
         repo = self.root / "repo\n"
@@ -288,16 +341,19 @@ class CodexFiles(InstallFixture):
             self.assertEqual(cli.codex_launch.import_argument(self.toolbox, repo, True), [])
 
     @unittest.skipUnless(shutil.which("codex"), "installed Codex CLI required")
-    def test_installed_codex_loads_profile_and_independent_forbids(self):
+    def test_installed_codex_loads_launch_flags_and_independent_forbids(self):
         actual = shutil.which("codex")
         bin_dir = self.root / "vendor"
         bin_dir.mkdir()
         (bin_dir / "codex").symlink_to(actual)
         self.env["PATH"] = str(bin_dir) + os.pathsep + self.env["PATH"]
-        self.configure({"optIn": {"nativeForbids": True}})
+        self.configure({"optIn": {"nativeForbids": True, "approval_policy": True, "approvals_reviewer": True,
+                                  "sandbox_mode": True}})
+        # Installing checks that this Codex reports every shipped value under the name kk passes.
         self.assertIn("every Codex session", self.install().stdout)
         rules = self.codex / "rules/kk.rules"
-        rendered = self.invoke(actual, "--profile", "kk", "debug", "prompt-input")
+        rendered = self.invoke(self.link, "codex", "debug", "prompt-input")
+        self.assertNotIn("kk:", rendered.stderr)
         messages = json.loads(rendered.stdout)
         self.assertTrue(any(m.get("role") == "developer" and
                             "Protected files:" in str(m.get("content")) and "Tool-Name Mapping" in str(m.get("content"))
@@ -309,16 +365,20 @@ class CodexFiles(InstallFixture):
         self.assertIn("KK_SELECTED_WORKSPACE_MARKER", probe.stdout)
         with patch("pathlib.Path.cwd", return_value=self.root):
             self.assertEqual(cli.codex_launch.launch_options(["-Cdir=choice", "debug"])[0], selected)
-        before = self.profile.read_bytes()
+        before = self.state_file.read_bytes()
         extra = rules.with_name("personal.rules")
         extra.write_text("this is not a rules file!\n")
         rejected = self.invoke(self.link, "apply", ok=False)
         self.assertIn("personal.rules", rejected.stderr)
-        self.assertEqual(self.profile.read_bytes(), before)
+        self.assertEqual(self.state_file.read_bytes(), before)
         extra.unlink()
         self.configure({"settings": {"agents": {"max_concurrent_threads_per_session": "six"}}})
-        self.assertIn("Codex rejected", self.invoke(self.link, "apply", ok=False).stderr)
-        self.assertEqual(self.profile.read_bytes(), before)
+        self.assertIn("Codex rejected debug prompt-input", self.invoke(self.link, "apply", ok=False).stderr)
+        self.configure({"settings": {"agents": {"max_threads": 3}}})
+        self.assertIn("does not report agents.max_threads under the name kk passes; it reported "
+                      "agents.max_concurrent_threads_per_session instead.",
+                      self.invoke(self.link, "apply", ok=False).stderr)
+        self.assertEqual(self.state_file.read_bytes(), before)
         self.assertTrue(rules.is_file())
         self.configure({})
         self.invoke(self.link, "apply")
@@ -338,14 +398,11 @@ class CodexFiles(InstallFixture):
             import tomllib
         except ImportError:
             self.skipTest("tomllib unavailable")
-        profile, instructions, native = cli.codex_profile.compose(ROOT, {})
-        values = tomllib.loads(profile.decode())
-        self.assertEqual(values.pop("developer_instructions"), instructions.decode())
-        baseline = json.loads((ROOT / "kk/baseline/codex.json").read_text())
-        self.assertEqual(values, baseline["profile"])
-        self.assertFalse(native)
-        notices = {"example.model": 2}
-        configured = cli.codex_profile.compose(ROOT, {"settings": {"tui": {"model_availability_nux": notices}}})[0]
-        self.assertEqual(tomllib.loads(configured.decode())["tui"]["model_availability_nux"], notices)
+        baseline, explicit, instructions, native = cli.codex_profile.compose(ROOT, {})
+        settings = cli.codex_profile.merge([*baseline, (("developer_instructions",), instructions)])
+        values = tomllib.loads("\n".join(cli.codex_profile.config_flags(settings)[1::2]))
+        self.assertEqual(values.pop("developer_instructions"), instructions)
+        self.assertEqual(values, json.loads((ROOT / "kk/baseline/codex.json").read_text())["profile"])
+        self.assertEqual((explicit, native), ([], False))
         data = {"key.with.dots": [{"quoted": '😀\n"\\\x7f'}]}
         self.assertEqual(tomllib.loads("sample = " + cli.codex_profile.toml_value(data))["sample"], data)

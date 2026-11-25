@@ -1,4 +1,4 @@
-"""Compose, validate and publish the Codex files owned by the active release."""
+"""Compose kk's Codex launch settings; validate and publish the Codex files the active release owns."""
 
 import hashlib
 import json
@@ -11,12 +11,11 @@ import subprocess
 import sys
 import tempfile
 
-from . import codex_plugins, mixed, payload, state
+from . import codex_app, codex_plugins, mixed, payload, state
 from .claude_launch import check_keys, object_value, switches
 from .state import override_path
 
 
-TIP_TABLE = "\n[tui.model_availability_nux]\n"
 # Codex splits a -c key on every dot, even inside quotes, so only a plain name can head a launch flag.
 PLAIN_KEY = re.compile(r"[A-Za-z0-9_-]+")
 # These tables carry credentials, and launch flags are readable in process listings.
@@ -60,20 +59,8 @@ def toml_value(value):
     if isinstance(value, list):
         return "[" + ", ".join(toml_value(v) for v in value) + "]"
     if value is None:
-        raise ValueError("Codex profile values cannot be null")
+        raise ValueError("Codex settings cannot be null")
     return json.dumps(value, ensure_ascii=False, allow_nan=False).replace(chr(127), r"\u007f")
-
-
-def toml_entries(table):
-    return "".join(toml_value(k) + " = " + toml_value(v) + "\n" for k, v in table.items())
-
-
-def overlay(table, overrides):
-    for key, value in overrides.items():
-        if isinstance(value, dict) and isinstance(table.get(key), dict):
-            overlay(table[key], value)
-        else:
-            table[key] = value
 
 
 def codex_settings(raw):
@@ -96,8 +83,37 @@ def leaves(table, path=()):
             yield path + (key,), value
 
 
-def validated(release, config):
-    """Check the overrides against the release baseline and return the parts every consumer shares."""
+def put(table, path, value):
+    for part in path[:-1]:
+        if not isinstance(table.get(part), dict):
+            table[part] = {}
+        table = table[part]
+    # An empty table carries no value of its own, so it must not replace leaves already collected.
+    if value != {} or not isinstance(table.get(path[-1]), dict):
+        table[path[-1]] = value
+
+
+def merge(pairs):
+    """Build the table that leaves describe; a later leaf replaces an earlier one at its path."""
+    table = {}
+    for path, value in pairs:
+        put(table, path, value)
+    return table
+
+
+def config_flags(table):
+    # One flag per top-level key: a second inline table for a key would replace the first.
+    return [part for key, value in table.items() for part in ("-c", key + "=" + toml_value(value))]
+
+
+def compose(release, config):
+    """Check the overrides against the release baseline and return what a launch is built from.
+
+    Returns baseline leaves, explicit leaves, the instructions and the native switch.
+    Leaves are (path tuple, value) pairs. Baseline leaves are kk's defaults left on by
+    codex.defaults. Explicit leaves are the selected opt-ins followed by codex.settings,
+    so the later of two leaves at one path is the one to use.
+    """
     baseline = payload.read_json(release / "kk/baseline/codex.json")
     selected = config.get("optIn", {})
     switches(selected, set(baseline["optIn"]) | {"nativeForbids"}, "codex.optIn")
@@ -127,39 +143,12 @@ def validated(release, config):
     instructions = "\n\n".join([p.read_text(encoding="utf-8").rstrip() for p in (
         release / "kk/baseline/codex/bootstrap.md", release / "klaude-plugin/instructions/behavior.md"
     )] + [advisory]) + "\n"
-    return profile, opted, settings, instructions, selected.get("nativeForbids", False)
+    return (list(leaves(profile)), [*leaves(opted), *leaves(settings)], instructions,
+            selected.get("nativeForbids", False))
 
 
-def launch_inputs(release, config):
-    """Return baseline and explicit leaves, the instructions and the native switch.
-
-    Leaves are (path tuple, value) pairs. Baseline leaves are kk's defaults left on by
-    codex.defaults. Explicit leaves are the selected opt-ins followed by codex.settings,
-    so the later of two leaves at one path is the one to use.
-    """
-    profile, opted, settings, instructions, native = validated(release, config)
-    return list(leaves(profile)), [*leaves(opted), *leaves(settings)], instructions, native
-
-
-def compose(release, config):
-    profile, opted, settings, instructions, native = validated(release, config)
-    profile.update(opted)
-    overlay(profile, settings)
-    profile["developer_instructions"] = instructions
-    # Inline TUI tables get reformatted by Codex on the first interactive
-    # launch. Emit a regular table last so its model-tip counters append cleanly.
-    # With the tui defaults switched off this table is the caller's own settings object.
-    tui = dict(object_value(profile.pop("tui", {}), "codex.settings.tui"))
-    tips = None
-    if "model_availability_nux" in tui:
-        tips = object_value(tui.pop("model_availability_nux"), "codex.settings.tui.model_availability_nux")
-    rendered = toml_entries(profile) + "\n[tui]\n" + toml_entries(tui)
-    if tips is not None:
-        rendered += TIP_TABLE + toml_entries(tips)
-    return rendered.encode(), instructions.encode(), native
-
-
-def validate_files(release, directory, profile, rules, executable):
+def validate_files(release, directory, settings, rules, executable):
+    """Stop publication when Codex rejects a value kk may pass at launch, or the candidate rules."""
     # An isolated working directory avoids a trusted project's config masking
     # candidate errors. Retain base user configuration (e.g. custom providers).
     with tempfile.TemporaryDirectory(prefix="kk-codex-check-") as temp:
@@ -167,16 +156,46 @@ def validate_files(release, directory, profile, rules, executable):
         base = directory / "config.toml"
         if base.exists():
             (scratch / "config.toml").symlink_to(base)
-        (scratch / "kk.config.toml").write_bytes(profile)
         env = dict(os.environ, CODEX_HOME=str(scratch))
-        def run(args, capture=False):
-            result = subprocess.run([executable] + args, cwd=scratch, env=env, stdin=subprocess.DEVNULL,
-                                    stdout=subprocess.PIPE if capture else subprocess.DEVNULL,
-                                    stderr=subprocess.PIPE, text=True, timeout=30)
+        def run(operation, args, capture=False):
+            # The arguments carry codex.settings values, so a failure names only the operation.
+            try:
+                result = subprocess.run([executable] + args, cwd=scratch, env=env, stdin=subprocess.DEVNULL,
+                                        stdout=subprocess.PIPE if capture else subprocess.DEVNULL,
+                                        stderr=subprocess.PIPE, text=True, timeout=30)
+            except subprocess.TimeoutExpired:
+                raise ValueError("Codex {} timed out".format(operation)) from None
             if result.returncode:
-                raise ValueError("Codex rejected {}: {}".format(" ".join(args), result.stderr.strip()))
+                raise ValueError("Codex rejected {}: {}".format(operation, result.stderr.strip()))
             return result.stdout
-        run(["--profile", "kk", "debug", "prompt-input"])
+        run("debug prompt-input", config_flags(settings) + ["debug", "prompt-input"])
+
+        def unreported(table):
+            """Return the leaves Codex does not report under kk's name, and the other names it reported."""
+            try:
+                layers, _ = codex_app.layers(scratch, scratch, config_flags(table), executable, 30)
+            except codex_app.NoMethod as exc:
+                raise ValueError(str(exc)) from exc
+            names = {key for key, layer in layers.items() if layer == "sessionFlags"}
+            missing = []
+            for path, value in leaves(table):
+                keys = codex_app.origin_keys(names, path)
+                names.difference_update(keys)
+                # Codex reports no origin for an empty array or table.
+                if not keys and value not in ([], {}):
+                    missing.append((path, value))
+            return missing, sorted(names)
+
+        # A launch finds out what other layers set by these names. A value Codex reports under
+        # another name, such as an alias, would never yield to the account or a repository.
+        missing, _ = unreported(settings)
+        if missing:
+            # Passed alone, they show the names Codex uses, which another kk value may share.
+            _, names = unreported(merge(missing))
+            raise ValueError("Codex config/read does not report {} under the name kk passes; it reported {} instead. "
+                             "Use the name Codex reports in codex.settings. For one of kk's own defaults, switch "
+                             "it off in codex.defaults and update kk".format(
+                                 ", ".join(".".join(path) for path, _ in missing), ", ".join(names) or "no other name"))
         if rules is None:
             return
         candidate = scratch / "kk.rules"
@@ -187,13 +206,13 @@ def validate_files(release, directory, profile, rules, executable):
             for rule in category:
                 for native in rule.get("codex", []):
                     for example in native["match"]:
-                        decision = json.loads(run(command + ["--"] + shlex.split(example), True))
+                        decision = json.loads(run("execpolicy check", command + ["--"] + shlex.split(example), True))
                         if not isinstance(decision, dict) or decision.get("decision") != "forbidden":
                             raise ValueError("candidate kk.rules does not forbid " + example)
         for path in sorted((directory / "rules").glob("*.rules")):
             if path.name != "kk.rules":
                 command.extend(["--rules", str(path)])
-        run(command + ["--", "echo", "ok"])
+        run("execpolicy check", command + ["--", "echo", "ok"])
 
 
 def check_destinations(paths, owned):
@@ -219,8 +238,8 @@ def prepare(release, record, *, required=False, snapshot=...):
         directory = codex_home()
         raw = override_bytes()
         saved = {"directory": str(directory), "settings": codex_settings(raw), "override_hash": digest(raw)}
-    profile, instructions, native = compose(release, saved["settings"])
-    files = {directory / "kk.config.toml": profile}
+    baseline, explicit, instructions, native = compose(release, saved["settings"])
+    files = {}
     agents = release / "kk/baseline/codex/agents"
     for agent in sorted(agents.iterdir()):
         if agent.suffix == ".toml":
@@ -236,8 +255,9 @@ def prepare(release, record, *, required=False, snapshot=...):
     # The target's immutable payload and saved overrides reproduce its validated
     # files. A broken vendor CLI must not strand recovery of the Claude release.
     if snapshot is ...:
-        validate_files(release, directory, profile, rules, str(Path(executable).absolute()))
-    return files, obsolete, instructions, saved
+        settings = merge([*baseline, *explicit, (("developer_instructions",), instructions)])
+        validate_files(release, directory, settings, rules, str(Path(executable).absolute()))
+    return files, obsolete, instructions.encode(), saved
 
 
 def prepare_activation(release, record):
@@ -348,6 +368,11 @@ def publish(home, record, version, plan):
     for path in obsolete:
         path.unlink(missing_ok=True)
         record["installed_paths"].remove(str(path))
+        if path.name == "kk.config.toml":
+            # Releases that launched Codex with this profile let Codex save session choices in it.
+            print("kk: removed the managed Codex profile {}; kk codex now passes its settings as launch flags. "
+                  "A model or hook approval Codex saved in that profile no longer applies: choose it again in "
+                  "plain codex, or set it in config.toml.".format(path))
     sidecar = home / "codex-instructions.md"
     release_state = record["releases"].setdefault(version, {})
     if saved is None:

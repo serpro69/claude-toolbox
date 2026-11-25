@@ -1,4 +1,4 @@
-"""Launch Codex with the managed profile and repository-confirmed instructions."""
+"""Launch Codex with kk's settings as configuration flags and repository-confirmed instructions."""
 
 from collections import namedtuple
 import hashlib
@@ -254,29 +254,6 @@ def report_imports(home):
         print("Codex imports: {} ({})".format({True: "approved", False: "declined", None: "undecided"}[answer], path))
 
 
-def read_origins(codex_home, directory, flags, executable):
-    """Return the layer type that set each origin key, and the effective configuration."""
-    origins, config = codex_app.origins(codex_home, directory, flags, executable, 5)
-    layers = {}
-    for key, origin in origins.items():
-        name = origin.get("name") if isinstance(origin, dict) else None
-        layer = name.get("type") if isinstance(name, dict) else None
-        if not isinstance(layer, str):
-            raise ValueError("Codex config/read returned an unexpected origin for " + key)
-        layers[key] = layer
-    return layers, config
-
-
-def put(table, path, value):
-    for part in path[:-1]:
-        if not isinstance(table.get(part), dict):
-            table[part] = {}
-        table = table[part]
-    # An empty table carries no value of its own, so it must not replace leaves already collected.
-    if value != {} or not isinstance(table.get(path[-1]), dict):
-        table[path[-1]] = value
-
-
 def launch_flags(baseline, explicit, options, lookup, imports):
     """Return kk's configuration flags for one launch.
 
@@ -289,9 +266,7 @@ def launch_flags(baseline, explicit, options, lookup, imports):
         layers, config = lookup
 
         def setters(path):
-            # Codex reports array elements separately: tui.status_line.0, tui.status_line.1, ...
-            name = ".".join(path)
-            return {layer for key, layer in layers.items() if key == name or key.startswith(name + ".")}
+            return {layers[key] for key in codex_app.origin_keys(layers, path)}
 
         def empty_array(path):
             # An empty array has no origin, and Codex leaves kk's array defaults unset on its own.
@@ -309,12 +284,7 @@ def launch_flags(baseline, explicit, options, lookup, imports):
                  if "project" not in setters(path)
                  and not (options.permissions and path[0] in PERMISSION_KEYS)
                  and not (imports and path == ("developer_instructions",))]
-    table = {}
-    for path, value in kept:
-        put(table, path, value)
-    # One flag per top-level key: a second inline table for a key would replace the first.
-    flags = [part for key, value in table.items() for part in ("-c", key + "=" + codex_profile.toml_value(value))]
-    return flags + imports
+    return codex_profile.config_flags(codex_profile.merge(kept)) + imports
 
 
 def require_applied_home(saved):
@@ -341,10 +311,10 @@ def session_flags(home, release, saved, codex_home, options, executable, prompt)
         instructions = (home / "codex-instructions.md").read_text(encoding="utf-8")
     except FileNotFoundError:
         raise ValueError("kk's Codex instructions are missing; run kk apply") from None
-    baseline, chosen, _, _ = codex_profile.launch_inputs(release, saved["codex_snapshot"]["settings"])
+    baseline, chosen, _, _ = codex_profile.compose(release, saved["codex_snapshot"]["settings"])
     imports = workspace_imports(home, options.workspace, prompt)
     try:
-        lookup = read_origins(codex_home, options.directory, options.config_flags, executable)
+        lookup = codex_app.layers(codex_home, options.directory, options.config_flags, executable, 5)
     except (codex_app.NoMethod, ValueError, OSError) as exc:
         lookup = None
         print("kk: could not read Codex configuration origins ({}); launching without kk {} so repository "

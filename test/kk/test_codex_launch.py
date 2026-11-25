@@ -42,19 +42,20 @@ class LaunchArguments(unittest.TestCase):
             with self.subTest(args=args):
                 self.assertEqual(launcher.launch_options(args)[5:], (False, False, False, False))
 
-    def test_composing_the_profile_leaves_the_saved_settings_alone(self):
+    def test_composing_leaves_the_saved_settings_alone(self):
         settings = {"defaults": {"tui": False}, "settings": {"tui": {"model_availability_nux": {"example": 1}}}}
         saved = json.loads(json.dumps(settings))
-        cli.codex_profile.compose(ROOT, settings)
+        baseline, explicit, _, _ = cli.codex_profile.compose(ROOT, settings)
+        cli.codex_profile.merge([*baseline, *explicit])
         self.assertEqual(settings, saved)
-        self.assertIn((("tui", "model_availability_nux", "example"), 1), cli.codex_profile.launch_inputs(ROOT, settings)[1])
+        self.assertIn((("tui", "model_availability_nux", "example"), 1), explicit)
 
     def test_an_unexpected_origin_is_a_failed_lookup(self):
         for origin in (None, "user", {"name": "user"}, {"name": {"type": None}}):
             with self.subTest(origin=origin), patch.object(launcher.codex_app, "origins",
                                                            return_value=({"model": origin}, {})):
                 with self.assertRaisesRegex(ValueError, "unexpected origin for model"):
-                    launcher.read_origins(Path("/home"), Path("/work"), [], "codex")
+                    launcher.codex_app.layers(Path("/home"), Path("/work"), [], "codex", 5)
 
 
 class CodexLaunchFlags(InstallFixture):
@@ -191,9 +192,6 @@ class CodexLaunchFlags(InstallFixture):
         saved = 'model = "other"\n\n[hooks.state."repository:hooks.json:pre_tool_use:0:0"]\ntrusted_hash = "sha256:1"\n'
         (self.codex / "config.toml").write_text(saved)
         self.layers({"model": "user"})
-        # Sessions of earlier releases saved the same choices in kk's profile, which no launch reads now.
-        with (self.codex / "kk.config.toml").open("a") as profile:
-            profile.write(saved)
         flags, printed = self.launch("exec", "hello")
         self.assertEqual(set(PROFILE) - flags.keys(), MODEL_GROUP)
         self.assertEqual(printed, "")

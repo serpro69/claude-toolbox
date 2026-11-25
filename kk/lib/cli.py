@@ -492,7 +492,7 @@ def main():
     migration.add_argument("--retirement-version", metavar="TAG", default=migrate.RETIREMENT_VERSION,
                            help="use this retirement release (default: %(default)s)")
     commands.add_parser("apply", help="rewrite the active release's Codex files from current overrides")
-    commands.add_parser("codex", help="launch Codex with the managed profile")
+    commands.add_parser("codex", help="launch Codex with the active release's settings")
     commands.add_parser("claude", help="launch Claude with the active release's settings (--print-layer to inspect)")
     home = state.toolbox_home()
     try:
