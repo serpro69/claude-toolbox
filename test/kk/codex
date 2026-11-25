@@ -138,10 +138,15 @@ def config_read(flags, cwd):
 
 def app_server():
     flags = session_flags(args[:-1])
+    requests = directory / "fixture-requests"
     for line in sys.stdin:
         msg = json.loads(line)
         if msg["method"] == "initialized":
             continue
+        # A test that creates this file learns which sessions started, and with which arguments.
+        if requests.exists():
+            with requests.open("a") as log:
+                print(json.dumps([msg["method"], args[:-1]]), file=log)
         reply = {"id": msg["id"], "result": {}}
         if msg["method"] == "config/read":
             reply["result"] = config_read(flags, msg["params"]["cwd"])

@@ -335,14 +335,14 @@ def workspace_imports(home, directory, interactive):
     return [] if root is None else import_argument(home, root, interactive)
 
 
-def interactive_flags(home, release, saved, options, executable):
-    codex_home = require_applied_home(saved)
+def session_flags(home, release, saved, codex_home, options, executable, prompt):
+    """Return kk's flags for a launch without a named profile; prompt allows asking about imports."""
     try:
         instructions = (home / "codex-instructions.md").read_text(encoding="utf-8")
     except FileNotFoundError:
         raise ValueError("kk's Codex instructions are missing; run kk apply") from None
     baseline, chosen, _, _ = codex_profile.launch_inputs(release, saved["codex_snapshot"]["settings"])
-    imports = workspace_imports(home, options.workspace, sys.stdin.isatty())
+    imports = workspace_imports(home, options.workspace, prompt)
     try:
         lookup = read_origins(codex_home, options.directory, options.config_flags, executable)
     except (codex_app.NoMethod, ValueError, OSError) as exc:
@@ -379,26 +379,25 @@ def launch_checked(home, args, options, lock):
     if phase not in ("ready", "unverified", "awaiting review"):
         raise ValueError("Codex is not configured for the active release; " + codex_plugins.activation_hint(saved))
     executable = codex_plugins.executable()
+    release = home / "releases" / active
+    flags = []
     if batch:
-        if directory is None or explicit not in (None, "kk"):
+        if directory is None or explicit is not None:
             raise ValueError("cannot verify the Codex guard for this session's workspace or named profile; "
-                             "use an interactive session or select a local directory with the kk profile")
-        release = home / "releases" / active
+                             "use an interactive session, or select a local directory and no profile")
+        unverifiable = [name for name, given in (("--ignore-user-config", options.ignore_user_config),
+                                                 ("--trust", options.trust)) if given]
+        if unverifiable:
+            # The trust read below runs app-server, which accepts neither flag.
+            raise ValueError("cannot verify the Codex guard with {0}: the guard check cannot reproduce such a "
+                             "configuration or trust change; launch without {0}".format(" and ".join(unverifiable)))
         codex_home = require_applied_home(saved)
-        profile = codex_home / "kk.config.toml"
-        snapshot = saved["codex_snapshot"]
-        if profile.is_symlink() or not profile.is_file():
-            raise ValueError("expected a regular managed Codex profile at {}. Check the path, then run kk apply.".format(
-                display(profile)))
-        expected_profile = codex_profile.compose(release, snapshot["settings"])[0]
-        if not codex_profile.matches_profile(profile.read_bytes(), expected_profile):
-            raise ValueError("the managed Codex profile {} differs from its generated settings. "
-                             "Save preferences you want to keep under codex.settings in {} before running kk apply. "
-                             "Confirm any folder or hook trust choices in plain codex (without --profile).".format(
-                                 display(profile), display(state.override_path())))
         if not codex_plugins.receipt(record, codex_home, "kk-guard"):
             raise ValueError("Codex guard is not installed in this CODEX_HOME; " + codex_plugins.activation_hint(saved))
-        phase, issues = codex_trust.check(release, codex_home, directory, options.config_flags,
+        flags = session_flags(home, release, saved, codex_home, options, executable, False)
+        # The read gets the configuration flags of the command launched below, in the same order,
+        # so nothing can change hook state between this check and the run.
+        phase, issues = codex_trust.check(release, codex_home, directory, flags + options.config_flags,
                                           acknowledged=phase == "unverified", executable=executable)
         if phase == "awaiting review":
             raise ValueError("Codex guard awaiting review for {}: {}".format(display(directory), "; ".join(issues)))
@@ -408,15 +407,9 @@ def launch_checked(home, args, options, lock):
         print("kk: Codex guard is not installed in this CODEX_HOME; " + codex_plugins.activation_hint(saved),
               file=sys.stderr)
     codex_profile.report_drift(record)
-    flags = []
-    if explicit is None and batch:
-        # Batch launches keep the managed profile until they verify the final flags instead.
-        profile_path = codex_profile.codex_home() / "kk.config.toml"
-        if str(profile_path) not in record.get("codex_paths", []) or not profile_path.is_file() or profile_path.is_symlink():
-            raise ValueError("managed profile is missing from this CODEX_HOME; run kk apply")
-        flags = ["--profile", "kk", *workspace_imports(home, directory, False)]
-    elif explicit is None:
-        flags = interactive_flags(home, home / "releases" / active, saved, options, executable)
+    if explicit is None and not batch:
+        flags = session_flags(home, release, saved, require_applied_home(saved), options, executable,
+                              sys.stdin.isatty())
     env = dict(os.environ, CODEX_HOME=str(codex_profile.codex_home()), KK_HOME=str(home))
     if env.get("XDG_CONFIG_HOME"):
         env["XDG_CONFIG_HOME"] = str(Path(env["XDG_CONFIG_HOME"]).absolute())

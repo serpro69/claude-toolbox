@@ -17,9 +17,6 @@ from .state import override_path
 
 
 TIP_TABLE = "\n[tui.model_availability_nux]\n"
-# Codex's ModelAvailabilityNuxConfig stores one uint32 per model. Keep the rest of the
-# managed profile byte-exact: it can affect the trust check for batch launches.
-TIP_COUNTER = re.compile(r'([A-Za-z0-9_-]+|"[^"\\\x00-\x1f\x7f]+") = (0|[1-9][0-9]{0,9})')
 # Codex splits a -c key on every dot, even inside quotes, so only a plain name can head a launch flag.
 PLAIN_KEY = re.compile(r"[A-Za-z0-9_-]+")
 # These tables carry credentials, and launch flags are readable in process listings.
@@ -69,31 +66,6 @@ def toml_value(value):
 
 def toml_entries(table):
     return "".join(toml_value(k) + " = " + toml_value(v) + "\n" for k, v in table.items())
-
-
-def matches_profile(actual, expected):
-    if actual == expected:
-        return True
-    header = TIP_TABLE.encode()
-    prefix = expected.partition(header)[0] + header
-    if not actual.startswith(prefix):
-        return False
-    try:
-        counters = actual[len(prefix):].decode("utf-8")
-    except UnicodeDecodeError:
-        return False
-    models = set()
-    for line in counters.split("\n"):
-        if not line:
-            continue
-        entry = TIP_COUNTER.fullmatch(line)
-        if not entry or int(entry[2]) > 2**32 - 1:
-            return False
-        model = entry[1].strip('"')
-        if model in models:
-            return False
-        models.add(model)
-    return True
 
 
 def overlay(table, overrides):

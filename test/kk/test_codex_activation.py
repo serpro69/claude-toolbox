@@ -237,46 +237,6 @@ class CodexActivation(InstallFixture):
         self.assertIn("awaiting review", self.invoke(self.link, "status").stdout)
         self.assertIn("cannot verify", self.invoke(self.link, "codex", "-pother", "exec", ok=False).stderr)
         self.assertIn("cannot verify", self.invoke(self.link, "codex", "exec", "resume", ok=False).stderr)
-        with (self.directory / "kk.config.toml").open("a") as profile:
-            profile.write("\n[features]\nhooks = false\n")
-        drift = self.invoke(self.link, "codex", "-pkk", "exec", ok=False).stderr
-        self.assertIn("managed Codex profile", drift)
-        self.assertIn("plain codex", drift)
-        self.assertIn("kk apply", drift)
-
-    def test_batch_profile_drift_explains_how_to_preserve_preferences(self):
-        self.install()
-        (self.directory / "fixture-reviewed").write_text(self.guard_version())
-        profile = self.directory / "kk.config.toml"
-        profile.write_bytes(b'service_tier = "default"\n' + profile.read_bytes())
-        overrides = Path(self.env["XDG_CONFIG_HOME"]) / "kk/config.json"
-        drift = self.invoke(self.link, "codex", "exec", ok=False).stderr
-        self.assertIn("differs from", drift)
-        self.assertIn("codex.settings", drift)
-        self.assertIn(str(overrides), drift)
-        self.assertIn("kk apply", drift)
-        cli.state.write_json(overrides, {"codex": {"settings": {"service_tier": "default"}}})
-        self.invoke(self.link, "apply")
-        self.invoke(self.link, "codex", "exec", "hello")
-
-    def test_vendor_model_tip_update_preserves_batch_checks(self):
-        self.install()
-        (self.directory / "fixture-reviewed").write_text(self.guard_version())
-        self.invoke(self.link, "apply")
-        profile = self.directory / "kk.config.toml"
-        original = profile.read_bytes()
-        # The actual Linux TUI appends this table, including the blank line.
-        vendor_update = b'\n[tui.model_availability_nux]\n"gpt-6.1-sol" = 4\n'
-        profile.write_bytes(original + vendor_update)
-        self.invoke(self.link, "codex", "exec", "hello")
-        self.assertEqual(profile.read_bytes(), original + vendor_update)
-        (self.directory / "disabled-1").touch()
-        self.assertIn("disabled", self.invoke(self.link, "codex", "exec", "hello", ok=False).stderr)
-        for extra in (b'\n[projects."/repo"]\ntrust_level = "trusted"\n',
-                      b'\n[tui]\nanimations = true\n', b'"gpt-6.1-sol" = 2\n', b'other = 4294967296\n'):
-            with self.subTest(extra=extra):
-                profile.write_bytes(original + vendor_update + extra)
-                self.assertIn("managed Codex profile", self.invoke(self.link, "codex", "exec", ok=False).stderr)
 
     def test_tag_collision_and_same_identity_across_local_and_tagged_versions(self):
         self.install()
