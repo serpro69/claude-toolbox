@@ -38,7 +38,7 @@ A default therefore ranks below `config.toml`. Your choices rank above `config.t
 - **Sandbox and approval flags.** With `-s`/`--sandbox`, `-a`/`--ask-for-approval`, `--approve-for-me`, `--dangerously-bypass-approvals-and-sandbox` or `--yolo`, kk passes no approval or sandbox value, so your flag and your native settings decide.
 - **Named profile.** `kk codex --profile <name>` passes your arguments through without kk’s settings or imports. `--profile kk` has no special meaning.
 - **Lookup.** The check starts a short `codex app-server` process and sends `config/read` for the directory Codex starts in (`-C`, or the current one). It took 0.15–0.30 seconds with Codex 0.172.0 on the verification machine; a batch launch adds the guard’s trust read. If the lookup fails or takes more than 5 seconds, kk prints one line starting `kk: could not read Codex configuration origins` and passes none of the values above for that launch, so repository settings keep precedence. Approved imports still apply.
-- **Visibility.** `codex.settings` values become part of the Codex command line, which other local users can usually read in the process list. kk rejects the credential-bearing tables `mcp_servers`, `model_providers` and `shell_environment_policy` there. Configure them in `config.toml`.
+- **Visibility.** `codex.settings` values become part of the Codex command line, which other local users can usually read in the process list. kk rejects the credential-bearing tables `mcp_servers`, `model_providers`, `shell_environment_policy` and `otel` (its exporters take headers such as API keys) there. Configure them in `config.toml`.
 
 Approval policy, approval reviewer and sandbox defaults are optional. The separate native-forbids opt-in affects every repository and bare session using this Codex home. [Override keys and effects](../user-guide/configuration.md#how-configuration-works)
 
@@ -70,9 +70,11 @@ kk: removed the managed Codex profile <path>; kk codex now passes its settings a
 
 kk copies nothing out of the removed file, because `config.toml` is yours. If the upgrade stops on your `codex.settings`, correct `${XDG_CONFIG_HOME:-$HOME/.config}/kk/config.json` and run it again:
 
-- `configure mcp_servers in native Codex configuration` (also `model_providers` and `shell_environment_policy`): move the table to `config.toml`.
+- `configure mcp_servers in native Codex configuration` (also `model_providers`, `shell_environment_policy` and `otel`): move the table to `config.toml`.
 - `Codex config/read does not report … under the name kk passes`: rename the key to the name the message reports.
 - `codex.settings key … is not a plain name`: write a dotted key as a nested JSON object.
+
+A relative path in `codex.settings`, such as a `sandbox_workspace_write.writable_roots` entry, resolved from `$CODEX_HOME` while it lived in the profile. As a launch flag it resolves from the directory Codex starts in, so make such paths absolute.
 
 `kk rollback` to v0.26.x restores that release’s profile and launcher. That release’s `kk apply` rejects a `codex.defaults` key as unknown, so remove the key from `config.json` while you stay on it.
 
@@ -159,6 +161,8 @@ Guard coverage depends on the vendor loading the reviewed handlers for the curre
 **Managed configuration.** A value an administrator pins in the system `managed_config.toml` outranks command-line flags. kk’s default for that setting yields. One of your choices for it is passed without effect, and kk does not report this.
 
 **Resumed sessions.** For `resume` and `fork`, kk looks up settings for the directory you start in. If the session belongs to another repository, kk does not see that repository’s values, so kk’s defaults and your choices can override them for the session. Imports are skipped for these launches. [Launch overrides decision](../adr/0015-codex-launch-overrides.md)
+
+**First session in a repository you trust in `kk codex`.** Codex reads an untrusted repository’s `.codex/config.toml` only after you trust the folder. kk looks up settings before that, sees none from the repository, and passes its values. When you then trust the folder in that session, the repository’s values load below kk’s flags for the rest of the session. Later sessions are correct. Trusting the folder in plain `codex` first, as the [installation steps](../getting-started/install.md) describe, avoids it.
 
 ## Generation pipeline
 

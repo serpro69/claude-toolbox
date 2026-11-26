@@ -19,7 +19,8 @@ from .state import override_path
 # Codex splits a -c key on every dot, even inside quotes, so only a plain name can head a launch flag.
 PLAIN_KEY = re.compile(r"[A-Za-z0-9_-]+")
 # These tables carry credentials, and launch flags are readable in process listings.
-CREDENTIAL_TABLES = ("mcp_servers", "model_providers", "shell_environment_policy")
+# otel exporters take headers such as API keys; Codex itself redacts them in config/read.
+CREDENTIAL_TABLES = ("mcp_servers", "model_providers", "shell_environment_policy", "otel")
 # Runs a session in its own server. A launch with kk's flags passes it (see codex_launch).
 NO_DAEMON = "--no-daemon"
 
@@ -185,7 +186,7 @@ def validate_files(release, directory, settings, rules, executable):
             """Return the leaves Codex does not report under kk's name, and the other names it reported."""
             try:
                 layers, _ = codex_app.layers(scratch, scratch, config_flags(table), executable, 30)
-            except (codex_app.NoMethod, ValueError) as exc:
+            except (codex_app.NoMethod, ValueError, OSError) as exc:
                 # Required, not skipped with a warning: every launch depends on the same request, and
                 # a skipped check would let a misnamed key through after a single timeout.
                 raise ValueError("kk checks setting names through Codex config/read, which failed: {}. Run the command "

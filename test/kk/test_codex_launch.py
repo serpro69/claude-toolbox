@@ -41,6 +41,27 @@ class LaunchArguments(unittest.TestCase):
         for args in (["-i", "--oss"], ["--", "--oss", "--trust", "-s", "x"]):
             with self.subTest(args=args):
                 self.assertEqual(launcher.launch_options(args)[5:9], (False, False, False, False))
+        # As Codex 0.172 parses them: after a separate image value every word up to the next option is
+        # another image; an attached value ends the option; one prompt may come before a subcommand.
+        for args, batch, workspace in ((["-i", "a.png", "b.png", "-m", "x", "exec", "hi"], True, here),
+                                       (["-i", "a.png", "b.png", "exec"], False, here),
+                                       (["-i", "a.png", "-", "exec"], False, here),
+                                       (["-ia.png", "exec", "hi"], True, here),
+                                       (["-i=a.png", "review"], True, here),
+                                       (["--image=a.png", "b.png", "e", "hi"], True, here),
+                                       (["hello", "exec", "hi"], True, here),
+                                       (["-m", "x", "hello", "review"], True, here),
+                                       (["hello", "resume"], False, None),
+                                       (["exec", "-i", "a.png", "resume"], True, here),
+                                       (["exec", "-i", "a.png", "-m", "x", "resume"], True, None),
+                                       (["exec", "-ia.png", "resume"], True, None)):
+            with self.subTest(args=args):
+                options = launcher.launch_options(args)
+                self.assertEqual((options.batch, options.workspace), (batch, workspace))
+        # A hidden alias is a subcommand too, not a prompt before one: cloud-tasks exec is cloud exec.
+        self.assertEqual(launcher.launch_options(["cloud-tasks", "exec", "x"]),
+                         launcher.launch_options(["cloud", "exec", "x"]))
+        self.assertFalse(launcher.launch_options(["cloud-tasks", "exec", "x"]).batch)
         # kk may add --no-daemon to a launch that opens the session TUI in its own server.
         for args, allowed in (([], True), (["-C", "/", "fix it"], True), (["resume", "--last"], True), (["fork"], True),
                               (["--", "--no-daemon"], True), (["exec", "hello"], False), (["login"], False),

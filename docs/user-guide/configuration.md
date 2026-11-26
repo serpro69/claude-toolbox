@@ -34,7 +34,7 @@ Edit `${XDG_CONFIG_HOME:-$HOME/.config}/kk/config.json` for personal toolbox pre
 
 - `codex.defaults` switches a release default off, so that Codex uses its own value. Its keys are `model`, `model_reasoning_effort`, `model_context_window`, `model_auto_compact_token_limit`, `project_doc_max_bytes`, `agents` and `tui`; set one to `false`.
 - `codex.settings` sets Codex values, including your own value for a release default. Use the names Codex reports. Two release defaults have aliases that stop `kk apply`: write `agents.max_concurrent_threads_per_session` and `tui.effects.starfield`, not `agents.max_threads` and `tui.whimsy`. Top-level keys are plain names, with nested tables written as JSON objects.
-- These values appear in the Codex command line. Keep `mcp_servers`, `model_providers` and `shell_environment_policy` in `config.toml`; kk rejects them here. Configure hook and plugin enablement in native Codex settings too.
+- These values appear in the Codex command line. Keep `mcp_servers`, `model_providers`, `shell_environment_policy` and `otel` in `config.toml`; kk rejects them here. Write path values as absolute paths: Codex resolves a relative path in a flag from the directory it starts in. Configure hook and plugin enablement in native Codex settings too.
 
 After editing overrides, run `kk apply`. It checks the values with your Codex CLI and updates the active release’s owned files offline. `kk status` and `kk codex` report pending edits.
 

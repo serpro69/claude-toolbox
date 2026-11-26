@@ -62,10 +62,10 @@ Model switches and hook approvals made in a `kk codex` session are saved to `con
 
 **Managed configuration.** A value pinned by a system managed layer wins over kk’s flag. A pinned default yields. A pinned explicit value is passed without effect, and kk does not report it.
 
-**Resumed sessions.** The lookup uses the starting directory. If a resumed session belongs to another repository, kk’s defaults and explicit values can shadow that repository’s values for the session. Dropping all kk flags for resumed sessions was the alternative.
+**Resumed sessions.** The lookup uses the starting directory. If a resumed session belongs to another repository, kk’s defaults and explicit values can shadow that repository’s values for the session. Dropping all kk flags for resumed sessions was the alternative. The same applies to the first session in a repository the user trusts inside `kk codex`: Codex reads the repository’s configuration only after trust, which comes after the lookup.
 
-**Argument visibility.** Settings that lived in a 0600 file are now process arguments, which other local users can often read. `codex.settings` rejects `mcp_servers`, `model_providers` and `shell_environment_policy`; the remaining preference values are documented as visible.
+**Argument visibility.** Settings that lived in a 0600 file are now process arguments, which other local users can often read. `codex.settings` rejects `mcp_servers`, `model_providers`, `shell_environment_policy` and `otel`, whose exporters take headers such as API keys; the remaining preference values are documented as visible.
 
-**Upgrade and rollback.** Choices Codex saved in the old profile are dropped once, with a notice. An existing `codex.settings` with an aliased key, a credential table or a dotted top-level key stops the upgrade until it is corrected. Rollback to v0.26.x republishes that release’s profile from its own snapshot, and its launcher uses it. That release’s `kk apply` rejects a later `codex.defaults` key as unknown.
+**Upgrade and rollback.** Choices Codex saved in the old profile are dropped once, with a notice. An existing `codex.settings` with an aliased key, a credential table or a dotted top-level key stops the upgrade until it is corrected. A relative path in `codex.settings` now resolves from the launch directory instead of `$CODEX_HOME`. Rollback to v0.26.x republishes that release’s profile from its own snapshot, and its launcher uses it. That release’s `kk apply` rejects a later `codex.defaults` key as unknown.
 
 Batch launches lose `-p kk`, which is now refused like any other named profile. [Codex provider page](../providers/codex.md#launch-settings)

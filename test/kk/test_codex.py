@@ -107,7 +107,8 @@ class CodexFiles(InstallFixture):
         original = self.state_file.read_bytes()
         for settings in ({"features": {"hooks": False}}, {"features": {"plugins": True}},
                          {"plugins": {"example@local": {"enabled": False}}}, {"hooks": {"state": {}}},
-                         {"mcp_servers": {}}, {"model_providers": {}}, {"shell_environment_policy": {}}):
+                         {"mcp_servers": {}}, {"model_providers": {}}, {"shell_environment_policy": {}},
+                         {"otel": {"exporter": {"otlp-http": {"headers": {"x-api-key": "secret"}}}}}):
             self.configure({"settings": settings})
             self.assertIn("native Codex", self.invoke(self.link, "apply", ok=False).stderr)
             self.assertEqual(self.state_file.read_bytes(), original)

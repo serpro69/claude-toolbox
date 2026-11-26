@@ -24,6 +24,9 @@ VALUE_OPTIONS = {
     "--remote-auth-token-env", "--local-provider", "--add-dir", "--thread-source",
     "--cyber-access-program", "--output-schema", "--color", "-o", "--output-last-message",
 }
+# Given a separate value, Codex 0.172 takes every following word up to the next option as another
+# value of these, including "-". An attached value (-ia.png, --image=a.png) ends the option.
+LIST_OPTIONS = {"-i", "--image"}
 # Arguments that change which kk values apply, or what a batch launch can verify.
 NOTED_OPTIONS = {
     "-m": "model", "--model": "model", "--oss": "model",
@@ -32,13 +35,14 @@ NOTED_OPTIONS = {
     "--yolo": "permissions",  # Codex accepts this alias of the bypass flag without listing it in --help.
     "--ignore-user-config": "ignore_user_config", "--trust": "trust",
 }
-# Codex 0.172 commands that do not open the session TUI: those in --help and the two hidden ones kk
-# found by trying names. Any other first word is taken for a prompt, resume or fork.
+# Codex 0.172 commands that do not open the session TUI: those in --help, the two hidden ones kk
+# found by trying names and the hidden alias cloud-tasks. Any other first word is taken for a prompt,
+# resume or fork.
 OTHER_COMMANDS = {
     "agents", "exec", "e", "review", "login", "logout", "mcp", "plugin", "app-server", "remote-control",
     "completion", "update", "doctor", "sandbox", "debug", "apply", "a", "queue", "archive", "delete",
-    "migrate-rollouts", "migrate-nfs-db", "unarchive", "cloud", "exec-server", "features", "help",
-    "execpolicy", "responses-api-proxy",
+    "migrate-rollouts", "migrate-nfs-db", "unarchive", "cloud", "cloud-tasks", "exec-server", "features",
+    "help", "execpolicy", "responses-api-proxy",
 }
 # workspace is None when Codex selects it; directory is where Codex starts either way.
 # config_flags are the caller's -c, --enable and --disable flags as separated pairs, in order.
@@ -62,8 +66,12 @@ def launch_options(args):
     noted = set()
     dynamic_workspace = False
     own_server = True
+    listing = prompt = False
     it = iter(args)
     for arg in it:
+        if listing and (arg == "-" or not arg.startswith("-")):
+            continue  # another image, not a command or prompt
+        listing = False
         if arg == "--":
             break
         key, separator, value = arg.partition("=")
@@ -76,6 +84,7 @@ def launch_options(args):
                 value = next(it, None)
             if value is None or (key in ("-C", "--cd", "-p", "--profile") and not value):
                 raise ValueError("{} requires a value".format(key))
+            listing = key in LIST_OPTIONS and not separator
             if key in ("-C", "--cd"):
                 directory = Path.cwd() / value
             elif key in ("-p", "--profile"):
@@ -94,6 +103,9 @@ def launch_options(args):
         elif arg in NOTED_OPTIONS:
             noted.add(NOTED_OPTIONS[arg])
         elif command is None and not arg.startswith("-"):
+            if not prompt and arg not in OTHER_COMMANDS | {"resume", "fork"}:
+                prompt = True  # Codex still runs a subcommand named after its prompt: codex hello exec …
+                continue
             command = arg
             dynamic_workspace = dynamic_workspace or command in ("resume", "fork", "agents")
         elif command in ("exec", "e") and arg in ("resume", "fork"):

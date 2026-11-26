@@ -23,7 +23,7 @@ Add an origin lookup that sends `config/read` with `{"cwd": str(directory), "inc
 
 Extend `test/kk/codex` `app_server()`:
 
-- Parse its own configuration flags into one session dictionary, accepting every spelling `launch_options` accepts (`-c x`, `-cx`, `--config x`, `--config=x`). Apply the `-c` flags **in order**: a dotted `-c a.b=v` sets that leaf; an inline-table `-c a={…}` replaces everything under `a`. Then apply `--enable x`/`--disable x` as `features.x`, after every `-c` wherever the toggle appears on the command line, as Codex 0.172 does (`--disable hooks -c 'features={x=true}'` leaves hooks off). Parse inline tables with a small helper limited to the shapes kk emits (strings, integers, booleans, arrays, nested inline tables, quoted keys). Do not rely on `tomllib`: the fake runs under the system `python3`, and `test/test-kk.sh` supports older interpreters through `KK_TEST_PYTHON`.
+- Parse its own configuration flags into one session dictionary, accepting every spelling `launch_options` accepts (`-c x`, `-cx`, `--config x`, `--config=x`). Apply the `-c` flags **in order**: a dotted `-c a.b=v` sets that leaf; an inline-table `-c a={…}` replaces everything under `a`. Then apply `--enable x`/`--disable x` as `features.x`, after every `-c` wherever the toggle appears on the command line, as Codex 0.172 does (`--disable hooks -c 'features={x=true}'` leaves hooks off); a `--disable` wins over an `--enable` of the same feature in either order. Parse inline tables with a small helper limited to the shapes kk emits (strings, integers, booleans, arrays, nested inline tables, quoted keys). Do not rely on `tomllib`: the fake runs under the system `python3`, and `test/test-kk.sh` supports older interpreters through `KK_TEST_PYTHON`.
 - Derive `features.hooks` from that dictionary instead of the current `"features.hooks=false" in args` substring test, so tests detect flag-order mistakes.
 - Answer `config/read` like Codex 0.172: origins from an optional `fixture-origins.json` (canonical path → type) merged with `sessionFlags` for every non-empty leaf in the session dictionary, arrays indexed per element and no origin for empty arrays or tables; `config` built from the same layers plus an optional `fixture-config.json`. An optional `fixture-aliases.json` (input path → canonical path) renames session leaves before reporting, so kk's alias handling can be tested without real Codex. A `fixture-no-config-read` file makes it return `-32601`.
 
@@ -46,14 +46,14 @@ In `kk/baseline/codex.json`, rename `agents.max_threads` → `agents.max_concurr
 
 Keep path components as tuples end to end; join with `.` only to compare against origin keys. A table key such as `docs.internal` stays one component and is rendered as one quoted key by `toml_value`.
 
-Keep every existing validation in `compose`: `switches` for `optIn`, the hook/plugin enablement and `developer_instructions` rejections in `settings`. Add `mcp_servers`, `model_providers` and `shell_environment_policy` to the rejected `settings` keys with the existing "configure … in native Codex configuration" wording. `codex_settings` adds `"defaults"` to its accepted keys; validate `defaults` with `claude_launch.switches` against the baseline profile's top-level keys.
+Keep every existing validation in `compose`: `switches` for `optIn`, the hook/plugin enablement and `developer_instructions` rejections in `settings`. Add `mcp_servers`, `model_providers`, `shell_environment_policy` and `otel` to the rejected `settings` keys with the existing "configure … in native Codex configuration" wording, and reject a top-level `settings` key that is not a plain name (`[A-Za-z0-9_-]+`), because step 6 never emits a dotted path. `codex_settings` adds `"defaults"` to its accepted keys; validate `defaults` with `claude_launch.switches` against the baseline profile's top-level keys.
 
 Add a function (in `codex_launch`) that, given the inputs, the caller's arguments and the lookup result (or `None` when the lookup failed), returns kk's `-c` arguments:
 
 1. If the lookup result is `None`: return no baseline and no explicit leaves (approved imports are handled in step 5).
 2. A leaf is **set** when some origin key equals its dotted path or starts with that path plus `.`, with an origin type other than `packagedDefaults`; or when the effective `config` holds an empty array at its path (Codex reports no origin for empty values). An empty table does not count: Codex fills tables such as `tui.presets` with `{}` by default.
 3. Baseline leaf: drop if switched off, set, or shadowed by an explicit leaf at the same path. Model group (`model`, `model_reasoning_effort`, `model_context_window`, `model_auto_compact_token_limit`): drop all four baseline values when `model` is set, supplied as an explicit `codex.settings` leaf, or switched off in `codex.defaults`, or when the caller's arguments contain `-m`/`--model` (any spelling `launch_options` recognizes) or `--oss`.
-4. Explicit leaf: drop only when it is set with origin type `project`. Drop the three approval/sandbox opt-in leaves when the caller's arguments contain `-s`/`--sandbox`, `-a`/`--ask-for-approval`, `--approve-for-me` or `--dangerously-bypass-approvals-and-sandbox`.
+4. Explicit leaf: drop only when it is set with origin type `project`. Drop the three approval/sandbox opt-in leaves when the caller's arguments contain `-s`/`--sandbox`, `-a`/`--ask-for-approval`, `--approve-for-me`, `--dangerously-bypass-approvals-and-sandbox` or its unlisted alias `--yolo`.
 5. `developer_instructions`: an explicit leaf from the `codex-instructions.md` sidecar, unless imports were approved, in which case the import argument replaces it unconditionally (also when origins is `None`).
 6. Group surviving leaves by top-level component and emit exactly one `-c` per group: `key=<toml_value>` for a scalar, `key=<inline table>` for a table built from all surviving leaves under it (baseline and explicit together). Never emit a dotted path.
 
@@ -71,7 +71,7 @@ In `launch_checked`, for the non-batch path with no explicit profile:
 - Run the origin lookup with the caller's configuration flags and the lookup directory.
 - On lookup failure print one stderr line, for example: `kk: could not read Codex configuration origins (<reason>); launching without kk defaults, opt-ins and instructions so repository settings keep precedence`, and compose with origins `None`.
 - Build `argv` as `["codex", *kk_flags, *args]` with no `--profile`.
-- When `kk_flags` is not empty and the launch opens the session TUI, put `--no-daemon` first (design.md §1 "Shared background server"). `launch_options` reports whether that applies: the first word is not one of Codex's other subcommands, and the caller gave neither `--remote` nor `--no-daemon`.
+- When `kk_flags` is not empty and the launch opens the session TUI, put `--no-daemon` first (design.md §1 "Shared background server"). `launch_options` reports whether that applies: the subcommand Codex runs, if any, is not one of its other subcommands, and the caller gave neither `--remote` nor `--no-daemon`. As Codex 0.172 parses the root, one prompt word may come before a subcommand (`codex hello exec …` runs `exec`), so the command is the first bare word when it is a known subcommand and otherwise the next one; a separate `-i`/`--image` value continues across following bare words, an attached one does not.
 
 An explicit `--profile`/`-p` keeps today's pass-through: no kk flags, no imports, no lookup.
 
@@ -138,7 +138,7 @@ Update `test/kk/test_status.py` assertions that expect the reason text (`assertI
 
 ## Real-Codex verification
 
-The vendor behaviors the rules depend on were probed during design (design.md §Vendor evidence). After the code tasks, verify the end-to-end result against the maintainer's real `~/.codex` and record it, with the Codex version, in `docs/feat/wip/codex-launch-overrides/verification/README.md`:
+The vendor behaviors the rules depend on were probed during design (design.md §Vendor evidence). After the code tasks, verify the end-to-end result against the maintainer's real `~/.codex` and record it, with the Codex version, in `docs/feat/done/codex-launch-overrides/verification/README.md`:
 
 - Reproduce #206: interactive `kk codex`, switch `/model`, approve a repository hook, exit; then `kk codex exec "echo ok"` and `kk status --live` pass.
 - Assumption 3: record where `/model` and the hook approval were saved (`config.toml` diff, or nowhere) and reflect it in `docs/providers/codex.md`. If wrapped sessions now save hook trust to `config.toml`, the "review in plain codex (without --profile)" guidance (`codex_trust.REVIEW_UI` and the provider docs) no longer needs the qualifier; simplify it in the docs task.
