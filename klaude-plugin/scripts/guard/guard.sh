@@ -86,6 +86,10 @@ for candidate in $interpreters; do
                 ($diagnostics | test("\\S"))' "$scratch/out" >/dev/null 2>&1 ||
                 fail_closed "malformed engine denial or missing stderr reason"
             ;;
+        3)
+            # run-guard.py found this interpreter older than the engine's floor.
+            continue
+            ;;
         *)
             # A macOS interpreter shim can exist without working. Retry only
             # when the interpreter itself fails; an engine crash must block.
@@ -103,4 +107,4 @@ for candidate in $interpreters; do
     if [[ -s "$scratch/out" ]]; then cat "$scratch/out"; fi
     exit "$rc"
 done
-fail_closed "no working Python interpreter; install or repair Python 3.8 or newer"
+fail_closed "no working Python 3.9+ interpreter; install or repair Python 3.9 or newer"

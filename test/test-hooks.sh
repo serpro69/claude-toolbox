@@ -275,6 +275,12 @@ for mode in crash stdin-error emitter-error signal malformed malformed-deny empt
     GUARD_FIXTURE_MODE="$mode" GUARD_TEST_PYTHON="$TEST_PYTHON"
   assert_deny "failure"
 done
+log_test "Interpreter below the floor falls back to the next candidate"
+run_guard "$read_payload" KK_GUARD_INTERPRETERS="$INTERPRETER_FIXTURE $TEST_PYTHON" GUARD_FIXTURE_MODE=too-old
+assert_allow
+log_test "Only interpreters below the floor deny with the required version"
+run_guard "$read_payload" KK_GUARD_INTERPRETERS="$INTERPRETER_FIXTURE" GUARD_FIXTURE_MODE=too-old
+assert_deny "Python 3.9 or newer"
 log_test "Broken interpreter shim falls back to a working interpreter"
 run_guard "$read_payload" KK_GUARD_INTERPRETERS="$INTERPRETER_FIXTURE $TEST_PYTHON" GUARD_FIXTURE_MODE=broken
 assert_allow

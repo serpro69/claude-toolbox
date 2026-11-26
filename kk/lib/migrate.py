@@ -1,20 +1,24 @@
 """Retire a repository's legacy template using the retirement release's own scripts."""
 
+from __future__ import annotations
+
 import os
 from pathlib import Path
 import shutil
 import subprocess
 import sys
 import tempfile
+from typing import Dict, List, Sequence
 
 from . import claude, codex_plugins, codex_profile, codex_trust, live, payload
+from .payload import JSONObject
 
 
 RETIREMENT_VERSION = "v0.26.0+retirement.1"
 MANIFEST = ".github/template-state.json"
 
 
-def prerequisites():
+def prerequisites() -> None:
     if not shutil.which("curl"):
         raise ValueError("curl is required for this migration step only")
     if shutil.which("yq"):
@@ -24,19 +28,19 @@ def prerequisites():
     raise ValueError("Mike Farah's yq is required for this migration step only")
 
 
-def confirm(question):
+def confirm(question: str) -> bool:
     print(question + " [y/N] ", end="", file=sys.stderr, flush=True)
     return sys.stdin.readline().strip().lower() in ("yes", "y")
 
 
-def repository_tools(workspace):
+def repository_tools(workspace: Path) -> List[str]:
     tools = [tool for tool in ("claude", "codex") if os.path.lexists(workspace / ("." + tool))]
     if not tools:
         raise ValueError("no legacy .claude or .codex configuration in " + str(workspace))
     return tools
 
 
-def verify_workspace(tool, home, record, workspace):
+def verify_workspace(tool: str, home: Path, record: JSONObject, workspace: Path) -> None:
     release = home / "releases" / record["active"]
     saved = record["releases"][record["active"]]
     if tool not in saved["tools"]:
@@ -55,7 +59,7 @@ def verify_workspace(tool, home, record, workspace):
         print("Codex cannot report hook trust here. The scratch live check is required.", flush=True)
 
 
-def fetch_scripts(directory, repository, tag):
+def fetch_scripts(directory: Path, repository: str, tag: str) -> Path:
     base = "https://raw.githubusercontent.com/{}/refs/tags/{}/.claude/toolbox/scripts".format(repository, tag)
     for name in ("template-sync.sh", "semver-compare.sh"):
         subprocess.run(["curl", "--disable", "--fail", "--silent", "--show-error", "--location",
@@ -68,12 +72,12 @@ def fetch_scripts(directory, repository, tag):
     return script
 
 
-def route_legacy_upstream(env, upstream, repository, scratch):
+def route_legacy_upstream(env: Dict[str, str], upstream: str, repository: str, scratch: Path) -> None:
     # RC4 reads the downstream manifest again, and can rewrite starter-kit to
     # claude-toolbox during sync. Bind those Git fetches to the verified source.
     if upstream == repository:
         return
-    def git_url(slug):
+    def git_url(slug: str) -> str:
         url = "https://github.com/{}.git".format(slug)
         # Like RC4's git clone, resolve inherited settings outside the adopter repository.
         return subprocess.check_output(["git", "ls-remote", "--get-url", url],
@@ -95,10 +99,11 @@ def route_legacy_upstream(env, upstream, repository, scratch):
                 alias, repository))
 
 
-def migrate(home, record, tag):
+def migrate(home: Path, record: JSONObject, tag: str) -> None:
     tag = payload.tag_name(tag)
+    candidate: JSONObject = record["candidate"] or {}
     if (not record["active"] or not record["installed_paths"] or record.get("pending_entry")
-            or record.get("codex_write_pending") or (record["candidate"] or {}).get("phase") == "activating"):
+            or record.get("codex_write_pending") or candidate.get("phase") == "activating"):
         raise ValueError("finish installing or activating kk before migrating")
     root = subprocess.run(["git", "rev-parse", "--show-toplevel"], check=True, text=True, stdout=subprocess.PIPE)
     workspace = Path(root.stdout.rstrip("\n")).resolve()
@@ -132,7 +137,7 @@ def migrate(home, record, tag):
         route_legacy_upstream(env, upstream, repository, directory)
         sync_env = dict(env, TEMPLATE_SYNC_MERGE_DENY="1")
 
-        def run(options, environment):
+        def run(options: Sequence[str], environment: Dict[str, str]) -> None:
             subprocess.run(["bash", str(script), *options, "--version", tag], cwd=workspace, env=environment,
                            stdin=subprocess.DEVNULL, check=True)
 

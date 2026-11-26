@@ -8,12 +8,12 @@ Most cases call the engine in-process: a check that raises `Denied` refuses
 the call, a check that returns allows it. A small set runs `guard.py` as a
 real process to pin the stdout/stderr/exit-code contract.
 
-Python floor is 3.8. Verified under Python 3.9.6 on macOS (2026-10-26) and
-Python 3.10.12 on Linux (2026-10-25). No 3.8 interpreter was available,
-so `test_engine_parses_as_python_3_8` additionally parses the engine with
-`ast.parse(feature_version=(3, 8))`, which rejects syntax newer than 3.8
-that the parser knows about (`match`, parenthesised context managers). It
-is a drift guard, not a full 3.8 run.
+Python floor is 3.9 (ADR 0016); CI runs this suite on 3.9 and the current
+release. `test_engine_parses_at_the_floor` additionally parses the engine
+with `ast.parse(feature_version=(3, 9))`, which rejects newer syntax that the
+parser knows about (`match`, parenthesised context managers). The launcher is
+held to 3.8 syntax so it can refuse an older interpreter instead of crashing.
+These are drift guards, not runs on those versions.
 
 Fixtures (test/fixtures/guard/):
   glob-cases.json   pattern/path table for `glob_to_regex`
@@ -38,13 +38,16 @@ for the tests that give the engine logical (symlinked) roots.
 
 import ast
 import importlib.util
+import io
 import json
 import os
 import re
+import runpy
 import subprocess
 import sys
 import tempfile
 import unittest
+from unittest import mock
 
 sys.dont_write_bytecode = True
 
@@ -1418,6 +1421,22 @@ class CapyTests(unittest.TestCase):
             with self.subTest(code=code):
                 self.check(tool, {"language": "python", "code": code}, category)
 
+    def test_undecodable_path_write_literal_is_refused(self):
+        # A Path(...) write accepts a quoted line break no interpreter literal decodes.
+        # Its target is unknown, so the write stays refused wherever path rules apply,
+        # including inside a spawned command, whose prose retry must not excuse it.
+        tool = "mcp__capy__capy_execute"
+        inner = "from pathlib import Path\\nPath('notes\\nx').write_text('1')"
+        for code, category in (
+            ("Path('a\nb').write_text('x')", "failure"),
+            ('import subprocess\nsubprocess.run(["python3", "-c", "%s"])' % inner, "failure"),
+            # A command kept in a variable gets no path rules, so nothing is decoded.
+            ('import subprocess\ncmd = ["python3", "-c", "%s"]\nsubprocess.run(cmd)' % inner, None),
+            ("Path('notes.txt').write_text('x')", None),
+        ):
+            with self.subTest(code=code):
+                self.check(tool, {"language": "python", "code": code}, category)
+
     def test_comment_apostrophe_does_not_hide_later_literals(self):
         tool = "mcp__capy__capy_execute"
         for language, code, category in (
@@ -1776,14 +1795,30 @@ class LauncherTests(unittest.TestCase):
 
 
 class PythonFloorTests(unittest.TestCase):
-    def test_engine_parses_as_python_3_8(self):
-        for path in (GUARD, RUNNER):
+    def test_engine_parses_at_the_floor(self):
+        # The launcher reports the floor, so it must load on interpreters below it,
+        # down to a distribution's 3.6. ast cannot see future features, so check that too.
+        # Python 3.13+ documents (3, 7) as its lowest grammar version; the 3.9 CI job checks 3.6.
+        launcher = (3, 6) if sys.version_info < (3, 13) else (3, 7)
+        for path, version in ((GUARD, (3, 9)), (RUNNER, launcher)):
             with self.subTest(path=path):
                 with open(path, "r", encoding="utf-8") as handle:
                     source = handle.read()
-                ast.parse(source, path, feature_version=(3, 8))
-                self.assertNotIn("removeprefix", source)
-                self.assertNotIn("removesuffix", source)
+                ast.parse(source, path, feature_version=version)
+        with open(RUNNER, "r", encoding="utf-8") as handle:
+            tree = ast.parse(handle.read(), RUNNER)
+        self.assertFalse([node for node in ast.walk(tree)
+                          if isinstance(node, ast.ImportFrom) and node.module == "__future__"])
+
+    def test_launcher_refuses_interpreters_below_the_floor(self):
+        runner = runpy.run_path(RUNNER)
+        stderr = io.StringIO()
+        loaded = sys.modules.get("_kk_guard_engine")
+        with mock.patch.object(sys, "version_info", (3, 8, 20, "final", 0)), \
+                mock.patch.object(sys, "stderr", stderr):
+            self.assertEqual(runner["main"](), runner["TOO_OLD"])
+        self.assertIn("Python 3.9 or newer", stderr.getvalue())
+        self.assertIs(sys.modules.get("_kk_guard_engine"), loaded, "the engine must not load")
 
 
 if __name__ == "__main__":

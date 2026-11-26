@@ -1,5 +1,7 @@
 """Persistent installation state and ownership of one writer transaction."""
 
+from __future__ import annotations
+
 import fcntl
 import json
 import os
@@ -9,20 +11,24 @@ import sys
 import tempfile
 from contextlib import contextmanager
 from datetime import datetime, timedelta, timezone
+from typing import IO, Callable, Generator, Optional
 
-from .payload import release_id
+from .payload import JSONObject, is_object, release_id
+
+# Journals the activation step before the next one starts (see checkpoint).
+Checkpoint = Callable[[str], None]
 
 
-def toolbox_home():
+def toolbox_home() -> Path:
     data = Path(os.environ.get("XDG_DATA_HOME") or Path.home() / ".local/share")
     return Path(os.environ.get("KK_HOME") or data / "kk").resolve()
 
 
-def override_path():
+def override_path() -> Path:
     return Path(os.environ.get("XDG_CONFIG_HOME") or Path.home() / ".config") / "kk/config.json"
 
 
-def atomic_write(path, data, mode=0o600):
+def atomic_write(path: Path, data: bytes, mode: int = 0o600) -> None:
     path.parent.mkdir(parents=True, exist_ok=True)
     with tempfile.NamedTemporaryFile(dir=path.parent, delete=False) as output:
         temporary = Path(output.name)
@@ -36,24 +42,24 @@ def atomic_write(path, data, mode=0o600):
             temporary.unlink(missing_ok=True)
 
 
-def write_json(path, value):
+def write_json(path: Path, value: object) -> None:
     atomic_write(path, (json.dumps(value, indent=2) + "\n").encode())
 
 
-def load(home):
+def load(home: Path) -> JSONObject:
     try:
         with (home / "state.json").open() as stream:
             state = json.load(stream)
     except FileNotFoundError:
         return {"format_version": 1, "active": None, "rollback_target": None,
                 "candidate": None, "releases": {}, "installed_paths": []}
-    if not isinstance(state, dict) or type(state.get("format_version")) is not int or state["format_version"] != 1:
+    if not is_object(state) or type(state.get("format_version")) is not int or state["format_version"] != 1:
         raise ValueError("unsupported kk state format; state.json was left intact")
     return state
 
 
 @contextmanager
-def writer(home):
+def writer(home: Path) -> Generator[None, None, None]:
     home.mkdir(parents=True, exist_ok=True)
     with (home / "lock").open("a+") as lock:
         try:
@@ -70,7 +76,7 @@ def writer(home):
 
 
 @contextmanager
-def codex_access(home, *, batch=False):
+def codex_access(home: Path, *, batch: bool = False) -> Generator[IO[str], None, None]:
     """Share admission among batch sessions, or reserve it to change the installation."""
     with (home / "codex-activation.lock").open("a") as lock:
         mode = fcntl.LOCK_SH if batch else fcntl.LOCK_EX
@@ -88,14 +94,14 @@ def codex_access(home, *, batch=False):
             fcntl.flock(lock, fcntl.LOCK_UN)
 
 
-def record_codex_phase(release, phase):
+def record_codex_phase(release: JSONObject, phase: str) -> None:
     tools = release.setdefault("tools", {})
     if phase in ("ready", "unverified") or tools.get("codex") in ("ready", "unverified"):
         release["codex_rollback_eligible"] = True
     tools["codex"] = phase
 
 
-def promote(state, version, claude_phase="ready"):
+def promote(state: JSONObject, version: str, claude_phase: str = "ready") -> None:
     previous = state["active"]
     if previous and previous != version:
         old = state["releases"][previous]
@@ -115,8 +121,8 @@ def promote(state, version, claude_phase="ready"):
     state["candidate"] = None
 
 
-def rollback_version(record):
-    candidate = record["candidate"] or {}
+def rollback_version(record: JSONObject) -> Optional[str]:
+    candidate: JSONObject = record["candidate"] or {}
     if candidate.get("operation") == "rollback":
         return candidate["version"]
     if candidate.get("phase") == "activating":
@@ -124,19 +130,19 @@ def rollback_version(record):
     return record["rollback_target"]
 
 
-def checkpoint(home, record, step):
+def checkpoint(home: Path, record: JSONObject, step: str) -> None:
     record["candidate"].update(phase="activating", step=step)
     write_json(home / "state.json", record)
 
 
-def remember_candidate(record, candidate):
+def remember_candidate(record: JSONObject, candidate: JSONObject) -> None:
     entry = record["releases"].setdefault(candidate["version"], {})
     for key in ("source", "digest", "digest_format"):
         if key in candidate:
             entry[key] = candidate[key]
 
 
-def remember_placed(home, record, abandoned):
+def remember_placed(home: Path, record: JSONObject, abandoned: Optional[str]) -> None:
     """Start the retention clock now for directories whose earlier use is unknown."""
     now = datetime.now(timezone.utc).isoformat()
     for path in (home / "releases").iterdir():
@@ -151,9 +157,10 @@ def remember_placed(home, record, abandoned):
             entry["superseded_at"] = now
 
 
-def prune(home, record, now=None):
+def prune(home: Path, record: JSONObject, now: Optional[datetime] = None) -> None:
     cutoff = (now or datetime.now(timezone.utc)) - timedelta(days=14)
-    keep = {record["active"], record["rollback_target"], (record["candidate"] or {}).get("version")}
+    candidate: JSONObject = record["candidate"] or {}
+    keep = {record["active"], record["rollback_target"], candidate.get("version")}
     for version, release in list(record["releases"].items()):
         since = release.get("superseded_at")
         if version in keep or not since or datetime.fromisoformat(since) >= cutoff:

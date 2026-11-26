@@ -1,28 +1,40 @@
 """Compute the portable identity of a Codex guard bundle, independently of kk."""
 
+from __future__ import annotations
+
 import argparse
 import hashlib
 import json
 import os
 from pathlib import Path
 import stat
+from typing import Any, Dict, Optional, Tuple
+
+TYPE_CHECKING = False
+if TYPE_CHECKING:
+    from typing_extensions import TypeIs
 
 
 MANIFEST = Path(".codex-plugin/plugin.json")
 
 
-def with_version(data, version):
+def is_object(value: object) -> TypeIs[Dict[str, Any]]:
+    # Release scripts import this module alone, so it keeps its own JSON check.
+    return isinstance(value, dict)
+
+
+def with_version(data: bytes, version: str) -> bytes:
     """Replace just the top-level version value, preserving all other UTF-8 bytes."""
     text = data.decode("utf-8")
     manifest = json.loads(text)
-    if not isinstance(manifest, dict) or not isinstance(manifest.get("version"), str):
+    if not is_object(manifest) or not isinstance(manifest.get("version"), str):
         raise ValueError("guard manifest must contain a version string")
 
     # A parsed-and-reserialized document would also mask changes to whitespace,
     # key order and escapes. Walk the validated object's top-level members.
     decoder = json.JSONDecoder()
     pos = text.index("{") + 1
-    span = None
+    span: Optional[Tuple[int, int]] = None
     while True:
         while text[pos] in " \r\n\t":
             pos += 1
@@ -41,6 +53,8 @@ def with_version(data, version):
         if text[pos] == "}":
             break
         pos += 1  # comma
+    if span is None:  # The validated manifest has a top-level version.
+        raise ValueError("guard manifest version not found")
     start, end = span
     return (text[:start] + json.dumps(version) + text[end:]).encode("utf-8")
 

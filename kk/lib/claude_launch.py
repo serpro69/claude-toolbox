@@ -1,5 +1,7 @@
 """Compose Claude's per-launch settings from the selected release and adopter inputs."""
 
+from __future__ import annotations
+
 import json
 import os
 from pathlib import Path
@@ -9,22 +11,24 @@ import shutil
 import subprocess
 import sys
 import tempfile
+from typing import Iterable, Iterator, List, Optional, Set, Tuple
 from uuid import uuid4
 
 from . import notice, payload, state
 from .claude import OTHER_PLUGINS, settings_report
+from .payload import JSONObject, is_array, is_object
 
 
 PERMISSION_LISTS = ("allow", "ask", "deny", "additionalDirectories")
 
 
-def object_value(value, label):
-    if not isinstance(value, dict):
+def object_value(value: object, label: str) -> JSONObject:
+    if not is_object(value):
         raise ValueError("{} must be a JSON object".format(label))
     return value
 
 
-def json_file(path, *, optional=False):
+def json_file(path: Path, *, optional: bool = False) -> JSONObject:
     try:
         return object_value(payload.read_json(path), str(path))
     except FileNotFoundError:
@@ -35,21 +39,21 @@ def json_file(path, *, optional=False):
         raise ValueError("invalid JSON in {}: {}".format(path, exc)) from exc
 
 
-def check_keys(obj, keys, label):
+def check_keys(obj: JSONObject, keys: Iterable[str], label: str) -> None:
     unknown = obj.keys() - set(keys)
     if unknown:
         raise ValueError("unknown {} key: {}".format(label, sorted(unknown)[0]))
 
 
-def switches(obj, keys, label):
-    object_value(obj, label)
-    check_keys(obj, keys, label)
-    for key, value in obj.items():
+def switches(obj: object, keys: Iterable[str], label: str) -> None:
+    table = object_value(obj, label)
+    check_keys(table, keys, label)
+    for key, value in table.items():
         if not isinstance(value, bool):
             raise ValueError("{}.{} must be a boolean".format(label, key))
 
 
-def read_overrides(path, baseline):
+def read_overrides(path: Path, baseline: JSONObject) -> JSONObject:
     config = json_file(path, optional=True)
     check_keys(config, ("claude", "codex", "launchNotice", "$schema"), str(path))
     if not isinstance(config.get("launchNotice", True), bool):
@@ -67,7 +71,7 @@ def read_overrides(path, baseline):
     return config
 
 
-def local_settings_paths(cwd):
+def local_settings_paths(cwd: Path) -> Iterator[Path]:
     """Claude also reads the main checkout's local settings when launched below it."""
     yield cwd / ".claude/settings.local.json"
     if shutil.which("git") is None:
@@ -85,7 +89,7 @@ def local_settings_paths(cwd):
     yield root / ".claude/settings.local.json"
 
 
-def file_rule(rule, directory):
+def file_rule(rule: str, directory: Path) -> str:
     """Keep file-anchored Read/Edit rules at their source after moving the flag file."""
     match = re.fullmatch(r"(Read|Edit|Write|NotebookEdit)\(/((?!/).*)\)", rule)
     if match:
@@ -94,18 +98,18 @@ def file_rule(rule, directory):
     return rule
 
 
-def literal_path(path):
+def literal_path(path: object) -> str:
     return re.sub(r"([\\*?\[\]])", r"\\\1", str(path))
 
 
-def string_list(value, label):
-    if not isinstance(value, list) or not all(isinstance(entry, str) for entry in value):
+def string_list(value: object, label: str) -> List[str]:
+    if not is_array(value) or not all(isinstance(entry, str) for entry in value):
         raise ValueError("{} must be an array of strings".format(label))
     return value
 
 
-def overlay(layer, settings, label, directory):
-    object_value(settings, label)
+def overlay(layer: JSONObject, settings: object, label: str, directory: Path) -> None:
+    settings = object_value(settings, label)
     if "effortLevel" in settings:
         # A later global effort replaces earlier per-model effort choices.
         for model in layer.get("modelSettings", {}).values():
@@ -136,16 +140,16 @@ def overlay(layer, settings, label, directory):
             layer[key] = value
 
 
-def baseline_layer(release, baseline, config, existing):
+def baseline_layer(release: Path, baseline: JSONObject, config: JSONObject, existing: List[JSONObject]) -> JSONObject:
     defaults = config.get("defaults", {})
-    layer = {k: v for k, v in baseline["preferences"].items()
+    layer: JSONObject = {k: v for k, v in baseline["preferences"].items()
              if k != "env" and defaults.get(k, True) and all(k not in s for s in existing)}
     if "effortLevel" in layer:
         # A flag-level global effort shadows even a lower per-model effort.
         # Carry only those choices forward; every other model uses the baseline.
         for settings in existing:
             for model, options in object_value(settings.get("modelSettings", {}), "modelSettings").items():
-                if isinstance(options, dict) and options.get("effortLevel") in ("low", "medium", "high", "xhigh"):
+                if is_object(options) and options.get("effortLevel") in ("low", "medium", "high", "xhigh"):
                     layer.setdefault("modelSettings", {})[model] = {"effortLevel": options["effortLevel"]}
     if defaults.get("env", True):
         env = {k: v for k, v in baseline["preferences"]["env"].items()
@@ -162,14 +166,14 @@ def baseline_layer(release, baseline, config, existing):
     return layer
 
 
-def compose(release, arguments, sources):
+def compose(release: Path, arguments: List[str], sources: Set[str]) -> Tuple[JSONObject, bool]:
     cwd = Path.cwd()
     config_file = state.override_path()
     claude_dir = Path(os.environ.get("CLAUDE_CONFIG_DIR") or Path.home() / ".claude")
     baseline_dir = release / "kk/baseline"
     baseline = json_file(baseline_dir / "claude.json")
     config = read_overrides(config_file, baseline)
-    paths = []
+    paths: List[Path] = []
     if "user" in sources:
         paths.append(claude_dir / "settings.json")
     if "project" in sources:
@@ -206,7 +210,7 @@ def compose(release, arguments, sources):
     return layer, needs_validation
 
 
-def validate_settings(claude, path, layer):
+def validate_settings(claude: Path, path: Path, layer: JSONObject) -> None:
     """Ask this Claude binary whether it accepted the flag file, without a model turn."""
     with tempfile.TemporaryDirectory(prefix="kk-claude-validate-") as scratch:
         env = dict(PATH=os.environ["PATH"], HOME=scratch, CLAUDE_CONFIG_DIR=scratch,
@@ -226,7 +230,7 @@ def validate_settings(claude, path, layer):
     raise ValueError("Claude could not confirm the composed --settings deny list")
 
 
-def session_file(home, layer):
+def session_file(home: Path, layer: JSONObject) -> Path:
     directory = home / "claude-layers"
     directory.mkdir(mode=0o700, exist_ok=True)
     # The launcher execs Claude, so its PID owns the layer for the session.
@@ -247,8 +251,9 @@ def session_file(home, layer):
     return path
 
 
-def launch(home, argv):
-    settings, forwarded = [], []
+def launch(home: Path, argv: List[str]) -> None:
+    settings: List[str] = []
+    forwarded: List[str] = []
     sources = {"user", "project", "local"}
     restricted = False
     print_layer = False
@@ -260,7 +265,7 @@ def launch(home, argv):
         if arg == "--print-layer":
             print_layer = True
         elif arg == "--setting-sources" or arg.startswith("--setting-sources="):
-            value = next(args, None) if arg == "--setting-sources" else arg.partition("=")[2]
+            value: Optional[str] = next(args, None) if arg == "--setting-sources" else arg.partition("=")[2]
             if value is None:
                 raise ValueError("--setting-sources requires a list of sources")
             sources = {s.strip() for s in value.split(",") if s.strip()}
@@ -281,7 +286,8 @@ def launch(home, argv):
     release = home / "releases" / payload.release_id(record["active"])
     if release.resolve() != Path(__file__).resolve().parents[2]:
         raise ValueError("active release changed; rerun kk claude")
-    if (record["candidate"] or {}).get("phase") == "activating":
+    candidate: JSONObject = record["candidate"] or {}
+    if candidate.get("phase") == "activating":
         print("kk: activation in progress; Claude's plugin may differ from the active release", file=sys.stderr)
     layer, needs_validation = compose(release, settings, set() if restricted else sources)
     if print_layer and not needs_validation:

@@ -1,5 +1,7 @@
 """Compose kk's Codex launch settings; validate and publish the Codex files the active release owns."""
 
+from __future__ import annotations
+
 import hashlib
 import json
 import os
@@ -10,10 +12,17 @@ import shutil
 import subprocess
 import sys
 import tempfile
+from typing import Any, Collection, Dict, Iterable, Iterator, List, Optional, Sequence, Tuple, Union
 
 from . import codex_app, codex_plugins, mixed, payload, state
 from .claude_launch import check_keys, object_value, switches
+from .payload import JSONObject, is_array, is_object
 from .state import override_path
+
+# A setting at a path of table keys, and its value.
+Leaf = Tuple[Tuple[str, ...], Any]
+# Files to publish, obsolete files, the instructions and the saved inputs (see prepare).
+Plan = Tuple[Dict[Path, bytes], List[Path], Optional[bytes], Optional[JSONObject]]
 
 
 # Codex splits a -c key on every dot, even inside quotes, so only a plain name can head a launch flag.
@@ -25,11 +34,11 @@ CREDENTIAL_TABLES = ("mcp_servers", "model_providers", "shell_environment_policy
 NO_DAEMON = "--no-daemon"
 
 
-def codex_home():
+def codex_home() -> Path:
     return Path(os.environ.get("CODEX_HOME") or Path.home() / ".codex").resolve()
 
 
-def override_bytes():
+def override_bytes() -> Optional[bytes]:
     path = override_path()
     try:
         return path.read_bytes()
@@ -39,11 +48,11 @@ def override_bytes():
         return None
 
 
-def digest(raw):
+def digest(raw: Optional[bytes]) -> str:
     return hashlib.sha256(raw).hexdigest() if raw is not None else "missing"
 
 
-def report_drift(record):
+def report_drift(record: JSONObject) -> None:
     if "codex_override_hash" not in record:
         return
     try:
@@ -55,18 +64,18 @@ def report_drift(record):
         print("kk: Codex overrides changed. Run kk apply to apply them.", file=sys.stderr)
 
 
-def toml_value(value):
+def toml_value(value: object) -> str:
     """TOML basic strings, scalars, arrays and inline tables for JSON values."""
-    if isinstance(value, dict):
+    if is_object(value):
         return "{ " + ", ".join(toml_value(k) + " = " + toml_value(v) for k, v in value.items()) + " }"
-    if isinstance(value, list):
+    if is_array(value):
         return "[" + ", ".join(toml_value(v) for v in value) + "]"
     if value is None:
         raise ValueError("Codex settings cannot be null")
     return json.dumps(value, ensure_ascii=False, allow_nan=False).replace(chr(127), r"\u007f")
 
 
-def codex_settings(raw):
+def codex_settings(raw: Optional[bytes]) -> JSONObject:
     try:
         config = object_value(json.loads(raw) if raw is not None else {}, str(override_path()))
     except (UnicodeError, json.JSONDecodeError) as exc:
@@ -77,16 +86,16 @@ def codex_settings(raw):
     return config
 
 
-def leaves(table, path=()):
+def leaves(table: JSONObject, path: Tuple[str, ...] = ()) -> Iterator[Leaf]:
     """Flatten nested tables into (path tuple, value) pairs; an empty table is its own leaf."""
     for key, value in table.items():
-        if isinstance(value, dict) and value:
+        if is_object(value) and value:
             yield from leaves(value, path + (key,))
         else:
             yield path + (key,), value
 
 
-def put(table, path, value):
+def put(table: JSONObject, path: Sequence[str], value: object) -> None:
     for part in path[:-1]:
         if not isinstance(table.get(part), dict):
             table[part] = {}
@@ -96,20 +105,20 @@ def put(table, path, value):
         table[path[-1]] = value
 
 
-def merge(pairs):
+def merge(pairs: Iterable[Leaf]) -> JSONObject:
     """Build the table that leaves describe; a later leaf replaces an earlier one at its path."""
-    table = {}
+    table: JSONObject = {}
     for path, value in pairs:
         put(table, path, value)
     return table
 
 
-def config_flags(table):
+def config_flags(table: JSONObject) -> List[str]:
     # One flag per top-level key: a second inline table for a key would replace the first.
     return [part for key, value in table.items() for part in ("-c", key + "=" + toml_value(value))]
 
 
-def compose(release, config):
+def compose(release: Path, config: JSONObject) -> Tuple[List[Leaf], List[Leaf], str, bool]:
     """Check the overrides against the release baseline and return what a launch is built from.
 
     Returns baseline leaves, explicit leaves, the instructions and the native switch.
@@ -150,7 +159,7 @@ def compose(release, config):
             selected.get("nativeForbids", False))
 
 
-def validate_files(release, directory, settings, rules, executable):
+def validate_files(release: Path, directory: Path, settings: JSONObject, rules: Optional[bytes], executable: str) -> None:
     """Stop publication when Codex rejects a value kk may pass at launch, or the candidate rules."""
     # An isolated working directory avoids a trusted project's config masking
     # candidate errors. Retain base user configuration (e.g. custom providers).
@@ -160,7 +169,7 @@ def validate_files(release, directory, settings, rules, executable):
         if base.exists():
             (scratch / "config.toml").symlink_to(base)
         env = dict(os.environ, CODEX_HOME=str(scratch))
-        def run(operation, args, capture=False):
+        def run(operation: str, args: List[str], capture: bool = False) -> str:
             # The arguments carry codex.settings values, so a failure names only the operation.
             try:
                 result = subprocess.run([executable] + args, cwd=scratch, env=env, stdin=subprocess.DEVNULL,
@@ -182,7 +191,7 @@ def validate_files(release, directory, settings, rules, executable):
             raise ValueError("kk codex passes {} to its sessions, and this Codex CLI refused it; update Codex. {}".format(
                 NO_DAEMON, exc)) from None
 
-        def unreported(table):
+        def unreported(table: JSONObject) -> Tuple[List[Leaf], List[str]]:
             """Return the leaves Codex does not report under kk's name, and the other names it reported."""
             try:
                 layers, _ = codex_app.layers(scratch, scratch, config_flags(table), executable, 30)
@@ -192,7 +201,7 @@ def validate_files(release, directory, settings, rules, executable):
                 raise ValueError("kk checks setting names through Codex config/read, which failed: {}. Run the command "
                                  "again; if this Codex CLI has no config/read, update Codex".format(exc)) from exc
             names = {key for key, layer in layers.items() if layer == "sessionFlags"}
-            missing = []
+            missing: List[Leaf] = []
             for path, value in leaves(table):
                 # Any layer vouches for a name: a managed layer outranks a flag and is reported in its place.
                 keys = codex_app.origin_keys(layers, path)
@@ -223,7 +232,7 @@ def validate_files(release, directory, settings, rules, executable):
                 for native in rule.get("codex", []):
                     for example in native["match"]:
                         decision = json.loads(run("execpolicy check", command + ["--"] + shlex.split(example), True))
-                        if not isinstance(decision, dict) or decision.get("decision") != "forbidden":
+                        if not is_object(decision) or decision.get("decision") != "forbidden":
                             raise ValueError("candidate kk.rules does not forbid " + example)
         for path in sorted((directory / "rules").glob("*.rules")):
             if path.name != "kk.rules":
@@ -231,7 +240,7 @@ def validate_files(release, directory, settings, rules, executable):
         run("execpolicy check", command + ["--", "echo", "ok"])
 
 
-def check_destinations(paths, owned):
+def check_destinations(paths: Iterable[Path], owned: Collection[str]) -> None:
     for path in paths:
         if path.parent.resolve() != path.parent:
             raise ValueError("install directory is a symlink: {}".format(path.parent))
@@ -239,12 +248,14 @@ def check_destinations(paths, owned):
             raise ValueError("install path already exists: {}".format(path))
 
 
-def prepare(release, record, *, required=False, snapshot=...):
+def prepare(release: Path, record: JSONObject, *, required: bool = False,
+            snapshot: Union[JSONObject, None, ellipsis] = ...) -> Optional[Plan]:
     executable = shutil.which("codex")
     if not executable and snapshot is ...:
         if required or record.get("codex_paths"):
             raise ValueError("codex executable not found on PATH")
         return None
+    saved: Optional[JSONObject]
     if snapshot is not ...:
         saved = snapshot
         if saved is None:
@@ -255,12 +266,12 @@ def prepare(release, record, *, required=False, snapshot=...):
         raw = override_bytes()
         saved = {"directory": str(directory), "settings": codex_settings(raw), "override_hash": digest(raw)}
     baseline, explicit, instructions, native = compose(release, saved["settings"])
-    files = {}
+    files: Dict[Path, bytes] = {}
     agents = release / "kk/baseline/codex/agents"
     for agent in sorted(agents.iterdir()):
         if agent.suffix == ".toml":
             files[directory / "agents" / ("kk-" + agent.name)] = agent.read_bytes()
-    rules = None
+    rules: Optional[bytes] = None
     if native:
         rules = (release / "kk/baseline/codex/kk.rules").read_bytes()
         files[directory / "rules/kk.rules"] = rules
@@ -271,12 +282,13 @@ def prepare(release, record, *, required=False, snapshot=...):
     # The target's immutable payload and saved overrides reproduce its validated
     # files. A broken vendor CLI must not strand recovery of the Claude release.
     if snapshot is ...:
+        assert executable is not None  # A fresh preparation returned above without one.
         settings = merge([*baseline, *explicit, (("developer_instructions",), instructions)])
         validate_files(release, directory, settings, rules, str(Path(executable).absolute()))
     return files, obsolete, instructions.encode(), saved
 
 
-def prepare_activation(release, record):
+def prepare_activation(release: Path, record: JSONObject) -> Optional[Plan]:
     candidate = record["candidate"]
     home = release.parent.parent
     if candidate["phase"] == "activating" and "codex_inputs" in candidate:
@@ -285,8 +297,10 @@ def prepare_activation(release, record):
         mixed.check_codex_pilot(home, record, saved["directory"] if saved else None)
         return None if saved is None else prepare(release, record, snapshot=saved)
     plan = prepare(release, record)
+    inputs = plan[3] if plan else None
     if plan:
-        directory = Path(plan[3]["directory"])
+        assert inputs is not None  # A fresh preparation always records its inputs.
+        directory = Path(inputs["directory"])
         # A previous release's staging code may predate guard stamping. Its
         # preflight runs here before the private staging directory is placed.
         if not candidate.get("codex_guard_staged") and release.parent.name == "staging":
@@ -300,13 +314,13 @@ def prepare_activation(release, record):
             # pause for vendor cleanup; resuming the same change needs no new consent.
             state.write_json(home / "state.json", record)
     mixed.check_claude_pilot(home)
-    mixed.check_codex_pilot(home, record, plan[3]["directory"] if plan else None)
+    mixed.check_codex_pilot(home, record, inputs["directory"] if inputs else None)
     # The place checkpoint persists exactly the inputs validated at staging.
     candidate["codex_inputs"] = None if plan is None else plan[3]
     return plan
 
 
-def reconcile_claim(home, record):
+def reconcile_claim(home: Path, record: JSONObject) -> None:
     """Finish or relinquish an interrupted create-only publication under the writer lock."""
     claim = record.get("codex_claim")
     if not claim:
@@ -339,7 +353,7 @@ def reconcile_claim(home, record):
     state.write_json(home / "state.json", record)
 
 
-def publish_new(home, record, path, data):
+def publish_new(home: Path, record: JSONObject, path: Path, data: bytes) -> None:
     # Keep the source inode until the ownership decision is durable. On retry,
     # a file someone else created after our reservation remains theirs.
     path.parent.mkdir(parents=True, exist_ok=True)
@@ -366,7 +380,7 @@ def publish_new(home, record, path, data):
         reconcile_claim(home, record)
 
 
-def publish(home, record, version, plan):
+def publish(home: Path, record: JSONObject, version: str, plan: Optional[Plan]) -> None:
     if plan is None:
         return
     files, obsolete, instructions, saved = plan
@@ -396,6 +410,7 @@ def publish(home, record, version, plan):
         record.pop("codex_override_hash", None)
         release_state.setdefault("tools", {}).pop("codex", None)
     else:
+        assert instructions is not None  # prepare returns instructions with saved inputs.
         state.atomic_write(sidecar, instructions)
         record["codex_override_hash"] = saved["override_hash"]
         release_state["codex_snapshot"] = saved

@@ -18,6 +18,7 @@ Architecture decisions that span more than one feature are recorded as ADRs usin
 | [0013](../adr/0013-codex-file-access-through-hooked-tools.md) | Codex File Access Runs Through Hooked Tools | Accepted |
 | [0014](../adr/0014-machine-level-delivery.md) | Deliver the toolbox per machine | Accepted; Codex profile superseded by 0015 |
 | [0015](../adr/0015-codex-launch-overrides.md) | Pass Codex settings as launch flags | Accepted |
+| [0016](../adr/0016-python-runtime.md) | Keep machine delivery and the guard in Python | Accepted |
 
 ## Location
 

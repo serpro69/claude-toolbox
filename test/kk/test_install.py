@@ -5,6 +5,7 @@ import io
 import json
 import os
 from pathlib import Path
+import runpy
 import shutil
 import subprocess
 import sys
@@ -259,13 +260,29 @@ class FirstInstall(InstallFixture):
         result = self.invoke(ROOT / "install.sh", "--local", self.checkout, env=env)
         self.assertIn(str(shadow), result.stderr)
 
-    def test_38_syntax(self):
+    def test_floor_syntax(self):
+        # The entry points report the floor, so they must load on interpreters below it,
+        # down to a distribution's 3.6. ast cannot see future features, so check that too.
+        # Python 3.13+ documents (3, 7) as its lowest grammar version; the 3.9 CI job checks 3.6.
+        entry = (3, 6) if sys.version_info < (3, 13) else (3, 7)
         for path in (ROOT / "kk/lib").glob("*.py"):
             with self.subTest(path=path):
-                ast.parse(path.read_text(), filename=str(path), feature_version=(3, 8))
+                version = entry if path.name == "run.py" else (3, 9)
+                ast.parse(path.read_text(), filename=str(path), feature_version=version)
         installer = (ROOT / "install.sh").read_text()
         bootstrap = installer.split("<<'PY'\n", 1)[1].rsplit("\nPY\n", 1)[0]
-        ast.parse(bootstrap, filename="install.sh", feature_version=(3, 8))
+        ast.parse(bootstrap, filename="install.sh", feature_version=entry)
+        for name, source in (("run.py", (ROOT / "kk/lib/run.py").read_text()), ("install.sh", bootstrap)):
+            with self.subTest(entry_point=name):
+                self.assertFalse([node for node in ast.walk(ast.parse(source))
+                                  if isinstance(node, ast.ImportFrom) and node.module == "__future__"])
+
+    def test_entry_point_refuses_python_below_the_floor(self):
+        run = runpy.run_path(str(ROOT / "kk/lib/run.py"))
+        with patch.object(sys, "version_info", (3, 8, 20, "final", 0)):
+            with self.assertRaises(SystemExit) as raised:
+                run["require_python"]()
+        self.assertEqual(str(raised.exception), "kk: Python 3.9 or newer is required; 3.8.20 found")
 
     def test_archive_round_trip_and_tag_validation(self):
         archive = self.root / "release.tar"

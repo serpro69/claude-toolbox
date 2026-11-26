@@ -4,8 +4,9 @@ SHELL      := $(shell which bash)
 
 VERSION ?=
 REF     ?=
+PYRIGHT_VERSION := 1.1.414
 
-.PHONY: vendor-profiles generate-kodex generate-guard check-guard generate-all test-structure plugin-graph plugin-graph-docs docs-serve docs-build release pre-release
+.PHONY: vendor-profiles generate-kodex generate-guard check-guard generate-all test-structure typecheck plugin-graph plugin-graph-docs docs-serve docs-build release pre-release
 
 vendor-profiles:
 	go test ./cmd/vendor-profiles/...
@@ -35,6 +36,10 @@ generate-all:
 test-structure:
 	bash test/test-plugin-structure.sh
 	bash test/test-codex-structure.sh
+
+# Strict pyright over kk/lib and the canonical guard; scope and floor live in pyrightconfig.json.
+typecheck:
+	npx --yes pyright@$(PYRIGHT_VERSION)
 
 plugin-graph:
 	go test ./cmd/plugin-graph/...

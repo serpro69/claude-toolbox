@@ -1,24 +1,28 @@
 """Exercise the installed guard through one real vendor session in a private workspace."""
 
+from __future__ import annotations
+
 import json
 import os
 from pathlib import Path
 import re
 import subprocess
 import tempfile
+from typing import Iterable, Iterator, Set
 
 from . import codex_plugins, codex_profile, mixed, state
+from .payload import is_array, is_object
 
 
-def claude_errors(stream, canary):
-    requests = set()
+def claude_errors(stream: str, canary: Path) -> Iterator[str]:
+    requests: Set[str] = set()
     for line in stream.splitlines():
         event = json.loads(line)
-        if not isinstance(event, dict) or not isinstance(event.get("message"), dict):
+        if not is_object(event) or not is_object(event.get("message")):
             continue
         blocks = event["message"].get("content", [])
-        for block in blocks if isinstance(blocks, list) else ():
-            if not isinstance(block, dict):
+        for block in blocks if is_array(blocks) else ():
+            if not is_object(block):
                 continue
             if event["type"] == "assistant" and block.get("type") == "tool_use" and block.get("name") == "Read":
                 name = block.get("input", {}).get("file_path")
@@ -29,11 +33,11 @@ def claude_errors(stream, canary):
                 content = block.get("content")
                 if isinstance(content, str):
                     yield content
-                elif isinstance(content, list):
-                    yield from (part["text"] for part in content if isinstance(part, dict) and part.get("type") == "text")
+                elif is_array(content):
+                    yield from (part["text"] for part in content if is_object(part) and part.get("type") == "text")
 
 
-def run(tool, home):
+def run(tool: str, home: Path) -> str:
     # Never inherit a repository's TMPDIR, working tree, or project hooks.
     with tempfile.TemporaryDirectory(prefix="kk-live-", dir="/tmp") as temp:
         workspace = Path(temp).resolve()
@@ -76,6 +80,7 @@ def run(tool, home):
             message = last[4:] if last.startswith("kk: ") else ""
             raise ValueError(message[:500] or "vendor session exited {}; check {} authentication and guard settings".format(
                 result.returncode, tool))
+        errors: Iterable[str]
         if tool == "claude":
             errors = claude_errors(result.stdout, canary)
         else:

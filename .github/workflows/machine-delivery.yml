@@ -16,7 +16,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        python: ['3.8', '3.x']
+        python: ['3.9', '3.x']
     steps:
       - uses: actions/checkout@v7
       - uses: actions/setup-python@v7
@@ -32,6 +32,13 @@ jobs:
         run: bash test/test-codex-hooks.sh
       - name: kk lifecycle and packaged guard self-tests
         run: bash test/test-kk.sh
+
+  typecheck:
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v7
+      - name: Strict pyright over kk and the guard
+        run: make typecheck
 
   # kk keeps vendor warnings out of install output, so warnings fail here.
   # The CLI is unpinned on purpose: new vendor checks should surface before a release.

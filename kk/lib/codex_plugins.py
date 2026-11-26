@@ -1,5 +1,7 @@
 """Install and verify the two plugins from the release's local Codex marketplace."""
 
+from __future__ import annotations
+
 import json
 import os
 from pathlib import Path
@@ -7,9 +9,12 @@ import shlex
 import shutil
 import subprocess
 import sys
+from typing import Any, List, Optional, Set, Union
 
 from . import payload, state
 from .claude import MARKETPLACE
+from .payload import JSONObject
+from .state import Checkpoint
 from .guard_identity import MANIFEST, guard_identity, with_version
 
 
@@ -19,18 +24,18 @@ GUARD_ID = "kk-guard@" + MARKETPLACE
 INVENTORY_TIMEOUT = 120
 
 
-def saved_receipt(record, directory, name):
+def saved_receipt(record: JSONObject, directory: Union[str, Path], name: str) -> JSONObject:
     return record.get("codex_plugins", {}).get(str(directory), {}).get(name, {})
 
 
-def receipt(record, directory, name):
+def receipt(record: JSONObject, directory: Union[str, Path], name: str) -> JSONObject:
     saved = saved_receipt(record, directory, name)
     if saved and saved.get("path") == str(Path(directory) / "plugins/cache" / MARKETPLACE / name / saved["version"]):
         return saved
     return {}
 
 
-def activation_hint(saved):
+def activation_hint(saved: JSONObject) -> str:
     source = saved.get("source", {})
     if "tag" in source:
         repository = payload.canonical_repository(source["repository"])
@@ -42,7 +47,7 @@ def activation_hint(saved):
     return "run kk upgrade"
 
 
-def stage_guard(release, record, directory, local):
+def stage_guard(release: Path, record: JSONObject, directory: Path, local: bool) -> None:
     guard = release / PLUGINS["kk-guard"]
     installed = receipt(record, directory, "kk-guard")
     identity = guard_identity(guard)
@@ -57,7 +62,7 @@ def stage_guard(release, record, directory, local):
         raise ValueError("Codex guard content changed under installed version " + version)
 
 
-def confirm_change(record, release, directory):
+def confirm_change(record: JSONObject, release: Path, directory: Path) -> None:
     installed = saved_receipt(record, directory, "kk-guard")
     identity = guard_identity(release / PLUGINS["kk-guard"])
     if not installed:
@@ -82,21 +87,21 @@ def confirm_change(record, release, directory):
     candidate["confirmed_guard_change"] = pair
 
 
-def executable():
+def executable() -> str:
     found = shutil.which("codex")
     if not found:
         raise FileNotFoundError("codex executable not found on PATH")
     return os.path.abspath(found)
 
 
-def vendor(home, directory, *args, timeout=30):
+def vendor(home: Path, directory: Union[str, Path], *args: str, timeout: float = 30) -> Any:
     result = subprocess.run([executable(), "plugin", *args, "--json"], cwd=home,
                             env=dict(os.environ, CODEX_HOME=str(directory)), timeout=timeout,
                             stdin=subprocess.DEVNULL, stdout=subprocess.PIPE, check=True, text=True)
     return json.loads(result.stdout)
 
 
-def manifest(home, release):
+def manifest(home: Path, release: Path) -> JSONObject:
     return {"name": MARKETPLACE, "interface": {"displayName": "Agentstakk"},
             "plugins": [{"name": name, "category": "Productivity",
                          "policy": {"installation": "AVAILABLE", "authentication": "ON_INSTALL"},
@@ -104,13 +109,13 @@ def manifest(home, release):
                         for name, folder in PLUGINS.items()]}
 
 
-def verify_tree(name, source, directory, version, path):
+def verify_tree(name: str, source: Path, directory: Path, version: str, path: Path) -> JSONObject:
     expected = directory / "plugins/cache" / MARKETPLACE / name / version
     if not path.is_absolute() or path.resolve(strict=True) != expected or not expected.is_dir():
         raise ValueError("unexpected Codex install path for {}: {}".format(name, path))
     if payload.read_json(path / MANIFEST)["version"] != version:
         raise ValueError("Codex installed manifest differs from reported version for " + name)
-    result = {"version": version, "path": str(expected)}
+    result: JSONObject = {"version": version, "path": str(expected)}
     if name == "kk-guard":
         result["identity"] = guard_identity(source)
         matches = guard_identity(path) == result["identity"]
@@ -122,7 +127,7 @@ def verify_tree(name, source, directory, version, path):
     return result
 
 
-def restore_absent(home, record, directory, checkpoint):
+def restore_absent(home: Path, record: JSONObject, directory: str, checkpoint: Checkpoint) -> None:
     """Undo kk's registrations when the rollback target had no managed Codex."""
     receipts = record.get("codex_plugins", {}).get(directory)
     if receipts is None:
@@ -131,6 +136,7 @@ def restore_absent(home, record, directory, checkpoint):
     path = Path(directory)
     if path.resolve() != path:
         raise ValueError("Codex home has moved; restore its original directory before rollback: " + directory)
+    installed: Set[str]
     try:
         path.stat()
     except FileNotFoundError:
@@ -159,12 +165,13 @@ def restore_absent(home, record, directory, checkpoint):
     checkpoint("codex-restored-absent")
 
 
-def remove_registrations(home, record, directory, receipts, checkpoint):
+def remove_registrations(home: Path, record: JSONObject, directory: str, receipts: JSONObject,
+                         checkpoint: Checkpoint) -> Set[str]:
     markets = vendor(home, directory, "marketplace", "list")["marketplaces"]
     market = next((m for m in markets if m["name"] == MARKETPLACE), None)
     if market and Path(market["root"]).resolve() != home:
         raise ValueError("Codex marketplace {} already belongs to another source".format(MARKETPLACE))
-    installed = {p["pluginId"] for p in vendor(home, directory, "list", "--marketplace", MARKETPLACE)["installed"]}
+    installed: Set[str] = {p["pluginId"] for p in vendor(home, directory, "list", "--marketplace", MARKETPLACE)["installed"]}
     pending = record.get("codex_plugin_pending")
     for name in PLUGINS:
         plugin_id = name + "@" + MARKETPLACE
@@ -182,7 +189,7 @@ def remove_registrations(home, record, directory, receipts, checkpoint):
     return installed
 
 
-def activate(home, record, release, directory, checkpoint):
+def activate(home: Path, record: JSONObject, release: Path, directory: Union[str, Path], checkpoint: Checkpoint) -> None:
     directory = Path(directory)
     directory.mkdir(mode=0o700, parents=True, exist_ok=True)
     rollback = record["candidate"].get("operation") == "rollback"
@@ -190,6 +197,8 @@ def activate(home, record, release, directory, checkpoint):
     # If the vendor executable broke after promotion, identical installed
     # trees can still be verified locally and the offline files restored.
     offline = False
+    markets: List[JSONObject] = []
+    market: Optional[JSONObject] = None
     try:
         markets = vendor(home, directory, "marketplace", "list")["marketplaces"]
     except (OSError, subprocess.SubprocessError) as exc:
@@ -225,7 +234,7 @@ def activate(home, record, release, directory, checkpoint):
         plugin_id = name + "@" + MARKETPLACE
         entry = entries.get(plugin_id)
         version = entry["version"] if entry else None
-        path = None
+        path: Optional[Path] = None
         if version is not None:
             payload.tag_name("v" + version)
             saved = receipt(record, directory, name)
@@ -237,6 +246,7 @@ def activate(home, record, release, directory, checkpoint):
         if name == "kk-guard" and path is not None:
             replace = guard_identity(path) != guard_identity(source)
         elif name == "kk" and not replace:
+            assert path is not None  # The installed version matches, so its cache path is known.
             # Local checkouts can edit a skill without bumping the manifest.
             replace = not path.is_dir() or payload.fingerprint(source) != payload.fingerprint(path)
         if replace:
@@ -246,6 +256,7 @@ def activate(home, record, release, directory, checkpoint):
             if added["pluginId"] != plugin_id or added["version"] != wanted:
                 raise ValueError("Codex installed the wrong plugin or version for " + plugin_id)
             path, version = Path(added["installedPath"]), wanted
+        assert path is not None and version is not None  # Either installed already or just added.
         receipts[name] = verify_tree(name, source, directory, version, path)
         if record.get("codex_plugin_pending") == plugin_id:
             del record["codex_plugin_pending"]

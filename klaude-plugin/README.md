@@ -31,7 +31,7 @@ See the [Skills](https://serpro69.github.io/agentstakk/latest/user-guide/skills/
 
 ## Permission guard
 
-The [shipped declaration](scripts/guard/guard-rules.json), [wrapper](scripts/guard/guard.sh), [launcher](scripts/guard/run-guard.py) and [engine](scripts/guard/guard.py) enforce the same baseline even on plugin-only installs. Use Claude Code 2.1.295+, Bash, `jq` and Python 3.8+. The hook covers Bash, Read/Grep/Glob, Edit/Write/NotebookEdit and `capy_execute`, `capy_execute_file`, `capy_batch_execute` under any MCP server name.
+The [shipped declaration](scripts/guard/guard-rules.json), [wrapper](scripts/guard/guard.sh), [launcher](scripts/guard/run-guard.py) and [engine](scripts/guard/guard.py) enforce the same baseline even on plugin-only installs. Use Claude Code 2.1.295+, Bash, `jq` and Python 3.9+. The hook covers Bash, Read/Grep/Glob, Edit/Write/NotebookEdit and `capy_execute`, `capy_execute_file`, `capy_batch_execute` under any MCP server name.
 
 The launcher imports the adjacent engine under isolated Python, allowing Python's normal bytecode cache to reduce startup time. Rules and configuration are reloaded on every call. Caches stay beside the installed engine; cold starts and runtimes that cannot write caches still evaluate source. Unexpected loading failures block through the wrapper.
 

@@ -1,5 +1,7 @@
 """Exercise the staged engine and both vendors' registered adapters on inert events."""
 
+from __future__ import annotations
+
 import json
 import os
 from pathlib import Path
@@ -7,12 +9,14 @@ import re
 import subprocess
 import sys
 import tempfile
+from typing import Callable, Dict, Sequence, Set, Tuple
 
-from .payload import read_json
+from .payload import JSONObject, read_json
 from . import state
 
 
-def check_event(command, event, expected, workspace, env, timeout=30):
+def check_event(command: Sequence[str], event: JSONObject, expected: str, workspace: Path, env: Dict[str, str],
+                timeout: float = 30) -> None:
     body = dict(event, cwd=str(workspace), hook_event_name="PreToolUse")
     result = subprocess.run(command, input=json.dumps(body), text=True, capture_output=True,
                             cwd=workspace, env=env, timeout=timeout)
@@ -27,17 +31,17 @@ def check_event(command, event, expected, workspace, env, timeout=30):
         expected, event["tool_name"], result.returncode, result.stderr.strip()))
 
 
-def validate_codex(root, workspace, env):
+def validate_codex(root: Path, workspace: Path, env: Dict[str, str]) -> None:
     plugin = root / "kodex-guard"
     groups = read_json(plugin / "hooks/hooks.json")["hooks"]["PreToolUse"]
-    samples = {
+    samples: Dict[str, Tuple[str, Callable[[str], JSONObject]]] = {
         "Bash": ("Bash", lambda name: {"command": "cat " + name}),
         "Edit": ("apply_patch", lambda name: {"command": "*** Begin Patch\n*** Add File: " + name
                                                + "\n+fixture\n*** End Patch"}),
         "mcp__kk__capy_execute": ("mcp__kk__capy_execute",
                                    lambda name: {"language": "shell", "code": "cat " + name}),
     }
-    covered = set()
+    covered: Set[str] = set()
     for group in groups:
         # Codex matchers use POSIX character classes. The shipped MCP matcher
         # uses [:space:], whose Python equivalent is \s.
@@ -58,7 +62,7 @@ def validate_codex(root, workspace, env):
         raise ValueError("missing Codex adapter registration for " + ", ".join(sorted(set(samples) - covered)))
 
 
-def validate(root):
+def validate(root: Path) -> None:
     plugin = root / "klaude-plugin"
     cases = read_json(root / "kk/selftest/guard-cases.json")
     groups = read_json(plugin / "hooks/hooks.json")["hooks"]["PreToolUse"]
