@@ -16,7 +16,8 @@ Architecture decisions that span more than one feature are recorded as ADRs usin
 | [0010](../adr/0010-proportionate-verification.md) | Proportionate Verification and Agent Evaluation | Accepted |
 | [0012](../adr/0012-permission-guard-single-declaration.md) | Single Declaration for the Permission Guard | Accepted |
 | [0013](../adr/0013-codex-file-access-through-hooked-tools.md) | Codex File Access Runs Through Hooked Tools | Accepted |
-| [0014](../adr/0014-machine-level-delivery.md) | Deliver the toolbox per machine | Accepted |
+| [0014](../adr/0014-machine-level-delivery.md) | Deliver the toolbox per machine | Accepted; Codex profile superseded by 0015 |
+| [0015](../adr/0015-codex-launch-overrides.md) | Pass Codex settings as launch flags | Accepted |
 
 ## Location
 

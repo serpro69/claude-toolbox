@@ -24,7 +24,7 @@ curl -fsSL https://raw.githubusercontent.com/serpro69/agentstakk/v0.26.0/install
 
 ## Verify and launch
 
-1. **If you use Codex**, open plain `codex` in your project without a named profile. Review folder trust and the three `kk-guard@agentstakk-local` handlers in `/hooks`, then exit. Plain Codex saves these decisions to your account. Use it for the first folder-trust decision in each new project too. If your Codex version cannot report hook trust, run `kk apply` interactively after reviewing the hooks. [Codex trust settings](../providers/codex.md#where-codex-saves-trust-decisions)
+1. **If you use Codex**, open plain `codex` in your project. Review folder trust and the three `kk-guard@agentstakk-local` handlers in `/hooks`, then exit. Codex saves these decisions to your account. If your Codex version cannot report hook trust, run `kk apply` interactively after reviewing the hooks. [Codex trust settings](../providers/codex.md#where-codex-saves-trust-decisions)
 2. **If `kk status` lists an older Git-marketplace plugin**, check its scope. After reviewing the managed guard, run `kk status --remove-mixed` to review and confirm removal of user-scope duplicates. Handle project-owned registrations with the team that uses them.
 3. **Check the guards.** Run `kk status --live` in your terminal with working vendor authentication. It starts a short session for each managed CLI and checks that its guard denies a test read.
 4. **Start work.** In your project, run `kk claude` or `kk codex`. [Try the workflow](quickstart.md)

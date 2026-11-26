@@ -54,4 +54,4 @@ Both plugins include the workflow skills and language profiles. Claude also incl
 
 ## What's not included
 
-Configure [MCP servers](../user-guide/mcp-servers.md) separately. The [machine installation](install.md) supplies the kk launchers, Claude’s native permission settings and statusline, the Codex profile and reviewer files, optional account-wide Codex rules, and offline rollback.
+Configure [MCP servers](../user-guide/mcp-servers.md) separately. The [machine installation](install.md) supplies the kk launchers, Claude’s native permission settings and statusline, Codex launch settings and reviewer files, optional account-wide Codex rules, and offline rollback.

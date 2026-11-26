@@ -2,7 +2,7 @@
 
 ## Status
 
-Accepted, 2026-11-23. The RC4 pilot established `v0.26.0-rc.4` as the last full template. The first stable machine release was v0.26.0.
+Accepted, 2026-11-23. The RC4 pilot established `v0.26.0-rc.4` as the last full template. The first stable machine release was v0.26.0. [ADR 0015](0015-codex-launch-overrides.md) supersedes the statement below that `kk codex` selects a named profile.
 
 ## Context
 

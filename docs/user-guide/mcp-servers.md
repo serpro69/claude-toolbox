@@ -150,7 +150,7 @@ Restart PAL after editing the client. In a read-only `clink` review, check that 
 
 #### Codex client
 
-Keep PAL’s shipped `codex` client and do not point it at `kk codex`. kk installs the guard hooks and the skills plugin for the Codex account, so the plain `codex` that PAL starts loads them too. The launcher would add only model defaults and instructions that a `clink` reviewer does not use. PAL runs `codex exec`, which `kk codex` treats as a checked batch launch: it refuses whenever the managed profile has drifted, for example after a `/model` switch in a `kk codex` session.
+Keep PAL’s shipped `codex` client and do not point it at `kk codex`. kk installs the guard hooks and the skills plugin for the Codex account, so the plain `codex` that PAL starts loads them too. The launcher would add kk’s launch settings: its defaults, your approval and sandbox opt-ins, your `codex.settings` and the behavioral instructions. A `clink` reviewer needs none of them, and the opt-ins could change the permissions it runs with. PAL runs `codex exec`, which `kk codex` treats as a checked batch launch. It would refuse a review at once if the client passes a named profile, `--ignore-user-config` or `--trust`. Every other review would first wait for the settings lookup and the guard’s trust read, and would be refused whenever a guard handler is not reviewed and enabled for the workspace.
 
 Codex has no per-path read grant like Claude’s `--allowedTools`. Its sandbox configuration decides what the reviewer can read. If a review reports that it could not read criteria or the diff, check that configuration for the plugin path and the temporary directory.
 

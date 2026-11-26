@@ -1,6 +1,6 @@
 # Configuration
 
-The machine installation supplies a Claude launch layer and a named Codex profile. Repositories can keep their own settings, instructions and project guard policy.
+The machine installation supplies a Claude launch layer and Codex launch settings. Repositories can keep their own settings, instructions and project guard policy.
 
 ## How Configuration Works
 
@@ -15,6 +15,7 @@ Edit `${XDG_CONFIG_HOME:-$HOME/.config}/kk/config.json` for personal toolbox pre
     "settings": {"effortLevel": "medium"}
   },
   "codex": {
+    "defaults": {"tui": false},
     "settings": {"model_reasoning_effort": "high"}
   }
 }
@@ -29,11 +30,17 @@ Edit `${XDG_CONFIG_HOME:-$HOME/.config}/kk/config.json` for personal toolbox pre
 | `Bash(mkdir:*)` and `WebSearch` | Opt in separately with `claude.optIn.mkdir` and `claude.optIn.webSearch`. The legacy grants for `cat`, `grep`, `ls` and `sort` are dropped. |
 | Statusline and instructions | The launcher supplies the statusline in trusted interactive wrapped sessions with hooks enabled. Set `claude.defaults.statusLine` to `false` to opt out. The plugin supplies behavioral instructions at session start and supports `claude.instructions`. |
 
-**Codex.** `kk codex` selects the `kk` profile. It takes precedence over base user configuration and yields to trusted project configuration and explicit CLI flags. `codex.settings` can set profile values. Configure hook and plugin enablement in native Codex settings. After editing overrides, run `kk apply` to regenerate the active release’s owned files offline. `kk status` and `kk codex` report pending edits.
+**Codex.** Each `kk codex` launch passes its settings to plain `codex` as `-c` flags. The release defaults yield to a value set anywhere else: `config.toml`, trusted project configuration or your command line. Your `codex.optIn` and `codex.settings` values take precedence over `config.toml` and yield to trusted project configuration and to your own CLI flags. [Launch settings](../providers/codex.md#launch-settings)
+
+- `codex.defaults` switches a release default off, so that Codex uses its own value. Its keys are `model`, `model_reasoning_effort`, `model_context_window`, `model_auto_compact_token_limit`, `project_doc_max_bytes`, `agents` and `tui`; set one to `false`.
+- `codex.settings` sets Codex values, including your own value for a release default. Use the names Codex reports. Two release defaults have aliases that stop `kk apply`: write `agents.max_concurrent_threads_per_session` and `tui.effects.starfield`, not `agents.max_threads` and `tui.whimsy`. Top-level keys are plain names, with nested tables written as JSON objects.
+- These values appear in the Codex command line. Keep `mcp_servers`, `model_providers` and `shell_environment_policy` in `config.toml`; kk rejects them here. Configure hook and plugin enablement in native Codex settings too.
+
+After editing overrides, run `kk apply`. It checks the values with your Codex CLI and updates the active release’s owned files offline. `kk status` and `kk codex` report pending edits.
 
 There are two independent opt-ins:
 
-1. **Approval and sandbox defaults.** Enable the values you want under `codex.optIn`: `"approval_policy": true` supplies `on-request`, `"approvals_reviewer": true` supplies `user`, and `"sandbox_mode": true` supplies `read-only`. Otherwise the machine owner’s native settings govern. Migrated repositories keep their existing three project values until someone removes them.
+1. **Approval and sandbox defaults.** Enable the values you want under `codex.optIn`: `"approval_policy": true` supplies `on-request`, `"approvals_reviewer": true` supplies `user`, and `"sandbox_mode": true` supplies `read-only`. Otherwise the machine owner’s native settings govern. With a sandbox or approval flag on the command line (`-s`/`--sandbox`, `-a`/`--ask-for-approval`, `--approve-for-me`, `--dangerously-bypass-approvals-and-sandbox` or `--yolo`), kk passes none of these three values for that launch. Migrated repositories keep their existing three project values until someone removes them.
 2. **Account-wide native forbids.** Set `"nativeForbids": true` under `codex.optIn` and run `kk apply` to install `$CODEX_HOME/rules/kk.rules`. Those rules apply to **bare Codex and unrelated repositories** using that Codex home. Project settings and guard exceptions cannot loosen a native forbid. Switch it off and run `kk apply` to remove the toolbox-owned file.
 
 Machine updates replace the previous per-repository sync PRs. Review the chosen release before upgrading. A local user install covers sessions that load its plugin. Hosts without it, including fresh CI runners and cloud sessions, need separate provisioning if migration removes committed plugin enablement. See the [migration guide](template-sync.md) for team-wide effects.
@@ -140,7 +147,7 @@ The guard blocks mutations of these paths, including moving their parent directo
 - `~/.claude/plugins/**`
 - `$KK_HOME/**`
 - `$XDG_CONFIG_HOME/kk/config.json`
-- Each path recorded in `$KK_HOME/state.json` under `installed_paths`, including the `~/.local/bin/kk` launcher, the installed Codex profile, the opt-in rules file and toolbox sub-agents.
+- Each path recorded in `$KK_HOME/state.json` under `installed_paths`, including the `~/.local/bin/kk` launcher, the opt-in Codex rules file and toolbox sub-agents.
 - `$CODEX_HOME/plugins/cache/**`
 
 The toolbox home defaults to `${XDG_DATA_HOME:-~/.local/share}/kk`. The configuration and Codex homes default to `~/.config` and `~/.codex`. A file in a shared directory becomes protected when the installer records its exact path. Reads still follow the secrets policy.

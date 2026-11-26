@@ -32,7 +32,6 @@ Migration keeps the legacy scripts together when you exclude `.codex/hooks.json`
 ### If the guard check stops before the first preview
 
 - **Codex plugin inventory timed out.** Run `codex plugin list --json` from the same terminal. If it finishes and lists the managed plugins, retry `kk status --live` and `kk migrate`. If Codex itself reports an error, resolve that error first. A successful listing alone checks installation. The live check also verifies that the guard actually runs.
-- **kk cannot verify the managed Codex profile.** A preference such as `service_tier` saved in the generated profile can cause this even when the hooks are trusted. Preserve any intended preferences in the machine overrides before running `kk apply`, then retry. [Recover a changed Codex profile](../providers/codex.md#recover-a-changed-managed-profile)
 
 ## What changes for the team
 

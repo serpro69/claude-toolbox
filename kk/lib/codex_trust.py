@@ -7,7 +7,7 @@ from . import claude, codex_app, codex_plugins, mixed, payload
 from .codex_plugins import GUARD_ID
 
 
-REVIEW_UI = "/hooks in plain codex (without --profile)"
+REVIEW_UI = "/hooks in plain codex"
 NoTrustMethod = codex_app.NoMethod  # hooks/list is the only method the trust read requests.
 
 
