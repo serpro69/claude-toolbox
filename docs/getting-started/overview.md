@@ -48,7 +48,7 @@ for destinations, missing context and sharing boundaries.
 
 ### Machine configuration
 
-`kk claude` composes Claude preferences, native secret denies and a themed statusline for the session. `kk codex` selects the managed profile, and Codex loads the separately reviewed guard plugin. Your repositories keep their own instructions and settings. See [Configuration](../user-guide/configuration.md).
+`kk claude` composes Claude preferences, native secret denies and a themed statusline for the session. `kk codex` passes its settings to Codex as launch flags, and Codex loads the separately reviewed guard plugin. Your repositories keep their own instructions and settings. See [Configuration](../user-guide/configuration.md).
 
 ## Requirements
 

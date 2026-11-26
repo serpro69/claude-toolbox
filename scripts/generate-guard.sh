@@ -57,7 +57,7 @@ jq -r '
   "### Protected configuration\n",
   "The guard blocks mutations of these paths, including moving their parent directories:\n",
   (.selfmod[] | if . == "$KK_HOME/state.json#installed_paths" then
-    "- Each path recorded in `$KK_HOME/state.json` under `installed_paths`, including the `~/.local/bin/kk` launcher, the installed Codex profile, the opt-in rules file and toolbox sub-agents."
+    "- Each path recorded in `$KK_HOME/state.json` under `installed_paths`, including the `~/.local/bin/kk` launcher, the opt-in Codex rules file and toolbox sub-agents."
     else "- " + code end),
   "\nThe toolbox home defaults to `${XDG_DATA_HOME:-~/.local/share}/kk`. The configuration and Codex homes default to `~/.config` and `~/.codex`. A file in a shared directory becomes protected when the installer records its exact path. Reads still follow the secrets policy.",
   "\nWhen copying an unrelated executable into `~/.local/bin/`, name its destination file explicitly. A directory-only destination is checked as a parent of the protected `kk` launcher.",
