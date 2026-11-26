@@ -57,7 +57,10 @@ class AppServer(unittest.TestCase):
                 (["-c", table, "-c", "features.hooks=false"], 0),
                 # Codex 0.172 applies feature toggles after every -c flag.
                 (["--disable", "hooks", "-c", table], 0),
-                (["--enable", "hooks", "-c", "features.hooks=false"], 1)):
+                (["--enable", "hooks", "-c", "features.hooks=false"], 1),
+                # and a --disable after every --enable of the same feature.
+                (["--disable", "hooks", "--enable", "hooks"], 0),
+                (["--enable", "hooks", "--disable", "hooks"], 0)):
             with self.subTest(flags=flags):
                 self.assertEqual(len(trust.hooks(self.home, self.work, flags, FAKE)), listed)
 

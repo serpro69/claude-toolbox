@@ -79,7 +79,8 @@ def session_flags(arguments):
 
     Each -c applies in order: a dotted path sets one leaf, splitting on every
     dot, and an inline table replaces everything under its key. Feature toggles
-    apply after every -c, wherever they appear.
+    apply after every -c, wherever they appear, and a --disable wins over an
+    --enable of the same feature in either order.
     """
     config, toggles = {}, []
     it = iter(arguments)
@@ -96,7 +97,7 @@ def session_flags(arguments):
         else:
             path, _, value = value.partition("=")
             put(config, path.split("."), toml_value(value))
-    for path, value in toggles:
+    for path, value in sorted(toggles, key=lambda toggle: not toggle[1]):  # enables, then disables
         put(config, path, value)
     return config
 
