@@ -1,3 +1,7 @@
+---
+description: Verify implemented code against design and implementation documentation, detecting spec deviations, missing implementations, and outdated docs.
+---
+
 Verify implemented code against design and implementation documentation, detecting spec deviations, missing implementations, and outdated docs.
 
 Arguments: $ARGUMENTS

@@ -1,3 +1,7 @@
+---
+description: Apply Chain-of-Verification (CoVe) with true factored verification using isolated sub-agents.
+---
+
 Apply Chain-of-Verification (CoVe) with true factored verification using isolated sub-agents.
 
 This mode spawns separate sub-agents for each verification question, ensuring they have

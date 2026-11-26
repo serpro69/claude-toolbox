@@ -1,3 +1,7 @@
+---
+description: Review behavior, compatibility, SOLID, security and code quality in isolated mode with independent reviewers.
+---
+
 Review behavior, compatibility, SOLID, security and code quality in isolated mode with independent reviewers.
 
 One internal `code-reviewer` sub-agent plus external review selected once at discovery: `pal codereview` when an API model is available, otherwise one `pal clink` CLI review per eligible non-authoring provider (configured models, fresh conversations, no edits). Produces a report organized by agreement level with corroborated findings highlighted and every reviewer's outcome disclosed.

@@ -1,3 +1,7 @@
+---
+description: Migrate this project from Task Master MCP to native markdown-based task tracking.
+---
+
 Migrate this project from Task Master MCP to native markdown-based task tracking.
 
 ## Pre-flight checks
