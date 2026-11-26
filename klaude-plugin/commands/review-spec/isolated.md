@@ -1,3 +1,7 @@
+---
+description: Run implementation review in isolated mode with an independent spec-reviewer sub-agent that has zero authorship bias.
+---
+
 Run implementation review in isolated mode with an independent spec-reviewer sub-agent that has zero authorship bias.
 
 Delegates detection to a `spec-reviewer` sub-agent, then annotates findings with type-specific author context. Low-relevance types (MISSING_IMPL, DOC_INCON, OUTDATED_DOC, AMBIGUOUS) get brief annotations; high-relevance types (SPEC_DEV, EXTRA_IMPL) get detailed annotations with spec update suggestions.

@@ -1,3 +1,7 @@
+---
+description: Apply Chain-of-Verification (CoVe) prompting to improve response accuracy through self-verification.
+---
+
 Apply Chain-of-Verification (CoVe) prompting to improve response accuracy through self-verification.
 
 Arguments: $ARGUMENTS

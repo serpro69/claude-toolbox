@@ -32,3 +32,17 @@ jobs:
         run: bash test/test-codex-hooks.sh
       - name: kk lifecycle and packaged guard self-tests
         run: bash test/test-kk.sh
+
+  # kk keeps vendor warnings out of install output, so warnings fail here.
+  # The CLI is unpinned on purpose: new vendor checks should surface before a release.
+  plugin-validate:
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v7
+      - name: Install Claude Code
+        run: npm install -g @anthropic-ai/claude-code
+      - name: Validate plugin and marketplace strictly
+        run: |
+          claude --version
+          claude plugin validate --strict klaude-plugin
+          claude plugin validate --strict .

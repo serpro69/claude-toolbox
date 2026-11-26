@@ -1,3 +1,7 @@
+---
+description: Sync this repository with the last full template from `v0.26.0-rc.4`.
+---
+
 Sync this repository with the last full template from `v0.26.0-rc.4`.
 
 Legacy repositories can sync to the last full template, `v0.26.0-rc.4`. After retirement the compatibility script directs users to `kk migrate`.

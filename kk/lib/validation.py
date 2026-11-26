@@ -93,4 +93,10 @@ def validate(root):
                 check_event(["bash", "-c", hook["command"]], event, expected, workspace, env,
                             timeout=min(30, hook.get("timeout", 30)))
         validate_codex(root, workspace, env)
-        subprocess.run(["claude", "plugin", "validate", str(plugin)], cwd=workspace, check=True)
+        # Show the vendor report only when it rejects the plugin. Warnings are
+        # the repository's strict CI check to catch, not install output.
+        result = subprocess.run(["claude", "plugin", "validate", str(plugin)], cwd=workspace,
+                                stdout=subprocess.PIPE, stderr=subprocess.STDOUT, text=True)
+        if result.returncode:
+            sys.stderr.write(result.stdout)
+        result.check_returncode()
