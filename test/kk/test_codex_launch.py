@@ -18,7 +18,7 @@ class LaunchArguments(unittest.TestCase):
     def test_options_report_the_arguments_that_shape_a_launch(self):
         here = Path.cwd().resolve()
         plain = launcher.launch_options(["hello"])
-        self.assertEqual(plain, (here, None, False, [], here, False, False, False, False))
+        self.assertEqual(plain, (here, None, False, [], here, False, False, False, False, True))
         # Codex selects the workspace of a resumed session, but it still starts in a directory.
         resumed = launcher.launch_options(["-C", "/", "resume"])
         self.assertEqual((resumed.workspace, resumed.directory), (None, Path("/")))
@@ -40,7 +40,16 @@ class LaunchArguments(unittest.TestCase):
         # An option's value and anything after -- are not options.
         for args in (["-i", "--oss"], ["--", "--oss", "--trust", "-s", "x"]):
             with self.subTest(args=args):
-                self.assertEqual(launcher.launch_options(args)[5:], (False, False, False, False))
+                self.assertEqual(launcher.launch_options(args)[5:9], (False, False, False, False))
+        # kk may add --no-daemon to a launch that opens the session TUI in its own server.
+        for args, allowed in (([], True), (["-C", "/", "fix it"], True), (["resume", "--last"], True), (["fork"], True),
+                              (["--", "--no-daemon"], True), (["exec", "hello"], False), (["login"], False),
+                              (["queue", "--thread", "x"], False), (["remote-control", "start"], False),
+                              (["execpolicy", "check"], False),
+                              (["--remote", "ws://example.invalid"], False), (["--remote=ws://example.invalid"], False),
+                              (["--no-daemon", "hello"], False), (["resume", "--no-daemon"], False)):
+            with self.subTest(args=args):
+                self.assertEqual(launcher.launch_options(args).no_daemon, allowed)
 
     def test_composing_leaves_the_saved_settings_alone(self):
         settings = {"defaults": {"tui": False}, "settings": {"tui": {"model_availability_nux": {"example": 1}}}}
@@ -79,6 +88,8 @@ class CodexLaunchFlags(InstallFixture):
         argv = json.loads(run.stdout)
         own = argv[:len(argv) - len(args)]
         self.assertEqual(argv[len(own):], list(args))
+        if own[:1] == ["--no-daemon"]:  # Covered by its own test.
+            del own[0]
         self.assertEqual(own[::2], ["-c"] * (len(own) // 2))
         pairs = [flag.partition("=")[::2] for flag in own[1::2]]
         flags = dict(pairs)
@@ -181,6 +192,25 @@ class CodexLaunchFlags(InstallFixture):
         self.assertEqual(flags.keys(), set(PROFILE) | set(OPT_INS) | {"developer_instructions"})
         self.assertIn("imported text", flags["developer_instructions"])
         self.assertEqual(printed, "")
+
+    def test_a_session_with_kk_flags_asks_for_its_own_server(self):
+        self.review_guard()
+
+        def argv(*args):
+            return json.loads(self.invoke(self.link, "codex", *args).stdout)
+
+        # Codex warns at every start when configuration flags keep a session off its shared server.
+        for args in (["hello"], ["resume", "--last"], ["-C", ".", "fork"]):
+            with self.subTest(args=args):
+                self.assertEqual(argv(*args)[:2], ["--no-daemon", "-c"])
+        # Codex refuses the flag twice or with a remote server. Other commands and batch runs show no such warning.
+        for args in (["--no-daemon", "hello"], ["--remote", "ws://example.invalid", "hello"], ["login", "status"],
+                     ["exec", "hello"]):
+            with self.subTest(args=args):
+                launched = argv(*args)
+                self.assertEqual(launched[0], "-c")
+                self.assertEqual(launched.count("--no-daemon"), args.count("--no-daemon"))
+        self.assertEqual(argv("-p", "personal", "hello"), ["-p", "personal", "hello"])
 
     def review_guard(self):
         version = next((self.codex / "plugins/cache/agentstakk-local/kk-guard").iterdir()).name

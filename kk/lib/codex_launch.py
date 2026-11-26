@@ -14,6 +14,7 @@ import sys
 from contextlib import ExitStack
 
 from . import codex_app, codex_plugins, codex_profile, codex_trust, notice, payload, state
+from .codex_profile import NO_DAEMON
 
 
 ARG_LIMIT = 122880  # Linux per-argument limit less 8 KiB, including TOML escaping.
@@ -31,10 +32,20 @@ NOTED_OPTIONS = {
     "--yolo": "permissions",  # Codex accepts this alias of the bypass flag without listing it in --help.
     "--ignore-user-config": "ignore_user_config", "--trust": "trust",
 }
+# Codex 0.172 commands that do not open the session TUI: those in --help and the two hidden ones kk
+# found by trying names. Any other first word is taken for a prompt, resume or fork.
+OTHER_COMMANDS = {
+    "agents", "exec", "e", "review", "login", "logout", "mcp", "plugin", "app-server", "remote-control",
+    "completion", "update", "doctor", "sandbox", "debug", "apply", "a", "queue", "archive", "delete",
+    "migrate-rollouts", "migrate-nfs-db", "unarchive", "cloud", "exec-server", "features", "help",
+    "execpolicy", "responses-api-proxy",
+}
 # workspace is None when Codex selects it; directory is where Codex starts either way.
 # config_flags are the caller's -c, --enable and --disable flags as separated pairs, in order.
+# no_daemon says kk may add --no-daemon: the launch opens the session TUI, and the caller
+# chose neither a remote server nor the flag itself.
 Options = namedtuple("Options", "workspace profile batch config_flags directory "
-                                "model permissions ignore_user_config trust")
+                                "model permissions ignore_user_config trust no_daemon")
 # These are sized for kk's default model, so they apply only when that model runs.
 MODEL_GROUP = ("model", "model_reasoning_effort", "model_context_window", "model_auto_compact_token_limit")
 PERMISSION_KEYS = ("approval_policy", "approvals_reviewer", "sandbox_mode")
@@ -50,6 +61,7 @@ def launch_options(args):
     trust_flags = []
     noted = set()
     dynamic_workspace = False
+    own_server = True
     it = iter(args)
     for arg in it:
         if arg == "--":
@@ -70,12 +82,15 @@ def launch_options(args):
                 profile = value
             elif key == "--remote":
                 dynamic_workspace = True
+                own_server = False  # Codex refuses --no-daemon with --remote.
             elif key in ("-c", "--config", "--enable", "--disable"):
                 trust_flags.extend([key, value])
             elif key in NOTED_OPTIONS:
                 noted.add(NOTED_OPTIONS[key])
         elif arg == "--worktree":
             dynamic_workspace = True
+        elif arg == NO_DAEMON:
+            own_server = False  # Codex refuses the flag twice.
         elif arg in NOTED_OPTIONS:
             noted.add(NOTED_OPTIONS[arg])
         elif command is None and not arg.startswith("-"):
@@ -85,7 +100,8 @@ def launch_options(args):
             dynamic_workspace = True
     directory = directory.resolve()
     return Options(None if dynamic_workspace else directory, profile, command in ("exec", "e", "review"), trust_flags,
-                   directory, "model" in noted, "permissions" in noted, "ignore_user_config" in noted, "trust" in noted)
+                   directory, "model" in noted, "permissions" in noted, "ignore_user_config" in noted, "trust" in noted,
+                   own_server and command not in OTHER_COMMANDS)
 
 
 def workspace_root(directory):
@@ -380,6 +396,10 @@ def launch_checked(home, args, options, lock):
     if explicit is None and not batch:
         flags = session_flags(home, release, saved, require_applied_home(saved), options, executable,
                               sys.stdin.isatty())
+        if flags and options.no_daemon:
+            # With configuration flags Codex runs the session in its own server instead of the shared
+            # background one, and warns about it at every start unless the launch asks for that.
+            flags = [NO_DAEMON, *flags]
     env = dict(os.environ, CODEX_HOME=str(codex_profile.codex_home()), KK_HOME=str(home))
     if env.get("XDG_CONFIG_HOME"):
         env["XDG_CONFIG_HOME"] = str(Path(env["XDG_CONFIG_HOME"]).absolute())

@@ -71,6 +71,7 @@ In `launch_checked`, for the non-batch path with no explicit profile:
 - Run the origin lookup with the caller's configuration flags and the lookup directory.
 - On lookup failure print one stderr line, for example: `kk: could not read Codex configuration origins (<reason>); launching without kk defaults, opt-ins and instructions so repository settings keep precedence`, and compose with origins `None`.
 - Build `argv` as `["codex", *kk_flags, *args]` with no `--profile`.
+- When `kk_flags` is not empty and the launch opens the session TUI, put `--no-daemon` first (design.md §1 "Shared background server"). `launch_options` reports whether that applies: the first word is not one of Codex's other subcommands, and the caller gave neither `--remote` nor `--no-daemon`.
 
 An explicit `--profile`/`-p` keeps today's pass-through: no kk flags, no imports, no lookup.
 
@@ -96,7 +97,7 @@ In the same task, update tests whose assertions depend on the batch argv or the 
 `prepare`:
 
 - Converge `compose` with the launch-inputs function, delete TOML profile rendering, `TIP_TABLE` and `TIP_COUNTER`, and stop adding `directory / "kk.config.toml"` to `files`.
-- `validate_files` no longer writes a scratch profile. In the scratch home it (1) runs `[executable, *all_candidate_flags, "debug", "prompt-input"]` (every baseline and explicit leaf plus instructions, no origin filtering), and (2) runs the origin lookup with the same flags and the scratch directory as `cwd`, and requires every kk leaf to match a `sessionFlags` origin by the origin-key part of §Launch flag composition step 2, skipping leaves whose value is an empty array or table. Report a mismatch as the leaf's dotted path plus the unmatched `sessionFlags` keys Codex reported. A lookup that fails (missing method, vendor error, timeout) is a validation error naming `config/read`, not a skipped check (design.md §Not Doing). Keep the `config.toml` symlink and the `kk.rules` checks.
+- `validate_files` no longer writes a scratch profile. In the scratch home it (1) runs `[executable, "--no-daemon", *all_candidate_flags, "debug", "prompt-input"]` (every baseline and explicit leaf plus instructions, no origin filtering; `--no-daemon` because session launches pass it), and (2) runs the origin lookup with the same flags and the scratch directory as `cwd`, and requires every kk leaf to match an origin key, of any layer, by the origin-key part of §Launch flag composition step 2, skipping leaves whose value is an empty array or table. The origin is normally `sessionFlags`; a system managed layer outranks the flags and is reported in their place under the same name. Report a mismatch as the leaf's dotted path plus the unmatched `sessionFlags` keys Codex reported. A lookup that fails (missing method, vendor error, timeout) is a validation error naming `config/read`, not a skipped check (design.md §Not Doing). Keep the `config.toml` symlink and the `kk.rules` checks.
 - Error messages from `validate_files` name the operation (`debug prompt-input`, `config/read`, `execpolicy check`) and Codex's stderr, never the argument list.
 
 `publish`:

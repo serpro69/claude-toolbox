@@ -24,6 +24,8 @@ class CodexFiles(InstallFixture):
     def flags(self):
         """The applied settings, as the configuration flags of an interactive launch."""
         argv = json.loads(self.invoke(self.link, "codex", "hello").stdout)
+        if argv[0] == "--no-daemon":  # Precedes kk's flags whenever there are any.
+            del argv[0]
         self.assertEqual(argv[:-1:2], ["-c"] * (len(argv) // 2))
         return argv[1::2]
 
@@ -248,6 +250,18 @@ class CodexFiles(InstallFixture):
         self.assertEqual(rejected, "kk: Codex rejected debug prompt-input: error: invalid configuration\n")
         # Settings travel as arguments; an error repeats what Codex said, never the arguments.
         self.assertNotIn(marker, renamed + rejected)
+        # Codex quotes a rejected value, which may read like the flag below without being about it.
+        quoted = 'Error: invalid type: string "--no-daemon", expected usize'
+        (self.codex / "fixture-rejects-settings").write_text(quoted)
+        self.assertEqual(self.invoke(self.link, "apply", ok=False, env=env).stderr,
+                         "kk: Codex rejected debug prompt-input: {}\n".format(quoted))
+        # Interactive launches pass --no-daemon, so a Codex without the flag is found out here.
+        (self.codex / "fixture-rejects-settings").unlink()
+        self.configure({})
+        (self.codex / "fixture-no-daemon-unknown").touch()
+        self.assertEqual(self.invoke(self.link, "apply", ok=False, env=env).stderr,
+                         "kk: kk codex passes --no-daemon to its sessions, and this Codex CLI refused it; update Codex. "
+                         "Codex rejected debug prompt-input: error: unexpected argument '--no-daemon' found\n")
         self.assertEqual(self.state_file.read_bytes(), original)
 
     def test_apply_needs_codex_to_answer_config_read(self):
@@ -258,6 +272,18 @@ class CodexFiles(InstallFixture):
         self.assertIn("config/read, which failed: Codex has no config/read method. Run the command again; "
                       "if this Codex CLI has no config/read, update Codex", refused.stderr)
         self.assertEqual(self.state_file.read_bytes(), original)
+
+    def test_apply_accepts_a_value_an_administrator_pins(self):
+        self.install()
+        # Codex reports a pinned value under the same name, with the managed layer as its origin.
+        (self.codex / "fixture-managed.json").write_text(
+            json.dumps({"project_doc_max_bytes": 12345, "approval_policy": "never"}))
+        self.configure({"optIn": {"approval_policy": True}})
+        self.invoke(self.link, "apply", env=dict(self.env, KK_TEST_CODEX_FIXTURES=str(self.codex)))
+        applied = [flag.partition("=")[0] for flag in self.flags()]
+        # At launch the default yields to the pin; the opt-in is passed and Codex keeps the pinned value.
+        self.assertNotIn("project_doc_max_bytes", applied)
+        self.assertIn("approval_policy", applied)
 
     def test_apply_accepts_empty_values_codex_reports_no_origin_for(self):
         self.install()

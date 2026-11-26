@@ -135,6 +135,10 @@ def config_read(flags, cwd):
         else:
             keys = [] if value == {} else [name]
         origins.update((key, origin("sessionFlags")) for key in keys)
+    # A system managed layer outranks the flags: Codex reports its value and origin in their place.
+    for name, value in fixture("fixture-managed.json").items():
+        put(config, name.split("."), value)
+        origins[name] = origin("legacyManagedConfigTomlFromFile")
     return {"config": config, "origins": origins}
 
 
@@ -228,7 +232,10 @@ elif args[:2] == ["plugin", "add"]:
     print(json.dumps({"pluginId": args[2], "installedPath": str(destination), "version": version}))
 elif args[-2:] == ["debug", "prompt-input"]:
     if (fixtures / "fixture-rejects-settings").exists():
-        sys.exit("error: invalid configuration")
+        # The control's text, when it has any, stands for Codex's own error.
+        sys.exit((fixtures / "fixture-rejects-settings").read_text() or "error: invalid configuration")
+    if "--no-daemon" in args and (fixtures / "fixture-no-daemon-unknown").exists():
+        sys.exit("error: unexpected argument '--no-daemon' found")
     print("[]")
 elif args[:2] == ["execpolicy", "check"]:
     # Exercise kk's publication flow on CI without Codex. The live CLI test
