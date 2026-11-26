@@ -1,7 +1,7 @@
 # Design: Codex launch overrides
 
 > Issue: [#206](https://github.com/serpro69/agentstakk/issues/206) — choices made inside `kk codex` sessions drift the managed profile and break batch launches
-> Status: design approved, 2026-11-24; revised after two design reviews and a consistency pass with further probes, 2026-11-24; empty-value rule limited to arrays after the Task 1 probes, 2026-11-25; a failed apply-time `config/read` stops `kk apply` (maintainer decision after the Task 4 review), 2026-11-25; session launches with kk flags pass `--no-daemon`, and the apply-time name check accepts a name reported by any layer (maintainer decisions during the Task 6 verification), 2026-11-26
+> Status: design approved, 2026-11-24; revised after two design reviews and a consistency pass with further probes, 2026-11-24; empty-value rule limited to arrays after the Task 1 probes, 2026-11-25; a failed apply-time `config/read` stops `kk apply` (maintainer decision after the Task 4 review), 2026-11-25; session launches with kk flags pass `--no-daemon`, and the apply-time name check accepts a name reported by any layer (maintainer decisions during the Task 6 verification), 2026-11-26; the resumed-session trade-off names kk's defaults as well as its explicit values (maintainer decision after the Task 7 review), 2026-11-26
 > Evidence: Codex CLI 0.172.0, Linux
 
 ## Problem
@@ -95,7 +95,7 @@ The `initialize` / `initialized` / request plumbing in `codex_trust.hooks` moves
 
 The origin lookup sends `config/read` with `cwd` set to the lookup directory and returns both `origins` and the effective `config` (needed for empty arrays). `launch_options` returns that directory separately from the verified workspace: the `-C` target or current directory, even for `resume`, `fork`, `--remote` and `--worktree`, where the verified workspace stays `None`. The lookup's `app-server` process receives only the caller's own `-c`/`--enable`/`--disable` flags in their original order, so a caller `-c model=…` appears as `sessionFlags` and beats kk's default. The interactive lookup has a 5-second kill timer; the batch trust read keeps 10 seconds.
 
-For resumed sessions, if the session belongs to another repository, that repository's project values can be shadowed by kk's explicit values for the session. Imports are already skipped in this case; the trade-off is accepted rather than dropping all kk flags for resumed sessions.
+For resumed sessions, if the session belongs to another repository, that repository's project values can be shadowed by kk's defaults and explicit values for the session: the lookup reads the starting directory, so a default that neither that directory nor the account sets is passed too. Imports are already skipped in this case; the trade-off is accepted rather than dropping all kk flags for resumed sessions.
 
 ### 3. Batch verification
 
