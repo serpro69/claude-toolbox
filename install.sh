@@ -27,6 +27,10 @@ import tarfile
 import tempfile
 from urllib.request import urlopen
 
+# Keep this bootstrap parseable by older interpreters so it can say why it stops.
+if sys.version_info < (3, 9):
+    sys.exit("kk: Python 3.9 or newer is required; {} found".format(".".join(map(str, sys.version_info[:3]))))
+
 
 UPSTREAM = "serpro69/agentstakk"
 

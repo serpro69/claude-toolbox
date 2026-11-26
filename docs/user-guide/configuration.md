@@ -214,7 +214,7 @@ Missing config files leave the baseline active. Invalid JSON or invalid supporte
 
 ## Hooks
 
-The Claude plugin ships three hook handlers. It needs Bash, `jq`, Python 3.8+ and Claude Code 2.1.295+ for the declared [`onFailure: "block"` behavior](https://code.claude.com/docs/en/hooks#block-the-action-when-a-hook-fails).
+The Claude plugin ships three hook handlers. It needs Bash, `jq`, Python 3.9+ and Claude Code 2.1.295+ for the declared [`onFailure: "block"` behavior](https://code.claude.com/docs/en/hooks#block-the-action-when-a-hook-fails).
 
 | Hook | Trigger | Description |
 |------|---------|-------------|

@@ -73,7 +73,7 @@ Out of the box you get:
 
 ## Install kk
 
-On macOS or Linux, install the latest stable release once per user account. Have Claude Code 2.1.295 or later, Bash, Git, `curl`, `jq` and Python 3.8+ on your `PATH`. Include Codex on your `PATH` if you use it.
+On macOS or Linux, install the latest stable release once per user account. Have Claude Code 2.1.295 or later, Bash, Git, `curl`, `jq` and Python 3.9+ on your `PATH`. Include Codex on your `PATH` if you use it.
 
 ```bash
 curl -fsSL https://raw.githubusercontent.com/serpro69/agentstakk/master/install.sh | bash

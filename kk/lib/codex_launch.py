@@ -1,6 +1,7 @@
 """Launch Codex with kk's settings as configuration flags and repository-confirmed instructions."""
 
-from collections import namedtuple
+from __future__ import annotations
+
 import hashlib
 import importlib.util
 import json
@@ -12,9 +13,15 @@ import stat
 import subprocess
 import sys
 from contextlib import ExitStack
+from types import FrameType
+from typing import IO, Callable, Dict, Iterable, List, NamedTuple, Optional, Sequence, Set, Tuple
 
 from . import codex_app, codex_plugins, codex_profile, codex_trust, notice, payload, state
-from .codex_profile import NO_DAEMON
+from .codex_profile import NO_DAEMON, Leaf
+from .payload import JSONObject, is_object
+
+# Returns the secrets glob that protects any of the given paths, if one does.
+Protected = Callable[[Sequence[str]], Optional[str]]
 
 
 ARG_LIMIT = 122880  # Linux per-argument limit less 8 KiB, including TOML escaping.
@@ -48,22 +55,34 @@ OTHER_COMMANDS = {
 # config_flags are the caller's -c, --enable and --disable flags as separated pairs, in order.
 # no_daemon says kk may add --no-daemon: the launch opens the session TUI, and the caller
 # chose neither a remote server nor the flag itself.
-Options = namedtuple("Options", "workspace profile batch config_flags directory "
-                                "model permissions ignore_user_config trust no_daemon")
+class Options(NamedTuple):
+    workspace: Optional[Path]
+    profile: Optional[str]
+    batch: bool
+    config_flags: List[str]
+    directory: Path
+    model: bool
+    permissions: bool
+    ignore_user_config: bool
+    trust: bool
+    no_daemon: bool
+
+
 # These are sized for kk's default model, so they apply only when that model runs.
 MODEL_GROUP = ("model", "model_reasoning_effort", "model_context_window", "model_auto_compact_token_limit")
 PERMISSION_KEYS = ("approval_policy", "approvals_reviewer", "sandbox_mode")
 
 
-def display(value):
+def display(value: object) -> str:
     return json.dumps(str(value), ensure_ascii=True)
 
 
-def launch_options(args):
+def launch_options(args: Sequence[str]) -> Options:
     directory = Path.cwd()
-    profile = command = None
-    trust_flags = []
-    noted = set()
+    profile: Optional[str] = None
+    command: Optional[str] = None
+    trust_flags: List[str] = []
+    noted: Set[str] = set()
     dynamic_workspace = False
     own_server = True
     listing = prompt = False
@@ -116,7 +135,7 @@ def launch_options(args):
                    own_server and command not in OTHER_COMMANDS)
 
 
-def workspace_root(directory):
+def workspace_root(directory: Path) -> Path:
     env = {k: v for k, v in os.environ.items()
            if k not in ("GIT_DIR", "GIT_WORK_TREE", "GIT_COMMON_DIR", "GIT_CEILING_DIRECTORIES")}
     result = subprocess.run(["git", "rev-parse", "--show-toplevel"], cwd=directory,
@@ -128,7 +147,7 @@ def workspace_root(directory):
     raise ValueError("cannot resolve Codex workspace: " + display(os.fsdecode(result.stderr).strip()))
 
 
-def import_workspace(directory):
+def import_workspace(directory: Path) -> Optional[Path]:
     try:
         return workspace_root(directory)
     except (OSError, ValueError) as exc:
@@ -136,12 +155,15 @@ def import_workspace(directory):
         return None
 
 
-def import_policy(root):
+def import_policy(root: Path) -> Protected:
     """Use the release guard's secret rules for reads performed by the launcher."""
     engine = Path(__file__).resolve().parents[2] / "kodex-guard/scripts/guard/guard.py"
     spec = importlib.util.spec_from_file_location("_kk_import_guard", engine)
+    if spec is None or spec.loader is None:
+        raise ValueError("cannot load the release guard from {}".format(engine))
     guard = importlib.util.module_from_spec(spec)
-    spec.loader.exec_module(guard)
+    # Python's stubs omit exec_module from Loader before 3.10; source loaders implement it.
+    spec.loader.exec_module(guard)  # pyright: ignore[reportAttributeAccessIssue, reportUnknownMemberType]
     env = dict(os.environ, KK_GUARD_PROJECT_ROOT=str(root))
     try:
         ctx = guard.context_from_payload({"tool_name": "Read", "tool_input": {}, "cwd": str(root)}, env)
@@ -153,7 +175,7 @@ def import_policy(root):
     return lambda paths: guard.secrets_match(paths, policy)
 
 
-def read_inside(root, path, protected, limit=None):
+def read_inside(root: Path, path: Path, protected: Protected, limit: Optional[int] = None) -> bytes:
     """Open the resolved in-repo file without following a substituted symlink."""
     relative = path.resolve(strict=True).relative_to(root)
     if protected((os.path.normpath(path), str(root / relative))):
@@ -173,7 +195,7 @@ def read_inside(root, path, protected, limit=None):
             return stream.read() if limit is None else stream.read(limit)
 
 
-def import_names(root, protected):
+def import_names(root: Path, protected: Protected) -> List[str]:
     agents = root / "AGENTS.md"
     try:
         content = read_inside(root, agents, protected).decode("utf-8")
@@ -183,7 +205,7 @@ def import_names(root, protected):
         print("kk: skipped AGENTS.md ({})".format(display(exc)), file=sys.stderr)
         return []
     fence = ""
-    names = []
+    names: List[str] = []
     for line in content.splitlines():
         marker = re.match(r"^ {0,3}(`{3,}|~{3,})(.*)$", line)
         if fence:
@@ -198,23 +220,23 @@ def import_names(root, protected):
     return names
 
 
-def import_record(home, root):
+def import_record(home: Path, root: Path) -> Path:
     key = hashlib.sha256(os.fsencode(root)).hexdigest()
     return home / "imports" / (key + ".json")
 
 
-def saved_consent(path, names):
+def saved_consent(path: Path, names: Iterable[str]) -> Optional[bool]:
     try:
         entry = payload.read_json(path)
     except FileNotFoundError:
         return None
-    if not isinstance(entry, dict) or type(entry.get("approved")) is not bool:
+    if not is_object(entry) or type(entry.get("approved")) is not bool:
         raise ValueError("invalid import decision in {}".format(path))
     return entry["approved"] if entry.get("paths") == sorted(names) else None
 
 
-def eligible_imports(root, protected):
-    sizes = {}
+def eligible_imports(root: Path, protected: Protected) -> Dict[str, int]:
+    sizes: Dict[str, int] = {}
     for name in import_names(root, protected):
         try:
             if Path(name).is_absolute():
@@ -232,7 +254,7 @@ def eligible_imports(root, protected):
     return sizes
 
 
-def import_argument(home, root, interactive):
+def import_argument(home: Path, root: Path, interactive: bool) -> List[str]:
     if not (root / "AGENTS.md").exists():
         return []
     protected = import_policy(root)
@@ -255,7 +277,7 @@ def import_argument(home, root, interactive):
             print("kk: repository imports were not injected (no stored approval for this list).", file=sys.stderr)
         return []
     text = (home / "codex-instructions.md").read_text(encoding="utf-8")
-    argument = None
+    argument: Optional[str] = None
     for name, size in sizes.items():
         try:
             if size > ARG_LIMIT:
@@ -271,36 +293,37 @@ def import_argument(home, root, interactive):
     return ["-c", argument] if argument is not None else []
 
 
-def report_imports(home):
+def report_imports(home: Path) -> None:
     root = import_workspace(Path.cwd().resolve())
     if root is None:
         return
     path = import_record(home, root)
-    names = eligible_imports(root, import_policy(root)) if (root / "AGENTS.md").exists() else {}
+    names: Dict[str, int] = eligible_imports(root, import_policy(root)) if (root / "AGENTS.md").exists() else {}
     if names or path.exists():
         answer = saved_consent(path, names)
         print("Codex imports: {} ({})".format({True: "approved", False: "declined", None: "undecided"}[answer], path))
 
 
-def launch_flags(baseline, explicit, options, lookup, imports):
+def launch_flags(baseline: List[Leaf], explicit: List[Leaf], options: Options,
+                 lookup: Optional[Tuple[Dict[str, str], JSONObject]], imports: List[str]) -> List[str]:
     """Return kk's configuration flags for one launch.
 
     Baseline leaves yield to a value any layer set; explicit leaves yield only to a
     repository. When the lookup failed nothing is known about other layers, so no leaf
     is passed. Approved imports replace the instructions in either case.
     """
-    kept = []
+    kept: List[Leaf] = []
     if lookup is not None:
         layers, config = lookup
 
-        def setters(path):
+        def setters(path: Sequence[str]) -> Set[str]:
             return {layers[key] for key in codex_app.origin_keys(layers, path)}
 
-        def empty_array(path):
+        def empty_array(path: Sequence[str]) -> bool:
             # An empty array has no origin, and Codex leaves kk's array defaults unset on its own.
-            value = config
+            value: object = config
             for part in path:
-                value = value.get(part) if isinstance(value, dict) else None
+                value = value.get(part) if is_object(value) else None
             return value == []
 
         replaced = {path for path, _ in explicit}
@@ -315,7 +338,7 @@ def launch_flags(baseline, explicit, options, lookup, imports):
     return codex_profile.config_flags(codex_profile.merge(kept)) + imports
 
 
-def require_applied_home(saved):
+def require_applied_home(saved: JSONObject) -> Path:
     """kk's saved settings, instructions and guard receipt all describe one CODEX_HOME."""
     codex_home = codex_profile.codex_home()
     applied = saved["codex_snapshot"]["directory"]
@@ -325,7 +348,7 @@ def require_applied_home(saved):
     return codex_home
 
 
-def workspace_imports(home, directory, interactive):
+def workspace_imports(home: Path, directory: Optional[Path], interactive: bool) -> List[str]:
     if directory is None:
         print("kk: skipping repository imports because Codex selects the session workspace.", file=sys.stderr)
         return []
@@ -333,7 +356,8 @@ def workspace_imports(home, directory, interactive):
     return [] if root is None else import_argument(home, root, interactive)
 
 
-def session_flags(home, release, saved, codex_home, options, executable, prompt):
+def session_flags(home: Path, release: Path, saved: JSONObject, codex_home: Path, options: Options,
+                  executable: str, prompt: bool) -> List[str]:
     """Return kk's flags for a launch without a named profile; prompt allows asking about imports."""
     try:
         instructions = (home / "codex-instructions.md").read_text(encoding="utf-8")
@@ -341,6 +365,7 @@ def session_flags(home, release, saved, codex_home, options, executable, prompt)
         raise ValueError("kk's Codex instructions are missing; run kk apply") from None
     baseline, chosen, _, _ = codex_profile.compose(release, saved["codex_snapshot"]["settings"])
     imports = workspace_imports(home, options.workspace, prompt)
+    lookup: Optional[Tuple[Dict[str, str], JSONObject]]
     try:
         lookup = codex_app.layers(codex_home, options.directory, options.config_flags, executable, 5)
     except (codex_app.NoMethod, ValueError, OSError) as exc:
@@ -352,7 +377,7 @@ def session_flags(home, release, saved, codex_home, options, executable, prompt)
     return launch_flags(baseline, [*chosen, (("developer_instructions",), instructions)], options, lookup, imports)
 
 
-def launch(home, args):
+def launch(home: Path, args: List[str]) -> int:
     options = launch_options(args)
     if options.batch and not home.is_dir():
         raise ValueError("no active release; finish installing kk first")
@@ -361,11 +386,12 @@ def launch(home, args):
         return launch_checked(home, args, options, lock)
 
 
-def launch_checked(home, args, options, lock):
+def launch_checked(home: Path, args: List[str], options: Options, lock: Optional[IO[str]]) -> int:
     directory, explicit = options.workspace, options.profile
     batch = lock is not None
     record = state.load(home)
-    if (record.get("candidate") or {}).get("phase") == "activating" or record.get("codex_write_pending"):
+    candidate: JSONObject = record.get("candidate") or {}
+    if candidate.get("phase") == "activating" or record.get("codex_write_pending"):
         raise ValueError("Codex files are changing; finish kk apply, upgrade or rollback before launching")
     active = record["active"]
     if not active:
@@ -378,7 +404,7 @@ def launch_checked(home, args, options, lock):
         raise ValueError("Codex is not configured for the active release; " + codex_plugins.activation_hint(saved))
     executable = codex_plugins.executable()
     release = home / "releases" / active
-    flags = []
+    flags: List[str] = []
     if batch:
         if directory is None or explicit is not None:
             raise ValueError("cannot verify the Codex guard for this session's workspace or named profile; "
@@ -420,18 +446,18 @@ def launch_checked(home, args, options, lock):
     if sys.stderr is not None:
         sys.stderr.flush()
     argv = ["codex", *flags, *args]
-    if not batch:
+    if lock is None:
         os.execve(executable, argv, env)
     return run_batch(argv, executable, env, lock)
 
 
-def run_batch(argv, executable, env, lock):
+def run_batch(argv: List[str], executable: str, env: Dict[str, str], lock: IO[str]) -> int:
     # Keep an independent holder while the vendor is running, including when
     # its entry point spawns the native binary or closes inherited descriptors.
     # The inherited copy also covers the interval if the supervisor is killed.
     with subprocess.Popen(argv, executable=executable, env=env, pass_fds=(lock.fileno(),)) as child:
         with ExitStack() as handlers:
-            def forward(number, _frame):
+            def forward(number: int, _frame: Optional[FrameType]) -> None:
                 # A terminal interrupt reaches the whole foreground group,
                 # even when all standard descriptors have been redirected.
                 if number in (signal.SIGINT, signal.SIGQUIT):

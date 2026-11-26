@@ -1,17 +1,21 @@
 """Read Codex's effective guard handlers for one workspace without changing trust."""
 
+from __future__ import annotations
+
 from pathlib import Path
 import sys
+from typing import Iterable, List, Optional, Sequence, Tuple
 
 from . import claude, codex_app, codex_plugins, mixed, payload
 from .codex_plugins import GUARD_ID
+from .payload import JSONObject
 
 
 REVIEW_UI = "/hooks in plain codex (no named profile)"
 NoTrustMethod = codex_app.NoMethod  # hooks/list is the only method the trust read requests.
 
 
-def hooks(directory, workspace, flags, executable):
+def hooks(directory: Path, workspace: Path, flags: Sequence[str], executable: str) -> List[JSONObject]:
     result, = codex_app.session(directory, workspace, flags, executable,
                                 [("hooks/list", {"cwds": [str(workspace)]})], 10)
     rows = result["data"]
@@ -20,7 +24,8 @@ def hooks(directory, workspace, flags, executable):
     return rows[0]["hooks"]
 
 
-def check(release, directory, workspace, flags=(), *, acknowledged=False, prompt=False, executable=None):
+def check(release: Path, directory: Path, workspace: Path, flags: Sequence[str] = (), *, acknowledged: bool = False,
+          prompt: bool = False, executable: Optional[str] = None) -> Tuple[str, List[str]]:
     groups = payload.read_json(release / "kodex-guard/hooks/hooks.json")["hooks"]["PreToolUse"]
     try:
         rows = hooks(directory, workspace, flags, executable or codex_plugins.executable())
@@ -38,7 +43,7 @@ def check(release, directory, workspace, flags=(), *, acknowledged=False, prompt
     except (OSError, ValueError, KeyError, TypeError) as exc:
         return "awaiting review", ["could not verify Codex guard: " + str(exc)]
     listed = {h["key"]: h for h in rows if h.get("pluginId") == GUARD_ID and h.get("source") == "plugin"}
-    issues = []
+    issues: List[str] = []
     if any(h.get("source") == "plugin" and h.get("enabled") is True
            and h.get("pluginId") in (*claude.OTHER_PLUGINS, *mixed.OTHER_GUARDS) for h in rows):
         issues.append("other marketplace hooks also apply in this workspace")
@@ -60,7 +65,8 @@ def check(release, directory, workspace, flags=(), *, acknowledged=False, prompt
     return ("awaiting review" if issues else "ready"), issues
 
 
-def machine(release, saved, *, prompt=False, inventory_issues=None, workspace=Path("/")):
+def machine(release: Path, saved: JSONObject, *, prompt: bool = False, inventory_issues: Optional[List[str]] = None,
+            workspace: Path = Path("/")) -> Tuple[str, List[str]]:
     # A caller's cwd and TMPDIR can both be inside a trusted repository.
     directory = Path(saved["codex_snapshot"]["directory"])
     if inventory_issues is None:
@@ -73,7 +79,7 @@ def machine(release, saved, *, prompt=False, inventory_issues=None, workspace=Pa
     return phase, details
 
 
-def report(phase, issues):
+def report(phase: str, issues: Iterable[str]) -> None:
     print("codex: " + phase)
     for issue in issues:
         print("  " + issue)

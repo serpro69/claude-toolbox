@@ -4,7 +4,7 @@ Install Agentstakk once per user account. Its `kk` command starts Claude Code or
 
 ## Install
 
-On macOS or Linux, have Bash, Git, `curl`, `jq`, Python 3.8 or later, and a signed-in Claude Code CLI (2.1.295 or later) on your `PATH`. Claude Code is required for the machine installer. To include Codex, put its CLI on your `PATH` before installing. For Codex alone, use the [plugin-only setup](plugin-only.md#codex).
+On macOS or Linux, have Bash, Git, `curl`, `jq`, Python 3.9 or later, and a signed-in Claude Code CLI (2.1.295 or later) on your `PATH`. Claude Code is required for the machine installer. To include Codex, put its CLI on your `PATH` before installing. For Codex alone, use the [plugin-only setup](plugin-only.md#codex).
 
 Run this from any directory to install the latest stable release.
 

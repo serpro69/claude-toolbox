@@ -1,5 +1,7 @@
 """Read release sources into a private staging directory before activation."""
 
+from __future__ import annotations
+
 import hashlib
 import json
 import os
@@ -7,8 +9,25 @@ from pathlib import Path, PurePosixPath
 import re
 import shutil
 import tarfile
+from typing import IO, TYPE_CHECKING, Any, Collection, Dict, List, Optional, Tuple, Union
 from urllib.request import urlopen
 from uuid import uuid4
+
+if TYPE_CHECKING:
+    from typing_extensions import TypeIs
+
+# Parsed JSON objects: journals, manifests and vendor replies. Existing checks
+# narrow their values; the alias documents the shape, it does not validate it.
+JSONObject = Dict[str, Any]
+
+
+def is_object(value: object) -> TypeIs[JSONObject]:
+    """isinstance(value, dict) for parsed JSON, whose object keys are strings."""
+    return isinstance(value, dict)
+
+
+def is_array(value: object) -> TypeIs[List[Any]]:
+    return isinstance(value, list)
 
 
 UPSTREAM = "serpro69/agentstakk"
@@ -17,18 +36,18 @@ TAG = re.compile(r"v[0-9]+\.[0-9]+\.[0-9]+(?:-[0-9A-Za-z.-]+)?(?:\+[0-9A-Za-z.-]
 LAYOUT = Path(__file__).resolve().parents[1] / "payload.json"
 
 
-def read_json(path):
+def read_json(path: Path) -> Any:
     with path.open(encoding="utf-8") as stream:
         return json.load(stream)
 
 
-def layout_at(path):
+def layout_at(path: Path) -> JSONObject:
     manifest = read_json(path)
-    if (not isinstance(manifest, dict) or type(manifest.get("layout_version")) is not int
+    if (not is_object(manifest) or type(manifest.get("layout_version")) is not int
             or manifest["layout_version"] != 1):
         raise ValueError("unsupported release payload layout")
     names = manifest.get("required_directories")
-    if (not isinstance(names, list) or not names or
+    if (not is_array(names) or not names or
             not all(isinstance(name, str) and re.fullmatch(r"[A-Za-z][A-Za-z0-9_-]*", name) for name in names)
             or len(set(names)) != len(names)):
         raise ValueError("payload directories must be distinct top-level names")
@@ -39,7 +58,7 @@ GUARD_CACHE = Path("klaude-plugin/scripts/guard/__pycache__")
 GUARD_BYTECODE = re.compile(r"guard\.[\w-]+(?:\.opt-[0-9]+)?\.pyc(?:\.[0-9]+)?")
 
 
-def fingerprint(root, *, legacy=False):
+def fingerprint(root: Path, *, legacy: bool = False) -> str:
     """Bind all shipped files and link targets. Task 3 journals also hashed bytecode."""
     digest = hashlib.sha256()
     cache = root / GUARD_CACHE
@@ -51,6 +70,7 @@ def fingerprint(root, *, legacy=False):
             # temporary file. Either name can appear or disappear mid-walk.
             if path.parent == cache and GUARD_BYTECODE.fullmatch(path.name) and (path.is_file() or not path.exists()):
                 continue
+        identity: List[Union[str, int]]
         if path.is_symlink():
             identity = ["link", os.readlink(path)]
         elif path.is_dir():
@@ -67,7 +87,7 @@ def fingerprint(root, *, legacy=False):
     return digest.hexdigest()
 
 
-def verify_saved(root, saved):
+def verify_saved(root: Path, saved: JSONObject) -> None:
     if not root.is_dir() or root.is_symlink():
         raise ValueError("journaled payload is missing: {}".format(root))
     if "digest_format" in saved:
@@ -87,31 +107,31 @@ def verify_saved(root, saved):
     validate_layout(root, root.name)
 
 
-def tag_name(value):
+def tag_name(value: object) -> str:
     if not isinstance(value, str) or not TAG.fullmatch(value):
         raise ValueError("expected a release tag such as v1.2.3")
     return value
 
 
-def release_id(value):
+def release_id(value: object) -> str:
     if isinstance(value, str) and re.fullmatch(r"local-[0-9a-f]{32}", value):
         return value
     return tag_name(value)
 
 
-def api_root(repo):
+def api_root(repo: str) -> str:
     if not re.fullmatch(r"[A-Za-z0-9_.-]+/[A-Za-z0-9_.-]+", repo) or any(
             part in (".", "..") for part in repo.split("/")):
         raise ValueError("KK_REPOSITORY must be a GitHub owner/repository")
     return "https://api.github.com/repos/" + repo
 
 
-def latest_tag(repo):
+def latest_tag(repo: str) -> str:
     with urlopen(api_root(repo) + "/releases/latest", timeout=30) as response:
         return tag_name(json.load(response)["tag_name"])
 
 
-def canonical_repository(repo):
+def canonical_repository(repo: object) -> str:
     if not isinstance(repo, str):
         raise ValueError("KK_REPOSITORY must be a GitHub owner/repository")
     if repo.lower() in (*FORMER_UPSTREAMS, UPSTREAM):
@@ -119,17 +139,17 @@ def canonical_repository(repo):
     return repo
 
 
-def canonical_source(source):
+def canonical_source(source: Optional[JSONObject]) -> Optional[JSONObject]:
     if source and "repository" in source:
         return dict(source, repository=canonical_repository(source["repository"]))
     return source
 
 
-def upgrade_repository():
+def upgrade_repository() -> str:
     return canonical_repository(os.environ.get("KK_REPOSITORY", UPSTREAM))
 
 
-def check_links(root):
+def check_links(root: Path) -> None:
     for directory, directories, files in os.walk(root):
         for name in directories + files:
             path = Path(directory) / name
@@ -142,10 +162,10 @@ def check_links(root):
                     raise ValueError("broken or escaping payload symlink: {}".format(path)) from exc
 
 
-def extract(archive, target, required):
+def extract(archive: IO[bytes], target: Path, required: Collection[str]) -> None:
     """Read GitHub's single-root tar. Create symlinks only after regular writes."""
     prefix = None
-    links = []
+    links: List[Tuple[Path, str]] = []
     with tarfile.open(fileobj=archive, mode="r|*") as tar:
         for item in tar:
             name = PurePosixPath(item.name)
@@ -162,7 +182,10 @@ def extract(archive, target, required):
                 path.mkdir(parents=True, exist_ok=True)
             elif item.isreg():
                 path.parent.mkdir(parents=True, exist_ok=True)
-                with tar.extractfile(item) as source, path.open("xb") as output:
+                source = tar.extractfile(item)
+                if source is None:  # Regular members always carry data.
+                    raise ValueError("unreadable member in release archive: {}".format(name))
+                with source, path.open("xb") as output:
                     shutil.copyfileobj(source, output)
                 path.chmod(0o755 if item.mode & 0o111 else 0o644)
             elif item.issym():
@@ -180,7 +203,14 @@ def extract(archive, target, required):
     check_links(target)
 
 
-def stage(target, local=None, tag=None, archive_file=None, repo=None):
+def release_repository(repo: Optional[str]) -> str:
+    if repo is None:
+        raise ValueError("a release download needs a repository")
+    return repo
+
+
+def stage(target: Path, local: Optional[Path] = None, tag: Optional[str] = None,
+          archive_file: Optional[Path] = None, repo: Optional[str] = None) -> str:
     layout = layout_at(LAYOUT)
     required = layout["required_directories"]
     if local is not None:
@@ -195,18 +225,18 @@ def stage(target, local=None, tag=None, archive_file=None, repo=None):
                             ignore=shutil.ignore_patterns("__pycache__", "*.pyc", ".git"))
         check_links(target)
     else:
-        version = tag_name(tag) if tag else latest_tag(repo)
+        version = tag_name(tag) if tag else latest_tag(release_repository(repo))
         if archive_file is not None:
             with archive_file.open("rb") as stream:
                 extract(stream, target, required)
         else:
-            with urlopen(api_root(repo) + "/tarball/" + version, timeout=60) as stream:
+            with urlopen(api_root(release_repository(repo)) + "/tarball/" + version, timeout=60) as stream:
                 extract(stream, target, required)
     validate_layout(target, version)
     return version
 
 
-def validate_layout(root, version):
+def validate_layout(root: Path, version: str) -> None:
     layout = layout_at(LAYOUT)
     if layout_at(root / "kk/payload.json") != layout:
         raise ValueError("unsupported or incomplete release payload layout")
@@ -220,7 +250,7 @@ def validate_layout(root, version):
                  "lib/codex_launch.py", "lib/codex_profile.py", "baseline/codex.json", "baseline/codex/bootstrap.md"):
         if not (root / "kk" / name).is_file():
             raise ValueError("missing release file: kk/{}".format(name))
-    versions = []
+    versions: List[str] = []
     for manifest in ("klaude-plugin/.claude-plugin/plugin.json", "kodex-plugin/.codex-plugin/plugin.json"):
         plugin = read_json(root / manifest)
         if plugin.get("name") != "kk" or not isinstance(plugin.get("version"), str):
@@ -229,7 +259,7 @@ def validate_layout(root, version):
     if versions[0] != versions[1] or (TAG.fullmatch(version) and versions[0] != version):
         raise ValueError("release tag and plugin manifest versions disagree")
     guard = read_json(root / "kodex-guard/.codex-plugin/plugin.json")
-    if not isinstance(guard, dict) or guard.get("name") != "kk-guard" or not isinstance(guard.get("version"), str):
+    if not is_object(guard) or guard.get("name") != "kk-guard" or not isinstance(guard.get("version"), str):
         raise ValueError("invalid Codex guard manifest")
     tag_name("v" + guard["version"])  # The guard version is independent of the skills release.
     if not (root / "kodex-guard/hooks/hooks.json").is_file():

@@ -11,6 +11,7 @@ case "$GUARD_FIXTURE_MODE" in
     payload) cmp -s - "$GUARD_EXPECTED_INPUT" ;;
     warning) printf '%s\n' '{"systemMessage":"invalid test config"}' ;;
     broken) exit 127 ;;
+    too-old) printf 'kk guard needs Python 3.9 or newer\n' >&2; exit 3 ;;
     missing-capture) rm -f -- "$GUARD_CAPTURE_DIR"/kk-guard.*/"$GUARD_CAPTURE_STREAM" ;;
     crash) printf 'partial engine output\n'; exit 1 ;;
     signal) kill -TERM "$$" ;;

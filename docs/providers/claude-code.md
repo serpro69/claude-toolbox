@@ -24,7 +24,7 @@ Anthropic’s published guidance allows end users to sign in to the unmodified C
 
 ## Permission guard
 
-The user-scope plugin `kk@agentstakk-local` supplies guard hooks wherever Claude loads and enables it. It checks shell calls, Claude file tools and the supported capy execution tools. Use Claude Code 2.1.295+ with Bash, `jq` and Python 3.8+. Start a fresh session after an upgrade. [Guard configuration](../user-guide/configuration.md#guard-configuration)
+The user-scope plugin `kk@agentstakk-local` supplies guard hooks wherever Claude loads and enables it. It checks shell calls, Claude file tools and the supported capy execution tools. Use Claude Code 2.1.295+ with Bash, `jq` and Python 3.9+. Start a fresh session after an upgrade. [Guard configuration](../user-guide/configuration.md#guard-configuration)
 
 **Wrapped sessions** also receive the native secret deny list through `kk claude`, including when you supply your own `--settings`. They get the toolbox statusline in trusted interactive sessions with hooks enabled. Inspect the composed settings with `kk claude --print-layer`.
 

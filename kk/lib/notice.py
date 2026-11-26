@@ -1,22 +1,27 @@
 """Check for a newer stable release at most once a day, outside the launcher."""
 
+from __future__ import annotations
+
 import fcntl
 from contextlib import contextmanager
 from http.client import HTTPException
 import subprocess
 import sys
 import time
+from pathlib import Path
+from typing import Generator
 
 from . import payload, state
+from .payload import JSONObject, is_object
 
 
 DAY = 24 * 60 * 60
 
 
-def read_cache(home):
+def read_cache(home: Path) -> JSONObject:
     try:
         cached = payload.read_json(home / "update-notice.json")
-        if not isinstance(cached, dict):
+        if not is_object(cached):
             return {}
         for alias in payload.FORMER_UPSTREAMS:
             if alias in cached:
@@ -26,14 +31,14 @@ def read_cache(home):
         return {}
 
 
-def fresh(cache, repository):
+def fresh(cache: JSONObject, repository: str) -> bool:
     try:
         return 0 <= time.time() - cache[repository]["checked"] < DAY
     except (TypeError, KeyError):
         return False
 
 
-def newer(latest, installed):
+def newer(latest: str, installed: str) -> bool:
     stable = payload.tag_name(latest)[1:].split("+")[0]
     current = payload.tag_name(installed)[1:].split("+")[0]
     if "-" in stable:
@@ -44,14 +49,14 @@ def newer(latest, installed):
     return upstream > local or (upstream == local and bool(prerelease))
 
 
-def installed_tag(home, record):
+def installed_tag(home: Path, record: JSONObject) -> str:
     active = record["active"]
     source = record["releases"][active].get("source", {})
     return source.get("tag") or "v" + payload.read_json(
         home / "releases" / active / "klaude-plugin/.claude-plugin/plugin.json")["version"]
 
 
-def check(home, record):
+def check(home: Path, record: JSONObject) -> None:
     active = record["active"]
     if not active:
         raise ValueError("no active release; finish installing kk first")
@@ -67,20 +72,20 @@ def check(home, record):
 
 
 @contextmanager
-def cache_lock(home):
+def cache_lock(home: Path) -> Generator[None, None, None]:
     with (home / "update-notice.lock").open("a") as lock:
         fcntl.flock(lock, fcntl.LOCK_EX | fcntl.LOCK_NB)
         yield
 
 
-def refresh(home, repository):
+def refresh(home: Path, repository: str) -> None:
     try:
         with cache_lock(home):
             cache = read_cache(home)
             if fresh(cache, repository):
                 return
-            previous = cache.get(repository, {})
-            if not isinstance(previous, dict):
+            previous: object = cache.get(repository, {})
+            if not is_object(previous):
                 previous = {}
             try:
                 latest = payload.latest_tag(repository)
@@ -93,15 +98,16 @@ def refresh(home, repository):
         return  # An optional notification must never make a launch fail.
 
 
-def on_launch(home, record):
+def on_launch(home: Path, record: JSONObject) -> None:
     if not (sys.stdin.isatty() and sys.stderr.isatty()):
         return
     try:
+        config: object
         try:
             config = payload.read_json(state.override_path())
         except FileNotFoundError:
             config = {}
-        if not isinstance(config, dict) or config.get("launchNotice", True) is not True:
+        if not is_object(config) or config.get("launchNotice", True) is not True:
             return
         active = record["active"]
         source = record["releases"][active].get("source", {})
@@ -109,8 +115,8 @@ def on_launch(home, record):
         release = home / "releases" / payload.release_id(active)
         with cache_lock(home):
             cache = read_cache(home)
-            entry = cache.get(repo, {})
-            if isinstance(entry, dict) and entry.get("latest") and not entry.get("shown"):
+            entry: object = cache.get(repo, {})
+            if is_object(entry) and entry.get("latest") and not entry.get("shown"):
                 installed = installed_tag(home, record)
                 if newer(entry["latest"], installed):
                     print("kk: {} is available (installed {}).".format(entry["latest"], installed),

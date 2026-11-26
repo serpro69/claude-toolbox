@@ -1,5 +1,7 @@
 """Release staging, activation and offline recovery under one writer lock."""
 
+from __future__ import annotations
+
 import argparse
 import hashlib
 import os
@@ -10,17 +12,20 @@ import subprocess
 import sys
 import tarfile
 import tempfile
+from typing import Optional, Union
 
 from . import claude, claude_launch, codex_launch, codex_plugins, codex_profile, codex_trust, payload, state, validation
 from . import live, migrate, mixed, notice
+from .codex_profile import Plan
+from .payload import JSONObject
 from .run import load_cli
 
 
-def entry_link():
+def entry_link() -> Path:
     return Path.home() / ".local/bin/kk"
 
 
-def check_link(home, record):
+def check_link(home: Path, record: JSONObject) -> None:
     link = entry_link()
     if (home / "bin").is_symlink():
         raise ValueError("toolbox bin directory is a symlink: {}".format(home / "bin"))
@@ -34,17 +39,17 @@ def check_link(home, record):
             raise ValueError("install path already exists: {}".format(link))
 
 
-def recovery_command(home, version):
+def recovery_command(home: Path, version: str) -> str:
     return shlex.quote(str(home / "releases" / payload.release_id(version) / "kk/bin/kk")) + " rollback"
 
 
-def entry_digest(path):
+def entry_digest(path: Path) -> Optional[str]:
     if not path.is_symlink() and path.is_file() and os.access(path, os.R_OK | os.X_OK):
         return hashlib.sha256(path.read_bytes()).hexdigest()
     return None
 
 
-def complete_publication(home, record):
+def complete_publication(home: Path, record: JSONObject) -> None:
     """A promoted release can finish publishing its dispatcher after a crash."""
     version = payload.release_id(record["pending_entry"])
     if version != record["active"]:
@@ -67,13 +72,14 @@ def complete_publication(home, record):
     state.write_json(home / "state.json", record)
 
 
-def finish_install(home, record, release, codex_plan=..., *, codex_catalog_error=None):
+def finish_install(home: Path, record: JSONObject, release: Path, codex_plan: Union[Plan, None, ellipsis] = ..., *,
+                   codex_catalog_error: Optional[BaseException] = None) -> None:
     """Run in the release being activated, under the caller's writer lock."""
     check_link(home, record)
     # Pre-Task-9 active releases invoke this entry point without a prepared plan.
     if codex_plan is ...:
         codex_plan = codex_profile.prepare_activation(release, record)
-    def checkpoint(step):
+    def checkpoint(step: str) -> None:
         state.checkpoint(home, record, step)
 
     claude.activate(home, release, checkpoint)
@@ -152,7 +158,7 @@ def finish_install(home, record, release, codex_plan=..., *, codex_catalog_error
     state.prune(home, record)
 
 
-def replace_pending(source, destination, work):
+def replace_pending(source: Path, destination: Path, work: Path) -> None:
     """Replace only an unpromoted directory owned by this first installation."""
     destination.parent.mkdir(parents=True, exist_ok=True)
     if destination.exists():
@@ -163,12 +169,14 @@ def replace_pending(source, destination, work):
         source.rename(destination)
 
 
-def prepare(home, record, args, archive_file, work):
+def prepare(home: Path, record: JSONObject, args: argparse.Namespace, archive_file: Optional[Path],
+            work: Path) -> Optional[str]:
     candidate = record["candidate"]
-    source = {"local": str(args.local.resolve())} if args.local else {
+    source: JSONObject = {"local": str(args.local.resolve())} if args.local else {
         "tag": args.version, "repository": payload.upgrade_repository()}
     candidate_source = payload.canonical_source(candidate["source"]) if candidate else None
     if candidate and not args.local and not args.version:
+        assert candidate_source is not None  # Every staged or activating candidate records its source.
         source = candidate_source
     if record["active"] and candidate and candidate["phase"] == "activating" and source != candidate_source:
         raise ValueError("upgrade in progress; run kk upgrade without a source to resume, or kk status for recovery options")
@@ -194,8 +202,9 @@ def prepare(home, record, args, archive_file, work):
         existing = record["releases"].get(version, {})
         if payload.canonical_source(existing.get("source")) == source:
             directory = codex_profile.codex_home()
+            snapshot: JSONObject = existing.get("codex_snapshot") or {}
             needs_codex = shutil.which("codex") and (
-                (existing.get("codex_snapshot") or {}).get("directory") != str(directory)
+                snapshot.get("directory") != str(directory)
                 or not codex_plugins.receipt(record, directory, "kk-guard"))
             if version == record["active"] and not needs_codex:
                 print("Already active:", version)
@@ -237,7 +246,7 @@ def prepare(home, record, args, archive_file, work):
     return version
 
 
-def install_locked(home, args, archive_file=None):
+def install_locked(home: Path, args: argparse.Namespace, archive_file: Optional[Path] = None) -> None:
     record = state.load(home)
     codex_profile.reconcile_claim(home, record)
     if record.get("pending_entry"):
@@ -254,7 +263,8 @@ def install_locked(home, args, archive_file=None):
             raise ValueError("mixed installation; run kk status for recovery commands")
         print("Already installed:", record["active"])
         return
-    if (record["candidate"] or {}).get("operation") == "rollback":
+    candidate: JSONObject = record["candidate"] or {}
+    if candidate.get("operation") == "rollback":
         raise ValueError("rollback in progress; run kk rollback to finish restoring the release")
     check_link(home, record)
     work = home / ".first-install-work"
@@ -271,7 +281,7 @@ def install_locked(home, args, archive_file=None):
         shutil.rmtree(work)
 
 
-def activate_staged(home, record, version, work):
+def activate_staged(home: Path, record: JSONObject, version: str, work: Path) -> None:
     stage = home / "staging" / version
     release = home / "releases" / version
     source = stage if stage.is_dir() else release
@@ -308,8 +318,8 @@ def activate_staged(home, record, version, work):
     candidate.finish_install(home, record, release, codex_plan)
 
 
-def rollback_locked(home, record):
-    pending = record["candidate"] or {}
+def rollback_locked(home: Path, record: JSONObject) -> None:
+    pending: JSONObject = record["candidate"] or {}
     if pending.get("operation") == "add-codex" and pending["phase"] == "activating":
         raise ValueError("first Codex installation on the active release is unfinished; "
                          "there is no earlier Codex installation to restore. Resume offline with kk upgrade")
@@ -328,7 +338,7 @@ def rollback_locked(home, record):
     plan = codex_profile.prepare(release, record, snapshot=saved.get("codex_snapshot"))
     snapshot = plan[3] if plan else None
     mixed.check_claude_pilot(home)
-    codex_catalog_error = None
+    codex_catalog_error: Optional[BaseException] = None
     try:
         mixed.check_codex_pilot(home, record, snapshot["directory"] if snapshot else None)
     except (OSError, subprocess.SubprocessError) as exc:
@@ -344,9 +354,9 @@ def rollback_locked(home, record):
             print("Restoring a different Codex guard. Open sessions may run without protection until "
                   "the restored hooks are reviewed. Continuing offline recovery.", file=sys.stderr, flush=True)
     if not previous or previous.get("operation") != "rollback":
-        rollback = {"operation": "rollback", "phase": "activating", "version": target}
+        rollback: JSONObject = {"operation": "rollback", "phase": "activating", "version": target}
         if not saved.get("codex_snapshot"):
-            departing = (previous or {}).get("codex_inputs") or record["releases"][record["active"]].get("codex_snapshot")
+            departing = pending.get("codex_inputs") or record["releases"][record["active"]].get("codex_snapshot")
             if departing:
                 rollback["restore_absent_codex"] = departing["directory"]
                 print("Restoring a Claude-only release. Open Codex sessions may lose their managed guard.",
@@ -365,7 +375,7 @@ def rollback_locked(home, record):
         shutil.rmtree(staging)
 
 
-def tool_status(home, record, tool, saved, check_live):
+def tool_status(home: Path, record: JSONObject, tool: str, saved: JSONObject, check_live: bool) -> bool:
     workspace = Path.cwd().resolve()
     directory = codex_profile.codex_home()
     copies, issues = mixed.inspect(tool, workspace, directory,
@@ -386,7 +396,8 @@ def tool_status(home, record, tool, saved, check_live):
             print("{} live: skipped (not managed by this installation)".format(tool))
         return not check_live or tool not in saved["tools"]
     phase = "awaiting review" if issues else saved["tools"][tool]
-    changing = (record["candidate"] or {}).get("phase") == "activating" or record.get("codex_write_pending")
+    candidate: JSONObject = record["candidate"] or {}
+    changing = candidate.get("phase") == "activating" or record.get("codex_write_pending")
     if tool == "codex" and not changing:
         if saved.get("codex_snapshot", {}).get("directory") != str(directory):
             phase = "awaiting review"
@@ -411,10 +422,11 @@ def tool_status(home, record, tool, saved, check_live):
     return True
 
 
-def remove_mixed(home):
+def remove_mixed(home: Path) -> None:
     with state.writer(home), state.codex_access(home):
         record = state.load(home)
-        if not record["active"] or not record["installed_paths"] or (record["candidate"] or {}).get("phase") == "activating":
+        candidate: JSONObject = record["candidate"] or {}
+        if not record["active"] or not record["installed_paths"] or candidate.get("phase") == "activating":
             raise ValueError("finish activation before reviewing Git-marketplace copies")
         workspace = Path.cwd().resolve()
         directory = codex_profile.codex_home()
@@ -427,7 +439,7 @@ def remove_mixed(home):
                 mixed.remove_user_copies(tool, workspace, directory, issues)
 
 
-def status(home, check_live=False):
+def status(home: Path, check_live: bool = False) -> int:
     record = state.load(home)
     active = record["active"]
     print("Active:", active or "none")
@@ -474,7 +486,7 @@ def status(home, check_live=False):
     return 1 if check_live and not verified else 0
 
 
-def main():
+def main() -> int:
     parser = argparse.ArgumentParser(prog="kk")
     commands = parser.add_subparsers(dest="command", required=True)
     for command in ("install", "upgrade"):
@@ -532,8 +544,9 @@ def main():
         return 1
 
 
-def apply_locked(home, record, owner):
-    if not owner or (record["candidate"] or {}).get("phase") == "activating" or record.get("pending_entry"):
+def apply_locked(home: Path, record: JSONObject, owner: Optional[str]) -> None:
+    candidate: JSONObject = record["candidate"] or {}
+    if not owner or candidate.get("phase") == "activating" or record.get("pending_entry"):
         raise ValueError("finish install, upgrade or rollback before running kk apply")
     release = home / "releases" / payload.release_id(owner)
     codex_profile.reconcile_claim(home, record)

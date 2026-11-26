@@ -4,7 +4,7 @@ Use the public `agentstakk` marketplace to add the workflow skills to your exist
 
 ## Claude Code
 
-With Claude Code 2.1.295 or later, Bash, `jq` and Python 3.8+ installed, run the following in your terminal.
+With Claude Code 2.1.295 or later, Bash, `jq` and Python 3.9+ installed, run the following in your terminal.
 
 ```bash
 claude plugin marketplace add serpro69/agentstakk

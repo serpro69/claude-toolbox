@@ -44,7 +44,7 @@ would let `../.env` read from `<root>/sub` slip past `./**/.env`.
 Every check is a pure function that raises `Denied`; only `main` turns that
 into output and an exit code, so tests import this module and call the
 checks in-process. The module imports nothing outside the standard library
-and stays within Python 3.8 syntax.
+and stays within Python 3.9 syntax.
 
 The wrapper/engine split, the `-I` interpreter flag, the fail-closed exit
 contract and the deny-message shape that hands the action back to the human
@@ -59,12 +59,27 @@ License terms accompany this plugin in LICENSE.md beside this file. Parsing is s
 code are never run.
 """
 
+from __future__ import annotations
+
 import bisect
 import glob as pathname_glob
 import json
 import os
 import re
 import sys
+
+# Typing stays out of the hook's import path: pyright treats this constant as true.
+TYPE_CHECKING = False
+if TYPE_CHECKING:
+    from typing import (Any, Callable, Collection, Dict, Iterable, Iterator, List, Mapping, Match, Optional,
+                        Pattern, Sequence, Set, TextIO, Tuple, TypeVar)
+    from typing_extensions import TypeIs
+
+    Env = Mapping[str, str]
+    JSONObject = Dict[str, Any]
+    # A destructive rule after compile_policy: declared fields, with flag regexes compiled.
+    Rule = Dict[str, Any]
+    T = TypeVar("T")
 
 SUPPORTED_VERSIONS = (1,)
 
@@ -105,6 +120,15 @@ REMEDIES = {
 # ---------------------------------------------------------------------------
 # Decision type
 # ---------------------------------------------------------------------------
+def is_object(value: object) -> TypeIs[JSONObject]:
+    """isinstance(value, dict) for parsed JSON, whose object keys are strings."""
+    return isinstance(value, dict)
+
+
+def is_array(value: object) -> TypeIs[List[Any]]:
+    return isinstance(value, list)
+
+
 class Denied(Exception):
     """Raised by any check that decides the tool call must not run.
 
@@ -113,14 +137,14 @@ class Denied(Exception):
     template: the destructive category name, or the failure cause.
     """
 
-    def __init__(self, category, what, detail=""):
+    def __init__(self, category: str, what: str, detail: str = "") -> None:
         Exception.__init__(self, what)
         self.category = category
         self.what = what
         self.detail = detail
-        self.messages = []
+        self.messages: Sequence[str] = []
 
-    def reason(self):
+    def reason(self) -> str:
         remedy = REMEDIES[self.category]
         if self.category == "destructive":
             remedy = remedy.format(category=self.detail)
@@ -129,8 +153,19 @@ class Denied(Exception):
         return "kk guard: %s — %s. Way through: %s" % (self.category, self.what, remedy)
 
 
-def failure(cause):
+def failure(cause: str) -> Denied:
     return Denied("failure", "the guard could not evaluate this call", cause)
+
+
+class UnknownWrite(Denied):
+    """A write the guard recognized but whose literal target it cannot decode.
+
+    Unlike a lexer failure on prose, it stands for a real write, so the
+    lenient retry in check_literal_command must not excuse it.
+    """
+
+    def __init__(self, cause: str) -> None:
+        Denied.__init__(self, "failure", "the guard could not evaluate this call", cause)
 
 
 # ---------------------------------------------------------------------------
@@ -142,7 +177,8 @@ class Context(object):
 
     __slots__ = ("tool_name", "tool_input", "project_root", "exec_dir", "home", "permission_mode", "cwd_certain", "other_dirs")
 
-    def __init__(self, tool_name, tool_input, project_root, exec_dir, home, permission_mode=""):
+    def __init__(self, tool_name: str, tool_input: JSONObject, project_root: str, exec_dir: str, home: str,
+                 permission_mode: str = "") -> None:
         self.tool_name = tool_name
         self.tool_input = tool_input
         self.project_root = project_root
@@ -150,10 +186,10 @@ class Context(object):
         self.home = home
         self.permission_mode = permission_mode
         self.cwd_certain = True
-        self.other_dirs = ()
+        self.other_dirs: Tuple[str, ...] = ()
 
 
-def command_context(ctx, exec_dir=None, certain=None):
+def command_context(ctx: Context, exec_dir: Optional[str] = None, certain: Optional[bool] = None) -> Context:
     """A command-local directory; nested shells never change their parent's cwd."""
     result = Context(ctx.tool_name, ctx.tool_input, ctx.project_root,
                      exec_dir if exec_dir is not None else ctx.exec_dir, ctx.home, ctx.permission_mode)
@@ -162,14 +198,14 @@ def command_context(ctx, exec_dir=None, certain=None):
     return result
 
 
-def uncertain_context(ctx, *directories):
+def uncertain_context(ctx: Context, *directories: str) -> Context:
     """Keep known possible directories for denies; none justifies an exemption."""
     result = command_context(ctx, certain=False)
     result.other_dirs = tuple(dict.fromkeys(ctx.other_dirs + tuple(directories)))
     return result
 
 
-def home_dir(env):
+def home_dir(env: Env) -> str:
     """Absolute home directory. A missing, empty or relative HOME would give
     the `~/` globs an anchor no absolute path can match, so fall back to the
     password database (expanduser would return `/` for an empty HOME)."""
@@ -186,7 +222,7 @@ def home_dir(env):
     return home
 
 
-def parse_payload(raw, env, fallback_cwd=None):
+def parse_payload(raw: str, env: Env, fallback_cwd: Optional[str] = None) -> Context:
     """Turn the raw stdin text into a Context, or raise a `failure` Denied."""
     if not raw or not raw.strip():
         raise failure("empty payload")
@@ -197,22 +233,22 @@ def parse_payload(raw, env, fallback_cwd=None):
     return context_from_payload(payload, env, fallback_cwd)
 
 
-def capy_tool_name(tool_name):
+def capy_tool_name(tool_name: str) -> Optional[str]:
     """The supported MCP suffix, independent of the registered server name."""
     match = CAPY_TOOL.fullmatch(tool_name)
     return match.group(1) if match else None
 
 
-def context_from_payload(payload, env, fallback_cwd=None):
-    if not isinstance(payload, dict):
+def context_from_payload(payload: object, env: Env, fallback_cwd: Optional[str] = None) -> Context:
+    if not is_object(payload):
         raise failure("payload is not a JSON object")
     tool_name = payload.get("tool_name")
     if not isinstance(tool_name, str) or not tool_name:
         raise failure("payload has no tool_name")
-    tool_input = payload.get("tool_input")
+    tool_input: object = payload.get("tool_input")
     if tool_input is None:
         tool_input = {}
-    if not isinstance(tool_input, dict):
+    if not is_object(tool_input):
         raise failure("tool_input is not a JSON object")
 
     cwd = payload.get("cwd")
@@ -244,15 +280,15 @@ def context_from_payload(payload, env, fallback_cwd=None):
 # ---------------------------------------------------------------------------
 # Declaration loading
 # ---------------------------------------------------------------------------
-def default_rules_path():
+def default_rules_path() -> str:
     return os.path.join(os.path.dirname(os.path.abspath(__file__)), "guard-rules.json")
 
 
-def rules_path(env):
+def rules_path(env: Env) -> str:
     return env.get("KK_GUARD_RULES") or default_rules_path()
 
 
-def load_rules(path):
+def load_rules(path: str) -> JSONObject:
     """Load and validate the declaration, or raise a `failure` Denied."""
     try:
         with open(path, "r", encoding="utf-8") as handle:
@@ -261,7 +297,7 @@ def load_rules(path):
         raise failure("cannot read rules file %s: %s" % (path, exc.strerror or exc))
     except ValueError as exc:
         raise failure("rules file %s is not valid JSON: %s" % (path, exc))
-    if not isinstance(rules, dict):
+    if not is_object(rules):
         raise failure("rules file %s is not a JSON object" % path)
     version = rules.get("version")
     # `True in (1,)` and `1.0 in (1,)` both hold; require a real integer.
@@ -281,7 +317,7 @@ def load_rules(path):
 # ---------------------------------------------------------------------------
 # Glob matcher
 # ---------------------------------------------------------------------------
-def _glob_body_to_regex(body):
+def _glob_body_to_regex(body: str) -> str:
     """Translate the part of a permission glob after its anchor.
 
     `**/` is an optional run of directories, a trailing `/**` is "and
@@ -289,7 +325,7 @@ def _glob_body_to_regex(body):
     A trailing `/` names a directory and everything beneath it.
     """
     body = body.strip("/")
-    out = []
+    out: List[str] = []
     i = 0
     n = len(body)
     while i < n:
@@ -312,7 +348,7 @@ def _glob_body_to_regex(body):
     return "".join(out)
 
 
-def validate_glob(pattern):
+def validate_glob(pattern: object) -> None:
     """Reject glob shapes whose meaning here could differ from Claude Code's.
 
     Accepted anchors are `//` (absolute), `~/` (home), `./` (project root)
@@ -344,7 +380,7 @@ def validate_glob(pattern):
                 raise ValueError("glob %r: empty, . and .. segments can never match a normalised path" % pattern)
 
 
-def glob_to_regex(pattern, project_root, home):
+def glob_to_regex(pattern: str, project_root: str, home: str) -> Pattern[str]:
     """Compile a Claude Code permission glob into a regex over absolute paths.
 
     Anchors: `//` absolute, `~/` home, `./` or bare relative to the project
@@ -385,7 +421,7 @@ def glob_to_regex(pattern, project_root, home):
     return re.compile(regex, re.DOTALL)
 
 
-def anchor_forms(path):
+def anchor_forms(path: str) -> List[str]:
     """The logical path and its canonical form, deduplicated.
 
     HOME and the project root routinely pass through symlinks (macOS `/tmp`
@@ -405,16 +441,17 @@ class Policy(object):
 
     __slots__ = ("secrets", "destructive", "tmp_roots", "selfmod", "allow_patterns", "partial")
 
-    def __init__(self, secrets, destructive, tmp_roots, selfmod):
+    def __init__(self, secrets: List[Tuple[str, Pattern[str]]], destructive: Dict[str, List[Rule]],
+                 tmp_roots: List[str], selfmod: List[Tuple[str, str]]) -> None:
         self.secrets = secrets          # list of (glob, compiled regex)
         self.destructive = destructive  # map category -> rules with compiled predicates
         self.tmp_roots = tmp_roots
         self.selfmod = selfmod          # list of (entry, absolute protected path)
-        self.allow_patterns = []        # compiled regexes, destructive checks only
+        self.allow_patterns: List[Pattern[str]] = []  # compiled regexes, destructive checks only
         self.partial = False            # the command under check may gain operands
 
 
-def toolbox_home(env, home):
+def toolbox_home(env: Env, home: str) -> str:
     # Claude runs its managed plugin in place, even before the dispatcher is
     # published. Recognize the release-plugin.sh layout in the standalone engine.
     suffix = "/klaude-plugin/scripts/guard/guard.py"
@@ -436,6 +473,7 @@ def toolbox_home(env, home):
         if target == os.path.join(installed, "bin", "kk") and os.path.isfile(os.path.join(installed, "state.json")):
             # The link lives in a shared directory. A different program can
             # own this exact name and keep an unrelated journal beside it.
+            recorded: Sequence[str]
             try:
                 recorded = installed_paths(installed)
             except Denied:
@@ -448,7 +486,7 @@ def toolbox_home(env, home):
     return os.path.join(data, "kk")
 
 
-def installed_paths(home):
+def installed_paths(home: str) -> List[str]:
     """Paths recorded before publication, including files in shared Codex directories."""
     journal = os.path.join(home, "state.json")
     try:
@@ -458,7 +496,7 @@ def installed_paths(home):
         return []  # Plugin-only install, or first install before the first state write.
     except (OSError, ValueError) as exc:
         raise failure("cannot read toolbox ownership from %s: %s" % (journal, exc))
-    if (not isinstance(state, dict) or type(state.get("format_version")) is not int
+    if (not is_object(state) or type(state.get("format_version")) is not int
             or state["format_version"] != 1 or not isinstance(state.get("installed_paths"), list)
             or not all(isinstance(path, str) and os.path.isabs(path) and "\0" not in path
                        for path in state["installed_paths"])):
@@ -466,11 +504,11 @@ def installed_paths(home):
     return state["installed_paths"]
 
 
-def compile_policy(rules, ctx, env=None):
+def compile_policy(rules: JSONObject, ctx: Context, env: Optional[Env] = None) -> Policy:
     """Compile the secrets globs against every anchor form (see
     `anchor_forms`). One glob yields one regex per (root, home) combination
     that differs; `secrets_match` reports the glob, not the regex."""
-    secrets = []
+    secrets: List[Tuple[str, Pattern[str]]] = []
     roots = anchor_forms(ctx.project_root)
     homes = anchor_forms(ctx.home)
     for glob in rules["secrets"]:
@@ -495,7 +533,7 @@ def compile_policy(rules, ctx, env=None):
         "$XDG_CONFIG_HOME": env.get("XDG_CONFIG_HOME") or os.path.join(ctx.home, ".config"),
         "$CODEX_HOME": env.get("CODEX_HOME") or os.path.join(ctx.home, ".codex"),
     }
-    selfmod = []
+    selfmod: List[Tuple[str, str]] = []
     for entry in rules["selfmod"]:
         if entry == "$KK_HOME/state.json#installed_paths":
             for owned in installed_paths(path_tokens["$KK_HOME"]):
@@ -517,13 +555,13 @@ def compile_policy(rules, ctx, env=None):
         elif base.startswith("//"):
             base = base[1:]
         selfmod.extend((entry, path) for path in resolve(base, ctx.project_root, ctx.home))
-    destructive = {}
+    destructive: Dict[str, List[Rule]] = {}
     for category, entries in rules["destructive"].items():
-        if not isinstance(entries, list):
+        if not is_array(entries):
             raise failure("destructive category %r must contain a list" % category)
         destructive[category] = []
         for entry in entries:
-            if not isinstance(entry, dict) or not all(isinstance(entry.get(k), str) and entry[k]
+            if not is_object(entry) or not all(isinstance(entry.get(k), str) and entry[k]
                                                      for k in ("program", "reason")):
                 raise failure("destructive rules require a program and reason")
             if set(entry) - {"program", "reason", "subcommand", "flags_any", "flags_all", "flags_none", "exempt", "codex"}:
@@ -531,7 +569,7 @@ def compile_policy(rules, ctx, env=None):
             rule = dict(entry)
             sub = rule.get("subcommand", [])
             rule["subcommand"] = [sub] if isinstance(sub, str) else sub
-            if not isinstance(rule["subcommand"], list) or not all(isinstance(s, str) and s for s in rule["subcommand"]):
+            if not is_array(rule["subcommand"]) or not all(isinstance(s, str) and s for s in rule["subcommand"]):
                 raise failure("subcommand must be a string or list of strings")
             if "exempt" in rule and rule["exempt"] != "targets_under_tmp":
                 raise failure("unknown destructive exemption")
@@ -539,14 +577,14 @@ def compile_policy(rules, ctx, env=None):
                 if key not in rule:
                     continue
                 patterns = rule[key]
-                if not isinstance(patterns, list) or not all(isinstance(p, str) for p in patterns):
+                if not is_array(patterns) or not all(isinstance(p, str) for p in patterns):
                     raise failure("%s must be a list of regex strings" % key)
                 try:
                     rule[key] = [re.compile(p) for p in patterns]
                 except re.error as exc:
                     raise failure("invalid %s regex: %s" % (key, exc))
             destructive[category].append(rule)
-    tmp_roots = []
+    tmp_roots: List[str] = []
     for root in rules["tmp_roots"]:
         if root == "$TMPDIR":
             root = env.get("TMPDIR", "")
@@ -561,22 +599,24 @@ def compile_policy(rules, ctx, env=None):
 # ---------------------------------------------------------------------------
 # Configuration: independently validated additions and user exceptions
 # ---------------------------------------------------------------------------
-def config_object(value, allowed, location, messages, version=False):
-    if not isinstance(value, dict):
+def config_object(value: object, allowed: Collection[str], location: str, messages: List[str],
+                  version: bool = False) -> JSONObject:
+    if not is_object(value):
         raise ValueError("%s must be an object" % location)
     if version and (type(value.get("version")) is not int or value["version"] not in SUPPORTED_VERSIONS):
         raise ValueError("unsupported config version %r" % value.get("version"))
     for key in sorted(set(value) - set(allowed)):
         messages.append("%s: unknown key %r ignored" % (location, key))
+    return value
 
 
-def string_list(value, key):
-    if not isinstance(value, list) or not all(isinstance(item, str) and item for item in value):
+def string_list(value: object, key: str) -> List[str]:
+    if not is_array(value) or not all(isinstance(item, str) and item for item in value):
         raise ValueError("%s must be a list of nonempty strings" % key)
     return value
 
 
-def read_config(path, validate, messages):
+def read_config(path: str, validate: Callable[[Any, List[str]], T], messages: List[str]) -> Optional[T]:
     """Missing is normal. Invalid contents never partially apply a layer."""
     try:
         with open(path, "r", encoding="utf-8") as handle:
@@ -586,7 +626,8 @@ def read_config(path, validate, messages):
     except (OSError, ValueError) as exc:
         messages.append("%s: %s" % (path, exc))
         return None
-    notes = []
+    notes: List[str] = []
+    result: Optional[T]
     try:
         result = validate(value, notes)
     except (ValueError, re.error, Denied) as exc:
@@ -597,8 +638,8 @@ def read_config(path, validate, messages):
     return result
 
 
-def project_policy(value, ctx, env, messages):
-    config_object(value, {"version", "secrets", "destructive", "selfmod"}, "project config", messages, version=True)
+def project_policy(value: object, ctx: Context, env: Env, messages: List[str]) -> Policy:
+    value = config_object(value, {"version", "secrets", "destructive", "selfmod"}, "project config", messages, version=True)
     secrets = string_list(value.get("secrets", []), "secrets")
     for glob in secrets:
         validate_glob(glob)
@@ -607,36 +648,39 @@ def project_policy(value, ctx, env, messages):
             raise ValueError("secrets glob %r must use ./**/<name>, ~/<path> or //<path>/**" % glob)
     selfmod = string_list(value.get("selfmod", []), "selfmod")
     destructive = value.get("destructive", {})
-    if not isinstance(destructive, dict) or not all(category for category in destructive):
+    if not is_object(destructive) or not all(category for category in destructive):
         raise ValueError("destructive must be an object with nonempty category names")
     return compile_policy({"secrets": secrets, "destructive": destructive,
                            "selfmod": selfmod, "tmp_roots": []}, ctx, env)
 
 
-def user_exceptions(value, ctx, messages):
-    config_object(value, {"version", "projects"}, "user config", messages, version=True)
+def user_exceptions(value: object, ctx: Context,
+                    messages: List[str]) -> Tuple[Set[str], List[Pattern[str]], bool]:
+    value = config_object(value, {"version", "projects"}, "user config", messages, version=True)
     projects = value.get("projects")
-    if not isinstance(projects, dict):
+    if not is_object(projects):
         raise ValueError("projects must be an object")
-    entries = {}
+    entries: Dict[str, Tuple[List[str], List[Pattern[str]], bool]] = {}
     for path, entry in projects.items():
         if path != "*" and (not os.path.isabs(path) or "\0" in path):
             raise ValueError("project key %r must be * or an absolute path" % path)
-        config_object(entry, {"disable_categories", "allow_patterns", "disable_selfmod"},
+        entry = config_object(entry, {"disable_categories", "allow_patterns", "disable_selfmod"},
                       "projects[%r]" % path, messages)
-        categories = string_list(entry.get("disable_categories", []), "disable_categories")
-        patterns = string_list(entry.get("allow_patterns", []), "allow_patterns")
-        disable_selfmod = entry.get("disable_selfmod", False)
-        if type(disable_selfmod) is not bool:
+        entry_categories = string_list(entry.get("disable_categories", []), "disable_categories")
+        entry_patterns = string_list(entry.get("allow_patterns", []), "allow_patterns")
+        entry_selfmod = entry.get("disable_selfmod", False)
+        if type(entry_selfmod) is not bool:
             raise ValueError("disable_selfmod must be a boolean")
-        entries[path] = (categories, [re.compile(pattern) for pattern in patterns], disable_selfmod)
+        entries[path] = (entry_categories, [re.compile(pattern) for pattern in entry_patterns], entry_selfmod)
     root = os.path.realpath(ctx.project_root)
     matches = [path for path in entries if path != "*" and
                (root == os.path.normpath(path) or root.startswith(os.path.normpath(path).rstrip("/") + "/"))]
     selected = ["*"]
     if matches:
         selected.append(max(matches, key=lambda path: len(os.path.normpath(path))))
-    categories, patterns, disable_selfmod = set(), [], False
+    categories: Set[str] = set()
+    patterns: List[Pattern[str]] = []
+    disable_selfmod = False
     for path in selected:
         if path in entries:
             extra_categories, extra_patterns, extra_selfmod = entries[path]
@@ -646,10 +690,10 @@ def user_exceptions(value, ctx, messages):
     return categories, patterns, disable_selfmod
 
 
-def effective_policy(rules, ctx, env):
+def effective_policy(rules: JSONObject, ctx: Context, env: Env) -> Tuple[Policy, List[str]]:
     """Compile the baseline first; configs cannot conceal a broken declaration."""
     policy = compile_policy(rules, ctx, env)
-    messages = []
+    messages: List[str] = []
     project_path = env.get("KK_GUARD_PROJECT_CONFIG") or os.path.join(ctx.project_root, ".claude", "kk-guard.json")
     additions = read_config(project_path, lambda value, notes: project_policy(value, ctx, env, notes), messages)
     if additions is not None:
@@ -670,7 +714,7 @@ def effective_policy(rules, ctx, env):
 # ---------------------------------------------------------------------------
 # Path resolution
 # ---------------------------------------------------------------------------
-def expand_tilde(path, home):
+def expand_tilde(path: str, home: str) -> str:
     if path == "~":
         return home
     if path.startswith("~/"):
@@ -678,7 +722,7 @@ def expand_tilde(path, home):
     return path
 
 
-def resolve(path, exec_dir, home):
+def resolve(path: str, exec_dir: str, home: str) -> Tuple[str, str]:
     """Return (requested, resolved) absolute paths for a tool argument.
 
     `requested` is the argument after `~` expansion, joining onto the
@@ -697,7 +741,7 @@ def resolve(path, exec_dir, home):
     return requested, resolved
 
 
-def secrets_match(paths, policy):
+def secrets_match(paths: Sequence[str], policy: Policy) -> Optional[str]:
     """The first secrets glob matching any of `paths`, or None."""
     for glob, regex in policy.secrets:
         for candidate in paths:
@@ -706,7 +750,7 @@ def secrets_match(paths, policy):
     return None
 
 
-def selfmod_match(paths, policy):
+def selfmod_match(paths: Sequence[str], policy: Policy) -> Optional[str]:
     """Protect both sides of a directory move, with path-component boundaries."""
     for entry, protected in policy.selfmod:
         for path in paths:
@@ -716,7 +760,7 @@ def selfmod_match(paths, policy):
     return None
 
 
-def check_path(path, ctx, policy, action, mutation=False):
+def check_path(path: str, ctx: Context, policy: Policy, action: str, mutation: bool = False) -> None:
     if not policy.secrets and not policy.selfmod:
         return  # a destructive-only pass: nothing here can match
     paths = [form for directory in (ctx.exec_dir,) + ctx.other_dirs
@@ -766,10 +810,11 @@ DATA_SINKS = {"cat", "tee", "printf"}
 MAX_SHELL_DEPTH = 32
 
 
-def defang(text):
+def defang(text: str) -> str:
     """Mask multiword quoted prose; retain single words and glued quotes."""
     text = text.replace("\\", "")
-    out, i = [], 0
+    out: List[str] = []
+    i = 0
     for match in QUOTED.finditer(text):
         before = text[match.start() - 1] if match.start() else " "
         after = text[match.end()] if match.end() < len(text) else " "
@@ -780,21 +825,21 @@ def defang(text):
     return "".join(out) + text[i:]
 
 
-def strip_quotes(text):
+def strip_quotes(text: str) -> str:
     """Decode one shell word without splitting a quoted path at its spaces."""
     tokens, _, _ = _shell_scan(text)
     return " ".join(token.value for token in tokens)
 
 
-def basename(token):
+def basename(token: str) -> str:
     return token.rsplit("/", 1)[-1]
 
 
-def is_interpreter(program):
+def is_interpreter(program: str) -> bool:
     return program in INTERPRETERS or re.fullmatch(r"python[23](?:\.\d+)?", program) is not None
 
 
-def program_indices(words):
+def program_indices(words: Sequence[str]) -> Iterator[int]:
     """Yield wrappers as well as their program, so sudo cannot disappear."""
     i = 0
     while i < len(words):
@@ -825,7 +870,7 @@ def program_indices(words):
         i += WRAPPER_POSITIONAL.get(program, 0)
 
 
-def program_index(words):
+def program_index(words: Sequence[str]) -> Optional[int]:
     """The final command after assignments and wrappers, including option values."""
     indices = list(program_indices(words))
     if not indices or basename(words[indices[-1]]) in WRAPPERS:
@@ -836,7 +881,7 @@ def program_index(words):
 class ShellToken(object):
     __slots__ = ("value", "raw", "operator", "pattern")
 
-    def __init__(self, value, raw, operator=False, pattern=None):
+    def __init__(self, value: str, raw: str, operator: bool = False, pattern: Optional[str] = None) -> None:
         self.value, self.raw, self.operator = value, raw, operator
         self.pattern = pattern
 
@@ -844,12 +889,13 @@ class ShellToken(object):
 class ShellBody(object):
     __slots__ = ("text", "interpreter", "position")
 
-    def __init__(self, text, interpreter=False, position=0):
+    def __init__(self, text: str, interpreter: bool = False, position: int = 0) -> None:
         self.text, self.interpreter, self.position = text, interpreter, position
 
 
-def split_segments(tokens, separators=SEPARATORS):
-    segment = []
+def split_segments(tokens: Iterable[ShellToken],
+                   separators: Collection[str] = SEPARATORS) -> Iterator[List[ShellToken]]:
+    segment: List[ShellToken] = []
     for token in tokens:
         if token.operator and token.value in separators:
             if segment:
@@ -861,9 +907,9 @@ def split_segments(tokens, separators=SEPARATORS):
         yield segment
 
 
-def command_tokens(tokens):
+def command_tokens(tokens: Sequence[ShellToken]) -> List[ShellToken]:
     """Remove redirections, their targets and adjacent numeric descriptors."""
-    words = []
+    words: List[ShellToken] = []
     i = 0
     while i < len(tokens):
         token = tokens[i]
@@ -876,11 +922,11 @@ def command_tokens(tokens):
     return words
 
 
-def command_words(tokens):
+def command_words(tokens: Sequence[ShellToken]) -> List[str]:
     return [token.value for token in command_tokens(tokens)]
 
 
-def command_position_tokens(text):
+def command_position_tokens(text: str) -> Iterator[str]:
     tokens, _, _ = _shell_scan(text)
     for segment in split_segments(tokens):
         words = command_words(segment)
@@ -889,7 +935,7 @@ def command_position_tokens(text):
             yield basename(words[index])
 
 
-def _heredoc_consumer(tokens, position):
+def _heredoc_consumer(tokens: Sequence[ShellToken], position: int) -> str:
     # Inspect the whole pipeline: `cat <<EOF | ./import.sh` feeds executable
     # or unknown input even though the first process is a known data sink.
     start = position
@@ -898,7 +944,7 @@ def _heredoc_consumer(tokens, position):
     end = position
     while end < len(tokens) and not (tokens[end].operator and tokens[end].value in CHAIN_SEPARATORS):
         end += 1
-    programs = []
+    programs: List[str] = []
     for segment in split_segments(tokens[start:end]):
         words = command_words(segment)
         index = program_index(words)
@@ -910,7 +956,7 @@ def _heredoc_consumer(tokens, position):
     return "cat"  # all data sinks, or a redirection without a command
 
 
-def _substitution(text, i, depth):
+def _substitution(text: str, i: int, depth: int) -> Tuple[ShellBody, int]:
     """Read one executable body; the recursive lexer respects heredoc spans."""
     if text.startswith(("$(", "<(", ">("), i):
         _, _, end = _shell_scan(text, i + 2, ")", depth + 1)
@@ -925,12 +971,14 @@ def _substitution(text, i, depth):
             else:
                 j += 1
         raise failure("unterminated backtick substitution")
-    return None, i
+    # Callers only start here at a substitution; anything else is a lexer fault.
+    raise failure("no substitution at offset %d" % i)
 
 
-def _heredoc_substitutions(text, depth):
+def _heredoc_substitutions(text: str, depth: int) -> List[ShellBody]:
     # Quotes in an expandable heredoc are data, not shell quote delimiters.
-    bodies, i = [], 0
+    bodies: List[ShellBody] = []
+    i = 0
     while i < len(text):
         if text[i] == "\\" and i + 1 < len(text) and text[i + 1] in "\\$`\n":
             i += 2
@@ -943,7 +991,7 @@ def _heredoc_substitutions(text, depth):
     return bodies
 
 
-def _ansi_escape(text, i):
+def _ansi_escape(text: str, i: int) -> Tuple[str, int]:
     """Decode an escape inside Bash's $'...' without evaluating shell text."""
     char = text[i + 1]
     simple = {"a": "\a", "b": "\b", "e": "\x1b", "E": "\x1b", "f": "\f",
@@ -954,6 +1002,7 @@ def _ansi_escape(text, i):
         return chr(ord(text[i + 2].upper()) & 31), i + 3
     if char in "01234567":
         match = re.match(r"[0-7]{1,3}", text[i + 1:])
+        assert match is not None  # char itself is an octal digit.
         return chr(int(match.group(), 8) % 256), i + 1 + len(match.group())
     if char in "xuU":
         width = {"x": 2, "u": 4, "U": 8}[char]
@@ -963,7 +1012,8 @@ def _ansi_escape(text, i):
     return "\\" + char, i + 2
 
 
-def _shell_scan(text, start=0, stop="", depth=0):
+def _shell_scan(text: str, start: int = 0, stop: str = "",
+                depth: int = 0) -> Tuple[List[ShellToken], List[ShellBody], int]:
     """Quote-aware lexer; consume heredocs before interpreting their contents.
 
     Returns (tokens, executable bodies, end offset). Substitution output is
@@ -972,7 +1022,9 @@ def _shell_scan(text, start=0, stop="", depth=0):
     """
     if depth > MAX_SHELL_DEPTH:
         raise failure("shell nesting exceeds the inspection limit")
-    tokens, bodies, pending = [], [], []
+    tokens: List[ShellToken] = []
+    bodies: List[ShellBody] = []
+    pending: List[Tuple[int, str, bool, bool]] = []
     i, group_depth = start, 0
     while i < len(text):
         ch = text[i]
@@ -1000,7 +1052,7 @@ def _shell_scan(text, start=0, stop="", depth=0):
             i += len(operator)
             if operator == "\n":
                 for position, delimiter, quoted, tabs in pending:
-                    lines = []
+                    lines: List[str] = []
                     while i < len(text):
                         end = text.find("\n", i)
                         end = len(text) if end < 0 else end
@@ -1022,7 +1074,9 @@ def _shell_scan(text, start=0, stop="", depth=0):
                         bodies.append(ShellBody(body, is_interpreter(consumer), position))
                 pending = []
             continue
-        begin, quote, value, pattern, has_glob = i, "", [], [], False
+        begin, quote, has_glob = i, "", False
+        value: List[str] = []
+        pattern: List[str] = []
         while i < len(text):
             ch = text[i]
             if not quote and text.startswith(("$'", '$"'), i):
@@ -1078,7 +1132,7 @@ def _shell_scan(text, start=0, stop="", depth=0):
     return tokens, bodies, i
 
 
-def short_option_argument(word, name, value_options):
+def short_option_argument(word: str, name: str, value_options: str) -> Optional[str]:
     """Find a short flag in a cluster, stopping at options which consume text."""
     if not word.startswith("-") or word.startswith("--"):
         return None
@@ -1090,7 +1144,7 @@ def short_option_argument(word, name, value_options):
     return None
 
 
-def inline_code(words, shell=False):
+def inline_code(words: Sequence[str], shell: bool = False) -> Optional[str]:
     """Return the argument of a shell -c or interpreter -c/-e invocation."""
     index = program_index(words)
     if index is None:
@@ -1122,7 +1176,7 @@ def inline_code(words, shell=False):
     return None
 
 
-def extract_bodies(text):
+def extract_bodies(text: str) -> List[ShellBody]:
     """Original executable text, before defang; heredoc literals stay opaque."""
     tokens, bodies, _ = _shell_scan(text)
     for segment in split_segments(tokens):
@@ -1132,17 +1186,17 @@ def extract_bodies(text):
     return bodies
 
 
-def substitution_bodies(text):
+def substitution_bodies(text: str) -> List[str]:
     return [body.text for body in _shell_scan(text)[1]]
 
 
-def path_like(word, ctx):
+def path_like(word: str, ctx: Context) -> bool:
     return bool(word) and ("/" in word or word.startswith(("~", ".")) or
                            any(os.path.exists(os.path.join(directory, word))
                                for directory in (ctx.exec_dir,) + ctx.other_dirs))
 
 
-def shell_glob_paths(token, ctx):
+def shell_glob_paths(token: ShellToken, ctx: Context) -> Iterator[str]:
     """Inspect existing wildcard matches without reading data or running a shell.
 
     The lexer escapes quoted/escaped metacharacters in the pattern. Keep the
@@ -1160,9 +1214,9 @@ def shell_glob_paths(token, ctx):
             yield path
 
 
-def mutation_operands(segment, words):
+def mutation_operands(segment: Sequence[ShellToken], words: Sequence[str]) -> List[str]:
     """Literal write targets; reads of settings remain permitted."""
-    targets = []
+    targets: List[str] = []
     for i, token in enumerate(segment[:-1]):
         if token.operator and token.value in {">", ">>", ">|", "&>", "&>>", "<>", ">&"}:
             target = segment[i + 1].value
@@ -1172,7 +1226,8 @@ def mutation_operands(segment, words):
     if index is None:
         return targets
     program, args = basename(words[index]), words[index + 1:]
-    operands, target_dir = [], None
+    operands: List[str] = []
+    target_dir: Optional[str] = None
     options = True
     i = 0
     while i < len(args):
@@ -1269,13 +1324,14 @@ LINE_END = re.compile(r"\s*[,)\]](?!(?:\s*[)\]])*\s*\+)|"
                       r"[ \t]*(?:[;}]|\n(?!\s*(?:[+.%]|[rRuUbBfF]{0,2}['\"`]))|\Z)")
 
 
-def code_string_value(match):
+def code_string_value(match: Match[str]) -> str:
     """Decode literal escapes only, never evaluate an interpreter expression."""
     value = next(match.group(name) for name in ("single", "double", "single3", "double3")
                  if match.group(name) is not None)
     if "r" in (match.group("prefix") or "").lower():
         return value
-    decoded, i = [], 0
+    decoded: List[str] = []
+    i = 0
     while i < len(value):
         if value[i] == "\\" and i + 1 < len(value):
             if value[i + 1] in "abfnrtv\\'\"01234567xuU":
@@ -1292,9 +1348,10 @@ def code_string_value(match):
     return "".join(decoded)
 
 
-def call_arguments(text, start):
+def call_arguments(text: str, start: int) -> List[str]:
     """Split literal call arguments at top-level commas without executing code."""
-    args, begin, i, nesting, quote = [], start, start, 0, ""
+    args: List[str] = []
+    begin, i, nesting, quote = start, start, 0, ""
     while i < len(text):
         char = text[i]
         if quote:
@@ -1318,13 +1375,16 @@ def call_arguments(text, start):
     return args + [text[begin:].strip()]
 
 
-def literal_argument(argument):
+def literal_argument(argument: Optional[str]) -> Optional[str]:
+    if argument is None:
+        return None
     argument = re.sub(r"^[A-Za-z_]\w*\s*=\s*", "", argument)
     match = CODE_STRING.fullmatch(argument)
     return code_string_value(match) if match else None
 
 
-def named_argument(args, name, position, default=None):
+def named_argument(args: Sequence[str], name: str, position: int,
+                   default: Optional[str] = None) -> Optional[str]:
     for arg in args:
         if re.match(re.escape(name) + r"\s*=", arg):
             return arg.split("=", 1)[1].strip()
@@ -1332,13 +1392,15 @@ def named_argument(args, name, position, default=None):
     return positional[position] if len(positional) > position else default
 
 
-def shell_word(value):
+def shell_word(value: str) -> str:
     return "'" + value.replace("'", "'\\''") + "'"
 
 
-def split_prose(code):
+def split_prose(code: str) -> Tuple[str, List[Tuple[int, int]]]:
     """Return the code without its line comments, and the string and comment spans."""
-    spans, kept, last = [], [], 0
+    spans: List[Tuple[int, int]] = []
+    kept: List[str] = []
+    last = 0
     for match in PROSE.finditer(code):
         spans.append(match.span())
         if match.group("comment") is not None:
@@ -1348,7 +1410,7 @@ def split_prose(code):
     return "".join(kept), spans
 
 
-def closes(code, pos, depth, operands):
+def closes(code: str, pos: int, depth: int, operands: bool) -> bool:
     """Whether every bracket opened inside a spawn call's first argument
     closes at `pos`, leaving the call's next argument or its end. When the
     call's own arguments are the operands, only its end will do."""
@@ -1360,7 +1422,7 @@ def closes(code, pos, depth, operands):
     return (CLOSER if operands else ARGUMENT_END).match(code, pos) is not None
 
 
-def spawned_commands(code, matches):
+def spawned_commands(code: str, matches: Sequence[Match[str]]) -> Iterator[Tuple[str, bool, bool, bool]]:
     """Yield (shell text, direct, whole, partial) for literal commands in code.
 
     `code` has its comments removed and `matches` are its COMMAND_LITERALs.
@@ -1374,7 +1436,8 @@ def spawned_commands(code, matches):
     """
     calls = {match.end(): (1 + match.group().rstrip().endswith("["), match.group().startswith("os.exec"))
              for match in SPAWN_CALL.finditer(code)}
-    runs = []
+    # Each run: [(literal, end) pairs, shell words, spawn call or None, brackets opened].
+    runs: List[List[Any]] = []
     for match in matches:
         value = match.group("tick")
         if value is None:
@@ -1414,7 +1477,7 @@ def spawned_commands(code, matches):
             yield " ".join(words), call is not None, whole, partial
 
 
-def narrowed(policy, paths, tmp, partial=False):
+def narrowed(policy: Policy, paths: bool, tmp: bool, partial: bool = False) -> Policy:
     """The same destructive rules, with the path rules or tmp exemption withheld."""
     result = Policy(policy.secrets if paths else [], policy.destructive,
                     policy.tmp_roots if tmp else [], policy.selfmod if paths else [])
@@ -1423,7 +1486,7 @@ def narrowed(policy, paths, tmp, partial=False):
     return result
 
 
-def check_literal_command(command, ctx, policy):
+def check_literal_command(command: str, ctx: Context, policy: Policy) -> None:
     """Apply the rules to text that may not be shell at all.
 
     Most literals are prose, so text the lexer rejects is not a finding by
@@ -1434,17 +1497,17 @@ def check_literal_command(command, ctx, policy):
     try:
         check_command(command, ctx, policy)
     except Denied as denied:
-        if denied.category != "failure":
+        if denied.category != "failure" or isinstance(denied, UnknownWrite):
             raise
         for line in re.sub("['\"`]", "", command.replace("\\\n", " ")).split("\n"):
             try:
                 check_command(line, ctx, policy)
             except Denied as again:
-                if again.category != "failure":
+                if again.category != "failure" or isinstance(again, UnknownWrite):
                     raise
 
 
-def check_inline_code(code, ctx, policy):
+def check_inline_code(code: str, ctx: Context, policy: Policy) -> None:
     for match in CODE_STRING.finditer(code):
         path = code_string_value(match)
         if path_like(path, ctx):
@@ -1456,7 +1519,8 @@ def check_inline_code(code, ctx, policy):
     # The gate reads code, not what its strings say: a script that only
     # writes about `subprocess` starts nothing. A string that is exactly a
     # spawn module's name is an import (`require("child_process")`), so it stays.
-    bare, last = [], 0
+    bare: List[str] = []
+    last = 0
     for match in literals:
         imported = match.group("tick") is None and code_string_value(match) in SPAWN_MODULES
         bare.append(text[last:match.start()] + (match.group() if imported else '""'))
@@ -1472,6 +1536,7 @@ def check_inline_code(code, ctx, policy):
     starts = [span[0] for span in prose]
     for match in WRITE_CALL.finditer(code):
         name, args = match.group(1), call_arguments(code, match.end())
+        selected: List[Optional[str]]
         if name == "open":
             mode = literal_argument(named_argument(args, "mode", 1, "'r'"))
             selected = [named_argument(args, "file", 0)] if mode is not None and any(c in mode for c in "wax+") else []
@@ -1507,7 +1572,13 @@ def check_inline_code(code, ctx, policy):
                 denied.what = "%s() deletes like rm; %s" % (name, denied.what)
                 raise
     for match in PATH_WRITE.finditer(code):
-        check_path(literal_argument(match.group("path")), ctx, policy, "inline write", mutation=True)
+        path = literal_argument(match.group("path"))
+        if path is None:
+            if not policy.secrets and not policy.selfmod:
+                continue  # A destructive-only pass checks no paths, decodable or not.
+            # PATH_WRITE accepts quoted text that no interpreter literal decodes.
+            raise UnknownWrite("cannot decode the path literal of a Path write")
+        check_path(path, ctx, policy, "inline write", mutation=True)
 
 
 # Program-level options whose following token is a value, not a subcommand.
@@ -1535,7 +1606,7 @@ GLOBAL_OPTIONS_WITH_ARG = {
 }
 
 
-def skip_global_options(args, program):
+def skip_global_options(args: Sequence[str], program: str) -> Sequence[str]:
     i = 0
     takes_arg = GLOBAL_OPTIONS_WITH_ARG.get(program, set())
     while i < len(args) and args[i].startswith("-"):
@@ -1548,7 +1619,7 @@ def skip_global_options(args, program):
     return args[i:]
 
 
-def destructive_match(program, args, rule):
+def destructive_match(program: str, args: Sequence[str], rule: Rule) -> bool:
     if program != rule["program"]:
         return False
     remaining = args
@@ -1557,19 +1628,21 @@ def destructive_match(program, args, rule):
         if not remaining or remaining[0] != expected:
             return False
         remaining = remaining[1:]
-    hits = lambda patterns: [any(regex.search(arg) for arg in remaining) for regex in patterns]
+    hits: Callable[[List[Pattern[str]]], List[bool]] = \
+        lambda patterns: [any(regex.search(arg) for arg in remaining) for regex in patterns]
     return (("flags_any" not in rule or any(hits(rule["flags_any"])))
             and all(hits(rule.get("flags_all", [])))
             and not any(hits(rule.get("flags_none", []))))
 
 
-def targets_under_tmp(tokens, ctx, policy):
+def targets_under_tmp(tokens: Sequence[ShellToken], ctx: Context, policy: Policy) -> bool:
     """Require at least one literal operand and canonical containment for all.
 
     Never expand shell variables or globs. Test the original spelling as well
     as the decoded token: command substitution output is represented by Q.
     """
-    targets, options = [], True
+    targets: List[str] = []
+    options = True
     for token in tokens:
         if options and token.value == "--":
             options = False
@@ -1588,7 +1661,7 @@ def targets_under_tmp(tokens, ctx, policy):
     return bool(targets)
 
 
-def env_options(words):
+def env_options(words: Sequence[str]) -> Iterator[Tuple[str, str, int]]:
     """Yield env's bound option/value pairs, never its child's arguments."""
     indices = list(program_indices(words))
     for n, index in enumerate(indices):
@@ -1620,7 +1693,7 @@ def env_options(words):
             i += 1
 
 
-def check_destructive(segment, ctx, policy):
+def check_destructive(segment: Sequence[ShellToken], ctx: Context, policy: Policy) -> None:
     operands = command_tokens(segment)
     # The lexer has already decoded glued/ANSI-C quotes. Mask multiword prose
     # without losing alignment with the original operands used for exemptions.
@@ -1647,7 +1720,7 @@ def check_destructive(segment, ctx, policy):
                 raise Denied("destructive", "%s: %s" % (category, rule["reason"]), category)
 
 
-def check_command(command, ctx, policy, depth=0):
+def check_command(command: str, ctx: Context, policy: Policy, depth: int = 0) -> None:
     if depth > MAX_SHELL_DEPTH:
         raise failure("shell nesting exceeds the inspection limit")
     tokens, bodies, _ = _shell_scan(command)
@@ -1695,7 +1768,7 @@ def check_command(command, ctx, policy, depth=0):
                     check_inline_code(text, local, policy)
                 elif consumer not in DATA_SINKS:
                     segment_bodies.append(ShellBody(text))
-        if program == "dd":
+        if index is not None and program == "dd":
             for arg in words[index + 1:]:
                 if arg.startswith(("if=", "of=")):
                     check_path(arg[3:], local, policy, "Bash")
@@ -1721,7 +1794,7 @@ def check_command(command, ctx, policy, depth=0):
                 check_inline_code(body.text, local, policy)
             else:
                 check_command(body.text, local, policy, depth + 1)
-        if program in {"cd", "pushd", "popd"}:
+        if index is not None and program in {"cd", "pushd", "popd"}:
             args = words[index + 1:]
             raw_args = command_tokens(segment)[index + 1:]
             directory_changed = True
@@ -1749,7 +1822,7 @@ def check_command(command, ctx, policy, depth=0):
 # ---------------------------------------------------------------------------
 # File tools
 # ---------------------------------------------------------------------------
-def file_tool_path(tool_name, tool_input):
+def file_tool_path(tool_name: str, tool_input: JSONObject) -> Optional[str]:
     for key in PATH_KEYS.get(tool_name, ()):
         value = tool_input.get(key)
         if isinstance(value, str) and value:
@@ -1757,7 +1830,7 @@ def file_tool_path(tool_name, tool_input):
     return None
 
 
-def check_file_tool(tool_name, tool_input, ctx, policy):
+def check_file_tool(tool_name: str, tool_input: JSONObject, ctx: Context, policy: Policy) -> None:
     """Deny a file-tool call whose path is a secret. Grep and Glob with no
     search root are allowed: only the root is checked, never results."""
     path = file_tool_path(tool_name, tool_input)
@@ -1771,7 +1844,7 @@ def check_file_tool(tool_name, tool_input, ctx, policy):
 # ---------------------------------------------------------------------------
 # Codex patch headers
 # ---------------------------------------------------------------------------
-def check_patch(ctx, policy):
+def check_patch(ctx: Context, policy: Policy) -> None:
     """Inspect mutation headers, never added/removed/context text as commands.
 
     Codex trims hunk headers outside updates, but preserves leading spaces
@@ -1814,14 +1887,14 @@ def check_patch(ctx, policy):
 # ---------------------------------------------------------------------------
 # Capy execution tools
 # ---------------------------------------------------------------------------
-def capy_text(tool_input, key):
+def capy_text(tool_input: JSONObject, key: str) -> str:
     value = tool_input.get(key)
     if not isinstance(value, str) or not value or "\0" in value:
         raise failure("capy %s must be a nonempty string without NUL bytes" % key)
     return value
 
 
-def check_capy_tool(tool_name, ctx, policy):
+def check_capy_tool(tool_name: str, ctx: Context, policy: Policy) -> None:
     """Inspect submitted code and file inputs; never execute or read their data."""
     tool_input = ctx.tool_input
     if tool_name == "capy_batch_execute":
@@ -1833,12 +1906,12 @@ def check_capy_tool(tool_name, ctx, policy):
                 commands = json.loads(commands)
             except ValueError as exc:
                 raise failure("capy commands must be a JSON array: %s" % exc)
-        if not isinstance(commands, list) or not commands:
+        if not is_array(commands) or not commands:
             raise failure("capy commands must be a nonempty list")
         for entry in commands:
             if isinstance(entry, str):
                 entry = {"command": entry}
-            if not isinstance(entry, dict):
+            if not is_object(entry):
                 raise failure("each capy batch command must be an object or string")
             # check_command owns a command-local context, so a child's cd
             # cannot affect later children (serial or parallel).
@@ -1862,7 +1935,7 @@ def check_capy_tool(tool_name, ctx, policy):
 # ---------------------------------------------------------------------------
 # Dispatch
 # ---------------------------------------------------------------------------
-def evaluate(ctx, policy):
+def evaluate(ctx: Context, policy: Policy) -> None:
     """Run the checks for one call. Returns None (allow) or raises Denied."""
     if ctx.tool_name in FILE_TOOLS:
         check_file_tool(ctx.tool_name, ctx.tool_input, ctx, policy)
@@ -1885,7 +1958,7 @@ def evaluate(ctx, policy):
     return
 
 
-def decide(raw, env, fallback_cwd=None):
+def decide(raw: str, env: Env, fallback_cwd: Optional[str] = None) -> List[str]:
     """Return config diagnostics on allow; raise Denied with them on refusal."""
     ctx = parse_payload(raw, env, fallback_cwd)
     rules = load_rules(rules_path(env))
@@ -1901,8 +1974,8 @@ def decide(raw, env, fallback_cwd=None):
 # ---------------------------------------------------------------------------
 # Emitter and entry point
 # ---------------------------------------------------------------------------
-def deny_output(reason, messages=()):
-    output = {
+def deny_output(reason: str, messages: Sequence[str] = ()) -> str:
+    output: JSONObject = {
         "hookSpecificOutput": {
             "hookEventName": "PreToolUse",
             "permissionDecision": "deny",
@@ -1914,18 +1987,18 @@ def deny_output(reason, messages=()):
     return json.dumps(output)
 
 
-def emit_deny(denied, stdout=None, stderr=None):
+def emit_deny(denied: Denied, stdout: Optional[TextIO] = None, stderr: Optional[TextIO] = None) -> None:
     """Write the deny on both channels. The caller exits 2."""
-    stdout = stdout or sys.stdout
-    stderr = stderr or sys.stderr
+    out = stdout or sys.stdout
+    err = stderr or sys.stderr
     reason = denied.reason()
-    stdout.write(deny_output(reason, denied.messages) + "\n")
-    stdout.flush()
-    stderr.write(reason + "\n")
-    stderr.flush()
+    out.write(deny_output(reason, denied.messages) + "\n")
+    out.flush()
+    err.write(reason + "\n")
+    err.flush()
 
 
-def main():
+def main() -> int:
     raw = sys.stdin.buffer.read().decode("utf-8", "replace")
     try:
         messages = decide(raw, os.environ)

@@ -1,11 +1,14 @@
 """Reconcile public and pilot registrations with the machine-managed marketplace."""
 
+from __future__ import annotations
+
 import subprocess
 import sys
 from pathlib import Path
-from typing import NamedTuple
+from typing import Iterable, List, NamedTuple, Optional, Set, Tuple, Union
 
 from . import claude, codex_plugins, payload
+from .payload import JSONObject
 
 
 GIT_GUARD = "kk-guard@" + claude.PUBLIC_MARKETPLACE
@@ -13,11 +16,11 @@ PUBLIC_GUARDS = (GIT_GUARD, "kk-guard@" + claude.FORMER_PUBLIC_MARKETPLACE)
 OTHER_GUARDS = (*PUBLIC_GUARDS, "kk-guard@" + claude.PILOT_MARKETPLACE)
 
 
-def is_pilot_catalog(path):
+def is_pilot_catalog(path: Path) -> bool:
     return path.is_file() and payload.read_json(path).get("name") == claude.PILOT_MARKETPLACE
 
 
-def check_claude_pilot(home):
+def check_claude_pilot(home: Path) -> None:
     """RC4 and its successor publish different names at the same physical catalog."""
     if not is_pilot_catalog(home / ".claude-plugin/marketplace.json"):
         return
@@ -27,10 +30,10 @@ def check_claude_pilot(home):
                          "RC4 marketplace switch, then rerun this command.".format(home))
 
 
-def check_codex_pilot(home, record, directory):
+def check_codex_pilot(home: Path, record: JSONObject, directory: Optional[Union[str, Path]]) -> None:
     if not is_pilot_catalog(home / ".agents/plugins/marketplace.json"):
         return
-    homes = set(record.get("codex_plugins", {}))
+    homes: Set[str] = set(record.get("codex_plugins", {}))
     if directory is not None:
         homes.add(str(directory))
     for previous in sorted(homes):
@@ -49,13 +52,15 @@ class Install(NamedTuple):
     project: str
 
 
-def inventory(tool, workspace, directory):
+def inventory(tool: str, workspace: Path, directory: Optional[Path]) -> List[JSONObject]:
     if tool == "claude":
         return claude.vendor(workspace, "list")
+    if directory is None:
+        raise ValueError("the Codex inventory needs a CODEX_HOME")
     return codex_plugins.vendor(workspace, directory, "list", timeout=codex_plugins.INVENTORY_TIMEOUT)["installed"]
 
 
-def other_copies(tool, rows):
+def other_copies(tool: str, rows: List[JSONObject]) -> List[Install]:
     if tool == "claude":
         return [Install(p["id"], p["scope"], p.get("enabled") is not False, p.get("projectPath") or "")
                 for p in rows if p["id"] in claude.OTHER_PLUGINS]
@@ -63,15 +68,16 @@ def other_copies(tool, rows):
             for p in rows if p["pluginId"] in (*claude.OTHER_PLUGINS, *OTHER_GUARDS)]
 
 
-def claude_managed(rows):
+def claude_managed(rows: List[JSONObject]) -> bool:
     return any(p["id"] == claude.PLUGIN_ID and p["scope"] == "user" and p.get("enabled") is True for p in rows)
 
 
-def inspect(tool, workspace, directory=None, *, claude_plugin=None):
+def inspect(tool: str, workspace: Path, directory: Optional[Path] = None, *,
+            claude_plugin: Optional[Path] = None) -> Tuple[List[Install], List[str]]:
     try:
         rows = inventory(tool, workspace, directory)
         installs = other_copies(tool, rows)
-        issues = []
+        issues: List[str] = []
         if tool == "claude":
             if not claude_managed(rows):
                 issues.append("managed user-scope plugin {} is missing or disabled".format(claude.PLUGIN_ID))
@@ -97,7 +103,7 @@ def inspect(tool, workspace, directory=None, *, claude_plugin=None):
     return installs, issues
 
 
-def remove_user_copies(tool, workspace, directory, guard_issues=()):
+def remove_user_copies(tool: str, workspace: Path, directory: Path, guard_issues: Iterable[str] = ()) -> None:
     rows = inventory(tool, workspace, directory)
     copies = other_copies(tool, rows)
     for plugin in sorted({i.plugin for i in copies if i.scope == "user" and i.plugin in (*claude.PUBLIC_PLUGINS, *PUBLIC_GUARDS)}):

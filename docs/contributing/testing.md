@@ -39,7 +39,7 @@ Run a single suite:
 
 ## Machine delivery tests
 
-Run `bash test/test-kk.sh` for installer, launchers, lifecycle, guard trust, update notices and migration orchestration. It uses temporary homes and vendor fixtures. The migration integration test uses the maintenance tag pinned in `kk/lib/migrate.py`. Run `bash test/test-template-sync.sh` for handoff from the original RC4 updater to the compatibility notice. To exercise both cases in a shallow upstream checkout, run `git fetch origin tag v0.26.0-rc.4 tag v0.26.0+retirement.1`. The maintenance tag contains the full sync and removal suites. The `machine-delivery.yml` CI job also runs the guard and Codex adapter suites on Python 3.8 and the current Python.
+Run `bash test/test-kk.sh` for installer, launchers, lifecycle, guard trust, update notices and migration orchestration. It uses temporary homes and vendor fixtures. The migration integration test uses the maintenance tag pinned in `kk/lib/migrate.py`. Run `bash test/test-template-sync.sh` for handoff from the original RC4 updater to the compatibility notice. To exercise both cases in a shallow upstream checkout, run `git fetch origin tag v0.26.0-rc.4 tag v0.26.0+retirement.1`. The maintenance tag contains the full sync and removal suites. The `machine-delivery.yml` CI job also runs the guard and Codex adapter suites on Python 3.9 and the current Python.
 
 For installation evidence, `kk status --live` starts fresh vendor sessions and expects the installed guard’s own denial of a public canary. Open-session behavior needs a session spanning the relevant transition. The tagged pilot verified that an ordinary sync to the last full template kept the legacy guard in place before migration. The release workflows run the machine delivery and generated-guard checks before publication.
 
@@ -113,7 +113,7 @@ bash test/test-codex-hooks.sh
 bash test/test-generate-guard.sh
 ```
 
-`test/guard/test_guard.py` imports the engine and replays `test/fixtures/guard/corpus.jsonl`. Rows carry expected decisions/categories, optional cwd/project roots and per-row configuration fixtures. They use a synthetic home and project; submitted commands are never executed. `KK_GUARD_TEST_PYTHON` selects the engine test interpreter. The Python floor is 3.8, with actual local runs on 3.9.6/macOS and 3.10.12/Linux; the 3.8 syntax check does not replace a 3.8 runtime run.
+`test/guard/test_guard.py` imports the engine and replays `test/fixtures/guard/corpus.jsonl`. Rows carry expected decisions/categories, optional cwd/project roots and per-row configuration fixtures. They use a synthetic home and project; submitted commands are never executed. `KK_GUARD_TEST_PYTHON` selects the engine test interpreter. The Python floor is 3.9 ([ADR 0016](../adr/0016-python-runtime.md)), with actual local runs on 3.9.6/macOS and 3.10.12/Linux. The syntax checks hold the engine to 3.9. They hold its launcher to 3.6 and keep it free of `from __future__` imports, so an older interpreter gets a refusal instead of a crash. These checks do not replace runs on those versions.
 
 The wrapper suite times 100 Read calls and every active Bash corpus row, including process startup, validation and cleanup. It always reports both p95 values when the timing probes run. Targets are 30 ms for file tools and 50 ms for Bash; local gates fail at 60/100 ms respectively when `CI` is unset. With `CI` present, timing is reported without enforcement. A CI-mode pass is not evidence that a local latency target passed.
 
