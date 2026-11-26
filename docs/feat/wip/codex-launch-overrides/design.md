@@ -1,7 +1,7 @@
 # Design: Codex launch overrides
 
 > Issue: [#206](https://github.com/serpro69/agentstakk/issues/206) — choices made inside `kk codex` sessions drift the managed profile and break batch launches
-> Status: design approved, 2026-11-24; revised after two design reviews and a consistency pass with further probes, 2026-11-24; empty-value rule limited to arrays after the Task 1 probes, 2026-11-25; a failed apply-time `config/read` stops `kk apply` (maintainer decision after the Task 4 review), 2026-11-25
+> Status: design approved, 2026-11-24; revised after two design reviews and a consistency pass with further probes, 2026-11-24; empty-value rule limited to arrays after the Task 1 probes, 2026-11-25; a failed apply-time `config/read` stops `kk apply` (maintainer decision after the Task 4 review), 2026-11-25; session launches with kk flags pass `--no-daemon`, and the apply-time name check accepts a name reported by any layer (maintainer decisions during the Task 6 verification), 2026-11-26
 > Evidence: Codex CLI 0.172.0, Linux
 
 ## Problem
@@ -83,6 +83,8 @@ Explicit values reproduce the profile's old precedence slot: they beat `config.t
 
 **Order.** The final command is `codex <kk flags> <caller arguments>`. Caller `-c` flags come after kk's, so a caller flag for the same leaf wins, and a caller inline table replaces kk's table for that key, as the caller asked.
 
+**Shared background server.** Codex 0.172 attaches the session TUI to a shared background `app-server` and falls back to a server of its own when the launch carries configuration flags, with a startup warning (`Running without the shared background server: command-line configuration overrides … requires embedded mode`). The managed profile had the same effect ([#205](https://github.com/serpro69/agentstakk/issues/205)), so this is an existing limitation of `kk codex`, accepted and documented (decided 2026-11-26). To keep Codex from warning at every start, kk puts `--no-daemon` in front of its flags when it passes at least one and the launch opens the session TUI: no subcommand, a prompt, `resume` or `fork`. A first word that is not a Codex subcommand counts as a prompt. kk does not add the flag when the caller gave `--remote` or `--no-daemon` (Codex refuses both combinations), for other subcommands (`queue` and `remote-control` refuse it), or for batch launches, which show no such warning. The flag changes no behavior: the session runs in its own server either way.
+
 An explicit `--profile <name>` remains a pass-through with no kk flags and no imports. `--profile kk` loses its special meaning.
 
 **Lookup failure.** If `config/read` fails (timeout, vendor error, missing method), kk cannot tell which values a repository or the account already set. Interactive and batch launches then pass no origin-dependent kk values: no baseline defaults and no explicit values. Approved imports still apply, because the adopter consented to them replacing repository instructions. kk prints one line saying that kk's defaults, opt-ins and instructions were omitted and why. Batch launches proceed to the trust read with these reduced flags; the guard guarantee comes from that read, not from the origins.
@@ -114,8 +116,8 @@ Interactive launches without an explicit profile keep a `CODEX_HOME` gate: the s
 
 `compose` returns launch inputs (baseline leaves after `codex.defaults`, explicit leaves, instruction text, the `nativeForbids` switch) instead of TOML bytes. `codex_settings` accepts the new `defaults` key. `prepare` stops publishing `kk.config.toml`; it still publishes `agents/kk-*.toml` and the opt-in `rules/kk.rules`. `validate_files`, in its existing scratch home:
 
-1. runs `codex <all candidate -c flags> debug prompt-input`, so a value Codex rejects still stops publication before any owned file changes;
-2. sends `config/read` with the same flags and requires every kk leaf to be reported under a `sessionFlags` origin with a matching key (section 1). Leaves whose value is an empty array or table are skipped, because Codex reports no origin for them. A mismatch names the leaf and the keys Codex reported instead, for example an aliased `codex.settings` name. If `config/read` itself fails (missing method, vendor error, timeout), validation fails with a message naming `config/read` and nothing is published; the check is not skipped (see Not Doing).
+1. runs `codex --no-daemon <all candidate -c flags> debug prompt-input`, so a value Codex rejects still stops publication before any owned file changes, and so does a Codex that does not know `--no-daemon`, which would otherwise refuse every session launch;
+2. sends `config/read` with the same flags and requires every kk leaf to be reported under a matching key (section 1). The origin is `sessionFlags` unless a layer that outranks the flags sets the same key: a system `managed_config.toml` does (origin `legacyManagedConfigTomlFromFile`, observed in Task 6), and the name it is reported under is just as good evidence that kk's name is the one Codex uses (decided 2026-11-26; until then only `sessionFlags` counted, which stopped `kk apply` on a machine whose administrator pins a key kk passes). Leaves whose value is an empty array or table are skipped, because Codex reports no origin for them. A mismatch names the leaf and the keys Codex reported instead, for example an aliased `codex.settings` name. If `config/read` itself fails (missing method, vendor error, timeout), validation fails with a message naming `config/read` and nothing is published; the check is not skipped (see Not Doing).
 
 Validation errors name the operation and the stderr of Codex, never the argument list, so `codex.settings` values are not copied into kk's output.
 

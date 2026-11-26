@@ -20,6 +20,8 @@ from .state import override_path
 PLAIN_KEY = re.compile(r"[A-Za-z0-9_-]+")
 # These tables carry credentials, and launch flags are readable in process listings.
 CREDENTIAL_TABLES = ("mcp_servers", "model_providers", "shell_environment_policy")
+# Runs a session in its own server. A launch with kk's flags passes it (see codex_launch).
+NO_DAEMON = "--no-daemon"
 
 
 def codex_home():
@@ -168,7 +170,16 @@ def validate_files(release, directory, settings, rules, executable):
             if result.returncode:
                 raise ValueError("Codex rejected {}: {}".format(operation, result.stderr.strip()))
             return result.stdout
-        run("debug prompt-input", config_flags(settings) + ["debug", "prompt-input"])
+        # A Codex that does not know --no-daemon would refuse every interactive launch, so it stops here.
+        try:
+            run("debug prompt-input", [NO_DAEMON] + config_flags(settings) + ["debug", "prompt-input"])
+        except ValueError as exc:
+            # Only Codex's own wording for an unknown flag: its errors can also quote a rejected value.
+            if "unexpected argument '{}'".format(NO_DAEMON) not in str(exc):
+                raise
+            # The adopter never typed the flag, so say where it comes from and what helps.
+            raise ValueError("kk codex passes {} to its sessions, and this Codex CLI refused it; update Codex. {}".format(
+                NO_DAEMON, exc)) from None
 
         def unreported(table):
             """Return the leaves Codex does not report under kk's name, and the other names it reported."""
@@ -182,7 +193,8 @@ def validate_files(release, directory, settings, rules, executable):
             names = {key for key, layer in layers.items() if layer == "sessionFlags"}
             missing = []
             for path, value in leaves(table):
-                keys = codex_app.origin_keys(names, path)
+                # Any layer vouches for a name: a managed layer outranks a flag and is reported in its place.
+                keys = codex_app.origin_keys(layers, path)
                 names.difference_update(keys)
                 # Codex reports no origin for an empty array or table.
                 if not keys and value not in ([], {}):
