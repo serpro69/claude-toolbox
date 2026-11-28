@@ -126,6 +126,22 @@ a.xp-ln:hover, a.xp-ln:focus-visible { color: var(--tn-cyan); }
 .xp-js .xp-text mark { background-size: 0% 100%; transition: background-size 0.7s ease 0.45s; }
 .xp-js .xp-chapter.is-active .xp-text mark { background-size: 100% 100%; }
 
+/* ── One recorded run (after the first chapter): same two columns, a video in the pane ─── */
+.xp-run {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1.2fr);
+  gap: 56px;
+  align-items: center;
+  padding: 72px 0;
+  scroll-margin-top: 2.4rem;
+  border-top: 1px solid rgba(var(--tn-blue-rgb), 0.08);
+}
+.xp-run .xp-copy, .xp-run .xp-pane { position: static; }
+.xp-run-video { display: block; width: 100%; height: auto; background: var(--tn-night); }
+.xp-run-links { display: flex; flex-wrap: wrap; gap: 8px 24px; margin: 8px 0 0; font-size: 15px; }
+.xp-run-links a { color: var(--md-typeset-a-color); text-decoration: none; border-bottom: 1px dotted currentColor; }
+.xp-run-links a:hover, .xp-run-links a:focus-visible { border-bottom-style: solid; }
+
 /* ── Closing ─── */
 .xp-closing {
   padding: 96px 0 120px; text-align: center;
@@ -163,6 +179,7 @@ a.xp-ln:hover, a.xp-ln:focus-visible { color: var(--tn-cyan); }
   .xp-pane { position: static; order: 1; margin: 12px 0 0; }
   .xp-left { order: 2; }
   .xp-footnote { order: 3; }
+  .xp-run { grid-template-columns: minmax(0, 1fr); gap: 24px; padding: 48px 0; }
 }
 @media (max-width: 540px) {
   .xp { padding: 0 16px; }
