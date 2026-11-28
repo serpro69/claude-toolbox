@@ -21,6 +21,34 @@ explore:
     capy: https://github.com/serpro69/capy/blob/master/
     agentstakk: https://github.com/serpro69/agentstakk/blob/master/
 
+  # One recorded run, shown after the first chapter. It is not a capy record,
+  # so it has no excerpts. The video is served from the demo repository's
+  # `recordings` branch, pinned to a commit; `poster` is a path under docs/.
+  run:
+    id: one-run
+    kicker: One run, end to end
+    headline: From a GitHub issue to a reviewed pull request
+    copy:
+      - >-
+        Before capy's records, here is the whole chain in one run. It was
+        recorded on a small demo repository, a Go webhook relay, in two
+        sessions that took 52 minutes. The video is sped up to 72 seconds, and
+        each caption gives the real time of its stage.
+      - >-
+        `/kk:design` turns issue #1 into a design, and `/kk:review-design` has
+        it reviewed by a Claude reviewer and Codex. `/kk:implement` builds the
+        first task, `/kk:test` writes its tests, and a planted bug shows the
+        tests catch it. In the second `/kk:review-code` round, both reviewers
+        find a semaphore leak that the first round's fixes introduced.
+    video: https://cdn.jsdelivr.net/gh/serpro69/agentstakk-demo@a97604878581f1ea6b7e8ea697d6d9ed130e8edf/out/hero.mp4
+    poster: assets/videos/demo-run.jpg
+    title: ~/agentstakk-demo
+    links:
+      - label: The pull request it opened ↗
+        href: https://github.com/serpro69/agentstakk-demo/pull/2
+      - label: The cut and its scripts ↗
+        href: https://github.com/serpro69/agentstakk-demo/tree/recordings
+
   chapters:
     - id: shortcut
       kicker: What Agentstakk caught while we were building capy
