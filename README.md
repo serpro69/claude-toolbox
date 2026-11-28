@@ -7,7 +7,7 @@
 
 # Agentstakk
 
-**An agentic development lifecycle for Claude Code and Codex.**
+**An A-SDLC (Agentic Software Development Lifecycle) for Claude Code and Codex.**
 Design, implement, review, test and document as one chain of skills.
 
 [![GitHub Release](https://img.shields.io/github/v/release/serpro69/agentstakk?style=for-the-badge&color=D9683D)](https://github.com/serpro69/agentstakk/releases)
@@ -77,7 +77,7 @@ Agentstakk is written with Claude Code, and a human reviews and tests every chan
 
 ## Coming from claude-toolbox?
 
-This project used to be `claude-toolbox`, a template for sharing Claude Code settings. It now ships skills, hooks and workflows for Claude Code and Codex through one `kk` installation. "Agentstakk" reads as "agent stack"; the Norwegian *stakk* gives it the double *k*, a nod to `kk`.
+This project used to be `claude-toolbox`, a template for sharing Claude Code settings. It now ships skills, hooks and workflows for Claude Code and Codex through one `kk` installation. "Agentstakk" reads as "agent stack"; the Norwegian _stakk_ gives it the double _k_, a nod to `kk`.
 
 - If your project has `.github/template-state.json`, follow the [template migration guide](docs/user-guide/template-sync.md).
 - If you installed `kk@claude-toolbox` directly, follow the [marketplace switch](docs/getting-started/plugin-only.md#switch-an-existing-git-marketplace-installation).
