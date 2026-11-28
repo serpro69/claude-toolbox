@@ -102,6 +102,37 @@
       </div>
     </figure>
   </article>
+  {%- if loop.first and xp.run %}
+  {%- set run = xp.run %}
+  {#- Not an .xp-chapter: explore.js tracks chapters only, so numbering and the URL hash ignore it. #}
+  <section class="xp-run" id="{{ run.id | e }}" aria-labelledby="{{ run.id | e }}-title">
+    <div class="xp-copy">
+      <p class="xp-kicker">{{ run.kicker | e }}</p>
+      <h2 class="xp-headline" id="{{ run.id | e }}-title">{{ headline(run.headline) }}</h2>
+      {%- for para in run['copy'] %}
+      <p class="xp-para">{{ inline(para) }}</p>
+      {%- endfor %}
+      <p class="xp-run-links">
+        {%- for l in run.links %}
+        <a href="{{ l.href | e }}">{{ l.label | e }}</a>
+        {%- endfor %}
+      </p>
+    </div>
+    <figure class="xp-pane">
+      <div class="xp-term">
+        <div class="xp-term-bar" aria-hidden="true">
+          <span class="xp-term-dot xp-dot-red"></span><span class="xp-term-dot xp-dot-yellow"></span><span class="xp-term-dot xp-dot-green"></span>
+          <span class="xp-term-title">{{ run.title | e }}</span>
+        </div>
+        <video class="xp-run-video" controls muted playsinline preload="metadata"
+               poster="{{ run.poster | url }}" aria-label="{{ run.headline | e }}, sped up to 72 seconds">
+          <source src="{{ run.video | e }}" type="video/mp4">
+          <a href="{{ run.video | e }}">Download the video</a>
+        </video>
+      </div>
+    </figure>
+  </section>
+  {%- endif %}
   {%- endfor %}
 
   {%- set close = xp.closing %}
