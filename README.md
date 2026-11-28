@@ -71,6 +71,8 @@ Out of the box you get:
 - **Up-to-date library docs** — always-current documentation lookup via Context7
 - **Battle-tested configuration** — permissions, statusline themes, hooks, sensible defaults
 
+**Does the review step matter?** We replayed five real reviews from [capy](https://github.com/serpro69/capy), a project built with Agentstakk. Plain Claude Code on the same model found 36% of the issues those reviews reported and the author kept, and nothing they missed. [Benchmarks and limits](https://serpro69.github.io/agentstakk/latest/benchmarks/) · [data](https://github.com/serpro69/agentstakk-bench)
+
 ## Install kk
 
 On macOS or Linux, install the latest stable release once per user account. Have Claude Code 2.1.295 or later, Bash, Git, `curl`, `jq` and Python 3.9+ on your `PATH`. Include Codex on your `PATH` if you use it.
