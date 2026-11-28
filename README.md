@@ -7,14 +7,20 @@
 
 # Agentstakk
 
+**An agentic development lifecycle for Claude Code and Codex.**
+Design, implement, review, test and document as one chain of skills.
+
 [![GitHub Release](https://img.shields.io/github/v/release/serpro69/agentstakk?style=for-the-badge&color=D9683D)](https://github.com/serpro69/agentstakk/releases)
 [![Mentioned in Awesome Claude Code](https://img.shields.io/badge/Awesome-Claude%20Code-fc60a8?style=for-the-badge&logo=awesomelists&logoColor=white)](https://github.com/hesreallyhim/awesome-claude-code)
 [![Documentation](https://img.shields.io/badge/docs-serpro69.github.io%2Fagentstakk-blue?style=for-the-badge)](https://serpro69.github.io/agentstakk/)
 
-> [!NOTE]
-> **From `claude-toolbox` to `agentstakk`.** I started this project as a template for sharing Claude Code settings across my repositories. It now ships skills, hooks and workflows for both Claude Code and Codex through one `kk` installation. “Agentstakk” reads as “agent stack.” The Norwegian word *stakk* gives the name its double *k*, a nod to the `kk` command.
->
-> If your project has `.github/template-state.json`, follow the [template migration guide](docs/user-guide/template-sync.md). If you installed `kk@claude-toolbox` directly and want to keep using the public plugin, follow the [marketplace switch](docs/getting-started/plugin-only.md#switch-an-existing-git-marketplace-installation).
+You describe a feature. `/kk:design` turns it into a design, an implementation plan and tasks. `/kk:implement` works through the tasks. Each task is verified with `/kk:test` and gets an independent code review before it's done, so you don't have to remember to ask. Profiles give every step specific checks for Go, Java, JS/TS, Kotlin, Python and Kubernetes.
+
+```
+/kk:design → /kk:review-design → /kk:implement → /kk:review-code → /kk:test → /kk:document
+```
+
+**Does the built-in review matter?** We replayed five real reviews from [capy](https://github.com/serpro69/capy), a project built with Agentstakk. Plain Claude Code on the same model found 36% of the issues those reviews reported and the author kept, and nothing they missed. [Benchmarks and limits](https://serpro69.github.io/agentstakk/latest/benchmarks/) · [data](https://github.com/serpro69/agentstakk-bench)
 
 <div align="center">
   <picture>
@@ -22,60 +28,9 @@
   </picture>
 </div>
 
-Agentstakk is a collection of "tools" for all your agentic workflows — pre-configured MCP servers, skills, sub-agents, commands, hooks, statuslines with themes, and more - everything you need for AI-powered development workflows, used and battle-tested daily on many of my own projects.
+## Install
 
-**Supported providers:** [Claude Code](https://serpro69.github.io/agentstakk/latest/providers/claude-code/) · [Codex](https://serpro69.github.io/agentstakk/latest/providers/codex/)
-
-<div align="center">
-
-## [Read the full documentation →](https://serpro69.github.io/agentstakk/latest/)
-
-  <a href="https://serpro69.github.io/agentstakk/latest/">
-    <img width="1080" alt="Docs landing page" src="https://github.com/user-attachments/assets/f6af0017-7f78-476b-8399-81eda8673d0a" />
-  </a>
-
-### [Or explore how Agentstakk was used in a real project →](https://serpro69.github.io/agentstakk/latest/explore/)
-
-  <a href="https://serpro69.github.io/agentstakk/latest/explore/">
-    <img width="1080" alt="Explore page" src="https://github.com/user-attachments/assets/1adbbaa6-579c-4f27-94b1-8515cfefc2ec" />
-  </a>
-</div>
-
----
-
-> [!IMPORTANT]
-> This project was created with the help of Claude-Code. Is it, however, always reviewed, tested, and reworked with a human-in-the-loop.
->
-> No AI slop here. Purely AI-made skills are hot garbage, and that's putting it mildly.
->
-> That said, if you have any problems with code that is written by AI - you've been warned. But, then again, why would you be interested in AI-related configs and skills in the first place... `¯\_(ツ)_/¯`
-
-## Why Agentstakk?
-
-Tools like Claude Code and Codex are powerful on their own, but LLMs don't know your development workflow. This project started as a way for me to streamline claude configurations across all my projects without needing to copy-paste things. With time, patterns and re-curring prompts evolved into skills and agents. Currently, Agentstakk gives you two things:
-
-**A minimal, opinionated Claude Code and Codex configuration** — sensible permission baselines, a rich statusline, MCP server wiring, and a machine-level installation that updates them across projects. Think of it as a dotfiles repo for Claude Code and Codex.
-
-**A structured development pipeline** — 16 workflow and utility skills with explicit multi-language support that take you from idea through design, implementation, code review, testing, to documentation, with persistent knowledge that carries across sessions.
-
-```
-/kk:design → /kk:review-design → /kk:implement → /kk:review-code → /kk:test → /kk:document
-```
-
-Out of the box you get:
-
-- **16 workflow and utility skills** — a complete development pipeline invoked as `/kk:<skill-name>`, plus utilities such as `/kk:clarify-docs` for improving existing documentation, PR drafts and issue descriptions, and explicit `/kk:handoff` publication of task context to a secret GitHub gist.
-- **Multi-language support** — precise and distinct instructions from design, to implementation, to testing, to review for: go, java, js/ts, kotlin, kubernetes, and python
-- **Multi-model code review** — independent reviewers using sub-agents and external models (Gemini, etc.)
-- **Persistent knowledge base** — findings, decisions, and conventions that survive across sessions via Capy
-- **Up-to-date library docs** — always-current documentation lookup via Context7
-- **Battle-tested configuration** — permissions, statusline themes, hooks, sensible defaults
-
-**Does the review step matter?** We replayed five real reviews from [capy](https://github.com/serpro69/capy), a project built with Agentstakk. Plain Claude Code on the same model found 36% of the issues those reviews reported and the author kept, and nothing they missed. [Benchmarks and limits](https://serpro69.github.io/agentstakk/latest/benchmarks/) · [data](https://github.com/serpro69/agentstakk-bench)
-
-## Install kk
-
-On macOS or Linux, install the latest stable release once per user account. Have Claude Code 2.1.295 or later, Bash, Git, `curl`, `jq` and Python 3.9+ on your `PATH`. Include Codex on your `PATH` if you use it.
+On macOS or Linux, you need Claude Code 2.1.295 or later, Bash, Git, `curl`, `jq` and Python 3.9+ on your `PATH`. Codex is optional. Install once per user account:
 
 ```bash
 curl -fsSL https://raw.githubusercontent.com/serpro69/agentstakk/master/install.sh | bash
@@ -83,40 +38,49 @@ export PATH="$HOME/.local/bin:$PATH"
 kk status
 ```
 
-For Codex, open plain `codex` in your project first, review folder trust and the three managed guard handlers in `/hooks`, then exit. Run `kk status --live` to check your installed guards. Start sessions with `kk claude` or `kk codex`. [Installation and updates](docs/getting-started/install.md) · [Plugin-only setup](docs/getting-started/plugin-only.md)
+Start sessions with `kk claude` or `kk codex`. Codex needs a one-time trust review first; see [Installation and updates](docs/getting-started/install.md). To use only the Claude Code plugin without `kk`, see [Plugin-only setup](docs/getting-started/plugin-only.md).
 
-## Try It
+## How it works
 
-After setup, try the core workflow:
+1. **Plan.** Run `/kk:design` and describe a feature. Claude asks refinement questions, then writes a design, an implementation plan and a task list to `docs/feat/wip/`. To think an idea through first, use `/kk:brainstorm`.
+2. **Check the plan.** `/kk:review-design your-feature` looks for gaps before any code exists.
+3. **Build.** `/kk:implement` takes the next task. It writes the code, runs focused checks with `/kk:test`, and sends the change to an isolated review: an independent sub-agent plus an external model through PAL. Standalone fixes work without design docs.
+4. **Review on demand.** `/kk:review-code` checks any change, tracing intended behavior, unchanged callers and compatibility, not just style. `/kk:review-code:isolated` runs the independent, multi-model version.
+5. **Document.** `/kk:document` updates the docs for what changed.
 
-For an optional conversation first, use `/kk:brainstorm` to think through a technical idea. It adapts the interview to your next decision and ends with a chat recap of decisions, rationale, and open assumptions. It creates no files or automatic handoff; request `/kk:design` when you want written planning.
+See the [Skills guide](https://serpro69.github.io/agentstakk/latest/user-guide/skills/) for all 16 skills and the [Quickstart](docs/getting-started/quickstart.md) for a first run.
 
-1. **Write a plan.** Type `/kk:design` and describe a feature you want to build. Claude will ask refinement questions and confirm decisions, then produce design docs, an implementation plan, and a task list in `docs/feat/wip/`.
+## What you get
 
-2. **Review the design.** Run `/kk:review-design your-feature` to catch gaps before writing code.
+- **Per-language profiles.** Design, implementation, test and review checklists for Go, Java, JS/TS, Kotlin, Python, Kubernetes and Kubernetes operators, plus Twelve-Factor design guidance. Detection is automatic. [Profiles](https://serpro69.github.io/agentstakk/latest/user-guide/profiles/)
+- **Multi-model review.** An independent reviewer that never saw the implementation, plus an external model (Gemini, or the CLIs you have installed) through PAL.
+- **A permission guard.** Hooks that block access to secrets, destructive operations and edits to the guard's own configuration, with per-project additions. [Configuration](docs/user-guide/configuration.md)
+- **Memory across sessions.** Review findings, decisions and conventions persist through [capy](https://github.com/serpro69/capy). Library docs stay current through Context7.
+- **Claude Code and Codex from one source.** One canonical plugin generates the Codex skills, agents and rules. [Providers](https://serpro69.github.io/agentstakk/latest/providers/)
+- **A configured environment.** Permission baselines, MCP servers and statuslines, installed once per machine and kept up to date by `kk`.
 
-3. **Build it.** Type `/kk:implement` — Claude establishes the task's behavior and compatibility constraints, implements it, and supplies current evidence to independent review. Standalone fixes also work without design documents.
+## Built with Agentstakk
 
-4. **Review the code.** `/kk:review-code` traces intended behavior, unchanged callers and affected compatibility contracts alongside SOLID, security and quality checks. Use `/kk:review-code:isolated` for independent review without the implementation conversation: an internal reviewer plus external review through PAL, using an API model when one is configured and otherwise your installed CLIs from other vendors (see [isolated reviews](docs/user-guide/skills.md#isolated-reviews-and-external-models)).
+[capy](https://github.com/serpro69/capy) was built with this workflow. Every task went through design, implementation and review. The [Explore page](https://serpro69.github.io/agentstakk/latest/explore/) quotes what the reviews caught, and the [benchmarks](https://serpro69.github.io/agentstakk/latest/benchmarks/) replay them against plain Claude Code.
 
-Reviews distinguish current regressions from inherited issues and code support
-from deployment readiness. Missing evidence stays explicit; green tests support
-the paths exercised. Verification is proportionate to the change, while explicit
-repository and release checks remain required. See
-[functional review and implementation](docs/user-guide/skills.md#functional-review-and-implementation)
-for examples and limits.
+<div align="center">
+  <a href="https://serpro69.github.io/agentstakk/latest/explore/">
+    <img width="1080" alt="Explore page" src="https://github.com/user-attachments/assets/1adbbaa6-579c-4f27-94b1-8515cfefc2ec" />
+  </a>
+</div>
 
-This is the core loop. See the [Skills documentation](https://serpro69.github.io/agentstakk/latest/user-guide/skills/) for all available skills and the full workflow pipeline.
+More examples: [examples/](./examples). Full documentation: [serpro69.github.io/agentstakk](https://serpro69.github.io/agentstakk/latest/).
 
-To clarify a bug report or feature request, use `/kk:clarify-docs issue-draft.md`
-or supply an issue URL or pasted description with a local destination. The skill
-preserves evidence limits and produces a local draft; it does not publish or
-implement the issue. See [issue-description examples](docs/user-guide/skills.md#clarify-an-issue-description)
-for output selection and audience rules. Clarification remains optional.
+## How it's built
 
-## Examples
+Agentstakk is written with Claude Code, and a human reviews and tests every change. Skills are treated like software: they ship with evaluation scenarios and structure tests, and design decisions are recorded as [ADRs](docs/adr/), including the failures that motivated them.
 
-Examples of actual Claude Code workflows executed using this template's configs, skills, and tools: [examples/](./examples)
+## Coming from claude-toolbox?
+
+This project used to be `claude-toolbox`, a template for sharing Claude Code settings. It now ships skills, hooks and workflows for Claude Code and Codex through one `kk` installation. "Agentstakk" reads as "agent stack"; the Norwegian *stakk* gives it the double *k*, a nod to `kk`.
+
+- If your project has `.github/template-state.json`, follow the [template migration guide](docs/user-guide/template-sync.md).
+- If you installed `kk@claude-toolbox` directly, follow the [marketplace switch](docs/getting-started/plugin-only.md#switch-an-existing-git-marketplace-installation).
 
 ## Contributing
 
