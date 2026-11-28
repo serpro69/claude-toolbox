@@ -22,11 +22,7 @@ You describe a feature. `/kk:design` turns it into a design, an implementation p
 
 **Does the built-in review matter?** We replayed five real reviews from [capy](https://github.com/serpro69/capy), a project built with Agentstakk. Plain Claude Code on the same model found 36% of the issues those reviews reported and the author kept, and nothing they missed. [Benchmarks and limits](https://serpro69.github.io/agentstakk/latest/benchmarks/) · [data](https://github.com/serpro69/agentstakk-bench)
 
-<div align="center">
-  <picture>
-    <img width="1080" alt="Terminal view" src="https://github.com/user-attachments/assets/27ef7269-0153-47c0-b07d-ed6a9504a176" />
-  </picture>
-</div>
+https://github.com/user-attachments/assets/d28eaa01-c133-4248-be28-bd2bd4c9e409
 
 ## Install
 
